@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `c94f694e`  
+> **Source Version**: `fe9248e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:22:44.465Z  
+> **Timestamp**: 2026-11-04T21:42:24.229Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:22:37.993Z  
+> **Harvest Timestamp**: 2026-11-04T21:42:24.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 26045 stars
+- **Stars / Engagement**: 26049 stars
 
 ---
 
@@ -941,17 +941,17 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12911** (2026-11-03): **perf(analyze): make a disabled rule timer free**
-  *Symptoms*: ## Summary Makes it so that when the rule profiler is disabled, we hold less info in memory. Also deals with inlining and such.  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
+- **Issue #12931** (2026-11-04): **perf(rowan): skip childless nodes and avoid segment copies in the kind-filtered walk**
+  *Symptoms*: ## Summary This makes preorder traversals a little bit faster by skipping nodes that it can trivially determine will never contain a hit.  A node is skipped when both of these are true: 1. **Its kind is not in the requested set**, so the node itself would yield no Enter or Leave event. 2. **None of its slots holds a node**: every slot is a token or empty. That means nothing below it can be requested either.  Only results in a 0.4%-1% difference on my machine  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
   **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 3911ba1530f9ef86b530768e6c14dc3cc262768d  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/dyc3/perf-inline-disabled-rule-timer?filename=.changeset/tricky-peaches-find.md&value=---%0A%0A---%0A%0Aperf(analyze)%3A%20make%20a%20disabled%20rule%20timer%20free%0A)  
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12911?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  ### Walkthrough  `RuleRunTimer` now stores running state only when profiling is enabled at start. Timers started while profiling is disabled do not read the clock or
+  > ### 🦋 Changeset detected  Latest commit: c10cea3b7b7248351f7cff48b3cf4f025f4f6094  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12931?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  `Preorder
 
-- **Issue #12898** (2026-11-03): **fix(parse/tailwind): handle long dashed base names when aribtrary values are involved**
-  *Symptoms*: ## Summary fixes #12882  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
+- **Issue #12930** (2026-11-04): **fix(type_inference): remove lowering override for Array type**
+  *Symptoms*: ## Summary fixes the type lowering for `Array` so its not being excluded anymore  fixes #12073  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
   **Post-Mortem & Fix Analysis**:
-  > ### 🦋 Changeset detected  Latest commit: 9df949e1a1c1dbae3f881942f90b5ee4c477594c  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: rate limited by coderabbit.ai -->  > [!WARNING] > ## Review limit reached >  > You've used all free OSS reviews for now. Wait for the free limit to reset to keep reviewing this public repository. >  > **Next included review available in 35 minutes.** >  > [Check out review usage here](https://app.coderabbit.ai/dashboard/review-capacity?orgId=4f12658c-a260-4bf3-9e00-368555ef5725). >  > <details> > <summary><strong>View limit details</strong></summary> > <dl> > <dd> >  > **Limit details:** You’ve used all 10 included reviews currently available. >  > [Learn how review limits work](https://docs.coderabbit.ai/management/rate-limits). >  > **Review configuration:** >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dar
+  > ### 🦋 Changeset detected  Latest commit: 13a0dd7356676fb3cb365daa731b76435cf48d4d  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12930?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  Global ty
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -968,458 +968,459 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `291f0347` (2026-11-03)
-**Commit Message**: fix(parse/tailwind): handle long dashed base names when aribtrary values are involved (#12898)
+### Incident Patch 1: `ce712840` (2026-11-04)
+**Commit Message**: fix(type_inference): remove lowering override for Array type (#12930)
 
-**File**: `.changeset/fix-tailwind-unknown-dashed-arbitrary-value.md` (added, +5/-0)
+**File**: `.changeset/iterate-array-entries.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,7 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed [#12882](https://github.com/biomejs/biome/issues/12882): the Tailwind class parser no longer reports a parse error for unknown utilities with a dashed name and an arbitrary value or a CSS variable, such as `foo-bar-[1px]` or `foo-bar-(--my-var)`. [`useTailwindSortedClasses`](https://biomejs.dev/linter/rules/use-tailwind-sorted-classes/) sorts these classes first, like other unknown classes.
++Fixed [#12073](https://github.com/biomejs/biome/issues/12073): [`useExhaustiveSwitchCases`](https://biomejs.dev/linter/rules/use-exhaustive-switch-cases/) now reports non-exhaustive switches over values read from `for...of` loops over `Array.prototype.entries()`, `Map`, and `Set`, and over properties of array elements indexed by a `number` variable.
++
++[`noMisusedPromises`](https://biomejs.dev/linter/rules/no-misused-promises/) now also reports Promise-returning callbacks passed to array methods such as `find` and `every`.
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/nursery/useTailwindSortedClasses/issue_12882.jsx` (added, +6/-0)
+**File**: `crates/biome_js_analyze/src/lint/nursery/no_misused_promises.rs` (modified, +24/-4)
 ```diff
-@@ -0,0 +1,6 @@
-+// Unknown dashed utilities with an arbitrary value or a CSS variable sort
-+// first as unknown classes instead of causing a parse error.
-+export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+export const C = () => <div className="flex foo-[48%]" />;
-+export const D = () => <div className="flex foo-bar-(--my-var)" />;
+@@ -263,12 +263,12 @@ fn find_misused_promise_returning_callback(
+         .iter()
+         .position(|arg| arg.is_ok_and(|arg| arg == argument))?;
+ 
+-    let argument_ty = if let Some(call_expression) = argument_list
++    let call_expression = argument_list
+         .syntax()
+         .ancestors()
+         .skip(1)
+-        .find_map(JsCallExpression::cast)
+-    {
++        .find_map(JsCallExpression::cast);
++    let argument_ty = if let Some(call_expression) = &call_expression {
+         ctx.expected_argument_type(
+             &call_expression.callee().ok()?,
+             &argument_list,
+@@ -289,11 +289,31 @@ fn find_misused_promise_returning_callback(
+         )?
+     };
+ 
+-    if argument_ty.function_returns_conditional() {
++    // Array methods such as `filter` declare a type guard overload, and use the
++    // callback's result as a condition whichever overload applies. Other callees
++    // may pair a type guard overload with one that accepts a Promise.
++    if argument_ty.function_returns_type_predicate()
++        && call_expression.is_some_and(|call| is_array_method_call(ctx, &call))
++    {
+         Some(NoMisusedPromisesState::ConditionalReturn)
+     } else if argument_ty.function_returns_void() {
+         Some(NoMisusedPromisesState::VoidReturn)
+     } else {
+         None
+     }
+ }
++
++/// Returns whether `call` invokes a method on an array or a tuple, such as
++/// `items.filter(callback)`.
++fn is_array_method_call(ctx: &RuleContext<NoMisusedPromises>, call: &JsCallExpression) -> bool {
++    let Ok(AnyJsExpression::JsStaticMemberExpression(callee)) =
++        call.callee().map(AnyJsExpression::omit_parentheses)
++    else {
++        return false;
++    };
++    callee
++        .object()
++        .ok()
++        .and_then(|object| ctx.type_of_expression(&object))
++        .is_some_and(|ty| ty.is_all_array_or_tuple())
++}
 ```
 
-**File**: `crates/biome_js_analyze/tests/specs/nursery/useTailwindSortedClasses/issue_12882.jsx.snap` (added, +126/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/libraryCallbacksInvalid.ts` (added, +5/-0)
 ```diff
-@@ -0,0 +1,126 @@
+@@ -0,0 +1,5 @@
++// should generate diagnostics
++const promise = Promise.resolve(true);
++
++[1, 2, 3].find(() => promise);
++[1, 2, 3].every(() => promise);
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/libraryCallbacksInvalid.ts.snap` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
 +---
 +source: crates/biome_js_analyze/tests/spec_tests.rs
-+assertion_line: 211
-+expression: issue_12882.jsx
++expression: libraryCallbacksInvalid.ts
 +---
 +# Input
-+```jsx
-+// Unknown dashed utilities with an arbitrary value or a CSS variable sort
-+// first as unknown classes instead of causing a parse error.
-+export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+export const C = () => <div className="flex foo-[48%]" />;
-+export const D = () => <div className="flex foo-bar-(--my-var)" />;
++```ts
++// should generate diagnostics
++const promise = Promise.resolve(true);
++
++[1, 2, 3].find(() => promise);
++[1, 2, 3].every(() => promise);
 +
 +```
 +
 +# Diagnostics
 +```
-+issue_12882.jsx:3:39 lint/nursery/useTailwindSortedClasses  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++libraryCallbacksInvalid.ts:4:16 lint/nursery/noMisusedPromises ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  i These CSS classes should be sorted.
++  i This function returns a Promise where a conditional was expected.
 +  
-+    1 │ // Unknown dashed utilities with an arbitrary value or a CSS variable sort
-+    2 │ // first as unknown classes instead of causing a parse error.
-+  > 3 │ export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+      │                                       ^^^^^^^^^^^^^^^^^^^
-+    4 │ export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+    5 │ export const C = () => <div className="flex foo-[48%]" />;
++    2 │ const promise = Promise.resolve(true);
++    3 │ 
++  > 4 │ [1, 2, 3].find(() => promise);
++      │                ^^^^^^^^^^^^^
++    5 │ [1, 2, 3].every(() => promise);
++    6 │ 
 +  
-+  i A consistent class order makes class lists easier to read and keeps changes to them small.
++  i A Promise is always truthy, so this is most likely a mistake.
++  
++  i You may have intended to `await` the Promise, but this does not work inside a synchronous callback.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
-+  i Unsafe fix: Sort the classes.
-+  
-+    1 1 │   // Unknown dashed utilities with an arbitrary value or a CSS variable sort
-+    2 2 │   // first as unknown classes instead of causing a parse error.
-+    3   │ - export·const·A·=·()·=>·<div·className="p-4·foo-bar-[1px]"·/>;
-+      3 │ + export·const·A·=·()·=>·<div·className="foo-bar-[1px]·p-4"·/>;
-+    4 4 │   export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+    5 5 │   export const C = () => <div className="flex foo-[48%]" />;
-+  
 +
 +```
 +
 +```
-+issue_12882.jsx:4:39 lint/nursery/useTailwindSortedClasses  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++libraryCallbacksInvalid.ts:5:17 lint/nursery/noMisusedPromises ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  i These CSS classes should be sorted.
++  i This function returns a Promise where a conditional was expected.
 +  
-+    2 │ // first as unknown classes instead of causing a parse error.
-+    3 │ export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+  > 4 │ export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+      │                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+    5 │ export const C = () => <div className="flex foo-[48%]" />;
-+    6 │ export const D = () => <div className="flex foo-bar-(--my-var)" />;
++    4 │ [1, 2, 3].find(() => promise);
++  > 5 │ [1, 2, 3].every(() => promise);
++      │                 ^^^^^^^^^^^^^
++    6 │ 
 +  
-+  i A consistent class order makes class lists easier to read and keeps changes to them small.
++  i A Promise is always truthy, so this is most likely a mistake.
++  
++  i You may have intended to `await` the Promise, but this does not work inside a synchronous callback.
 +  
 +  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
-+  i Unsafe fix: Sort the classes.
-+  
-+    2 2 │   // first as unknown classes instead of causing a parse error.
-+    3 3 │   export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+    4   │ - export·const·B·=·()·=>·<div·className="flex·slide-out-to-top-[48%]"·/>;
-+      4 │ + export·const·B·=·()·=>·<div·className="slide-out-to-top-[48%]·flex"·/>;
-+    5 5 │   export const C = () => <div className="flex foo-[48%]" />;
-+    6 6 │   export const D = () => <div className="flex foo-bar-(--my-var)" />;
-+  
 +
 +```
-+
-+```
-+issue_12882.jsx:5:39 lint/nursery/useTailwindSortedClasses  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i These CSS classes should be sorted.
-+  
-+    3 │ export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+    4 │ export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+  > 5 │ export const C = () => <div className="flex foo-[48%]" />;
-+      │                                       ^^^^^^^^^^^^^^^^
-+    6 │ export const D = () => <div className="flex foo-bar-(--my-var)" />;
-+    7 │ 
-+  
-+  i A consistent class order makes class lists easier to read and keeps changes to them small.
-+  
-+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
-+  
-+  i Unsafe fix: Sort the classes.
-+  
-+    3 3 │   export const A = () => <div className="p-4 foo-bar-[1px]" />;
-+    4 4 │   export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+    5   │ - export·const·C·=·()·=>·<div·className="flex·foo-[48%]"·/>;
-+      5 │ + export·const·C·=·()·=>·<div·className="foo-[48%]·flex"·/>;
-+    6 6 │   export const D = () => <div className="flex foo-bar-(--my-var)" />;
-+    7 7 │   
-+  
-+
-+```
-+
-+```
-+issue_12882.jsx:6:39 lint/nursery/useTailwindSortedClasses  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i These CSS classes should be sorted.
-+  
-+    4 │ export const B = () => <div className="flex slide-out-to-top-[48%]" />;
-+    5 │ export const C = () => <div className="flex foo-[48%]" />;
-+  > 6 │ export const D = () => <div className="flex foo-bar-(-
 ```
 
-**File**: `crates/biome_tailwind_parser/src/lexer/mod.rs` (modified, +19/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/validTypeGuardOverload.ts` (added, +10/-0)
 ```diff
-@@ -430,6 +430,16 @@ impl<'src> TailwindLexer<'src> {
-             return TW_BASE;
-         }
- 
-+        // Tailwind takes everything before the first `-[` or `-(` as the root of a
-+        // candidate with an arbitrary value or a CSS variable, whether or not the root
-+        // is a known utility (`foo-bar-[1px]` has the root `foo-bar`). Without this,
-+        // an unknown dashed root would end at its first `-` and leave the bracket
-+        // inside a named value.
-+        if let Some(arbitrary_end) = arbitrary_value_base_end(slice) {
-+            self.advance(arbitrary_end);
-+            return TW_BASE;
-+        }
+@@ -0,0 +1,10 @@
++/* should not generate diagnostics */
 +
-         // Fallback to dashed-basename trie matching for cases with '-' inside the basename
-         let dashed_end = self.base_names.matcher(slice).base_end();
-         self.advance(dashed_end);
-@@ -788,6 +798,15 @@ fn css_identifier_kind(text: &[u8]) -> TailwindSyntaxKind {
-     }
- }
- 
-+/// Returns the position of the first `-[` or `-(` before a delimiter, which ends
-+/// the basename of a candidate with an arbitrary value or a CSS variable.
-+fn arbitrary_value_base_end(slice: &[u8]) -> Option<usize> {
-+    slice
-+        .windows(2)
-+        .take_while(|pair| !is_delimiter(lookup_byte(pair[0])))
-+        .position(|pair| pair[0] == b'-' && matches!(pair[1], b'[' | b'('))
++interface Refine {
++	<T>(check: (value: unknown) => value is T): void;
++	(check: (value: unknown) => unknown | Promise<unknown>): void;
 +}
 +
- fn is_css_identifier_start(byte: u8) -> bool {
-     byte != b'_' && matches!(lookup_byte(byte), IDT | MIN)
- }
++declare const refine: Refine;
++
++refine(async (value) => true);
 ```
 
-**File**: `crates/biome_tailwind_parser/tests/tailwind_specs/ok/simple/unknown-dashed-base-arbitrary-value.txt` (added, +1/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noMisusedPromises/validTypeGuardOverload.ts.snap` (added, +18/-0)
 ```diff
-@@ -0,0 +1 @@
-+foo-bar-[1px] slide-out-to-top-[48%] foo-[48%] foo-bar-(--my-var) foo-bar-baz-[1px]/50 hover:foo-bar-[1px]! -foo-bar-[1px]
+@@ -0,0 +1,18 @@
++---
++source: crates/biome_js_analyze/tests/spec_tests.rs
++expression: validTypeGuardOverload.ts
++---
++# Input
++```ts
++/* should not generate diagnostics */
++
++interface Refine {
++	<T>(check: (value: unknown) => value is T): void;
++	(check: (value: unknown) => unknown | Promise<unknown>): void;
++}
++
++declare const refine: Refine;
++
++refine(async (value) => true);
++
++```
 ```
 
-**File**: `crates/biome_tailwind_parser/tests/tailwind_specs/ok/simple/unknown-dashed-base-arbitrary-value.txt.snap` (added, +341/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useExhaustiveSwitchCases/issue12073Invalid.ts` (added, +24/-0)
 ```diff
-@@ -0,0 +1,341 @@
-+---
-+source: crates/biome_tailwind_parser/tests/spec_test.rs
-+assertion_line: 132
-+expression: snapshot
-+---
+@@ -0,0 +1,24 @@
++// should generate diagnostics
++import type { Player } from "./issue12073Player.js";
 +
-+## Input
++class GameController {
++	players: Player[];
 +
-+```text
-+foo-bar-[1px] slide-out-to-top-[48%] foo-[48%] foo-bar-(--my-var) foo-bar-baz-[1px]/50 hover:foo-bar-[1px]! -foo-bar-[1px]
++	updatePlayers() {
++		for (const [i, player] of this.players.entries()) {
++			switch (player.state) {
++				case "running":
++					break;
++			}
++		}
++	}
++
++	updatePlayersByIndex() {
++		for (const [i] of this.players.entries()) {
++			switch (this.players[i].state) {
++				case "running":
++					break;
++			}
++		}
++	}
++}
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/useExhaustiveSwitchCases/issue12073Invalid.ts.snap` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++---
++source: crates/biome_js_analyze/tests/spec_tests.rs
++expression: issue12073Invalid.ts
++---
++# Input
++```ts
++// should generate diagnostics
++import type { Player } from "./issue12073Player.js";
++
++class GameController {
++	players: Player[];
++
++	updatePlayers() {
++		for (const [i, player] of this.players.entries()) {
++			switch (player.state) {
++				case "running":
++					break;
++			}
++		}
++	}
++
++	updatePlayersByIndex() {
++		for (const [i] of this.players.entries()) {
++			switch (this.players[i].state) {
++				case "running":
++					break;
++			}
++		}
++	}
++}
 +
 +```
 +
++# Diagnostics
++```
++issue12073Invalid.ts:9:4 lint/nursery/useExhaustiveSwitchCases  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+## AST
++  i The switch statement is not exhaustive.
++  
++     7 │ 	updatePlayers() {
++     8 │ 		for (const [i, player] of this.players.entries()) {
++   > 9 │ 			switch (player.state) {
++       │ 			^^^^^^^^^^^^^^^^^^^^^^^
++  > 10 │ 				case "running":
++  > 11 │ 					break;
++  > 12 │ 			}
++       │ 			^
++    13 │ 		}
++    14 │ 	}
++  
++  i Some variants of the union type are not handled here.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i These cases are missing:
++  
++  - "jumping"
++  - "ducking"
++  
++  i Unsafe fix: Add the missing cases to the switch statement.
++  
++     9  9 │         switch (player.state) {
++    10 10 │           case "running":
++    11    │ - → → → → → break;
++       11 │ + → → → → → break;
++       12 │ + → → → → case·"jumping":·throw·new·Error("TODO:·Not·implemented·yet");
++       13 │ + → → → → case·"ducking":·throw·new·Error("TODO:·Not·implemented·yet");
++    12 14 │         }
++    13 15 │       }
++  
 +
 +```
-+TwRoot {
-+    bom_token: missing (optional),
-+    leading_whitespace_token: missing (optional),
-+    candidates: TwCandidateList [
-+        TwFullCandidate {
-+            variants: TwVariantList [],
-+            legacy_important_token: missing (optional),
-+            negative_token: missing (optional),
-+            candidate: TwFunctionalCandidate {
-+                base_token: TW_BASE@0..7 "foo-bar" [] [],
-+                minus_token: DASH@7..8 "-" [] [],
-+                value: TwArbitraryValue {
-+                    l_brack_token: L_BRACKET@8..9 "[" [] [],
-+                    value: CssGenericComponentValueList [
-+                        CssRegularDimension {
-+                            value_token: CSS_NUMBER_LITERAL@9..10 "1" [] [],
-+                            unit_token: IDENT@10..12 "px" [] [],
-+                        },
-+                    ],
-+                    r_brack_token: R_BRACKET@12..13 "]" [] [],
-+                },
-+                modifier: missing (optional),
-+            },
-+            excl_token: missing (optional),
-+        },
-+        WHITESPACE@13..14 " " [] [],
-+        TwFullCandidate {
-+            variants: TwVariantList [],
-+            legacy_important_token: missing (optional),
-+            negative_token: missing (optional),
-+            candidate: TwFunctionalCandidate {
-+                base_token: TW_BASE@14..30 "slide-out-to-top" [] [],
-+                minus_token: DASH@30..31 "-" [] [],
-+                value: TwArbitraryValue {
-+                    l_brack_token: L_BRACKET@31..32 "[" [] [],
-+                    value: CssGenericComponentValueList [
-+                        CssPercentage {
-+                            value_token: CSS_NUMBER_LITERAL@32..34 "48" [] [],
-+                            remainder_token: PERCENT@34..35 "%" [] [],
-+                        },
-+                    ],
-+                    r_brack_token: R_BRACKET@35..36 "]" [] [],
-+                },
-+                modifier: missing (optional),
-+            },
-+            excl_token: missing (optional),
-+        },
-+        WHITESPACE@36..37 " " [] [],
-+        TwFullCandidate {
-+            variants: TwVariantList [],
-+            legacy_important_token: missing (optional),
-+            negative_token: missing (optional),
-+            candidate: TwFunctionalCandidate {
-+                base_token: TW_BASE@37..40 "foo" [] [],
-+                minus_token: DASH@40..41 "-" [] [],
-+                value: TwArbitraryValue {
-+                    l_brack_token: L_BRACKET@41..42 "[" [] [],
-+                    value: CssGenericComponentValueList [
-+                        CssPercentage {
-+                            value_token: CSS_NUMBER_LITERAL@42..44 "48" [] [],
-+                            remainder_token: PERCENT@44..45 "%" [] [],
-+                        },
-+                    ],
-+                    r_brack_token: R_BRACKET@45..46 "]" [] [],
-+                },
-+                modifier: missing (optional),
-+            },
-+            excl_token: missing (optional),
-+        },
-+        WHITESPACE@46..47 " " [] [],
-+        TwFullCandidate {
-+            variants: TwVariantList [],
-+            legacy_important_token: missing (optional),
-+            negative_token: missing (optional),
-+            candidate: TwFunctionalCandidate {
-+                base_token: TW_BASE@47..54 "foo-bar" [] [],
-+                minus_token: DASH@54..55 "-" [] [],
-+                value: TwCssVariableValue {
-+                    l_paren_token: L_PAREN@55..56 "(" [] [],
-+                    type_hint: missing (optional),
-+                    value: CssParameterList [
-+                        CssListOfComponentValuesExpression {
-+                            css_component_value_list: CssComponentValueList [
-+                                CssDashedIdentifier {
-+                                    ident_token: IDENT@56..64 "--my-var" [] [],
-+                                },
-+                            ],
-+                        },
-+                    ],
-+                    r_paren_token: R_PAREN@64..65 ")" [] [],
-+                },
-+                modifier: missing (optional),
-+            },
-+            excl_token: missing (optional),
-+        },
-+        WHITESPACE@65..66 " " [] [],
-+        TwFullCandidate {
-+            variants: TwVariantList [],
-+            legacy_important_token: missing (optional),
-+            negative_token: missing (optional),
-+            candidate: TwFunctionalCandidate {
-+                base_token: TW_BASE@66..77 "foo-bar-baz" [] [],
-+                minus_token: DASH@77..78 "-" [] [],
-+                value: TwArbitraryValue {
-+                    l_brack_token: L_BRA
++
++```
++issue12073Invalid.ts:18:4 lint/nursery/useExhaustiveSwitchCases  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The switch statement is not exhaustive.
++  
++    16 │ 	updatePlayersByIndex() {
++    17 │ 		for (const [i] of this.players.entries()) {
++  > 18 │ 			switch (this.players[i].state) {
++       │ 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++  > 19 │ 				case "running":
++  > 20 │ 					break;
++  > 21 │ 			}
++       │ 			^
++    22 │ 		}
++    23 │ 	}
++  
++  i Some variants of the union type are not handled here.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i These cases are missing:
++  
++  - "jumping"
++  - "ducking"
++  
++  i Unsafe fix: Add the missing cases to the switch statement.
++  
++    18 18 │         switch (this.players[i].state) {
++    19 19 │           case "running":
++    20    │ - → → → → → break;
++       20 │ + → → → → → break;
++       21 │ + → → → → case·"jumping":·throw·new·Error("TODO:·Not·implemented·yet");
++       22 │ + → → → → case·"ducking":·throw·new·Error("TODO:·Not·implemented·yet");
++    21 23 │         }
++    22 24 │       }
++  
++
++```
 ```
 
 ---
 
-### Incident Patch 2: `c2c25908` (2026-11-03)
-**Commit Message**: fix(service): apply the top-level grit configuration (#12864)
+### Incident Patch 2: `f84956bd` (2026-11-04)
+**Commit Message**: test(cli): fix flaky symlink test (#12929)
 
-**File**: `.changeset/fix-grit-top-level-configuration.md` (added, +5/-0)
+**File**: `crates/biome_cli/tests/commands/lint.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed [#12862](https://github.com/biomejs/biome/issues/12862): Biome now applies the options under the top-level `grit` configuration key. Previously, options such as `grit.formatter.lineWidth` and `grit.formatter.enabled` were ignored, and Grit files were formatted with the global `formatter` settings.
-```
-
-**File**: `crates/biome_cli/tests/cases/grit.rs` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+use crate::TestArgs as Args;
-+use crate::run_cli;
-+use crate::snap_test::{SnapshotPayload, assert_cli_snapshot};
-+use biome_console::BufferConsole;
-+use biome_fs::MemoryFileSystem;
-+use camino::Utf8Path;
-+
-+const GRIT_PATTERN: &str = r#"language js
-+
-+`foo($x)` where { $x <: `1`, register_diagnostic(span=$x, message="mm") }
-+"#;
-+
-+#[test]
-+fn grit_line_width_takes_precedence_over_global_line_width() {
-+    let fs = MemoryFileSystem::default();
-+    let mut console = BufferConsole::default();
-+
-+    let config_path = Utf8Path::new("biome.json");
-+    fs.insert(
-+        config_path.into(),
-+        r#"{
-+    "formatter": { "lineWidth": 120 },
-+    "grit": { "formatter": { "lineWidth": 40 } }
-+}"#
-+        .as_bytes(),
-+    );
-+
-+    let file_path = Utf8Path::new("file.grit");
-+    fs.insert(file_path.into(), GRIT_PATTERN.as_bytes());
-+
-+    let (fs, result) = run_cli(
-+        fs,
-+        &mut console,
-+        Args::from(["format", "--write", file_path.as_str()].as_slice()),
-+    );
-+
-+    assert!(result.is_ok(), "run_cli returned {result:?}");
-+
-+    assert_cli_snapshot(SnapshotPayload::new(
-+        module_path!(),
-+        "grit_line_width_takes_precedence_over_global_line_width",
-+        fs,
-+        console,
-+        result,
-+    ));
-+}
-```
-
-**File**: `crates/biome_cli/tests/cases/mod.rs` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ mod diagnostics;
- mod editorconfig;
- mod format_with_errors;
- mod graphql;
-+mod grit;
- mod handle_astro_files;
- mod handle_css_files;
- mod handle_gs_files;
-```
-
-**File**: `crates/biome_cli/tests/snapshots/main_cases_grit/grit_line_width_takes_precedence_over_global_line_width.snap` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+---
-+source: crates/biome_cli/tests/snap_test.rs
-+expression: redactor(content)
-+---
-+## Command
-+
-+```shell
-+biome format --write file.grit
-+```
-+
-+## `biome.json`
-+
-+```json
-+{
-+  "formatter": { "lineWidth": 120 },
-+  "grit": { "formatter": { "lineWidth": 40 } }
-+}
-+```
-+
-+## `file.grit`
-+
-+```grit
-+language js
-+
-+`foo($x)` where {
-+	$x <: `1`,
-+	register_diagnostic(span=$x, message="mm")
-+}
-+
-+```
-+
-+# Emitted Messages
-+
-+```block
-+Formatted 1 file in <TIME>. Fixed 1 file.
-+```
-```
-
-**File**: `crates/biome_service/src/settings.rs` (modified, +7/-0)
-```diff
-@@ -410,6 +410,13 @@ impl Settings {
-             }
-         }
+@@ -1265,7 +1265,7 @@ fn ignore_file_in_subdir_in_symlinked_dir() {
+     let result = run_cli_with_dyn_fs(
+         Box::new(OsFileSystem::new(subroot_path.clone())),
+         &mut console,
+-        Args::from(["lint", root_path.as_ref()].as_slice()),
++        Args::from(["lint", subroot_path.as_ref()].as_slice()),
+     );
  
-+        #[cfg(feature = "lang_grit")]
-+        {
-+            if let Some(grit) = configuration.grit {
-+                self.languages.grit = grit.into();
-+            }
-+        }
-+
-         // plugin settings
-         #[cfg(feature = "plugins")]
-         {
+     remove_dir_all(root_path).unwrap();
+```
+
+**File**: `crates/biome_cli/tests/snapshots/main_commands_lint/ignore_file_in_subdir_in_symlinked_dir.snap` (modified, +2/-67)
+```diff
+@@ -5,76 +5,11 @@ expression: redactor(content)
+ ## Command
+ 
+ ```shell
+-biome lint '<TEMP_DIR>/ignore_file_in_subdir_in_symlinked_dir'
+-```
+-
+-# Termination Message
+-
+-```block
+-lint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-
+-  × Some errors were emitted while running checks.
+-  
+-
+-
++biome lint '<TEMP_DIR>/ignore_file_in_subdir_in_symlinked_dir/subroot'
+ ```
+ 
+ # Emitted Messages
+ 
+ ```block
+-<TEMP_DIR>/ignore_file_in_subdir_in_symlinked_dir/symlinked/subdir/file.js:1:1 lint/style/useConst  FIXABLE  ━━━━━━━━━━━━━━━━━━━━
+-
+-  ! This let declares a variable that is only assigned once.
+-  
+-  > 1 │ let a = 4;
+-      │ ^^^
+-    2 │ debugger;
+-    3 │ console.log(a);
+-  
+-  i 'a' is never reassigned.
+-  
+-  > 1 │ let a = 4;
+-      │     ^
+-    2 │ debugger;
+-    3 │ console.log(a);
+-  
+-  i A variable that is never reassigned is clearer as const, because it prevents the binding from being reassigned.
+-  
+-  i Safe fix: Use const instead.
+-  
+-    1   │ - let·a·=·4;
+-      1 │ + const·a·=·4;
+-    2 2 │   debugger;
+-    3 3 │   console.log(a);
+-  
+-
+-```
+-
+-```block
+-<TEMP_DIR>/ignore_file_in_subdir_in_symlinked_dir/symlinked/subdir/file.js:2:1 lint/suspicious/noDebugger  FIXABLE  ━━━━━━━━━━━━━━━━━━━━
+-
+-  × This is an unexpected use of the debugger statement.
+-  
+-    1 │ let a = 4;
+-  > 2 │ debugger;
+-      │ ^^^^^^^^^
+-    3 │ console.log(a);
+-    4 │ 
+-  
+-  i A debugger statement pauses the program when a debugger is open. It is meant for debugging only, and it should not be left in code that is shipped.
+-  
+-  i Unsafe fix: Remove debugger statement
+-  
+-    1 1 │   let a = 4;
+-    2   │ - debugger;
+-    3 2 │   console.log(a);
+-    4 3 │   
+-  
+-
+-```
+-
+-```block
+-Checked 2 files in <TIME>. No fixes applied.
+-Found 1 error.
+-Found 1 warning.
++Checked 1 file in <TIME>. No fixes applied.
+ ```
+```
+
+---
+
+### Incident Patch 3: `95f0cd1a` (2026-11-04)
+**Commit Message**: chore: increase size of release builders (#12919)
+
+**File**: `.github/workflows/release.yml` (modified, +4/-2)
+```diff
+@@ -212,11 +212,13 @@ jobs:
+       RUST_BACKTRACE: 1
+     strategy:
+       matrix:
++        # The fat-LTO link of the CLI peaks at about 10 GB on x86_64 and 20 GB on aarch64.
++        # On runners with less memory the build thrashes for hours instead of failing.
+         include:
+-          - os: depot-ubuntu-24.04
++          - os: depot-ubuntu-24.04-8
+             target: x86_64-unknown-linux-gnu
+             code-target: linux-x64
+-          - os: depot-ubuntu-24.04-arm-4
++          - os: depot-ubuntu-24.04-arm-8
+             target: aarch64-unknown-linux-gnu
+             code-target: linux-arm64
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12911** (2026-11-03): perf(analyze): make a disabled rule timer free (@dyc3)
-- **PR #12898** (2026-11-03): fix(parse/tailwind): handle long dashed base names when aribtrary values are involved (@dyc3)
-- **PR #12883** (2026-11-03): feat(md): add the `quoteStyle` formatter option (@nhedger)
-- **PR #12879** (closed): fix(lint): skip BigInt operands and shadowed Math in useMathTrunc (@Aschenbath)
-- **PR #12878** (closed): fix(lint): don't report useFlatMap when flat is reached through optional chaining (@Aschenbath)
-- **PR #12875** (2026-11-03): chore: update rule metadata (@dyc3)
+- **PR #12931** (2026-11-04): perf(rowan): skip childless nodes and avoid segment copies in the kind-filtered walk (@dyc3)
+- **PR #12930** (2026-11-04): fix(type_inference): remove lowering override for Array type (@dyc3)
+- **PR #12929** (2026-11-04): test(cli): fix flaky symlink test (@dyc3)
+- **PR #12919** (2026-11-04): chore: increase size of release builders (@dyc3)
+- **PR #12918** (2026-11-04): ci: release (@github-actions[bot])
+- **PR #12914** (2026-11-03): feat(plugins/js): add union to node and token kind sets (@dyc3)
 
 ---
 
@@ -1439,16 +1440,16 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parse/tailwind): handle long dashed base names when aribtrary values are involve
+## X. type_inference): remove lowering override for Array type (#12930)
 
 **RULE**:
-When implementing operations in `.changeset/fix-tailwind-unknown-dashed-arbitrary-value.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/iterate-array-entries.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `291f0347`: parse/tailwind): handle long dashed base names when aribtrary values are involved (#12898). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce712840`: type_inference): remove lowering override for Array type (#12930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-tailwind-unknown-dashed-arbitrary-value.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/iterate-array-entries.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -1457,7 +1458,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed [#12882](https://github.com/biomejs/biome/issues/12882): the Tailwind class parser no longer reports a parse error for unknown utilities with a dashed name and an arbitrary value or a CSS variable, such as `foo-bar-[1px]` or `foo-bar-(--my-var)`. [`useTailwindSortedClasses`](https://biomejs.dev/linter/rules/use-tailwind-sorted-classes/) sorts these classes first, like other unknown classes.
+Fixed [#12073](https://github.com/biomejs/biome/issues/12073): [`useExhaustiveSwitchCases`](https://biomejs.dev/linter/rules/use-exhaustive-switch-cases/) now reports non-exhaustive switches over values read from `for...of` loops over `Array.prototype.entries()`, `Map`, and `Set`, and over properties of array elements indexed by a `number` variable.
+
+[`noMisusedPromises`](https://biomejs.dev/linter/rules/no-misused-promises/) now also reports Promise-returning callbacks passed to array methods such as `find` and `every`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1467,4 +1470,4 @@ Fixed [#12882](https://github.com/biomejs/biome/issues/12882): the Tailwind clas
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `291f0347` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce712840` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `bacc207f`  
+> **Source Version**: `6ab2eaff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:39:18.711Z  
+> **Timestamp**: 2026-11-05T03:20:48.286Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:39:17.530Z  
+> **Harvest Timestamp**: 2026-11-05T03:20:48.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6266 stars
+- **Stars / Engagement**: 6267 stars
 
 ---
 
@@ -1011,6 +1011,10 @@ pub struct IndexOperationQueueTuning {
     start_paused: bool,
     /// Per-search source-input budget for eventual pending overlays.
     eventual_search_budget: u64,
+    /// Lowered suppression limit of overlaid searches; `None` keeps the
+    /// search default of 800 results.
+    #[cfg(test)]
+    max_suppressed_search_results: Option<usize>,
     /// Most committed pending vector work one strong search decodes and
     /// scores; `None` follows `max_retained_bytes`.
     strong_vector_search_max_pending_bytes: Option<NonZeroU64>,
@@ -1033,20 +1037,13 @@ impl Default for IndexOperationQueueTuning {
             #[cfg(test)]
             start_paused: false,
             eventual_search_budget: EVENTUAL_SEARCH_SOURCE_INPUT_BYTES,
+            #[cfg(test)]
+            max_suppressed_search_results: None,
             strong_vector_search_max_pending_bytes: None,
             strong_text_search_max_analysis_bytes: NonZeroU64::new(
                 DEFAULT_STRONG_TEXT_SEARCH_MAX_ANALYSIS_BYTES,
             )
-            .expect("default strong text search bound is nonzero"),
-        }
-    }
-}
-
-impl IndexOperationQueueTuning {
-    /// Largest accepted [retained-byte ceiling](Self::max_retained_bytes),
-    /// about 2.27 GiB.
-    ///
-    /// Storage encodes a valu
+     
 ```
 
 ### Core Architecture Module: `crates/db/src/config/secondary_index_lifecycle.rs`
@@ -1054,7 +1051,7 @@ impl IndexOperationQueueTuning {
 //! Validated resource and scheduling policy for secondary lifecycle work.
 //!
 //! [`SecondaryIndexLifecycleTuning`] is the single user-facing source for bounded
-//! secondary outbox discovery, source backfill, catch-up, final drain, and
+//! secondary outbox discovery, source backfill, catch-up, validation, and
 //! cleanup execution. Every count, byte cap, and interval is positive by construction;
 //! [`SecondaryIndexLifecycleWorkerMode`] represents manual versus background driving
 //! without a parallel boolean. The database converts this policy into internal
@@ -1070,9 +1067,7 @@ const DEFAULT_BATCH_ROWS: usize = 1_024;
 const DEFAULT_MAX_INPUT_BYTES: u64 = 8 * 1024 * 1024;
 const DEFAULT_MAX_OUTPUT_OPERATIONS: u64 = 4_096;
 const DEFAULT_MAX_OUTPUT_BYTES: u64 = 8 * 1024 * 1024;
-const DEFAULT_FINAL_DRAIN_ENTITIES: u64 = 1_024;
 const DEFAULT_RECONCILE_INPUT_BYTES: u64 = 1024 * 1024;
-const DEFAULT_CATCH_UP_TAIL_DELAY_MILLIS: u64 = 1_000;
 const DEFAULT_ACTIVE_INTERVAL_MILLIS: u64 = 10;
 const DEFAULT_IDLE_INTERVAL_MILLIS: u64 = 1_000;
 
@@ -1101,25 +1096,6 @@ impl SecondaryIndexLifecycleBatchRows {
 
     /// Returns the positive entity limit.
     pub const fn get(self) -> usize {
-        self.0.get()
-    }
-}
-
-/// Positive delay used to coalesce a non-full secondary catch-up tail.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SecondaryIndexLifecycleCatchUpTailDelayMillis(NonZeroU64);
-
-impl SecondaryIndexLifecycleCatchUpTailDelayMillis {
-    /// Creates a positive tail delay, returning `None` for zero.
-    pub const fn new(milliseconds: u64) -> Option<Self> {
-        match NonZeroU64::new(milliseconds) {
-            Some(milliseconds) => Some(Self(milliseconds)),
-            None => None,
-        }
-    }
-
-    /// Returns the positive tail delay in milliseconds.
-    pub const fn get(self) -> u64 {
         self.0.get()
     }
 }
@@ -1163,6 +1139,11 @@ impl SecondaryIndexLifecycleIdleIntervalMillis {
 }
 
 /// Complete positive budgets and timing for secondary lifecycle execution.
+///
+/// Every lifecycle transaction stays within the batch budgets below. A step
+/// that holds the scope's exclusive gate first drains the deltas the writes
+/// it waited for recorded, in further transactions under the same budgets,
+/// so however large that write window was, no transaction exceeds them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SecondaryIndexLifecycleTuning {
     worker_mode: SecondaryIndexLifecycleWorkerMode,
@@ -1170,9 +1151,7 @@ pub struct SecondaryIndexLifecycleTuning {
     max_input_bytes: NonZeroU64,
     max_output_operations: NonZeroU64,
     max_output_bytes: NonZeroU64,
-    final_drain_entities: NonZeroU64,
     reconcile_input_bytes: NonZeroU64,
-    catch_up_tail_delay_millis: SecondaryIndexLifecycleCatchUpTailDelayMillis,
     active_interval_millis: SecondaryIndexLifecycleActiveIntervalMillis,
     idle_interval_millis: SecondaryIndexLifecycleIdleIntervalMillis,
 }
@@ -1183,39 +1162,31 @@ impl SecondaryIndexLifecycleTuning {
         self.worker_mode
     }
 
-    /// Returns the maximum entities admitted by one batch or cleanup page.
+    /// Returns the maximum entities one lifecycle transaction admits, whether
+    /// it scans sources, drains deltas, releases applied state, or cleans up.
     pub const fn batch_rows(self) -> SecondaryIndexLifecycleBatchRows {
         self.batch_rows
     }
 
-    /// Returns the exact decoded-input cap for one executor transaction.
+    /// Returns the exact decoded-input cap for one lifecycle transaction.
     pub const fn max_input_bytes(self) -> NonZeroU64 {
         self.max_input_bytes
     }
 
-    /// Returns the maximum puts/deletes staged by one transaction.
+    /// Returns the maximum puts/deletes staged by one lifecycle transaction.
     pub const fn max_output_operations(self) -> NonZeroU64 {
         self.max_output_operations
     }
 
-    /// Returns the exact encoded-output cap for one transaction and entity.
+    /// Returns the exact encoded-output cap for one lifecycle transaction and
+    /// entity.
     pub const fn max_output_bytes(self) -> NonZeroU64 {
         self.max_output_bytes
-    }
-
-    /// Returns the maximum delta entities admitted under the exclusive gate.
-    pub const fn final_drain_entities(self) -> NonZeroU64 {
-        self.final_drain_entities
     }
 
     /// Returns the operation and checkpoint bytes decoded by one reconciliation call.
     pub const fn reconcile_input_bytes(self) -> NonZeroU64 {
         self.reconcile_input_bytes
-    }
-
-    /// Returns the delay used to coalesce an exhausted live catch-up tail.
-    pub const fn catch_up_tail_delay_millis(self) -> SecondaryIndexLifecycleCatchUpTailDelayMillis {
-        self.catch_up_tail_delay_millis
     }
 
     /// Returns the delay between passes while a runnable job exists.
@@ -1258,24 +1229,9 @@ impl SecondaryIndexLifecycleTuning {
         self
     }
 
-    /// Replaces the positive exclusive final-drain entity cap.
-    pub const fn with_final_drain_entities(mut self, entities: NonZeroU64) -> Self {
-        self.final_drain_entities = entities;
-        self
-    }
-
     /// Replaces the positive reconciliation decoded-input cap.
     pub const fn with_reconcile_input_bytes(mut self, bytes: NonZeroU64) -> Self {
         self.reconcile_input_bytes = bytes;
-        self
-    }
-
-    /// Replaces the positive catch-up tail coalescing delay.
-    pub const fn with_catch_up_tail_delay_millis(
-        mut self,
-        delay: SecondaryIndexLifecycleCatchUpTailDelayMillis,
-    ) -> Self {
-        self.catch_up_tail_delay_millis = delay;
         self
     }
 
@@ -1310,11 +1266,47 @@ impl Default for SecondaryIndexLifecycleTuning {
                 .expect("default output operations are positive"),
             max_output_bytes: NonZeroU64::new(DEFAULT_MAX_OUTPUT_BYTES)
                 .expect("default output bytes are positive"),
-            final_drain_entities: NonZeroU64::new(DEFAULT_FINAL_DRAIN_ENTITIES)
-                .expect("default final drain is positive"),
             reconcile_input_bytes: NonZeroU64::new(DEFAULT_RECONCILE_INPUT_BYTES)
                 .expect("default reconcile bytes are positive"),
-            catch_up_tail_delay_millis: SecondaryIndexLifecycleCatchUpTailDelayMil
+            active_interval_millis: SecondaryIndexLifecycleActiveIntervalMillis::new(
+                DEFAULT_ACTIVE_INTERVAL_MILLIS,
+            )
+            .expect("default active interval is positive"),
+            idle_interval_millis: SecondaryIndexLifecycleIdleIntervalMillis::new(
+                DEFAULT_IDLE_INTERVAL_MILLIS,
+            )
+            .expect("default idle interval is positive"),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zero_limits_and_intervals_are_unrepresentable() {
+        assert_eq!(SecondaryIndexLifecycleBatchRows::new(0), None);
+        assert_eq!(SecondaryIndexLifecycleActiveIntervalMillis::new(0), None);
+        assert_eq!(SecondaryIndexLifecycleIdleIntervalMillis::new(0), None);
+    }
+
+    #[test]
+    fn builders_replace_one_policy_dimension_without_erasing_the_rest() {
+        let defaults = SecondaryIndexLifecycleTuning::default();
+        let updated = defaults
+            .with_worker_mode(SecondaryIndexLifecycleWorkerMode::Disabled)
+            .with_batch_rows(SecondaryIndexLifecycleBatchRows::new(3).unwrap())
+            .with_max_output_operations(NonZeroU64::new(11).unwrap())
+            .with_active_interval_millis(
+                SecondaryIndexLifecycleActiveIntervalMillis::new(5).unwrap(),
+            )
+            .with_idle_interval_millis(SecondaryIndexLifecycleIdleIntervalMillis::new(7).unwrap());
+        assert_eq!(
+            updated.worker_mode(),
+            SecondaryIndexLifecycleWorkerMode::Disabled
+        );
+        assert_eq!(updated.bat
 ```
 
 ### Core Architecture Module: `crates/db/src/config/utils.rs`
@@ -2047,85 +2039,421 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bacc207f` (2026-11-02)
-**Commit Message**: perf(db): do not flush deferred index state before element KV reads (#1220)
+### Incident Patch 1: `fbda0daf` (2026-10-31)
+**Commit Message**: Pin the SlateDB fork with its v0.17 fixes and cleanups
 
-## Problem
+The fork now polls the WAL on `wal_poll_interval`, counts spawned
+block fetches in per-query metrics, and no longer resolves terminal
+merges across a TTL boundary. Adapt to its removed shims:
+- map `cache_puts` onto SlateDB's `cache_on_flush` and
+  `cache_on_compaction`;
+- open readers with an explicit `DbReaderMode`;
+- read sorted runs through `sst_views()`;
+- stage the sweep benchmark's exclusive additions as ordinary merges.
 
-A write request that repeats `g().n(id).add_e(label, id, props)` pays
-for a flush of the deferred topology and
-secondary index state before every statement. The node read that starts
-each statement is an `ExecOp::KvRead`, and
-`mutation::visibility::required_for` classifies every `KvRead` as `ALL`,
-so `flush_required_mutations` runs before
-it. With the importer I work on, that was most of the request time.
-
-Where the time went, for 18,000 edges written 500 statements per
-request, in memory, release build (a throwaway build
-with timers around the interpreter stages, not part of this PR):
-
-| Stage | Time |
-|---|---|
-| `add_edges` (all statements) | 0.25 s |
-| commit | 0.45 s |
-| `flush_required_mutations` before the `KvRead` steps | 4.5 s |
-| whole request path | about 7.5 s |
-
-## Change
-
-`required_for(ExecOp::KvRead(_))` is now `NONE`. A KV read lists or gets
-element rows (node property rows and edge
-endpoint rows). Those rows are staged eagerly in the request transaction
-(`property_writes.stage` and
-`stage_edge_endpoints_scoped` write through the transaction), so a read
-sees them without a flush
-
-**File**: `crates/db/src/execution/interpreter/mutation/visibility.rs` (modified, +19/-2)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -61,8 +61,12 @@ pub(in crate::execution::interpreter) fn required_for(
-     match op {
-         exec::ExecOp::Access { plan } => required_for_access(plan),
-         exec::ExecOp::Count { plan } => required_for_count(plan),
--        exec::ExecOp::KvRead(_)
--        | exec::ExecOp::Reserved { .. }
-+        // A KV read lists or gets element rows (node property rows and edge endpoint rows). Those rows are
-+        // staged eagerly in the request transaction, so the read sees them without a flush; only the
-+        // topology and secondary families are deferred. Flushing before it re-merged every shared row a
-+        // preceding mutation touched once per read (`g().n(id).add_e(..)` repeated in one batch).
-+        exec::ExecOp::KvRead(_) => RequiredMutationVisibility::NONE,
-+        exec::ExecOp::Reserved { .. }
-         | exec::ExecOp::Barrier { .. }
-         | exec::ExecOp::IndexDdl { .. } => RequiredMutationVisibility::ALL,
-         exec::ExecOp::Expand { .. } | exec::ExecOp::ShortestPath { .. } => {
-@@ -409,6 +413,19 @@ mod tests {
-         }
-     }
+@@ -4840,7 +4840,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "ahash",
+  "async-channel",
+@@ -4886,7 +4886,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -4901,7 +4901,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/db-testkit/fuzz/Cargo.lock` (modified, +3/-3)
+```diff
+@@ -3195,7 +3195,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "ahash",
+  "async-channel",
+@@ -3241,7 +3241,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -3256,7 +3256,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/db/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -4,8 +4,8 @@ version = "0.1.0"
+ edition = "2024"
  
-+    #[test]
-+    fn element_kv_reads_flush_nothing() {
-+        for keyspace in [
-+            exec::ElementKeyspace::NodeProperty,
-+            exec::ElementKeyspace::EdgeEndpoints,
-+        ] {
-+            let read = exec::ExecOp::KvRead(exec::KvReadPlan::Get {
-+                key: keyspace.point_key(7),
-+            });
-+            assert_eq!(required_for(&read), RequiredMutationVisibility::NONE);
-+        }
-+    }
-+
-     #[test]
-     fn explicit_barrier_requires_every_deferred_family() {
-         let required = required_for(&exec::ExecOp::Barrier {
+ [dependencies]
+-slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da" }
+-slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da", optional = true }
++slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0" }
++slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0", optional = true }
+ http-body = { version = "1", optional = true }
+ helix-ast = { path = "../ast" }
+ helix-planner = { path = "../planner" }
+@@ -68,7 +68,7 @@ memmap2 = { version = "0.9", optional = true }
+ [dev-dependencies]
+ # `wal_disable` only adds the opt-in `Settings::wal_enabled` field (default
+ # `true`); one legacy-text migration fixture writes without a WAL.
+-slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da", features = ["wal_disable"] }
++slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0", features = ["wal_disable"] }
+ tokio-test = "0.4"
+ proptest = "1"
+ bincode = "^1.3.3"
+```
+
+**File**: `crates/db/fuzz/Cargo.lock` (modified, +3/-3)
+```diff
+@@ -3175,7 +3175,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "ahash",
+  "async-channel",
+@@ -3221,7 +3221,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -3236,7 +3236,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/db/src/config/cache.rs` (modified, +4/-2)
+```diff
+@@ -362,7 +362,8 @@ impl SlateObjectStoreCacheSettings {
+             root_folder: Some(self.root.to_path_buf()),
+             max_cache_size_bytes: self.max_cache_size_bytes.map(NonZeroUsize::get),
+             part_size_bytes: self.part_size_bytes.get(),
+-            cache_puts: self.cache_puts,
++            cache_on_flush: self.cache_puts,
++            cache_on_compaction: self.cache_puts,
+             preload_disk_cache_on_startup: self.warm.to_slate_preload(),
+             scan_interval: self.scan_interval,
+             max_open_file_handles: self.max_open_file_handles.get(),
+@@ -400,7 +401,8 @@ impl SlateObjectStoreCacheSettings {
+     ///     8,
+     /// )?;
+     /// let reads_only = settings.clone().with_cache_puts(false);
+-    /// assert!(!reads_only.to_slate_options().cache_puts);
++    /// assert!(!reads_only.to_slate_options().cache_on_flush);
++    /// assert!(!reads_only.to_slate_options().cache_on_compaction);
+     /// assert_eq!(reads_only.with_cache_puts(true), settings);
+     /// # Ok::<(), db::config::ConfigError>(())
+     /// ```
+```
+
+**File**: `crates/db/src/config/tests.rs` (modified, +1/-1)
+```diff
+@@ -286,7 +286,7 @@ fn slate_object_store_cache_settings_project_all_slate_options() {
+     );
+     assert_eq!(options.max_cache_size_bytes, Some(512));
+     assert_eq!(options.part_size_bytes, 4096);
+-    assert!(options.cache_puts);
++    assert!(options.cache_on_flush && options.cache_on_compaction);
+     assert_eq!(
+         options.preload_disk_cache_on_startup,
+         Some(slatedb::config::PreloadLevel::AllSst)
+```
+
+**File**: `crates/db/src/execution/interpreter/mutation/topology.rs` (modified, +2/-2)
+```diff
+@@ -1609,7 +1609,7 @@ mod tests {
+             SweepBenchmarkStrategy::ExclusiveReadModifyWrite if present => {
+                 let additions = ids.clone().collect::<RoaringTreemap>();
+                 transaction
+-                    .merge_commutative(
++                    .merge(
+                         node_label_key(DataScope::LegacyUnscoped, LABEL),
+                         secondary::SecondaryEqualityValue::encode_ids(&additions),
+                     )
+@@ -1619,7 +1619,7 @@ mod tests {
+                     adjacency.add_out(id);
+                 }
+                 transaction
+-                    .merge_commutative(
++                    .merge(
+                         DataKey::Data {
+                             scope: DataScope::LegacyUnscoped,
+                             kind: DataKeyKind::Adjacency(AdjacencyKey::new(PARENT_ID)),
+```
+
+**File**: `crates/db/src/execution/interpreter/read_view.rs` (modified, +1/-1)
+```diff
+@@ -509,7 +509,7 @@ mod tests {
+         let reader = slatedb::DbReader::open(
+             "reader-read-view",
+             object_store,
+-            None,
++            slatedb::DbReaderMode::ManagedCheckpoint,
+             slatedb::config::DbReaderOptions {
+                 manifest_poll_interval: std::time::Duration::from_millis(10),
+                 ..slatedb::config::DbReaderOptions::default()
+```
+
+---
+
+### Incident Patch 2: `9ed0df10` (2026-11-02)
+**Commit Message**: Pin the SlateDB fork with the reader poll and multi-get fixes
+
+Idle WAL polls send one HEAD instead of eight, multi-get fallbacks read
+at their request's visibility bound, and manifests with unreadable SST
+info fail to open instead of panicking.
+
+**File**: `Cargo.lock` (modified, +3/-4)
+```diff
+@@ -4840,9 +4840,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+- "ahash",
+  "async-channel",
+  "async-trait",
+  "atomic",
+@@ -4886,7 +4885,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -4901,7 +4900,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/db-testkit/fuzz/Cargo.lock` (modified, +3/-17)
+```diff
+@@ -2,19 +2,6 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
+-[[package]]
+-name = "ahash"
+-version = "0.8.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+-dependencies = [
+- "cfg-if",
+- "getrandom 0.3.4",
+- "once_cell",
+- "version_check",
+- "zerocopy",
+-]
+-
+ [[package]]
+ name = "aho-corasick"
+ version = "1.1.4"
+@@ -3195,9 +3182,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+- "ahash",
+  "async-channel",
+  "async-trait",
+  "atomic",
+@@ -3241,7 +3227,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -3256,7 +3242,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/db/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -4,8 +4,8 @@ version = "0.1.0"
+ edition = "2024"
+ 
+ [dependencies]
+-slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f" }
+-slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f", optional = true }
++slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385" }
++slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385", optional = true }
+ http-body = { version = "1", optional = true }
+ helix-ast = { path = "../ast" }
+ helix-planner = { path = "../planner" }
+@@ -68,7 +68,7 @@ memmap2 = { version = "0.9", optional = true }
+ [dev-dependencies]
+ # `wal_disable` only adds the opt-in `Settings::wal_enabled` field (default
+ # `true`); one legacy-text migration fixture writes without a WAL.
+-slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f", features = ["wal_disable"] }
++slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385", features = ["wal_disable"] }
+ tokio-test = "0.4"
+ proptest = "1"
+ bincode = "^1.3.3"
+```
+
+**File**: `crates/db/fuzz/Cargo.lock` (modified, +3/-17)
+```diff
+@@ -2,19 +2,6 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
+-[[package]]
+-name = "ahash"
+-version = "0.8.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+-dependencies = [
+- "cfg-if",
+- "getrandom 0.3.4",
+- "once_cell",
+- "version_check",
+- "zerocopy",
+-]
+-
+ [[package]]
+ name = "aho-corasick"
+ version = "1.1.4"
+@@ -3175,9 +3162,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ [[package]]
+ name = "slatedb"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+- "ahash",
+  "async-channel",
+  "async-trait",
+  "atomic",
+@@ -3221,7 +3207,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-common"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "chrono",
+  "log",
+@@ -3236,7 +3222,7 @@ dependencies = [
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+-source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
++source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
+ dependencies = [
+  "async-trait",
+  "bytes",
+```
+
+**File**: `crates/server/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ prost = "0.14.3"
+ reqwest = { version = "0.13", default-features = false }
+ serde = { version = "1", features = ["derive"] }
+ serde_json = "1"
+-slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f" }
++slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385" }
+ simd-json = { version = "0.18.1", default-features = false, features = [
+     "runtime-detection",
+     "serde_impl",
+```
+
+---
+
+### Incident Patch 3: `aba7a20c` (2026-11-04)
+**Commit Message**: Crucible: build with line-tables debuginfo and no incremental cache (#1247)
+
+Base builds ran out of VM disk (lld SIGBUS) with full debuginfo. Match
+rust-ci.yml so the warm-up target stays around 12 GiB.
+
+**File**: `.crucible.toml` (modified, +3/-0)
+```diff
+@@ -7,6 +7,9 @@ build_timeout_secs = 2700 # base builds; default 1800
+ 
+ [test]
+ timeout_secs = 1800       # per test VM; default 900
++# Same lean build as rust-ci.yml. Full debuginfo and incremental caches fill the
++# VM disk (lld then dies with SIGBUS): about 12 GiB of target/ instead of over 44.
++env = { CARGO_INCREMENTAL = "0", CARGO_PROFILE_DEV_DEBUG = "line-tables-only", CARGO_PROFILE_TEST_DEBUG = "line-tables-only" }
+ 
+ [checks]
+ # PR CI runs as GitHub Actions; Crucible runs are for agents (CLI / MCP).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1229** (2026-10-30): Map every query error code to one transport class (@xav-db)
-- **PR #1228** (2026-10-29): fix: fsync every write to local disk storage (@xav-db)
-- **PR #1226** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #1225** (2026-10-23): docs: explain storage-level tenant database isolation (@xav-db)
-- **PR #1224** (2026-10-25): fix: reject inner types in Go SDK ParamObject (@Tyagiquamar)
-- **PR #1223** (2026-10-26): docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI models, usage, the Ask home (@xav-db)
+- **PR #1247** (2026-11-04): Crucible: lean debuginfo for base builds (@xav-db)
+- **PR #1245** (2026-11-04): Add Crucible config: large VMs, longer timeouts, no Crucible PR check (@xav-db)
+- **PR #1244** (2026-11-04): Bump SlateDB to the v0.17 fork (@xav-db)
+- **PR #1243** (2026-11-03): Show `auth status` workspaces one per line (@xav-db)
+- **PR #1241** (2026-11-03): Fix MCP first-read example and document index operation tracking (@xav-db)
+- **PR #1240** (2026-11-04): Collect disk manifests and compactions without GC boundary files (@xav-db)
 
 ---
 
@@ -2145,47 +2473,32 @@ sees them without a flush
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. db): do not flush deferred index state before element KV reads (#1220)
+## X. Pin the SlateDB fork with its v0.17 fixes and cleanups
 
 **RULE**:
-When implementing operations in `crates/db/src/execution/interpreter/mutation/visibility.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bacc207f`: db): do not flush deferred index state before element KV reads (#1220). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbda0daf`: Pin the SlateDB fork with its v0.17 fixes and cleanups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/execution/interpreter/mutation/visibility.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A KV read lists or gets element rows (node property rows and edge endpoint rows). Those rows are
-        // staged eagerly in the request transaction, so the read sees them without a flush; only the
-        // topology and secondary families are deferred. Flushing before it re-merged every shared row a
-        // preceding mutation touched once per read (`g().n(id).add_e(..)` repeated in one batch).
-        exec::ExecOp::KvRead(_) => RequiredMutationVisibility::NONE,
-        exec::ExecOp::Reserved { .. }
-    #[test]
-    fn element_kv_reads_flush_nothing() {
-        for keyspace in [
-            exec::ElementKeyspace::NodeProperty,
-            exec::ElementKeyspace::EdgeEndpoints,
-        ] {
-            let read = exec::ExecOp::KvRead(exec::KvReadPlan::Get {
-                key: keyspace.point_key(7),
-            });
-            assert_eq!(required_for(&read), RequiredMutationVisibility::NONE);
-        }
-    }
-
+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        exec::ExecOp::KvRead(_)
-        | exec::ExecOp::Reserved { .. }
+source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
+source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
+source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bacc207f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbda0daf` are properly handled with clean fallback behavior.

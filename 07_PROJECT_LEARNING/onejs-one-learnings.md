@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `834340ac`  
+> **Source Version**: `09334632`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:47:17.702Z  
+> **Timestamp**: 2026-11-04T21:11:23.211Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:47:17.693Z  
+> **Harvest Timestamp**: 2026-11-04T21:11:23.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4633 stars
+- **Stars / Engagement**: 4641 stars
 
 ---
 
@@ -1883,377 +1883,654 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec85f3ee` (2026-10-31)
-**Commit Message**: fix(deps): pin follow-redirects, joi and node-forge past their high advisories (#1078)
+### Incident Patch 1: `b6ae224f` (2026-11-04)
+**Commit Message**: chore(deps): upgrade Tamagui to 3.2.1
 
-The stable release's security audit step fails on GHSA-mrwp-f3q8-3g9p (follow-redirects), GHSA-4528-x5fx-h6hg (joi) and the node-forge TLS/X.509 advisories; the root resolutions pin the vulnerable versions.
+Validation: bun install; bun run check:deps; site workspace build closure with skip-types; bun run site:build; local prepared Cloudflare worker home HTTP200. Only Tamagui lock package entries changed; generated build output excluded.
+Team-Machine-Session: r222367
 
-Validation: bun install; bun run audit exit 0
-
-**File**: `bun.lock` (modified, +6/-6)
+**File**: `apps/onestack.dev/package.json` (modified, +10/-10)
 ```diff
-@@ -1546,19 +1546,19 @@
-     "fast-xml-builder": "1.1.7",
-     "fast-xml-parser": "5.9.0",
-     "fastify": "5.12.5",
--    "follow-redirects": "1.16.1",
-+    "follow-redirects": "1.16.2",
-     "form-data": "4.0.6",
-     "got": "11.8.5",
-     "hono": "4.13.11",
-     "image-size": "2.0.3",
-     "ip-address": "10.7.1",
--    "joi": "17.13.8",
-+    "joi": "17.13.9",
-     "js-yaml": "4.3.2",
-     "launch-editor": "2.14.2",
-     "lodash": "4.18.1",
-     "minimatch": "3.1.5",
-     "nanoid": "3.3.18",
--    "node-forge": "1.4.0",
-+    "node-forge": "1.4.2",
-     "picomatch": "^4.0.4",
-     "piscina": "4.9.4",
-     "postcss": "8.5.23",
-@@ -3831,7 +3831,7 @@
- 
-     "flow-parser": ["flow-parser@0.336.0", "", { "dependencies": { "flow-estree": "0.336.0" } }, "sha512-O8QvQf/B3rBF+eagcc9/WMAjfJoaKckdgSd8PT/qvMIIe4ZjVKrSqV5SDnRFAKY0VrE8r5C4ADYgvYhmwkWADA=="],
- 
--    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
-+    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
- 
-     "fontverter": ["fontverter@2.0.0", "", { "dependencies": { "wawoff2": "^2.0.0", "woff2sfnt-sfnt2woff": "^1.0.0" } }, "sha512-DFVX5hvXuhi1Jven1tbpebYTCT9XYnvx6/Z+HFUPb7ZRMCW+pj2clU9VMhoTPgWKPhAs7JJDSk3CW1jNUvKCZQ=="],
- 
-@@ -4159,7 +4159,7 @@
- 
-     "jju": ["jju@1.4.0", "", {}, "sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA=="],
- 
--    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
-+    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
- 
-     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
- 
-@@ -4511,7 +4511,7 @@
- 
-     "node-fetch": ["node-fetch@2.7.0", "", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
- 
--    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
-+    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
- 
-     "node-int64": ["node-int64@0.4.0", "", {}, "sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw=="],
- 
+@@ -24,27 +24,27 @@
+     "@callstack/liquid-glass": "^0.8.1",
+     "@react-navigation/native": "8.0.0-alpha.51",
+     "@supabase/supabase-js": "^2.44.4",
+-    "@tamagui/react-native-web": "3.2.0",
+-    "@tamagui/sheet": "3.2.0",
+-    "@tamagui/themes": "3.2.0",
+-    "@tamagui/use-store": "3.2.0",
++    "@tamagui/react-native-web": "3.2.1",
++    "@tamagui/sheet": "3.2.1",
++    "@tamagui/themes": "3.2.1",
++    "@tamagui/use-store": "3.2.1",
+     "@vxrn/color-scheme": "workspace:*",
+     "@vxrn/mdx-rust": "workspace:*",
+     "body-scroll-lock": "^4.0.0-beta.0",
+     "one": "workspace:*",
+     "react": "19.3.0",
+     "react-native": "0.88.0",
+     "react-native-screens": "~4.30.0",
+-    "tamagui": "3.2.0",
+-    "@tamagui/helpers-icon": "3.2.0",
++    "tamagui": "3.2.1",
++    "@tamagui/helpers-icon": "3.2.1",
+     "react-native-svg": "15.15.4",
+-    "@tamagui/config": "3.2.0",
+-    "@tamagui/react-native-svg": "3.2.0",
+-    "@tamagui/react-native-web-lite": "3.2.0"
++    "@tamagui/config": "3.2.1",
++    "@tamagui/react-native-svg": "3.2.1",
++    "@tamagui/react-native-web-lite": "3.2.1"
+   },
+   "devDependencies": {
+     "@algolia/client-search": "^5.8.1",
+-    "@tamagui/vite-plugin": "3.2.0",
++    "@tamagui/vite-plugin": "3.2.1",
+     "@vxrn/test": "workspace:*",
+     "gray-matter": "^4.0.3",
+     "marked": "^14.1.2",
+```
+
+**File**: `examples/testflight/package.json` (modified, +4/-4)
+```diff
+@@ -25,7 +25,7 @@
+     "@callstack/liquid-glass": "^0.8.1",
+     "@react-navigation/native": "8.0.0-alpha.51",
+     "@react-navigation/native-stack": "8.0.0-alpha.59",
+-    "@tamagui/config": "3.2.0",
++    "@tamagui/config": "3.2.1",
+     "@vxrn/color-scheme": "workspace:*",
+     "better-sqlite3": "^11.2.1",
+     "dotenv": "^17.2.1",
+@@ -41,15 +41,15 @@
+     "react-native-svg": "15.15.4",
+     "react-native-web": "^0.21.2",
+     "react-native-worklets": "~0.13.0",
+-    "tamagui": "3.2.0",
+-    "@tamagui/helpers-icon": "3.2.0"
++    "tamagui": "3.2.1",
++    "@tamagui/helpers-icon": "3.2.1"
+   },
+   "devDependencies": {
+     "@biomejs/biome": "2.5.15",
+     "@faker-js/faker": "next",
+     "@react-native-community/cli": "^20.2.0",
+     "@react-native-community/template": "^0.88.0",
+-    "@tamagui/vite-plugin": "3.2.0",
++    "@tamagui/vite-plugin": "3.2.1",
+     "tsx": "^4.20.6",
+     "vite": "^8.2.2",
+     "typescript": "7.0.2"
 ```
 
 **File**: `package.json` (modified, +3/-3)
 ```diff
-@@ -108,7 +108,7 @@
-     "image-size": "2.0.3",
-     "minimatch": "3.1.5",
-     "brace-expansion": "5.0.12",
--    "node-forge": "1.4.0",
-+    "node-forge": "1.4.2",
-     "picomatch": "^4.0.4",
-     "piscina": "4.9.4",
+@@ -163,7 +163,7 @@
+     "@hono/node-server": "^1.19.14",
+     "@manypkg/cli": "^0.25.1",
+     "@react-native-swc/worklets-plugin": "0.1.5",
+-    "@tamagui/web": "3.2.0",
++    "@tamagui/web": "3.2.1",
+     "@take-out/cli": "0.4.17",
+     "@types/react": "^19.3.0",
+     "axios": "1.20.0",
+@@ -178,15 +178,15 @@
+     "playwright": "^1.58.2",
+     "prettier": "^3.5.3",
      "shell-quote": "1.11.0",
-@@ -140,13 +140,13 @@
-     "@typescript/typescript-win32-x64": "7.0.2",
-     "@cloudflare/vite-plugin": "1.41.0",
-     "ws": "8.21.0",
--    "follow-redirects": "1.16.1",
-+    "follow-redirects": "1.16.2",
-     "form-data": "4.0.6",
-     "qs": "6.15.2",
-     "ajv": "8.20.0",
-     "ip-address": "10.7.1",
-     "postcss": "8.5.23",
--    "joi": "17.13.8",
-+    "joi": "17.13.9",
-     "launch-editor": "2.14.2",
-     "uuid": "11.1.1",
-     "js-yaml": "4.3.2",
+-    "tamagui": "3.2.0",
++    "tamagui": "3.2.1",
+     "ts-pattern": "^5.6.2",
+     "turbo": "^2.9.18",
+     "typescript": "7.0.2",
+     "ultra-runner": "^3.10.5",
+     "update-ts-references": "^3.4.0",
+     "vxrn": "workspace:*",
+     "zod": "4.6.6",
+-    "@tamagui/cli": "3.2.0"
++    "@tamagui/cli": "3.2.1"
+   },
+   "upgradeSets": {
+     "takeout": [
+```
+
+**File**: `packages/color-scheme/package.json` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@
+     "@vxrn/use-isomorphic-layout-effect": "workspace:*"
+   },
+   "devDependencies": {
+-    "@tamagui/build": "3.2.0",
++    "@tamagui/build": "3.2.1",
+     "react": "19.3.0",
+     "react-native": "0.88.0",
+     "vitest": "^4.1.0"
+```
+
+**File**: `packages/compiler/package.json` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@
+   },
+   "devDependencies": {
+     "@jridgewell/trace-mapping": "^0.3.25",
+-    "@tamagui/build": "3.2.0",
++    "@tamagui/build": "3.2.1",
+     "depcheck": "^1.4.7",
+     "react-native-worklets": "~0.13.0",
+     "rolldown": "^1.2.8",
+```
+
+**File**: `packages/create-vxrn/package.json` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@
+     "yocto-spinner": "^0.1.0"
+   },
+   "devDependencies": {
+-    "@tamagui/build": "3.2.0",
++    "@tamagui/build": "3.2.1",
+     "@types/prompts": "^2.4.9",
+     "typescript": "7.0.2"
+   },
+```
+
+**File**: `packages/debug/package.json` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@
+     "debug": "^4.3.7"
+   },
+   "devDependencies": {
+-    "@tamagui/build": "3.2.0",
++    "@tamagui/build": "3.2.1",
+     "@types/debug": "^4"
+   },
+   "publishConfig": {
+```
+
+**File**: `packages/emitter/package.json` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+     "react": "^19.3.0"
+   },
+   "devDependencies": {
+-    "@tamagui/build": "3.2.0",
++    "@tamagui/build": "3.2.1",
+     "react": "19.3.0"
+   },
+   "publishConfig": {
 ```
 
 ---
 
-### Incident Patch 2: `5a76a11a` (2026-10-31)
-**Commit Message**: fix(utils): dev manifest carries native usage descriptions (#1077)
+### Incident Patch 2: `3951c067` (2026-11-01)
+**Commit Message**: Fix native audio option layout (#1084)
 
-* fix(utils): the dev manifest carries the native usage descriptions the built app has
+Independent large-model review by s129558 of 1306e9255d4dc32f37762143c4acb26556e09815: approved.
 
-expoClientFromNativeApp left imagePicker, photoLibrary and the other native fields out of ios.infoPlist, so a live preview with no Info.plist could not read NSPhotoLibraryUsageDescription and PhotoLibrary requests threw the manifest error. prebuild and the manifest now share iosUsageDescriptions.
+Read the complete diff and all generated sender/receiver changes. The optional boolean and double are reordered consistently in the source, C++ JSI conversion, Swift initializer/accessors, Kotlin constructor, JNI signatures and declaration. Public JavaScript property names and behavior remain unchanged.
 
-Validation: vitest run src/nativeAppManifest.test.ts in packages/utils (24 passed); prebuildWithoutExpo.test.ts not run (worktree lacks sharp)
+TESTED: independent Swift/C++ compiler reproduction with the reordered native layout returns paused=2 positioned=6, expected=2,6. The original layout reproduced lost option bits before this repair. Adopted the exact native Release action receipt: paused load stays paused at zero; paused position250 stays at250; resume advances; explicit false/default advance. The fixture remains recorded as FAIL because it demands immediate playing on resume. Read HybridOneAudio.resume/playbackStatus: loading while AVPlayer is waiting is an existing valid status, followed by playing447ms in the receipt. No overall fixture green or Android runtime claim.
 
-* chore(utils): regenerate committed types
+No public API choice, publication or feature approval requested. No remaining defect found in this bounded rep
 
-Validation: bun run build in packages/utils and packages/vxrn; only nativeAppManifest.d.ts changed
-
-**File**: `packages/utils/src/nativeAppManifest.test.ts` (modified, +15/-0)
+**File**: `packages/one/nitrogen/generated/android/c++/JAudioPlayOptions.hpp` (modified, +7/-7)
 ```diff
-@@ -355,6 +355,21 @@ describe('native.app manifest', () => {
-     ).toBe('dark')
-   })
+@@ -31,13 +31,13 @@ namespace margelo::nitro::one {
+     [[nodiscard]]
+     AudioPlayOptions toCpp() const {
+       static const auto clazz = javaClassStatic();
+-      static const auto fieldPositionMs = clazz->getField<jni::JDouble>("positionMs");
+-      jni::local_ref<jni::JDouble> positionMs = this->getFieldValue(fieldPositionMs);
+       static const auto fieldPaused = clazz->getField<jni::JBoolean>("paused");
+       jni::local_ref<jni::JBoolean> paused = this->getFieldValue(fieldPaused);
++      static const auto fieldPositionMs = clazz->getField<jni::JDouble>("positionMs");
++      jni::local_ref<jni::JDouble> positionMs = this->getFieldValue(fieldPositionMs);
+       return AudioPlayOptions(
+-        positionMs != nullptr ? std::make_optional(positionMs->value()) : std::nullopt,
+-        paused != nullptr ? std::make_optional(static_cast<bool>(paused->value())) : std::nullopt
++        paused != nullptr ? std::make_optional(static_cast<bool>(paused->value())) : std::nullopt,
++        positionMs != nullptr ? std::make_optional(positionMs->value()) : std::nullopt
+       );
+     }
  
-+  // a preview has no Info.plist, so the manifest carries the purpose strings
-+  // prebuild stamps for the native fields.
-+  test('the dev manifest carries the usage descriptions the built app has', () => {
-+    const client = expoClientFromNativeApp({
-+      ...app,
-+      imagePicker: { camera: 'Take photos.' },
-+      photoLibrary: { readWrite: 'Pick photos.', addOnly: 'Save photos.' },
-+    })
-+    expect(client.ios?.infoPlist).toMatchObject({
-+      NSCameraUsageDescription: 'Take photos.',
-+      NSPhotoLibraryUsageDescription: 'Pick photos.',
-+      NSPhotoLibraryAddUsageDescription: 'Save photos.',
-+    })
-+  })
-+
-   test('the dev manifest carries both native launch background images', () => {
-     const client = expoClientFromNativeApp({
-       ...app,
+@@ -47,13 +47,13 @@ namespace margelo::nitro::one {
+      */
+     [[maybe_unused]]
+     static jni::local_ref<JAudioPlayOptions::javaobject> fromCpp(const AudioPlayOptions& value) {
+-      using JSignature = JAudioPlayOptions(jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>);
++      using JSignature = JAudioPlayOptions(jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>);
+       static const auto clazz = javaClassStatic();
+       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
+       return create(
+         clazz,
+-        value.positionMs.has_value() ? jni::JDouble::valueOf(value.positionMs.value()) : nullptr,
+-        value.paused.has_value() ? jni::JBoolean::valueOf(value.paused.value()) : nullptr
++        value.paused.has_value() ? jni::JBoolean::valueOf(value.paused.value()) : nullptr,
++        value.positionMs.has_value() ? jni::JDouble::valueOf(value.positionMs.value()) : nullptr
+       );
+     }
+   };
 ```
 
-**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +54/-1)
+**File**: `packages/one/nitrogen/generated/android/kotlin/com/margelo/nitro/one/AudioPlayOptions.kt` (modified, +8/-8)
 ```diff
-@@ -767,6 +767,57 @@ export function validateNativeApp(
-   return manifest
+@@ -20,24 +20,24 @@ import java.util.Objects
+ data class AudioPlayOptions(
+   @DoNotStrip
+   @Keep
+-  val positionMs: Double?,
++  val paused: Boolean?,
+   @DoNotStrip
+   @Keep
+-  val paused: Boolean?
++  val positionMs: Double?
+ ) {
+   /* primary constructor */
+ 
+   override fun equals(other: Any?): Boolean {
+     if (this === other) return true
+     if (other !is AudioPlayOptions) return false
+-    return Objects.deepEquals(this.positionMs, other.positionMs)
+-      && Objects.deepEquals(this.paused, other.paused)
++    return Objects.deepEquals(this.paused, other.paused)
++      && Objects.deepEquals(this.positionMs, other.positionMs)
+   }
+ 
+   override fun hashCode(): Int {
+     return arrayOf<Any?>(
+-      positionMs,
+-      paused
++      paused,
++      positionMs
+     ).contentDeepHashCode()
+   }
+ 
+@@ -49,8 +49,8 @@ data class AudioPlayOptions(
+     @Keep
+     @Suppress("unused")
+     @JvmStatic
+-    private fun fromCpp(positionMs: Double?, paused: Boolean?): AudioPlayOptions {
+-      return AudioPlayOptions(positionMs, paused)
++    private fun fromCpp(paused: Boolean?, positionMs: Double?): AudioPlayOptions {
++      return AudioPlayOptions(paused, positionMs)
+     }
+   }
+ }
+```
+
+**File**: `packages/one/nitrogen/generated/ios/swift/AudioPlayOptions.swift` (modified, +15/-15)
+```diff
+@@ -18,27 +18,27 @@ public extension AudioPlayOptions {
+   /**
+    * Create a new instance of `AudioPlayOptions`.
+    */
+-  init(positionMs: Double?, paused: Bool?) {
+-    self.init({ () -> bridge.std__optional_double_ in
+-      if let __unwrappedValue = positionMs {
+-        return bridge.create_std__optional_double_(__unwrappedValue)
++  init(paused: Bool?, positionMs: Double?) {
++    self.init({ () -> bridge.std__optional_bool_ in
++      if let __unwrappedValue = paused {
++        return bridge.create_std__optional_bool_(__unwrappedValue)
+       } else {
+         return .init()
+       }
+-    }(), { () -> bridge.std__optional_bool_ in
+-      if let __unwrappedValue = paused {
+-        return bridge.create_std__optional_bool_(__unwrappedValue)
++    }(), { () -> bridge.std__optional_double_ in
++      if let __unwrappedValue = positionMs {
++        return bridge.create_std__optional_double_(__unwrappedValue)
+       } else {
+         return .init()
+       }
+     }())
+   }
+ 
+   @inline(__always)
+-  var positionMs: Double? {
+-    return { () -> Double? in
+-      if bridge.has_value_std__optional_double_(self.__positionMs) {
+-        let __unwrapped = bridge.get_std__optional_double_(self.__positionMs)
++  var paused: Bool? {
++    return { () -> Bool? in
++      if bridge.has_value_std__optional_bool_(self.__paused) {
++        let __unwrapped = bridge.get_std__optional_bool_(self.__paused)
+         return __unwrapped
+       } else {
+         return nil
+@@ -47,10 +47,10 @@ public extension AudioPlayOptions {
+   }
+ 
+   @inline(__always)
+-  var paused: Bool? {
+-    return { () -> Bool? in
+-      if bridge.has_value_std__optional_bool_(self.__paused) {
+-        let __unwrapped = bridge.get_std__optional_bool_(self.__paused)
++  var positionMs: Double? {
++    return { () -> Double? in
++      if bridge.has_value_std__optional_double_(self.__positionMs) {
++        let __unwrapped = bridge.get_std__optional_double_(self.__positionMs)
+         return __unwrapped
+       } else {
+         return nil
+```
+
+**File**: `packages/one/nitrogen/generated/shared/c++/AudioPlayOptions.hpp` (modified, +6/-6)
+```diff
+@@ -39,12 +39,12 @@ namespace margelo::nitro::one {
+    */
+   struct AudioPlayOptions final {
+   public:
+-    std::optional<double> positionMs     SWIFT_PRIVATE;
+     std::optional<bool> paused     SWIFT_PRIVATE;
++    std::optional<double> positionMs     SWIFT_PRIVATE;
+ 
+   public:
+     AudioPlayOptions() = default;
+-    explicit AudioPlayOptions(std::optional<double> positionMs, std::optional<bool> paused): positionMs(positionMs), paused(paused) {}
++    explicit AudioPlayOptions(std::optional<bool> paused, std::optional<double> positionMs): paused(paused), positionMs(positionMs) {}
+ 
+   public:
+     friend bool operator==(const AudioPlayOptions& lhs, const AudioPlayOptions& rhs) = default;
+@@ -60,14 +60,14 @@ namespace margelo::nitro {
+     static inline margelo::nitro::one::AudioPlayOptions fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
+       jsi::Object obj = arg.asObject(runtime);
+       return margelo::nitro::one::AudioPlayOptions(
+-        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs"))),
+-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused")))
++        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused"))),
++        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))
+       );
+     }
+     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::one::AudioPlayOptions& arg) {
+       jsi::Object obj(runtime);
+-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "positionMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.positionMs));
+       obj.setProperty(runtime, PropNameIDCache::get(runtime, "paused"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.paused));
++      obj.setProperty(runtime, PropNameIDCache::get(runtime, "positionMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.positionMs));
+       return obj;
+     }
+     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
+@@ -78,8 +78,8 @@ namespace margelo::nitro {
+       if (!nitro::isPlainObject(runtime, obj)) {
+         return false;
+       }
+-      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))) return false;
+       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused")))) return false;
++      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))) return false;
+       return true;
+     }
+   };
+```
+
+**File**: `packages/one/src/platform/specs/OneAudio.nitro.ts` (modified, +2/-1)
+```diff
+@@ -15,8 +15,9 @@ export interface AudioPlaybackStatus {
+ // with either field set, play prepares the item and seeks before any sound,
+ // resolving once it is ready at the position.
+ export interface AudioPlayOptions {
+-  positionMs?: number
++  // keep paused first to avoid a Swift C++ interop padding mismatch on iOS.
+   paused?: boolean
++  positionMs?: number
  }
  
-+// the purpose strings the native fields stamp into the ios Info.plist, shared by
-+// prebuild and the manifest so a built app and its dev preview state the same keys.
-+export function iosUsageDescriptions(app: NativeAppManifest): Map<string, string> {
-+  const usage = new Map<string, string>()
-+  if (app.imagePicker?.camera !== undefined) {
-+    usage.set('NSCameraUsageDescription', app.imagePicker.camera)
-+  }
-+  if (app.imagePicker?.microphone !== undefined) {
-+    usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
-+  }
-+  if (app.photoLibrary !== undefined) {
-+    if (app.photoLibrary.addOnly !== undefined) {
-+      usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
+ export interface AudioRecordingStatus {
+```
+
+**File**: `packages/one/types/platform/specs/OneAudio.nitro.d.ts` (modified, +1/-1)
+```diff
+@@ -10,8 +10,8 @@ export interface AudioPlaybackStatus {
+     error?: string;
+ }
+ export interface AudioPlayOptions {
+-    positionMs?: number;
+     paused?: boolean;
++    positionMs?: number;
+ }
+ export interface AudioRecordingStatus {
+     state: AudioRecordingState;
+```
+
+---
+
+### Incident Patch 3: `76b5fb29` (2026-11-01)
+**Commit Message**: Fix Android live config permissions (#1083)
+
+Android previews receive the app-authored permissions One prebuild declares. One prebuild and the live config mapper share permission derivation, retain blocked names and preserve explicit overrides.
+
+Bounded legacy storage permissions remain bounded in AndroidManifest.xml and absent from the live string list. This does not claim merged library declarations or complete older Android photo coverage.
+
+Validation: prebuild/converter source probe, CommonJS notification-host import, independent non-author large review of blocked/override/cap/identity behavior, and local bun release --into integration through the normal Contrast static config boundary. Unmodified published One Location JS plus the queued native seam and real privacy store returned allow=whenInUse and deny=denied. No browser, phone, APK or publication performed.
+
+Reviewed-by: s129558 (gpt-6.1-sol high)
+
+**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +59/-1)
+```diff
+@@ -818,6 +818,55 @@ export function iosUsageDescriptions(app: NativeAppManifest): Map<string, string
+   return usage
+ }
+ 
++// android declarations authored by native.app, before library manifest merging.
++// prebuild uses the same entries so capped permissions retain their SDK bounds.
++export const androidNotificationPermissions = [
++  'android.permission.POST_NOTIFICATIONS',
++  'android.permission.RECEIVE_BOOT_COMPLETED',
++]
++
++export function androidAppPermissions(app: NativeAppManifest): Map<string, number | undefined> {
++  const permissions = new Map<string, number | undefined>()
++  const add = (name: string, maxSdkVersion?: number) => {
++    const fullName = name.includes('.') ? name : `android.permission.${name}`
++    if (!permissions.has(fullName) || maxSdkVersion === undefined) {
++      permissions.set(fullName, maxSdkVersion)
 +    }
-+    if (app.photoLibrary.readWrite !== undefined) {
-+      usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
-+    }
 +  }
-+  if (app.contacts !== undefined) {
-+    usage.set('NSContactsUsageDescription', app.contacts.usage)
-+  }
-+  if (app.calendar !== undefined) {
-+    if (app.calendar.usage !== undefined) {
-+      usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
-+    }
-+    if (app.calendar.remindersUsage !== undefined) {
-+      usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
-+    }
-+  }
++  if (app.imagePicker?.camera !== undefined) add('CAMERA')
++  if (app.speech !== undefined || app.audio?.microphone !== undefined) add('RECORD_AUDIO')
 +  if (app.location !== undefined) {
-+    usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
-+    if (app.location.alwaysAndWhenInUse !== undefined) {
-+      usage.set('NSLocationAlwaysAndWhenInUseUsageDescription', app.location.alwaysAndWhenInUse)
-+    }
++    add('ACCESS_COARSE_LOCATION')
++    add('ACCESS_FINE_LOCATION')
++    if (app.location.background) add('ACCESS_BACKGROUND_LOCATION')
 +  }
-+  if (app.pedometer !== undefined) {
-+    usage.set('NSMotionUsageDescription', app.pedometer.usage)
++  if (app.pedometer !== undefined) add('ACTIVITY_RECOGNITION')
++  if (app.brightness === true) add('WRITE_SETTINGS')
++  if (app.notifications !== undefined || app.calendar?.remindersUsage !== undefined) {
++    for (const name of androidNotificationPermissions) add(name)
 +  }
-+  if (app.ios?.faceIdUsageDescription !== undefined) {
-+    usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
++  if (app.photoLibrary?.readWrite !== undefined) {
++    add('READ_MEDIA_IMAGES')
++    add('READ_MEDIA_VIDEO')
++    add('READ_EXTERNAL_STORAGE', 32)
 +  }
-+  if (app.speech !== undefined) {
-+    usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
-+    usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
++  if (app.photoLibrary?.addOnly !== undefined) add('WRITE_EXTERNAL_STORAGE', 28)
++  if (app.contacts !== undefined) {
++    add('READ_CONTACTS')
++    add('WRITE_CONTACTS')
 +  }
-+  if (app.audio?.microphone !== undefined) {
-+    usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
++  if (app.calendar?.usage !== undefined) {
++    add('READ_CALENDAR')
++    add('WRITE_CALENDAR')
 +  }
-+  return usage
++  if (app.audio?.background === true) {
++    add('FOREGROUND_SERVICE')
++    add('FOREGROUND_SERVICE_MEDIA_PLAYBACK')
++  }
++  for (const name of app.android?.permissions ?? []) add(name)
++  return permissions
 +}
 +
  // the expo config shape the dev server's manifest carries (`extra.expoClient`)
  // for an app that declares native.app and no expo: clients that read an app's
  // name, scheme or splash from the manifest read a one app the same way.
-@@ -802,7 +853,9 @@ export function expoClientFromNativeApp(app: NativeAppManifest) {
-       associatedDomains: app.ios.associatedDomains,
-       usesAppleSignIn: app.ios.usesAppleSignIn,
-       googleServicesFile: app.ios.googleServicesFile,
--      infoPlist: app.ios.infoPlist,
-+      // a live preview has no Info.plist, so the purpose strings the built
-+      // app carries ride in the manifest's infoPlist
-+      infoPlist: { ...app.ios.infoPlist, ...Object.fromEntries(iosUsageDescriptions(app)) },
-       entitlements: app.ios.entitlements,
-     },
+@@ -861,7 +910,16 @@ export function expoClientFromNativeApp(app: NativeAppManifest) {
      android: app.android && {
+       package: app.android.applicationId,
+       versionCode: app.android.versionCode,
+-      permissions: app.android.permissions,
++      // expo's string list cannot express maxSdkVersion, so only declarations
++      // valid on every SDK can be represented without overstating access.
++      permissions: [...androidAppPermissions(app)]
++        .filter(([name, maxSdk]) =>
++          maxSdk === undefined &&
++          !(app.android?.blockedPermissions ?? []).some((blocked) =>
++            (blocked.includes('.') ? blocked : `android.permission.${blocked}`) === name
++          )
++        )
++        .map(([name]) => name),
+       blockedPermissions: app.android.blockedPermissions,
+       googleServicesFile: app.android.googleServicesFile,
+       adaptiveIcon: app.android.adaptiveIcon && {
 ```
 
-**File**: `packages/utils/types/nativeAppManifest.d.ts` (modified, +4/-1)
+**File**: `packages/utils/types/nativeAppManifest.d.ts` (modified, +3/-1)
 ```diff
-@@ -148,6 +148,7 @@ export interface NativeAppManifest {
-     };
+@@ -149,6 +149,8 @@ export interface NativeAppManifest {
  }
  export declare function validateNativeApp(manifest: NativeAppManifest, platform?: 'ios' | 'android' | string): NativeAppManifest;
-+export declare function iosUsageDescriptions(app: NativeAppManifest): Map<string, string>;
+ export declare function iosUsageDescriptions(app: NativeAppManifest): Map<string, string>;
++export declare const androidNotificationPermissions: string[];
++export declare function androidAppPermissions(app: NativeAppManifest): Map<string, number | undefined>;
  export declare function expoClientFromNativeApp(app: NativeAppManifest): {
      name: string;
      slug: string;
-@@ -178,7 +179,9 @@ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
-         associatedDomains: string[] | undefined;
-         usesAppleSignIn: boolean | undefined;
-         googleServicesFile: string | undefined;
--        infoPlist: Record<string, PlistValue> | undefined;
-+        infoPlist: {
-+            [x: string]: PlistValue;
-+        };
-         entitlements: Record<string, PlistValue> | undefined;
-     } | undefined;
+@@ -187,7 +189,7 @@ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
      android: {
+         package: string;
+         versionCode: number | undefined;
+-        permissions: string[] | undefined;
++        permissions: string[];
+         blockedPermissions: string[] | undefined;
+         googleServicesFile: string | undefined;
+         adaptiveIcon: {
 ```
 
-**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +2/-48)
+**File**: `packages/vxrn/native-project-patches.cjs` (modified, +3/-4)
 ```diff
-@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url'
+@@ -734,10 +734,9 @@ const ONE_NOTIFICATIONS = {
+   enabledInfoPlistKey: 'OneNativeNotificationsEnabled',
+   pushInfoPlistKey: 'OneNativeNotificationsPush',
+   apsEnvironment: 'development',
+-  androidPermissions: [
+-    'android.permission.POST_NOTIFICATIONS',
+-    'android.permission.RECEIVE_BOOT_COMPLETED',
+-  ],
++  get androidPermissions() {
++    return require('@vxrn/utils/nativeAppManifest').androidNotificationPermissions
++  },
+   receiver: 'dev.onejs.onenative.OneNativeNotificationsReceiver',
+   receiverAction: 'android.intent.action.BOOT_COMPLETED',
+   pushService: 'dev.onejs.onenative.OneNativePushService',
+```
+
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +34/-172)
+```diff
+@@ -4,6 +4,7 @@ import module from 'node:module'
+ import path from 'node:path'
+ import { pathToFileURL } from 'node:url'
  import {
++  androidAppPermissions,
    androidIconSuffix,
    appIconPreviewResources,
-+  iosUsageDescriptions,
-   validateNativeApp,
-   type NativeAppIcon,
-   type NativeAppManifest,
-@@ -2769,54 +2770,7 @@ ${schemes.map((scheme) => `            <data android:scheme="${scheme}" />`).joi
-     if (platform === 'ios' && relativePath.endsWith('/Info.plist')) {
-       // schemes, usesNonExemptEncryption, and fileSharing stamp above in one
-       // anchored block; only the usage descriptions stamp here.
--      const usage = new Map<string, string>()
+   iosUsageDescriptions,
+@@ -2256,86 +2257,42 @@ ${schemes.map((scheme) => `\t\t\t\t<string>${scheme}</string>`).join('\n')}
+         rendered = rendered.replace(anchor, `${stamps.join('\n')}\n${anchor}`)
+       }
+     }
+-    if (
+-      platform === 'android' &&
+-      relativePath === 'app/src/main/AndroidManifest.xml' &&
+-      (app.imagePicker?.camera !== undefined || app.speech !== undefined)
+-    ) {
+-      const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
+-      if (!rendered.includes(anchor)) {
+-        throw new Error(
+-          '[vxrn] cannot stamp the camera or microphone permission: expected the INTERNET permission in app/src/main/AndroidManifest.xml'
+-        )
+-      }
+-      const stamps: string[] = []
 -      if (app.imagePicker?.camera !== undefined) {
--        usage.set('NSCameraUsageDescription', app.imagePicker.camera)
+-        stamps.push('    <uses-permission android:name="android.permission.CAMERA" />')
++    if (platform === 'android' && relativePath === 'app/src/main/AndroidManifest.xml') {
++      const permissions = androidAppPermissions(app)
++      if (permissions.size || app.android?.blockedPermissions?.length) {
++        const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
++        if (!rendered.includes(anchor)) {
++          const feature = app.imagePicker?.camera !== undefined || app.speech !== undefined
++            ? 'the camera or microphone permission'
++            : app.notifications !== undefined ? 'notification permissions' : 'permissions'
++          throw new Error(
++            `[vxrn] cannot stamp ${feature}: expected the INTERNET permission in app/src/main/AndroidManifest.xml`
++          )
++        }
++        const blocked = new Set((app.android?.blockedPermissions ?? []).map((name) =>
++          name.includes('.') ? name : `android.permission.${name}`
++        ))
++        const lines = [
++          ...[...permissions].filter(([name]) => !blocked.has(name)).map(([name, maxSdk]) =>
++            `    <uses-permission android:name="${name}"${maxSdk === undefined ? '' : ` android:maxSdkVersion="${maxSdk}"`} />`
++          ),
++          ...(app.android?.blockedPermissions ?? []).map((name) =>
++            `    <uses-permission android:name="${name.includes('.') ? name : `android.permission.${name}`}" tools:node="remove" />`
++          ),
++        ]
++        rendered = rendered.replace(anchor, `${anchor}\n${lines.join('\n')}`)
++        if (app.android?.blockedPermissions?.length && !rendered.includes('xmlns:tools=')) {
++          rendered = rendered.replace(
++            'xmlns:android="http://schemas.android.com/apk/res/android"',
++            'xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:tools="http://schemas.android.com/tools"'
++          )
++        }
+       }
+       if (app.speech !== undefined) {
+-        // package visibility (android 11+) hides the recognition service
+-        // from SpeechRecognizer.isRecognitionAvailable without the query
+-        stamps.push(
+-          '    <uses-permission android:name="android.permission.RECORD_AUDIO" />',
+-          '    <queries>\n      <intent>\n        <action android:name="android.speech.RecognitionService" />\n      </intent>\n    </queries>'
+-        )
++        // android 11+ hides recognition services without this query.
++        const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
++        rendered = rendered.replace(anchor, `${anchor}\n    <queries>\n      <intent>\n        <action android:name="android.speech.RecognitionService" />\n      </intent>\n    </queries>`)
+       }
+-      rendered = rendered.replace(anchor, `${anchor}\n${stamps.join('\n')}`)
+-    }
+-    if (
+-      platform === 'android' &&
+-      relativePath === 'app/src/main/AndroidManifest.xml' &&
+-      app.location !== undefined
+-    ) {
+-      const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
+-      if (!rendered.includes(anchor)) {
+-        throw new Error(
+-          '[vxrn] cannot stamp location permissions: expected the INTERNET permission in app/src/main/AndroidManifest.xml'
+-        )
 -      }
--      if (app.imagePicker?.microphone !== undefined) {
--        usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
+-      const stamps = [
+-        '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />',
+-        '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
+-      ]
+-      if (app.location.background) {
+-        stamps.push(
+-          '    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />'
+-        )
 -      }
--      if (app.photoLibrary !== undefined) {
--        if (app.photoLibrary.addOnly !== undefined) {
--          usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
--        }
--        if (app.photoLibrary.readWrite !== undefined) {
--          usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
--        }
--      }
--      if (app.contacts !== undefined) {
--        usage.set('NSContactsUsageDescription', app.contacts.usage)
--      }
--      if (app.calendar !== undefined) {
--        if (app.calendar.usage !== undefined) {
--          usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
--        }
--        if (app.calendar.remindersUsage !== undefined) {
--          usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
--        }
--      }
--      if (app.location !== undefined) {
--        usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
--        if (app.location.alwaysAndWhenInUse !== undefined) {
--          usage.set(
--            'NSLocationAlwaysAndWhenInUseUsageDescription',
--            app.location.alwaysAndWhenInUse
--          )
--        }
--      }
--      if (app.pedometer !== undefined) {
--        usage.set('NSMotionUsageDescription', app.pedometer.usage)
--      }
--      if (app.ios?.faceIdUsageDescription !== undefined) {
--        usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
--      }
--      if (app.speech !== undefined) {
--        usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
--        usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
--      }
--      if (app.audio?.microphone !== undefined) {
--        usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
--      }
-+      const usage = iosUsageDescriptions(app)
-       const additions: [string, string][] = []
-       for (const [key, text] of usage) {
-         const existing = new RegExp(`(<key>${key}</key>\\s*<string>)[^<]*(</string>)`)
-```
-
----
-
-### Incident Patch 3: `788e3d9d` (2026-10-29)
-**Commit Message**: perf(one): release unused native memory after dev dependency optimization (#1071)
-
-* perf(one): release native prebundle memory in the development CLI
-
-Initialize Rolldown with direct allocations and immediate purging before the CLI loads Vite. Restore the original environment before user config or child processes run, since Bun uses a separate allocator.
-
-Validation: paired Mac cold One RSS 3209 to 1990 MiB with the same generated output and optimizer completing; runtime environment restoration and Bun child startup passed. Native tracking measured 39 MiB live Rust allocations with 3.1 GiB RSS; forced native collection did not reduce it.
-
-* chore(one): include the development allocator initializer declaration
-
-Validation: bun release --into Contrast built all 16 selected tasks and installed 17 packages successfully; source and launcher format checks passed.
-
-* fix(one): initialize the native binding used by Vite
-
-Validation: installed-package cold dev probe maps one Rolldown native binding; MIMALLOC_VERBOSE reports purge_delay=0 and disallow_arena_alloc=1, with the original environment restored. bun release --into Contrast built and installed the changed source.
-
-**File**: `packages/one/run.mjs` (modified, +5/-1)
-```diff
-@@ -1,3 +1,7 @@
- #!/usr/bin/env node
- 
--import './dist/esm/cli.mjs'
-+if (process.argv[2] === 'dev') {
-+  const { initializeDevAllocator } = await import('./dist/esm/cli-dev-memory.mjs')
-+  await initializeDevAllocator()
-+}
-+await import('./dist/esm/cli.mjs')
-```
-
-**File**: `packages/one/src/cli-dev-memory.ts` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+import { createRequire } from 'node:module'
-+import { pathToFileURL } from 'node:url'
-+
-+// rolldown's allocator otherwise keeps large arenas resident after prebundling.
-+// initialize its binding with direct allocations, then restore the environment
-+// before user config and child commands run (bun has its own allocator).
-+export async function initializeDevAllocator() {
-+  const options = {
-+    MIMALLOC_DISALLOW_ARENA_ALLOC: '1',
-+    MIMALLOC_PURGE_DELAY: '0',
-+  }
-+  const previous = new Map(Object.keys(options).map((key) => [key, process.env[key]]))
-+  for (const [key, value] of Object.entries(options)) process.env[key] ??= value
-+
-+  try {
-+    const requireFromVite = createRequire(import.meta.resolve('vite'))
-+    await import(pathToFileURL(requireFromVite.resolve('rolldown')).href)
-+  } finally {
-+    for (const [key, value] of previous) {
-+      if (value === undefined) delete process.env[key]
-+      else process.env[key] = value
-+    }
-+  }
-+}
-```
-
-**File**: `packages/one/types/cli-dev-memory.d.ts` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+export declare function initializeDevAllocator(): Promise<void>;
-+//# sourceMappingURL=cli-dev-memory.d.ts.map
-\ No newline at end of file
+-      rendered = rendered.replace(anchor, `${anchor}\n${stamps.join('\n')}`)
+-    }
+-    if (
+-      platform === 'android' &&
+-      relativePath === 'app/src/main/AndroidManifest.xml' &&
+-      app.pedometer !== undefined
+-    ) {
+-      const anchor = '<uses-permission android:name="android.p
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1081** (2026-10-31): fix(vxrn): map reanimated src deep imports to lib/module on web (@natew)
-- **PR #1079** (closed): fix(deps): raise follow-redirects, joi and node-forge past their advisories (@natew)
-- **PR #1078** (2026-10-31): fix(deps): pin follow-redirects, joi and node-forge past high advisories (@natew)
-- **PR #1077** (2026-10-31): fix(utils): dev manifest carries native usage descriptions (@natew)
-- **PR #1076** (2026-10-30): feat(ios): Tab navigationStack and DefaultToolbarItem for the Duo shell (minor) (@natew)
-- **PR #1075** (2026-10-30): chore(deps): upgrade Tamagui consumers to published 3.1.9 (@natew)
+- **PR #1093** (2026-11-04): ci: capture native fixture diagnostics on cancellation (@natew)
+- **PR #1092** (2026-11-04): fix(sdk): align shipped facades with generator diagnostics (@natew)
+- **PR #1091** (2026-11-04): fix(sdk): name the extractor error when a framework has no symbol graph (@natew)
+- **PR #1090** (2026-11-04): chore(deps): upgrade Tamagui to 3.2.1 (@natew)
+- **PR #1089** (2026-11-03): chore(deps): upgrade Tamagui to 3.2.0 (@natew)
+- **PR #1088** (2026-11-02): fix(one): preserve stack replacing nested dynamic routes (@natew)
 
 ---
 
@@ -2273,38 +2550,46 @@ Validation: installed-package cold dev probe maps one Rolldown native binding; M
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): pin follow-redirects, joi and node-forge past their high advisories (#107
+## X. deps): upgrade Tamagui to 3.2.1
 
 **RULE**:
-When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/onestack.dev/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec85f3ee`: deps): pin follow-redirects, joi and node-forge past their high advisories (#1078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6ae224f`: deps): upgrade Tamagui to 3.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "follow-redirects": "1.16.2",
-    "joi": "17.13.9",
-    "node-forge": "1.4.2",
-    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
-    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
-    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
+    "@tamagui/react-native-web": "3.2.1",
+    "@tamagui/sheet": "3.2.1",
+    "@tamagui/themes": "3.2.1",
+    "@tamagui/use-store": "3.2.1",
+    "tamagui": "3.2.1",
+    "@tamagui/helpers-icon": "3.2.1",
+    "@tamagui/config": "3.2.1",
+    "@tamagui/react-native-svg": "3.2.1",
+    "@tamagui/react-native-web-lite": "3.2.1"
+    "@tamagui/vite-plugin": "3.2.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "follow-redirects": "1.16.1",
-    "joi": "17.13.8",
-    "node-forge": "1.4.0",
-    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
-    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
-    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
+    "@tamagui/react-native-web": "3.2.0",
+    "@tamagui/sheet": "3.2.0",
+    "@tamagui/themes": "3.2.0",
+    "@tamagui/use-store": "3.2.0",
+    "tamagui": "3.2.0",
+    "@tamagui/helpers-icon": "3.2.0",
+    "@tamagui/config": "3.2.0",
+    "@tamagui/react-native-svg": "3.2.0",
+    "@tamagui/react-native-web-lite": "3.2.0"
+    "@tamagui/vite-plugin": "3.2.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec85f3ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6ae224f` are properly handled with clean fallback behavior.

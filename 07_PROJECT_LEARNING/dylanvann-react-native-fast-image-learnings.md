@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source**: github ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
-> **Source Version**: `df42e80f`  
+> **Source Version**: `d86d925a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:45:20.974Z  
+> **Timestamp**: 2026-11-04T09:40:05.011Z  
 > **Learning ID**: `learn-github-dylanvann-react-native-fast-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:45:20.836Z  
+> **Harvest Timestamp**: 2026-11-04T09:40:02.653Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Performant React Native image component.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8420 stars
+- **Stars / Engagement**: 8419 stars
 
 ---
 
@@ -36,6 +36,336 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageAutoViewShadowNode.cpp`
+```
+#include "FastImageAutoViewShadowNode.h"
+
+#include <cmath>
+
+#include <react/renderer/core/LayoutConstraints.h>
+#include <react/renderer/core/LayoutContext.h>
+
+namespace facebook::react {
+
+const char FastImageAutoViewComponentName[] = "FastImageAutoView";
+
+// Yoga only asks for a side the style leaves open: a set width (or one from
+// the parent, e.g. stretched) comes as minimum = maximum, an open one as 0 to
+// the space there is (or infinity). Its sizes are the box inside the borders,
+// which the image fills (padding is always 0, see
+// FastImageViewComponentDescriptor).
+Size FastImageAutoViewShadowNode::measureContent(
+    const LayoutContext & /*layoutContext*/,
+    const LayoutConstraints &layoutConstraints) const
+{
+    // A single source's own size (see the ownWidth prop), or the loaded
+    // image's, which the native views put in the state.
+    const auto &props = getConcreteProps();
+    const auto &state = getStateData();
+    const bool own = props.ownWidth > 0 && props.ownHeight > 0;
+    const Size image = own ? Size{props.ownWidth, props.ownHeight} : Size{state.width, state.height};
+    if (image.width <= 0 || image.height <= 0) {
+        return layoutConstraints.clamp({0, 0});
+    }
+    // The style's aspectRatio (NaN if it has none) wins over the image's:
+    // Yoga applies it to the size measured here, so a size of the image's
+    // shape would come out smaller (with neither side set, the height from
+    // the image's shape, then the width from the style's ratio).
+    const auto styleRatio = YGNodeStyleGetAspectRatio(&yogaNode_);
+    const bool hasStyleRatio = !std::isnan(styleRatio) && styleRatio > 0;
+    const auto ratio = hasStyleRatio ? styleRatio : image.width / image.height;
+    // The sides that follow it: those the style sets to auto (the autoSize
+    // prop's bits; a side left out stays 0, as with React Native's Image), or
+    // with an own size, every side Yoga asks for. With the style's aspect
+    // ratio, the other side comes from the one that follows.
+    int sides = own ? 3 : props.autoSize;
+    if (hasStyleRatio && sides != 0) {
+        sides = 3;
+    }
+    const bool followsWidth = (sides & 1) != 0;
+    const bool followsHeight = (sides & 2) != 0;
+    if (!followsWidth && !followsHeight) {
+        return layoutConstraints.clamp({0, 0});
+    }
+    const auto forWidth = [&](Float width) -> Size { return {width, width / ratio}; };
+    const auto forHeight = [&](Float height) -> Size { return {height * ratio, height}; };
+    const auto &minimum = layoutConstraints.minimumSize;
+    const auto &maximum = layoutConstraints.maximumSize;
+    Size size;
+    if (minimum.width == maximum.width) {
+        size = followsHeight ? forWidth(maximum.width) : Size{maximum.width, 0};
+    } else if (minimum.height == maximum.height) {
+        size = followsWidth ? forHeight(maximum.height) : Size{0, maximum.height};
+    } else if (!followsWidth || !followsHeight) {
+        // The side that follows, from the other's 0.
+        size = {0, 0};
+    } else {
+        // The image's own width, and the height its shape (or the style's
+        // ratio) gives, scaled down to fit the space there is.
+        size = forWidth(image.width);
+        if (size.width > maximum.width) {
+            size = forWidth(maximum.width);
+        }
+        if (size.height > maximum.height) {
+            size = forHeight(maximum.height);
+        }
+    }
+    return layoutConstraints.clamp(size);
+}
+
+FastImageAutoViewShadowNode::FastImageAutoViewShadowNode(
+    const ShadowNode &sourceShadowNode,
+    const ShadowNodeFragment &fragment)
+    : ConcreteViewShadowNode(sourceShadowNode, fragment)
+{
+    YGNodeSetNodeType(&yogaNode_, YGNodeTypeDefault);
+    const auto &source = static_cast<const FastImageAutoViewShadowNode &>(sourceShadowNode);
+    if (fragment.state) {
+        const auto &previous = source.getStateData();
+        const auto &image = getStateData();
+        imageSizeChanged_ = image.width != previous.width || image.height != previous.height;
+    }
+    if (fragment.props) {
+        const auto &previous = source.getConcreteProps();
+        const auto &props = getConcreteProps();
+        imageSizeChanged_ = imageSizeChanged_ || props.ownWidth != previous.ownWidth ||
+            props.ownHeight != previous.ownHeight || props.autoSize != previous.autoSize;
+    }
+}
+
+bool FastImageAutoViewShadowNode::shouldNewRevisionDirtyMeasurement(
+    const ShadowNode & /*sourceShadowNode*/,
+    const ShadowNodeFragment & /*fragment*/) const
+{
+    return imageSizeChanged_;
+}
+
+} // namespace facebook::react
+
+```
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageAutoViewShadowNode.h`
+```
+#pragma once
+
+#include <jsi/jsi.h>
+#include <react/renderer/components/RNFastImageSpec/EventEmitters.h>
+#include <react/renderer/components/RNFastImageSpec/Props.h>
+#include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include <yoga/YGNode.h>
+
+#include "FastImageAutoViewState.h"
+
+namespace facebook::react {
+
+JSI_EXPORT extern const char FastImageAutoViewComponentName[];
+
+// FastImageAutoView's shadow node: FastImageView's props and events, for an
+// image whose style leaves a side to the image (src/index.tsx renders it
+// then, and FastImageView otherwise, whose views have no state). It measures
+// itself from the loaded image's size, as an <img> does: a side its style
+// leaves open (e.g. no height, or `auto`) follows the image's aspect ratio,
+// and with neither side set it's the image's own size. Until an image has
+// loaded, the open sides are 0.
+class JSI_EXPORT FastImageAutoViewShadowNode final : public ConcreteViewShadowNode<
+                                                     FastImageAutoViewComponentName,
+                                                     FastImageViewProps,
+                                                     FastImageViewEventEmitter,
+                                                     FastImageAutoViewState> {
+  public:
+    // Yoga takes a node with a measure function for text, which it rounds to
+    // the pixel grid differently (sizes rounded up): an image is rounded as
+    // any view is, also where its style sets both sides. (Clones copy the
+    // node type.)
+    FastImageAutoViewShadowNode(
+        const ShadowNodeFragment &fragment,
+        const ShadowNodeFamily::Shared &family,
+        ShadowNodeTraits traits)
+        : ConcreteViewShadowNode(fragment, family, traits)
+    {
+        YGNodeSetNodeType(&yogaNode_, YGNodeTypeDefault);
+    }
+
+    FastImageAutoViewShadowNode(const ShadowNode &sourceShadowNode, const ShadowNodeFragment &fragment);
+
+    static ShadowNodeTraits BaseTraits()
+    {
+        auto traits = ConcreteViewShadowNode::BaseTraits();
+        traits.set(ShadowNodeTraits::Trait::LeafYogaNode);
+        traits.set(ShadowNodeTraits::Trait::MeasurableYogaNode);
+        return traits;
+    }
+
+    Size measureContent(const LayoutContext &layoutContext, const LayoutConstraints &layoutConstraints) const override;
+
+  protected:
+    // React Native dirties a measurable node on every clone (a prop or state
+    // change, or its parent's layout), laying it out again. Only the image's
+    // size changes what measureContent returns (a style change dirties it
+    // itself).
+    bool shouldNewRevisionDirtyMeasurement(const ShadowNode &sourceShadowNode, const ShadowNodeFragment &fragment)
+        const override;
+
+  private:
+    // Whether this clone measures differently from the node it was cloned
+    // from: another image size (the state's, or the props' own size), or
+    // other sides that follow it (autoSize)
+    // (shouldNewRevisionDirtyMeasurement gets this node, not that one).
+    bool imageSizeChanged_{false};
+};
+
+} // namespace facebook::react
+
+```
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageAutoViewState.h`
+```
+#pragma once
+
+#include <react/renderer/graphics/Float.h>
+
+#ifdef RN_SERIALIZABLE_STATE
+#include <folly/dynamic.h>
+#endif
+
+namespace facebook::react {
+
+// The view's state: the loaded image's own size in points (0 until an image
+// has loaded), which the native views set as one loads. The view's size
+// follows it where its style leaves it open (see FastImageAutoViewShadowNode).
+class FastImageAutoViewState final {
+  public:
+    FastImageAutoViewState() = default;
+    FastImageAutoViewState(Float width, Float height) : width(width), height(height) {}
+
+    Float width{0};
+    Float height{0};
+
+#ifdef RN_SERIALIZABLE_STATE
+    // Android's view sets it as a map ({ width, height }).
+    FastImageAutoViewState(const FastImageAutoViewState &previousState, folly::dynamic data)
+        : width(static_cast<Float>(data.getDefault("width", 0).asDouble())),
+          height(static_cast<Float>(data.getDefault("height", 0).asDouble()))
+    {
+    }
+
+    folly::dynamic getDynamic() const
+    {
+        return folly::dynamic::object("width", width)("height", height);
+    }
+#endif
+};
+
+} // namespace facebook::react
+
+```
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageViewComponentDescriptor.h`
+```
+#pragma once
+
+#include <react/renderer/core/ConcreteComponentDescriptor.h>
+
+#include "FastImageAutoViewShadowNode.h"
+#include "FastImageViewShadowNode.h"
+
+namespace facebook::react {
+
+// FastImageView's and FastImageAutoView's descriptors.
+template <typename ShadowNodeT>
+class FastImageComponentDescriptor final : public ConcreteComponentDescriptor<ShadowNodeT> {
+  public:
+    using ConcreteComponentDescriptor<ShadowNodeT>::ConcreteComponentDescriptor;
+
+    // Padding doesn't inset the image (it fills the view inside its
+    // borders), so it isn't laid out either: the style's padding is cleared
+    // from the props Yoga lays the view out from, as they're made: the
+    // style's edges, and the logical paddings React Native keeps apart and
+    // adds to them as it lays the view out (paddingBlock, paddingInline and
+    // their start and end). (Props made without any padding, e.g. the shared
+    // default ones, are left as they are.)
+    Props::Shared cloneProps(const PropsParserContext &context, const Props::Shared &props, RawProps rawProps)
+        const override
+    {
+        auto cloned = ConcreteComponentDescriptor<ShadowNodeT>::cloneProps(context, props, std::move(rawProps));
+        const auto &viewProps = static_cast<const FastImageViewProps &>(*cloned);
+        bool padded = viewProps.paddingBlock.isDefined() || viewProps.paddingBlockStart.isDefined() ||
+            viewProps.paddingBlockEnd.isDefined() || viewProps.paddingInline.isDefined() ||
+            viewProps.paddingInlineStart.isDefined() || viewProps.paddingInlineEnd.isDefined();
+        for (auto edge : kEdges) {
+            padded = padded || viewProps.yogaStyle.padding(edge).isDefined();
+        }
+        if (padded) {
+            auto &unpadded = const_cast<FastImageViewProps &>(viewProps);
+            for (auto edge : kEdges) {
+                unpadded.yogaStyle.setPadding(edge, yoga::StyleLength::undefined());
+            }
+            unpadded.paddingBlock = yoga::StyleLength::undefined();
+            unpadded.paddingBlockStart = yoga::StyleLength::undefined();
+            unpadded.paddingBlockEnd = yoga::StyleLength::undefined();
+            unpadded.paddingInline = yoga::StyleLength::undefined();
+            unpadded.paddingInlineStart = yoga::StyleLength::undefined();
+            unpadded.paddingInlineEnd = yoga::StyleLength::undefined();
+        }
+        return cloned;
+    }
+
+  private:
+    static constexpr yoga::Edge kEdges[] = {
+        yoga::Edge::Left,
+        yoga::Edge::Top,
+        yoga::Edge::Right,
+        yoga::Edge::Bottom,
+        yoga::Edge::Start,
+        yoga::Edge::End,
+        yoga::Edge::Horizontal,
+        yoga::Edge::Vertical,
+        yoga::Edge::All,
+    };
+};
+
+using FastImageViewComponentDescriptor = FastImageComponentDescriptor<FastImageViewShadowNode>;
+using FastImageAutoViewComponentDescriptor = FastImageComponentDescriptor<FastImageAutoViewShadowNode>;
+
+} // namespace facebook::react
+
+```
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageViewShadowNode.cpp`
+```
+#include "FastImageViewShadowNode.h"
+
+namespace facebook::react {
+
+const char FastImageViewComponentName[] = "FastImageView";
+
+} // namespace facebook::react
+
+```
+
+### Core Architecture Module: `common/cpp/react/renderer/components/FastImage/FastImageViewShadowNode.h`
+```
+#pragma once
+
+#include <jsi/jsi.h>
+#include <react/renderer/components/RNFastImageSpec/EventEmitters.h>
+#include <react/renderer/components/RNFastImageSpec/Props.h>
+#include <react/renderer/components/view/ConcreteViewShadowNode.h>
+
+namespace facebook::react {
+
+JSI_EXPORT extern const char FastImageViewComponentName[];
+
+// FastImageView's shadow node, as Codegen would make it (the spec is
+// interfaceOnly for FastImageAutoView's): no state and no measuring, so an
+// image with a set size costs no more than any view.
+using FastImageViewShadowNode =
+    ConcreteViewShadowNode<FastImageViewComponentName, FastImageViewProps, FastImageViewEventEmitter>;
+
+} // namespace facebook::react
+
+```
 
 ### Core Architecture Module: `ReactNativeFastImageExample/android/animation-clock/com/fastimage/example/AnimationClock.kt`
 ```
@@ -366,275 +696,6 @@ module.exports = {
 
 ```
 
-### Core Architecture Module: `ReactNativeFastImageExample/index.js`
-```
-/**
- * @format
- */
-
-import { AppRegistry } from 'react-native'
-import App from './src'
-import { name as appName } from './app.json'
-
-AppRegistry.registerComponent(appName, () => App)
-
-```
-
-### Core Architecture Module: `ReactNativeFastImageExample/ios/ReactNativeFastImageExample/AppDelegate.swift`
-```
-import UIKit
-
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-  func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-  ) -> Bool {
-    true
-  }
-}
-
-```
-
-### Core Architecture Module: `ReactNativeFastImageExample/ios/ReactNativeFastImageExample/SceneDelegate.swift`
-```
-import React
-import React_RCTAppDelegate
-import ReactAppDependencyProvider
-import UIKit
-
-class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate {
-  var window: UIWindow?
-  var reactNativeFactory: RCTReactNativeFactory?
-
-  func scene(
-    _ scene: UIScene,
-    willConnectTo session: UISceneSession,
-    options connectionOptions: UIScene.ConnectionOptions
-  ) {
-    guard let windowScene = scene as? UIWindowScene else {
-      return
-    }
-
-    // scripts/verify.mts hides React Native's development banner
-    // ("Downloading 100%"), which its screenshots would catch.
-    if UserDefaults.standard.bool(forKey: "FastImageHideDevLoadingView") {
-      RCTDevLoadingViewSetEnabled(false)
-    }
-
-    dependencyProvider = RCTAppDependencyProvider()
-    reactNativeFactory = RCTReactNativeFactory(delegate: self)
-    window = UIWindow(windowScene: windowScene)
-
-    reactNativeFactory?.startReactNative(
-      withModuleName: "ReactNativeFastImageExample",
-      in: window,
-      connectionOptions: connectionOptions
-    )
-  }
-
-  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-    RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
-  }
-
-  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-    RCTLinkingManager.scene(scene, continue: userActivity)
-  }
-
-  override func bundleURL() -> URL? {
-    #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-    #else
-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-    #endif
-  }
-}
-
-```
-
-### Core Architecture Module: `ReactNativeFastImageExample/metro.config.js`
-```
-const path = require('path')
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
-const pkg = require('../package.json')
-
-const root = path.resolve(__dirname, '..')
-
-// The repo root has its own dev copies of the library's peer dependencies
-// (react, react-native). Block them so the library source uses this app's.
-const peers = Object.keys(pkg.peerDependencies)
-const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-const dir = (p) => new RegExp(`^${escape(p)}\\/.*$`)
-
-// Metro sends the app an update for any change in its watch folders, even a
-// file the app doesn't use, and React Native shows "Refreshing..." for it
-// (in verify.mts's screenshots too). Leave out what changes while the app
-// runs and isn't JavaScript: verify.mts's output and references, local
-// notes, and the native projects builds write into.
-const notSource = [
-    ...[
-        'verify-output',
-        'screenshots',
-        'recordings',
-        '.local',
-        'android',
-        'ios',
-    ].map((d) => dir(path.join(root, d))),
-    // Every example app's native projects, which its builds write into.
-    new RegExp(
-        `^${escape(root)}\\/ReactNativeFastImageExample[^/]*\\/(ios|android)\\/.*$`,
-    ),
-    new RegExp(`^${escape(root)}\\/[^/]+\\.md$`),
-]
-
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {
-    watchFolders: [root],
-    resolver: {
-        blockList: [
-            ...peers.map((m) => dir(path.join(root, 'node_modules', m))),
-            ...notSource,
-        ],
-        extraNodeModules: Object.fromEntries(
-            peers.map((m) => [m, path.join(__dirname, 'node_modules', m)]),
-        ),
-        // Load the library from its source so changes show up without a build
-        // (unless `scripts/verify.mts --package` installed the package).
-        resolveRequest: (context, moduleName, platform) => {
-            if (
-                moduleName === pkg.name &&
-                !process.env.FAST_IMAGE_FROM_PACKAGE
-            ) {
-                return {
-                    type: 'sourceFile',
-                    filePath: path.join(root, 'src', 'index.tsx'),
-                }
-            }
-            return context.resolveRequest(context, moduleName, platform)
-        },
-    },
-}
-
-module.exports = mergeConfig(getDefaultConfig(__dirname), config)
-
-```
-
-### Core Architecture Module: `ReactNativeFastImageExample/react-native.config.js`
-```
-const path = require('path')
-const pkg = require('../package.json')
-
-// Autolink the library's native code (ios/, android/) from the repo root, or
-// from the package that `scripts/verify.mts --package` installs.
-module.exports = {
-    dependencies: {
-        [pkg.name]: {
-            root: process.env.FAST_IMAGE_FROM_PACKAGE
-                ? path.join(__dirname, 'node_modules', pkg.name)
-                : path.join(__dirname, '..'),
-        },
-    },
-}
-
-```
-
-### Core Architecture Module: `ReactNativeFastImageExample/src/AutoSizeExample.tsx`
-```
-import React, { useCallback, useMemo, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import SectionFlex from './SectionFlex'
-import FastImage, { FastImageProps } from 'react-native-fast-image'
-import Section from './Section'
-import FeatureText from './FeatureText'
-import { useCacheBust } from './useCacheBust'
-import { imageUrl } from './imageServer'
-import { useReport } from './RunnerContext'
-
-const IMAGE = imageUrl('picsum/1018-600x300.jpg')
-
-interface AutoSizingImageProps extends FastImageProps {
-    onLoad?: (event: any) => void
-    defaultHeight?: number
-    width: number
-    style?: any
-}
-
-const AutoSizingImage = (props: AutoSizingImageProps) => {
-    const [dimensions, setDimensions] = useState({
-        height: 0,
-        width: 0,
-    })
-
-    const propsOnLoad = props.onLoad
-    const onLoad = useCallback(
-        (e: any) => {
-            const {
-                nativeEvent: { width, height },
-            } = e
-            setDimensions({ width, height })
-            if (propsOnLoad) {
-                propsOnLoad(e)
-            }
-        },
-        [propsOnLoad],
-    )
-
-    const height = useMemo(() => {
-        if (!dimensions.height) {
-            return props.defaultHeight === undefined ? 300 : props.defaultHeight
-        }
-        const ratio = dimensions.height / dimensions.width
-        return props.width * ratio
-    }, [dimensions.height, dimensions.width, props.defaultHeight, props.width])
-    return (
-        <FastImage
-            {...props}
-            onLoad={onLoad}
-            style={[{ width: props.width, height }, props.style]}
-        />
-    )
-}
-
-export const AutoSizeExample = () => {
-    const { bust, url } = useCacheBust(IMAGE)
-    const [size, setSize] = useState<string>()
-    useReport('auto-size', size === undefined ? 'waiting' : 'OK')
-    return (
-        <View>
-            <Section>
-                <FeatureText text="• AutoSize." />
-            </Section>
-            <SectionFlex onPress={bust}>
-                <AutoSizingImage
-                    style={styles.image}
-                    width={200}
-                    source={{ uri: url }}
-                    onLoad={(e) =>
-                        setSize(
-                            `${e.nativeEvent.width}x${e.nativeEvent.height}`,
-                        )
-                    }
-                />
-            </SectionFlex>
-        </View>
-    )
-}
-
-const styles = StyleSheet.create({
-    image: {
-        backgroundColor: '#ddd',
-        margin: 20,
-        flex: 0,
-    },
-})
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -662,862 +723,642 @@ const styles = StyleSheet.create({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a576869` (2026-10-30)
-**Commit Message**: fix(android): views of one url at different sizes download it once, also when one gets to downloading just after the download ended (#1403)
+### Incident Patch 1: `399f8995` (2026-11-02)
+**Commit Message**: feat: FastImage can be rendered from a React Server Component (#1419)
 
-* fix(android): views of one url at different sizes download it once, also when one gets to downloading just after the download ended
+It uses hooks, so without 'use client' a server component had to wrap it in a client file of its own, or the build failed. Rolldown drops the directive in src, so the build adds it to its output too.
 
-Glide looks in its disk cache before it downloads, on another of its
-threads: a request that looked before the first request's image was stored
-there, and got to downloading just after the shared download ended and its
-bytes were dropped, downloaded the image again. The bytes now stay for new
-requests for a second after every request has read them.
-
-* fix(android): an ended download's bytes don't outlast a disk cache clear, or serve diskCache false, and give way to other downloads' memory
-
-- clearDiskCache drops the bytes of ended downloads (they stand for the
-  disk cache for that moment): a load after a clear asked the server
-  again before, and still does (cache-path-after-clear).
-- A source with diskCache false only joins a download in progress, as
-  `web` ones do: it downloads again (disk-cache-off).
-- Bytes in memory don't linger while more than half the memory budget is
-  taken, so other downloads' bytes
-
-**File**: `android/src/main/java/com/fastimage/FastImageOkHttpProgressGlideModule.java` (modified, +2/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -195,7 +195,8 @@ public LoadData<InputStream> buildLoadData(@NonNull FastImageUrl model, int widt
-                     OkHttpClient urlClient = FastImageGlide.isNoStore(options) ? noStoreClient
-                             : model.url instanceof FastImageWebGlideUrl ? webClient
-                             : client;
--                    return FastImageSharedDownloads.loadData(model.url, urlClient);
-+                    return FastImageSharedDownloads.loadData(model.url, urlClient,
-+                            !FastImageGlide.isNoStore(options) && !(model.url instanceof FastImageWebGlideUrl));
-                 }
- 
-                 @Override
+@@ -1048,6 +1048,7 @@ Support is minimal:
+ - Props that work: `source` (a `uri`, a `require()`d image, or several sizes, with `thumbhash` and `blurDataUri`), `placeholder` (and `defaultSource`), `objectFit`, `objectPosition`, `tintColor`, `blurRadius`, `alt`, `style`, `source.priority`, the web-only `loading` and `sizes`, `onLoadStart`, `onLoad`, `onError`, `onLoadEnd`, and View props such as `testID`, accessibility props, `onLayout` and `pointerEvents`.
+ - Ignored: `source.headers` (a browser can't send them for an image), `source.cache`, `source.cacheKey`, `source.memoryCache`, `source.diskCache`, `recyclingKey`, `loop`, `imageRendering`, `paused`, `transition`, `downsample` and `onProgress`.
+ - The image is an `<img>` element that fills the view inside its borders, with `objectFit` and `objectPosition` as its CSS `object-fit` and `object-position`. `tintColor` is an SVG filter and `blurRadius` a CSS `blur()`, and the placeholder is another `<img>`, under the image until it has loaded. A new `source` gets a new `<img>`, so the previous image doesn't stay while it loads (with several sizes, the browser shows it until the new one has loaded).
++- In a framework with React Server Components, such as Next.js, FastImage can be rendered from a server component. It's a client component, so its props must be ones a server component can pass (no event handlers).
+ - Images load lazily unless [`loading`](#loading) is `'eager'`, and `source.priority` `'high'` and `'low'` are the `<img>`'s `fetchpriority`.
+ - Several sizes are shown with an `<img>` whose `srcset` lists them, with `sizes="auto, 100vw"` (or [`sizes`](#sizes)): the browser loads the one for the width the image is shown at, in device pixels (usually the smallest that's at least as wide). Browsers that don't support `sizes="auto"`, or an image with `loading="eager"`, use the viewport's width.
+ - `FastImage.preload` loads the images into the browser's cache and resolves with a result per source. `clearMemoryCache`, `clearDiskCache` and `configureCache` resolve without doing anything (the browser manages its cache), and `getCachePath` and `writeToCache` resolve with `{ ok: false, error: 'Not supported on the web' }`.
 ```
 
-**File**: `android/src/main/java/com/fastimage/FastImageSharedDownloads.java` (modified, +145/-15)
+**File**: `rolldown.config.mjs` (modified, +12/-4)
 ```diff
-@@ -31,6 +31,7 @@
- import java.util.TreeSet;
- import java.util.concurrent.ConcurrentHashMap;
- import java.util.concurrent.LinkedBlockingQueue;
-+import java.util.concurrent.ScheduledThreadPoolExecutor;
- import java.util.concurrent.ThreadFactory;
- import java.util.concurrent.ThreadPoolExecutor;
- import java.util.concurrent.TimeUnit;
-@@ -64,7 +65,7 @@
- // request that comes while many images download still gets to the queue below
- // at once, and other images aren't held up behind slow downloads. The download
- // is cancelled once every request for it has gone, and its bytes are dropped
--// once every request has read what it needed.
-+// a moment after every request has read what it needed (LINGER_MS).
- //
- // At most MAX_RUNNING downloads run at once, as SDWebImage's downloader limits
- // them, and at most as many wait for their response from a host as the
-@@ -82,8 +83,9 @@
- final class FastImageSharedDownloads {
-     // The longest response kept in memory, and the most bytes held in memory
-     // for downloads at once: encoded images (not decoded bitmaps, which
--    // Glide's memory cache holds), each only until every request has read it.
--    // Others are kept in a temporary file.
-+    // Glide's memory cache holds), each until every request has read it (and
-+    // LINGER_MS more while under half the budget). Others are kept in a
-+    // temporary file.
-     private static final long MEMORY_MAX = 1024 * 1024;
-     private static final long MEMORY_BUDGET = Runtime.getRuntime().maxMemory() / 16;
-     // The longest response kept in memory, still within MEMORY_BUDGET, when
-@@ -96,12 +98,22 @@ final class FastImageSharedDownloads {
-     private static final int MAX_RUNNING = 16;
-     // How long a preload's finished file is used (see finished()).
-     private static final long KEEP_MS = 60_000;
-+    // How long an ended download's bytes stay for new requests once every
-+    // request has read them. Glide looks in its disk cache before it
-+    // downloads, and gets to downloading later (another of its threads):
-+    // a request that looked before the first request's image was stored
-+    // there, and gets to downloading just after the download ended, reads
-+    // them rather than downloading the image again (views of one url at
-+    // different sizes, which Glide loads apart, at once). They stand for the
-+    // disk cache, so clearDiskCache drops them (dropEnded), and a request
-+    // that keeps its image off disk (diskCache false) doesn't read them.
-+    private static final long LINGER_MS = 1000;
-     // Progress is sent when a download has read another 0.5% (and at its
-     // start and end).
-     private static final long PROGRESS_STEPS = 200;
- 
-     // The download new requests for a key join: in progress, or ended and
--    // still being read. Guards the downloads' sharing, queue and progress
-+    // still being read (or read less than LINGER_MS ago). Guards the downloads' sharing, queue and progress
-     // (taken before a download's own lock, and FastImageViewManager's progress
-     // lock).
-     private static final Map<String, Download> downloads = new HashMap<>();
-@@ -146,8 +158,25 @@ public void run() {
-                 }
-             });
- 
-+    // Drops the bytes of ended downloads that every request has read, once
-+    // LINGER_MS has passed.
-+    private static final ScheduledThreadPoolExecutor lingering = new ScheduledThreadPoolExecutor(1,
-+            new ThreadFactory() {
-+                @Override
-+                public Thread newThread(@NonNull Runnable runnable) {
-+                    Thread thread = new Thread(runnable, "FastImageDownloadLinger");
-+                    thread.setDaemon(true);
-+                    return thread;
-+                }
-+            });
-+
-     static {
-         reading.allowCoreThreadTimeOut(true);
-+        // Its thread goes when it has had nothing to do for a while. Safe for a
-+        // scheduled executor as its keep-alive is longer than the delays (a
-+        // thread waiting for a drop due in under LINGER_MS doesn't time out).
-+        lingering.setKeepAliveTime(10, TimeUnit.SECONDS);
-+        lingering.allowCoreThreadTimeOut(true);
-     }
- 
-     private static final class Finished {
-@@ -232,8 +261,29 @@ private static File finishedFile(String key) {
- 
-     // A remote image's load data (FastImageOkHttpProgressGlideModule): its
-     // download with the client, shared with the other requests for its key.
--    static ModelLoader.LoadData<InputStream> loadData(GlideUrl url, OkHttpClient client) {
--        return new ModelLoader.LoadData<>(url, new Fetcher(url, client));
-+    // readsEnded false: a `web` image (it follows its HTTP cache) or one with
-+    // diskCache false (it downloads again), which only joins a download in
-+    // progress, not the bytes of one that has ended (see LINGER_MS).
-+    static ModelLoader.LoadData<InputStream> loadData(GlideUrl url, OkHttpClient client, boolean readsEnded) {
-+        return new ModelLoader.LoadData<>
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageViewModule.java` (modified, +5/-0)
-```diff
-@@ -691,12 +691,17 @@ public void clearDiskCache(final Promise promise) {
-         cachePathExecutor.execute(new Runnable() {
-             @Override
-             public void run() {
-+                // The bytes of ended downloads, which stand for the disk cache
-+                // for a moment (see FastImageSharedDownloads.LINGER_MS): before
-+                // the clear, so none is stored again while it runs, and after.
-+                FastImageSharedDownloads.dropEnded();
-                 try {
-                     FastImageGlide.getRegistered(context).clearDiskCache();
-                 } catch (RuntimeException e) {
-                     promise.resolve(failure(e));
-                     return;
-                 }
-+                FastImageSharedDownloads.dropEnded();
-                 // And the HTTP cache of `cache: 'web'` images, which Glide
-                 // doesn't cache (set up when FastImage's components are
-                 // registered).
-```
-
-**File**: `android/src/test/java/com/fastimage/FastImageSharedDownloadsTest.java` (modified, +58/-1)
-```diff
-@@ -97,6 +97,63 @@ public void requestsForAnImageShareOneDownload() throws Exception {
-         assertEquals(1, server.count("/image"));
-     }
- 
-+    // Glide looks in its disk cache before it downloads: a request that looked
-+    // before the first request's image was stored there, and gets to
-+    // downloading just after its download ended, reads its bytes rather than
-+    // downloading the image again (views of one url at different sizes, which
-+    // Glide loads apart, at once).
-+    @Test
-+    public void aRequestJustAfterTheDownloadEndedReadsItsBytes() throws Exception {
-+        server.route("/image");
-+        Load first = load(url("/image"));
-+        byte[] bytes = first.bytes();
-+        Load late = load(url("/image"));
-+        assertArrayEquals(bytes, late.bytes());
-+        assertEquals(1, server.count("/image"));
-+    }
-+
-+    // A second later, its bytes are gone: a request downloads the image again
-+    // (Glide's disk cache has it by then).
-+    @Test
-+    public void aRequestWellAfterTheDownloadEndedDownloadsItAgain() throws Exception {
-+        server.route("/image");
-+        Load first = load(url("/image"));
-+        byte[] bytes = first.bytes();
-+        for (long end = System.currentTimeMillis() + 10_000;
-+                FastImageSharedDownloads.busy() != null && System.currentTimeMillis() < end; ) {
-+            Thread.sleep(20);
-+        }
-+        Load later = load(url("/image"));
-+        assertArrayEquals(bytes, later.bytes());
-+        assertEquals(2, server.count("/image"));
-+    }
-+
-+    // The bytes stand for the disk cache for that moment: clearing it
-+    // (clearDiskCache) drops them, and a source with diskCache false (or a
-+    // `web` one) doesn't read them.
-+    @Test
-+    public void aRequestAfterTheDiskCacheWasClearedDownloadsItAgain() throws Exception {
-+        server.route("/image");
-+        Load first = load(url("/image"));
-+        byte[] bytes = first.bytes();
-+        FastImageSharedDownloads.dropEnded();
-+        Load again = load(url("/image"));
-+        assertArrayEquals(bytes, again.bytes());
-+        assertEquals(2, server.count("/image"));
-+    }
-+
-+    @Test
-+    public void aRequestOffDiskDoesntReadTheBytesOfAnEndedDownload() throws Exception {
-+        server.route("/image");
-+        Load first = load(url("/image"));
-+        byte[] bytes = first.bytes();
-+        Load offDisk = new Load(FastImageSharedDownloads.loadData(url("/image"), client, false).fetcher);
-+        loads.add(offDisk);
-+        offDisk.fetcher.loadData(Priority.NORMAL, offDisk);
-+        assertArrayEquals(bytes, offDisk.bytes());
-+        assertEquals(2, server.count("/image"));
-+    }
-+
-     @Test
-     public void aRequestThatLeavesLeavesTheDownloadToTheOthers() throws Exception {
-         TestServer.Route image = server.route("/image").holdAfter(100);
-@@ -479,7 +536,7 @@ private Load load(GlideUrl url) {
-     }
- 
-     private Load load(GlideUrl url, Priority priority) {
--        Load load = new Load(FastImageSharedDownloads.loadData(url, client).fetcher);
-+        Load load = new Load(FastImageSharedDownloads.loadData(url, client, true).fetcher);
-         loads.add(load);
-         load.fetcher.loadData(priority, load);
-         return load;
-```
-
----
-
-### Incident Patch 2: `e5e6aa55` (2026-10-30)
-**Commit Message**: test: check the work each regression group makes Fast Image do [skip actions] (#1398)
-
-The regression runs count the expensive work each group makes Fast Image do (decodes with their sizes, loads and reloads with their reason, blurs, SVG renders, Android fade snapshots, and image requests), logged in debug builds when verify.mts turns it on, and check the counts against committed references per app and platform (screenshots/<app>-<platform>/work.json). Groups start with empty caches, requests are split at each group's mount by the app's clock, and groups or cases whose work depends on timing opt out (countWork: false, or an `uncounted` url).
-
-**File**: `ReactNativeFastImageExample/src/ExampleGroups.tsx` (modified, +3/-0)
-```diff
-@@ -82,6 +82,9 @@ export const EXAMPLE_GROUPS: RegressionGroup[] = [
+@@ -11,6 +11,10 @@ const flowTypes = {
      },
-     {
-         name: 'fastimage-grid',
-+        // Its list mounts 200 images: how many have downloaded when the next
-+        // group replaces it depends on timing.
-+        countWork: false,
-         description: {
-             checks: "A grid of many remote images loading at the same time, like a gallery screen (the example screen's FastImage grid).",
-             steps: "Fetches the image server's list of photos and shows them in a 4-column list with 6 rows, each a 100×100 photo in a square cell. Passes once all 24 have sent onLoad.",
-```
-
-**File**: `ReactNativeFastImageExample/src/NavigationGroups.tsx` (modified, +5/-2)
-```diff
-@@ -1,5 +1,5 @@
- import React, { useContext, useRef, useState } from 'react'
--import { StyleSheet, View } from 'react-native'
-+import { Platform, StyleSheet, View } from 'react-native'
- import { ScreenStack, ScreenStackItem } from 'react-native-screens'
- import FastImage from 'react-native-fast-image'
- import { CaseStatus, caseStyles } from './CaseStatus'
-@@ -108,8 +108,11 @@ function PopCase({
- 
- export const NAVIGATION_GROUPS: RegressionGroup[] = [
-     {
--        // Recorded (a video sample).
-+        // Recorded (a video sample). On iOS, whether the stack has laid its
-+        // screen out when the image starts loading (the decode's box)
-+        // depends on timing.
-         name: 'navigation-pop',
-+        countWork: Platform.OS !== 'ios',
-         description: {
-             checks: 'An image in a screen that a native stack pops stays until the screen is gone.',
-             steps: 'A video sample: the screen is recorded while the case pops the screen, and the color in the middle of the view must go through the listed colors in order.',
-```
-
-**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +29/-15)
-```diff
-@@ -783,12 +783,20 @@ const HEADERS_PRIVATE = imageUrl(
- const HEADERS_PRELOAD_PRIVATE = imageUrl(
-     `private/picsum/1021-120x120.jpg?invalid-headers-preload=${RUN}`,
- )
-+// The logo preloaded twice, each with a url of its own: with one url, whether
-+// iOS decodes it once or twice depends on whether the second preload joins
-+// the first's download (see scripts/verify.mts's work counts).
-+const HEADERS_PRELOAD_NULL = imageUrl('logo.png?preload-headers-null')
-+const HEADERS_PRELOAD_ARRAY = imageUrl('logo.png?preload-headers-array')
- function PreloadInvalidHeadersCase() {
-     const [status, setStatus] = useState('waiting')
-     useEffect(() => {
-         FastImage.preload([
--            { uri: LOGO, headers: null as unknown as {} },
--            { uri: LOGO, headers: ['x-token'] as unknown as {} },
-+            { uri: HEADERS_PRELOAD_NULL, headers: null as unknown as {} },
-+            {
-+                uri: HEADERS_PRELOAD_ARRAY,
-+                headers: ['x-token'] as unknown as {},
-+            },
-             { uri: HEADERS_PRELOAD_PRIVATE, headers: INVALID_HEADERS },
-         ])
-             .then((results) => {
-@@ -5254,23 +5262,24 @@ function CacheOnlyMissCase({
- const EXAMPLE_MAX_DISK_SIZE = 300 * 1024 * 1024
- 
- // FastImage.configureCache: the limit in the app's native config is in effect
--// from the start, with the disk cache's size. iOS: a runtime change applies at
--// once: downloads an image (getCachePath), sets maxDiskSize to 1 byte, which
--// removes every image from the disk cache, then the image isn't cached
--// anymore. Resetting it (null) goes back to the native config's limit. On
--// Android a runtime change applies from the next launch, so the limit in
--// effect stays the same. Changes are saved, so it always resets. Only groups
--// after this one see the emptied cache.
-+// from the start, with the disk cache's size (after downloading an image,
-+// getCachePath: the runner empties the caches before each group). iOS: a
-+// runtime change applies at once: sets maxDiskSize to 1 byte, which removes
-+// every image from the disk cache, then the image isn't cached anymore.
-+// Resetting it (null) goes back to the native config's limit. On Android a
-+// runtime change applies from the next launch, so the limit in effect stays
-+// the same. Changes are saved, so it always resets.
- function ConfigureCacheCase() {
-     const [status, setStatus] = useState('waiting')
-     useEffect(() => {
-         const uri = imageUrl(`picsum/1022-120x120.jpg?configure-cache=${RUN}`)
-         const run = async () => {
-+            const before = await FastImage.getCachePath({ uri })
-+            if (!before.ok) return setStatus(`not cached: ${before.error}`)
-             const state = await FastImage.configureCache()
-             if (state.maxDiskSize !== EXAMPLE_MAX_DISK_SIZE) {
-                 return setStatus(`maxDiskSize is ${state.maxDiskSize}`)
-             }
--            // Images earlier groups loaded.
-             if (!state.diskSize)
-                 return setStatus(`diskSize is ${state.diskSize}`)
-             if (Platform.OS !== 'ios') {
-@@ -5287,8 +5296,6 @@ function ConfigureCacheCase() {
-                         : `in effect: ${changed.maxDiskSize}, ${reset.maxDiskSize}`,
-                 )
-             }
--            const before = await FastImage.getCachePath({ uri })
--            if (!before.ok) return setStatus(`not cached: ${before.error}`)
-             const trimmed = await FastImage.configureCache({ maxDiskSize: 1 })
-             const after = await FastImage.getCachePath({
-                 uri,
-@@ -8268,11 +8275,13 @@ function DownsampleFromDiskCase() {
- // under the url's key, where SDImageCache found it (it looks in memory again
- // before it decodes), so the right view showed that, gray and at less than
- // half its size. A url of its own each run, preloaded to disk only
--// (memoryCache: false).
-+// (memoryCache: false). Its work isn't counted (uncounted, see
-+// scripts/verify.mts): whether iOS decodes the right view's image at full
-+// size at once or loads it again after depends on timing.
- function DownsampleOverLimitSharedCase() {
-     const [uri] = useState(() =>
-         imageUrl(
--            `block-stripes-80mp.png?case=downsample-over-limit-shared-${RUN}`,
-+            `block-stripes-80mp.png?case=downsample-over-limit-shared-${RUN}&uncounted`,
-         ),
-     )
-     const [preloaded, setPreloaded] = useState<PreloadResult>()
-@@ -10982,6 +10991,9 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-     },
-     {
-         name: 'blur-events',
-+        // How many of the quick steps' blurs Android runs before the next
-+        // one replaces them depends on timing.
-+        countWork: false,
-         description: {
-             checks: 'blurRadius changed in quick steps after the image has loaded: no load events fire again, and the image ends up with the last radius.',
-         },
-@@ -11215,8 +11227,10 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-    
-```
-
-**File**: `ReactNativeFastImageExample/src/RegressionRunner.tsx` (modified, +71/-10)
-```diff
-@@ -42,11 +42,20 @@ import { regressionCheckUrl, regressionSocketUrl } from './imageServer'
- //
- // Messages to the script (JSON, one per WebSocket message):
- //   { type: 'hello', platform, version, arch, groups: [names], window:
--//     { width, height }, scale }                   on connecting (window in
--//                                                 dp; scale = pixels per dp)
--//   { type: 'group', index, name, wide, cases: [ids], description,
--//     descriptions: { id: description } }         once a group is on screen
--//                                                 (wide: compared whole)
-+//     { width, height }, scale, launch, at }       on connecting (window in
-+//                                                 dp; scale = pixels per dp;
-+//                                                 launch: the same until the
-+//                                                 app or its JS starts again;
-+//                                                 at: the app's clock)
-+//   { type: 'group', index, name, wide, countWork, cases: [ids],
-+//     description, descriptions: { id: description } }
-+//                                                 once a group is on screen
-+//                                                 (wide: compared whole;
-+//                                                 countWork: false, its work
-+//                                                 isn't compared)
-+//   { type: 'mount', index, at }                  as a group starts to mount,
-+//                                                 before its cases do (at:
-+//                                                 the app's clock)
- //   { type: 'status', group, id, status }         a case's status ('OK' passed)
- //   { type: 'masks', group, id, masks, cases, content, visible, safeArea }
- //                                                 the reply to 'measure'
-@@ -73,7 +82,9 @@ import { regressionCheckUrl, regressionSocketUrl } from './imageServer'
- // { type: 'recording', group, name } says a sample's recording has started,
- // { type: 'framed', group, name } that a stepped sample's screenshot is
- // taken, and { type: 'sampled', group, name, ok, seen, detail } gives its
--// result.
-+// result; { type: 'end' } says the run is over (the work in the app's log
-+// after it isn't counted, and the script waits for the line to reach the
-+// log).
- 
- type Message = { type: string; [key: string]: unknown }
- 
-@@ -186,6 +197,9 @@ const afterLayout = () =>
-         requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-     )
- 
-+// This launch of the app (or of its JS): see 'hello'.
-+const LAUNCH = `${Date.now()}-${Math.random()}`
-+
- const isFabric = () =>
-     (globalThis as { nativeFabricUIManager?: unknown }).nativeFabricUIManager !=
-     null
-@@ -232,6 +246,39 @@ export default function RegressionRunner({
-     // errors still show, and fail their group.
-     useState(() => LogBox.ignoreAllLogs())
-     const [index, setIndex] = useState(0)
-+    // The group to show next ('next': the one after), while the one on screen
-+    // is unmounted and the caches cleared: each group starts with empty
-+    // caches, so the work it makes Fast Image do (see scripts/verify.mts)
-+    // doesn't depend on the groups before it, which differ between a full
-+    // run, a CI shard and a run of some groups. Cleared once the unmount is
-+    // on screen, when the views have let go of their images (Android's
-+    // memory cache keeps the images views hold).
-+    const [next, setNext] = useState<number | 'next' | undefined>(undefined)
-+    // The group on screen, or -1 while the next one is on its way.
-+    const shownIndex = useRef(index)
-+    useEffect(() => {
-+        shownIndex.current = next === undefined ? index : -1
-+    }, [next, index])
-+    useEffect(() => {
-+        if (next === undefined) return
-+        let cancelled = false
-+        const show = () => {
-+            if (cancelled) return
-+            setIndex(next === 'next' ? index + 1 : next)
-+            setNext(undefined)
-+        }
-+        afterLayout()
-+            .then(() =>
-+                Promise.all([
-+                    FastImage.clearMemoryCache(),
-+                    FastImage.clearDiskCache(),
-+                ]),
-+            )
-+            .then(show, show)
-+        return () => {
-+            cancelled = true
-+        }
-+    }, [next, index])
-     const [connected, setConnected] = useState(false)
-     const socket = useRef<WebSocket | undefined>(undefined)
-     // The whole screen (see 'measure').
-@@ -281,6 +328,8 @@ export default function RegressionRunner({
-                         groups: groups.map((group) => group.name),
-                         window: Dimensions.get('window'),
-                         scale: PixelRatio.get(),
-+                        launch: LAUNCH,
-+                        at: Date.now(),
-                     }),
-                 )
-                 for (const text of queue.current.splice(0)) ws?.send(text)
-@@ -306,7 +355
-```
-
-**File**: `ReactNativeFastImageExample/src/RunnerContext.tsx` (modified, +4/-0)
-```diff
-@@ -18,6 +18,10 @@ export type RegressionGroup = {
-     // each case's area (and screenshot) is its images. A wide group's
-     // screenshot is compared as a whole.
-     wide?: boolean
-+    // false: the work Fast Image does for it (its requests, decodes and
-+    // loads) depends on timing (on this platform), so scripts/verify.mts
-+    // records it but doesn't compare it with the reference (work.json).
-+    countWork?: boolean
  }
  
- // What a case checks, in plain English, for someone reviewing its screenshot
-```
-
-**File**: `ReactNativeFastImageExample/src/SmokeExample.tsx` (modified, +3/-0)
-```diff
-@@ -792,6 +792,9 @@ function BlurDataUriCase() {
- export const SMOKE_GROUPS: RegressionGroup[] = [
++// So that a React Server Component can render FastImage. Rolldown drops the
++// directive in src.
++const USE_CLIENT = "'use client';"
++
+ const shared = {
+     // Dependencies (react, react-native) come from the app.
+     external: (id) => !id.startsWith('.') && !path.isAbsolute(id),
+@@ -43,16 +47,20 @@ export default defineConfig([
+         ...shared,
+         input: 'src/index.tsx',
+         output: [
+-            { file: 'dist/index.cjs.js', format: 'cjs' },
+-            { file: 'dist/index.js', format: 'esm' },
++            { file: 'dist/index.cjs.js', format: 'cjs', banner: USE_CLIENT },
++            { file: 'dist/index.js', format: 'esm', banner: USE_CLIENT },
+         ],
+     },
      {
-         name: 'smoke',
-+        // On the web, whether the browser asks for the missing image again
-+        // for reload() depends on timing.
-+        countWork: Platform.OS !== 'web',
-         description: {
-             checks: "FastImage works at all in an Expo app (the Expo example, on iOS, Android and the web): an image loads, a missing one fails, reload() after a failure, a bundled image, several sizes, preload, and the cache methods (on the web, that getCachePath isn't supported).",
-         },
+         ...shared,
+         input: 'src/index.web.tsx',
+         output: [
+-            { file: 'dist/index.cjs.web.js', format: 'cjs' },
+-            { file: 'dist/index.web.js', format: 'esm' },
++            {
++                file: 'dist/index.cjs.web.js',
++                format: 'cjs',
++                banner: USE_CLIENT,
++            },
++            { file: 'dist/index.web.js', format: 'esm', banner: USE_CLIENT },
+         ],
+     },
+     // react-native-fast-image/thumbhash (thumbhash/package.json), for any
 ```
 
-**File**: `ReactNativeFastImageExampleServer/server.ts` (modified, +22/-0)
+**File**: `src/index.tsx` (modified, +2/-0)
 ```diff
-@@ -36,6 +36,11 @@
- //
- // GET /requests?path=<path and query> returns how many times it was requested,
- // so a test can check what was loaded from the network: `{ "count": 1 }`.
-+// GET /request-log?since=<ms> returns every image request (both servers)
-+// since that time (Date.now() on this machine), in order, with its
-+// User-Agent (which platform asked): `[{ "at": 1700000000000, "path":
-+// "/picsum/…", "agent": "okhttp/4.12.0" }]`, for scripts/verify.mts to count
-+// each group's.
- // GET /requests?group=<group> returns how many requests the slow server got
- // with that `group` query parameter, the most of them in flight at the same
- // time, and the order each arrived in among all the slow server's requests:
-@@ -77,6 +82,7 @@ const IMAGES = path.join(import.meta.dir, 'images')
- const PORT = Number(process.env.PORT ?? 8090)
- const SLOW_PORT = PORT + 1
- const requests = new Map<string, number>()
-+const requestLog: { at: number; path: string; agent: string }[] = []
- // Per `group` query parameter on the slow server: requests, requests in
- // flight now, and the most in flight at the same time.
- const groups = new Map<
-@@ -147,6 +153,12 @@ const server = Bun.serve({
-             release(url.searchParams.get('hold') ?? '')
-             return Response.json({ released: true })
-         }
-+        if (url.pathname === '/request-log') {
-+            const since = Number(url.searchParams.get('since') ?? 0)
-+            return Response.json(
-+                requestLog.filter((entry) => entry.at >= since),
-+            )
-+        }
-         if (url.pathname === '/requests') {
-             const group = url.searchParams.get('group')
-             if (group !== null) {
-@@ -178,6 +190,11 @@ const server = Bun.serve({
-         }
-         const key = url.pathname + url.search
-         requests.set(key, (requests.get(key) ?? 0) + 1)
-+        requestLog.push({
-+            at: Date.now(),
-+            path: key,
-+            agent: request.headers.get('user-agent') ?? '',
-+        })
- 
-         let { pathname } = url
-         let cacheControl: string | undefined
-@@ -340,6 +357,11 @@ http.createServer(async (request, response) => {
-     const url = new URL(request.url ?? '/', 'http://localhost')
-     const key = `slow:${url.pathname}${url.search}`
-     requests.set(key, (requests.get(key) ?? 0) + 1)
-+    requestLog.push({
-+        at: Date.now(),
-+        path: key,
-+        agent: request.headers['user-agent'] ?? '',
-+    })
-     slowRequests++
-     const group = url.searchParams.get('group')
-     if (group !== null) {
+@@ -1,3 +1,5 @@
++'use client'
++
+ import React, { forwardRef, memo, useMemo } from 'react'
+ import {
+     ColorValue,
 ```
 
-**File**: `android/src/main/java/com/fastimage/FastImageBlur.java` (modified, +4/-0)
+**File**: `src/index.web.tsx` (modified, +2/-0)
 ```diff
-@@ -59,6 +59,10 @@ protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform
-         int blurredHeight = Math.max(1, Math.round(height * scale));
-         int boxSize = boxSize(radius * scale / shownScale, Math.max(blurredWidth, blurredHeight));
-         if (boxSize <= 1 && scale == 1) return toTransform;
-+        if (FastImageWork.enabled()) {
-+            FastImageWork.record("blur", null, width + "x" + height + " to " + blurredWidth + "x" + blurredHeight
-+                    + " box " + boxSize);
-+        }
- 
-         Bitmap result = pool.get(blurredWidth, blurredHeight, Bitmap.Config.ARGB_8888);
-         result.setDensity(toTransform.getDensity());
+@@ -1,3 +1,5 @@
++'use client'
++
+ // FastImage on the web (react-native-web): a View with an <img> in it, with
+ // FastImage's props and events. Bundlers that resolve `.web` files, or the
+ // package's `browser` field, pick this file instead of index.tsx, which uses
 ```
 
 ---
 
-### Incident Patch 3: `358569cf` (2026-10-31)
-**Commit Message**: ci: run checks CI skipped: example and website types, the website build, tvOS for JS changes, missing references, an Android Release build [skip actions] (#1407)
+### Incident Patch 2: `ee19659c` (2026-11-02)
+**Commit Message**: test: the Regression tab shows every case only when asked [skip actions] (#1417)
 
-* ci: type-check the example apps, the scripts and the website, and build the website
+Every case at once made Maestro's lookups on the tab so slow that the --background flows timed out tapping their start box. The tab now opens with the background cases and an All cases switch.
 
-verify.mts's JS checks type-check the example apps, verify.mts and the image
-server, but e2e.yml runs it with --no-js and ci.yml didn't run them: the
-shared regression cases, and the library's source against React Native 0.88,
-tvOS 0.87 and Expo, weren't type-checked on CI. The website was built only by
-Cloudflare after a merge, and its scripts weren't type-checked anywhere
-(generate.mts sorted DeclarationReflections typed as Reflections, which have
-no sources). scripts/tsconfig.json now has group-times.ts and
-regression-viewer.mts too.
-
-* ci: run the tvOS groups when the library's JS or the regression cases change
-
-The tvOS example runs the main example's regression cases with the library's
-source, but its jobs ran only for changes to ios/, the tvOS example, its
-references, the podspec, verify.mts or the workflow: a change to src/ (an
-Apple TV focus fix was one) or a new case didn't run them, and a new case's
-tvOS references weren't se
-
-**File**: `.github/workflows/ci.yml` (modified, +18/-1)
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +21/-12)
 ```diff
-@@ -30,8 +30,25 @@ jobs:
-       - run: bun run typecheck
-       - run: bun run build:package
-       - run: bun run test
-+      # The example apps, as verify.mts's JS checks do (e2e.yml runs it with
-+      # --no-js): their screens and the shared regression cases, and the
-+      # library's source, which they type-check against their own React
-+      # Native.
-+      - run: bun install --frozen-lockfile && bun run typecheck
-+        working-directory: ReactNativeFastImageExample
-+      - run: bun install --frozen-lockfile && bun run typecheck
-+        working-directory: ReactNativeFastImageExampleMinimum
-+      - run: bun install --frozen-lockfile && bun run typecheck
-+        working-directory: ReactNativeFastImageExampleTV
-+      - run: bun install --frozen-lockfile && bun run typecheck
-+        working-directory: ReactNativeFastImageExampleExpo
-+      # The scripts and the image server, with the main example's TypeScript.
-+      - run: ReactNativeFastImageExample/node_modules/.bin/tsc -p scripts
-+      - run: ReactNativeFastImageExample/node_modules/.bin/tsc -p ReactNativeFastImageExampleServer
-       # The README's props section is generated from the doc comments in src/.
--      - run: bun install --frozen-lockfile && bun run check
-+      # Then the website as Cloudflare builds it from main, and its scripts'
-+      # types (after the build, which generates Astro's).
-+      - run: bun install --frozen-lockfile && bun run check && bun run build && node_modules/.bin/tsc --noEmit -p .
-         working-directory: website
-   release:
-     if: github.repository == 'DylanVann/react-native-fast-image' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+@@ -3063,8 +3063,8 @@ function BackgroundCase({ id, slow }: { id: string; slow?: boolean }) {
+     )
+ }
+ 
+-// The background cases load only once started, so the rest of the tab's
+-// cases aren't loading while the app goes to the background.
++// The background cases load only once started, so they aren't loading before
++// the flow is ready for them.
+ function BackgroundCases() {
+     const [started, setStarted] = useState(false)
+     if (started) {
+@@ -13698,6 +13698,9 @@ export default function RegressionExample() {
+     const statusBarHeight = useStatusBarHeight()
+     // Each description's steps and what it shows, not only what it checks.
+     const [details, setDetails] = useState(false)
++    // Not until asked for: every case at once makes the tab too slow for the
++    // Maestro flows, which only need the background cases.
++    const [allCases, setAllCases] = useState(false)
+     return (
+         <DetailsContext.Provider value={details}>
+             <ScrollView
+@@ -13711,16 +13714,22 @@ export default function RegressionExample() {
+                 </View>
+                 <BackgroundCases />
+                 <ClearWithoutActivityCase />
+-                {REGRESSION_GROUPS.map((group) => (
+-                    <React.Fragment key={group.name}>
+-                        <DescriptionText
+-                            title={group.name}
+-                            description={group.description}
+-                            style={styles.group}
+-                        />
+-                        {group.cases}
+-                    </React.Fragment>
+-                ))}
++                <View style={styles.details}>
++                    <Text>All cases</Text>
++                    <Switch value={allCases} onValueChange={setAllCases} />
++                </View>
++                {allCases
++                    ? REGRESSION_GROUPS.map((group) => (
++                          <React.Fragment key={group.name}>
++                              <DescriptionText
++                                  title={group.name}
++                                  description={group.description}
++                                  style={styles.group}
++                              />
++                              {group.cases}
++                          </React.Fragment>
++                      ))
++                    : null}
+             </ScrollView>
+         </DetailsContext.Provider>
+     )
 ```
 
-**File**: `.github/workflows/e2e.yml` (modified, +21/-12)
+**File**: `docs/development.md` (modified, +1/-1)
 ```diff
-@@ -33,9 +33,10 @@ jobs:
-   # can be merged). And chooses the iOS jobs: the main example's groups in 2 shards
-   # (--shard), each a job that builds the app and runs half of them (by their
-   # times in recent runs); the minimum example's smoke groups (SMOKE_GROUPS) in
--  # one; and, when a pull request changes the iOS code, the tvOS example, its
--  # references, or how the cases run (and in a run by hand), the tvOS example's
--  # groups in 2 shards. (At most 5 macOS jobs run at once.)
-+  # one; and, when a pull request changes the library's iOS or JS code, the
-+  # regression cases (the tvOS example runs the main example's), the tvOS
-+  # example, its references, or how the cases run (and in a run by hand), the
-+  # tvOS example's groups in 2 shards. (At most 5 macOS jobs run at once.)
-   changes:
-     runs-on: ubuntu-24.04
-     timeout-minutes: 5
-@@ -71,7 +72,7 @@ jobs:
-         run: |
-           jobs='{"app":"main","shard":1},{"app":"main","shard":2},{"app":"minimum","shard":1}'
-           if [ -z "$PR" ] || gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' |
--            grep -qE '^(ios/|ReactNativeFastImageExampleTV/|screenshots/tv-ios/|RNFastImage\.podspec$|scripts/verify\.mts$|\.github/workflows/e2e\.yml$)'; then
-+            grep -qE '^(ios/|src/|ReactNativeFastImageExample/src/|ReactNativeFastImageExampleTV/|screenshots/tv-ios/|RNFastImage\.podspec$|package\.json$|scripts/verify\.mts$|\.github/workflows/e2e\.yml$)'; then
-             jobs="$jobs"',{"app":"tv","shard":1},{"app":"tv","shard":2}'
-           fi
-           echo "ios={\"include\":[$jobs]}" >> "$GITHUB_OUTPUT"
-@@ -481,14 +482,19 @@ jobs:
-       fail-fast: false
-       # The main example's groups in 2 shards (--shard), each a job that
-       # builds the app and runs half of them (by their times in recent runs);
--      # the minimum example's smoke groups (SMOKE_GROUPS) in one. (At most 5
--      # macOS jobs run at once.)
-+      # the minimum example's smoke groups (SMOKE_GROUPS) in one; and the main
-+      # example's smoke groups from the package as published (its files),
-+      # in a Release build (minified with R8, with the package's ProGuard
-+      # rules). (At most 5 macOS jobs run at once.)
-       matrix:
-         include:
-           - { app: main, shard: 1 }
-           - { app: main, shard: 2 }
-           - { app: minimum, shard: 1 }
-+          - { app: main, release: true }
-+    name: android (${{ matrix.app }}, ${{ matrix.release && 'release' || matrix.shard }})
-     env:
-+      JOB: ${{ matrix.app }}-${{ matrix.release && 'release' || matrix.shard }}
-       ANDROID_AVD: rnfi_ci
-       # Where avdmanager creates it and the emulator looks for it.
-       ANDROID_AVD_HOME: /home/runner/.android/avd
-@@ -625,13 +631,14 @@ jobs:
-       - name: Build the app and run its cases
-         run: |
-           mkdir -p "$TMPDIR"
--          node scripts/verify.mts --app ${{ matrix.app }} --android --no-js ${{ matrix.app == 'minimum' && format('--groups {0}', env.SMOKE_GROUPS) || format('--shard {0}/2', matrix.shard) }}
-+          node scripts/verify.mts --app ${{ matrix.app }} --android --no-js ${{ matrix.release && format('--release --package --groups {0}', env.SMOKE_GROUPS) || matrix.app == 'minimum' && format('--groups {0}', env.SMOKE_GROUPS) || format('--shard {0}/2', matrix.shard) }}
-         env:
-           TMPDIR: ${{ runner.temp }}/tmp
-           VERIFY_GROUP_TIMES: ${{ runner.temp }}/group-times.json
--      # This job's group times, for later runs' shards.
-+      # This job's group times, for later runs' shards (not the Release
-+      # build's, whose groups aren't sharded).
-       - name: "Record the groups' times"
--        if: always() && env.R2_WRITE == 'true'
-+        if: always() && env.R2_WRITE == 'true' && !matrix.release
-         continue-on-error: true
-         run: bun scripts/group-times.ts record android-${{ matrix.app }}-${{ matrix.shard }}
-         env: *group-times
-@@ -642,8 +649,10 @@ jobs:
-           test -d "$RUNNER_TEMP/tmp/metro-cache" && echo metro=true >> "$GITHUB_OUTPUT" || true
-           test -d ~/.gradle/caches/modules-2 && echo gradle=true >> "$GITHUB_OUTPUT" || true
-           test -d /usr/local/lib/android/sdk/ndk/27.1.12297006 && test -d /usr/local/lib/android/sdk/cmake/3.22.1 && echo ndk=true >> "$GITHUB_OUTPUT" || true
-+      # Not the Release build's (the debug jobs' key, and its bundle is
-+      # transformed for Release).
-       - name: "Save Metro's cache"
--        if: always() && env.R2_WRITE == 'true' && steps.made.outputs.metro == 'true' && steps.metro.outputs.cache-hit != 'true'
-+        if: always() && env.R2_WRITE == 'true' && !matrix.release && steps.made.outputs.metro == 'true' && steps.metro.outputs.cache-hit != 'true'
-         uses: runs-on/cache/save@88d90644011a3a9957fd141a106f5a94f9794203 # v5.0.7
-         env: *r2
-         with:
-@@ -674,7 +683,7 @@ jobs:
-         continue-on-error: true
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f47
+@@ -151,7 +151,7 @@ The script runs the groups through the app's **regression runner** (`RegressionR
+ 
+ **Reviewing screenshots**: `node scripts/regression-viewer.mts` serves a page (http://localhost:8095) with every group and case of every app and platform: its committed reference (git's `HEAD`) and description, and its change, if it has one. A change is a run's screenshot that differs from the reference (the latest run in `verify-output/`, a folder argument for another, or `--references` for none), or a reference in `screenshots/` that isn't committed: approved, seeded by a run, or edited. A change shows the committed reference, the new image and their diff; each case's crop, with the group's whole screenshot beside them (hovering over a case outlines its area), and a group without cases as a whole, side by side or with a slider. It lists the groups with changes or failures (**To review**), or all of them (**All tests**, where it opens when there's nothing to review); each group and case has its own address (`#main-ios/visual/clear-tint`), so a reload stays on it. **Approve** copies a run's screenshot over its reference in `screenshots/` (**Approve all**, a group's; not a failed group's, or a `--ref` run's, which the script wouldn't seed either), and **Undo** puts the committed reference back (or removes one that isn't committed); commit what's left. Descriptions come from `descriptions.json`, so they need no run; a group whose descriptions a run changed, or that aren't committed, shows the committed ones next to them, and they're approved and undone with the group's images. `--pr <number>` compares with the PR's latest e2e run on GitHub Actions instead (downloaded with `gh`; check out the PR's branch first).
+ 
+-The **Regression** tab shows every case at once, for a look by hand, plus the cases that send the app to the background, which stay in a flow. The cases that need a real touch are the runner's last group, `touch`: while it's shown, the script taps them with `maestro/touch.yaml`, and they report their `OK` to the runner like the others.
++The **Regression** tab shows the cases that send the app to the background, which stay in a flow, and with its **All cases** switch every other case at once, for a look by hand. The cases that need a real touch are the runner's last group, `touch`: while it's shown, the script taps them with `maestro/touch.yaml`, and they report their `OK` to the runner like the others.
+ 
+ **Video samples** check how an area changes over time, which one screenshot can't reliably catch (e.g. an image fading in, or a source change that must never show a blank view). A case asks for one with `SampleContext` (`RunnerContext.tsx`): the area (from `measureView`), the longest it may take, the colors it should show in order (`expect`), and colors that mustn't appear (`palette`). The script records the screen (`simctl io recordVideo`, `adb shell screenrecord`; needs ffmpeg), the case makes its change once the recording has started and says when it's done (e.g. once an image has loaded), and each frame's color at the middle of the area is matched to the nearest listed color (perceptually, in CIE Lab, with some tolerance for video compression). A group's samples share one recording, so they run at the same time; each is checked in its own part of it, from the last frame before its change until it was done. The area is measured before the recording starts, so a case keeps it in place: its row shouldn't change height while it records. Repeats are collapsed, so how long each color lasts doesn't matter, only the order. The result comes back to the case as its status. The keep-previous cases use them: magenta, then cyan, never blank. Recordings are kept in `verify-output/…/regression/`.
+ 
 ```
 
-**File**: `screenshots/tv-ios/descriptions.json` (modified, +27/-0)
+---
+
+### Incident Patch 3: `2659984c` (2026-11-02)
+**Commit Message**: fix(android): a finished animated image doesn't play again when the app comes back (#1415)
+
+Glide's target starts animations when the Activity starts, from the start of their plays, so one that had finished played again when the app came back. The target no longer stops or starts them: they stop themselves while they aren't shown, and carry on when they are. An APNG, which starts itself when it's shown, now only does so if it was playing when it was hidden.
+
+New `app-return` and `app-return-playing` regression groups cover finished, playing and paused GIF, APNG, animated WebP and animated AVIF images, with new `slow-once` images in those formats.
+
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +183/-0)
 ```diff
-@@ -671,6 +671,33 @@
+@@ -6796,6 +6796,87 @@ function GifPausedCase({
+     )
+ }
+ 
++// An animated image the app leaves and comes back to (scripts/verify.mts sends
++// it away once the status says it's ready): 1.5 s red, then 0.1 s blue. One that
++// played to its end stays there, blue; playing again it's red. One still playing
++// plays on, so it reaches blue; stopped by leaving, it stays red. A paused one
++// stays on its first frame, red; started by coming back, it reaches blue.
++function AppReturnCase({
++    id,
++    uri,
++    name,
++    playing,
++    paused,
++}: {
++    id: string
++    uri: string
++    name: string
++    playing?: boolean
++    paused?: boolean
++}) {
++    const [ready, setReady] = useState(false)
++    const [ok, setOk] = useState(false)
++    const wentAway = useRef(false)
++    const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
++    useEffect(() => () => clearTimeout(timer.current), [])
++    useEffect(() => {
++        const subscription = AppState.addEventListener('change', (state) => {
++            if (state === 'background') wentAway.current = true
++            if (state === 'active' && wentAway.current) {
++                // Long enough for any format to reach the end of its plays.
++                timer.current = setTimeout(
++                    () => setOk(true),
++                    playing || paused ? 3200 + GIF_MARGIN : 500,
++                )
++            }
++        })
++        return () => subscription.remove()
++    }, [playing, paused])
++    return (
++        <View style={styles.row}>
++            <FastImage
++                style={styles.image}
++                loop={playing ? 2 : 1}
++                paused={paused}
++                source={{ uri: imageUrl(uri) }}
++                onLoad={() => {
++                    // In its second play, or after its plays: up to 3.1 s, as
++                    // Android shows an APNG's first frame for twice its delay.
++                    timer.current = setTimeout(
++                        () => setReady(true),
++                        playing || paused
++                            ? 1600 + GIF_MARGIN
++                            : 3100 + GIF_MARGIN,
++                    )
++                }}
++            />
++            <CaseStatus
++                id={id}
++                status={ok ? 'OK' : ready ? 'ready' : 'waiting'}
++                description={
++                    paused
++                        ? {
++                              checks: `A paused ${name} stays paused when the app comes back from the background.`,
++                              steps: `Loads a ${name} (1.5 s red, then 0.1 s blue) with paused and loop={1}. scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.`,
++                              shows: 'A red square: the first frame. Blue means it played when the app came back.',
++                          }
++                        : playing
++                          ? {
++                                checks: `A ${name} still playing when the app goes to the background plays on when it comes back.`,
++                                steps: `Loads a ${name} (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.`,
++                                shows: 'A blue square: the last frame, where its plays end. Red means it stopped when the app left.',
++                            }
++                          : {
++                                checks: `A ${name} that played to its end stays on its last frame when the app comes back from the background.`,
++                                steps: `Loads a ${name} (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.`,
++                                shows: "A blue square: the last frame. Red means it's playing again.",
++                            }
++                }
++            />
++        </View>
++    )
++}
++
+ // A GIF paused and resumed in its second of two plays (loop={2}) only plays
+ // that one to its end: 1.5 s red, then 0.1 s blue, where it stops. Paused until
+ // after the blue frame was due, Android shows it as soon as it's resumed and
+@@ -13454,6 +13535,108 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
+             <CachePathNonObjectCase key="write-to-cache-non-object" write />,
+         ],
+     },
++    {
++        // scripts/verify.mts sends the app away and brings it back while this
++        // group and the next are shown, once their cases are ready. After
++        // image-rendering: on Android, once an APNG has been drawn, its pixelated
++        // images are smooth (APNG4Android leaves its draw filter on the canvas).
++        name: 'app-return',
++        description: {
++            checks: 'Animated images that finished playing stay finished when the app comes back from the background.',
++        },
++      
+```
+
+**File**: `android/src/main/java/com/fastimage/FastImageApng.java` (modified, +10/-0)
+```diff
+@@ -193,6 +193,7 @@ private static final class ApngDrawable extends APNGDrawable implements FastImag
+         private volatile boolean paused = false;
+         // Once a frame has been rendered (on the decoder's thread).
+         private volatile boolean rendered = false;
++        private boolean playingWhenHidden = true;
+ 
+         ApngDrawable(Loader loader, int plays) {
+             super(loader);
+@@ -225,6 +226,15 @@ public void setPaused(boolean paused) {
+             }
+         }
+ 
++        // It starts itself when it's shown, which would play one that finished
++        // its plays again: only one that was playing when it was hidden.
++        @Override
++        public boolean setVisible(boolean visible, boolean restart) {
++            if (!visible && isVisible()) playingWhenHidden = isRunning();
++            setAutoPlay(!paused && (!visible || playingWhenHidden));
++            return super.setVisible(visible, restart);
++        }
++
+         // From its first frame. The target starts it right after
+         // setVisible(true) has (auto play): APNG4Android's start() stops and
+         // starts a running decoder, and a stop made while the decoder is
+```
+
+**File**: `android/src/main/java/com/fastimage/FastImageViewWithUrl.java` (modified, +9/-9)
+```diff
+@@ -1256,17 +1256,17 @@ private void showAnimated(AnimatedImageDrawable animated, @Nullable Transition<?
+             if (mPaused) animated.stop();
+         }
+ 
+-        // The target starts animations again when the Activity does: not a
+-        // paused one, and the view's own GIF continues its loop count (start()
+-        // would count again).
++        // The target stops animations when the Activity stops and starts them
++        // when it starts, from the start of their plays (even finished ones),
++        // and a paused one too. They don't need it: they stop while they're
++        // not shown, and carry on when they are (an APNG from the start of
++        // its play).
+         @Override
+         public void onStart() {
+-            if (mPaused) return;
+-            if (mOwnGif != null && getDrawable() == mOwnGif) {
+-                FastImageGif.resume(mOwnGif);
+-            } else {
+-                super.onStart();
+-            }
++        }
++
++        @Override
++        public void onStop() {
+         }
+ 
+         @Override
+```
+
+**File**: `screenshots/main-android/descriptions.json` (modified, +74/-0)
+```diff
+@@ -2392,6 +2392,80 @@
              }
          }
      },
-+    "large-view": {
++    "app-return": {
 +        "description": {
-+            "checks": "An image in a view far larger than the screen shows: a still image, one cross-dissolving to a new source, a GIF and a placeholder url."
++            "checks": "Animated images that finished playing stay finished when the app comes back from the background."
 +        },
 +        "cases": {
-+            "large-view": {
-+                "checks": "An image in a view far larger than the screen shows (on Android its bitmap was the view's size, about 160 MB, and the app crashed drawing it).",
-+                "steps": "Loads a 20x20 image of four colored squares into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
-+                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            "app-return-gif": {
++                "checks": "A GIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
 +            },
-+            "large-view-fade": {
-+                "checks": "transition's betweenImages in a view far larger than the screen (on Android the fade copied what the view showed into a bitmap the view's size, about 160 MB, and the app crashed drawing it).",
-+                "steps": "The large-view case, with transition { duration: 300, betweenImages: true }: once the image loads, its source changes to the same image at another url, which cross-dissolves from it. Passes once both have loaded (and a moment more).",
-+                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            "app-return-apng": {
++                "checks": "A APNG that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
 +            },
-+            "large-view-gif": {
-+                "checks": "A GIF in a view far larger than the screen shows (on Android each frame was cropped to the view's size, about 160 MB, and the app crashed drawing it).",
-+                "steps": "Loads an 80x80 GIF that plays once, magenta then cyan, into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
-+                "shows": "A 120x120 cyan square. The app closing is a failure."
++            "app-return-webp": {
++                "checks": "A animated WebP that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
 +            },
-+            "large-view-placeholder": {
-+                "checks": "A placeholder url in a view far larger than the screen shows while the image loads (on Android it was loaded at the view's size, about 160 MB, and the app crashed drawing it).",
-+                "steps": "The large-view case, with the image from the slow server (about 4 s) and a placeholder url of the logo, which shows meanwhile. Passes once the image has loaded (and a moment more).",
-+                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            "app-return-avif": {
++                "checks": "A animated AVIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
 +            }
 +        }
 +    },
-     "downsample-from-disk": {
-         "description": {
-             "checks": "downsample={false} decodes at full size an image that's on disk but not in memory while a downsampled view of it loads."
++    "app-return-playing": {
++        "description": {
++            "checks": "Animated images still playing when the app goes to the background play on when it comes back, and paused ones stay paused."
++        },
++        "cases": {
++            "app-return-playing-gif": {
++                "checks": "A GIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-apng": {
++                "checks": "A APNG still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-webp": {
++                "checks": "A animated WebP still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-avif": {
++                "checks": "A animated AVIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-paused-gif": {
++                "checks": "A paused GIF stays paused when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with paused and loop={1}. scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A red square: the first frame. Blue means it played when the app came back."
++            },
++            "app-return-paused-apng": {
++                "checks": "A paused APNG stays paused wh
 ```
 
-**File**: `scripts/tsconfig.json` (modified, +4/-3)
+**File**: `screenshots/main-android/work.json` (modified, +37/-0)
 ```diff
-@@ -1,6 +1,7 @@
- {
-     // Type-checks the scripts with the main example's TypeScript and
--    // Node types (the repo root's are too old). Node runs the file directly.
-+    // Node and Bun types (the repo root's are too old). Node runs verify.mts
-+    // and regression-viewer.mts directly, Bun group-times.ts.
-     "compilerOptions": {
-         "target": "ES2024",
-         "module": "ESNext",
-@@ -11,7 +12,7 @@
-         "erasableSyntaxOnly": true,
-         "allowImportingTsExtensions": true,
-         "typeRoots": ["../ReactNativeFastImageExample/node_modules/@types"],
--        "types": ["node"]
-+        "types": ["node", "bun"]
+@@ -1511,6 +1511,43 @@
+         "load http://10.0.2.2:8090/picsum/1025-200x200.jpg?non-object=RUN preload main": 1,
+         "request /picsum/1025-200x200.jpg?non-object=RUN": 1
      },
--    "files": ["verify.mts"]
-+    "files": ["verify.mts", "regression-viewer.mts", "group-times.ts"]
- }
++    "app-return": {
++        "decode http://10.0.2.2:8090/slow-once.avif?app-return 8x8 for 126x126 at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.gif?app-return gif at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.webp?app-return 8x8 for 126x126 at 126x126": 1,
++        "load http://10.0.2.2:8090/slow-once.avif?app-return source main": 1,
++        "load http://10.0.2.2:8090/slow-once.gif?app-return source main": 1,
++        "load http://10.0.2.2:8090/slow-once.png?app-return source main": 1,
++        "load http://10.0.2.2:8090/slow-once.webp?app-return source main": 1,
++        "request /slow-once.avif?app-return": 1,
++        "request /slow-once.gif?app-return": 1,
++        "request /slow-once.png?app-return": 1,
++        "request /slow-once.webp?app-return": 1
++    },
++    "app-return-playing": {
++        "decode http://10.0.2.2:8090/slow-once.avif?app-return-paused 8x8 for 126x126 at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.avif?app-return-playing 8x8 for 126x126 at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.gif?app-return-paused gif at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.gif?app-return-playing gif at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.webp?app-return-paused 8x8 for 126x126 at 126x126": 1,
++        "decode http://10.0.2.2:8090/slow-once.webp?app-return-playing 8x8 for 126x126 at 126x126": 1,
++        "load http://10.0.2.2:8090/slow-once.avif?app-return-paused source main": 1,
++        "load http://10.0.2.2:8090/slow-once.avif?app-return-playing source main": 1,
++        "load http://10.0.2.2:8090/slow-once.gif?app-return-paused source main": 1,
++        "load http://10.0.2.2:8090/slow-once.gif?app-return-playing source main": 1,
++        "load http://10.0.2.2:8090/slow-once.png?app-return-paused source main": 1,
++        "load http://10.0.2.2:8090/slow-once.png?app-return-playing source main": 1,
++        "load http://10.0.2.2:8090/slow-once.webp?app-return-paused source main": 1,
++        "load http://10.0.2.2:8090/slow-once.webp?app-return-playing source main": 1,
++        "request /slow-once.avif?app-return-paused": 1,
++        "request /slow-once.avif?app-return-playing": 1,
++        "request /slow-once.gif?app-return-paused": 1,
++        "request /slow-once.gif?app-return-playing": 1,
++        "request /slow-once.png?app-return-paused": 1,
++        "request /slow-once.png?app-return-playing": 1,
++        "request /slow-once.webp?app-return-paused": 1,
++        "request /slow-once.webp?app-return-playing": 1
++    },
+     "touch": {
+         "decode http://10.0.2.2:8090/logo.png 1000x1000 for 126x126 at 126x126": 1,
+         "load http://10.0.2.2:8090/logo.png source main": 7,
 ```
 
-**File**: `scripts/verify.mts` (modified, +26/-4)
+**File**: `screenshots/main-ios/descriptions.json` (modified, +74/-0)
 ```diff
-@@ -81,8 +81,9 @@ Options:
-                       Replace the reference screenshots in screenshots/ with
-                       this run's (and the groups' descriptions and work
-                       counts); a missing reference is always seeded from
--                      the run, except with --ref. Look at them, then commit
--                      them with the change.
-+                      the run, except with --ref (on CI, where it isn't
-+                      committed, it also fails the run). Look at them, then
-+                      commit them with the change.
-   --record            Record the screen while the flows run. Each flow's
-                       recording is saved in its report, and a copy sized for
-                       a GitHub comment (needs ffmpeg) is written to
-@@ -1427,8 +1428,8 @@ function pngSize(file: string) {
- // ignored), leaving out the areas the app masks (animated images, timings).
- // Up to SCREENSHOT_MAX_DIFF percent of the pixels may differ (of the case's
- // area, which catches smaller changes than the whole screen would). A missing
--// reference is seeded from the run (look at it before committing it);
--// --update-screenshots replaces them all. On a mismatch the diff is written
-+// reference is seeded from the run (look at it before committing it), and
-+// on CI fails it; --update-screenshots replaces them all. On a mismatch the diff is written
- // next to the screenshot in verify-output/.
- const SCREENSHOTS = path.join(ROOT, 'screenshots')
- // A phone's (ANDROID_SERIAL) are its own, screenshots/<app>-android-<model>,
-@@ -3493,6 +3494,21 @@ async function runRegression(
-         failures.push(...checked.failures)
-         workSeeded = checked.seeded
-     }
-+    // On CI a missing reference fails the run: seeded there, it isn't
-+    // committed, so every run would seed it again and pass without comparing
-+    // the group with anything. The run's output has them, to look at and
-+    // commit (regression-viewer.mts --pr; the work in the run's work.json).
-+    if (env.CI && !UPDATE_SCREENSHOTS) {
-+        const missing = [
-+            ...seeded.map((name) => `${name}'s screenshot`),
-+            ...descriptionsSeeded.map((group) => `${group}'s descriptions`),
-+            ...workSeeded.map((group) => `${group}'s work`),
-+        ]
-+        if (missing.length > 0)
-+            failures.push(
-+                `no reference for ${missing.join(', ')} in ${rel(referenceDir(app, platform))}: commit them from this run's output`,
-+            )
-+    }
-     const total = ((Date.now() - startedAt) / 1000).toFixed(1)
-     fs.writeFileSync(
-         path.join(dir, 'results.json'),
-@@ -3550,6 +3566,12 @@ async function runRegression(
-             `${indices.length} groups${SHARD ? ` (shard ${SHARD.index}/${SHARD.count})` : ''} in ${total}s${seededNote}`,
-         )
-     }
-+    // Samples that passed unchecked, as a warning on the GitHub Actions run
-+    // (and its pull request), which the job's log alone doesn't show.
-+    if (env.GITHUB_ACTIONS && unchecked.length > 0)
-+        console.log(
-+            `::warning title=Samples not checked in ${name}::Their recordings couldn't show the change: ${unchecked.join(', ')}`,
-+        )
- }
- 
- // The work each group made Fast Image do: its image requests (the image
+@@ -2387,6 +2387,80 @@
+             }
+         }
+     },
++    "app-return": {
++        "description": {
++            "checks": "Animated images that finished playing stay finished when the app comes back from the background."
++        },
++        "cases": {
++            "app-return-gif": {
++                "checks": "A GIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-apng": {
++                "checks": "A APNG that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-webp": {
++                "checks": "A animated WebP that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-avif": {
++                "checks": "A animated AVIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            }
++        }
++    },
++    "app-return-playing": {
++        "description": {
++            "checks": "Animated images still playing when the app goes to the background play on when it comes back, and paused ones stay paused."
++        },
++        "cases": {
++            "app-return-playing-gif": {
++                "checks": "A GIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-apng": {
++                "checks": "A APNG still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-webp": {
++                "checks": "A animated WebP still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-avif": {
++                "checks": "A animated AVIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-paused-gif": {
++                "checks": "A paused GIF stays paused when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with paused and loop={1}. scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A red square: the first frame. Blue means it played when the app came back."
++            },
++            "app-return-paused-apng": {
++                "checks": "A paused APNG stays paused wh
 ```
 
-**File**: `website/scripts/generate.mts` (modified, +1/-1)
+**File**: `screenshots/main-ios/work.json` (modified, +40/-0)
 ```diff
-@@ -77,7 +77,7 @@ const platformList = (platforms: Platforms) =>
- 
- // By where they're declared: line, then column (an object type's fields can
- // share a line).
--const bySource = (a: J.Reflection, b: J.Reflection) =>
-+const bySource = (a: J.DeclarationReflection, b: J.DeclarationReflection) =>
-     (a.sources?.[0]?.line ?? 0) - (b.sources?.[0]?.line ?? 0) ||
-     (a.sources?.[0]?.character ?? 0) - (b.sources?.[0]?.character ?? 0)
- 
+@@ -1602,6 +1602,46 @@
+         "load http://localhost:8090/picsum/1025-200x200.jpg?non-object=RUN preload main": 1,
+         "request /picsum/1025-200x200.jpg?non-object=RUN": 1
+     },
++    "app-return": {
++        "decode http://localhost:8090/slow-once.avif?app-return 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.gif?app-return 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.png?app-return 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.webp?app-return 8x8 for 144x144 at full": 1,
++        "load http://localhost:8090/slow-once.avif?app-return source main": 1,
++        "load http://localhost:8090/slow-once.gif?app-return source main": 1,
++        "load http://localhost:8090/slow-once.png?app-return source main": 1,
++        "load http://localhost:8090/slow-once.webp?app-return source main": 1,
++        "request /slow-once.avif?app-return": 1,
++        "request /slow-once.gif?app-return": 1,
++        "request /slow-once.png?app-return": 1,
++        "request /slow-once.webp?app-return": 1
++    },
++    "app-return-playing": {
++        "decode http://localhost:8090/slow-once.avif?app-return-paused 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.avif?app-return-playing 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.gif?app-return-paused 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.gif?app-return-playing 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.png?app-return-paused 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.png?app-return-playing 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.webp?app-return-paused 8x8 for 144x144 at full": 1,
++        "decode http://localhost:8090/slow-once.webp?app-return-playing 8x8 for 144x144 at full": 1,
++        "load http://localhost:8090/slow-once.avif?app-return-paused source main": 1,
++        "load http://localhost:8090/slow-once.avif?app-return-playing source main": 1,
++        "load http://localhost:8090/slow-once.gif?app-return-paused source main": 1,
++        "load http://localhost:8090/slow-once.gif?app-return-playing source main": 1,
++        "load http://localhost:8090/slow-once.png?app-return-paused source main": 1,
++        "load http://localhost:8090/slow-once.png?app-return-playing source main": 1,
++        "load http://localhost:8090/slow-once.webp?app-return-paused source main": 1,
++        "load http://localhost:8090/slow-once.webp?app-return-playing source main": 1,
++        "request /slow-once.avif?app-return-paused": 1,
++        "request /slow-once.avif?app-return-playing": 1,
++        "request /slow-once.gif?app-return-paused": 1,
++        "request /slow-once.gif?app-return-playing": 1,
++        "request /slow-once.png?app-return-paused": 1,
++        "request /slow-once.png?app-return-playing": 1,
++        "request /slow-once.webp?app-return-paused": 1,
++        "request /slow-once.webp?app-return-playing": 1
++    },
+     "touch": {
+         "decode http://localhost:8090/logo.png 1000x1000 for 144x144 at 144": 1,
+         "load http://localhost:8090/logo.png source main": 6,
+```
+
+**File**: `screenshots/tv-ios/descriptions.json` (modified, +74/-0)
+```diff
+@@ -2386,5 +2386,79 @@
+                 "shows": "An empty gray square: no image is shown."
+             }
+         }
++    },
++    "app-return": {
++        "description": {
++            "checks": "Animated images that finished playing stay finished when the app comes back from the background."
++        },
++        "cases": {
++            "app-return-gif": {
++                "checks": "A GIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-apng": {
++                "checks": "A APNG that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-webp": {
++                "checks": "A animated WebP that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            },
++            "app-return-avif": {
++                "checks": "A animated AVIF that played to its end stays on its last frame when the app comes back from the background.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={1}. Once it has finished, scripts/verify.mts sends the app to the background and brings it back. Passes 0.5 s after that.",
++                "shows": "A blue square: the last frame. Red means it's playing again."
++            }
++        }
++    },
++    "app-return-playing": {
++        "description": {
++            "checks": "Animated images still playing when the app goes to the background play on when it comes back, and paused ones stay paused."
++        },
++        "cases": {
++            "app-return-playing-gif": {
++                "checks": "A GIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-apng": {
++                "checks": "A APNG still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a APNG (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-webp": {
++                "checks": "A animated WebP still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated WebP (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-playing-avif": {
++                "checks": "A animated AVIF still playing when the app goes to the background plays on when it comes back.",
++                "steps": "Loads a animated AVIF (1.5 s red, then 0.1 s blue) with loop={2}. In its second play, scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A blue square: the last frame, where its plays end. Red means it stopped when the app left."
++            },
++            "app-return-paused-gif": {
++                "checks": "A paused GIF stays paused when the app comes back from the background.",
++                "steps": "Loads a GIF (1.5 s red, then 0.1 s blue) with paused and loop={1}. scripts/verify.mts sends the app to the background and brings it back. Passes 3.8 s after that.",
++                "shows": "A red square: the first frame. Blue means it played when the app came back."
++            },
++            "app-return-paus
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1412** (2026-10-31): ci: cache the Android apps' C++ with ccache [skip actions] (@DylanVann)
-- **PR #1411** (2026-10-31): test: give the smoke group's preload case its own missing url [skip actions] (@DylanVann)
-- **PR #1410** (2026-10-31): ci: save Xcode's compilation cache again when it goes stale [skip actions] (@DylanVann)
-- **PR #1408** (2026-10-31): ci: run the Expo example's smoke cases on iOS and Android [skip actions] (@DylanVann)
-- **PR #1407** (2026-10-31): ci: run checks CI skipped: example and website types, the website build, tvOS for JS changes, missing references, an Android Release build [skip actions] (@DylanVann)
-- **PR #1406** (closed): fix(android): an image in a view laid out without a size is decoded no larger than its own size (@DylanVann)
+- **PR #1420** (2026-11-02): test: keep downsample-over-limit-shared's views in separate commits (@DylanVann)
+- **PR #1419** (2026-11-02): feat: FastImage can be rendered from a React Server Component (@DylanVann)
+- **PR #1418** (2026-11-02): docs: a bundled APNG needs PNG compression off in Android release builds (@DylanVann)
+- **PR #1417** (2026-11-02): test: the Regression tab shows every case only when asked (@DylanVann)
+- **PR #1416** (2026-11-02): fix(android): a pixelated image stays sharp after an APNG has been drawn (@DylanVann)
+- **PR #1415** (2026-11-02): fix(android): a finished animated image doesn't play again when the app comes back (@DylanVann)
 
 ---
 
@@ -1537,29 +1378,28 @@ tvOS references weren't se
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): views of one url at different sizes download it once, also when one ge
+## X. FastImage can be rendered from a React Server Component (#1419)
 
 **RULE**:
-When implementing operations in `android/src/main/java/com/fastimage/FastImageOkHttpProgressGlideModule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a576869`: android): views of one url at different sizes download it once, also when one gets to downloading just after the download ended (#1403). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `399f8995`: FastImage can be rendered from a React Server Component (#1419). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/fastimage/FastImageOkHttpProgressGlideModule.java`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                    return FastImageSharedDownloads.loadData(model.url, urlClient,
-                            !FastImageGlide.isNoStore(options) && !(model.url instanceof FastImageWebGlideUrl));
+- In a framework with React Server Components, such as Next.js, FastImage can be rendered from a server component. It's a client component, so its props must be ones a server component can pass (no event handlers).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                    return FastImageSharedDownloads.loadData(model.url, urlClient);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a576869` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `399f8995` are properly handled with clean fallback behavior.

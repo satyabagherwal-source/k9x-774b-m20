@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `27a6ff0c`  
+> **Source Version**: `7c71db93`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:24:25.326Z  
+> **Timestamp**: 2026-11-04T16:43:04.769Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:24:23.302Z  
+> **Harvest Timestamp**: 2026-11-04T16:43:04.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6240 stars
+- **Stars / Engagement**: 6249 stars
 
 ---
 
@@ -2457,11 +2457,11 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #575** (2026-10-20): **[False Positive] redirect-truncate-dynamic-path treats `>>"$X"` (no space) as a truncating redirect; `>> "$X"` is ignored as documented**
-  *Symptoms*: ### Blocked Command  echo done >>"$LOG"  ### Expected Behavior  This is an append, and the redirect rule is documented to ignore appends. The [changelog entry](https://github.com/Dicklesworthstone/destructive_command_guard/blob/v0.15.0/CHANGELOG.md) that moved `>> /etc/passwd` and `>> ~/.bashrc` to their own scenario says: "Appending does not truncate, which is why the *redirect* rule ignores `>>`". The rule's own deny text also recommends "Use append (`>>`) when preserving existing content is acceptable". So `>>"$LOG"` and `>> "$LOG"` should get the same verdict, and they don't:  | Command | Observed (0.15.3) | |---|---| | `echo done >>"$LOG"` | deny, redirect-truncate-dynamic-path | | `echo done >> "$LOG"` | allow | | `echo done >>$LOG` | deny | | `echo done >> $LOG` | allow | | `echo done 2>>"$LOG"` | deny | | `echo done 2>> "$LOG"` | allow | | `echo done >>"$HOME/notes.txt"` | deny | | `echo done >> "$HOME/notes.txt"` | allow | | `echo done >>"/tmp/log"` | allow |  **Must stay blocked**, and they do, through credential-file-write in both spellings: `echo x >>~/.bashrc`, `echo x >> ~/.bashrc`, `echo x >>"$HOME/.bashrc"`, `echo x >> "$HOME/.bashrc"`.  Expected: `>>` with or without a following space is an append, and the truncate rule skips it either way.  ### Output of `dcg explain`  ```shell ══════════════════════════════════════════════════════════════════ DCG EXPLAIN ══════════════════════════════════════════════════════════════════  Decision: DENY Latency:  2.5ms  ─── 
+- **Issue #611** (2026-11-04): **[False Positive] heredoc.posix:pipeline-consumer: `… | perl -pe 's/x//'` denied while `… | perl -p -e 's/x//'` is allowed (bundled -e not read) (0.15.3 and main)**
+  *Symptoms*: ### Blocked Command  cat /tmp/t.txt | perl -pe 's/x//'  ### Expected Behavior  `perl -pe CODE` is `perl -p -e CODE`: the program is the `-e` argument and the piped text is data. dcg already treats the split spelling that way. The bundled one, which is how these one-liners are usually written, is refused:  | Command | Observed (0.15.3) | |---|---| | `cat /tmp/t.txt \| perl -pe 's/x//'` | deny, heredoc.posix:pipeline-consumer | | `cat /tmp/t.txt \| perl -p -e 's/x//'` | allow | | `cat /tmp/t.txt \| perl -ne 'print'` | deny | | `cat /tmp/t.txt \| perl -n -e 'print'` | allow | | `cat /tmp/t.txt \| perl -lne 'print'` | deny | | `cat /tmp/t.txt \| perl -l -n -e 'print'` | allow | | `cat /tmp/t.txt \| perl -anE 'say $F[0]'` | deny | | `cat /tmp/t.txt \| perl -a -n -E 'say $F[0]'` | allow | | `cat /tmp/t.txt \| perl -le 'print 1'` | deny | | `cat /tmp/t.txt \| perl -i -pe 's/x//'` | deny | | `cat /tmp/t.txt \| ruby -ne 'puts $_'` | deny | | `cat /tmp/t.txt \| ruby -n -e 'puts $_'` | allow | | `cat /tmp/t.txt \| ruby -pe '$_.upcase!'` | deny | | `cat /tmp/t.txt \| ruby -p -e '$_.upcase!'` | allow | | `cat /tmp/t.txt \| perl -pe 's/x//' \| sort` | deny | | `cat /tmp/t.txt \| perl -p -e 's/x//' \| sort` | allow | | `perl -pe 's/x//' /tmp/t.txt` | allow | | `perl -pe 's/x//' < /tmp/t.txt` | allow |  **Must stay blocked**, and they do. Reading the cluster loses nothing, because the program is judged on its own: `cat /tmp/t.txt | perl -p -e 'system("git reset --hard")'` and `perl -pe 'syst
 
-- **Issue #574** (2026-10-20): **[False Positive] redirect-truncate-dynamic-path drops a same-command literal assignment after a grouped `printf "$(…)"`, a second prefix assignment, or an unrelated `read`/`printf -v`**
-  *Symptoms*: ### Blocked Command  S=/tmp/x; { printf a "$(true)"; } > "$S/o"  ### Expected Behavior  `S` is bound to a literal temp path in the same command and nothing between the assignment and the redirect can rebind it, so `"$S/o"` resolves to `/tmp/x/o` and the write should be allowed, as its ungrouped twin is. The [0.15.0 changelog](https://github.com/Dicklesworthstone/destructive_command_guard/blob/v0.15.0/CHANGELOG.md) describes narrowing the variable-mutator list "so a plain `printf` no longer blocks an ordinary write"; these shapes still lose the binding proof. The table establishes that loss; I have not traced whether all three share one implementation cause.  **1. A plain `printf` with a substitution argument, only inside a group.**  | Command | Observed (0.15.3) | |---|---| | `S=/tmp/x; { printf a "$(true)"; } > "$S/o"` | deny | | `S=/tmp/x; printf a "$(true)" > "$S/o"` | allow (no group) | | `S=/tmp/x; { printf a; } > "$S/o"` | allow (no substitution) | | `S=/tmp/x; { echo a "$(true)"; } > "$S/o"` | allow (`echo`) | | `S=/tmp/x; { printf a $(true); } > "$S/o"` | deny (unquoted) | | ``S=/tmp/x; { printf a `true`; } > "$S/o"`` | deny (backticks) | | `S=/tmp/x; { printf a "$(true)"; } > /tmp/x/o` | allow (literal target) |  **2. A second assignment word in the same prefix.**  | Command | Observed (0.15.3) | |---|---| | `B=/tmp/b T=/tmp/t && cat a > "$B"` | deny | | `B=/tmp/b T=/tmp/t; cat a > "$B"` | deny | | `B=$(mktemp) T=$(mktemp) && cat a > "$B"` | deny | | `B=/tmp/b && T=/
+- **Issue #604** (2026-11-03): **[False Positive] heredoc.posix:substitution-unverified refuses a quoted heredoc that cat only writes to a file, when its body has a `$(…)` line and then a `trap` line**
+  *Symptoms*: ### Blocked Command  cat > f <<'SH' (a four-line heredoc; exact text under Expected Behavior)  ### Expected Behavior  ```bash cat > f <<'SH' X=$(pwd) trap x EXIT SH ```  This should be allowed. The delimiter is quoted, so the body is literal text that `cat` writes to `f`. Nothing expands the `$(pwd)` and nothing runs the `trap`. The same two lines run as a real command are allowed, and so is a copied body that holds `git reset --hard`. #440's fix (7ce336d, d2ebd76) settled the same question for `eval`, which asks "whether there is an eval whose source it cannot resolve, and an eval inside a body nothing executes is not one."  Every row is a heredoc written to `f` with `cat > f <<'SH'` unless the first column says otherwise. Body lines are separated by line breaks.  | Writer | Body | Observed (0.15.3) | |---|---|---| | `cat > f <<'SH'` | `X=$(pwd)`<br>`trap x EXIT` | **deny**, substitution-unverified | | `cat > f <<'SH'` | ``X=`pwd` ``<br>`trap x EXIT` | **deny** | | `cat <<'SH'` (no redirect) | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat <<'SH' > f` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `tee f >/dev/null <<'SH'` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<"SH"` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `echo $(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `X=$(pwd)`<br>`y`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `X=$(pwd)`<br>`trap 'rm -f /tmp/x' EXIT` | **deny** | | `cat > f <<SH` (unquoted) | `X=$(pwd)`<br>`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2478,946 +2478,692 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90fe7bf7` (2026-11-01)
-**Commit Message**: fix(python): revoke path proofs after opaque coercions
+### Incident Patch 1: `ff76198f` (2026-11-04)
+**Commit Message**: fix(evaluator): read PowerShell call, dot-source and script-block invoke statements as commands (#637) [skip ci]
 
-Path/string conversions and overloaded path operators could return an
-unknown value while retaining trusted factory and receiver identities.
-Unknown Python protocol hooks can change those identities, so later
-temporary cleanup must not inherit their earlier proof.
+Several PowerShell spellings that run a program were judged as inert:
 
-Invalidate trust for unresolved Path, str/fspath, join/joinpath and + or /
-operands. Separate primitive, inert and other captured values, and retain
-purity for known standard conversions without inventing a path identity.
-Conversions alone remain non-blocking without a deletion invocation.
+- The call operator after another statement. The segment splitter reads
+  every bare `&` as a separator, so in `Set-Location x; & '<path>\git.exe'
+  ...` the second segment lost its operator and its quoted program path read
+  as a string expression. Each statement-leading `&` after `;`, `|`, `&&`,
+  `||`, `{`, `(` or a newline is now read on its own with its operator; a
+  background `a & b` and `>&` are not.
+- The dot-source operator, which runs a program as `&` does, in front of a
+  literally named program (`. '<path>\git.exe' ...`), and a call operator
+  written against its program (`&'<path>\git.exe' ...`). The command is read
+  again with the operator spelled `& `, and the stricter verdict wins. A
+  dot-sourced variable or expression (`. $PROFILE`) is left as it was.
+- An invoke method (`.Invoke()`, `.InvokeReturnAsIs()`,
+  `.InvokeWithContext()`) on a script block literal, or on a variable bound
+  to one, and `. $sb`, now run the block's body through the evaluator. A
+  block that is only stored 
 
-Add 20 policy fixtures and five actual parser test groups. Exact source
-passes 290 policy cases, 61 actual inline tests, strict project Clippy and
-pinned formatting in the focused actual-source harness. Full Cargo and
-hook/CLI gates remain unavailable under workspace resource limits.
-
-Refs #626.
-
-**File**: `docs/patterns.md` (modified, +6/-0)
+**File**: `src/evaluator.rs` (modified, +305/-1)
 ```diff
-@@ -243,6 +243,12 @@ destinations do not receive this allowance. Absolute join components replace
- the prior base: `Path(tempfile.mkdtemp()) / '/etc/hosts'` remains denied.
- Replaced factories, modified dependencies, reflective binding mutation, and
- unsupported path transformations cannot establish temporary ownership.
-+Unresolved operands to path/string conversions and overloaded `+` or `/`
-+operations can execute Python hooks such as `__fspath__` or `__str__`; these
-+operations revoke later factory and receiver proofs. Conversions of known standard values
-+preserve unrelated cleanup proofs even when the result's exact path is unknown.
-+Conversions alone do not produce deletion findings: an actual destructive
-+invocation is still required.
- Analysis limits or an incomplete proof never establish a safe target.
- 
- ### Ruby
-```
-
-**File**: `src/ast_matcher/python_paths.rs` (modified, +118/-10)
-```diff
-@@ -210,6 +210,10 @@ enum Value {
-     Unknown,
-     Scalar,
-     None,
-+    // A selected standard text/path value without its path identity.
-+    Inert,
-+    // A non-deletion selection whose conversion behavior is unproved.
-+    Other,
-     Text(Path),
-     Path(Path),
-     Directory(Path),
-@@ -245,6 +249,19 @@ impl Value {
-         }
-     }
- 
-+    fn inert_conversion(&self) -> bool {
-+        matches!(
-+            self,
-+            Self::Scalar | Self::None | Self::Inert | Self::Text(_) | Self::Path(_)
-+        )
-+    }
-+
-+    fn inert_binary_operand(&self) -> bool {
-+        // Builtin container + and / dispatch does not convert its elements.
-+        // In contrast, str(container) can invoke an unknown element's repr.
-+        self.inert_conversion() || matches!(self, Self::Container(_))
-+    }
-+
-     fn capabilities(&self) -> Capabilities {
-         match self {
-             Self::Delete(call) => Capabilities {
-@@ -297,12 +314,20 @@ impl Value {
-     }
- 
-     fn captured(&self) -> Self {
--        if matches!(self, Self::Delete(Delete { trusted: true, .. })) {
-+        if matches!(
-+            self,
-+            Self::Scalar | Self::None | Self::Inert | Self::Delete(Delete { trusted: true, .. })
-+        ) {
-             self.clone()
-+        } else if matches!(self, Self::Text(_) | Self::Path(_)) {
-+            // Preserve inert conversion without granting a path through an
-+            // otherwise unsupported container value.
-+            Self::Inert
-         } else if *self != Self::Unknown && !self.has_capability() {
--            // A precise harmless slot must not fall back to another slot's
--            // possible deletion after the whole-body alias map coarsens.
--            Self::Scalar
-+            // A precise non-deletion slot must not fall back to another slot's
-+            // possible deletion. That fact alone does not prove its coercions
-+            // are inert: a nested container can hold unknown repr hooks.
-+            Self::Other
-         } else {
-             self.indirect()
-         }
-@@ -1746,17 +1771,32 @@ impl<'a> Scan<'a> {
-                     .field("operator")
-                     .map(|operator| operator.text().into_owned())
-                     .unwrap_or_default();
-+                let path_operator = matches!(operator.as_str(), "+" | "/");
-+                let inert_result =
-+                    path_operator && left.inert_conversion() && right.inert_conversion();
-+                if path_operator && (!left.inert_binary_operand() || !right.inert_binary_operand())
-+                {
-+                    // Overloaded operators and pathlib's path conversion can
-+                    // run user code. An unresolved result cannot preserve
-+                    // trusted factory or receiver identities afterward.
-+                    self.invalidate(env);
-+                }
-+                let unresolved = if inert_result {
-+                    Value::Inert
-+                } else {
-+                    Value::Unknown
-+                };
-                 match (operator.as_str(), left, right) {
-                     ("/", Value::Path(left), right) => right
-                         .path()
-                         .and_then(|right| left.join(right))
--                        .map_or(Value::Unknown, Value::Path),
-+                        .map_or(unresolved, Value::Path),
-                     ("+", Value::Text(Path::Literal(left)), Value::Text(Path::Literal(right)))
-                         if left.len() + right.len() <= MAX_VALUE_BYTES =>
-                     {
-                         Value::Text(Path::Literal(format!("{left}{right}").into()))
-                     }
--                    _ => Value::Unknown,
-+                    _ => unresolved,
-                 }
-             }
-             "conditional_expression" => {
-@@ -1972,6 +2012,23 @@ impl<'a> Scan<'a> {
+@@ -12323,7 +12323,9 @@ fn powershell_executable_block_bodies(command: &str) -> Result<Vec<&str>, ()> {
+         let Some(close) = find_powershell_script_block_close(command, open + 1) else {
+             return Err(());
          };
-         let args = self.arguments(node, env, depth + 1)?;
-         let plain = !args.uncertain && args.keywords.is_empty();
-+        let conversion = matches!(
-+            &function,
-+            Value::Symbol(Symbol::PathClass | Symbol::Str | Symbol::Join) | Value::Join(_)
-+        );
-+        let inert_conversion = conversion && args.positional.iter().all(Value::inert_conversion);
-+        if conversion && !inert_conversion {
-+            // Familiar constructors can dispatch unknown __fspath__/__str__
-+            // hooks. Losing the result's path proof must also lose the
-+            // identities that such hooks may have changed. Pure operands
-+            // retain trust even when a literal join cannot be resolved.
-+            self.invalidate(env);
-+        }
-+        let unresolved_conversion = if inert_conversion {
-+            Value::Inert
-+        } else {
-+            Value::Unknown
-+        };
-         let value = match function {
-             Value::Possible(possible) => {
-                 let kinds = u8::try_from(possible.direct & DELETE_KINDS).unwrap_or_default();
-@@ -2012,19 +2069,1
-```
-
-**File**: `tests/fixtures/python_tempfile_provenance.json` (modified, +21/-1)
-```diff
-@@ -232,5 +232,25 @@
-   {"id":"bindings_626_indirection_container_context_expiry","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nwith tempfile.TemporaryDirectory() as directory:\n    p = Path(directory) / 'lock'\n    actions = [p.unlink]\nactions[0]()"},
-   {"id":"bindings_626_indirection_getter_context_expiry","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nwith tempfile.TemporaryDirectory() as directory:\n    p = Path(directory) / 'lock'\n    erase = getattr(p, 'unlink')\nerase()"},
-   {"id":"bindings_626_indirection_item_store_through_alias","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\nactions = [print]\nalias = actions\nalias[0] = os.unlink\nactions[0]('/etc/hosts')"},
--  {"id":"bindings_626_callable_escaped_getattr_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\ngetattr(p, 'unl\\x69nk')()"}
-+  {"id":"bindings_626_callable_escaped_getattr_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\ngetattr(p, 'unl\\x69nk')()"},
-+  {"id":"bindings_626_coercion_path_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nPath(value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_str_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nstr(value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_fspath_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nimport os\nos.fspath(value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_os_join_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nimport os\nos.path.join('/tmp', value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_joinpath_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\np.joinpath(value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_addition_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nignored = value + 1\np.unlink()"},
-+  {"id":"bindings_626_coercion_division_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nignored = 1 / value\np.unlink()"},
-+  {"id":"bindings_626_coercion_conditional_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nif condition:\n    Path(value)\np.unlink()"},
-+  {"id":"bindings_626_coercion_definition_default_executes","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\ndef unused(arg=str(value)):\n    pass\np.unlink()"},
-+  {"id":"bindings_626_coercion_eager_comprehension_executes","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nignored = [str(item) for item in (value,)]\np.unlink()"},
-+  {"id":"bindings_626_coercion_caught_unknown","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\ntry:\n    str(value)\nexcept Exception:\n    pass\np.unlink()"},
-+  {"id":"bindings_626_coercion_known_path_operands","decision":"allow","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nimport os\nPath('/tmp/unused')\nstr(p)\nos.fspath(p)\nos.path.join('/tmp', 'unused')\np.joinpath('unused')\nos.path.join('/tmp', '..')\np.joinpath('..')\np.unlink()"},
-+  {"id":"bindings_626_coercion_pure_scalar_operations","decision":"allow","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import value\np = Path(tempfile.mkdtemp()) / 'child'\nstr(1)\nstr(None)\nstr(True)\nignored = 1 + 2\nignored = 4 / 2\nignored = '/tmp/' + 'unused'\np.unlink()"},
-+  {"id":"bindings_626_coercion_unused_function_body","decision
-```
-
----
-
-### Incident Patch 2: `089c4426` (2026-11-01)
-**Commit Message**: fix(python): retain deletion capabilities across containers and getters
-
-Invoking a captured deletion through a container subscription or a static
-getattr lookup could produce no finding. Track possible deletion identities
-separately from the proof that a target is safe.
-
-Preserve exact trusted captures for temporary-child cleanup, while joins,
-opaque effects, item mutation, and TemporaryDirectory exit revoke their
-safety proofs without erasing possible deletion. Keep unused captures and
-precise benign selections non-blocking. Propagate contained capabilities
-through mutable aliases.
-
-Bound snapshot size, depth, comparison, and diagnostics. Extend the
-incomplete-analysis fallback to static and escaped getattr member names,
-and ensure escaped names trigger the same parsed-tree path analysis.
-
-Add 33 deterministic fixtures and a shared-container-graph regression.
-Validation: 270 policy cases, 56 selected actual-source inline tests, the
-16-case fallback unit, pinned formatting, and strict production/test
-Clippy all pass in focused actual-source harnesses. Full application and
-hook/CLI integration validation remains blocked by workspace resources.
-
-Refs #626.
-
-**File**: `docs/patterns.md` (modified, +14/-0)
-```diff
-@@ -192,6 +192,20 @@ Conditional branches preserve a safety fact only when every reaching binding
- proves it. Loop assignments, shadowed parameters, and deferred function access
- to mutable outer paths cannot inherit a stale temporary-path allowance.
- 
-+Captured deletion functions also retain their identity through literal lists,
-+tuples, dictionary values, and builtin `getattr` with a static deletion member.
-+A finding requires an invocation: storing `p.unlink` or retrieving it alone
-+does not delete a file. Exact literal selection can preserve a trusted captured
-+method or function; unknown selection, merged identities, or mutation cannot
-+provide a temporary-path allowance. A supported builtin `getattr` lookup on a
-+known `Path` instance or `os` module follows the same target checks as direct
-+attribute access. Other reflective access remains conservative.
-+
-+If extraction or analysis is incomplete, captured deletion names remain a
-+blocking signal, including static `getattr` member names written with string
-+escapes. This fallback does not assert that an unused capture was invoked;
-+it cannot complete the proof that would establish that it stays unused.
-+
- Normal completion, `break`, `continue`, `return`, and exceptions retain separate
- path states. Unreachable assignments after an exit cannot replace the state
- that actually reaches a later deletion. Loop `else` clauses apply only on
-```
-
-**File**: `src/ast_matcher/python_paths.rs` (modified, +648/-56)
-```diff
-@@ -24,6 +24,13 @@ const OS_REMOVE: u8 = 2;
- const OS_RMDIR: u8 = 4;
- const PATH_UNLINK: u8 = 8;
- const PATH_RMDIR: u8 = 16;
-+const DELETE_KINDS: u16 = 31;
-+const MAY_OS: u16 = 1 << 5;
-+const MAY_GETATTR: u16 = 1 << 6;
-+const MAY_BUILTINS: u16 = 1 << 7;
-+const MAX_CONTAINER_ITEMS: usize = 32;
-+const MAX_CONTAINER_DEPTH: usize = 32;
-+const MAX_KEY_BYTES: usize = 1024;
- 
- fn rule(kind: u8) -> &'static str {
-     match kind {
-@@ -112,6 +119,8 @@ enum Symbol {
-     TemporaryDirectory,
-     Str,
-     Print,
-+    Getattr,
-+    Builtins,
+-        if powershell_prefix_opens_executable_block(&command[..open]) {
++        if powershell_prefix_opens_executable_block(&command[..open])
++            || powershell_block_literal_is_invoked(command, open, close)
++        {
+             if bodies.len() >= MAX_POWERSHELL_VISIBLE_STATEMENTS {
+                 return Err(());
+             }
+@@ -12338,6 +12340,187 @@ fn powershell_executable_block_bodies(command: &str) -> Result<Vec<&str>, ()> {
+     Ok(bodies)
  }
  
- #[derive(Clone, Debug, PartialEq, Eq)]
-@@ -122,6 +131,79 @@ struct Delete {
-     trusted: bool,
- }
- 
-+// Direct and contained capabilities are separate: storing a deletion does not
-+// invoke it, and a container's own remove method is not os.remove. Joins only
-+// union these finite masks; none of them carries a safe path or trusted object.
-+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-+struct Capabilities {
-+    direct: u16,
-+    contained: u16,
-+}
-+
-+impl Capabilities {
-+    const fn union(self, other: Self) -> Self {
-+        Self {
-+            direct: self.direct | other.direct,
-+            contained: self.contained | other.contained,
-+        }
++/// Whether the script block literal `{ … }` at `open..=close` is run by an
++/// invoke method on it, `{ … }.Invoke()` or `({ … }).InvokeReturnAsIs()`, or
++/// is bound to a variable that a later statement runs: `$sb = { … }` then
++/// `$sb.Invoke()`, `& $sb` or `. $sb` (#637). A block that is only stored or
++/// printed stays inert.
++fn powershell_block_literal_is_invoked(command: &str, open: usize, close: usize) -> bool {
++    let after = command.get(close + 1..).unwrap_or_default();
++    if powershell_text_starts_with_invoke_method(
++        after.trim_start_matches(|c: char| c == ')' || c.is_ascii_whitespace()),
++    ) {
++        return true;
 +    }
-+
-+    const fn any(self) -> bool {
-+        self.direct != 0 || self.contained != 0
-+    }
-+
-+    const fn selected(self) -> Self {
-+        Self {
-+            direct: self.contained,
-+            // Retain descendants after an unresolved selection so another
-+            // subscription cannot hide a nested deletion.
-+            contained: self.contained,
-+        }
-+    }
-+}
-+
-+#[derive(Clone, Debug, PartialEq, Eq)]
-+enum ContainerKey {
-+    Integer(i64),
-+    Text(Arc<str>),
-+}
-+
-+struct Container {
-+    entries: Vec<(ContainerKey, Value)>,
-+    sequence: bool,
-+    precise: bool,
-+    members: Capabilities,
-+    depth: usize,
-+    origins: Vec<usize>,
-+    unknown_origins: bool,
-+}
-+
-+impl std::fmt::Debug for Container {
-+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        formatter
-+            .debug_struct("Container")
-+            .field("entries", &self.entries.len())
-+            .field("precise", &self.precise)
-+            .field("members", &self.members)
-+            .field("depth", &self.depth)
-+            .field("origins", &self.origins.len())
-+            .field("unknown_origins", &self.unknown_origins)
-+            .finish_non_exhaustive()
-+    }
-+}
-+
-+// Snapshots are shared by Arc and compare only by identity. Recursive
-+// comparison of independently built shared graphs can amplify a short source
-+// exponentially outside the AST budget. Distinct snapshots instead join to
-+// their finite may-call summaries.
-+impl PartialEq for Container {
-+    fn eq(&self, other: &Self) -> bool {
-+        std::ptr::eq(self, other)
-+    }
-+}
-+
-+impl Eq for Container {}
-+
- #[derive(Clone, Debug, Default, PartialEq, Eq)]
- enum Value {
-     #[default]
-@@ -132,7 +214,8 @@ enum Value {
-     Path(Path),
-     Directory(Path),
-     Symbol(Symbol),
--    PossibleOs,
-+    Possible(Capabilities),
-+    Container(Arc<Container>),
-     Delete(Delete),
-     Join(Path),
-     PathRead,
-@@ -162,35 +245,74 @@ impl Value {
-         }
-     }
- 
--    fn lost(&self) -> Self {
-+    fn capabilities(&self) -> Capabilities {
-         match self {
--            Self::Delete(call) => Self::Delete(Delete {
--                kinds: call.kinds,
--                receiver: None,
--                bound: call.bound,
--                trusted: false,
--            }),
--            Self::Symbol(Symbol::Os) | Self::PossibleOs => Self::PossibleOs,
--            _ => Self::Unknown,
-+            Self::Delete(call) => Capabilities {
-+                direct: u16::from(call.kinds),
-+                contained: 0,
-+            },
-+            Self::Symbol(symbol) => Capabilities {
-+                direct: match symbol {
-+                    Symbol::Os => MAY_OS,
-+                    Symbol::Getattr => MAY_GETATTR,
-+                    Symbol::Builtins => MAY_BUILTINS,
-+                    _ => 0,
-+                },
-+                contained: 0,
-+            },
-+            Self::Possible(possible) => *possible,
-+            Self::Container(container) => Capabilities {
-+                direct: 0,
-+                contained: container.members.direct | container.members.contained,
-+            },
-+            _ => Capabilities::default(),
-+        }
-+    }
-+
-+    fn possible(possible: Capabilities) -> Self {
-+        if possible.any() {
-+            Self::Possible(possible)
-+        } else {
-+            Self::Unknown
-+        }
-+    }
-+
-+    fn has_capability(&self) -> bool {
-+        self.capabilities().any()
-+    }
-+
-+    fn lost(&self) -> Self {
-+        Self::possible(self.capabilities())
-+    }
-+
-+    // Literal snapshots retain exact selections until an opaque effect or a
-+    // join loses their identity. Only captured deletion functions may carry
-+    // receiver proofs; paths and module objects do not gain one b
-```
-
-**File**: `src/ast_pattern_engine.rs` (modified, +1/-1)
-```diff
-@@ -1897,7 +1897,7 @@ fn find_matches_ast(
-     // explicitly configured corpora authoritative: only registered rule IDs
-     // participate, and the analysis shares the worker's remaining deadline.
-     if language == ScriptLanguage::Python
--        && ["unlink", "remove", "rmdir"]
-+        && ["unlink", "remove", "rmdir", "getattr"]
-             .iter()
-             .any(|name| code.contains(name))
-     {
-```
-
-**File**: `src/evaluator.rs` (modified, +86/-1)
-```diff
-@@ -35624,6 +35624,45 @@ fn check_credential_write_fallback(
-     None
- }
- 
-+/// Conservatively retain static reflective deletion names after analysis failed.
-+///
-+/// The caller has already masked comments, quoted data and non-executing
-+/// heredocs. A completed Python scan still requires an actual invocation;
-+/// this fallback cannot prove that a captured capability remains unused.
-+fn python_reflective_deletion_fallback_hit(code: &str, has_os_import: bool) -> bool {
-+    static GETTER: LazyLock<regex::Regex> =
-+        LazyLock::new(|| regex::Regex::new(r"\bgetattr\b").expect("getattr signal compiles"));
-+    if !GETTER.is_match(code) {
++    let local = command[..open]
++        .rsplit([';', '\r', '\n', '|', '{', '}'])
++        .next()
++        .unwrap_or_default()
++        .trim();
++    let Some(name) = local
++        .strip_suffix('=')
++        .map(str::trim_end)
++        .and_then(|target| target.strip_prefix('$'))
++        .filter(|name| {
++            !name.is_empty()
++                && name
++                    .bytes()
++                    .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b':'))
++        })
++    else {
 +        return false;
-+    }
-+    static MEMBERS: LazyLock<RegexSet> = LazyLock::new(|| {
-+        let member = |name: &str| {
-+            // Match the same ASCII names when a static Python string uses
-+            // hex, Unicode or octal escapes, or adjacent/added literals.
-+            let letters: Vec<_> = name
-+                .bytes()
-+                .map(|byte| {
-+                    format!(
-+                        r"(?:{}|\\x(?i:{byte:02x})|\\u(?i:{byte:04x})|\\U(?i:{byte:08x})|\\{byte:03o})",
-+                        char::from(byte)
-+                    )
-+                })
-+                .collect();
-+            format!(
-+                r#"["']{}["']"#,
-+                letters.join(r#"(?:["'](?:\s|\\\r?\n)*\+?(?:\s|\\\r?\n)*[rRuUfF]{0,2}["'])?"#)
-+            )
-+        };
-+        RegexSet::new([
-+            format!("(?:{}|{})", member("unlink"), member("rmdir")),
-+            member("remove"),
-+        ])
-+        .expect("reflective Python deletion names compile")
-+    });
-+    let members = MEMBERS.matches(code);
-+    members.matched(0) || has_os_import && members.matched(1)
++    };
++    powershell_variable_is_invoked(after, name)
 +}
 +
- fn fallback_pattern_hit(command: &str) -> bool {
-     // Critical destructive patterns checked whenever high-fidelity embedded
-     // code analysis is incomplete (timeout, parse failure, or bounded input
-@@ -35798,7 +35837,9 @@ fn fallback_pattern_hit(command: &str) -> bool {
-         regex::Regex::new(r"\.(?:\s|\\\r?\n)*remove\b")
-             .expect("Python remove-member fallback compiles")
-     });
--    PYTHON_REMOVE_MEMBER.is_match(check_target) && PYTHON_OS_IMPORT.is_match(check_target)
-+    let has_os_import = PYTHON_OS_IMPORT.is_match(check_target);
-+    PYTHON_REMOVE_MEMBER.is_match(check_target) && has_os_import
-+        || python_reflective_deletion_fallback_hit(check_target, has_os_import)
- }
- 
- /// [`check_fallback_patterns`] over the whole command, whose denial yields to
-@@ -55865,6 +55906,9 @@ mod tests {
-                 for body in [
-                     "from pathlib import Path\np = Path('/etc/hosts')\nerase = p.unlink\nerase()",
-                     "erase = unknown.unlink\nerase()",
-+                    "from pathlib import Path\np = Path('/etc/hosts')\ngetattr(p, 'unlink')()",
-+                    "from pathlib import Path\np = Path('/etc/hosts')\nerase = getattr(p, 'unl\\x69nk')\nerase()",
-+                    "import os as operating_system\ngetattr(operating_system, 'remove')('/etc/hosts')",
-                     "erase = unknown . \\\n rmdir\nerase()",
-                     "from os import unlink as erase\nerase('/etc/hosts')",
-                     "from os import stat, remove as erase\nerase('/etc/hosts')",
-@@ -55889,6 +55933,43 @@ mod tests {
-             }
-         }
- 
-+        #[test]
-+        fn python_reflective_fallback_tracks_static_names_without_broad_getter_denial() {
-+            for code in [
-+                "getattr(p, 'unlink')()",
-+                "erase = getattr(p, 'rmdir')\nerase()",
-+                r"getattr(p, 'unl\x69nk')()",
-+                r"getattr(p, '\165\156\154\151\156\153')()",
-+                r"getattr(p, '\u0075\u006e\u006c\u0069\u006e\u006b')()",
-+                r"getattr(p, '\U00000075nlink')()",
-+                "getter = getattr\nmember = 'unlink'\nerase = getter(p, member)\nerase()",
-+                "getattr(p, 'un' 'link')()",
-+                "getattr(p, 'un' + 'link')()",
-+            ] {
-+                assert!(
-+                    python_reflective_deletion_fallback_hit(code, false),
-+                    "reflective deletion must retain its incomplete-analysis signal: {code}"
-+                );
++/// Whether `text` starts with `.Invoke(`, `.InvokeReturnAsIs(` or
++/// `.InvokeWithContext(`, in any case.
++fn powershell_text_starts_with_invoke_method(text: &str) -> bool {
++    let Some(rest) = text.strip_prefix('.') else {
++        return false;
++    };
++    let name_len = rest.bytes().take_while(u8::is_ascii_alphanumeric).count();
++    rest[name_len..].trim_start().starts_with('(')
++        && ["invoke", "invokereturnasis", "invokewithcontext"]
++            .iter()
++            .any(|method| rest[..name_len].eq_ignore_ascii_case(method))
++}
++
++/// Whether `$name` is run anywhere in `text`: an invoke method on it, or the
++/// call or dot-source operator before it. PowerShell variable names ignore
++/// case.
++fn powershell_variable_is_invoked(text: &str, name: &str) -> bool {
++    let lower = text.to_ascii_lowercase();
++    let needle = format!("${}", name.to_ascii_lowercase());
++    let bytes = lower.as_bytes();
++    let mut from = 0usize;
++    while let Some(found) = lower.get(from..).and_then(|rest| rest.find(&needle)) {
++        let start = from + found;
++        let end = start + needle.len();
++        from = end;
++        if bytes
++            .get(end)
++            .copied()
++            .is_some_and(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b':'))
++        {
++            continue;
++        }
++        if powershell_text_starts_with_invoke_method(&text[end..]) {
++            return true;
++        }
++        let before = text[..start].trim_end();
++        if let Some(operator) = before.strip_suffix(['&', '.']) {
++            let operator_starts_statement = operator.trim_end().is_empty()
++                || operator.ends_with(|c: char| {
++                    c.is_ascii_whitespace() || matches!(c, ';' | '(' | '{' | '|')
++                });
++            if operator_starts_statement && !operator.ends_with('&') {
++                return true;
 +            }
-+            for code in [
-+                "getattr(p, 'name')",
-+                "getattr(p, 'UNLINK')",
-+                "getattribute(p, 'unlink')()",
-+                "my_getattr(p, 'unlink')()",
-+                "print('unlink')",
-+                "getattr(items, 'remove')(item)",
-+            ] {
-+                assert!(
-+                    !python_reflective_deletion_fallback_hit(code, false),
-+                    "unrelated lookup must not acquire a deletion identity: {code}"
-+                );
-+            }
-+            assert!(python_reflective_deletion_fallback_hit(
-+                "getattr(operating_system, 'remove')(path)",
-+                true
-+            ));
-+       
-```
++        }
++    }
++    false
++}
++
++/// Every PowerShell statement that runs a command through the call operator
++/// `&`, as the span from the operator to the end of its statement (#637). The
++/// segment splitter reads every bare `&` as a separator, so such a statement's
++/// segment has lost its operator, and after another statement a quoted
++/// program path (`Set-Location x; & 'C:\…\git.exe' reset --hard`) read as an
++/// inert string.
++fn powershell_call_operator_statements(
++    command: &str,
++    segments: &[(usize, usize)],
++) -> Vec<(usize, usize)> {
++    let mut statements = Vec::new();
++    for &(start, end) in segments {
++        let before = command.get(..start).unwrap_or_default().trim_end();
++        let Some(operator_text) = before.strip_suffix('&') else {
++            continue;
++        };
++        let preceding = operator_text.trim_end();
++        let after_newline = operator_text[preceding.len()..].contains(['\n', '\r']);
++        // `a & b` runs `a` in the background; `a && b` chains; `>&` redirects.
++        let after_separator = preceding.ends_with(['&', '|', ';', '{', '('])
 
-**File**: `tests/fixtures/python_tempfile_provenance.json` (modified, +34/-1)
-```diff
-@@ -199,5 +199,38 @@
-   {"id":"flow_626_eager_comprehension_preserves_cleanup","decision":"allow","source":"import tempfile\nfrom pathlib import Path\np = Path(tempfile.mkdtemp()) / 'child'\n[p.unlink(missing_ok=True) for i in (0, 1)]"},
-   {"id":"flow_626_comprehension_target_stays_local","decision":"allow","source":"import tempfile\nfrom pathlib import Path\np = Path(tempfile.mkdtemp()) / 'child'\n[None for p in ('/etc/hosts',)]\np.unlink(missing_ok=True)"},
-   {"id":"flow_626_generator_proof_deferred_past_mutation","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"import tempfile\nfrom pathlib import Path\nfrom helpers import mutate\ng = ((Path(tempfile.mkdtemp()) / 'hosts').unlink() for i in (0,))\nmutate()\nnext(g)"},
--  {"id":"flow_626_generator_iterable_effect_is_immediate","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\nfrom helpers import mutate\np = Path('/tmp/first')\ng = (None for i in mutate())\np.unlink()"}
-+  {"id":"flow_626_generator_iterable_effect_is_immediate","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\nfrom helpers import mutate\np = Path('/tmp/first')\ng = (None for i in mutate())\np.unlink()"},
-+  {"id":"bindings_626_callable_list_os_invoked","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\nactions = [os.unlink]\nactions[0]('/etc/hosts')"},
-+  {"id":"bindings_626_callable_list_path_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = [p.unlink]\nactions[0]()"},
-+  {"id":"bindings_626_callable_tuple_path_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = (p.unlink,)\nactions[0]()"},
-+  {"id":"bindings_626_callable_dict_path_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = {'delete': p.unlink}\nactions['delete']()"},
-+  {"id":"bindings_626_callable_getattr_direct_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\ngetattr(p, 'unlink')()"},
-+  {"id":"bindings_626_callable_getattr_alias_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nerase = getattr(p, 'unlink')\nerase()"},
-+  {"id":"bindings_626_callable_list_os_lookup_only","decision":"allow","source":"import os\nactions = [os.unlink]\nactions[0]"},
-+  {"id":"bindings_626_callable_list_path_lookup_only","decision":"allow","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = [p.unlink]\nactions[0]"},
-+  {"id":"bindings_626_callable_tuple_path_lookup_only","decision":"allow","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = (p.unlink,)\nactions[0]"},
-+  {"id":"bindings_626_callable_dict_path_lookup_only","decision":"allow","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = {'delete': p.unlink}\nactions['delete']"},
-+  {"id":"bindings_626_callable_getattr_direct_lookup_only","decision":"allow","source":"from pathlib import Path\np = Path('/etc/hosts')\ngetattr(p, 'unlink')"},
-+  {"id":"bindings_626_callable_getattr_alias_lookup_only","decision":"allow","source":"from pathlib import Path\np = Path('/etc/hosts')\nerase = getattr(p, 'unlink')\nerase"},
-+  {"id":"bindings_626_callable_list_fresh_child_cleanup","decision":"allow","source":"from tempfile import mkdtemp\nfrom pathlib import Path\np = Path(mkdtemp()) / 'leaked.lock'\nactions = [p.unlink]\nactions[0]()"},
-+  {"id":"bindings_626_callable_getattr_direct_fresh_child_cleanup","decision":"allow","source":"from tempfile import mkdtemp\nfrom pathlib import Path\np = Path(mkdtemp()) / 'leaked.lock'\ngetattr(p, 'unlink')()"},
-+  {"id":"bindings_626_callable_getattr_alias_fresh_child_cleanup","decision":"allow","source":"from tempfile import mkdtemp\nfrom pathlib import Path\np = Path(mkdtemp()) / 'leaked.lock'\nerase = getattr(p, 'unlink')\nerase()"},
-+  {"id":"bindings_626_indirection_unknown_index_keeps_delete","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\nactions = [os.unlink, print]\nactions[index]('/etc/hosts')"},
-+  {"id":"bindings_626_indirection_nested_container","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = {'cleanup': [(p.unlink,)]}\nactions['cleanup'][0][0]()"},
-+  {"id":"bindings_626_indirection_mixed_direct_container_branch","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\nif ready:\n    actions = [os.unlink]\nelse:\n    actions = os.unlink\nactions[0]('/etc/hosts')"},
-+  {"id":"bindings_626_indirection_alias_before_reassignment","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np =
 ```
 
 ---
 
-### Incident Patch 3: `e7822214` (2026-11-01)
-**Commit Message**: fix(python): follow deletion callbacks through local helpers [skip ci]
+### Incident Patch 2: `18687c83` (2026-11-03)
+**Commit Message**: fix(evaluator): detect proven destructive argument expansions
 
-Local callback parameters and returned callables could hide protected-path
-deletions from Python heredoc analysis. Bind supported synchronous helpers
-on the existing AST, retain lexical scopes and argument/return flow, and
-expire temporary ownership in defaults, containers, and returned values.
-Preserve possible deletion identities after helper identity loss without
-granting path trust or treating capture alone as invocation.
+Resolve bounded literal echo/printf output and scalar bindings before
+checked substitutions are masked as data. Feed the additional argument
+view through the existing evaluator so destructive flags and operands
+retain their native rules, policy overrides, and denial precedence.
 
-Keep unknown inherited deletion formals conservative while allowing proved
-harmless replacements. Preserve completed recursive-delete findings around
-irrelevant opaque helpers. Correct shell unlink normalization so a glued
-parenthesis in Python call syntax cannot fabricate a shell operand boundary.
+Preserve original-source authorization, producer shadowing and quoting;
+never reinterpret generated bytes as shell syntax. Bound parser work,
+keep quoted IFS semantics, and stop reset option matching at a real --
+delimiter without narrowing the existing Git executable prefix.
 
-Add 66 shared policy cases and 14 focused Rust regression tests. Keep all
-334 previous policy contracts and all analysis limits intact. Document the
-supported synchronous-call scope and conservative incomplete cases.
+Close bd-substitution-supplied-flags-1n9a. Add 13 regression tests covering
+42 plain-rule pairs in POSIX/Unknown, 164 CLI/native-hook invocations,
+policy and grant boundaries, inert data, and opt-in guardrails.
 
-Validation: full dcg build; cargo check --locked --all-targets;
-cargo clippy --locked --all-targets -- -D warnings; cargo fmt --check;
-400 cases across eight CLI/hook forms (3,20
+Validation: 69 selected integration tests passed; one existing live
+OpenCode test requires an external binary and remains ignored. All-target
+cargo check and formatting passed. Clippy with -D warnings passed for the
+production library, binary, and four integration targets. Full-target
+Clippy could not complete its library-test target within workspace memory.
+Local 
 
-**File**: `docs/patterns.md` (modified, +20/-0)
+**File**: `.beads/issues.jsonl` (modified, +1/-1)
 ```diff
-@@ -216,6 +216,26 @@ uncertain arguments cannot establish a cleanup allowance. Selector-return
- depth is bounded separately from deletion invocation: exceeding that bound
- reports incomplete analysis instead of inventing a destructive call.
- 
-+Supported calls to source-visible synchronous local helpers bind arguments in
-+a fresh function scope and track returned callbacks. A callback invoked through
-+a parameter receives the same deletion and target checks as a direct call.
-+Passing, storing, or returning that callback alone does not invoke it. Function
-+aliases retain their definition identity; reassignment replaces the current
-+binding. Definition-time defaults and supported literal argument unpacking
-+participate in argument binding without turning unknown values into path proofs.
-+
-+Only proved live values can carry a temporary-child allowance across a supported
-+call. Mutable outer bindings and closure captures do not inherit a stale safe
-+path. A supported closure invocation reads its still-active lexical owner's
-+current bindings as possible identities only. An escaped closure or unidentified
-+owner reports incomplete analysis instead of reusing definition-time cell values.
-+Returned values follow return/finally control flow and lose temporary ownership
-+when their context ends. Recursive calls, unresolved helper identities, and
-+exhausted call-analysis bounds cannot establish an allowance. Calls share the
-+existing AST, traversal budget, and deadline. Generator and coroutine creation
-+is not treated as synchronous execution of their bodies; this helper analysis
-+does not model their later consumption.
-+
- If extraction or analysis is incomplete, captured deletion names remain a
- blocking signal, including static `getattr` member names written with string
- escapes. This fallback does not assert that an unused capture was invoked;
+@@ -115,7 +115,7 @@
+ {"id":"bd-pwvp","title":"fix(core.filesystem): 'bq rm -r -f' attributed to rm-r-f-separate, not the bq rule","description":"'bq rm -r -f my_project:my_dataset' is blocked by core.filesystem:rm-r-f-separate rather than database.bigquery:bq-rm-recursive. Reproduced with database.bigquery DISABLED, so it predates that pack — core.filesystem is always enabled (tier 1) and matches the 'rm -r -f' token run before any tier-7 database pack is consulted.\n\nThe command IS blocked, so this is not a safety hole; it is a wrong-guidance / wrong-rule_id bug of the #288 class (a rule firing on tokens belonging to a different command). The agent is told about filesystem deletion and offered filesystem alternatives for what is actually a BigQuery dataset drop, and the rule_id recorded in history/stats/allowlists is misleading.\n\nOther forms attribute correctly: 'bq rm -r my_dataset' and 'bq rm --recursive my_dataset' -> database.bigquery:bq-rm-recursive; 'bq rm my_dataset.t' -> database.bigquery:bq-rm.\n\nLikely fix: core.filesystem's rm rules should require rm to be the resolved argv0 (parse_rm_command / executables= scoping, per #289-B) rather than matching the token run anywhere. Touching core.filesystem is high-risk — it is the always-on tier-1 pack — so this needs its own careful change with the full corpus as the guard.\n\nFound 2026-08-10 while implementing bd-sysv.","status":"closed","priority":3,"issue_type":"bug","created_at":"2026-08-11T00:22:08.258796Z","created_by":"jemanuel","updated_at":"2026-08-11T04:17:34.362061Z","closed_at":"2026-08-11T04:17:34.360578Z","close_reason":"Fixed the symptom (misleading guidance), deliberately NOT by scoping. Scoping core.filesystem's recursive-force rules to executables=[rm] would turn a recursive-force `git rm` (no core.git rule) and the `bq` equivalent (bigquery is opt-in, core.filesystem always-on) into ALLOW, plus an unbounded class of future CLIs whose subcommand is literally rm. Blocking with imperfect guidance beats not blocking. Explanation now names the subcommand case and points at the owning pack; a test pins the coverage so a future scoping attempt fails loudly. Related pack-layer anchoring issue filed as bd-migo. Verified: lib 3646/3646, corpus+explanations+audit suites pass, fmt and clippy -D warnings clean.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-qny3","title":"install.sh --no-configure still writes shell completions, overwriting an existing _dcg with no backup","description":"`maybe_install_completions` runs after every `install.sh` run. `--no-configure` skips agent configuration only. So a `--no-configure --dest <dir>` install still writes `$XDG_DATA_HOME/zsh/site-functions/_dcg` (or the bash or fish completion file) in the caller's home, and it overwrites an existing file there with no backup.\n\nSeen on 2026-11-01. A 0.15.3 → 0.16.0 upgrade on an agent host, run with `--no-configure --require-minisign --dest <staging dir>`, replaced the user's existing `_dcg`. The completion directory's mtime did not change, so the file was overwritten in place, not created. Nothing outside `--dest` was expected to change.\n\nFix, either:\n- (a) add `--no-completions`, and say in `--help` that `--no-configure` does not cover completions; or\n- (b) have `--no-configure` skip completions too.\n\nEither way, back up an existing completion file that differs before replacing it, as the agent-config steps already do (`*.bak.<timestamp>`).\n\nAcceptance:\n- A `--no-completions` run (or a `--no-configure` run, under fix b) leaves every completion directory unchanged.\n- A normal run that replaces a different existing completion file leaves a backup beside it.\n","status":"closed","priority":3,"issue_type":"bug","created_at":"2026-11-01T10:21:23.942796Z","created_by":"jemanuel","updated_at":"2026-11-03T03:02:45.712022Z","closed_at":"2026-11-03T03:02:45.710660Z","close_reason":"Fixed by fix (b) in d48abac0 (install.sh + tests; auto-landed from my validated tree, identical to it) and c3cae532 (cli.rs dcg update --no-configure doc + README line). --no-configure now skips completions as well as agent config and the shell startup check. A normal run that replaces a DIFFERENT completion file first copies it to .<name>.bak.<timestamp> beside it (a dotfile so zsh compinit does not autoload a second #compdef dcg); identical content is not rewritten; a failed backup leaves the file. bats: new tests '--no-configure leaves the completion directories unchanged' and 'replacing a different file keeps a backup that compinit does not load' pass, and both FAIL against the previous install.sh. install_test.bats 59/60 (shell-startup-check is pre-existing on zsh hosts); agent_config_test.bats installer subset 8/8.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-release-readiness-nt7g","title":"DECISION: release readiness, 300+ commits since v0.14.4","status":"closed","priority":2,"is
 ```
 
-**File**: `src/ast_matcher/python_paths.rs` (modified, +1205/-88)
+**File**: `src/evaluator.rs` (modified, +222/-1)
 ```diff
-@@ -35,12 +35,14 @@ const MAY_EXTEND: u16 = 1 << 11;
- const MAY_UPDATE: u16 = 1 << 12;
- const MAY_LIST: u16 = 1 << 13;
- const MAY_DICT: u16 = 1 << 14;
-+const MAY_LOCAL: u16 = 1 << 15;
- const MAY_SELECT: u16 = MAY_GET | MAY_POP;
- const MAY_MUTATE: u16 = MAY_POP | MAY_APPEND | MAY_EXTEND | MAY_UPDATE;
- const MAY_CONTAINER: u16 = MAY_LIST | MAY_DICT;
- const MAX_CONTAINER_ITEMS: usize = 32;
- const MAX_CONTAINER_DEPTH: usize = 32;
- const MAX_KEY_BYTES: usize = 1024;
-+const MAX_LOCAL_CALLS: usize = 16;
- 
- fn rule(kind: u8) -> &'static str {
-     match kind {
-@@ -152,6 +154,7 @@ struct Capabilities {
-     // callback. This fixed ladder bounds nested selectors without recursively
-     // expanding the shared container graph.
-     returned: [u16; MAX_CONTAINER_DEPTH],
-+    returned_contained: [u16; MAX_CONTAINER_DEPTH],
-     returned_overflow: bool,
+@@ -16022,6 +16022,42 @@ fn evaluate_command_in_single_dialect_view(
+             return denial;
+         }
+     }
++    // A checked producer's output can still be an option of its consumer:
++    // `git reset $(echo --hard)` executes a harmless echo, then a destructive
++    // reset. Judge proven argument values before the data sanitizer erases
++    // the producer spelling (bd-substitution-supplied-flags-1n9a).
++    if matches!(shell_dialect, ShellDialect::Posix | ShellDialect::Unknown) {
++        match posix_literal_argument_view(command, deadline) {
++            Ok(Some(expanded)) => {
++                let mut result = evaluate_command_with_pack_order_deadline_at_path_inner(
++                    &expanded,
++                    enabled_keywords,
++                    ordered_packs,
++                    keyword_index,
++                    compiled_overrides,
++                    allowlists,
++                    heredoc_settings,
++                    None,
++                    project_path,
++                    deadline,
++                    ShellDialect::Posix,
++                    nested_command_depth + 1,
++                    inherited_automated_stdin,
++                );
++                if nested_result_decides(&result) {
++                    if let Some(info) = result.pattern_info.as_mut() {
++                        info.matched_span = None;
++                        info.matched_text_preview = None;
++                    }
++                    return result;
++                }
++                record_nested_allowlist_hit(&mut heredoc_allowlist_hit, &mut result);
++            }
++            Ok(None) => {}
++            Err(()) => return EvaluationResult::indeterminate_due_to_budget(),
++        }
++    }
++
+     // `$IFS`/`${IFS}` word-splits to whitespace by default, so
+     // `rm${IFS}-rf${IFS}~` runs `rm -rf ~` while presenting no whitespace the
+     // tokenizer can split on. When IFS is not reassigned in the command, expand
+@@ -17811,6 +17847,176 @@ fn posix_declaration_option(builtin: &str, option: &str) -> bool {
+     flags.chars().all(|flag| allowed.contains(flag))
  }
  
-@@ -163,6 +166,7 @@ impl Capabilities {
-         let mut index = 0;
-         while index < MAX_CONTAINER_DEPTH {
-             self.returned[index] |= other.returned[index];
-+            self.returned_contained[index] |= other.returned_contained[index];
-             index += 1;
-         }
-         self
-@@ -174,7 +178,7 @@ impl Capabilities {
-         }
-         let mut index = 0;
-         while index < MAX_CONTAINER_DEPTH {
--            if self.returned[index] != 0 {
-+            if self.returned[index] != 0 || self.returned_contained[index] != 0 {
-                 return true;
-             }
-             index += 1;
-@@ -187,6 +191,7 @@ impl Capabilities {
-             direct: 0,
-             contained: self.direct | self.contained,
-             returned: self.returned,
-+            returned_contained: self.returned_contained,
-             returned_overflow: self.returned_overflow,
-         }
-     }
-@@ -198,6 +203,7 @@ impl Capabilities {
-             // subscription cannot hide a nested deletion.
-             contained: self.contained,
-             returned: self.returned,
-+            returned_contained: self.returned_contained,
-             returned_overflow: self.returned_overflow,
-         }
-     }
-@@ -211,22 +217,42 @@ impl Capabilities {
-             result.returned[0] = self.contained;
-             for index in 1..MAX_CONTAINER_DEPTH {
-                 result.returned[index] = self.returned[index - 1];
-+                result.returned_contained[index] = self.returned_contained[index - 1];
-             }
--            result.returned_overflow =
--                self.returned_overflow || self.returned[MAX_CONTAINER_DEPTH - 1] != 0;
-+            result.returned_overflow = self.returned_overflow
-+                || self.returned[MAX_CONTAINER_DEPTH - 1] != 0
-+                || self.returned_contained[MAX_CONTAINER_DEPTH - 1] != 0;
-         }
-         result
-     }
- 
-     fn called(self) -> Self {
-         let mut result = Self {
-             direct: self.returned[0],
--            contained: self.returned[0],
-+            contained: self.returned[0] | self.returned_contained[0],
-             returned_overflow: self.returned_overflow,
-             ..Self::default()
-         };
-         for index in 0..MAX_CONTAINER_DEPTH - 1 {
-             result.returned[index] = self.returned[index + 1];
-+            result.returned_contained[index] = self.returned_contained[index + 1];
-+        }
-+        result
-+    }
-+
-+    fn returning(self, direct: u16) -> Self {
-+        let mut result = Self {
-+            direct,
-+            returned_overflow: self.returned_overflow
-+                || self.returned[MAX_CONTAINER_DEPTH - 1] != 0
-+                || self.returned_contained[MAX_CONTAINER_DEPTH - 1] != 0,
-+            ..Self::default()
++/// Resolve a whole scalar argument or a literal command substitution to one atom.
++///
++/// Keep unknown values and multiword output on their existing paths. In
++/// particular, generated newlines and operators are argv data, never new shell
++/// source. A whole-word variable proof also avoids confusing an apostrophe in
++/// a double-quoted argument with the start of a single-quoted variable.
++fn proven_posix_argument_value(
++    raw: &str,
++    source: &str,
++    segment_ranges: &[(usize, usize)],
++    segment_start: usize,
++    wholly_double_quoted: bool,
++) -> Option<String> {
++    let unquoted = raw
++        .strip_prefix('"')
++        .and_then(|rest| rest.strip_suffix('"'))
++        .unwrap_or(raw);
++    let value = if let Some((name, consumed)) = parse_leading_posix_variable(unquoted)
++        && consumed == unquoted.len()
++    {
++        let values = resolve_variable_bindings(
++            source,
++            segment_ranges,
++            segment_start,
++            name,
++            VariableResolution::ArgumentLiteral {
++                wholly_double_quoted,
++            },
++        )?;
++        let [value] = values.as_slice() else {
++            return None;
 +        };
-+        result.returned[0] = self.direct;
-+        result.returned_contained[0] = self.contained;
-+        for index in 1..MAX_CONTAINER_DEPTH {
-+            result.returned[index] = self.returned[index - 1];
-+            result.returned_contained[index] = self.returned_contained[index - 1];
-         }
-         result
-     }
-@@ -301,6 +327,45 @@ impl PartialEq for Container {
- 
- impl Eq for Container {}
- 
-+// A function identity is a source location on the worker's existing tree.
-+// Defaults are evaluated once, while closure facts are deliberately may-only:
-+// Python closes over mutable cells, not definition-time path snapshots.
-+struct LocalFunction {
-+    source: usize,
-+    owner: Option<usize>,
-+    defaults: HashMap<String, Value>,
-+    closure: HashMap<String, Value>,
-+    preserves: bool,
-+    deferred: bool,
-+    complete: bool,
-+    depth: usize,
-+    called: u8,
-+    returned: Capabilities,
-+    origins: Vec<usize>,
-+    unknown_origins: bool,
++        value.clone()
++    } else if raw.contains("$(") || raw.contains('`') {
++        let view = crate::packs::core::git::posix_argument_substitution_view(raw).ok()?;
++        if view.has_dynamic || view.command == raw {
++            return None;
++        }
++        for producer in view.literal_producers {
++            // Cut before the consuming command, then complete a possible
++            // trailing `&&` or pipe. Later definitions cannot change the
++            // producer that this expansion runs, and a cut inside `$(...)`
++            // would spuriously fail parsing.
++            let mut prefix = source.get(..segment_start)?.to_owned();
++            prefix.push_str(producer);
++            if std::env::var_os(format!("BASH_FUNC_{producer}%%")).is_some()
++                || crate::heredoc::shell_name_may_be_rebound(&prefix, producer)
++            {
++                return None;
++            }
++        }
++        let words = shell_words::split(&view.command).ok()?;
++        let [value] = words.as_slice() else {
++            return None;
++        };
++        value.clone()
++    } else {
++        return None;
++    };
++    literal_posix_argument_atom(&value).then_some(value)
 +}
 +
-+impl std::fmt::Debug for LocalFunction {
-+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        formatter
-+            .debug_struct("LocalFunction")
-+            .field("source", &self.source)
-+            .field("defaults", &self.defaults.len())
-+            .field("closure", &self.closure.len())
-+            .field("preserves", &self.
++fn literal_posix_argument_atom(value: &str) -> bool {
++    !value.is_empty()
++        && value.bytes().all(|byte| {
++            byte.is_ascii_alphanumeric()
++                || matches!(
++                    byte,
++                    b'_' | b'.' | b'/' | b':' | b'+' | b',' | b'=' | b'@' | b'%' | b'-'
++                )
++        })
++}
++
++/// An additional, bounded view of proven POSIX argument values.
++///
++/// Only ordinary arguments in top-level simple commands participa
 ```
 
-**File**: `src/ast_matcher/tempfile_provenance.rs` (modified, +51/-8)
+**File**: `src/heredoc.rs` (modified, +1/-1)
 ```diff
-@@ -900,6 +900,36 @@ mod tests {
-         id: String,
-         decision: String,
-         source: String,
-+        #[serde(default)]
-+        analysis_error: Option<String>,
-+    }
-+
-+    fn checked_case_matches(
-+        case: &Case,
-+        result: Result<Vec<PatternMatch>, super::super::MatchError>,
-+    ) -> Option<Vec<PatternMatch>> {
-+        if let Some(expected) = &case.analysis_error {
-+            assert_eq!(
-+                case.decision, "deny",
-+                "{}: incomplete work cannot allow",
-+                case.id
-+            );
-+            match result {
-+                Err(super::super::MatchError::Unavailable { language, detail }) => {
-+                    assert_eq!(language, ScriptLanguage::Python, "{}", case.id);
-+                    assert_eq!(&detail, expected, "{}", case.id);
-+                }
-+                other => panic!(
-+                    "{}: expected explicit incomplete analysis, got {other:?}",
-+                    case.id
-+                ),
-+            }
-+            // CLI/hook fixtures separately require a blocking wire verdict.
-+            // Incomplete analysis supplies no completed proof candidates.
-+            None
-+        } else {
-+            Some(result.unwrap_or_else(|error| panic!("{}: {error:?}", case.id)))
-+        }
-     }
+@@ -15101,7 +15101,7 @@ fn command_may_run_heredoc_output<'a>(
+ /// function or alias of that name, a `PATH` assignment, or an `eval`/`source`
+ /// that could install one ([`find_visible_shell_name_override`]). A command
+ /// the parser cannot read fails closed.
+-fn shell_name_may_be_rebound(command: &str, name: &str) -> bool {
++pub(crate) fn shell_name_may_be_rebound(command: &str, name: &str) -> bool {
+     let ast = parse_shell_ast(command);
+     let mut overridden = false;
+     let mut parse_error = false;
+```
+
+**File**: `src/packs/core/git.rs` (modified, +59/-17)
+```diff
+@@ -530,18 +530,19 @@ fn decode_branch_syntax(decoder: &mut ShellTokenDecoder, token: &str) -> Option<
+         .map(std::borrow::Cow::into_owned)
+ }
  
-     #[test]
-@@ -1040,13 +1070,14 @@ mod tests {
-         .expect("valid shared verdict fixtures");
-         assert!(!cases.is_empty());
-         for case in cases {
--            let matches = super::super::DEFAULT_MATCHER
--                .find_matches_with_timeout(
--                    &case.source,
--                    ScriptLanguage::Python,
--                    Duration::from_secs(5),
--                )
--                .unwrap_or_else(|error| panic!("{}: {error:?}", case.id));
-+            let result = super::super::DEFAULT_MATCHER.find_matches_with_timeout(
-+                &case.source,
-+                ScriptLanguage::Python,
-+                Duration::from_secs(5),
-+            );
-+            let Some(matches) = checked_case_matches(&case, result) else {
-+                continue;
-+            };
-             assert_eq!(
-                 matches.iter().any(|hit| hit.severity.blocks_by_default()),
-                 case.decision == "deny",
-@@ -1185,7 +1216,19 @@ mod tests {
-         .expect("valid shared verdict fixtures");
-         let mut compared_candidates = 0;
-         for case in cases {
--            let candidates = candidate_spans(&case.source);
-+            let result = super::super::source_analysis::DEFAULT_MATCHER.find_matches_with_timeout(
-+                &case.source,
-+                ScriptLanguage::Python,
-+                Duration::from_secs(60),
-+            );
-+            let Some(matches) = checked_case_matches(&case, result) else {
-+                continue;
-+            };
-+            let candidates: HashSet<_> = matches
-+                .iter()
-+                .filter(|hit| needs_proof(&case.source, hit))
-+                .map(|hit| (hit.start, hit.end))
-+                .collect();
-             compared_candidates += candidates.len();
-             compare_proof_strategies(&case.source, &candidates);
+-const MAX_STATIC_SUBSTITUTION_BYTES: usize = 16 * 1024;
++pub(crate) const MAX_STATIC_SUBSTITUTION_BYTES: usize = 16 * 1024;
+ pub(crate) const POSIX_DYNAMIC_QUOTED: &str = "__DCG_POSIX_SUB_Q_7B8CFAE1__";
+ pub(crate) const POSIX_DYNAMIC_UNQUOTED: &str = "__DCG_POSIX_SUB_U_7B8CFAE1__";
+ 
+ /// Bounded matching-only view of POSIX command substitutions.
+ ///
+ /// The evaluator consumes this read-only view only while resolving an
+-/// executable launcher command word; the original command remains
+-/// authoritative for decisions, logging, allowlists, and source spans.
++/// executable or argument word; the original command remains authoritative
++/// for decisions, logging, allowlists, and source spans.
+ pub(crate) struct PosixSubstitutionView {
+     pub(crate) command: String,
+     pub(crate) has_dynamic: bool,
++    pub(crate) literal_producers: Vec<&'static str>,
+ }
+ 
+ /// Resolve the deliberately small, non-executing subset of POSIX command
+@@ -561,6 +562,20 @@ fn resolve_literal_printf_substitutions(command: &str) -> Result<Option<String>,
+ }
+ 
+ pub(crate) fn posix_substitution_view(command: &str) -> Result<PosixSubstitutionView, ()> {
++    posix_substitution_view_inner(command, false)
++}
++
++/// Argument-only view that also recognizes literal dash-leading `echo`
++/// operands. Callers must prove that `literal_producers` have not been
++/// overridden in the shell before adopting the returned value.
++pub(crate) fn posix_argument_substitution_view(command: &str) -> Result<PosixSubstitutionView, ()> {
++    posix_substitution_view_inner(command, true)
++}
++
++fn posix_substitution_view_inner(
++    command: &str,
++    literal_echo_flags: bool,
++) -> Result<PosixSubstitutionView, ()> {
+     if command.contains(POSIX_DYNAMIC_QUOTED) || command.contains(POSIX_DYNAMIC_UNQUOTED) {
+         return Err(());
+     }
+@@ -571,6 +586,7 @@ pub(crate) fn posix_substitution_view(command: &str) -> Result<PosixSubstitution
+     let mut in_double = false;
+     let mut changed = false;
+     let mut has_dynamic = false;
++    let mut literal_producers = Vec::new();
+ 
+     while index < bytes.len() {
+         match bytes[index] {
+@@ -593,9 +609,14 @@ pub(crate) fn posix_substitution_view(command: &str) -> Result<PosixSubstitution
+                 let close = find_posix_substitution_close(command, index + 2, b')')?;
+                 match render_static_producer_body(
+                     command.get(index + 2..close).ok_or(())?,
+-                    in_double,
++                    literal_echo_flags,
+                 ) {
+-                    Ok(rendered) => output.push_str(&rendered),
++                    Ok((rendered, producer)) => {
++                        output.push_str(&rendered);
++                        if !literal_producers.contains(&producer) {
++                            literal_producers.push(producer);
++                        }
++                    }
+                     Err(()) => {
+                         output.push_str(if in_double {
+                             POSIX_DYNAMIC_QUOTED
+@@ -612,9 +633,14 @@ pub(crate) fn posix_substitution_view(command: &str) -> Result<PosixSubstitution
+                 let close = find_posix_substitution_close(command, index + 1, b'`')?;
+                 match render_static_producer_body(
+                     command.get(index + 1..close).ok_or(())?,
+-                    in_double,
++                    literal_echo_flags,
+                 ) {
+-                    Ok(rendered) => output.push_str(&rendered),
++                    Ok((rendered, producer)) => {
++                        output.push_str(&rendered);
++                        if !literal_producers.contains(&producer) {
++                            literal_producers.push(producer);
++                        }
++                    }
+                     Err(()) => {
+                         output.push_str(if in_double {
+                             POSIX_DYNAMIC_QUOTED
+@@ -644,6 +670,7 @@ pub(crate) fn posix_substitution_view(command: &str) -> Result<PosixSubstitution
+     Ok(PosixSubstitutionView {
+         command: if changed { output } else { command.to_string() },
+         has_dynamic,
++        literal_producers,
+     })
+ }
+ 
+@@ -688,7 +715,10 @@ fn find_posix_substitution_close(command: &str, start: usize, delimiter: u8) ->
+     Err(())
+ }
+ 
+-fn render_static_producer_body(body: &str, _in_double_quotes: bool) -> Result<String, ()> {
++fn render_static_producer_body(
++    body: &str,
++    literal_echo_flags: bool,
++) -> Result<(String, &'static str), ()> {
+     if body.len() > MAX_STATIC_SUBSTITUTION_BYTES
+         || body.bytes().any(|byte| {
+             matches!(
+@@ -722,23 +752,32 @@ fn render_static_producer_body(body: &str, _in_double_quotes: bool) -> Result<St
+         return Err(());
+     }
+     let producer = words.remove(0);
+-    let rendered = match producer.as_str() {
++   
+```
+
+**File**: `tests/repro_executable_assignment_scope.rs` (modified, +654/-1)
+```diff
+@@ -20,14 +20,26 @@
+ //! Scope (No-Claim): straight-line POSIX prefixes only. A binding that a
+ //! subshell, `unset` or an environment-only prefix would hide still denies
+ //! (conservative); these tests do not pin that over-block either way.
++//!
++//! bd-substitution-supplied-flags-1n9a extends that proof to ordinary argument
++//! positions: a known scalar flag produced by `echo`, `printf`, or a literal
++//! binding must reach the same rules as its plain spelling. Source strings
++//! are classifier input only; none of their commands are executed.
++
++use std::io::Write;
++use std::path::PathBuf;
++use std::process::{Command, Stdio};
+ 
+ use destructive_command_guard::evaluator::evaluate_command_with_pack_order_at_path_in_dialect;
+ use destructive_command_guard::normalize::ShellDialect;
+ use destructive_command_guard::packs::REGISTRY;
+ use destructive_command_guard::{Config, EvaluationResult, LayeredAllowlist};
+ 
+ fn evaluate(command: &str, dialect: ShellDialect) -> EvaluationResult {
+-    let config = Config::default();
++    evaluate_with_config(command, dialect, &Config::default())
++}
++
++fn evaluate_with_config(command: &str, dialect: ShellDialect, config: &Config) -> EvaluationResult {
+     let enabled_packs = config.enabled_pack_ids();
+     let enabled_keywords = REGISTRY.collect_enabled_keywords(&enabled_packs);
+     let ordered_packs = REGISTRY.expand_enabled_ordered(&enabled_packs);
+@@ -227,3 +239,644 @@ fn resolved_bindings_to_harmless_commands_stay_allowed() {
          }
+     }
+ }
++
++const LITERAL_ARGUMENT_DENIALS: &[(&str, &str)] = &[
++    ("git reset $(echo --hard)", "git reset --hard"),
++    (r#"git reset "$(echo --hard)""#, "git reset --hard"),
++    ("git reset `echo --hard`", "git reset --hard"),
++    ("git reset $(echo '--hard')", "git reset --hard"),
++    ("git reset $(echo --hard) HEAD~1", "git reset --hard HEAD~1"),
++    ("git reset $(printf %s --hard)", "git reset --hard"),
++    // Only preceding IFS changes affect splitting; quoted words never split.
++    ("git reset $(echo --hard); IFS=:", "git reset --hard; IFS=:"),
++    (
++        r#"git reset "$(echo --hard)"; IFS=:"#,
++        "git reset --hard; IFS=:",
++    ),
++    (
++        r#"IFS=-; git reset "$(echo --hard)""#,
++        "IFS=-; git reset --hard",
++    ),
++    // These spellings already denied; extending the proof must preserve them.
++    ("git reset $(printf -- --hard)", "git reset --hard"),
++    ("git reset --$(echo hard)", "git reset --hard"),
++    ("git reset -q $(echo --hard)", "git reset -q --hard"),
++    ("git reset HEAD~1 $(echo --h)", "git reset HEAD~1 --h"),
++    (
++        "git reset $(echo --hard) -- tracked",
++        "git reset --hard -- tracked",
++    ),
++    ("git reset HEAD~1 $(echo --me)", "git reset HEAD~1 --me"),
++    (
++        "PART=i; g${PART}t reset $(echo --hard)",
++        "PART=i; g${PART}t reset --hard",
++    ),
++    ("git push $(echo --force)", "git push --force"),
++    ("git push $(echo -f) origin main", "git push -f origin main"),
++    ("git clean $(echo -fdx)", "git clean -fdx"),
++    ("rm $(echo -rf) /", "rm -rf /"),
++    ("rm $(echo -rf) ~/", "rm -rf ~/"),
++    (r#"rm "$(echo -rf)" /"#, "rm -rf /"),
++    ("rm $(printf %s -rf) /", "rm -rf /"),
++    ("find / $(echo -delete)", "find / -delete"),
++    ("find . -name x $(echo -delete)", "find . -name x -delete"),
++    ("find / $(printf %s -delete)", "find / -delete"),
++    (
++        "dd if=/dev/zero $(echo of=/dev/sda)",
++        "dd if=/dev/zero of=/dev/sda",
++    ),
++    (
++        "dd if=/dev/zero $(printf %s of=/dev/sda)",
++        "dd if=/dev/zero of=/dev/sda",
++    ),
++    ("git $(echo reset) --hard", "git reset --hard"),
++];
++
++const BOUND_ARGUMENT_DENIALS: &[(&str, &str)] = &[
++    ("F=--hard; git reset $F", "git reset --hard"),
++    ("F=--hard; git reset ${F}", "git reset --hard"),
++    (r#"F=--hard; git reset "$F""#, "git reset --hard"),
++    (r#"F=--hard; git reset "${F}""#, "git reset --hard"),
++    (
++        r#"F=--hard; git reset "$F"; IFS=:"#,
++        "F=--hard; git reset --hard; IFS=:",
++    ),
++    (
++        r#"IFS=-; F=--hard; git reset "$F""#,
++        "IFS=-; F=--hard; git reset --hard",
++    ),
++    ("F=-rf; rm $F /", "rm -rf /"),
++    (r#"F=-delete; find / "$F""#, "find / -delete"),
++    (
++        "F=of=/dev/sda; dd if=/dev/zero $F",
++        "dd if=/dev/zero of=/dev/sda",
++    ),
++    (
++        r#"F=--force; git push "$F" origin main"#,
++        "git push --force origin main",
++    ),
++    // An unrelated unresolved word cannot discard a flag whose value is known.
++    (
++        r#"F=--hard; git reset "$F" "$REV""#,
++        r#"git reset --hard "$REV""#,
++    ),
++    (
++        r#"F=--hard; git reset "$REV" "$F""#,
++        r#"git reset "$REV" --hard"#,
++    ),
++    (
++        r#"git reset "$REV" $(echo --hard)"#,
++        r#"git reset "$REV" --hard"#,
++    ),
++];
++
++fn assert_plain_rule_parity(source: &str, plain: &str, config: &Config) {
++    for dialect in DIALECTS {
++        let expected = evaluate_with_config(plain, di
 ```
 
-**File**: `src/packs/core/filesystem.rs` (modified, +53/-0)
+---
+
+### Incident Patch 3: `753ce512` (2026-11-04)
+**Commit Message**: fix(evaluator): count every use of a PowerShell script block variable, printing included (#637) [skip ci]
+
+The previous commit left a block variable inert when its only use was a
+whole `Write-Output $sb`, `Write-Host $sb`, `echo $sb` or `$sb.ToString()`
+statement. Such a statement can still feed something that runs the block:
+it may sit inside a block whose output is piped on
+(`& { …; Write-Output $sb } | ForEach-Object { & $_ }`), and PowerShell 7
+continues a pipeline on a line that starts with `|`. Telling those apart
+needs the statement's nesting, so every later use of the variable now has
+the block's body judged. Printing a block whose body is destructive is
+denied; a block that is stored and never used, or whose body is harmless,
+is still allowed.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/evaluator.rs` (modified, +17/-39)
 ```diff
-@@ -794,6 +794,18 @@ pub(crate) fn unlink_command_for_pattern_matching(
-         return None;
-     }
+@@ -12432,8 +12432,11 @@ fn powershell_executable_block_bodies(command: &str) -> Result<Vec<&str>, ()> {
+ /// (`{ … }.Invoke()`, `({ … }).GetNewClosure().Invoke()`), or through a
+ /// variable bound to it (`$sb = { … }`) that a later statement uses. Any use
+ /// may hand the block to something that runs it (`$sb.Invoke()`, `& $sb`,
+-/// `Invoke-Command $sb`, `ForEach-Object $sb`, `$b = $sb`), so only the uses
+-/// in [`powershell_block_variable_use_is_inert`] leave it inert.
++/// `Invoke-Command $sb`, `ForEach-Object $sb`, `$b = $sb`), and even a block
++/// that is printed or turned into text can run once its output is piped on
++/// (`Write-Output $sb | ForEach-Object { & $_ }`,
++/// `[scriptblock]::Create($sb.ToString())`), so every use counts. A block
++/// that is stored and never used stays inert.
+ fn powershell_block_literal_is_invoked(command: &str, open: usize, close: usize) -> bool {
+     // `@{ … }` is a hashtable and `${ … }` a variable name, not a block.
+     if open
+@@ -12487,9 +12490,8 @@ fn powershell_unscoped_variable_name(name: &str) -> &str {
+     name.rsplit_once(':').map_or(name, |(_, unscoped)| unscoped)
+ }
  
-+    // A word boundary in the lexer is not necessarily an argv boundary.
-+    // `unlink('hello')` in an interpreter body ends the first token at `(`,
-+    // but it is a call expression, not the shell command `unlink ('hello')`.
-+    // Inserting a space in the matching view below invented a shell operand
-+    // and denied harmless Python helpers whose `unlink` parameter was print
-+    // (#626). Decline that executable proof; language analysis and the normal
-+    // fallback still judge the source. Real arguments, including quoted
-+    // parentheses and redirects attached to argv0, keep their existing path.
-+    if source.as_bytes().get(executable_end) == Some(&b'(') {
-+        return None;
-+    }
-+
-     let arguments: Vec<&str> = tokens
-         .iter()
-         .skip(1)
-@@ -7007,6 +7019,47 @@ mod tests {
+-/// Whether `text` uses the variable `name` (any scope, `$name` or
+-/// `${name}`, in any case) other than in the ways
+-/// [`powershell_block_variable_use_is_inert`] allows.
++/// Whether `text` uses the variable `name`, in any scope, spelled `$name` or
++/// `${name}`, in any case.
+ fn powershell_block_variable_is_used(text: &str, name: &str) -> bool {
+     let mut from = 0usize;
+     while let Some(found) = text.get(from..).and_then(|rest| rest.find('$')) {
+@@ -12508,43 +12510,13 @@ fn powershell_block_variable_is_used(text: &str, name: &str) -> bool {
+             (&after_sigil[..len], start + 1 + len)
+         };
+         from = end;
+-        if powershell_unscoped_variable_name(reference).eq_ignore_ascii_case(name)
+-            && !powershell_block_variable_use_is_inert(text, start, end)
+-        {
++        if powershell_unscoped_variable_name(reference).eq_ignore_ascii_case(name) {
+             return true;
          }
      }
+     false
+ }
  
-+    #[test]
-+    fn unlink_call_syntax_is_not_a_shell_argument_boundary_issue_626() {
-+        let pack = create_pack();
-+        for command in [
-+            "unlink('hello')",
-+            "unlink('/etc/hosts')",
-+            "unlink()",
-+            "'unlink'('/etc/hosts')",
-+            "u'n'link('/etc/hosts')",
-+            "/usr/bin/unlink('/etc/hosts')",
-+        ] {
-+            for dialect in [ShellDialect::Posix, ShellDialect::Unknown] {
-+                assert!(
-+                    unlink_command_for_pattern_matching(command, dialect).is_none(),
-+                    "a glued parenthesis must not manufacture shell argv: {command:?} ({dialect:?})"
-+                );
-+            }
-+            assert_no_match(&pack, command);
-+        }
-+
-+        // This is an identity-boundary correction, not an exemption for
-+        // unlink or for parentheses in its actual argument.
-+        for command in [
-+            "unlink /etc/hosts",
-+            "unlink\t/etc/hosts",
-+            "u'n'link /etc/hosts",
-+            r"un\link /etc/hosts",
-+            "'/usr/bin/unlink' '/etc/hosts'",
-+            "sudo unlink /etc/hosts",
-+            "env FOO=bar unlink /etc/hosts",
-+            "command unlink /etc/hosts",
-+            "unlink</dev/null /etc/hosts",
-+            "unlink>/tmp/unlink.log /etc/hosts",
-+            "unlink '(hello)'",
-+            "(unlink /etc/hosts)",
-+            "xargs unlink",
-+        ] {
-+            assert_blocks(&pack, command, "unlink");
-+        }
-+    }
-+
-     #[test]
-     fn quoted_unlink_preserves_literal_temp_and_information_exceptions() {
-         let pack = create_pack();
-```
-
-**File**: `tests/fixtures/python_tempfile_provenance.json` (modified, +67/-1)
-```diff
-@@ -296,5 +296,71 @@
-   {"id":"bindings_626_methods_update_opaque_receiver_key","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from helpers import value\nimport tempfile\nfrom pathlib import Path\nactions = {value: print}\np = Path(tempfile.mkdtemp()) / 'child'\nactions.update({'known': print})\np.unlink()"},
-   {"id":"bindings_626_methods_append_literal_splat","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = []\nactions.append(*[p.unlink])\nactions[0]()"},
-   {"id":"bindings_626_methods_update_literal_keyword_splat","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = {}\nactions.update(**{'erase': p.unlink})\nactions.get('erase')()"},
--  {"id":"bindings_626_methods_destructured_mutator_helper","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = []\n(put,) = [actions.append]\ndef populate():\n    put(p.unlink)\npopulate()\nactions[0]()"}
-+  {"id":"bindings_626_methods_destructured_mutator_helper","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\np = Path('/etc/hosts')\nactions = []\n(put,) = [actions.append]\ndef populate():\n    put(p.unlink)\npopulate()\nactions[0]()"},
-+  {"id":"bindings_626_local_call_os_unlink","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\ndef invoke(callback, target):\n    callback(target)\ninvoke(os.unlink, '/etc/hosts')"},
-+  {"id":"bindings_626_local_call_os_remove_keywords","decision":"deny","rule_id":"heredoc.python:os_remove","source":"import os\ndef invoke(callback, target):\n    callback(target)\ninvoke(target='/etc/hosts', callback=os.remove)"},
-+  {"id":"bindings_626_local_call_os_rmdir","decision":"deny","rule_id":"heredoc.python:os_rmdir","source":"import os\ndef invoke(callback, target):\n    callback(target)\ninvoke(os.rmdir, '/etc')"},
-+  {"id":"bindings_626_local_call_bound_unlink","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\ninvoke(Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_bound_rmdir","decision":"deny","rule_id":"heredoc.python:pathlib_rmdir","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\ninvoke(Path('/etc').rmdir)"},
-+  {"id":"bindings_626_local_call_alias","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\ndef invoke(callback, target):\n    callback(target)\nrun = invoke\nrun(os.unlink, '/etc/hosts')"},
-+  {"id":"bindings_626_local_call_alias_survives_reassignment","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\nrun = invoke\ninvoke = print\nrun(Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_reassigned_to_print","decision":"allow","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\ninvoke = print\ninvoke(Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_nested_helpers","decision":"deny","rule_id":"heredoc.python:os_remove","source":"import os\ndef inner(callback, target):\n    callback(target)\ndef outer(callback, target):\n    inner(callback, target)\nouter(os.remove, '/etc/hosts')"},
-+  {"id":"bindings_626_local_call_container_selection","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\nhelpers = {'run': invoke}\nhelpers['run'](Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_two_invocations","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\ndef invoke(callback, target):\n    callback(target)\ninvoke(print, 'hello')\ninvoke(os.unlink, '/etc/hosts')"},
-+  {"id":"bindings_626_local_call_parameter_replaced","decision":"allow","source":"from pathlib import Path\ndef ignore(callback):\n    callback = print\n    callback('hello')\nignore(Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_unused_parameter","decision":"allow","source":"from pathlib import Path\ndef ignore(callback):\n    pass\nignore(Path('/etc/hosts').unlink)"},
-+  {"id":"bindings_626_local_call_unused_definition","decision":"allow","source":"from pathlib import Path\ndef invoke(callback):\n    callback()\npending = Path('/etc/hosts').unlink"},
-+  {"id":"bindings_626_local_call_return_capture_only","decision":"allow","source":"import os\ndef identity(callback):\n    return callback\npending = identity(os.unlink)"},
-+  {"id":"bindings_626_local_call_return_invoked","decision":"deny","rule_id":"heredoc.python:os_unlink","source":"import os\ndef identity(callback):\n    return callback\nidentity(os.unlink)('/etc/hosts')"},
-+  {"id":"bindings_626_local_call_return_bound_invoked","decision":"deny","rule_id":"heredoc.python:pathlib_unlink","so
+-/// Whether the use of a script block variable at `start..end` of `text` only
+-/// reads it as text: a whole statement `$sb.ToString()`, or `Write-Output
+-/// $sb`, `Write-Host $sb` or `echo $sb` with nothing after it. Inside any
+-/// other statement the value, or text made from it, may reach something that
+-/// runs it (`[scriptblock]::Create($sb.ToString()).Invoke()`,
+-/// `Write-Output $sb | ForEach-Object { & $_ }`).
+-fn powershell_block_variable_use_is_inert(text: &str, start: usize, end: usize) -> bool {
+-    let statement_start = text[..start]
+-        .rfind([';', '\r', '\n'])
+-        .map_or(0, |at| at + 1);
+-    // A backtick before the line break continues the statement above.
+-    if text[..statement_start]
+-        .trim_end_matches(['\r', '\n'])
+-        .ends_with('`')
+-    {
+-        return false;
+-    }
+-    let after = &text[end..];
+-    let statement_end = after.find([';', '\r', '\n']).unwrap_or(after.len());
+-    let before = text[statement_start..start].trim().to_ascii_lowercase();
+-    let rest = after[..statement_end].trim().to_ascii_lowercase();
+-    match before.as_str() {
+-        "" => rest == ".tostring()",
+-        "write-output" | "write-host" | "echo" => rest.is_empty(),
+-        _ => false,
+-    }
+-}
+-
+ /// Every PowerShell statement that runs a command through the call operator
+ /// `&`, as the span from the operator to the end of its statement (#637). The
+ /// segment splitter reads every bare `&` as a separator, so such a statement's
+@@ -56190,6 +56162,13 @@ mod tests {
+             "$sb = { git reset --hard }; & ${sb}".to_string(),
+             "$script:sb = { git reset --hard }; & $sb".to_string(),
+             "[scriptblock]$sb = { git reset --hard }; & $sb".to_string(),
++            // Printed or stringified output can still be run once piped on.
++            "$sb = { git reset --hard }\nWrite-Output $sb\n| ForEach-Object { & $_ }".to_string(),
++            "& {\n$sb = { git reset --hard }\nWrite-Output $sb\n} | ForEach-Object { & $_ }"
++                .to_string(),
++            "$sb = { git reset --hard }; $sb.ToString() | Invoke-Expression".to_string(),
++            "$sb = { git reset --hard }; Write-Output $sb".to_string(),
++            "$sb = { git reset --hard }; $sb.ToString()".to_string(),
+         ] {
+             let result = evaluate(&cmd);
+             assert!(result.is_denied(), "{cmd:?} must be denied: {result:?}");
+@@ -56202,9 +56181,8 @@ mod tests {
+             r"Set-Location C:\x; . 'C:\tools\build.ps1'".to_string(),
+             r". .\env.ps1; Get-ChildItem".to_string(),
+             "Get-Date; . $PROFILE".to_string(),
+-            "$sb = { git reset --hard }; Write-Output $sb".to_string(),
+-            "$sb = { git reset --hard }; $sb.ToString()".to_string(),
+-            "$sb = { git reset --hard }; echo $sb".to_string(),
++            "$sb = { git reset --hard }".to_string(),
++   
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #637** (closed): fix(powershell): preserve call/dot-source operators across compound statements, scriptblock .Invoke(), and *.exe tool names (@stevemoraco)
 - **PR #632** (2026-11-02): deps(deps): bump fancy-regex from 0.19.2 to 0.20.0 (@dependabot[bot])
 - **PR #631** (2026-11-02): deps(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
 - **PR #630** (2026-11-02): deps(deps): bump the rust-minor-patch group with 2 updates (@dependabot[bot])
+- **PR #629** (closed): fix(heredoc): stop quoted_heredoc_bodies_blanked from re-entering itself (#628) (@Khang5687)
 - **PR #596** (2026-10-27): deps(deps): bump smallvec from 1.16.3 to 1.16.4 in the rust-minor-patch group (@dependabot[bot])
-- **PR #595** (2026-10-26): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
-- **PR #594** (2026-10-26): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -3437,33 +3183,56 @@ cargo clippy --locked --all-targets -- -D warnings; cargo fmt --check;
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): revoke path proofs after opaque coercions
+## X. evaluator): read PowerShell call, dot-source and script-block invoke statements 
 
 **RULE**:
-When implementing operations in `docs/patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90fe7bf7`: python): revoke path proofs after opaque coercions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff76198f`: evaluator): read PowerShell call, dot-source and script-block invoke statements as commands (#637) [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/patterns.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Unresolved operands to path/string conversions and overloaded `+` or `/`
-operations can execute Python hooks such as `__fspath__` or `__str__`; these
-operations revoke later factory and receiver proofs. Conversions of known standard values
-preserve unrelated cleanup proofs even when the result's exact path is unknown.
-Conversions alone do not produce deletion findings: an actual destructive
-invocation is still required.
+        if powershell_prefix_opens_executable_block(&command[..open])
+            || powershell_block_literal_is_invoked(command, open, close)
+        {
+/// Whether the script block literal `{ … }` at `open..=close` is run by an
+/// invoke method on it, `{ … }.Invoke()` or `({ … }).InvokeReturnAsIs()`, or
+/// is bound to a variable that a later statement runs: `$sb = { … }` then
+/// `$sb.Invoke()`, `& $sb` or `. $sb` (#637). A block that is only stored or
+/// printed stays inert.
+fn powershell_block_literal_is_invoked(command: &str, open: usize, close: usize) -> bool {
+    let after = command.get(close + 1..).unwrap_or_default();
+    if powershell_text_starts_with_invoke_method(
+        after.trim_start_matches(|c: char| c == ')' || c.is_ascii_whitespace()),
+    ) {
+        return true;
+    }
+    let local = command[..open]
+        .rsplit([';', '\r', '\n', '|', '{', '}'])
+        .next()
+        .unwrap_or_default()
+        .trim();
+    let Some(name) = local
+        .strip_suffix('=')
+        .map(str::trim_end)
+        .and_then(|target| target.strip_prefix('$'))
+        .filter(|name| {
+            !name.is_empty()
+                && name
+                    .bytes()
+          
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        if powershell_prefix_opens_executable_block(&command[..open]) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90fe7bf7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff76198f` are properly handled with clean fallback behavior.

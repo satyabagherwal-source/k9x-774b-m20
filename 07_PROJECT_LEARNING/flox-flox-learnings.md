@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `da039c11`  
+> **Source Version**: `c310e5dc`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T01:39:57.035Z  
+> **Timestamp**: 2026-11-05T02:40:19.402Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T01:39:56.517Z  
+> **Harvest Timestamp**: 2026-11-05T02:40:19.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4188 stars
+- **Stars / Engagement**: 4192 stars
 
 ---
 
@@ -1445,1149 +1445,171 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da039c11` (2026-10-30)
-**Commit Message**: fix(cli): Drop the unused webpki-roots CA store (#4855)
+### Incident Patch 1: `c310e5dc` (2026-11-04)
+**Commit Message**: fix(auth): drop the CI hint from expired and rejected login errors (#4858)
 
-## Proposed Changes
+Follow-up to #4787, which added 401 handling for `/resolve` in 1.19.0.
+Closes DEV-406.
 
-Removes `webpki-roots` from `Cargo.lock`. Version 1.0.3 still trusts
-eMudhra, so SBOMs and dependency scanners flag the CLI after INC-35,
-even though the store is never used. Bumping it would silence this scan
-but keep a dead CA store for the next root incident to flag.
+The `ResolveAuthError` messages each carried a transitional hint line,
+`For CI and automation, see https://go.flox.dev/auth`, to help while
+users adjusted to the auth change. DEV-406 schedules its removal two
+releases later, in 1.21.0, because it makes the errors too verbose once
+users are used to them.
 
-`oauth2`'s default `rustls-tls` feature was the only thing enabling it,
-so `oauth2` now uses `default-features = false` with `reqwest`. reqwest
-already used native-tls, so TLS behavior doesn't change.
+Triage decision: the line is removed from **Expired** and **Rejected**
+only. Those users have already logged in, so the CI hint is noise for
+them. **Required** keeps the line because it is the first error a
+logged-out CI user hits. The `flox-auth` man page and the catalog auth
+section still point CI users at the URL.
 
-The `cacert-distrust` check is renamed to `ca-roots`, and it now fails
-if `webpki-roots` returns at any version. Rust bundled roots are a fixed
-list, so they can't pick up the distrust list or `SSL_CERT_FILE`.
+Resulting messages:
 
-Tested `flox auth login` on macOS.
+```
+✘ ERROR: Your FloxHub login has expired.
+Log in again with 'flox auth login'.
+```
 
-Resolves CLI-275.
+```
+✘ ERROR: Authentication rejected: Unable to verify token
+Log in again with 'flox auth login'.
+```
+
+The expected output in `cli/tests/catalog-auth-required.bats` is updated
+to match.
+
+**Do not merge before 1.21.0.** Opened as a draft so it is ready when
+that release opens.
 
 ## Release Notes
 
-N/A
+The er
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `cli/floxhub-client/src/error.rs` (modified, +0/-2)
 ```diff
-@@ -417,7 +417,7 @@ jobs:
-           export AWS_SESSION_TOKEN
-           export NIX_SUBSTITUTER_KEY
- 
--          for package in 'checks.${{ matrix.system }}.cacert-distrust' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-+          for package in 'checks.${{ matrix.system }}.ca-roots' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-             echo "::group::Building $package"
-             ./.github/scripts/remote-execute-nix-build.sh "$package" "$NIX_SUBSTITUTER"
-             echo "::endgroup::"
+@@ -46,7 +46,6 @@ pub enum ResolveAuthError {
+     /// The credential's expiry, known locally, has passed.
+     #[error(
+         "Your FloxHub login has expired.\n\
+-         For CI and automation, see https://go.flox.dev/auth\n\
+          Log in again with 'flox auth login'."
+     )]
+     Expired,
+@@ -55,7 +54,6 @@ pub enum ResolveAuthError {
+     /// explanation follows the colon.
+     #[error(
+         "Authentication rejected: {detail}\n\
+-         For CI and automation, see https://go.flox.dev/auth\n\
+          Log in again with 'flox auth login'."
+     )]
+     Rejected { detail: String },
 ```
 
-**File**: `Cargo.lock` (modified, +1/-88)
+**File**: `cli/tests/catalog-auth-required.bats` (modified, +0/-2)
 ```diff
-@@ -2083,10 +2083,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
- dependencies = [
-  "cfg-if",
-- "js-sys",
-  "libc",
-  "wasi 0.13.3+wasi-0.2.2",
-- "wasm-bindgen",
-  "windows-targets 0.52.6",
- ]
+@@ -44,15 +44,13 @@ EOF
+ assert_login_expired_error() {
+   assert_output --partial - << 'EOF'
+ ✘ ERROR: Your FloxHub login has expired.
+-For CI and automation, see https://go.flox.dev/auth
+ Log in again with 'flox auth login'.
+ EOF
+ }
  
-@@ -2409,7 +2407,6 @@ dependencies = [
-  "tokio",
-  "tokio-rustls",
-  "tower-service",
-- "webpki-roots 0.26.11",
- ]
- 
- [[package]]
-@@ -3041,12 +3038,6 @@ dependencies = [
-  "logos-codegen",
- ]
- 
--[[package]]
--name = "lru-slab"
--version = "0.1.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
--
- [[package]]
- name = "matchers"
- version = "0.2.0"
-@@ -3943,61 +3934,6 @@ version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
- 
--[[package]]
--name = "quinn"
--version = "0.11.9"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
--dependencies = [
-- "bytes",
-- "cfg_aliases",
-- "pin-project-lite",
-- "quinn-proto",
-- "quinn-udp",
-- "rustc-hash 2.1.1",
-- "rustls",
-- "socket2 0.6.1",
-- "thiserror 2.0.18",
-- "tokio",
-- "tracing",
-- "web-time",
--]
--
--[[package]]
--name = "quinn-proto"
--version = "0.11.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
--dependencies = [
-- "bytes",
-- "getrandom 0.3.1",
-- "lru-slab",
-- "rand 0.9.5",
-- "ring",
-- "rustc-hash 2.1.1",
-- "rustls",
-- "rustls-pki-types",
-- "slab",
-- "thiserror 2.0.18",
-- "tinyvec",
-- "tracing",
-- "web-time",
--]
--
--[[package]]
--name = "quinn-udp"
--version = "0.5.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
--dependencies = [
-- "cfg_aliases",
-- "libc",
-- "once_cell",
-- "socket2 0.6.1",
-- "tracing",
-- "windows-sys 0.60.2",
--]
--
- [[package]]
- name = "quote"
- version = "1.0.40"
-@@ -4209,16 +4145,13 @@ dependencies = [
-  "native-tls",
-  "percent-encoding",
-  "pin-project-lite",
-- "quinn",
-- "rustls",
-  "rustls-pki-types",
-  "serde",
-  "serde_json",
-  "serde_urlencoded",
-  "sync_wrapper",
-  "tokio",
-  "tokio-native-tls",
-- "tokio-rustls",
-  "tokio-util",
-  "tower",
-  "tower-http",
-@@ -4228,7 +4161,6 @@ dependencies = [
-  "wasm-bindgen-futures",
-  "wasm-streams",
-  "web-sys",
-- "webpki-roots 1.0.3",
- ]
- 
- [[package]]
-@@ -4439,7 +4371,6 @@ version = "1.15.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
- dependencies = [
-- "web-time",
-  "zeroize",
- ]
- 
-@@ -6238,24 +6169,6 @@ dependencies = [
-  "rustls-pki-types",
- ]
- 
--[[package]]
--name = "webpki-roots"
--version = "0.26.11"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
--dependencies = [
-- "webpki-roots 1.0.3",
--]
--
--[[package]]
--name = "webpki-roots"
--version = "1.0.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "32b130c0d2d49f8b6889abc456e795e82525204f27c42cf767cf0d7734e089b8"
--dependencies = [
-- "rustls-pki-types",
--]
--
- [[package]]
- name = "winapi"
- version = "0.3.9"
-@@ -6278,7 +6191,7 @@ version = "0.1.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
-```
-
-**File**: `Cargo.toml` (modified, +3/-1)
-```diff
-@@ -82,7 +82,9 @@ zbus-secret-service-keyring-store = { version = "1", default-features = false, f
- log = { version = "0.4.29", features = ["kv"] }
- nef-lock-catalog = { path = "cli/nef-lock-catalog" }
- nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
--oauth2 = "5.0"
-+# The default `rustls-tls` feature bundles a webpki CA store that reqwest never
-+# uses, because native-tls takes precedence.
-+oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
- path-dedot = "3.1.1"
- pollster = "0.4.0"
- progenitor-client = "0.11.2"
-```
-
-**File**: `checks/ca-roots.nix` (renamed, +19/-2)
-```diff
-@@ -1,4 +1,4 @@
--# Checks the CA bundle that flox's binaries compile in:
-+# Checks the CA roots that flox's binaries trust:
- #
- # - Every package that sets `NIXPKGS_CACERT_BUNDLE_CRT`, and the installers'
- #   `pkgsFor.cacert`, use the same bundle, because the CLI compares the bundle
-@@ -8,6 +8,11 @@
- #   depend on it are still substituted.
- # - The bundle doesn't trust the distrusted roots for TLS servers, but does
- #   trust a control root, so the check can't pass by matching nothing.
-+# - No crate compiles in its own roots. The system's roots are likely newer
-+#   and more trustworthy. A list compiled into the binary, at any version,
-+#   also can't pick up the distrust list above or a user's `SSL_CERT_FILE`.
-+#   So `Cargo.lock`, which is what dependency scanners read, must not contain
-+#   `webpki-roots`.
- {
-   lib,
-   runCommand,
-@@ -41,6 +46,10 @@ let
-     crate2nix-flox-core = crate2nix-builds.crateEnvs.flox-core.NIXPKGS_CACERT_BUNDLE_CRT;
-     installers = flox.passthru.pkgsFor.cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
-   };
-+
-+  bundledRoots =
-+    lib.filter (package: package.name == "webpki-roots")
-+      (lib.importTOML ../Cargo.lock).package;
- in
- assert lib.assertMsg (lib.length (lib.unique (lib.attrValues bundles)) == 1) ''
-   flox's packages compile in different CA bundles:
-@@ -49,7 +58,15 @@ assert lib.assertMsg (cacert.outPath == stockCacert.outPath) ''
-   The package set's cacert is not the stock nixpkgs one, so every package that depends on it is rebuilt:
-     package set: ${cacert.outPath}
-     nixpkgs:     ${stockCacert.outPath}'';
--runCommand "cacert-distrust"
-+assert lib.assertMsg (bundledRoots == [ ]) ''
-+  Cargo.lock contains webpki-roots ${
-+    lib.concatMapStringsSep ", " (package: package.version) bundledRoots
-+  }, which compiles in a fixed snapshot of CA roots.
-+  Rust bundled roots aren't allowed, because the system's roots are likely newer and more trustworthy.
-+  A list compiled into the binary, at any version, also can't pick up the distrust list or a user's `SSL_CERT_FILE`.
-+  Use system roots instead: enable `rustls-tls-native-roots`, or disable the feature that enabled webpki-roots.
-+  To find that feature, run 'cargo tree -i webpki-roots --target all -e features'.'';
-+runCommand "ca-roots"
-   {
-     nativeBuildInputs = [ openssl ];
-     bundle = bundles.flox-cli;
-```
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -257,7 +257,7 @@
-           inherit pkgs nixpkgs;
-           module = import ./modules/nixos pkgsContext;
-         };
--        cacert-distrust = pkgs.callPackage ./checks/cacert-distrust.nix {
-+        ca-roots = pkgs.callPackage ./checks/ca-roots.nix {
-           stockCacert = nixpkgs.legacyPackages.${system}.cacert;
-         };
-       }) pkgsContext;
-```
-
-**File**: `pkgs/crate2nix/Cargo.nix` (modified, +13/-355)
-```diff
-@@ -5295,6 +5295,8 @@ rec {
-           {
-             name = "oauth2";
-             packageId = "oauth2";
-+            usesDefaultFeatures = false;
-+            features = [ "reqwest" ];
-           }
-           {
-             name = "path-dedot";
-@@ -7182,13 +7184,6 @@ rec {
-             name = "cfg-if";
-             packageId = "cfg-if";
-           }
--          {
--            name = "js-sys";
--            packageId = "js-sys";
--            optional = true;
--            usesDefaultFeatures = false;
--            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)) && (builtins.elem "atomics" targetFeatures));
--          }
-           {
-             name = "libc";
-             packageId = "libc";
-@@ -7243,13 +7238,6 @@ rec {
-             usesDefaultFeatures = false;
-             target = { target, features }: (("wasm32" == target."arch" or null) && ("wasi" == target."os" or null) && ("p2" == target."env" or null));
-           }
--          {
--            name = "wasm-bindgen";
--            packageId = "wasm-bindgen";
--            optional = true;
--            usesDefaultFeatures = false;
--            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)));
--          }
-           {
-             name = "windows-targets";
-             packageId = "windows-targets 0.52.6";
-@@ -7260,7 +7248,7 @@ rec {
-           "rustc-dep-of-std" = [ "dep:compiler_builtins" "dep:core" ];
-           "wasm_js" = [ "dep:wasm-bindgen" "dep:js-sys" ];
-         };
--        resolvedDefaultFeatures = [ "std" "wasm_js" ];
-+        resolvedDefaultFeatures = [ "std" ];
-       };
-       "getrandom 0.4.2" = rec {
-         crateName = "getrandom";
-@@ -8343,11 +8331,6 @@ rec {
-             name = "tower-service";
-             packageId = "tower-service";
-           }
--          {
--            name = "webpki-roots";
--            packageId = "webpki-roots 0.26.11";
--            optional = true;
--          }
-         ];
-         devDependencies = [
-           {
-@@ -8384,7 +8367,7 @@ rec {
-           "webpki-roots" = [ "dep:webpki-roots" ];
-           "webpki-tokio" = [ "webpki-roots" ];
-         };
--        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" "webpki-roots" "webpki-tokio" ];
-+        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" ];
-       };
-       "hyper-tls" = rec {
-         crateName = "hyper-tls";
-@@ -10291,17 +10274,6 @@ rec {
-           "forbid_unsafe" = [ "logos-codegen/forbid_unsafe" ];
-         };
-       };
--      "lru-slab" = rec {
--        crateName = "lru-slab";
--        version = "0.1.2";
--        edition = "2021";
--        sha256 = "0m2139k466qj3bnpk66bwivgcx3z88qkxvlzk70vd65jq373jaqi";
--        libName = "lru_slab";
--        authors = [
--          "Benjamin Saunders <ben.e.saunders@gmail.com>"
--        ];
--
--      };
-       "matchers" = rec {
-         crateName = "matchers";
-         version = "0.2.0";
-@@ -11484,7 +11456,7 @@ rec {
-           "rustls-tls" = [ "reqwest/rustls-tls" ];
-           "ureq" = [ "dep:ureq" ];
-         };
--        resolvedDefaultFeatures = [ "default" "reqwest" "rustls-tls" ];
-+        resolvedDefaultFeatures = [ "reqwest" ];
-       };
-       "objc2-core-foundation" = rec {
-         crateName = "objc2-core-foundation";
-@@ -13154,253 +13126,6 @@ rec {
-         ];
- 
-       };
--      "quinn" = rec {
--        crateName = "quinn";
--        version = "0.11.9";
--        edition = "2021";
--        sha256 = "086gzj666dr3slmlynkvxlndy28hahgl361d6bf93hk3i6ahmqmr";
--        dependencies = [
--          {
--            name = "bytes";
--            packageId = "bytes";
--          }
--          {
--            name = "pin-project-lite";
--            packageId = "pin-project-lite";
--          }
--          {
--            name = "quinn-proto";
--            packageId = "quinn-proto";
--            rename = "proto";
--            usesDefaultFeatures = false;
--          }
--          {
--            name = "quinn-udp";
--            packageId = "quinn-udp";
--            rename = "udp";
--            usesDefaultFeatures = false;
--            features = [ "tracing" ];
--          }
--          {
--            name = "rustc-hash";
--            packageId = "rustc-hash 2.1.1";
--          }
--          {
--            name = "rustls";
--            packageId = "rustls";
--            optional = true;
--            usesDefaultFeatures = false;
--            features = [ "std" ];
--          }
--          {
--            name = "socket2";
--            packageId = "socket2 0.6.1";
--            target = { target, features }: (!((builtins.elem "wasm" target."family") && ("unknown" == target."os" or null)));
--          }
--          {
--            name = "thiserror";
--            packageId = "thiserror 2.0.18";
--          }
--          {
--            
+ assert_login_rejected_error() {
+   assert_output --partial - << 'EOF'
+ ✘ ERROR: Authentication rejected: Unable to verify token
+-For CI and automation, see https://go.flox.dev/auth
+ Log in again with 'flox auth login'.
+ EOF
+ }
 ```
 
 ---
 
-### Incident Patch 2: `f2fc5f48` (2026-10-30)
-**Commit Message**: fix(cli): Drop the unused webpki-roots CA store
+### Incident Patch 2: `5a078339` (2026-11-04)
+**Commit Message**: fix(ld-floxlib): pass src dir to builtins.path without interpolation (#4810)
 
-`Cargo.lock` carries `webpki-roots` 1.0.3, which still trusts eMudhra, so
-SBOMs and dependency scanners flag the CLI after INC-35 even though the
-store is never used. Bumping to 1.0.10+ would silence this one scan but
-keep a dead CA store for the next root incident to flag, so remove it.
+Closes #4775, reported by @sciyoshi. Tracked as
+[DEV-409](https://linear.app/floxdotdev/issue/DEV-409).
 
-The only thing enabling it is `oauth2`'s default `rustls-tls` feature. In
-this inverted tree from before the fix, trimmed to the relevant paths, each
-line is enabled by the lines nested under it:
+`pkgs/ld-floxlib/default.nix` interpolates the source directory into a
+string before handing it to `builtins.path`:
 
-    $ cargo tree -i webpki-roots@1.0.3 --target all -e features
-    webpki-roots v1.0.3
-    └── webpki-roots feature "default"
-        ├── reqwest v0.12.28
-        │   └── oauth2 v5.0.0
-        │       ├── oauth2 feature "default"
-        │       │   └── flox v0.0.0
-        │       │       └── flox feature "default" (command-line)
-        │       ├── oauth2 feature "reqwest"
-        │       │   ├── oauth2 feature "default" (*)
-        │       │   └── oauth2 feature "rustls-tls"
-        │       │       └── oauth2 feature "default" (*)
-        │       └── oauth2 feature "rustls-tls" (*)
-        │   ├── reqwest feature "__rustls"
-        │   │   └── reqwest f
-
-**File**: `Cargo.lock` (modified, +1/-88)
-```diff
-@@ -2083,10 +2083,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
- dependencies = [
-  "cfg-if",
-- "js-sys",
-  "libc",
-  "wasi 0.13.3+wasi-0.2.2",
-- "wasm-bindgen",
-  "windows-targets 0.52.6",
- ]
- 
-@@ -2409,7 +2407,6 @@ dependencies = [
-  "tokio",
-  "tokio-rustls",
-  "tower-service",
-- "webpki-roots 0.26.11",
- ]
- 
- [[package]]
-@@ -3041,12 +3038,6 @@ dependencies = [
-  "logos-codegen",
- ]
- 
--[[package]]
--name = "lru-slab"
--version = "0.1.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
--
- [[package]]
- name = "matchers"
- version = "0.2.0"
-@@ -3943,61 +3934,6 @@ version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
- 
--[[package]]
--name = "quinn"
--version = "0.11.9"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
--dependencies = [
-- "bytes",
-- "cfg_aliases",
-- "pin-project-lite",
-- "quinn-proto",
-- "quinn-udp",
-- "rustc-hash 2.1.1",
-- "rustls",
-- "socket2 0.6.1",
-- "thiserror 2.0.18",
-- "tokio",
-- "tracing",
-- "web-time",
--]
--
--[[package]]
--name = "quinn-proto"
--version = "0.11.15"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
--dependencies = [
-- "bytes",
-- "getrandom 0.3.1",
-- "lru-slab",
-- "rand 0.9.5",
-- "ring",
-- "rustc-hash 2.1.1",
-- "rustls",
-- "rustls-pki-types",
-- "slab",
-- "thiserror 2.0.18",
-- "tinyvec",
-- "tracing",
-- "web-time",
--]
--
--[[package]]
--name = "quinn-udp"
--version = "0.5.14"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
--dependencies = [
-- "cfg_aliases",
-- "libc",
-- "once_cell",
-- "socket2 0.6.1",
-- "tracing",
-- "windows-sys 0.60.2",
--]
--
- [[package]]
- name = "quote"
- version = "1.0.40"
-@@ -4209,16 +4145,13 @@ dependencies = [
-  "native-tls",
-  "percent-encoding",
-  "pin-project-lite",
-- "quinn",
-- "rustls",
-  "rustls-pki-types",
-  "serde",
-  "serde_json",
-  "serde_urlencoded",
-  "sync_wrapper",
-  "tokio",
-  "tokio-native-tls",
-- "tokio-rustls",
-  "tokio-util",
-  "tower",
-  "tower-http",
-@@ -4228,7 +4161,6 @@ dependencies = [
-  "wasm-bindgen-futures",
-  "wasm-streams",
-  "web-sys",
-- "webpki-roots 1.0.3",
- ]
- 
- [[package]]
-@@ -4439,7 +4371,6 @@ version = "1.15.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
- dependencies = [
-- "web-time",
-  "zeroize",
- ]
- 
-@@ -6238,24 +6169,6 @@ dependencies = [
-  "rustls-pki-types",
- ]
- 
--[[package]]
--name = "webpki-roots"
--version = "0.26.11"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
--dependencies = [
-- "webpki-roots 1.0.3",
--]
--
--[[package]]
--name = "webpki-roots"
--version = "1.0.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "32b130c0d2d49f8b6889abc456e795e82525204f27c42cf767cf0d7734e089b8"
--dependencies = [
-- "rustls-pki-types",
--]
--
- [[package]]
- name = "winapi"
- version = "0.3.9"
-@@ -6278,7 +6191,7 @@ version = "0.1.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
+```nix
+path = "${./../../ld-floxlib}";
 ```
 
-**File**: `Cargo.toml` (modified, +3/-1)
-```diff
-@@ -82,7 +82,9 @@ zbus-secret-service-keyring-store = { version = "1", default-features = false, f
- log = { version = "0.4.29", features = ["kv"] }
- nef-lock-catalog = { path = "cli/nef-lock-catalog" }
- nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
--oauth2 = "5.0"
-+# The default `rustls-tls` feature bundles a webpki CA store that reqwest never
-+# uses, because native-tls takes precedence.
-+oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
- path-dedot = "3.1.1"
- pollster = "0.4.0"
- progenitor-client = "0.11.2"
-```
+That produces an intermediate store path (`...-ld-floxlib`) which
+`builtins.path` then reads to produce `...-ld-floxlib-src`. `nix flake
+check --no-build` evaluates with a read-only store, so the interpolation
+computes the intermediate path without materializing it and the read
+fails with `error: path /nix/store/...-ld-floxlib is not valid`. An
+ordinary evaluation can materialize that copy and mask the bug, which is
+why it looks intermittent; GC removing the copy exposes it again.
 
-**File**: `checks/ca-roots.nix` (modified, +17/-0)
+This is the one-line fix proposed in the issue — pass the directory
+straight through, so no intermediate copy is involved.
+
+**Verified against the reporter's cold-store reproduction.** Their
+wrapper flake, pinned to each revision in turn and evaluated into a
+fresh `local?root=` store with `--no-build --all-systems --option
+eval-cache false`:
+
+| flox revision | result
+
+**File**: `pkgs/ld-floxlib/default.nix` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,11 @@
- #   depend on it are still substituted.
- # - The bundle doesn't trust the distrusted roots for TLS servers, but does
- #   trust a control root, so the check can't pass by matching nothing.
-+# - No crate compiles in its own roots. The system's roots are likely newer
-+#   and more trustworthy. A list compiled into the binary, at any version,
-+#   also can't pick up the distrust list above or a user's `SSL_CERT_FILE`.
-+#   So `Cargo.lock`, which is what dependency scanners read, must not contain
-+#   `webpki-roots`.
- {
-   lib,
-   runCommand,
-@@ -41,6 +46,10 @@ let
-     crate2nix-flox-core = crate2nix-builds.crateEnvs.flox-core.NIXPKGS_CACERT_BUNDLE_CRT;
-     installers = flox.passthru.pkgsFor.cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
+@@ -8,7 +8,7 @@ stdenv.mkDerivation {
+   version = "1.0.0";
+   src = builtins.path {
+     name = "ld-floxlib-src";
+-    path = "${./../../ld-floxlib}";
++    path = ./../../ld-floxlib;
    };
-+
-+  bundledRoots =
-+    lib.filter (package: package.name == "webpki-roots")
-+      (lib.importTOML ../Cargo.lock).package;
- in
- assert lib.assertMsg (lib.length (lib.unique (lib.attrValues bundles)) == 1) ''
-   flox's packages compile in different CA bundles:
-@@ -49,6 +58,14 @@ assert lib.assertMsg (cacert.outPath == stockCacert.outPath) ''
-   The package set's cacert is not the stock nixpkgs one, so every package that depends on it is rebuilt:
-     package set: ${cacert.outPath}
-     nixpkgs:     ${stockCacert.outPath}'';
-+assert lib.assertMsg (bundledRoots == [ ]) ''
-+  Cargo.lock contains webpki-roots ${
-+    lib.concatMapStringsSep ", " (package: package.version) bundledRoots
-+  }, which compiles in a fixed snapshot of CA roots.
-+  Rust bundled roots aren't allowed, because the system's roots are likely newer and more trustworthy.
-+  A list compiled into the binary, at any version, also can't pick up the distrust list or a user's `SSL_CERT_FILE`.
-+  Use system roots instead: enable `rustls-tls-native-roots`, or disable the feature that enabled webpki-roots.
-+  To find that feature, run 'cargo tree -i webpki-roots --target all -e features'.'';
- runCommand "ca-roots"
-   {
-     nativeBuildInputs = [ openssl ];
-```
-
-**File**: `pkgs/crate2nix/Cargo.nix` (modified, +13/-355)
-```diff
-@@ -5295,6 +5295,8 @@ rec {
-           {
-             name = "oauth2";
-             packageId = "oauth2";
-+            usesDefaultFeatures = false;
-+            features = [ "reqwest" ];
-           }
-           {
-             name = "path-dedot";
-@@ -7182,13 +7184,6 @@ rec {
-             name = "cfg-if";
-             packageId = "cfg-if";
-           }
--          {
--            name = "js-sys";
--            packageId = "js-sys";
--            optional = true;
--            usesDefaultFeatures = false;
--            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)) && (builtins.elem "atomics" targetFeatures));
--          }
-           {
-             name = "libc";
-             packageId = "libc";
-@@ -7243,13 +7238,6 @@ rec {
-             usesDefaultFeatures = false;
-             target = { target, features }: (("wasm32" == target."arch" or null) && ("wasi" == target."os" or null) && ("p2" == target."env" or null));
-           }
--          {
--            name = "wasm-bindgen";
--            packageId = "wasm-bindgen";
--            optional = true;
--            usesDefaultFeatures = false;
--            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)));
--          }
-           {
-             name = "windows-targets";
-             packageId = "windows-targets 0.52.6";
-@@ -7260,7 +7248,7 @@ rec {
-           "rustc-dep-of-std" = [ "dep:compiler_builtins" "dep:core" ];
-           "wasm_js" = [ "dep:wasm-bindgen" "dep:js-sys" ];
-         };
--        resolvedDefaultFeatures = [ "std" "wasm_js" ];
-+        resolvedDefaultFeatures = [ "std" ];
-       };
-       "getrandom 0.4.2" = rec {
-         crateName = "getrandom";
-@@ -8343,11 +8331,6 @@ rec {
-             name = "tower-service";
-             packageId = "tower-service";
-           }
--          {
--            name = "webpki-roots";
--            packageId = "webpki-roots 0.26.11";
--            optional = true;
--          }
-         ];
-         devDependencies = [
-           {
-@@ -8384,7 +8367,7 @@ rec {
-           "webpki-roots" = [ "dep:webpki-roots" ];
-           "webpki-tokio" = [ "webpki-roots" ];
-         };
--        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" "webpki-roots" "webpki-tokio" ];
-+        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" ];
-       };
-       "hyper-tls" = rec {
-         crateName = "hyper-tls";
-@@ -10291,17 +10274,6 @@ rec {
-           "forbid_unsafe" = [ "logos-codegen/forbid_unsafe" ];
-         };
-       };
--      "lru-slab" = rec {
--        crateName = "lru-slab";
--        version = "0.1.2";
--        edition = "2021";
--        sha256 = "0m2139k466qj3bnpk66bwivgcx3z88qkxvlzk70vd65jq373jaqi";
--        libName = "lru_slab";
--        authors = [
--          "Benjamin Saunders <ben.e.saunders@gmail.com>"
--        ];
--
--      };
-       "matchers" = rec {
-         crateName = "matchers";
-         version = "0.2.0";
-@@ -11484,7 +11456,7 @@ rec {
-           "rustls-tls" = [ "reqwest/rustls-tls" ];
-           "ureq" = [ "dep:ureq" ];
-         };
--        resolvedDefaultFeatures = [ "default" "reqwest" "rustls-tls" ];
-+        resolvedDefaultFeatures = [ "reqwest" ];
-       };
-       "objc2-core-foundation" = rec {
-         crateName = "objc2-core-foundation";
-@@ -13154,253 +13126,6 @@ rec {
-         ];
- 
-       };
--      "quinn" = rec {
--        crateName = "quinn";
--        version = "0.11.9";
--        edition = "2021";
--        sha256 = "086gzj666dr3slmlynkvxlndy28hahgl361d6bf93hk3i6ahmqmr";
--        dependencies = [
--          {
--            name = "bytes";
--            packageId = "bytes";
--          }
--          {
--            name = "pin-project-lite";
--            packageId = "pin-project-lite";
--          }
--          {
--            name = "quinn-proto";
--            packageId = "quinn-proto";
--            rename = "proto";
--            usesDefaultFeatures = false;
--          }
--          {
--            name = "quinn-udp";
--            packageId = "quinn-udp";
--            rename = "udp";
--            usesDefaultFeatures = false;
--            features = [ "tracing" ];
--          }
--          {
--            name = "rustc-hash";
--            packageId = "rustc-hash 2.1.1";
--          }
--          {
--            name = "rustls";
--            packageId = "rustls";
--            optional = true;
--            usesDefaultFeatures = false;
--            features = [ "std" ];
--          }
--          {
--            name = "socket2";
--            packageId = "socket2 0.6.1";
--            target = { target, features }: (!((builtins.elem "wasm" target."family") && ("unknown" == target."os" or null)));
--          }
--          {
--            name = "thiserror";
--            packageId = "thiserror 2.0.18";
--          }
--          {
--            
+   makeFlags = [ "PREFIX=$(out)" ];
+   doCheck = true;
 ```
 
 ---
 
-### Incident Patch 3: `cf7f326d` (2026-10-29)
-**Commit Message**: feat(build): carry the realm nixpkgs host through the flox-nixpkgs proxy (#4459)
+### Incident Patch 3: `2fa8fe3a` (2026-10-12)
+**Commit Message**: fix(ld-floxlib): pass src dir to builtins.path without interpolation
 
-Base catalog source builds discarded the host in the catalog's
-`locked_url` and fetched the revision from public GitHub. A revision
-available only on another host therefore failed to build.
+Interpolating the source directory into a string first produces an
+intermediate store path (`...-ld-floxlib`), which `builtins.path` then
+reads to produce `...-ld-floxlib-src`. Under `nix flake check --no-build`
+Nix evaluates with a read-only store, so the interpolation computes that
+intermediate path without materializing it and the subsequent read fails:
 
-Carry the locked URL's host, owner, and revision through the
-`flox-nixpkgs` proxy. Non-public hosts use shallow Git over HTTPS,
-allowing Git transport authentication. Public GitHub keeps its existing
-host-less proxy reference, tarball fetcher, and cache keys. Proxy cache
-entries include the host when specified.
+    error: path '/nix/store/...-ld-floxlib' is not valid
 
-The existing `flox`/`NixOS` owner restriction remains in place. This
-change covers the base-catalog source URL path; it does not change
-publish-time build-tool selection.
+Passing the directory directly skips the intermediate copy.
 
-## Validation
+Fixes #4775
 
-- Builds: `just build-cli` and `nix build --no-link .#flox-nix-plugins`
-passed against Nix 2.31.6.
-- Tests: both C++ plugin tests, all 67 Rust build-environment tests, and
-all three `flox-nixpkgs.bats` integration tests passed.
-- A local Git fixture verified non-public host transport, shallow
-locking, wrapped evaluation, host-specific proxy cache entries, and
-branch resolution.
-- All PR lint hooks passed: Clippy with warni
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
-**File**: `cli/flox-rust-sdk/src/providers/buildenv.rs` (modified, +102/-23)
+**File**: `pkgs/ld-floxlib/default.nix` (modified, +1/-1)
 ```diff
-@@ -27,6 +27,7 @@ use rsevents_extra::Semaphore;
- use serde::{Deserialize, Serialize};
- use thiserror::Error;
- use tracing::{Span, debug, info_span, instrument, trace, warn};
-+use url::Url;
- 
- use super::nix::nix_base_command;
- use super::nix_auth::{AuthError, AuthProvider};
-@@ -42,12 +43,6 @@ static BUILDENV_NIX: LazyLock<PathBuf> = LazyLock::new(|| {
-         .into()
- });
- 
--/// Prefix of locked_url of catalog packages that are from the nixpkgs base-catalog.
--/// This url was meant to serve as a flake reference to the Flox hosted mirror of nixpkgs,
--/// but is both ill formatted and does not provide the necessary overrides
--/// to allow evaluating packages without common evaluation checks, such as unfree and broken.
--const NIXPKGS_CATALOG_URL_PREFIX: &str = "https://github.com/flox/nixpkgs?rev=";
--
- /// Returns `true` if `path` is accessible on the local filesystem.
- ///
- /// Uses `metadata()` rather than `Path::exists()` so callers can distinguish
-@@ -57,11 +52,54 @@ fn path_is_present(path: &str) -> bool {
-     std::fs::metadata(path).is_ok()
- }
- 
--/// The base flake reference invoking the `flox-nixpkgs` fetcher.
--/// This is a bridge to the Flox hosted mirror of nixpkgs flake,
--/// which enables building packages without common evaluation checks,
--/// such as unfree and broken.
--const FLOX_NIXPKGS_PROXY_FLAKE_REF_BASE: &str = "flox-nixpkgs:v0/flox";
-+/// Scheme and rules-version of the `flox-nixpkgs` proxy fetcher. The proxy wraps
-+/// the realm's nixpkgs base catalog so evaluation checks (allowUnfree,
-+/// allowBroken) are controlled by manifest options rather than Nix's built-in
-+/// guards.
-+const FLOX_NIXPKGS_SCHEME: &str = "flox-nixpkgs:v0";
-+
-+/// Build the `flox-nixpkgs` proxy flake ref for a base catalog package's
-+/// fully-qualified `locked_url`
-+/// (`https://<host>/<owner>/nixpkgs?rev=<rev>`, as mastered by the realm's
-+/// catalog server).
-+///
-+/// The realm host is carried through as the proxy's `?host=` attribute so the
-+/// fetch targets the nixpkgs the catalog server actually mastered (e.g. an
-+/// on-premise fork) rather than defaulting to github.com. Only the host, owner,
-+/// and rev are needed — the proxy always wraps `<owner>/nixpkgs`.
-+fn flox_nixpkgs_flake_ref(locked_url: &str, attr_path: &str) -> Result<String, BuildEnvError> {
-+    let malformed = |detail: &str| {
-+        BuildEnvError::LockfileContents(format!(
-+            "Locked package '{attr_path}' is a base catalog package, but its locked url '{locked_url}' {detail}."
-+        ))
-+    };
-+
-+    let url =
-+        Url::parse(locked_url).map_err(|err| malformed(&format!("is not a valid URL: {err}")))?;
-+    let host = url.host_str().ok_or_else(|| malformed("has no host"))?;
-+    // The owner is passed through verbatim. The flox-nixpkgs proxy still
-+    // constrains it to `flox`/`NixOS`; relaxing that allowlist to arbitrary
-+    // realm orgs is out of scope for this effort (tracked with SL-007).
-+    let owner = url
-+        .path_segments()
-+        .and_then(|mut segments| segments.find(|segment| !segment.is_empty()))
-+        .ok_or_else(|| malformed("has no owner path segment"))?;
-+    let rev = url
-+        .query_pairs()
-+        .find(|(key, _)| key == "rev")
-+        .map(|(_, value)| value.into_owned())
-+        .ok_or_else(|| malformed("has no 'rev' query parameter"))?;
-+
-+    // Omit `?host=` for github.com so a public ref stays byte-identical to the
-+    // pre-host form (`flox-nixpkgs:v0/<owner>/<rev>`). The proxy treats absent
-+    // and `github.com` hosts identically, but the fetcher cache keys on the
-+    // `host` attr — so adding `?host=github.com` would miss every existing
-+    // cache entry and needlessly re-fetch public nixpkgs after an upgrade.
-+    if host == "github.com" {
-+        return Ok(format!("{FLOX_NIXPKGS_SCHEME}/{owner}/{rev}"));
-+    }
-+    Ok(format!("{FLOX_NIXPKGS_SCHEME}/{owner}/{rev}?host={host}"))
-+}
- 
- /// Name to use in error messages when a package can't be downloaded from
- /// `cache.nixos.org` as a fallback for other locations.
-@@ -336,18 +374,12 @@ pub fn build_catalog_pkg_from_source(
-     broken: Option<bool>,
-     gc_root_prefix: Option<&Path>,
- ) -> Result<(), BuildEnvError> {
--    // Transform the locked URL: strip the nixpkgs GitHub prefix and replace
--    // it with the flox-nixpkgs fetcher reference so that evaluation checks
--    // (allowUnfree, allowBroken) are controlled by manifest options rather
--    // than Nix's built-in guards.
--    let flake_ref = if let Some(rev) = locked_url.strip_prefix(NIXPKGS_CATALOG_URL_PREFIX) {
--        format!("{FLOX_NIXPKGS_PROXY_FLAKE_REF_BASE}/{rev}")
--    } else {
--        return Err(BuildEnvError::LockfileContents(format!(
--            "Locked package '{}' is a base catalog package, but the locked url '{}' does not start with the expected prefix '{}'",
--            attr_path, locked_url, NIXPKGS_CATALOG_URL_PREFIX
--        )));
--    };
-+    // Route the base catalog package through the flox-nixpkgs proxy fetcher so
-+    // e
-```
-
-**File**: `nix-plugins/src/fetchers/wrapped-nixpkgs-input.cc` (modified, +58/-12)
-```diff
-@@ -145,18 +145,38 @@ createWrappedFlakeDir( nix::EvalState &      state,
- 
- 
- /**
-- * @brief Helper used to convert a `flox-nixpkgs` attribute set representation,
-- *        to a `github` attribute set representation.
-+ * @brief Convert a `flox-nixpkgs` attribute set to the underlying fetcher's
-+ *        attribute set — `github` for github.com, `git` for any other host.
-+ *
-+ * github.com keeps the fast GitHub tarball fetcher. A non-github.com host
-+ * (an on-premise GitHub Enterprise realm) is fetched over `git+https` instead:
-+ * the GitHub REST tarball API authenticates only with access tokens, whereas
-+ * git-over-https negotiates Kerberos/SPNEGO — which is how an enterprise host
-+ * behind Kerberos is reached. This also matches the CLI's resolve prefetch,
-+ * which already fetches the same rev over git, so it reuses Nix's git cache.
-  */
- static nix::fetchers::Attrs
--floxNixpkgsAttrsToGithubAttrs( const nix::fetchers::Attrs & attrs )
-+floxNixpkgsAttrsToFetcherAttrs( const nix::fetchers::Attrs & attrs )
- {
-+  auto owner = nix::fetchers::getStrAttr( attrs, "owner" );
-+  auto host  = nix::fetchers::maybeGetStrAttr( attrs, "host" );
-+
-   nix::fetchers::Attrs _attrs;
--  _attrs["type"] = "github";
--  _attrs["repo"] = "nixpkgs";
- 
--  /* Inherit owner field (could be NixOS or flox) */
--  _attrs["owner"] = nix::fetchers::getStrAttr( attrs, "owner" );
-+  if ( host.has_value() && ( *host != "github.com" ) )
-+    {
-+      /* Enterprise host: fetch over git so the transport can do Kerberos. */
-+      _attrs["type"]    = "git";
-+      _attrs["url"]     = "https://" + *host + "/" + owner + "/nixpkgs";
-+      _attrs["shallow"] = nix::Explicit<bool> { true };
-+    }
-+  else
-+    {
-+      /* Public github.com: keep the faster GitHub tarball fetcher. */
-+      _attrs["type"]  = "github";
-+      _attrs["repo"]  = "nixpkgs";
-+      _attrs["owner"] = owner;
-+    }
- 
-   /* Inherit `rev' and `ref' fields */
-   if ( auto rev = nix::fetchers::maybeGetStrAttr( attrs, "rev" ) )
-@@ -181,7 +201,7 @@ floxNixpkgsAttrsToGithubAttrs( const nix::fetchers::Attrs & attrs )
- /**
-  * @brief Helper used to convert a `github` attribute set representation,
-  *        to a `flox-nixpkgs` attribute set representation.
-- * @note This is the inverse of `floxNixpkgsAttrsToGithubAttrs`.
-+ * @note Inverse of the github branch of `floxNixpkgsAttrsToFetcherAttrs`.
-  * @param attrs The attribute set representation of an (assumed) `github` input.
-  * @return The attribute set representation of a `flox-nixpkgs` input.
-  * @throws nix::Error If the input type is not `github`.
-@@ -225,6 +245,12 @@ githubAttrsToFloxNixpkgsAttrs( const nix::fetchers::Attrs & attrs )
-   /* Inherit `owner' field */
-   _attrs["owner"] = owner;
- 
-+  /* Inherit an enterprise `host' if present (github.com when absent). */
-+  if ( auto host = nix::fetchers::maybeGetStrAttr( attrs, "host" ) )
-+    {
-+      _attrs["host"] = *host;
-+    }
-+
-   /* Inherit `rev' and `ref' fields */
-   if ( auto rev = nix::fetchers::maybeGetStrAttr( attrs, "rev" ) )
-     {
-@@ -260,7 +286,7 @@ WrappedNixpkgsInputScheme::inputFromAttrs(
-     {
-       if ( ( name != "owner" ) && ( name != "type" ) && ( name != "ref" )
-            && ( name != "rev" ) && ( name != "narHash" )
--           && ( name != "version" ) )
-+           && ( name != "version" ) && ( name != "host" ) )
-         {
-           throw nix::Error( "unsupported flox-nixpkgs input attribute '%s'",
-                             name );
-@@ -384,6 +410,13 @@ WrappedNixpkgsInputScheme::inputFromURL(
-         path[1] );
-     }
- 
-+  /* Optional enterprise `host' (e.g. `?host=github.company.com'); defaults to
-+   * github.com in the github fetcher when absent. */
-+  if ( auto it = url.query.find( "host" ); it != url.query.end() )
-+    {
-+      input.attrs.insert_or_assign( "host", it->second );
-+    }
-+
-   return input;
- }
- 
-@@ -425,6 +458,12 @@ WrappedNixpkgsInputScheme::toURL( const nix::fetchers::Input & input ) const
-       throw nix::Error( "missing 'rev' or 'ref' attribute in input" );
-     }
- 
-+  /* Round-trip an enterprise `host' as a query attribute. */
-+  if ( auto host = nix::fetchers::maybeGetStrAttr( input.attrs, "host" ) )
-+    {
-+      url.query.insert_or_assign( "host", *host );
-+    }
-+
-   return url;
- }
- 
-@@ -487,7 +526,7 @@ WrappedNixpkgsInputScheme::clone( const nix::fetchers::Input & input,
- {
-   auto githubInput = nix::fetchers::Input::fromAttrs(
-     *input.settings,
--    floxNixpkgsAttrsToGithubAttrs( input.attrs ) );
-+    floxNixpkgsAttrsToFetcherAttrs( input.attrs ) );
-   githubInput.clone( destDir );
- }
- 
-@@ -521,7 +560,7 @@ WrappedNixpkgsInputScheme::getAccessor(
-       /* Use existing GitHub fetcher in `nix' to lookup `rev'. */
-       auto githubInput = nix::fetchers::Input::fromAttrs(
-         *input.settings,
--        floxNixpkgsAttrsToGithubAttrs( input.attrs ) );
-+        floxNixpkgsAttrsToFetcherAttrs( input.attrs ) );
-       rev = githubInput.getAccessor( store ).second.getRev();
-     }
-   /* Now that we have a `rev'
-```
-
-**File**: `nix-plugins/tests/flox-nixpkgs.cc` (modified, +23/-0)
-```diff
-@@ -63,6 +63,28 @@ test_inputFromAttrs( nix::ref<nix::EvalState> & state )
- }
- 
- 
-+/* -------------------------------------------------------------------------- */
-+
-+/**
-+ * @brief Test an enterprise `host' round-trips through parse and serialize, so
-+ *        a realm's on-premise nixpkgs host is carried through the proxy.
-+ */
-+bool
-+test_URLRoundtripWithHost( nix::ref<nix::EvalState> & state )
-+{
-+  WrappedNixpkgsInputScheme inputScheme;
-+  auto url = "flox-nixpkgs:v0/flox/" + nixpkgsRev + "?host=github.company.com";
-+  auto input = inputScheme.inputFromURL( state->fetchSettings,
-+                                         nix::parseURL( url ),
-+                                         true );
-+  EXPECT( input.has_value() );
-+  EXPECT_EQ( nix::fetchers::getStrAttr( input->attrs, "host" ),
-+             "github.company.com" );
-+  EXPECT_EQ( inputScheme.toURL( *input ).to_string(), url );
-+  return true;
-+}
-+
-+
- /* -------------------------------------------------------------------------- */
- 
- bool
-@@ -129,6 +151,7 @@ main()
-                                               nix::evalSettings );
- 
-   RUN_TEST( URLRoundtrip, state );
-+  RUN_TEST( URLRoundtripWithHost, state );
-   RUN_TEST( inputFromAttrs, state );
-   RUN_TEST( lockedFromUrl, state );
-   RUN_TEST( lockedRepresentation, state );
+@@ -8,7 +8,7 @@ stdenv.mkDerivation {
+   version = "1.0.0";
+   src = builtins.path {
+     name = "ld-floxlib-src";
+-    path = "${./../../ld-floxlib}";
++    path = ./../../ld-floxlib;
+   };
+   makeFlags = [ "PREFIX=$(out)" ];
+   doCheck = true;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4858** (2026-11-04): fix(auth): drop the CI hint from expired and rejected login errors (@tanjadev)
 - **PR #4855** (2026-10-30): fix(cli): Drop the unused webpki-roots CA store (@dcarley)
 - **PR #4854** (2026-10-29): fix(nix): substitute CI builds from cache.floxsdlc.com (@devusb)
 - **PR #4853** (2026-10-29): chore: community CI (@mkenigs)
 - **PR #4851** (2026-10-28): chore: Release 1.19.3 (@mkenigs)
 - **PR #4843** (2026-10-26): fix(nix): skip AWS SDK unit tests on Intel macOS (@mkenigs)
-- **PR #4842** (2026-10-27): docs(readme): point AI agent links at flox-skills (@imkarrer)
 
 ---
 
@@ -2601,34 +1623,3 @@ branch resolution.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. cli): Drop the unused webpki-roots CA store (#4855)
-
-**RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `da039c11`: cli): Drop the unused webpki-roots CA store (#4855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-          for package in 'checks.${{ matrix.system }}.ca-roots' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-          for package in 'checks.${{ matrix.system }}.cacert-distrust' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da039c11` are properly handled with clean fallback behavior.

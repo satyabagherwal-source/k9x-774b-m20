@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `3f2d26fa`  
+> **Source Version**: `3ff3e5fc`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:27:14.573Z  
+> **Timestamp**: 2026-11-04T23:34:40.666Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:27:14.567Z  
+> **Harvest Timestamp**: 2026-11-04T23:34:40.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2682 stars
+- **Stars / Engagement**: 2689 stars
 
 ---
 
@@ -768,78 +768,184 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f2d26fa` (2026-10-30)
-**Commit Message**: :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)
+### Incident Patch 1: `5be13f40` (2026-11-01)
+**Commit Message**: :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (#5304)
 
-Bumps [org.jetbrains.kotlinx:kotlinx-serialization-json](https://github.com/Kotlin/kotlinx.serialization) from 1.11.0 to 1.12.0.
-- [Release notes](https://github.com/Kotlin/kotlinx.serialization/releases)
-- [Changelog](https://github.com/Kotlin/kotlinx.serialization/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/Kotlin/kotlinx.serialization/compare/v1.11.0...v1.12.0)
-
----
-updated-dependencies:
-- dependency-name: org.jetbrains.kotlinx:kotlinx-serialization-json
-  dependency-version: 1.12.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt` (modified, +19/-15)
 ```diff
-@@ -26,7 +26,7 @@ kotlin = "2.4.21"
- kotlin-logging = "8.0.4"
- kotlinx-coroutines = "1.11.0"
- kotlinx-datetime = "0.8.0-0.6.x-compat"
--kotlinx-serialization = "1.11.0"
-+kotlinx-serialization = "1.12.0"
- kotlinx-uuid = "0.1.7"
- ksoup = "0.2.6"
- ktlint = "14.2.0"
+@@ -94,19 +94,23 @@ object WindowsFocusUtils {
+             }
+ 
+         // Attaching a thread to itself is invalid (ERROR_INVALID_PARAMETER).
+-        val shouldAttach = prevThreadId != null && prevThreadId != targetThreadId
+-        if (shouldAttach) {
+-            val success =
+-                user32.AttachThreadInput(
+-                    DWORD(prevThreadId.toLong()),
+-                    DWORD(targetThreadId.toLong()),
+-                    true,
+-                )
+-            if (!success) {
+-                logger.error { "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}" }
+-                return
+-            }
+-        }
++        val attachThreadId = prevThreadId?.takeIf { it != targetThreadId }
++        // The cached previous thread may be gone (its app exited); attaching then fails,
++        // but we still try to bring the window to the front without it.
++        val attached =
++            attachThreadId != null &&
++                user32
++                    .AttachThreadInput(
++                        DWORD(attachThreadId.toLong()),
++                        DWORD(targetThreadId.toLong()),
++                        true,
++                    ).also { success ->
++                        if (!success) {
++                            logger.warn {
++                                "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}, continuing without it"
++                            }
++                        }
++                    }
+ 
+         try {
+             user32.ShowWindow(handle, SW_RESTORE)
+@@ -117,9 +121,9 @@ object WindowsFocusUtils {
+                 logger.info { "Failed to set foreground window. Please switch manually" }
+             }
+         } finally {
+-            if (shouldAttach) {
++            if (attached) {
+                 user32.AttachThreadInput(
+-                    DWORD(prevThreadId.toLong()),
++                    DWORD(attachThreadId.toLong()),
+                     DWORD(targetThreadId.toLong()),
+                     false,
+                 )
 ```
 
 ---
 
-### Incident Patch 2: `e2c4aa09` (2026-10-30)
-**Commit Message**: :arrow_up: Bump com.ibm.icu:icu4j from 78.3 to 79.1 (#5299)
+### Incident Patch 2: `3ff3e5fc` (2026-11-03)
+**Commit Message**: :bug: use the local paste id when writing a received non-file paste to the pasteboard (#5314)
 
-Bumps [com.ibm.icu:icu4j](https://github.com/unicode-org/icu) from 78.3 to 79.1.
-- [Release notes](https://github.com/unicode-org/icu/releases)
-- [Commits](https://github.com/unicode-org/icu/compare/release-78.3...release-79.1)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/paste/PasteReleaseService.kt` (modified, +2/-1)
+```diff
+@@ -646,7 +646,8 @@ class PasteReleaseService(
+         markDeleteSameHash(id, pasteData.pasteType, pasteData.hash)
+         addRenderingTask(id, pasteData.getType())
+         if (!historyPull) addRelaySyncTask(id, pasteData.appInstanceId, seenAppInstanceIds)
+-        tryWritePasteboard(pasteData)
++        // pasteData.id is the sender's id; writing takes the local row as the current paste
++        tryWritePasteboard(pasteData.copy(id = id))
+         return id
+     }
+ 
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/paste/PasteReleaseServiceRemoteDiscardTest.kt` (modified, +16/-0)
+```diff
+@@ -23,6 +23,7 @@ import io.mockk.mockk
+ import io.mockk.verify
+ import kotlinx.coroutines.runBlocking
+ import kotlin.test.Test
++import kotlin.test.assertEquals
+ import kotlin.test.assertNotNull
+ import kotlin.test.assertNull
+ import kotlin.test.assertTrue
+@@ -153,6 +154,21 @@ class PasteReleaseServiceRemoteDiscardTest {
+             verify(exactly = 0) { notificationManager.sendNotification(any(), any(), any(), any()) }
+         }
+ 
++    @Test
++    fun `remote non-file paste is written to the pasteboard with its local id`() =
++        runBlocking {
++            val pasteDao = mockk<PasteDao>(relaxed = true)
++            coEvery { pasteDao.createPasteData(any(), any()) } returns 42L
++            val service = newService(pasteDao = pasteDao, taskSubmitter = immediateSubmitter())
++
++            var writtenId: Long? = null
++            service.releaseRemotePasteData(remotePasteData(createTextPasteItem(text = "small")).copy(id = 7L)) {
++                writtenId = it.id
++            }
++
++            assertEquals(42L, writtenId)
++        }
++
+     @Test
+     fun `raised limit releases previously oversized remote paste normally`() =
+         runBlocking {
+```
 
 ---
-updated-dependencies:
-- dependency-name: com.ibm.icu:icu4j
-  dependency-version: '79.1'
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 3: `f3ae979e` (2026-11-02)
+**Commit Message**: :bug: treat Xcode device pasteboard sync content like Universal Clipboard on macOS (#5310)
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +5/-1)
 ```diff
-@@ -15,7 +15,7 @@ foojay-resolver = "1.0.0"
- hikaricp = "7.1.0"
- hot-reload = "1.2.0"
- icons-material-symbols = "2.2.1"
--icu4j = "78.3"
-+icu4j = "79.1"
- imageio = "3.15.3"
- jmdns = "3.6.3"
- dbus-java = "5.2.2"
+@@ -22,7 +22,11 @@ public func getPasteboardChangeCount(currentChangeCount: Int,
+     if newChangeCount != currentChangeCount, let items = pasteboard.pasteboardItems {
+         for item in items {
+             for type in item.types {
+-                if type.rawValue == "com.apple.is-remote-clipboard" {
++                if type.rawValue == "com.apple.is-remote-clipboard" ||
++                    type.rawValue == "com.apple.coredevice.dtpasteboardd.sync" {
++                    // Put here by another Apple device: Universal Clipboard, or Xcode's
++                    // pasteboard sync with an attached device. Syncing it back to Apple
++                    // devices would loop through that sync.
+                     isRemote.pointee = 1
+                 } else if type.rawValue == "com.crosspaste" {
+                     isCrossPaste.pointee = 1
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/paste/MacosNativePasteboardTest.kt` (modified, +31/-0)
+```diff
+@@ -284,4 +284,35 @@ class MacosNativePasteboardTest {
+             cleanupClipboard()
+         }
+     }
++
++    @Test
++    fun `getPasteboardChangeCount marks Xcode device pasteboard sync as remote`() {
++        try {
++            val process =
++                ProcessBuilder(
++                    "osascript",
++                    "-l",
++                    "JavaScript",
++                    "-e",
++                    """
++                    ObjC.import("AppKit");
++                    var pb = $.NSPasteboard.generalPasteboard;
++                    pb.clearContents;
++                    pb.setStringForType($("synced-text"), $("public.utf8-plain-text"));
++                    pb.setStringForType($(""), $("com.apple.coredevice.dtpasteboardd.sync"));
++                    """.trimIndent(),
++                ).start()
++            val exitCode = process.waitFor()
++            assertEquals(0, exitCode, "osascript should set device sync type on pasteboard")
++
++            val remote = IntByReference()
++            val isCrossPaste = IntByReference()
++            val isConcealed = IntByReference()
++            MacosApi.INSTANCE.getPasteboardChangeCount(0, remote, isCrossPaste, isConcealed)
++            assertTrue(remote.value != 0, "Xcode device sync content should be marked remote")
++            assertEquals(0, isConcealed.value, "device sync must not look concealed")
++        } finally {
++            cleanupClipboard()
++        }
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5299** (2026-10-30): ⬆️ Bump com.ibm.icu:icu4j from 78.3 to 79.1 (@dependabot[bot])
-- **PR #5298** (2026-10-29): ⬆️ Bump ch.qos.logback:logback-classic from 1.6.5 to 1.6.6 (@dependabot[bot])
-- **PR #5297** (2026-10-30): ⬆️ Bump org.jetbrains.kotlinx:kotlinx-serialization-json from 1.11.0 to 1.12.0 (@dependabot[bot])
-- **PR #5295** (2026-10-28): :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (@guiyanakuang)
-- **PR #5294** (2026-10-28): :memo: add the Wayland clipboard fix to the 2.3.1 changelog (@guiyanakuang)
-- **PR #5293** (2026-10-28): :bug: write the Wayland clipboard natively so background writes reach Wayland apps (@guiyanakuang)
+- **PR #5314** (2026-11-03): :bug: use the local paste id when writing a received non-file paste to the pasteboard (@guiyanakuang)
+- **PR #5312** (closed): :bug: skip reading Universal Clipboard content when no non-Apple device needs it (@guiyanakuang)
+- **PR #5310** (2026-11-02): :bug: treat Xcode device pasteboard sync content like Universal Clipboard on macOS (@guiyanakuang)
+- **PR #5308** (2026-11-01): :bug: route basePath storage through expect encodeStoredPath/decodeStoredPath (@guiyanakuang)
+- **PR #5306** (2026-11-01): :white_check_mark: clean up never-failing, duplicate and weak unit tests (@guiyanakuang)
+- **PR #5304** (2026-11-01): :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (@guiyanakuang)
 
 ---
 
@@ -859,28 +965,60 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)
+## X. :bug: keep bringing the window to the front when AttachThreadInput fails on Wind
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f2d26fa`: :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5be13f40`: :bug: keep bringing the window to the front when AttachThreadInput fails on Windows (#5304). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/platform/windows/WindowsFocusUtils.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-kotlinx-serialization = "1.12.0"
+        val attachThreadId = prevThreadId?.takeIf { it != targetThreadId }
+        // The cached previous thread may be gone (its app exited); attaching then fails,
+        // but we still try to bring the window to the front without it.
+        val attached =
+            attachThreadId != null &&
+                user32
+                    .AttachThreadInput(
+                        DWORD(attachThreadId.toLong()),
+                        DWORD(targetThreadId.toLong()),
+                        true,
+                    ).also { success ->
+                        if (!success) {
+                            logger.warn {
+                                "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}, continuing without it"
+                            }
+                        }
+                    }
+            if (attached) {
+                    DWORD(attachThreadId.toLong()),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-kotlinx-serialization = "1.11.0"
+        val shouldAttach = prevThreadId != null && prevThreadId != targetThreadId
+        if (shouldAttach) {
+            val success =
+                user32.AttachThreadInput(
+                    DWORD(prevThreadId.toLong()),
+                    DWORD(targetThreadId.toLong()),
+                    true,
+                )
+            if (!success) {
+                logger.error { "AttachThreadInput failed: ${Kernel32.INSTANCE.GetLastError()}" }
+                return
+            }
+        }
+            if (shouldAttach) {
+                    DWORD(prevThreadId.toLong()),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f2d26fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5be13f40` are properly handled with clean fallback behavior.

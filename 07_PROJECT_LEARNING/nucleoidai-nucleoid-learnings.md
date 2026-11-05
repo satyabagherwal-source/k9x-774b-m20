@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `12382609`  
+> **Source Version**: `9bd304a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:15:09.698Z  
+> **Timestamp**: 2026-11-05T02:25:56.953Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:15:09.200Z  
+> **Harvest Timestamp**: 2026-11-05T02:25:56.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Synthesized Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 772 stars
+- **Stars / Engagement**: 771 stars
 
 ---
 
@@ -43,6 +43,7 @@ use indexmap::IndexMap;
 use std::fmt;
 use std::sync::Arc;
 
+use crate::graph::ShapeKey;
 use crate::history::{History, HistoryKey};
 use crate::lang::ast::VersionSelector;
 use crate::lang::ast::generator::generate_all;
@@ -61,20 +62,24 @@ pub struct DeclarationKey(String);
 
 impl DeclarationKey {
     /// `$Person.mortal`.
+    #[must_use]
     pub fn property(class: &str, property: &str) -> Self {
         DeclarationKey(format!("${class}.{property}"))
     }
 
     /// `if(this.age>18)`.
+    #[must_use]
     pub fn conditional(condition: &Expr) -> Self {
         DeclarationKey(format!("if({condition})"))
     }
 
     /// A block of statements, keyed by their source.
+    #[must_use]
     pub fn block(statements: &[Stmt]) -> Self {
         DeclarationKey(format!("block({})", generate_all(statements)))
     }
 
+    #[must_use]
     pub fn as_str(&self) -> &str {
         &self.0
     }
@@ -118,6 +123,7 @@ impl ClassData {
         }
     }
 
+    #[must_use]
     pub fn declarations_in_order(&self) -> Vec<Declaration> {
         let mut declarations: Vec<Declaration> = self.declarations.values().cloned().collect();
         declarations.sort_by_key(|declaration| declaration.sequence);
@@ -144,14 +150,17 @@ pub struct State {
 }
 
 impl State {
+    #[must_use]
     pub fn new() -> Self {
         State::default()
     }
 
+    #[must_use]
     pub fn variable(&self, name: &str) -> Option<&Value> {
         self.variables.get(name)
     }
 
+    #[must_use]
     pub fn has_variable(&self, name: &str) -> bool {
         self.variables.contains_key(name)
     }
@@ -172,27 +181,33 @@ impl State {
         self.histories.insert(key, history);
     }
 
+    #[must_use]
     pub fn has_object(&self, id: &ObjectId) -> bool {
         self.objects.contains_key(id)
     }
 
+    #[must_use]
     pub fn function(&self, name: &str) -> Option<&Arc<Function>> {
         self.functions.get(name)
     }
 
+    #[must_use]
     pub fn has_function(&self, name: &str) -> bool {
         self.functions.contains_key(name)
     }
 
+    #[must_use]
     pub fn has_class(&self, name: &str) -> bool {
         self.classes.contains_key(name)
     }
 
     /// How many classes are defined. `Class.length` reads this.
+    #[must_use]
     pub fn class_count(&self) -> usize {
         self.classes.len()
     }
 
+    #[must_use]
     pub fn object(&self, id: &ObjectId) -> Option<&ObjectData> {
         self.objects.get(id)
     }
@@ -201,18 +216,30 @@ impl State {
         self.objects.get_mut(id)
     }
 
+    #[must_use]
     pub fn property(&self, id: &ObjectId, property: &str) -> Option<&Value> {
         self.objects
             .get(id)
             .and_then(|object| object.properties.get(property))
     }
 
+    #[must_use]
     pub fn class(&self, name: &str) -> Option<&ClassData> {
         self.classes.get(name)
     }
 
     pub(crate) fn classes(&self) -> impl Iterator<Item = &ClassData> {
         self.classes.values()
+    }
+
+    pub(crate) fn lineage<'s>(
+        &'s self,
+        class: Option<&'s ClassData>,
+    ) -> impl Iterator<Item = &'s ClassData> {
+        std::iter::successors(class, |data| {
+            data.parent.as_deref().and_then(|parent| self.class(parent))
+        })
+        .take(self.classes.len())
     }
 
     pub fn class_mut(&mut self, name: &str) -> Option<&mut ClassData> {
@@ -298,9 +325,13 @@ impl State {
 /// differ.
 impl Runtime {
     fn append_history(&mut self, key: HistoryKey, value: &Value) {
-        let history = self.state.histories.entry(key.clone()).or_default();
-        self.transaction.record_history_append(&key, history.len());
-        history.push(value.clone());
+        let length = self.state.histories.get(&key).map_or(0, History::len);
+        self.transaction.record_history_append(&key, length);
+        self.state
+            .histories
+            .entry(key)
+            .or_default()
+            .push(value.clone());
     }
 
     fn remove_history(&mut self, key: HistoryKey) {
@@ -333,27 +364,7 @@ impl Runtime {
         property: &str,
         value: Value,
     ) -> bool {
-        if !self.state.objects.contains_key(object) {
-            self.insert_object(object.clone(), ObjectData::new(None));
-        }
-
-        let before = self.state.property(object, property).cloned();
-        let changed = before
-            .as_ref()
-            .is_none_or(|before| !before.same_value(&value));
-        if before.is_some() {
-            self.transaction.record_property(object, property, before);
-        } else {
-            self.transaction.record_property_added(object, property);
-        }
-        if changed {
-            self.append_history(
-                HistoryKey::Property(object.clone(), property.to_string()),
-                &value,
-            );
-        }
-
-        if let Some(da
+        if !self.state.objects.contains_key(obj
 ```
 
 ### Core Architecture Module: `src/statement.rs`
@@ -467,6 +478,7 @@ export async function value({
   puzzle_id,
   instance_name,
   declarations,
+  input_matrix,
   input_instance_matrix,
   output_instance_matrix,
 }) {
@@ -495,8 +507,15 @@ export async function value({
 
   milestone.evaluating_rules();
 
+  const canvas_width: number = input_matrix[0].length;
+  const canvas_height: number = input_matrix.length;
   const input_value = await nucleoid.run(
-    [declarations[0], implementation].join("\n\n")
+    [
+      `canvas_width = ${canvas_width}`,
+      `canvas_height = ${canvas_height}`,
+      declarations[0],
+      implementation,
+    ].join("\n\n")
   );
 
   milestone.instance_constructed({
@@ -516,8 +535,16 @@ export async function state(train_dataset) {
       ({ implementation }) => implementation
     );
 
+    const canvas_width: number = dataset.input_matrix[0].length;
+    const canvas_height: number = dataset.input_matrix.length;
     const obj_list = await nucleoid.run(
-      [...train_dataset.declarations, ...implementations, "Obj[:]"].join("\n\n")
+      [
+        `canvas_width = ${canvas_width}`,
+        `canvas_height = ${canvas_height}`,
+        ...train_dataset.declarations,
+        ...implementations,
+        "Obj[:]",
+      ].join("\n\n")
     );
 
     milestone.state({ index, obj_list });
@@ -541,10 +568,10 @@ import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
-import { writeFile } from "node:fs/promises";
+import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "6150a2bd") {
+export async function start(puzzle_id: string = "3c9b0459") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -600,6 +627,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
         puzzle_id,
         instance_name,
         declarations,
+        input_matrix,
         input_instance_matrix,
         output_instance_matrix,
       });
@@ -640,6 +668,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
       puzzle_id,
       declarations,
       train_dataset,
+      test_input_matrix,
       instance_name,
       input_instances,
       input_instance_matrix,
@@ -653,7 +682,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
     });
   }
 
-  await visualizer.state({ declarations, input_instances });
+  await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
     const { input_value, input_instance_matrix, output_value } = input_instance;
@@ -696,7 +725,11 @@ export async function start(puzzle_id: string = "6150a2bd") {
     difference,
   };
 
-  await writeFile(`logs/${puzzle_id}.log.json`, JSON.stringify(debug, null, 2));
+  await fs.mkdir("logs", { recursive: true });
+  await fs.writeFile(
+    `logs/${puzzle_id}.log.json`,
+    JSON.stringify(debug, null, 2)
+  );
 
   return difference;
 }
@@ -973,200 +1006,407 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12382609` (2026-11-03)
-**Commit Message**: Require every agent to pull before starting
+### Incident Patch 1: `9bd304a7` (2026-11-05)
+**Commit Message**: NUC 81 Object Spread Entries
 
-Update git policy so every agent, coordinators and workers alike, pulls the primary checkout first. The /nuc-proposal caller uses `git pull --no-rebase --autostash`; all other agents use `git pull --ff-only --autostash`. Agents never pull a candidate worktree and must report the commits a pull brings in.
+Accepted. The independent evaluator accepted the proposal in continuous
+mode against 55fbddc and its 937-case baseline, the 926 accepted cases
+plus 11 extra baselines, which it re-recorded byte-identically. The
+required token comparison ran (Runtime features, existing comparable):
+11 cases use fewer lexer tokens, 926 the same and none more. No
+accepted spelling ties or beats a candidate case, and no policy check
+failed.
 
-Add a pull-first step to the arc-dataset, arc-debug, arc-purposal, nuc-evaluate, nuc-proposal and rust-improver agent profiles. Relax the read-only wording in arc-debug and nuc-evaluate (profiles and skills) to allow that single pull. Update the CLAUDE.md index entry to match.
+Hard criteria, checked independently and again on the integrated tree:
+cargo build --all-targets, warning-denied Clippy and cargo fmt --check
+pass; the full cargo test passes (93 suites, 2,444 passed, 0 failed,
+25 ignored) with all 2,428 accepted test identities present and 41
+added; all 926 pinned accepted programs and the 11 extra baselines
+replay; a 19,935-program differential of accepted programs is
+unchanged apart from clock readings, and every program a 2,385-program
+spread grid changes was an error at the accepted revision.
 
-**File**: `.claude/CLAUDE.md` (modified, +1/-1)
+NUC 81 adds spread entries to object literals: {...SOURCE, key: value}
+copies the entries of the object SOURCE holds, left to right, with
+later entries winning and each key keeping its first position. A null
+
+**File**: `README.md` (modified, +27/-0)
 ```diff
-@@ -17,7 +17,7 @@ not a replacement for the policies it links to.
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
- | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
--| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; pull before agents start (fast-forward only in other flows) and before commit/push, push after every commit, resolve conflicts and push |
-+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; every agent pulls before it starts (fast-forward only, except the `/nuc-proposal` caller), pull before commit/push, push after every commit, resolve conflicts and push |
+@@ -1735,6 +1735,33 @@ assert: [hall.mean, building], [20, 18]
+   does. See the
+   [root contract](nucleoid.spec.md#list-and-population-averages).
  
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
++## Object spread entries
++
++**Spread entries keep derived listings in step with their products**
++
++```nuc
++class Product(name, price):
++    this.name = name
++    this.price = price
++$Product.listing = {...$Product, currency: "USD"}
++lamp = Product("lamp", 40)
++draft = {...lamp.listing, price: lamp.price * 0.75}
++assert: [lamp.listing.price, draft.price], [40, 30]
++lamp.price = 60
++lamp.stock = 3
++assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
++```
++
++- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
++  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
++  later entry for the same key replaces its value. `$Product.listing` copies
++  each product and adds a currency, and `draft` copies the listing with a
++  discounted price.
++- A spread stays live: a changed price and the new `stock` entry reach both
++  records. A class-level rule that spreads its own receiver leaves out the
++  property it declares, so `listing` never holds an older listing. See the
++  [root contract](nucleoid.spec.md#object-spread-entries).
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
+```diff
+@@ -633,3 +633,11 @@
+ {"id":"spec-0633","description":"Nucleoid uses averages in functions methods and conditional expressions","code":"class Team(name, scores):\n    this.name = name\n    this.scores = scores\n    def mean(): return this.scores.average()\ndef variance(team) => team.scores.average(score -> score * score) - team.mean() ** 2\nred = Team(\"red\", [3, 5])\nblue = Team(\"blue\", [6])\nleague = Team.average(team -> team.mean())\nleader = red.mean() > blue.mean() ? red.name : blue.name\nspread = variance(red)\nassert: [league, leader, spread], [5, \"blue\", 1]\nblue.scores.push(2)\nred.scores.push(7)\nTeam(\"green\", [1])\nassert: [league, leader, spread], [3.3333333333333335, \"red\", 2.666666666666668]","return":null}
+ {"id":"spec-0634","description":"Nucleoid keeps average as an ordinary name beside the average query","code":"average = 2\nreport = {average: 5}\ndef double average => average * 2\nclass Bag(items):\n    this.items = items\n    def average(): return this.items.average(item -> item * item)\nbag = Bag([1, 3])\nlevel = bag.items.average() + average + report.average\nbags = Bag.average(each -> each.average())\nassert: [level, bag.average(), bags, double(average)], [9, 5, 5, 4]\nassert: bag.items.average, null\nbag.items.push(5)\naverage = 4\nBag([6])\nassert: [level, bags], [12, 23.833333333333332]","return":null}
+ {"id":"spec-0635","description":"Nucleoid rolls back failed average updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_LARGE\"\n    return value\namounts = [10, 20]\nmean = amounts.average(checked)\nfailure = \"\"\ntry:\n    amounts.push(500)\ncatch error:\n    failure = error\nassert: [failure, amounts, mean], [\"TOO_LARGE\", [10, 20], 15]\namounts.push(30)\nassert: mean, 20\nclass Item(price): this.price = price\npen = Item(3)\ntypical = Item.average(item -> checked(item.price))\nfailure = \"\"\ntry:\n    Item(500)\ncatch error:\n    failure = error\nassert: [failure, Item.length, typical], [\"TOO_LARGE\", 1, 3]\nsuppose:\n    Item(5)\n    assert: typical, 4\nassert: [Item.length, typical], [1, 3]","return":null}
++{"id":"spec-0636","description":"Nucleoid copies object entries into records with spread entries","code":"base = {name: \"tea\", price: 4, stock: 10}\nsale = {...base, price: 3, tag: \"sale\"}\nfloor = {price: 9, ...base}\nassert: [sale, floor], [{name: \"tea\", price: 3, stock: 10, tag: \"sale\"}, {price: 4, name: \"tea\", stock: 10}]\nassert: [sale == base, floor == base, base.tag], [false, false, null]\nbase.name = \"oolong\"\nbase.price = 6\nbase.size = 2\ndelete base.stock\nassert: [sale, floor], [{name: \"oolong\", price: 3, size: 2, tag: \"sale\"}, {price: 6, name: \"oolong\", size: 2}]\ntag = \"new\"\nfresh = {tag, ...base price: 5,}\nassert: fresh, {tag: \"new\", name: \"oolong\", price: 5, size: 2}","return":null}
++{"id":"spec-0637","description":"Nucleoid keeps spread entries live as their sources change","code":"base = {name: \"tea\", price: 4}\nitem = {...base, qty: 2}\nline = {...item, total: item.price * item.qty}\nassert: line, {name: \"tea\", price: 4, qty: 2, total: 8}\nbase.price = 5\nbase.size = \"large\"\ndelete base.name\nassert: line, {price: 5, size: \"large\", qty: 2, total: 10}\nbase = {name: \"jam\", price: 3}\nassert: [item, line], [{name: \"jam\", price: 3, qty: 2}, {name: \"jam\", price: 3, qty: 2, total: 6}]","return":null}
++{"id":"spec-0638","description":"Nucleoid merges records with several spread entries","code":"defaults = {color: \"red\", size: 2, gift: false}\ncustom = {size: 3}\norder = {...defaults, ...custom, id: 7}\nassert: order, {color: \"red\", size: 3, gift: false, id: 7}\ncustom.gift = true\ncustom.note = \"rush\"\nassert: order, {color: \"red\", size: 3, gift: true, note: \"rush\", id: 7}\ndelete custom.size\ndefaults.color = \"blue\"\nassert: order, {color: \"blue\", size: 2, gift: true, note: \"rush\", id: 7}","return":null}
++{"id":"spec-0639","description":"Nucleoid spreads instances into records and class level rules","code":"class Room(name, temp):\n    this.name = name\n    this.temp = temp\n$Room.card = {...$Room, unit: \"C\"}\nlab = Room(\"lab\", 20)\nlab.temp = 25\nlab.floor = 2\nassert: lab.card, {id: \"lab\", name: \"lab\", temp: 25, floor: 2, unit: \"C\"}\nhall = Room(\"hall\", 18)\ncopy = {...hall, temp: 19}\nassert: (why copy)[0].from, [\"hall\", \"hall.id\", \"hall.name\", \"hall.card\"]\nhall.name = \"foyer\"\nassert: copy, {id: \"hall\", name: \"foyer\", temp: 19, card: {id: \"hall\", name: \"foyer\", temp: 18, unit: \"C\"}}","return":null}
++{"id":"spec-0640","description":"Nucleoid spreads entries in functions methods and lambdas","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n    def shifted dx => {...this, x: this.x + dx}\ndef flat p => {...p, z: 0}\np = Point(1, 2)\nq = Point(3, 4)\nup = flat(p)\nfar = p.shifted(10)\ngrid = [p, q].map(lambda pt: {...pt, area: pt.x * pt.y})\nassert: [up, far], [{id: \"p\", x: 1, y: 2, z: 0}, {id: \"p\", x: 11, y: 2}]\np.y
+```
+
+**File**: `dataset/nucleoid.synth.56.jsonl` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{"id":"synth-56-0001","description":"A spread entry copies a record's entries into a new record that adds its own","code":"base = {name: \"tea\", price: 4}\nsale = {...base, tag: \"sale\"}\n[sale.name, sale.price, sale.tag, base.tag]","return":"[\"tea\",4,\"sale\",null]"}
++{"id":"synth-56-0002","description":"Entries apply from left to right, so a later entry wins and a key keeps its first position","code":"defaults = {theme: \"light\", size: 12, font: \"mono\"}\nprefs = {size: 14}\nsettings = {...defaults, ...prefs, theme: \"dark\"}\nkeys = []\nfor key, value of settings: keys.push(key + \"=\" + value)\nkeys","return":"[\"theme=dark\",\"size=14\",\"font=mono\"]"}
++{"id":"synth-56-0003","description":"A spread stays live as its source gains, changes and loses entries","code":"item = {name: \"lamp\", price: 40}\nlisting = {...item, currency: \"USD\"}\nitem.price = 35\nitem.stock = 3\ndelete item.name\nlisting","return":"{\"price\":35,\"stock\":3,\"currency\":\"USD\"}"}
++{"id":"synth-56-0004","description":"A class-level rule that spreads its instance copies the id first and leaves out the property it declares","code":"class Order(total):\n    this.total = total\n$Order.view = {...$Order, paid: false}\norder = Order(10)\norder.total = 12\norder.view","return":"{\"id\":\"order\",\"total\":12,\"paid\":false}"}
++{"id":"synth-56-0005","description":"A spread of a null source waits for the source, and an unset property copies nothing","code":"owner = null\ncard = {...owner, seen: true}\nfirst := card\nowner = {name: \"ada\"}\nbox = {}\npacked = {...box.lid, open: false}\n[first, card, packed]","return":"[null,{\"name\":\"ada\",\"seen\":true},{\"open\":false}]"}
++{"id":"synth-56-0006","description":"Spreading a value that is not an object raises a TypeError","code":"sizes = [1, 2]\nfailure = \"\"\ntry:\n    record = {...sizes}\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: sizes is not an object\""}
++{"id":"synth-56-0007","description":"Lambdas and named arrows build records with spread entries","code":"points = [{x: 1, y: 2}, {x: 3, y: 4}]\ndef lift p => {...p, z: 0}\n[points.map(lambda p: {...p, x: p.x * 10}), lift(points[0])]","return":"[[{\"x\":10,\"y\":2},{\"x\":30,\"y\":4}],{\"x\":1,\"y\":2,\"z\":0}]"}
++{"id":"synth-56-0008","description":"Explanations render a spread entry once, as it is written","code":"lab = {name: \"lab\", temp: 20}\nview = {...lab, unit: \"C\"}\n(why view)[0].rule","return":"\"view = {...lab,\\\"unit\\\":\\\"C\\\"}\""}
+```
+
+**File**: `docs/README.md` (modified, +55/-0)
+```diff
+@@ -545,6 +545,59 @@ assert(summary.kind, "alert")
+   Existing computed-key writes, exporter splitting and receiver-frame limits
+   are not repaired.
+ 
++### Object spread entries
++
++```
++defaults = {theme: "light", size: 12}
++prefs = {size: 14}
++settings = {...defaults, ...prefs}
++assert(settings.theme, "light")
++assert(settings.size, 14)
++prefs.theme = "dark"
++defaults.font = "mono"
++assert(settings.theme, "dark")
++assert(settings.font, "mono")
++delete prefs.size
++settings.size
++```
++
++- This is the complete `Nucleoid derives records with spread entries`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `12`.
++- [NUC 81](nuc-0081.md) adds spread entries to object literals:
++  `...SOURCE` copies the entries of the object `SOURCE` holds, in insertion
++  order. They are the entries an entry loop visits: an instance's `id` first,
++  `null` values included, undefined slots left out. A copy is shallow, so a
++  nested object or list is the same value in both records.
++- Entries apply from left to right, and each source is evaluated once. A
++  later entry for a key the object already holds replaces its value and keeps
++  the key's first position, so `{...point, x: 5}` lists `x` first and
++  `{x: 9, ...point}` takes `x` from `point`.
++- A spread is three adjacent dots wherever a key may begin. A keyed entry may
++  follow it without a comma, as in `{...base qty: 1}`; a spread after a value
++  or another spread needs one. Statement-leading braces and anonymous arrow
++  bodies in braces stay blocks, so `({...a})` and `lambda p: {...p}` write
++  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
++  errors.
++- A `null` source or an undefined property copies nothing. Reading a `null`
++  source is an ordinary null read, so the declaration is `null` until its
++  source holds an object, while copied `null` values never settle it. Any
++  other value raises `TypeError("<source> is not an object")`.
++- A declaration that spreads stays live. It depends on every entry it copies,
++  except one a later keyed entry replaces, and observes its source's set of
++  entries, so a changed, deleted or added entry and a rebound source
++  re-evaluate it. `why` lists the dependencies of the explicit record that
++  names the same entries, `--graph` shows the observation as
++  `observes {...<object id>}`, and rollback restores entries, their order and
++  observations together.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the property leaves that property out, so
++  `$Order.view = {...$Order, paid: false}` never nests an older view. Two
++  class-level rules that spread the same receiver read each other and raise
++  `TypeError("Circular Dependency")` when an instance applies both.
++- The authoritative contract is the
++  [object spread entries](../nucleoid.spec.md#object-spread-entries) section.
++
+ ### Operators
+ 
+ - Arithmetic: `+`, `-`, `*`, `/`, `%`, and exponentiation `**`; see below.
+@@ -3213,6 +3266,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Missing or non-function `maxBy` or `minBy` selector, including `null`, even on an empty receiver | `maxBy expects a function` or `minBy expects a function` |
+ | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
++| A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+ | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
+ | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
+ | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
+@@ -3377,6 +3431,7 @@ def name amount: type:                 one typed parameter, indented only (NUC 2
+ { statement; statement }               block
+ record = { amount, label }             object shorthand (candidate NUC 17)
+ record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
++record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
+ 
+ throw value                            raise a value
+ return expression                      yield from a block or function
+```
+
+**File**: `docs/examples.md` (modified, +33/-0)
+```diff
+@@ -3299,6 +3299,39 @@ assert: [Number.isNaN(chair.rating), chair.featured], [true, false]
+   [NUC 80](nuc-0080.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-averages).
+ 
++## Object spread entries
++
++**Spread entries keep shipping labels in step with their customers**
++
++```nuc
++class Customer(name, city):
++    this.name = name
++    this.city = city
++class Order(customer, item, qty):
++    this.customer = customer
++    this.item = item
++    this.qty = qty
++$Order.label = {...$Order.customer, item: $Order.item, qty: $Order.qty}
++ada = Customer("ada", "Paris")
++lamp = Order(ada, "lamp", 1)
++desk = Order(ada, "desk", 2)
++assert: lamp.label, {id: "ada", name: "ada", city: "Paris", item: "lamp", qty: 1}
++ada.city = "Lyon"
++ada.zip = "69001"
++desk.qty = 3
++assert: desk.label, {id: "ada", name: "ada", city: "Lyon", zip: "69001", item: "desk", qty: 3}
++[lamp.label.city, lamp.label.zip, desk.label.qty]
++# return: ["Lyon","69001",3]
++```
++
++- `$Order.label` copies every entry of the order's customer, its `id`
++  first, and adds the order's item and quantity. Each order gets its own
++  label from the same rule.
++- The labels follow their sources: Ada's move to Lyon, her new `zip` entry
++  and the desk's new quantity re-evaluate them without naming any of the
++  customer's fields. See [NUC 81](nuc-0081.md) and the
++  [root contract](../nucleoid.spec.md#object-spread-entries).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -79,6 +79,7 @@ Created: 31-Jul-2026
+ | [70](nuc-0070.md) | Object Entry Loops | Automatic-Accepted: independent evaluation rejected it because a rolled-back `delete` re-appended the key; its loops ship through NUC 72, which fixed that |
+ | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Accepted |
+ | [74](nuc-0074.md) | Final Rest Parameters | Accepted |
++| [81](nuc-0081.md) | Object Spread Entries | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -215,6 +216,7 @@ Created: 31-Jul-2026
+ | [78](nuc-0078.md) | Extends Clauses for Subclasses | Standards Track | Language compatibility | Accepted |
+ | [79](nuc-0079.md) | Property Selector Arguments | Standards Track | Syntax enhancement | Accepted |
+ | [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
++| [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
+ 
+ ## Copyright
  
 ```
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +4/-0)
+**File**: `docs/nuc-0081.md` (added, +957/-0)
 ```diff
-@@ -15,6 +15,10 @@ needs instead. Read and follow the [ARC instructions](../rules/arc.instructions.
- 
- ## Inputs
- 
-+- Pull first, under the
-+  [git synchronization policy](../rules/git.instructions.md#pull-first): run
-+  `git pull --ff-only --autostash` in the primary checkout before anything
-+  else, and report the commits it brought in.
- - Require an eight-character lowercase hexadecimal puzzle ID with a file in
-   `arc/data/training/`. Report a missing or unknown ID instead of guessing.
- - If `dataset.<id>.json` already exists, stop and report it; audit or overwrite
+@@ -0,0 +1,957 @@
++# NUC 81 -- Object Spread Entries
++
++```
++NUC: 81
++Title: Object Spread Entries
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Runtime features
++Created: 04-Nov-2026
++Requires: 8, 17, 18, 44, 45, 57, 65, 66, 72, 74
++```
++
++## Abstract
++
++- Object literals gain spread entries. `{...SOURCE, key: value}` copies the
++  entries of the object `SOURCE` holds into the new object, in their
++  insertion order, so `{...point, z: 0}` extends a record and
++  `{...defaults, ...overrides}` merges two.
++- Entries apply from left to right, and each source is evaluated once. A
++  later entry for a key the object already holds replaces its value and
++  keeps the key's first position, as a repeated key does in an accepted
++  literal. A spread copies exactly the entries an entry loop visits: `null`
++  values are copied, undefined slots are not.
++- A `null` or undefined source copies nothing, and reading a `null` source is
++  an ordinary null read, so a declaration waits for an unknown source. Every
++  other value that is not an object raises
++  `TypeError("<source> is not an object")`, the message of
++  [NUC 72](nuc-0072.md)'s entry loops.
++- A spread in a standing declaration stays live. It depends on the entries it
++  copies and observes its source's set of entries, so changing, deleting or
++  adding an entry, or replacing the binding its source reads, evaluates the
++  declaration again. A derived record stays equal to the explicit record
++  that names every entry its source holds. Programs without spreads
++  propagate exactly as before.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the property leaves that property out, so the class-level rule
++  `$Order.view = {...$Order, paid: false}` never copies an older view into a
++  newer one.
++- No keyword, token or error type is added. Three adjacent dots start a spread
++  only where an object-literal entry may begin, as [NUC 74](nuc-0074.md)
++  recognizes them only in parameter lists. Every accepted program keeps its
++  parse and behavior; only inputs that raised
++  `SyntaxError("Expected a key but found '.'")` at such an entry change. The
++  public `Expr` enum gains `Expr::SpreadObject`, the public `ast` module gains
++  the enum `ObjectEntry`, and the public `ShapeKey` enum gains
++  `ShapeKey::Entries`; they need human SemVer review. No project version is
++  changed. The authoritative contract is
++  [Object spread entries](../nucleoid.spec.md#object-spread-entries).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria, and the independent
++  evaluator decided Accepted. The required token comparison ran in
++  continuous mode: 11 cases use fewer tokens, 926 the same and none more. No
++  policy check failed. The evaluation corrects one claim above: where the
++  parser backtracks, some spreads that raised a different syntax error at
++  the accepted revision now run too, such as `{x, y} = {...p}`; every
++  changed input was an error at the accepted revision.
++
++## Motivation
++
++- A world model derives records from records: an order line from a product,
++  a shipping label from a customer and an order, the settings in effect from
++  defaults and a user's preferences, a sale beside the regular listing, an
++  instance's public view. Each derived record keeps the fields of its source
++  and changes or adds a few.
++- Accepted Nucleoid cannot copy an object's entries. `{...a}` raises
++  `SyntaxError("Expected a key but found '.'")`, `Object.assign({}, a)`
++  raises `ReferenceError("Object is not defined")`, `JSON` is not defined,
++  and computed writes such as `a[k] = 2` raise
++  `SyntaxError("Cannot assign to a[k]")`, so NUC 72's entry loops can read
++  every entry but cannot write one into another object. NUC 74 lists
++  call-site spread among what it does not add.
++- The accepted spellings therefore name every field by hand, as
++  `line = {name: item.name price: item.price size: item.size qty: item.qty total: item.price * item.qty}`
++  does. They repeat the source for every field and break as the model grows:
++  - a field the source gains later is missing from every derived record that
++    does not name it ahead of time, as `size: item.size` does above;
++  - merging records needs `??` for every key both may hold,
++    `{size: custom.size ?? defaults.size gift: custom.gift ?? defaults.gift}`,
++    and still misses keys neither literal names;
++  - [NUC 67](nuc-0067.md)'s destructuring shortens the reads, but a
++    destructured name of a missing or deleted key reads `null`, and the
++    null-read rule then settles every record that reads it to `null`;
++  - a class-level rule that copies its receiver lists each field, and a rule
++    that reads its own property raises `TypeError("Circular Dependency")`.
++- JavaScript's `{...a, b: 1}`, Python's `{**a, "b": 1}`, Kotlin's
++  `a.copy(b = 1)`, C#'s `a with { B = 1 }` 
 ```
 
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +8/-3)
+**File**: `nucleoid.spec.md` (modified, +233/-0)
 ```diff
-@@ -13,6 +13,11 @@ You diagnose; you never repair.
+@@ -3768,6 +3768,97 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid restores object entries in place when it rolls back` specify the
+   executable behavior.
  
- ## Inputs
- 
-+- Pull first, under the
-+  [git synchronization policy](../rules/git.instructions.md#pull-first): run
-+  `git pull --ff-only --autostash` in the primary checkout before reading
-+  anything, and report the commits it brought in. Record the Git state below
-+  after the pull.
- - Require an eight-character lowercase hexadecimal puzzle ID. Optional text
-   after it names a suspected problem to examine first; it never shortens the
-   checks below.
-@@ -27,9 +32,9 @@ You diagnose; you never repair.
- 
- ## Boundaries
- 
--- Read-only. Never edit, create, stage, commit, push, delete or reformat
--  anything in the repository, including the log, datasets, solver code, docs
--  and progress records. Put scratch scripts and repaired copies in the OS temp
-+- Read-only, apart from that first pull. Never edit, create, stage, commit,
-+  push, delete or reformat anything in the repository, including the log,
-+  datasets, solver code, docs and progress records. Put scratch scripts and repaired copies in the OS temp
-   directory or your session scratchpad, never in the repository.
- - Never run the solver (`bun start`, `server.ts`, `app.ts`), any module that
-   calls the LLM (`analyzer.ts`, `visualizer.ts`, `lib/llm.ts`,
-```
-
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +3/-0)
-```diff
-@@ -13,6 +13,9 @@ Follow `.claude/CLAUDE.md`, the
- 
- ## Role
- 
-+- Pull first, before any other step and again before launching each agent,
-+  under the [git synchronization policy](../rules/git.instructions.md#pull-first),
-+  and report the commits each pull brings in.
- - You are the caller. Launch the `arc-dataset` agent and, for a requested
-   enhancement, the `nuc-proposal`, `rust-improver`, and `nuc-evaluate` agents
-   as the skill directs. Never do their work yourself or reuse a NUC agent.
-```
-
-**File**: `.claude/agents/nuc-evaluate.agent.md` (modified, +9/-3)
-```diff
-@@ -10,6 +10,11 @@ You independently evaluate exactly one completed NUC revision. Follow
- 
- ## Scope
- 
-+- Pull first, under the
-+  [git synchronization policy](../rules/git.instructions.md#pull-first): run
-+  `git pull --ff-only --autostash` in the primary checkout, never in the
-+  candidate worktree, and report the commits it brought in. The pull never
-+  changes the frozen handoff or the pinned baseline you evaluate.
- - Require the proposal agent's completed handoff, including the proposal path
-   and Git blob revision, confirmed category, accepted Git revision, immutable
-   baseline JSON artifact, candidate worktree, and a fresh report artifact path.
-@@ -40,9 +45,10 @@ You independently evaluate exactly one completed NUC revision. Follow
-   separately: no compile errors (build, warning-denied Clippy, formatting), the
-   full `cargo test` passing with every existing test present and unweakened,
-   and backward compatibility with all accepted syntax and behavior.
--- Treat candidate sources and the baseline as read-only. Write only new
--  reports/learner checkpoints in the external session workspace and normal
--  ignored build outputs; never overwrite old state or reports.
-+- Treat candidate sources and the baseline as read-only. Apart from that
-+  first pull of the primary checkout, write only new reports/learner
-+  checkpoints in the external session workspace and normal ignored build
-+  outputs; never overwrite old state or reports.
- - For optional advisory scoring, verify the caller's rubric/blob pin frozen
-   before drafting. After independent checks, create only a new external session
-   assessment bound to that criterion/rubric, baseline, proposal path and
-```
-
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +5/-0)
-```diff
-@@ -10,6 +10,11 @@ You draft and prototype exactly one added or updated NUC revision. Follow
- 
- ## Scope
- 
-+- Pull first, under the
-+  [git synchronization policy](../rules/git.instructions.md#pull-first): run
-+  `git pull --ff-only --autostash` in the primary checkout, never in the
-+  supplied candidate worktree, and report the commits it brought in. Keep
-+  drafting against the caller's pinned baseline revision.
- - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
-   do not redraw the selected category.
- - Apply any caller-supplied hint under the skill's
-```
-
-**File**: `.claude/agents/rust-improver.agent.md` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ other validation.
- 
- ## Scope
- 
-+- Pull first, under the [git synchronization policy](../rules/git.instructions.md#pull-first): run `git pull --ff-only --autostash` in the primary checkout, never in a candidate worktree you were given, and report the commits it brought in. Pulled commits are not task-owned changes.
- - For tasks requiring a pass, read `.claude/CLAUDE.md` and all instruction files it indexes, `Cargo.toml`, and the relevant specification and tests before editing.
- - Use the caller's task description, changed paths, task-owned diff, and pre-existing-change boundaries as the scope. Do not treat every staged, unstaged, or untracked change as yours.
- - Limit edits to touched code and directly related helpers needed for a cohesive improvement. Preserve other contributors' changes.
-```
-
-**File**: `.claude/rules/git.instructions.md` (modified, +23/-12)
-```diff
-@@ -5,8 +5,9 @@ applyTo: "**"
- # Git synchronization: pull, commit, push
- 
- These rules apply to every agent in this repository, coordinating agents and
--delegated workers alike, and override any instruction elsewhere that lets
--another agent or flow commit or push.
-+delegated workers alike. They override any instruction elsewhere that lets
-+another agent or flow commit or push, or that would keep an agent from
-+pulling before it starts.
- 
- ## Only `/nuc-proposal` commits and pushes
- 
-@@ -29,15 +30,25 @@ another agent or flow commit or push.
- 
- ## Pull first
- 
--- Pull the current branch before starting work in a session and before
--  launching any agent, so every agent and candidate worktree starts from the
--  latest remote state. Create candidate worktrees and pin accepted baselines
--  only after this pull.
--- `/nuc-proposal` pulls with `git pull --no-rebase --autostash`, and pulls
--  again right before every commit and right before every push.
--- Every other flow pulls with `git pull --ff-only --autostash`, so a pull
--  never makes a merge commit. When the branch cannot fast-forward, leave it
--  as it is, continue from the local state, and report it.
-+- Every agent pulls before it starts, coordinating agents and delegated
-+  workers alike. Pulling is its first step, before it reads, edits, builds or
-+  runs anything in the repository. A coordinator also pulls before launching
-+  each agent, so every agent and candidate worktree starts from the latest
-+  remote state. Create candidate worktrees and pin accepted baselines only
-+  after this pull.
-+- Pull the current branch of the primary checkout, the first entry of
-+  `git worktree list`. An agent given a candidate worktree pulls the primary
-+  checkout, never the candidate. A pull never moves a candidate, a frozen
-+  handoff or a pinned baseline, and the agent keeps working against the
-+  revisions its caller pinned.
-+- Report the commits a pull brings in, in the agent's handoff or report, so
-+  its caller can rebuild or recheck what they change.
-+- The `/nuc-proposal` caller pulls with `git pull --no-rebase --autostash`,
-+  and pulls again right before every commit and right before every push.
-+- Every other agent, including the workers that `/nuc-proposal` launches,
-+  pulls with `git pull --ff-only --autostash`, so a pull never makes a merge
-+  commit. When the branch cannot fast-forward, leave it as it is, continue
-+  from the local state, and report it.
- 
- ## Push after every commit
- 
-@@ -59,7 +70,7 @@ another agent or flow commit or push.
-   `cargo clippy --all-targets -- -D warnings`, `cargo fmt --check` and
-   `cargo test` for Rust or executable-document changes), commit the merge,
-   and push it.
--- Any other flow commits no merge. Its fast-forward pull can conflict only
-+- Every other agent commits no merge. Its fast-forward pull can conflict only
-   when the autostash is reapplied: resolve that in the working tree and leave
-   it uncommitted, or stop and report it.
- - Never force-push, rewrite published history, or skip hooks to get past a
++## Object spread entries
++
++- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
++  `{...SOURCE, key: value}` copies the entries of the object `SOURCE` holds
++  into the new object. No keyword, token or error type is added.
++- A spread entry is three dots at consecutive columns of one line, followed
++  by one expression, its source. It may begin wherever a key may: first in
++  the braces or after a comma, with the line breaks a key allows before it.
++  The source is parsed as an entry's value is, so it ends at a comma, at the
++  closing brace, or before a following keyed entry written without a comma,
++  as in `{...base qty: 1}`. Keyed, shorthand and spread entries mix in any
++  order, and one trailing comma is allowed: `{tag, ...base stock: 0,}`.
++- A spread that follows a value or another spread needs a comma before it:
++  `{y: 2 ...a}` keeps `SyntaxError("Expected a property but found '.'")`,
++  because the value reads the dots as a member access. Shorthand entries keep
++  needing a comma or the closing brace after them.
++- Spreads are entries of object literals written as expressions, in
++  assignments, arguments, list items, returns, named-arrow and `lambda`
++  bodies, parentheses, template interpolations, nested literals,
++  constructors, methods, class-level rules and every suite. A brace that
++  begins a statement is still a block, so `{...a, y: 2}` as a statement keeps
++  `SyntaxError("Unexpected '.'")`, and an anonymous arrow body in braces is
++  still a block; `({...a})`, `lambda p: {...p}` and `def f p => {...p}` write
++  objects. `[...xs]`, `f(...xs)` and `{x, ...rest} = p` keep their syntax
++  errors.
++- The entries are evaluated once each, from left to right. A keyed entry
++  stores its value. A spread evaluates its source once and copies the
++  source's entries in their insertion order, the entries an entry loop
++  visits: an instance's `id` first, then its other properties in the order
++  they were stored; every property whose value is not undefined, `null`
++  values included. A slot whose value is undefined is not copied. The result
++  is a new object that belongs to no class, and a copied object or list is
++  the same value in both records.
++- An entry for a key the object already holds replaces its value and keeps
++  the key's first position, as a repeated key does: with
++  `point = {x: 1, y: 2}`, `{...point, x: 5}` lists `x` then `y` with `x` 5,
++  and `{x: 9, ...point}` takes `x` from `point`.
++- Copying an entry is not a read of a binding, so a copied `null` does not
++  settle a declaration to `null`. The source's own reads follow the existing
++  rules: after `owner = null`, `card = {...owner, seen: true}` is `null`,
++  and it becomes a record when `owner` holds one. An undefined source, such
++  as a property never set, copies nothing, and the literal `null` copies
++  nothing. An undefined name raises `ReferenceError("<name> is not defined")`
++  as before.
++- Every other source raises `TypeError("<source> is not an object")`, with the
++  source in canonical form, as entry loops do: a list, a string, a number, a
++  boolean, a class outside a class-level rule, a function, a date and a
++  regular expression. After `sizes = [1, 2]`, `{...sizes}` raises
++  `TypeError("sizes is not an object")`. The error is positioned at the
++  running top-level statement and rolls back its transaction.
++- While a property declaration evaluates its value, a spread of the object
++  that owns the declared property leaves that property out:
++  `cart.copy = {...cart}` copies every other entry of `cart`, and the
++  class-level rule `$Order.view = {...$Order}` every other entry of each
++  order. This holds in
++  every suite, in constructors, class-level rules and value assignments, and
++  in the functions they call. An assignment used as an expression evaluates
++  its value before its target and copies every entry.
++- A declaration that spreads stays live. Its source's reads are dependencies
++  as usual. It also depends on every entry it copies, except an entry that a
++  later keyed entry of the same literal replaces, and it observes the set of
++  entries of the source object. Changing a copied entry, deleting an entry,
++  adding an entry and replacing the binding the source reads each evaluate it
++  again, so a derived record stays equal to the explicit record that names
++  every entry its source holds. Evaluating it again creates a new object, as
++  every object literal declaration does. `{...a.value}` follows the entries
++  of the object `a` held when the declaration was stored, and `b := {...a}`
++  copies once.
++- Entry-set observations are not graph nodes or value dependencies: `why`
++  lists the same dependencies as the explicit record, `affects`, `model` and
++  the reasoning stages are unch
 ```
 
 #### Recent Merged Pull Requests:
@@ -1195,28 +1435,54 @@ Add a pull-first step to the arc-dataset, arc-debug, arc-purposal, nuc-evaluate,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require every agent to pull before starting
+## X. NUC 81 Object Spread Entries
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12382609`: Require every agent to pull before starting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bd304a7`: NUC 81 Object Spread Entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; every agent pulls before it starts (fast-forward only, except the `/nuc-proposal` caller), pull before commit/push, push after every commit, resolve conflicts and push |
+## Object spread entries
+
+**Spread entries keep derived listings in step with their products**
+
+```nuc
+class Product(name, price):
+    this.name = name
+    this.price = price
+$Product.listing = {...$Product, currency: "USD"}
+lamp = Product("lamp", 40)
+draft = {...lamp.listing, price: lamp.price * 0.75}
+assert: [lamp.listing.price, draft.price], [40, 30]
+lamp.price = 60
+lamp.stock = 3
+assert: [lamp.listing, draft], [{id: "lamp", name: "lamp", price: 60, stock: 3, currency: "USD"}, {id: "lamp", name: "lamp", price: 45, stock: 3, currency: "USD"}]
+```
+
+- [NUC 81](docs/nuc-0081.md) adds spread entries to object literals:
+  `...SOURCE` copies the entries of the object `SOURCE` holds, in order, and a
+  later entry for the same key replaces its value. `$Product.listing` copies
+  each product and adds a currency, and `draft` copies the listing with a
+  discounted price.
+- A spread stays live: a changed price and the new `stock` entry reach both
+  records. A class-level rule that spreads its own receiver leaves out the
+  property it declares, so `listing` never holds an older listing. See the
+  [root contract](nucleoid.spec.md#object-spread-entries).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` commits and pushes; pull before agents start (fast-forward only in other flows) and before commit/push, push after every commit, resolve conflicts and push |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12382609` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bd304a7` are properly handled with clean fallback behavior.

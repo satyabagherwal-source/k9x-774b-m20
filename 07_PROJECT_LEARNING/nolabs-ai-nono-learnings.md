@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `1680298d`  
+> **Source Version**: `0e15816b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:32:21.105Z  
+> **Timestamp**: 2026-11-04T18:42:22.072Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:32:21.097Z  
+> **Harvest Timestamp**: 2026-11-04T18:42:20.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4821 stars
+- **Stars / Engagement**: 4839 stars
 
 ---
 
@@ -2980,286 +2980,177 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1680298d` (2026-11-03)
-**Commit Message**: fix(proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)
+### Incident Patch 1: `0e15816b` (2026-11-04)
+**Commit Message**: docs(neps): add nep 0010 for session terminal capture (#2259)
 
-Endpoint rules (allow_domain endpoints, URL-form --allow-domain, and
-endpoint_rules on routes) were only evaluated on the TLS-intercept and
-reverse-proxy paths. Absolute-form http:// requests sent via HTTP_PROXY
-are handled by handle_forward_http, which checked only the host filter,
-so any method and path on an allowed host was forwarded — the rules
-looked enforced while plain-HTTP traffic bypassed them entirely.
+* docs(neps): add nep 0010 for session terminal capture
 
-Evaluate the endpoint policy of matching routes on the forward path too,
-mirroring select_intercept_route's authorization semantics: explicit
-denies and approve-required rules fail closed with 403 + an
-EndpointPolicy audit event, legacy allow-lists gate via the
-endpoint-only layer, and catch-all routes impose no L7 constraint.
-Candidate routes are matched by upstream host with an 80→443 alias so
-https-registered rules also cover plain-HTTP default-port requests,
-while loopback routes keep their explicit port so distinct local
-services never gate each other.
+This proposal introduces NEP 0010, which outlines the specification and requirements for capturing session terminal output. It details the proposed architecture, data formats, and integration points for recording CLI interactions within the ecosystem.
 
-Closes #2174
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
-Signed-off-by: LuckVd <[REDACTED_EMAIL]>
-Co-authored-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+* docs(nep): add NEP-0010 session terminal capture to roadmap
 
-**File**: `crates/nono-proxy/src/route.rs` (modified, +115/-0)
+Add NEP-0010 to the project roadmap and NEP index. This proposal details session terminal capture, allowing the nono supervisor to record terminal input and output in a tamper-evident log linked to the audit record.
+
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+
+**File**: `ROADMAP.md` (modified, +2/-0)
 ```diff
-@@ -451,6 +451,52 @@ impl RouteStore {
-         matches
-     }
- 
-+    /// Return all routes whose endpoint policy can constrain a plain-HTTP
-+    /// forward-proxy request to `host:port`.
-+    ///
-+    /// The absolute-form forward path (`handle_forward_http`) sees
-+    /// `http://host:port/…` targets. A route is a candidate when its upstream
-+    /// host matches (wildcard-aware, same grammar as the host filter) and
-+    /// either its upstream port equals the request port, or the request uses
-+    /// the plain-HTTP default port 80 and the route is the port-443 `https`
-+    /// upstream of the same host: `allow_domain` entries with endpoints (and
-+    /// URL-form `--allow-domain 'https://host/path'`) always compile to
-+    /// `https` upstreams, so without that alias every `http://` request would
-+    /// bypass the rules entirely (issue #2174). Loopback routes keep their
-+    /// explicit port (often an `http://` upstream on a non-default port), so
-+    /// different local services on the same host never gate each other.
-+    #[must_use]
-+    pub fn lookup_forward_endpoint_candidates(
-+        &self,
-+        host: &str,
-+        port: u16,
-+    ) -> Vec<(&str, &LoadedRoute)> {
-+        let normalised_host = match host.parse::<std::net::IpAddr>() {
-+            Ok(std::net::IpAddr::V4(v4)) => v4.to_string(),
-+            Ok(std::net::IpAddr::V6(v6)) => format!("[{v6}]"),
-+            Err(_) => nono::net_filter::HostFilter::normalize_authority_host(host),
-+        };
-+        let request_port = port.to_string();
-+        let mut matches: Vec<_> = self
-+            .routes
-+            .iter()
-+            .filter(|(_, route)| {
-+                route
-+                    .upstream_host_port
-+                    .as_ref()
-+                    .and_then(|hp| hp.rsplit_once(':'))
-+                    .is_some_and(|(pattern_host, pattern_port)| {
-+                        nono::net_filter::host_pattern_matches(pattern_host, &normalised_host)
-+                            && (pattern_port == request_port
-+                                || (port == 80 && pattern_port == "443"))
-+                    })
-+            })
-+            .map(|(prefix, route)| (prefix.as_str(), route))
-+            .collect();
-+        matches.sort_by_key(|(prefix, _)| *prefix);
-+        matches
-+    }
-+
-     /// Whether any route for `host:port` requires TLS interception.
-     #[must_use]
-     pub fn has_intercept_route(&self, host_port: &str) -> bool {
-@@ -1085,6 +1131,75 @@ mod tests {
-         assert!(!store.is_route_upstream("github.com:443"));
-     }
- 
-+    /// Candidates for the plain-HTTP forward path (issue #2174): exact-port
-+    /// matches always apply; port-80 requests also see the port-443 `https`
-+    /// upstream of the same host; other ports on the same host do not gate
-+    /// each other (loopback services on distinct ports stay independent).
-+    #[tokio::test]
-+    async fn test_forward_endpoint_candidates() {
-+        fn route(prefix: &str, upstream: &str) -> RouteConfig {
-+            RouteConfig {
-+                redeem_phantoms: Vec::new(),
-+                prefix: prefix.to_string(),
-+                upstream: upstream.to_string(),
-+                credential_key: None,
-+                inject_mode: Default::default(),
-+                inject_header: "Authorization".to_string(),
-+                credential_format: None,
-+                path_pattern: None,
-+                path_replacement: None,
-+                query_param_name: None,
-+                proxy: None,
-+                env_var: None,
-+                endpoint_rules: vec![EndpointRule {
-+                    method: "GET".to_string(),
-+                    path: "/get".to_string(),
-+                }],
-+                endpoint_policy: None,
-+                tls_ca: None,
-+                tls_client_cert: None,
-+                tls_client_key: None,
-+                oauth2: None,
-+                aws_auth: None,
-+                spiffe: None,
-+                upgrades: vec![],
-+                rate_limit: None,
-+            }
-+        }
-+
-+        let routes = vec![
-+            route("api", "https://api.example.com"),
-+            route("local", "http://127.0.0.1:3000"),
-+            route("wild", "https://*.example.com"),
-+        ];
-+        let store = RouteStore::load(&routes).await.unwrap();
-+
-+        let prefixes = |host: &str, port: u16| -> Vec<String> {
-+            store
-+                .lookup_forward_endpoint_candidates(host, port)
-+                .into_iter()
-+                .map(|(prefix, _)| prefix.to_string())
-+                .collect()
-+        };
-+
-+        // Exact upstream port match.
-+        assert_eq!(prefixes("api.example.com", 443), vec!["api", "wild"]);
-+        // Plain-HTTP default port 80 sees the https (443) upstream of the
-+        // same host — the issue #2174 bypass.
-+        assert_eq!(prefixes("api.example.com", 80), vec!["api", "wild"]);
-+        // Wildcard route upstreams match subdomains.
-+        asser
+@@ -40,6 +40,8 @@ _Under active authoring; not yet ready for a decision._
+   Let nono split its supervisor across a virtual-machine boundary.
+ - **[NEP-0008: Session flight recorder](neps/0008-session-flight-recorder.md)** — _Breaking: not yet assessed_
+   Make the audit log a complete, self-describing record of an agent session: every access nono denied, from every enforcement layer, with the reason and the process responsible; every grant the agent held; every allowed access to paths an operator marked as sensitive; and a statement of which sources were live, so an operator can tell "nothing happened" apart from "nono could not see it".
++- **[NEP-0010: Session terminal capture](neps/0010-session-terminal-capture.md)** — _Breaking: not yet assessed_
++  Let the nono supervisor capture what a session showed and was told: its terminal output, the input sent to it, and the terminal facts around them. nono keeps this as a tamper-evident recording linked into the audit log, and can deliver it, durably and live, to an external receiver over open protocols. nono captures, protects and delivers.
+ - **[NEP-0002: Tool Sandbox invocation-scoped filesystem approvals](neps/0002-invocation-scoped-commands.md)** — _Non-breaking_
+   Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
+ - **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Non-breaking_
 ```
 
-**File**: `crates/nono-proxy/src/server.rs` (modified, +367/-11)
+**File**: `neps/0010-session-terminal-capture.md` (added, +476/-0)
 ```diff
-@@ -9,7 +9,7 @@
- 
- use crate::audit;
- use crate::capture::CredentialCaptureBackend;
--use crate::config::ProxyConfig;
-+use crate::config::{EndpointPolicyOutcome, ProxyConfig};
- use crate::connect;
- use crate::credential::CredentialStore;
- use crate::error::{ProxyError, Result};
-@@ -2279,16 +2279,8 @@ async fn handle_forward_http(
-         return Ok(());
-     }
- 
--    // 3. Read the request body before building upstream headers so chunked
--    //    framing can be decoded and re-written with Content-Length.
--    let body = match reverse::read_request_body(stream, header_bytes, buffered).await? {
--        Some(body) => body,
--        None => return Ok(()), // send_error already written (e.g. 413 / 400)
--    };
--
--    // Build the origin-form request bytes: rewritten request line +
--    // proxy-header-stripped header block + optional Content-Length +
--    // terminating CRLF.
-+    // Build the origin-form request line and extract method + path so the
-+    // endpoint-policy gate below can evaluate the L7 rules.
-     let origin_line = rewrite_absolute_to_origin_form(first_line)?;
-     let inbound_path = origin_line
-         .split_whitespace()
-@@ -2301,6 +2293,24 @@ async fn handle_forward_http(
-         .unwrap_or("GET")
-         .to_string();
- 
-+    // 2b. Endpoint-policy gate. The host filter authorizes the HOST; endpoint
-+    //     rules configured on routes for that host restrict which method+path
-+    //     combinations may pass. The CONNECT-intercept path enforces them via
-+    //     `select_intercept_route`; without the same gate here every
-+    //     plain-HTTP request to an allowed host would bypass the rules
-+    //     entirely (issue #2174).
-+    if enforce_forward_http_endpoint_rules(state, &host, port, &method, &inbound_path).await {
-+        reverse::send_error_generic(stream, 403, "Forbidden").await?;
-+        return Ok(());
-+    }
+@@ -0,0 +1,476 @@
++---
++nep: 0010
++title: Session terminal capture
++authors:
++  - lukehinds
++status: draft
++created: 2026-11-03
++breaking:
++superseded-by:
++---
 +
-+    // 3. Read the request body before building upstream headers so chunked
-+    //    framing can be decoded and re-written with Content-Length.
-+    let body = match reverse::read_request_body(stream, header_bytes, buffered).await? {
-+        Some(body) => body,
-+        None => return Ok(()), // send_error already written (e.g. 413 / 400)
-+    };
++# NEP-0010: Session terminal capture
 +
-     // Target matches a route's upstream (not nono's own port, handled above) —
-     // redeem any phantom nonce before forwarding, as CONNECT already does.
-     let host_port = crate::route::format_host_port(&host, port);
-@@ -2433,6 +2443,112 @@ async fn handle_forward_http(
-     }
- }
- 
-+/// Audit an endpoint-policy denial on the plain-HTTP forward path.
-+async fn log_forward_endpoint_denial(
-+    state: &ProxyState,
-+    host: &str,
-+    port: u16,
-+    route_id: Option<&str>,
-+    reason: &str,
-+) {
-+    warn!("forward-http: {}", reason);
-+    audit::log_denied(
-+        state.audit_log.as_ref(),
-+        audit::ProxyMode::Reverse,
-+        &audit::EventContext {
-+            route_id,
-+            denial_category: Some(nono::undo::NetworkAuditDenialCategory::EndpointPolicy),
-+            ..audit::EventContext::default()
-+        },
-+        host,
-+        port,
-+        reason,
-+    );
-+}
++## Summary
 +
-+/// Evaluate the endpoint rules configured on routes matching an absolute-form
-+/// forward target, mirroring `select_intercept_route`'s authorization
-+/// semantics (without credential selection, approval workflows, or rate
-+/// limiting — the forward path is a transparent proxy that never injects a
-+/// managed credential).
-+///
-+/// Returns `true` when the request must be denied (the caller responds 403);
-+/// `false` when it may proceed.
-+async fn enforce_forward_http_endpoint_rules(
-+    state: &ProxyState,
-+    host: &str,
-+    port: u16,
-+    method: &str,
-+    path: &str,
-+) -> bool {
-+    let candidates = state
-+        .route_store
-+        .lookup_forward_endpoint_candidates(host, port);
-+    if candidates.is_empty() {
-+        return false;
-+    }
++Let the nono supervisor capture what a session showed and was told: its
++terminal output, the input sent to it, and the terminal facts around them.
++nono keeps this as a tamper-evident recording linked into the audit log, and
++can deliver it, durably and live, to an external receiver over open
++protocols. nono captures, protects and delivers. It does not analyse the
++content. NEP-0008 records what an agent *did*. This NEP records what the
++session *showed and was told*, on the same timeline.
 +
-+    let mut has_endpoint_only_route = false;
-+    let mut endpoint_authorized = false;
-+    for (prefix, route) in &candidates {
-+        if route.endpoint_policy.allows_all_without_l7() {
-+            // Catch-all route for this host: no L7 constraint.
-+            continue;
-+        }
-+        match route.endpoint_policy.evaluate(method, path) {
-+            EndpointPolicyOutcome::Allow { .. } => {
-+                endpoint_authorized = true;
-+            }
-+            EndpointPolicyOutcome::Approve { rule_label, .. } => {
-+                // Approval workflows have no client surface on the
-+                // plain-HTTP forward path; fail closed.
-+                let reason = format!(
-+                    "endpoint rule {} requires approval, which is not supported \
-+                     on the plain-HTTP forward path: {} {} on {}:{}",
-+                    rule_label, method, path, host, port
-+                );
-+                log_forward_endpoint_denial(state, host, port, Some(prefix), &reason).await;
-+                return true;
-+            }
-+         
++## Implementation status
++
++Unimplemented as of 2026-11-03. The PTY proxy already keeps an attach
++scrollback and a vt100 screen model. Neither is persisted or delivered.
++`breaking` is unassessed.
++
++## Motivation
++
++The supervisor sits between the agent and its terminal, or its standard
++streams. It sees every byte the agent prints and every byte sent back to it.
++Today that stream feeds attach replay and is then discarded. That leaves
++three gaps:
++
++- **Debugging unattended sessions.** A detached session, or one on a CI
++  runner or a cloud host, that fails leaves an exit code and an audit log of
++  access decisions. Nothing shows what the agent printed, what it said it was
++  doing, or the error it reported before it went wrong.
++- **Audit of the conversation.** Operators need a record of what an agent
++  displayed and what it was told, to the same integrity standard as the rest
++  of the audit log, and reviewable away from the host that ran it.
++- **Getting the record off the host.** Ephemeral hosts (CI runners, batch
++  containers) are destroyed when the job ends. A record that exists only on
++  the host is lost with it.
++
++A recorder that runs inside the sandbox (`script`, asciinema, an agent's own
++transcript) does not fill these gaps, because the agent can alter or delete
++it. The supervisor runs outside the sandbox, so its record is out of the
++agent's reach.
++
++### Goals
++
++- Capture output, input, resizes and terminal facts (terminal mode,
++  foreground process, terminal notifications, lifecycle) for supervised
++  sessions, with or without a PTY.
++- Attribute input to the client that sent it.
++- Before anything is stored or sent:
++  - remove credential values nono resolved for the session;
++  - never capture input typed while the terminal is in password mode.
++- Keep a local recording that can be replayed, rendered as text, and
++  verified through the audit hash chain.
++- Deliver the recording to an external receiver durably (ordered,
++  acknowledged, resumable) and live (best effort, watch-only), over open
++  protocols, on connections nono opens outbound.
++- Work on interactive and headless hosts alike, configured at launch.
++- Let operators require recording, failing closed.
++- Never let a slow destination stall the agent's terminal.
++
++### Non-Goals
++
++- **Analysing content.** nono does not classify, search or score recordings,
++  and ships no secret or PII pattern lists. Receivers can analyse the stream
++  as they see fit.
++- **Input sent from receivers.** Live streams are watch-only. Remote input
++  would need its own NEP.
++- **Holding or rewriting the session's input.** Capture is passive, apart
++  from the two fixed protections in §3.
++- **Receiver storage, indexing or user interfaces.**
++- **Direct mode (`nono wrap`).** No supervisor remains to capture anything,
++  as with NEP-0008.
++
++## Proposal
++
++### 1. Overview
++
++```text
++            ┌─────────── Capture (PTY proxy, or supervised pipes) ───────────┐
++ agent ───▶ │ output · input{client} · resize · mode · foreground · notify   │
++            └───────────────────────────────┬────────────────────────────────┘
++                                            ▼ ordered events
++                              Fixed protections (§3)
++                              · remove known credentials
++                              · drop password-mode input
++                                            ▼ protected events
++                                 Sinks (§5), never block capture
++           ┌──────────┬──────────┬──────────┴──┬──────────────┬───────────┐
++       recording  audit link    file       delivery         live      scrollback
++       (chunks)   (hash chain)  (artifact) (durable, §6.1)  (§6.2)    (attach)
++```
++
++Rules that hold across the design:
++
++1. Only capture touches the PTY or the standard streams.
++2. No sink ever receives bytes that have not passed through §3.
++3. Markers and metadata come from the supervisor. Escape sequences printed by
++   the agent cannot create them.
++4. Capture is passive: it never changes what the agent receives.
++
++### 2. Capture
++
++#### 2.1 Events
++
++| Event | Source | Fields |
++|---|---|---|
++| `Output` | `PtyProxy::record_output`, or the supervised stdout/stderr pipes | bytes, `stream` (`pty`, `stdout
+```
+
+**File**: `neps/README.md` (modified, +1/-0)
+```diff
+@@ -108,4 +108,5 @@ CI fails PRs that leave them stale.
+ | 0007 | Supervisor decisions, audit and credentials outside a microVM guest | draft | Breaking: not yet assessed |
+ | 0008 | Session flight recorder | draft | Breaking: not yet assessed |
+ | 0009 | Account sign-in from the CLI (`nono login`) | draft | Non-breaking |
++| 0010 | Session terminal capture | draft | Breaking: not yet assessed |
+ <!-- nep-index:end -->
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2260** (2026-11-03): refactor(cli): simplify remote session display and selector layout (@lukehinds)
+- **PR #2259** (2026-11-04): docs(neps): add nep 0010 for session terminal capture (@lukehinds)
 - **PR #2254** (2026-11-03): fix(proxy): strip hop headers when the colon is spaced (@SebTardif)
 - **PR #2251** (2026-11-02): chore(deps): bump the routine-rust group with 6 updates (@dependabot[bot])
 - **PR #2250** (2026-11-03): feat(cli): add nono login and logout commands (@lukehinds)
 - **PR #2249** (2026-11-02): docs(neps): update implementation status and pre-1.0 compatibility guidance (@SequeI)
-- **PR #2245** (2026-11-02): docs(nep): propose nep-0009 for cli oauth login and device enrollment (@lukehinds)
 
 ---
 
@@ -3279,42 +3170,22 @@ Co-authored-by: Leonardo Zanivan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): enforce endpoint rules on plain-HTTP forward requests (#2184)
+## X. docs(neps): add nep 0010 for session terminal capture (#2259)
 
 **RULE**:
-When implementing operations in `crates/nono-proxy/src/route.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ROADMAP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1680298d`: proxy): enforce endpoint rules on plain-HTTP forward requests (#2184). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e15816b`: docs(neps): add nep 0010 for session terminal capture (#2259). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/route.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ROADMAP.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Return all routes whose endpoint policy can constrain a plain-HTTP
-    /// forward-proxy request to `host:port`.
-    ///
-    /// The absolute-form forward path (`handle_forward_http`) sees
-    /// `http://host:port/…` targets. A route is a candidate when its upstream
-    /// host matches (wildcard-aware, same grammar as the host filter) and
-    /// either its upstream port equals the request port, or the request uses
-    /// the plain-HTTP default port 80 and the route is the port-443 `https`
-    /// upstream of the same host: `allow_domain` entries with endpoints (and
-    /// URL-form `--allow-domain 'https://host/path'`) always compile to
-    /// `https` upstreams, so without that alias every `http://` request would
-    /// bypass the rules entirely (issue #2174). Loopback routes keep their
-    /// explicit port (often an `http://` upstream on a non-default port), so
-    /// different local services on the same host never gate each other.
-    #[must_use]
-    pub fn lookup_forward_endpoint_candidates(
-        &self,
-        host: &str,
-        port: u16,
-    ) -> Vec<(&str, &LoadedRoute)> {
-        let normalised_host = match host.parse::<std::net::IpAddr>() {
-            
+- **[NEP-0010: Session terminal capture](neps/0010-session-terminal-capture.md)** — _Breaking: not yet assessed_
+  Let the nono supervisor capture what a session showed and was told: its terminal output, the input sent to it, and the terminal facts around them. nono keeps this as a tamper-evident recording linked into the audit log, and can deliver it, durably and live, to an external receiver over open protocols. nono captures, protects and delivers.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3324,4 +3195,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1680298d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e15816b` are properly handled with clean fallback behavior.

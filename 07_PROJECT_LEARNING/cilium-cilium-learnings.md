@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `7c469256`  
+> **Source Version**: `cff73042`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:27:51.485Z  
+> **Timestamp**: 2026-11-05T00:15:02.894Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:27:51.288Z  
+> **Harvest Timestamp**: 2026-11-05T00:15:02.887Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25769 stars
+- **Stars / Engagement**: 25774 stars
 
 ---
 
@@ -1259,13 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49811** (2026-11-03): **[v1.18] ci: Fix the chart organization in the printed helm commands**
-  *Symptoms*: The chart push prints its example helm commands with env.QUAY_CHARTS_ORGANIZATION_DEV, which set-env-variables stopped setting when the variable became CHARTS_ORGANIZATION_DEV, so the printed commands point at oci://quay.io//cilium. Main, v1.19 and v1.20 already read CHARTS_ORGANIZATION_DEV there.  This commit reads CHARTS_ORGANIZATION_DEV.  Fixes: 90ec4a89510b ("ci: make registry configurable")  This PR was prepared with AIL:3. I personally checked the diff. 
+- **Issue #49837** (2026-11-04): **cilium-cli: add explicit timeout to ensure health check termination**
+  *Symptoms*: Otherwise, the test would continue running forever until manually stopped (or the CI timeout hits) in case the health status does not converge. The timeout is set to five minutes, which should be generous enough to not risk causing flakes. 
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #49809** (2026-11-03): **ci: Build releases with the tagged commit's local actions**
-  *Symptoms*: The release and beta image workflows check out the default branch to reach their local actions, so a stable release tag builds with main's disk-cleanup and set-env-variables actions, and the release workflow also with main's set-runtime-image action. A change to one of them on main reaches every release branch at its next tag.  This commit checks out github.sha, the tagged or dispatched commit the workflow file runs from, so each release builds with its own branch's actions. The values these workflows read from set-env-variables are the same on main, v1.18, v1.19 and v1.20, and each of those branches carries every action its copy uses.  This PR was prepared with AIL:3. I personally checked the diff. 
+- **Issue #49833** (2026-11-04): **.github: Make the vulnerability report components optional**
+  *Symptoms*: GitHub's private vulnerability report form treats a required dropdown with `multiple: true` as requiring every option [1]. Our Affected components dropdown sets both, so a reporter cannot submit a report without selecting all 13 components.  This commit drops the required validation from that dropdown and keeps `multiple: true`. A reporter can now leave it empty, and the Security Team fills in the component during triage.  1: https://github.com/orgs/community/discussions/210542 Fixes: e5827d55a0c3 (".github: Add a private vulnerability report form") Reported-by: @peoyekunle  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,278 +1282,1005 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c469256` (2026-10-29)
-**Commit Message**: bpf: host: remove no longer needed __maybe_unused
+### Incident Patch 1: `cff73042` (2026-11-04)
+**Commit Message**: ci: Raise the Release Helm job timeout to 55 minutes
 
-Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
+On 2026-07-16, the v1.19.6 Release Helm job took 37 of its 40 minutes
+over three chart runs, whose Tetragon "validate" jobs queued for 467,
+784 and 510 seconds. The job now waits for the Cilium chart runs, which
+finished 352 seconds later in total that day, so that day would have
+taken about 43 minutes.
 
-**File**: `bpf/bpf_host.c` (modified, +17/-18)
+This commit raises the timeout to 55 minutes, within the 1-hour
+lifetime of the app token that the job mints at its start. That covers
+the three runs of that day, but not a fourth run at the same queue
+times, such as one after a failed Cilium chart check.
+
+This commit was prepared with AIL:3. I personally checked the Tetragon
+and Cilium chart run timings of the 2026-07-16 v1.19.6 release.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/release.yaml` (modified, +1/-1)
 ```diff
-@@ -1012,22 +1012,22 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
- 
- static __always_inline int
- do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
--	  enum trace_point obs_point,  const bool __maybe_unused from_host)
-+	  enum trace_point obs_point, const bool from_host)
- {
- 	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = TRACE_PAYLOAD_LEN,
- 	};
--	fraginfo_t __maybe_unused fraginfo = 0;
--	__u32 __maybe_unused ipcache_srcid = 0;
-+	fraginfo_t fraginfo = 0;
-+	__u32 ipcache_srcid = 0;
- 	enum metric_dir dir = METRIC_INGRESS;
--	void __maybe_unused *data, *data_end;
-+	void *data, *data_end;
- 	struct ipv6hdr __maybe_unused *ip6;
--	struct iphdr __maybe_unused *ip4;
--	struct arp_eth __maybe_unused *arp;
--	int __maybe_unused hdrlen = 0;
--	__u8 __maybe_unused next_proto = 0;
--	__s8 __maybe_unused ext_err = 0;
-+	struct iphdr *ip4;
-+	struct arp_eth *arp;
-+	int hdrlen = 0;
-+	__u8 next_proto = 0;
-+	__s8 ext_err = 0;
- 	int ret;
- 
- 	switch (proto) {
-@@ -1250,9 +1250,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 
- 	return ret;
- 
--drop_err_egress: __maybe_unused
-+drop_err_egress:
- 	dir = METRIC_EGRESS;
--drop_err_ingress: __maybe_unused
-+drop_err_ingress:
- 	return send_drop_notify_error(ctx, identity, ret, dir);
- }
- 
-@@ -1711,8 +1711,8 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
- 
- static __always_inline
- int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
--			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
--			__s8 *ext_err __maybe_unused)
-+			__u32 src_sec_identity, bool traced, bool use_tailcall,
-+			__s8 *ext_err)
- {
- 	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
-@@ -1913,16 +1913,15 @@ int cil_to_host(struct __ctx_buff *ctx)
-  * control back to bpf_lxc.
-  */
- static __always_inline __maybe_unused int
--from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
--		 __s8 *ext_err __maybe_unused)
-+from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
- {
--	struct trace_ctx __maybe_unused trace = {
-+	struct trace_ctx trace = {
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = 0,
- 	};
- 	int ret = CTX_ACT_OK;
--	void __maybe_unused *data, *data_end;
--	struct iphdr *ip4 __maybe_unused;
-+	void *data, *data_end;
-+	struct iphdr *ip4;
- 	struct ipv6hdr *ip6 __maybe_unused;
- 
- 	switch (proto) {
+@@ -123,7 +123,7 @@ jobs:
+     environment:
+       name: release-helm
+       deployment: false
+-    timeout-minutes: 40
++    timeout-minutes: 55
+     runs-on: ubuntu-26.04
+     steps:
+       - name: Install Go
 ```
 
 ---
 
-### Incident Patch 2: `56c42f64` (2026-10-29)
-**Commit Message**: bpf: host: convert ENABLE_IPV4 guards to is_defined()
+### Incident Patch 2: `45376462` (2026-11-02)
+**Commit Message**: routing/reconciler: Avoid udev MAC races in script tests
 
-When IPv4 is disabled, IPv4 and ARP packets still get the default
-unknown L3 handling. do_netdev() reaches it through a new unknown_l3
-label instead of duplicating the default case.
+Set the test link MAC during creation to prevent udev from replacing it.
 
-Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
+AIL:4
 
-**File**: `bpf/bpf_host.c` (modified, +37/-14)
+Fixes: db4c861c34bb ("routing/reconciler: Add script-based tests")
+Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (modified, +3/-2)
 ```diff
-@@ -87,7 +87,6 @@ static __always_inline bool allow_vlan(__u32 vlan_id)
- DEFINE_AUX(struct ct_buffer4, cilium_tail_call_buffer4);
- DEFINE_AUX(struct ct_buffer6, cilium_tail_call_buffer6);
+@@ -2,8 +2,8 @@
  
--#if defined(ENABLE_IPV4) || defined(ENABLE_IPV6)
- static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
- {
- 	/* When attached to cilium_host, we rewrite the DMAC to the mac of
-@@ -102,7 +101,6 @@ static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
+ # Configure one dual-stack ENI as the operator would report it to the agent.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
  
- 	return CTX_ACT_OK;
- }
--#endif
+ hive start
+ ipam/start
+@@ -13,6 +13,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
  
- #ifdef ENABLE_IPV6
- static __always_inline __u32
-@@ -557,7 +555,6 @@ handle_to_netdev_ipv6(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
- }
- #endif /* ENABLE_IPV6 */
+ # Endpoint creation waits for both address families to be reconciled.
+ endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (modified, +3/-2)
+```diff
+@@ -2,8 +2,8 @@
  
--#ifdef ENABLE_IPV4
- static __always_inline __u32
- resolve_srcid_ipv4(const struct __ctx_buff *ctx, const struct iphdr *ip4,
- 		   __u32 real_sec_identity, __u32 *ipcache_sec_identity)
-@@ -1012,7 +1009,6 @@ handle_to_netdev_ipv4(struct __ctx_buff *ctx, bool is_from_proxy, __u32 src_sec_
- 	return ipv4_host_policy_egress(ctx, is_from_proxy, src_id, ipcache_srcid, ip4,
- 				       trace, ext_err);
- }
--#endif /* ENABLE_IPV4 */
+ # Configure one ENI as the operator would report it to the agent.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
  
- static __always_inline int
- do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
-@@ -1123,8 +1119,10 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
- 								CTX_ACT_OK, METRIC_INGRESS);
- #endif
--#ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4))
-+			goto unknown_l3;
+ hive start
+ ipam/start
+@@ -13,6 +13,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
+ 
+ # Endpoint creation installs both endpoint rules and the shared ENI routes.
+ endpoint/add pod-a 192.0.2.10
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (modified, +3/-2)
+```diff
+@@ -2,8 +2,8 @@
+ 
+ # Configure one ENI with an IPv6 delegated prefix as the operator would report it.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
+ 
+ hive start
+ ipam/start
+@@ -13,6 +13,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
+ 
+ # Endpoint creation installs IPv6 endpoint rules and routes through the AWS
+ # link-local gateway.
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (modified, +3/-2)
+```diff
+@@ -2,8 +2,8 @@
+ 
+ # Configure one ENI as the operator would report it to the agent.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
+ 
+ hive start
+ ipam/start
+@@ -13,6 +13,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
+ 
+ # Losing the parent ENI keeps reconciliation failing. Bound the simulated
+ # request and assert its routing error without expiring the script context,
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (modified, +3/-2)
+```diff
+@@ -2,8 +2,8 @@
+ 
+ # Configure one ENI as the operator would report it to the agent.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
+ 
+ hive start
+ ipam/start
+@@ -13,6 +13,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
+ 
+ # Simulate an upgrade with an old destination-scoped egress rule. Endpoint
+ # creation replaces it with the desired unconditional rule.
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (modified, +3/-2)
+```diff
+@@ -2,8 +2,8 @@
+ 
+ # Configure one ENI as the operator would report it to the agent.
+ k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
++link/set cilium-rr-test mtu=1400
+ 
+ # Seed orphan rules before starting the reconciler.
+ rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
+@@ -23,6 +23,7 @@ link/list
+ * stdout 'addr: 192[.]0[.]2[.]5/24'
+ stdout 'cilium-rr-test dummy <up[|>]'
+ stdout 'mtu: 1500'
++stdout 'hwaddr: 02:ca:fe:00:00:01'
+ 
+ # Wait for the initial reconciler prune without replaying the rule additions.
+ rule/list --family=ipv4 --priority=20 --protocol=kernel
+```
+
+**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +13/-0)
+```diff
+@@ -343,6 +343,7 @@ func linkAddCmd(nsm *NetNSManager) script.Cmd {
+ 			Args:    "<name> <type>",
+ 			Flags: func(fs *pflag.FlagSet) {
+ 				fs.String("netns", "", "Execute in the specified network namespace")
++				fs.String("hwaddr", "", "Hardware address to assign when creating the link")
+ 				fs.String("peername", "", "Name of the veth peer interface (veth only)")
+ 				fs.String("peerns", "", "Network namespace of the veth peer (veth only)")
+ 			},
+@@ -364,6 +365,18 @@ func linkAddCmd(nsm *NetNSManager) script.Cmd {
+ 			}
+ 
+ 			linkAttrs := netlink.LinkAttrs{Name: name}
++			hwAddr, err := s.Flags.GetString("hwaddr")
++			if err != nil {
++				return nil, fmt.Errorf("failed to get hwaddr flag: %w", err)
++			}
++			// Assign the MAC at creation so udev sees NET_ADDR_SET before handling
++			// the device and does not replace it with a persistent MAC.
++			if hwAddr != "" {
++				linkAttrs.HardwareAddr, err = net.ParseMAC(hwAddr)
++				if err != nil {
++					return nil, fmt.Errorf("invalid hwaddr value %q: %w", hwAddr, err)
++				}
++			}
+ 
+ 			err = nsm.exec(nsName, func() error {
+ 				var link netlink.Link
+```
+
+---
+
+### Incident Patch 3: `b6698674` (2026-11-02)
+**Commit Message**: Revert "Revert "routing/reconciler: Add script-based tests""
+
+This reverts commit 9b0aad96d4b73890a04fc3d9d65d16a327360b28.
+
+Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
+
+**File**: `pkg/datapath/linux/routing/reconciler/script_test.go` (added, +543/-0)
+```diff
+@@ -0,0 +1,543 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
 +
- 		/* This is the first time revalidate_data() is going to be called.
- 		 * Make sure that we don't legitimately drop the packet if the skb
- 		 * arrived with the header not being not in the linear data.
-@@ -1218,6 +1216,9 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		return send_drop_notify_error_with_exitcode_ext(ctx, identity, ret, ext_err,
- 								CTX_ACT_OK, METRIC_INGRESS);
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4))
-+			goto unknown_l3;
++package reconciler_test
 +
- 		if (!revalidate_data_arp_pull(ctx, &data, &data_end, &arp)) {
- 			ret = DROP_INVALID;
- 			goto drop_err_ingress;
-@@ -1235,8 +1236,8 @@ do_netdev(struct __ctx_buff *ctx, __be16 proto, __u32 identity,
- 		}
++import (
++	"context"
++	"errors"
++	"fmt"
++	"log/slog"
++	"maps"
++	"net/netip"
++	"os"
++	"strings"
++	"testing"
++
++	"github.com/cilium/hive/cell"
++	"github.com/cilium/hive/hivetest"
++	"github.com/cilium/hive/script"
++	"github.com/cilium/hive/script/scripttest"
++	"github.com/cilium/statedb"
++	"github.com/spf13/pflag"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"github.com/vishvananda/netlink"
++	"golang.org/x/sys/unix"
++
++	"github.com/cilium/cilium/api/v1/models"
++	agentK8s "github.com/cilium/cilium/daemon/k8s"
++	awsAgent "github.com/cilium/cilium/pkg/aws/agent"
++	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
++	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
++	linuxrouting "github.com/cilium/cilium/pkg/datapath/linux/routing"
++	routingReconciler "github.com/cilium/cilium/pkg/datapath/linux/routing/reconciler"
++	"github.com/cilium/cilium/pkg/datapath/linux/safenetlink"
++	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
++	sysctlFake "github.com/cilium/cilium/pkg/datapath/linux/sysctl/fake"
++	fakeloader "github.com/cilium/cilium/pkg/datapath/loader/fake"
++	datapathTables "github.com/cilium/cilium/pkg/datapath/tables"
++	"github.com/cilium/cilium/pkg/endpoint"
++	fakeendpoint "github.com/cilium/cilium/pkg/endpoint/fake"
++	"github.com/cilium/cilium/pkg/endpointmanager"
++	"github.com/cilium/cilium/pkg/endpointstate"
++	fqdnRules "github.com/cilium/cilium/pkg/fqdn/rules"
++	"github.com/cilium/cilium/pkg/hive"
++	"github.com/cilium/cilium/pkg/identity/identitymanager"
++	"github.com/cilium/cilium/pkg/ipam"
++	ipamcell "github.com/cilium/cilium/pkg/ipam/cell"
++	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
++	"github.com/cilium/cilium/pkg/ipmasq"
++	k8sClientTest "github.com/cilium/cilium/pkg/k8s/client/testutils"
++	k8sTables "github.com/cilium/cilium/pkg/k8s/tables"
++	"github.com/cilium/cilium/pkg/k8s/watchers"
++	"github.com/cilium/cilium/pkg/maps/ctmap"
++	"github.com/cilium/cilium/pkg/maps/lxcmap"
++	"github.com/cilium/cilium/pkg/metrics"
++	monitorAgent "github.com/cilium/cilium/pkg/monitor/agent"
++	"github.com/cilium/cilium/pkg/mtu"
++	mtuFake "github.com/cilium/cilium/pkg/mtu/fake"
++	"github.com/cilium/cilium/pkg/node"
++	nodeFake "github.com/cilium/cilium/pkg/node/fake"
++	nodeTypes "github.com/cilium/cilium/pkg/node/types"
++	"github.com/cilium/cilium/pkg/nodediscovery"
++	"github.com/cilium/cilium/pkg/option"
++	"github.com/cilium/cilium/pkg/policy"
++	"github.com/cilium/cilium/pkg/promise"
++	"github.com/cilium/cilium/pkg/testutils"
++	testidentity "github.com/cilium/cilium/pkg/testutils/identity"
++	testmonitor "github.com/cilium/cilium/pkg/testutils/monitor"
++	testpolicy "github.com/cilium/cilium/pkg/testutils/policy"
++	"github.com/cilium/cilium/pkg/testutils/scriptnet"
++	"github.com/cilium/cilium/pkg/time"
++	fakewireguard "github.com/cilium/cilium/pkg/wireguard/fake"
++)
++
++const (
++	testENILinkName = "cilium-rr-test"
++	testENILinkMAC  = "02:ca:fe:00:00:01"
++)
++
++func TestPrivilegedScript(t *testing.T) {
++	testutils.PrivilegedTest(t)
++
++	defer testutils.GoleakVerifyNone(t,
++		// Endpoint-manager policy-map pressure triggers live for the process lifetime.
++		// Disable them to avoid a false negative from Goleak.
++		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/trigger.(*Trigger).waiter"),
++		// ENI setup workers are not managed by Hive via Jobs and can still be
++		// sleeping between device lookups when the test ends.
++		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/aws/agent.setupENIDevices"),
++	)
++
++	nodeTypes.SetName("test-node")
++
++	scripttest.Test(t,
++		t.Context(),
++		func(t testing.TB, args []string) *script.Engine {
++			daemonCfg := daemonConfig(t, args)
++			daemonCfg.StateDir = t.TempDir()
++
++			nsManager, err := scriptnet.NewNSManager(t)
++			require.NoError(t, err, "NewNSManager")
++
++			// Keep the test in the process network namespace so asynchronous ENI
++			// provider jobs operate on the links created by the script.
++			require.NoError(t, nsManager.LockThreadAndInitialize(t, false), "LockThreadAndInitialize")
++
++			// Remove state left by an interrupted prior run, and register the same
++			// cleanup in case this scenario fails before removing its state.
++			registerTestCleanup(t)
++
++			restorerResolver, restorerPromise := promise.New[endpointstate.Restorer]()
++			restorerResolver.Resolve(fakeRestorer{})
++
++			var (
++				initializer   *ipamcell.IPAMInitializer
++				ipamManager   *ipam.IPAM
++				epManager     endpointmanager.EndpointManager
++				routingWaiter endpointmanager.EndpointRoutingWaiter
++			)
++
++			h := hive.New(
++				k8sClientTest.FakeClientCell(),
++				agentK8s.ResourcesCell,
++				k8sTables.TablesCell,
++				datapathTables.DirectRoutingDeviceCell,
++				endpointmanager.TestCell,
++
++				// Exercise the production ENI pool accessor, device configurator,
++				// native-routing-CIDR ob
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++#! --family=ipv4 --family=ipv6
++
++# Configure one dual-stack ENI as the operator would report it to the agent.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Endpoint creation waits for both address families to be reconciled.
++endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
++stdout --count=1 '^192[.]0[.]2[.]10$'
++stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
++
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
++
++rule/list --family=ipv6 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
++
++rule/list --family=ipv6 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
++
++route/list --table=11
++stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
++stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
++stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
++stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
++
++# Endpoint deletion removes both rule families but leaves the shared routes.
++endpoint/del pod-a
++
++# Wait for asynchronous rule deletion without replaying endpoint/del.
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv6 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv6 --priority=111 --protocol=kernel
++* empty stdout
++
++route/list --table=11
++stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
++stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
++stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
++stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        addresses:
++        - 192.0.2.10
++        ipv6-prefixes:
++        - 2001:db8:1::/80
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++#! --family=ipv4
++
++# Configure one ENI as the operator would report it to the agent.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Endpoint creation installs both endpoint rules and the shared ENI routes.
++endpoint/add pod-a 192.0.2.10
++stdout '^192.0.2.10$'
++
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
++
++route/list --table=11
++stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
++stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
++
++# Endpoint deletion removes its rules but leaves routes shared by the ENI.
++endpoint/del pod-a
++
++# Wait for asynchronous rule deletion without replaying endpoint/del.
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++* empty stdout
++
++route/list --table=11
++stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
++stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        addresses:
++        - 192.0.2.10
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++#! --family=ipv6
++
++# Configure one ENI with an IPv6 delegated prefix as the operator would report it.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Endpoint creation installs IPv6 endpoint rules and routes through the AWS
++# link-local gateway.
++endpoint/add pod-a 2001:db8:1::/80
++stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
++
++rule/list --family=ipv6 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
++
++rule/list --family=ipv6 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
++
++route/list --table=11
++stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
++stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
++
++# Endpoint deletion removes its rules but leaves routes shared by the ENI.
++endpoint/del pod-a
++
++# Wait for asynchronous rule deletion without replaying endpoint/del.
++rule/list --family=ipv6 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv6 --priority=111 --protocol=kernel
++* empty stdout
++
++route/list --table=11
++stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
++stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        ipv6-prefixes:
++        - 2001:db8:1::/80
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++#! --family=ipv4
++
++# Configure one ENI as the operator would report it to the agent.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Losing the parent ENI keeps reconciliation failing. Bound the simulated
++# request and assert its routing error without expiring the script context,
++# so the following commands can still verify endpoint cleanup.
++link/del cilium-rr-test
++endpoint/add --timeout=5s --expect-error='interface with MAC 02:ca:fe:00:00:01 not found' pod-a 192.0.2.10
++
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++empty stdout
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++empty stdout
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        addresses:
++        - 192.0.2.10
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++#! --family=ipv4
++
++# Configure one ENI as the operator would report it to the agent.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Simulate an upgrade with an old destination-scoped egress rule. Endpoint
++# creation replaces it with the desired unconditional rule.
++rule/add --family=ipv4 --from=192.0.2.10/32 --to=192.0.2.0/24 --priority=111 --table=11 --protocol=kernel
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to 192[.]0[.]2[.]0/24 table 11 protocol kernel$'
++
++endpoint/add pod-a 192.0.2.10
++stdout '^192.0.2.10$'
++
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
++
++endpoint/del pod-a
++
++# Wait for asynchronous rule deletion without replaying endpoint/del.
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++* empty stdout
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        addresses:
++        - 192.0.2.10
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++#! --family=ipv4
++
++# Configure one ENI as the operator would report it to the agent.
++k8s/add cilium-node.yaml
++link/add cilium-rr-test dummy
++link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
++
++# Seed orphan rules before starting the reconciler.
++rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
++rule/add --family=ipv4 --from=192.0.2.99/32 --priority=111 --table=11 --protocol=kernel
++
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]99/32 table main protocol kernel$'
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++stdout --count=1 '^priority 111 from 192[.]0[.]2[.]99/32 to all table 11 protocol kernel$'
++
++hive start
++ipam/start
++
++# Wait for the production ENI device configurator before reconciling routing.
++link/list
++* stdout 'addr: 192[.]0[.]2[.]5/24'
++stdout 'cilium-rr-test dummy <up[|>]'
++stdout 'mtu: 1500'
++
++# Wait for the initial reconciler prune without replaying the rule additions.
++rule/list --family=ipv4 --priority=20 --protocol=kernel
++* empty stdout
++
++rule/list --family=ipv4 --priority=111 --protocol=kernel
++* empty stdout
++
++hive stop
++
++-- cilium-node.yaml --
++apiVersion: cilium.io/v2
++kind: CiliumNode
++metadata:
++  name: test-node
++spec:
++  eni: {}
++status:
++  eni:
++    enis:
++      eni-1:
++        id: eni-1
++        ip: 192.0.2.5
++        mac: 02:ca:fe:00:00:01
++        number: 1
++        addresses:
++        - 192.0.2.10
++        subnet:
++          id: subnet-1
++          cidr: 192.0.2.0/24
++        vpc:
++          id: vpc-1
++          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +330/-0)
+```diff
+@@ -123,6 +123,9 @@ func (nsm *NetNSManager) Commands() map[string]script.Cmd {
+ 		"route/add":     routeAddCmd(nsm),
+ 		"route/replace": routeReplaceCmd(nsm),
+ 		"route/del":     routeDelCmd(nsm),
++		"rule/list":     ruleListCmd(nsm),
++		"rule/add":      ruleAddCmd(nsm),
++		"rule/del":      ruleDelCmd(nsm),
+ 		"sysctl/get":    sysctlGetCmd(nsm),
+ 		"sysctl/set":    sysctlSetCmd(nsm),
+ 	}
+@@ -590,6 +593,333 @@ func addAddCmd(nsm *NetNSManager) script.Cmd {
+ 	)
+ }
  
- 		break;
--#endif /* ENABLE_IPV4 */
- 	default:
-+unknown_l3:
- 		send_trace_notify(ctx, obs_point, identity, UNKNOWN_ID, TRACE_EP_ID_UNKNOWN,
- 				  ctx->ingress_ifindex, trace.reason, trace.monitor, proto);
- 		if (CONFIG(enable_host_firewall)) {
-@@ -1479,17 +1480,25 @@ int cil_to_netdev(struct __ctx_buff *ctx)
- 						    src_sec_identity, &trace, &ext_err);
- 			break;
- # endif
--# ifdef ENABLE_IPV4
- 		case bpf_htons(ETH_P_IP): {
-+			if (!is_defined(ENABLE_IPV4)) {
-+				ret = DROP_UNKNOWN_L3;
-+				break;
++func ruleFamily(value string, allowAll bool) (int, error) {
++	switch value {
++	case "ipv4":
++		return netlink.FAMILY_V4, nil
++	case "ipv6":
++		return netlink.FAMILY_V6, nil
++	case "all":
++		if allowAll {
++			return netlink.FAMILY_ALL, nil
++		}
++	}
++	valid := "'ipv4', 'ipv6'"
++	if allowAll {
++		valid += ", 'all'"
++	}
++	return 0, fmt.Errorf("invalid family %q: must be one of %s", value, valid)
++}
++
++func ruleTable(value string, allowAll bool) (int, error) {
++	switch value {
++	case "main":
++		return unix.RT_TABLE_MAIN, nil
++	case "local":
++		return unix.RT_TABLE_LOCAL, nil
++	case "default":
++		return unix.RT_TABLE_DEFAULT, nil
++	case "all":
++		if allowAll {
++			return unix.RT_TABLE_UNSPEC, nil
++		}
++	}
++
++	table, err := strconv.Atoi(value)
++	if err != nil {
++		valid := "'main', 'local', 'default'"
++		if allowAll {
++			valid += ", 'all'"
++		}
++		return 0, fmt.Errorf("invalid table %q: must be an integer or one of %s", value, valid)
++	}
++	return table, nil
++}
++
++func ruleProtocol(value string) (uint8, error) {
++	switch value {
++	case "kernel":
++		return unix.RTPROT_KERNEL, nil
++	case "static":
++		return unix.RTPROT_STATIC, nil
++	case "unspec":
++		return unix.RTPROT_UNSPEC, nil
++	}
++
++	protocol, err := strconv.ParseUint(value, 10, 8)
++	if err != nil {
++		return 0, fmt.Errorf("invalid protocol %q: must be an integer or one of 'kernel', 'static', 'unspec'", value)
++	}
++	return uint8(protocol), nil
++}
++
++func rulePrefix(value string) (*net.IPNet, error) {
++	if value == "all" {
++		return nil, nil
++	}
++
++	prefix, err := netlink.ParseIPNet(value)
++	if err != nil {
++		return nil, fmt.Errorf("invalid rule prefix %q: %w", value, err)
++	}
++	return prefix, nil
++}
++
++func ruleFlags(fs *pflag.FlagSet, family, table string) {
++	fs.String("netns", "", "Execute in the specified network namespace")
++	fs.String("family", family, "Address family: ipv4, ipv6, or all")
++	fs.String("from", "all", "Source prefix")
++	fs.String("to", "all", "Destination prefix")
++	fs.Int("priority", -1, "Rule priority")
++	fs.String("table", table, "Routing table")
++	fs.String("protocol", "unspec", "Rule protocol")
++}
++
++func ruleFromFlags(fs *pflag.FlagSet, allowAll bool) (*netlink.Rule, error) {
++	rule := netlink.NewRule()
++
++	family, err := fs.GetString("family")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get family flag: %w", err)
++	}
++	rule.Family, err = ruleFamily(family, allowAll)
++	if err != nil {
++		return nil, err
++	}
++
++	from, err := fs.GetString("from")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get from flag: %w", err)
++	}
++	rule.Src, err = rulePrefix(from)
++	if err != nil {
++		return nil, err
++	}
++
++	to, err := fs.GetString("to")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get to flag: %w", err)
++	}
++	rule.Dst, err = rulePrefix(to)
++	if err != nil {
++		return nil, err
++	}
++
++	rule.Priority, err = fs.GetInt("priority")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get priority flag: %w", err)
++	}
++
++	table, err := fs.GetString("table")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get table flag: %w", err)
++	}
++	rule.Table, err = ruleTable(table, allowAll)
++	if err != nil {
++		return nil, err
++	}
++
++	protocol, err := fs.GetString("protocol")
++	if err != nil {
++		return nil, fmt.Errorf("failed to get protocol flag: %w", err)
++	}
++	rule.Protocol, err = ruleProtocol(protocol)
++	if err != nil {
++		return nil, err
++	}
++
++	return rule, nil
++}
++
++func ruleAddCmd(nsm *NetNSManager) script.Cmd {
++	return script.Command(
++		script.CmdUsage{
++			Summary: "Add a policy routing rule",
++			Args:    "",
++			Flags: func(fs *pflag.FlagSet) {
++				ruleFlags(fs, "ipv4", "main")
++			},
++		},
++		func(s *script.State, args ...string) (script.WaitFunc, error) {
++			if len(args) != 0 {
++				return nil, script.ErrUsage
 +			}
 +
- 			ret = handle_to_netdev_ipv4(ctx,
- 						    magic == MARK_MAGIC_PROXY_EGRESS,
- 						    src_sec_identity, &trace, &ext_err);
- 			break;
- 		}
- 		case bpf_htons(ETH_P_ARP):
-+			if (!is_defined(ENABLE_IPV4)) {
-+				ret = DROP_UNKNOWN_L3;
-+				break;
++			rule, err := ruleFromFlags(s.Flags, false)
++			if err != nil {
++				return nil, err
 +			}
 +
- 			ret = CTX_ACT_OK;
- 			break;
--# endif
- 		default:
- 			ret = DROP_UNKNOWN_L3;
- 			break;
-@@ -1674,7 +1683,6 @@ int tail_ipv6_host_policy_ingress(struct __ctx_buff *ctx)
- }
- #endif /* ENABLE_IPV6 */
- 
--#ifdef ENABLE_IPV4
- __declare_tail(CILIUM_CALL_IPV4_TO_HOST_POLICY_ONLY)
- static __always_inline
- int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
-@@ -1700,7 +1708,6 @@ int tail_ipv4_host_policy_ingress(struct __ctx_buff *ctx)
- 
- 	return ret;
- }
--#endif /* ENABLE_IPV4 */
- 
- static __always_inline
- int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
-@@ -1732,8 +1739,12 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
- 
- 		break;
- # endif
--# ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
++			nsName, err := s.Flags.GetString("netns")
++			if err != nil {
++				return nil, fmt.Errorf("failed to get netns flag: %w", err)
++			}
++			if nsName == "" {
++				nsName = nsm.currentNamespaceName()
++			}
 +
- 		if (use_tailcall) {
- 			ctx_store_meta(ctx, CB_SRC_LABEL, src_sec_identity);
- 			ctx_store_meta(ctx, CB_TRACED, traced);
-@@ -1746,9 +1757,13 @@ int host_ingress_policy(struct __ctx_buff *ctx, __be16 proto,
- 
- 		break;
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
++			err = nsm.exec(nsName, func() error {
++				if err := netlink.RuleAdd(rule); err != nil {
++					return fmt.Errorf("failed to add rule: %w", err)
++				}
++				return nil
++			})
++			return nil, err
++		},
++	)
++}
 +
- 		ret = CTX_ACT_OK;
- 		break;
--# endif
- 	default:
- 		ret = DROP_UNKNOWN_L3;
- 		break;
-@@ -1919,8 +1934,12 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
- 		ret = ipv6_host_policy_egress(ctx, false, HOST_ID, 0, ip6, &trace, ext_err);
- 		break;
- # endif
--# ifdef ENABLE_IPV4
- 	case bpf_htons(ETH_P_IP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		if (!revalidate_data(ctx, &data, &data_end, &ip4))
- 			return DROP_INVALID;
- 
-@@ -1933,9 +1952,13 @@ from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
- 		ret = ipv4_host_policy_egress(ctx, false, HOST_ID, 0, ip4, &trace, ext_err);
- 		break;
- 	case bpf_htons(ETH_P_ARP):
-+		if (!is_defined(ENABLE_IPV4)) {
-+			ret = DROP_UNKNOWN_L3;
-+			break;
-+		}
-+
- 		ret = CTX_ACT_OK;
- 		break;
--# endif
- 	default:
- 		ret = DROP_UNKN
++func ruleDelCmd(nsm *NetNSManager) script.Cmd {
++	return script.Command(
++		script.CmdUsage{
++			Summary: "Delete a policy routing rule",
++			Args:    "",
++			Flags: func(fs *pflag.FlagSet) {
++				ruleFlags(fs, "ipv4", "ma
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49811** (2026-11-03): [v1.18] ci: Fix the chart organization in the printed helm commands (@aanm)
-- **PR #49809** (closed): ci: Build releases with the tagged commit's local actions (@aanm)
-- **PR #49807** (2026-11-03): datapath: Revert the ENABLE_NODEPORT is_defined() conversion (@aanm)
-- **PR #49806** (2026-11-03): v1.18 Backports 2026-11-03 (@tklauser)
-- **PR #49805** (2026-11-03): v1.19 Backports 2026-11-03 (@tklauser)
-- **PR #49802** (2026-11-03): v1.20 Backports 2026-11-03 (@tklauser)
+- **PR #49837** (2026-11-04): cilium-cli: add explicit timeout to ensure health check termination (@giorio94)
+- **PR #49833** (2026-11-04): .github: Make the vulnerability report components optional (@aanm)
+- **PR #49832** (2026-11-04): datapath: convert `ENABLE_IPV4` #ifdefs to `is_defined()` in bpf_lxc.c (@ekoops)
+- **PR #49827** (2026-11-04): fix: pass the real IPsec config to node handler (@vakalapa)
+- **PR #49820** (2026-11-04): Reapply "datapath: turn `ENABLE_NODEPORT` into runtime config" (@ekoops)
+- **PR #49819** (2026-11-04): build: Update iptables-wrapper to v4 (@HadrienPatte)
 
 ---
 
@@ -1573,61 +2300,28 @@ Signed-off-by: Liam Connery <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bpf: host: remove no longer needed __maybe_unused
+## X. ci: Raise the Release Helm job timeout to 55 minutes
 
 **RULE**:
-When implementing operations in `bpf/bpf_host.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c469256`: bpf: host: remove no longer needed __maybe_unused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cff73042`: ci: Raise the Release Helm job timeout to 55 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_host.c`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	  enum trace_point obs_point, const bool from_host)
-	fraginfo_t fraginfo = 0;
-	__u32 ipcache_srcid = 0;
-	void *data, *data_end;
-	struct iphdr *ip4;
-	struct arp_eth *arp;
-	int hdrlen = 0;
-	__u8 next_proto = 0;
-	__s8 ext_err = 0;
-drop_err_egress:
-drop_err_ingress:
-			__u32 src_sec_identity, bool traced, bool use_tailcall,
-			__s8 *ext_err)
-from_host_to_lxc(struct __ctx_buff *ctx, __be16 proto, __s8 *ext_err)
-	struct trace_ctx trace = {
-	void *data, *data_end;
-	struct iphdr *ip4;
+    timeout-minutes: 55
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	  enum trace_point obs_point,  const bool __maybe_unused from_host)
-	fraginfo_t __maybe_unused fraginfo = 0;
-	__u32 __maybe_unused ipcache_srcid = 0;
-	void __maybe_unused *data, *data_end;
-	struct iphdr __maybe_unused *ip4;
-	struct arp_eth __maybe_unused *arp;
-	int __maybe_unused hdrlen = 0;
-	__u8 __maybe_unused next_proto = 0;
-	__s8 __maybe_unused ext_err = 0;
-drop_err_egress: __maybe_unused
-drop_err_ingress: __maybe_unused
-			__u32 src_sec_identity, bool traced, bool use_tailcall __maybe_unused,
-			__s8 *ext_err __maybe_unused)
-from_host_to_lxc(struct __ctx_buff *ctx __maybe_unused, __be16 proto,
-		 __s8 *ext_err __maybe_unused)
-	struct trace_ctx __maybe_unused trace = {
-	void __maybe_unused *data, *data_end;
-	struct iphdr *ip4 __maybe_unused;
+    timeout-minutes: 40
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c469256` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cff73042` are properly handled with clean fallback behavior.

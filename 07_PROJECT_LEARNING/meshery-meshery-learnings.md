@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `501f825c`  
+> **Source Version**: `5eadb108`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:04:47.047Z  
+> **Timestamp**: 2026-11-05T00:22:40.384Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:04:46.720Z  
+> **Harvest Timestamp**: 2026-11-05T00:22:40.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12126 stars
+- **Stars / Engagement**: 12132 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22769** (2026-11-03): **fix(server): stop embedding design contents in event metadata**
-  *Symptoms*: ## Intent  Stop Meshery embedding design contents in event metadata (meshery/meshery#22764): design-related events carry only design identity (designId, designName, designVersion, designLink) plus bounded summaries, a central 16 KB metadata guard, and UI views that read the new fields and tolerate rows Meshery Cloud rewrote (layer5io/meshery-cloud#6385, #6387).  ## What Changed  - **Server: events carry design identity, not design contents.** The relationship-evaluation, design-saved, deploy/undeploy/dry-run and pattern-error events now start from a shared `DesignEventIdentity` helper (`designId`, `designName`, `designVersion`, `designLink`), with `designLink` pointing at the meshmap designer. Each event then adds a bounded summary: relationship evaluation reports added/removed/updated relationship counts, `evaluationStatus`, `evaluationDurationMs` and `evaluatedAt`, and no longer stores `trace` or `evaluationResponse`. Deploy, undeploy and dry-run report `status` (success/partial/failed), `errorCount`, up to 20 `{code, componentId}` `errors` with a `truncated` flag, and keep the operator `viewLink`. They no longer store the raw `summary` response. Design-saved keeps only a `{id, name}` `design` object. - **Server: a central 16 KB metadata guard.** `GuardEventMetadataSize` runs in `EventsPersister.PersistEvent` and `RemoteProvider.PersistEvent`. When metadata is larger than 16 KB or cannot be serialized, it is cut down to the identity fields, `historyTitle` and an identity-on
+- **Issue #22839** (2026-11-04): **[Server] Close each adapter client per host in Provision**
+  *Symptoms*: ﻿**Notes for Reviewers**  - This PR fixes #20874  **What was wrong**  `serviceActionProvider.Provision` loops over a component's hosts and opens a gRPC adapter client for each one with `meshes.CreateClient`. The close was `defer`red inside the loop, so it ran when `Provision` returned and not at the end of each iteration. With several hosts, every adapter connection stayed open until the last host had been provisioned.  **What this changes**  - Moves the per-host adapter call (create client, marshal the component, call `Provision`, build the message) into a new method, `provisionOnAdapter`. - Its `defer mClient.Close()` now runs when that host is done, so each connection closes before the next host is provisioned. - Behavior and error messages are otherwise unchanged. The local-call path in `Provision` is untouched.  **How this was tested**  - Added `TestProvisionClosesEachAdapterClientBeforeTheNextHost` (`server/handlers/design_engine_provision_test.go`). It starts two in-process gRPC adapters that count their open client connections, provisions a component across both hosts, and asserts the first adapter's connection is closed while the second host is being provisioned, and that none remain after `Provision` returns. - Before the change the test fails (the first adapter still held 1 client connection). After the change it passes, including three runs with `-race`. - `go build ./server/...`, `go vet ./server/handlers/` and gofmt are clean. - The same four tests in `server/ha
 
-- **Issue #22764** (2026-11-03): **[Events] Stop embedding design contents in event metadata (relationship evaluation, pattern validate)**
-  *Symptoms*: ## Problem Meshery Server persists events whose `metadata` carries the full contents of a design. In Meshery Cloud production (see layer5io/meshery-cloud#6385), relationship evaluation events average about 106 KB each and reach up to 10 MB, adding up to roughly 9.8 GB across about 97k rows. Pattern validate events add another 1.3 GB.  Rule: events carry only design identity and metadata, never design contents.  ## Sources found - `server/handlers/policy_relationship_handler.go`: `buildPolicyEvaluationEventMetadata` puts the whole `evaluationResponse` (including the hydrated `Design` with every component and relationship) and the full `trace` into metadata. - `server/handlers/design_engine_handler.go`: deploy, undeploy, dry-run and validate put the whole `_processPattern` response into `metadata.summary`. - Also audit the other `WithMetadata` call sites that embed design or pattern-file contents.  ## Fix For any design-related event, metadata holds only (camelCase, matching the existing `event_trackers.metadata` wire convention, e.g. `designId`, `designName`, `viewLink`): - `designId`, `designName`, `designVersion` (when present), `designLink` - relationship evaluation: counts of relationships added, removed and updated, plus evaluation status and duration - pattern validate, deploy and dry-run: status, error count and a bounded list of error codes with component ids - never the design file, pattern file, components, relationships, trace bodies or the evaluation response body 
+- **Issue #22828** (2026-11-04): **Add Maanvi Chetwanii's introduction to meetings doc**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a brief introduction expressing enthusiasm for contributing.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,846 +825,653 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a83f2e85` (2026-11-03)
-**Commit Message**: Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-contents
+### Incident Patch 1: `ed66e6ec` (2026-11-04)
+**Commit Message**: [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (#22801)
 
-fix(server): stop embedding design contents in event metadata
+[mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply
 
-**File**: `docs/content/en/project/contributing/contributing-server-events/index.md` (modified, +17/-0)
+**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +20/-5)
 ```diff
-@@ -54,6 +54,23 @@ _Note: In certain conditions you must add some fields with specific keys:_
-     <img src="images/events-table.png" alt="Event Schema" style="width:50%;">
- </a>
+@@ -17,6 +17,7 @@ package perf
+ import (
+ 	"bytes"
+ 	"encoding/json"
++	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"os"
+@@ -453,12 +454,13 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
+ 		certData := string(certFile)
+ 		certName := fileInfo.Name()
  
-+### Design Event Metadata
-+
-+An event about a design carries the design's identity and a bounded summary, never the design itself - no `design` contents, `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse` or raw process `summary` ([#22764](https://github.com/meshery/meshery/issues/22764)). Build the identity with `models.DesignEventIdentity` (`server/models/event_metadata.go`) and add the event's own fields. `designLink` is always the designer URL (`models.DesignLink`, `/extension/meshmap?mode=design&design=<id>`); only `viewLink` points at the operator view.
-+
-+| Event | Metadata |
-+|---|---|
-+| any design event | `designId`, `designName`, `designVersion` (when set), `designLink` (designer URL) |
-+| `pattern/create`, `pattern/update` (design saved) | identity, plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
-+| `relationship/evaluation` | identity, `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
-+| `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity, `viewLink` set to the operator view URL (`models.DesignOperatorViewLink`, `/extension/meshmap?mode=operator&type=view&design_id=<id>`), `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` |
-+| `pattern/validate` | identity, `status`, `errorCount`, `errors[]` of at most 20 `{code, componentId}`, `truncated` - no `viewLink`. Meshery server does not emit this event; Meshery UI's `SchemaValidationFormatter` reads it in this shape |
-+| a failed design event | identity and `error` (the MeshKit error) |
-+
-+`errorCount` is always the full count; `truncated` marks that `errors[]` was capped. `design` is allowed only as the two-field identity object - `models.IsDesignIdentityObject` is the check. Persisted metadata larger than 16 KB (`models.MaxEventMetadataBytes`) is reduced by `models.GuardEventMetadataSize` to the identity fields, `historyTitle` and that `design` object.
-+
-+Readers must tolerate older rows: events stored earlier, and rows Meshery Cloud rewrote to this shape, may spell the identity in snake_case (`design_id`, `design_name`, `view_link`) and may lack `evaluationStatus`, `evaluationDurationMs` and `designLink`. A rewritten validate error's `code` is the JSON-schema keyword (`required`, `type`), not a MeshKit code. Meshery UI reads all of this through `ui/components/layout/NotificationCenter/formatters/design_event_metadata.ts`.
-+
- ## Event Persistence in Meshery
+-		// check if values["metadata"] is nil
+-		if values["metadata"] == nil {
+-			values["metadata"] = map[string]interface{}{}
++		metadata, ok := values["metadata"].(map[string]interface{})
++		if !ok || metadata == nil {
++			metadata = map[string]interface{}{}
++			values["metadata"] = metadata
+ 		}
  
- Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers]({{< ref "reference/extensibility/providers/index.md" >}}).
-```
-
-**File**: `docs/content/en/project/contributing/ui/notification-center.md` (modified, +29/-23)
-```diff
-@@ -130,6 +130,8 @@ This directory houses reusable formatter components dedicated to specific types
- - **error.tsx**: Defines `ErrorMetadataFormatter` for displaying structured error details.
- - **model_registration.tsx**: Contains formatters for model import/registration events (`ModelImportMessages`, `ModelImportedSection`).
- - **pattern_dryrun.tsx**: Defines `DryRunResponse` and `SchemaValidationFormatter`, which delegate to the design lifecycle components.
-+- **design_event_metadata.ts**: The single reader of design event metadata. `getDesignEventIdentity` returns `designId`, `designName`, `designVersion`, `designLink` and `viewLink`, falling back to the legacy `design_id`, `design_name` and `view_link` only when the camelCase key is absent; `getDesignEventErrorSummary` reads `status`, `errorCount`, `errors[]` and `truncated`; `isMeshkitErrorCode` tells a MeshKit code (`meshery-server-1480`) from a JSON-schema keyword or Kubernetes cause type. Never index these metadata keys directly in a formatter.
-+- **design_event_errors.tsx**: Defines `DesignEventErrorsFormatter`, which renders an error summary for validate, deploy, undeploy and dry-run events and links only MeshKit codes to the error code reference.
- - **relationship_evaluation.tsx**: Defines `RelationshipEvaluationEventFormatter`, responsible for rendering notifications related to the evaluation of relationships between components in a design.
- - **meshsync_events.tsx**: Defines `MeshSyncPropertyFormatters` for connection and MeshSync deployment fields.
- - **academy_events.tsx**: Defines `AcademyEventsFormatter` for quiz evaluation results.
-@@ -187,7 +189,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
-    If the event has no metadata, or the metadata is empty at all depths, `EmptyState` renders the event description on its own.
+-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
++		metadata["ca_certificate"] = map[string]interface{}{
+ 			"name":     certName,
+ 			"certName": certData,
+ 		}
+@@ -475,7 +477,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
  
- 3. **Fallback to Property-Based Formatting**
--   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`), and hands the result to `FormatStructuredData` along with:
-+   Otherwise, `FormattedMetadata` reorders the metadata into a stable display order, strips out properties that are rendered elsewhere (links, `id`, `kind`, and - when a design-saved event's `design` {id, name} link names the design - the design identity keys), and hands the result to `FormatStructuredData` along with:
- 
-    - `PropertyFormatters` – for structured or specialized visual formats.
-    - `PropertyLinkFormatters` – consumed separately by the ellipsis menu in `notification.tsx` to render actionable links (e.g. file downloads, log views).
-@@ -299,18 +301,16 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
- #### Key Components
- 
- 1. **RelationshipEvaluationEventFormatter**:
--   The main formatter component that renders the event description and invokes the `RelationshipEvaluationTraceFormatter` to display detailed traces.
-+   The main formatter component. It renders the event description and the evaluation summary: the relationship change counts, `evaluationStatus`, `evaluationDurationMs` and an "Open design" link from `designLink`, the designer URL (falling back to `viewLink` on older rows). Each of the last three is rendered only when present - rows Meshery Cloud rewrote to this shape lack them. Only an event without the summary fields falls back to `RelationshipEvaluationTraceFormatter`.
- 
- **Props:**
- 
- - `event` (object): Contains:
-   - **description**: A description of the evaluation process.
--  - **metadata.evaluationResponse** (or `metadata.evaluation_response`): The evaluation result, containing:
--    - `actions` (Array): The list of changes produced by the evaluation.
--    - `design` (Object): The evaluated design, used to resolve components and relationships by ID.
-+  - **metadata**: `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `historyTitle`, `evaluatedAt` and the design identity. Events stored before [#22764](https://github.com/meshery/meshery/issues/22764) instead carry `evaluationResponse` (or `evaluation_response`) with the `actions` and the evaluated `design`.
- 
- 2. **RelationshipEvaluationTraceFormatter**:
--   Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
-+   Renders a legacy `evaluationResponse`. Takes `actions` and `design` and derives the displayed categories by filtering actions on their `op` field:
- 
-    - Components: `add_component`, `delete_component`, `update_component` / `update_component_configuration`
-    - Relationships: `add_relationship`, `delete_relationship`, `update_relationship`
-@@ -325,17 +325,22 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
- 
- 1. When a notification involves the evaluation of relationships between components in a design.
- 2. When you need to display categorized
-```
-
-**File**: `server/cmd/main.go` (modified, +3/-3)
-```diff
-@@ -268,7 +268,7 @@ func main() {
- 		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
- 		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
- 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
--		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
-+		EventsPersister:                 &models.EventsPersister{DB: dbHandler, Log: log},
- 		GenericPersister:                dbHandler,
- 		Log:                             log,
- 		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
-@@ -299,7 +299,7 @@ func main() {
- 		// This is the same database handler every provider's own
- 		// EventsPersister wraps, so the events land in the same table either
- 		// way.
--		SystemEventPersister: &models.EventsPersister{DB: dbHandler},
-+		SystemEventPersister: &models.EventsPersister{DB: dbHandler, Log: log},
- 
- 		K8scontextChannel: models.NewContextHelper(),
- 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
-@@ -367,7 +367,7 @@ func main() {
- 			ProviderVersion:               version,
- 			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
- 			GenericPersister:              dbHandler,
--			EventsPersister:               &models.EventsPersister{DB: dbHandler},
-+			EventsPersister:               &models.EventsPersister{DB: dbHandler, Log: log},
- 			Log:                           log,
- 			CookieDuration:                24 * time.Hour,
- 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
-```
-
-**File**: `server/handlers/design_engine_handler.go` (modified, +14/-19)
-```diff
-@@ -92,7 +92,7 @@ func (h *Handler) PatternFileHandler(
- 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
+ 	resp, err := utils.MakeRequest(req)
  	if err != nil {
- 		err = ErrPatternFile(err)
--		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(patternErrorEventMetadata(r, payload.PatternID, "", "", err)).Build()
- 		_ = provider.PersistEvent(*event, token)
- 		go h.config.EventBroadcaster.Publish(userID, event)
- 		h.log.Error(err)
-@@ -171,9 +171,7 @@ func (h *Handler) PatternFileHandler(
- 
- 	if err != nil {
- 		err := ErrPatternDeploy(err, patternFile.Name)
--		metadata := map[string]interface{}{
--			"error": err,
--		}
-+		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
- 
- 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
- 		_ = provider.PersistEvent(*event, token)
-@@ -184,22 +182,10 @@ func (h *Handler) PatternFileHandler(
- 		return
+-		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
++		return "", "", ErrPerfProfileServer(err)
  	}
  
--	metadata := map[string]interface{}{
--		"summary": response,
--	}
--
--	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
--
--	// NOTE: design_id (snake_case) in this URL is the meshmap extension's URL
--	// query-param contract; flipping it requires a coordinated meshmap-side
--	// change. The metadata map keys below are flipped to canonical camelCase
--	// (event_trackers.metadata wire) but the URL is left as-is until the
--	// extension contract is migrated.
--	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
-+	// The raw response embeds every component, so the event carries only its
-+	// status and per-component errors.
-+	metadata := buildPatternProcessEventMetadata(response, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
- 	description = fmt.Sprintf("%s.", description)
--	metadata["viewLink"] = viewLink
--	metadata["designName"] = patternFile.Name
--	metadata["designId"] = patternID
- 
- 	var event *events.Event
- 	if action == "deploy" || action == "dry-run" {
-@@ -218,6 +204,15 @@ func (h *Handler) PatternFileHandler(
- 	_ = ec.Encode(response)
- }
- 
-+// patternErrorEventMetadata builds the metadata of a failed pattern event:
-+// the design's identity and the MeshKit error, never the design or the
-+// request payload.
-+func patternErrorEventMetadata(r *http.Request, designID core.Uuid, name, version string, err error) map[string]interface{} {
-+	metadata := models.DesignEventIdentity(models.ServerURLFromRequest(r), designID, name, version)
-+	metadata["error"] = err
-+	return metadata
-+}
+ 	var response *perfprofile.PerformanceProfile
+@@ -485,10 +487,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
+ 	if err != nil {
+ 		return "", "", utils.ErrReadResponseBody(err)
+ 	}
++	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
++		serverErrMsg := strings.TrimSpace(string(body))
++		if serverErrMsg == "" {
++			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
++		}
++		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
++	}
 +
- func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {
- 	resp := make(map[string]interface{})
+ 	err = json.Unmarshal(body, &response)
+ 	if err != nil {
+ 		return "", "", ErrFailUnmarshal(err)
+ 	}
++
++	if response == nil {
++		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
++	}
++
+ 	profileID = response.ID.String()
+ 	profileName = response.Name
  
 ```
 
-**File**: `server/handlers/design_event_metadata.go` (added, +194/-0)
+**File**: `mesheryctl/internal/cli/root/perf/apply_test.go` (modified, +188/-1)
 ```diff
-@@ -0,0 +1,194 @@
-+package handlers
-+
+@@ -153,7 +153,18 @@
+ //	}
+ package perf
+ 
+-import "testing"
 +import (
-+	"sort"
-+
-+	"github.com/meshery/meshery/server/models"
-+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
-+	"github.com/meshery/meshery/server/models/pattern/patterns"
-+	"github.com/meshery/meshery/server/models/pattern/stages"
-+	meshkiterrors "github.com/meshery/meshkit/errors"
-+	"github.com/meshery/schemas/models/core"
-+)
-+
-+// maxPatternEventErrors caps the errors[] list of a pattern deploy, undeploy
-+// or dry-run event; errorCount always carries the full count.
-+const maxPatternEventErrors = 20
-+
-+// Status values of a pattern deploy, undeploy or dry-run event.
-+const (
-+	patternProcessStatusSuccess = "success"
-+	patternProcessStatusPartial = "partial"
-+	patternProcessStatusFailed  = "failed"
-+)
-+
-+// dryRunFailureCode is the code of a dry-run failure that carries no
-+// per-cause type: it is the Kubernetes Status value of a failed request.
-+const dryRunFailureCode = "Failure"
-+
-+// patternEventError is one entry of the errors[] list of a pattern event. It
-+// names the failing component and the error code, never the component itself.
-+type patternEventError struct {
-+	Code        string `json:"code"`
-+	ComponentID string `json:"componentId"`
-+}
-+
-+// patternProcessSummary is what a pattern event reports about the response of
-+// _processPattern.
-+type patternProcessSummary struct {
-+	Status     string
-+	ErrorCount int
-+	Errors     []patternEventError
-+	Truncated  bool
-+}
-+
-+// summarizePatternProcessResponse derives the status and per-component errors
-+// from the response of _processPattern, which holds either
-+//
-+//   - one entry per component id, carrying the []patterns.DeploymentMessagePerContext
-+//     the Provision stage recorded for it (deploy and undeploy), or
-+//   - stages.DryRunResponseKey, carrying component name -> context id ->
-+//     patterncore.DryRunResponseWrapper (dry-run).
-+//
-+// A provisioning entry fails when a non-prerequisite outcome reports
-+// Success: false, mirroring the Provision stage's own decision; its code is the
-+// MeshKit code of the outcome's error, empty when that error is not a MeshKit
-+// error. A dry-run entry fails when Success is false; it contributes one error
-+// per failure cause, coded by the cause type (dryRunFailureCode when there are
-+// none).
-+func summarizePatternProcessResponse(response map[string]interface{}) patternProcessSummary {
-+	var errs []patternEventError
-+	failed := map[string]bool{}
-+
-+	keys := make([]string, 0, len(response))
-+	for key := range response {
-+		keys = append(keys, key)
-+	}
-+	sort.Strings(keys)
-+
-+	for _, key := range keys {
-+		switch value := response[key].(type) {
-+		case []patterns.DeploymentMessagePerContext:
-+			if key == "" {
-+				continue
-+			}
-+			if _, seen := failed[key]; !seen {
-+				failed[key] = false
-+			}
-+			for _, perContext := range value {
-+				for _, outcome := range perContext.Summary {
-+					if outcome.IsPrerequisite || outcome.Success {
-+						continue
-+					}
-+					failed[key] = true
-+					errs = append(errs, patternEventError{Code: meshkitCode(outcome.Error), ComponentID: key})
-+				}
-+			}
-+		case map[string]map[string]patterncore.DryRunResponseWrapper:
-+			if key != stages.DryRunResponseKey {
-+				continue
-+			}
-+			errs = append(errs, dryRunErrors(value, failed)...)
-+		}
-+	}
-+
-+	summary := patternProcessSummary{
-+		ErrorCount: len(errs),
-+		Errors:     errs,
-+	}
-+	failedCount := 0
-+	for _, isFailed := range failed {
-+		if isFailed {
-+			failedCount++
-+		}
-+	}
-+	switch {
-+	case failedCount == 0:
-+		summary.Status = patternProcessStatusSuccess
-+	case failedCount < len(failed):
-+		summary.Status = patternProcessStatusPartial
-+	default:
-+		summary.Status = patternProcessStatusFailed
-+	}
-+	if len(summary.Errors) > maxPatternEventErrors {
-+		summary.Errors = summary.Errors[:maxPatternEventErrors]
-+		summary.Truncated = true
-+	}
-+	if summary.Errors == nil {
-+		summary.Errors = []patternEventError{}
-+	}
-+	return summary
-+}
-+
-+func dryRunErrors(resp map[string]map[string]patterncore.DryRunResponseWrapper, failed map[string]bool) []patternEventError {
-+	var errs []patternEventError
-+
-+	names := make([]string, 0, len(resp))
-+	for name := range resp {
-+		names = append(names, name)
-+	}
-+	sort.Strings(names)
-+
-+	for _, name := range names {
-+		perContext := resp[name]
-+		contexts := make([]string, 0, len(perContext))
-+		for ctxID := range perContext {
-+			contexts = append(contexts, ctxID)
-+		}
-+		sort.Strings(contexts)
-+
-+		for _, ctxID := range contexts {
-+			wrapper := perContext[ctxID]
-+			componentID := name
-+			if wrapper.Component != nil {
-+				componentID = wrapper.Component.ID.String()
-+			}
-+			failed[componentID] = failed[componentID] || !wrapper.Success
-+			if wrapper.Success {
-+				continue
-+			}
-+			if wrapper.Error == nil || len(wrapper.Error.Causes) == 0 {
-+				errs = append(errs, patternEventError{Code: dryRunFailureCode, ComponentID: componentID})
-+				continue
-+			}
-+			for _, cause := range wrapper.Error.Causes {
-+				
-```
-
-**File**: `server/handlers/design_event_metadata_test.go` (added, +237/-0)
-```diff
-@@ -0,0 +1,237 @@
-+package handlers
-+
-+import (
-+	"encoding/json"
-+	"fmt"
++	"net/http"
++	"path/filepath"
++	"runtime"
 +	"strings"
 +	"testing"
 +
-+	"github.com/gofrs/uuid"
-+	"github.com/meshery/meshery/server/models"
-+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
-+	"github.com/meshery/meshery/server/models/pattern/patterns"
-+	"github.com/meshery/meshery/server/models/pattern/stages"
-+	"github.com/meshery/schemas/models/v1beta2/component"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	"github.com/jarcoal/httpmock"
++	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
++	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	"github.com/spf13/viper"
 +)
+ 
+ func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
+ 	value, unit := splitTestDuration("")
+@@ -202,3 +213,179 @@ func resetVariables() {
+ 	viewSingleProfile = false
+ 	viewSingleResult = false
+ }
 +
-+// bannedDesignEventMetadataKeys may not appear at any nesting level of a
-+// design-related event's metadata (#22764). `design` is banned only when it
-+// carries contents: the design-saved event's {id, name} object is allowed.
-+var bannedDesignEventMetadataKeys = []string{
-+	"design", "designFile", "patternFile", "pattern_file", "components",
-+	"relationships", "trace", "evaluationResponse", "summary",
-+}
++func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	defer utils.StopMockery(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
 +
-+// bannedDesignEventMetadataKeysIn returns the path of every banned key in the
-+// JSON form of metadata - the form that is persisted - at any depth.
-+func bannedDesignEventMetadataKeysIn(t *testing.T, metadata map[string]interface{}) []string {
-+	t.Helper()
-+	data, err := json.Marshal(metadata)
-+	require.NoError(t, err)
-+	var decoded interface{}
-+	require.NoError(t, json.Unmarshal(data, &decoded))
-+
-+	var found []string
-+	var walk func(path string, value interface{})
-+	walk = func(path string, value interface{}) {
-+		switch v := value.(type) {
-+		case map[string]interface{}:
-+			for key, child := range v {
-+				for _, banned := range bannedDesignEventMetadataKeys {
-+					if key == banned && (key != models.EventMetadataDesign || !models.IsDesignIdentityObject(child)) {
-+						found = append(found, path+"."+key)
-+					}
-+				}
-+				walk(path+"."+key, child)
-+			}
-+		case []interface{}:
-+			for i, child := range v {
-+				walk(fmt.Sprintf("%s[%d]", path, i), child)
-+			}
-+		}
++	_, filename, _, ok := runtime.Caller(0)
++	if !ok {
++		t.Fatal("Not able to get current working directory")
 +	}
-+	walk("metadata", decoded)
-+	return found
-+}
++	currDir := filepath.Dir(filename)
++	origToken := utils.TokenFlag
++	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
++	defer func() { utils.TokenFlag = origToken }()
 +
-+// assertNoBannedDesignEventMetadataKeys fails on any banned key at any depth
-+// of metadata.
-+func assertNoBannedDesignEventMetadataKeys(t *testing.T, metadata map[string]interface{}) {
-+	t.Helper()
-+	for _, path := range bannedDesignEventMetadataKeysIn(t, metadata) {
-+		t.Errorf("banned key present at %s", path)
++	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
++	if err != nil {
++		t.Fatalf("failed to get mesheryctl config: %v", err)
 +	}
-+}
 +
-+func TestBannedDesignEventMetadataKeys_DesignIdentityObject(t *testing.T) {
-+	cases := []struct {
-+		name   string
-+		design interface{}
-+		banned bool
++	profileURL := testContext.BaseURL + "/api/performance/profiles"
++
++	tests := []struct {
++		name          string
++		statusCode    int
++		responseBody  string
++		expectedInErr string
 +	}{
-+		{name: "id and name", design: map[string]interface{}{"id": "d1", "name": "my-design"}},
-+		{name: "id only", design: map[string]interface{}{"id": "d1"}},
-+		{name: "name only", design: map[string]interface{}{"name": "my-design"}},
-+		{name: "with contents", design: map[string]interface{}{"id": "d1", "name": "my-design", "components": []interface{}{}}, banned: true},
-+		{name: "with another key", design: map[string]interface{}{"id": "d1", "version": "1.0.0"}, banned: true},
-+		{name: "not a map", design: "name: my-design", banned: true},
-+		{name: "a list", design: []interface{}{map[string]interface{}{"id": "d1"}}, banned: true},
++		{
++			name:          "server returns 500 internal server error",
++			statusCode:    http.StatusInternalServerError,
++			responseBody:  `{"error":"failed to save profile in database"}`,
++			expectedInErr: "failed to save profile in database",
++		},
++		{
++			name:          "server returns 400 with empty body uses status code",
++			statusCode:    http.StatusBadRequest,
++			responseBody:  "",
++			expectedInErr: "400",
++		},
++		{
++			name:          "server returns 401 unauthorized",
++			statusCode:    http.StatusUnauthorized,
++			responseBody:  `{"error":"unauthorized access"}`,
++			expectedInErr: "unauthorized access",
++		},
++		{
++			name:          "server returns 204 no content",
++			statusCode:    http.StatusNoContent,
++			responseBody:  "",
++			expectedInErr: "204",
++		},
 +	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			found := bannedDesignEventMetadataKeysIn(t, map[string]interface{}{"design": tc.design})
-+			if tc.banned {
-+				assert.Contains(t, found, "metadata.design")
-+			} else {
-+				assert.Empty(t, found)
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resetVariables()
++			profileName = "test-profile"
++			testURL = "https://meshery.io"
++
++			httpmock.RegisterResponder("POST", profileURL,
++				httpmock.NewStringResponder(tt.statusCode, tt.responseBody))
++
++			id, name, err := createPerformanceProfile(mctlCfg)
++			if err == nil {
++				t.Fatalf("expected error for status code %d, got nil", tt.statusCode)
++			}
++			if !strings.Contains(err.Error(), tt.expectedInErr) {
++				t.Errorf("expected error to contain %q, got %q", tt.expectedInErr, err.Error())
++			}
++			if id != "" || name != "" {
++				t.Errorf("expected empty profile ID and name on error, got id=%q, name=%q", id, name)
 +			}
 +		})
 +	}
 +}
 +
-+// assertMetadataExcludes fails when needle appears anywhere in the JSON form
-+// of metadata.
-+func assertMetadataExcludes(t *testing.T, metadata map[string]interface{}, needle string) {
-+	t.Helper()
-+	data, err := json.Marshal(metadata)
-+	require.NoError(t, err)
-+	assert.NotContains(t, string(data), needle)
-+}
++func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	defer utils.StopMockery(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
 +
-+func provisionOutcome(success bool, err error, prerequisite bool) []patterns.DeploymentMessagePerContext {
-+	return []patterns.DeploymentMessagePerContext{{
-+		Location: "ctx",
-+		Summary: []patterns.DeploymentMessagePerComp{{
-+			Kind:           "Pod",
-+			CompName:       "must-not-leak",
-+			Success:        success,
-+			Message:        "must-not-leak",
-+			Metadata:       map[string]interface{}{"components": "must-not-leak"},
-+			Error:          err,
-+			IsPrerequisite: prerequisite,
-+		}},
-+	}}
-+}
++	_, filename, _, ok := runtime.Caller(0)
++	if !ok {
++		t.Fatal("Not able to get current working directory")
++	}
++	currDir := filepath.Dir(filename)
++	origToken := utils.TokenFlag
++	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
++	defer func() { utils.TokenFlag = origToken }()
 +
-+func TestBuildPatternProcessEventMetadata_DeployOutcomes(t *testing.T) {
-+	designID := uuid.Must(uuid.NewV4())
-+	okID, failedID, plainErrID, prereqID := uuid.Must(uuid.NewV4()).String(), uuid.Must(uuid.NewV4()).String(), uuid.Must(uuid.NewV4()).String(), uuid.Must(uuid.NewV4()).String()
-+	meshkitErr := stages.ErrDependencyNotSatisfied("a", "b", false)
-+
-+	response := map[string]interface{}{
-+		okID:       provisionOutcome(true, nil, false),
-+		failedID:   provisionOutcome(false, meshkitErr, false),
-+		plainErrID: provisionOutcome(false, fmt.Errorf("plain"), false),
-+		// a failed prerequisite install is fail-forward and not a component failure
-+		prereqID: append(provisionOutcome(true, nil, false), provisionOutcome(false, meshkitErr, true)...),
++	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
++	if err != nil {
++		t.Fatalf("failed to get mesheryctl config: %v", err)
 +	}
 +
-+	metadata := buildPatternProcess
-```
-
-**File**: `server/handlers/meshery_pattern_handler.go` (modified, +15/-16)
-```diff
-@@ -254,21 +254,20 @@ func (h *Handler) PatternFileRequestHandler(
- }
- 
- // buildDesignSavedEventMetadata builds the metadata map emitted on the
--// design-saved event. Extracted into a named function so the canonical
--// camelCase keys (`historyTitle`, `design`, `doclink`) are pinned by a
--// focused unit test — see TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
--// Drift here would silently re-introduce the snake_case `history_title`
--// key that production carried for 263,378 rows pre-flip.
--func buildDesignSavedEventMetadata(designFile design.PatternFile) map[string]interface{} {
--	return map[string]interface{}{
--		"historyTitle": fmt.Sprintf("Version %s - %d components and %d relationships",
--			designFile.Version, len(designFile.Components), len(designFile.Relationships)),
--		"design": map[string]interface{}{
--			"name": designFile.Name,
--			"id":   designFile.ID.String(),
--		},
--		"doclink": "https://docs.meshery.io/concepts/logical/designs",
--	}
-+// design-saved event: the design's identity, the `design` {name, id} object
-+// the notification center's "Saved design" link reads, historyTitle and
-+// doclink. It never carries the design's contents (#22764). Keys are
-+// camelCase and pinned by TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys.
-+func buildDesignSavedEventMetadata(designFile design.PatternFile, serverURL string) map[string]interface{} {
-+	metadata := models.DesignEventIdentity(serverURL, designFile.ID, designFile.Name, string(designFile.Version))
-+	metadata[models.EventMetadataDesign] = map[string]interface{}{
-+		"name": designFile.Name,
-+		"id":   designFile.ID.String(),
++	profileURL := testContext.BaseURL + "/api/performance/profiles"
++
++	resetVariables()
++	profileName = "test-profile-null"
++	testURL = "https://meshery.io"
++
++	httpmock.RegisterResponder("POST", profileURL,
++		httpmock.NewStringResponder(http.StatusOK, "null"))
++
++	defer func() {
++		if r := recover(); r != nil {
++			t.Fatalf("createPerformanceProfile panicked on null response: %v", r)
++		}
++	}()
++
++	id, name, err := createPerformanceProfile(mctlCfg)
++	if err == nil {
++		t.Fatal("expected error on null response, got nil")
 +	}
-+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("Version %s - %d components and %d relationships",
-+		designFile.Version, len(designFile.Components), len(designFile.Relationships))
-+	metadata["doclink"] = "https://docs.meshery.io/concepts/logical/designs"
-+	return metadata
- }
- 
- func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID core.Uuid, body []byte, err error, provider models.Provider, token string) {
-@@ -406,7 +405,7 @@ func (h *Handler) handlePatternPOST(
- 	description := fmt.Sprintf("Design %s saved at version %s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Version)
- 	event := eventBuilder.
- 		WithDescription(description).
--		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile)).
-+		WithMetadata(buildDesignSavedEventMetadata(requestPayload.DesignFile, models.ServerURLFromRequest(r))).
- 		Build()
- 	_ = provider.PersistEvent(*event, token)
- 
++	if !strings.Contains(err.Error(), "empty performance profile") {
++		t.Errorf("expected error to contain 'empty performance profile', got: %v", err)
++	}
++	if id != "" || name != "" {
++		t.Errorf("expected empty profile ID and name, got id=%q, name=%q", id, name)
++	}
++}
++
++func TestCreatePerformanceProfile_Success(t *testing.T) {
++	testContext := utils.InitTestEnvironment(t)
++	defer utils.StopMockery(t)
++	_ = utils.SetupMeshkitLoggerTesting(t, false)
++
++	_, filename, _, ok := runtime.Caller(0)
++	if !ok {
++		t.Fatal("Not able to get current working directory")
++	}
++	currDir := filepath.Dir(filename)
++	origToken := utils.TokenFlag
++	utils.TokenFlag = filepath.Join(currDir, "fixtures", "auth.json")
++	defer func() { utils.TokenFlag = origToken }()
++
++	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
++	if err != nil {
++		t.Fatalf("failed to get mesheryctl config: %v", err)
++	}
++
++	profileURL := testContext.BaseURL + "/api/performance/profiles"
++
++
 ```
 
-**File**: `server/handlers/meshery_pattern_handler_test.go` (modified, +11/-5)
+**File**: `mesheryctl/pkg/utils/auth.go` (modified, +9/-9)
 ```diff
-@@ -618,15 +618,17 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T)
- 		Relationships: make([]*relationship.RelationshipDefinition, 5),
+@@ -106,6 +106,15 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
+ 		return nil, ErrInvalidToken()
  	}
  
--	metadata := buildDesignSavedEventMetadata(df)
-+	metadata := buildDesignSavedEventMetadata(df, "http://meshery.test")
- 
- 	// Canonical camelCase keys MUST be present.
- 	require.Contains(t, metadata, "historyTitle")
- 	require.Contains(t, metadata, "design")
- 	require.Contains(t, metadata, "doclink")
-+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+id.String(), metadata["designLink"])
- 
- 	// Legacy snake_case key MUST NOT be present.
- 	require.NotContains(t, metadata, "history_title")
-+	assertNoBannedDesignEventMetadataKeys(t, metadata)
- 
- 	// historyTitle reflects version + counts so future contributors
- 	// don't repurpose the helper without keeping the user-visible label
-@@ -635,10 +637,14 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T)
- 	assert.Contains(t, metadata["historyTitle"], "3 components")
- 	assert.Contains(t, metadata["historyTitle"], "5 relationships")
- 
--	// `design` sub-object carries the design's id and name (single-word
--	// keys, exempt from the camelCase contract).
-+	// The design is identified, never embedded.
-+	assert.Equal(t, id, metadata["designId"])
-+	assert.Equal(t, "test-design", metadata["designName"])
-+	assert.Equal(t, "0.0.1", metadata["designVersion"])
++	if resp.StatusCode == http.StatusInternalServerError {
++		defer func() { _ = resp.Body.Close() }()
++		bodyBytes, err := io.ReadAll(resp.Body)
++		if err != nil {
++			return nil, ErrReadResponseBody(err)
++		}
++		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
++	}
 +
-+	// `design` sub-object carries only the design's id and name: the
-+	// notification center's "Saved design" link reads it.
- 	designSub, ok := metadata["design"].(map[string]interface{})
- 	require.True(t, ok, "design field should be a map")
--	assert.Equal(t, "test-design", designSub["name"])
--	assert.Equal(t, id.String(), designSub["id"])
-+	assert.Equal(t, map[string]interface{}{"name": "test-design", "id": id.String()}, designSub)
+ 	// failsafe for not being authenticated
+ 	if ContentTypeIsHTML(resp) {
+ 		SafeClose(resp.Body)
+@@ -123,15 +132,6 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
+ 		return nil, ErrNotFound(errors.New(string(bodyBytes)))
+ 	}
+ 
+-	if resp.StatusCode == http.StatusInternalServerError {
+-		defer func() { _ = resp.Body.Close() }()
+-		bodyBytes, err := io.ReadAll(resp.Body)
+-		if err != nil {
+-			return nil, ErrReadResponseBody(err)
+-		}
+-		return nil, ErrMesheryServerInternalError(errors.New(string(bodyBytes)))
+-	}
+-
+ 	// failsafe for bad api call
+ 	isNotSuccess := resp.StatusCode != http.StatusOK &&
+ 		resp.StatusCode != http.StatusCreated &&
+```
+
+**File**: `mesheryctl/pkg/utils/auth_test.go` (modified, +25/-0)
+```diff
+@@ -168,4 +168,29 @@ func TestMakeRequest_Status302AndHTMLResponseHandling(t *testing.T) {
+ 			t.Fatal("expected response body to be closed on HTML content-type response")
+ 		}
+ 	})
++
++	t.Run("MakeRequest returns ErrMesheryServerInternalError on HTML 500 response", func(t *testing.T) {
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.Header().Set("Content-Type", "text/html; charset=utf-8")
++			w.WriteHeader(http.StatusInternalServerError)
++			_, _ = fmt.Fprint(w, "<html><body>500 Internal Server Error</body></html>")
++		}))
++		defer server.Close()
++
++		req, err := http.NewRequest(http.MethodGet, server.URL, nil)
++		if err != nil {
++			t.Fatalf("unexpected error creating request: %v", err)
++		}
++
++		resp, err := MakeRequest(req)
++		if resp != nil {
++			t.Errorf("expected nil response on 500, got %v", resp)
++		}
++		if err == nil {
++			t.Fatal("expected error on 500, got nil")
++		}
++		if errors.GetCode(err) != ErrMesheryServerInternalErrorCode {
++			t.Errorf("expected error code %s, got %s", ErrMesheryServerInternalErrorCode, errors.GetCode(err))
++		}
++	})
  }
 ```
 
 ---
 
-### Incident Patch 2: `b7e643c4` (2026-11-03)
-**Commit Message**: Merge pull request #22226 from muskan-creates352/fix/docs-playwright-guide-17057
+### Incident Patch 2: `873d7a25` (2026-11-04)
+**Commit Message**: [UI] Fix notification center infinite scroll loading past the last page (#22793)
 
-[Docs] Update outdated Playwright E2E testing guide references
+[UI] Fix notification center infinite scroll loading past the last page
 
-**File**: `docs/content/en/project/contributing/ui/tests.md` (modified, +2/-2)
+**File**: `ui/components/layout/NotificationCenter/index.tsx` (modified, +15/-18)
 ```diff
-@@ -141,7 +141,7 @@ To run playwright for specific project only, for example meshery-provider, you c
- {{< code code=`npx playwright test --ui --project=chromium-meshery-provider` >}}
+@@ -1,4 +1,4 @@
+-import React, { useContext, useEffect, useRef, useState } from 'react';
++import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+ import { CustomTooltip, NoSsr } from '@sistent/sistent';
+ import {
+   alpha,
+@@ -367,10 +367,15 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
+   const events = useSelector(selectEvents);
+   // const page = useSelector((state) => state.events.current_view.page);
+   const lastEventRef = useRef(null);
+-  const intersectionObserver = useRef(
+-    new IntersectionObserver(
++
++  useEffect(() => {
++    const node = lastEventRef.current;
++    if (!node) {
++      return;
++    }
++    const observer = new IntersectionObserver(
+       (entries) => {
+-        if (isFetching && !hasMore) {
++        if (isFetching || !hasMore) {
+           return;
+         }
+         const firstEntry = entries[0];
+@@ -379,20 +384,12 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
+         }
+       },
+       { threshold: 1 },
+-    ),
+-  );
+-
+-  useEffect(() => {
+-    const currentObserver = intersectionObserver.current;
+-    if (lastEventRef.current) {
+-      currentObserver.observe(lastEventRef.current);
+-    }
++    );
++    observer.observe(node);
+     return () => {
+-      if (lastEventRef.current) {
+-        currentObserver.unobserve(lastEventRef.current);
+-      }
++      observer.unobserve(node);
+     };
+-  }, [lastEventRef.current]);
++  }, [isFetching, hasMore, handleLoadNextPage]);
  
- To run specific test, you can add the test file location, for example:
--{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js` >}}
-+{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/connections.spec.ts` >}}
+   return (
+     <>
+@@ -432,9 +429,9 @@ const NotificationCenterDrawer = () => {
+     );
+   }, []);
  
- For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
+-  const loadMore = () => {
++  const loadMore = useCallback(() => {
+     dispatch(loadNextPage(fetchEvents));
+-  };
++  }, [dispatch, fetchEvents]);
  
-@@ -150,7 +150,7 @@ For more detail, you can read the [Playwright Cli docs](https://playwright.dev/d
- 
- By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
- 
--- StorageState: In meshery [setup auth](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/auth.setup.js), we have 2 storage state, which store a session for Meshery and Local provider.
-+- StorageState: In Meshery auth setup ([local.setup.js](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/local.setup.js) and [remote.setup.js](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/remote.setup.js)), we have 2 storage states, which store a session for Meshery and Local provider.
- - Project: After the setup completes, it will run the project-based test depending on which storage state for the Local Provider and one for the Meshery Provider
- - Test Parameterize:  In the Local provider we are limiting some features to test against. For the missing features, we leverage this playwright feature to check or even skip the test. If it is not possible to run then you need to specify the `provider` directly from the test, and make sure the test is wrapped using:
- 
+   const handleClose = () => {
+     if (!isNotificationCenterOpen) {
 ```
 
 ---
 
-### Incident Patch 3: `a5c03f04` (2026-11-02)
-**Commit Message**: Merge pull request #21312 from Katotodan/fix-action-btn
+### Incident Patch 3: `06ed1f16` (2026-11-04)
+**Commit Message**: Merge pull request #22839 from harshitsaxena214/fix-adapter-client-leak
 
-Fix Responsiveness of Cancel, Save, Reset Action Buttons
+[Server] Close each adapter client per host in Provision
 
-**File**: `ui/components/dashboard/components.test.tsx` (modified, +132/-17)
+**File**: `server/handlers/design_engine_handler.go` (modified, +56/-46)
 ```diff
-@@ -1,14 +1,18 @@
- import React from 'react';
- import { render, screen } from '@testing-library/react';
- import userEvent from '@testing-library/user-event';
--import { describe, expect, it, vi } from 'vitest';
-+import { configureStore } from '@reduxjs/toolkit';
-+import { Provider } from 'react-redux';
-+import { afterEach, describe, expect, it, vi } from 'vitest';
- import {
-   AddWidgetsToLayoutPanel,
-   LayoutActionButton,
-   LayoutWidget,
-   StyledCard,
- } from './components';
+@@ -627,60 +627,70 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
+ 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
+ 		}
  
-+const useMediaQueryMock = vi.hoisted(() => vi.fn(() => false));
-+
- vi.mock('@sistent/sistent', () => ({
-   Box: ({ children }: any) => <div data-testid="box">{children}</div>,
-   useTheme: () => ({
-@@ -20,7 +24,9 @@ vi.mock('@sistent/sistent', () => ({
-         elevatedComponents: '#ddd',
-       },
-     },
-+    breakpoints: { down: () => '' },
-   }),
-+  useMediaQuery: useMediaQueryMock,
-   Typography: ({ children, variant }: any) => <span data-variant={variant}>{children}</span>,
-   Stack: ({ children }: any) => <div>{children}</div>,
-   AddIcon: (props: any) => <svg data-testid="add-icon" data-fill={props.fill} />,
-@@ -36,8 +42,8 @@ vi.mock('@sistent/sistent', () => ({
-       {children}
-     </div>
-   ),
--  Button: ({ children, onClick, endIcon }: any) => (
--    <button type="button" onClick={onClick}>
-+  Button: ({ children, onClick, endIcon, 'aria-label': ariaLabel }: any) => (
-+    <button type="button" onClick={onClick} aria-label={ariaLabel}>
-       {children}
-       {endIcon}
-     </button>
-@@ -102,15 +108,32 @@ describe('AddWidgetsToLayoutPanel', () => {
- describe('LayoutActionButton', () => {
-   const FakeIcon = (props: any) => <svg data-testid="fake-icon" {...props} />;
+-		addr := hostName
+-		if hostPort != 0 {
+-			addr += ":" + strconv.Itoa(hostPort)
+-		}
+-		// Create mesh client
+-		mClient, err := meshes.CreateClient(
+-			context.TODO(),
+-			addr,
+-		)
+-		if err != nil {
+-			return nil, fmt.Errorf("error creating a mesh client: %v", err)
+-		}
+-		defer func() {
+-			_ = mClient.Close()
+-		}()
+-
+-		// Else it is an  adapter call
+-		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
+-		var kconfigs []string
+-		for _, v := range sap.ctxTokubeconfig {
+-			kconfigs = append(kconfigs, v)
+-		}
+-		compStr, err := utils.Marshal(ccp.Component)
++		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
+ 		if err != nil {
+-			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
+ 			return nil, err
+ 		}
+-		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+-			Username:     sap.userID,
+-			DeleteOp:     sap.opIsDelete,
+-			KubeConfigs:  kconfigs,
+-			Declarations: []string{compStr},
+-		})
+-		success := err == nil
+-		msgs = append(msgs, patterns.DeploymentMessagePerContext{
+-			SystemName: hostName,
+-			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
+-			Summary: []patterns.DeploymentMessagePerComp{
+-				{
+-					Kind:       ccp.Component.Component.Kind,
+-					Model:      ccp.Component.Model.Name,
+-					CompName:   ccp.Component.DisplayName,
+-					DesignName: sap.patternName,
+-					Success:    success,
+-					Message:    resp.GetMessage(),
+-					Error:      err,
+-				},
+-			},
+-		})
++		msgs = append(msgs, msg)
+ 	}
  
-+  const createTestStore = (isDrawerCollapsed = false) =>
-+    configureStore({
-+      reducer: {
-+        ui: (state = { isDrawerCollapsed }) => state,
-+      },
-+    });
+ 	return msgs, nil
+ }
+ 
++// provisionOnAdapter provisions comp through one gRPC adapter, closing its client
++// on return so hosts do not hold connections open until Provision ends.
++func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
++	addr := hostName
++	if hostPort != 0 {
++		addr += ":" + strconv.Itoa(hostPort)
++	}
++	// Create mesh client
++	mClient, err := meshes.CreateClient(
++		context.TODO(),
++		addr,
++	)
++	if err != nil {
++		return patterns.DeploymentMessagePerContext{}, fmt.Errorf("error creating a mesh client: %v", err)
++	}
++	defer func() {
++		_ = mClient.Close()
++	}()
 +
-+  const setMediaQueries = (isSmallTablet: boolean, isMobile: boolean) => {
-+    useMediaQueryMock.mockReturnValueOnce(isSmallTablet).mockReturnValueOnce(isMobile);
-+  };
++	// Else it is an  adapter call
++	//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
++	var kconfigs []string
++	for _, v := range sap.ctxTokubeconfig {
++		kconfigs = append(kconfigs, v)
++	}
++	compStr, err := utils.Marshal(comp)
++	if err != nil {
++		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
++		return patterns.DeploymentMessagePerContext{}, err
++	}
++	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
++		Username:     sap.userID,
++		DeleteOp:     sap.opIsDelete,
++		KubeConfigs:  kconfigs,
++		Declarations: []string{compStr},
++	})
++	success := err == nil
++	return patterns.DeploymentMessagePerContext{
++		SystemName: hostName,
++		Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
++		Summary: []patterns.DeploymentMessagePerComp{
++			{
++				Kind:       comp.Component.Kind,
++				Model:      comp.Model.Name,
++				CompName:   comp.DisplayName,
++				DesignName: sap.patternName,
++				Success:    success,
++				Message:    resp.GetMessage(),
++				Error:      err,
++			},
++		},
++	}, nil
++}
 +
-+  afterEach(() => {
-+    useMediaQueryMock.mockReturnValue(false);
-+  });
-+
-   it('renders nothing when isShown is false', () => {
-     const { container } = render(
--      <LayoutActionButton
--        Icon={FakeIcon}
--        label="Edit"
--        action={vi.fn()}
--        description="Edit layout"
--        isShown={false}
--      />,
-+      <Provider store={createTestStore()}>
-+        <LayoutActionButton
-+          Icon={FakeIcon}
-+          label="Edit"
-+          action={vi.fn()}
-+          description="Edit layout"
-+          isShown={false}
-+        />
-+      </Provider>,
-     );
-     expect(container.firstChild).toBeNull();
-   });
-@@ -119,19 +142,111 @@ describe('LayoutActionButton', () => {
-     const user = userEvent.setup();
-     const action = vi.fn();
-     render(
--      <LayoutActionButton
--        Icon={FakeIcon}
--        label="Edit"
--        action={action}
--        description="Edit layout"
--        isShown={true}
--      />,
-+      <Provider store={createTestStore()}>
-+        <LayoutActionButton
-+          Icon={FakeIcon}
-+          label="Edit"
-+          action={action}
-+          description="Edit layout"
-+          isShown={true}
-+        />
-+      </Provider>,
-     );
-     expect(screen.getByText('Edit')).toBeInTheDocument();
-     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Edit layout');
-     await user.click(screen.getByRole('button'));
-     expect(action).toHaveBeenCalledTimes(1);
-   });
-+
-+  it('renders only the icon below md with an expanded drawer', () => {
-+    setMediaQueries(true, false);
-+    render(
-+      <Provider store={createTestStore()}>
-+        <LayoutActionButton
-+          Icon={FakeIcon}
-+          label="Share"
-+          action={vi.fn()}
-+          description="Share layout"
-+          isShown={true}
-+        />
-+      </Provider>,
-+    );
-+
-+    expect(screen.queryByText('Share')).not.toBeInTheDocument();
-+    expect(screen.getByTestId('fake-icon')).toBeInTheDocument();
-+    expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Share layout');
-+    expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument();
-+  });
-+
-+  it('keeps the label visible below md when alwaysShowLabel is set', () => {
-+    setMediaQueries(true, false);
-+    render(
-+      <Provider store={createTestStore()}>
-+        <LayoutActionButton
-+          Icon={FakeIcon}
-+          label="Modifier"
-+          action={vi.fn()}
-+          description="Configure dashboard layout"
-+          isShown={true}
-+          alwaysShowLabel
-+        />
-+      </Provider>,
-+    );
-+
-+    expect(screen.getByText('Modifier')).toBeInTheDocument();
-+  });
-+
-+  it('keeps the label visible below md with a collapsed drawer', () => {
-+    setMediaQueries(true, false);
-+    render(
-+      <Provider store={createTestStore(true)}>
-+        <LayoutActionButton
-+          Icon={FakeIcon}
-+          label="Share"
-+          action={vi.fn()}
-+          description="Share l
+ // func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {
+ // 	if !sap.opIsDelete {
+ // 		if isUpdate {
 ```
 
-**File**: `ui/components/dashboard/components.tsx` (modified, +22/-1)
+**File**: `server/handlers/design_engine_provision_test.go` (added, +123/-0)
 ```diff
-@@ -12,8 +12,11 @@ import {
-   DeleteIcon,
-   DragIcon,
-   type Theme,
-+  useMediaQuery,
- } from '@sistent/sistent';
-+import { useSelector } from 'react-redux';
- 
-+import type { RootState } from '../../store';
- import { iconMedium } from 'css/icons.styles';
- import { ActionButton } from './style';
- 
-@@ -164,10 +167,11 @@ type LayoutActionButtonProps = {
-     width?: string | number;
-     height?: string | number;
-   }>;
--  label: React.ReactNode;
-+  label: string;
-   action: () => void;
-   description: React.ReactNode;
-   isShown: boolean;
-+  alwaysShowLabel?: boolean;
- };
- 
- export const LayoutActionButton = ({
-@@ -176,14 +180,31 @@ export const LayoutActionButton = ({
-   action,
-   description,
-   isShown,
-+  alwaysShowLabel = false,
- }: LayoutActionButtonProps) => {
-   const theme = useTheme();
-   const iconsProps = actionIconProps(theme);
-+  const { isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
-+  const isSmallTablet = useMediaQuery(theme.breakpoints.down('md'));
-+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
- 
-   if (!isShown) {
-     return null;
-   }
- 
-+  if (!alwaysShowLabel && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
-+    return (
-+      <CustomTooltip title={description} variant="standard">
-+        <ActionButton
-+          variant="text"
-+          onClick={action}
-+          aria-label={label}
-+          endIcon={<Icon {...iconsProps} />}
-+        ></ActionButton>
-+      </CustomTooltip>
-+    );
-+  }
+@@ -0,0 +1,123 @@
++package handlers
 +
-   return (
-     <ActionButton variant="text" onClick={action} endIcon={<Icon {...iconsProps} />}>
-       <CustomTooltip title={description} variant="standard">
-```
-
-**File**: `ui/components/dashboard/index.tsx` (modified, +1/-0)
-```diff
-@@ -267,6 +267,7 @@ const Dashboard = () => {
-       action: toggleEditMode,
-       description: 'Configure dashboard layout for the current organization',
-       isShown: !isEditMode,
-+      alwaysShowLabel: true,
-     },
-     CANCEL_EDIT: {
-       label: 'Cancel',
++import (
++	"context"
++	"net"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/meshery/meshery/server/meshes"
++	"github.com/meshery/meshery/server/models/pattern/stages"
++	"github.com/meshery/meshkit/logger"
++	"github.com/meshery/schemas/models/v1beta1/connection"
++	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/stats"
++)
++
++// provisionAdapter is an in-process adapter that counts its open client connections.
++type provisionAdapter struct {
++	meshes.UnimplementedMeshServiceServer
++	openConns   atomic.Int32
++	onProvision func()
++}
++
++func (a *provisionAdapter) Provision(context.Context, *meshes.ProvisionRequest) (*meshes.ProvisionResponse, error) {
++	if a.onProvision != nil {
++		a.onProvision()
++	}
++	return &meshes.ProvisionResponse{Message: "provisioned"}, nil
++}
++
++func (a *provisionAdapter) TagRPC(ctx context.Context, _ *stats.RPCTagInfo) context.Context {
++	return ctx
++}
++func (a *provisionAdapter) HandleRPC(context.Context, stats.RPCStats) {}
++func (a *provisionAdapter) TagConn(ctx context.Context, _ *stats.ConnTagInfo) context.Context {
++	return ctx
++}
++
++func (a *provisionAdapter) HandleConn(_ context.Context, s stats.ConnStats) {
++	switch s.(type) {
++	case *stats.ConnBegin:
++		a.openConns.Add(1)
++	case *stats.ConnEnd:
++		a.openConns.Add(-1)
++	}
++}
++
++// waitForNoOpenConns waits briefly, since a client close reaches the server asynchronously.
++func (a *provisionAdapter) waitForNoOpenConns() int32 {
++	deadline := time.Now().Add(2 * time.Second)
++	for a.openConns.Load() != 0 && time.Now().Before(deadline) {
++		time.Sleep(10 * time.Millisecond)
++	}
++	return a.openConns.Load()
++}
++
++// startProvisionAdapter serves a provisionAdapter on a free local port and
++// returns it with the host Provision reaches it through.
++func startProvisionAdapter(t *testing.T) (*provisionAdapter, connection.Connection) {
++	t.Helper()
++
++	listener, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("listen for the adapter: %v", err)
++	}
++
++	adapter := &provisionAdapter{}
++	server := grpc.NewServer(grpc.StatsHandler(adapter))
++	meshes.RegisterMeshServiceServer(server, adapter)
++	go func() { _ = server.Serve(listener) }()
++	t.Cleanup(server.Stop)
++
++	host := connection.Connection{
++		Kind: "adapter",
++		Metadata: map[string]interface{}{
++			"host_name": "127.0.0.1",
++			"port":      listener.Addr().(*net.TCPAddr).Port,
++		},
++	}
++	return adapter, host
++}
++
++// Each host's adapter client must close before the next host is provisioned (#20874).
++func TestProvisionClosesEachAdapterClientBeforeTheNextHost(t *testing.T) {
++	log, err := logger.New("provision-test", logger.Options{})
++	if err != nil {
++		t.Fatalf("failed to build a logger: %v", err)
++	}
++
++	first, firstHost := startProvisionAdapter(t)
++	second, secondHost := startProvisionAdapter(t)
++
++	var firstStillOpen atomic.Int32
++	second.onProvision = func() {
++		firstStillOpen.Store(first.waitForNoOpenConns())
++	}
++
++	comp := mutateTestComponent("workload", "Deployment")
++	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
++
++	sap := &serviceActionProvider{log: log, userID: "user", patternName: "design"}
++	msgs, err := sap.Provision(stages.CompConfigPair{
++		Component: *comp,
++		Hosts:     []connection.Connection{firstHost, secondHost},
++	})
++	if err != nil {
++		t.Fatalf("Provision: %v", err)
++	}
++	if len(msgs) != 2 {
++		t.Fatalf("Provision returned %d message(s), want 2", len(msgs))
++	}
++
++	if open := firstStillOpen.Load(); open != 0 {
++		t.Errorf("the first adapter still held %d client connection(s) while the second host was provisioned, want 0", open)
++	}
++	for name, adapter := range map[string]*provisionAdapter{"first": first, "second": second} {
++		if open := adapter.waitForNoOpenConns(); open != 0 {
++			t.Errorf("the %s adapter still holds %d client connection(s) after Provision returned, want 0", name, open)
++		}
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22839** (2026-11-04): [Server] Close each adapter client per host in Provision (@harshitsaxena214)
+- **PR #22828** (2026-11-04): Add Maanvi Chetwanii's introduction to meetings doc (@Maanvi212006)
+- **PR #22801** (2026-11-04): [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (@Swatantra-66)
+- **PR #22793** (2026-11-04): [UI] Fix notification center infinite scroll loading past the last page (@ayushgade06)
 - **PR #22769** (2026-11-03): fix(server): stop embedding design contents in event metadata (@yi-nuo426)
 - **PR #22746** (2026-11-02): fix/CLI reference docs should not include /home/runner/... (@Aravind226)
-- **PR #22745** (2026-11-02): Fix broken DCO documentation link in PR welcome comment (@motalib6)
-- **PR #22744** (2026-11-02): [UI] Fix Design Configurator "+" for key/value fields after RJSF v6 upgrade (@HelanaNady)
-- **PR #22742** (2026-11-02): [Server] Isolate ExportModel working directory with per-request temp dir (#22609) (@VimalN2005)
-- **PR #22741** (closed): [Docs] Note startup delay and site URL in Docker setup section (@piyusshkumar)
 
 ---
 
@@ -1684,37 +1491,51 @@ Fix Responsiveness of Cancel, Save, Reset Action Buttons
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-conten
+## X. [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in 
 
 **RULE**:
-When implementing operations in `docs/content/en/project/contributing/contributing-server-events/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/perf/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a83f2e85`: Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-contents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed66e6ec`: [mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in perf apply (#22801). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/en/project/contributing/contributing-server-events/index.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/perf/apply.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### Design Event Metadata
+	"fmt"
+		metadata, ok := values["metadata"].(map[string]interface{})
+		if !ok || metadata == nil {
+			metadata = map[string]interface{}{}
+			values["metadata"] = metadata
+		metadata["ca_certificate"] = map[string]interface{}{
+		return "", "", ErrPerfProfileServer(err)
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		serverErrMsg := strings.TrimSpace(string(body))
+		if serverErrMsg == "" {
+			serverErrMsg = fmt.Sprintf("server returned status: %s", resp.Status)
+		}
+		return "", "", ErrPerfProfileServer(errors.New(serverErrMsg))
+	}
 
-An event about a design carries the design's identity and a bounded summary, never the design itself - no `design` contents, `designFile`, `patternFile`, `components`, `relationships`, `trace`, `evaluationResponse` or raw process `summary` ([#22764](https://github.com/meshery/meshery/issues/22764)). Build the identity with `models.DesignEventIdentity` (`server/models/event_metadata.go`) and add the event's own fields. `designLink` is always the designer URL (`models.DesignLink`, `/extension/meshmap?mode=design&design=<id>`); only `viewLink` points at the operator view.
 
-| Event | Metadata |
-|---|---|
-| any design event | `designId`, `designName`, `designVersion` (when set), `designLink` (designer URL) |
-| `pattern/create`, `pattern/update` (design saved) | identity, plus `design` as exactly `{id, name}` - the Notification Center's "Saved design" link reads it - `historyTitle` and `doclink` |
-| `relationship/evaluation` | identity, `historyTitle`, `relationshipsAdded`, `relationshipsRemoved`, `relationshipsUpdated`, `evaluationStatus`, `evaluationDurationMs`, `evaluatedAt` |
-| `pattern/deploy`, `pattern/undeploy`, `pattern/dry-run` | identity, `viewLink` s
+	if response == nil {
+		return "", "", ErrPerfProfileServer(errors.New("server returned empty performance profile"))
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		// check if values["metadata"] is nil
+		if values["metadata"] == nil {
+			values["metadata"] = map[string]interface{}{}
+		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
+		return "", "", ErrPerfProfileServer(errors.New("failed to save performance profile on server"))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a83f2e85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed66e6ec` are properly handled with clean fallback behavior.

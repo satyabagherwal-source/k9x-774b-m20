@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `14318705`  
+> **Source Version**: `d1774d10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:06:02.112Z  
+> **Timestamp**: 2026-11-04T18:21:36.345Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:06:01.078Z  
+> **Harvest Timestamp**: 2026-11-04T18:21:35.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1561,412 +1561,245 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14318705` (2026-11-03)
-**Commit Message**: [FIXED]  WebSocket frame handling (#2225)
+### Incident Patch 1: `d1774d10` (2026-11-04)
+**Commit Message**: [FIXED] Treat malformed WS close frames as protocol errors (#2226)
 
-* [FIXED] Panic or spin on an empty fragment of a compressed WebSocket message
+Also treats unexpected compression as protocol errors.
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+This mirrors nats-server's handling of three cases the reader accepted silently:
 
-* [FIXED] Do not send status 1005 when replying to a WebSocket close frame
+- A close frame with a one-byte payload is a protocol error
+  (RFC 6455 section 5.5.1, it was treated as "no status received").
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+- A close frame carrying a status an endpoint must not send:
+  1004, 1005, 1006, 1015, below 1000, 1016-2999, 5000 and above
+  (RFC 6455 section 7.4)
 
-* [FIXED] Corrupted WebSocket PONG payload while the writer buffers
+- A compressed (RSV1) frame when permessage-deflate was not negotiated was
+  decompressed anyway. Frames are only copied out of the read buffer when
+  compression is on, so the decompressed output could overwrite a later
+  frame still aliasing the buffer and corrupt its data.
+  (RFC 6455 section 5.2 requires failing the connection on an unexpected RSV bit).
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+In all three cases the client now replies with a close frame carrying
+status 1002 and a message, and the read ends with that message as the
+error. The compression unit tests now mark compression as negotiated, as
+the reader is only handed compressed frames when it is.
 
----------
+Signed-off-by: Waldemar Quevedo <[REDACTED_EMAIL]>
+Co-authored-by: Claude Mythos 5.
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `ws.go` (modified, +18/-8)
+**File**: `ws.go` (modified, +38/-0)
 ```diff
-@@ -158,7 +158,10 @@ func (d *wsDecompressor) ReadByte() (byte, error) {
+@@ -63,9 +63,11 @@ const (
+ 
+ 	// From https://tools.ietf.org/html/rfc6455#section-11.7
+ 	wsCloseStatusNormalClosure      = 1000
++	wsCloseStatusProtocolError      = 1002
+ 	wsCloseStatusNoStatusReceived   = 1005
+ 	wsCloseStatusAbnormalClosure    = 1006
+ 	wsCloseStatusInvalidPayloadData = 1007
++	wsCloseStatusTLSHandshake       = 1015
+ 
+ 	wsScheme    = "ws"
+ 	wsSchemeTLS = "wss"
+@@ -279,6 +281,12 @@ func (r *websocketReader) Read(p []byte) (int, error) {
+ 			if !r.ff {
+ 				return 0, errors.New("new message started before final frame for previous message was received")
+ 			}
++			// Frames are only copied out of the read buffer when
++			// compression was negotiated, so a compressed frame received
++			// without it would corrupt the data of the frames around it.
++			if compressed && !r.compress {
++				return 0, r.protocolError("compressed frame received without negotiated permessage-deflate")
++			}
+ 			r.ff = final
+ 			r.fc = compressed
+ 		case wsContinuationFrame:
+@@ -438,13 +446,19 @@ func (r *websocketReader) handleControlFrame(frameType wsOpCode, buf []byte, pos
+ 		status := wsCloseStatusNoStatusReceived
+ 		var body string
+ 		lp := len(payload)
++		if lp == 1 {
++			return pos, r.protocolError("close frame payload cannot be 1 byte")
++		}
+ 		// If there is a payload, the status is represented as a 2-byte
+ 		// unsigned integer (in network byte order). Then, there may be an
+ 		// optional body.
+ 		hasStatus, hasBody := lp >= wsCloseSatusSize, lp > wsCloseSatusSize
+ 		if hasStatus {
+ 			// Decode the status
+ 			status = int(binary.BigEndian.Uint16(payload[:wsCloseSatusSize]))
++			if !wsIsValidCloseStatus(status) {
++				return pos, r.protocolError(fmt.Sprintf("invalid close status code %v", status))
++			}
+ 			// Now if there is a body, capture it and make sure this is a valid UTF-8.
+ 			if hasBody {
+ 				body = string(payload[wsCloseSatusSize:])
+@@ -468,6 +482,30 @@ func (r *websocketReader) handleControlFrame(frameType wsOpCode, buf []byte, pos
+ 	return pos, nil
  }
  
- func (d *wsDecompressor) addBuf(b []byte) {
--	d.bufs = append(d.bufs, b)
-+	// Read and ReadByte rely on no buffer being empty.
-+	if len(b) > 0 {
-+		d.bufs = append(d.bufs, b)
++// protocolError replies with a close frame carrying status 1002 and the
++// given message, and returns that message as the error that ends the read.
++func (r *websocketReader) protocolError(message string) error {
++	r.nc.wsEnqueueCloseMsg(r.nl, wsCloseStatusProtocolError, message)
++	return errors.New(message)
++}
++
++// wsIsValidCloseStatus reports whether a close status code may be sent by an
++// endpoint. See https://tools.ietf.org/html/rfc6455#section-7.4
++func wsIsValidCloseStatus(code int) bool {
++	switch code {
++	case wsCloseStatusNoStatusReceived, 1004, wsCloseStatusAbnormalClosure, wsCloseStatusTLSHandshake:
++		return false
 +	}
- }
- 
- func (d *wsDecompressor) decompress() ([]byte, error) {
-@@ -734,17 +737,21 @@ func (nc *Conn) wsEnqueueCloseMsgLocked(status int, payload string) {
- 	if !ok || wr.cmDone {
- 		return
- 	}
--	statusAndPayloadLen := 2 + len(payload)
-+	var statusAndPayloadLen int
-+	// 1005 stands for a close frame without status and must not be sent.
-+	if status != wsCloseStatusNoStatusReceived {
-+		statusAndPayloadLen = 2 + len(payload)
++	if code < 1000 || code >= 5000 {
++		return false
 +	}
- 	frame := make([]byte, 2+4+statusAndPayloadLen)
- 	n, key := wsFillFrameHeader(frame, false, wsCloseMessage, statusAndPayloadLen)
--	// Set the status
--	binary.BigEndian.PutUint16(frame[n:], uint16(status))
--	// If there is a payload, copy
--	if len(payload) > 0 {
-+	if statusAndPayloadLen > 0 {
-+		// Set the status
-+		binary.BigEndian.PutUint16(frame[n:], uint16(status))
-+		// If there is a payload, copy
- 		copy(frame[n+2:], payload)
-+		// Mask status + payload
-+		wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
- 	}
--	// Mask status + payload
--	wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
- 	wr.cm = frame
- 	wr.cmDone = true
- 	nc.bw.flush()
-@@ -769,6 +776,9 @@ func (nc *Conn) wsEnqueueControlMsg(needsLock bool, frameType wsOpCode, payload
- 	fh, key := wsCreateFrameHeader(false, frameType, len(payload))
- 	wr.ctrlFrames = append(wr.ctrlFrames, fh)
- 	if len(payload) > 0 {
-+		// The payload points into the read buffer, which is reused before
-+		// the frame is sent if the writer is buffering.
-+		payload = bytes.Clone(payload)
- 		wsMaskBuf(key, payload)
- 		wr.ctrlFrames = append(wr.ctrlFrames, payload)
- 	}
++	// 1016-2999 are currently reserved.
++	if code >= 1016 && code <= 2999 {
++		return false
++	}
++	return true
++}
++
+ func (w *websocketWriter) Write(p []byte) (int, error) {
+ 	if w.noMoreSend {
+ 		return 0, nil
 ```
 
-**File**: `ws_test.go` (modified, +102/-0)
+**File**: `ws_test.go` (modified, +99/-2)
 ```diff
-@@ -225,6 +225,41 @@ func TestWSParseControlFrames(t *testing.T) {
+@@ -17,6 +17,7 @@ import (
+ 	"bufio"
+ 	"bytes"
+ 	"context"
++	"encoding/binary"
+ 	"fmt"
+ 	"io"
+ 	"net"
+@@ -208,10 +209,10 @@ func TestWSParseControlFrames(t *testing.T) {
+ 		t.Fatalf("Error on read: n=%v err=%v", n, err)
+ 	}
+ 
+-	// Write a CLOSE with invalid status
++	// Write a CLOSE with a one-byte payload: a protocol error, not a close.
+ 	mr.buf.Write([]byte{136, 1, 100})
+ 	n, err = r.Read(p)
+-	if err != io.EOF || n != 0 {
++	if err == nil || err == io.EOF || n != 0 || !strings.Contains(err.Error(), "cannot be 1 byte") {
+ 		t.Fatalf("Error on read: n=%v err=%v", n, err)
+ 	}
+ 
+@@ -324,6 +325,100 @@ func TestWSCloseReplyWithoutStatus(t *testing.T) {
  	}
  }
  
-+func TestWSPongPayloadWhileBuffering(t *testing.T) {
-+	mr := &fakeReader{ch: make(chan []byte, 1)}
-+	defer mr.close()
-+	r := wsNewReader(mr)
-+	var out bytes.Buffer
-+	r.nc = &Conn{bw: &natsWriter{w: &websocketWriter{w: &out}}}
-+	// As during a reconnect, the PONG is sent only once pending is flushed.
-+	r.nc.bw.switchToPending()
-+
-+	// A data frame in the same read is drained into the buffer that held
-+	// the PING payload.
-+	mr.buf.Write([]byte{byte(wsPingMessage) | wsFinalBit, 4})
-+	mr.buf.WriteString("ping")
-+	mr.buf.Write([]byte{byte(wsBinaryMessage) | wsFinalBit, 5})
-+	mr.buf.WriteString("hello")
-+
-+	p := make([]byte, 100)
-+	n, err := r.Read(p)
-+	if err != nil || string(p[:n]) != "hello" {
-+		t.Fatalf("Unexpected read: n=%v err=%v data=%q", n, err, p[:n])
++// TestWSProtocolErrors checks that a close frame with a one-byte payload, a
++// close frame with a status code an endpoint must not send, and a compressed
++// frame received without negotiated compression end the read with an error
++// and are answered with a close frame carrying status 1002 and that error,
++// whether the writer sends directly or buffers (as during a reconnect).
++func TestWSProtocolErrors(t *testing.T) {
++	closeFrame := func(status int, body string) []byte {
++		payload := make([]byte, 2+len(body))
++		binary.BigEndian.PutUint16(payload, uint16(status))
++		copy(payload[2:], body)
++		return append([]byte{byte(wsCloseMessage) | wsFinalBit, byte(len(payload))}, payload...)
 +	}
-+	r.nc.bw.doneWithPending()
-+	r.nc.bw.flush()
-+
-+	frame := out.Bytes()
-+	if len(frame) != 10 || frame[0] != byte(wsPongMessage)|wsFinalBit || frame[1] != wsMaskBit|4 {
-+		t.Fatalf("Unexpected PONG frame: %v", frame)
-+	}
-+	payload := frame[6:]
-+	wsMaskBuf(frame[2:6], payload)
-+	if string(payload) != "ping" {
-+		t.Fatalf("Expected PONG payload %q, got %q", "ping", payload)
-+	}
-+}
-+
- func TestWSDataBeforeCloseFrame(t *testing.T) {
- 	mr := &fakeReader{ch: make(chan []byte, 1)}
- 	defer mr.close()
-@@ -270,6 +305,25 @@ func TestWSDataBeforeCloseFrame(t *testing.T) {
- 	}
- }
- 
-+func TestWSCloseReplyWithoutStatus(t *testing.T) {
-+	mr := &fakeReader{ch: make(chan []byte, 1)}
-+	defer mr.close()
-+	r := wsNewReader(mr)
-+	var out bytes.Buffer
-+	r.nc = &Conn{bw: &natsWriter{w: &websocketWriter{w: &out}}}
-+
-+	mr.buf.Write([]byte{byte(wsCloseMessage) | wsFinalBit, 0})
-+	p := make([]byte, 100)
-+	if n, err := r.Read(p); err != io.EOF || n != 0 {
-+		t.Fatalf("Unexpected read: n=%v err=%v", n, err)
-+	}
-+	// 1005 must not be sent, so the reply has no status either.
-+	frame := out.Bytes()
-+	if len(frame) != 6 || frame[0] != byte(wsCloseMessage)|wsFinalBit || frame[1] != wsMaskBit {
-+		t.Fatalf("Unexpected close frame: %v", frame)
-+	}
-+}
-+
- func TestWSParseInvalidFrames(t *testing.T) {
- 
- 	newReader := func() (*fakeReader, *websocketReader) {
-@@ -604,6 +658,54 @@ func TestWSCompressionWithContinuationFrames(t *testing.T) {
- 	}
- }
- 
-+func TestWSCompressionWithEmptyFrames(t *testing.T) {
-+	buf := &bytes.Buffer{}
-+	compressor, _ := flate.NewWriter(buf, flate.BestSpeed)
++	cbuf := &bytes.Buffer{}
++	compressor, _ := flate.NewWriter(cbuf, flate.BestSpeed)
 +	compressor.Write([]byte("hello"))
 +	compressor.Flush()
-+	b := buf.Bytes()
-+	b = b[:len(b)-4]
++	compressed := cbuf.Bytes()
++	compressed = compressed[:len(compressed)-4]
++	compressedFrame := append([]byte{byte(wsBinaryMessage) | wsRsv1Bit | wsFinalBit, byte(len(compressed))}, compressed...)
 +
 +	for _, test := range []struct {
-+		name    string
-+		frames  [][]byte
-+		wantErr bool
++		name  string
++		frame []byte
++		err   string
 +	}{
-+		// Not a valid deflate stream, but must fail rather than panic.
-+		{"only", [][]byte{nil}, true},
-+		{"first", [][]byte{nil, b}, false},
-+		{"middle", [][]byte{b[:2], nil, b[2:]}, false},
-+		{"last", [][]byte{b, nil}, false},
++		{"close with one byte payload", []byte{byte(wsCloseMessage) | wsFinalBit, 1, 100}, "close frame payload cannot be 1 byte"},
++		{"close with status 999", closeFrame(999, ""), "invalid close status code 999"},
++		{"close with status 1004", closeFrame(1004, ""), "invalid close status code 1004"},
++		{"close with status 1005", closeFrame(1005, ""), "invalid close status code 1005"},
++		{"close with status 1006", closeFrame(1006, ""), "invalid close status code 1006"},
++		{"close with status 1015", closeFrame(1015, ""), "invalid close status code 1015"},
++		{"close with status 1016", closeFrame(1016, ""), "invalid close status code 1016"},
++		{"close with status 2999", closeFrame(2999, ""), "invalid close status code 2999"},
++		{"close with status 5000", closeFrame(5000, ""), "invalid close status code 5000"},
++		{"close with invalid status and body", closeFrame(1006, "going away"), "invalid close status code 1006"},
++		{"compressed frame without negotiated compression", compressedFrame, "compressed frame received without negotiated permessage-deflate"},
++		// Valid close frames still end the read with io.EOF.
++		{"close with status 1000", closeFrame(1000, ""), ""},
++		{"close with status 3000", closeFrame(3000, "custom"), ""},
++		{"close with status 4999", closeFrame(4999, ""), ""},
 +	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			srbuf := &bytes.Buffer{}
-+			for i, frame := range test.frames {
-+				b0 := byte(wsContinuationFrame)
-+				if i == 0 {
-+					b0 = byte(wsBinaryMessage) | wsRsv1Bit
-+				}
-+				if i == len(test.frames)-1 {
-+					b0 |= wsFinalBit
-+				}
-+				srbuf.Write([]byte{b0, byte(len(frame))})
-+				srbuf.Write(frame)
++		for _, pending := range []bool{false, true} {
++			name := test.name
++			if pending {
++				name += " while buffering"
 +			}
-+			r := wsNewReader(srbuf)
-+			rbuf := make([]byte, 100)
-+			n, err := r.Read(rbuf)
-+			if test.wantErr {
-+				if err == nil {
-+					t.Fatalf("Expected error, got n=%v", n)
++			t.Run(name, func(t *testing.T) {
++				// Whatever follows the offending frame must be ignored.
++				stream := append(bytes.Clone(test.frame), []byte{byte(wsBinaryMessage) | wsFinalBit, 3, 'a', 'b', 'c'}...)
++				r := wsNewReader(bytes.NewReader(stream))
++				var out bytes.Buffer
++				r.nc = &Conn{bw: &natsWriter{w: &websocketWriter{w: &out}}}
++				if pending {
++					r.nc.bw.switchToPending()
 +				}
-+				return
-+			}
-+			if err != nil || string(rbuf[:n]) != "hello" {
-+				t.Fatalf("Unexpected read: n=%v err=%v data=%q", n, err, rbuf[:n])
-+			}
-+		})
++				n, err := r.Read(make([]byte, 100))
++				if test.err == "" {
++					if err != io.EOF || n != 0 {
++						t.Fatalf("Expected EOF, got n=%v err=%v", n, err)
++					}
++				} else if err == nil || err.Error() != test.err || n != 0 {
++					t.Fatalf("Expected error %q, got n=%v err=%v", test.err, n, err)
++				}
++				if pending {
++					if out.Len() != 0 {
++						t.Fatalf("Nothing should be sent while buffering, got %v", out.Bytes())
++					}
++					r.nc.bw.doneWithPending()
++					r.nc.bw.flush()
++				}
++				frame := out.Bytes()
++				if len(frame) < 6 || frame[0] != byte(wsCloseMessage)|wsFinalBit || frame[1]&wsMaskBit == 0 {
++					t.Fatalf("Expected a masked close frame, got %v", frame)
++				}
++				payload := frame[6:]
++				wsMaskBuf(frame[2:6], payload)
++				if len(frame) != 6+int(frame[1]&0x7f) || len(payload) < 2 {
++					t.Fatalf("Unexpected close frame: %v", frame)
++				}
++				status := int(binary.BigEndian.Uint16(payload))
++				if test.err == "" {
++					if wantStatus := int(binary.BigEndian.Uint16(test.frame[2:])); status != wantStatus {
++						t.Fatalf("Expected echoed status %v, got %v", wantStatus, status)
++					}
++					return
++				}
++				if status != wsCloseStatusProtocolError || string(payload[2:]) != test.err {
++					t.Fatalf("Expected close status 1002 with %q, got %v with %q", test.err, status, payload[2:])
++				}
++			})
++		}
 +	}
 +}
 +
- func TestWSTlsNoConfig(t *testing.T) {
- 	opts := GetDefaultOptions()
- 	opts.Servers = []string{"wss://localhost:443"}
-```
-
----
-
-### Incident Patch 2: `c782ae0e` (2026-11-02)
-**Commit Message**: [FIXED] Preserve options when following object links (#2220)
-
-Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
-
-**File**: `jetstream/object.go` (modified, +2/-2)
-```diff
-@@ -866,15 +866,15 @@ func (obs *obs) Get(ctx context.Context, name string, opts ...GetObjectOpt) (Obj
- 		// is the link in the same bucket?
- 		lbuck := info.ObjectMeta.Opts.Link.Bucket
- 		if lbuck == obs.name {
--			return obs.Get(ctx, info.ObjectMeta.Opts.Link.Name)
-+			return obs.Get(ctx, info.ObjectMeta.Opts.Link.Name, opts...)
- 		}
- 
- 		// different bucket
- 		lobs, err := obs.js.ObjectStore(ctx, lbuck)
- 		if err != nil {
- 			return nil, err
- 		}
--		return lobs.Get(ctx, info.ObjectMeta.Opts.Link.Name)
-+		return lobs.Get(ctx, info.ObjectMeta.Opts.Link.Name, opts...)
- 	}
- 
- 	result := &objResult{info: info, ctx: ctx, cancel: cancel}
-```
-
-**File**: `jetstream/test/object_test.go` (modified, +43/-0)
-```diff
-@@ -732,6 +732,49 @@ func TestObjectWatch(t *testing.T) {
- 	})
- }
- 
-+func TestObjectLinksShowDeleted(t *testing.T) {
-+	withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-+		defer cancel()
-+		root, err := js.CreateObjectStore(ctx, jetstream.ObjectStoreConfig{Bucket: "ROOT"})
-+		expectOk(t, err)
-+		dir, err := js.CreateObjectStore(ctx, jetstream.ObjectStoreConfig{Bucket: "DIR"})
-+		expectOk(t, err)
-+
-+		info, err := root.PutString(ctx, "A", "AAA")
-+		expectOk(t, err)
-+		_, err = root.AddLink(ctx, "SAME", info)
-+		expectOk(t, err)
-+		info, err = dir.PutString(ctx, "A", "BBB")
-+		expectOk(t, err)
-+		_, err = root.AddLink(ctx, "CROSS", info)
-+		expectOk(t, err)
-+		expectOk(t, root.Delete(ctx, "A"))
-+		expectOk(t, dir.Delete(ctx, "A"))
-+
-+		for _, name := range []string{"A", "SAME", "CROSS"} {
-+			t.Run(name, func(t *testing.T) {
-+				_, err := root.Get(ctx, name)
-+				expectErr(t, err, jetstream.ErrObjectNotFound)
-+
-+				result, err := root.Get(ctx, name, jetstream.GetObjectShowDeleted())
-+				expectOk(t, err)
-+				defer result.Close()
-+				info, err := result.Info()
-+				expectOk(t, err)
-+				if !info.Deleted {
-+					t.Fatal("Expected the deleted target's metadata")
-+				}
-+				data, err := io.ReadAll(result)
-+				expectOk(t, err)
-+				if len(data) != 0 {
-+					t.Fatalf("Expected an empty deleted object, got %q", data)
-+				}
-+			})
-+		}
-+	})
-+}
-+
- func TestObjectLinks(t *testing.T) {
- 	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
- 		ctx := newTesterCtx(t, 10*time.Second)
-```
-
-**File**: `object.go` (modified, +2/-2)
-```diff
-@@ -622,15 +622,15 @@ func (obs *obs) Get(name string, opts ...GetObjectOpt) (ObjectResult, error) {
- 		// is the link in the same bucket?
- 		lbuck := info.ObjectMeta.Opts.Link.Bucket
- 		if lbuck == obs.name {
--			return obs.Get(info.ObjectMeta.Opts.Link.Name)
-+			return obs.Get(info.ObjectMeta.Opts.Link.Name, opts...)
- 		}
- 
- 		// different bucket
- 		lobs, err := obs.js.ObjectStore(lbuck)
- 		if err != nil {
- 			return nil, err
- 		}
--		return lobs.Get(info.ObjectMeta.Opts.Link.Name)
-+		return lobs.Get(info.ObjectMeta.Opts.Link.Name, opts...)
- 	}
- 
- 	result := &objResult{info: info, ctx: ctx, readTimeout: obs.js.opts.wait}
-```
-
-**File**: `test/object_test.go` (modified, +82/-0)
-```diff
-@@ -670,6 +670,88 @@ func TestObjectWatch(t *testing.T) {
- 	})
- }
- 
-+func TestObjectLinksContext(t *testing.T) {
-+	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
-+		js, err := nc.JetStream()
-+		expectOk(t, err)
-+
-+		root, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "ROOT"})
-+		expectOk(t, err)
-+		dir, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "DIR"})
-+		expectOk(t, err)
-+
-+		info, err := root.PutString("A", "AAA")
-+		expectOk(t, err)
-+		_, err = root.AddLink("SAME", info)
-+		expectOk(t, err)
-+		info, err = dir.PutString("A", "BBB")
-+		expectOk(t, err)
-+		_, err = root.AddLink("CROSS", info)
-+		expectOk(t, err)
-+
-+		for _, name := range []string{"A", "SAME", "CROSS"} {
-+			t.Run(name, func(t *testing.T) {
-+				ctx, cancel := context.WithCancel(context.Background())
-+				defer cancel()
-+				result, err := root.Get(name, nats.Context(ctx))
-+				expectOk(t, err)
-+				defer result.Close()
-+
-+				cancel()
-+				var buf [1]byte
-+				n, err := result.Read(buf[:])
-+				expectErr(t, err, context.Canceled)
-+				if n != 0 {
-+					t.Fatalf("Read returned %d bytes after cancellation", n)
-+				}
-+			})
-+		}
-+	})
-+}
-+
-+func TestObjectLinksShowDeleted(t *testing.T) {
-+	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
-+		js, err := nc.JetStream()
-+		expectOk(t, err)
-+		root, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "ROOT"})
-+		expectOk(t, err)
-+		dir, err := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "DIR"})
-+		expectOk(t, err)
-+
-+		info, err := root.PutString("A", "AAA")
-+		expectOk(t, err)
-+		_, err = root.AddLink("SAME", info)
-+		expectOk(t, err)
-+		info, err = dir.PutString("A", "BBB")
-+		expectOk(t, err)
-+		_, err = root.AddLink("CROSS", info)
-+		expectOk(t, err)
-+		expectOk(t, root.Delete("A"))
-+		expectOk(t, dir.Delete("A"))
-+
-+		for _, name := range []string{"A", "SAME", "CROSS"} {
-+			t.Run(name, func(t *testing.T) {
-+				_, err := root.Get(name)
-+				expectErr(t, err, nats.ErrObjectNotFound)
-+
-+				result, err := root.Get(name, nats.GetObjectShowDeleted())
-+				expectOk(t, err)
-+				defer result.Close()
-+				info, err := result.Info()
-+				expectOk(t, err)
-+				if !info.Deleted {
-+					t.Fatal("Expected the deleted target's metadata")
-+				}
-+				data, err := io.ReadAll(result)
-+				expectOk(t, err)
-+				if len(data) != 0 {
-+					t.Fatalf("Expected an empty deleted object, got %q", data)
-+				}
-+			})
-+		}
-+	})
-+}
-+
- func TestObjectLinks(t *testing.T) {
- 	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
- 		js, err := nc.JetStream(nats.MaxWait(10 * time.Second))
+ fu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2226** (2026-11-04): Treat malformed WS close frames as protocol errors (@wallyqs)
 - **PR #2225** (2026-11-03): [FIXED]  WebSocket frame handling (@piotrpio)
 - **PR #2220** (2026-11-02): [FIXED] Preserve options when following object links (@Grivn)
 - **PR #2219** (2026-10-30): [IMPROVED] Reuse header encoding buffers in PublishMsg (@Grivn)
 - **PR #2218** (2026-10-27): [FIXED] Legacy JetStream reconnect watcher cleanup (@piotrpio)
 - **PR #2217** (2026-10-26): [FIXED] Keep TLS server name for IPs discovered via an IP entry (@igor-kupczynski)
-- **PR #2216** (2026-10-26): [FIXED] Release the JetStream reconnect watcher after publisher cleanup (@Grivn)
 
 ---
 
@@ -1986,13 +1819,13 @@ Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED]  WebSocket frame handling (#2225)
+## X. [FIXED] Treat malformed WS close frames as protocol errors (#2226)
 
 **RULE**:
 When implementing operations in `ws.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14318705`: [FIXED]  WebSocket frame handling (#2225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1774d10`: [FIXED] Treat malformed WS close frames as protocol errors (#2226). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ws.go`.
@@ -2000,38 +1833,39 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Read and ReadByte rely on no buffer being empty.
-	if len(b) > 0 {
-		d.bufs = append(d.bufs, b)
-	}
-	var statusAndPayloadLen int
-	// 1005 stands for a close frame without status and must not be sent.
-	if status != wsCloseStatusNoStatusReceived {
-		statusAndPayloadLen = 2 + len(payload)
-	}
-	if statusAndPayloadLen > 0 {
-		// Set the status
-		binary.BigEndian.PutUint16(frame[n:], uint16(status))
-		// If there is a payload, copy
-		// Mask status + payload
-		wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
-		// The payload points into the read buffer, which is reused before
-		// the frame is sent if the writer is buffering.
-		payload = bytes.Clone(payload)
+	wsCloseStatusProtocolError      = 1002
+	wsCloseStatusTLSHandshake       = 1015
+			// Frames are only copied out of the read buffer when
+			// compression was negotiated, so a compressed frame received
+			// without it would corrupt the data of the frames around it.
+			if compressed && !r.compress {
+				return 0, r.protocolError("compressed frame received without negotiated permessage-deflate")
+			}
+		if lp == 1 {
+			return pos, r.protocolError("close frame payload cannot be 1 byte")
+		}
+			if !wsIsValidCloseStatus(status) {
+				return pos, r.protocolError(fmt.Sprintf("invalid close status code %v", status))
+			}
+// protocolError replies with a close frame carrying status 1002 and the
+// given message, and returns that message as the error that ends the read.
+func (r *websocketReader) protocolError(message string) error {
+	r.nc.wsEnqueueCloseMsg(r.nl, wsCloseStatusProtocolError, message)
+	return errors.New(message)
+}
+
+// wsIsValidCloseStatus reports whether a close status code may be sent by an
+// endpoint. See https://tools.ietf.org/html/rfc6455#section-7.4
+func wsIsValidCloseStatus(code int) bool {
+	switch code {
+	case wsCloseStatusNoStatusReceived, 1004, wsCloseStatusAbnormalClo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	d.bufs = append(d.bufs, b)
-	statusAndPayloadLen := 2 + len(payload)
-	// Set the status
-	binary.BigEndian.PutUint16(frame[n:], uint16(status))
-	// If there is a payload, copy
-	if len(payload) > 0 {
-	// Mask status + payload
-	wsMaskBuf(key, frame[n:n+statusAndPayloadLen])
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14318705` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1774d10` are properly handled with clean fallback behavior.

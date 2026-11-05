@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `035356d9`  
+> **Source Version**: `3d54f0c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:36:52.471Z  
+> **Timestamp**: 2026-11-05T01:33:31.382Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:36:52.201Z  
+> **Harvest Timestamp**: 2026-11-05T01:33:31.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32031** (2026-11-02): **perf(tae): index logtail append ranges on demand**
-  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## Which issue(s) this PR fixes:  Related to #31374. Addresses the measured append-range scanning regression, while leaving the HNSW resource-admission incident open for matched combined-load validation.  The earlier source-level report is in [#31350](https://github.com/matrixorigin/matrixone/issues/31350#issuecomment-6486498238).  ## What this PR does / why we need it:  Incremental logtail collection currently scans all retained AppendNodes to find transactions to wait for, construct the physical selection, and build commit/abort vectors. Small intervals therefore become expensive as an object's history grows, and visits to older objects with unknown append bounds amplify that work.  Keep physical rows authoritative and admit a reader-owned timestamp index for repeated large-history reads with stable history or small changes. Completed nodes have immutable timestamp keys; unfinished nodes retain the transaction prepare-window check. Commit/rollback only record membership changes after index activation, with no change to PrepareCommit or the AppendNode layout. Readers build and refresh the index, then emit selection and commit/abort vectors in physical row order.  Use the physical scan for small histories, dense intervals and large completion batches. This avoids transferring the read improvement into writer overhead or batched-write regressions. Empty and single-node selections need no pointer scratch; sparse multi-node selecti
+- **Issue #32194** (2026-11-05): **fix(hnsw): a CDC batch keeps the sign of -0 on every architecture**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #32193  ## What this PR does / why we need it:  An HNSW CDC batch (`VectorIndexCdc`) lost the sign of a `-0` vector element. sonic writes `-0` as `0` on arm64, and reads `-0` as `0` on every architecture, which float64 batches still went through. A synced vector holding `-0` was stored as `+0`.  Float32 and float64 batches are now encoded and decoded with `encoding/json`, as float32 decoding already was. Integer element types keep sonic.  Validation: - `TestVectorIndexCdcFloat32RoundTrip` passes on darwin/arm64, where it failed on main (`entry 0 value 7 (-0)`). - The same test now checks a float64 `-0` too; that check fails without the fix on every architecture, because sonic decodes `-0` as `0`. - `pkg/vectorindex` and `pkg/iscp` pass; lint is clean.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #32022** (2026-11-02): **fix(disttae): release subscription state locks before diagnostics**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [x] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32021  ## What this PR does / why we need it:  A slow subscription diagnostic sink holds the cross-table subscription state lock and stalls unrelated subscribed-table reads. Move the state owner's response, explicit-unsubscribe and GC-rollback diagnostics after lock release, carrying immutable scalar fields. Remove the common send-success diagnostic, nested cleanup Debug log and mutable subscription-map dump. State transitions, transport sends and cleanup retain their original synchronization and failure semantics.  The removed send-success event is an intentional observability tradeoff: final subscription success remains logged, but it is not a one-to-one replacement for every successful send. Retained transition logs describe the committed event and may appear after a later concurrent transition.  Validation on Go 1.27.1 / macOS arm64:  - Same deterministic reporter-backpressure regressions on clean main: 13 lock-retention failures and eight passing error/cancellation controls. All 21 scenarios pass after the fix, including a real unrelated-table partition lookup while diagnostics remain blocked, Debug cleanup, retained scalar fields, and actual-only GC rollback logging. - Complete owning package on the published head: 629 test roots and 829 subcases passed in normal and race modes, wit
+- **Issue #32191** (2026-11-04): **fix(hashbuild): bound collected runtime-filter keys**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [x] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #30125.  ## What this PR does / why we need it:  HashBuild currently collects runtime-filter keys into one growing vector per key component. These vectors span the entire build and can reach the single-allocation ceiling independently of retained join batches.  Collect keys in aligned batches of at most 8,192 rows, splitting earlier at actual payload and encoding byte limits. Preserve component slots and leave uniqueness decisions to the hash table. Admit chunk-directory storage before allocation and restore the previous tail after an append failure. Join rollback failures with the original error, finish remaining cleanup, and discard invalid collections rather than retrying or publishing partially restored keys.  Preserve the ordinary IN wire format and single-chunk fast path. Encode fixed-width runs directly into the final admitted buffer and sort there. For variable-width runs, bulk-copy each area once and merge/rebase the sorted descriptors, preserving shared values without a whole-build temporary vector or per-key payload copies. Evaluate composite-key expressions per aligned batch with reusable executors.  Publish membership keys as one complete, immutable, reference-counted chunked payload. Retain ownership through compiler receipt and lazy-reader lifetimes, and consume all chu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,12 +2370,12 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `650a4bb3` (2026-11-02)
-**Commit Message**: fix(function): clamp temporal casts to DECIMAL on overflow (#31999)
+### Incident Patch 1: `948cfbc1` (2026-11-04)
+**Commit Message**: fix(vector): return append rollback failures instead of panicking (#32167)
 
 ## What type of PR is this?
 
-- [ ] API-change
+- [x] API-change
 - [x] BUG
 - [ ] Improvement
 - [ ] Documentation
@@ -2385,1268 +2385,20 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31930
+Related to issue #32143. This contains allocation-error handling; it does not make oversized allocations succeed.
 
 ## What this PR does / why we need it:
 
-Clamp explicit DATE, DATETIME, TIME, and TIMESTAMP casts to the signed
-DECIMAL64/128 target bounds instead of failing on insufficient
-precision. Reuse the existing numeric CAST range handling,
-NULL/selection handling, and DATETIME arithmetic fast path.
+An allocation refusal must remain a returned query error, even when append cleanup cannot restore its checkpoint. RollbackAppend currently panics on invalid checkpoint bounds or missing restoration metadata, which can replace the original allocation error during failure cleanup.
 
-Quantize TIME at the final target scale before checking precision,
-avoiding premature intermediate overflow and missed final overflow.
-Preserve normal parser errors in the underlying TIME helpers rather than
-wrapping them as internal errors. Implicit and strict assignment
-conversions retain their existing range rejection.
+Make RollbackAppend return a terminal allocation-invariant error instead of panicking. Validate restoration bounds and attempted-row arithmetic before mutation, and retain owned capacity for eventual Free. Preserve the original error object unchanged when rollback succeeds; retain both causes when rollback fails so invariant failures cannot be treated as retryable memory pressure.
 
-Add UT coverage for positive/negative overflow, rounding boundaries,
-scale changes, NULLs, skipped rows, session time zones, and non-explicit
-mode controls. Add a focused SQL regression for constant and column
-inputs, including DECIMAL128 and result metadata. Broader warning
-text/count compatibility is outside th
+Update every production rollback caller to propagate the result, including retained join batches, MergeTop, Order, mult
 
-**File**: `pkg/container/types/time.go` (modified, +2/-14)
+**File**: `pkg/container/vector/rollback_error_test.go` (added, +79/-0)
 ```diff
-@@ -426,23 +426,11 @@ func (t Time) TruncateToScaleWithoutRounding(scale int32) Time {
- }
- 
- func (t Time) ToDecimal64(ctx context.Context, width, scale int32) (Decimal64, error) {
--	tToStr := t.NumericString(scale)
--	ret, err := ParseDecimal64(tToStr, width, scale)
--	if err != nil {
--		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
--	}
--
--	return ret, nil
-+	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
- }
- 
- func (t Time) ToDecimal128(ctx context.Context, width, scale int32) (Decimal128, error) {
--	tToStr := t.NumericString(scale)
--	ret, err := ParseDecimal128(tToStr, width, scale)
--	if err != nil {
--		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
--	}
--
--	return ret, nil
-+	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
- }
- 
- func TimeFromClock(isNegative bool, hour uint64, minute, sec uint8, msec uint32) Time {
-```
-
-**File**: `pkg/container/types/time_test.go` (modified, +27/-0)
-```diff
-@@ -22,6 +22,33 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestTimeToDecimalPreservesRangeError(t *testing.T) {
-+	for _, negative := range []bool{false, true} {
-+		value := TimeFromClock(negative, 12, 34, 56, 123456)
-+		for _, target := range []struct{ width, scale int32 }{{5, 1}, {8, 6}, {18, 6}} {
-+			text := value.NumericString(target.scale)
-+			want64, wantErr64 := ParseDecimal64(text, target.width, target.scale)
-+			got64, err64 := value.ToDecimal64(context.Background(), target.width, target.scale)
-+			want128, wantErr128 := ParseDecimal128(text, target.width, target.scale)
-+			got128, err128 := value.ToDecimal128(context.Background(), target.width, target.scale)
-+			if wantErr64 != nil {
-+				require.EqualError(t, err64, wantErr64.Error())
-+				require.False(t, moerr.IsMoErrCode(err64, moerr.ErrInternal))
-+			} else {
-+				require.NoError(t, err64)
-+				require.Equal(t, want64, got64)
-+			}
-+			if wantErr128 != nil {
-+				require.EqualError(t, err128, wantErr128.Error())
-+				require.False(t, moerr.IsMoErrCode(err128, moerr.ErrInternal))
-+			} else {
-+				require.NoError(t, err128)
-+				require.Equal(t, want128, got128)
-+			}
-+		}
-+	}
-+}
-+
- func TestTime_StringAndString2(t *testing.T) {
- 	testCases := []struct {
- 		name       string
-```
-
-**File**: `pkg/sql/plan/function/func_cast.go` (modified, +36/-2)
-```diff
-@@ -192,10 +192,41 @@ func numericToDecimalExplicit[S, D types.FixedSizeTExceptStrType](
- func explicitNumericToDecimalTarget[D types.FixedSizeTExceptStrType](
- 	from *vector.Vector, to *vector.FunctionResult[D], length int, proc *process.Process, selectList *FunctionSelectList,
- 	parseString func(string) (D, error), fromFloat func(float64) (D, error),
--	clamp func(bool) (D, error),
-+	fromDatetime func(types.Datetime) (D, error), clamp func(bool) (D, error),
- ) (bool, error) {
-+	// Temporal DECIMAL256 casts are not part of the supported cast overloads.
-+	if fromDatetime == nil {
-+		switch from.GetType().Oid {
-+		case types.T_date, types.T_datetime, types.T_timestamp, types.T_time:
-+			return false, nil
-+		}
-+	}
- 	finite := func(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
- 	switch from.GetType().Oid {
-+	case types.T_date:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Date](from), to, length, proc, selectList,
-+			func(value types.Date) (D, error) { return parseString(strconv.FormatInt(packedDateInt64(value), 10)) },
-+			func(types.Date) bool { return false }, nil, clamp)
-+	case types.T_datetime:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Datetime](from), to, length, proc, selectList,
-+			fromDatetime, func(types.Datetime) bool { return false }, nil, clamp)
-+	case types.T_timestamp:
-+		zone := time.Local
-+		if proc != nil && proc.GetSessionInfo().TimeZone != nil {
-+			zone = proc.GetSessionInfo().TimeZone
-+		}
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Timestamp](from), to, length, proc, selectList,
-+			func(value types.Timestamp) (D, error) { return fromDatetime(value.ToDatetime(zone)) },
-+			func(types.Timestamp) bool { return false }, nil, clamp)
-+	case types.T_time:
-+		return true, numericToDecimalExplicit(
-+			vector.GenerateFunctionFixedTypeParameter[types.Time](from), to, length, proc, selectList,
-+			// Quantize once at the final scale, before checking the target width.
-+			func(value types.Time) (D, error) { return parseString(value.NumericString(6)) },
-+			func(value types.Time) bool { return value < 0 }, nil, clamp)
- 	case types.T_bool:
- 		// TRUE is exactly 1 and FALSE exactly 0, so the explicit cast reuses
- 		// the integer parse path, including the out-of-range clamp that
-@@ -300,6 +331,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			func(value types.Datetime) (types.Decimal64, error) { return packedDatetimeDecimal64(value, toType) },
- 			func(negative bool) (types.Decimal64, error) {
- 				return clampDecimal64Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -317,6 +349,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			func(value types.Datetime) (types.Decimal128, error) { return packedDatetimeDecimal128(value, toType) },
- 			func(negative bool) (types.Decimal128, error) {
- 				return clampDecimal128Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -334,6 +367,7 @@ func explicitNumericToDecimal(
- 				}
- 				return result, err
- 			},
-+			nil,
- 			func(negative bool) (types.Decimal256, error) {
- 				return clampDecimal256Value(negative, toType.Width, toType.Scale)
- 			})
-@@ -1202,7 +1236,7 @@ func newCastWithoutMediumIntBounds(parameters []*vector.Vector, result vector.Fu
- 			return decimalToUnsignedAssignment(proc.Ctx, vector.GenerateFunctionFixedTypeParameter[types.Decimal256](from), toType.Oid, result, length, selectList, decimal256RoundedIntegerString)
- 		}
- 	}
--	if mode == castModeExplicit && toType.IsDecimal() && (fromType.IsNumeric() || fromType.Oid == types.T_bool) {
-+	if mode == castModeExplicit && toType.IsDecimal() {
- 		if handled, err := explicitNumericToDecimal(from, *toType, result, length, proc, selectList); handled {
- 			return err
- 		}
-```
-
-**File**: `pkg/sql/plan/function/func_cast_temporal_numeric_test.go` (modified, +92/-0)
-```diff
-@@ -26,6 +26,98 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestExplicitCastTemporalDecimalRange(t *testing.T) {
-+	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
-+		for _, tc := range []struct {
-+			name   string
-+			source types.T
-+			input  string
-+			width  int32
-+			scale  int32
-+			want   string
-+		}{
-+			{"date overflow", types.T_date, "2024-01-02", 6, 2, "9999.99"},
-+			{"datetime overflow", types.T_datetime, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
-+			{"timestamp overflow", types.T_timestamp, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
-+			{"time overflow", types.T_time, "12:34:56", 5, 1, "9999.9"},
-+			{"negative time overflow", types.T_time, "-12:34:56", 5, 1, "-9999.9"},
-+			{"time final scale overflow", types.T_time, "12:34:56", 6, 2, "9999.99"},
-+			{"time source scale fits final scale", types.T_time, "12:34:56.123456", 8, 2, "123456.12"},
-+			{"time rounding overflow", types.T_time, "00:00:09.999999", 3, 2, "9.99"},
-+			{"negative time rounding overflow", types.T_time, "-00:00:09.999999", 3, 2, "-9.99"},
-+			{"time exact boundary", types.T_time, "00:00:09.990000", 3, 2, "9.99"},
-+			{"time rounding control", types.T_time, "00:00:09.994999", 3, 2, "9.99"},
-+			{"time zero integral width", types.T_time, "-00:00:01", 2, 2, "-0.99"},
-+			{"time wide target", types.T_time, "-12:34:56.123456", 18, 6, "-123456.123456"},
-+			{"date wide target", types.T_date, "2024-01-02", 10, 2, "20240102.00"},
-+			{"datetime wide target", types.T_datetime, "2024-01-02 03:04:05.123456", 18, 4, "20240102030405.1235"},
-+			{"timestamp session zone", types.T_timestamp, "2024-01-02 03:04:05.123456", 18, 4, "20240102110405.1235"},
-+			{"zero time", types.T_time, "00:00:00", 1, 1, "0.0"},
-+		} {
-+			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
-+				proc := testutil.NewProcess(t)
-+				proc.GetSessionInfo().TimeZone = time.FixedZone("UTC+8", 8*60*60)
-+				nulls := []bool{false, true, false}
-+				var input FunctionTestInput
-+				switch tc.source {
-+				case types.T_date:
-+					v, err := types.ParseDateCast(tc.input)
-+					require.NoError(t, err)
-+					input = NewFunctionTestInput(tc.source.ToType(), []types.Date{v, v, v}, nulls)
-+				case types.T_datetime, types.T_timestamp:
-+					v, err := types.ParseDatetime(tc.input, 6)
-+					require.NoError(t, err)
-+					if tc.source == types.T_timestamp {
-+						ts := v.ToTimestamp(time.UTC)
-+						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Timestamp{ts, ts, ts}, nulls)
-+					} else {
-+						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Datetime{v, v, v}, nulls)
-+					}
-+				case types.T_time:
-+					v, err := types.ParseTime(tc.input, 6)
-+					require.NoError(t, err)
-+					input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Time{v, v, v}, nulls)
-+				}
-+				target := types.New(oid, tc.width, tc.scale)
-+				fc := NewFunctionTestCase(proc, []FunctionTestInput{input, NewFunctionTestInput(target, emptyCastTargetValues(target), nil)},
-+					NewFunctionTestResult(target, false, nil, nil), NewExplicitCast).
-+					WithSelectList(&FunctionSelectList{AnyNull: true, SelectList: []bool{true, true, false}})
-+				t.Cleanup(fc.Free)
-+				got, err := fc.DebugRun()
-+				require.NoError(t, err)
-+				require.Equal(t, tc.want, explicitCastDecimalTestValue(got, 0))
-+				require.True(t, got.IsNull(1))
-+				require.True(t, got.IsNull(2), "unselected temporal operands must not be evaluated")
-+			})
-+		}
-+	}
-+}
-+
-+func TestTemporalDecimalOverflowModes(t *testing.T) {
-+	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
-+		for _, tc := range []struct {
-+			name string
-+			fn   executeLogicOfOverload
-+		}{
-+			{"implicit", NewCast},
-+			{"assignment", NewAssignCast},
-+			{"strict", NewStrictCast},
-+		} {
-+			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
-+				proc := testutil.NewProcess(t)
-+				target := types.New(oid, 6, 2)
-+				fc := NewFunctionTestCase(proc, []FunctionTestInput{
-+					NewFunctionTestInput(types.T_date.ToType(), []types.Date{types.DateFromCalendar(2024, 1, 2)}, nil),
-+					NewFunctionTestInput(target, emptyCastTargetValues(target), nil),
-+				}, NewFunctionTestResult(target, true, nil, nil), tc.fn)
-+				t.Cleanup(fc.Free)
-+				_, err := fc.DebugRun()
-+				require.Error(t, err, "only explicit CAST may clamp a temporal range overflow")
-+			})
-+		}
-+	}
-+}
-+
- func TestPackedDatetimeDecimal128MatchesParser(t *testing.T) {
- 	// Keep the old text conversion as an independent oracle for width, scale,
- 	// rounding, overflow, zero values, and the exact public error text.
-```
-
-**File**: `test/distributed/cases/dtype/TimeToInt.result` (modified, +32/-8)
-```diff
-@@ -16,7 +16,10 @@ null
- select cast(col1 as int) from test01;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,10)) from test01;
--invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,10).
-+➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
-+9999999999.9999999999  𝄀
-+9999999999.9999999999  𝄀
-+null
- drop table test01;
- drop table if exists test01;
- create table test01(col1 datetime(3));
-@@ -31,7 +34,10 @@ null
- select cast(col1 as int) from test01;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,10)) from test01;
--invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,10).
-+➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
-+9999999999.9999999999  𝄀
-+9999999999.9999999999  𝄀
-+null
- drop table test01;
- drop table if exists test02;
- create table test02(col1 date);
-@@ -77,7 +83,10 @@ insert into test06 values(NULL);
- insert into test05 select * from test06;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,18)) from test06;
--invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- insert into test07 select * from test06;
- select * from test05;
- ➤ col1[4,32,0]
-@@ -101,7 +110,10 @@ insert into test06 values(NULL);
- insert into test05 select * from test06;
- Data truncation: data out of range: data type int32, value '20200113122059'
- select cast(col1 as decimal(20,18)) from test06;
--invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- insert into test07 select * from test06;
- select * from test05;
- ➤ col1[4,32,0]
-@@ -394,7 +406,10 @@ null
- select cast(col1 as int) from test03;
- Data truncation: data out of range: data type int32, value '19970113122100'
- select cast(col1 as decimal(20,18)) from test03;
--invalid input: 19970113122100.000000 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- drop table test03;
- drop table if exists test03;
- create table test03(col1 timestamp(5));
-@@ -409,7 +424,10 @@ null
- select cast(col1 as int) from test03;
- Data truncation: data out of range: data type int32, value '19970113122059'
- select cast(col1 as decimal(20,18)) from test03;
--invalid input: 19970113122059.898610 beyond the range, can't be converted to Decimal128(20,18).
-+➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
-+99.999999999999999999  𝄀
-+99.999999999999999999  𝄀
-+null
- drop table test03;
- drop table if exists test09;
- drop table if exists test10;
-@@ -423,7 +441,10 @@ insert into test10 values(NULL);
- insert into test09 select * from test10;
- Data truncation: data out of range: data type int32, value '20221213122059'
- select cast(col1 as decimal(10,5)) from test10;
--invalid input: 20221213122059.000000 beyond the range, can't be converted to Decimal64(10,5).
-+➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
-+99999.99999  𝄀
-+99999.99999  𝄀
-+null
- insert into test11 select * from test10;
- select * from test09;
- ➤ col1[4,32,0]
-@@ -446,7 +467,10 @@ insert into test10 values(NULL);
- insert into test09 select * from test10;
- Data truncation: data out of range: data type int32, value '20221213122059'
- select cast(col1 as decimal(10,5)) from test10;
--invalid input: 20221213122059.213213 beyond the range, can't be converted to Decimal64(10,5).
-+➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
-+99999.99999  𝄀
-+99999.99999  𝄀
-+null
- insert into test11 select * from test10;
- select * from test09;
- ➤ col1[4,32,0]
-```
-
-**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.result` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
-+cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
-+cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
-+➤ datetime_clamped[3,12,2]  ¦  date_clamped[3,6,2]  ¦  time_clamped[3,5,1]  𝄀
-+9999999999.99  ¦  9999.99  ¦  9999.9
-+select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
-+cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
-+cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
-+➤ negative_time_clamped[3,5,1]  ¦  time_final_scale_clamped[3,6,2]  ¦  time_final_scale_fits[3,8,2]  𝄀
-+-9999.9  ¦  9999.99  ¦  123456.12
-+select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
-+cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
-+cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
-+➤ rounded_time_clamped[3,3,2]  ¦  rounded_negative_time_clamped[3,3,2]  ¦  time_boundary[3,3,2]  𝄀
-+9.99  ¦  -9.99  ¦  9.99
-+select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
-+cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
-+➤ datetime_wide[3,20,2]  ¦  negative_time_wide[3,20,6]  𝄀
-+20240102030405.12  ¦  -123456.123456
-+set @temporal_decimal_saved_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+drop table if exists temporal_decimal_cast_range_t;
-+create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
-+insert into temporal_decimal_cast_range_t values
-+(1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
-+(2, null, null, null, null);
-+select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
-+cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
-+from temporal_decimal_cast_range_t order by id;
-+➤ id[4,32,0]  ¦  d64[3,6,2]  ¦  dt64[3,12,2]  ¦  tm64[3,5,1]  ¦  ts64[3,12,2]  𝄀
-+1  ¦  9999.99  ¦  9999999999.99  ¦  -9999.9  ¦  9999999999.99  𝄀
-+2  ¦  null  ¦  null  ¦  null  ¦  null
-+select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
-+cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
-+from temporal_decimal_cast_range_t order by id;
-+➤ id[4,32,0]  ¦  d128[3,20,16]  ¦  dt128[3,20,16]  ¦  tm128[3,20,16]  ¦  ts128[3,20,16]  𝄀
-+1  ¦  9999.9999999999999999  ¦  9999.9999999999999999  ¦  -9999.9999999999999999  ¦  9999.9999999999999999  𝄀
-+2  ¦  null  ¦  null  ¦  null  ¦  null
-+set time_zone = '+08:00';
-+select cast(ts as decimal(20,6)) as timestamp_session_zone
-+from temporal_decimal_cast_range_t where id = 1;
-+➤ timestamp_session_zone[3,20,6]  𝄀
-+20240102110405.123456
-+drop table temporal_decimal_cast_range_t;
-+set time_zone = @temporal_decimal_saved_time_zone;
-```
-
-**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.test` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+-- @bvt:parallel
-+
-+-- Constant temporal casts clamp at the final DECIMAL precision and scale.
-+select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
-+       cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
-+       cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
-+select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
-+       cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
-+       cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
-+select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
-+       cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
-+       cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
-+select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
-+       cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
-+
-+-- Column inputs exercise both DECIMAL64 and DECIMAL128, including NULLs.
-+set @temporal_decimal_saved_time_zone = @@session.time_zone;
-+set time_zone = '+00:00';
-+drop table if exists temporal_decimal_cast_range_t;
-+create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
-+insert into temporal_decimal_cast_range_t values
-+    (1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
-+    (2, null, null, null, null);
-+select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
-+       cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
-+from temporal_decimal_cast_range_t order by id;
-+select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
-+       cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
-+from temporal_decimal_cast_range_t order by id;
-+set time_zone = '+08:00';
-+select cast(ts as decimal(20,6)) as timestamp_session_zone
-+from temporal_decimal_cast_range_t where id = 1;
-+drop table temporal_decimal_cast_range_t;
-+set time_zone = @temporal_decimal_saved_time_zone;
-```
-
-**File**: `test/distributed/cases/function/func_cast.result` (modified, +2/-1)
-```diff
-@@ -722,7 +722,8 @@ set time_zone="+00:00";
- create table t1(s1 timestamp);
- insert into t1 values ('2020-12-03 11:11:11');
- select cast(s1 as decimal(7,2)) from t1;
--invalid input: 20201203111111.000000 beyond the range, can't be converted to Decimal64(7,2).
-+➤ cast(s1 as decimal(7, 2))[3,7,2]  𝄀
-+99999.99
- drop table t1;
- set time_zone="+00:00";
- create table ts_cast_time(id int primary key, event_ts timestamp(6));
-```
-
----
-
-### Incident Patch 2: `b4d1a674` (2026-11-02)
-**Commit Message**: fix(disttae): release subscription state locks before diagnostics (#32022)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [x] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32021
-
-## What this PR does / why we need it:
-
-A slow subscription diagnostic sink holds the cross-table subscription
-state lock and stalls unrelated subscribed-table reads. Move the state
-owner's response, explicit-unsubscribe and GC-rollback diagnostics after
-lock release, carrying immutable scalar fields. Remove the common
-send-success diagnostic, nested cleanup Debug log and mutable
-subscription-map dump. State transitions, transport sends and cleanup
-retain their original synchronization and failure semantics.
-
-The removed send-success event is an intentional observability tradeoff:
-final subscription success remains logged, but it is not a one-to-one
-replacement for every successful send. Retained transition logs describe
-the committed event and may appear after a later concurrent transition.
-
-Validation on Go 1.27.1 / macOS arm64:
-
-- Same deterministic reporter-backpressure regressions on clean main: 13
-lock-rete
-
-**File**: `pkg/vm/engine/disttae/engine.go` (modified, +0/-1)
-```diff
-@@ -1388,7 +1388,6 @@ func (e *Engine) cleanMemoryTableWithTable(dbId, tblId uint64) {
- 	// deadlock: cleanMemoryTableWithTable holds Engine.mu→GlobalStats.mu,
- 	// while GlobalStats.Get holds GlobalStats.mu→Engine.mu (via GetOrCreateLatestPart).
- 	e.globalStats.RemoveTid(tblId)
--	logutil.Debugf("clean memory table of tbl[dbId: %d, tblId: %d]", dbId, tblId)
- }
- 
- func (e *Engine) PushClient() *PushClient {
-```
-
-**File**: `pkg/vm/engine/disttae/logtail_consumer.go` (modified, +62/-54)
-```diff
-@@ -766,11 +766,6 @@ func (c *PushClient) subscribeTable(
- 		if err != nil {
- 			return err
- 		}
--		logutil.Info(
--			fmt.Sprintf("%s-send-subscribe-ok", logTag),
--			zap.Uint64("table-id", tblId.TbId),
--			zap.Uint64("db-id", tblId.DbId),
--		)
- 		return nil
- 	}
- }
-@@ -1309,24 +1304,25 @@ func (c *PushClient) UnsubscribeTable(ctx context.Context, accId, dbID, tbID uin
- 	if ifShouldNotDistribute(dbID, tbID) {
- 		return moerr.NewInternalErrorf(ctx, "%s cannot unsubscribe table %d-%d as table ID is not allowed", logTag, dbID, tbID)
- 	}
--	c.subscribed.rw.Lock()
--	defer c.subscribed.rw.Unlock()
--	k := tbID
--	ent, ok := c.subscribed.m[k]
--	if !ok || ent.state != Subscribed {
-+	attempted, err := func() (bool, error) {
-+		c.subscribed.rw.Lock()
-+		defer c.subscribed.rw.Unlock()
-+		ent, ok := c.subscribed.m[tbID]
-+		if !ok || ent.state != Subscribed {
-+			return false, nil
-+		}
-+		dbID = ent.dbID
-+		ent.state = Unsubscribing
-+		return true, c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID})
-+	}()
-+	if !attempted {
- 		logutil.Infof("%s table %d-%d is not subscribed yet", logTag, dbID, tbID)
--		return nil
--	}
--
--	dbID = ent.dbID
--	ent.state = Unsubscribing
--
--	if err := c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID}); err != nil {
-+	} else if err != nil {
- 		logutil.Errorf("%s cannot unsubscribe table %d-%d, err: %v", logTag, dbID, tbID, err)
--		return err
-+	} else {
-+		logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
- 	}
--	logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
--	return nil
-+	return err
- }
- 
- func (c *PushClient) doGCUnusedTable(ctx context.Context) {
-@@ -1398,18 +1394,22 @@ func (c *PushClient) doGCUnusedTable(ctx context.Context) {
- 	// retried after one GC cycle (20 min) instead of waiting full unsubscribeTimer (1 hour)
- 	if len(failedJobs) > 0 {
- 		backoffTs := time.Now().Add(-unsubscribeTimer + unsubscribeProcessTicker).UnixNano()
-+		rolledBack := failedJobs[:0]
- 		c.subscribed.rw.Lock()
- 		for _, job := range failedJobs {
- 			if ent, ok := c.subscribed.m[job.tId]; ok && ent.state == Unsubscribing {
- 				ent.state = Subscribed
- 				ent.lastTs.Store(backoffTs)
--				logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
--					logTag,
--					job.dbID,
--					job.tId)
-+				rolledBack = append(rolledBack, job)
- 			}
- 		}
- 		c.subscribed.rw.Unlock()
-+		for _, job := range rolledBack {
-+			logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
-+				logTag,
-+				job.dbID,
-+				job.tId)
-+		}
- 	}
- }
- 
-@@ -1957,14 +1957,16 @@ func (c *PushClient) Close() error {
- }
- 
- func (s *subscribedTable) setTableSubNotExist(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: SubRspTableNotExist,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: SubRspTableNotExist,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+	}()
- 	logutil.Error(
- 		"logtail.consumer.set.table.sub.not.exist",
- 		zap.Uint64("db-id", dbId),
-@@ -1979,14 +1981,16 @@ func (s *subscribedTable) clearTable(dbId, tblId uint64) {
- }
- 
- func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: Subscribed,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: Subscribed,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.subscribed",
- 		zap.Uint64("db-id", dbId),
-@@ -1995,28 +1999,32 @@ func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
- }
- 
- func (s *subscribedTable) setTableSubRspReceived(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	ent := &subEntry{
--		dbID:  dbId,
--		state: SubRspReceived,
--	}
--	ent.lastTs.Store(time.Now().UnixNano())
--	s.m[tblId] = ent
-+	service := func() string {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		ent := &subEntry{
-+			dbID:  dbId,
-+			state: SubRspReceived,
-+		}
-+		ent.lastTs.Store(time.Now().UnixNano())
-+		s.m[tblId] = ent
-+		return s.eng.service
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.sub.rsp.received",
--		zap.String("service", s.eng.service),
-+		zap.String("service", service),
- 		zap.Uint64("db-id", dbId),
- 		zap.Uint64("tbl-id", tblId),
--		zap.Any("subscribed-table", s),
- 	)
- }
- 
- func (s *subscribedTable) setTableUnsubscribe(dbId, tblId uint64) {
--	s.rw.Lock()
--	defer s.rw.Unlock()
--	s.eng.cleanMemoryTableWithTable(dbId, tblId)
--	delete(s.m, tblId)
-+	func() {
-+		s.rw.Lock()
-+		defer s.rw.Unlock()
-+		s.eng.cleanMemoryTableWithTable(dbId, tblId)
-+		delete(s.m, tblId)
-+	}()
- 	logutil.Info(
- 		"logtail.consumer.set.table.unsubscribe",
- 		zap.Uint64("db-id", dbId)
-```
-
-**File**: `pkg/vm/engine/disttae/subscription_diagnostics_test.go` (added, +415/-0)
-```diff
-@@ -0,0 +1,415 @@
+@@ -0,0 +1,79 @@
 +// Copyright 2026 Matrix Origin
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+// http://www.apache.org/licenses/LICENSE-2.0
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package disttae
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"strings"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/logutil"
-+	"github.com/matrixorigin/matrixone/pkg/pb/api"
-+	"github.com/matrixorigin/matrixone/pkg/pb/statsinfo"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae/logtailreplay"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/buffer"
-+	"go.uber.org/zap/zapcore"
-+)
-+
-+const diagnosticDB, diagnosticCold, diagnosticWarm = uint64(1000), uint64(100), uint64(200)
-+
-+func subscriptionDiagnosticsFixture(t *testing.T) *PushClient {
-+	t.Helper()
-+	e := &Engine{service: "subscription-diagnostics", partitions: make(map[[2]uint64]*logtailreplay.Partition), globalStats: &GlobalStats{}}
-+	c := &PushClient{eng: e, subscriber: newLogTailSubscriber()}
-+	c.subscriber.setReady()
-+	c.receivedLogTailTime.ready.Store(true)
-+	c.subscribed.eng = e
-+	c.subscribed.m = map[uint64]*subEntry{diagnosticWarm: {dbID: diagnosticDB, state: Subscribed}}
-+	c.subscribed.m[diagnosticWarm].lastTs.Store(time.Now().UnixNano())
-+	e.GetOrCreateLatestPart(t.Context(), 0, diagnosticDB, diagnosticWarm)
-+	return c
-+}
-+
-+type subscriptionDiagnosticEvent struct {
-+	entry  zapcore.Entry
-+	fields []zapcore.Field
-+}
-+
-+func (e subscriptionDiagnosticEvent) table(dbID, tableID uint64) bool {
-+	var db, table uint64
-+	var hasDB, hasTable bool
-+	for _, field := range e.fields {
-+		switch field.Key {
-+		case "db-id":
-+			db, hasDB = uint64(field.Integer), true
-+		case "table-id", "tbl-id":
-+			table, hasTable = uint64(field.Integer), true
-+		}
-+	}
-+	if hasDB || hasTable {
-+		return hasDB && hasTable && db == dbID && table == tableID
-+	}
-+	for _, target := range []string{
-+		fmt.Sprintf("%d-%d", dbID, tableID),
-+		fmt.Sprintf("[db: %d, tbl: %d]", dbID, tableID),
-+		fmt.Sprintf("[dbId: %d, tblId: %d]", dbID, tableID),
-+	} {
-+		if strings.Contains(e.entry.Message, target) {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// A blocked diagnostic must not retain the subscription lock or stop another
-+// table's real partition lookup. The optional terminal path also checks removal
-+// of the old send-only diagnostic without using a timeout as an absence oracle.
-+func checkSubscriptionDiagnosticBackpressure(t *testing.T, c *PushClient, optional bool,
-+	matches func(subscriptionDiagnosticEvent) bool, action func(context.Context) error,
-+	check func(subscriptionDiagnosticEvent),
-+) ([]subscriptionDiagnosticEvent, error) {
-+	t.Helper()
-+	ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
-+	entered := make(chan subscriptionDiagnosticEvent, 1)
-+	release := make(chan struct{})
-+	var releaseOnce, blockOnce sync.Once
-+	unblock := func() { releaseOnce.Do(func() { close(release) }) }
-+	previous := logutil.GetReportZapFunc()
-+	var probe atomic.Bool
-+	var recordsMu sync.Mutex
-+	var records []subscriptionDiagnosticEvent
-+	logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: func(enc zapcore.Encoder, entry zapcore.Entry, fields []zapcore.Field) (*buffer.Buffer, error) {
-+		if entry.Message == "subscription-diagnostics-probe" {
-+			probe.Store(true)
-+		}
-+		event := subscriptionDiagnosticEvent{entry: entry, fields: fields}
-+		if matches(event) {
-+			event.fields = append([]zapcore.Field(nil), fields...)
-+			recordsMu.Lock()
-+			records = append(records, event)
-+			recordsMu.Unlock()
-+			blockOnce.Do(func() { entered <- event; <-release })
-+		}
-+		return previous(enc, entry, fields)
-+	}})
-+	done := make(chan error, 1)
-+	joined := false
-+	started := false
-+	t.Cleanup(func() {
-+		cancel()
-+		unblock()
-+		if started && !joined {
-+			select {
-+			case <-done:
-+			case <-time.After(5 * time.Second):
-+				t.Error("subscription operation did not terminate")
-+			}
-+		}
-+		logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: previous})
-+	})
-+	logutil.Info("subscription-diagnostics-probe")
-+	require.True(t, probe.Load(), "the real synchronous reporter must be enabled")
-+	started = true
-+	go func() { done <- action(ctx) }()
-+	var result error
-+	select {
-+	case event := <-entered:
-+		unlocked := c.subscribed.rw.TryRLock()
-+		if unlocked {
-+			c.subscribed.rw.RUnlock()
-+		}
-+		require.True(t, unlocked, "diagnostic backpressure retained the cross-table subscription lock")
-+		want := c.eng.partitions[[2]uint64{diagnosticDB, diagnosticWarm}].Snapshot()
-+		part, ok, state, pending := c.isSubscr
-```
-
----
-
-### Incident Patch 3: `ea184ad9` (2026-11-02)
-**Commit Message**: fix: authorize exclusive SELECT lock targets (#31978)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31916
-
-## What this PR does / why we need it:
-
-A SELECT-only user could execute SELECT ... FOR UPDATE, acquire
-exclusive locks, and block writers. Require SELECT plus UPDATE or DELETE
-for each exclusive locking-read target; existing ALL/ownership grants
-also qualify. Ordinary SELECT and shared locking reads retain their
-SELECT-only requirements. MatrixOne does not currently support granting
-LOCK TABLES. See the [MySQL 8.4 locking-read privilege
-contract](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html).
-
-Capture logical lock targets and view paths during binding, preserve
-them across rewrites and prepared execution, and reauthorize rebuilt
-plans before compilation, including CTAS retry sources. Preserve
-inherited roles and DEFINER account boundaries.
-
-For eligible multi-target view checks, reuse the caller role closure and
-one last-definer closure within one authorization transaction at the
-statement's admitted catalog sna
-
-**File**: `pkg/frontend/authenticate.go` (modified, +321/-30)
-```diff
-@@ -2468,6 +2468,8 @@ const (
- 
- // privilegeItem is the item for in the compound entry
- type privilegeItem struct {
-+	// SELECT is checked separately; this item requires a locking-read alternative.
-+	selectLock            bool
- 	privilegeTyp          PrivilegeType
- 	objType               objectType
- 	viewPath              []*plan.ViewStep
-@@ -5673,6 +5675,9 @@ func resolveViewChainPrivilegeContext(
- 	privType PrivilegeType,
- 	viewPath []*plan.ViewStep,
- 	enableCache bool,
-+	selectLock bool,
-+	lockRoles *btree.Set[int64],
-+	definerRoles ...*selectLockDefinerRoles,
- ) (viewPrivilegePrincipal, bool, bool, error) {
- 	accountID, err := defines.GetAccountId(ctx)
- 	if err != nil {
-@@ -5686,7 +5691,7 @@ func resolveViewChainPrivilegeContext(
- 		return caller, false, false, err
- 	}
- 	if isSystemViewDatabase(viewPath[0].DatabaseName) {
--		return caller, true, true, nil
-+		return caller, true, !selectLock, nil
- 	}
- 
- 	principal := caller
-@@ -5703,7 +5708,12 @@ func resolveViewChainPrivilegeContext(
- 			cacheToUse = nil
- 		}
- 		grantCtx := defines.AttachAccountId(ctx, principal.accountID)
--		viewAllowed, err := verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache)
-+		var viewAllowed bool
-+		if lockRoles != nil {
-+			viewAllowed, err = verifySelectLockPrivilegeForRoles(grantCtx, bh, ses, lockRoles, objectTypeView, grantDb, viewName)
-+		} else {
-+			viewAllowed, err = verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache, selectLock)
-+		}
- 		if err != nil {
- 			return principal, false, false, err
- 		}
-@@ -5729,6 +5739,21 @@ func resolveViewChainPrivilegeContext(
- 		}
- 		if viewInfo.securityType == viewSecurityDefiner {
- 			principal = viewPrivilegePrincipal{accountID: snapshot.Tenant.TenantID, roleID: viewInfo.definerRoleId}
-+			if lockRoles != nil {
-+				// The caller owns this temporary set. A definer transition replaces
-+				// the complete role namespace, even when numeric IDs collide.
-+				lockRoles.Clear()
-+				lockRoles.Insert(principal.roleID)
-+				definerCtx := defines.AttachAccountId(ctx, principal.accountID)
-+				if len(definerRoles) > 0 {
-+					err = definerRoles[0].load(definerCtx, bh, principal, lockRoles)
-+				} else {
-+					err = expandRoleSetWithInheritedRoles(definerCtx, bh, lockRoles)
-+				}
-+				if err != nil {
-+					return principal, false, false, err
-+				}
-+			}
- 		}
- 	}
- 
-@@ -7542,6 +7567,11 @@ func extractPrivilegeTipsFromPlan(p *plan2.Plan) (privilegeTipsArray, error) {
- 			})
- 		}
- 	}
-+	lockTips, err := selectLockPrivilegeTips(p.GetQuery())
-+	if err != nil {
-+		return nil, err
-+	}
-+	pts = append(pts, lockTips...)
- 	return appendLogicalViewPrivilegeTips(pts, p.GetQuery())
- }
- 
-@@ -7856,6 +7886,198 @@ func replaceFunctionPreservesNull(fn *plan.Function) bool {
- 	return strings.Contains(fnName, "cast")
- }
- 
-+// privilegeAlternatives keeps a locking read distinct from a data modification.
-+// The SELECT requirement is checked independently of these alternatives.
-+func privilegeAlternatives(typ PrivilegeType, selectLock bool) []PrivilegeType {
-+	if selectLock {
-+		return []PrivilegeType{PrivilegeTypeUpdate, PrivilegeTypeDelete, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
-+	}
-+	return []PrivilegeType{typ, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
-+}
-+
-+// selectLockPrivilegeTips uses binding identities rather than an outer AST or
-+// physical table IDs: nested blocks and different view paths retain their own
-+// requirements even when optimization removes their scan nodes.
-+func selectLockPrivilegeTips(q *plan.Query) (privilegeTipsArray, error) {
-+	if q == nil || len(q.SelectLockReferences) == 0 {
-+		return nil, nil
-+	}
-+	var tips privilegeTipsArray
-+	seen := make(map[string]struct{}, len(q.SelectLockReferences))
-+	for _, reference := range q.SelectLockReferences {
-+		obj := reference.GetObjectRef()
-+		if obj == nil || obj.SchemaName == "" || obj.ObjName == "" {
-+			return nil, moerr.NewInternalErrorNoCtx("invalid SELECT lock authorization target")
-+		}
-+		if err := validateViewPath(reference.ViewPath); err != nil {
-+			return nil, err
-+		}
-+		identity, err := reference.Marshal()
-+		if err != nil {
-+			return nil, err
-+		}
-+		key := string(identity)
-+		if _, exists := seen[key]; exists {
-+			continue
-+		}
-+		seen[key] = struct{}{}
-+		tips = append(tips, privilegeTips{
-+			typ: PrivilegeTypeSelect, objType: objectTypeTable,
-+			databaseName: getDbNameForPrivilege(obj), tableName: obj.ObjName,
-+			objectRef: obj, viewPath: reference.ViewPath,
-+			isClusterTable:        reference.IsClusterTable || isClusterTable(obj.SchemaName, obj.ObjName),
-+			clusterTableOperation: clusterTableSelect,
-+		})
-+	}
-+	return tips, nil
-+}
-+
-+// This check consumes one already-validated, statement-local role closure.
-+// It deliberately bypasses the session cache, which has no account/role key.
-+func verifySelectLockPrivilegeForRoles(ctx context.Context, bh BackgroundExec, ses *Session,
-```
-
-**File**: `pkg/frontend/authenticate2.go` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ var checkPrivilegeInCache = func(ctx context.Context, ses *Session, priv *privil
- 							if yes2 {
- 								//At least there is one success
- 								yes = false
--								for i, typ := range [3]PrivilegeType{mi.privilegeTyp, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership} {
-+								for i, typ := range privilegeAlternatives(mi.privilegeTyp, mi.selectLock) {
- 									if i > 0 && mi.objType != objectTypeTable {
- 										break
- 									}
-```
-
-**File**: `pkg/frontend/authenticate_test.go` (modified, +23/-9)
-```diff
-@@ -7608,6 +7608,7 @@ func addTablePrivilegeResultsForRole(
- 	privTypes := []PrivilegeType{
- 		PrivilegeTypeSelect,
- 		PrivilegeTypeInsert,
-+		PrivilegeTypeUpdate,
- 		PrivilegeTypeDelete,
- 		PrivilegeTypeTableAll,
- 		PrivilegeTypeTableOwnership,
-@@ -14386,9 +14387,12 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantOnlyAfterCommit(t *testin
- 			defer backgroundExecStub.Reset()
- 
- 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
--			_, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
-+			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
- 			require.ErrorIs(t, err, commitErr)
--			require.Contains(t, bh.executedSQLs, "rollback;")
-+			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;", "rollback;"}, bh.executedSQLs)
-+			if tc.rows == nil {
-+				require.False(t, valid)
-+			}
- 			_, cached := cache.getActiveRoleGrant(2, 3)
- 			require.False(t, cached)
- 		})
-@@ -14406,13 +14410,16 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 	defer cacheHitStub.Reset()
- 
- 	for _, tc := range []struct {
--		name      string
--		rows      [][]interface{}
--		wantValid bool
--		wantError bool
-+		name       string
-+		rows       [][]interface{}
-+		wantValid  bool
-+		wantError  bool
-+		invalidate bool
- 	}{
- 		{name: "granted", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true},
- 		{name: "revoked", wantError: true},
-+		{name: "granted invalidated during commit", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true, invalidate: true},
-+		{name: "revoked invalidated during commit", wantError: true, invalidate: true},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			cache := &privilegeCache{}
-@@ -14433,6 +14440,9 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 				if sql == "commit;" {
- 					_, cached := cache.getActiveRoleGrant(2, 3)
- 					require.False(t, cached)
-+					if tc.invalidate {
-+						cache.invalidate()
-+					}
- 				}
- 			}
- 			backgroundExecStub := gostub.StubFunc(&NewBackgroundExec, bh)
-@@ -14441,14 +14451,18 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
- 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
- 			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
- 			if tc.wantError {
--				require.Error(t, err)
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal))
-+				require.EqualError(t, err, "internal error: do not have privilege to execute the statement")
- 			} else {
- 				require.NoError(t, err)
- 			}
- 			require.Equal(t, tc.wantValid, valid)
- 			cachedValid, cached := cache.getActiveRoleGrant(2, 3)
--			require.True(t, cached)
--			require.Equal(t, tc.wantValid, cachedValid)
-+			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;"}, bh.executedSQLs)
-+			require.Equal(t, !tc.invalidate, cached)
-+			if cached {
-+				require.Equal(t, tc.wantValid, cachedValid)
-+			}
- 		})
- 	}
- }
-```
-
-**File**: `pkg/frontend/computation_wrapper.go` (modified, +19/-2)
-```diff
-@@ -3137,11 +3137,28 @@ func preparedExecutionBuildPlanFunc(
- 			// let an EXECUTE-time USE leak into that retry, and always restore the
- 			// session context even when planning fails.
- 			currentDatabase := compilerCtx.GetDatabase()
-+			if session, ok := ses.(*Session); ok {
-+				restoreDatabase := bindSessionDatabaseForStatement(session, bindingDatabase)
-+				defer restoreDatabase()
-+			}
- 			compilerCtx.SetDatabase(bindingDatabase)
- 			defer compilerCtx.SetDatabase(currentDatabase)
- 		}
--		return buildPlanForCompileRetry(
--			ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
-+		p, err := buildPlanForCompileRetry(ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
-+		if err != nil {
-+			return nil, err
-+		}
-+		// A retry can bind a different view body. CTAS discards its source Query
-+		// in ordinary plans, so it must use the source authorization/replanning
-+		// path even when the rebuilt plan has no top-level lock references.
-+		ctas, isCTAS := stmt.(*tree.CreateTable)
-+		needsAuthorization := len(p.GetQuery().GetSelectLockReferences()) > 0 || (isCTAS && ctas.IsAsSelect)
-+		if session, ok := ses.(*Session); ok && !session.IsBackgroundSession() && session.GetTenantInfo() != nil && needsAuthorization {
-+			if _, err = authenticateCanExecuteStatementAndPlan(ctx, session, stmt, p); err != nil {
-+				return nil, err
-+			}
-+		}
-+		return p, nil
- 	}
- }
- 
-```
-
-**File**: `pkg/frontend/select_lock_ctas_retry_integration_test.go` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+//go:build integration
-+
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package frontend_test
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/embed"
-+	"github.com/matrixorigin/matrixone/pkg/frontend"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+	"github.com/matrixorigin/matrixone/pkg/sql/plan"
-+	"github.com/matrixorigin/matrixone/pkg/txn/client"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestSelectLockCTASRetry(t *testing.T) {
-+	t.Cleanup(frontend.InstallNativeSelectLockFailureExecForTest())
-+	runNativeViewSchemaCluster(t, func(cn embed.ServiceOperator, svc cnservice.Service) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+		defer cancel()
-+		admin := openNativeViewSchemaSQL(t, ctx, cn, "dump:111", "")
-+		admin.SetMaxOpenConns(1)
-+		exec := func(query string) {
-+			t.Helper()
-+			_, err := admin.ExecContext(ctx, query)
-+			require.NoError(t, err, query)
-+		}
-+		const database = "select_lock_ctas_retry"
-+		exec("create database " + database)
-+		defer exec("drop database " + database)
-+		exec("create database select_lock_ctas_other")
-+		defer exec("drop database select_lock_ctas_other")
-+		exec("create role select_lock_retry_role")
-+		defer exec("drop role select_lock_retry_role")
-+		exec("create user select_lock_retry_reader identified by 'test123' default role select_lock_retry_role")
-+		defer exec("drop user select_lock_retry_reader")
-+		for _, query := range []string{
-+			"grant select_lock_retry_role to select_lock_retry_reader",
-+			"create table " + database + ".a(id int primary key)",
-+			"create table " + database + ".b(id int primary key)",
-+			"insert into " + database + ".a values(1)",
-+			"insert into " + database + ".b values(1)",
-+			"set view_security_type='INVOKER'",
-+			"create view " + database + ".v as select id from " + database + ".a",
-+			"grant select on table " + database + ".* to select_lock_retry_role",
-+			"grant select, update on view " + database + ".v to select_lock_retry_role",
-+			"grant update on table " + database + ".a to select_lock_retry_role",
-+			"grant create table on database " + database + " to select_lock_retry_role",
-+		} {
-+			exec(query)
-+		}
-+		reader := frontend.GetBackgroundTenant()
-+		reader.User = "select_lock_retry_reader"
-+		reader.DefaultRole = "select_lock_retry_role"
-+		require.NoError(t, admin.QueryRowContext(ctx, "select user_id from mo_catalog.mo_user where user_name='select_lock_retry_reader'").Scan(&reader.UserID))
-+		require.NoError(t, admin.QueryRowContext(ctx, "select role_id from mo_catalog.mo_role where role_name='select_lock_retry_role'").Scan(&reader.DefaultRoleID))
-+		readerCtx := defines.AttachAccount(ctx, reader.TenantID, reader.UserID, reader.DefaultRoleID)
-+		noLocks := func(t *testing.T) {
-+			t.Helper()
-+			tx, err := admin.BeginTx(ctx, nil)
-+			require.NoError(t, err)
-+			defer func() { require.NoError(t, tx.Rollback()) }()
-+			var id int
-+			require.NoError(t, tx.QueryRowContext(ctx, "select id from "+database+".b for update nowait").Scan(&id))
-+			require.Equal(t, 1, id)
-+		}
-+		for _, prepared := range []bool{false, true} {
-+			t.Run(map[bool]string{false: "ordinary", true: "prepared with changed USE"}[prepared], func(t *testing.T) {
-+				exec("alter view " + database + ".v as select id from " + database + ".a")
-+				statement, err := mysql.ParseOne(readerCtx, "create table retry_result as select id from v for update", 1)
-+				require.NoError(t, err)
-+				defer statement.Free()
-+				// Establish the original authorized binding before the catalog transition.
-+				withNativeViewSchemaRead(t, readerCtx, cn, svc, database, reader, func(compiler *frontend.TxnCompilerContext, _ client.TxnOperator, _ *process.Process) {
-+					p, err := plan.BuildPlan(compiler, statement, prepared)
-+					require.NoError(t, err)
-+					require.Nil(t, p.GetQuery())
-+					require.Equal(t, prepared, p.GetDdl().GetQuery() != nil)
-+					require.NoError(t, frontend.AuthorizeNativeViewSchemaPlanForTest(readerCtx, compiler, statement, p))
-+				})
-+				exec("alter view " + database + ".v as select id from " + database + ".b")
-+				retr
-```
-
-**File**: `pkg/frontend/select_lock_privilege_test.go` (added, +576/-0)
-```diff
-@@ -0,0 +1,576 @@
-+// Copyright 2021 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -3660,203 +2412,1819 @@ statement's admitted catalog sna
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package vector
 +
 +import (
-+	"context"
-+	"fmt"
++	"errors"
++	"math"
 +	"strings"
 +	"testing"
 +
-+	"github.com/golang/mock/gomock"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
-+	lockpb "github.com/matrixorigin/matrixone/pkg/pb/lock"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
-+	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace/statistic"
-+	"github.com/prashantv/gostub"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
 +	"github.com/stretchr/testify/require"
-+	"github.com/tidwall/btree"
 +)
 +
-+// Pair a real parser/planner witness with typed lock identities and independent
-+// catalog grants. A SELECT-only user must never acquire an exclusive SELECT lock.
-+func TestSelectLockPrivilege(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, sql  string
-+		targets    []string
-+		grants     map[string]PrivilegeType
-+		denySelect bool
-+		allowed    bool
-+	}{
-+		{name: "ordinary read", sql: "select n_nationkey from nation", allowed: true},
-+		{name: "shared read", sql: "select n_nationkey from nation for share", allowed: true},
-+		{name: "legacy shared read", sql: "select n_nationkey from nation lock in share mode", allowed: true},
-+		{name: "read only exclusive", sql: "select n_nationkey from nation for update", targets: []string{"nation"}},
-+		{name: "nowait exclusive", sql: "select n_nationkey from nation for update nowait", targets: []string{"nation"}},
-+		{name: "constant false", sql: "select n_nationkey from nation where 1=0 for update", targets: []string{"nation"}},
-+		{name: "update alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
-+		{name: "delete alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeDelete}, allowed: true},
-+		{name: "write alone lacks select", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, denySelect: true},
-+		{name: "nested exclusive", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}},
-+		{name: "derived exclusive", sql: "select * from (select n_nationkey from nation for update) d", targets: []string{"nation"}},
-+		{name: "cte exclusive", sql: "with d as (select n_nationkey from nation for update) select * from d", targets: []string{"nation"}},
-+		{name: "unlocked source needs no write", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region) for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
-+		{name: "outer grant cannot authorize inner lock", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}},
-+		{name: "mixed alternatives", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate, "region": PrivilegeTypeDelete}, allowed: true},
-+		{name: "sibling lacks write", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeTableOwnership}},
-+		{name: "shared outer exclusive inner", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update) for share", targets: []string{"region"}},
-+		{name: "dml own locks", sql: "update nation set n_name='new' where n_nationkey=1", grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			stmt, err := parsers.ParseOne(t.Context(), dialect.MYSQL, tc.sql, 1)
-+			require.NoError(t, err)
-+			p, err := plan2.BuildPlan(plan2.NewMockCompilerContext(true, newPlanTestProcess(t)), stmt, false)
-+	
-```
-
-**File**: `pkg/frontend/view_privilege_principal_test.go` (modified, +1/-1)
-```diff
-@@ -119,7 +119,7 @@ func TestViewAdminRoleIsAccountQualified(t *testing.T) {
- 		bh := &backgroundExecTest{}
- 		bh.init()
- 		bh.resultSets = []interface{}{&MysqlResultSet{}}
--		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false)
-+		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false, false)
- 		require.NoError(t, err)
- 		require.Equal(t, tc.allowed, allowed)
- 	}
-```
-
-**File**: `pkg/frontend/view_schema_native_support_test.go` (modified, +304/-1)
-```diff
-@@ -19,13 +19,21 @@ package frontend
- import (
- 	"context"
- 	"fmt"
-+	"math"
-+	goruntime "runtime"
-+	"strings"
- 	"sync/atomic"
-+	"testing"
++func TestRollbackAppendRejectsBeforeMutation(t *testing.T) {
++	for _, name := range []string{"length", "area", "negative", "overflow", "prepared", "string", "binary"} {
++		t.Run(name, func(t *testing.T) {
++			mp := mpool.MustNewZero()
++			v := NewVec(types.T_varchar.ToType())
++			defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
++			require.NoError(t, AppendBytes(v, []byte(strings.Repeat("a", 64)), false, mp))
++			v.SetSorted(true)
++			cp := v.MakeAppendCheckpoint()
++			attempted := 1
++			switch name {
++			case "length":
++				cp.length++
++			case "area":
++				cp.areaLength++
++			case "negative":
++				attempted = -1
++			case "overflow":
++				attempted = math.MaxInt
++			case "prepared":
++				cp.hadPrepareParamKinds = true
++			case "string":
++				cp.hadStringSources = true
++			case "binary":
++				cp.hadBinaryStringRows = true
++			}
++			err := v.RollbackAppend(cp, attempted)
++			require.ErrorIs(t, err, mpool.ErrAllocationAccountInvariant)
++			require.False(t, mpool.IsRetryableAllocationCapacity(errors.Join(mpool.ErrAllocationAccountCapacity, err)))
++			require.Equal(t, 1, v.Length())
++			require.Equal(t, 64, len(v.GetArea()))
++			require.True(t, v.GetSorted())
++			require.Equal(t, strings.Repeat("a", 64), v.GetStringAt(0))
++		})
++	}
++}
 +
-+	"github.com/stretchr/testify/require"
++func TestAppendAllocatorLimitReturnsErrorAndKeepsPrefix(t *testing.T) {
++	old := mpool.CapLimit
++	mpool.CapLimit = 128
++	t.Cleanup(func() { mpool.CapLimit = old })
++	mp := mpool.MustNewZero()
++	v := NewVec(types.T_varchar.ToType())
++	defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
++	first := strings.Repeat("a", 64)
++	require.NoError(t, AppendBytes(v, []byte(first), false, mp))
++	err := AppendBytes(v, []byte(strings.Repeat("b", 64)), false, mp)
++	require.ErrorIs(t, err, mpool.ErrAllocationAllocatorLimit)
++	require.NotErrorIs(t, err, mpool.ErrAllocationAccountInvariant)
++	require.Equal(t, 1, v.Length())
++	require.Equal(t, first, v.GetStringAt(0))
++}
+```
+
+**File**: `pkg/container/vector/vector.go` (modified, +44/-26)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"bytes"
+ 	"cmp"
+ 	"encoding/binary"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"math"
+@@ -483,14 +484,37 @@ func (v *Vector) MakeAppendCheckpoint() AppendCheckpoint {
+ 	}
+ }
  
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
- 	"github.com/matrixorigin/matrixone/pkg/sql/plan"
- 	"github.com/matrixorigin/matrixone/pkg/txn/client"
-+	"github.com/matrixorigin/matrixone/pkg/util/fault"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae"
- 	"github.com/matrixorigin/matrixone/pkg/vm/process"
- )
-@@ -164,13 +172,25 @@ func AuthorizeNativeViewSchemaPlanForTest(ctx context.Context, compiler *TxnComp
+-// RollbackAppend restores the logical state captured before an attempted
+-// append. attemptedRows is needed because grouping bits can be published
+-// before a varlen copy fails and advances length.
+-func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int) {
+-	if checkpoint.length < 0 || checkpoint.length > v.length ||
++// JoinAppendRollbackError preserves a successful rollback's original error
++// identity, including direct MO errors used at protocol boundaries.
++func JoinAppendRollbackError(cause, rollbackErr error) error {
++	if rollbackErr == nil {
++		return cause
++	}
++	return errors.Join(cause, rollbackErr)
++}
++
++// RollbackAppend restores an append checkpoint, retaining owned capacity.
++// Invalid checkpoints return a terminal invariant error before any mutation.
++// attemptedRows includes metadata published before a payload append failed.
++func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int) error {
++	invalid := func(message string) error {
++		return errors.Join(mpool.ErrAllocationAccountInvariant, moerr.NewInternalErrorNoCtx(message))
++	}
++	if v == nil || checkpoint.length < 0 || checkpoint.length > v.length ||
+ 		checkpoint.areaLength < 0 || checkpoint.areaLength > len(v.area) ||
+-		attemptedRows < 0 {
+-		panic("invalid vector append checkpoint")
++		attemptedRows < 0 || attemptedRows > math.MaxInt-checkpoint.length {
++		return invalid("invalid vector append checkpoint")
++	}
++	// Validate the complete restoration before changing lengths or metadata.
++	if checkpoint.hadPrepareParamKinds && len(v.prepareParamKinds) < checkpoint.length {
++		return invalid("prepared parameter sidecar lost during append rollback")
++	}
++	metadataLength := v.physicalMetadataRowCountForLength(checkpoint.length)
++	if checkpoint.hadStringSources && len(v.stringSources) < metadataLength {
++		return invalid("string source sidecar lost during append rollback")
++	}
++	if checkpoint.hadBinaryStringRows && !(!v.binaryStringRowsActive && checkpoint.binaryStringRowsUniform) && (v.binaryStringRows == nil || !v.binaryStringRowsActive) {
++		return invalid("binary-string sidecar lost during append rollback")
+ 	}
+ 	end := max(v.length, checkpoint.length+attemptedRows)
+ 	nulls.RemoveRange(&v.nsp, uint64(checkpoint.length), uint64(end))
+@@ -502,9 +526,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	v.areaDisjoint = checkpoint.areaDisjoint && v.areaDisjoint
+ 	v.sorted = checkpoint.sorted
+ 	if checkpoint.hadPrepareParamKinds {
+-		if len(v.prepareParamKinds) < checkpoint.length {
+-			panic("prepared parameter sidecar lost during append rollback")
+-		}
+ 		clear(v.prepareParamKinds[checkpoint.length:])
+ 		v.prepareParamKinds = v.prepareParamKinds[:checkpoint.length]
+ 	} else {
+@@ -514,9 +535,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	v.prepareParamKindSeen = checkpoint.prepareParamKindSeen
+ 	if checkpoint.hadStringSources {
+ 		metadataLength := v.physicalMetadataRowCountForLength(checkpoint.length)
+-		if len(v.stringSources) < metadataLength {
+-			panic("string source sidecar lost during append rollback")
+-		}
+ 		clear(v.stringSources[metadataLength:])
+ 		v.stringSources = v.stringSources[:metadataLength]
+ 	} else {
+@@ -526,8 +544,6 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	if checkpoint.hadBinaryStringRows {
+ 		if !v.binaryStringRowsActive && checkpoint.binaryStringRowsUniform {
+ 			v.setBinaryStringScalar(checkpoint.binaryString)
+-		} else if v.binaryStringRows == nil || !v.binaryStringRowsActive {
+-			panic("binary-string sidecar lost during append rollback")
+ 		} else {
+ 			v.binaryStringRows.RemoveRange(uint64(checkpoint.length), uint64(end))
+ 			v.textStringRows.RemoveRange(uint64(checkpoint.length), uint64(end))
+@@ -536,6 +552,7 @@ func (v *Vector) RollbackAppend(checkpoint AppendCheckpoint, attemptedRows int)
+ 	} else {
+ 		v.setBinaryStringScalar(checkpoint.binaryString)
+ 	}
++	return nil
+ }
+ 
+ // Size of data, I think this function is inherently broken.  This
+@@ -10142,7 +10159,7 @@ func AppendFixedWithStringSource[T any](vec *Vector, val T, isNull bool, source
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	defer func() {
+ 		if err != nil {
+-			vec.RollbackAppend(checkpoint, 1)
++			err = JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, 1))
+ 		}
+ 	}()
+ 	return appendOneFixedWithSource(vec, val, isNull, &source, mp)
+@@ -10202,7 +10219,7 @@ func AppendBytesWithWriter(vec *Vector, size int, mp *mpool.MPool, writer func([
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	defer func() {
+ 		if err != nil {
+-			vec.RollbackAppend(checkpoint, 1)
++			err = JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, 1))
+ 		}
+ 	}()
+ 	if err = vec.prepareOrdinaryAppendMetadata(1, mp); e
+```
+
+**File**: `pkg/sql/colexec/external/parquet.go` (modified, +21/-21)
+```diff
+@@ -2274,7 +2274,7 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 			}
+ 			checkpoint := vec.MakeAppendCheckpoint()
+ 			rollback := func(err error) error {
+-				vec.RollbackAppend(checkpoint, numRows)
++				err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 				return err
+ 			}
+ 			targetType := types.MustTypeFromPlan(dt)
+@@ -2937,7 +2937,7 @@ func processStringToTimeAssignment(mp *columnMapper, page parquet.Page, proc *pr
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	if err := vec.UnionBatch(result.GetResultVector(), 0, text.Length(), nil, proc.Mp()); err != nil {
+-		vec.RollbackAppend(checkpoint, text.Length())
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, text.Length()))
+ 		return err
+ 	}
+ 	return nil
+@@ -3017,7 +3017,7 @@ func processStringToFixedWithTrim[T any](
+ 	vec.SetLength(numRows + length)
+ 	ret := vector.MustFixedColWithTypeCheck[T](vec)
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 
+@@ -3110,7 +3110,7 @@ func processStringToJson(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 	for i := 0; i < numRows; i++ {
+@@ -3217,7 +3217,7 @@ func processStringToArrayEnc[T types.ArrayElement](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 	for i := 0; i < numRows; i++ {
+@@ -3443,7 +3443,7 @@ func processParquetListValuesToArrayEnc[T types.ArrayElement](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, numRows)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, numRows))
+ 		return err
+ 	}
+ 
+@@ -3575,7 +3575,7 @@ func processParquetValuesToFixed[T any](
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3626,7 +3626,7 @@ func processParquetValuesToBytes(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3681,7 +3681,7 @@ func processParquetValuesToStagingBytes(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -3811,7 +3811,7 @@ func processParquetValuesToJson(
+ 	}
+ 	checkpoint := vec.MakeAppendCheckpoint()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, len(values))
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, len(values)))
+ 		return err
+ 	}
+ 	for i, v := range values {
+@@ -4899,7 +4899,7 @@ func copyPlainBoolPageToVec(page parquet.Page, proc *process.Process, vec *vecto
+ 	ret := vector.MustFixedColWithTypeCheck[bool](vec)
+ 	reader := page.Values()
+ 	rollback := func(err error) error {
+-		vec.RollbackAppend(checkpoint, n)
++		err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoint, n))
+ 		return err
+ 	}
+ 	if !nc.noNulls {
+@@ -5624,7 +5624,9 @@ func (h *ParquetHandler) getDataByPage(bat *batch.Batch, param *ExternalParam, p
+ 				bat, length, length+int(toRead), batchBytesBefore, param)
+ 			accepted = int64(acceptedRows - length)
+ 			if accepted < toRead {
+-				h.rollbackPageAppend(bat, checkpoints, int(toRead))
++				if rollbackErr := h.rollbackPageAppend(bat, checkpoints, int(toRead)); rollbackErr != nil {
++					return rollbackErr
++				}
+ 				warnings.Reset()
+ 				if accepted == 0 {
+ 					break
+@@ -5755,8 +5757,7 @@ func (h *ParquetHandler) mapCurrentPageRows(
+ 	for i, colIdx := range h.dataColIndices {
+ 		vec := bat.Vecs[colIdx]
+ 		if vec == nil {
+-			h.rollbackPageAppend(bat, checkpoints[:i], int(rows))
+-			return nil, moerr.NewInternalErrorf(param.Ctx, "parquet output column %d is not allocated", colIdx)
++			return nil, vector.JoinAppendRollbackError(moerr.NewInternalErrorf(param.Ctx, "parquet output column %d is not allocated", colIdx), h.rollbackPageAppend(bat, checkpoints[:i], int(rows)))
+ 		}
+ 		checkpoints[i] = vec.MakeAppendCheckpoint()
+ 		startLength := vec.Length()
+@@ -5768,14 +5769,12 @@ func (h *ParquetHandler) mapCurrentPageRows(
+ 			MapTime: time.Since(mapStart).Nanoseconds(),
+```
+
+**File**: `pkg/sql/colexec/external/parquet_nested.go` (modified, +18/-17)
+```diff
+@@ -182,18 +182,22 @@ func (h *ParquetHandler) getDataByRow(bat *batch.Batch, param *ExternalParam, pr
+ 			if err := h.processRow(row, bat, param, proc); err != nil {
+ 				for colIdx, vec := range bat.Vecs {
+ 					if vec != nil {
+-						vec.RollbackAppend(checkpoints[colIdx], 1)
++						err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], 1))
+ 					}
+ 				}
+ 				return err
+ 			}
+ 			if h.parquetBatchAtByteBudget(bat, rowsRead+1, param) {
+ 				if rowsRead > 0 {
++					var err error
+ 					for colIdx, vec := range bat.Vecs {
+ 						if vec != nil {
+-							vec.RollbackAppend(checkpoints[colIdx], 1)
++							err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], 1))
+ 						}
+ 					}
++					if err != nil {
++						return err
++					}
+ 					batchBoundary = true
+ 					break
+ 				}
+@@ -269,12 +273,13 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 	eof := false
+ 	batchBoundary := false
+ 
+-	rollbackRows := func(checkpoints []vector.AppendCheckpoint, attemptedRows int) {
++	rollbackRows := func(checkpoints []vector.AppendCheckpoint, attemptedRows int) (err error) {
+ 		for colIdx, vec := range bat.Vecs {
+ 			if vec != nil {
+-				vec.RollbackAppend(checkpoints[colIdx], attemptedRows)
++				err = vector.JoinAppendRollbackError(err, vec.RollbackAppend(checkpoints[colIdx], attemptedRows))
+ 			}
+ 		}
++		return err
+ 	}
+ 
+ 	for length < batchLimit && !h.parquetBatchAtByteBudget(bat, length, param) {
+@@ -344,17 +349,14 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 		batchBytesBefore := h.physicalBatchSize(bat)
+ 		for _, row := range rowBuf[:n] {
+ 			if err := context.Cause(proc.Ctx); err != nil {
+-				rollbackRows(checkpoints, n)
+-				return err
++				return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n))
+ 			}
+ 			if err := h.processNestedRow(row, bat, param, proc); err != nil {
+-				rollbackRows(checkpoints, n)
+-				return err
++				return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n))
+ 			}
+ 		}
+ 		if _, err := h.mapCurrentPageRows(bat, param, mappingProc, int64(n)); err != nil {
+-			rollbackRows(checkpoints, n)
+-			return h.closePagesOnError(param.Ctx, err)
++			return h.closePagesOnError(param.Ctx, vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, n)))
+ 		}
+ 
+ 		accepted := n
+@@ -366,26 +368,25 @@ func (h *ParquetHandler) getDataByRowAndPage(bat *batch.Batch, param *ExternalPa
+ 				accepted = 0
+ 			}
+ 			if accepted < n {
+-				rollbackRows(checkpoints, n)
++				if rollbackErr := rollbackRows(checkpoints, n); rollbackErr != nil {
++					return rollbackErr
++				}
+ 				warnings.Reset()
+ 				if accepted > 0 {
+ 					for _, row := range rowBuf[:accepted] {
+ 						if err := h.processNestedRow(row, bat, param, proc); err != nil {
+-							rollbackRows(checkpoints, accepted)
+-							return err
++							return vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, accepted))
+ 						}
+ 					}
+ 					if _, err := h.mapCurrentPageRows(bat, param, mappingProc, int64(accepted)); err != nil {
+-						rollbackRows(checkpoints, accepted)
+-						return h.closePagesOnError(param.Ctx, err)
++						return h.closePagesOnError(param.Ctx, vector.JoinAppendRollbackError(err, rollbackRows(checkpoints, accepted)))
+ 					}
+ 				}
+ 				// The row reader has already decoded n rows. Rewind the unread
+ 				// suffix so the next batch starts at the same logical row as the
+ 				// scalar page offsets.
+ 				if err := h.rowReader.SeekToRow(rowStart + int64(length+accepted)); err != nil {
+-					rollbackRows(checkpoints, accepted)
+-					return moerr.ConvertGoError(param.Ctx, err)
++					return vector.JoinAppendRollbackError(moerr.ConvertGoError(param.Ctx, err), rollbackRows(checkpoints, accepted))
+ 				}
+ 				batchBoundary = true
+ 			}
+```
+
+**File**: `pkg/sql/colexec/join_util.go` (modified, +13/-6)
+```diff
+@@ -104,6 +104,9 @@ func (bs *Batches) CopyIntoBatchesWithAllocation(
+ 			tailCheckpoints = localTailCheckpoints[:len(originalTail.Vecs)]
+ 		}
+ 		for i := range originalTail.Vecs {
++			if err := originalTail.Vecs[i].MaterializeOwned(proc.Mp()); err != nil {
++				return err
++			}
+ 			tailCheckpoints[i] = originalTail.Vecs[i].MakeAppendCheckpoint()
+ 		}
+ 	}
+@@ -118,13 +121,14 @@ func (bs *Batches) CopyIntoBatchesWithAllocation(
+ 		bs.Buf = nil
+ 	}
+ 	if originalTail != nil {
++		var rollbackErr error
+ 		for i := range originalTail.Vecs {
+-			originalTail.Vecs[i].RollbackAppend(
+-				tailCheckpoints[i],
+-				DefaultBatchSize-originalTailRows,
+-			)
++			rollbackErr = vector.JoinAppendRollbackError(rollbackErr, originalTail.Vecs[i].RollbackAppend(tailCheckpoints[i], DefaultBatchSize-originalTailRows))
+ 		}
+-		originalTail.SetRowCount(originalTailRows)
++		if rollbackErr == nil {
++			originalTail.SetRowCount(originalTailRows)
++		}
++		err = vector.JoinAppendRollbackError(err, rollbackErr)
+ 	}
+ 	bs.MemSize = originalMemSize
+ 	return err
+@@ -301,12 +305,15 @@ func appendToFixedSizeFromOffset(dst *batch.Batch, src *batch.Batch, offset int,
+ 		checkpoints = localCheckpoints[:len(dst.Vecs)]
+ 	}
+ 	for i := range dst.Vecs {
++		if err := dst.Vecs[i].MaterializeOwned(proc.Mp()); err != nil {
++			return 0, err
++		}
+ 		checkpoints[i] = dst.Vecs[i].MakeAppendCheckpoint()
+ 	}
+ 	for i := range dst.Vecs {
+ 		if err = dst.Vecs[i].UnionBatch(src.Vecs[i], int64(offset), length, nil, proc.Mp()); err != nil {
+ 			for j := 0; j <= i; j++ {
+-				dst.Vecs[j].RollbackAppend(checkpoints[j], length)
++				err = vector.JoinAppendRollbackError(err, dst.Vecs[j].RollbackAppend(checkpoints[j], length))
+ 			}
+ 			return 0, err
+ 		}
+```
+
+**File**: `pkg/sql/colexec/mergetop/top.go` (modified, +1/-1)
+```diff
+@@ -299,7 +299,7 @@ func (ctr *container) processBatch(limit uint64, bat *batch.Batch, proc *process
+ 				proc.Mp(),
+ 			); err != nil {
+ 				for i := range checkpoints {
+-					ctr.bat.Vecs[i].RollbackAppend(checkpoints[i], processCount)
++					err = vector.JoinAppendRollbackError(err, ctr.bat.Vecs[i].RollbackAppend(checkpoints[i], processCount))
+ 				}
+ 				return err
+ 			}
+```
+
+**File**: `pkg/sql/colexec/multi_update/s3writer_delegate.go` (modified, +3/-3)
+```diff
+@@ -614,12 +614,12 @@ func (writer *s3WriterDelegate) prepareDeleteBatches(
+ 			rowIDCheckpoint := rowIDDst.MakeAppendCheckpoint()
+ 			pkCheckpoint := pkDst.MakeAppendCheckpoint()
+ 			if err := vector.AppendFixed(rowIDDst, rowID, false, proc.GetMPool()); err != nil {
+-				rowIDDst.RollbackAppend(rowIDCheckpoint, 1)
++				err = vector.JoinAppendRollbackError(err, rowIDDst.RollbackAppend(rowIDCheckpoint, 1))
+ 				return nil, err
+ 			}
+ 			if err := pkDst.UnionOne(bat.GetVector(PkIdx), int64(i), proc.GetMPool()); err != nil {
+-				rowIDDst.RollbackAppend(rowIDCheckpoint, 1)
+-				pkDst.RollbackAppend(pkCheckpoint, 1)
++				err = vector.JoinAppendRollbackError(err, rowIDDst.RollbackAppend(rowIDCheckpoint, 1))
++				err = vector.JoinAppendRollbackError(err, pkDst.RollbackAppend(pkCheckpoint, 1))
+ 				return nil, err
+ 			}
+ 			block.bat.SetRowCount(rowIDDst.Length())
+```
+
+**File**: `pkg/sql/colexec/order/order.go` (modified, +1/-2)
+```diff
+@@ -331,8 +331,7 @@ func (ctr *container) appendBatchAccounted(
+ 		}
+ 		if err != nil {
+ 			for j := range ctr.batWaitForSort.Vecs {
+-				ctr.batWaitForSort.Vecs[j].RollbackAppend(
+-					checkpoints[j], bat.Vecs[j].Length())
++				err = vector.JoinAppendRollbackError(err, ctr.batWaitForSort.Vecs[j].RollbackAppend(checkpoints[j], bat.Vecs[j].Length()))
+ 			}
+ 			return err
+ 		}
+```
+
+---
+
+### Incident Patch 2: `4e0a1864` (2026-11-04)
+**Commit Message**: fix(disttae): bound long-transaction workspace maintenance and close orphan-cleanup ownership (#30988)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to #25590
+
+## What this PR does / why we need it:
+
+Long explicit transactions repeatedly updating the same primary-key rows rescan superseded workspace history at statement boundaries and during reads. This PR keeps incremental per-table views and compacts superseded entries so maintenance follows the live working set. The issue's UPDATE, REPLACE and DELETE+INSERT cases are covered by focused workspace tests and SQL cases.
+
+Persistence and compaction also need a complete ownership contract: every unpublished object must reserve bounded capacity and remain owned until publication or cleanup. The implementation centralizes that contract in the workspace/engine, retains failed cleanup work, and drains it with bounded batches/backoff and a single shutdown budget. Local writers and remote fragments share the same same-version admission contract running on one build; remote ownership transfer prov
+
+**File**: `pkg/fileservice/local_fs.go` (modified, +7/-0)
+```diff
+@@ -1028,6 +1028,13 @@ func deleteLocalFile(mu *sync.RWMutex, dirFiles map[string]*os.File, nativePath
+ 
+ 	err = os.Remove(nativePath)
+ 	if err != nil {
++		// A concurrent deletion already removed the file between this
++		// check's Stat and its Remove: the file is gone, which is the
++		// documented not-found outcome, not an error (the cleanup
++		// subsystem's drains race benignly over one-ownership names).
++		if os.IsNotExist(err) {
++			return nil
++		}
+ 		return err
+ 	}
+ 
+```
+
+**File**: `pkg/objectio/injects.go` (modified, +111/-0)
+```diff
+@@ -121,13 +121,60 @@ const (
+ 	// -> NewCompile -> UpdateSnapshotWriteOffset.
+ 	FJ_CNReenterSnapshotOffsetOnGetTable = "fj/cn/reenter_snapshot_offset_on_get_table"
+ 
++	// FJ_CNWorkspaceMergeRowidAllocFailed is a test-only fault that makes
++	// the >=30-entries merge pass of the admission merge fail exactly at
++	// its combined-batch rowid regeneration. Before the round-6 rewrite
++	// of issue #25590 this fired AFTER the merge had already destroyed
++	// the combined sources, which left the retained batch mixing the
++	// rowids of several blocks with no reader-safe invariants left.
++	FJ_CNWorkspaceMergeRowidAllocFailed = "fj/cn/workspace_merge_rowid_alloc_failed"
++
++	// FJ_CNWorkspaceCompactPublishFailed is a test-only fault that makes
++	// the object-compaction pass of the admission merge fail exactly at
++	// the post-lookup re-publication of another object sharing a metadata
++	// batch with a compacted (dirty) object — the mpool-fallible window
++	// between the compaction's table resolution and the pending-deletion
++	// rewrite. Before the round-7 fix of issue #25590 this fired where the
++	// compaction still wiped pending deletedBlocks unconditionally while
++	// the dirty object had not been rewritten yet, so the retried
++	// admission resurrected the rows those marks deleted.
++	FJ_CNWorkspaceCompactPublishFailed = "fj/cn/workspace_compact_publish_failed"
++
+ 	// FJ_CNDumpResolveWindowWait is a test-only orchestration point inside the
+ 	// unlocked table-resolution window of a workspace dump. Armed with the
+ 	// WAIT action, it parks the dumping goroutine right before the transaction
+ 	// lock is re-acquired, so a test can deterministically mutate the
+ 	// workspace from another goroutine while the window is open.
+ 	FJ_CNDumpResolveWindowWait = "fj/cn/dump_resolve_window_wait"
+ 
++	// FJ_CNWorkspaceRecordStageFailed is a test-only fault that fails one
++	// table's S3 metadata record inside its fallible preparation (the
++	// staged record phase of issue #25590's object compaction): armed
++	// with the table's name — or empty to fire for every record — it
++	// makes the record fail AFTER an earlier replacement of the same
++	// pass has already staged, which is the exact window the round-20
++	// atomicity contract covers: nothing the failed record prepared may
++	// survive a partially failed pass as a live workspace entry.
++	FJ_CNWorkspaceRecordStageFailed = "fj/cn/workspace_record_stage_failed"
++
++	// The four FJ_CNDump{Insert,Delete}{Write,Sync}Failed keys are test-only
++	// faults inside the fallible publication phase of the workspace dumps
++	// (Transaction.dumpInsertBatchLocked / dumpDeleteBatchLocked). They let a
++	// test fail the publication deterministically — before the writer Write,
++	// or between Write and Sync — to pin that a failed dump leaves the
++	// workspace intact instead of discarding staged sources whose
++	// replacement file entries were never published (issue #25590).
++	FJ_CNDumpInsertWriteFailed = "fj/cn/dump_insert_write_fails"
++	FJ_CNDumpInsertSyncFailed  = "fj/cn/dump_insert_sync_fails"
++	FJ_CNDumpDeleteWriteFailed = "fj/cn/dump_delete_write_fails"
++	FJ_CNDumpDeleteSyncFailed  = "fj/cn/dump_delete_sync_fails"
++
++	// FJ_CNDumpDeleteCloseFailed fails the tombstone writer's Close AFTER
++	// the replacement entry is recorded, pinning that such a table counts
++	// as published (retiring to its sources would double-apply the
++	// tombstones) while the dump still reports the error.
++	FJ_CNDumpDeleteCloseFailed = "fj/cn/dump_delete_close_fails"
++
+ 	// FJ_ArrowLoadRolloutWait is a test-only post-admission/pre-publication
+ 	// barrier. Arrow's reader triggers it after a range has been admitted and
+ 	// converted, but before the batch is published to the LOAD pipeline, so a
+@@ -388,13 +435,77 @@ func CNReenterSnapshotOffsetOnGetTableInjected() (injected bool, rogueUpdate boo
+ 	return true, iarg == 2, iarg != 1
+ }
+ 
++// CNWorkspaceMergeRowidAllocFailedInjected reports whether the
++// FJ_CNWorkspaceMergeRowidAllocFailed fault is active: when it is, the
++// admission merge's staged publication fails before the regenerated rowids
++// of the combined raw-insert batch are installed.
++func CNWorkspaceMergeRowidAllocFailedInjected() bool {
++	return SimpleInjected(FJ_CNWorkspaceMergeRowidAllocFailed)
++}
++
++// CNWorkspaceCompactPublishFailedInjected reports whether the
++// FJ_CNWorkspaceCompactPublishFailed fault is active: when it is, the
++// object-compaction pass' re-publication of a metadata-batch-sharing
++// object fails after the compaction's table lookup has resolved, so the
++// pass returns mid-batch with the dirty object's rewrite still pending.
++func CNWorkspaceCompactPublishFailedInjected() bool {
++	return SimpleInjected(FJ_CNWorkspaceCompactPublishFailed)
++}
++
++// CNWorkspaceRecordStageFailedInjected reports whether the table's S3
++// record belongs to the FJ_CNWorkspaceRecordStageFailed fault — armed by
++// table name (or with no name to refuse every record): the staged record
++// fails at 
+```
+
+**File**: `pkg/objectio/ioutil/sink_pool.go` (modified, +35/-1)
+```diff
+@@ -55,11 +55,24 @@ type poolSinkJob struct {
+ 	mp      *mpool.MPool
+ 	fs      fileservice.FileService
+ 	result  *pipelineResult
++	// capacityHook, when the owning sinker carries one, gates each
++	// spilling object right before the pool's sync worker would make it
++	// durable — the SAME edge-of-persistence contract as the sync path's
++	// syncFileSinker, so a pipelined writer cannot push its objects past
++	// an admission bound its non-pipelined sibling respects (issue
++	// #25590 round-19 review). A refused job persists nothing and only
++	// the job's error surfaces.
++	capacityHook UncommittedCapacityHook
+ }
+ 
+ type poolSyncJob struct {
+ 	fSinker FileSinker
+ 	result  *pipelineResult
++	// capacityHook gates one spilling object before the sync worker
++	// persists it — the same edge-of-persistence contract as
++	// syncFileSinker, so pipelined writers respect the admission bound
++	// (issue #25590 round-19 review). Refusal persists nothing.
++	capacityHook UncommittedCapacityHook
+ }
+ 
+ // pipelineResult tracks accumulated results and errors for one Sinker's
+@@ -168,7 +181,11 @@ func (p *SinkPool) runSinkWorker() {
+ 		// Forward to sync worker. Do NOT call r.pending.Done() here;
+ 		// the sync worker calls it after completing the IO.
+ 		select {
+-		case p.syncChan <- &poolSyncJob{fSinker: fSinker, result: r}:
++		case p.syncChan <- &poolSyncJob{
++			fSinker:      fSinker,
++			result:       r,
++			capacityHook: job.capacityHook,
++		}:
+ 		case <-r.ctx.Done():
+ 			fSinker.Close()
+ 			r.setError(context.Cause(r.ctx))
+@@ -191,6 +208,23 @@ func (p *SinkPool) runSyncWorker() {
+ 			continue
+ 		}
+ 
++		// The hook gate runs before the pool's Sync exactly like
++		// syncFileSinker runs it on the sync path: a refusal aborts the
++		// object before anything goes durable — nothing lands in
++		// r.unpublished because the object never met storage — and the
++		// error fails the writer's Sync through result.getError (issue
++		// #25590 round-19 review).
++		if job.capacityHook != nil {
++			if name := activeFileSinkerObjectName(job.fSinker); name != "" {
++				if err := job.capacityHook(name); err != nil {
++					job.fSinker.Close()
++					r.setError(err)
++					r.pending.Done()
++					continue
++				}
++			}
++		}
++
+ 		syncStart := time.Now()
+ 		stats, err := job.fSinker.Sync(r.ctx)
+ 		atomic.AddInt64(&r.syncNs, int64(time.Since(syncStart)))
+```
+
+**File**: `pkg/objectio/ioutil/sinker.go` (modified, +119/-13)
+```diff
+@@ -415,6 +415,9 @@ type Sinker struct {
+ 		tailSizeCap         int
+ 		offHeap             bool
+ 		chunkedColumnPolicy objectio.ChunkedColumnPolicy
++		// capacityHook gates each object right before it persists; nil
++		// in every caller without an engine capacity ledger.
++		capacityHook UncommittedCapacityHook
+ 	}
+ 	fSinker struct {
+ 		executor FileSinker
+@@ -548,12 +551,26 @@ func DeleteUnpublishedObjects(
+ 	return len(unique), nil
+ }
+ 
+-// DeletePersisted deletes every object that this sinker has persisted, or may
+-// have persisted after a commit-ambiguous Sync error, but has not transferred
+-// out of its lifecycle yet. It returns the exact ownership snapshot on both
+-// success and failure. The tracked references are retained when deletion fails
+-// so the caller may retry or hand them off before closing the sinker.
+-func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
++// PersistedNames takes this sinker's exact ownership snapshot — every
++// object it persisted, or may have persisted after a commit-ambiguous
++// Sync error, and has not transferred out of its lifecycle yet — WITHOUT
++// deleting anything (issue #25590 round-15 review): a caller on a
++// lock-holding or user-blocking path (a transaction's statement
++// admission) can transfer the names to its asynchronous cleanup owner
++// instead of synchronously deleting them on a file service whose
++// deletion a stalled context cannot move. The snapshot follows the same
++// completeness rule as DeletePersisted: a still-running pipeline is
++// drained first so no sibling write's file can be missed, and the tracked
++// references stay inside the sinker — closing it drops them exactly as
++// DeletePersisted's callers have always done after taking the snapshot.
++func (sinker *Sinker) PersistedNames() []string {
++	return sinker.persistedSnapshot()
++}
++
++// persistedSnapshot assembles the persisted/possibly-persisted name
++// snapshot shared by DeletePersisted (which deletes it) and
++// PersistedNames (which only hands it out).
++func (sinker *Sinker) persistedSnapshot() []string {
+ 	if sinker.pipe.enabled && sinker.pipe.result != nil {
+ 		// A failed pipeline may still have successful sibling writes. Wait for
+ 		// all of them before taking the ownership snapshot.
+@@ -577,7 +594,16 @@ func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
+ 		files = append(files, sinker.pipe.result.unpublished...)
+ 		sinker.pipe.result.mu.RUnlock()
+ 	}
+-	files = normalizeUnpublishedObjectNames(files)
++	return normalizeUnpublishedObjectNames(files)
++}
++
++// DeletePersisted deletes every object that this sinker has persisted, or may
++// have persisted after a commit-ambiguous Sync error, but has not transferred
++// out of its lifecycle yet. It returns the exact ownership snapshot on both
++// success and failure. The tracked references are retained when deletion fails
++// so the caller may retry or hand them off before closing the sinker.
++func (sinker *Sinker) DeletePersisted(ctx context.Context) ([]string, error) {
++	files := sinker.persistedSnapshot()
+ 	_, err := DeleteUnpublishedObjects(ctx, sinker.fs, files...)
+ 	if err != nil {
+ 		return files, err
+@@ -718,11 +744,12 @@ func (sinker *Sinker) pipelineSubmit(ctx context.Context, data []*batch.Batch) e
+ 	}
+ 	waitStart := time.Now()
+ 	err := GetDefaultSinkPool().Submit(&poolSinkJob{
+-		data:    data,
+-		factory: sinker.fSinker.factory,
+-		mp:      sinker.mp,
+-		fs:      sinker.fs,
+-		result:  sinker.pipe.result,
++		data:         data,
++		factory:      sinker.fSinker.factory,
++		mp:           sinker.mp,
++		fs:           sinker.fs,
++		result:       sinker.pipe.result,
++		capacityHook: sinker.config.capacityHook,
+ 	})
+ 	atomic.AddInt64(&sinker.timing.waitNs, int64(time.Since(waitStart)))
+ 	return err
+@@ -815,6 +842,76 @@ func (sinker *Sinker) trySpill(ctx context.Context) error {
  	return err
  }
  
-+// Invoke the actual compile-retry callback with the fixture-owned session.
-+// The caller controls the catalog transition between initial admission and retry.
-+func RebuildNativeSelectLockCTASForTest(ctx context.Context, compiler *TxnCompilerContext, statement tree.Statement, prepared bool, bindingDatabase string) (*plan.Plan, error) {
-+	ses := compiler.GetSession().(*Session)
-+	var retry *preparedExecutionRetry
-+	if prepared {
-+		ses.SetSql("execute select_lock_ctas")
-+		retry = &preparedExecutionRetry{}
++// UncommittedCapacityHook gates one object sitting on the edge of
++// persistence: the file sinker calls it right BEFORE its Sync would make
++// the object durable, with the object's name, and a returned error aborts
++// that spill before anything persists. The engine uses this hook to
++// reserve capacity for each unpublished object as it is created, in
++// object units rather than writer units, so a workspace dump whose
++// writer spills several objects consumes one reservation per object and
++// a refusal stops the spilling writer with no partially-persisted
++// object behind it (issue #25590 round-18 review).
++type UncommittedCapacityHook func(name string) error
++
++// WithUncommittedCapacityHook installs the capacity hook consulted
++// before each object persists. It is nil in production unless the
++// caller's persistence is bounded by an engine admission ledger.
++func WithUncommittedCapacityHook(hook UncommittedCapacityHook) SinkerOption {
++	return func(sinker *Sinker) {
++		sinker.config.capacityHook = hook
 +	}
-+	return preparedExecutionBuildPlanFunc(ses, statement, false, retry, bindingDatabase, prepared)(ctx)
 +}
 +
- // 测试角色只具有一个明确的 active role，直接复用既有 view privilege 查询。
- // 此 helper 不把它推广为生产 SHOW/查询权限策略。
- func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSchemaAuthorizer {
- 	return func(ctx context.Context, database, name string, _ *plan.Snapshot) error {
- 		ses := compiler.GetSession().(*Session)
- 		allowed, err := verifyViewPrivilegeForRole(ctx, compiler.getOrCreateBackExec(ctx), ses,
--			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false)
-+			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false, false)
- 		if err != nil {
- 			return err
- 		}
-@@ -180,3 +200,286 @@ func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSch
- 		return nil
- 	}
++// SinkerOwner is the structural interface to a workspace 
+```
+
+**File**: `pkg/objectio/ioutil/sinker_test.go` (modified, +27/-0)
+```diff
+@@ -237,3 +237,30 @@ func TestSinkerDeletePersistedAfterAmbiguousSyncFailure(t *testing.T) {
+ 	_, err = baseFS.StatFile(ctx, fs.persisted)
+ 	require.True(t, moerr.IsMoErrCode(err, moerr.ErrFileNotFound))
  }
 +
-+// Exercise the real batch admission and transaction owner using the fixture's
-+// engine. Warm membership in this epoch, then count targets consumed together.
-+func AuthorizeNativeSelectLockBatchForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query) (int, bool, error) {
-+	ses := compiler.GetSession().(*Session)
-+	ctx, epoch := beginAuthorizationEpoch(ctx, ses, &ExecCtx{})
-+	defer epoch.end()
-+	tips, err := selectLockPrivilegeTips(q)
-+	if err != nil {
-+		return 0, false, err
-+	}
-+	batch := &selectLockAuthorizationBatch{}
-+	for _, tip := range tips {
-+		batch.items = append(batch.items, privilegeItem{privilegeTyp: PrivilegeTypeSelect, selectLock: true,
-+			objType: objectTypeTable, dbName: tip.databaseName, tableName: tip.tableName,
-+			objectRef: tip.objectRef, viewPath: tip.viewPath,
-+			isClusterTable: tip.isClusterTable, clusterTableOperation: clusterTableSelect})
-+	}
-+	priv := &privilege{objType: objectTypeTable, entries: []privilegeEntry{{privilegeEntryTyp: privilegeEntryTypeCompound,
-+		compound: &compoundEntry{items: batch.items[:1]}}}}
-+	if ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv); err != nil || !ok {
-+		return 0, ok, err
-+	}
-+	ok, _, err := determineUserHasPrivilegeSetWithSelectLockBatch(ctx, ses, priv, batch)
-+	return batch.checked, ok, err
++func TestSinkerResetDiscardsTransferredFailureNames(t *testing.T) {
++	ctx := context.Background()
++	proc := testutil.NewProc(t)
++	baseFS, err := fileservice.NewMemoryFS("shared", fileservice.DisabledCacheConfig, nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { baseFS.Close(ctx) })
++	fs := &persistThenErrorFS{FileService: baseFS}
++	_, typs, _, sinker := makeTestSinker(proc.Mp(), fs)
++	t.Cleanup(func() { require.NoError(t, sinker.Close()) })
++	bat := containers.MockBatch(typs, 2, 2, nil)
++	t.Cleanup(bat.Close)
++	require.NoError(t, sinker.Write(ctx, containers.ToCNBatch(bat)))
++	require.ErrorContains(t, sinker.Sync(ctx), "injected post-persist sync failure")
++	owned := sinker.PersistedNames()
++	require.Equal(t, []string{fs.persisted}, owned)
++	require.Equal(t, owned, sinker.GetUnpublishedFiles())
++
++	sinker.Reset()
++	require.Empty(t, sinker.PersistedNames())
++	require.Empty(t, sinker.GetUnpublishedFiles())
++	require.Equal(t, []string{fs.persisted}, owned, "the transferred snapshot is independent")
++	_, err = baseFS.StatFile(ctx, fs.persisted)
++	require.NoError(t, err, "Reset must leave physical cleanup to the owner")
++	sinker.Reset()
++	require.Empty(t, sinker.PersistedNames())
++}
+```
+
+**File**: `pkg/sql/colexec/cn_segment_map.go` (modified, +28/-19)
+```diff
+@@ -15,7 +15,6 @@
+ package colexec
+ 
+ import (
+-	"bytes"
+ 	"encoding/binary"
+ 	"sync"
+ 
+@@ -40,6 +39,34 @@ type CnSegmentMap struct {
+ 	sync.Mutex
+ 	// tag whether a segment is generated by this txn
+ 	mp map[string]int32
++	// refs counts, per map entry, the ledgers that claimed it through
++	// PutCnSegment — the dual-claim shape a coordinator's re-record of an
++	// adopted transferred object builds on this CN (issue #25590
++	// round-55 review): two workspaces of one transaction can register
++	// the same (txnID, table, segment) — the fragment's mirror and the
++	// recording workspace — so a map entry retires only when EVERY
++	// claiming ledger has reached its terminal. It is read and written
++	// only under the mutex.
++	refs map[string]int
 +}
 +
-+// Pause the real second-target boundary, then change one reuse precondition.
-+// The existing frontend fault point supplies the barrier; production has no
-+// test hook. The count distinguishes legacy resumption from skipping a target.
-+func AuthorizeNativeSelectLockBoundaryForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query, change string) (int64, bool, error) {
-+	ses := compiler.GetSession().(*Session)
-+	runCtx, cancel := context.WithCancel(ctx)
-+	defer cancel()
-+	runCtx, epoch := beginAuthorizationEpoch(runCtx, ses, &ExecCtx{})
-+	defer epoch.end()
-+	if ok, _, err := authenticateSelectLockReferences(runCtx, ses, q); err != nil || !ok {
-+		return 0, ok, err
-+	}
-+	if fault.EnableDomain(fault.DomainFrontend) {
-+		defer fault.DisableDomain(fault.DomainFrontend)
-+	}
-+	const target = "authorization_before_grant_read"
-+	for _, point := range []struct{ name, frequency, action string }{
-+		{target, "2:2::", "wait"},
-+		{"select_lock_batch_waiters", ":::", "getwaiters"},
-+		{"select_lock_batch_notify", ":::", "notifyall"},
-+		{"select_lock_batch_count", ":::", "getcount"},
-+	} {
-+		if err := fault.AddFaultPointInDomain(ctx, fault.DomainFrontend, point.name, point.frequency, point.action, 0, target, false); err != nil {
-+			return 0, false, err
++// TxnWorkspaceSegments records exactly the CN segment-map entries ONE
++// workspace registered, so the workspace's terminal can remove exactly
++// those entries at a cost proportional to its own registrations. The
++// whole-map prefix sweep the retire path previously ran cost up to
++// milliseconds once unrelated live transactions registered hundreds of
++// thousands of segments (issue #25590 review finding P2), and — because
++// a remote statement's fragment mirror workspaces share the user
++// transaction's ID — one fragment's settlement could also unregister
++// segments a concurrent fragment of the same live transaction had
++// registered on this CN, corrupting later in-transaction delete
++// routing (GetCnSegmentType). The zero value is a workspace that
++// registered no segment; retiring it never opens the segment mutex. All
++// ledger access happens through the owning server's segment-map mutex
++// (register on Put, retire on removal), so the ledger needs no
++// separate synchronization.
++type TxnWorkspaceSegments struct {
++	keys map[string]struct{}
+ }
+ 
+ func IsDeletionOnTxnUnCommit(
+@@ -70,22 +97,4 @@ func segmentKey(txnID []byte, tableId uint64, segId *types.Segmentid) string {
+ 	return string(key)
+ }
+ 
+-func segmentKeyPrefix(txnID []byte) []byte {
+-	if len(txnID) > maxTxnIDLen {
+-		txnID = txnID[:maxTxnIDLen]
+-	}
+-	prefix := make([]byte, 2+len(txnID))
+-	binary.BigEndian.PutUint16(prefix[:2], uint16(len(txnID)))
+-	copy(prefix[2:], txnID)
+-	return prefix
+-}
+-
+-func segmentKeyHasTxn(key string, txnID []byte) bool {
+-	prefix := segmentKeyPrefix(txnID)
+-	if len(key) < len(prefix) {
+-		return false
+-	}
+-	return bytes.HasPrefix([]byte(key), prefix)
+-}
+-
+ const maxTxnIDLen = int(^uint16(0))
+```
+
+**File**: `pkg/sql/colexec/cn_segment_map_test.go` (added, +288/-0)
+```diff
+@@ -0,0 +1,288 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package colexec
++
++import (
++	"encoding/binary"
++	"fmt"
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/common/runtime"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
++	"github.com/stretchr/testify/require"
++)
++
++// newSegmentMapTestServer installs a fresh server for the default runtime
++// and restores whatever server the process had before, so segment-map
++// cases never observe state another test left behind.
++func newSegmentMapTestServer(t *testing.T) *Server {
++	t.Helper()
++	rt := runtime.ServiceRuntime("")
++	previous, existed := rt.GetGlobalVariables(runtime.ColexecServer)
++	server := NewServer("")
++	t.Cleanup(func() {
++		if existed {
++			rt.SetGlobalVariables(runtime.ColexecServer, previous)
++		} else {
++			rt.CompareAndDeleteGlobalVariables(runtime.ColexecServer, server)
 +		}
-+		defer fault.RemoveFaultPointFromDomain(ctx, fault.DomainFrontend, point.name)
++	})
++	return server
++}
++
++// TestTxnWorkspaceSegmentsRetireExactlyOwnRegistrations pins the issue
++// #25590 review finding P2 contract on the segment map itself: a
++// workspace's retirement deletes exactly the entries the workspace
++// registered — never entries registered by other workspaces, including
++// workspaces that share the same transaction ID (fragments of one
++// distributed transaction do exactly that), and never extra entries of
++// other transactions. The pre-fix per-txnID prefix sweep violated both
++// halves: it cost a whole-CN map scan under the shared mutex on every
++// fragment settlement, and a shared-txnID fragment settlement removed
++// another live fragment's registrations.
++func TestTxnWorkspaceSegmentsRetireExactlyOwnRegistrations(t *testing.T) {
++	srv := newSegmentMapTestServer(t)
++
++	txnID := []byte("shared-user-txn")
++	foreignTxnID := []byte("unrelated-txn")
++	const tableA = uint64(42)
++	const tableB = uint64(43)
++
++	writerA := &TxnWorkspaceSegments{}
++	writerB := &TxnWorkspaceSegments{}
++	foreign := &TxnWorkspaceSegments{}
++
++	sidA := objectio.NewSegmentid()
++	sidB := objectio.NewSegmentid()
++	sidForeign := objectio.NewSegmentid()
++
++	// Two workspaces of the SAME user transaction register distinct
++	// segments; an unrelated transaction registers a third entry.
++	srv.PutCnSegment(writerA, txnID, tableA, sidA, TxnWorkspaceUnCommitType)
++	srv.PutCnSegment(writerB, txnID, tableB, sidB, TxnWorkspaceUnCommitType)
++	srv.PutCnSegment(foreign, foreignTxnID, tableA, sidForeign, TxnWorkspaceUnCommitType)
++
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidA, tableA, txnID))
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID))
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidForeign, tableA, foreignTxnID))
++
++	// A repeated registration of the same segment dedupes in the ledger,
++	// so retirement stays proportional to distinct registrations.
++	srv.PutCnSegment(writerA, txnID, tableA, sidA, TxnWorkspaceUnCommitType)
++
++	// Retire writerA: exactly its own segment disappears. Pre-fix this
++	// swept writerB's and foreign's entries away too, because every entry
++	// with the same txnID prefix — and, for the full-scan cost, every
++	// foreign entry — was compared under the shared mutex.
++	srv.RetireTxnWorkspaceSegments(writerA)
++
++	require.Zero(t, srv.GetCnSegmentType(sidA, tableA, txnID),
++		"the retiring workspace's own registration must be removed at its terminal")
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID),
++		"another fragment workspace of the SAME user transaction keeps its registration")
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidForeign, tableA, foreignTxnID),
++		"an unrelated transaction's registration keeps untouched")
++
++	// The ledger is cleared, so a second terminal — a double settlement —
++	// is a no-op, and the remaining writer's own terminal removes its
++	// entry exactly.
++	srv.RetireTxnWorkspaceSegments(writerA)
++	require.Equal(t, int32(TxnWorkspaceUnCommitType),
++		srv.GetCnSegmentType(sidB, tableB, txnID))
++	srv.RetireTxnWorkspaceSegments(writerB)
++	require.Zero(t, srv.GetCnSegmentType(sidB, tableB, txnID))
++
++	// A zero-value ledger — the ordinary read-only remote fragment case —
++	// retires with nothing to remove.
++	srv.RetireTxnWorkspaceSegments(&TxnWorkspaceSegments{})
++
++	// The remaining consumers still see the surviving entries.
++	require.Equal(t, int32(TxnWorkspa
+```
+
+**File**: `pkg/sql/colexec/deletion/relay_object_names.go` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// relay_object_names.go derives the storage-object names a standalone
++// remote DELETE fragment's result stream carries (issue #25590
++// round-23 review, finding 3).
++//
++// A remote deletion operator (Deletion.RemoteDelete) flushes what it
++// persisted through the fragment result stream itself:
++// makeDelRemoteBatch's five-vector layout [BlockMeta_Delete_ID,
++// BlockMeta_DeltaLoc, BlockMeta_Type, BlockMeta_Partition,
++// BlockMeta_Deletes_Length]. Two row classes share that stream, and
++// only one of them names an object: for each CN-flushed S3 tombstone
++// the row's DeltaLoc column carries the MARSHALED tombstone stats
++// batch (a [ObjectMeta_ObjectStats] batch, one serialized ObjectStats
++// row per tombstone object) and its Type column is FlushDeltaLoc; a
++// per-block row carries the retained row-id batch and a block class
++// in Type, owning nothing. The pre-r23 intake recognized none of it:
++// a clean, drained standalone-delete fragment settled transferred,
++// released its local owner, and a cancellation before the coordinator's
++// record left the tombstone files enumerable nowhere.
++//
++// The recognizer is attribute-anchored and excludes the row-only class
++// by the producer's own Type discriminator; a DeltaLoc that cannot
++// decode rejects the ack instead of adopting a subset of the tombstones
++// the delete persisted.
++package deletion
++
++import (
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/objectio"
++)
++
++// ProducesRemotePersistedObjectMetadata is the mode-authenticated
++// provenance edge the coordinator's remote-object admission asserts
++// (issue #25590 round-24 review finding F2, design r11 D2): the remote
++// deletion layout names tombstone objects only when a real remote
++// S3-flushing deletion produced it. A local delete (RemoteDelete off)
++// is a stream whose rows are ordinary data - the very same
++// makeDelRemoteBatch-shaped rows from such an operator must never reach
++// the recognizer, where they would either reject a legitimate stream
++// fail-closed or adopt embedded stats as cleanup obligations.
++func (deletion *Deletion) ProducesRemotePersistedObjectMetadata() bool {
++	return deletion.RemoteDelete
++}
++
++// ProducesRemotePersistedObjectMetadata mirrors the raw operator's mode
++// on the partition wrapper: the wrapper's raw field is only visible
++// inside this package, so the compile-side admission consumes the mode
++// through this predicate alone, never by reaching into the wrapper.
++func (op *PartitionDelete) ProducesRemotePersistedObjectMetadata() bool {
++	return op.raw != nil && op.raw.RemoteDelete
++}
++
++// TryExtractRemoteDeleteObjectNames returns ok=true only for a batch
++// carrying the standalone deletion operator's remote layout, with one
++// canonical name per flushed tombstone object, or an error when a
++// FlushDeltaLoc row cannot prove the object it claims.
++func TryExtractRemoteDeleteObjectNames(
++	bat *batch.Batch, mp *mpool.MPool,
++) (names []string, ok bool, err error) {
++	if bat == nil || len(bat.Vecs) < 4 || bat.Vecs[0].Length() == 0 {
++		return nil, false, nil
 +	}
-+	type result struct {
-+		ok  bool
-+		err error
++	if len(bat.Attrs) < 4 ||
++		bat.Attrs[0] != catalog.BlockMeta_Delete_ID ||
++		bat.Attrs[1] != catalog.BlockMeta_DeltaLoc ||
++		bat.Attrs[2] != catalog.BlockMeta_Type ||
++		bat.Attrs[3] != catalog.BlockMeta_Partition {
++		return nil, false, nil
 +	}
-+	done := make(chan result, 1)
-+	go func() {
-+		ok, _, err := authent
++	if bat.Vecs[0].GetType().Oid != types.T_text ||
++		bat.Vecs[1].GetType().Oid != types.T_text ||
++		bat.Vecs[2].GetType().Oid != types.T_int8 ||
++		bat.Vecs[3].GetType().Oid != types.T_int32 {
++		return nil, false, nil
++	}
++	classes := vector.MustFixedColNoTypeCheck[int8](bat.Vecs[2])
++	data, area := vector.MustVarlenaRawData(bat.Vecs[1])
++	seen := make(map[string]struct{})
++	inner := batch.NewOffHeapEmpty()
++	defer inner.Clean(mp)
++	for i, class := range classes {
++		if class != int8(FlushDeltaLoc) {
++			// A retained block's rows stayed in the workspace; the
++			// producer's own class marker says no tombstone object.
++			continue
++		}
++		blob := data[i].GetByteSlice(area)
++		if len(blob) == 0 {
++			re
+```
+
+---
+
+### Incident Patch 3: `2b16c3ab` (2026-11-04)
+**Commit Message**: fix(sql): accept JSON in remaining string functions (#30883)
+
+## What type of PR is this?
+
+- [x] BUG
+- [x] Test and CI
+
+## Which issue(s) this PR fixes:
+
+Related to #28905. Keep the issue open until deployed QA acceptance.
+
+## What this PR does / why we need it:
+
+Support JSON operands in MD5, SHA/SHA1, SHA2, COMPRESS, QUOTE and SOUNDEX. Bind JSON operands directly and render complete visible JSON bytes inside each consumer without inserting a CONCAT expression or intermediate text vector. This preserves quotes, escape bytes and values above 65,535 bytes without a bounded VARCHAR cast. SHA2 integer-argument normalization, non-JSON behavior, ordinary CAST/assignment semantics, SQL NULL versus JSON null, and selection masks remain unchanged. QUOTE/SOUNDEX retain unbounded result metadata; COMPRESS retains its binary result.
+
+**Deployment contract: full offline upgrade.** Stop the cluster and replace all MatrixOne service binaries before accepting queries or resuming work; every CN must run the new binary. Mixed old/new CN execution and binary rollback are unsupported. The current implementation binds JSON directly. A retained seven-consumer predecessor-expression test replays the earl
+
+**File**: `pkg/common/morpc/backend_test.go` (modified, +4/-2)
+```diff
+@@ -1716,19 +1716,21 @@ func TestSendWithCannotConnect(t *testing.T) {
+ 			defer cancel()
+ 			req := &testMessage{id: 1}
+ 			f, err := b.Send(ctx, req)
+-			assert.NoError(t, err)
++			require.NoError(t, err)
+ 			defer f.Close()
+ 
+ 			resp, err := f.Get()
+ 			assert.Error(t, err)
+ 			assert.Nil(t, resp)
+ 		},
+ 		WithBackendFilter(func(Message, string) bool {
++			// Keep the short reconnect budget out of healthy fixture setup.
++			// The filter and subsequent reconnects share the write-loop owner.
++			rb.options.connectTimeout = time.Millisecond * 200
+ 			assert.NoError(t, rb.conn.Disconnect())
+ 			rb.remote = ""
+ 			return true
+ 		}),
+-		WithBackendConnectTimeout(time.Millisecond*200),
+ 	)
+ }
+ 
+```
+
+**File**: `pkg/frontend/show_account_test.go` (modified, +27/-10)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"math/rand"
+ 	"strings"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
+ 	"github.com/golang/mock/gomock"
+@@ -451,9 +452,12 @@ func Test_updateStorageUsageCache(t *testing.T) {
+ }
+ 
+ func Test_checkStorageUsageCache_V2(t *testing.T) {
++	synctest.Test(t, testCheckStorageUsageCacheV2)
++}
++
++func testCheckStorageUsageCacheV2(t *testing.T) {
+ 	origCache := cnUsageCache
+ 	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+-	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+ 	t.Cleanup(func() {
+ 		cnUsageCache = origCache
+ 	})
+@@ -476,16 +480,24 @@ func Test_checkStorageUsageCache_V2(t *testing.T) {
+ 		require.Equal(t, rep.Sizes[i], usages[int64(i)][0])
+ 	}
+ 
+-	require.Eventually(t, func() bool {
+-		_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
+-		return !ok
+-	}, time.Second+200*time.Millisecond, 10*time.Millisecond)
++	// Advance the bubble's fake clock, not wall time. Synchronous checks
++	// cannot leave an Eventually predicate racing the cache cleanup.
++	time.Sleep(time.Second - time.Nanosecond)
++	_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.True(t, ok, "cache must remain valid before the expiry boundary")
++	time.Sleep(time.Nanosecond)
++	usages, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.False(t, ok, "cache must expire at the lazy threshold")
++	require.Nil(t, usages)
+ }
+ 
+ func Test_checkStorageUsageCache(t *testing.T) {
++	synctest.Test(t, testCheckStorageUsageCache)
++}
++
++func testCheckStorageUsageCache(t *testing.T) {
+ 	origCache := cnUsageCache
+ 	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+-	cnUsageCache = logtail.NewStorageUsageCache(logtail.WithLazyThreshold(1))
+ 	t.Cleanup(func() {
+ 		cnUsageCache = origCache
+ 	})
+@@ -510,10 +522,15 @@ func Test_checkStorageUsageCache(t *testing.T) {
+ 		require.Equal(t, rep.SnapshotSizes[i], usages[int64(i)][1])
+ 	}
+ 
+-	require.Eventually(t, func() bool {
+-		_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
+-		return !ok
+-	}, time.Second+200*time.Millisecond, 10*time.Millisecond)
++	// The virtual-clock boundary is independent of scheduler delays and
++	// has no polling goroutine that can outlive cache restoration.
++	time.Sleep(time.Second - time.Nanosecond)
++	_, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.True(t, ok, "cache must remain valid before the expiry boundary")
++	time.Sleep(time.Nanosecond)
++	usages, ok = checkStorageUsageCache([][]int64{rep.AccIds})
++	require.False(t, ok, "cache must expire at the lazy threshold")
++	require.Nil(t, usages)
+ }
+ 
+ func Test_GetObjectCount_V2(t *testing.T) {
+```
+
+**File**: `pkg/sql/plan/base_binder.go` (modified, +0/-1)
+```diff
+@@ -9385,7 +9385,6 @@ func bindFuncExprImplByPlanExpr(
+ 			}
+ 		}
+ 	}
+-
+ 	// Temporal precision is also the display width stored in derived schemas.
+ 	// Keep the two metadata fields aligned after unit-dependent refinement.
+ 	switch name {
+```
+
+**File**: `pkg/sql/plan/function/func_binary.go` (modified, +14/-2)
+```diff
+@@ -7862,7 +7862,7 @@ func EndsWith(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc
+ }
+ 
+ // https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha2
+-func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int, selectList *FunctionSelectList) (err error) {
++func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) (err error) {
+ 	res := vector.MustFunctionResult[types.Varlena](result)
+ 	strs := vector.GenerateFunctionStrParameter(args[0])
+ 	shaTypes := vector.GenerateFunctionFixedTypeParameter[int64](args[1])
+@@ -7875,6 +7875,12 @@ func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *pro
+ 			continue
+ 		}
+ 		str, isnull1 := strs.GetStrValue(i)
++		if args[0].GetType().Oid == types.T_json {
++			str, isnull1, err = getJSONStringConsumerValue(proc.Ctx, strs, i)
++			if err != nil {
++				return err
++			}
++		}
+ 		shaType, isnull2 := shaTypes.GetValue(i)
+ 
+ 		if isnull1 || isnull2 {
+@@ -7905,7 +7911,7 @@ func SHA2Func(args []*vector.Vector, result vector.FunctionResultWrapper, _ *pro
+ // as '256tail' selects SHA-256 while a non-numeric value becomes zero. The
+ // string wrapper preserves binary bytes and avoids the lossy implicit cast to
+ // VARCHAR that would otherwise happen before execution.
+-func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int, selectList *FunctionSelectList) (err error) {
++func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) (err error) {
+ 	res := vector.MustFunctionResult[types.Varlena](result)
+ 	strs := vector.GenerateFunctionStrParameter(args[0])
+ 	shaLengths := vector.GenerateFunctionStrParameter(args[1])
+@@ -7928,6 +7934,12 @@ func SHA2StringLengthFunc(args []*vector.Vector, result vector.FunctionResultWra
+ 			continue
+ 		}
+ 		str, isnull1 := strs.GetStrValue(i)
++		if args[0].GetType().Oid == types.T_json {
++			str, isnull1, err = getJSONStringConsumerValue(proc.Ctx, strs, i)
++			if err != nil {
++				return err
++			}
++		}
+ 		var isnull2 bool
+ 		var shaType int64
+ 		if lengthIsConst {
+```
+
+**File**: `pkg/sql/plan/function/func_json_string_consumers_test.go` (modified, +330/-0)
+```diff
+@@ -15,12 +15,22 @@
+ package function
+ 
+ import (
++	"bytes"
++	"compress/zlib"
+ 	"context"
++	"crypto/md5"
++	"crypto/sha1"
++	"crypto/sha256"
++	"encoding/binary"
++	"encoding/hex"
++	"io"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -63,6 +73,76 @@ func TestJSONStringConsumerJSONOverloads(t *testing.T) {
+ 	}
+ }
+ 
++func TestJSONStringConsumerRemainingFunctionsKeepJSONAsSource(t *testing.T) {
++	cases := []struct {
++		name         string
++		args         []types.Type
++		wantOverload int32
++		wantCast     bool
++	}{
++		{name: "md5", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "sha1", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "sha2", args: []types.Type{types.T_json.ToType(), types.T_int64.ToType()}, wantOverload: 0},
++		{name: "sha2", args: []types.Type{types.T_json.ToType(), types.T_varchar.ToType()}, wantOverload: 0, wantCast: true},
++		{name: "compress", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "quote", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++		{name: "soundex", args: []types.Type{types.T_json.ToType()}, wantOverload: 0},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name+"/"+tc.args[len(tc.args)-1].Oid.String(), func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, tc.args)
++			require.NoError(t, err)
++			_, overloadIndex := DecodeOverloadID(resolved.GetEncodedOverloadID())
++			require.Equal(t, tc.wantOverload, overloadIndex)
++			casts, shouldCast := resolved.ShouldDoImplicitTypeCast()
++			require.Equal(t, tc.wantCast, shouldCast)
++			if shouldCast {
++				require.Equal(t, []types.Type{types.T_json.ToType(), types.T_int64.ToType()}, casts)
++			}
++		})
++	}
++}
++
++func TestJSONStringConsumerNonJSONTypesKeepExistingOverloads(t *testing.T) {
++	varcharType := types.T_varchar.ToType()
++	cases := []struct {
++		name string
++		args []types.Type
++	}{
++		{name: "md5", args: []types.Type{varcharType}},
++		{name: "sha1", args: []types.Type{varcharType}},
++		{name: "sha2", args: []types.Type{varcharType, types.T_int64.ToType()}},
++		{name: "compress", args: []types.Type{varcharType}},
++		{name: "quote", args: []types.Type{varcharType}},
++		{name: "soundex", args: []types.Type{varcharType}},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, tc.args)
++			require.NoError(t, err)
++			_, shouldCast := resolved.ShouldDoImplicitTypeCast()
++			require.False(t, shouldCast)
++		})
++	}
++}
++
++func TestJSONStringConsumerJSONResultBounds(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		want types.Type
++	}{
++		{name: "compress", want: types.T_blob.ToType()},
++		{name: "quote", want: types.NewWithCharset(types.T_text, 0, 0, types.CharsetUTF8MB4Bin)},
++		{name: "soundex", want: types.NewWithCharset(types.T_text, types.MaxLongTextLen, 0, types.CharsetUTF8)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			resolved, err := GetFunctionByName(context.Background(), tc.name, []types.Type{types.T_json.ToType()})
++			require.NoError(t, err)
++			require.Equal(t, tc.want, resolved.GetReturnType())
++		})
++	}
++}
++
+ func TestJSONStringConsumerRegisteredExecutors(t *testing.T) {
+ 	proc := testutil.NewProcess(t)
+ 	t.Cleanup(proc.Free)
+@@ -132,6 +212,215 @@ func TestJSONStringConsumerRegisteredExecutors(t *testing.T) {
+ 	}
+ }
+ 
++func runRegisteredJSONStringConsumer(
++	t *testing.T,
++	proc *process.Process,
++	name string,
++	argTypes []types.Type,
++	values []any,
++) []byte {
++	t.Helper()
++	require.Len(t, values, len(argTypes))
++	resolved, err := GetFunctionByName(proc.Ctx, name, argTypes)
++	require.NoError(t, err)
++	inputs := make([]*vector.Vector, len(argTypes))
++	for i := range argTypes {
++		inputs[i] = newVectorByType(proc.Mp(), argTypes[i], values[i], nil)
++	}
++	defer func() {
++		for _, input := range inputs {
++			input.Free(proc.Mp())
++		}
++	}()
++	if targets, shouldCast := resolved.ShouldDoImplicitTypeCast(); shouldCast {
++		require.Len(t, targets, len(inputs))
++		for i, targetType := range targets {
++			if argTypes[i].Eq(targetType) {
++				continue
++			}
++			// Reproduce the binder-owned integer parameter conversion instead
++			// of passing the original string vector to an INT64 executor.
++			integerTarget, integerContext := IntegerArgumentTarget(name, i)
++			require.True(t, integerContext)
++			require.Equal(t, integerTarget, targetType.Oid)
++			target := vector.NewVec(targetType)
++			defer target.Free(proc.Mp())
++			converted, err := RunFunctionDirectly(proc, EncodeOverloadID(CAST, IntegerArgumentCastOverload), []*vector.Vector{inputs[i], target}, 1)
++			require.NoError(t, err)
++			inputs[i].Free(proc.Mp())
++			inputs[i] = converted
++		}
++	}
++	result, err := RunFu
+```
+
+**File**: `pkg/sql/plan/function/func_unary.go` (modified, +39/-5)
+```diff
+@@ -1485,7 +1485,8 @@ func QuoteString(str string) string {
+ func Quote(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+ 	parameter := vector.GenerateFunctionStrParameter(ivecs[0])
+ 	rs := vector.MustFunctionResult[types.Varlena](result)
+-	isUTF8Text := isExplicitUTF8Charset(ivecs[0].GetType().Charset)
++	isJSON := ivecs[0].GetType().Oid == types.T_json
++	isUTF8Text := isJSON || isExplicitUTF8Charset(ivecs[0].GetType().Charset)
+ 	for row := uint64(0); row < uint64(length); row++ {
+ 		if selectList != nil && (selectList.IgnoreAllRow() ||
+ 			(!selectList.ShouldEvalAllRow() && selectList.Contains(row))) {
+@@ -1494,7 +1495,10 @@ func Quote(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *pr
+ 			}
+ 			continue
+ 		}
+-		value, null := parameter.GetStrValue(row)
++		value, null, err := getJSONStringConsumerValue(proc.Ctx, parameter, row)
++		if err != nil {
++			return err
++		}
+ 		if null {
+ 			if err := rs.AppendBytes([]byte("NULL"), false); err != nil {
+ 				return err
+@@ -5870,6 +5874,33 @@ func soundexTextString(str string) string {
+ }
+ 
+ func Soundex(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
++	if ivecs[0].GetType().Oid == types.T_json {
++		parameter := vector.GenerateFunctionStrParameter(ivecs[0])
++		rs := vector.MustFunctionResult[types.Varlena](result)
++		for row := uint64(0); row < uint64(length); row++ {
++			if functionRowSkipped(selectList, row) {
++				if err := rs.AppendBytes(nil, true); err != nil {
++					return err
++				}
++				continue
++			}
++			value, isNull, err := getJSONStringConsumerValue(proc.Ctx, parameter, row)
++			if err != nil {
++				return err
++			}
++			if isNull {
++				if err := rs.AppendBytes(nil, true); err != nil {
++					return err
++				}
++				continue
++			}
++			resultValue := functionUtil.QuickStrToBytes(soundexTextString(functionUtil.QuickBytesToStr(value)))
++			if err := rs.AppendBytes(resultValue, false); err != nil {
++				return err
++			}
++		}
++		return nil
++	}
+ 	textSoundex := SoundexString
+ 	if isExplicitUTF8Charset(ivecs[0].GetType().Charset) {
+ 		textSoundex = soundexTextString
+@@ -9356,7 +9387,7 @@ func Unhex(parameters []*vector.Vector, result vector.FunctionResultWrapper, pro
+ }
+ 
+ func Md5(parameters []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+-	return opUnaryBytesToBytes(parameters, result, proc, length, func(data []byte) []byte {
++	return jsonStringConsumerUnaryBytesToBytes(parameters, result, proc, length, func(data []byte) []byte {
+ 		sum := md5.Sum(data)
+ 		return []byte(hex.EncodeToString(sum[:]))
+ 	}, selectList)
+@@ -9761,7 +9792,10 @@ func Compress(parameters []*vector.Vector, result vector.FunctionResultWrapper,
+ 			continue
+ 		}
+ 
+-		data, null := source.GetStrValue(i)
++		data, null, err := getJSONStringConsumerValue(proc.Ctx, source, i)
++		if err != nil {
++			return err
++		}
+ 		if null {
+ 			if err := rs.AppendBytes(nil, true); err != nil {
+ 				return err
+@@ -14039,7 +14073,7 @@ func SHA1Func(
+ 	length int,
+ 	selectList *FunctionSelectList,
+ ) error {
+-	return opUnaryBytesToBytes(parameters, result, proc, length, func(v []byte) []byte {
++	return jsonStringConsumerUnaryBytesToBytes(parameters, result, proc, length, func(v []byte) []byte {
+ 		sum := sha1.Sum(v)
+ 		return []byte(hex.EncodeToString(sum[:]))
+ 	}, selectList)
+```
+
+**File**: `pkg/sql/plan/function/json_string_consumers.go` (modified, +88/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"context"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
+ )
+ 
+ const jsonStringConsumerOverloadID = 1
+@@ -54,3 +55,90 @@ func jsonStringConsumerReturnType(parameters []types.Type) types.Type {
+ 	}
+ 	return types.NewWithCharset(types.T_text, 0, 0, types.CharsetUTF8MB4Bin)
+ }
++
++func jsonStringConsumerResultParameters(parameters []types.Type) []types.Type {
++	// JSON visible text has no VARCHAR width bound. Preserve that fact when
++	// deriving output metadata as well as when consuming the runtime value.
++	if len(parameters) == 0 || parameters[0].Oid != types.T_json {
++		return parameters
++	}
++	result := append([]types.Type(nil), parameters...)
++	result[0] = jsonStringConsumerReturnType(parameters[:1])
++	return result
++}
++
++// Keep JSON in its source type so each consumer can hash or transform the
++// complete visible JSON bytes without an implicit VARCHAR width limit.
++func jsonStringConsumerUnaryFixedTypeMatch(overloads []overload, inputs []types.Type) checkResult {
++	return jsonStringConsumerTypeMatch(overloads, inputs, fixedTypeMatch)
++}
++
++func jsonStringConsumerUnaryDomainTypeMatch(overloads []overload, inputs []types.Type) checkResult {
++	return jsonStringConsumerTypeMatch(overloads, inputs, stringDomainFixedTypeMatch)
++}
++
++// Keep JSON as the bound input so the executor can serialize its complete
++// visible bytes without an intermediate string expression or width bound.
++func jsonStringConsumerTypeMatch(
++	overloads []overload,
++	inputs []types.Type,
++	match func([]overload, []types.Type) checkResult,
++) checkResult {
++	if len(inputs) == 0 || inputs[0].Oid != types.T_json {
++		return match(overloads, inputs)
++	}
++	prepared := append([]types.Type(nil), inputs...)
++	prepared[0] = types.T_varchar.ToType()
++	matched := match(overloads, prepared)
++	if matched.status == succeedMatched {
++		return newCheckResultWithSuccess(matched.idx)
++	}
++	if matched.status != succeedWithCast || len(matched.finalType) != len(inputs) {
++		return matched
++	}
++	castTypes := append([]types.Type(nil), matched.finalType...)
++	castTypes[0] = inputs[0]
++	for i := range inputs {
++		if !inputs[i].Eq(castTypes[i]) {
++			return newCheckResultWithCast(matched.idx, castTypes)
++		}
++	}
++	return newCheckResultWithSuccess(matched.idx)
++}
++
++func jsonStringConsumerUnaryBytesToBytes(
++	parameters []*vector.Vector,
++	result vector.FunctionResultWrapper,
++	proc *process.Process,
++	length int,
++	resultFn func([]byte) []byte,
++	selectList *FunctionSelectList,
++) error {
++	if parameters[0].GetType().Oid != types.T_json {
++		return opUnaryBytesToBytes(parameters, result, proc, length, resultFn, selectList)
++	}
++	source := vector.GenerateFunctionStrParameter(parameters[0])
++	rs := vector.MustFunctionResult[types.Varlena](result)
++	for row := uint64(0); row < uint64(length); row++ {
++		if functionRowSkipped(selectList, row) {
++			if err := rs.AppendBytes(nil, true); err != nil {
++				return err
++			}
++			continue
++		}
++		value, isNull, err := getJSONStringConsumerValue(proc.Ctx, source, row)
++		if err != nil {
++			return err
++		}
++		if isNull {
++			if err := rs.AppendBytes(nil, true); err != nil {
++				return err
++			}
++			continue
++		}
++		if err := rs.AppendBytes(resultFn(value), false); err != nil {
++			return err
++		}
++	}
++	return nil
++}
+```
+
+**File**: `pkg/sql/plan/function/list_builtIn.go` (modified, +16/-16)
+```diff
+@@ -4553,14 +4553,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: COMPRESS,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4570,7 +4570,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4580,7 +4580,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -4590,7 +4590,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 3,
+ 				args:       []types.T{types.T_blob},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return compressReturnType(parameters)
++					return compressReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Compress
+@@ -5203,14 +5203,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: QUOTE,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -5220,7 +5220,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -5230,7 +5230,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return quoteReturnType(parameters)
++					return quoteReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Quote
+@@ -7389,14 +7389,14 @@ var supportedStringBuiltIns = []FuncNew{
+ 		functionId: SOUNDEX,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    stringDomainFixedTypeMatch,
++		checkFn:    jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+ 				overloadId: 0,
+ 				args:       []types.T{types.T_varchar},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7406,7 +7406,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 1,
+ 				args:       []types.T{types.T_char},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7416,7 +7416,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 				overloadId: 2,
+ 				args:       []types.T{types.T_text},
+ 				retType: func(parameters []types.Type) types.Type {
+-					return soundexReturnType(parameters)
++					return soundexReturnType(jsonStringConsumerResultParameters(parameters))
+ 				},
+ 				newOp: func() executeLogicOfOverload {
+ 					return Soundex
+@@ -7432,7 +7432,7 @@ var supportedStringBuiltIns = []FuncNew{
+ 		integerParameters: []integerParameter{{position: 1, target: types.T_int64}},
+ 		bindingOverloads:  []int{0},
+ 		layout:            STANDARD_FUNCTION,
+-		checkFn:           stringDomainFixedTypeMatch,
++		checkFn:           jsonStringConsumerUnaryDomainTypeMatch,
+ 
+ 		Overloads: []overload{
+ 			{
+@@ -9516,7 +9516,7 @@ var supportedMathBuiltIns = []FuncNew{
+ 		functionId: MD5,
+ 		class:      plan.Function_STRICT,
+ 		layout:     STANDARD_FUNCTION,
+-		checkFn:    fixedTypeMat
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32031** (2026-11-02): perf(tae): index logtail append ranges on demand (@aunjgr)
-- **PR #32022** (2026-11-02): fix(disttae): release subscription state locks before diagnostics (@XuPeng-SH)
-- **PR #32019** (2026-11-02): fix(python): group additional fulltext WHERE predicates (@MatrixAdventurer)
-- **PR #32012** (2026-11-02): fix(plan): decouple simple zone-map filter admission from estimates (@ck89119)
-- **PR #32009** (2026-11-02): fix(function): preserve 64-bit complement of unsigned zero (@aptend)
-- **PR #32007** (2026-11-02): fix(fileservice): report anonymous file unlink failures (@XuPeng-SH)
+- **PR #32194** (2026-11-05): fix(hnsw): a CDC batch keeps the sign of -0 on every architecture (@cpegeric)
+- **PR #32191** (2026-11-04): fix(hashbuild): bound collected runtime-filter keys (@aunjgr)
+- **PR #32186** (2026-11-04): fix(vector): return append rollback failures on 4.2-dev (@aunjgr)
+- **PR #32184** (2026-11-04): fix(python): reject overflowing CDC CLI durations (@MatrixAdventurer)
+- **PR #32182** (2026-11-05): fix(median): correct unaccounted results across chunks (@XuPeng-SH)
+- **PR #32181** (2026-11-04): fix(plan): serve a selected MATCH through views, derived tables and CTEs (#31715) (@cpegeric)
 
 ---
 
@@ -3876,42 +4244,61 @@ statement's admitted catalog sna
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. function): clamp temporal casts to DECIMAL on overflow (#31999)
+## X. vector): return append rollback failures instead of panicking (#32167)
 
 **RULE**:
-When implementing operations in `pkg/container/types/time.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/container/vector/rollback_error_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `650a4bb3`: function): clamp temporal casts to DECIMAL on overflow (#31999). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `948cfbc1`: vector): return append rollback failures instead of panicking (#32167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/types/time.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/vector/rollback_error_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
-	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
+// Copyright 2026 Matrix Origin
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package vector
+
+import (
+	"errors"
+	"math"
+	"strings"
+	"testing"
+
+	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+	"github.com/matrixorigin/matrixone/pkg/container/types"
+	"github.com/stretchr/testify/require"
+)
+
+func TestRollbackAppendRejectsBeforeMutation(t *testing.T) {
+	for _, name := range []string{"length", "area", "negative", "overflow", "prepared", "string", "binary"} {
+		t.Run(name, func(t *testing.T) {
+			mp := mpool.MustNewZero()
+			v := NewVec(types.T_varchar.ToType())
+			defer func() { v.Free(mp); require.Zero(t, mp.CurrNB()); require.Zero(t, mp.OnHeapCurrNB()) }()
+			require.NoErro
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tToStr := t.NumericString(scale)
-	ret, err := ParseDecimal64(tToStr, width, scale)
-	if err != nil {
-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
-	}
-
-	return ret, nil
-	tToStr := t.NumericString(scale)
-	ret, err := ParseDecimal128(tToStr, width, scale)
-	if err != nil {
-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
-	}
-
-	return ret, nil
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `650a4bb3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `948cfbc1` are properly handled with clean fallback behavior.

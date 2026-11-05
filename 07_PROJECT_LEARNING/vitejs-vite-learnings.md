@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
-> **Source Version**: `90bc034a`  
+> **Source Version**: `b3cb0575`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T18:58:29.795Z  
+> **Timestamp**: 2026-11-04T02:26:09.042Z  
 > **Learning ID**: `learn-github-vitejs-vite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T18:58:29.524Z  
+> **Harvest Timestamp**: 2026-11-04T02:26:07.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation frontend tooling. It's fast!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 83626 stars
+- **Stars / Engagement**: 83713 stars
 
 ---
 
@@ -1294,11 +1294,11 @@ self.onmessage = (e) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23951** (2026-10-30): **fix(env): strip UTF-8 BOM before parsing .env files**
-  *Symptoms*: A `.env` file starting with a UTF-8 BOM — what PowerShell 5 `Set-Content -Encoding utf8` and Notepad write — silently loses its first variable. Since #21586 Vite parses `.env` with Node's `util.parseEnv`, which keeps the BOM on the first key, so `'﻿VITE_A'` fails the `VITE_` prefix check; dotenv 17 returned both variables, so this is a regression. Node's behavior is now nodejs/node#67102. The file read in `packages/vite/src/node/env.ts` now goes through the existing `stripBomTag` (the same helper Vite uses for package.json and CSS), plus a temp-dir test in `__tests__/env.spec.ts`. 2 files, +23/-3. LF files are unchanged.  Added a test that fails without the fix (missing `VITE_BOM_A`) and passes with it. oxlint, oxfmt, typecheck and the lint-staged hook pass; `vitest run packages/vite/src/node`: 1025 passed, with 4 local failures that also fail without the change (a stray package.json in %TEMP% and a symlink checkout).  AI disclosure: I used Kimi Code to help track down the regression and draft the fix and test; I reviewed every line, reproduced the bug with a PowerShell 5-written .env file on Windows, and ran the vitest suite and lint gates myself. 
+- **Issue #23980** (2026-11-03): **fix(client): preserve valueless query params in cleanUrl (fix #23979)**
+  *Symptoms*: ### Description  Fixes #23979.  When a `<link rel="stylesheet">` points to a stylesheet with valueless query flags (such as `/src/Comp.vue?vue&type=style&index=0&lang.scss` rendered during SSR by Nuxt), CSS HMR calls `cleanUrl(path)` in `packages/vite/src/client/client.ts` to drop `direct`.  Previously, `cleanUrl` called `url.searchParams.delete('direct')` and read back `url.search`. Because `URLSearchParams.prototype.toString()` serializes valueless parameters as `key=`, flags like `vue` and `lang.scss` became `vue=&...&lang.scss=`. The trailing `=` prevented `CSS_LANGS_RE` from matching the extension on the updated link URL (`...lang.scss=&t=...`), causing the styles to be served as JavaScript or fail scoped CSS compilation.  This change filters out `direct` / `direct=...` directly from the raw `url.search` string without round-tripping through `URLSearchParams`, preserving valueless flags as written while properly removing `direct`.  ### AI Disclosure  Assisted by AI to analyze the reproduction in #23979. The fix was manually reviewed and verified against edge cases (such as URLs with no query, trailing `?`, multiple parameters, parameters prefixed with `direct` like `direction`, and full browser URLs). 
 
-- **Issue #23949** (2026-10-30): **fix(server): deduplicate watch registrations for out-of-root files (#23940)**
-  *Symptoms*: ### Description  Fixes #23940  When modules outside the dev server root (e.g. linked packages in a monorepo workspace) are transformed or requested, `ensureWatchedFile` is invoked on each transform.  On macOS with chokidar's FSEvents backend, calling `watcher.add(file)` repeatedly for a file that is already watched registers an additional closer/listener on each transform, growing memory without bound and duplicating event notifications. On other platforms, repeatedly calling `ensureWatchedFile` also performs redundant synchronous `fs.existsSync` calls on every transform.  This PR maintains a per-watcher `Set<string>` in `ensureWatchedFile` so each out-of-root path is only added once: - Skips redundant `fs.existsSync` and `watcher.add` calls when the path is already tracked. - Listens to `watcher.on('unlink')` and `watcher.on('unlinkDir')` to drop deleted files or directories from the set, allowing recreated files to be watched again on subsequent requests. - Includes unit tests in `packages/vite/src/node/server/__tests__/watcher.spec.ts` asserting that repeated calls for the same out-of-root file register only once with `watcher.add`, and that unlinking the file or its directory re-enables watching upon recreation. 
+- **Issue #23977** (2026-11-02): **fix(css): preserve quoted image-set spaces (BOYF-266)**
+  *Symptoms*: `image-set("./image  name.svg" 1x)` collapses the two spaces in its quoted filename before asset resolution. When a one-space file also exists, the build silently selects that different asset; otherwise it leaves an unresolved URL. The same issue affects single-quoted candidates.  Keep quoted tokens intact while normalizing candidate separators. The boundary guard preserves normal parsing of apostrophes in unquoted HTML srcset URLs. The candidate matcher and nested-function handling are unchanged. #23521 and #23550 address nested parentheses and retain the whitespace normalization that causes this separate bug.  Added unit coverage for both quote styles, commas, descriptors, CRLF/tabs, escaped whitespace strings, and HTML URL apostrophes. Independently rebuilt the exact base and head, then ran the same four-build fixture matrix: static/dynamic CSS, distinct one/two-space SVG bytes, double-space-only files, and cssMinify=false/lightningcss. Base: 16 failures among 56 declarations; head: 56 correct, zero warnings, all 40 controls retained. Related unit tests (296), type build, Vite typecheck, and changed-file lint/format checks pass. Browser and full repository suites were not run.  AI disclosure: AI coding agents prepared this change and performed a separate automated review of the exact commit. The review checked the full diff, quote boundaries, separator behavior, and emitted asset bytes. No human review or personal production-use experience is claimed. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1315,233 +1315,372 @@ self.onmessage = (e) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90bc034a` (2026-10-30)
-**Commit Message**: fix: use top-level `input` for SSR build when `build.ssr: true` (#23898)
+### Incident Patch 1: `b3cb0575` (2026-11-02)
+**Commit Message**: fix(deps): update all non-major dependencies (#23966)
 
-**File**: `packages/vite/src/node/__tests__/config.spec.ts` (modified, +24/-0)
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/semgrep.yml` (modified, +1/-1)
 ```diff
-@@ -1507,6 +1507,30 @@ describe('resolveConfig', () => {
-     expect(config.environments.ssr.build.rolldownOptions.input).toBeUndefined()
-   })
- 
-+  test('top-level input applies to the SSR environment when build.ssr is true in build', async () => {
-+    const config = await resolveConfig(
-+      {
-+        input: 'src/entry-server.ts',
-+        build: { ssr: true },
-+      },
-+      'build',
-+    )
-+
-+    expect(config.environments.ssr.input).toBe('src/entry-server.ts')
-+  })
-+
-+  test('top-level input does not apply to the SSR environment when build.ssr is true in dev', async () => {
-+    const config = await resolveConfig(
-+      {
-+        input: 'src/entry-server.ts',
-+        build: { ssr: true },
-+      },
-+      'serve',
-+    )
-+
-+    expect(config.environments.ssr.input).toBeUndefined()
-+  })
-+
-   test('per-environment input overrides the top-level value', async () => {
-     const config = await resolveConfig(
-       {
+@@ -14,7 +14,7 @@ jobs:
+     permissions:
+       security-events: write # Required for upload-sarif to upload SARIF files.
+     container:
+-      image: semgrep/semgrep:1.182.1@sha256:451b3d875c00dac7ed5db5293e584a07de11449a409c10b3c2d2652f429630b6
++      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
 ```
 
-**File**: `packages/vite/src/node/config.ts` (modified, +4/-0)
+**File**: `docs/package.json` (modified, +2/-2)
 ```diff
-@@ -1714,6 +1714,10 @@ export async function resolveConfig(
-     },
-   }
- 
-+  if (isBuild && config.build?.ssr === true) {
-+    config.environments.ssr.input ??= config.input
-+  }
-+
-   for (const name of Object.keys(config.environments)) {
-     config.environments[name] = mergeConfig(
-       name === 'client'
-```
-
----
-
-### Incident Patch 2: `28e17107` (2026-10-30)
-**Commit Message**: fix(create-vite): keep TypeScript 6 when using ESLint (#23931)
-
-Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
-
-**File**: `packages/create-vite/__tests__/cli.spec.ts` (modified, +26/-0)
-```diff
-@@ -206,6 +206,15 @@ test('scaffolds react-ts with Oxlint by default', () => {
-   expect(pkg).toContain('"oxlint"')
-   expect(pkg).not.toContain('eslint')
-   expect(pkg).toContain('"lint": "oxlint"')
-+  const templatePkg = JSON.parse(
-+    fs.readFileSync(
-+      path.join(CLI_PATH, 'template-react-ts', 'package.json'),
-+      'utf-8',
-+    ),
-+  )
-+  expect(JSON.parse(pkg).devDependencies.typescript).toBe(
-+    templatePkg.devDependencies.typescript,
-+  )
- 
-   const readme = fs.readFileSync(path.join(genPath, 'README.md'), 'utf-8')
-   expect(readme).toContain('Expanding the Oxlint configuration')
-@@ -225,8 +234,25 @@ test('scaffolds React template with ESLint when --eslint is passed', () => {
-   expect(pkg).toContain('"eslint"')
-   expect(pkg).not.toContain('oxlint')
-   expect(pkg).toContain('"lint": "eslint ."')
-+  expect(pkg).not.toContain('"typescript"')
-+  expect(pkg).not.toContain('"typescript-eslint"')
- })
- 
-+for (const template of ['react-ts', 'react-compiler-ts']) {
-+  test(`keeps TypeScript 6 for ${template} when --eslint is passed`, () => {
-+    run([projectName, '--template', template, '--eslint'], {
-+      cwd: import.meta.dirname,
-+    })
-+
-+    const pkg = JSON.parse(
-+      fs.readFileSync(path.join(genPath, 'package.json'), 'utf-8'),
-+    )
-+    expect(pkg.devDependencies.typescript).toBe('~6.0.3')
-+    expect(pkg.devDependencies['typescript-eslint']).toBeDefined()
-+    expect(pkg.devDependencies.oxlint).toBeUndefined()
-+  })
-+}
-+
- test('ignores --eslint with a warning for non-React templates', () => {
-   const { stdout, stderr } = run(
-     [projectName, '--template', 'vue', '--eslint'],
-```
-
-**File**: `packages/create-vite/src/index.ts` (modified, +5/-3)
-```diff
-@@ -943,6 +943,11 @@ export default defineConfig([
- 
-   editFile(path.resolve(root, 'package.json'), (content) => {
-     const asObject = JSON.parse(content)
-+    if (isTs) {
-+      // Keep TypeScript 6 until typescript-eslint supports TypeScript 7.
-+      // https://github.com/typescript-eslint/typescript-eslint/issues/10940
-+      asObject.devDependencies.typescript = '~6.0.3'
-+    }
-     const devDepsEntries = Object.entries(asObject.devDependencies).filter(
-       ([name]) => name !== 'oxlint',
-     )
-@@ -955,9 +960,6 @@ export default defineConfig([
-     )
-     if (isTs) {
-       devDepsEntries.push(['typescript-eslint', `^${typescriptEslintVersion}`])
--      // Keep TypeScript 6 until typescript-eslint supports TypeScript 7.
--      // https://github.com/typescript-eslint/typescript-eslint/issues/10940
--      asObject.devDependencies.typescript = '~6.0.3'
-     }
-     devDepsEntries.sort()
-     asObject.devDependencies = Object.fromEntries(devDepsEntries)
-```
-
----
-
-### Incident Patch 3: `20d355a0` (2026-10-30)
-**Commit Message**: build: generate sourcemaps in import-meta-current-dirname plugin (#23904)
-
-**File**: `packages/vite/rolldown.config.ts` (modified, +39/-27)
-```diff
-@@ -344,39 +344,51 @@ function buildTimeImportMetaUrlPlugin(): Plugin {
-             s.overwrite(ss, se + 4, `${prefix}${index}`)
-           }
-         }
--        return s.hasChanged() ? s.toString() : undefined
-+        return s.hasChanged()
-+          ? {
-+              code: s.toString(),
-+              map: s.generateMap({ source: id, hires: 'boundary' }),
-+            }
-+          : undefined
-       },
-     },
-     renderChunk(code, chunk, outputOptions) {
-       if (!code.includes(prefix)) return
- 
--      return code.replace(
--        /__vite_buildTimeImportMetaUrl_(\d+)/g,
--        (_, index) => {
--          const originalFile = Object.keys(idMap).find(
--            (key) => idMap[key] === +index,
-+      const s = new MagicString(code)
-+      const pattern = /__vite_buildTimeImportMetaUrl_(\d+)/g
-+      let match
-+      while ((match = pattern.exec(code))) {
-+        const originalFile = Object.keys(idMap).find(
-+          (key) => idMap[key] === +match![1],
-+        )
-+        if (!originalFile) {
-+          throw new Error(
-+            `Could not find original file for ${prefix}${match[1]} in ${chunk.fileName}`,
-           )
--          if (!originalFile) {
--            throw new Error(
--              `Could not find original file for ${prefix}${index} in ${chunk.fileName}`,
--            )
--          }
--          const outputFile = path.resolve(outputOptions.dir!, chunk.fileName)
--          const relativePath = path
--            .relative(path.dirname(outputFile), originalFile)
--            .replaceAll('\\', '/')
--
--          if (outputOptions.format === 'es') {
--            return `new URL(${JSON.stringify(relativePath)}, import.meta.url)`
--          } else if (outputOptions.format === 'cjs') {
--            return `new URL(${JSON.stringify(
--              relativePath,
--            )}, require('node:url').pathToFileURL(__filename))`
--          } else {
--            throw new Error(`Unsupported output format ${outputOptions.format}`)
--          }
--        },
--      )
-+        }
-+        const outputFile = path.resolve(outputOptions.dir!, chunk.fileName)
-+        const relativePath = path
-+          .relative(path.dirname(outputFile), originalFile)
-+          .replaceAll('\\', '/')
-+
-+        let replacement: string
-+        if (outputOptions.format === 'es') {
-+          replacement = `new URL(${JSON.stringify(relativePath)}, import.meta.url)`
-+        } else if (outputOptions.format === 'cjs') {
-+          replacement = `new URL(${JSON.stringify(
-+            relativePath,
-+          )}, require('node:url').pathToFileURL(__filename))`
-+        } else {
-+          throw new Error(`Unsupported output format ${outputOptions.format}`)
-+        }
-+        s.overwrite(match.index, match.index + match[0].length, replacement)
-+      }
-+
-+      if (!outputOptions.sourcemap) {
-+        return s.toString()
-+      }
-+      return { code: s.toString(), map: s.generateMap({ hires: 'boundary' }) }
-     },
+@@ -14,11 +14,11 @@
+     "@voidzero-dev/vitepress-theme": "^5.0.7",
+     "feed": "^6.0.0",
+     "typescript": "~6.0.3",
+-    "vitepress": "^2.0.0-alpha.20",
++    "vitepress": "^2.0.0-alpha.21",
+     "vitepress-plugin-graphviz": "^0.1.0",
+     "vitepress-plugin-group-icons": "^1.8.1",
+     "vitepress-plugin-llms": "^1.14.0",
+     "vue": "^3.5.44",
+-    "vue-tsc": "^3.3.13"
++    "vue-tsc": "^3.3.14"
    }
  }
 ```
 
+**File**: `package.json` (modified, +4/-4)
+```diff
+@@ -54,11 +54,11 @@
+     "@types/ws": "^8.18.2",
+     "@vitejs/release-scripts": "^1.10.0",
+     "eslint-plugin-n": "^18.5.0",
+-    "eslint-plugin-regexp": "^3.3.1",
++    "eslint-plugin-regexp": "^3.3.2",
+     "execa": "^9.6.1",
+     "lint-staged": "^17.6.0",
+-    "oxfmt": "^0.74.0",
+-    "oxlint": "^1.89.0",
++    "oxfmt": "^0.75.0",
++    "oxlint": "^1.90.0",
+     "oxlint-tsgolint": "^7.0.2005",
+     "picocolors": "^1.1.1",
+     "playwright-chromium": "^1.64.1",
+@@ -87,7 +87,7 @@
+       "oxlint --fix"
+     ]
+   },
+-  "packageManager": "pnpm@12.15.0",
++  "packageManager": "pnpm@12.16.1",
+   "stackblitz": {
+     "startCommand": "pnpm --filter='./packages/vite' run dev"
+   }
+```
+
+**File**: `packages/create-vite/src/index.ts` (modified, +3/-3)
+```diff
+@@ -826,7 +826,7 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
+ 
+ function setupReactCompiler(root: string, isTs: boolean) {
+   // renovate: datasource=npm depName=@rolldown/plugin-babel
+-  const babelPluginVersion = '0.2.4'
++  const babelPluginVersion = '0.3.0'
+   // renovate: datasource=npm depName=babel-plugin-react-compiler
+   const reactCompilerPluginVersion = '1.0.0'
+   // renovate: datasource=npm depName=@babel/core
+@@ -880,15 +880,15 @@ function setupEslint(root: string, isTs: boolean) {
+   // renovate: datasource=npm depName=@eslint/js
+   const eslintJsVersion = '10.0.1'
+   // renovate: datasource=npm depName=eslint
+-  const eslintVersion = '10.13.0'
++  const eslintVersion = '10.14.0'
+   // renovate: datasource=npm depName=eslint-plugin-react-hooks
+   const eslintPluginReactHooksVersion = '7.1.1'
+   // renovate: datasource=npm depName=eslint-plugin-react-refresh
+   const eslintPluginReactRefreshVersion = '0.5.7'
+   // renovate: datasource=npm depName=globals
+   const globalsVersion = '17.13.0'
+   // renovate: datasource=npm depName=typescript-eslint
+-  const typescriptEslintVersion = '8.72.0'
++  const typescriptEslintVersion = '8.72.1'
+ 
+   const eslintConfigForTS = /* js */ `import js from '@eslint/js'
+ import globals from 'globals'
+```
+
+**File**: `packages/create-vite/template-preact-ts/package.json` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+     "preview": "vite preview"
+   },
+   "dependencies": {
+-    "preact": "^11.0.2"
++    "preact": "^11.1.1"
+   },
+   "devDependencies": {
+     "@preact/preset-vite": "^2.10.6",
+```
+
+**File**: `packages/create-vite/template-preact/package.json` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+     "preview": "vite preview"
+   },
+   "dependencies": {
+-    "preact": "^11.0.2"
++    "preact": "^11.1.1"
+   },
+   "devDependencies": {
+     "@preact/preset-vite": "^2.10.6",
+```
+
+**File**: `packages/create-vite/template-qwik-ts/package.json` (modified, +1/-1)
+```diff
+@@ -15,6 +15,6 @@
+     "vite": "^8.3.5"
+   },
+   "dependencies": {
+-    "@builder.io/qwik": "^1.20.2"
++    "@builder.io/qwik": "^1.20.3"
+   }
+ }
+```
+
+**File**: `packages/create-vite/template-qwik/package.json` (modified, +1/-1)
+```diff
+@@ -13,6 +13,6 @@
+     "vite": "^8.3.5"
+   },
+   "dependencies": {
+-    "@builder.io/qwik": "^1.20.2"
++    "@builder.io/qwik": "^1.20.3"
+   }
+ }
+```
+
+---
+
+### Incident Patch 2: `0105733e` (2026-11-02)
+**Commit Message**: fix(deps): update rolldown-related dependencies (#23967)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@
+     "oxlint-tsgolint": "^7.0.2005",
+     "picocolors": "^1.1.1",
+     "playwright-chromium": "^1.64.1",
+-    "rolldown": "~1.2.15",
++    "rolldown": "~1.2.16",
+     "rollup": "^4.59.0",
+     "simple-git-hooks": "^2.14.0",
+     "tsx": "^4.23.15",
+```
+
+**File**: `packages/create-vite/package.json` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@
+     "mri": "^1.2.0",
+     "std-env": "^4.3.0",
+     "tinyexec": "^1.3.1",
+-    "tsdown": "^0.23.2",
++    "tsdown": "^0.23.4",
+     "unrun": "^0.3.1"
+   }
+ }
+```
+
+**File**: `packages/plugin-legacy/package.json` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@
+   "devDependencies": {
+     "acorn": "^8.19.0",
+     "picocolors": "^1.1.1",
+-    "tsdown": "^0.23.2",
++    "tsdown": "^0.23.4",
+     "unrun": "^0.3.1",
+     "vite": "workspace:*"
+   },
+```
+
+**File**: `packages/vite/package.json` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@
+     "lightningcss": "^1.33.0",
+     "picomatch": "^4.0.7",
+     "postcss": "^8.5.31",
+-    "rolldown": "~1.2.15",
++    "rolldown": "~1.2.16",
+     "tinyglobby": "^0.2.17"
+   },
+   "devDependencies": {
+@@ -120,7 +120,7 @@
+     "postcss-modules": "^9.0.1",
+     "premove": "^4.0.0",
+     "resolve.exports": "^2.0.4",
+-    "rolldown-plugin-dts": "^0.28.8",
++    "rolldown-plugin-dts": "^0.29.0",
+     "rollup": "^4.59.0",
+     "rollup-plugin-license": "^3.7.1",
+     "sass": "^1.106.1",
+```
+
+**File**: `playground/js-sourcemap/package.json` (modified, +1/-1)
+```diff
+@@ -16,6 +16,6 @@
+     "@vitejs/test-dep-optimized-malicious": "file:dep-optimized-malicious",
+     "@vitejs/test-importee-pkg": "file:importee-pkg",
+     "magic-string": "^1.4.3",
+-    "oxc-parser": "^0.155.0"
++    "oxc-parser": "^0.156.0"
+   }
+ }
+```
+
+**File**: `playground/package.json` (modified, +1/-1)
+```diff
+@@ -10,6 +10,6 @@
+     "convert-source-map": "^2.0.0",
+     "css-color-names": "^1.0.1",
+     "kill-port": "^1.6.1",
+-    "rolldown": "~1.2.15"
++    "rolldown": "~1.2.16"
+   }
+ }
+```
+
+**File**: `pnpm-lock.yaml` (modified, +253/-185)
+```diff
+@@ -244,8 +244,8 @@ importers:
+         specifier: ^1.64.1
+         version: 1.64.1
+       rolldown:
+-        specifier: ~1.2.15
+-        version: 1.2.15
++        specifier: ~1.2.16
++        version: 1.2.16
+       rollup:
+         specifier: ^4.59.0
+         version: 4.64.9
+@@ -319,8 +319,8 @@ importers:
+         specifier: ^1.3.1
+         version: 1.3.1
+       tsdown:
+-        specifier: ^0.23.2
+-        version: 0.23.2(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
++        specifier: ^0.23.4
++        version: 0.23.4(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
+       unrun:
+         specifier: ^0.3.1
+         version: 0.3.1
+@@ -371,8 +371,8 @@ importers:
+         specifier: ^1.1.1
+         version: 1.1.1
+       tsdown:
+-        specifier: ^0.23.2
+-        version: 0.23.2(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
++        specifier: ^0.23.4
++        version: 0.23.4(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
+       unrun:
+         specifier: ^0.3.1
+         version: 0.3.1
+@@ -392,8 +392,8 @@ importers:
+         specifier: ^8.5.31
+         version: 8.5.31
+       rolldown:
+-        specifier: ~1.2.15
+-        version: 1.2.15
++        specifier: ~1.2.16
++        version: 1.2.16
+       tinyglobby:
+         specifier: ^0.2.17
+         version: 0.2.17
+@@ -531,8 +531,8 @@ importers:
+         specifier: ^2.0.4
+         version: 2.0.4
+       rolldown-plugin-dts:
+-        specifier: ^0.28.8
+-        version: 0.28.8(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(rolldown@1.2.15)(typescript@7.0.2)(vue-tsc@3.3.13)
++        specifier: ^0.29.0
++        version: 0.29.0(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(rolldown@1.2.16)(typescript@7.0.2)(vue-tsc@3.3.13)
+       rollup:
+         specifier: ^4.59.0
+         version: 4.64.9
+@@ -731,8 +731,8 @@ importers:
+         specifier: ^1.6.1
+         version: 1.6.1
+       rolldown:
+-        specifier: ~1.2.15
+-        version: 1.2.15
++        specifier: ~1.2.16
++        version: 1.2.16
+ 
+   playground/alias:
+     dependencies:
+@@ -1135,8 +1135,8 @@ importers:
+         specifier: ^1.4.3
+         version: 1.4.3
+       oxc-parser:
+-        specifier: ^0.155.0
+-        version: 0.155.0
++        specifier: ^0.156.0
++        version: 0.156.0
+ 
+   playground/js-sourcemap/dep-class-field-sourcemap-babel: {}
+ 
+@@ -3337,130 +3337,130 @@ packages:
+     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
+     engines: {node: '>= 8'}
+ 
+-  '@oxc-parser/binding-android-arm-eabi@0.155.0':
+-    resolution: {integrity: sha512-A6xv7hDtnTm+xlZ7utn6rRQpRMJHRhVr3gjRGqlx0RUX84mNk0pAsy6YN/wWhuOTkaZhRrrzaLxf0NfbH77j2w==}
++  '@oxc-parser/binding-android-arm-eabi@0.156.0':
++    resolution: {integrity: sha512-RMq7DKNzEp1T51QKNLTn0NryNEt2IYfh7mZBlIdi2Ju52ltOEDMeIXv0XBpA6dL7j7ChjlcovtGcc1Jv4qMipg==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [android]
+ 
+-  '@oxc-parser/binding-android-arm64@0.155.0':
+-    resolution: {integrity: sha512-T1wWwH9/JI5g7Z4kEQwDOwhToxdDhRyOTklH+uuNpJ16m3MZFmGl+l2rKc0NHQdbVRG2LTOBsNjpW3h1BWytPA==}
++  '@oxc-parser/binding-android-arm64@0.156.0':
++    resolution: {integrity: sha512-mwkWKhOBpmh8fWc3m4MiLsmEAtx0YuHmvyo9ff557cnb3QZ2kt2eauSz75wCGIpiZG3gUsJ4WwzEjm4R4/BHig==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@oxc-parser/binding-darwin-arm64@0.155.0':
+-    resolution: {integrity: sha512-ZoRB3qJxJ8DWA41jHja+YeB0lLfjBy4T+Kr15vnN1k65X3zbJt3rPZftEwN4Ju4tmA4K/T9dWWD7Z8ewQLnrVA==}
++  '@oxc-parser/binding-darwin-arm64@0.156.0':
++    resolution: {integrity: sha512-6pGR5fUszM9M4eBBapqpGjCRJolFwuCldx8bRQjqXyM09cQysBTWVF2Ttg4UNJVxYSaw5RRINbveCOOCrsuGvA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@oxc-parser/binding-darwin-x64@0.155.0':
+-    resolution: {integrity: sha512-vxtL86BtM+IgrpejA86nbTk5j0HKTIMeuaJ1fQciw6p9RfavPtIPjI7gN34owap0yG9txXBaAWpGdxokNwdqIw==}
++  '@oxc-parser/binding-darwin-x64@0.156.0':
++    resolution: {integrity: sha512-M9QghL7uCAqMKjYJv1rDGblfEvkeQu3QzTPd7Uwo16gG3uO7m9ikVQ9OL8FZTnKzU4vbCEby6kTlEkqN+JeEMA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@oxc-parser/binding-freebsd-x64@0.155.0':
+-    resolution: {integrity: sha512-tN6Ru5e0UVnWaIuiH8jEwnvxuxg7FvhWwSd3oe5oDhOD4ObsSr9/N6WfHLjilUWlPPj65ptwrSDH0Y7lzwTzmw==}
++  '@oxc-parser/binding-freebsd-x64@0.156.0':
++    resolution: {integrity: sha512-lX0ANxSwAOrpOT7NHB+YsrBqDJ8sOVon5m7GS9eQtkuUeNzQMMGpFsJLsStawTbrdwOF5KDVxgPWcKmt/DIZUQ==}
+     engines: {node: ^20.1
+```
+
 #### Recent Merged Pull Requests:
-- **PR #23951** (closed): fix(env): strip UTF-8 BOM before parsing .env files (@jaeminbird)
-- **PR #23949** (closed): fix(server): deduplicate watch registrations for out-of-root files (#23940) (@praveen-kumary)
-- **PR #23948** (closed): fix(optimizer): resolve pre-bundled package #subpath imports (#23946) (@praveen-kumary)
-- **PR #23937** (closed): fix(types): add missing module declaration for `*?url&raw` imports (@okxint)
-- **PR #23935** (2026-10-30): fix: await overlapping plugin container close calls (@L-zeus)
-- **PR #23933** (2026-10-30): fix(dev): escape ANSI escape sequence for `server.forwardConsole` (@sapphi-red)
+- **PR #23980** (closed): fix(client): preserve valueless query params in cleanUrl (fix #23979) (@saiyam-jain-dev)
+- **PR #23977** (closed): fix(css): preserve quoted image-set spaces (BOYF-266) (@boyfeiyu)
+- **PR #23971** (closed): fix: attach plugin and hook name to errors thrown in config and server hooks (#23958) (@praveen-kumary)
+- **PR #23970** (closed): fix(server): close watcher and server resources when createServer rejects (#23965) (@praveen-kumary)
+- **PR #23969** (closed): fix(server): close server resources when a startup hook throws (@simpleqt)
+- **PR #23967** (2026-11-02): fix(deps): update rolldown-related dependencies (@renovate[bot])
 
 ---
 
@@ -1561,51 +1700,28 @@ Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use top-level `input` for SSR build when `build.ssr: true` (#23898)
+## X. deps): update all non-major dependencies (#23966)
 
 **RULE**:
-When implementing operations in `packages/vite/src/node/__tests__/config.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/semgrep.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90bc034a`: use top-level `input` for SSR build when `build.ssr: true` (#23898). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3cb0575`: deps): update all non-major dependencies (#23966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite/src/node/__tests__/config.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/semgrep.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  test('top-level input applies to the SSR environment when build.ssr is true in build', async () => {
-    const config = await resolveConfig(
-      {
-        input: 'src/entry-server.ts',
-        build: { ssr: true },
-      },
-      'build',
-    )
-
-    expect(config.environments.ssr.input).toBe('src/entry-server.ts')
-  })
-
-  test('top-level input does not apply to the SSR environment when build.ssr is true in dev', async () => {
-    const config = await resolveConfig(
-      {
-        input: 'src/entry-server.ts',
-        build: { ssr: true },
-      },
-      'serve',
-    )
-
-    expect(config.environments.ssr.input).toBeUndefined()
-  })
-
+      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      image: semgrep/semgrep:1.182.1@sha256:451b3d875c00dac7ed5db5293e584a07de11449a409c10b3c2d2652f429630b6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90bc034a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3cb0575` are properly handled with clean fallback behavior.

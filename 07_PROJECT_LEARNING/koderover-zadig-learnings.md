@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `da7b0e35`  
+> **Source Version**: `97df5a8b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:23:41.906Z  
+> **Timestamp**: 2026-11-04T20:46:46.013Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:23:41.491Z  
+> **Harvest Timestamp**: 2026-11-04T20:46:46.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1158,111 +1158,189 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da7b0e35` (2026-11-03)
-**Commit Message**: Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql
+### Incident Patch 1: `97df5a8b` (2026-11-04)
+**Commit Message**: feat: support split image variables for CR workloads (#5037)
 
-fix: use /rest/api/2/search/jql for Jira Cloud issue search
+* feat: support split image variables for CR workloads
 
-**File**: `pkg/tool/jira/issue.go` (modified, +71/-0)
+* fix: render delivery image variables from environment templates
+
+* fix: match delivery image parts against source images
+
+* fix: validate only referenced delivery image parts
+
+* refactor: unify image part lookup and remove digest guard
+
+* fix: return partially rendered yaml on image variable errors
+
+* refactor: share image keys and reuse delivery render queries
+
+* fix: preserve unresolved image previews and guard null delivery images
+
+* refactor: simplify delivery image field replacement
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/aslan/core/common/service/kube/parse.go` (modified, +52/-31)
 ```diff
-@@ -19,7 +19,9 @@ package jira
- import (
- 	"fmt"
- 	"net/http"
-+	"net/url"
- 	"strconv"
-+	"strings"
- 
- 	"github.com/pkg/errors"
+@@ -35,11 +35,6 @@ const (
+ 	productRegexString   = `\$Product\$`
+ 	serviceRegexString   = `\$Service\$`
+ 	clusterRegexString   = `\$ClusterName\$`
+-
+-	// $<module>-image$ - per service-module image substitution.
+-	// Module names follow the K8s container name spec; we allow the broader
+-	// [A-Za-z0-9_-]+ to match what parseContainer already accepts.
+-	moduleImageRegexString = `\$([A-Za-z0-9_-]+)-image\$`
  )
-@@ -134,6 +136,10 @@ func (s *IssueService) GetTypes(project string) ([]*IssueTypeWithStatus, error)
+ 
+ var (
+@@ -52,8 +47,6 @@ var (
+ 	envNameRegex   = regexp.MustCompile(envRegexString)
+ 	serviceRegex   = regexp.MustCompile(serviceRegexString)
+ 	clusterRegex   = regexp.MustCompile(clusterRegexString)
+-
+-	moduleImageRegex = regexp.MustCompile(moduleImageRegexString)
+ )
+ 
+ // ParseSysKeys 渲染系统变量键值
+@@ -66,54 +59,82 @@ func ParseSysKeys(namespace, envName, productName, serviceName, clusterName, ori
+ 	return ori
  }
  
- func (s *IssueService) SearchByJQL(jql string, findAll bool) ([]*Issue, error) {
-+	// Jira Cloud removed /rest/api/2/search (CHANGE-2046), Server and Data Center still serve it
-+	if isJiraCloud(s.client.Host) {
-+		return s.searchByJQLCloud(jql, findAll)
-+	}
- 	var re []*Issue
- 	start := 0
- 	for {
-@@ -178,6 +184,71 @@ func (s *IssueService) searchByJQL(jql string, start int) ([]*Issue, int, error)
- 	return re.Issues, next, nil
- }
- 
-+func (s *IssueService) searchByJQLCloud(jql string, findAll bool) ([]*Issue, error) {
-+	var re []*Issue
-+	token := ""
-+	for {
-+		list, next, err := s.searchByJQLWithToken(jql, token)
+-// ParseModuleImageKeys substitutes $<module>-image$ placeholders in yaml using
+-// the provided container list (container.Name -> container.Image). Containers
+-// with an empty or placeholder-shaped Image are skipped — they cannot resolve
+-// anything.
+-//
+-// If allowUnresolved is false, any $<module>-image$ placeholder still present
+-// after substitution causes an error naming the offending module(s). Callers
+-// on the initial-deploy path (no built image yet) should pass true.
++// ParseModuleImageKeys substitutes complete and split image variables from the
++// final container images. Replacement values are prepared before scanning YAML;
++// split errors are reported only when the corresponding variable is referenced.
++// When allowUnresolved is true, missing or invalid images leave their unresolved
++// variables unchanged without returning an error.
++// The returned YAML includes all successful replacements, even on error.
++// Variables without replacement values remain unchanged.
+ func ParseModuleImageKeys(yaml string, containers []*commonmodels.Container, allowUnresolved bool) (string, error) {
++	replacements := make(map[string]string)
++	replacementErrors := make(map[string]error)
+ 	for _, c := range containers {
+ 		if c == nil || c.Name == "" || c.Image == "" {
+ 			continue
+ 		}
+ 		if commonutil.IsModuleImagePlaceholder(c.Image) {
+ 			continue
+ 		}
+-		// Also skip the Zadig workflow-task-create placeholder convention
+-		// (e.g. "{{ NOT BE RENDERED }}"). Substituting it into the YAML
+-		// produces flow-style garbage that downstream YAML decoders choke
+-		// on. For built-in workload kinds, ReplaceWorkloadImages still
+-		// writes this placeholder into container.image structurally, so the
+-		// preview yaml round-trips. For non-built-in kinds (CRDs, etc.),
+-		// the $<name>-image$ placeholder stays as text — paired with
+-		// AllowUnresolvedModuleImages on the caller, this is fine.
++		// Workflow task previews may carry a non-image sentinel.
+ 		trimmedImage := strings.TrimSpace(c.Image)
+ 		if strings.HasPrefix(trimmedImage, "{{") && strings.HasSuffix(trimmedImage, "}}") {
+ 			continue
+ 		}
+-		pattern := regexp.MustCompile(`\$` + regexp.QuoteMeta(c.Name) + `-image\$`)
+-		yaml = pattern.ReplaceAllLiteralString(yaml, c.Image)
++		key := commonutil.ModuleImageKey(c.Name)
++		if _, exists := replacements[key]; exists {
++			continue
++		}
++		replacements[key] = c.Image
++
++		parts, err := commonutil.ParseModuleImageParts(c.Image)
 +		if err != nil {
-+			return nil, err
++			for _, variable := range commonutil.ModuleImagePartVariables {
++				key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
++				replacementErrors[key] = fmt.Errorf("module %q variable %s: %w", c.Name, key, err)
++			}
++			continue
 +		}
-+		re = append(re, list...)
-+		if next == "" || !findAll {
-+			return re, nil
++		for _, variable := range commonutil.ModuleImagePartVariables {
++			key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
++			value, ok := parts.PartValue(variable.Part)
++			if !ok {
++				replacementErrors[key] = fmt.Errorf("module %q variable %s: unsupported image part %q", c.Name, key, variable.Part)
++				continue
++			}
++			replacements[key] = value
 +		}
-+		token = next
-+	}
-+}
+ 	}
+ 
++	yaml = commonutil.ModuleImageRegex.ReplaceAllStringFunc(yaml, func(key string) string {
++		if value, exists := replacements[key]; exists {
++			return value
++		}
++		return key
++	})
 +
-+// searchByJQLWithToken https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-jql-get
-+func (s *IssueService) searchByJQLWithToken(jql, token string) ([]*Issue, string, error) {
-+	url := s.client.Host + "/rest/api/2/search/jql"
-+	params := map[string]string{
-+		"jql":    jql,
-+		"fields": "*navigable",
+ 	if allowUnresolved {
+ 		return yaml, nil
+ 	}
+ 
+-	matches := moduleImageRegex.FindAllStringSubmatch(yaml, -1)
++	for _, key := range commonutil.ModuleImageRegex.FindAllString(yaml, -1) {
++		if err := replacementErrors[key]; err != nil {
++			return yaml, err
++		}
 +	}
-+	if token != "" {
-+		params["nextPageToken"] = token
-+	}
-+	resp, err := s.client.R().SetQueryParams(params).Get(url)
-+	if err != nil {
-+		return nil, "", err
-+	}
-+	if resp.GetStatusCode()/100 != 2 {
-+		return nil, "", errors.Errorf("unexpected Jira status code %d, body: %s", resp.GetStatusCode(), resp.String())
-+	}
-+	type tmp struct {
-+		NextPageToken string   `json:"nextPageToken"`
-+		IsLast        bool     `json:"isLast"`
-+		Issues        []*Issue `json:"issues"`
-+	}
-+	var re tmp
-+	if err = resp.UnmarshalJson(&re); err != nil {
-+		return nil, "", errors.Wrap(err, "unmarshal")
-+	}
-+	next := re.NextPageToken
-+	if re.IsLast {
-+		next = ""
-+	}
-+	return re.Issues, next, nil
-+}
 +
-+// isJiraCloud reports whether host is a Jira Cloud site (*.atlassian.net or api.atlassian.com/ex/jira)
-+func isJiraCloud(host string) bool {
-+	u, err := url.Parse(host)
-+	if err == nil && u.Host == "" {
-+		u, err = url.Parse("https://" + host)
-+	}
-+	if err != nil {
-+		return false
-+	}
-+	hostname := strings.ToLower(u.Hostname())
-+	if strings.HasSuffix(hostname, ".atlassian.net") {
-+		return true
-+	}
-+	return hostname == "api.atlassian.com" && (u.Path == "/ex/jira" || strings.HasPrefix(u.Path, "/ex/jira/"))
-+}
-+
- type updateBody struct {
- 	Transition struct {
- 		ID string `json:"id"`
++	matches := commonutil.ModuleImageRegex.FindAllString(yaml, -1)
+ 	if len(matches) == 0 {
+ 		return yaml, nil
+ 	}
+ 	seen := make(map[string]struct{}, len(matches))
+ 	unresolved := make([]string, 0, len(matches))
+-	for _, m := range matches {
+-		if _, ok := seen[m[1]]; ok {
++	for _, key := range matches {
++		if _, ok := seen[key]; ok {
+ 			continue
+ 		}
+-		seen[m[1]] = struct{}{}
+-		unresolved = append(unresolved, m[1])
++		seen[key] = struct{}{}
++		unresolved = append(unresolved, key)
+ 	}
+-	return yaml, fmt.Errorf("unresolved $<module>-image$ placeholder(s): %s", strings.Join(unresolved, ", "))
++	ret
 ```
 
-**File**: `pkg/tool/jira/issue_test.go` (added, +192/-0)
+**File**: `pkg/microservice/aslan/core/common/service/kube/render.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,192 @@
+@@ -67,7 +67,7 @@ type GeneSvcYamlOption struct {
+ 	UnInstall                     bool
+ 	Containers                    []*models.Container
+ 	// AllowUnresolvedModuleImages skips the post-render check that errors
+-	// when a $<module>-image$ placeholder remains in the YAML. Set this on
++	// when a complete or split module image variable remains in the YAML. Set this on
+ 	// initial-deploy code paths where the image hasn't been built yet.
+ 	AllowUnresolvedModuleImages bool
+ }
+@@ -1021,7 +1021,7 @@ func GenerateRenderedYaml(option *GeneSvcYamlOption) (string, int, []*WorkloadRe
+ 	if err != nil {
+ 		return "", 0, nil, fmt.Errorf("failed to replace workload images: %v", err)
+ 	}
+-	// Second image-substitution pass — text-level $<module>-image$ replacement
++	// Second image-substitution pass — complete and split module image variables
+ 	// for any workload kind not handled by ReplaceWorkloadImages (e.g. DaemonSets,
+ 	// Argo Rollouts, other CRDs).
+ 	fullRenderedYaml, err = ParseModuleImageKeys(fullRenderedYaml, mergedContainers, option.AllowUnresolvedModuleImages)
+```
+
+**File**: `pkg/microservice/aslan/core/common/util/module_image.go` (added, +117/-0)
+```diff
+@@ -0,0 +1,117 @@
 +/*
 +Copyright 2026 The KodeRover Authors.
 +
@@ -1279,193 +1357,144 @@ fix: use /rest/api/2/search/jql for Jira Cloud issue search
 +limitations under the License.
 +*/
 +
-+package jira
++package util
 +
 +import (
 +	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"slices"
-+	"testing"
++	"regexp"
++	"strings"
++
++	"github.com/distribution/reference"
 +)
 +
-+func TestIsJiraCloud(t *testing.T) {
-+	cases := []struct {
-+		host string
-+		want bool
-+	}{
-+		{"acme.atlassian.net", true},
-+		{"https://acme.atlassian.net", true},
-+		{"https://acme.atlassian.net:443/", true},
-+		{"https://ACME.Atlassian.NET", true},
-+		{"https://api.atlassian.com/ex/jira/11223344-a1b2-c3d4-e5f6-123456abcdef", true},
-+		{"api.atlassian.com/ex/jira/11223344-a1b2-c3d4-e5f6-123456abcdef", true},
-+		{"https://api.atlassian.com/ex/jira", true},
-+		{"https://api.atlassian.com/ex/jiraX/11223344-a1b2-c3d4-e5f6-123456abcdef", false},
-+		{"https://api.atlassian.com/oauth/token", false},
-+		{"https://jira.example.com", false},
-+		{"http://jira.internal:8080/jira", false},
-+		{"https://evilatlassian.net", false},
-+		{"https://atlassian.net.example.com", false},
-+		{"", false},
-+		{"://bad host", false},
++const moduleImageKeyFormat = "$%s-image%s$"
++
++// ModuleImageKey returns the complete-image placeholder for a module.
++func ModuleImageKey(module string) string {
++	return fmt.Sprintf(moduleImageKeyFormat, module, "")
++}
++
++// ModuleImagePartKey returns a split-image placeholder for a module.
++func ModuleImagePartKey(module, part string) string {
++	return fmt.Sprintf(moduleImageKeyFormat, module, "-"+part)
++}
++
++// ModuleImagePartVariables defines the supported image parts and their display order.
++var ModuleImagePartVariables = []struct {
++	Part        string
++	Description string
++}{
++	{Part: "registry", Description: "镜像仓库地址，包含端口"},
++	{Part: "namespace", Description: "镜像多级路径"},
++	{Part: "name", Description: "镜像名"},
++	{Part: "tag", Description: "镜像标签"},
++}
++
++// ModuleImageRegex captures the module name and optional image part.
++var ModuleImageRegex = func() *regexp.Regexp {
++	parts := make([]string, 0, len(ModuleImagePartVariables))
++	for _, variable := range ModuleImagePartVariables {
++		parts = append(parts, regexp.QuoteMeta(variable.Part))
 +	}
-+	for _, c := range cases {
-+		if got := isJiraCloud(c.host); got != c.want {
-+			t.Errorf("isJiraCloud(%q) = %v, want %v", c.host, got, c.want)
-+		}
++	return regexp.MustCompile(fmt.Sprintf(regexp.QuoteMeta(moduleImageKeyFormat), `([A-Za-z0-9_-]+)`, `(?:-(`+strings.Join(parts, "|")+`))?`))
++}()
++
++// IsModuleImagePlaceholder also recognizes unresolved variables inside a composed image.
++func IsModuleImagePlaceholder(image string) bool {
++	return ModuleImageRegex.MatchString(image)
++}
++
++// ModuleImageParts is derived from a complete image at render time and is not persisted.
++type ModuleImageParts struct {
++	Registry  string
++	Namespace string
++	Name      string
++	Tag       string
++}
++
++// PartValue distinguishes unsupported parts from supported parts with empty values.
++func (p *ModuleImageParts) PartValue(part string) (string, bool) {
++	switch part {
++	case "registry":
++		return p.Registry, true
++	case "namespace":
++		return p.Namespace, true
++	case "name":
++		return p.Name, true
++	case "tag":
++		return p.Tag, true
++	default:
++		return "", false
 +	}
 +}
 +
-+// cloudSearch serves /rest/api/2/search/jql with one page per nextPageToken and records the
-+// tokens it was asked for.
-+func cloudSearch(t *testing.T, pages map[string]string, tokens *[]string) *httptest.Server {
-+	t.Helper()
-+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.URL.Path != "/rest/api/2/search/jql" {
-+			t.Errorf("path = %s, want /rest/api/2/search/jql", r.URL.Path)
-+		}
-+		if got := r.URL.Query().Get("fields"); got != "*navigable" {
-+			t.Errorf("fields = %q, want *navigable", got)
-+		}
-+		token := r.URL.Query().Get("nextPageToken")
-+		*tokens = append(*tokens, token)
-+		page, ok := pages[token]
-+		if !ok {
-+			http.Error(w, `{"errorMessages":["unknown token"]}`, http.StatusBadRequest)
-+			return
-+		}
-+		w.Header().Set("Content-Type", "application/json")
-+		fmt.Fprint(w, page)
-+	}))
-+}
-+
-+func issueKeys(issues []*Issue) []string {
-+	keys := make([]string, 0, len(issues))
-+	for _, issue := range issues {
-+		keys = append(keys, issue.Key)
-+	}
-+	return keys
-+}
-+
-+func TestSearchByJQLCloudFollowsNextPageTokenUntilIsLast(t *testing.T) {
-+	var tokens []string
-+	server := cloudSearch(t, map[string]string{
-+		"":       `{"issues":[{"key":"HELP-1"},{"key":"HELP-2"}],"nextPageToken":"page-2","isLast":false}`,
-+		"page-2": `{"issues":[{"key":"HELP-3"}],"nextPageToken":"page-3","isLast":true}`,
-+	}, &tokens)
-+	defer server.Close()
-+	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
-+
-+	issues, err := client.Issue.searchByJQLCloud("project = HELP", true)
++// ParseModuleImageParts preserves explicitly supplied registry and path components.
++func ParseModuleImageParts(image string) (*ModuleImageParts, error) {
++	// Parse, unlike ParseNormalizedNamed, does not add docker.io or library.
++	ref, err := reference.Parse(image)
 +	if err != nil {
-+		t.Fatalf("searchByJQLCloud: %v", err)
++		return nil, fmt.Errorf("invalid image %q: %w", image, err)
 +	}
-+	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1", "HELP-2", "HELP-3"}) {
-+		t.Errorf("issues = %v, want HELP-1, HELP-2 and HELP-3", keys)
++	named, ok := ref.(reference.Named)
++	if !ok {
++		return nil, fmt.Errorf("image %q has no name", image)
 +	}
-+	// isLast ends the search even when the last page still carries a nextPageToken.
-+	if !slices.Equal(tokens, []string{"", "page-2"}) {
-+		t.Errorf("tokens requested = %q, want the first page and page-2 only", tokens)
++	parts := &ModuleImageParts{}
++	if tagged, ok := ref.(reference.Tagged); ok {
++		parts.Tag = tagged.Tag()
 +	}
++
++	path := named.Name()
++	if first, remainder, ok := strings.Cut(path, "/"); ok &&
++		(first == "localhost" || strings.ContainsAny(first, ".:") || first != strings.ToLower(first)) {
++		parts.Registry = first
++		path = remainder
++	}
++	if index := strings.LastIndex(path, "/"); index >= 0 {
++		parts.Namespace = path[:index]
++		parts.Name = path[index+1:]
++	} else {
++		parts.Name = path
++	}
++	return parts, nil
 +}
-+
-+func TestSearchByJQLCloudStopsWithoutANextPageToken(t *testing.T) {
-+	var tokens []string
-+	server := cloudSearch(t, map[string]string{
-+		"": `{"issues":[{"key":"HELP-1"}]}`,
-+	}, &tokens)
-+	defer server.Close()
-+	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
-+
-+	issues, err := client.Issue.searchByJQLCloud("project = HELP", true)
-+	if err != nil {
-+		t.Fatalf("searchByJQLCloud: %v", err)
-+	}
-+	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1"}) {
-+		t.Errorf("issues = %v, want HELP-1", keys)
-+	}
-+	if len(tokens) != 1 {
-+		t.Errorf("requests = %d, want 1", len(tokens))
-+	}
-+}
-+
-+func TestSearchByJQLCloudReadsOnePageUnlessFindAll(t *testing.T) {
-+	var tokens []string
-+	server := cloudSearch(t, map[string]string{
-+		"": `{"issues":[{"key":"HELP-1"}],"nextPageToken":"page-2","isLast":false}`,
-+	}, &tokens)
-+	defer server.Close()
-+	client := NewJiraClientWithBasicAuth(server.URL, "user", "token")
-+
-+	issues, err := client.Issue.searchByJQLCloud("project = HELP", false)
-+	if err != nil {
-+		t.Fatalf("searchByJQLCloud: %v", err)
-+	}
-+	if keys := issueKeys(issues); !slices.Equal(keys, []string{"HELP-1"}) {
-+		t.Errorf("issues = %v, want HELP-1", keys)
-+	}
-+	if len(tokens) != 1 {
-+		t.Errorf("requests = %d, want 1", len(tokens))
-+	}
-+}
-+
-+func TestSearchByJQ
 ```
 
----
-
-### Incident Patch 2: `110de3dd` (2026-11-03)
-**Commit Message**: Merge pull request #5050 from Cynthia-0203/fix/build-pod-hide-git-credentials
-
-feat: mask git tokens in build pod logs
-
-**File**: `pkg/microservice/jobexecutor/core/service/job.go` (modified, +13/-2)
+**File**: `pkg/microservice/aslan/core/common/util/service.go` (modified, +0/-10)
 ```diff
-@@ -35,6 +35,7 @@ import (
- 	"github.com/koderover/zadig/v2/pkg/setting"
- 	"github.com/koderover/zadig/v2/pkg/tool/log"
- 	"github.com/koderover/zadig/v2/pkg/types/job"
-+	"github.com/koderover/zadig/v2/pkg/util"
+@@ -19,7 +19,6 @@ package util
+ import (
+ 	"errors"
+ 	"fmt"
+-	"regexp"
+ 	"strings"
+ 
+ 	"gopkg.in/yaml.v2"
+@@ -44,17 +43,8 @@ var (
+ 		{setting.PathSearchComponentImage: "image.repository", setting.PathSearchComponentTag: "image.tag"},
+ 		{setting.PathSearchComponentImage: "image"},
+ 	}
+-
+-	moduleImagePlaceholderRegex = regexp.MustCompile(`^\$[A-Za-z0-9_-]+-image\$$`)
  )
  
- type Job struct {
-@@ -141,6 +142,16 @@ func (j *Job) getUserEnvs() []string {
- }
- 
- func (j *Job) Run(ctx context.Context) error {
-+	gitTokens, err := meta.CollectGitTokens(j.Ctx.Steps)
-+	if err != nil {
-+		return err
-+	}
-+	// Add Git credentials only to log masking, not to the subprocess environment.
-+	logSecretEnvs := make([]string, 0, len(gitTokens)+len(j.Ctx.SecretEnvs))
-+	for i, token := range gitTokens {
-+		logSecretEnvs = append(logSecretEnvs, fmt.Sprintf("ZADIG_GIT_TOKEN_%d=%s", i, token))
-+	}
-+	logSecretEnvs = append(logSecretEnvs, j.Ctx.SecretEnvs...)
- 	if err := os.MkdirAll(job.JobOutputDir, os.ModePerm); err != nil {
- 		return err
- 	}
-@@ -150,9 +161,9 @@ func (j *Job) Run(ctx context.Context) error {
- 		if hasFailed && !stepInfo.Onfailure {
- 			continue
- 		}
--		if err := step.RunStep(ctx, stepInfo, j.ActiveWorkspace, j.Ctx.Paths, j.getUserEnvs(), j.Ctx.SecretEnvs, j.ConfigMapUpdater); err != nil {
-+		if err := step.RunStep(ctx, stepInfo, j.ActiveWorkspace, j.Ctx.Paths, j.getUserEnvs(), logSecretEnvs, j.ConfigMapUpdater); err != nil {
- 			hasFailed = true
--			respErr = err
-+			respErr = fmt.Errorf("%s", util.MaskSecretEnvs(err.Error(), logSecretEnvs))
- 		}
- 	}
- 	return respErr
+-// IsModuleImagePlaceholder reports whether s is exactly a $<module>-image$
+-// placeholder string (no surrounding text). Used to avoid persisting an
+-// unresolved placeholder as a stored image URI.
+-func IsModuleImagePlaceholder(s string) bool {
+-	return moduleImagePlaceholderRegex.MatchString(s)
+-}
+-
+ // FoldManualModulesInto merges user-declared manual modules into an already-
+ // populated auto-container slice in place. The intended call site is right
+ // after SetCurrentContainerImages on a service template: that call fills the
 ```
 
-**File**: `pkg/microservice/jobexecutor/core/service/meta/git_log.go` (added, +87/-0)
+**File**: `pkg/microservice/aslan/core/delivery/service/image_parts.go` (added, +302/-0)
 ```diff
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,302 @@
 +/*
-+Copyright 2022 The KodeRover Authors.
++Copyright 2026 The KodeRover Authors.
 +
 +Licensed under the Apache License, Version 2.0 (the "License");
 +you may not use this file except in compliance with the License.
@@ -1480,351 +1509,345 @@ feat: mask git tokens in build pod logs
 +limitations under the License.
 +*/
 +
-+package meta
++package service
 +
 +import (
-+	"encoding/base64"
 +	"fmt"
-+	"net/url"
-+	"sort"
++	"io"
 +	"strings"
 +
-+	"gopkg.in/yaml.v2"
++	"gopkg.in/yaml.v3"
 +
-+	"github.com/koderover/zadig/v2/pkg/types"
-+	"github.com/koderover/zadig/v2/pkg/types/step"
++	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
++	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/kube"
++	commonutil "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/util"
++	"github.com/koderover/zadig/v2/pkg/setting"
++	"github.com/koderover/zadig/v2/pkg/util"
 +)
 +
-+// CollectGitTokens gathers repository authentication secrets and their URL-escaped forms for log masking.
-+func CollectGitTokens(steps []*Step) ([]string, error) {
-+	var tokens []string
-+	for _, info := range steps {
-+		if info.StepType != "git" {
-+			continue
-+		}
-+		yamlBytes, err := yaml.Marshal(info.Spec)
-+		if err != nil {
-+			return nil, fmt.Errorf("marshal spec %+v failed", info.Spec)
-+		}
-+		var spec *step.StepGitSpec
-+		if err := yaml.Unmarshal(yamlBytes, &spec); err != nil {
-+			return nil, fmt.Errorf("unmarshal spec %s to git spec failed", yamlBytes)
-+		}
-+		if spec == nil {
-+			return nil, fmt.Errorf("git spec is empty")
-+		}
-+		hasSubmodules := false
-+		for _, repo := range spec.Repos {
-+			if repo != nil {
-+				tokens = append(tokens, repo.OauthToken)
-+				if repo.Source == types.ProviderGerrit {
-+					tokens = append(tokens, repo.Password)
-+					// Gerrit clone URLs contain the HTTP password decoded from the access token.
-+					if userpass, err := base64.StdEncoding.DecodeString(repo.OauthToken); err == nil {
-+						if _, password, ok := strings.Cut(string(userpass), ":"); ok {
-+							tokens = append(tokens, password)
-+						}
-+					}
-+				}
-+				hasSubmodules = hasSubmodules || repo.SubModules
-+			}
-+		}
-+		if !hasSubmodules {
-+			continue
-+		}
-+		for _, host := range spec.CodeHosts {
-+			if host != nil {
-+				tokens = append(tokens, host.AccessToken)
-+				if host.Type == types.ProviderGerrit {
-+					tokens = append(tokens, host.Password)
-+				}
-+			}
-+		}
-+	}
-+	var values []string
-+	for _, token := range tokens {
-+		if token != "" {
-+			values = append(values, token, strings.TrimPrefix(url.UserPassword("", token).String(), ":"))
-+		}
-+	}
-+	// Match longer credentials first when secrets share a prefix.
-+	sort.Slice(values, func(i, j int) bool { return len(values[i]) > len(values[j]) })
-+	return values, nil
++type deliveryImageFields struct {
++	patterns map[*yaml.Node]string
++	parts    map[string]bool
 +}
-```
-
-**File**: `pkg/microservice/jobexecutor/core/service/step/step.go` (modified, +4/-3)
-```diff
-@@ -128,6 +128,7 @@ func RunStep(ctx context.Context, step *meta.Step, workspace, paths string, envs
- 		return err
- 	}
- 	if err := stepInstance.Run(ctx); err != nil {
-+		err = fmt.Errorf("%s", util.MaskSecretEnvs(err.Error(), secretEnvs))
- 		log.Error(err)
- 		return err
- 	}
-@@ -161,11 +162,11 @@ func handleCmdOutput(pipe io.ReadCloser, needPersistentLog bool, logFile string,
- 			break
- 		}
- 
--		fmt.Printf("%s   %s", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(string(lineBytes), secretEnvs))
-+		lineBytes = []byte(util.MaskSecretEnvs(string(lineBytes), secretEnvs))
-+		fmt.Printf("%s   %s", time.Now().Format(setting.WorkflowTimeFormat), lineBytes)
- 
- 		if needPersistentLog {
--			err := util.WriteFile(logFile, lineBytes, 0700)
--			if err != nil {
-+			if err := util.WriteFile(logFile, lineBytes, 0700); err != nil {
- 				log.Warnf("Failed to write file when processing cmd output: %s", err)
- 			}
- 		}
-```
-
-**File**: `pkg/microservice/jobexecutor/core/service/step/step_git.go` (modified, +10/-4)
-```diff
-@@ -59,6 +59,9 @@ func NewGitStep(spec interface{}, workspace string, envs, secretEnvs []string) (
- 	if err := yaml.Unmarshal(yamlBytes, &gitStep.spec); err != nil {
- 		return gitStep, fmt.Errorf("unmarshal spec %s to git spec failed", yamlBytes)
- 	}
-+	if gitStep.spec == nil {
-+		return gitStep, fmt.Errorf("git spec is empty")
++
++// templateYaml retains image placeholders to locate fields in serviceYaml.
++// Referenced fields must match the source and have nonempty target image parts.
++func replaceDeliveryServiceImagesWithTemplate(serviceYaml, templateYaml, namespace string, images []*commonmodels.DeliveryVersionImage) (string, error) {
++	// 1. 解析模板和服务 YAML，每个文档（以 --- 分隔）对应一个资源节点。
++	// templateDocs 保留镜像占位符；serviceDocs 保存待校验和替换的实际值。
++	templateDocs, err := deliveryImageDocuments(templateYaml)
++	if err != nil {
++		return "", err
 +	}
- 	return gitStep, nil
++	serviceDocs, err := deliveryImageDocuments(serviceYaml)
++	if err != nil {
++		return "", err
++	}
++
++	// 2. 按模块整理源镜像和目标镜像，分别用于校验当前值和生成替换值。
++	sources := make([]*commonmodels.Container, 0, len(images))
++	targets := make([]*commonmodels.Container, 0, len(images))
++	for _, image := range images {
++		if image != nil {
++			sources = append(sources, &commonmodels.Container{Name: image.ContainerName, Image: image.SourceImage})
++			targets = append(targets, &commonmodels.Container{Name: image.ContainerName, Image: image.TargetImage})
++		}
++	}
++
++	// 3. 按 API 版本、资源类型、命名空间和名称建立模板索引，供服务资源匹配。
++	templateByResource := make(map[string]*yaml.Node, len(templateDocs))
++	for _, node := range templateDocs {
++		key, err := deliveryImageResourceKey(node, namespace, sources)
++		if err != nil {
++			return "", err
++		}
++		templateByResource[key] = node
++	}
++
++	// 4. 逐个匹配服务资源，定位拆分字段；源值匹配且目标分量非空时，才按模块替换。
++	// 同时标记拆分字段，防止后续完整镜像替换绕过校验。
++	protected := make(map[*yaml.Node]bool)
++	changed := false
++	for _, document := range serviceDocs {
++		key, err := deliveryImageResourceKey(document, namespace, nil)
++		if err != nil {
++			return "", err
++		}
++		tmpl := templateByResource[key]
++		if tmpl == nil {
++			continue
++		}
++		modules := collectDeliveryImageFields(tmpl, document, protected)
++		replaced, err := replaceDeliveryImageFields(modules, images, sources)
++		if err != nil {
++			return "", err
++		}
++		changed = changed || replaced
++	}
++
++	// 5. 未定位到实际的拆分字段时，沿用原有的完整镜像替换逻辑并返回。
++	if len(protected) == 0 {
++		service := &commonmodels.DeliveryVersionService{YamlContent: serviceYaml, Images: images}
++		err := updateDeliveryServiceImageInYaml(service, setting.DeliveryVersionSourceFromEnv)
++		return service.YamlContent, err
++	}
++
++	// 6. 替换其他字段中的完整源镜像，跳过已标记的拆分字段。
++	for _, document := range serviceDocs {
++		visitDeliveryImageFields(document, document, func(_, node *yaml.Node) bool {
++			if protected[node] {
++				return false
++			}
++			value := node.Value
++			for _, image := range images {
++				if image != nil && image.SourceImage != "" && image.TargetImage != "" {
++					value = strings.ReplaceAll(value, image.SourceImage, image.TargetImage)
++				}
++			}
++			if value != node.Value {
++				node.Value, node.Tag, changed = value, "!!str", true
++			}
++			return true
++		})
++	}
++
++	// 7. 字段发生更新时，将资源节点重新序列化并合并为服务 YAML。
++	if changed {
++		manifests := make([]string, 0, len(serviceDocs))
++		for _, document := range serviceDocs {
++			data, err := yaml.Marshal(document)
++			if err != nil {
++				return "", err
++			}
++			manifests = append(manifests, string(data))
++		}
++		serviceYaml = util.JoinYamls(manifests)
++	}
++
++	// 8. 按容器名称更新工作负载中的镜像，保持原有工作负载替换行为。
++	result, _, err := kube.ReplaceWorkloadImages(serviceYaml, targets)
++	return result, err
++}
++
++// collectDeliveryImageFields 根据模板占位符，按模块收集实际资源中的拆分镜像字段。
++// protected 记录这些字段，避免后续完整镜像替换绕过拆分字段的校验。
++func collectDeliveryImageFields(template, actual *yaml.Node, protected map[*yaml.Node]bool) map[string]*deliveryImageFields {
++	modules := make(map[string]*deliveryImageFields)
++	visitDeliveryImageFields(template, actual, func(pattern, node *yaml.Node) bool {
++		for _, match := range commonutil.ModuleImageRegex.FindAllStringSubmatch(pattern.Value, -1) {
++			if match[2] == "" {
++				continue
++			}
++			fields := modules[match[1]]
++			if fields == nil {
++				fields = &deliveryImageFields{patterns: make(
+```
+
+**File**: `pkg/microservice/aslan/core/delivery/service/version_v2.go` (modified, +66/-17)
+```diff
+@@ -166,11 +166,13 @@ func buildDeliveryImagesV2(targetRegistry *commonmodels.RegistryNamespace, regis
+ 		updateVersionStatusV2(deliveryVersion.Version, deliveryVersion.ProjectName, deliveryVersion.Status, deliveryVersion.Error)
+ 	}()
+ 
+-	// update service image in yaml
+-	for _, service := range deliveryVersion.Services {
+-		err = updateDeliveryServiceImageInYaml(service, deliveryVersion.Source)
+-		if err != nil {
+-			return fmt.Errorf("failed to update service image in yaml, serviceName: %s, err: %s", service.ServiceName, err)
++	// Environment-sourced YAML is already updated before the version is saved.
++	if deliveryVersion.Source != setting.DeliveryVersionSourceFromEnv {
++		for _, service := range deliveryVersion.Services {
++			err = updateDeliveryServiceImageInYaml(service, deliveryVersion.Source)
++			if err != nil {
++				return fmt.Errorf("failed to update service image in yaml, serviceName: %s, err: %w", service.ServiceName, err)
++			}
+ 		}
+ 	}
+ 
+@@ -214,6 +216,9 @@ func updateDeliveryServiceImageInYaml(service *commonmodels.DeliveryVersionServi
+ 
+ 	containers := make([]*commonmodels.Container, 0, len(service.Images))
+ 	for _, image := range service.Images {
++		if image == nil {
++			continue
++		}
+ 		containers = append(containers, &commonmodels.Container{
+ 			Name:      image.ContainerName,
+ 			ImageName: image.ImageName,
+@@ -227,7 +232,7 @@ func updateDeliveryServiceImageInYaml(service *commonmodels.DeliveryVersionServi
+ 	}
+ 
+ 	for _, image := range service.Images {
+-		if image.SourceImage == "" || image.TargetImage == "" || image.SourceImage == image.TargetImage {
++		if image == nil || image.SourceImage == "" || image.TargetImage == "" || image.SourceImage == image.TargetImage {
+ 			continue
+ 		}
+ 		replacedYaml = strings.ReplaceAll(replacedYaml, image.SourceImage, image.TargetImage)
+@@ -682,6 +687,9 @@ func checkDeliveryVersionRegistry(args *CreateDeliveryVersionRequest, registryMa
+ 
+ 	for _, service := range args.Services {
+ 		for _, image := range service.Images {
++			if image == nil {
++				return nil, fmt.Errorf("image entry must not be null, projectName: %s, serviceName: %s", args.ProjectName, service.ServiceName)
++			}
+ 			if !image.PushImage {
+ 				continue
+ 			}
+@@ -1201,10 +1209,10 @@ func fillK8SDeliveryVersionYamlContent(args *CreateDeliveryVersionRequest) error
+ 		Production: &args.Production,
+ 	})
+ 	if err != nil {
+-		return fmt.Errorf("failed to find env, projectName: %s, envName: %s, err: %v", args.ProjectName, args.EnvName, err)
++		return fmt.Errorf("failed to find env, projectName: %s, envName: %s, err: %w", args.ProjectName, args.EnvName, err)
+ 	}
+ 
+-	return fillDeliveryVersionServicesYamlContent(env, args.Services)
++	return fillDeliveryVersionServicesYamlContent(env, args.Services, true)
  }
  
-@@ -151,6 +154,9 @@ func (s *GitStep) runGitCmds() error {
- 	if err := writeSSHConfigFile(hostNames, s.spec.Proxy); err != nil {
- 		return err
+ func fillDeliveryVersionYamlContentForDetail(version *commonmodels.DeliveryVersionV2, logger *zap.SugaredLogger) {
+@@ -1225,7 +1233,7 @@ func fillDeliveryVersionYamlContentForDetail(version *commonmodels.DeliveryVersi
+ 		return
  	}
-+	maskOutput := func(message string) string {
-+		return util.MaskSecret(tokens, util.MaskSecretEnvs(message, s.secretEnvs))
-+	}
  
- 	for _, c := range cmds {
- 		cmdOutReader, err := c.Cmd.StdoutPipe()
-@@ -161,7 +167,7 @@ func (s *GitStep) runGitCmds() error {
- 		outScanner := bufio.NewScanner(cmdOutReader)
- 		go func() {
- 			for outScanner.Scan() {
--				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecret(tokens, outScanner.Text()))
-+				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(outScanner.Text()))
- 			}
- 		}()
+-	if err = fillDeliveryVersionServicesYamlContent(env, version.Services); err != nil {
++	if err = fillDeliveryVersionServicesYamlContent(env, version.Services, false); err != nil {
+ 		logger.Errorf("failed to fill delivery version yaml content, version: %s, projectName: %s, err: %v", version.Version, version.ProjectName, err)
+ 	}
+ }
+@@ -1239,28 +1247,69 @@ func hasEmptyDeliveryVersionYamlContent(services []*commonmodels.DeliveryVersion
+ 	return false
+ }
  
-@@ -173,17 +179,17 @@ func (s *GitStep) runGitCmds() error {
- 		errScanner := bufio.NewScanner(cmdErrReader)
- 		go func() {
- 			for errScanner.Scan() {
--				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecret(tokens, errScanner.Text()))
-+				fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(errScanner.Text()))
- 			}
- 		}()
+-func fillDeliveryVersionServicesYamlContent(env *commonmodels.Product, services []*commonmodels.DeliveryVersionService) error {
++func fillDeliveryVersionServicesYamlContent(env *commonmodels.Product, services []*commonmodels.DeliveryVersionService, replaceImageParts bool) error {
+ 	if env == nil {
+ 		return fmt.Errorf("env is nil")
+ 	}
  
- 		c.Cmd.Env = envs
- 		if !c.DisableTrace {
--			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), strings.Join(c.Cmd.Args, " "))
-+			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), maskOutput(strings.Join(c.Cmd.Args, " ")))
+ 	serviceMap := env.GetServiceMap()
++	clusterName := ""
++	clusterLoaded := false
+ 	for _, service := range services {
+-		if service == nil || service.YamlContent != "" {
++		if service == nil || (service.YamlContent != "" && !replaceImageParts) {
+ 			continue
  		}
  
- 		if err := c.Run(); err != nil {
--			return err
-+			return fmt.Errorf("%s", maskOutput(err.Error()))
+ 		envSvc := serviceMap[service.ServiceName]
+ 		if envSvc == nil {
+-			return fmt.Errorf("not found service %s in env %s", service.ServiceName, env.EnvName)
++			return fmt.Errorf("service not found, projectName: %s, envName: %s, serviceName: %s", env.ProductName, env.EnvName, service.ServiceName)
++		}
++		templateProject := envSvc.ProductName
++		if templateProject == "" {
++			templateProject = env.ProductName
++		}
++		svcTmpl, err := repository.QueryTemplateService(&commonrepo.ServiceFindOption{
++			ServiceName: envSvc.ServiceName,
++			ProductName: templateProject,
++			Type:        envSvc.Type,
++			Revision:    envSvc.Revision,
++		}, env.Production)
++		if err != nil {
++			return fmt.Errorf("failed to find env service template, projectName: %s, envName: %s, serviceName: %s, err: %w", env.ProductName, env.EnvName, service.ServiceName, err)
  		}
- 	}
- 	return nil
+ 
+-		yamlContent, err := kube.RenderEnvService(env, envSvc.GetServiceRender()
 ```
 
-**File**: `pkg/microservice/jobexecutor/core/service/step/step_tool_install.go` (modified, +18/-4)
+**File**: `pkg/microservice/aslan/core/service/service/manual_module.go` (modified, +4/-15)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"path"
- 	"path/filepath"
- 	"strings"
-+	"sync"
- 	"time"
+@@ -19,7 +19,6 @@ package service
+ import (
+ 	"context"
+ 	"fmt"
+-	"regexp"
  
- 	"github.com/google/uuid"
-@@ -21,6 +22,7 @@ import (
- 	"github.com/koderover/zadig/v2/pkg/tool/log"
- 	s3tool "github.com/koderover/zadig/v2/pkg/tool/s3"
- 	"github.com/koderover/zadig/v2/pkg/types/step"
-+	"github.com/koderover/zadig/v2/pkg/util"
+ 	"go.mongodb.org/mongo-driver/bson/primitive"
+ 	"go.uber.org/zap"
+@@ -32,15 +31,6 @@ import (
+ 	"github.com/koderover/zadig/v2/pkg/util"
  )
  
- type ToolInstallStep struct {
-@@ -139,10 +141,16 @@ func (s *ToolInstallStep) runIntallationScripts(tool *step.Tool) error {
- 		return err
- 	}
- 
-+	var wg sync.WaitGroup
- 	outScanner := bufio.NewScanner(cmdOutReader)
-+	wg.Add(1)
- 	go func() {
-+		defer wg.Done()
- 		for outScanner.Scan() {
--			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), outScanner.Text())
-+			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(outScanner.Text(), s.secretEnvs))
-+		}
-+		if err := outScanner.Err(); err != nil {
-+			log.Warnf("Failed to read tool installation stdout: %s", util.MaskSecretEnvs(err.Error(), s.secretEnvs))
- 		}
- 	}()
- 
-@@ -152,20 +160,26 @@ func (s *ToolInstallStep) runIntallationScripts(tool *step.Tool) error {
- 	}
- 
- 	errScanner := bufio.NewScanner(cmdErrReader)
-+	wg.Add(1)
- 	go func() {
-+		defer wg.Done()
- 		for errScanner.Scan() {
--			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), errScanner.Text())
-+			fmt.Printf("%s   %s\n", time.Now().Format(setting.WorkflowTimeFormat), util.MaskSecretEnvs(errScanner.Text(), s.secretEnvs))
-+		}
-+		if err := errScanner.Err(); err != nil {
-+			log.Warnf("Failed to read tool installation stderr: %s", util.MaskSecretEnvs(err.Error(), s.secretEnvs))
- 		}
- 	}()
- 
- 	cmd.Dir = s.workspace
- 	cmd.Env = s.envs
- 
--	if err := cmd.Run(); err != nil {
-+	if err := cmd.Start(); err != nil {
- 		return err
- 	}
- 
--	return nil
-+	wg.Wait()
-+	return cmd.Wait()
+-// moduleImagePlaceholderRegex matches `$<name>-image$` anywhere in a string
+-// and captures the name. Mirrors moduleImageRegex in kube/parse.go — kept in
+-// a third copy here to avoid an import cycle (service/service → kube has
+-// other forward deps).
+-//
+-// TODO: consolidate the three copies (kube/parse.go, util/service.go, here)
+-// once we have a leaf package both can import safely.
+-var moduleImagePlaceholderRegex = regexp.MustCompile(`\$([A-Za-z0-9_-]+)-image\$`)
+-
+ // ManualModuleCreateReq is the API payload for declaring a new manual module.
+ // Manual modules attach to a K8s YAML service template and are version-
+ // agnostic — they remain visible across every revision of the service.
+@@ -272,8 +262,8 @@ func ResolveServiceModules(projectName, serviceName string, production bool, rev
+ 	return repository.ResolveServiceModules(context.Background(), projectName, serviceName, production, revision)
  }
  
- func Environs(envs []string) []string {
-```
-
-**File**: `pkg/microservice/podexec/core/service/workflow_debug.go` (modified, +9/-1)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
- 	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
- 	auditservice "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/terminalaudit"
-+	"github.com/koderover/zadig/v2/pkg/microservice/jobexecutor/core/service/meta"
- 	internalhandler "github.com/koderover/zadig/v2/pkg/shared/handler"
- 	"github.com/koderover/zadig/v2/pkg/tool/clientmanager"
- 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
-@@ -65,7 +66,14 @@ FOR:
- 		return e.ErrGetDebugShell.AddDesc(fmt.Sprintf("启动调试终端意外失败: parse job spec: %v", err))
+-// ValidatePlaceholderResolution scans the rendered YAML for $<name>-image$
+-// placeholders and returns the names that don't match any known module
++// ValidatePlaceholderResolution scans complete and split image variables
++// and returns the names that don't match any known module
+ // (parsed containers ∪ manual modules). The caller decides what to do —
+ // callers in this package log + include in the response, never reject the
+ // save (per the design rule that git-imported templates must not be
+@@ -320,7 +310,7 @@ func extractPlaceholderNames(yaml string) []string {
+ 	if yaml == "" {
+ 		return nil
  	}
+-	matches := moduleImagePlaceholderRegex.FindAllStringSubmatch(yaml, -1)
++	matches := commonutil.ModuleImageRegex.FindAllStringSubmatch(yaml, -1)
+ 	out := make([]string, 0, len(matches))
+ 	for _, m := range matches {
+ 		if len(m) >= 2 {
+@@ -357,8 +347,7 @@ func ensureServiceExists(projectName, serviceName string, production bool) error
  
--	var credValues []string
-+	steps := make([]*meta.Step, 0, len(jobTaskSpec.Steps))
-+	for _, taskStep := range jobTaskSpec.Steps {
-+		steps = append(steps, &meta.Step{StepType: string(taskStep.StepType), Spec: taskStep.Spec})
-+	}
-+	credValues, err := meta.CollectGitTokens(steps)
-+	if err != nil {
-+		return e.ErrGetDebugShell.AddDesc("启动调试终端失败: 无法获取 Git 凭证脱敏配置")
-+	}
- 	for _, v := range jobTaskSpec.Properties.Envs {
- 		if v.IsCredential {
- 			credValues = append(credValues, v.Value)
+ // isValidModuleName accepts the same character set as parseContainer accepts
+ // for K8s container names (the broader [A-Za-z0-9_-]+ form, matching what
+-// the moduleImageRegex in kube/parse.go expects). The regex anchors the
+-// whole string.
++// the shared ModuleImageRegex expects).
+ func isValidModuleName(name string) bool {
+ 	if name == "" {
+ 		return false
 ```
 
-**File**: `pkg/util/variables.go` (modified, +1/-1)
+**File**: `pkg/microservice/aslan/core/service/service/service.go` (modified, +17/-1)
 ```diff
-@@ -30,7 +30,7 @@ func MaskSecretEnvs(message string, secretEnvs []string) string {
- 		if len(val) == 0 {
+@@ -235,7 +235,7 @@ func buildServiceSystemVariables(args *commonmodels.Service, serviceModules []*S
+ 		if module == nil || module.Container == nil || module.Name == "" {
  			continue
  		}
--		sl := strings.Split(val, "=")
-+		sl := strings.SplitN(val, "=", 2)
- 
- 		if len(sl) != 2 {
+-		key := fmt.Sprintf("$%s-image$", module.Name)
++		key := commonutil.ModuleImageKey(module.Name)
+ 		if _, ok := seen[key]; ok {
  			continue
-```
-
----
-
-### Incident Patch 3: `55ac9058` (2026-11-03)
-**Commit Message**: fix: skip CRDs from disabled Helm subcharts (#5051)
-
-* fix: skip CRDs from disabled Helm subcharts
-
-* refactor: simplify Helm CRD dependency filtering
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
-**File**: `pkg/tool/helmclient/helmclient.go` (modified, +41/-2)
-```diff
-@@ -570,7 +570,7 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
- 		upgrade.Version = ">0.0.0-0"
- 	}
- 
--	helmChart, _, err := hClient.getChart(spec.ChartName, &upgrade.ChartPathOptions)
-+	helmChart, chartPath, err := hClient.getChart(spec.ChartName, &upgrade.ChartPathOptions)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -587,8 +587,12 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
- 	}
- 
- 	if !spec.SkipCRDs && spec.UpgradeCRDs {
-+		crdChart, err := hClient.loadChartForCRDUpgrade(chartPath, spec.ReleaseName, values)
-+		if err != nil {
-+			return nil, err
-+		}
- 		c.DebugLog("upgrading crds")
--		err = hClient.upgradeCRDs(ctx, helmChart)
-+		err = hClient.upgradeCRDs(ctx, crdChart)
- 		if err != nil {
- 			return nil, err
  		}
-@@ -602,6 +606,41 @@ func (hClient *HelmClient) upgradeChart(ctx context.Context, spec *hc.ChartSpec)
- 	return rel, nil
- }
- 
-+// loadChartForCRDUpgrade filters dependencies on a separate chart so Helm can
-+// still process aliases and imported values on the original chart during upgrade.
-+// ponytail: callers use default value options; add reuse/reset handling if enabled.
-+func (hClient *HelmClient) loadChartForCRDUpgrade(chartPath, releaseName string, values map[string]interface{}) (*chart.Chart, error) {
-+	helmChart, err := loader.Load(chartPath)
-+	if err != nil {
-+		return nil, err
-+	}
+@@ -244,6 +244,22 @@ func buildServiceSystemVariables(args *commonmodels.Service, serviceModules []*S
+ 			Key:   key,
+ 			Value: module.Image,
+ 		})
 +
-+	// Helm implicitly reuses the current release's config when input is empty.
-+	if len(values) == 0 {
-+		current, err := hClient.ActionConfig.Releases.Last(releaseName)
++		parts, err := commonutil.ParseModuleImageParts(module.Image)
 +		if err != nil {
-+			return nil, err
++			parts = &commonutil.ModuleImageParts{}
 +		}
-+		if current.Info.Status != release.StatusDeployed {
-+			deployed, err := hClient.ActionConfig.Releases.Deployed(releaseName)
-+			if err != nil {
-+				if !errors.Is(err, driver.ErrNoDeployedReleases) ||
-+					(current.Info.Status != release.StatusFailed && current.Info.Status != release.StatusSuperseded) {
-+					return nil, err
-+				}
-+			} else {
-+				current = deployed
++		for _, variable := range commonutil.ModuleImagePartVariables {
++			value, ok := parts.PartValue(variable.Part)
++			if !ok {
++				continue
 +			}
++			systemVariables = append(systemVariables, &Variable{
++				Key:         commonutil.ModuleImagePartKey(module.Name, variable.Part),
++				Value:       value,
++				Description: variable.Description,
++			})
 +		}
-+		values = current.Config
-+	}
-+
-+	if err := helmchartutil.ProcessDependenciesWithMerge(helmChart, values); err != nil {
-+		return nil, err
-+	}
-+	return helmChart, nil
-+}
-+
- // InstallOrUpgradeChart install or upgrade helm chart, use the same rule with helm to determine weather to install or upgrade
- func (hClient *HelmClient) InstallOrUpgradeChart(ctx context.Context, spec *hc.ChartSpec, opts *hc.GenericHelmOptions) (*release.Release, error) {
- 	operationSpec := *spec
+ 	}
+ 
+ 	return systemVariables
 ```
 
 #### Recent Merged Pull Requests:
@@ -1853,68 +1876,73 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql
+## X. support split image variables for CR workloads (#5037)
 
 **RULE**:
-When implementing operations in `pkg/tool/jira/issue.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/service/kube/parse.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da7b0e35`: Merge pull request #5049 from tiltmeter-dev/fix/jira-search-jql. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97df5a8b`: support split image variables for CR workloads (#5037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/tool/jira/issue.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/kube/parse.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"net/url"
-	"strings"
-	// Jira Cloud removed /rest/api/2/search (CHANGE-2046), Server and Data Center still serve it
-	if isJiraCloud(s.client.Host) {
-		return s.searchByJQLCloud(jql, findAll)
-	}
-func (s *IssueService) searchByJQLCloud(jql string, findAll bool) ([]*Issue, error) {
-	var re []*Issue
-	token := ""
-	for {
-		list, next, err := s.searchByJQLWithToken(jql, token)
-		if err != nil {
-			return nil, err
+// ParseModuleImageKeys substitutes complete and split image variables from the
+// final container images. Replacement values are prepared before scanning YAML;
+// split errors are reported only when the corresponding variable is referenced.
+// When allowUnresolved is true, missing or invalid images leave their unresolved
+// variables unchanged without returning an error.
+// The returned YAML includes all successful replacements, even on error.
+// Variables without replacement values remain unchanged.
+	replacements := make(map[string]string)
+	replacementErrors := make(map[string]error)
+		// Workflow task previews may carry a non-image sentinel.
+		key := commonutil.ModuleImageKey(c.Name)
+		if _, exists := replacements[key]; exists {
+			continue
 		}
-		re = append(re, list...)
-		if next == "" || !findAll {
-			return re, nil
-		}
-		token = next
-	}
-}
+		replacements[key] = c.Image
 
-// searchByJQLWithToken https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-jql-get
-func (s *IssueService) searchByJQLWithToken(jql, token string) ([]*Issue, string, error) {
-	url := s.client.Host + "/rest/api/2/search/jql"
-	params := map[string]string{
-		"jql":    jql,
-		"fields": "*navigable",
-	}
-	if token != "" {
-		params["nextPageToken"] = token
-	}
-	resp, err := s.client.R().SetQueryParams(params).Get(url)
-	if err != nil {
-		return nil, "", err
-	}
-	if resp.GetStatusCode()/100 != 2 {
-		return nil, "", errors.Errorf("unexpected Jira status code %d, body: %s", resp.GetStatusCode(), resp.String())
-	}
-	type tmp struct {
-		Ne
+		parts, err := commonutil.ParseModuleImageParts(c.Image)
+		if err != nil {
+			for _, variable := range commonutil.ModuleImagePartVariables {
+				key := commonutil.ModuleImagePartKey(c.Name, variable.Part)
+				replacementErrors[key] = fmt.Errorf("module %q variable %s: %w", c.Name, key, err)
+			}
+			continue
+		}
+		for _, variable := range commonutil.ModuleImagePartVariables {
+			key := commonutil.ModuleImage
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+
+	// $<module>-image$ - per service-module image substitution.
+	// Module names follow the K8s container name spec; we allow the broader
+	// [A-Za-z0-9_-]+ to match what parseContainer already accepts.
+	moduleImageRegexString = `\$([A-Za-z0-9_-]+)-image\$`
+
+	moduleImageRegex = regexp.MustCompile(moduleImageRegexString)
+// ParseModuleImageKeys substitutes $<module>-image$ placeholders in yaml using
+// the provided container list (container.Name -> container.Image). Containers
+// with an empty or placeholder-shaped Image are skipped — they cannot resolve
+// anything.
+//
+// If allowUnresolved is false, any $<module>-image$ placeholder still present
+// after substitution causes an error naming the offending module(s). Callers
+// on the initial-deploy path (no built image yet) should pass true.
+		// Also skip the Zadig workflow-task-create placeholder convention
+		// (e.g. "{{ NOT BE RENDERED }}"). Substituting it into the YAML
+		// produces flow-style garbage that downstream YAML decoders choke
+		// on. For built-in workload kinds, ReplaceWorkloadImages still
+		// writes this placeholder into container.image structurally, so the
+		// preview yaml round-trips. For non-built-in kinds (CR
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da7b0e35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97df5a8b` are properly handled with clean fallback behavior.

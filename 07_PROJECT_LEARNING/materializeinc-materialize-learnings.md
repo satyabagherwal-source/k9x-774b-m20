@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `0da844b2`  
+> **Source Version**: `9b376dfd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:31:50.868Z  
+> **Timestamp**: 2026-11-05T03:13:17.182Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:31:50.031Z  
+> **Harvest Timestamp**: 2026-11-05T03:12:54.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6392 stars
+- **Stars / Engagement**: 6395 stars
 
 ---
 
@@ -1064,13 +1064,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40408** (2026-11-02): **console: log Codex in under the same server name as its config**
-  *Symptoms*: The connect drawer writes the Codex config under `[mcp_servers.materialize_agent]` but tells users to run `codex mcp login materialize-agent`, which Codex rejects with "No MCP server named ... found". The login command now uses the same underscored key as the config, through one shared helper, so configs already copied from the console keep working. Reported in #40346.  Adds a test that checks the Codex login argument matches the TOML table name for each server.
+- **Issue #40502** (2026-11-05): **release: mark v26.49 as released**
+  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
 
-- **Issue #40407** (2026-11-02): **mcp: deprecate the standalone MCP server packages and pin mcp below 2**
-  *Symptoms*: Marks `misc/mcp-materialize` and `misc/mcp-materialize-agents` as deprecated in favor of the built-in MCP server (`/api/mcp/agent`): a notice in both READMEs and the PyPI "Inactive" classifier. Both servers use APIs that mcp 2.x removed, so they fail to start on a fresh install. This pins `mcp>=1.30.0,<2` (1.30.0 patches the open advisories on 1.28.1), relocks both packages to 1.30.0, bumps the versions so the next deploy publishes them to PyPI, ignores major `mcp` bumps in Dependabot, and fixes the console script name in the agents README. Supersedes #40245.
-  **Post-Mortem & Fix Analysis**:
-  > > This looks good, but having dependabot ignore might not remove our security scans even if the package is deprecated.  Good point, the ignore rule only stops the update PRs, and the lock files would still get scanned. I'll merge this so the deprecated versions go out to PyPI, then open a follow-up that removes both packages from the repo.
+- **Issue #40500** (2026-11-04): **helm: disable enableUserNamespaces by default**
+  *Symptoms*: ### Motivation  #40435 turned on `operator.args.enableUserNamespaces` by default, so the chart runs the operator, environmentd, clusterd, balancerd and console with `hostUsers: false`. That only works on nodes that allow user namespaces. Bottlerocket sets `user.max_user_namespaces = 0`. It's the default AMI family for EKS with Karpenter and the one our self-managed Terraform modules use for both the EKS node groups and Karpenter. On those nodes every pod with `hostUsers: false` fails at sandbox creation:  ``` Failed to create pod sandbox: ... failed to start noop process for unshare: fork/exec /proc/self/exe: no space left on device ```  We hit this on a Cloud personal stack, which runs Bottlerocket nodes too. With the default on, upgrading to v26.50 would take down every self-managed deployment on Bottlerocket, starting with the operator itself. v26.50 hasn't been released, so this changes the default before it ships.  ### Description  - `operator.args.enableUserNamespaces` now defaults to `false`. The value's comment lists the nonzero `user.max_user_namespaces` requirement and calls out Bottlerocket. - Flipped the helm unittest cases to match. - Removed the `test/orchestratord` override that turned the value off for the pinned operator image. It's off by default now. - Added a `UserNamespaces` modification to `test/orchestratord`, so the nightly individual and combined property runs (`orchestratord-individual`, `orchestratord-combine` and the upgrade variants) install the c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1087,506 +1085,460 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01faeb82` (2026-11-02)
-**Commit Message**: build(deps): bump the simple group across 1 directory with 13 updates (#40399)
+### Incident Patch 1: `ac8bac66` (2026-11-04)
+**Commit Message**: build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)
 
-Bumps the simple group with 13 updates in the /ci/builder directory:
-
-| Package | From | To |
-| --- | --- | --- |
-| [boto3-stubs](https://github.com/youtype/mypy_boto3_builder) |
-`1.43.118` | `1.43.122` |
-| [boto3](https://github.com/boto/boto3) | `1.43.118` | `1.43.122` |
-| [jupyterlab](https://github.com/jupyterlab/jupyterlab) | `4.6.4` |
-`4.6.5` |
-| [launchdarkly-api](https://github.com/launchdarkly/api-client-python)
-| `25.0.0` | `25.1.0` |
-| [pandas-stubs](https://github.com/pandas-dev/pandas-stubs) |
-`3.0.5.260914` | `3.1.0.261029` |
-| [psycopg](https://github.com/psycopg/psycopg) | `3.3.3` | `3.3.6` |
-| [psycopg-binary](https://github.com/psycopg/psycopg) | `3.3.3` |
-`3.3.6` |
-| [pydantic](https://github.com/pydantic/pydantic) | `2.14.1` | `2.14.2`
-|
-| [pytest](https://github.com/pytest-dev/pytest) | `9.1.1` | `9.2.0` |
-| [ruff](https://github.com/astral-sh/ruff) | `0.17.2` | `0.17.3` |
-| [types-markdown](https://github.com/python/typeshed) |
-`3.10.2.20261007` | `3.11.2.20261029` |
-|
-[confluent-kafka](https://github.com/confluentinc/confluent-kafka-python)
-| `2.16.0` | `2.16.1` |
-| [hatchling](ht
-
-**File**: `ci/builder/requirements.txt` (modified, +13/-13)
-```diff
-@@ -14,8 +14,8 @@
- aiohttp==3.14.5
- black==26.10.1
- # Pulls in dependencies that make launchdarkly/cloud tests fail, keep for now
--boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
--boto3==1.43.118
-+boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.122
-+boto3==1.43.122
- click==8.5.0
- cryptography==50.0.2
- colored==2.3.2
-@@ -27,11 +27,11 @@ ipympl==0.10.0
- ipywidgets==8.1.9
- junit-xml==1.9
- junitparser==5.0.3
--jupyterlab==4.6.4
-+jupyterlab==4.6.5
- jupyter-black==0.4.0
- kubernetes==25.3.0
- kubernetes-stubs==22.6.0.post1
--launchdarkly-api==25.0.0
-+launchdarkly-api==25.1.0
- # NOTE matplotlib 3.10.9 is required for Python 3.10 compatibility
- matplotlib==3.10.9; python_version < "3.11"
- matplotlib==3.11.2; python_version >= "3.11"
-@@ -43,26 +43,26 @@ networkx-stubs==0.0.1
- numpy==2.2.6; python_version < "3.11"
- numpy==2.5.4; python_version >= "3.11"
- pandas==3.1.0
--pandas-stubs==3.0.5.260914
-+pandas-stubs==3.1.0.261029
- parameterized==0.9.0
- paramiko==5.1.0
- pdoc==16.0.0
- pg8000==1.31.6
- prettytable==3.18.0
- psutil==7.2.2
- # TODO: Bump psycopg/psycopg-binary to >= 3.3.6 when SQL-840 is fixed
--psycopg==3.3.3
--psycopg-binary==3.3.3
--pydantic==2.14.1
-+psycopg==3.3.6
-+psycopg-binary==3.3.6
-+pydantic==2.14.2
- pyelftools==0.33
- pyjwt==2.15.1
- PyMySQL==1.2.3
--pytest==9.1.1
-+pytest==9.2.0
- pytest-split==0.11.0
- pyyaml==6.0.3
- requests==2.34.2
- ruamel.yaml==0.19.1
--ruff==0.17.2
-+ruff==0.17.3
- # NOTE scipy 1.15 is required for Python 3.10 compatibility
- scipy==1.15.3; python_version < "3.11"
- scipy==1.18.1; python_version >= "3.11"
-@@ -72,7 +72,7 @@ shtab==1.13.0
- sqlparse==0.6.0
- toml==0.10.2
- twine==7.0.0
--types-Markdown==3.10.2.20261007
-+types-Markdown==3.11.2.20261029
- types-prettytable==3.4.2.6
- types-psutil==7.2.2.20260906
- types-PyMYSQL==1.2.0.20260923
-@@ -85,12 +85,12 @@ xxhash==4.0.2
- yamllint==1.38.0
- # NOTE confluent-kafka only has wheels for a few python versions
- confluent-kafka==2.6.1; python_version < "3.13"
--confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
-+confluent-kafka[schema-registry]==2.16.1; python_version >= "3.13"
- fastavro==1.13.1
- websocket-client==1.9.2
- pyarrow-stubs==20.0.0.20260819
- pyarrow==26.0.0
- minio==7.2.20
- zstandard==0.25.0
- build==1.6.1
--hatchling==1.32.4
-+hatchling==1.33.0
-```
-
-**File**: `ci/mkpipeline.sh` (modified, +7/-1)
-```diff
-@@ -19,6 +19,8 @@
- 
- set -euo pipefail
- 
-+. misc/shlib/shlib.bash
-+
- pipeline=${1:-test}
- if [ "$#" -gt 0 ]; then
-   shift
-@@ -55,6 +57,10 @@ done < "$tmpfile"
- rm "$tmpfile"
- 
- if [ -n "$bootstrap_steps" ]; then
-+  queue=hetzner-x86-64-4cpu-8gb-mkpipeline
-+  if is_truthy "${CI_FORCE_SWITCH_TO_AWS-1}"; then
-+    queue=linux-x86_64-small
-+  fi
-   exec buildkite-agent pipeline upload <<EOF
- steps:
-   $bootstrap_steps
-@@ -63,7 +69,7 @@ steps:
-     command: bin/ci-builder run min bin/pyactivate -m ci.mkpipeline $pipeline $@
-     priority: 200
-     agents:
--      queue: hetzner-x86-64-4cpu-8gb-mkpipeline
-+      queue: $queue
-     retry:
-       automatic:
-         - exit_status: -1
-```
-
----
-
-### Incident Patch 2: `c98b3213` (2026-11-02)
-**Commit Message**: build(deps-dev): bump the typescript-and-eslint group across 1 directory with 3 updates (#40391)
-
-Bumps the typescript-and-eslint group with 3 updates in the /console
-directory:
-[@tanstack/eslint-plugin-query](https://github.com/TanStack/query/tree/HEAD/packages/eslint-plugin-query),
-[eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)
-and
-[typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint).
-
-Updates `@tanstack/eslint-plugin-query` from 5.104.5 to 5.105.0
+Bumps [browserslist](https://github.com/browserslist/browserslist) from
+4.24.0 to 4.29.4.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/TanStack/query/releases">@​tanstack/eslint-plugin-query's
+href="https://github.com/browserslist/browserslist/releases">browserslist's
 releases</a>.</em></p>
 <blockquote>
-<h2><code>@​tanstack/eslint-plugin-query</code><a
-href="https://github.com/5"><code>@​5</code></a>.105.0</h2>
-<p>No changes in this release.</p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com/TanStack/query/blob/main/packages/eslint-plugin-query/CHANGELOG.md">@​tanstack/eslint-plugin-query's
-changelog</a>.</em></p>
-<blockquote>
-<h2>5.105.0</h2>
-<p>No changes in this release.</p>
-</blockquote>
-</detai
-
-**File**: `console/package.json` (modified, +3/-3)
-```diff
-@@ -132,7 +132,7 @@
-     "@sentry/vite-plugin": "^5.4.0",
-     "@storybook/react-vite": "^10",
-     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
--    "@tanstack/eslint-plugin-query": "^5.104.5",
-+    "@tanstack/eslint-plugin-query": "^5.105.0",
-     "@testing-library/dom": "^10.4.2",
-     "@testing-library/jest-dom": "^7.0.1",
-     "@testing-library/react": "^16.3.3",
-@@ -163,7 +163,7 @@
-     "eslint-plugin-react-hooks": "^7.1.1",
-     "eslint-plugin-react-refresh": "^0.5.7",
-     "eslint-plugin-simple-import-sort": "^14.0.0",
--    "eslint-plugin-unicorn": "^78.0.0",
-+    "eslint-plugin-unicorn": "^79.0.0",
-     "fast-xml-parser": "^5.11.2",
-     "globals": "^17.13.0",
-     "intersection-observer": "^0.12.2",
-@@ -184,7 +184,7 @@
-     "storybook": "^10",
-     "terser": "^5.51.2",
-     "tsx": "^4.23.15",
--    "typescript-eslint": "^8.72.0",
-+    "typescript-eslint": "^8.72.1",
-     "typescript-eslint-language-service": "^5.0.5",
-     "vite": "^8.3.3",
-     "vite-bundle-analyzer": "^1.3.9",
-```
-
-**File**: `console/yarn.lock` (modified, +83/-83)
-```diff
-@@ -4689,9 +4689,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/eslint-plugin-query@npm:^5.104.5":
--  version: 5.104.5
--  resolution: "@tanstack/eslint-plugin-query@npm:5.104.5"
-+"@tanstack/eslint-plugin-query@npm:^5.105.0":
-+  version: 5.105.0
-+  resolution: "@tanstack/eslint-plugin-query@npm:5.105.0"
-   dependencies:
-     "@typescript-eslint/utils": "npm:^8.71.0"
-   peerDependencies:
-@@ -4700,7 +4700,7 @@ __metadata:
-   peerDependenciesMeta:
-     typescript:
-       optional: true
--  checksum: 10c0/0667a02e6e3f08e6e4b96d63e5cb18a5bf6592ecad6fa750dcf4694ec5c5efd3693e2320ec3a9c70cfbe06065823415e22bedfce8e95bfd8b21e1afc7f31b5db
-+  checksum: 10c0/009aa34de317547c47525c99995408dfdc2c868aba0ed552f19959dc612b79d1f2859ce7f6800d09d5ee17cefb56230331861f77b056e03acd3d50ef02b54e8f
-   languageName: node
-   linkType: hard
- 
-@@ -5698,39 +5698,39 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/eslint-plugin@npm:8.72.0":
--  version: 8.72.0
--  resolution: "@typescript-eslint/eslint-plugin@npm:8.72.0"
-+"@typescript-eslint/eslint-plugin@npm:8.72.1":
-+  version: 8.72.1
-+  resolution: "@typescript-eslint/eslint-plugin@npm:8.72.1"
-   dependencies:
-     "@eslint-community/regexpp": "npm:^4.12.2"
--    "@typescript-eslint/scope-manager": "npm:8.72.0"
--    "@typescript-eslint/type-utils": "npm:8.72.0"
--    "@typescript-eslint/utils": "npm:8.72.0"
--    "@typescript-eslint/visitor-keys": "npm:8.72.0"
-+    "@typescript-eslint/scope-manager": "npm:8.72.1"
-+    "@typescript-eslint/type-utils": "npm:8.72.1"
-+    "@typescript-eslint/utils": "npm:8.72.1"
-+    "@typescript-eslint/visitor-keys": "npm:8.72.1"
-     ignore: "npm:^7.0.5"
-     natural-compare: "npm:^1.4.0"
-     ts-api-utils: "npm:^2.5.0"
-   peerDependencies:
--    "@typescript-eslint/parser": ^8.72.0
-+    "@typescript-eslint/parser": ^8.72.1
-     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-     typescript: ">=4.8.4 <6.1.0"
--  checksum: 10c0/19e7a2fff7fa15a41662eab550918f8e060e522de5621cb78b1cf0516f9dd845878f03f351d503161a3d0417bc87e73b582d2c41d13a51bb3e7d3088cce41fe2
-+  checksum: 10c0/331c3efdb08ff63bc1bb4fc2888f901d206f71552e1a822a936d7086537b58a9104360a20c6ebfe5a1ea6d3555eda808599cf13cd185ab1554efc0d7a170fa70
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/parser@npm:8.72.0":
--  version: 8.72.0
--  resolution: "@typescript-eslint/parser@npm:8.72.0"
-+"@typescript-eslint/parser@npm:8.72.1":
-+  version: 8.72.1
-+  resolution: "@typescript-eslint/parser@npm:8.72.1"
-   dependencies:
--    "@typescript-eslint/scope-manager": "npm:8.72.0"
--    "@typescript-eslint/types": "npm:8.72.0"
--    "@typescript-eslint/typescript-estree": "npm:8.72.0"
--    "@typescript-eslint/visitor-keys": "npm:8.72.0"
-+    "@typescript-eslint/scope-manager": "npm:8.72.1"
-+    "@typescript-eslint/types": "npm:8.72.1"
-+    "@typescript-eslint/typescript-estree": "npm:8.72.1"
-+    "@typescript-eslint/visitor-keys": "npm:8.72.1"
-     debug: "npm:^4.4.3"
-   peerDependencies:
-     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-     typescript: ">=4.8.4 <6.1.0"
--  checksum: 10c0/da37b31758b3a90eaca4cdf650f71a565fe0b0c1f4348281623b790d53858fd1afda185f5da9530858d0eada39ba1aabc4bdc10c2c449c001c4186471cd1f761
-+  checksum: 10c0/087e37a59dde6cc87fbc917b84a0a4d1ae846f117aa7a9388afe9d3951f661592ce23f5db87146fa31d5e5383c23ca5a5bd190bf5a99ecfea01f052a55d29b61
-   languageName: node
-   linkType: hard
- 
-@@ -5747,16 +5747,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/project-service@npm:8.72.0":
--  version: 8.72.0
--  resolution: "@typescript-eslint/project-service@npm:8.72.0"
-+"@typescript-eslint/project-service@npm:8.72.1":
-+  version: 8.72.1
-+  resolution: "@typescript-eslint/project-service@npm:8.72.1"
-   dependencies:
--    "@typescript-eslint/tsconfig-utils": "npm:^8.72.0"
--    "@typescript-eslint/types": "npm:^8.72.0"
-+    "@typescript-eslint/tsconfig-utils": "npm:^8.72.1"
-+    "@typescript-eslint/types": "npm:^8.72.1"
-     debug: "npm:^4.4.3"
-   peerDependencies:
-     typescript: ">=4.8.4 <6.1.0"
--  checksum: 10c0/33825ee41b6f0281f40fca6c9123af5493225a971f62173381984de52d4101cc974fdb93077e16ac4b67b3c345bea738c1bc228b76610bd1737f6b2af2c0ccaf
-+  checksum: 10c0/666172a721ef93b97129b7452e2a025487892b04c6dec8c98f22146354947361be0fd087c5404372f2f4a9be72abfc7d513a35a64509a694e0adb847f8b47e93
-   languageName: node
-   linkType: hard
- 
-@@ -5770,13 +5770,13 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/scope-manager@npm:8.72.0":
--  version: 8.72.0
--  resolution: "@typescript-eslint/scope-manager@npm:8.72.0"
-+"@typescript-eslint/scope-manager@npm:8.72.1":
-+  version: 8.72.1
-+  resolution: "@typescript-eslint/scope-manager@npm:8.72.1"
-   dependencies:
--    "@typescript-eslint/types": "npm:8.72.0"
--    "@typescript-eslint/visitor-keys": "npm:8.72.0"
--  checksum: 10c0/f8e40de6c306aa5792ede4389aa279cca8ea43d0ea31fec083102bd563ac22d14a6b0554b641e27f476421e033adc299c6b4d4d026bb1fd84f7694421fb5a74f
-+    "@typescript-eslint/types": 
-```
-
----
-
-### Incident Patch 3: `35fbed3c` (2026-11-02)
-**Commit Message**: build(deps): bump the simple group across 2 directories with 3 updates (#40396)
-
-Bumps the simple group with 2 updates in the /misc/mcp-materialize
-directory: [pytest](https://github.com/pytest-dev/pytest) and
-[hatch](https://github.com/pypa/hatch).
-Bumps the simple group with 3 updates in the
-/misc/mcp-materialize-agents directory:
-[pytest](https://github.com/pytest-dev/pytest),
-[hatch](https://github.com/pypa/hatch) and
-[pydantic](https://github.com/pydantic/pydantic).
-
-Updates `pytest` from 9.1.1 to 9.2.0
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/pytest-dev/pytest/releases">pytest's
-releases</a>.</em></p>
-<blockquote>
-<h2>9.2.0</h2>
-<h1>pytest 9.2.0 (2026-10-27)</h1>
-<h2>Removals and backward incompatible breaking changes</h2>
+<h2>4.29.4</h2>
 <ul>
-<li>
-<p><a
-href="https://redirect.github.com/pytest-dev/pytest/issues/14716">#14716</a>:
-<code>-c</code> now raises a usage error for a path that does not exist,
-is a directory, or is in a format pytest has no loader for. Such paths
-were previously either ignored or reported as an unhandled
-<code>FileNotFoundError</code>.</p>
-</li>
-<li>
-<p><a
-href="https://redirect.github.com/pytest-dev/pytest/issues/85
+<li>Fixed joined version bounds in version ray and range queries (by <a
+href="https://github.com/ybai08"><code>@​ybai08</code></a>).</li>
+<li>Fixed whitespaces processing (by <a
+href="https://github.com/abhu85"><code>@​abhu85</code></a>).</li>
+</ul>
+<h2>4.29.3</h2>
+<ul>
+<li>Updated Firefox ESR.</li>
+</ul>
+<h2>4.29.2</h2>
+<ul>
+<li>Fixed ignoring <code>null</code> usage in <code>cover X in Y</code>
+query (by <a
+href="https://github.com/wahidrizka"><code>@​wahidrizka</code></a>).</li>
+</ul>
+<h2>4.29.1</h2>
+<ul>
+<li>Fixed config name loading protection on Windows (by <a
+href="https://github.com/oss-security-shop"><code>@​oss-security-shop</code></a>).</li>
+<li>Fixed case-insensitive negation queries (by <a
+href="https://github.com/jakezwang"><code>@​jakezwang</code></a>).</li>
+<li>Fixed percentage and supports queries case-insen
 
-**File**: `misc/mcp-materialize-agents/uv.lock` (modified, +152/-148)
+**File**: `console/e2e-tests/platform.spec.ts` (modified, +11/-2)
 ```diff
-@@ -390,7 +390,7 @@ wheels = [
+@@ -21,7 +21,14 @@ import { Client } from "pg";
  
- [[package]]
- name = "hatch"
--version = "1.18.1"
-+version = "1.18.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "backports-zstd", marker = "python_full_version < '3.14'" },
-@@ -414,9 +414,9 @@ dependencies = [
-     { name = "uv" },
-     { name = "virtualenv" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/91/81/a5a77aaa23df824562d50ad25eeb52ae6446924d0dc68c7c19ed6d8b171f/hatch-1.18.1.tar.gz", hash = "sha256:222fff78e197cf12a39db7efe5318ca403f2614db213416fd106a6c3260ef221", size = 5277846, upload-time = "2026-09-16T16:56:20.886Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/4d/55/45033136574fc89bce07e2c64e4ffb151df5007518b2739b54c95838e14f/hatch-1.18.2.tar.gz", hash = "sha256:7f365f1a5b8f1a8162813daed9bf9fce83f15dc933fc99c6d04cbb942e64f4d0", size = 5280209, upload-time = "2026-10-28T02:29:49.598Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/04/a0/dc90fbe25bca29154d5926e1c96385d1c7a6feb120fa2c1b3e6098ad4d23/hatch-1.18.1-py3-none-any.whl", hash = "sha256:f005959995df45e5f5dd27c862dd77ce07e24e7f06aa8e51cbba2a40bac33a40", size = 172336, upload-time = "2026-09-16T16:56:19.332Z" },
-+    { url = "https://files.pythonhosted.org/packages/92/b9/6b281cc90e60a095d16a990a3c54d18dfb2e39772e4c5d657e4950b9974d/hatch-1.18.2-py3-none-any.whl", hash = "sha256:3991c741a2746d1e62345c403cb1f873a58d9c38fd25e3c3ad740437014f56b4", size = 172627, upload-time = "2026-10-28T02:29:48.034Z" },
- ]
+ import { Region } from "~/api/cloudGlobalApi";
  
- [[package]]
-@@ -920,164 +920,168 @@ wheels = [
+-import { CONSOLE_ADDR, EMAIL, REGIONS, STATE_NAME, TestContext } from "./util";
++import {
++  CONSOLE_ADDR,
++  EMAIL,
++  FRONTEGG_LOADING_TIMEOUT,
++  REGIONS,
++  STATE_NAME,
++  TestContext,
++} from "./util";
  
- [[package]]
- name = "pydantic"
--version = "2.14.1"
-+version = "2.14.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "annotated-types" },
-     { name = "pydantic-core" },
-     { name = "typing-extensions" },
-     { name = "typing-inspection" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/7c/0b/8e10b2e693af8ec54346a14caf36221334775975a747c9ceaa3f8371d96d/pydantic-2.14.1.tar.gz", hash = "sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26", size = 900362, upload-time = "2026-10-11T18:37:55.396Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/9f/d5/b4867fa7c7f04c34997d7d8aad744f64d210bb99d67cf18bf3fb1eea1aed/pydantic-2.14.2.tar.gz", hash = "sha256:fb7b2db6cefe8414dd612edeede49c4c433acb0432b0f92b95024e45f66c505d", size = 911596, upload-time = "2026-10-29T16:37:12.476Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl", hash = "sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454", size = 488106, upload-time = "2026-10-11T18:37:53.437Z" },
-+    { url = "https://files.pythonhosted.org/packages/97/01/c71a71258b58659c72504e5fd65b451f6e36e34dc931d0b237ded213c814/pydantic-2.14.2-py3-none-any.whl", hash = "sha256:7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118", size = 490403, upload-time = "2026-10-29T16:37:10.181Z" },
- ]
- 
- [[package]]
- name = "pydantic-core"
--version = "2.50.1"
-+version = "2.50.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "typing-extensions" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz", hash = "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09", size = 513515, upload-time = "2026-10-11T18:35:44.82Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/09/db/c9cc34707ba2c23ce90d54e8a4ee9307583ad054b9df2ce570ba550cb576/pydantic_core-2.50.1-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:b281a3b0f0822618fe5e3e0d8a2048b6356b14388505dc9374ccffeb69989713", size = 2154222, upload-time = "2026-10-11T18:31:38.345Z" },
--    { url = "https://files.pythonhosted.org/packages/c1/17/6963f4ee55b7df7658f5c036c0f90baf8cd3d413f5d8b551f227e8467afc/pydantic_core-2.50.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:1fa4c8bc12c1354c5550c0c35c1852c8c1901e89e06561724e03f8d0342e1f87", size = 2048126, upload-time = "2026-10-11T18:31:41.061Z" },
--    { url = "https://files.pythonhosted.org/packages/bf/be/f75637e222085d29a3076edbc5cfd0dd9b77d145e310ff7dc1150f07558a/pydantic_core-2.50.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3aa9de446b793de2beb6fa2d9d0961803126c4e2a99c2f25ab59b9fd6ea125c0", size = 2052460, upload-time = "2026-10-11T18:31:42.321Z" },
--    { url = "https://files.pythonhosted.org/packages/7a/1e/3d192ffa39ce3bd0e98e988fb5c055cfbf4af6e6e155a4ca5baa86d1f2cc/pydantic_core-2.50.1-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:de531ce1e2a3364e8767878b58f4ff728a434b4fde089781fe30b1e08e2396e0", size = 2190750, upload-time = "2026-10-11T18:31:43.572Z" },
--    { url = "https://files.pythonhosted.org/packages/b2/7e/12ea94df5220ab316ee5bb498ebcf710cff2db352653039fb6033f6997d1/pydanti
+ const test = base.extend<{
+   testContext: TestContext;
+@@ -109,7 +116,9 @@ for (const region of REGIONS) {
+     );
+     await page.getByRole("textbox", { name: "Name" }).fill(apiKeyName);
+     await page.getByRole("button", { name: "Create password" }).click();
+-    await page.getByText(`New password "${apiKeyName}"`).waitFor();
++    await page.getByText(`New password "${apiKeyName}"`).waitFor({
++      timeout: FRONTEGG_LOADING_TIMEOUT,
++    });
+     await page.getByRole("button", { name: "visibility" }).first().click();
+     const passwordField = page.getByLabel("clientId");
+     const password = await passwordField.evaluate((e) => e.textContent);
 ```
 
-**File**: `misc/mcp-materialize/uv.lock` (modified, +88/-88)
+**File**: `console/src/platform/clusters/AlterClusterModal.test.tsx` (modified, +46/-16)
 ```diff
-@@ -475,7 +475,7 @@ wheels = [
+@@ -15,6 +15,7 @@ import React from "react";
+ import { onTestFinished } from "vitest";
  
- [[package]]
- name = "hatch"
--version = "1.18.1"
-+version = "1.18.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "backports-zstd", marker = "python_full_version < '3.14'" },
-@@ -498,9 +498,9 @@ dependencies = [
-     { name = "uv" },
-     { name = "virtualenv" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/91/81/a5a77aaa23df824562d50ad25eeb52ae6446924d0dc68c7c19ed6d8b171f/hatch-1.18.1.tar.gz", hash = "sha256:222fff78e197cf12a39db7efe5318ca403f2614db213416fd106a6c3260ef221", size = 5277846, upload-time = "2026-09-16T16:56:20.886Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/4d/55/45033136574fc89bce07e2c64e4ffb151df5007518b2739b54c95838e14f/hatch-1.18.2.tar.gz", hash = "sha256:7f365f1a5b8f1a8162813daed9bf9fce83f15dc933fc99c6d04cbb942e64f4d0", size = 5280209, upload-time = "2026-10-28T02:29:49.598Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/04/a0/dc90fbe25bca29154d5926e1c96385d1c7a6feb120fa2c1b3e6098ad4d23/hatch-1.18.1-py3-none-any.whl", hash = "sha256:f005959995df45e5f5dd27c862dd77ce07e24e7f06aa8e51cbba2a40bac33a40", size = 172336, upload-time = "2026-09-16T16:56:19.332Z" },
-+    { url = "https://files.pythonhosted.org/packages/92/b9/6b281cc90e60a095d16a990a3c54d18dfb2e39772e4c5d657e4950b9974d/hatch-1.18.2-py3-none-any.whl", hash = "sha256:3991c741a2746d1e62345c403cb1f873a58d9c38fd25e3c3ad740437014f56b4", size = 172627, upload-time = "2026-10-28T02:29:48.034Z" },
- ]
+ import { Cluster } from "~/api/materialize/cluster/clusterList";
++import { labelSql } from "~/api/materialize/executeSqlV2";
+ import {
+   ErrorCode,
+   ExtendedRequest,
+@@ -390,13 +391,16 @@ describe("ClusterOverview", () => {
+     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+     expect(sent).toEqual([
+       [
+-        [
+-          `ALTER CLUSTER "prod" SET (`,
+-          "  AUTO SCALING STRATEGY = (",
+-          "    ON HYDRATION (HYDRATION SIZE = '1600cc', LINGER DURATION = '90s')",
+-          "  )",
+-          ")",
+-        ].join("\n"),
++        labelSql(
++          [
++            `ALTER CLUSTER "prod" SET (`,
++            "  AUTO SCALING STRATEGY = (",
++            "    ON HYDRATION (HYDRATION SIZE = '1600cc', LINGER DURATION = '90s')",
++            "  )",
++            ")",
++          ].join("\n"),
++          "clusters.alter",
++        ),
+       ],
+     ]);
+   });
+@@ -412,7 +416,7 @@ describe("ClusterOverview", () => {
+     await user.click(screen.getByRole("button", { name: "Alter cluster" }));
  
- [[package]]
-@@ -1029,104 +1029,104 @@ wheels = [
+     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+-    expect(sent).toEqual([[RESET_PROD]]);
++    expect(sent).toEqual([[labelSql(RESET_PROD, "clusters.alter")]]);
+   });
  
- [[package]]
- name = "pydantic"
--version = "2.14.1"
-+version = "2.14.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "annotated-types" },
-     { name = "pydantic-core" },
-     { name = "typing-extensions" },
-     { name = "typing-inspection" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/7c/0b/8e10b2e693af8ec54346a14caf36221334775975a747c9ceaa3f8371d96d/pydantic-2.14.1.tar.gz", hash = "sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26", size = 900362, upload-time = "2026-10-11T18:37:55.396Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/9f/d5/b4867fa7c7f04c34997d7d8aad744f64d210bb99d67cf18bf3fb1eea1aed/pydantic-2.14.2.tar.gz", hash = "sha256:fb7b2db6cefe8414dd612edeede49c4c433acb0432b0f92b95024e45f66c505d", size = 911596, upload-time = "2026-10-29T16:37:12.476Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl", hash = "sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454", size = 488106, upload-time = "2026-10-11T18:37:53.437Z" },
-+    { url = "https://files.pythonhosted.org/packages/97/01/c71a71258b58659c72504e5fd65b451f6e36e34dc931d0b237ded213c814/pydantic-2.14.2-py3-none-any.whl", hash = "sha256:7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118", size = 490403, upload-time = "2026-10-29T16:37:10.181Z" },
- ]
+   it("removes a policy in the same SET as a resize to its burst size", async () => {
+@@ -428,7 +432,10 @@ describe("ClusterOverview", () => {
+     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+     expect(sent).toEqual([
+       [
+-        `ALTER CLUSTER "prod" SET (\n  SIZE = '800cc',\n  AUTO SCALING STRATEGY = ()\n)`,
++        labelSql(
++          `ALTER CLUSTER "prod" SET (\n  SIZE = '800cc',\n  AUTO SCALING STRATEGY = ()\n)`,
++          "clusters.alter",
++        ),
+       ],
+     ]);
+   });
+@@ -467,8 +474,18 @@ describe("ClusterOverview", () => {
  
- [[package]]
- name = "pydantic-core"
--version = "2.50.1"
-+version = "2.50.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "typing-extensions" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz", hash = "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09", size = 513515, upload-time = "2026-10-11T18:35:44.82Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/ae/57/0e237d7091d2cd44a35d243b7344227f90440166860469cd036afc23a04d/pydantic_core-2.50.1-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:d5e062c01286d861fd6a1c4ff6e063547b3e713067f2df033c0ff97ac2ca006b", size = 2222774, upload-time = "2026-10-11T18:32:43.103Z" },
--    { url = "https://files.pythonhosted.org/packages/f7/b9/c720e56858d4e1539503297ed37063e0c08e0f3541c41b777f6a800f75fa/pydantic_core-2.50.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0c003c3b7f49debb893d2d85ae099ac5959c9839e2f330fadb1fcdf7a6594482", size = 2024738, upload-time = "2026-10-11T18:32:44.587Z" },
--    { url = "https://files.pythonhosted.org/packages/4d/b8/fbfc25875219cc060e613170ff10e850c6d8924beb4910da57c2ee3ba1d2/pydantic_core-2.50.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:409e0ea40ec30d9158f33574fd758e689f6045a0f2596701828c27816ca9687d", size = 2047049, upload-time = "2026-10-11T18:32:46.164Z" },
--    { url = "https://files.pythonhosted.org/packages/d7/43/34210124d504c553688f2f04b48500b131237528ac545b445e0d6d30e0d5/pydantic_core-2.50.1-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:131059670f1d2444269b8585cb888963994871932447c08b39ac6a51fcfef658", size = 2173415, upload-time = "2026-10-11T18:32:47.722Z" },
--    { url = "https://files.pythonhosted.org/packages/65/cf/6e178e8fdc11da5965bef980983bf46326a42f436871dd51ba0a57f39df1/pydan
+     await waitFor(() => expect(sent).toHaveLength(2));
+     expect(sent).toEqual([
+-      [`ALTER CLUSTER "prod" SET (\n  SIZE = '1600cc'\n)`],
+-      [`ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`],
++      [
++        labelSql(
++          `ALTER CLUSTER "prod" SET (\n  SIZE = '1600cc'\n)`,
++          "clusters.alter",
++        ),
++      ],
++      [
++        labelSql(
++          `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++          "clusters.alter",
++        ),
++      ],
+     ]);
+   });
+ 
+@@ -486,7 +503,9 @@ describe("ClusterOverview", () => {
+     ).toBeInTheDocument();
+     await user.click(screen.getByRole("button", { name: "Alter cluster" }));
+     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+-    expect(sent).toEqual([[`ALTER CLUSTER "prod" RENAME TO "renamed"`]]);
++    expect(sent).toEqual([
++      [labelSql(`ALTER CLUSTER "prod" RENAME TO "renamed"`, "clusters.alter")],
++    ]);
+   });
+ 
+   it("diffs against the values it opened with when they change under it", async () => {
+@@ -532,7 +551,12 @@ describe("ClusterOverview", () => {
+ 
+     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
+     expect(sent).toEqual([
+-      [`ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`],
++      [
++        labelSql(
++          `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++          "clusters.alter",
++        ),
++      ],
+     ]);
+   });
+ 
+@@ -563,7 +587,10 @@ describe("ClusterOverview", () => {
+ 
+     await waitFor(() => expect(sent).toHaveLength(2));
+     expect(sent[1]).toEqual([
+-      `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++      labelSql(
++        `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++        "clusters.alter",
++      ),
+     ]);
+   });
+ 
+@@ -585,7 +612,7 @@ describe("ClusterOverview", () => {
+         screen.queryByRole("dialog", { name: "Alter cluster" }),
+       ).not.toBeInTheDocument(),
+     );
+-    expect(sent).toEqual([[RESET_PROD]]);
++    expect(sent).toEqual([[labelSql(RESET_PROD, "clusters.alter")]]);
+ 
+     await user.click(screen.getByRole("button", { name: "Open" }));
+     expect(
+@@ -597,7 +624,10 @@ describe("ClusterOverview", () => {
+ 
+     await waitFor(() => expect(sent).toHaveLength(2));
+     expect(sent[1]).toEqual([
+-      `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++      labelSql(
++        `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
++        "clusters.alter",
++      ),
+     ]);
+   });
+ 
+```
+
+**File**: `console/yarn.lock` (modified, +29/-130)
+```diff
+@@ -6725,21 +6725,12 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"baseline-browser-mapping@npm:^2.11.25":
+-  version: 2.11.26
+-  resolution: "baseline-browser-mapping@npm:2.11.26"
++"baseline-browser-mapping@npm:^2.11.29":
++  version: 2.11.34
++  resolution: "baseline-browser-mapping@npm:2.11.34"
+   bin:
+     baseline-browser-mapping: dist/cli.cjs
+-  checksum: 10c0/62abc56f5afad332e9da97bbb1c0fac78a455c67ce94564007b3eb8e6051bcea2c1c8b14e21a34d00deefca9cd4c08d9c980aee5be662bb68f52f7a71556f2ea
+-  languageName: node
+-  linkType: hard
+-
+-"baseline-browser-mapping@npm:^2.11.26":
+-  version: 2.11.28
+-  resolution: "baseline-browser-mapping@npm:2.11.28"
+-  bin:
+-    baseline-browser-mapping: dist/cli.cjs
+-  checksum: 10c0/769e7a09a43babb7436f6c78c45323580f7fdf8c846ef97b93895f31a95adc1898168415e3a7ff1091610d74b96a826aceddaa4ed7f2bfe95caa453bbb331e60
++  checksum: 10c0/294a4513440f4cacca2d84032ccff2dd284b429356af0c12574360d1e471ad1ab2383b101261193bec87891f90d2fea29cb75d3e54b2b69a060c6e726c433c58
+   languageName: node
+   linkType: hard
+ 
+@@ -6818,47 +6809,18 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"browserslist@npm:^4.24.0":
+-  version: 4.24.0
+-  resolution: "browserslist@npm:4.24.0"
++"browserslist@npm:^4.24.0, browserslist@npm:^4.28.7, browserslist@npm:^4.29.1":
++  version: 4.29.4
++  resolution: "browserslist@npm:4.29.4"
+   dependencies:
+-    caniuse-lite: "npm:^1.0.30001663"
+-    electron-to-chromium: "npm:^1.5.28"
+-    node-releases: "npm:^2.0.18"
+-    update-browserslist-db: "npm:^1.1.0"
++    baseline-browser-mapping: "npm:^2.11.29"
++    caniuse-lite: "npm:^1.0.30001816"
++    electron-to-chromium: "npm:^1.5.459"
++    node-releases: "npm:^2.0.59"
++    update-browserslist-db: "npm:^1.3.4"
+   bin:
+     browserslist: cli.js
+-  checksum: 10c0/95e76ad522753c4c470427f6e3c8a4bb5478ff448841e22b3d3e53f89ecaf17b6984666d6c7e715c370f1e7fa0cf684f42e34e554236a8b2fab38ea76b9e4c52
+-  languageName: node
+-  linkType: hard
+-
+-"browserslist@npm:^4.28.7":
+-  version: 4.29.1
+-  resolution: "browserslist@npm:4.29.1"
+-  dependencies:
+-    baseline-browser-mapping: "npm:^2.11.25"
+-    caniuse-lite: "npm:^1.0.30001810"
+-    electron-to-chromium: "npm:^1.5.438"
+-    node-releases: "npm:^2.0.57"
+-    update-browserslist-db: "npm:^1.3.3"
+-  bin:
+-    browserslist: cli.js
+-  checksum: 10c0/038459d4c2e011393267870efd139cda3fad3e025b857bf9d43724ac29ef97a48bb1a5ba3126777caa6d07769ad81c847ece761319f7972647a9fe78416a813f
+-  languageName: node
+-  linkType: hard
+-
+-"browserslist@npm:^4.29.1":
+-  version: 4.29.3
+-  resolution: "browserslist@npm:4.29.3"
+-  dependencies:
+-    baseline-browser-mapping: "npm:^2.11.26"
+-    caniuse-lite: "npm:^1.0.30001813"
+-    electron-to-chromium: "npm:^1.5.439"
+-    node-releases: "npm:^2.0.57"
+-    update-browserslist-db: "npm:^1.3.3"
+-  bin:
+-    browserslist: cli.js
+-  checksum: 10c0/6e1a1fcae77369260e936fe63e7994105f04c6b7aea4f2139fdf3ecccfcb1eb24d4522c2828c6ed48ef71206a33f4346e11cf714c5aac0f7496cead06bb66bac
++  checksum: 10c0/e706dfb56f89a78a3b5fef681d9793327779f5d30885606e49c4af788a7f60b92dd8c2ead153d780109e8fcc2529a784491854037b18c8b8700fb464b87f9f93
+   languageName: node
+   linkType: hard
+ 
+@@ -7021,24 +6983,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"caniuse-lite@npm:^1.0.30001663":
+-  version: 1.0.30001669
+-  resolution: "caniuse-lite@npm:1.0.30001669"
+-  checksum: 10c0/f125f23440d3dbb6c25ffb8d55f4ce48af36a84d0932b152b3b74f143a4170cbe92e02b0a9676209c86609bf7bf34119ff10cc2bc7c1b7ea40e936cc16598408
+-  languageName: node
+-  linkType: hard
+-
+-"caniuse-lite@npm:^1.0.30001810":
+-  version: 1.0.30001812
+-  resolution: "caniuse-lite@npm:1.0.30001812"
+-  checksum: 10c0/7f7375d80dbec0c4feeb11a0f655de12d27fd38a5ecff831ef2ceb7a74a87b9fb27d9ffcdd8b114e6f33f951e401ba86cfca489b8e78de505392d3d08e223abe
+-  languageName: node
+-  linkType: hard
+-
+-"caniuse-lite@npm:^1.0.30001813":
+-  version: 1.0.30001815
+-  resolution: "caniuse-lite@npm:1.0.30001815"
+-  checksum: 10c0/9ff9c5d036cf9f4b5569b534c251b417a924dc83a96fde0eedbb60ce9fe766c406efdc278d7c87fe0feaa8b93171b1e8df7921a93ed9ed525202877425207e11
++"caniuse-lite@npm:^1.0.30001816":
++  version: 1.0.30001819
++  resolution: "caniuse-lite@npm:1.0.30001819"
++  checksum: 10c0/6842319cdb9c8ac950ef0910fc3cc7dac3320b96b150de83ac65162c6b4906d2721ca830943a9e5a833c265b186aa0c417402ddd4157108bbf5474d6fabdc843
+   languageName: node
+   linkType: hard
+ 
+@@ -8385,24 +8333,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"electron-to-chromium@npm:^1.5.28":
+-  version: 1.5.32
+-  resolution: "electron-to-chromium@npm:1.5.32"
+-  checksum: 10c0/d0c0c418fae6f7714fb6cfeb8f6a74a9504cf41ed6a4119d5388d94442ee224238c331bacc5917f2c89e3ffebd1b9f870ea5c0951c473ca7e58debef0f3e9137
+-  languageName: node
+-  linkType: hard
+-
+-"electron-to-chromium@npm:^1.5.438":
+-  version: 1.5.439
+-  resolution: "electron-to-chromium@npm:1.5.439"
+-  checksum: 10c0/cacda90b1addee4f59d57b1f850c0558a678d1b911a0f64e06af555c2ed6844562858f74255a83d7d83ea0618948377ba56e276108ef7
+```
+
+---
+
+### Incident Patch 2: `8b26a0b1` (2026-11-04)
+**Commit Message**: build(deps): bump brace-expansion from 1.1.18 to 1.1.21 in /console (#40440)
+
+Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion)
+from 1.1.18 to 1.1.21.
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/8e81e187b6e9c6c723d16c042657c00acefc2483"><code>8e81e18</code></a>
+1.1.21</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e"><code>ffdfa3e</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/c6513ad31e08edb56dc414a629e39cba724b7548"><code>c6513ad</code></a>
+1.1.20</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b"><code>1efee7c</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/a34340a053abb475cc226aeb3f71887018e71bd0"><code>a34340a</code></a>
+1.1.19</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc"><code>0bcbfc0</code></a>
+Merge commit from fork</li>
+<li>See full diff in <a
+href="https://github.com/julia
+
+**File**: `console/yarn.lock` (modified, +4/-13)
+```diff
+@@ -6751,12 +6751,12 @@ __metadata:
+   linkType: hard
+ 
+ "brace-expansion@npm:^1.1.7":
+-  version: 1.1.18
+-  resolution: "brace-expansion@npm:1.1.18"
++  version: 1.1.21
++  resolution: "brace-expansion@npm:1.1.21"
+   dependencies:
+     balanced-match: "npm:^1.0.0"
+     concat-map: "npm:0.0.1"
+-  checksum: 10c0/3432c18a9e2ebf94162d4effb62198bd0adea06a9f332b2c0188df5d5e30b1e51ea3c848b6608e47d0b857ebe1ea5b3888ed3326dd3c4f6f9645c94153cf9c14
++  checksum: 10c0/8f0a68a720f9cb28c2ecaea5cdaf15fafd686d6b6e4e722a81c9d4bd2f68c1fd0619731cac05875d842221eaf4d97d564d329a12eb3c4c22137502fb3c65be8b
+   languageName: node
+   linkType: hard
+ 
+@@ -6769,16 +6769,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:^5.0.2":
+-  version: 5.0.9
+-  resolution: "brace-expansion@npm:5.0.9"
+-  dependencies:
+-    balanced-match: "npm:^4.0.2"
+-  checksum: 10c0/3dea38884a1c3c8b1c9c44a7402a0c76fca460f70cffb3127242b0b4cbf4472019e022ade021eec44838ff19f1dac2625dfd11dd459d7e1e055b0698a8d52fec
+-  languageName: node
+-  linkType: hard
+-
+-"brace-expansion@npm:^5.0.8":
++"brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.8":
+   version: 5.0.12
+   resolution: "brace-expansion@npm:5.0.12"
+   dependencies:
+```
+
+---
+
+### Incident Patch 3: `38b176cc` (2026-11-04)
+**Commit Message**: build(deps): bump jsondiffpatch from 0.7.3 to 0.7.6 (#40460)
+
+See
+https://github.com/MaterializeInc/materialize/security/dependabot/604
+
+**File**: `console/package.json` (modified, +1/-1)
+```diff
+@@ -203,7 +203,7 @@
+     "ip-address": "^10.4.0",
+     "js-cookie": "^3.0.7",
+     "js-yaml": "^4.3.2",
+-    "jsondiffpatch": "^0.7.2",
++    "jsondiffpatch": "^0.7.6",
+     "tar": "^7.5.22",
+     "uuid": "^14.0.2"
+   },
+```
+
+**File**: `console/yarn.lock` (modified, +4/-4)
+```diff
+@@ -11107,14 +11107,14 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"jsondiffpatch@npm:^0.7.2":
+-  version: 0.7.3
+-  resolution: "jsondiffpatch@npm:0.7.3"
++"jsondiffpatch@npm:^0.7.6":
++  version: 0.7.7
++  resolution: "jsondiffpatch@npm:0.7.7"
+   dependencies:
+     "@dmsnell/diff-match-patch": "npm:^1.1.0"
+   bin:
+     jsondiffpatch: bin/jsondiffpatch.js
+-  checksum: 10c0/fae49073e5cacef98a4700bf6c46d1a946549bb526597f57ad52a0ca4ac7f510be256386577ff39a966e227f132fc667bef4c547be7b68a69c2a5e7db9cc2d4f
++  checksum: 10c0/fb436068076267b19fbed52313ab1440ce36f398159f86d2744f1560585434746cf8c97e45b5525c26fb7d3d912ff8cf7f520d09bbed0d95f4e580beab7779e9
+   languageName: node
+   linkType: hard
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40408** (2026-11-02): console: log Codex in under the same server name as its config (@bobbyiliev)
-- **PR #40407** (2026-11-02): mcp: deprecate the standalone MCP server packages and pin mcp below 2 (@bobbyiliev)
-- **PR #40404** (2026-11-02): ci: Detect commonly used Linear ids without linear# prefix (@def-)
-- **PR #40402** (2026-11-02): doc: fix typos and grammar in the v26.48.2 and v26.47.0 release notes (@bosconi)
-- **PR #40401** (2026-11-02): build(deps): bump the simple group in /misc/dbt-materialize with 3 updates (@dependabot[bot])
-- **PR #40400** (2026-11-02): build(deps): bump the telemetry-grpc group across 1 directory with 5 updates (@dependabot[bot])
+- **PR #40502** (2026-11-05): release: mark v26.49 as released (@materialize-bot)
+- **PR #40500** (2026-11-04): helm: disable enableUserNamespaces by default (@jubrad)
+- **PR #40475** (2026-11-04): doc: correct the Terraform paragraph in the drop-in-use-index design doc (@ggevay)
+- **PR #40467** (2026-11-04): adapter: explain intent of the catalog command framework (@aljoscha)
+- **PR #40465** (2026-11-04): ci: Nightly fixes (2026-11-04) (@def-)
+- **PR #40464** (2026-11-04): build(deps): Bump js-yaml from 4.3.1 to 4.3.2 (@def-)
 
 ---
 
@@ -1606,52 +1558,39 @@ href="https://redirect.github.com/pytest-dev/pytest/issues/85
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the simple group across 1 directory with 13 updates (#40399)
+## X. build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)
 
 **RULE**:
-When implementing operations in `ci/builder/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `console/e2e-tests/platform.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01faeb82`: build(deps): bump the simple group across 1 directory with 13 updates (#40399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac8bac66`: build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/builder/requirements.txt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/e2e-tests/platform.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.122
-boto3==1.43.122
-jupyterlab==4.6.5
-launchdarkly-api==25.1.0
-pandas-stubs==3.1.0.261029
-psycopg==3.3.6
-psycopg-binary==3.3.6
-pydantic==2.14.2
-pytest==9.2.0
-ruff==0.17.3
-types-Markdown==3.11.2.20261029
-confluent-kafka[schema-registry]==2.16.1; python_version >= "3.13"
-hatchling==1.33.0
+import {
+  CONSOLE_ADDR,
+  EMAIL,
+  FRONTEGG_LOADING_TIMEOUT,
+  REGIONS,
+  STATE_NAME,
+  TestContext,
+} from "./util";
+    await page.getByText(`New password "${apiKeyName}"`).waitFor({
+      timeout: FRONTEGG_LOADING_TIMEOUT,
+    });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
-boto3==1.43.118
-jupyterlab==4.6.4
-launchdarkly-api==25.0.0
-pandas-stubs==3.0.5.260914
-psycopg==3.3.3
-psycopg-binary==3.3.3
-pydantic==2.14.1
-pytest==9.1.1
-ruff==0.17.2
-types-Markdown==3.10.2.20261007
-confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
-hatchling==1.32.4
+import { CONSOLE_ADDR, EMAIL, REGIONS, STATE_NAME, TestContext } from "./util";
+    await page.getByText(`New password "${apiKeyName}"`).waitFor();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01faeb82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac8bac66` are properly handled with clean fallback behavior.

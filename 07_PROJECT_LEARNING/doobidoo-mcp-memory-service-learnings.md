@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `e0f224ec`  
+> **Source Version**: `a2ee57d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:57:29.419Z  
+> **Timestamp**: 2026-11-05T01:47:46.853Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:57:28.130Z  
+> **Harvest Timestamp**: 2026-11-05T01:47:46.846Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2062 stars
+- **Stars / Engagement**: 2082 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1785** (2026-11-02): **[Bug]: Milvus full reads stop at 16384 rows (get_all_memories, time range, tags, export)**
-  *Symptoms*: ### Bug Description  On the Milvus backend, reads that mean "every match" stop at 16384 rows without any error. Once a collection holds more than 16384 memories, `get_all_memories()`, `get_memories_by_time_range()`, tag search, tag counts, timestamps and the JSON export all return 16384.  There are two causes:  1. **The caller slices after draining.** `_query_memories` ([milvus.py#L4575](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4575)) already drains the whole match set with QueryIterator; its docstring says that is to avoid the 16384 truncation. But the callers that mean "all" pass `limit=_MILVUS_MAX_LIMIT`, so it returns `memories[:16384]` anyway ([L4621](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L4621)). Affected: `get_all_memories` with no limit ([L3834](https://github.com/doobidoo/mcp-memory-service/blob/06e2f786/src/mcp_memory_service/storage/milvus.py#L3834)), `get_memories_by_time_range`, `search_by_tag`, `search_by_tags`, `search_by_tag_chronological` with no limit, `get_by_exact_content`, `get_largest_memories`, and the exact and time/tag-only branches of `search_memories`. 2. **A single `query()` call.** `_scan_tags` (behind `get_all_tags` and `get_all_tags_with_counts`), `get_memory_timestamps`, `purge_deleted` and `get_conflicts` call `client.query(limit=16384)` once, which Milvus caps at 16384.  The sort is newest first, so the rows dropped ar
+- **Issue #1858** (2026-11-04): **harvest: an older session can evolve a newer memory, because the statement time is never kept**
+  *Symptoms*: A harvest over several sessions processes them newest first, and evolution does not compare times. So within one run, a statement from an older session can replace the current version of a memory that a newer session just wrote.  How it happens on `9ad9b7ac`:  1. `TranscriptParser.find_sessions` sorts the session files by mtime, newest first, and returns the first `count` (`harvest/parser.py:190-191`). `harvest_and_store` loops over them in that order (`harvest/harvester.py:211-219`). 2. For every candidate, `_try_evolve` (`harvester.py:307`) retrieves the single most similar memory and, above `similarity_threshold` (0.85), calls `evolve_memory` with the candidate's content. The candidate becomes the new current version. Nothing compares when either statement was made. 3. The time is available but dropped. `ParsedMessage` carries the transcript `timestamp` (`parser.py:22`), but `HarvestCandidate` has no time field (`harvest/models.py:15-25`), `_provenance` records none (`harvester.py:284-305`), and `store_memory` takes no time argument. A harvested memory's `created_at` is the time of the harvest.  Scenario: `memory_harvest` with `{"sessions": 2, "dry_run": false}`. The newer session says "the sync hub runs on port 8020", the older one says "the sync hub runs on port 8010". The newer one is processed first and stored. Then the older one comes along, matches it above 0.85, and evolves it. The current version now says 8010. The same applies to `session_ids` backfills and `force
 
-- **Issue #1782** (2026-11-02): **[Bug]: Milvus memory_search without a query returns the oldest matches, not the newest**
-  *Symptoms*: ### Bug Description  On the Milvus backend, `memory_search` without a `query` (only `time_expr`, `after`/`before`, or `tags`) returns the **oldest** matching memories instead of the newest. sqlite_vec returns the newest.  The time/tag-only branch of `MilvusMemoryStorage.search_memories` ([milvus.py#L2983-L2997](https://github.com/doobidoo/mcp-memory-service/blob/815ca45b/src/mcp_memory_service/storage/milvus.py#L2983-L2997)) issues one `client.query(filter=..., limit=limit * 3)` and keeps the first `limit` rows. Milvus has no server-side `ORDER BY`, so those are the rows scanned first, which for memories written over time are the oldest. Nothing sorts them afterwards; the MCP handler does not either.  The same branch serves the `fallback=true` tag stage (`_search_tag_fallback` in `server/handlers/memory.py`). REST `/api/search*` is not affected: it does not call `search_memories`.  ### Steps to Reproduce  Through the real MCP handler, on Milvus Lite and sqlite_vec, write 30 memories one hour apart, oldest first, then call `memory_search`:  | call | sqlite_vec (hours old) | Milvus (hours old) | |---|---|---| | `{"time_expr": "last 7 days", "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` | | `{"tags": ["timeline"], "limit": 5}` | `[0, 1, 2, 3, 4]` | `[29, 28, 27, 26, 25]` |  ### Expected Behavior  The newest matches first, as on sqlite_vec, so the tool's own example `{"time_expr": "last week", "limit": 20}` returns the last 20 memories of the week.  ### Actual Behavio
+- **Issue #1852** (2026-11-04): **memory_graph is annotated readOnlyHint although extract_entities writes**
+  *Symptoms*: `memory_graph` is annotated `readOnlyHint: True` in `tools/registry.py`, but one of its actions writes: `extract_entities` stores entity links, which is why `tool_requires_write` in `server_impl.py` keeps it out of the read-only exemption (GHSA-2mw6-h564-86wv).  The server side is fine. A token without write scope still cannot run `extract_entities`. The hint itself is wrong, though, and since #1849 the HTTP transport serves it as well as stdio. A client that auto-approves tools marked read-only will run `extract_entities` without asking the user.  The fix is to drop the hint, setting `readOnlyHint` to `False` on `memory_graph`. The annotation is per tool, not per action, so a tool with any writing action cannot claim to be read-only. The action-level write-scope check in `server_impl.py` stays as it is.  For a contributor picking this up:  1. The test goes in `tests/web/api/test_transport_consistency.py` from #1849: assert that no tool whose actions include a write is annotated read-only, on both stdio and HTTP. 2. It must fail on `main` and pass on your branch. Paste both runs into the PR under "How it was verified". 3. Running `bash scripts/pr/pre_pr_check.sh` is welcome but not required from outside.  Comment on this issue to claim it before you start. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1181 +2932,1284 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce80cb53` (2026-11-02)
-**Commit Message**: fix: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726)
+### Incident Patch 1: `56ba922e` (2026-11-04)
+**Commit Message**: fix(oauth): enforce foreign keys in the SQLite OAuth store (#1862)
 
-* fix: memory_search point-in-time queries with as_of and status flags
+* fix(oauth): enforce foreign keys in the SQLite OAuth store
 
-Implements issue #1724: memory_search (MCP + REST) accepts as_of for
-point-in-time queries (knowledge-time semantics), include_superseded
-results carry current/superseded status flags with superseded_by and
-superseded_at, a new superseded_at column records the replacement moment,
-and reasoning/temporal.py is wired into the graph layer instead of dead code.
+The schema declares ON DELETE CASCADE from authorization codes, access
+tokens and refresh tokens to oauth_clients, but the backend never turned
+on PRAGMA foreign_keys. Deleting a client left its codes and tokens
+behind, and a code or token could be stored for a client that did not
+exist.
 
-Tests: tests/storage/test_1724_point_in_time.py (9 tests)
+- Set PRAGMA foreign_keys=ON in _init_db next to the other pragmas.
+  close() resets _initialized, so a reconnect applies it again.
+- store_client: INSERT OR REPLACE -> INSERT ... ON CONFLICT DO UPDATE.
+  REPLACE deletes the existing row first; with enforcement on, that
+  delete cascades. authenticate_client re-stores a client to upgrade a
+  legacy plaintext secret to a hash, which would have wiped the client's
+  codes and tokens, including the one being redeemed.
+- Every product write path (authorize POST, authorization_code,
+  refresh_token and client_credentials grants) already checks the client
+  before storing a code or token. Only test fixtures stored them for
+  unregistered clients; those now register the client.
+- docs/oauth-storage-backends.md: the foreign-key 
 
-* fix: memory_search point-in-time queries with as_of and status flags
-
-Implements issue #1724: memory_search (MCP + REST) accepts as_of for
-point-in-time queries (knowledge-time semantics), include_superseded
-results carry current/superseded status flags with superseded_by and
-superseded_at, a new superseded_at column records the replacement moment,
-and reasoning/temporal.py is wired into the graph layer instead of dead code.
-
-Rebased onto current upstream main; no upstream changes reverted.
-
-Tests: tests/storage/test_1724_point_in_time.py (9 tests)
-
-* fix: address review feedback on point-in-time as_of queri
-
-**File**: `changelog.d/1724.fixed.md` (added, +5/-0)
+**File**: `changelog.d/1804.fixed.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
-+  With `fallback=true`, an `as_of` search returning fewer than three matches could
-+  append present-day exact or tag matches. The cascading fallback stages now forward
-+  `as_of`, so historical queries only return memories that were current at the
-+  requested date.
+@@ -0,0 +1,9 @@
++- **The SQLite OAuth store never enforced its foreign keys (#1804, timkjr).**
++  The schema declares `ON DELETE CASCADE` from authorization codes, access
++  tokens and refresh tokens to `oauth_clients`, but the backend never turned on
++  `PRAGMA foreign_keys`, so deleting a client left its codes and tokens behind
++  and a code or token could be stored for a client that did not exist. The
++  pragma is now set on the connection. `store_client` switched from
++  `INSERT OR REPLACE` to an upsert: REPLACE deletes the row first, and with
++  enforcement on, that delete would have wiped the client's tokens whenever
++  `authenticate_client` upgraded a legacy plaintext secret to a hash.
 ```
 
-**File**: `src/mcp_memory_service/models/memory.py` (modified, +8/-2)
+**File**: `docs/oauth-storage-backends.md` (modified, +3/-1)
 ```diff
-@@ -460,12 +460,18 @@ class MemoryQueryResult:
-     memory: Memory
-     relevance_score: float
-     debug_info: Dict[str, Any] = field(default_factory=dict)
--    
-+    # Issue #1724: supersession lineage, populated by backends that track it
-+    # (sqlite_vec / hybrid). superseded_at is the exact replacement moment for
-+    # rows superseded after migration 021; for older rows it is approximated
-+    # with the successor's created_at (see RetrieveMixin.retrieve).
-+    superseded_by: Optional[str] = None
-+    superseded_at: Optional[float] = None
-+
-     @property
-     def similarity_score(self) -> float:
-         """Alias for relevance_score for backward compatibility."""
-         return self.relevance_score
--    
-+
-     def to_dict(self) -> Dict[str, Any]:
-         """Convert to dictionary representation."""
-         return {
-```
-
-**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +27/-2)
-```diff
-@@ -99,7 +99,10 @@ async def handle_memory_graph(server, arguments: dict) -> List[types.TextContent
+@@ -63,7 +63,9 @@ MCP_OAUTH_SQLITE_PATH=./data/oauth.db
+ - WAL (Write-Ahead Logging) mode for concurrent access
+ - Atomic `UPDATE WHERE consumed=0` for replay attack prevention
+ - Indexes on `expires_at` and `consumed` columns for fast queries
+-- Foreign key constraints for referential integrity
++- Foreign keys enforced (`PRAGMA foreign_keys=ON`): a code or token can only be
++  stored for a registered client, and deleting a client deletes its
++  authorization codes, access tokens and refresh tokens
  
-             return await handle_find_connected_memories(server, {
-                 "hash": hash_val,
--                "max_hops": arguments.get("max_hops", 2)
-+                "max_hops": arguments.get("max_hops", 2),
-+                # Issue #1724: forward the point-in-time bound — dropping it
-+                # here silently disabled as_of for the memory_graph tool.
-+                "as_of": arguments.get("as_of"),
-             })
- 
-         elif action == "path":
-@@ -373,10 +376,32 @@ async def handle_find_connected_memories(
- 
-     # Get optional parameters
-     max_hops = arguments.get("max_hops", 2)
-+    as_of = arguments.get("as_of")
- 
-     try:
-+        # Parse as_of (issue #1724): point-in-time traversal. Invalid values
-+        # fail the call rather than silently ignoring the bound.
-+        as_of_ts = None
-+        if as_of is not None:
-+            from ...utils.time_parser import parse_as_of
-+            try:
-+                as_of_ts = parse_as_of(as_of)
-+            except ValueError as e:
-+                result = {
-+                    "success": False,
-+                    "error": f"Invalid as_of value: {e}",
-+                    "connected": [],
-+                    "count": 0,
-+                }
-+                return [types.TextContent(
-+                    type="text",
-+                    text=json.dumps(result, indent=2)
-+                )]
-+
-         # Perform graph traversal
--        connected = await graph.find_connected(memory_hash, max_hops=max_hops)
-+        connected = await graph.find_connected(
-+            memory_hash, max_hops=max_hops, as_of=as_of_ts
-+        )
- 
-         # Format results
-         result = {
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +20/-5)
-```diff
-@@ -1152,15 +1152,16 @@ async def _collect_cascading_fallback_memories(
-     """Combine exact and tag fallback results while preserving their labels."""
-     seen_hashes = {memory.get("content_hash") for memory in memories}
-     include_superseded = arguments.get("include_superseded", False)
-+    as_of = arguments.get("as_of")
-     exact_memories = await _search_exact_fallback(
--        storage, query, limit, include_superseded
-+        storage, query, limit, include_superseded, as_of
-     )
-     _append_unique_fallback_memories(
-         memories, exact_memories, seen_hashes, "exact_fallback"
-     )
-     if len(memories) < limit:
-         tag_memories = await _search_tag_fallback(
--            storage, query, limit, include_superseded
-+            storage, query, limit, include_superseded, as_of
-         )
-         _append_unique_fallback_memories(
-             memories, tag_memories, seen_hashes, "tag_fallback"
-@@ -1173,22 +1174,23 @@ async def _collect_cascading_fallback_memories(
- 
- 
- async def _search_exact_fallback(
--    storage, query: str, limit: int, include_superseded: bool
-+    storage, query: str, limit: int, include_superseded: bool, as_of=None
- ) -> list[dict]:
-     """Return exact-search candidates, treating a backend error as no matches."""
-     result = await storage.search_memories(
-         query=query,
-         mode="exact",
-         limit=limit,
-         include_superseded=include_superseded,
-+        as_of=as_of,
-     )
-     if "error" in result:
-         return []
-     return result.get("memories", [])
- 
- 
- async def _search_tag_fallback(
--    storage, query: str, limit: int, include_superseded: bool
-+    storage, query: str, limit: int, include_superseded: bool, as_of=None
- ) -> list[dict]:
-     """Return tag-search candidates for tokens extracted from the query."""
-     query_tokens = [
-@@ -1204,6 +1206,7 @@ async def _search_tag_fallback(
-         tags=query_tokens,
-         limit=limit,
-         include_superseded=include_superseded,
-+        as_of=as_of,
-     )
-     if "error" in result:
-         return []
-@@ -1243,6 +1246,7 @@ async def _retrieve_search_results(storage, arguments: dict, normalize_tags):
-         ranking_weights=arguments.get("ranking_weights"),
-         store=store,
-         agent_id=arguments.get("agent_id"),
-+        as_of=arguments.get("as_of"),
-     )
-     if "error" in result:
-         return result, None
-@@ -1487,10 +1491,21 @@ def _format_search_memory(memory: dict, index: int, fallback_used: bool) -> str:
-     match_info = ""
-     if fallback_used and memory.get("match_method"):
-         match_info = f" (via {memory['match_method']})"
-+    # Issue #1724: surface the point-in-time status flag when the backend
-+    # attached one (include_superseded=true).
-+    status_info = ""
-+    if memory.get("status"):
-+        status_info = f"   Status: {memory['status']}"
-+        if memory.get("superseded_by"):
-+            status_info += f" by {memory['superseded_by'][:12]}"
-+            if memory.get("superseded_at_iso"):
-+                status_info += f" at {memory['superseded_at_iso']}"
-+        status_info += "\n"
-     return (
-         f"{index}. {memory.get('content', '')}\n"
-         f"   Hash: {content_hash}\n"
--        f"   Created: {created_at}{tags_display}{match_info}"
-+        f"   Created: {created_at}{tags_display}{match_info}\n"
-+        f"{status_info}".rstrip("\n")
-     )
- 
+ ## Programmatic Usage
  
 ```
 
-**File**: `src/mcp_memory_service/storage/base.py` (modified, +137/-9)
+**File**: `src/mcp_memory_service/web/oauth/storage/sqlite.py` (modified, +26/-2)
 ```diff
-@@ -19,6 +19,7 @@
- """
- import asyncio
- import logging
-+import time
- from abc import ABC, abstractmethod
- from typing import List, Optional, Dict, Any, Sequence, Tuple, Set
- from datetime import datetime, timezone, timedelta, date
-@@ -209,7 +210,7 @@ async def store_batch(self, memories: List[Memory], recreate: Optional[bool] = N
-         return final_results
- 
-     @abstractmethod
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None) -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: Optional[str] = None, as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories by semantic search.
- 
-         Args:
-@@ -221,6 +222,9 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-             min_confidence: Minimum effective confidence score (0.0-1.0).
-                   When > 0, stale memories below threshold are filtered out.
-                   Default 0.0 disables filtering (backward compatible).
-+            as_of: Optional epoch seconds for a point-in-time query (issue
-+                  #1724): only memories with created_at <= as_of that had not
-+                  yet been superseded at as_of are returned. None disables.
+@@ -119,7 +119,15 @@ async def _execute(self, query: str, params: tuple = ()):
+             Exception: If query execution fails
          """
-         pass
- 
-@@ -240,7 +244,8 @@ async def retrieve_with_quality_boost(
-         quality_boost: Optional[bool] = None,
-         quality_weight: Optional[float] = None,
-         include_superseded: bool = False,
--        store: Optional[str] = "default"
-+        store: Optional[str] = "default",
-+        as_of: Optional[float] = None,
-     ) -> List[MemoryQueryResult]:
-         """
-         Retrieve memories with optional quality-based reranking.
-@@ -285,12 +290,12 @@ async def retrieve_with_quality_boost(
- 
-         if not quality_boost:
-             # Standard retrieval, no reranking
--            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store)
-+            return await self.retrieve(query, n_results, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
- 
-         # Quality-boosted retrieval
-         # Step 1: Over-fetch (3x) to have pool for reranking
-         oversample_factor = 3
--        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store)
-+        candidates = await self.retrieve(query, n_results * oversample_factor, tags=tags, include_superseded=include_superseded, store=store, as_of=as_of)
- 
-         if not candidates:
-             return []
-@@ -1219,6 +1224,74 @@ async def get_graph_visualization_data(
-             },
-         }
- 
-+    @staticmethod
-+    def _post_filter_as_of(
-+        results: List[MemoryQueryResult], as_of_ts: float
-+    ) -> List[MemoryQueryResult]:
-+        """Best-effort point-in-time post-filter (issue #1724).
-+
-+        For backends without SQL-level as_of support (cloudflare, milvus,
-+        remote_http): drop memories created after as_of, and drop memories
-+        that are superseded without a known replacement moment (their
-+        supersede time cannot be proven to be after as_of, so they cannot be
-+        shown as current at as_of). Backends with native support (sqlite_vec,
-+        hybrid via primary) already filtered; this is a no-op for them.
-+        """
-+        filtered = []
-+        for r in results:
-+            created = r.memory.created_at
-+            if created is not None and created > as_of_ts:
-+                continue
-+            sup_by = r.superseded_by
-+            sup_at = r.superseded_at
-+            if sup_by and (sup_at is None or sup_at <= as_of_ts):
-+                continue
-+            filtered.append(r)
-+        return filtered
-+
-+    async def _get_supersession_map(
-+        self, content_hashes: List[str], store: Optional[str] = None
-+    ) -> Dict[str, Tuple[Optional[str], Optional[float]]]:
-+        """Batch supersession-lineage lookup: content_hash -> (superseded_by, superseded_at).
-+
-+        Issue #1724 follow-up: exact / time-only / tag-only search paths build
-+        results from raw Memory objects that never flow through retrieve(), so
-+        their lineage fields are empty. The base implementation returns {}
-+        (backend cannot provide it — those paths then get only the created_at
-+        bound); SQLite overrides with a single batched query.
-+        """
-+        return {}
-+
-+    async def _enrich_supersession(
-+        self, results: List[MemoryQueryResult], store: Optional[str] = None
-+    ) -> List[MemoryQueryResult]:
-+        """Backfill supersession lineag
-```
-
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +54/-3)
-```diff
-@@ -1039,7 +1039,7 @@ async def _store_r2_content(self, key: str, content: str) -> None:
-         if response.status_code not in [200, 201]:
-             raise ValueError(f"Failed to store content in R2: {response.status_code}")
-     
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories by semantic search."""
-         try:
-             # Generate query embedding
-@@ -1126,13 +1126,64 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-                 except Exception as e:
-                     logger.warning("Failed to persist access metadata: %s", _sanitize_log_value(e))
- 
-+            # Issue #1724 follow-up: always load the replacement lineage, not
-+            # only when as_of is set — include_superseded status flags need it
-+            # too. Cloudflare tracks superseded_by in metadata_json but not
-+            # the replacement moment, so superseded_at stays None
-+            # (conservative in as_of queries).
-+            results = self._copy_supersession_from_metadata(results)
-+
-+            # Issue #1724: best-effort point-in-time filter. The Cloudflare
-+            # backend has no superseded_at; superseded rows are conservatively
-+            # excluded from as_of queries.
-+            if as_of is not None:
-+                results = self._post_filter_as_of(results, as_of)
-+
-             logger.info("Retrieved %s memories for query", len(results))
-             return results
--            
-+
-         except Exception as e:
-             logger.error("Failed to retrieve memories: %s", _sanitize_log_value(e))
-             return []
--    
-+
-+    @staticmethod
-+    def _copy_supersession_from_metadata(
-+        results: List[MemoryQueryResult],
-+    ) -> List[MemoryQueryResult]:
-+        """Copy the superseded_by pointer from each result's loaded metadata.
-+
-+        Issue #1724 follow-up: Cloudflare's D1 schema has no superseded_by /
-+        superseded_at columns, so MemoryQueryResult lineage is never populated
-+        by the query itself. The replacement pointer, when present, lives in
-+        the memory's metadata_json (same convention as the SQLite metadata
-+        mirror and the Milvus backend). superseded_at is not tracked, so it
-+        stays None and _post_filter_as_of conservatively excludes such rows
-+        from as_of queries instead of silently returning them as current.
-+        """
-+        for r in results:
-+            if r.superseded_by is None:
-+                r.superseded_by = (r.memory.metadata or {}).get("superseded_by") or None
-+        return results
-+
-+    async def _enrich_supersession(
-+        self, results: List[MemoryQueryResult], store: Optional[str] = None
-+    ) -> List[MemoryQueryResult]:
-+        """Backfill supersession lineage from loaded metadata (issue #1724).
-+
-+        The exact / tag-only / time-only paths in search_memories() never flow
-+        through retrieve(), so they rely on this hook. The base implementation
-+        does a batched DB lookup that this backend cannot provide; copy the
-+        pointer from the already-loaded metadata instead. Never raises.
-+        """
+         conn = await self._get_connection()
+-        return await conn.execute(query, params)
 +        try:
-+            return self._copy_supersession_from_metadata(results)
-+        except Exception as e:
-+            logger.warning(
-+                "Supersession enrichment failed, continuing without lineage: %s",
-+                _sanitize_log_value(str(e)),
-+            )
-+            return results
-+
-     async def _load_memory_from_match(self, match: Dict[str, Any]) -> Optional[Memory]:
-         """Load full memory from a Vectorize match id."""
-         try:
-```
-
-**File**: `src/mcp_memory_service/storage/graph.py` (modified, +67/-2)
-```diff
-@@ -79,6 +79,7 @@ def normalize_entity_id(name: str) -> str:
-         cm.distance < ?  -- Limit recursion depth
-         AND instr(cm.path, ',' || {selected_hash} || ',') = 0  -- Prevent cycles (exact match)
-         {relationship_filter}
-+        {temporal_filter}
- )
- SELECT DISTINCT hash, distance
- FROM connected_memories
-@@ -268,7 +269,8 @@ async def find_connected(
-         memory_hash: str,
-         max_hops: int = 2,
-         relationship_type: Optional[str] = None,
--        direction: str = "both"
-+        direction: str = "both",
-+        as_of: Optional[float] = None,
-     ) -> List[Tuple[str, int]]:
++            return await conn.execute(query, params)
++        except Exception:
++            # A failed write (e.g. a rejected foreign key) leaves its implicit
++            # transaction open, holding the write lock and blocking every
++            # other process on this file until the next commit. Roll it back.
++            if conn.in_transaction:
++                await conn.rollback()
++            raise
+ 
+     async def _commit(self):
          """
-         Find all memories connected within N hops using recursive CTE.
-@@ -281,6 +283,11 @@ async def find_connected(
-             max_hops: Maximum number of hops to traverse (default: 2)
-             relationship_type: Optional filter for specific relationship type
-             direction: Direction to traverse ("outgoing", "incoming", "both")
-+            as_of: Optional point-in-time filter (Unix epoch, issue #1724).
-+                Edges whose metadata carries valid_from/valid_until
-+                (see reasoning.temporal.store_temporal_association) are only
-+                traversed when valid at as_of; edges without temporal bounds
-+                are always traversed.
+@@ -145,6 +153,9 @@ async def _init_db(self):
+         await self._execute("PRAGMA journal_mode=WAL")
+         await self._execute("PRAGMA synchronous=NORMAL")
+         await self._execute("PRAGMA busy_timeout=5000")
++        # SQLite enforces FOREIGN KEY constraints (and ON DELETE CASCADE) only
++        # when this is on for the connection; it is off by default.
++        await self._execute("PRAGMA foreign_keys=ON")
  
-         Returns:
-             List of (memory_hash, distance) tuples, sorted by distance
-@@ -313,6 +320,18 @@ async def find_connected(
-                 relationship_filter = "AND mg.relationship_type = ?"
-                 params.append(relationship_type)
- 
-+            # Issue #1724: point-in-time traversal. Temporal edges carry
-+            # valid_from/valid_until in metadata JSON; untimed edges pass.
-+            temporal_filter = ""
-+            if as_of is not None:
-+                temporal_filter = (
-+                    "AND (json_extract(mg.metadata, '$.valid_from') IS NULL "
-+                    "OR json_extract(mg.metadata, '$.valid_from') <= ?) "
-+                    "AND (json_extract(mg.metadata, '$.valid_until') IS NULL "
-+                    "OR json_extract(mg.metadata, '$.valid_until') >= ?)"
-+                )
-+                params.extend([as_of, as_of])
-+
-             # Build join condition and selected hash based on direction
-             if direction == "outgoing":
-                 join_condition = "JOIN memory_graph mg ON cm.hash = mg.source_hash"
-@@ -329,7 +348,8 @@ async def find_connected(
-             query = _QUERY_TEMPLATE_FIND_CONNECTED.format(
-                 selected_hash=selected_hash,
-                 join_condition=join_condition,
--                relationship_filter=relationship_filter
-+                relationship_filter=relationship_filter,
-+                temporal_filter=temporal_filter,
+         # Create oauth_clients table
+         await self._execute("""
+@@ -288,12 +299,25 @@ async def store_client(self, client: RegisteredClient) -> None:
+                 else hash_client_secret(client.client_secret)
              )
  
-             cursor = conn.cursor()
-@@ -348,6 +368,51 @@ async def find_connected(
-             logger.error(f"Failed to find connected memories: {_sanitize_log_value(e)}")
-             return []
- 
-+    async def get_temporal_edges(
-+        self,
-+        memory_hash: str,
-+        as_of: Optional[float] = None,
-+    ) -> List["TemporalEdge"]:
-+        """Return temporal edges incident to a memory, filtered by as_of.
-+
-+        Issue #1724: this wires up reasoning/temporal.py (previously dead
-+        code). Edges are built from memory_graph rows — valid_from/valid_until
-+        come from the metadata JSON written by
-+        reasoning.temporal.store_temporal_association — and passed through
-+        filter_temporal_edges.
-+        """
-+        from ..reasoning.temporal import TemporalEdge, filter_temporal_edges
-+
-+        edges: List[TemporalEdge] = []
-+        try:
-+            conn = await self._get_connection()
-+            cursor = conn.cursor()
-+            try:
-+                cursor.execute(
-+                    "SELECT source_hash, target_hash, metadata FROM memory_graph "
-+                    "WHERE source_hash = ? OR target_hash = ?",
-+                    (memory_hash, memory_hash),
-+                )
-+                for row in cursor.fetchall():
-+                    try:
-+                        meta = json.loads(row["metadata"]) if row["metadata"] else {}
-+                    except (json.JSONDecodeError, TypeError):
-+                        meta = {}
-+                    edges.append(
-+                        TemporalEdge(
-+                            source=row["source_hash"],
-+                            target=row["target_hash"],
-+                            valid_from=meta.get("valid_from"),
-+                            valid_until=meta.get("valid_until"),
-+                        )
-+                    )
-+            finally:
-+                cursor.close()
-+        except sqlite3.Error as e:
-+            logger.error(f"Failed to get temporal edges: {_sanitize_log_value(e)}")
-+            return []
-+        return filter_temporal_edges(edges, as_of)
-+
-     async def get_relationship_types(self, memory_hash: str) -> Dict[str, int]:
-         """
- 
++            # Upsert in place. INSERT OR REPLACE would delete the existing row
++            # first, and with foreign keys on that delete cascades to the
++            # client's authorization codes and tokens.
+             await self._execute(
+                 """
+-                INSERT OR REPLACE INTO oauth_clients
++                INSERT INTO oauth_clients
+                 (client_id, client_secret, client_name, redirect_uris, response_types,
+                  grant_types, scope, token_endpoint_auth_method, created_at, metadata)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
++                ON CONFLICT(client_id) DO UPDATE SET
++                    client_secret = excluded.client_secret,
++                    client_name = excluded.client_name,
++                    redirect_uris = excluded.redirect_uris,
++                    response_types = excluded.response_types,
++                    grant_types = excluded.grant_types,
++                    scope = excluded.scope,
++                    token_endpoint_auth_method = excluded.token_endpoint_auth_method,
++                    created_at = excluded.created_at,
++                    metadata = excluded.metadata
+                 """,
+                 (
+                     client.client_id,
 ```
 
-**File**: `src/mcp_memory_service/storage/hybrid.py` (modified, +11/-1)
+**File**: `tests/unit/test_oauth_sqlite_foreign_keys.py` (added, +197/-0)
 ```diff
-@@ -2200,7 +2200,7 @@ async def store(self, memory: Memory, skip_semantic_dedup: bool = False, store:
- 
-         return success, message
- 
--    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default") -> List[MemoryQueryResult]:
-+    async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str]] = None, min_confidence: float = 0.0, include_superseded: bool = False, start_time: Optional[float] = None, end_time: Optional[float] = None, store: str = "default", as_of: Optional[float] = None) -> List[MemoryQueryResult]:
-         """Retrieve memories from primary storage (fast)."""
-         return await self.primary.retrieve(
-             query,
-@@ -2211,6 +2211,7 @@ async def retrieve(self, query: str, n_results: int = 5, tags: Optional[List[str
-             start_time=start_time,
-             end_time=end_time,
-             store=store,
-+            as_of=as_of,
-         )
- 
-     async def retrieve_hybrid(
-@@ -2221,6 +2222,7 @@ async def retrieve_hybrid(
-         semantic_weight: Optional[float] = None,
-         include_superseded: bool = False,
-         store: Optional[str] = "default",
-+        as_of: Optional[float] = None,
-     ) -> List[MemoryQueryResult]:
-         """BM25 + vector search on primary storage (#1576).
- 
-@@ -2235,6 +2237,7 @@ async def retrieve_hybrid(
-             semantic_weight=semantic_weight,
-             include_superseded=include_superseded,
-             store=store,
-+            as_of=as_of,
-         )
- 
-     async def search(self, query: str, n_results: int = 5, min_similarity: float = 0.0) -> List[MemoryQueryResult]:
-@@ -2335,6 +2338,13 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
-         """Retrieve memories by exact content match from primary storage."""
-         return await self.primary.get_by_exact_content(content, store=store)
- 
-+    async def _get_supersession_map(self, content_hashes, store=None):
-+        """Delegate the issue-#1724 lineage lookup to the primary SQLite storage."""
-+        delegate = getattr(self.primary, "_get_supersession_map", None)
-+        if delegate is not None:
-+            return await delegate(content_hashes, store=store)
-+        return {}
+@@ -0,0 +1,197 @@
++#!/usr/bin/env python3
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
 +
-     async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optional[str] = None) -> Tuple[int, str]:
-         """Delete memories within a specific date range in primary storage and queue for secondary sync."""
-         count, message = await self.primary.delete_by_timeframe(start_date, end_date, tag)
++"""
++Foreign-key enforcement in the SQLite OAuth backend (#1804).
++
++The schema declares ``client_id`` foreign keys with ``ON DELETE CASCADE`` on
++the authorization-code, access-token and refresh-token tables. SQLite enforces
++them only when ``PRAGMA foreign_keys`` is on for the connection. These tests
++run against a real ``oauth.db`` in a temporary directory.
++"""
++
++import sqlite3
++import time
++
++import pytest
++
++from mcp_memory_service.web.oauth.models import RegisteredClient
++from mcp_memory_service.web.oauth.storage import create_oauth_storage
++
++CHILD_TABLES = (
++    "oauth_authorization_codes",
++    "oauth_access_tokens",
++    "oauth_refresh_tokens",
++)
++
++
++def _client(client_id: str, secret: str = "s3cret") -> RegisteredClient:
++    return RegisteredClient(
++        client_id=client_id,
++        client_secret=secret,
++        client_name="FK test client",
++        redirect_uris=["http://localhost/callback"],
++        grant_types=["authorization_code", "refresh_token"],
++        response_types=["code"],
++        token_endpoint_auth_method="client_secret_basic",
++        created_at=time.time(),
++    )
++
++
++@pytest.fixture
++async def storage(tmp_path):
++    store = create_oauth_storage("sqlite", db_path=str(tmp_path / "oauth.db"))
++    yield store
++    await store.close()
++
++
++async def _issue_everything(storage, client_id: str) -> None:
++    await storage.store_authorization_code(
++        code=f"code-{client_id}", client_id=client_id, expires_in=300
++    )
++    await storage.store_access_token(
++        token=f"at-{client_id}", client_id=client_id, expires_in=3600
++    )
++    await storage.store_refresh_token(
++        token=f"rt-{client_id}", client_id=client_id, expires_in=3600
++    )
++
++
++async def _child_counts(storage, client_id: str) -> dict:
++    counts = {}
++    for table in CHILD_TABLES:
++        cursor = await storage._execute(
++            f"SELECT COUNT(*) FROM {table} WHERE client_id = ?", (client_id,)
++        )
++        counts[table] = (await cursor.fetchone())[0]
++    return counts
++
++
++@pytest.mark.asyncio
++async def test_deleting_a_client_removes_its_codes_and_tokens(storage):
++    await storage.store_client(_client("doomed"))
++    await storage.store_client(_client("bystander"))
++    await _issue_everything(storage, "doomed")
++    await _issue_everything(storage, "bystander")
++    assert await _child_counts(storage, "doomed") == dict.fromkeys(CHILD_TABLES, 1)
++
++    await storage._execute("DELETE FROM oauth_clients WHERE client_id = ?", ("doomed",))
++    await storage._commit()
++
++    assert await _child_counts(storage, "doomed") == dict.fromkeys(CHILD_TABLES, 0)
++    assert await _child_counts(storage, "bystander") == dict.fromkeys(CHILD_TABLES, 1)
++
++
++@pytest.mark.asyncio
++async def test_code_for_unknown_client_is_rejected(storage):
++    with pytest.raises(sqlite3.IntegrityError):
++        await storage.store_authorization_code(
++            code="orphan-code", client_id="no-such-client", expires_in=300
++        )
++
++
++@pytest.mark.asyncio
++async def test_foreign_keys_stay_on_after_reconnect(storage):
++    cursor = await storage._execute("PRAGMA foreign_keys")
++    assert (await cursor.fetchone())[0] == 1
++
++    await storage.close()
++
++    cursor = await storage._execute("PRAGMA foreign_keys")
++    assert (await cursor.fetchone())[0] == 1
++
++
++@pytest.mark.asyncio
++async def test_rejected_insert_does_not_block_later_writes(tmp_path):
++    db_path = str(tmp_path / "oauth.db")
++    storage = create_oauth_storage("sqlite", db_path=db_path)
++    try:
++        await storage.store_client(_client("real"))
++        with pytest.raises(sqlite3.IntegrityError):
++            await storage.store_authorization_code(
++                code="orphan-code", client_id="no-such-client", expires_in=300
++            )
++        await storage.store_authorization_code(
++            code="good-code", client_id="real", expires_in=300
++        )
++    finally:
++        await storage.close()
++
++    reopened = create_oauth_storage("sqlite", db_path=db_path)
++    try:
++        assert await _child_counts(reopened, "real") == {
++            "oauth_authorization_codes": 1,
++            "oauth_access_tokens": 0,
++            "oauth_refresh_tokens": 0,
++        }
++        assert await _child_counts(reopened, "no-such-client") == dict.fromkeys(
++            CHILD_TABLES, 0
++        )
++    fi
+```
+
+**File**: `tests/unit/test_oauth_storage_backends.py` (modified, +19/-4)
+```diff
+@@ -64,6 +64,21 @@ async def storage(request):
+     else:
+         storage = create_oauth_storage("memory")
+ 
++    # Most tests store codes and tokens for "client_1". The SQLite backend
++    # enforces the client_id foreign key, so the client has to exist.
++    await storage.store_client(
++        RegisteredClient(
++            client_id="client_1",
++            client_secret="client_1_secret",
++            client_name="Fixture Client",
++            redirect_uris=["http://localhost/callback"],
++            grant_types=["authorization_code", "refresh_token"],
++            response_types=["code"],
++            token_endpoint_auth_method="client_secret_basic",
++            created_at=time.time(),
++        )
++    )
++
+     yield storage
+ 
+     # Cleanup
+@@ -675,7 +690,7 @@ async def test_store_and_get_authorization_code_with_pkce(self, storage):
+ 
+         await storage.store_authorization_code(
+             code="pkce_code_123",
+-            client_id="pkce_client",
++            client_id="client_1",
+             redirect_uri="http://localhost/callback",
+             scope="read write",
+             expires_in=300,
+@@ -686,7 +701,7 @@ async def test_store_and_get_authorization_code_with_pkce(self, storage):
+         code_data = await storage.get_authorization_code("pkce_code_123")
+ 
+         assert code_data is not None
+-        assert code_data["client_id"] == "pkce_client"
++        assert code_data["client_id"] == "client_1"
+         assert code_data["code_challenge"] == challenge
+         assert code_data["code_challenge_method"] == method
+ 
+@@ -695,7 +710,7 @@ async def test_authorization_code_without_pkce(self, storage):
+         """Test that codes without PKCE still work (backward compat)."""
+         await storage.store_authorization_code(
+             code="no_pkce_code",
+-            client_id="plain_client",
++            client_id="client_1",
+             redirect_uri="http://localhost/callback",
+             scope="read",
+             expires_in=300,
+@@ -704,7 +719,7 @@ async def test_authorization_code_without_pkce(self, storage):
+         code_data = await storage.get_authorization_code("no_pkce_code")
+ 
+         assert code_data is not None
+-        assert code_data["client_id"] == "plain_client"
++        assert code_data["client_id"] == "client_1"
+         assert code_data.get("code_challenge") is None
+         assert code_data.get("code_challenge_method") is None
+ 
 ```
 
 ---
 
-### Incident Patch 2: `b9cdb17c` (2026-11-02)
-**Commit Message**: fix(sync): propagate a supersede made after the first sync (#1773) (#1788)
+### Incident Patch 2: `e0e2d895` (2026-11-04)
+**Commit Message**: fix(mcp): serve annotations and ping on HTTP, align memory_graph schema with the handler (#1849)
 
-* fix(sync): propagate a supersede made after the first sync (#1773)
+* fix(mcp): serve annotations and ping on HTTP, align memory_graph schema with the handler
 
-mark_superseded_batch, resolve_conflict and update_memory_versioned changed
-superseded_by / superseded_at without logging a sync event, and the
-receiver dropped superseded_by from update_metadata events, so a memory
-replaced after it was first synced stayed current on every other peer.
+* docs: changelog fragment for #1847
 
-- All three writers log the supersede as an update_metadata event inside
-  the same savepoint or transaction as the UPDATE (fail-closed, ADR-0008).
-  A retry that changes nothing logs no event.
-- updates carries only superseded_by, which peers without this change
-  already treat as protected; the origin's superseded_at travels at the
-  payload top level, where those peers never read it.
-- The receiver resolves both columns with the existing field-level LWW by
-  _winner_key and writes the origin's superseded_at instead of
-  re-stamping it. update_memory_metadata now carries superseded_at too.
+* fix(mcp): derive the graph action enum from GRAPH_ACTIONS; restore globals in test teardown
 
-Closes #1773
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(sync): roll back a failed resolve_conflict as a whole; mirror legacy superseded_by
-
-Review fol
-
-**File**: `changelog.d/1773.fixed.md` (added, +10/-0)
+**File**: `changelog.d/1847.fixed.md` (added, +10/-0)
 ```diff
 @@ -0,0 +1,10 @@
-+- **A supersede made after a memory was first synced never reached the other delta-sync peers (#1773, ppcvote).**
-+  `mark_superseded_batch`, `resolve_conflict` and `update_memory_versioned` changed
-+  `superseded_by` / `superseded_at` without logging a sync event, and the receiver dropped
-+  `superseded_by` from `update_metadata` events, so a replaced memory stayed current on every
-+  other peer, in default search and in `as_of` queries. All three writers now log the
-+  supersede inside the same savepoint or transaction as the UPDATE, and the receiver writes both columns
-+  with the existing field-level last-writer-wins order, taking `superseded_at` from the
-+  origin instead of re-stamping it. Peers that supersede the same memory with different
-+  winners converge regardless of arrival order; a peer without this change keeps its
-+  current behaviour.
++- **The HTTP /mcp shim served a weaker protocol than stdio (#1847).**
++  `tools/list` over HTTP dropped every tool's `annotations` (0/26 carried
++  readOnlyHint/destructiveHint vs 28/28 on stdio), `ping` answered
++  `-32601`, and the `memory_graph` schema enum advertised 5 of the 9 actions
++  the handler accepts — `abduct`, `list_entities` and `entity_profile` were
++  unreachable for schema-respecting clients. The shim now serializes
++  annotations, answers `ping` with an empty result, the enum lists all nine
++  actions, and the write-scope exemption derives from a single
++  `GRAPH_ACTIONS` constant so the three lists cannot drift (`extract_entities`
++  stays write-only, GHSA-2mw6-h564-86wv behavior unchanged).
 ```
 
-**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +110/-38)
+**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +15/-1)
 ```diff
-@@ -199,6 +199,10 @@ def _do_update():
-                             'updates': updates,
-                             'updated_at': updated_at,
-                         }
-+                        if update_superseded_by:
-+                            # Issue #1773: carry the origin's superseded_at (the CASE above
-+                            # may have kept an earlier instant) so receivers never re-stamp it.
-+                            payload['superseded_at'] = self._read_superseded_at(content_hash)
-                         self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
-                     self.conn.execute(f"RELEASE SAVEPOINT {sp}")
-                 except Exception:
-@@ -337,25 +341,84 @@ def _batch_update():
-             logger.error("Batch update failed: %s\n%s", _sanitize_log_value(str(e)), traceback.format_exc())
-             return [False] * len(memories)
+@@ -74,6 +74,20 @@ async def get_graph_storage() -> Optional[GraphStorage]:
+     return None
  
-+    def _read_superseded_at(self, content_hash: str) -> float | None:
-+        """Return the row's superseded_at as written by the current transaction."""
-+        row = self.conn.execute(
-+            "SELECT superseded_at FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-+            (content_hash,),
-+        ).fetchone()
-+        return row[0] if row else None
-+
-+    def _append_supersede_event(self, content_hash: str) -> None:
-+        """Log a supersede of ``content_hash`` for delta-sync peers (issue #1773).
-+
-+        Runs inside the caller's transaction/savepoint, so the UPDATE and the event
-+        commit or roll back together (ADR-0008). The event is an ``update_metadata``
-+        whose ``updates`` holds only ``superseded_by``, a field peers already treat as
-+        protected, and whose ``superseded_at`` sits at the payload top level, where a
-+        peer without #1773 never reads it. Both values and ``updated_at`` are read back
-+        from the row, so receivers write the origin's values instead of re-stamping.
-+        """
-+        if not hasattr(self, '_append_sync_event'):
-+            return
-+        row = self.conn.execute(
-+            "SELECT superseded_by, superseded_at, updated_at FROM memories "
-+            "WHERE content_hash = ? AND deleted_at IS NULL",
-+            (content_hash,),
-+        ).fetchone()
-+        if row is None:
-+            return
-+        superseded_by, superseded_at, updated_at = row
-+        payload = {
-+            'content_hash': content_hash,
-+            'updates': {'superseded_by': superseded_by},
-+            'superseded_at': superseded_at,
-+            'updated_at': updated_at,
-+        }
-+        self._append_sync_event(self.conn, 'update_metadata', content_hash, payload)
-+
-+    def _supersede_with_event(self, winner_hash: str, loser_hash: str, now: float) -> None:
-+        """Point ``loser_hash`` at ``winner_hash`` and log the change for sync peers.
-+
-+        Issue #1724 / follow-up review: stamp superseded_at only on the actual
-+        current -> superseded transition. A retried call (same winner) or a re-point
-+        keeps the ORIGINAL replacement moment — re-stamping would corrupt the
-+        historical instant that point-in-time queries rely on. (CASE sees pre-update
-+        values.) A retry that changes nothing logs no event.
-+        """
-+        before = self.conn.execute(
-+            "SELECT superseded_by FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-+            (loser_hash,),
-+        ).fetchone()
-+        cur = self.conn.execute(
-+            "UPDATE memories SET superseded_by = ?, "
-+            "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
-+            "THEN ? ELSE superseded_at END "
-+            "WHERE content_hash = ? AND deleted_at IS NULL",
-+            (winner_hash, now, loser_hash),
-+        )
-+        if cur.rowcount > 0 and before is not None and before[0] != winner_hash:
-+            self._append_supersede_event(loser_hash)
-+
-     async def mark_superseded_batch(self, pairs: list[tuple[str, str]]) -> int:
-         """Mark memories as superseded in a single transaction."""
-         if not pairs or not self.conn:
-             return 0
  
-         def _batch_mark():
--            # Issue #1724 / follow-up review: stamp superseded_at only on the
--            # actual current -> superseded transition. A retried batch (same
--            # winner) or a re-point keeps the ORIGINAL replacement moment —
--            # re-stamping would corrupt the historical instant that
--            # point-in-time queries rely on. (CASE sees pre-update values.)
-             now = time.time()
--            self.conn.executemany(
--                "UPDATE memories SET superseded_by = ?, "
--                "superseded_at = CASE WHEN superseded_by IS NULL OR superseded_by = '' "
--                "THEN ? ELSE superseded_at END "
--                "WHERE content_hash = ? AND deleted_at IS NULL",
--                [(winner, now, loser) for winner, loser in pairs],
--            )
-+            # SAVEPOINT: the UPDAT
++# Every action handle_memory_graph accepts. The tool schema enum in
++# tools/registry.py and the write-scope exemption in server_impl.py both
++# derive from this list — tests/web/api/test_mcp_transport_consistency.py
++# pins the three against each other so they cannot drift again.
++GRAPH_ACTIONS = [
++    "connected", "path", "subgraph", "extract_entities", "infer",
++    "suggest", "abduct", "list_entities", "entity_profile",
++]
++
++# Actions that only read the graph. extract_entities stores entity links,
++# so it is deliberately absent (GHSA-2mw6-h564-86wv).
++GRAPH_READ_ACTIONS = tuple(a for a in GRAPH_ACTIONS if a != "extract_entities")
++
++
+ async def handle_memory_graph(server, arguments: dict) -> List[types.TextContent]:
+     """Unified handler for graph operations."""
+     action = arguments.get("action")
+@@ -82,7 +96,7 @@ async def handle_memory_graph(server, arguments: dict) -> List[types.TextContent
+         return [types.TextContent(type="text", text="Error: action parameter is required")]
+ 
+     # Validate action
+-    valid_actions = ["connected", "path", "subgraph", "extract_entities", "infer", "suggest", "abduct", "list_entities", "entity_profile"]
++    valid_actions = GRAPH_ACTIONS
+     if action not in valid_actions:
+         return [types.TextContent(
+             type="text",
 ```
 
-**File**: `src/mcp_memory_service/storage/sync/apply.py` (modified, +30/-2)
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +5/-4)
 ```diff
-@@ -472,8 +472,29 @@ def _top_level_fields(ev_op, pl):
-                 if vv is not None}
-     # update_metadata
-     upd = (pl.get("updates", {}) or {})
--    return {kk: vv for kk, vv in upd.items()
--            if kk in ("tags", "memory_type") and vv is not None}
-+    fields = {kk: vv for kk, vv in upd.items()
-+              if kk in ("tags", "memory_type") and vv is not None}
-+    fields.update(_supersede_fields(upd, pl))
-+    return fields
-+
-+
-+def _supersede_fields(upd, pl):
-+    """Supersede columns carried by an update_metadata event (issue #1773).
-+
-+    ``superseded_by`` lives in ``updates`` ("" or None clears it). ``superseded_at`` is the
-+    origin's instant at the payload top level, written as-is and never re-stamped here; a
-+    clear without one clears it too. An event from a peer without #1773 has no top-level
-+    ``superseded_at``, so only ``superseded_by`` is taken from it.
-+    """
-+    if "superseded_by" not in upd:
-+        return {}
-+    superseded_by = upd["superseded_by"] or None
-+    fields = {"superseded_by": superseded_by}
-+    if "superseded_at" in pl:
-+        fields["superseded_at"] = pl["superseded_at"]
-+    elif superseded_by is None:
-+        fields["superseded_at"] = None
-+    return fields
+@@ -1670,10 +1670,11 @@ async def tool_requires_write(self, name: Optional[str], arguments: Optional[dic
+         if not name:
+             return False
+         if name == "memory_graph":
+-            return not (arguments and arguments.get("action") in (
+-                "connected", "path", "subgraph", "infer", "suggest", "abduct",
+-                "list_entities", "entity_profile",
+-            ))
++            # Derived from the handler's action table so the two lists cannot
++            # drift apart (GHSA-2mw6-h564-86wv); extract_entities writes entity
++            # links and stays out of the read set.
++            from mcp_memory_service.server.handlers.graph import GRAPH_READ_ACTIONS
++            return not (arguments and arguments.get("action") in GRAPH_READ_ACTIONS)
+         try:
+             tools = await self.list_tools()
+         except Exception:
+```
+
+**File**: `src/mcp_memory_service/tools/registry.py` (modified, +20/-1)
+```diff
+@@ -10,6 +10,12 @@
+ from dataclasses import dataclass, field
+ from typing import Any
  
++# The single source of truth for memory_graph actions. The schema enum below
++# and the write-scope exemption in server_impl both build on this list, so an
++# action added here is everywhere; tests/web/api/test_transport_consistency.py
++# pins the derivation.
++from ..server.handlers.graph import GRAPH_ACTIONS
++
  
- def _take_if_winner(best, best_key, k, key, value):
-@@ -563,6 +584,13 @@ def _write_merged_metadata(s, content_hash, best, meta_best, create_md_keys, lat
-     event_owned = set(meta_best) | create_md_keys
-     merged_md = {kk: vv for kk, vv in current_md.items() if kk not in event_owned}
-     merged_md.update(meta_best)
-+    if "superseded_by" in best:
-+        # Keep the legacy JSON mirror in step with the column, as update_memory_metadata
-+        # does on the origin (#1773): readers such as the contradiction scan check it.
-+        if best["superseded_by"] is None:
-+            merged_md.pop("superseded_by", None)
+ @dataclass(frozen=True)
+ class ToolDef:
+@@ -1008,8 +1014,12 @@ class ToolDef:
+ - connected: Find memories connected via associations (BFS traversal)
+ - path: Find shortest path between two memories
+ - subgraph: Get graph structure around a memory for visualization
++- extract_entities: Manually extract and store entities for a memory (write). Params: hash (string)
+ - infer: Find transitive relationships (A→B→C implies A→C). Params: rel_type (string), max_hops (int, default 2)
+ - suggest: Suggest potential relationships for a memory based on shared neighbors. Params: hash (string)
++- abduct: Find plausible common-cause explanations for a memory's relationships. Params: hash (string)
++- list_entities: List known entities. Params: limit (int, default 50)
++- entity_profile: Show memories linked to one entity. Params: entity_name (string)
+ 
+ Examples:
+ {"action": "connected", "hash": "abc123", "max_hops": 2}
+@@ -1023,7 +1033,7 @@ class ToolDef:
+             "properties": {
+                 "action": {
+                     "type": "string",
+-                    "enum": ["connected", "path", "subgraph", "infer", "suggest"],
++                    "enum": list(GRAPH_ACTIONS),
+                     "description": "Graph operation to perform",
+                 },
+                 "hash": {
+@@ -1057,6 +1067,15 @@ class ToolDef:
+                     "type": "string",
+                     "description": "For 'infer': relationship type to traverse",
+                 },
++                "entity_name": {
++                    "type": "string",
++                    "description": "For 'entity_profile': entity to profile",
++                },
++                "limit": {
++                    "type": "integer",
++                    "default": 50,
++                    "description": "For 'list_entities': max entities to return",
++                },
+                 "as_of": {
+                     "type": "string",
+                     "description": (
+```
+
+**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +16/-1)
+```diff
+@@ -149,11 +149,21 @@ def _get_memory_server():
+ 
+ def _tool_to_dict(tool) -> Dict[str, Any]:
+     """Convert an `mcp.types.Tool` to the wire shape MCP-over-HTTP returns."""
+-    return {
++    out: Dict[str, Any] = {
+         "name": tool.name,
+         "description": tool.description,
+         "inputSchema": tool.inputSchema,
+     }
++    # The stdio transport serializes annotations through the SDK; this shim
++    # used to drop them, so remote clients never saw readOnlyHint /
++    # destructiveHint and could not pre-classify write tools the way stdio
++    # clients can.
++    if tool.annotations is not None:
++        if hasattr(tool.annotations, "model_dump"):
++            out["annotations"] = tool.annotations.model_dump(exclude_none=True)
 +        else:
-+            merged_md["superseded_by"] = best["superseded_by"]
-     best = dict(best)
-     best["metadata"] = merged_md
++            out["annotations"] = dict(tool.annotations)
++    return out
  
+ 
+ def _wrap_tool_result(result, is_error: bool = False) -> Dict[str, Any]:
+@@ -219,6 +229,11 @@ async def mcp_endpoint(
+             )
+             return JSONResponse(content=response.model_dump(exclude_none=True))
+ 
++        elif request.method == "ping":
++            # MCP liveness check: the spec requires an empty result object.
++            response = MCPResponse(id=request.id, result={})
++            return JSONResponse(content=response.model_dump(exclude_none=True))
++
+         elif request.method == "tools/list":
+             tools = await server.list_tools()
+             local_only = server.local_only_tools()
 ```
 
-**File**: `tests/sync/test_1773_supersede_propagation.py` (added, +210/-0)
+**File**: `tests/web/api/test_transport_consistency.py` (added, +136/-0)
 ```diff
-@@ -0,0 +1,210 @@
-+"""
-+Issue #1773: a supersede that happens after the first sync must reach the other peers.
+@@ -0,0 +1,136 @@
++"""MCP transport consistency: the /mcp shim must not serve a weaker protocol
++than stdio.
 +
-+#1726 made the baseline snapshot and the create path carry ``superseded_by`` /
-+``superseded_at``, which covers rows that were already superseded when first synced.
-+These tests cover a supersede made later through each of the three writers, and two
-+peers superseding the same memory with different winners.
++Pins three lists that used to drift independently (the memory_graph schema
++enum, the handler's accepted actions and the write-scope exemption), and
++checks the HTTP shim carries tool annotations and answers ``ping``.
 +"""
-+
-+import json
-+import os
-+import tempfile
 +
 +import pytest
 +import pytest_asyncio
++import tempfile
++import os
++from fastapi.testclient import TestClient
 +
-+from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.web.dependencies import set_storage
 +from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.storage.sync.apply import apply_remote_event
-+from mcp_memory_service.storage.sync.orchestrator import _read_local_events_since
-+from mcp_memory_service.utils.hashing import generate_content_hash
++from mcp_memory_service.tools.registry import TOOL_REGISTRY
++from mcp_memory_service.server.handlers.graph import (
++    GRAPH_ACTIONS,
++    GRAPH_READ_ACTIONS,
++)
++
++
++@pytest.fixture
++def temp_db():
++    with tempfile.TemporaryDirectory() as tmpdir:
++        yield os.path.join(tmpdir, "test.db")
 +
 +
 +@pytest_asyncio.fixture
-+async def peers(monkeypatch):
-+    """Two empty sqlite-vec stores with the event log on."""
-+    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
++async def initialized_storage(temp_db, monkeypatch):
 +    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    with tempfile.TemporaryDirectory() as tmp:
-+        a = SqliteVecMemoryStorage(os.path.join(tmp, "a.db"))
-+        b = SqliteVecMemoryStorage(os.path.join(tmp, "b.db"))
-+        await a.initialize()
-+        await b.initialize()
-+        yield a, b
-+        await a.close()
-+        await b.close()
++    storage = SqliteVecMemoryStorage(temp_db)
++    await storage.initialize()
++    yield storage
++    await storage.close()
 +
 +
-+async def _store(storage, content):
-+    h = generate_content_hash(content)
-+    ok, msg = await storage.store(Memory(content=content, content_hash=h, tags=["t"], memory_type="note"))
-+    assert ok, msg
-+    return h
++@pytest.fixture
++def test_app(initialized_storage, monkeypatch):
++    from mcp_memory_service.web import dependencies as web_dependencies
++    from mcp_memory_service.web.api import mcp as mcp_api
++    from mcp_memory_service.web.oauth import middleware
++    monkeypatch.setattr(middleware, "API_KEY", None)
++    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
++    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
++
++    from mcp_memory_service.web.app import app
++    from mcp_memory_service.web.oauth.middleware import (
++        get_current_user, require_read_access, AuthenticationResult,
++    )
++
++    # The shim caches a MemoryServer against the module-global storage; save
++    # both so teardown leaves other tests' globals intact instead of pointing
++    # at this fixture's closed storage.
++    prev_storage = web_dependencies._storage
++    prev_server = mcp_api._memory_server
++    set_storage(initialized_storage)
++
++    async def mock_user():
++        return AuthenticationResult(
++            authenticated=True, client_id="test", scope="read write admin", auth_method="test",
++        )
++
++    app.dependency_overrides[get_current_user] = mock_user
++    app.dependency_overrides[require_read_access] = mock_user
++    yield app
++    app.dependency_overrides.clear()
++    web_dependencies._storage = prev_storage
++    mcp_api._memory_server = prev_server
 +
 +
-+def _sync(src, dst):
-+    """Apply every event src has logged to dst (duplicates are idempotent no-ops)."""
-+    for event in _read_local_events_since(src, 0, 10_000):
-+        result = apply_remote_event(dst, event)
-+        assert result.applied or "Duplicate" in result.reason, result.reason
++def _graph_tool_def():
++    return next(td for td in TOOL_REGISTRY if td.name == "memory_graph")
 +
 +
-+def _supersede_state(storage, content_hash):
-+    return storage.conn.execute(
-+        "SELECT superseded_by, superseded_at FROM memories WHERE content_hash = ?",
-+        (content_hash,),
-+    ).fetchone()
++def test_graph_schema_enum_lists_every_handler_action():
++    schema = _graph_tool_def().input_schema
++    enum = schema["properties"]["action"]["enum"]
++    assert enum == GRAPH_ACTIONS
++    # the advertised description covers every action too
++    description = _graph_tool_def().description
++    for action in GRAPH_ACTIONS:
++        assert action in description, f"{action} missing from the tool description"
 +
 +
-+async def _supersede(writer, storage, loser, winner_content):
-+    """Supersede ``loser`` on ``storage`` through ``writer``; return the winner's hash."""
-+    if writer == "versioned":
-+        ok, msg, new_hash = await storage.update_memory_versioned(loser, winner_content)
-+        assert ok, msg
-+        return new_hash
-+    winner = await _store(storage, winner_content)
-+    if writer == "batch":
-+        assert await storage.mark_superseded_batch([(winner, loser)]) == 1
-+    else:
-+        ok, msg = await storage.resolve_conflict(winner, loser)
-+        assert ok, msg
-+    return winner
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("writer", ["batch", "resolve_conflict", "versioned"])
-+async def test_supersede_after_initial_sync_reaches_peer(peers, monkeypatch, writer):
-+    a, b = peers
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    x = await _store(a, "Memory X: the deploy target is staging")
-+    _sync(a, b)
-+    assert _supersede_state(b, x) == (None, None)
-+
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    winner = await _supersede(writer, a, x, "Memory Y: the deploy target is production")
-+    superseded_by, superseded_at = _supersede_state(a, x)
-+    assert superseded_by == winner and superseded_at is not None
-+
-+    # The event keeps superseded_at out of ``updates``: a peer without #1773 treats
-+    # superseded_by there as protected and never reads the top-level field.
-+    row = a.conn.execute(
-+        "SELECT payload FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
-+        (x,),
-+    ).fetchone()
-+    payload = json.loads(row[0])
-+    assert payload["updates"] == {"superseded_by": winner}
-+    assert payload["superseded_at"] == superseded_at
-+
-+    monkeypatch.setenv("MCP_AGENT_ID", "beta")
-+    _sync(a, b)
-+    # Same value on both peers: the receiver writes the origin's instant, not its own.
-+    assert _supersede_state(b, x) == (winner, superseded_at)
++def test_read_actions_exclude_only_entity_extraction():
++    # extract_entities stores entity links (GHSA-2mw6-h564-86wv)
++    assert set(GRAPH_READ_ACTIONS) == set(GRAPH_ACTIONS) - {"extract_entities"}
 +
 +
 +@pytest.mark.asyncio
-+async def test_retried_supersede_logs_no_second_event(peers, monkeypatch):
-+    a, _ = peers
-+    monkeypatch.setenv("MCP_AGENT_ID", "alpha")
-+    x = await _store(a, "Memory X: retry target")
-+    y = await _store(a, "Memory Y: retry winner")
-+    assert await a.mark_superseded_batch([(y, x)]) == 1
-+    assert await a.mark_superseded_batch([(y, x)]) == 1
-+    count = a.conn.execute(
-+        "SELECT COUNT(*) FROM sync_events WHERE content_hash = ? AND op = 'update_metadata'",
-+        (x,),
-+    ).fetchone()[0]
-+    assert count == 1
++async def test_write_scope_follows_the_action_table(initialized_storage):
++    from mcp_memory_service.server_impl import MemoryServer
++
++    server = MemoryServer(
++        storage=initialized_storage, consolidator=None, consolidation_scheduler=None
++    )
++    for action in GRAPH_READ_ACTIONS:
++        requires_write = await server.tool_requires_write(
++            "memory_graph", {"action": action}
++        )
++        assert not requires_write, f"{action} is read-only but required write scope"
++
++    assert await server.tool_requires_write(
++        "memory_graph", {"action": "extract_entities"}
++    )
++    assert await server.tool_requires_write("memory_graph", {"action": "bogus"})
++    assert await server.tool_requires_write("memory_graph", None)
 +
 +
-+@pytest.mark.asyncio
-+async def test_conflicting_supersedes_converge_in_both_orders(monkeypatch):
-+    """Two peers supersede X with different winners; every arrival order ends the same."""
-+    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    with tempfile.TemporaryDirecto
++def test_http_tools_list_carries_annotations(test_app):
++    client = TestClient(test_app)
++    response = client.post(
++        "/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
++    )
++    tools = response.json()["result"]["tools"]
++
++    assert tools, "tools/list returned no tools"
++    missing = [t["name"] for t in tools if not t.get("annotations")]
++    assert not missing, f"HTTP tools/list dropped annotations for: {missing}"
++
++    by_name = {t["name"]: t for t in tools}
++    assert by_name["memory_search"]["annotations"].get("readOnlyHint") is True
++    assert by_name["memory_delete"]["annotations"].get("destructiveHint") is True
++    assert by_name["memory_graph"]["annotations"].get("readOnlyHint") is True
++
++
++def test_http_ping_answers_empty_result(test_app):
++    client = TestClient(test_app)
++    response = client.post(
++        "/mcp", json={"jsonrpc": "2.0", "id": 7, "method": "ping"}
+
 ```
 
 ---
 
-### Incident Patch 3: `6e8f5f15` (2026-11-01)
-**Commit Message**: fix(deps): patch minimatch in bridge test dependencies (#1767)
+### Incident Patch 3: `a2ee57d3` (2026-11-04)
+**Commit Message**: feat(entities): rebuild existing entity graphs (#1860)
 
-* fix(deps): patch minimatch in bridge test dependencies
+* feat(entities): rebuild existing entity graphs (#1722)
 
-* docs(changelog): record bridge dependency security fixes
+Add memory_quality(action="rebuild_entities") to preview or replace entity
+edges for all live memories on SQLite, Hybrid, and Milvus. Use current
+extraction settings and EntityLinker, preserving other relationships and
+memory data. Bind the graph to the active storage and stop on read errors
+before deleting edges. Remove the broken SQLite-only backfill script.
 
----------
+Validation: 44 rebuild tests passed, 1 skipped; the related suite passed
+314 tests with 7 skips. The full pre-PR gate still fails on existing auth,
+date-filter, and missing sentence-transformers failures. The local model
+analysis was skipped because its endpoint was unavailable.
 
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Fixes #1722
 
-**File**: `changelog.d/1767.internal.md` (added, +1/-0)
+* fix(entities): abort graph rebuilds on extractor failures
+
+**File**: `.env.example` (modified, +4/-3)
+```diff
+@@ -165,7 +165,8 @@ MCP_SEMANTIC_DEDUP_THRESHOLD=0.85            # Similarity threshold 0.0-1.0 (def
+ # docs/guides/token-efficient-retrieval.md
+ #
+ # Link entities at store time, for memories stored from then on. Existing memories are
+-# untouched — use memory_quality {"action":"maintain","dry_run":false} for those.
++# untouched — preview memory_quality {"action":"rebuild_entities"} for those,
++# then back up and use dry_run=false to rebuild their entity graph.
+ # MCP_ENTITY_LINKING_ENABLED=1
+ #
+ # Memories scanned per maintain run. Takes the FIRST N in storage order, so repeated runs
+@@ -180,8 +181,8 @@ MCP_SEMANTIC_DEDUP_THRESHOLD=0.85            # Similarity threshold 0.0-1.0 (def
+ #
+ # Which memory tags become entities: comma-separated fnmatch patterns, case-insensitive.
+ # Include is applied first, then exclude; unset keeps every tag. Entities found in the
+-# content (#hashtags, @mentions, URLs, paths) are not filtered. Existing graph edges are
+-# not rebuilt.
++# content (#hashtags, @mentions, URLs, paths) are not filtered. Existing graph edges
++# change only when memory_quality {"action":"rebuild_entities","dry_run":false} runs.
+ # MCP_ENTITY_TAG_INCLUDE=task:*
+ # MCP_ENTITY_TAG_EXCLUDE=bugfix,project:*
+ #
+```
+
+**File**: `changelog.d/1722.added.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **Patch minimatch in the bridge test dependencies (#1767).** Both JavaScript test projects now lock minimatch 11.0.3 to address GHSA-g3hv-75wg-m249. Update glob alongside it so Mocha can still discover tests through wildcard paths.
++- Rebuild existing entity graphs with `memory_quality(action="rebuild_entities")`, previewing changes by default and applying current extraction settings across all live memories on SQLite, Hybrid, and Milvus.
 ```
 
-**File**: `tests/bridge/package-lock.json` (modified, +57/-58)
+**File**: `docs/guides/token-efficient-retrieval.md` (modified, +58/-4)
 ```diff
-@@ -13,6 +13,13 @@
-         "sinon": "^17.0.0"
-       }
-     },
-+    "node_modules/@isaacs/nonrecursive-glob-match": {
-+      "version": "1.0.3",
-+      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
-+      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0"
-+    },
-     "node_modules/@sinonjs/commons": {
-       "version": "3.0.1",
-       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
-@@ -385,13 +392,6 @@
-         "flat": "cli.js"
-       }
-     },
--    "node_modules/fs.realpath": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
--      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/fsevents": {
-       "version": "2.3.3",
-       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-@@ -418,21 +418,18 @@
-       }
-     },
-     "node_modules/glob": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
--      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
--      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
-+      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
-       "dev": true,
--      "license": "ISC",
-+      "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "fs.realpath": "^1.0.0",
--        "inflight": "^1.0.4",
--        "inherits": "2",
--        "minimatch": "^5.0.1",
--        "once": "^1.3.0"
-+        "minimatch": "^11.0.2",
-+        "minipass": "^7.1.3",
-+        "path-scurry": "^3.0.0"
-       },
-       "engines": {
--        "node": ">=12"
-+        "node": "18 || 20 || >=22"
-       },
-       "funding": {
-         "url": "https://github.com/sponsors/isaacs"
-@@ -471,25 +468,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/inflight": {
--      "version": "1.0.6",
--      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
--      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
--      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
--      "dev": true,
--      "license": "ISC",
--      "dependencies": {
--        "once": "^1.3.0",
--        "wrappy": "1"
--      }
--    },
--    "node_modules/inherits": {
--      "version": "2.0.4",
--      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
--      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/is-binary-path": {
-       "version": "2.1.0",
-       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
-@@ -632,14 +610,25 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/lru-cache": {
-+      "version": "11.5.3",
-+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
-+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0",
-+      "engines": {
-+        "node": "20 || >=22"
-+      }
-+    },
-     "node_modules/minimatch": {
--      "version": "10.2.4",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
--      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
-+      "version": "11.0.3",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
-+      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.2"
-+        "@isaacs/nonrecursive-glob-match": "^1.0.3",
-+        "brace-expansion": "^5.0.12"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -648,6 +637,16 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/minipass": {
-+      "version": "7.1.3",
-+      "resolved": "https://registry.n
+@@ -163,8 +163,10 @@ via `memory_graph`. If that returns `{"entities": [], "total": 0}`, the two-phas
+ have nothing to work with, and the fix is one of:
+ 
+ - **Batch, for memories you already have** — `memory_quality` with
+-  `{"action": "maintain", "dry_run": false}`. The `dry_run` default is `true`, which counts
+-  candidate entities and stores none, so a default call looks like it did nothing.
++  `{"action": "rebuild_entities"}` previews a full entity-graph rebuild. Review the
++  report, then use `{"action": "rebuild_entities", "dry_run": false}` to apply it.
++  See [Rebuilding the entity graph](#rebuilding-the-entity-graph) before applying.
++  `maintain` can also populate `has_entity`, but does not create `shares_entity`.
+ - **Ongoing, for memories stored from now on** — set `MCP_ENTITY_LINKING_ENABLED=1`. This
+   links at store time and does not touch existing memories.
+ - **A single memory** — `memory_graph` with
+@@ -207,8 +209,8 @@ each a comma-separated list of `fnmatch` patterns matched case-insensitively:
+ - `MCP_ENTITY_TAG_EXCLUDE` — matching tags never do.
+ 
+ When both are set, include is applied first, then exclude. Unset keeps every tag. Entities
+-found in the content (`#hashtags`, `@mentions`, URLs, paths) are not filtered. Existing
+-graph edges are not rebuilt: the filter applies to extraction from then on.
++found in the content (`#hashtags`, `@mentions`, URLs, paths) are not filtered. The filter
++applies to extraction from then on; use `rebuild_entities` to update existing edges.
+ 
+ ```bash
+ MCP_ENTITY_TAG_INCLUDE=task:*
+@@ -222,6 +224,58 @@ of the patterns above, tags do most of the work — which is why tags being drop
+ For domain-specific extraction, `MCP_ENTITY_EXTRACTOR_MODULES` accepts comma-separated
+ `module.path:ClassName` entries implementing the `DomainExtractor` protocol.
+ 
++### Rebuilding the entity graph
++
++After changing entity filters or custom terms, correcting old extraction errors, or
++enabling linking on an existing store, preview a complete rebuild with `memory_quality`:
++
++```json
++{"action": "rebuild_entities"}
++```
++
++This defaults to `dry_run: true` and changes no memories or edges. `edges_before` counts
++the rows that would be deleted, and `edges_after` counts the replacement rows. Both
++contain `has_entity` and `shares_entity`. A `shares_entity` pair uses two directed rows;
++`shares_entity_pairs_before` and `shares_entity_pairs_after` count pairs instead.
++`memories_scanned` counts all live memories across all named stores, including
++superseded versions, in creation order. `MCP_MAINTAIN_SCAN_LIMIT` does not apply.
++The graph is selected from the server's active storage, including Hybrid's primary,
++and a Milvus preview leaves a missing graph collection absent. A read failure stops
++the operation before deleting any edges. Rebuilds load configured domain extractors
++afresh and stop before deletion if a plugin fails to load or extract entities.
++
++Back up the database first and pause other writers and consolidation jobs for the
++entire preview/apply window. Restart the server to load changed extraction settings,
++then review the preview and apply:
++
++```json
++{"action": "rebuild_entities", "dry_run": false}
++```
++
++The operation deletes only `has_entity` and `shares_entity` edges, then recreates them
++using the current extractor and `EntityLinker`. Other relationships and their metadata
++and timestamps are preserved. If a pair already has a non-entity relationship, the
++rebuild skips a `shares_entity` pair that would overwrite it; `protected_edges` reports
++the number of non-entity rows retained. Memory contents, hashes, timestamps, tags, and
++store assignments are unchanged. Rebuilding explicitly does not require
++`MCP_ENTITY_LINKING_ENABLED` to be enabled; that flag controls future store-time linking.
++
++The newest-first entity lookup window and linking cap are the same as at store time.
++Equal creation timestamps are ordered by content hash for repeatable results. The
++result reproduces linking with today's settings, rather than preserving historical
++entity edges. The old SQLite-only backfill script has been replaced by this action.
++
++SQLite, Hybrid (its local graph), and Milvus are supported. Cloudflare reports an
++unsupported graph backend and does nothing. This is a write operation requiring OAuth
++write scope, even for a preview. Only a boolean `dry_run: false` applies changes.
++
++The full memory scan, graph snapshot, and replacement plan are held in memory before
++any deletion. Large stores require proportionally more RAM, and Milvus performs an RPC
++per edge write, so a rebuild can take a while. Pause other writers: the process-local
++rebuild lock does not coordinate separate servers, and this is not a cross-backend
++transaction. A write failure returns `success: false`, errors and progress counters;
++the graph may be partially rebuilt. Fix the failure and rerun, or restore the backup.
++
+ ### What `summary` actually is
+ 
+ The `summary` field on each entity
 ```
 
-**File**: `tests/bridge/package.json` (modified, +2/-1)
+**File**: `docs/mastery/api-reference.md` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,8 @@
-   },
-   "overrides": {
-     "brace-expansion": "^5.0.12",
--    "minimatch": "^10.2.3",
-+    "glob": "^14.0.3",
-+    "minimatch": "^11.0.1",
-     "serialize-javascript": "^7.0.3"
-   },
-   "keywords": ["mcp", "bridge", "testing"],
+@@ -20,7 +20,7 @@ these twelve (`grep -c 'ToolDef(' src/mcp_memory_service/tools/registry.py`):
+ | `memory_update` | Update memory metadata (replaces `update_memory_metadata`) |
+ | `memory_cleanup` | Remove duplicates / orphans (replaces `cleanup_duplicates`) |
+ | `memory_consolidate` | Run/manage consolidation (replaces `trigger_consolidation`, `scheduler_status`) |
+-| `memory_quality` | Rate / get / analyze quality (replaces `rate_memory`, `get_memory_quality`, `analyze_quality_distribution`) |
++| `memory_quality` | Rate / get / analyze quality (replaces `rate_memory`, `get_memory_quality`, `analyze_quality_distribution`); maintain or rebuild all entity edges (`rebuild_entities`, dry-run by default) |
+ | `memory_ingest` | Ingest documents (PDF/DOCX/TXT/JSON) |
+ | `memory_graph` | Knowledge-graph queries (`connected`, `path`, `subgraph`, `extract_entities`, `infer`, `suggest`, `abduct`, `list_entities`, `entity_profile`) |
+ | `memory_explore` | Knowledge map of entities for a query, with ranked chunks per entity |
 ```
 
-**File**: `tests/integration/package-lock.json` (modified, +57/-58)
+**File**: `scripts/maintenance/backfill_has_entity.py` (removed, +0/-127)
 ```diff
-@@ -13,6 +13,13 @@
-         "sinon": "^17.0.0"
-       }
-     },
-+    "node_modules/@isaacs/nonrecursive-glob-match": {
-+      "version": "1.0.3",
-+      "resolved": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.0.3.tgz",
-+      "integrity": "sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0"
-+    },
-     "node_modules/@sinonjs/commons": {
-       "version": "3.0.1",
-       "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
-@@ -385,13 +392,6 @@
-         "flat": "cli.js"
-       }
-     },
--    "node_modules/fs.realpath": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
--      "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/fsevents": {
-       "version": "2.3.3",
-       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-@@ -418,21 +418,18 @@
-       }
-     },
-     "node_modules/glob": {
--      "version": "8.1.0",
--      "resolved": "https://registry.npmjs.org/glob/-/glob-8.1.0.tgz",
--      "integrity": "sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==",
--      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/glob/-/glob-14.0.3.tgz",
-+      "integrity": "sha512-A1vjIwC3qpdCso45Iw127gnp7sPhqgY8lUQhDrArIs+GbmfaaVPFuoyy7WyLT9EPZCRZ7j7aLdwUhQmHWesEow==",
-       "dev": true,
--      "license": "ISC",
-+      "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "fs.realpath": "^1.0.0",
--        "inflight": "^1.0.4",
--        "inherits": "2",
--        "minimatch": "^5.0.1",
--        "once": "^1.3.0"
-+        "minimatch": "^11.0.2",
-+        "minipass": "^7.1.3",
-+        "path-scurry": "^3.0.0"
-       },
-       "engines": {
--        "node": ">=12"
-+        "node": "18 || 20 || >=22"
-       },
-       "funding": {
-         "url": "https://github.com/sponsors/isaacs"
-@@ -471,25 +468,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/inflight": {
--      "version": "1.0.6",
--      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
--      "integrity": "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==",
--      "deprecated": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
--      "dev": true,
--      "license": "ISC",
--      "dependencies": {
--        "once": "^1.3.0",
--        "wrappy": "1"
--      }
--    },
--    "node_modules/inherits": {
--      "version": "2.0.4",
--      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
--      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
--      "dev": true,
--      "license": "ISC"
--    },
-     "node_modules/is-binary-path": {
-       "version": "2.1.0",
-       "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
-@@ -632,14 +610,25 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/lru-cache": {
-+      "version": "11.5.3",
-+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.5.3.tgz",
-+      "integrity": "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==",
-+      "dev": true,
-+      "license": "BlueOak-1.0.0",
-+      "engines": {
-+        "node": "20 || >=22"
-+      }
-+    },
-     "node_modules/minimatch": {
--      "version": "10.2.4",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
--      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
-+      "version": "11.0.3",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.3.tgz",
-+      "integrity": "sha512-iny/40PEGkNJQ5/Pv6z3nm6FbRAby32GeZRjCUJk2WnNDbgPSTcdI+DDvLqsgBdD4cD5sMtMheqPPnehCCa8Nw==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.2"
-+        "@isaacs/nonrecursive-glob-match": "^1.0.3",
-+        "brace-expansion": "^5.0.12"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -648,6 +637,16 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/minipass": {
-+      "version": "7.1.3",
-+      "resolved": "https://registry.n
+@@ -1,127 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-backfill_has_entity.py — Rebuild has_entity edges from existing memories.
+-
+-Use after applying the prune fix (#150) to repopulate has_entity edges
+-that were incorrectly deleted by previous consolidation cycles.
+-
+-Usage:
+-    python scripts/maintenance/backfill_has_entity.py [--dry-run] [--db PATH]
+-
+-Options:
+-    --dry-run   Show what would be inserted without writing
+-    --db PATH   Path to sqlite_vec.db (default: ~/.local/share/mcp-memory/sqlite_vec.db)
+-"""
+-
+-import argparse
+-import json
+-import os
+-import sqlite3
+-import sys
+-import time
+-
+-# Add src to path for imports
+-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+-
+-
+-def get_default_db_path():
+-    """Resolve default DB path from env or standard location."""
+-    return os.environ.get(
+-        "MCP_MEMORY_SQLITE_PATH",
+-        os.path.expanduser("~/.local/share/mcp-memory/sqlite_vec.db"),
+-    )
+-
+-
+-def main():
+-    parser = argparse.ArgumentParser(description="Backfill has_entity edges")
+-    parser.add_argument("--dry-run", action="store_true", help="Preview without writing")
+-    parser.add_argument("--db", default=get_default_db_path(), help="Path to sqlite_vec.db")
+-    args = parser.parse_args()
+-
+-    if not os.path.exists(args.db):
+-        print(f"Error: database not found at {args.db}")
+-        sys.exit(1)
+-
+-    try:
+-        from mcp_memory_service.extraction.entity_extractor import EntityExtractor
+-    except ImportError:
+-        print("Error: cannot import EntityExtractor. Run from repo root or install package.")
+-        sys.exit(1)
+-
+-    conn = sqlite3.connect(args.db)
+-    conn.row_factory = sqlite3.Row
+-
+-    # Count existing has_entity edges
+-    before = conn.execute(
+-        "SELECT COUNT(*) FROM memory_graph WHERE relationship_type = 'has_entity'"
+-    ).fetchone()[0]
+-    print(f"has_entity edges before: {before}")
+-
+-    # Get all non-deleted memories
+-    cursor = conn.execute(
+-        "SELECT content_hash, content, metadata FROM memories WHERE deleted_at IS NULL"
+-    )
+-
+-    extractor = EntityExtractor()
+-    inserted = 0
+-    processed = 0
+-    now = time.time()
+-
+-    for row in cursor:
+-        processed += 1
+-        if processed % 1000 == 0:
+-            print(f"  processed {processed} memories...")
+-
+-        content = row["content"] or ""
+-        if len(content) < 20:
+-            continue
+-
+-        metadata = {}
+-        if row["metadata"]:
+-            try:
+-                metadata = json.loads(row["metadata"]) if isinstance(row["metadata"], str) else row["metadata"]
+-            except (json.JSONDecodeError, TypeError):
+-                pass
+-
+-        try:
+-            entities = extractor.extract_entities(content, metadata)
+-        except Exception:
+-            continue
+-
+-        for ent in entities:
+-            if args.dry_run:
+-                inserted += 1
+-            else:
+-                try:
+-                    conn.execute(
+-                        """INSERT OR IGNORE INTO memory_graph
+-                           (source_hash, target_hash, similarity, connection_types, metadata, created_at, relationship_type)
+-                           VALUES (?, ?, 1.0, '["entity"]', ?, ?, 'has_entity')""",
+-                        (
+-                            row["content_hash"],
+-                            ent.name,
+-                            json.dumps({"entity_type": getattr(ent, 'entity_type', 'unknown')}),
+-                            now,
+-                        ),
+-                    )
+-                    inserted += 1
+-                except sqlite3.Error:
+-                    pass
+-
+-    if not args.dry_run:
+-        conn.commit()
+-
+-    after = conn.execute(
+-        "SELECT COUNT(*) FROM memory_graph WHERE relationship_type = 'has_entity'"
+-    ).fetchone()[0]
+-    conn.close()
+-
+-    mode = "DRY-RUN" if args.dry_run else "LIVE"
+-    print(f"\nResults ({mode}):")
+-    print(f"  Memories processed: {processed}")
+-    print(f"  Edges {'would be' if args.dry_run else ''} inserted: {inserted}")
+-    print(f"  has_entity edges after: {after if not args.dry_run else before + inserted}")
+-
+-
+-if __name__ == "__main__":
+-    main()
 ```
 
-**File**: `tests/integration/package.json` (modified, +2/-1)
+**File**: `src/mcp_memory_service/reasoning/entities.py` (modified, +57/-35)
 ```diff
-@@ -13,7 +13,8 @@
-   },
-   "overrides": {
-     "brace-expansion": "^5.0.12",
--    "minimatch": "^10.2.3",
-+    "glob": "^14.0.3",
-+    "minimatch": "^11.0.1",
-     "serialize-javascript": "^7.0.3"
-   },
-   "keywords": ["mcp", "bridge", "integration", "testing"],
+@@ -7,10 +7,18 @@
+ Supports pluggable domain-specific extractors via MCP_ENTITY_EXTRACTOR_MODULES env var.
+ """
+ 
++import importlib
++import logging
++import os
+ import re
+ from dataclasses import dataclass
+ from fnmatch import fnmatchcase
+-from typing import List, Dict, Any, Protocol, runtime_checkable
++from typing import Any, Callable, Dict, List, Protocol, runtime_checkable
++
++from ..compat import _sanitize_log_value
++
++logger = logging.getLogger(__name__)
++
+ 
+ @dataclass
+ class Entity:
+@@ -51,16 +59,31 @@ def _tag_allowed(tag: str, include: list[str], exclude: list[str]) -> bool:
+ _DOMAIN_EXTRACTOR_CACHE: list | None = None
+ 
+ 
++def _load_domain_extractor(spec: str) -> DomainExtractor:
++    """Instantiate one configured plugin and validate its protocol."""
++    module_path, class_name = spec.rsplit(":" if ":" in spec else ".", 1)
++    module = importlib.import_module(module_path)
++    instance = getattr(module, class_name)()
++    if not isinstance(instance, DomainExtractor):
++        raise TypeError("does not implement DomainExtractor protocol")
++    return instance
++
++
+ class EntityExtractor:
+     """Extract entities from memory content and metadata.
+ 
+     Uses high-precision patterns only (@mentions, #tags, URLs, paths).
+     CamelCase/ALLCAPS removed per review feedback (too many false positives).
+     Supports pluggable domain extractors via constructor or env var.
++    Strict mode raises on plugin errors instead of returning partial results.
+     """
+ 
+-    def __init__(self, domain_extractors: list[DomainExtractor] | None = None):
++    def __init__(
++        self, domain_extractors: list[DomainExtractor] | None = None,
++        *, strict: bool = False,
++    ):
+         self._domain_extractors = domain_extractors or []
++        self._strict = strict
+ 
+     def extract_entities(self, content: str, metadata: Dict[str, Any] | None = None) -> List[Entity]:
+         metadata = metadata or {}
+@@ -92,44 +115,53 @@ def _add(name: str, etype: str, source: str):
+         tags = metadata.get('tags', [])
+         if isinstance(tags, str):
+             tags = [t.strip() for t in tags.split(',') if t.strip()]
+-        from ..config import MCP_ENTITY_TAG_INCLUDE, MCP_ENTITY_TAG_EXCLUDE
++        from ..config import (  # inline import: read current config
++            MCP_ENTITY_TAG_INCLUDE, MCP_ENTITY_TAG_EXCLUDE,
++        )
+         include = _tag_patterns(MCP_ENTITY_TAG_INCLUDE)
+         exclude = _tag_patterns(MCP_ENTITY_TAG_EXCLUDE)
+         for tag in tags:
+             if _tag_allowed(tag, include, exclude):
+                 _add(tag, 'tag', 'metadata')
+ 
+         # Custom terms matching from config
+-        from ..config import MCP_ENTITY_CUSTOM_TERMS
++        from ..config import MCP_ENTITY_CUSTOM_TERMS  # inline import: read current config
+         if MCP_ENTITY_CUSTOM_TERMS:
+             custom_terms = [t.strip() for t in MCP_ENTITY_CUSTOM_TERMS.split(',') if t.strip()]
+             for term in custom_terms:
+                 # Word boundary match to avoid false positives (e.g., "roma" in "aroma")
+                 if re.search(r'(?<![a-zA-Z0-9_-])' + re.escape(term) + r'(?![a-zA-Z0-9_-])', content, re.IGNORECASE):
+                     _add(term, 'custom', 'config')
+ 
+-        # Domain-specific extractors (pluggable)
++        self._add_domain_entities(content, metadata, _add)
++        return entities
++
++    def _add_domain_entities(
++        self, content: str, metadata: dict,
++        add: Callable[[str, str, str], None],
++    ) -> None:
++        """Keep ordinary extraction fail-soft; rebuilds require complete results."""
+         for ext in self._domain_extractors:
+             try:
+                 domain_entities = ext.extract(content, metadata)
+                 for ent in domain_entities:
+-                    _add(ent.name, ent.entity_type, 'domain')
++                    add(ent.name, ent.entity_type, 'domain')
+             except Exception as e:
+-                import logging
+-                logging.getLogger(__name__).debug(f"Domain extractor failed: {e}")
+-
+-        return entities
++                if self._strict:
++                    raise RuntimeError(
++                        f"Domain extractor '{type(ext).__module__}."
++                        f"{type(ext).__qualname__}' failed: {e}"
++                    ) from e
++                logger.debug("Domain extractor failed: %s", _sanitize_log_value(e))
+ 
+     @staticmethod
+-    def load_domain_extractors() -> list['DomainExtractor']:
++    def load_domain_extractors(*, strict: bool = False) -> list['DomainExtractor']:
+         """Load domain extractors from MCP_ENTITY_EXTRACTOR_MODULES env var.
+ 
+         Format: comma-separated dotted paths to classes.
+         Example: MCP_ENTITY_EXTRACTOR_MODULES=mypackage.ner:MedicalExtractor,other.mod:LegalExtractor
++        With strict=True, any loading or protocol error aborts the entire load.
+         """
+-        import os
+-        import importlib
+-
+         modules_str = os.environ.get('MCP_ENTITY_EXTRAC
+```
+
+**File**: `src/mcp_memory_service/reasoning/entity_rebuild.py` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++"""Plan entity-graph replacement before making any destructive writes."""
++
++from collections import Counter, defaultdict, deque
++from typing import Any, Callable
++
++from .entities import Entity, EntityExtractor
++from .entity_linker import EntityLinker, MAX_LINKS_PER_ENTITY
++
++ENTITY_RELATIONSHIPS = ("has_entity", "shares_entity")
++
++
++def _tags(value: object) -> list[str]:
++    """Accept current list tags and legacy comma-separated metadata tags."""
++    if isinstance(value, str):
++        return [tag.strip() for tag in value.split(",") if tag.strip()]
++    return list(value or [])
++
++
++def _extraction_metadata(memory: Any) -> dict:
++    metadata = dict(memory.metadata or {})
++    metadata["tags"] = list(dict.fromkeys([
++        *_tags(metadata.get("tags")), *_tags(memory.tags),
++    ]))
++    return metadata
++
++
++class EntityRebuildPlan:
++    """An in-memory graph sink for the real EntityLinker.
++
++    Entity lookups reproduce the graph stores' newest-first 20-row window,
++    including the just-inserted memory. Protected pairs cannot be overwritten
++    by symmetric shares_entity writes. Counts are physical edge rows; pairs
++    are reported separately.
++    """
++
++    def __init__(
++        self, snapshot: list[dict], entity_key: Callable[[str], str]
++    ) -> None:
++        self.entity_key = entity_key
++        self.protected = {
++            (row["source_hash"], row["target_hash"])
++            for row in snapshot
++            if row["relationship_type"] not in ENTITY_RELATIONSHIPS
++        }
++        counts = Counter(row["relationship_type"] for row in snapshot)
++        self.before = {kind: counts[kind] for kind in ENTITY_RELATIONSHIPS}
++        self.pairs_before = len({
++            tuple(sorted((row["source_hash"], row["target_hash"])))
++            for row in snapshot if row["relationship_type"] == "shares_entity"
++        })
++        self.entity_links: dict[tuple[str, str], Entity] = {}
++        self.associations: dict[tuple[str, str], dict] = {}
++        self.recent: dict[str, deque] = defaultdict(
++            lambda: deque(maxlen=MAX_LINKS_PER_ENTITY)
++        )
++        self.memories_scanned = 0
++
++    def _add_entity(self, memory_hash: str, entity: Entity) -> None:
++        key = self.entity_key(entity.name)
++        pair = (memory_hash, key)
++        if pair in self.protected:
++            return
++        if pair in self.entity_links:
++            # Milvus upserts normalized names; preserve its last surface form.
++            self.entity_links[pair] = entity
++            return
++        if tuple(sorted(pair)) in self.associations:
++            return
++        self.entity_links[pair] = entity
++        self.recent[key].appendleft(memory_hash)
++
++    async def find_memories_by_entity(self, entity_name: str) -> list[str]:
++        """Return the same capped candidate window used at store time."""
++        return list(self.recent[self.entity_key(entity_name)])
++
++    async def store_association(
++        self, source_hash: str, target_hash: str, **edge: Any
++    ) -> bool:
++        """Record a symmetric pair only when both endpoints are writable."""
++        forward, reverse = (source_hash, target_hash), (target_hash, source_hash)
++        if any(
++            pair in self.protected or pair in self.entity_links
++            for pair in (forward, reverse)
++        ):
++            return False
++        pair = tuple(sorted(forward))
++        self.associations[pair] = {
++            "source_hash": source_hash, "target_hash": target_hash, **edge,
++        }
++        return True
++
++    async def build(self, memories: list) -> None:
++        """Replay all live memories oldest first with current extraction settings."""
++        # Reload strictly: the fail-soft cache may omit failed plugins.
++        extractor = EntityExtractor(
++            domain_extractors=EntityExtractor.load_domain_extractors(strict=True),
++            strict=True,
++        )
++        linker = EntityLinker()
++        memories.sort(key=lambda m: (m.created_at or 0, m.content_hash))
++        for memory in memories:
++            entities = extractor.extract_entities(
++                memory.content or "", _extraction_metadata(memory)
++            )
++            for entity in entities:
++                self._add_entity(memory.content_hash, entity)
++            await linker.link_by_entities(
++                memory.content_hash, [e.name for e in entities], self
++            )
++            self.memories_scanned += 1
++
++    def describe(self) -> dict:
++        """Return the preview without exposing memory contents."""
++        return {
++            "memories_scanned": self.memories_scanned,
++            "edges_before": self.before,
++            "edges_after": {
++                "has_entity": len(self.entity_links),
++                "shares_entity": 2 * len(self.associations),
++            },
++            "shares_entity_pairs_before": self.pairs_before,
++            "shares_entity_pairs_after": len(self.associations),
++   
+```
+
+**File**: `src/mcp_memory_service/server/handlers/entity_rebuild.py` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++"""Explicit, write-scoped entity maintenance, separate from maintain's scan cap."""
++
++import asyncio
++import json
++import logging
++import time
++from contextlib import asynccontextmanager
++from typing import Any, AsyncIterator
++
++from mcp import types
++
++from ...compat import _sanitize_log_value
++from ...reasoning.entity_rebuild import EntityRebuildPlan
++from ...storage.graph import GraphStorage
++from ...storage.hybrid import HybridMemoryStorage
++from ...storage.milvus import MilvusMemoryStorage
++from ...storage.milvus_graph import MilvusGraphStorage, _entity_key
++from ...storage.read_policy import strict_reads
++from ...storage.sqlite_vec import SqliteVecMemoryStorage
++
++logger = logging.getLogger(__name__)
++_rebuild_lock = asyncio.Lock()
++
++
++@asynccontextmanager
++async def _open_graph(
++    primary: Any, dry_run: bool
++) -> AsyncIterator[GraphStorage | MilvusGraphStorage]:
++    """Open the graph belonging to this server, without mutating a preview."""
++    if isinstance(primary, SqliteVecMemoryStorage):
++        graph = GraphStorage(primary.db_path)
++    elif isinstance(primary, MilvusMemoryStorage):
++        graph = MilvusGraphStorage(
++            uri=primary.uri, token=primary.token,
++            collection_name=primary.collection_name,
++        )
++    else:
++        raise RuntimeError(
++            "Entity rebuild requires graph storage (sqlite_vec, hybrid, or milvus)"
++        )
++    try:
++        if isinstance(graph, MilvusGraphStorage):
++            await graph.initialize(create_if_missing=not dry_run)
++        yield graph
++    finally:
++        await graph.close()
++
++
++async def _rebuild(server: Any, dry_run: bool, report: dict) -> None:
++    storage = await server._ensure_storage_initialized()
++    primary = storage.primary if isinstance(storage, HybridMemoryStorage) else storage
++    async with _open_graph(primary, dry_run) as graph:
++        # None means every named store; limit=None drains Milvus's full iterator.
++        with strict_reads():
++            memories = await primary.get_all_memories(limit=None, store=None)
++            expected = await primary.count_all_memories(store=None)
++        if len(memories) != expected:
++            raise RuntimeError(
++                "Memory scan was incomplete or the store changed; no edges deleted"
++            )
++        # Milvus listings include tombstones stored inside metadata, unlike
++        # SQLite's deleted_at SQL filter. Verify the raw count before filtering.
++        if isinstance(graph, MilvusGraphStorage):
++            memories = [
++                m for m in memories if m.metadata.get("deleted_at") is None
++            ]
++        snapshot = await graph.get_edge_snapshot()
++        key = (lambda name: name) if isinstance(graph, GraphStorage) else _entity_key
++        plan = EntityRebuildPlan(snapshot, entity_key=key)
++        await plan.build(memories)
++        report.update(plan.describe())
++        if not dry_run:
++            await plan.apply(graph, report)
++        report["success"] = True
++
++
++async def handle_rebuild_entities(
++    server: Any, arguments: dict
++) -> list[types.TextContent]:
++    """Preview by default; only a literal false permits destructive replacement."""
++    dry_run = arguments.get("dry_run", True)
++    started = time.monotonic()
++    report = {
++        "action": "rebuild_entities", "dry_run": dry_run, "success": False,
++        "edges_deleted": 0, "edges_created": {"has_entity": 0, "shares_entity": 0},
++        "errors": [],
++    }
++    try:
++        if not isinstance(dry_run, bool):
++            raise ValueError("dry_run must be a boolean")
++        if _rebuild_lock.locked():
++            raise RuntimeError("An entity rebuild is already running in this process")
++        async with _rebuild_lock:
++            await _rebuild(server, dry_run, report)
++    except Exception as exc:
++        report["success"] = False
++        report["errors"].append(str(exc))
++        logger.error("Entity rebuild failed: %s", _sanitize_log_value(exc))
++    report["elapsed_seconds"] = round(time.monotonic() - started, 3)
++    return [types.TextContent(type="text", text=json.dumps(report, indent=2))]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1795** (closed): fix(harvest): _try_evolve returns the evolved hash, so capture() can unpack it (@Esmail-sarhadi)
-- **PR #1792** (2026-11-02): fix(web): reject blank memory content and guard NULL cosine distance (#1791) (@10RZC22)
-- **PR #1790** (2026-11-02): fix(migrations): read migration files as UTF-8 (#1789) (@ppcvote)
-- **PR #1788** (2026-11-02): fix(sync): propagate a supersede made after the first sync (#1773) (@ppcvote)
-- **PR #1787** (2026-11-02): feat(i18n): add Brazilian Portuguese dashboard translation (#1755) (@shyam1017)
-- **PR #1786** (2026-11-02): fix(storage): stop capping Milvus full reads at 16384 rows (#1785) (@henry201605)
+- **PR #1862** (2026-11-04): fix(oauth): enforce foreign keys in the SQLite OAuth store (@timkjr)
+- **PR #1860** (2026-11-04): feat(entities): rebuild existing entity graphs (@andrunio)
+- **PR #1859** (2026-11-04): fix(harvest): keep the newer statement current when sessions arrive out of order (#1858) (@doobidoo)
+- **PR #1854** (2026-11-04): feat(i18n): add Russian web interface translations (@coughlmao)
+- **PR #1853** (2026-11-04): fix(registry): mark memory_graph as read-write in tool annotations (#1852) (@hamid-digitalmarketer)
+- **PR #1851** (2026-11-04): fix(dashboard): translate the manage tag table and the search counts (@ZYZ666-RGB)
 
 ---
 
@@ -4126,25 +4229,29 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory_search point-in-time queries with as_of and status flags (fixes #1724) (#
+## X. oauth): enforce foreign keys in the SQLite OAuth store (#1862)
 
 **RULE**:
-When implementing operations in `changelog.d/1724.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1804.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce80cb53`: memory_search point-in-time queries with as_of and status flags (fixes #1724) (#1726). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56ba922e`: oauth): enforce foreign keys in the SQLite OAuth store (#1862). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1724.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1804.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Point-in-time `as_of` searches no longer leak present-day fallback results (#1724).**
-  With `fallback=true`, an `as_of` search returning fewer than three matches could
-  append present-day exact or tag matches. The cascading fallback stages now forward
-  `as_of`, so historical queries only return memories that were current at the
-  requested date.
+- **The SQLite OAuth store never enforced its foreign keys (#1804, timkjr).**
+  The schema declares `ON DELETE CASCADE` from authorization codes, access
+  tokens and refresh tokens to `oauth_clients`, but the backend never turned on
+  `PRAGMA foreign_keys`, so deleting a client left its codes and tokens behind
+  and a code or token could be stored for a client that did not exist. The
+  pragma is now set on the connection. `store_client` switched from
+  `INSERT OR REPLACE` to an upsert: REPLACE deletes the row first, and with
+  enforcement on, that delete would have wiped the client's tokens whenever
+  `authenticate_client` upgraded a legacy plaintext secret to a hash.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4154,4 +4261,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce80cb53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56ba922e` are properly handled with clean fallback behavior.

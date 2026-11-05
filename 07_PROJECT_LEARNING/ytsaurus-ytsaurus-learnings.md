@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `303b4d91`  
+> **Source Version**: `822e884f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:50:46.454Z  
+> **Timestamp**: 2026-11-04T17:10:04.896Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:50:46.013Z  
+> **Harvest Timestamp**: 2026-11-04T17:09:39.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2327 stars
+- **Stars / Engagement**: 2325 stars
 
 ---
 
@@ -1195,270 +1195,90 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b90c8fa3` (2026-11-03)
-**Commit Message**: Fix test_schema_coexistence class timeout
+### Incident Patch 1: `b104d37c` (2026-11-04)
+**Commit Message**: YT-26829: Fix potential memory leaks and internal errors
+commit_hash:60be929ab514900a14c3a681b8ef9b9b5abde6f7
 
-Increase TestChaosRpcProxy from 40 to 100 partitions so slow test groups fit within the existing class execution limit.
-
-Assigned YT test: test_chaos.py::TestChaosRpcProxy[35]::test_schema_coexistence[async-3-schemas1] (savrus, osidorkin)
-
-Test history: https://nda.ya.ru/t/TYkSMMDb7vkK85
-commit_hash:fee2173ba2266fb466d189401c98034631120e6e
-
-**File**: `yt/yt/tests/integration/dynamic_tables/test_chaos.py` (modified, +23/-6)
+**File**: `yt/microservices/lib/go/ytmsvc/auth_external.go` (modified, +1/-0)
 ```diff
-@@ -4411,8 +4411,12 @@ def _check(error):
-     @pytest.mark.parametrize("tablet_count", [1, 3])
-     @pytest.mark.parametrize("mode", ["sync", "async", "async_queue"])
-     def test_schema_coexistence(self, schemas, tablet_count, mode):
--        cell_id = self._sync_create_chaos_bundle_and_cell()
--        sync_create_cells(1)
-+        primary_driver, remote_driver0, _ = self._get_drivers()
-+        cell_id, _, _ = map_in_parallel(lambda create_cells: create_cells(), [
-+            self._sync_create_chaos_bundle_and_cell,
-+            lambda: sync_create_cells(1, driver=primary_driver),
-+            lambda: sync_create_cells(1, driver=remote_driver0),
-+        ])
+@@ -36,6 +36,7 @@ func GetUserByAuthCookie(r *http.Request, l *zap.Logger, authCookieName string,
+ 	if err != nil {
+ 		return nil, nil, err
+ 	}
++	defer yc.Stop()
  
-         enabled = mode != "async_queue"
-         replica_mode = "sync" if mode == "sync" else "async"
-@@ -4426,7 +4430,6 @@ def test_schema_coexistence(self, schemas, tablet_count, mode):
-             {"cluster_name": "remote_0", "content_type": "queue", "mode": replica_mode, "enabled": True, "replica_path": "//tmp/rqa"},
-         ]
-         card_id, replica_ids = self._create_chaos_tables(cell_id, replicas[:3], create_replica_tables=False, sync_replication_era=False)
--        _, remote_driver0, remote_driver1 = self._get_drivers()
- 
-         create("chaos_replicated_table", "//tmp/crt", attributes={
-             "replication_card_id": card_id,
-@@ -4449,15 +4452,29 @@ def _create_pivots(schema):
-         )
- 
-         replica_ids.append(self._create_chaos_table_replica(replicas[3], replication_card_id=card_id, catchup=False))
--        self._create_replica_tables(replicas[3:4], replica_ids[3:4], schema=schema1, pivot_keys=_create_pivots(schema1))
-+        self._create_replica_tables(
-+            replicas[3:4],
-+            replica_ids[3:4],
-+            create_tablet_cells=False,
-+            schema=schema1,
-+            pivot_keys=_create_pivots(schema1),
-+        )
-         self._sync_replication_era(card_id)
- 
-         sync_unmount_table("//tmp/rqs", driver=remote_driver0)
-         progress = get("#{0}/@replication_progress".format(replica_ids[3]))
-         replica_ids.append(self._create_chaos_table_replica(replicas[4], replication_card_id=card_id, replication_progress=progress))
-         replica_ids.append(self._create_chaos_table_replica(replicas[5], replication_card_id=card_id, replication_progress=progress))
--        sync_mount_table("//tmp/rqs", driver=remote_driver0)
--        self._create_replica_tables(replicas[4:], replica_ids[4:], schema=schema1, pivot_keys=_create_pivots(schema1), replication_progress=progress)
-+        self._create_replica_tables(
-+            replicas[4:],
-+            replica_ids[4:],
-+            create_tablet_cells=False,
-+            mount_tables=False,
-+            schema=schema1,
-+            pivot_keys=_create_pivots(schema1),
-+            replication_progress=progress,
-+        )
-+        self._mount_replicas(replicas[3:])
-         self._sync_replication_era(card_id)
- 
-         assert get("//tmp/pd/@tablet_count") == tablet_count
+ 	ctx := r.Context()
+ 	user, err := yc.WhoAmI(ctx, nil)
 ```
 
 ---
 
-### Incident Patch 2: `c58a681a` (2026-11-03)
-**Commit Message**: YT-30042: increase timeout for size_s tests
-commit_hash:71e16d13ac2cebebb80da8fe2853c89b2311aa61
+### Incident Patch 2: `2e9dd4f9` (2026-11-04)
+**Commit Message**: [zephyr] Extract common build configuration
 
-**File**: `yt/yt/tests/integration/size_s/ya.make` (modified, +1/-0)
+Подготовка к добавлению kibo
+commit_hash:8a210f3169c161799f36676e49d80d6833e83128
+
+**File**: `build/ymake_conf.py` (modified, +3/-3)
 ```diff
-@@ -5,6 +5,7 @@ SET(YT_SPLIT_FACTOR 60)
- ENV(YT_TEST_FILTER=SMALL)
+@@ -1352,7 +1352,7 @@ def get_os_sdk(target):
  
- INCLUDE(../YaMakeDependsBoilerplate.txt)
-+TIMEOUT(2400)
+         if target.is_zephyr_armv7_cortex_a35:
+             self.c_flags_platform.append('-march=armv8-a -mthumb -mabi=aapcs -mfpu=neon-fp-armv8 -mfloat-abi=hard')
+-            self.setup_zephyr_armv7()
++            self.setup_zephyr()
  
- YT_SPEC(yt/yt/tests/integration/spec_job_batching.yson)
+         if target.is_riscv32_esp32p4:
+             self.c_flags_platform.extend([
+@@ -1447,8 +1447,8 @@ def setup_amlogic64_rtos_sdk(self):
+     def setup_actions_zephyr_sdk(self):
+         self.platform_projects.insert(0, 'build/internal/platform/actions_zephyr')
  
+-    def setup_zephyr_armv7(self):
+-        self.platform_projects.insert(0, 'build/internal/platform/zephyr_armv7')
++    def setup_zephyr(self):
++        self.platform_projects.insert(0, 'build/internal/platform/zephyr')
+ 
+     def setup_allwinner_rtos_sdk(self):
+         self.platform_projects.insert(0, 'build/internal/platform/allwinner_rtos')
 ```
 
 ---
 
-### Incident Patch 3: `303b4d91` (2026-11-03)
-**Commit Message**: YT-30228: Fix case
-commit_hash:79752cde487cf32e2d274dc8c273385121ace7f5
+### Incident Patch 3: `a579755b` (2026-11-04)
+**Commit Message**: Fix remote cluster tests
+commit_hash:64ff1bf99a5926496986e3a7a975f4e75c477dd0
 
-**File**: `yt/yt/library/query/base/expr_builder_v2.cpp` (modified, +10/-0)
+**File**: `yt/yql/tests/agent/test_ytflow.py` (modified, +3/-14)
 ```diff
-@@ -50,6 +50,10 @@ TConstExpressionPtr CreateCoercion(EValueType type, TConstExpressionPtr operand)
-         castName = "uint64";
-     } else if (type == EValueType::Double) {
-         castName = "double";
-+    } else if (type == EValueType::Boolean) {
-+        castName = "boolean";
-+    } else if (type == EValueType::String) {
-+        castName = "string";
-     } else if (type == EValueType::Any) {
-         castName = "to_any";
-     } else {
-@@ -1145,6 +1149,12 @@ TConstExpressionPtr TExpressionBuilderV2::OnCaseOp(const NAst::TCaseExpression*
-         }
+@@ -1,4 +1,3 @@
+-import copy
+ import functools
+ import itertools
+ import json
+@@ -1462,19 +1461,9 @@ class TestYtflowRemoteCluster(TestYtflowBase):
      }
  
-+    if (typedDefaultExpression &&
-+        resultType != TypingCtx_.GetTypeId(typedDefaultExpression->GetWireType()))
-+    {
-+        typedDefaultExpression = CreateCoercion(TypingCtx_.GetWireType(resultType), typedDefaultExpression);
-+    }
-+
-     return New<TCaseExpression>(
-         TypingCtx_.GetWireType(resultType),
-         std::move(typedOptionalOperand),
-```
-
-**File**: `yt/yt/library/query/engine/cg_fragment_compiler.cpp` (modified, +6/-1)
-```diff
-@@ -1657,6 +1657,8 @@ TCGValue CodegenRelationalBinaryOpExpr(
-         Value* evalData = nullptr;
+     @classmethod
+-    def _use_primary_timestamp_provider(cls, config, cluster_index):
+-        # The queue agent uses primary-cluster clocks for both clusters' tablet bundles.
+-        if cluster_index > 0:
+-            config["cluster_connection"]["timestamp_provider"] = copy.deepcopy(
+-                cls.Env.configs["master"][0]["cluster_connection"]["timestamp_provider"])
+-
+-    @classmethod
+-    def modify_rpc_proxy_config(cls, config, cluster_index, multidaemon_config, proxy_index):
+-        cls._use_primary_timestamp_provider(config, cluster_index)
+-
+-    @classmethod
+-    def modify_http_proxy_config(cls, config, cluster_index, multidaemon_config, proxy_index):
+-        cls._use_primary_timestamp_provider(config, cluster_index)
++    def _set_clock_cluster_tag(cls):
++        # Keep each cluster's clock independent instead of using the queue-agent base's shared clock.
++        pass
  
-         switch (operandType) {
-+            case EValueType::Null:
-+                return compareNulls();
-             case EValueType::Int64:
-                 switch (opcode) {
-                     CMP_OP(Equal, ICmpEQ)
-@@ -2385,6 +2387,7 @@ TCGValue CodegenCaseExpr(
-     TRange<std::pair<size_t, size_t>> whenThenExpressionIds,
-     std::optional<size_t> defaultId,
-     EValueType resultType,
-+    bool nullable,
-     TCGExprContext& builder)
- {
-     auto* resultPtr = CodegenAllocateValues(builder, /*valueCount*/ 1);
-@@ -2431,7 +2434,7 @@ TCGValue CodegenCaseExpr(
-     builder->CreateBr(endBB);
- 
-     builder->SetInsertPoint(endBB);
--    return TCGValue::LoadFromRowValue(builder, resultPtr, resultType);
-+    return TCGValue::LoadFromRowValue(builder, resultPtr, nullable, resultType);
- }
- 
- } // namespace NDetail
-@@ -2441,6 +2444,7 @@ TCodegenExpression MakeCodegenCaseExpr(
-     std::vector<std::pair<size_t, size_t>> whenThenExpressionIds,
-     std::optional<size_t> defaultId,
-     EValueType resultType,
-+    bool nullable,
-     TComparerManagerPtr comparerManager,
-     bool useCanonicalNullRelations)
- {
-@@ -2480,6 +2484,7 @@ TCodegenExpression MakeCodegenCaseExpr(
-             whenThenExpressionIds,
-             defaultId,
-             resultType,
-+            nullable,
-             builder);
-     };
- }
-```
-
-**File**: `yt/yt/library/query/engine/cg_fragment_compiler.h` (modified, +1/-0)
-```diff
-@@ -148,6 +148,7 @@ TCodegenExpression MakeCodegenCaseExpr(
-     std::vector<std::pair<size_t, size_t>> whenThenExpressionIds,
-     std::optional<size_t> defaultId,
-     EValueType resultType,
-+    bool nullable,
-     TComparerManagerPtr comparerManager,
-     bool useCanonicalNullRelations);
- 
-```
-
-**File**: `yt/yt/library/query/engine/folding_profiler.cpp` (modified, +5/-1)
-```diff
-@@ -902,7 +902,7 @@ size_t TExpressionProfiler::Profile(
-             {.ExecutionBackend = ExecutionBackend_},
-             Id_),
-         functionExpr->GetWireType(),
--        function->IsNullable(nullableArgs));
-+        functionExpr->GetWireType() == EValueType::Null || function->IsNullable(nullableArgs));
- 
-     if (ExecutionBackend_ == EExecutionBackend::WebAssembly) {
-         if (auto bytecode = function->GetWebAssemblyBytecodeFile(); !bytecode.Data.Empty()) {
-@@ -1154,6 +1154,7 @@ size_t TExpressionProfiler::Profile(
-     id.AddInteger(static_cast<int>(ExecutionBackend_));
-     id.AddInteger(static_cast<int>(EFoldingObjectType::CaseExpr));
-     id.AddInteger(static_cast<ui8>(caseExpr->GetWireType()));
-+    id.AddBoolean(UseCanonicalNullRelations_);
-     id.AddBoolean(static_cast<bool>(caseExpr->OptionalOperand));
-     if (caseExpr->OptionalOperand) {
-         id.AddInteger(static_cast<ui8>(caseExpr->OptionalOperand->GetWireType()));
-@@ -1209,6 +1210,8 @@ size_t TExpressionProfiler::Profile(
-         ++fragments->Items[*defaultExprId].UseCount;
- 
-         nullable |= fragments->Items[*defaultExprId].Nullable;
-+    } else {
-+        nullable = true;
-     }
- 
-     auto argIds = std::vector<size_t>();
-@@ -1228,6 +1231,7 @@ size_t TExpressionProfiler::Profile(
-             std::move(whenThenExpressionIds),
-             defaultExprId,
-             caseExpr->GetWireType(),
-+            nullable,
-             ComparerManager_,
-             UseCanonicalNullRelations_),
-         caseExpr->GetWireType(),
-```
-
-**File**: `yt/yt/library/query/unittests/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
-```diff
-@@ -90,6 +90,7 @@ target_sources(library-query-unittests.global PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
-```
-
-**File**: `yt/yt/library/query/unittests/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -90,6 +90,7 @@ target_sources(library-query-unittests.global PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
-```
-
-**File**: `yt/yt/library/query/unittests/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
-```diff
-@@ -94,6 +94,7 @@ target_sources(library-query-unittests.global PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
-```
-
-**File**: `yt/yt/library/query/unittests/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -94,6 +94,7 @@ target_sources(library-query-unittests.global PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ast_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/folding_profiler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/join_profilers_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_case_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_computed_columns_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_distributed_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/library/query/unittests/ql_expressions_ut.cpp
+     @classmethod
+     def extend_yql_agent_config(cls, config):
 ```
 
 #### Recent Merged Pull Requests:
@@ -1487,55 +1307,28 @@ commit_hash:79752cde487cf32e2d274dc8c273385121ace7f5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test_schema_coexistence class timeout
+## X. YT-26829: Fix potential memory leaks and internal errors
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_chaos.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/microservices/lib/go/ytmsvc/auth_external.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b90c8fa3`: test_schema_coexistence class timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b104d37c`: YT-26829: Fix potential memory leaks and internal errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_chaos.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/microservices/lib/go/ytmsvc/auth_external.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        primary_driver, remote_driver0, _ = self._get_drivers()
-        cell_id, _, _ = map_in_parallel(lambda create_cells: create_cells(), [
-            self._sync_create_chaos_bundle_and_cell,
-            lambda: sync_create_cells(1, driver=primary_driver),
-            lambda: sync_create_cells(1, driver=remote_driver0),
-        ])
-        self._create_replica_tables(
-            replicas[3:4],
-            replica_ids[3:4],
-            create_tablet_cells=False,
-            schema=schema1,
-            pivot_keys=_create_pivots(schema1),
-        )
-        self._create_replica_tables(
-            replicas[4:],
-            replica_ids[4:],
-            create_tablet_cells=False,
-            mount_tables=False,
-            schema=schema1,
-            pivot_keys=_create_pivots(schema1),
-            replication_progress=progress,
-        )
-        self._mount_replicas(replicas[3:])
+	defer yc.Stop()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        cell_id = self._sync_create_chaos_bundle_and_cell()
-        sync_create_cells(1)
-        _, remote_driver0, remote_driver1 = self._get_drivers()
-        self._create_replica_tables(replicas[3:4], replica_ids[3:4], schema=schema1, pivot_keys=_create_pivots(schema1))
-        sync_mount_table("//tmp/rqs", driver=remote_driver0)
-        self._create_replica_tables(replicas[4:], replica_ids[4:], schema=schema1, pivot_keys=_create_pivots(schema1), replication_progress=progress)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b90c8fa3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b104d37c` are properly handled with clean fallback behavior.

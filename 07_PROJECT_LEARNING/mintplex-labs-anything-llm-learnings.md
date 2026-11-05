@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `f31b5adf`  
+> **Source Version**: `eda0eb5e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:37:48.600Z  
+> **Timestamp**: 2026-11-04T19:41:33.719Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:37:47.974Z  
+> **Harvest Timestamp**: 2026-11-04T19:41:33.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67900 stars
+- **Stars / Engagement**: 67939 stars
 
 ---
 
@@ -1309,274 +1309,352 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cca9756a` (2026-11-02)
-**Commit Message**: fix: use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)
+### Incident Patch 1: `ed730a82` (2026-11-03)
+**Commit Message**: fix: replace agent session complete notice with an explicit exit notice (#6966)
 
-* fix outlook thread
+* fix: stop appending agent session complete notice to chat history
 
-* chore: drop unused webLink mapping and narrow outlook permalink tests
+The appended statusResponse became the last history item, which hid the
+finished answer's regenerate action and rendered a trailing Thoughts block.
+Content-less placeholders are still swept when the socket closes.
 
-* chore: drop unused webLink field from mapGraphMessage
+* feat: show a notice when the user exits an agent session
 
----------
+Bail commands (exit, stop, halt) now send an agentSessionExited event
+before the socket closes, rendered as an italic notice in the live chat.
+Timeouts, /reset, the stop button, and disconnects send nothing.
 
-Co-authored-by: Bensonbenyi <[REDACTED_EMAIL]>
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/utils/agents/aibitat/plugins/outlook/lib.js` (modified, +3/-1)
+**File**: `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx` (added, +17/-0)
 ```diff
-@@ -1018,7 +1018,7 @@ class OutlookBridge {
-    * @returns {Promise<{success: boolean, data?: object, error?: string}>}
-    */
-   async readThread(conversationId) {
--    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,attachments&$expand=attachments`;
-+    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,webLink,attachments&$expand=attachments`;
- 
-     const result = await this.request(endpoint);
-     if (!result.success) return result;
-@@ -1042,6 +1042,8 @@ class OutlookBridge {
-         conversationId,
-         subject: messages[0]?.subject || "No Subject",
-         messageCount: messages.length,
-+        permalink:
-+          messages[messages.length - 1]?.webLink || messages[0]?.webLink,
-         messages: messages.map((msg) =>
-           mapGraphMessage(msg, { includeBody: true, includeAttachments: true })
-         ),
-```
-
-**File**: `server/utils/agents/aibitat/plugins/outlook/search/outlook-read-thread.js` (modified, +1/-9)
-```diff
-@@ -100,7 +100,7 @@ module.exports.OutlookReadThread = {
-                 id: `outlook-thread-${thread.conversationId}`,
-                 title: thread.subject,
-                 text: `Subject: "${thread.subject}"\n\n${messagesFormatted}`,
--                chunkSource: `outlook-thread://${this._generatePermalink(thread.conversationId)}`,
-+                chunkSource: `outlook-thread://${thread.permalink}`,
-                 score: null,
-               });
- 
-@@ -116,14 +116,6 @@ module.exports.OutlookReadThread = {
-               return handleSkillError(this, "outlook-read-thread", e);
-             }
-           },
--          _generatePermalink: function (conversationId) {
--            if (!conversationId) return null;
--            let encodedId = encodeURIComponent(conversationId);
--            // For outlook, this needs to be specifically encoded
--            // as the webpage does not respect it like traditional URL encoding
--            encodedId = encodedId.replace(/-/g, "%2F");
--            return `https://outlook.live.com/mail/inbox/id/${encodedId}`;
--          },
-         });
-       },
-     };
-```
-
----
-
-### Incident Patch 2: `978cf588` (2026-11-02)
-**Commit Message**: feat: configurable per-server MCP tool call timeout (#6948)
-
-Adds anythingllm.timeout (seconds) to MCP server config. Defaults to 60s
-when unset or invalid. Resolves #6788
-
-**File**: `server/utils/MCP/hypervisor/index.js` (modified, +16/-0)
-```diff
-@@ -190,6 +190,22 @@ class MCPHypervisor {
-     return config?.server?.anythingllm?.suppressedTools || [];
-   }
- 
-+  /**
-+   * Get the tool call timeout for an MCP server in milliseconds.
-+   * Set per server via `anythingllm.timeout` (in seconds) in the MCP config file.
-+   * Falls back to 60 seconds when unset or not a positive number.
-+   * @param {string} serverName - The name of the MCP server
-+   * @returns {number} - Timeout in milliseconds
-+   */
-+  getToolCallTimeout(serverName) {
-+    const DEFAULT_TIMEOUT_SECONDS = 60;
-+    const config = this.mcpServerConfigs.find((s) => s.name === serverName);
-+    const timeout = Number(config?.server?.anythingllm?.timeout);
-+    if (!Number.isFinite(timeout) || timeout <= 0)
-+      return DEFAULT_TIMEOUT_SECONDS * 1000;
-+    return timeout * 1000;
-+  }
+@@ -0,0 +1,17 @@
++import { useTranslation } from "react-i18next";
++import { Info } from "@phosphor-icons/react";
 +
-   /**
-    * Reload the MCP servers - can be used to reload the MCP servers without restarting the server or app
-    * and will also apply changes to the config file if any where made.
++/**
++ * Notice shown after the user ends an agent session with an exit command.
++ */
++export default function AgentSessionExited() {
++  const { t } = useTranslation();
++  return (
++    <div className="flex justify-start w-full">
++      <div className="py-4 px-4 md:pl-0 flex items-center gap-x-1.5 text-xs font-mono italic text-zinc-400 light:text-slate-500">
++        <Info className="h-4 w-4 shrink-0" />
++        <p className="!m-0">{t("chat.agent_session_exited")}</p>
++      </div>
++    </div>
++  );
++}
 ```
 
-**File**: `server/utils/MCP/index.js` (modified, +5/-4)
+**File**: `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/index.jsx` (modified, +3/-0)
 ```diff
-@@ -133,10 +133,11 @@ class MCPCompatibilityLayer extends MCPHypervisor {
-                     aibitat.introspect(
-                       `Executing MCP server: ${name} with ${JSON.stringify(args, null, 2)}`
-                     );
--                    const result = await currentMcp.callTool({
--                      name: tool.name,
--                      arguments: args,
--                    });
-+                    const result = await currentMcp.callTool(
-+                      { name: tool.name, arguments: args },
-+                      undefined,
-+                      { timeout: mcpLayer.getToolCallTimeout(name) }
-+                    );
-                     aibitat.handlerProps.log(
-                       `MCP server: ${name}:${tool.name} completed successfully`,
-                       result
+@@ -7,6 +7,7 @@ import ClarifyingQuestionCard from "./ClarifyingQuestion";
+ import FileDownloadCard from "./FileDownloadCard";
+ import ImageGenerationPending from "./ImageGenerationPending";
+ import ScheduledJobCreatedCard from "./ScheduledJobCreatedCard";
++import AgentSessionExited from "./AgentSessionExited";
+ import { useManageWorkspaceModal } from "../../../Modals/ManageWorkspace";
+ import ManageWorkspace from "../../../Modals/ManageWorkspace";
+ import { ArrowDown } from "@phosphor-icons/react";
+@@ -300,6 +301,8 @@ function buildMessages({
+       acc.push(<FileDownloadCard key={props.uuid} props={props} />);
+     } else if (props.type === "scheduledJobCreated" && !!props.content) {
+       acc.push(<ScheduledJobCreatedCard key={props.uuid} props={props} />);
++    } else if (props.type === "agentSessionExited") {
++      acc.push(<AgentSessionExited key={props.uuid} />);
+     } else if (props.type === "imageGenerationPending") {
+       acc.push(
+         <ImageGenerationPending
+```
+
+**File**: `frontend/src/components/WorkspaceChat/ChatContainer/index.jsx` (modified, +4/-22)
+```diff
+@@ -55,7 +55,6 @@ export default function ChatContainer({
+   const { files, parseAttachments } = useContext(DndUploaderContext);
+   const { chatHistoryRef } = useChatContainerQuickScroll();
+   const pendingMessageChecked = useRef(false);
+-  const pendingResetRef = useRef(false);
+   const activeThreadSlug = threadSlug;
+ 
+   const isEmpty =
+@@ -332,7 +331,6 @@ export default function ChatContainer({
+         // server to abort the agent and close the socket; fall through to the
+         // /reset flow below which resets memory + clears chat history.
+         if (promptMessage.userMessage.trim() !== "/reset") return;
+-        pendingResetRef.current = true;
+       }
+ 
+       if (!promptMessage || !promptMessage?.userMessage) return false;
+@@ -417,26 +415,10 @@ export default function ChatContainer({
+           setAgentSessionActive(false);
+           setAgentSessionSocket(null);
+           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+-          // When the close was triggered by /reset, skip the "Agent session
+-          // complete." status - the pending /reset flow will clear history.
+-          if (pendingResetRef.current) {
+-            pendingResetRef.current = false;
+-          } else {
+-            setChatHistory((prev) => [
+-              ...prev.filter((msg) => !!msg.content),
+-              {
+-                uuid: v4(),
+-                type: "statusResponse",
+-                content: "Agent session complete.",
+-                role: "assistant",
+-                sources: [],
+-                closed: true,
+-                error: null,
+-                animate: false,
+-                pending: false,
+-              },
+-            ]);
+-          }
++          // Session end is stream plumbing, not conversation, so nothing is
++          // appended. Still sweep content-less placeholders (e.g. the pending
++          // dots from the @agent handoff) in case no agent event replaced them.
++          setChatHistory((prev) => prev.filter((msg) => !!msg.content));
+           setLoadingResponse(false);
+           setWebsocket(null);
+           setSocketId(null);
+```
+
+**File**: `frontend/src/locales/ar/common.js` (modified, +1/-0)
+```diff
+@@ -260,6 +260,7 @@ const TRANSLATIONS = {
+     token_limit_reached:
+       "وصلت الاستجابة إلى الحد الأقصى لعدد الرموز، لذا يجب زيادة الحد الأقصى لعدد الرموز التي يمكن للنموذج إنتاجها للسماح بإنتاج استجابات أطول.",
+     no_response: "فشل النموذج في الرد.",
++    agent_session_exited: "لقد أنهيت جلسة الوكيل.",
+   },
+   "vector-workspace": {
+     identifier: "معرف قاعدة بيانات المتجهة",
+```
+
+**File**: `frontend/src/locales/bg/common.js` (modified, +1/-0)
+```diff
+@@ -307,6 +307,7 @@ const TRANSLATIONS = {
+     token_limit_reached:
+       "Отговорът достигна максималния лимит за генерирани токени. Увеличете максималния брой токени, които моделът може да генерира, за да позволите по-дълги отговори.",
+     no_response: "Моделът не успя да отговори.",
++    agent_session_exited: "Прекратихте сесията с агента.",
+   },
+   "vector-workspace": {
+     identifier: "Идентификатор на векторната база данни",
+```
+
+**File**: `frontend/src/locales/ca/common.js` (modified, +1/-0)
+```diff
+@@ -307,6 +307,7 @@ const TRANSLATIONS = {
+     token_limit_reached:
+       "La resposta ha arribat al límit de tokens de sortida. Augmenta el nombre màxim de tokens de sortida del model per permetre respostes més llargues.",
+     no_response: "El model no ha pogut respondre.",
++    agent_session_exited: "Has finalitzat la sessió de l'agent.",
+   },
+   "vector-workspace": {
+     identifier: "Identificador de la base de dades vectorial",
+```
+
+**File**: `frontend/src/locales/cs/common.js` (modified, +1/-0)
+```diff
+@@ -304,6 +304,7 @@ const TRANSLATIONS = {
+     token_limit_reached:
+       "Odpověď dosáhla maximálního limitu tokenů. Zvyšte maximální počet tokenů, které model může generovat, aby bylo možné získat delší odpovědi.",
+     no_response: "Model nedokázal odpovědět.",
++    agent_session_exited: "Ukončili jste relaci agenta.",
+   },
+   "vector-workspace": {
+     identifier: "Identifikátor vektorové databáze",
+```
+
+**File**: `frontend/src/locales/da/common.js` (modified, +1/-0)
+```diff
+@@ -263,6 +263,7 @@ const TRANSLATIONS = {
+     token_limit_reached:
+       "Svaret nåede det maksimale tilladte antal tokens. Øg modellens maksimale antal tokens, så svaret kan være længere.",
+     no_response: "Modellen kunne ikke svare.",
++    agent_session_exited: "Du afsluttede agent-sessionen.",
+   },
+   "vector-workspace": {
+     identifier: "Identifikator for vektordatabase",
 ```
 
 ---
 
-### Incident Patch 3: `b8c8aafa` (2026-11-03)
-**Commit Message**: fix: enforce daily message limit on agent session follow-ups (#6918)
+### Incident Patch 2: `eda0eb5e` (2026-11-04)
+**Commit Message**: fix: honor a chat history limit of 0 (#6973)
 
-* fix: enforce daily message limit on agent session follow-ups
+* fix: honor a chat history limit of 0
 
-Added a function to enforce a 24-hour message limit for agent follow-ups in WebSocket sessions. The function checks user permissions and quota before allowing follow-up messages.
-
-* test: cover daily message limit on agent session follow-ups
-
-* use plugin userId for quota check and send refusal as wssFailure so it renders for streaming providers
+* Allow a chat history limit of 0 in workspace settings
 
 ---------
 
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/__tests__/utils/agents/aibitat/plugins/websocket.test.js` (modified, +64/-0)
+**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/ChatHistorySettings/index.jsx` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,9 @@ jest.mock("../../../../../models/telemetry", () => ({
- jest.mock("../../../../../models/systemSettings", () => ({
-   SystemSettings: { isMultiUserMode: jest.fn().mockResolvedValue(false) },
- }));
-+jest.mock("../../../../../models/workspaceChats", () => ({
-+  WorkspaceChats: { count: jest.fn() },
-+}));
- 
- const {
-   websocket,
-@@ -218,3 +221,64 @@ describe("websocket plugin session reasoning effort", () => {
-     expect(aibitat.continue).not.toHaveBeenCalled();
+@@ -17,7 +17,7 @@ export default function ChatHistorySettings({ workspace }) {
+       <input
+         name="openAiHistory"
+         type="number"
+-        min={1}
++        min={0}
+         step={1}
+         onWheel={(e) => e.target.blur()}
+         defaultValue={workspace?.openAiHistory ?? 20}
+```
+
+**File**: `server/__tests__/utils/chats/apiChatHandler.test.js` (modified, +53/-0)
+```diff
+@@ -442,3 +442,56 @@ describe("ApiChatHandler @agent persistence", () => {
+     });
    });
  });
 +
-+describe("websocket plugin follow-up chat quota", () => {
-+  const { SystemSettings } = require("../../../../../models/systemSettings");
-+  const { WorkspaceChats } = require("../../../../../models/workspaceChats");
-+  const { User } = require("../../../../../models/user");
-+
-+  const overLimitUser = { id: 7, role: "default", dailyMessageLimit: 3 };
-+
-+  /** Runs one interrupt round trip for an invocation owned by user 7. */
-+  async function replyWithQuota(feedback = "next") {
-+    const { socket, aibitat } = setupPlugin({ userId: 7 });
-+    aibitat.continue = jest.fn(async () => {});
-+
-+    const onInterrupt = aibitat.onInterrupt.mock.calls[0][0];
-+    const done = onInterrupt({ from: "USER", to: "@agent" });
-+    await flushPromises();
-+    await socket.handleFeedback(
-+      JSON.stringify({ type: "awaitingFeedback", feedback })
-+    );
-+    await done;
-+    return { socket, aibitat };
-+  }
++describe("ApiChatHandler chat history limit", () => {
++  const { recentChatHistory } = require("../../../utils/chats/index");
++  const historyLoaded = new Error("history loaded");
 +
 +  beforeEach(() => {
-+    SystemSettings.isMultiUserMode.mockResolvedValue(true);
-+    WorkspaceChats.count.mockResolvedValue(5);
-+    jest.spyOn(User, "get").mockResolvedValue(overLimitUser);
++    jest.clearAllMocks();
++    EphemeralAgentHandler.isAgentInvocation.mockResolvedValue(false);
++    resolveProviderConnector.mockResolvedValue({
++      connector: { promptWindowLimit: () => 8000 },
++      routingMetadata: null,
++    });
++    getVectorDbClass.mockReturnValue({
++      hasNamespace: jest.fn().mockResolvedValue(false),
++      namespaceCount: jest.fn().mockResolvedValue(0),
++    });
++    // Stop the chat once the history is requested, the limit is all we check.
++    recentChatHistory.mockRejectedValue(historyLoaded);
 +  });
 +
-+  afterEach(() => {
-+    jest.restoreAllMocks();
-+    SystemSettings.isMultiUserMode.mockResolvedValue(false);
-+  });
++  test.each([
++    ["chatSync", (args) => ApiChatHandler.chatSync(args)],
++    [
++      "streamChat",
++      (args) => ApiChatHandler.streamChat({ response: {}, ...args }),
++    ],
++  ])(
++    "%s sends no prior messages when the history limit is 0",
++    async (_, chat) => {
++      await expect(
++        chat({
++          workspace: { ...workspace, openAiHistory: 0 },
++          message: "hello",
++          mode: "chat",
++        })
++      ).rejects.toBe(historyLoaded);
 +
-+  it("refuses the follow-up and ends the session once the 24-hour quota is met", async () => {
-+    const { socket, aibitat } = await replyWithQuota();
++      expect(recentChatHistory).toHaveBeenCalledWith(
++        expect.objectContaining({ messageLimit: 0 })
++      );
++    }
++  );
 +
-+    expect(aibitat.continue).not.toHaveBeenCalled();
-+    const sent = JSON.parse(socket.send.mock.calls.at(-1)[0]);
-+    expect(sent.type).toBe("wssFailure");
-+    expect(sent.content).toBe(
-+      "You have met your maximum 24 hour chat quota of 3 chats. Try again later."
++  test("falls back to 20 messages when the workspace has no history limit", async () => {
++    await expect(
++      ApiChatHandler.chatSync({ workspace, message: "hello", mode: "chat" })
++    ).rejects.toBe(historyLoaded);
++
++    expect(recentChatHistory).toHaveBeenCalledWith(
++      expect.objectContaining({ messageLimit: 20 })
 +    );
-+    expect(socket.close).toHaveBeenCalled();
-+  });
-+
-+  it("continues the session while the user is under quota", async () => {
-+    WorkspaceChats.count.mockResolvedValue(1);
-+    const { aibitat } = await replyWithQuota();
-+
-+    expect(aibitat.continue).toHaveBeenCalledWith("next", []);
-+  });
-+
-+  it("does not enforce the quota in single-user mode", async () => {
-+    SystemSettings.isMultiUserMode.mockResolvedValue(false);
-+    const { aibitat } = await replyWithQuota();
-+
-+    expect(User.get).not.toHaveBeenCalled();
-+    expect(aibitat.continue).toHaveBeenCalledWith("next", []);
 +  });
 +});
 ```
 
-**File**: `server/utils/agents/aibitat/plugins/websocket.js` (modified, +28/-0)
+**File**: `server/utils/chats/apiChatHandler.js` (modified, +2/-2)
 ```diff
-@@ -22,6 +22,25 @@ async function userCanToggleTools(userId = null) {
-   return user?.role === ROLES.admin;
- }
+@@ -269,7 +269,7 @@ async function chatSync({
+     });
  
-+/**
-+ * Agent follow-ups arrive over the socket rather than the HTTP chat routes, so
-+ * the 24-hour message limit is checked here before each of the agent's turns.
-+ * Returns the quota message when the user is over their limit, otherwise null.
-+ * Single-user mode, admins, and users without a limit always pass.
-+ * @param {number|null} userId - User id from the agent invocation.
-+ * @returns {Promise<string|null>}
-+ */
-+async function chatQuotaExceededMessage(userId = null) {
-+  if (!userId) return null;
-+  const { SystemSettings } = require("../../../../models/systemSettings");
-+  if (!(await SystemSettings.isMultiUserMode())) return null;
-+
-+  const { User } = require("../../../../models/user");
-+  const user = await User.get({ id: Number(userId) });
-+  if (!user || (await User.canSendChat(user))) return null;
-+  return `You have met your maximum 24 hour chat quota of ${user.dailyMessageLimit} chats. Try again later.`;
-+}
-+
- /**
-  * Returns the timeout in ms for agent tool-call approval prompts.
-  * Reads from `TOOL_CALL_APPROVAL_TIMEOUT_MS` env var; defaults to 120 000 ms (2 min).
-@@ -455,6 +474,15 @@ const websocket = {
-             return;
+   const VectorDb = getVectorDbClass();
+-  const messageLimit = workspace?.openAiHistory || 20;
++  const messageLimit = workspace?.openAiHistory ?? 20;
+   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+ 
+@@ -652,7 +652,7 @@ async function streamChat({
+   abortConnectorOnClientDisconnect(response, LLMConnector);
+ 
+   const VectorDb = getVectorDbClass();
+-  const messageLimit = workspace?.openAiHistory || 20;
++  const messageLimit = workspace?.openAiHistory ?? 20;
+   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+ 
+```
+
+**File**: `server/utils/chats/stream.js` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ async function streamChatWithWorkspace(
+ 
+   const VectorDb = getVectorDbClass();
+ 
+-  const messageLimit = workspace?.openAiHistory || 20;
++  const messageLimit = workspace?.openAiHistory ?? 20;
+   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+ 
+```
+
+**File**: `server/utils/router/index.js` (modified, +1/-1)
+```diff
+@@ -340,7 +340,7 @@ class ModelRouterService {
+     } = require("../../models/workspaceParsedFiles");
+     const { TokenManager } = require("../helpers/tiktoken");
+ 
+-    const messageLimit = workspace?.openAiHistory || 20;
++    const messageLimit = workspace?.openAiHistory ?? 20;
+ 
+     const { rawHistory, chatHistory } = chatHistoryOverride
+       ? chatHistoryOverride
+```
+
+**File**: `server/utils/telegramBot/chat/stream.js` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ async function streamResponse({
+   await ctx.bot.sendChatAction(chatId, "typing");
+ 
+   const chatMode = workspace.chatMode || "chat";
+-  const messageLimit = workspace?.openAiHistory || 20;
++  const messageLimit = workspace?.openAiHistory ?? 20;
+   const { rawHistory, chatHistory } = await recentChatHistory({
+     workspace,
+     thread,
+```
+
+---
+
+### Incident Patch 3: `975afaba` (2026-11-04)
+**Commit Message**: Fix light mode highlight for active settings sidebar items (#6974)
+
+fix light mode highlight for active + hovered settings sidebar items
+
+**File**: `frontend/src/components/SettingsSidebar/MenuOption/index.jsx` (modified, +2/-2)
+```diff
+@@ -77,8 +77,8 @@ export default function MenuOption({
+           rounded-[6px]
+           ${
+             isActive
+-              ? "bg-theme-sidebar-subitem-selected font-medium border-outline"
+-              : "hover:bg-theme-sidebar-subitem-hover"
++              ? "bg-theme-sidebar-subitem-selected light:bg-slate-300 font-medium border-outline"
++              : "hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"
            }
- 
-+          const quotaMessage = await chatQuotaExceededMessage(userId);
-+          if (quotaMessage) {
-+            socket.send(
-+              JSON.stringify({ type: "wssFailure", content: quotaMessage })
-+            );
-+            socket.close();
-+            return;
-+          }
-+
-           // The chat session's reasoning effort can change between messages -
-           // apply it before the agent's next turn.
-           if (reasoningEffort !== undefined)
+         `}
+       >
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6955** (2026-11-03): Fix contextual save bar colors in light mode (@shatfield4)
-- **PR #6954** (2026-11-02): fix: re-check user and workspace access when an agent invocation connects (@timothycarambat)
-- **PR #6953** (2026-11-02): fix: compare filesystem agent paths case-insensitively on Windows (@timothycarambat)
-- **PR #6952** (2026-11-02): fix: reject browser extension API keys whose owner is no longer an admin or manager (@timothycarambat)
-- **PR #6950** (2026-11-02): fix: keep static agent flow variables out of flow results and status messages (@timothycarambat)
-- **PR #6948** (2026-11-02): feat: configurable per-server MCP tool call timeout (@timothycarambat)
+- **PR #6974** (2026-11-04): Fix light mode highlight for active settings sidebar items (@shatfield4)
+- **PR #6973** (2026-11-04): fix: honor a chat history limit of 0 (@RaphaelFakhri)
+- **PR #6966** (2026-11-03): fix: replace agent session complete notice with an explicit exit notice (@timothycarambat)
+- **PR #6964** (2026-11-03): fix: keep underscores inside words when reading messages aloud (@Fahmid-Arman)
+- **PR #6962** (2026-11-03): fix: keep * bullets and spaced * as text in Telegram replies (@Fahmid-Arman)
+- **PR #6960** (closed): fix: drop the stray agent session complete status from chat history (@lakshya-dhariwal)
 
 ---
 
@@ -1596,30 +1674,44 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use Microsoft Graph webLink for Outlook thread citation permalinks (#6923)
+## X. replace agent session complete notice with an explicit exit notice (#6966)
 
 **RULE**:
-When implementing operations in `server/utils/agents/aibitat/plugins/outlook/lib.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cca9756a`: use Microsoft Graph webLink for Outlook thread citation permalinks (#6923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed730a82`: replace agent session complete notice with an explicit exit notice (#6966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/agents/aibitat/plugins/outlook/lib.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/WorkspaceChat/ChatContainer/ChatHistory/AgentSessionExited/index.jsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,webLink,attachments&$expand=attachments`;
-        permalink:
-          messages[messages.length - 1]?.webLink || messages[0]?.webLink,
+import { useTranslation } from "react-i18next";
+import { Info } from "@phosphor-icons/react";
+
+/**
+ * Notice shown after the user ends an agent session with an exit command.
+ */
+export default function AgentSessionExited() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex justify-start w-full">
+      <div className="py-4 px-4 md:pl-0 flex items-center gap-x-1.5 text-xs font-mono italic text-zinc-400 light:text-slate-500">
+        <Info className="h-4 w-4 shrink-0" />
+        <p className="!m-0">{t("chat.agent_session_exited")}</p>
+      </div>
+    </div>
+  );
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    const endpoint = `/me/messages?$filter=conversationId eq '${conversationId}'&$select=id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,hasAttachments,body,attachments&$expand=attachments`;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cca9756a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed730a82` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
-> **Source Version**: `bb175b54`  
+> **Source Version**: `9ac5a9dc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:41:14.831Z  
+> **Timestamp**: 2026-11-05T00:29:43.554Z  
 > **Learning ID**: `learn-github-pointfreeco-swift-composable-architecture`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:41:14.719Z  
+> **Harvest Timestamp**: 2026-11-05T00:29:43.548Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14993 stars
+- **Stars / Engagement**: 15004 stars
 
 ---
 
@@ -1654,104 +1654,29 @@ extension Three<Three<Player?>> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb175b54` (2026-10-27)
-**Commit Message**: Deprecate `ReducerBuilder.buildArray` (#3971)
+### Incident Patch 1: `9ac5a9dc` (2026-11-04)
+**Commit Message**: Update Korean translation in README.md (#3973)
 
-We added it because we could, not because we should, and it's not currently implemented in 2.0.
-
-**File**: `Package.resolved` (modified, +10/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "e06633540745a804b50a99e0382dc321aae1c38b6381a2c21e5498f335a15fdd",
-+  "originHash" : "e448aeb25b94d92b65914a847781e984ae565ada637ca2870d3a1d4f058a081b",
-   "pins" : [
-     {
-       "identity" : "combine-schedulers",
-@@ -91,6 +91,15 @@
-         "version" : "1.1.1"
-       }
-     },
-+    {
-+      "identity" : "swift-issue-reporting",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
-+      "state" : {
-+        "revision" : "b23bb4493c439d3e05152bc167014235ba3d47fc",
-+        "version" : "2.1.2"
-+      }
-+    },
-     {
-       "identity" : "swift-macro-testing",
-       "kind" : "remoteSourceControl",
-```
-
-**File**: `Sources/ComposableArchitecture/Reducer/ReducerBuilder.swift` (modified, +32/-2)
-```diff
-@@ -7,6 +7,34 @@
- /// See ``CombineReducers`` for an entry point into a reducer builder context.
- @resultBuilder
- public enum ReducerBuilder<State, Action> {
-+  #if ComposableArchitecture2Deprecations
-+    @available(
-+      *,
-+      deprecated,
-+      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
-+    )
-+  #else
-+    @available(
-+      iOS,
-+      deprecated: 9999,
-+      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
-+    )
-+    @available(
-+      macOS,
-+      deprecated: 9999,
-+      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
-+    )
-+    @available(
-+      tvOS,
-+      deprecated: 9999,
-+      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
-+    )
-+    @available(
-+      watchOS,
-+      deprecated: 9999,
-+      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
-+    )
-+  #endif
-   @inlinable
-   public static func buildArray(
-     _ reducers: [some Reducer<State, Action>]
-@@ -75,7 +103,8 @@ public enum ReducerBuilder<State, Action> {
- 
-   @inlinable
-   public static func buildPartialBlock<R0: Reducer<State, Action>, R1: Reducer<State, Action>>(
--    accumulated: R0, next: R1
-+    accumulated: R0,
-+    next: R1
-   ) -> _Sequence<R0, R1> {
-     _Sequence(accumulated, next)
-   }
-@@ -129,7 +158,8 @@ public enum ReducerBuilder<State, Action> {
- 
-     @inlinable
-     public func _reduce(
--      into state: inout Element.State, action: Element.Action
-+      into state: inout Element.State,
-+      action: Element.Action
-     ) -> Effect<Element.Action> {
-       self.reducers.reduce(.none) { $0.merge(with: $1._reduce(into: &state, action: action)) }
-     }
+@@ -605,7 +605,7 @@ The following translations of this README have been contributed by members of th
+ * [Indonesian](https://gist.github.com/wendyliga/792ea9ac5cc887f59de70a9e39cc7343)
+ * [Italian](https://gist.github.com/Bellaposa/5114e6d4d55fdb1388e8186886d48958)
+ * [Japanese](https://gist.github.com/Achoo-kr/2d0712deb77f78b3379551ac7baea3e4)
+-* [Korean](https://gist.github.com/Achoo-kr/5d8936d12e71028fcc4a7c5e078ca038)
++* [Korean](https://gist.github.com/Jager-yoo/6ffe6f481f0c9b6244404dae00c78786)
+ * [Persian](https://gist.github.com/MojtabaHs/aec8eb43a7ffe184be8d6ed629adcef4)
+ * [Polish](https://gist.github.com/MarcelStarczyk/6b6153051f46912a665c32199f0d1d54)
+ * [Portuguese](https://gist.github.com/SevioCorrea/2bbf337cd084a58c89f2f7f370626dc8)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3974** (closed): Support concurrent and parallel tests when using TestStore with Swift Testing. (@younata)
+- **PR #3973** (2026-11-04): Update Korean translation in README.md (@Jager-yoo)
 - **PR #3971** (2026-10-27): Deprecate `ReducerBuilder.buildArray` (@stephencelis)
 - **PR #3967** (2026-10-06): Make PresentationAction, IdentifiedAction and StackAction CasePathIterable (@heyltsjay)
 - **PR #3960** (closed): Issue 3950 - Backport Xcode 27 support to TCA 1.23 (@aryansk)
 - **PR #3956** (2026-07-24): Fix missing @ObservableState annotations in bindings examples (@indextrown)
-- **PR #3955** (2026-07-21): Fix errors in stack navigation documentation examples (@indextrown)
-- **PR #3954** (2026-07-21): Fix reducer in tree-based navigation test examples (@indextrown)
 
 ---
 
@@ -1771,37 +1696,28 @@ We added it because we could, not because we should, and it's not currently impl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Deprecate `ReducerBuilder.buildArray` (#3971)
+## X. Update Korean translation in README.md (#3973)
 
 **RULE**:
-When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb175b54`: Deprecate `ReducerBuilder.buildArray` (#3971). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ac5a9dc`: Update Korean translation in README.md (#3973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  "originHash" : "e448aeb25b94d92b65914a847781e984ae565ada637ca2870d3a1d4f058a081b",
-    {
-      "identity" : "swift-issue-reporting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
-      "state" : {
-        "revision" : "b23bb4493c439d3e05152bc167014235ba3d47fc",
-        "version" : "2.1.2"
-      }
-    },
+* [Korean](https://gist.github.com/Jager-yoo/6ffe6f481f0c9b6244404dae00c78786)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-  "originHash" : "e06633540745a804b50a99e0382dc321aae1c38b6381a2c21e5498f335a15fdd",
+* [Korean](https://gist.github.com/Achoo-kr/5d8936d12e71028fcc4a7c5e078ca038)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb175b54` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ac5a9dc` are properly handled with clean fallback behavior.

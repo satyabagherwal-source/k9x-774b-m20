@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `f6744498`  
+> **Source Version**: `695a07dd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:53:42.833Z  
+> **Timestamp**: 2026-11-04T22:12:33.950Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:53:41.893Z  
+> **Harvest Timestamp**: 2026-11-04T22:12:33.753Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33567 stars
+- **Stars / Engagement**: 33576 stars
 
 ---
 
@@ -1934,14 +1934,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8738** (2026-10-29): **Chore(deps): Update parking_lot**
-  *Symptoms*: This udpates `parking_lot` to 0.13.0. It requires bumping the MSRV to 1.95.0 as well.
-  **Post-Mortem & Fix Analysis**:
-  > We're not going to bump all the way to 1.95 right now.
-  > But doesn't it match the >=six-month MSRV policy?
+- **Issue #8758** (2026-11-04): **rt: don't leave workers in the sleeper list when the scheduler shuts …**
+  *Symptoms*: ## Problem  A worker that parks can end up in `Idle::sleepers` with `num_unparked` decremented, and then exit the park loop on shutdown without ever being removed from `sleepers`. This happens in two ways:  1. The worker is already in `sleepers` when `close()` runs. `notify_all()` wakes it through the Parker, `maintenance()` sets `is_shutdown = true`, and `transition_from_parked()` returns `false` because `is_parked()` is `true`. The `while !is_shutdown` loop exits with the worker still in `sleepers`. 2. The worker is about to park when `close()` runs. `transition_to_parked()` only checks `has_tasks() || is_traced`, not `is_shutdown`, so it can add the worker to `sleepers` after `maintenance()` has already observed shutdown.  This does not hang the runtime. The invariant `num_unparked + sleepers.len() == num_workers` still holds, because `num_unparked` is also still decremented and nothing reads it again after shutdown. But it leaves `sleepers` in a state that does not match reality, and any future `debug_assert` that assumes a worker which has exited the park loop is not in `sleepers` will fire.  ## Fix  Mirror #8372 by treating a worker woken for shutdown the same as one woken for tracing:  - `transition_to_parked()`: refuse to park when `is_shutdown` is already set. - `transition_from_parked()`: perform the logical unpark when `is_shutdown` is set, so the worker leaves `sleepers` before the park loop exits.  Both changes are one line each. The existing fast paths are uncha
 
-- **Issue #8736** (2026-10-29): **rt: fix io_uring shutdown errors (#8634)**
-  *Symptoms*: Below is the original PR content, PR was merged in a different branch than master so re-opening it and merging  -- --  Shutdown errors can leave operations pending. Panicking then drops operation resources that the kernel may still be using.  Drain available completions before retrying EINTR, EBUSY or EAGAIN from shutdown waits. Also retry EINTR during submission .  Before panicking on other shutdown errors, leak thé operation slab to keep pending buffers alive (same for submission flush failures).  (cherry picked from commit 844500fd42537518c997a9461947e91abef727ea)  <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
+- **Issue #8740** (2026-11-04): **Cross-thread wakeups wait for the next timer on `wasm32-wasip3`**
+  *Symptoms*: **Version** ``` tokio-wasip3-park-repro v0.1.0 └── tokio v1.54.1 ```  **Platform** This is a WASM issue so a few runtime versions at play here: - Target: `wasm32-wasip3` (tier 3). `rustc --print cfg --target wasm32-wasip3` lists `target_has_atomic` but no `target_feature="atomics"`. - Toolchain: `rustc 1.100.0-nightly (a36d05efa 2026-09-09)` with `-Zbuild-std=std,panic_abort`, linked against the wasi-sdk 34 `experimental-coop-threads` sysroot. - Runtime: `wasmtime 50.0.0 (ebe5e8df1 2026-10-20)` with `-S p3 -W component-model-async -W component-model-threading`. - Host: macOS arm64 (Darwin 25.6.0).  **Description** On `wasm32-wasip3` a thread parked in `park_timeout` does not wake when another thread calls `unpark`. It continues sleeping until the timeout ends. On a current-thread runtime with a pending timer a wakeup from another thread is only triggered when that timer expires.  I tried this code:  ```rust use std::time::{Duration, Instant};  /// Delay before the other thread completes the oneshot. const SEND_AFTER: Duration = Duration::from_millis(100); /// Deadline of the unrelated timer kept pending in the second measurement. const TIMER: Duration = Duration::from_secs(3);  /// Returns how long the runtime took to observe a oneshot completed by a std /// thread after `SEND_AFTER`. If `timer_pending`, an unrelated task sleeps for /// `TIMER` meanwhile, so the runtime parks with a timeout. async fn cross_thread_wake(timer_pending: bool) -> Duration {     let timer = timer_p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1958,30 +1955,69 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6744498` (2026-11-03)
-**Commit Message**: fs: use std::fs::exists in try_exists (#8651)
+### Incident Patch 1: `695a07dd` (2026-11-04)
+**Commit Message**: io: test I/O registration races during driver shutdown (#8631)
 
-**File**: `tokio/src/fs/try_exists.rs` (modified, +1/-4)
+**File**: `tokio/src/runtime/io/registration_set.rs` (modified, +37/-0)
 ```diff
-@@ -84,8 +84,5 @@ cfg_io_uring! {
- 
- async fn try_exists_spawn_blocking(path: &Path) -> io::Result<bool> {
-     let path = path.to_owned();
--    // FIXME: When MSRV is 1.81, change this to
--    // std::fs::exists() to be consistent with
--    // all other tokio::fs operations
--    asyncify(move || path.try_exists()).await
-+    asyncify(move || std::fs::exists(path)).await
+@@ -150,6 +150,7 @@ unsafe impl linked_list::Link for Arc<ScheduledIo> {
+ #[cfg(all(test, loom))]
+ mod loom_tests {
+     use super::*;
++    use crate::io::interest::Interest;
+     use crate::io::ready::Ready;
+     use crate::loom::sync::Mutex;
+     use crate::loom::thread;
+@@ -221,4 +222,40 @@ mod loom_tests {
+             assert!(!handle.set.needs_release());
+         });
+     }
++
++    #[test]
++    fn allocation_racing_shutdown_is_included_or_rejected() {
++        loom::model(|| {
++            let handle = Arc::new(Registrations::new());
++            let shutdown_handle = handle.clone();
++            let shutdown = thread::spawn(move || {
++                let ios = shutdown_handle
++                    .set
++                    .shutdown(&mut shutdown_handle.synced.lock());
++                for io in &ios {
++                    io.shutdown();
++                }
++                ios
++            });
++
++            let allocation = handle.set.allocate(&mut handle.synced.lock());
++            let ios = shutdown.join().unwrap();
++            match allocation {
++                Ok(io) => {
++                    assert_eq!(ios.len(), 1);
++                    assert!(Arc::ptr_eq(&ios[0], &io));
++                    assert!(io.ready_event(Interest::READABLE).is_shutdown);
++                }
++                Err(err) => {
++                    assert_eq!(err.kind(), io::ErrorKind::Other);
++                    assert_eq!(
++                        err.to_string(),
++                        crate::util::error::RUNTIME_SHUTTING_DOWN_ERROR
++                    );
++                    assert!(ios.is_empty());
++                }
++            }
++            assert!(handle.set.is_shutdown(&handle.synced.lock()));
++        });
++    }
  }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8758** (closed): rt: don't leave workers in the sleeper list when the scheduler shuts … (@hassanbabayo85-source)
 - **PR #8738** (closed): Chore(deps): Update parking_lot (@PaulDance)
 - **PR #8736** (2026-10-29): rt: fix io_uring shutdown errors (#8634) (@Daksh14)
 - **PR #8734** (closed): stream: prevent duplicate keys in StreamMap::extend (@Ranjeet2063)
 - **PR #8732** (2026-10-28): time: add Interval::deadline (@stackedbyaradhya)
 - **PR #8729** (closed): time: wake the driver when the paused clock advances (@scrieve)
-- **PR #8728** (2026-10-27): taskdump: release the core borrow before tracing a dump (@scrieve)
 
 ---
 
@@ -2001,31 +2037,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fs: use std::fs::exists in try_exists (#8651)
+## X. io: test I/O registration races during driver shutdown (#8631)
 
 **RULE**:
-When implementing operations in `tokio/src/fs/try_exists.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/runtime/io/registration_set.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6744498`: fs: use std::fs::exists in try_exists (#8651). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `695a07dd`: io: test I/O registration races during driver shutdown (#8631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/fs/try_exists.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/io/registration_set.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    asyncify(move || std::fs::exists(path)).await
+    use crate::io::interest::Interest;
+
+    #[test]
+    fn allocation_racing_shutdown_is_included_or_rejected() {
+        loom::model(|| {
+            let handle = Arc::new(Registrations::new());
+            let shutdown_handle = handle.clone();
+            let shutdown = thread::spawn(move || {
+                let ios = shutdown_handle
+                    .set
+                    .shutdown(&mut shutdown_handle.synced.lock());
+                for io in &ios {
+                    io.shutdown();
+                }
+                ios
+            });
+
+            let allocation = handle.set.allocate(&mut handle.synced.lock());
+            let ios = shutdown.join().unwrap();
+            match allocation {
+                Ok(io) => {
+                    assert_eq!(ios.len(), 1);
+                    assert!(Arc::ptr_eq(&ios[0], &io));
+                    assert!(io.ready_event(Interest::READABLE).is_shutdown);
+                }
+                Err(err) => {
+                    assert_eq!(err.kind(), io::ErrorKind::Other);
+                    assert_eq!(
+                        err.to_string(),
+                        crate::util::error::RUNTIME_SHUTTING_DOWN_ERROR
+                    );
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    // FIXME: When MSRV is 1.81, change this to
-    // std::fs::exists() to be consistent with
-    // all other tokio::fs operations
-    asyncify(move || path.try_exists()).await
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6744498` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `695a07dd` are properly handled with clean fallback behavior.

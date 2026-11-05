@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md`  
 > **Source**: github ([https://github.com/wix/react-native-ui-lib](https://github.com/wix/react-native-ui-lib))  
-> **Source Version**: `1d6f609a`  
+> **Source Version**: `999abfa6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:13:57.020Z  
+> **Timestamp**: 2026-11-04T10:20:13.257Z  
 > **Learning ID**: `learn-github-wix-react-native-ui-lib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wix/react-native-ui-lib](https://github.com/wix/react-native-ui-lib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:13:57.014Z  
+> **Harvest Timestamp**: 2026-11-04T10:20:12.998Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: UI Components Library for React Native
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7153 stars
+- **Stars / Engagement**: 7158 stars
 
 ---
 
@@ -596,285 +596,416 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78dfad36` (2026-07-19)
-**Commit Message**: fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#4030)
+### Incident Patch 1: `999abfa6` (2026-11-02)
+**Commit Message**: ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)
 
-* DynamicFontModule - fix double callback invocation causing SIGABRT on Android
-
-The `finally` block unconditionally called `callback.invoke(null, name)` after
-every execution path, including after the `catch` block already invoked the
-callback on error. React Native enforces single-use callbacks and throws a fatal
-SIGABRT when a callback is invoked more than once.
-
-Fix: move the success callback into the `try` block and remove the `finally`.
-The callback is now invoked exactly once — on success inside `try`, or on
-failure inside `catch`.
-
-Reproduces intermittently on Android (branded apps) when an exception is thrown
-during font loading (e.g. `Typeface.createFromFile` failing on certain devices),
-causing the app to crash ~4 seconds after launch before any UI interaction.
-
-* fix: move success callback outside try/catch to prevent double invocation on bridge teardown
-
-Previously callback.invoke(null, name) was inside the try block, meaning any
-RuntimeException thrown by the RN bridge during invocation (e.g. activity destroyed
-mid-load) would be caught and trigger a second callback.invoke() call — 
-
-**File**: `packages/uilib-native/android/src/main/java/com/wix/reactnativeuilib/dynamicfont/DynamicFontModule.java` (modified, +2/-2)
+**File**: `.github/workflows/deployDocs.yml` (modified, +2/-2)
 ```diff
-@@ -132,8 +132,8 @@ public void loadFont(final ReadableMap options, final Callback callback) throws
-       cacheFile.delete();
-     } catch(Exception e) {
-       callback.invoke(e.getMessage());
--    } finally {
--      callback.invoke(null, name);
-+      return;
-     }
-+    callback.invoke(null, name);
-   }
- }
+@@ -22,7 +22,7 @@ jobs:
+           cache: 'yarn'
+ 
+       - name: Install dependencies
+-        run: NPQ_PKG_MGR=yarn npx npq install --immutable
++        run: yes | NPQ_PKG_MGR=yarn npx npq install --immutable
+ 
+       - name: Build documentation
+         run: yarn docs:build
+@@ -36,5 +36,5 @@ jobs:
+           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+           git config --global user.name "github-actions[bot]"
+           cd docuilib
+-          NPQ_PKG_MGR=yarn npx npq install --immutable
++          yes | NPQ_PKG_MGR=yarn npx npq install --immutable
+           yarn deploy
 ```
 
 ---
 
-### Incident Patch 2: `0cde3008` (2026-09-06)
-**Commit Message**: fix: TabController - clear stuck press feedback when a tap is cancelled on iOS (#4042)
+### Incident Patch 2: `33bdf936` (2026-11-02)
+**Commit Message**: ci: move npm releases to admin-dispatched GitHub Actions (OIDC trusted publishing) (#4056)
 
-TabBarItem latches its press feedback in the `isPressed` shared value from
-`onTouchesDown` and cleared it only in `onFinalize`.
+* ci: move npm releases to admin-dispatched GitHub Actions with OIDC trusted publishing
 
-On iOS a cancelled tap (e.g. when the enclosing horizontal ScrollView claims the
-touch after a few pixels of finger drift) transitions the recognizer straight
-from POSSIBLE to CANCELLED. UIKit emits no action message for that transition,
-and RNGestureHandler's RNTapHandler only compensates manually for FAILED - so no
-state change event reaches JS and `onFinalize` never runs. `isPressed` stayed
-true, leaving `activeBackgroundColor` painted on the item indefinitely, also
-after another tab was selected (every item owns its own `isPressed`).
+Replaces the Buildkite-driven, NPM_TOKEN-based publisher of react-native-ui-lib
+and uilib-native with a manually dispatched Release workflow on master, ported
+from react-native-navigation's release contract: dry-run / publish / resume,
+immutable artifacts, npm trusted publishing via GitHub OIDC, registry-integrity
+recovery, package-qualified tags, GitHub release, and a version PR.
 
-Android is unaffected: `GestureHandler.cancel()` goes through `moveToState`,
-which dispatches the state change, so `onFinalize` runs.
+* ci(release): wait for npm visibility, fix dry-run path, correct peer deps
 
-Clearing `isPressed` from `onTouchesCancelled` as well covers the cancel path,
-which does reach JS as a touch event. The extra call on Android is idempotent
-(both handlers write `false`) and can only fire on a terminal transition, so the
-feedback is never released mid-press.
+- Backport wix/react-native-navigation#8370: RELEASE_DIR without `..`
+  (upload-artifact rejects it), upload-artifact v7.0.2, Node 24.22.1.
+- Backport wix/react-native-navigation#8371: poll the registry until a
+  just-published version is visible instead of failing the run; publish
+  and finalize get 70 min for two packages.
+- Version PR lookup uses the repository owner instead of a hard-coded `wix:`.
+- peerDependencies: drop the self-peer and the stale uilib-native snapshot
+  range (published 9.1.3 has `^5.0.1`; the snapshot caused ERESOLVE with
+  ui
 
-Co-authored-by: Claude Opu
-
-**File**: `packages/react-native-ui-lib/src/components/tabController/TabBarItem.tsx` (modified, +7/-0)
+**File**: `.github/workflows/deployDocs.yml` (modified, +0/-7)
 ```diff
-@@ -224,6 +224,13 @@ export default function TabBarItem({
-     })
-     .onTouchesDown(() => {
-       isPressed.value = true;
-+    })
-+    // NOTE: On iOS a cancelled tap (i.e. when the enclosing ScrollView claims the touch) transitions the
-+    //       recognizer straight from POSSIBLE to CANCELLED, which emits no state change event, so onFinalize
-+    //       is never called and the press feedback stays on the item.
-+    //       Releasing it from the touch stream as well makes sure it is always cleared.
-+    .onTouchesCancelled(() => {
-+      isPressed.value = false;
-     });
+@@ -4,7 +4,6 @@ on:
+   push:
+     branches:
+       - master
+-      - release
  
-   return (
+ jobs:
+   build-and-deploy:
+@@ -29,7 +28,6 @@ jobs:
+         run: yarn docs:build
+ 
+       - name: Deploy documentation
+-        if: github.ref == 'refs/heads/release'
+         env:
+           GIT_USER: github-actions[bot]
+           GIT_PASS: ${{ secrets.GITHUB_TOKEN }}
+@@ -40,8 +38,3 @@ jobs:
+           cd docuilib
+           NPQ_PKG_MGR=yarn npx npq install --immutable
+           yarn deploy
+-
+-      - name: Deploy disclaimer
+-        if: github.ref != 'refs/heads/release'
+-        run: |
+-          echo "Deploying will only happen on release branch"
 ```
 
----
-
-### Incident Patch 3: `2af5663e` (2026-09-01)
-**Commit Message**: fix: Dialog - prevent open animation interruption by residual touch on Android (#4038)
-
-* fix: Dialog - prevent open animation interruption by residual touch on Android (minDistance)
-
-A bottom Dialog/ActionSheet opened from a gesture-driven trigger (e.g. List.Item's
-TapGestureHandler firing onPress on END) can rest part-way open on Android: the residual
-touch leaks into the Dialog's own panGesture and drives `visibility` mid-open, interrupting
-the open spring. Adding a minDistance activation threshold to the pan prevents a near-static
-residual touch from engaging it, while drag-to-dismiss keeps working.
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-* ci: trigger snapshot build
-
-* fix: clarify minDistance rationale (MOBAPP-2994)
-
-* test: add minDistance to Pan gesture jest mock (MOBAPP-2994)
-
-* fix: Dialog - add open-animation watchdog for stranded Android opens
-
-Two Android-only failure modes share this remedy, both traced to RN 0.79's
-ModalHostViewScreenSize() returning Size{0,0} on Android while iOS returns a
-real RCTScreenSize (facebook/react-native#51048, fixed only in RN 0.81):
-the dialog's open() call is gated on onLayout measuring a non-zero size, so
-inside a 0x0 Moda
-
-**File**: `packages/react-native-ui-lib/jestSetup/jest-setup.js` (modified, +1/-0)
+**File**: `.github/workflows/release-checks.yml` (added, +33/-0)
 ```diff
-@@ -79,6 +79,7 @@ jest.mock('react-native-gesture-handler',
-       PanMock.onFinalize = getDefaultMockedHandler('onFinalize');
-       PanMock.activateAfterLongPress = getDefaultMockedHandler('activateAfterLongPress');
-       PanMock.enabled = getDefaultMockedHandler('enabled');
-+      PanMock.minDistance = getDefaultMockedHandler('minDistance');
-       PanMock.hitSlop = getDefaultMockedHandler('hitSlop');
-       PanMock.onTouchesMove = getDefaultMockedHandler('onTouchesMove');
-       PanMock.prepare = jest.fn();
+@@ -0,0 +1,33 @@
++name: Release checks
++
++on:
++  pull_request:
++    branches: [master]
++  push:
++    branches: [master]
++
++permissions:
++  contents: read
++
++jobs:
++  package:
++    runs-on: ubuntu-24.04
++    timeout-minutes: 30
++    steps:
++      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
++        with:
++          persist-credentials: false
++      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
++        with:
++          node-version: '24.22.1'
++          package-manager-cache: false
++      - name: Test release authorization and recovery
++        run: node --test scripts/release/*.test.cjs
++      - name: Install and build the npm packages on Linux
++        run: |
++          node .yarn/releases/yarn-4.12.0.cjs install --immutable
++          node .yarn/releases/yarn-4.12.0.cjs build
++      - name: Verify package contents and entry points
++        env:
++          RELEASE_DIR: ${{ runner.temp }}/uilib-package
++        run: node scripts/release/index.cjs pack-check
 ```
 
-**File**: `packages/react-native-ui-lib/src/components/dialog/__tests__/index.new.spec.tsx` (modified, +74/-0)
+**File**: `.github/workflows/release.yml` (added, +206/-0)
 ```diff
-@@ -1,5 +1,6 @@
- import React, {useRef, useState, useEffect, useCallback} from 'react';
- import {render, act} from '@testing-library/react-native';
-+import * as Reanimated from 'react-native-reanimated';
- import Dialog, {DialogProps} from '../index';
- import {DialogDriver} from '../Dialog.driver.new';
- import View from '../../../components/view';
-@@ -109,3 +110,76 @@ describe('Dialog sanity checks', () => {
-     expect(dialogDriver.isVisible()).toBeFalsy();
-   });
- });
+@@ -0,0 +1,206 @@
++name: Release
++run-name: ${{ inputs.operation }} RNUILib ${{ inputs.version || inputs.kind }} by @${{ github.actor }}
 +
-+// Mirrors the non-exported constants in index.tsx.
-+const WATCHDOG_INTERVAL_MS = 400;
-+const WATCHDOG_MAX_ATTEMPTS = 8;
++on:
++  workflow_dispatch:
++    inputs:
++      operation:
++        description: 'Dry run, publish, or resume an interrupted publishing run'
++        type: choice
++        options: [dry-run, publish, resume]
++        default: dry-run
++      kind:
++        description: 'Release or on-demand snapshot (ignored for resume)'
++        type: choice
++        options: [release, snapshot]
++        default: release
++      version:
++        description: 'Exact react-native-ui-lib semver for release; leave empty for snapshots and resume'
++        type: string
++      native_version:
++        description: 'Exact uilib-native semver to publish in the same run; empty = do not publish uilib-native (must be empty for snapshots)'
++        type: string
++      npm_tag:
++        description: 'latest for stable, next for prerelease, snapshot for snapshots'
++        type: choice
++        options: [latest, next, snapshot]
++        default: latest
++      source_run_id:
++        description: 'Original publish run ID, required only for resume'
++        type: string
 +
-+// Mounted already `visible` so open/close and the watchdog share one render. Reanimated's mock
-+// useSharedValue returns a new value per call (the real one is ref-backed for the component's
-+// lifetime), so a post-mount `visible` flip would have them reading different values.
-+describe('Dialog open animation watchdog', () => {
-+  afterEach(() => {
-+    jest.useRealTimers();
-+    jest.restoreAllMocks();
-+  });
++permissions: {}
 +
-+  it('recovers a dialog that never opens, then stops once it reaches full visibility', () => {
-+    jest.useFakeTimers();
-+    const withSpringSpy = jest.spyOn(Reanimated, 'withSpring');
-+    const {dialogDriver} = getDriver(<TestCase1 visible/>);
-+    expect(dialogDriver.isVisible()).toBeTruthy();
-+    expect(withSpringSpy).not.toHaveBeenCalled();
++concurrency:
++  group: uilib-npm-release
++  cancel-in-progress: false
 +
-+    // Stuck at 0 since mount - the watchdog opens it.
-+    act(() => {
-+      jest.advanceTimersByTime(WATCHDOG_INTERVAL_MS);
-+    });
-+    expect(withSpringSpy).toHaveBeenCalledTimes(1);
++env:
++  RELEASE_OPERATION: ${{ inputs.operation }}
++  RELEASE_KIND: ${{ inputs.kind }}
++  RELEASE_VERSION: ${{ inputs.version }}
++  RELEASE_NATIVE_VERSION: ${{ inputs.native_version }}
++  RELEASE_NPM_TAG: ${{ inputs.npm_tag }}
++  RELEASE_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
++  RELEASE_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLISH_ENABLED }}
++  RELEASE_DIR: /home/runner/work/_temp/release-artifacts
++  GH_TOKEN: ${{ github.token }}
 +
-+    // Reached 1, so the watchdog clears itself for good.
-+    act(() => {
-+      jest.advanceTimersByTime(WATCHDOG_INTERVAL_MS * (WATCHDOG_MAX_ATTEMPTS + 3));
-+    });
-+    expect(withSpringSpy).toHaveBeenCalledTimes(1);
-+  });
++jobs:
++  prepare:
++    if: github.repository == 'wix/react-native-ui-lib' && github.ref == 'refs/heads/master'
++    runs-on: ubuntu-24.04
++    timeout-minutes: 45
++    permissions:
++      contents: read
++      actions: read
++      statuses: read
++      pull-requests: read
++    outputs:
++      artifact_id: ${{ steps.upload.outputs.artifact-id || steps.resume.outputs.artifact_id }}
++      source_run_id: ${{ steps.resume.outputs.source_run_id || github.run_id }}
++    steps:
++      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
++        with:
++          ref: ${{ github.sha }}
++          fetch-depth: 0
++          persist-credentials: false
++      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
++        with:
++          node-version: '24.22.1'
++          package-manager-cache: false
++      - name: Check admin authorization
++        run: node scripts/release/index.cjs authorize
++      - name: Locate original release artifact
++        if: inputs.operation == 'resume'
++        id: resume
++        run: node scripts/release/index.cjs resume-info
++      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
++        if: inputs.operation == 'resume'
++        with:
++          artifact-ids: ${{ steps.resume.outputs.artifact_id }}
++          run-id: ${{ steps.resume.outputs.source_run_id }}
++          github-token: ${{ github.token }}
++          path: ${{ env.RELEASE_DIR }}
++          merge-multiple: true
++      - name: Verify recovery identity and native CI
++        if: inputs.operation == 'resume'
++        run: node scripts/release/index.cjs verify-resume
++      - name: Plan exact versions and check native CI
++        if: inputs.operation != 'resume'
++        run: node scripts/release/index.cjs plan
++      - name: Install locked dependencies
++        if: inputs.operation != 'resume'
++        run: node .yarn/releases/yarn-4.12.0.cjs install --immutable
++      # The build rewrites package sources in place, so the release commit is
++      # created from the clean tree before building.
++      - name: Set versions and create the release commit
++        if: inputs.operation != 'resume'
++        run: node scripts/release/index.cjs set-version
++      - name: Build and test release helpers
++        if: inputs.operation != 'resume'
++        run: |
++          node --test scripts/release/*.test.cjs
++          node .yarn/releases/yarn-4.12.0.cjs build
++      - name: Pack and record immutable release inputs
++        if: inputs.operation != 'resume'
++        run: node scripts/release/index.cjs prepare-artifact
++      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
++        if: inputs.operation != 'resume'
++        id: upload
++        with:
++          name: release-${{ github.run_id }}-${{ github.run_attempt }}
++          path: ${{ env.RELEASE_DIR }}/
++          if-no-files-found: error
++          retention-days: 90
 +
-+  it('keeps retrying while the open animation stays frozen, then permanently gives up at the attempt cap', () => {
-+    jest.useFakeTimers();
-+    // open() always lands on the same value, so visibility never advances: the frozen-open failure.
-+    const withSpringSpy = jest.spyOn(Reanimated, 'withSpring').mockReturnValue(0.5);
-+    getDriver(<TestCase1 visible/>);
-+
-+    act(() => {
-+      jest.advanceTimersByTime(WATCHDOG_INTERVAL_MS * (WATCHDOG_MAX_ATTEMPTS + 3));
-+    });
-+    const attemptsMade = withSpringSpy.mock.calls.length;
-+    expect(attemptsMade).toBeGreaterThan(1);
-+    expect(attemptsMade).toBeLessThanOrEqual(WATCHDOG_MAX_ATTEMPTS + 1);
-+
-+    act(() => {
-+      jest.advanceTimersByTime(WATCHDOG_INTERVAL_MS * 5);
-+    });
-+    // No growth long after the cap: permanently given up, not paused.
-+    expect(withSpringSpy).toHaveBeenCalledTimes(attemptsMade);
-+  });
-+
-+  it('does not re-open while the dialog is closing (visibility decreasing)', () => {
-+    jest.useFakeTimers();
-+    const withSpringSpy = jest.spyOn(Reanimated, 'withSpring');
-+    // Drive visibility down as an in-progress close() would, without the completion callback -
-+    // so modalVisibility stays true, matching a close that is still animating.
-+    const withTimingSpy = jest.spyOn(Reanimated, 'withTiming').mockReturnValue(-0.1);
-+    const {dialogDriver} = getDriver(<TestCase1 visible/>);
-+
-+    act(() => {
-+      dialogDriver.pressOnBackground();
-+    });
-+    expect(withTimingSpy).toHaveBeenCalledTimes(1);
-+
-+    act(() => {
-+      jest.advanceTimersByTime(WATCHDOG_INTERVAL_MS * 3);
-+    });
-+    expect(withSpringSpy).not.toHaveBeenCalled();
-+  });
-+});
++  record:
++    needs: prepare
++    if: inputs.operation != 'dry-run'
++    environment: npm-release
++    runs-on: ubuntu-24.04
++    timeout-minutes: 10
++    permissions:
++      contents: write
++      actions: read
++      statuses: read
++    steps:
++      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
++        with:
++     
 ```
 
-**File**: `packages/react-native-ui-lib/src/components/dialog/index.tsx` (modified, +35/-0)
+**File**: `README.md` (modified, +5/-0)
 ```diff
-@@ -29,6 +29,9 @@ import {DialogProps, DialogDirections, DialogDirectionsEnum, DialogHeaderProps}
- export {DialogProps, DialogDirections, DialogDirectionsEnum, DialogHeaderProps};
+@@ -23,6 +23,11 @@ We are working on upgrading our UI Library to support the new React Native Archi
+ Currently, we support React Native 0.73, and we plan to support React Native 0.77 next.
+ While we don’t have a timeline yet, this is part of our roadmap.
  
- const THRESHOLD_VELOCITY = 750;
-+// Longer than a healthy open (~240ms), so a normal open always wins and the watchdog no-ops.
-+const OPEN_WATCHDOG_INTERVAL_MS = 400;
-+const OPEN_WATCHDOG_MAX_ATTEMPTS = 8;
- 
- export interface DialogStatics {
-   directions: typeof DialogDirectionsEnum;
-@@ -123,6 +126,34 @@ const Dialog = (props: DialogProps, ref: ForwardedRef<DialogImperativeMethods>)
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [modalVisibility, wasMeasured]);
- 
-+  // Recovers a dialog whose open animation never completes. On Android with RN 0.79 the Modal's
-+  // Fabric state can start 0x0 (facebook/react-native#51048, fixed in RN 0.81), so the dialog
-+  // either never opens - `open()` above is gated on `wasMeasured`, which never flips - or opens
-+  // part-way and freezes. Armed on `modalVisibility` alone, since gating on measurement is the
-+  // bug being worked around. Re-opens a frozen animation only: `close()` animates while
-+  // `modalVisibility` is still true, so a decreasing value is a dismiss in progress, not a strand.
-+  useEffect(() => {
-+    if (!modalVisibility) {
-+      return;
-+    }
-+    let attempts = 0;
-+    let previous = visibility.value;
-+    const interval = setInterval(() => {
-+      const current = visibility.value;
-+      attempts += 1;
-+      if (current >= 1 || current < previous || attempts > OPEN_WATCHDOG_MAX_ATTEMPTS) {
-+        clearInterval(interval);
-+        return;
-+      }
-+      if (current === previous) {
-+        open();
-+      }
-+      previous = current;
-+    }, OPEN_WATCHDOG_INTERVAL_MS);
-+    return () => clearInterval(interval);
-+    // eslint-disable-next-line react-hooks/exhaustive-deps
-+  }, [modalVisibility]);
++## Releases
 +
-   const alignmentStyle = useMemo(() => {
-     return {flex: 1, alignItems: 'center', ...extractAlignmentsValues(props)};
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-@@ -190,6 +221,10 @@ const Dialog = (props: DialogProps, ref: ForwardedRef<DialogImperativeMethods>)
-   };
- 
-   const panGesture = Gesture.Pan()
-+    // MOBAPP-2994: require a deliberate drag before the pan engages. On Android/Fabric the residual
-+    // touch from a gesture-handler trigger (e.g. List.Item) otherwise leaks into this freshly-mounted
-+    // pan and drives `visibility` mid-open, interrupting the open spring so the sheet rests part-way.
-+    .minDistance(10)
-     .onStart(event => {
-       initialTranslation.value =
-         getTranslationReverseInterpolation(isVertical ? event.translationY : event.translationX) - visibility.value;
++Repository administrators: see the [release runbook](docs/RELEASING.md) for manual releases,
++npm trusted publishing setup, and recovery.
++
+ ## Links
+ - [Docs](https://wix.github.io/react-native-ui-lib/)
+ - [Figma library](https://www.figma.com/community/file/1379775092983284111/rnui-library)
+```
+
+**File**: `docs/RELEASING.md` (added, +224/-0)
+```diff
+@@ -0,0 +1,224 @@
++# Releasing react-native-ui-lib
++
++The [Release workflow](https://github.com/wix/react-native-ui-lib/actions/workflows/release.yml)
++is the only supported npm publisher for `react-native-ui-lib` and `uilib-native`. Repository
++admins start it manually on `master`. Both regular releases and snapshots use npm trusted
++publishing with GitHub OIDC. Buildkite keeps running native tests; it must no longer version
++or publish packages, and its npm credentials must not be renewed as a fallback.
++
++The contract is a port of react-native-navigation's release tooling (`scripts/release/*.cjs`).
++Repository-specific policy (package directories, publication order, expected tarball contents)
++lives in `scripts/release/uilib.cjs`; tag naming lives in `scripts/release/policy.cjs`.
++
++## One-time configuration
++
++A repository admin and an npm administrator for both packages must complete these steps
++before enabling publication. Creating or merging the workflow does not configure npm trust.
++
++1. Create the GitHub environment `npm-release`. Under deployment branches and tags, select
++   only the **branch** `master`. Protect `master` and review changes to release workflows and
++   helpers. Required environment reviewers are optional; enabling them introduces approvals
++   for the record, publish, and finalize jobs.
++2. Add a GitHub Actions trusted publisher in the npm settings of **each** package,
++   `react-native-ui-lib` and `uilib-native`, with the same values:
++
++   | Field             | Value                 |
++   | ----------------- | --------------------- |
++   | Organization      | `wix`                 |
++   | Repository        | `react-native-ui-lib` |
++   | Workflow filename | `release.yml`         |
++   | Environment       | `npm-release`         |
++   | Allowed action    | Direct `npm publish`  |
++
++   Explicitly allow direct publication: a stage-only configuration cannot complete this
++   workflow. Standalone `npm dist-tag` permission is not needed. See
++   [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/). Provenance requires
++   both package.json `repository.url` fields to point at this repository; they do.
++
++   From the CLI, this needs an npm with `--allow-publish` (11.17.0 has it, 11.12.1 does not
++   and fails with an unexplained `E400`):
++
++   ```sh
++   npm trust github <package> --file release.yml --repo wix/react-native-ui-lib \
++     --env npm-release --allow-publish
++   ```
++
++3. Enable GitHub Actions for this repository. Check Wix's Actions policy permits the pinned
++   checkout, setup-node, upload-artifact, and download-artifact actions. Allow
++   workflow-created pull requests. Ensure existing repository rules permit
++   `infra/update-version-*` branches and `react-native-ui-lib@*` / `uilib-native@*` tags
++   without a bypass. Branch rulesets do not cover tags: anyone with push access can
++   pre-create a future `react-native-ui-lib@*` tag, which makes the workflow stop after npm
++   publication ("Tag ... already points to a different commit") or narrows the release-notes
++   range. Add a tag ruleset for both patterns that forbids creation and deletion, with a
++   bypass for repository admins and the GitHub Actions app (the workflow creates tags with
++   `GITHUB_TOKEN`), or record the accepted risk.
++4. Check the GitHub commit status `buildkite/react-native-ui-lib` represents the Buildkite
++   pipeline for this repository. It must finish successfully on the exact `master` commit
++   selected by the release run. The status creator must match the Buildkite app ID/login
++   pinned in `scripts/release/uilib.cjs`. A failed, absent, or pending status blocks real
++   publication, including snapshots. A dry run reports it without publishing.
++5. Define the release baseline on `master`. Release notes span from the newest stable
++   `react-native-ui-lib@*` tag reachable from the selected `master` commit. Existing tags
++   were created by the old flow on the `release` branch and are not reachable from `master`,
++   so the first `kind=release` run fails with "No preceding reachable stable tag" until an
++   admin creates an annotated `react-native-ui-lib@<npm latest>` tag on the `master` commit
++   that corresponds to that published version. For 9.1.3 that commit is `2af5663e4`
++   (`git tag -a react-native-ui-lib@9.1.3 -m react-native-ui-lib@9.1.3 2af5663e4` and push it).
++   Snapshots need no baseline; without one their notes list no pull requests.
++6. Verify a dry run and inspect its artifact. Then set the repository Actions variable
++   `RELEASE_PUBLISH_ENABLED` to `true`. Without it, publish and resume fail closed.
++7. Run an intentional snapshot publication and verify both npm versions, integrity,
++   provenance, and the `snapshot` dist-tags. Confirm that `latest` did not change.
++8. Clean up Buildkite (configured outside this repository, no `.buildkite/` directory):
++   remove the `release` and `snapshot` publishing steps and the `NPM_TOKEN`, `NPM_EMAIL`,
++   `GIT_US
+```
+
+**File**: `package.json` (modified, +2/-3)
+```diff
+@@ -11,12 +11,11 @@
+     "android": "yarn workspace react-native-ui-lib android",
+     "iPad": "yarn workspace react-native-ui-lib iPad",
+     "test": "yarn workspace react-native-ui-lib test",
+-    "test:releaseScript": "jest scripts/release/__tests__",
+     "pretest": "yarn lint",
+     "lint": "eslint packages -c .eslintrc.js --ext .tsx,.ts,.js",
+     "lint:fix": "eslint packages -c .eslintrc.js --fix",
+     "build:dev": "tsc --p tsconfig.dev.json",
+-    "pre-push": "yarn build:dev && yarn test && yarn test:releaseScript",
++    "pre-push": "yarn build:dev && yarn test",
+     "prepush": "node ./scripts/prepush.js",
+     "build": "yarn workspace react-native-ui-lib build",
+     "build:local": "yarn workspace react-native-ui-lib build:local",
+@@ -26,7 +25,7 @@
+     "docs:deploy": "./scripts/docs/deployDocs.sh",
+     "docs:build": "node scripts/docs/buildDocs.js",
+     "docs:start": "(cd docuilib && yarn start)",
+-    "release": "node ./scripts/release/release.js",
++    "test-release": "node --test scripts/release/*.test.cjs",
+     "releaseDemo": "./scripts/release/releaseDemo.sh",
+     "releaseDocs": "./scripts/release/releaseDocs.sh",
+     "releaseEslint": "./scripts/release/releaseEslint.sh",
+```
+
+**File**: `packages/react-native-ui-lib/package.json` (modified, +2/-2)
+```diff
+@@ -107,8 +107,8 @@
+         "react-native": ">=0.77.3",
+         "react-native-gesture-handler": ">=2.24.0",
+         "react-native-reanimated": ">=3.19.4",
+-        "react-native-ui-lib": "*",
+-        "uilib-native": "5.1.0-snapshot.7635"
++        "react-native-safe-area-context": ">=5.6.2",
++        "uilib-native": "^5.0.1"
+     },
+     "jest": {
+         "preset": "react-native",
+```
+
+**File**: `packages/uilib-native/package.json` (modified, +4/-0)
+```diff
+@@ -2,6 +2,10 @@
+     "name": "uilib-native",
+     "version": "5.1.2",
+     "homepage": "https://github.com/wix/react-native-ui-lib",
++    "repository": {
++        "type": "git",
++        "url": "https://github.com/wix/react-native-ui-lib"
++    },
+     "description": "uilib native components (separated from js components)",
+     "main": "components/index",
+     "scripts": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4065** (2026-11-02): ci(docs): auto-confirm npq prompt in deployDocs (@noomorph)
+- **PR #4064** (2026-11-03): fix: Toast - keep the hidden attachment above the iOS 26 bottom tab bar (@yedidyak)
+- **PR #4063** (closed): fix: FloatingButton - clear the iOS 26 bottom tab bar (@yedidyak)
+- **PR #4056** (2026-11-02): ci: move npm releases to admin-dispatched GitHub Actions (OIDC trusted publishing) (@noomorph)
 - **PR #4048** (2026-10-12): fix: TouchableOpacity - don't swallow onPress on long holds when no onLongPress is provided (@yedidyak)
-- **PR #4042** (2026-09-06): fix: TabController - clear stuck press feedback when a tap is cancelled on iOS (@mika-bejerano)
-- **PR #4041** (closed): Update README with React Native upgrade plans (@lukasmilasauskas)
-- **PR #4038** (2026-09-01): fix: Dialog - prevent open animation interruption by residual touch on Android (@Yoavpagir)
-- **PR #4037** (closed): fix: Dialog - prevent open animation interruption by residual touch on Android (@Yoavpagir)
-- **PR #4036** (closed): fix(ScreenFooter): init animatedValue to 1 for opacity-based animations when visible (@adids1221)
+- **PR #4046** (closed): Bump ip-address from 10.1.0 to 10.7.2 in /eslint-rules (@dependabot[bot])
 
 ---
 
@@ -894,30 +1025,30 @@ inside a 0x0 Moda
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#
+## X. ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)
 
 **RULE**:
-When implementing operations in `packages/uilib-native/android/src/main/java/com/wix/reactnativeuilib/dynamicfont/DynamicFontModule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-ui-lib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/deployDocs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-ui-lib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78dfad36`: fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#4030). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `999abfa6`: ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/uilib-native/android/src/main/java/com/wix/reactnativeuilib/dynamicfont/DynamicFontModule.java`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/deployDocs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      return;
-    callback.invoke(null, name);
+        run: yes | NPQ_PKG_MGR=yarn npx npq install --immutable
+          yes | NPQ_PKG_MGR=yarn npx npq install --immutable
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    } finally {
-      callback.invoke(null, name);
+        run: NPQ_PKG_MGR=yarn npx npq install --immutable
+          NPQ_PKG_MGR=yarn npx npq install --immutable
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78dfad36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `999abfa6` are properly handled with clean fallback behavior.

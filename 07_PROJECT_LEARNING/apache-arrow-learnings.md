@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `0ab78e2d`  
+> **Source Version**: `6bddeb67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:30:15.263Z  
+> **Timestamp**: 2026-11-04T22:45:28.437Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:30:13.991Z  
+> **Harvest Timestamp**: 2026-11-04T22:45:28.330Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17274 stars
+- **Stars / Engagement**: 17276 stars
 
 ---
 
@@ -1377,14 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55378** (2026-11-03): **GH-55377: [R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s**
-  *Symptoms*: ### Rationale for this change  Nightly builds failing due to a change in RTools URL and problem with job  ### What changes are included in this PR?  Don't pass in rtools version, as this can be inferred anyway  ### Are these changes tested?  No  ### Are there any user-facing changes?  No  **PR code and description written by:**  - [ ] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #55377
-  **Post-Mortem & Fix Analysis**:
-  > @github-actions crossbow submit r-binary-packages
-  > Revision: aa34f471018cf48d32551ef3225a3d04fd0e3859  Submitted crossbow builds: [ursacomputing/crossbow @ actions-35b8a75a67](https://github.com/ursacomputing/crossbow/branches/all?query=actions-35b8a75a67)  |Task|Status| |----|------| |r-binary-packages|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-35b8a75a67-github-r-binary-packages)](https://github.com/ursacomputing/crossbow/actions/runs/41627722512/job/125889585262)|
+- **Issue #55401** (2026-11-04): **GH-55400: [C++][IPC] Validate body_length in ReadMessage and ReadMessageAsync**
+  *Symptoms*: ### Rationale for this change  In `ipc::ReadMessage(offset, metadata_length, body_length, file)` and `ipc::ReadMessageAsync`, `body_length` is added to `metadata_length` to issue a single IO read for the entire message buffer. However, `body_length` was not validated before issuing the read: 1. Negative `body_length` values caused `ReadAt` / `ReadAsync` to read fewer bytes than `metadata_length`, but `SliceBuffer(metadata, 0, metadata_length)` still sliced using the expected length, resulting in out-of-bounds reads during decoding. 2. Extremely large `body_length` values could overflow 64-bit signed integer addition (`metadata_length + body_length`).  ### What changes are included in this PR?  - Validates that `body_length >= 0` in `ReadMessageInternal` (when `body_length` is provided) and `ReadMessageAsync`. - Uses `internal::AddWithOverflow` to guard against arithmetic overflow when adding `metadata_length + body_length`. - Returns `Status::Invalid` if validation fails. - Adds regression unit tests in `cpp/src/arrow/ipc/read_write_test.cc` verifying invalid and overflowing `body_length` are rejected in both synchronous and asynchronous overloads.  ### Are these changes tested?  Yes, covered by unit tests in `cpp/src/arrow/ipc/read_write_test.cc` (`TestReadMessage.ReadBodyWithInvalidLength`).  ### Are there any user-facing changes?  Direct calls to `ipc::ReadMessage` and `ipc::ReadMessageAsync` with negative or overflowing `body_length` now return `Status::Invalid` instead o
 
-- **Issue #55377** (2026-11-03): **[R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s**
-  *Symptoms*: Since 2026-10-30 both jobs that build the Windows libarrow binary with Rtools40 fail at the Rtools download in `r-lib/actions/setup-r`:      Downloading https://cran.rstudio.com/bin/windows/Rtools/rtools40-x86_64.exe...     ##[error]Failed to get R 4.1: Failed to get R 4.1.3: Failed to download version [object Object]: Error: Unexpected HTTP response: 404  CRAN moved Rtools40 and the Windows installers for R < 4.2 to `cran-archive.r-project.org` on 2026-10-30. `setup-r` normally gets download URLs from the r-hub rversions API, which was updated the same day, but when `rtools-version` is passed explicitly it uses a hard-coded URL table that still points at `cran.rstudio.com`. We pass `rtools-version: 40` in both places. r-lib/actions#1120 contained a fix for that table but was closed unmerged, and the current `v2` release (v2.14.0) still has the old URL.  Affected jobs: - `C++ Binary Windows RTools (40 only)` in the r-binary-packages crossbow task. This produces the single Windows libarrow binary used by every R version, so when it fails `Upload artifacts` is skipped and the R nightly upload (`r_nightly.yml`) has had nothing to publish since 2026-10-30. https://github.com/apache/arrow/blob/aae29bf6d4e85bafa7b9bd2bc45d8ab0b0b48373/dev/tasks/r/github.packages.yml#L174-L187 - `AMD64 Windows C++ RTools 40 ucrt64` in the R workflow, failing on every push to main. https://github.com/apache/arrow/blob/aae29bf6d4e85bafa7b9bd2bc45d8ab0b0b48373/.github/workflows/r.yml#L230-L236  Example
+- **Issue #55395** (2026-11-04): **GH-55394: [C++][Compute] Check overflow when negating duration**
+  *Symptoms*: ### Rationale for this change  Fixes GH-55394.  `negate_checked` registers duration kernels using unchecked `Negate`, so a valid `INT64_MIN` duration silently wraps to the same negative value. Its mathematical negation is outside signed64 storage, and the documented checked behavior requires an overflow error.  ### What changes are included in this PR?  Register duration kernels with the existing `NegateChecked` implementation. Add regression coverage for all four duration units, scalar/array overflow, representable extrema and nulls, while keeping unchecked negation's wrap behavior.  ### Are these changes tested?  The exact base and candidate production translation units were compiled separately and run in fresh private registries against the same pinned official PyArrow26.0.1 support libraries. An independent arbitrary precision integer oracle checks 90 input shapes/types and 5,265 outputs per build. The base fails 36 checked-duration overflow checks; the candidate passes all checks.  Coverage includes actual bitmap-valid duration minima, masked minimum payloads, four units, int64 controls, scalar/array/chunked/sliced/empty/all-null inputs, neighboring extrema and ordinary values. Checked absolute value and unchecked negation serve as controls.  A separate review oracle also checked 320 input representations and 26,925 native rows per build: the base has 456 mismatches, all checked-duration overflow, and the candidate has none.  The actual submitted native test translation 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1401,186 +1398,31 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67625df7` (2026-11-03)
-**Commit Message**: GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (#55375)
-
-### Rationale for this change
-Fix #55374, homebrew-cpp nightly job failing with 'apache-arrow contains conflicting version recursive dependencies: openssl@ 4, openssl@ 3'
-Formula last synced in #45460 Feb 2025 to this version of https://github.com/Homebrew/homebrew-core/blob/1cbc034a0ac723b88cc097b20a8d055871acf58f/Formula/a/apache-arrow.rb
-
-### What changes are included in this PR?
-Sync both `dev/tasks/homebrew-formulae/apache-arrow.rb` and `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`
-to current homebrew-core formulae [apache-arrow.rb](https://github.com/Homebrew/homebrew-core/blob/21ae7db95e31f05d0bde4acd9d48ce3d23c72988/Formula/a/apache-arrow.rb) and [apache-arrow-glib.rb](https://github.com/Homebrew/homebrew-core/blob/4b1bf942c798d35b6307d4f1c5c805902bd4ea9e/Formula/a/apache-arrow-glib.rb)
-
-### Are these changes tested?
-Yes
-
-### Are there any user-facing changes?
-No
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #55374
-
-Authored-by: Tadej
-
-**File**: `dev/tasks/homebrew-formulae/apache-arrow-glib.rb` (modified, +2/-0)
-```diff
-@@ -45,6 +45,8 @@ class ApacheArrowGlib < Formula
-   depends_on "apache-arrow"
-   depends_on "glib"
- 
-+  deny_network_access!
-+
-   def install
-     system "meson", "setup", "build", "c_glib", *std_meson_args
-     system "meson", "compile", "-C", "build", "--verbose"
-```
-
-**File**: `dev/tasks/homebrew-formulae/apache-arrow.rb` (modified, +13/-14)
-```diff
-@@ -46,9 +46,10 @@ class ApacheArrow < Formula
-   depends_on "grpc"
-   depends_on "llvm"
-   depends_on "lz4"
--  depends_on "openssl@3"
-+  depends_on "openssl@4"
-   depends_on "protobuf"
-   depends_on "re2"
-+  depends_on "simdjson"
-   depends_on "snappy"
-   depends_on "thrift"
-   depends_on "uriparser"
-@@ -57,18 +58,19 @@ class ApacheArrow < Formula
- 
-   uses_from_macos "python" => :build
-   uses_from_macos "bzip2"
--  uses_from_macos "zlib"
- 
--  # Issue ref: https://github.com/protocolbuffers/protobuf/issues/19447
-+  on_linux do
-+    depends_on "zlib-ng-compat"
-+  end
-+
-   fails_with :gcc do
-     version "12"
--    cause "Protobuf 29+ generated code with visibility and deprecated attributes needs GCC 13+"
-+    cause "fails handling PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED"
-   end
- 
-   def install
--    ENV.llvm_clang if OS.linux?
-+    ENV.runtime_cpu_detection
- 
--    # We set `ARROW_ORC=OFF` because it fails to build with Protobuf 27.0
-     args = %W[
-       -DCMAKE_INSTALL_RPATH=#{rpath}
-       -DLLVM_ROOT=#{formula_opt_prefix("llvm")}
-@@ -97,24 +99,21 @@ def install
-       -DARROW_INSTALL_NAME_RPATH=OFF
-       -DPARQUET_BUILD_EXECUTABLES=ON
-     ]
--    args << "-DARROW_MIMALLOC=ON" unless Hardware::CPU.arm?
--    # Reduce overlinking. Can remove on Linux if GCC 11 issue is fixed
--    args << "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,#{OS.mac? ? "-dead_strip_dylibs" : "--as-needed"}"
-+    args << "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-dead_strip_dylibs" if OS.mac? # Reduce overlinking
-+
-     # ARROW_SIMD_LEVEL sets the minimum required SIMD. Since this defaults to
-     # SSE4.2 on x86_64, we need to reduce level to match oldest supported CPU.
-     # Ref: https://arrow.apache.org/docs/cpp/env_vars.html#envvar-ARROW_USER_SIMD_LEVEL
--    if build.bottle? && Hardware::CPU.intel? && (!OS.mac? || !MacOS.version.requires_sse42?)
--      args << "-DARROW_SIMD_LEVEL=NONE"
--    end
-+    #
-+    # NOTE: Do not remove this while Core 2 is oldest supported CPU
-+    args << "-DARROW_SIMD_LEVEL=NONE" if Hardware::CPU.intel?
- 
-     system "cmake", "-S", "cpp", "-B", "build", *args, *std_cmake_args
-     system "cmake", "--build", "build"
-     system "cmake", "--install", "build"
-   end
- 
-   test do
--    ENV.method(DevelopmentTools.default_compiler).call if OS.linux?
--
-     (testpath/"test.cpp").write <<~CPP
-       #include "arrow/api.h"
-       int main(void) {
-```
-
----
-
-### Incident Patch 2: `d9a0ab4b` (2026-10-31)
-**Commit Message**: MINOR: [C++] Fix C++ Format (#55353)
-
-### Rationale for this change
-Lint C++ format fail on main
-
-### What changes are included in this PR?
-Minor lint C++ format fix
-
-### Are these changes tested?
-yes
-### Are there any user-facing changes?
-no
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-
-**Reviewed before submission by:**
-
-- [X] Human
-
-Authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
-Signed-off-by: Rok Mihevc <[REDACTED_EMAIL]>
-
-**File**: `cpp/src/arrow/util/bit_util.h` (modified, +1/-3)
-```diff
-@@ -168,9 +168,7 @@ constexpr bool HasSingleBit(T x) noexcept {
- }
- 
- // Returns ceil(log2(x)).
--static inline int Log2(uint64_t x) {
--  return BitWidth(x - 1);
--}
-+static inline int Log2(uint64_t x) { return BitWidth(x - 1); }
- 
- //
- // Utilities for reading and writing individual bits by their index
-```
-
----
-
-### Incident Patch 3: `907f6c1a` (2026-11-03)
-**Commit Message**: GH-55332: [CI][R] Remove clang-22 install from test-r-linux-as-cran (#55336)
+### Incident Patch 1: `de3bdd9c` (2026-11-03)
+**Commit Message**: GH-55362: [C++] Fix jemalloc ReleaseUnused implementation (#55363)
 
 ### Rationale for this change
 
-Workaround to install clang-22 no longer relevant, breaks CI
+Makes ReleaseUnused no longer an unintentional no-op with Jemalloc.
 
 ### What changes are included in this PR?
 
-Remove it
+Correctly builds the `mallctl` argument when calling `JemallocAllocator::ReleaseUnused`, and adds a debug-check of the error code.
 
 ### Are these changes tested?
 
-Will run CI
+Yes. I tested that without the fix, the `DCHECK_EQ` raised an error for `Jemalloc/TestMemoryPool/0.ReleaseUnused`:
+```
+Check failed: (err) == (0) Failed to purge jemalloc arenas: No such file or directory
+```
+
+With the fix, the tests pass.
+
+I also ran an extra test that dirty pages were now released successfully and reduced to 0, when before they weren't. But I'm not sure this is worth committing as it could be affected by changes to jemalloc internals.
 
 ### Are there any user-facing changes?
+
+No.
 
 ### Was AI used for this PR?
 
@@ -1593,100 +1435,183 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 
 **Reviewed before submission by:**
 
-- [x] Human
-- [x] AI
+- [
+
+**File**: `cpp/src/arrow/memory_pool_jemalloc.cc` (modified, +6/-1)
+```diff
+@@ -15,6 +15,9 @@
+ // specific language governing permissions and limitations
+ // under the License.
+ 
++#include <cstring>
++#include <string>
++
+ #include "arrow/memory_pool_internal.h"
+ #include "arrow/util/io_util.h"
+ #include "arrow/util/logging_internal.h"  // IWYU pragma: keep
+@@ -128,7 +131,9 @@ void JemallocAllocator::DeallocateAligned(uint8_t* ptr, int64_t size, int64_t al
+ }
+ 
+ void JemallocAllocator::ReleaseUnused() {
+-  mallctl("arena." ARROW_STRINGIFY(MALLCTL_ARENAS_ALL) ".purge", NULL, NULL, NULL, 0);
++  const std::string purge_name = "arena." + std::to_string(MALLCTL_ARENAS_ALL) + ".purge";
++  int err = mallctl(purge_name.c_str(), nullptr, nullptr, nullptr, 0);
++  DCHECK_EQ(err, 0) << "Failed to purge jemalloc arenas: " << std::strerror(err);
+ }
+ 
+ void JemallocAllocator::PrintStats() {
+```
+
+---
+
+### Incident Patch 2: `690ed566` (2026-11-04)
+**Commit Message**: GH-55366: [Dev][Release] Fix USE_CONDA=1 verification for GLib and Ruby on macOS and update docs (#55367)
+
+### Rationale for this change
+See #55366
+### What changes are included in this PR?
+- GLib/Ruby tests with `ruby -rbundler/setup` instead of `bundle exec ruby`
+- Update docs page `release_verification.rst` (remove Java, node, maven)
+
+### Are these changes tested?
+Yes, locally on macOS 26.6 and Ubuntu 24.04.
+`TEST_DEFAULT=0 TEST_SOURCE=1 (USE_CONDA=1) dev/release/verify-release-candidate.sh 26.0.1`
+
+### Are there any user-facing changes?
+No.
+
+### Was AI used for this PR?
+
+**PR code and description written by:**
+
+- [X] Human
+- [X] AI for hints only
+
+**Reviewed before submission by:**
+
+- [X] Human
+- [ ] AI
 - [ ] Not reviewed
+* GitHub Issue: #55366
 
-* GitHub Issue: #55332
+Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
+Co-authored-by: tadeja <[REDACTED_EMAIL]>
+Co-authored-by: Sutou Kouhei <[REDACTED_EMAIL]>
+Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
 
-Lead-authored-by: Nic Crane <[REDACTED_EMAIL]>
-Co-authored-by: Jonathan Keane <[REDACTED_EMAIL]>
-Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
-
-**File**: `ci/docker/linux-r.dockerfile` (modified, +0/-3)
+**File**: `dev/release/verify-release-candidate.sh` (modified, +3/-2)
 ```diff
-@@ -33,9 +33,6 @@ ENV R_PRUNE_DEPS=${r_prune_deps}
- ARG r_custom_ccache=false
- ENV R_CUSTOM_CCACHE=${r_custom_ccache}
+@@ -646,7 +646,8 @@ test_glib() {
+   export GI_TYPELIB_PATH=$ARROW_HOME/lib/girepository-1.0:$GI_TYPELIB_PATH
+   bundle config set --local path 'vendor/bundle'
+   bundle install
+-  bundle exec ruby test/run-test.rb
++  # replaced bundle exec to avoid macOS SIP removing DYLD_* via #!/bin/sh
++  ruby -rbundler/setup test/run-test.rb
  
--ARG r_update_clang=false
--ENV R_UPDATE_CLANG=${r_update_clang}
--
- ARG tz="UTC"
- ENV TZ=${tz}
+   popd
+ }
+@@ -681,7 +682,7 @@ test_ruby() {
+     pushd ${module}
+     bundle config set --local path 'vendor/bundle'
+     bundle install
+-    bundle exec ruby test/run-test.rb
++    ruby -rbundler/setup test/run-test.rb
+     popd
+   done
  
 ```
 
-**File**: `ci/scripts/r_docker_configure.sh` (modified, +0/-18)
+**File**: `docs/source/developers/release_verification.rst` (modified, +3/-7)
 ```diff
-@@ -90,23 +90,5 @@ if [ "$PACKAGE_MANAGER" = "apt-get" ] && apt-cache show tzdata-legacy > /dev/nul
-   apt-get install -y tzdata-legacy
- fi
+@@ -60,7 +60,7 @@ and test the result on their own platform in order to cast a +1 vote.
+    # here are a couple of examples, but see the source code for the available options
+    TEST_DEFAULT=0 TEST_CPP=1 verify-release-candidate.sh $VERSION $RC_NUM  # only C++ tests
+    TEST_DEFAULT=0 TEST_CPP=1 TEST_PYTHON=1 verify-release-candidate.sh $VERSION $RC_NUM  # C++ and Python tests
+-   TEST_DEFAULT=0 TEST_INTEGRATION_CPP=1 TEST_INTEGRATION_JAVA=1 verify-release-candidate.sh $VERSION $RC_NUM  # C++ and Java integration tests
++   TEST_DEFAULT=0 TEST_INTEGRATION_CPP=1 verify-release-candidate.sh $VERSION $RC_NUM  # C++ integration tests
  
--
--# Update clang version to latest available.
--# The rhub/ubuntu-clang image ships clang-15 but CRAN's debian-clang now uses
--# clang 22. Install clang-22 from LLVM's apt repos to match.
--if [ "$R_UPDATE_CLANG" = true ]; then
--  apt-get update -y --allow-releaseinfo-change
--  apt-get install -y gnupg
--  curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/llvm.gpg
--  echo "deb https://apt.llvm.org/jammy/ llvm-toolchain-jammy-22 main" > /etc/apt/sources.list.d/llvm22.list
--  apt-get update -y --allow-releaseinfo-change
--  apt-get install -y clang-22 lld-22
--  # The rhub image hardcodes clang-15/clang++-15 in R's Makeconf, so installing
--  # clang-22 alone isn't enough: point R at the new compilers.
--  sed -i 's/clang++-15/clang++-22/g; s/clang-15/clang-22/g' "$(R RHOME)/etc/Makeconf"
--  echo "R is now using CC=$(R CMD config CC) CXX=$(R CMD config CXX)"
--  clang-22 --version
--fi
--
- # Workaround for html help install failure; see https://github.com/r-lib/devtools/issues/2084#issuecomment-530912786
- Rscript -e 'x <- file.path(R.home("doc"), "html"); if (!file.exists(x)) {dir.create(x, recursive=TRUE); file.copy(system.file("html/R.css", package="stats"), x)}'
+ Binary verification
+ ^^^^^^^^^^^^^^^^^^^
+@@ -78,7 +78,6 @@ test them in order to cast a positive vote.
+    TEST_DEFAULT=0 TEST_WHEELS=1 verify-release-candidate.sh $VERSION $RC_NUM  # only Wheels
+    TEST_DEFAULT=0 TEST_APT=1 verify-release-candidate.sh $VERSION $RC_NUM  # only APT packages
+    TEST_DEFAULT=0 TEST_YUM=1 verify-release-candidate.sh $VERSION $RC_NUM  # only YUM packages
+-   TEST_DEFAULT=0 TEST_JARS=1 verify-release-candidate.sh $VERSION $RC_NUM  # only JARS
+ 
+ Windows
+ -------
+@@ -115,15 +114,12 @@ macOS ARM
+ 
+    # From the arrow clone
+    brew install gpg
++   # The rest is not needed with USE_CONDA=1
+    brew bundle --file=cpp/Brewfile
+    brew bundle --file=c_glib/Brewfile
+-   brew uninstall node
+-   # You might need to add node, ruby java and maven to the PATH, follow
++   # You might need to add ruby to the PATH, follow
+    # instructions from brew after installing.
+-   brew install node@20
+    brew install ruby
+-   brew install openjdk
+-   brew install maven
+ 
+ Windows 11
+ ----------
 ```
 
-**File**: `compose.yaml` (modified, +0/-1)
-```diff
-@@ -1686,7 +1686,6 @@ services:
-         tz: ${TZ}
-         r_prune_deps: ${R_PRUNE_DEPS}
-         r_custom_ccache: ${R_CUSTOM_CCACHE}
--        r_update_clang: ${R_UPDATE_CLANG}
-     shm_size: *shm-size
-     environment:
-       <<: [*common, *sccache]
-```
+---
 
-**File**: `dev/tasks/r/github.linux.cran.yml` (modified, +2/-3)
+### Incident Patch 3: `e778b2a6` (2026-11-04)
+**Commit Message**: GH-48182: [Python] Add regression test for RecordBatch.from_struct_array with list offsets (#49162)
+
+Adds a regression test to ensure RecordBatch.from_struct_array correctly handles sliced StructArray with offsets.
+
+This test verifies that only the sliced rows are included when converting a StructArray to RecordBatch.
+
+This addresses GH-48182.
+
+* GitHub Issue: #48182
+
+Authored-by: Gnananjali <[REDACTED_EMAIL]>
+Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
+
+**File**: `python/pyarrow/tests/test_table.py` (modified, +17/-0)
 ```diff
-@@ -35,16 +35,15 @@ jobs:
-         config:
-           # See https://r-hub.github.io/containers/
-           - { r_image: "ubuntu-gcc12" }  # ~ r-devel-linux-x86_64-debian-gcc
--          - { r_image: "ubuntu-clang", r_update_clang: true }  # ~ r-devel-linux-x86_64-debian-clang
-+          - { r_image: "ubuntu-clang" }  # ~ r-devel-linux-x86_64-debian-clang
-           - { r_image: "ubuntu-next" }  # ~ r-patched-linux-x86_64
-           - { r_image: "ubuntu-release" }  # ~ r-release-linux-x86_64
--          - { r_image: "clang22", skip_vignettes: true }  # ~ r-devel-linux-x86_64-fedora-clang
-+          - { r_image: "clang23", skip_vignettes: true }  # ~ r-devel-linux-x86_64-fedora-clang
-     env:
-       R_ORG: "rhub"
-       R_IMAGE: {{ '${{ matrix.config.r_image }}' }}
-       R_TAG: "latest"
-       ARROW_R_DEV: "FALSE"
--      R_UPDATE_CLANG: {{ '${{ matrix.config.r_update_clang }}' }}
-     steps:
-       {{ macros.github_checkout_arrow()|indent }}
-       {{ macros.github_install_archery()|indent }}
+@@ -894,6 +894,23 @@ def test_recordbatch_from_struct_array():
+     ))
+ 
+ 
++def test_recordbatch_from_struct_array_with_list_offsets():
++    struct_type = pa.struct([("x", pa.int64()), ("y", pa.int64())])
++
++    list0 = [{"x": 1, "y": 2}, {"x": 3, "y": 4}]
++    list1 = [{"x": 5, "y": 6}]
++    list2 = [{"x": 7, "y": 8}, {"x": 9, "y": 10}]
++
++    arr = pa.array([list0, list1, list2], type=pa.list_(struct_type))
++
++    elem0 = arr[0]
++    batch = pa.RecordBatch.from_struct_array(elem0.values)
++
++    assert len(batch) == 2
++    assert batch.column("x").to_pylist() == [1, 3]
++    assert batch.column("y").to_pylist() == [2, 4]
++
++
+ def test_recordbatch_to_struct_array():
+     batch = pa.RecordBatch.from_arrays(
+         [
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55401** (closed): GH-55400: [C++][IPC] Validate body_length in ReadMessage and ReadMessageAsync (@ShivanshhhG)
+- **PR #55395** (closed): GH-55394: [C++][Compute] Check overflow when negating duration (@DiadkoShmek)
+- **PR #55386** (2026-11-04): GH-55385: [C++][Parquet] Remove unused `last_value_in_previous_page_` from `DeltaByteArrayDecoderImpl` (@omkar-334)
+- **PR #55384** (closed): MINOR: [C++][Parquet] Reset page state in RecordReader::SetPageReader (@professor-moody)
+- **PR #55379** (2026-11-04): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
 - **PR #55378** (2026-11-03): GH-55377: [R][CI] Windows Rtools40 jobs fail since 2026-10-30: setup-r hard-codes a cran.rstudio.com URL for Rtools40 that now 404s (@thisisnic)
-- **PR #55375** (2026-11-03): GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (@tadeja)
-- **PR #55365** (2026-11-02): GH-55364: [CI][Release] Stop hardcoding PyArrow site-packages installation path on Windows verification (@raulcd)
-- **PR #55355** (closed): GH-55354: [C++][Parquet] Reject nested schemas in StreamReader and StreamWriter (@mardgez)
-- **PR #55353** (2026-10-31): MINOR: [C++] Fix C++ Format (@tadeja)
-- **PR #55343** (closed): GH-55342: [C++][Parquet] Fix rows dropped after a data page without values (@kszucs)
 
 ---
 
@@ -1706,29 +1631,33 @@ Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebr
+## X. GH-55362: [C++] Fix jemalloc ReleaseUnused implementation (#55363)
 
 **RULE**:
-When implementing operations in `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/arrow/memory_pool_jemalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67625df7`: GH-55374: [CI][Packaging] Fix homebrew-cpp nightly by syncing formulae to homebrew-core (#55375). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de3bdd9c`: GH-55362: [C++] Fix jemalloc ReleaseUnused implementation (#55363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/homebrew-formulae/apache-arrow-glib.rb`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/memory_pool_jemalloc.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  deny_network_access!
+#include <cstring>
+#include <string>
 
+  const std::string purge_name = "arena." + std::to_string(MALLCTL_ARENAS_ALL) + ".purge";
+  int err = mallctl(purge_name.c_str(), nullptr, nullptr, nullptr, 0);
+  DCHECK_EQ(err, 0) << "Failed to purge jemalloc arenas: " << std::strerror(err);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  mallctl("arena." ARROW_STRINGIFY(MALLCTL_ARENAS_ALL) ".purge", NULL, NULL, NULL, 0);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67625df7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de3bdd9c` are properly handled with clean fallback behavior.

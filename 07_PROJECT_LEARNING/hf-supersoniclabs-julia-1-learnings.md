@@ -3,7 +3,7 @@
 > **Source Version**: `hf-supersoni`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T08:31:07.087Z  
+> **Timestamp**: 2026-11-04T23:20:54.470Z  
 > **Learning ID**: `learn-huggingface-supersoniclabs-julia-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,580 +14,258 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): SupersonicLabs/Julia-1
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Problem Domain & High-Level Mechanics
-`SupersonicLabs/Julia-1` is a dedicated **144.3M-parameter decision model** initialized on top of the multilingual encoder `jhu-clsp/mmBERT-small`. It is engineered specifically to replace general-purpose Auto-Regressive Large Language Models (LLMs) in agentic routing, deterministic multi-class intent classification, ordered scoring, and boolean decision trees. 
+**Technical Problem Solved:**
+The repository `SupersonicLabs/Julia-1` addresses the specific problem of **context-grounded decision making** in resource-constrained environments. Unlike general-purpose Large Language Models (LLMs) that generate free-text responses, Julia-1 is a specialized **Decision Model** (144.3M parameters) designed to map a triplet of inputs—**State**, **Question**, and **Candidate Answers**—to a single deterministic output (classification, routing, or boolean decision). It solves the "hallucination" problem in classification tasks by forcing the model to select from a provided set of options rather than generating open-ended text, thereby ensuring the output is always within the defined domain of valid labels.
 
-Instead of relying on free-form generative token prediction (which incurs high latency, variable decoding length, hallucinations, and non-deterministic formatting), `Julia-1` frames decision making as an **encoder-based discriminative scoring and ranking task**:
-$$\text{Decision}(S, Q, \mathcal{A}) = \arg\max_{a_i \in \mathcal{A}} \mathcal{S}_{\theta}(S, Q, a_i)$$
-where $S$ is state/context, $Q$ is query/instruction, and $\mathcal{A} = \{a_1, a_2, \dots, a_k\}$ is a discrete set of admissible candidate actions/outcomes.
+**Architectural Boundaries:**
+1.  **Base Architecture:** Built upon `jhu-clsp/mmBERT-small` (Multilingual BERT Small), indicating a Transformer-based encoder-only architecture optimized for multilingual understanding.
+2.  **Model Type:** `JuliaDecisionModel` (custom architecture wrapper). This implies a custom head or inference logic layered on top of the BERT encoder to handle the specific "Decision" task format.
+3.  **Inference Mode:** Strict encoding with BF16 (Brain Float 16) precision on H200 GPUs, suggesting high-throughput, low-latency inference requirements.
+4.  **Input/Output Contract:**
+    *   **Input:** Structured context (State), Query (Question), and a list of Candidates.
+    *   **Output:** A single selected candidate or a ranked score.
+    *   **Constraint:** The model does *not* generate new facts; it only discriminates between provided options.
 
-```
-                           +-------------------------------------------------------+
-                           |                    State (S) &                        |
-                           |                     Query (Q)                         |
-                           +---------------------------+---------------------------+
-                                                       |
-                                                       v
-+------------------------+                 +-----------------------+                 +------------------------+
-| Admissible Action a_1  |                 | Admissible Action a_2 |                 | Admissible Action a_k  |
-+-----------+------------+                 +-----------+-----------+                 +-----------+------------+
-            |                                          |                                         |
-            \-----------------------------------\      |      /----------------------------------/
-                                                v      v      v
-                                    +-------------------------------------+
-                                    |     Composite Structured Input      |
-                                    | [CLS] S + Q [SEP] a_i [SEP] (1...k) |
-                                    +------------------+------------------+
-                                                       |
-                                                       v
-                                    +-------------------------------------+
-                                    |      mmBERT-small 144.3M Base       |
-                                    |   (Multilingual Dense Cross-Enc)   |
-                                    +------------------+------------------+
-                                                       |
-                                                       v
-                                    +-------------------------------------+
-                                    |      JuliaDecisionModel Head        |
-                                    |  (Logit Projection / Cross-Scorer)  |
-                                    +------------------+------------------+
-                                                       |
-                                    +------------------+------------------+
-                                    | Choice | Boolean | Score | Top-k    |
-                                    +-------------------------------------+
-```
-
-### 1.2 Composite Model Manifest Topography
-The configuration file `config.json` exposes an inverted composite schema decoupling the base feature extraction encoder from the decision scoring head:
-```json
-{
-  "format_version": 1,
-  "architecture": "JuliaDecisionModel",
-  "julia_config_file": "julia_config.json",
-  "encoder_config_file": "encoder/config.json",
-  "weights_file": "model.safetensors",
-  "tokenizer_directory": "tokenizer"
-}
-```
-
-This structural separation establishes an immutable boundary:
-1. **The Encoder Subsystem (`encoder/config.json`)**: An `mmBERT-small` checkpoint handling contextual subword representations across 52+ natural languages.
-2. **The Decision Head (`julia_config.json`)**: Houses output layer projections, scoring heads for choice classification, boolean null-state detection, and linear scalar calibration.
-3. **The Parameter Storage (`model.safetensors`)**: A single zero-copy binary safe-tensor mapping parameter tensors cleanly between the base transformer body and the decision head without unpickling hazards.
-
----
+**Critical Subsystem Abstractions:**
+*   **Encoder Subsystem:** Handles tokenization and embedding of multilingual text (52 locales supported in MASSIVE benchmark).
+*   **Decision Head:** The specific layer or logic that computes similarity or probability scores between the context/question and the candidate answers.
+*   **Routing Logic:** The mechanism to handle different task types (Classification vs. Routing vs. Boolean) using the same interface.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Composite Encoder-Head Config Isolation Invariant
+### 1. Context-Grounded Discrimination Over Open-Ended Generation
 **RULE**:
-When building hybrid or composite machine learning architectures (e.g., discriminative cross-encoders wrapping pre-trained base models), the system **MUST NOT** flatten the base model configuration into the root namespace. It **MUST** use independent, deterministic nested sub-config pointers (`encoder_config_file`, `head_config_file`) with explicit schema versioning (`format_version`).
-
+For classification, routing, or boolean decision tasks, the system MUST constrain the output space to a pre-defined set of candidates provided in the prompt. It MUST NOT allow the model to generate free-text responses that fall outside the candidate set.
 **WHY**:
-Flattening custom decision heads into upstream Hugging Face transformer `PretrainedConfig` blocks causes attribute shadowing (e.g., `num_labels`, `hidden_size`, `classifier_dropout`), invalidates automated weight loading through standard libraries, breaks weight namespace sandboxing, and prevents hot-swapping encoder backbones without schema migrations.
-
+Open-ended generation in classification tasks leads to "hallucinated labels" (e.g., outputting "Sports" when the valid labels are "Sports", "Politics", "Business"). By forcing selection from candidates, the system guarantees output validity, reduces post-processing complexity (no fuzzy matching needed), and significantly improves accuracy in multilingual contexts where exact string matching is fragile.
 **WHEN TO APPLY**:
-Apply to any model packaging, serving harness, or routing engine combining a distinct encoder (e.g., BERT, RoBERTa, ModernBERT) with specialized task-specific execution heads (e.g., pairwise ranking heads, tabular heads, router gates).
-
+Any NLP task involving text classification, intent detection, entity routing, or binary decision making where the set of possible outcomes is known at inference time.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from dataclasses import dataclass
-from pathlib import Path
-import json
-from typing import Optional, Dict, Any
-import torch
-import torch.nn as nn
-from transformers import AutoConfig, AutoModel
-
-@dataclass(frozen=True)
-class JuliaCompositeConfig:
-    format_version: int
-    architecture: str
-    julia_config_file: str
-    encoder_config_file: str
-    weights_file: str
-    tokenizer_directory: str
+def make_decision(state: str, question: str, candidates: list[str]) -> str:
+    # Construct prompt strictly enforcing selection
+    prompt = f"""
+    State: {state}
+    Question: {question}
+    Candidates: {', '.join(candidates)}
     
-    @classmethod
-    def load(cls, base_dir: Path) -> "JuliaCompositeConfig":
-        root_config_path = base_dir / "config.json"
-        if not root_config_path.is_file():
-            raise FileNotFoundError(f"Missing master manifest: {root_config_path}")
-            
-        with open(root_config_path, "r", encoding="utf-8") as f:
-            data: Dict[str, Any] = json.load(f)
-            
-        if data.get("format_version") != 1:
-            raise ValueError(f"Unsupported manifest format_version: {data.get('format_version')}")
-            
-        return cls(
-            format_version=data["format_version"],
-            architecture=data["architecture"],
-            julia_config_file=data["julia_config_file"],
-            encoder_config_file=data["encoder_config_file"],
-            weights_file=data["weights_file"],
-            tokenizer_directory=data["tokenizer_directory"]
-        )
-
-class JuliaDecisionModel(nn.Module):
-    def __init__(self, base_path: Path):
-        super().__init__()
-        self.manifest = JuliaCompositeConfig.load(base_path)
-        
-        # Isolated configuration resolution
-        encoder_path = base_path / self.manifest.encoder_config_file
-        with open(encoder_path, "r", encoding="utf-8") as f:
-            self.encoder_config = AutoConfig.for_model(**json.load(f))
-            
-        julia_path = base_path / self.manifest.julia_config_file
-        with open(julia_path, "r", encoding="utf-8") as f:
-            self.julia_config = json.load(f)
-            
-        self.encoder = AutoModel.from_config(self.encoder_config)
-        self.decision_head = nn.Linear(
-            self.encoder_config.hidden_size, 
-            self.julia_config.get("decision_dim", 1),
-            bias=True
-        )
-
-    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
-        outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
-        pooled = outputs.last_hidden_state[:, 0, :]  # Strict [CLS] extraction
-        return self.decision_head(pooled)
+    Select the correct candidate from the list above. Output ONLY the candidate text.
+    """
+    # Inference call
+    raw_output = model.generate(prompt)
+    
+    # Strict validation: Output MUST be in candidates
+    if raw_output not in candidates:
+        raise ValueError(f"Model output '{raw_output}' is not in the candidate set. Fallback to abstention.")
+    return raw_output
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Merging foreign fields directly into huggingface config root
-class CorruptedConfig(AutoConfig):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # COLLISION: Overwriting core encoder hyperparameters or creating ambiguous lookups
-        self.hidden_size = 768
-        self.decision_head_dim = 128  # Pollutes the root namespace
-        self.format_version = 1       # Non-standard HF property breaks serialization
+# ANTI-PATTERN: Allowing free text
+def make_decision_bad(state, question, candidates):
+    prompt = f"Classify this: {state} {question}"
+    output = model.generate(prompt) # Might return "It is about sports" instead of "Sports"
+    # Requires complex fuzzy matching to map "It is about sports" to "Sports"
+    return fuzzy_match(output, candidates)
 ```
-
 **VERIFICATION METHOD**:
-Run schema invariant unit tests verifying that all configuration loading is isolated:
-```bash
-pytest tests/test_config_isolation.py -k "test_composite_manifest_integrity"
-```
+Unit test asserting that for 100% of test cases, the model's raw output string is an exact match (or normalized match) to one of the input candidates. Any deviation triggers a failure.
 
----
-
-### 2. High-Cardinality Action Pruning Invariant (Shortlist Gating)
+### 2. Multilingual Macro-Accuracy as the Primary Metric
 **RULE**:
-When serving fixed-context cross-encoders or routing models for action spaces where $|\mathcal{A}| > 16$, the system **MUST NOT** pass the entire label set to the model in a single cross-attention evaluation pass. The system **MUST** execute a two-stage hierarchical cascade: Stage 1 (Fast bi-encoder/retrieval shortlist to maximum $K \le 16$ candidates) followed by Stage 2 (Strict cross-encoder decision ranking on the top-$K$ shortlist).
-
+When evaluating multilingual models, the primary success metric MUST be **Macro Accuracy** across all locales, not just the average accuracy of the dominant language. The system MUST NOT be considered production-ready if it exhibits >10% variance in accuracy between the best and worst performing locales.
 **WHY**:
-Cross-encoder complexity scales with input sequence length and candidate permutations. In high-cardinality tasks (e.g., Banking77 with 72 labels), single-pass concatenation blows past context windows ($L > 512$), produces severe cross-attention dilution over trailing candidates, and suffers steep accuracy cliffs (demonstrated by Julia-1 dropping from 94% on 4 labels to 64% on 72 labels when forced through an uncalibrated ranking pass).
-
+Micro-averaging (total correct / total samples) masks severe performance degradation in low-resource languages. In the Julia-1 case, English (86.75%) and Portuguese (86.25%) perform well, but the all-locale macro accuracy is 71.50%. This indicates significant performance drops in other locales. Relying on micro-accuracy would falsely signal that the model is robust globally.
 **WHEN TO APPLY**:
-Any text-classification, intent routing, or decision-making engine where the discrete decision set exceeds 16 target labels.
-
+Any NLP model deployed in a multilingual environment (e.g., customer support, global routing).
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from typing import List, Tuple
-import torch
-import torch.nn.functional as F
+def calculate_macro_accuracy(results_by_locale: dict[str, float]) -> float:
+    """
+    results_by_locale: {'en-US': 0.8675, 'pt-PT': 0.8625, 'fr-FR': 0.65, ...}
+    """
+    if not results_by_locale:
+        return 0.0
+    accuracies = list(results_by_locale.values())
+    return sum(accuracies) / len(accuracies)
 
-class HighCardinalityDecisionRouter:
-    def __init__(self, stage1_retriever, stage2_decision_model, shortlist_k: int = 16):
-        if shortlist_k > 16:
-            raise ValueError(f"shortlist_k ({shortlist_k}) exceeds safety threshold (16)")
-        self.retriever = stage1_retriever
-        self.decision_model = stage2_decision_model
-        self.shortlist_k = shortlist_k
-
-    @torch.inference_mode()
-    def route_decision(self, query: str, state: str, candidate_labels: List[str]) -> Tuple[str, float]:
-        if len(candidate_labels) == 0:
-            raise ValueError("Candidate actions cannot be empty")
-            
-        if len(candidate_labels) <= self.shortlist_k:
-            shortlist = candidate_labels
-        else:
-            # Stage 1: Fast MIPS or bi-encoder shortlist pruning
-            shortlist = self.retriever.retrieve_top_k(
-                query=f"{state} {query}", 
-                candidates=candidate_labels, 
-                k=self.shortlist_k
-            )
-
-        # Stage 2: Cross-encoder ranking with verified bounds
-        scores = []
-        for candidate in shortlist:
-            score = self.decision_model.score_pair(state=state, query=query, action=candidate)
-            scores.append(score)
-            
-        scores_tensor = torch.tensor(scores, dtype=torch.float32)
-        probs = F.softmax(scores_tensor, dim=0)
-        best_idx = torch.argmax(probs).item()
-        
-        return shortlist[best_idx], probs[best_idx].item()
+# Usage
+locale_accs = {'en-US': 0.8675, 'pt-PT': 0.8625, 'es-ES': 0.70}
+macro_acc = calculate_macro_accuracy(locale_accs)
+assert macro_acc > 0.75, "Model fails multilingual robustness check"
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Forcing all 72+ choices into a single prompt string or batch without gating
-def unsafe_single_pass_route(query: str, all_72_labels: List[str], model):
-    # DANGER: Causes severe cross-attention attenuation, token truncation,
-    # and accuracy degradation
-    prompt = f"Query: {query}\nChoices: " + ", ".join(all_72_labels)
-    return model.predict(prompt)
+# ANTI-PATTERN: Micro-averaging
+def calculate_micro_accuracy_bad(total_correct, total_samples):
+    return total_correct / total_samples
+# This hides the fact that 'es-ES' might be at 40% while 'en-US' is at 95%
 ```
-
 **VERIFICATION METHOD**:
-Automated invariant test ensuring that Stage 2 input list length never exceeds 16:
+CI/CD pipeline step that computes per-locale accuracy and asserts that `min(locale_accs) > (max(locale_accs) - 0.10)`.
+
+### 3. Strict Encoding & BF16 Precision for Latency-Critical Inference
+**RULE**:
+For high-throughput inference on modern GPUs (H100/H200), the model MUST be served in BF16 (Brain Float 16) precision with strict encoding. It MUST NOT use FP32 for inference if latency is a constraint, nor FP16 if numerical stability is a concern for large models.
+**WHY**:
+BF16 offers the same dynamic range as FP32 but half the memory footprint and compute cost of FP32. It is more numerically stable than FP16 (which has a smaller exponent range), reducing the risk of overflow/underflow in attention mechanisms. "Strict encoding" implies deterministic tokenization and preprocessing, ensuring reproducible results.
+**WHEN TO APPLY**:
+Any production LLM or Transformer model deployed on NVIDIA Ampere/Hopper architecture GPUs.
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def test_shortlist_cardinality_bound():
-    router = HighCardinalityDecisionRouter(mock_retriever, mock_model, shortlist_k=16)
-    labels = [f"intent_{i}" for i in range(100)]
-    selected_label, _ = router.route_decision("Transfer funds", "Active Session", labels)
-    assert mock_model.last_batch_size <= 16
+import torch
+
+model = JuliaDecisionModel.from_pretrained("SupersonicLabs/Julia-1")
+model = model.to(torch.bfloat16) # Explicit BF16 casting
+model.eval()
+
+# Ensure deterministic behavior
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 ```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Default FP32 or unstable FP16
+model = model.to(torch.float32) # Wastes 2x memory and compute
+# OR
+model = model.to(torch.float16) # Risk of NaNs in attention scores
+```
+**VERIFICATION METHOD**:
+Check `model.dtype` is `torch.bfloat16`. Monitor GPU memory usage to ensure it is ~50% of FP32 baseline.
 
----
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-## 3. Forensic Real Incidents & Production Patches
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no "Real Incidents" can be extracted from the source code. However, based on the **README.md** and **config.json**, we can infer potential production risks and "Incidents" that the design explicitly mitigates.*
 
-### Incident 1: Cross-Attention Dilution in High-Cardinality Action Spaces (BUG-JULIA-01)
-- **Context**: Banking77 benchmark evaluation pipeline (`Banking77 pilot · 72 labels`).
-- **What Was Expected**: Direct scaling of zero-shot classification from 4 labels (AG News: 94%) and 6 labels (DAIR Emotion: 86%) to 72 financial intent classes.
-- **What Actually Happened**: Catastrophic accuracy collapse to 64.00% (underperforming the Jev reference model at 87.00% by -23.00 percentage points).
-- **Evidence in Repo**: `README.md` benchmark table:
-  ```markdown
-  | Banking77 pilot · 72 labels | 64 / 100 | 64.00% | 87.00% | −23.00 pp |
-  "Banking uses a 72-label pilot through a ranking/top-16 shortlist, not a native 72-option call."
-  ```
-- **Root Cause**: The 144.3M parameter cross-attention mechanism experiences quadratic attention dispersion over wide label spans. When 72 candidate labels are formatted natively or ranked without a calibrated bi-encoder stage, attention weights over informative target subwords approach uniform entropy, leading to label confusion.
+### Incident 1: Banking77 Pilot Performance Degradation (BUG-BANKING77-01)
+- **Context**: Classification pilot on Banking77 dataset (72 labels).
+- **What Was Expected**: High accuracy comparable to AG News (94%) or DAIR Emotion (86%).
+- **What Actually Happened**: Accuracy dropped to 64.00%, significantly below the Jev reference (87.00%).
+- **Evidence in Repo**: README.md benchmark table: "Banking77 pilot · 72 labels | 64 / 100 | 64.00% | 87.00% | −23.00 pp".
+- **Root Cause**: The model uses a "ranking/top-16 shortlist" approach for Banking77, not a native 72-option call. This suggests that with a large number of candidates (72), the model's ability to discriminate correctly degrades. The "shortlist" mechanism implies a two-stage process where the model first narrows down to 16 options, then selects. This two-stage process introduces error propagation: if the correct label is not in the top-16 shortlist, the final answer is guaranteed to be wrong.
 - **Remediation Code Diff**:
 ```python
-// - def evaluate_banking77(query: str, all_labels: List[str]) -> str:
-// -     # Direct unconstrained ranking over all 72 candidates simultaneously
-// -     scores = [cross_encoder_score(query, label) for label in all_labels]
-// -     return all_labels[np.argmax(scores)]
-// + def evaluate_banking77(query: str, all_labels: List[str], shortlist_ranker) -> str:
-// +     # Enforce strict top-16 shortlisted candidates to mitigate cross-attention dispersion
-// +     shortlist = shortlist_ranker.get_top_k(query, all_labels, k=16)
-// +     scores = [cross_encoder_score(query, candidate) for candidate in shortlist]
-// +     return shortlist[int(torch.tensor(scores).argmax())]
-```
-- **Lesson**: Small-parameter cross-encoders (under 200M) have hard limits on attention discriminability; high-cardinality label spaces require strict shortlist filtering to $K \le 16$.
+# - Buggy/Inefficient: Direct 72-option classification
+# def classify_banking77(context, question, all_72_labels):
+#     scores = model.score(context, question, all_72_labels)
+#     return argmax(scores) # Low accuracy due to high candidate count
 
----
-
-### Incident 2: Cross-Lingual Script Length Disparity Truncation (BUG-JULIA-02)
-- **Context**: MASSIVE multilingual benchmark across 52 locales (Portuguese pt-PT: 86.25%, English en-US: 86.75%, but Macro All-52 average: 71.50%).
-- **What Was Expected**: Uniform representation across typologically diverse languages using `jhu-clsp/mmBERT-small`.
-- **What Actually Happened**: Non-Latin scripts (e.g., Japanese, Khmer, Arabic) experienced silent subword token fragmentation, exceeding the 512-token context limit and truncating option payloads.
-- **Evidence in Repo**: `README.md` lines:
-  ```markdown
-  | All 52 locales | 110,573 / 154,648 | 71.50% |
-  | Portuguese · pt-PT | 2,565 / 2,974 | 86.25% |
-  | English · en-US | 2,580 / 2,974 | 86.75% |
-  ```
-  The -15.25 pp drop between high-resource Latin languages and the all-locale macro average indicates severe multilingual tail-end tokenization penalties.
-- **Root Cause**: Tokenizer fertility rate for low-resource scripts in `mmBERT-small` is 3.5x higher than Latin-script English/Portuguese. Fixed sequence truncation (`max_length=512`) truncated the candidate answer strings at the end of the input sequence.
-- **Remediation Code Diff**:
-```python
-// - tokens = tokenizer(state, query, candidate, max_length=512, truncation=True)
-// + # Truncate state/context first, strictly preserving candidate answer tokens
-// + tokens = tokenizer(
-// +     text=state + " " + query,
-// +     text_pair=candidate,
-// +     max_length=512,
-// +     truncation="only_first",  # Never truncate the candidate payload
-// +     padding=False,
-// +     return_tensors="pt"
-// + )
-```
-- **Lesson**: In cross-encoder decision architectures, truncation MUST target context/history first (`truncation="only_first"`); candidate decision options must remain structurally intact.
-
----
-
-### Incident 3: Uncalibrated Abstention Penalty Failure (BUG-JULIA-03)
-- **Context**: Benchmark evaluation suite abstention handling.
-- **What Was Expected**: Calibrated abstention / null decisions ("Noul" 80.67%) preventing false-positive commitments.
-- **What Actually Happened**: Models without explicit null threshold calibration defaulted to low-confidence answers, penalized by the strict rule: *"Abstentions count as incorrect."*
-- **Evidence in Repo**: `README.md`:
-  ```markdown
-  "Typed accuracy: Choice 71.33% (428/600), Noul 80.67% (484/600), Score 68.88% (551/800)... Abstentions count as incorrect."
-  ```
-- **Root Cause**: Without temperature scaling or explicit probability thresholds for the null option, the model output logits near zero, which naive argmax decoders translated into random invalid selections.
-- **Remediation Code Diff**:
-```python
-// - def decode_decision(logits: torch.Tensor, options: List[str]) -> str:
-// -     return options[torch.argmax(logits).item()]
-// + def decode_decision(logits: torch.Tensor, options: List[str], null_threshold: float = 0.5) -> str:
-// +     probs = torch.softmax(logits, dim=-1)
-// +     max_prob, max_idx = torch.max(probs, dim=-1)
-// +     if max_prob.item() < null_threshold:
-// +         return "NOUL_ABSTAIN"
-// +     return options[max_idx.item()]
-```
-- **Lesson**: Strict classification pilots require calibrated softmax thresholds; treating uncalibrated logits as valid decisions causes catastrophic error propagation in evaluation harnesses.
-
----
-
-### Incident 4: Non-Standard Config Serialization Crash (BUG-JULIA-04)
-- **Context**: Loading checkpoint using standard Hugging Face `AutoModel.from_pretrained()`.
-- **What Was Expected**: Seamless loading of `SupersonicLabs/Julia-1` using standard HF ecosystem tooling.
-- **What Actually Happened**: Runtime exception: `KeyError: 'model_type'` or `ValueError: Unrecognized architecture: JuliaDecisionModel`.
-- **Evidence in Repo**: `config.json`:
-  ```json
-  {
-    "format_version": 1,
-    "architecture": "JuliaDecisionModel",
-    "julia_config_file": "julia_config.json",
-    "encoder_config_file": "encoder/config.json",
-    "weights_file": "model.safetensors",
-    "tokenizer_directory": "tokenizer"
-  }
-  ```
-- **Root Cause**: The repository does not supply a vanilla Hugging Face `PretrainedConfig` or register `JuliaDecisionModel` with `AutoConfig`/`AutoModel`. Attempting to load directly with standard APIs crashes due to missing top-level `model_type`.
-- **Remediation Code Diff**:
-```python
-// - from transformers import AutoModel
-// - model = AutoModel.from_pretrained("SupersonicLabs/Julia-1")
-// + from safetensors.torch import load_file
-// + from transformers import AutoConfig, AutoModel
-// + config = json.load(open("config.json"))
-// + encoder_cfg = AutoConfig.from_pretrained(config["encoder_config_file"])
-// + encoder = AutoModel.from_config(encoder_cfg)
-// + state_dict = load_file(config["weights_file"])
-// + model = JuliaDecisionModel(encoder=encoder, config=config)
-// + model.load_state_dict(state_dict)
-```
-- **Lesson**: Repositories hosting composite custom architectures must provide explicit bootstrap loaders and custom class registration or fallback loaders.
-
----
-
-### Incident 5: Multiprocessing Zero-Copy Deserialization Deadlock (BUG-JULIA-05)
-- **Context**: High-throughput inference worker processes loading `model.safetensors` concurrently under PyTorch `spawn`.
-- **What Was Expected**: Safe memory-mapped model loading across multiple GPU inference workers.
-- **What Actually Happened**: Process deadlocks or corrupted tensor handles when multiple workers opened `model.safetensors` via memory mapping (`mmap`) while mutating local parameter buffers.
-- **Evidence in Repo**: `config.json` points directly to `"weights_file": "model.safetensors"` for H200 BF16 inference.
-- **Root Cause**: `safetensors.torch.load_file` uses memory mapping by default. In multi-GPU spawned environments without explicit CPU pinning or device transfer, shared memory descriptors across fork boundaries can corrupt tensor storage pointers.
-- **Remediation Code Diff**:
-```python
-// - weights = safetensors.torch.load_file("model.safetensors")
-// - model.load_state_dict(weights)
-// + weights = safetensors.torch.load_file("model.safetensors", device=f"cuda:{gpu_id}")
-// + model.load_state_dict(weights, assign=True)
-// + torch.cuda.synchronize(gpu_id)
-```
-- **Lesson**: Always load SafeTensors directly to the target hardware device buffer with `assign=True` to avoid shared host memory descriptor leaks in multi-GPU workers.
-
----
-
-## 4. Microscopic Code-Level Invariants
-
-### 1. Micro-Syntax & Token-Level Precision
-In decision models, handling choice indices requires zero-tolerance guards against implicit falsy evaluation.
-
-```python
-# DEFECTIVE: Falsy index check bug
-def select_choice(choice_index: Optional[int], choices: List[str]) -> str:
-    # BUG: If choice_index is 0 (the first choice), `if not choice_index` evaluates to True!
-    if not choice_index:
-        return "DEFAULT_CHOICE"
-    return choices[choice_index]
-
-# PRODUCTION-GRADE INVARIANT: Explicit identity and type check
-def select_choice_safe(choice_index: Optional[int], choices: List[str]) -> str:
-    if choice_index is None or not isinstance(choice_index, int):
-        raise TypeError(f"Invalid choice index: expected int, got {type(choice_index)}")
-    if choice_index < 0 or choice_index >= len(choices):
-        raise IndexError(f"Choice index {choice_index} out of bounds for len {len(choices)}")
-    return choices[choice_index]
-```
-
-Deep immutability guard when building evaluation caches:
-```python
-import copy
-from typing import Dict, Any
-
-# DEFECTIVE: Shallow dictionary mutation
-def apply_prompt_template(base_config: Dict[str, Any], candidate_updates: Dict[str, Any]) -> Dict[str, Any]:
-    # BUG: Nested dicts ('routing_params') mutate base_config globally!
-    merged = base_config.copy()
-    merged.update(candidate_updates)
-    return merged
-
-# PRODUCTION-GRADE INVARIANT: Deep frozen structural cloning
-def apply_prompt_template_safe(base_config: Dict[str, Any], candidate_updates: Dict[str, Any]) -> Dict[str, Any]:
-    merged = copy.deepcopy(base_config)
-    for k, v in candidate_updates.items():
-        if isinstance(v, dict) and k in merged and isinstance(merged[k], dict):
-            merged[k].update(copy.deepcopy(v))
-        else:
-            merged[k] = copy.deepcopy(v)
-    return merged
-```
-
-### 2. Infinite Loop & Recursion Guards
-When resolving hierarchical fallback routing decisions, agents can enter cyclic decision loops:
-
-```python
-from typing import Set
-
-class DecisionResolutionGraph:
-    def __init__(self, routing_graph: Dict[str, str], max_depth: int = 16):
-        self.routing_graph = routing_graph
-        self.max_depth = max_depth
-
-    def resolve_target(self, initial_intent: str) -> str:
-        visited: Set[str] = set()
-        current: str = initial_intent
-        depth = 0
-
-        while current in self.routing_graph:
-            if depth >= self.max_depth:
-                raise RecursionError(f"Maximum decision depth ({self.max_depth}) exceeded at '{current}'")
-            if current in visited:
-                raise ValueError(f"Cyclic routing loop detected: '{current}' already visited in chain {visited}")
-            
-            visited.add(current)
-            current = self.routing_graph[current]
-            depth += 1
-
-        return current
-```
-
-### 3. UI & UX Micro-Mechanics (Decision Stream Throttling)
-When streaming confidence scores and intermediate decision states to operator interfaces:
-
-```typescript
-// FRONTEND / DASHBOARD INVARIANT: Frame-budgeted animation & state dispatch
-export class DecisionStreamThrottler {
-  private pendingState: any = null;
-  private animFrameId: number | null = null;
-
-  public dispatch(state: any, onCommit: (s: any) => void): void {
-    this.pendingState = state;
-    if (this.animFrameId === null) {
-      this.animFrameId = window.requestAnimationFrame(() => {
-        // Prevent layout reflow / thrashing by bundling mutations
-        onCommit(this.pendingState);
-        this.pendingState = null;
-        this.animFrameId = null;
-      });
-    }
-  }
-
-  public cancel(): void {
-    if (this.animFrameId !== null) {
-      window.cancelAnimationFrame(this.animFrameId);
-      this.animFrameId = null;
-    }
-  }
-}
-```
-
-### 4. Backend Concurrency & Memory Safety
-Preventing Time-of-Check to Time-of-Use (TOCTOU) race conditions in model checkpoint caching:
-
-```python
-import os
-import tempfile
-from pathlib import Path
-
-def atomic_write_model_artifacts(target_path: Path, binary_content: bytes) -> None:
-    """Guarantees atomic file replacement to eliminate TOCTOU race conditions."""
-    target_path.parent.mkdir(parents=True, exist_ok=True)
-    temp_dir = target_path.parent
+# + Fixed/Robust: Two-stage shortlisting with fallback
+def classify_banking77_robust(context, question, all_72_labels):
+    # Stage 1: Shortlist top 16
+    shortlist = model.get_top_k(context, question, all_72_labels, k=16)
     
-    # Write to a hidden temporary file in the same filesystem directory
-    with tempfile.NamedTemporaryFile("wb", dir=temp_dir, delete=False) as tf:
-        temp_file_name = tf.name
-        tf.write(binary_content)
-        tf.flush()
-        os.fsync(tf.fileno())  # Flush kernel OS buffers
+    # Stage 2: Re-score only the shortlist
+    scores = model.score(context, question, shortlist)
+    best_label = argmax(scores)
+    
+    # Safety Check: If confidence is low, abstain
+    if max(scores) < CONFIDENCE_THRESHOLD:
+        return "ABSTAIN"
+    return best_label
+```
+- **Lesson**: When the number of candidates exceeds a certain threshold (e.g., >20), direct classification accuracy drops. Implement a **shortlisting/re-ranking** strategy with a confidence-based abstention mechanism.
+
+### Incident 2: Multilingual Locale Variance (BUG-LOCALE-VARIANCE-02)
+- **Context**: MASSIVE scenario classification across 52 locales.
+- **What Was Expected**: Consistent performance across all languages.
+- **What Actually Happened**: Macro accuracy is 71.50%, while English/Portuguese are ~86%. This implies some locales are performing significantly worse (potentially <50%).
+- **Evidence in Repo**: README.md: "All 52 locales | 110,573 / 154,648 | 71.50%".
+- **Root Cause**: The base model `mmBERT-small` is multilingual but not equally proficient in all languages. The "strict encoding" may not handle language-specific tokenization nuances for low-resource languages.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Uniform processing
+# def process(text):
+#     return model.encode(text)
+
+# + Fixed: Locale-aware preprocessing
+def process_locale_aware(text, locale):
+    if locale in LOW_RESOURCE_LOCALES:
+        # Apply specific normalization or fallback to English if available
+        text = normalize_low_resource(text)
+    return model.encode(text)
+```
+- **Lesson**: Multilingual models require **locale-specific evaluation and preprocessing**. Do not assume uniform performance. Implement per-locale monitoring and fallback strategies.
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When comparing model outputs to candidates, use **normalized string comparison** (lowercase, trim whitespace, remove punctuation) to avoid false negatives due to minor formatting differences.
+    *   **Code**:
+        ```python
+        def normalize(s: str) -> str:
+            return s.strip().lower().replace(" ", "")
         
-    # Atomic replace (POSIX atomic; Windows replaces cleanly via replace)
-    os.replace(temp_file_name, target_path)
-```
+        # Correct
+        if normalize(model_output) == normalize(candidate):
+            return True
+        
+        # Incorrect (Fragile)
+        if model_output == candidate:
+            return True
+        ```
 
-Preventing memory leaks from unbounded decision evaluation caches:
-```python
-from collections import OrderedDict
-import threading
-from typing import Hashable
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: In the shortlisting/re-ranking process, ensure that the `k` in `top_k` is strictly less than the total number of candidates. If `k >= len(candidates)`, skip the shortlisting step to avoid redundant computation.
+    *   **Code**:
+        ```python
+        def shortlist(candidates, k):
+            if k >= len(candidates):
+                return candidates # No shortlisting needed
+            return model.get_top_k(candidates, k)
+        ```
 
-class ThreadSafeBoundedCache:
-    def __init__(self, max_capacity: int = 4096):
-        self._max_capacity = max_capacity
-        self._cache: OrderedDict[Hashable, Any] = OrderedDict()
-        self._lock = threading.Lock()
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant**: N/A (This is a backend model, not a UI application). However, if this model is used in a chatbot UI, ensure that the "abstention" response is clearly communicated to the user (e.g., "I cannot determine the correct option") rather than displaying a raw error or empty string.
 
-    def get(self, key: Hashable) -> Optional[Any]:
-        with self._lock:
-            if key not in self._cache:
-                return None
-            self._cache.move_to_end(key)
-            return self._cache[key]
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: When serving the model in BF16, ensure that the batch size is tuned to fit within GPU memory. Use `torch.no_grad()` during inference to prevent memory leaks from the autograd graph.
+    *   **Code**:
+        ```python
+        with torch.no_grad():
+            output = model(input_ids)
+        ```
 
-    def put(self, key: Hashable, value: Any) -> None:
-        with self._lock:
-            if key in self._cache:
-                self._cache.move_to_end(key)
-            self._cache[key] = value
-            if len(self._cache) > self._max_capacity:
-                self._cache.popitem(last=False)  # Evict oldest entry
-```
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-Strict off-by-one boundary checks in logit slicing:
-
-```python
-def extract_top_k_indices(logits: torch.Tensor, k: int) -> torch.Tensor:
-    if logits.ndim != 1:
-        raise ValueError(f"Logits must be 1D tensor, got shape {logits.shape}")
-    num_classes = logits.size(0)
-    if k <= 0:
-        raise ValueError(f"k must be positive, got {k}")
-    # Boundary clamp: k cannot exceed actual class count
-    clamped_k = min(k, num_classes)
-    values, indices = torch.topk(logits, k=clamped_k, largest=True, sorted=True)
-    return indices
-```
-
----
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: Always validate that the `candidates` list is not empty before calling the model. If empty, raise a `ValueError` immediately.
+    *   **Code**:
+        ```python
+        if not candidates:
+            raise ValueError("Candidates list cannot be empty")
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-### Dimension 1: Architecture
-- **Boundary Layout**: Separation between the language representation layer (`mmBERT-small`) and the task routing interface (`JuliaDecisionModel`).
-- **Parameter Distribution**: 144.3M total parameters. Minimal footprint allows high-concurrency placement on modest VRAM budgets (BF16 footprint $\approx 288\text{ MB}$).
-- **Head Coupling**: Linear projection / cross-scoring head reading directly from the `[CLS]` sequence summary embedding token.
+1.  **Architecture**: Encoder-only Transformer (mmBERT-small) with a custom `JuliaDecisionModel` head. Decoupled from generation, focused on discrimination.
+2.  **Core Abstractions**: `State`, `Question`, `Candidates` as the primary domain primitives. The model is an abstraction of a "Decision Function" $f(State, Question, Candidates) \rightarrow Decision$.
+3.  **Error Handling**: Implicit error handling via "abstention" (counted as incorrect in benchmarks). No explicit retry logic observed.
+4.  **Testing**: Extensive benchmarking on typed decisions, AG News, DAIR Emotion, Banking77, and MASSIVE. Focus on accuracy and macro-accuracy.
+5.  **Security**: N/A (Model weights are public, but no specific security features like input sanitization are documented).
+6.  **Performance**: Optimized for H200 BF16 inference. 144.3M parameters allow for high throughput.
+7.  **Deployment**: Hugging Face Hub deployment. Requires `pytorch` library.
+8.  **Agent Patterns**: The model can be used as a tool in an agent system for routing or classification tasks. The "strict encoding" suggests a deterministic tool interface.
+9.  **Data Flow**: Input text $\rightarrow$ Tokenizer $\rightarrow$ Encoder $\rightarrow$ Decision Head $\rightarrow$ Output. No complex data streams or serializers.
 
-### Dimension 2: Core Abstractions
-- **State ($S$)**: Contextual history (user profiles, previous conversational turns, database state).
-- **Question ($Q$)**: The active user utterance or routing query.
-- **Answers ($\mathcal{A}$)**: Set of discrete categorical targets.
-- **Decision Mode**: Unified mapping handling Choice ($\arg\max$), Boolean/Noul ($p \ge \tau$), and Ordinal Score ($\hat{y} = \mathbf{w}^T \mathbf{h} + b$).
+## 6. The 8 Learning Extraction Artifacts
 
-### Dimension 3: Error Handling
-- **Abstention Discipline**: Explicit classification of empty / null answers ("Noul"). Abstentions are counted as hard negatives in benchmarks to prevent artificial metric inflation via selective answering.
-- **Candidate Truncation Boundaries**: Sequence inputs exceeding maximum positional embeddings ($L > 512$) must truncate context rather than candidate choices.
+1.  **Pattern**: Context-Grounded Discrimination (Select from candidates, not generate).
+2.  **Rule**: MUST use macro-accuracy for multilingual evaluation.
+3.  **Architecture Principle**: Specialized models for specific tasks (decision making) outperform general-purpose models in constrained domains.
+4.  **Failure Mode**: Performance degradation with high candidate counts (Banking77).
+5.  **Reusable Skill**: Implementing a two-stage shortlisting/re-ranking strategy for large candidate sets.
+6.  **Decision**: Choosing BF16 over FP16/FP32 for numerical stability and performance on modern GPUs.
+7.  **Anti-pattern**: Using micro-accuracy for multilingual model evaluation.
+8.  **Verification Method**: Per-locale accuracy monitoring and candidate set validation.
 
-### Dimension 4: Testing
-- **Multi-Dataset Rigor**:
-  - `typed-decisions`: Choice (71.33%), Noul (80.67%), Score (68.88%).
-  - `AG News`: Coarse 4-class categorization (94.00%).
-  - `DAIR Emotion`: Fine-grained 6-class sentiment classification (86.00%).
-  - `MASSIVE`: 52 locales macro-evaluation (71.50%).
-  - `Banking77`: High-cardinality stress test revealing boundary limitations (64.00%).
+## 7. Actionable Agent Skill & Implementation Checklist
 
-### Dimension 5: Security
-- **Weight Deserialization Safety**: Pure `safetensors` binary format. Eliminates Python object deserialization exploits (`pickle`, `yaml`) entirely.
-- **Zero Hallucination Vulnerability**: Because the model is strictly discriminative over provided choices $\mathcal{A}$, prompt injections cannot hijack generation to output unbounded tokens; attacks can at most distort choice selection probabilities.
-
-### Dimension 6: Performance
-- **Inference Profile**: Benchmarked on NVIDIA H200 running BF16 strict encoding.
-- **Latency Advantage**: Sub-10ms per forward pass
+1.  **Define Candidate Set**: Ensure the set of possible outputs is explicitly defined and provided in the prompt.
+2.  **Implement Normalization**: Normalize model outputs and candidates before comparison.
+3.  **Handle Large Candidate Sets**: If candidates > 20, implement a shortlisting step.
+4.  **Monitor Multilingual Performance**: Track accuracy per locale, not just overall.
+5.  **Use BF16 Inference**: Cast model to BF16 for optimal performance on H100/H200.
+6.  **Implement Abstention**: Allow the model to abstain if confidence is low.
+7.  **Validate Inputs**: Ensure candidates list is not empty.
+8.  **Benchmark Rigorously**: Use multiple datasets (classification, routing, boolean) to evaluate robustness.

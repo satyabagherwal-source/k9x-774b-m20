@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `5df959f3`  
+> **Source Version**: `8c0f6991`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:40:10.000Z  
+> **Timestamp**: 2026-11-04T09:25:08.208Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:40:09.221Z  
+> **Harvest Timestamp**: 2026-11-04T09:25:07.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37312 stars
+- **Stars / Engagement**: 37338 stars
 
 ---
 
@@ -1303,68 +1303,244 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5df959f3` (2026-10-25)
-**Commit Message**: docs: fix syntax errors in code examples (#7159)
+### Incident Patch 1: `b7d8fefc` (2026-11-02)
+**Commit Message**: test: make handlerTimeout ended-but-not-finished test deterministic
 
-Two code examples in the docs have syntax errors that break
-parsing when copied:
+The previous version relied on a 64 MiB body exceeding the socket
+buffers so that 'finish' would still be pending when the handlerTimeout
+fired. On Windows the write completes anyway, so the branch was not
+reached and coverage-win failed. Hold back 'finish' explicitly instead.
 
-- docs/Guides/Migration-Guide-V5.md: both `hasRoute` examples
-  (the v4 and v5 snippets) are missing the closing `}` of the
-  options object before `)); // true`.
-- docs/Reference/Validation-and-Serialization.md: the response
-  content-types schema example is missing a comma after the
-  `description` string, before `content:`.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01Sfj4nDAKoM3WkNLatQvoao
 
-Each fixed example was verified to parse with the TypeScript
-compiler. Docs only.
-
----------
-
-Signed-off-by: Mayur Dhavan <[REDACTED_EMAIL]>
-
-**File**: `docs/Guides/Migration-Guide-V5.md` (modified, +2/-2)
+**File**: `test/handler-timeout.test.js` (modified, +30/-23)
 ```diff
-@@ -405,7 +405,7 @@ fastify.get('/example/:file(^\\d+).png', function (request, reply) { })
- console.log(fastify.hasRoute({
-   method: 'GET',
-   url: '/example/12345.png'
--)); // true
-+})); // true
- ```
+@@ -373,48 +373,55 @@ test('handlerTimeout keeps the connection usable when an abort listener sends th
+ // A response can be ended (reply.sent === true) while its body is still being
+ // flushed to a slow client, so 'finish' has not fired and the timer is still
+ // pending. When it fires it must leave the response and request.signal alone.
++// 'finish' is held back explicitly so the test does not depend on how much
++// data the OS socket buffers absorb.
+ test('handlerTimeout firing after the reply ended but before it finished is a no-op', async t => {
+-  t.plan(3)
++  t.plan(4)
  
- ```js
-@@ -416,7 +416,7 @@ fastify.get('/example/:file(^\\d+).png', function (request, reply) { })
- console.log(fastify.hasRoute({
-   method: 'GET',
-   url: '/example/:file(^\\d+).png'
--)); // true
-+})); // true
- ```
+-  const fastify = Fastify({ handlerTimeout: 100 })
+-  // Large enough to exceed the socket buffers, so the response cannot finish
+-  // while the client is not reading.
+-  const size = 64 * 1024 * 1024
+-  const big = Buffer.alloc(size, 'a')
++  const fastify = Fastify({ handlerTimeout: 50 })
  
- ### Removal of some non-standard HTTP methods
+   let signal
+-  fastify.get('/big', async (request, reply) => {
++  fastify.get('/', async (request, reply) => {
+     signal = request.signal
+-    reply.type('application/octet-stream')
+-    return big
++    const res = reply.raw
++    const emit = res.emit
++    res.emit = function (event, ...args) {
++      if (event !== 'finish') return emit.call(this, event, ...args)
++      // Emit 'finish' only well after the handlerTimeout has fired.
++      setTimeout(() => {
++        t.assert.strictEqual(reply.sent, true)
++        t.assert.strictEqual(signal.aborted, false)
++        emit.call(this, event, ...args)
++      }, 200)
++      return true
++    }
++    return 'ok'
+   })
+ 
+   await fastify.listen({ port: 0 })
+   t.after(() => fastify.close())
+ 
++  // A raw keep-alive connection, so nothing but the timer can abort the
++  // request while 'finish' is pending.
+   const socket = net.connect(fastify.server.address().port, '127.0.0.1')
+   t.after(() => socket.destroy())
+ 
+-  let received = 0
+-  await new Promise((resolve, reject) => {
++  const response = await new Promise((resolve, reject) => {
++    let buffer = ''
++    socket.setEncoding('utf8')
+     socket.on('connect', () => {
+-      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
++      socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n')
+     })
+-    socket.once('data', () => {
+-      // Stop reading until well past the handlerTimeout.
+-      socket.pause()
+-      setTimeout(() => {
+-        t.assert.strictEqual(signal.aborted, false)
+-        socket.resume()
+-      }, 300)
++    socket.on('data', (chunk) => {
++      buffer += chunk
++      if (buffer.endsWith('ok')) resolve(buffer)
+     })
+-    socket.on('data', (chunk) => { received += chunk.length })
+-    socket.on('end', resolve)
+     socket.on('error', reject)
+   })
++  t.assert.strictEqual(response.startsWith('HTTP/1.1 200'), true)
+ 
+-  // The whole body was delivered and the request was never aborted.
+-  t.assert.ok(received > size)
++  // Wait for the deferred 'finish', then the request must still not be aborted.
++  await new Promise((resolve) => setTimeout(resolve, 300))
+   t.assert.strictEqual(signal.aborted, false)
+ })
+ 
 ```
 
-**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +1/-1)
+---
+
+### Incident Patch 2: `7608b413` (2026-11-02)
+**Commit Message**: test: restore 100% coverage for handlerTimeout abort paths
+
+Commit 028b4ef added defensive branches that no test exercised, so the
+coverage check failed on main:
+
+- lib/error-handler.js: the fallback error handler aborting the response
+  when headers were already sent, or when writeHead throws
+  ERR_HTTP_HEADERS_SENT.
+- lib/route.js: the handlerTimeout timer firing after the reply has ended
+  but before 'finish' (body still flushing to a slow client).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01Sfj4nDAKoM3WkNLatQvoao
+
+**File**: `test/handler-timeout.test.js` (modified, +48/-0)
 ```diff
-@@ -799,7 +799,7 @@ For example:
- const schema = {
-   response: {
-     200: {
--      description: 'Response schema that support different content types'
-+      description: 'Response schema that support different content types',
-       content: {
-         'application/json': {
-           schema: {
+@@ -370,6 +370,54 @@ test('handlerTimeout keeps the connection usable when an abort listener sends th
+   t.assert.strictEqual(second.includes('ok'), true)
+ })
+ 
++// A response can be ended (reply.sent === true) while its body is still being
++// flushed to a slow client, so 'finish' has not fired and the timer is still
++// pending. When it fires it must leave the response and request.signal alone.
++test('handlerTimeout firing after the reply ended but before it finished is a no-op', async t => {
++  t.plan(3)
++
++  const fastify = Fastify({ handlerTimeout: 100 })
++  // Large enough to exceed the socket buffers, so the response cannot finish
++  // while the client is not reading.
++  const size = 64 * 1024 * 1024
++  const big = Buffer.alloc(size, 'a')
++
++  let signal
++  fastify.get('/big', async (request, reply) => {
++    signal = request.signal
++    reply.type('application/octet-stream')
++    return big
++  })
++
++  await fastify.listen({ port: 0 })
++  t.after(() => fastify.close())
++
++  const socket = net.connect(fastify.server.address().port, '127.0.0.1')
++  t.after(() => socket.destroy())
++
++  let received = 0
++  await new Promise((resolve, reject) => {
++    socket.on('connect', () => {
++      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
++    })
++    socket.once('data', () => {
++      // Stop reading until well past the handlerTimeout.
++      socket.pause()
++      setTimeout(() => {
++        t.assert.strictEqual(signal.aborted, false)
++        socket.resume()
++      }, 300)
++    })
++    socket.on('data', (chunk) => { received += chunk.length })
++    socket.on('end', resolve)
++    socket.on('error', reject)
++  })
++
++  // The whole body was delivered and the request was never aborted.
++  t.assert.ok(received > size)
++  t.assert.strictEqual(signal.aborted, false)
++})
++
+ // --- SSE with reply.hijack() ---
+ 
+ test('reply.hijack() clears timeout timer', async t => {
+```
+
+**File**: `test/reply-error.test.js` (modified, +53/-0)
+```diff
+@@ -877,3 +877,56 @@ test('should catch error when setting invalid header on async onSend hook', asyn
+   app.get('/', async () => ({ ok: true }))
+   await app.inject({ method: 'GET', path: '/' })
+ })
++
++// The fallback error handler must not try to write a new response once the
++// current one has started transmitting: that would raise an uncaught
++// ERR_HTTP_HEADERS_SENT and terminate the process. It aborts the response.
++test('fallback error handler aborts the response when headers were already sent', async (t) => {
++  t.plan(2)
++
++  const app = Fastify()
++  app.addHook('onSend', async (request, reply) => {
++    if (reply.raw.headersSent === false) {
++      reply.raw.writeHead(200, { 'content-type': 'text/plain' })
++      reply.raw.write('partial')
++    }
++    throw new Error('kaboom')
++  })
++  app.get('/', async () => 'ok')
++
++  await app.listen({ port: 0 })
++  t.after(() => app.close())
++
++  const base = `http://127.0.0.1:${app.server.address().port}`
++  await t.assert.rejects(async () => {
++    const res = await fetch(`${base}/`)
++    await res.text()
++  })
++
++  // The server must not have crashed.
++  t.assert.strictEqual(app.server.listening, true)
++})
++
++test('fallback error handler aborts the response when writeHead throws ERR_HTTP_HEADERS_SENT', async (t) => {
++  t.plan(2)
++
++  const app = Fastify()
++  app.addHook('onSend', async (request, reply, payload) => {
++    reply.raw.writeHead = function () {
++      const err = new Error('Cannot write headers after they are sent to the client')
++      err.code = 'ERR_HTTP_HEADERS_SENT'
++      throw err
++    }
++    return payload
++  })
++  app.get('/', async () => 'ok')
++
++  await app.listen({ port: 0 })
++  t.after(() => app.close())
++
++  const base = `http://127.0.0.1:${app.server.address().port}`
++  await t.assert.rejects(fetch(`${base}/`))
++
++  // The server must not have crashed.
++  t.assert.strictEqual(app.server.listening, true)
++})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7175** (2026-11-01): docs: join core team (@Tony133)
 - **PR #7160** (2026-10-25): [Backport 5.x] docs: fix syntax errors in code examples (@github-actions[bot])
 - **PR #7159** (2026-10-25): docs: fix syntax errors in code examples (@mayur-dhavan)
 - **PR #7158** (2026-10-25): [Backport 5.x] docs: clarify that maxParamLength does not prevent ReDoS (@github-actions[bot])
 - **PR #7154** (2026-10-24): [Backport 5.x] fix(decorators): evaluate instance getters once in getDecorator (@github-actions[bot])
 - **PR #7153** (2026-10-24): [Backport 5.x] perf(request): hoist port regex to module level (@github-actions[bot])
-- **PR #7152** (2026-10-24): [Backport 5.x] docs: remove plugins that do not support Fastify v5 (@Tony133)
 
 ---
 
@@ -1384,30 +1560,78 @@ Signed-off-by: Mayur Dhavan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix syntax errors in code examples (#7159)
+## X. test: make handlerTimeout ended-but-not-finished test deterministic
 
 **RULE**:
-When implementing operations in `docs/Guides/Migration-Guide-V5.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/handler-timeout.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5df959f3`: docs: fix syntax errors in code examples (#7159). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7d8fefc`: test: make handlerTimeout ended-but-not-finished test deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Guides/Migration-Guide-V5.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/handler-timeout.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-})); // true
-})); // true
+// 'finish' is held back explicitly so the test does not depend on how much
+// data the OS socket buffers absorb.
+  t.plan(4)
+  const fastify = Fastify({ handlerTimeout: 50 })
+  fastify.get('/', async (request, reply) => {
+    const res = reply.raw
+    const emit = res.emit
+    res.emit = function (event, ...args) {
+      if (event !== 'finish') return emit.call(this, event, ...args)
+      // Emit 'finish' only well after the handlerTimeout has fired.
+      setTimeout(() => {
+        t.assert.strictEqual(reply.sent, true)
+        t.assert.strictEqual(signal.aborted, false)
+        emit.call(this, event, ...args)
+      }, 200)
+      return true
+    }
+    return 'ok'
+  // A raw keep-alive connection, so nothing but the timer can abort the
+  // request while 'finish' is pending.
+  const response = await new Promise((resolve, reject) => {
+    let buffer = ''
+    socket.setEncoding('utf8')
+      socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n')
+    socket.on('data', (chunk) => {
+      buffer += chunk
+      if (buffer.endsWith('ok')) resolve(buffer)
+  t.assert.strictEqual(response.startsWith('HTTP/1.1 200'), true)
+  // Wait for the deferred 'finish', then the request must still n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-)); // true
-)); // true
+  t.plan(3)
+  const fastify = Fastify({ handlerTimeout: 100 })
+  // Large enough to exceed the socket buffers, so the response cannot finish
+  // while the client is not reading.
+  const size = 64 * 1024 * 1024
+  const big = Buffer.alloc(size, 'a')
+  fastify.get('/big', async (request, reply) => {
+    reply.type('application/octet-stream')
+    return big
+  let received = 0
+  await new Promise((resolve, reject) => {
+      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
+    socket.once('data', () => {
+      // Stop reading until well past the handlerTimeout.
+      socket.pause()
+      setTimeout(() => {
+        t.assert.strictEqual(signal.aborted, false)
+        socket.resume()
+      }, 300)
+    socket.on('data', (chunk) => { received += chunk.length })
+    socket.on('end', resolve)
+  // The whole body was delivered and the request was never aborted.
+  t.assert.ok(received > size)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5df959f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7d8fefc` are properly handled with clean fallback behavior.

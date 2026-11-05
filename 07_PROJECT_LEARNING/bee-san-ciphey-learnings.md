@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source**: github ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
-> **Source Version**: `867d27e8`  
+> **Source Version**: `f7ad87dd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:28:16.041Z  
+> **Timestamp**: 2026-11-05T02:25:52.124Z  
 > **Learning ID**: `learn-github-bee-san-ciphey`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:28:15.690Z  
+> **Harvest Timestamp**: 2026-11-05T02:25:52.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21709 stars
+- **Stars / Engagement**: 21743 stars
 
 ---
 
@@ -1055,817 +1055,602 @@ criterion_main!(benches);
 
 ```
 
-### Core Architecture Module: `benches/plaintext.rs`
+### Core Architecture Module: `benches/e2e/corpus.py`
 ```
-//! Plaintext-detection benchmark: how well the checkers tell plaintext from the junk a
-//! search produces, how long each check takes, and what that does to whole searches.
-//!
-//! ```text
-//! cargo bench --bench plaintext                      # checkers and decoders, both splits
-//! cargo bench --bench plaintext -- --split=heldout   # only the held-out half
-//! cargo bench --bench plaintext -- --e2e             # also the end-to-end corpora (minutes)
-//! cargo bench --bench plaintext -- --e2e-only
-//! cargo bench --bench plaintext -- --examples        # list misclassified samples
-//! cargo bench --bench plaintext -- --check < lines   # classify each line of stdin
-//! cargo bench --bench plaintext -- --tsv=out.tsv     # also write the numbers as TSV
-//! cargo bench --bench plaintext -- --dump=FILE       # every sample with every verdict
-//! cargo bench --bench plaintext -- --vigenere-keys   # Vigenère key search by key length
-//! cargo bench --bench plaintext -- --no-captured     # leave out the captured candidates
-//! cargo bench --bench plaintext -- --checkers='^Athena'  # only some checkers
-//! cargo bench --bench plaintext -- --checkers=Athena@Medium --repeat=20  # for perf stat
-//! cargo bench --bench plaintext -- --capture=FILE    # re-capture search candidates
-//! ```
-//!
-//! The data set is in `benches/data/plaintext/` (see docs/plaintext-detection.md):
-//!
-//! * `curated.tsv` and `gutenberg.tsv`: plaintext of many kinds, plus a few fixed negatives
-//!   (hashes) and informational categories (other languages, formats Ciphey ignores on
-//!   purpose) that are reported but left out of the totals. Formats that look like
-//!   credentials are generated at start-up instead (`generated_formats`).
-//! * Near misses derived from those here, the way decoders produce them: wrong Caesar,
-//!   ROT47, Atbash, railfence and Vigenère keys, reversed text, one layer of encoding left,
-//!   and random noise and mojibake. Each inherits its source's split.
-//! * `captured.tsv`: texts the A* search really asked the checkers about on the end-to-end
-//!   corpora (written by `--capture`), which are not the answer.
-//! * `e2e.tsv` and `search.toml`: end-to-end inputs with their expected plaintext.
-//!
-//! Every sample is in the `train` or the `heldout` split. Thresholds are tuned on train
-//! only; held-out is the check that they generalise.
-//!
-//! Deterministic: fixed data and an xorshift generator with a fixed seed. Timings are not:
-//! they depend on the machine and its load.
+#!/usr/bin/env python3
+"""Generate corpus v1 of Ciphey's end-to-end benchmark (benches/data/e2e/corpus-v1.tsv).
 
-mod common;
+The corpus is frozen: it was generated once with SEED and committed, and this script must
+reproduce it byte for byte (`--check`). Changing the cases means a new version
+(corpus-v2.tsv) so that results stay comparable. See docs/benchmark-e2e.md.
 
-use std::collections::{BTreeMap, HashMap, HashSet};
-use std::fmt::Write as _;
-use std::hint::black_box;
-use std::io::Write as _;
-use std::sync::Mutex;
-use std::time::{Duration, Instant};
+Every ciphertext comes from an implementation that is independent of Ciphey's decoders:
+Python's standard library, PyPI reference packages (pinned in setup.sh), CyberChef's
+operations (through cyberchef.py) or a short encoder written here from the published
+definition, cited next to it. `--verify` decodes every case again with a second, independent
+implementation where one exists. Which cases CyberChef is comparable on comes from Magic's
+own detection (cyberchef_tools), so generating needs the CyberChef install too.
 
-use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
-use ciphey::checkers::{
-    athena::Athena,
-    checker_type::{Check, Checker},
-    code_checker::CodeChecker,
-    english::EnglishChecker,
-    json_checker::JsonChecker,
-    lemmeknow_checker::LemmeKnow,
-    password::PasswordChecker,
-    CheckerTypes,
-};
-use ciphey::config::Config;
-use ciphey::decoders::{
-    atbash_decoder::AtbashDecoder,
-    caesar_decoder::CaesarDecoder,
-    interface::{Crack, Decoder},
-    railfence_decoder::RailfenceDecoder,
-    rot47_decoder::ROT47Decoder,
-    vigenere_decoder::VigenereDecoder,
-};
-use ciphey::{perform_cracking, CipheyError};
-use data_encoding::{BASE32, HEXLOWER, HEXUPPER};
-use gibberish_or_not::{is_gibberish, Sensitivity};
+    benches/e2e/setup.sh gen && benches/e2e/setup.sh node                     # into .tools/
+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node          # write
+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --check  # compare
+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --verify # decode again
+"""
 
-// ------------------------------------------------------------------ data set --
+import argparse
+import base64
+import binascii
+import bz2
+import email.charset
+import email.header
+import gzip
+import hashlib
+import hmac
+import json
+import lzma
+import math
+import os
+import quopri
+import random
+import re
+import string
+import sys
+import urllib.parse
+import warnings
+import zlib
 
-/// Train or held-out.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-enum Split {
-    Train,
-    Heldout,
-}
+warnings.filterwarnings("ignore", category=SyntaxWarning)  # pycipher 0.5.2's regex strings
 
-impl Split {
-    fn parse(s: &str) -> Split {
-        match s {
-            "train" => Split::Train,
-            "heldout" => Split::Heldout,
-            other => panic!("unknown split {other:?}"),
-        }
-    }
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+DATA = os.path.join(ROOT, "benches", "data", "e2e")
+VERSION = 1
+SEED = 20261104
+OUT = os.path.join(DATA, f"corpus-v{VERSION}.tsv")
 
-    fn name(self) -> &'static str {
-        match self {
-            Split::Train => "train",
-            Split::Heldout => "heldout",
-        }
-    }
-}
+# Tools a case can be comparable on. Every case runs on Ciphey.
+CIPHEY, PY, CC, CCI = "ciphey", "python-ciphey", "cyberchef", "cyberchef-intensive"
 
-/// What a checker should say about a sample.
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum Label {
-    /// Plaintext: should be accepted.
-    Pos,
-    /// Not the plaintext: should be rejected.
-    Neg,
-    /// Reported, but not counted in any total: Ciphey doesn't claim to accept these
-    /// (other languages, formats it ignores on purpose).
-    Info,
-}
+# ---------------------------------------------------------------------------------------
+# Helpers
 
-/// One sample.
-struct Sample {
-    text: String,
-    /// Category, e.g. `en_phrase` or `caesar_wrong`.
-    cat: String,
-    /// What the sample is a kind of, or derived from: `english`, `flag`, `json`, `code`,
-    /// `net`, `lemmeknow`, `password`, `noise` or `search`.
-    family: &'static str,
-    label: Label,
-    split: Split,
-}
 
-/// Label and family of a category in the TSV files.
-fn tsv_category(cat: &str) -> (Label, &'static str) {
-    match cat {
-        "en_word" | "en_phrase" | "en_sentence" | "en_chat" | "en_technical" | "en_formal"
-        | "en_ctf" | "en_paragraph" | "en_verse" | "en_literary" | "en_nospace" => {
-            (Label::Pos, "english")
-        }
-        "ctf_flag" => (Label::Pos, "flag"),
-        "json" => (Label::Pos, "json"),
-        "code" => (Label::Pos, "code"),
-        "url" | "email" | "ip" => (Label::Pos, "net"),
-        "lemmeknow" => (Label::Pos, "lemmeknow"),
-        "password" => (Label::Pos, "password"),
-        "non_english" => (Label::Info, "non_english"),
-        "lemmeknow_ignored" => (Label::Info, "lemmeknow_ignored"),
-        "hash" => (Label::Neg, "noise"),
-        "search_answer" => (Label::Pos, "search"),
-        "search_hard" | "search_random" => (Label::Neg, "search"),
-        other => panic!("unknown category {other:?} in benches/data/plaintext"),
-    }
-}
+def u(data):
+    """bytes -> str (UTF-8)."""
+    return data.decode("utf-8")
 
-/// Path of a file in `benches/data/plaintext`.
-fn data_file(name: &str) -> std::path::PathBuf {
-    common::data_path("plaintext").join(name)
-}
 
-/// Undoes the TSV escapes `\t`, `\n`, `\r` and `\\`.
-fn unescape(field: &str) -> String {
-    let mut out = String::with_capacity(field.len());
-    let mut chars = field.chars();
-    while let Some(c) = chars.next() {
-        if c != '\\' {
-            out.push(c);
-            continue;
-        }
-        match chars.next() {
-            Some('t') => out.push('\t'),
-            Some('n') => out.push('\n'),
-            Some('r') => out.push('\r'),
-            Some('\\') => out.push('\\'),
-            Some(other) => {
-                out.push('\\');
-                out.push(other);
-            }
-            None => out.push('\\'),
-        }
-    }
-    out
-}
+def text(fn):
+    """Lifts a str -> str encoder to the bytes -> bytes interface."""
 
-/// Applies the TSV escapes.
-fn escape(text: &str) -> String {
-    text.replace('\\', "\\\\")
-        .replace('\t', "\\t")
-        .replace('\n', "\\n")
-        .replace('\r', "\\r")
-}
+    def wrapped(data, rng):
+        return fn(u(data), rng).encode("utf-8")
 
-/// The non-comment lines of a TSV file, split on tabs. A missing file is empty.
-fn read_tsv(name: &str) -> Vec<Vec<String>> {
-    let path = data_file(name);
-    let Ok(text) = std::fs::read_to_string(&path) else {
-        return Vec::new();
-    };
-    text.lines()
-        // Git may check the files out with CRLF line ends on Windows
-        .map(|line| line.strip_suffix('\r').unwrap_or(line))
-        .filter(|line| !line.is_empty() && !line.starts_with('#'))
-        .map(|line| line.split('\t').map(unescape).collect())
-        .collect()
-}
+    wrapped.__name__ = fn.__name__
+    return wrapped
 
-/// `category<TAB>split<TAB>text` files.
-fn load_samples(name: &str) -> Vec<Sample> {
-    read_tsv(name)
-        .into_iter()
-        .map(|fields| {
-            let [cat, split, text] = <[String; 3]>::try_from(fields)
-                .unwrap_or_else(|f| panic!("{name}: expected 3 fields, got {f:?}"));
-            let (label, family) = tsv_category(&cat);
-            Sample {
-                text,
-                cat,
-                family,
-                label,
-                split: Split::parse(&split),
-            }
-        })
-        .collect()
-}
 
-/// xorshift64* so the data set does not depend on the `rand` crate version.
-struct Rng(u64);
+def to_radix(n, digits):
+    if n == 0:
+        return digits[0]
+    out = []
+    while n:
+        n, r = divmod(n, len(digits))
+        out.append(digits[r])
+    return "".join(reversed(out))
 
-impl Rng {
-    fn next(&mut self) -> u64 {
-        let mut x = self.0;
-        x ^= x >> 12;
-        x ^= x << 25;
-        x ^= x >> 27;
-        self.0 = x;
-        x.wrapping_mul(0x2545_F491_4F6C_DD1D)
-    }
 
-    /// Inclusive range.
-    fn range(&mut self, lo: usize, hi: usize) -> usize {
-        lo + (self.next() % (hi - lo + 1) as u64) as usize
-    }
+def shift_letters(s, k):
+    """Caesar shift by k, keeping case and everything that isn't an ASCII letter."""
+    out = []
+    for c in s:
+        if "A" <= c <= "Z":
+            out.append(chr((ord(c) - 65 + k) % 26 + 65))
+        elif "a" <= c <= "z":
+            out.append(chr((ord(c) - 97 + k) % 26 + 97))
+        else:
+            out.append(c)
+    return "".join(out)
 
-    fn pick<T: Copy>(&mut self, items: &[T]) -> T {
-        items[self.range(0, items.len() - 1)]
-    }
-}
 
-/// A hash of `text` for choices that must not depend on the order samples are generated
-/// in: FNV-1a, then MurmurHash3's finaliser, because FNV-1a's low bits are poorly mixed
-/// (bit 0 is the parity of the number of odd bytes).
-fn text_hash(text: &str) -> u64 {
-    let mut h = text.bytes().fold(0xCBF2_9CE4_8422_2325u64, |h, b| {
-        (h ^ u64::from(b)).wrapping_mul(0x100_0000_01B3)
-    });
-    h ^= h >> 33;
-    h = h.wrapping_mul(0xFF51_AFD7_ED55_8CCD);
-    h ^= h >> 33;
-    h = h.wrapping_mul(0xC4CE_B9FE_1A85_EC53);
-    h ^ (h >> 33)
-}
+def map_letters(s, fn):
+    """Applies fn(index of letter among the letters, value 0-25) -> 0-25 to every ASCII letter,
+    keeping case and non-letters."""
+    out, i = [], 0
+    for c in s:
+        if c.isascii() and c.isalpha():
+            base = 65 if c.isupper() else 97
+            out.append(chr(fn(i, ord(c) - base) % 26 + base))
+            i += 1
+        else:
+            out.append(c)
+    return "".join(out)
 
-// ------------------------------------------------- what decoders produce --
 
-fn caesar(s: &str, k: u8) -> String {
-    s.chars()
-        .map(|c| match c {
-            'a'..='z' => (((c as u8 - b'a' + k) % 26) + b'a') as char,
-            'A'..='Z' => (((c as u8 - b'A' + k) % 26) + b'A') as char,
-            _ => c,
-        })
-        .collect()
-}
+def letters_only(s):
+    return "".join(c for c in s.upper() if "A" <= c <= "Z")
 
-fn atbash(s: &str) -> String {
-    s.chars()
-        .map(|c| match c {
-            'a'..='z' => (b'z' - (c as u8 - b'a')) as char,
-            'A'..='Z' => (b'Z' - (c as u8 - b'A')) as char,
-            _ => c,
-        })
-        .collect()
-}
 
-/// Rotates printable ASCII (`!` to `~`) by `shift`; ROT47 is 47.
-fn rot47(s: &str, shift: u32) -> String {
-    s.chars()
-        .map(|c| {
-            let b = c as u32;
-            if (33..=126).contains(&b) {
-                char::from_u32(((b - 33 + shift) % 94) + 33).unwrap()
-            } else {
-                c
-            }
-        })
-        .collect()
-}
+# ---------------------------------------------------------------------------------------
+# Encoders: (data: bytes, rng) -> bytes. Text encoders work on the UTF-8 text.
 
-fn reverse(s: &str) -> String {
-    s.chars().rev().collect()
-}
+# Base encodings (Python stdlib, RFC 4648)
+def b64(data, rng):
+    return base64.b64encode(data)
 
-/// Letters only, 
-```
 
-### Core Architecture Module: `benches/search.rs`
-```
-//! The A* search end to end, through `ciphey::perform_cracking`, on the corpus in
-//! `benches/data/search.toml`:
-//!
-//! * `search/plaintext`: input that is already plaintext (early exit),
-//! * `search/single`: one encoding or cipher,
-//! * `search/multi`: two or three stacked layers,
-//! * `search/no_solution`: input with no plaintext to find. These end when the decoders
-//!   run out of candidates, when the search settles on a false positive, or when the
-//!   fixed 1 second timeout fires, so each sample is bounded by the timeout.
-//!
-//! The cache database is in memory (see `common::init`), so every iteration is a
-//! cache miss and does the full search.
-//!
-//! Run: `cargo bench --bench search` (add `-- search/multi` to run one group).
+def b64url(data, rng):  # RFC 4648 §5 alphabet, padding dropped as in JWTs and URLs
+    return base64.urlsafe_b64encode(data).rstrip(b"=")
 
-mod common;
 
-use ciphey::config::Config;
-use ciphey::{perform_cracking, CipheyError};
-use common::{SearchCase, SearchFixtures};
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion, SamplingMode};
-use std::hint::black_box;
-use std::time::Duration;
+B64_STD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
-/// Search timeout. The timer counts whole seconds, so 1 is the smallest useful value.
-const TIMEOUT_SECS: u32 = 1;
 
-/// Unoptimised builds (`cargo test --benches`) are too slow to finish some searches
-/// within the timeout, so they only smoke-run the benchmarks without checking results.
-const VERIFY: bool = !cfg!(debug_assertions);
+def b64_itoa64(data, rng):  # crypt(3)'s itoa64 alphabet, CyberChef's "itoa64" From Base64 preset
+    alt = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    return base64.b64encode(data).translate(bytes.maketrans(B64_STD.encode(), alt.encode()))
 
-fn search_config() -> Config {
-    Config {
-        timeout: TIMEOUT_SECS,
-        ..common::bench_config()
-    }
-}
 
-/// Per-iteration setup: a fresh config, and decoder statistics cleared so every search
-/// explores in the same order a fresh `ciphey` process would (see `common::fresh_search`).
-fn setup() -> Config {
-    common::fresh_search();
-    search_config()
-}
+def b32(data, rng):
+    return base64.b32encode(data)
 
-fn search(c: &mut Criterion) {
-    common::init(search_config());
-    let fixtures: SearchFixtures = common::load("search.toml");
 
-    for kind in ["plaintext", "single", "multi", "no_solution"] {
-        let mut group = c.benchmark_group(format!("search/{kind}"));
-        group.sampling_mode(SamplingMode::Flat);
-        if kind == "no_solution" {
-            // Up to ~1 s per iteration.
-            group
-                .sample_size(10)
-                .warm_up_time(Duration::from_secs(1))
-                .measurement_time(Duration::from_secs(8));
-        } else {
-            group
-                .sample_size(20)
-                .warm_up_time(Duration::from_secs(1))
-                .measurement_time(Duration::from_secs(3));
-        }
+def b32hex(data, rng):  # RFC 4648 §7
+    return base64.b32hexencode(data)
 
-        for case in fixtures.case.iter().filter(|c| c.kind == kind) {
-            verify(case);
-            group.bench_function(&case.name, |b| {
-                b.iter_batched(
-                    setup,
-                    |config| perform_cracking(black_box(&case.input), config),
-                    BatchSize::PerIteration,
-                )
-            });
-        }
-        group.finish();
-    }
-}
 
-/// Checks the search still ends the way the fixture says before timing it.
-fn verify(case: &SearchCase) {
-    if !VERIFY {
-        return;
-    }
-    let result = perform_cracking(&case.input, setup());
-    match (case.kind.as_str(), case.outcome.as_deref()) {
-        ("no_solution", Some("exhausted")) => assert!(
-            matches!(result, Ok(None)),
-            "{}: expected the search to exhaust, got {result:?}",
-            case.name
-        ),
-        ("no_solution", Some("timeout")) => assert!(
-            matches!(result, Err(CipheyError::Timeout { .. })),
-            "{}: expected a timeout, got {result:?}",
-            case.name
-        ),
-        ("no_solution", _) => {}
-        _ => {
-            let found = result
-                .unwrap_or_else(|e| panic!("{}: search failed: {e}", case.name))
-                .unwrap_or_else(|| panic!("{}: search found nothing", case.name));
-            assert_eq!(
-                found.text[0],
-                case.expected,
-                "{}: wrong plaintext via {:?}",
-                case.name,
-                found.path.iter().map(|p| p.decoder).collect::<Vec<_>>()
-            );
-        }
-    }
-}
+B32_STD = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
-criterion_group!(benches, search);
-criterion_main!(benches);
+
+def b32_crockford(data, rng):  # https://www.crockford.com/base32.html, 5 bits at a time
+    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32_STD, b"0123456789ABCDEFGHJKMNPQRSTVWXYZ"))
+
+
+def zbase32(data, rng):  # https://philzimmermann.com/docs/human-oriented-base-32-encoding.txt
+    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32_STD, b"ybndrfg8ejkmcpqxot1uwisza345h769"))
+
+
+def b16_spaced(data, rng):
+    return " ".join(f"{x:02X}" for x in data).encode()
+
+
+def hexlower(data, rng):
+    return data.hex().encode()
+
+
+def base36(data, rng):  # int.from_bytes(text, "big") in radix 36, as PyPI base36.dumps
+    return to_radix(int.from_bytes(data, "big"), "0123456789abcdefghijklmnopqrstuvwxyz").encode()
+
+
+def bigint(data, rng):  # PyCryptodome bytes_to_long
+    return str(int.from_bytes(data, "big")).encode()
+
+
+def bigint_named(data, rng):  # as RSA challenges print it
+    return f"m = {int.from_bytes(data, 'big')}".encode()
+
+
+def b45(data, rng):  # RFC 9285, PyPI base45
+    import base45
+
+    return base45.b45encode(data)
+
+
+def _b58(alphabet):
+    def enc(data, rng):
+        import base58
+
+        return base58.b58encode(data, alphabet=alphabet)
+
+    return enc
+
+
+B58_BITCOIN = b"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+B58_RIPPLE = b"rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"
+B58_FLICKR = b"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+b58_bitcoin, b58_ripple, b58_flickr = _b58(B58_BITCOIN), _b58(B58_RIPPLE), _b58(B58_FLICKR)
+
+
+def b58_monero(data, rng):
+    # Monero's base58 (src/common/base58.cpp): 8-byte blocks, each written big-endian in a
+    # fixed number of digits (11 for a full block), Bitcoin's alphabet.
+    full_size = [0, 2, 3, 5, 6, 7, 9, 10, 11]
+    out = []
+    for i in range(0, len(data), 8):
+        block = data[i : i + 8]
+        n = int.from_bytes(block, "big")
+        digits = []
+        for _ in range(full_size[len(block)]):
+            n, r = divmod(n, 58)
+            digits.append(B58_BITCOIN[r : r + 1])
+        out.append(b"".join(reversed(digits)))
+    return b"".join(out)
+
+
+def b62(data, rng):  # PyPI pybase62 encodebytes (what Python Ciphey decodes)
+    import base62
+
+    return base62.encodebytes(data).encode()
+
+
+def b65536(data, rng):  # PyPI base65536 (qntm's encoding)
+    import base65536
+
+    return base65536.encode(data).encode()
+
+
+def b85(data, rng):  # RFC 1924 alphabet, 4-byte groups (git, Python's b85encode)
+    return base64.b85encode(data)
+
+
+def a85(data, rng):
+    return base64.a85encode(data)
+
+
+def a85_adobe(data, rng):
+    return base64.a85encode(data, adobe=True)
+
+
+Z85_ALPHABET = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"
+
+
+def z85(data, rng):  # ZeroMQ RFC 32 (https://rfc.zeromq.org/spec/32/); length a multiple of 4
+    assert len(data) % 4 == 0
+    out = []
+    for i in range(0, len(data), 4):
+        n = int.from_bytes(data[i : i + 4], "big")
+        chunk = []
+        for _ in range(5):
+            n, r = divmod(n, 85)
+            chunk.append(Z85_ALPHABET[r : r + 1])
+        out.append(b"".join(reversed(chunk)))
+    return b"".join(out)
+
+
+def b91(data, rng):  # PyPI base91 (basE91, Joachim Henke)
+    import base91
+
+    return base91.encode(data).encode()
+
+
+def b92(data, rng):  # PyPI base92 (thenoviceoof's Base92)
+    import base92
+
+    out = base92.encode(data)
+    return out.encode() if isinstance(out, str) else out
+
+
+def b100(data, rng):  # AdamNiederer/base100: byte b is U+1F3F7 + b
+    return "".join(chr(0x1F3F7 + x) for x in data).encode()
+
+
+def uuencode(data, rng):  # binascii.b2a_uu, with the header and trailer of uuencode(1)
+    lines = ["begin 644 message.txt"]
+    for i in range(0, len(data), 45):
+        lines.append(binascii.b2a_uu(data[i : i + 45], backtick=True).decode().rstrip("\n"))
+    lines += ["`", "end"]
+    return "\n".join(lines).encode()
+
+
+XX_ALPHABET = "+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+
+def xxencode(data, rng):  # uuencode's layout with the xxencode alphabet (xxencode(1))
+    lines = ["begin 644 message.txt"]
+    for i in range(0, len(data), 45):
+        chunk = data[i : i + 45]
+        line = [XX_ALPHABET[len(chunk)]]
+        padded = chunk + b"\0" * (-len(chunk) % 3)
+        for j in range(0, len(padded), 3):
+            n = int.from_bytes(padded[j : j + 3], "big")
+            line += [XX_ALPHABET[(n >> s) & 63] for s in (18, 12, 6, 0)]
+        lines.append("".join(line))
+    lines += [XX_ALPHABET[0], "end"]
+    return "\n".join(lines).encode()
+
+
+BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+
+
+def _bech32_polymod(values):  # BIP-173 reference (sipa/bech32, MIT)
+    gen = [0x3B6A57B2, 0x26508E6D, 0x1EA119FA, 0x3D4233DD, 0x2A1462B3]
+    chk = 1
+    for v in values:
+        top = chk >> 25
+        chk = (chk & 0x1FFFFFF) << 5 ^ v
+        for i in range(5):
+            chk ^= gen[i] if ((top >> i) & 1) else 0
+    return chk
+
+
+def _convertbits(data, frombits, tobits):
+    acc = bits = 0
+    out = []
+    maxv = (1 << tobits) - 1
+    for value in data:
+        acc = (acc << frombits) | value
+        bits += frombits
+        while bits >= tobits:
+            bits -= tobits
+            out.append((acc >> bits) & maxv)
+    if bits:
+        out.append((acc << (tobits - bits)) & maxv)
+    return out
+
+
+def bech32(data, rng, hrp="msg"):
+    values = _convertbits(data, 8, 5)
+    expanded = [ord(x) >> 5 for x in hrp] + [0] + [ord(x) & 31 for x in hrp]
+    polymod = _bech32_polymod(expanded + values + [0] * 6) ^ 1
 
 ```
 
-### Core Architecture Module: `benches/startup.rs`
+### Core Architecture Module: `benches/e2e/cyberchef.mjs`
 ```
-//! Startup and per-call overhead outside the search itself.
-//!
-//! * `startup/config`: building the default config, loading `~/.ciphey/config.toml`
-//!   (the fixture copy, see below) and loading a 5,000 word wordlist.
-//! * `startup/cache`: the SQLite cache every `perform_cracking` call goes through, on a
-//!   database file in a scratch dir: schema setup, cache lookups, and an insert.
-//! * `startup/perform_cracking`: plaintext input end to end against that file, as a
-//!   cache hit and as a cache miss (the miss includes writing the result to the cache).
-//! * `startup/cli` (Unix only): the real `ciphey` binary started as a subprocess, which
-//!   adds process start, argument parsing, logger setup and every lazy `static` the run
-//!   touches (LemmeKnow compiles its ~130 regexes on first use).
-//!
-//! `HOME` is pointed at a scratch dir under `target/tmp` holding `benches/data/config.toml`,
-//! so nothing reads or writes your real `~/.ciphey` and the first-run wizard never starts.
-//! The scratch dir is removed afterwards.
-//!
-//! Run: `cargo bench --bench startup`
+// CyberChef worker for benches/e2e: reads one JSON request per line on stdin and writes one
+// JSON reply per line on stdout. Started by cyberchef.py (the runner's CyberChef adapter and
+// corpus.py's CyberChef encoders), never by hand:
+//
+//   node cyberchef.mjs <dir that holds node_modules/cyberchef>
+//
+// Requests:
+//   {"op": "magic", "input": "...", "depth": 3, "intensive": true, "extLang": false, "top": 5}
+//     Runs the Magic operation (CyberChef's src/core/lib/Magic.mjs speculativeExecution, the
+//     same call as the Magic operation in the web app) and bakes the recipe of the first `top`
+//     suggestions on the whole input, because Magic only keeps the first 100 characters of
+//     each result. `ms` is the time of Magic plus the bake of the first suggestion.
+//   {"op": "bake", "input": "...", "recipe": [{"op": "To Base64", "args": [...]}]}
+//     Runs a recipe and returns its output as text (UTF-8).
+//   {"op": "checks", "hex": "..."}     (corpus.py) the operations Magic would try on these bytes:
+//     the names of the operations whose detection patterns match (Magic's findMatchingInputOps)
+//   {"op": "jsfuck", "input": "..."}   (corpus.py) JSFuck.encode from npm jsfuck, if installed
+//   {"op": "eval", "code": "..."}      (corpus.py --verify) String(eval(code))
+import { pathToFileURL } from "node:url";
+import { join } from "node:path";
+import { createInterface } from "node:readline";
+import { createRequire } from "node:module";
 
-mod common;
+const dir = process.argv[2];
+if (!dir) {
+    process.stderr.write("usage: node cyberchef.mjs <dir with node_modules/cyberchef>\n");
+    process.exit(2);
+}
+const chef = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/node/index.mjs")).href)).default;
+const MagicLib = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/core/lib/Magic.mjs")).href)).default;
 
-use ciphey::config::{load_wordlist, Config};
-use ciphey::decoders::crack_results::CrackResult;
-use ciphey::decoders::interface::{Decoder, DefaultDecoder};
-use ciphey::perform_cracking;
-use ciphey::storage::database::{self, CacheEntry};
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion, SamplingMode};
-use std::hint::black_box;
-use std::path::{Path, PathBuf};
-use std::time::Duration;
+/** The text of a dish: UTF-8 decoded, as the web app shows it. */
+function dishText(dish) {
+    const buf = dish.get("ArrayBuffer");
+    return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(buf));
+}
 
-/// Already plaintext, so `perform_cracking` returns before searching.
-const PLAINTEXT: &str =
-    "Meet me at the old lighthouse after midnight and bring the map, the key and a torch.";
-/// `PLAINTEXT` in base64: one search step.
-const BASE64: &str = "TWVldCBtZSBhdCB0aGUgb2xkIGxpZ2h0aG91c2UgYWZ0ZXIgbWlkbmlnaHQgYW5kIGJyaW5nIHRoZSBtYXAsIHRoZSBrZXkgYW5kIGEgdG9yY2gu";
-/// Never inserted, for cache misses.
-const NOT_CACHED: &str = "this text is never written to the cache";
-
-/// Scratch dir under `target/`, removed on drop.
-struct TempDir(PathBuf);
-
-impl TempDir {
-    fn new() -> Self {
-        // CARGO_TARGET_TMPDIR is Cargo's scratch space for benches and integration tests,
-        // fixed at compile time (`target/tmp`).
-        let path = Path::new(env!("CARGO_TARGET_TMPDIR"))
-            .join(format!("ciphey-bench-startup-{}", std::process::id()));
-        std::fs::create_dir_all(path.join(".ciphey")).expect("could not create scratch dir");
-        std::fs::copy(
-            common::data_path("config.toml"),
-            path.join(".ciphey").join("config.toml"),
-        )
-        .expect("could not copy config.toml");
-        TempDir(path)
+/** Runs a recipe on text input and returns its output as text, or null if it throws. */
+async function bakeText(input, recipe) {
+    try {
+        return dishText(await chef.bake(input, recipe));
+    } catch (e) {
+        return null;
     }
 }
 
-impl Drop for TempDir {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_dir_all(&self.0);
+async function handle(req) {
+    if (req.op === "bake") {
+        return { output: dishText(await chef.bake(req.input, req.recipe)) };
     }
-}
-
-fn startup(c: &mut Criterion) {
-    let home = TempDir::new();
-    // Safe here: nothing else is running yet. `dirs::home_dir` reads HOME on Unix.
-    std::env::set_var("HOME", &home.0);
-    let db_path = home.0.join("bench.sqlite");
-    database::DB_PATH
-        .set(Some(db_path.clone()))
-        .expect("the database path was already set");
-    ciphey::config::set_global_config(common::bench_config());
-
-    config_benches(c);
-    cache_benches(c, &db_path);
-    #[cfg(unix)]
-    cli_benches(c, &home.0);
-    #[cfg(not(unix))]
-    eprintln!("skipping startup/cli: HOME can only be redirected on Unix");
-}
-
-fn config_benches(c: &mut Criterion) {
-    let mut group = c.benchmark_group("startup/config");
-    group
-        .warm_up_time(Duration::from_millis(500))
-        .measurement_time(Duration::from_secs(2));
-
-    group.bench_function("default", |b| b.iter(Config::default));
-
-    // What the CLI does first: read and parse ~/.ciphey/config.toml (HOME is the scratch dir).
-    #[cfg(unix)]
-    {
-        let loaded = ciphey::config::get_config_file_into_struct();
-        assert_eq!(loaded.timeout, 5, "did not read benches/data/config.toml");
-        group.bench_function("load_config_file", |b| {
-            b.iter(ciphey::config::get_config_file_into_struct)
+    if (req.op === "checks") {
+        const bytes = Uint8Array.from(req.hex.match(/../g) || [], h => parseInt(h, 16));
+        const ops = new MagicLib(bytes.buffer).findMatchingInputOps().map(m => m.op);
+        return { ops: [...new Set(ops)] };
+    }
+    if (req.op === "jsfuck") {
+        const { JSFuck } = createRequire(join(dir, "package.json"))("jsfuck");
+        return { output: JSFuck.encode(req.input, false, false) };
+    }
+    if (req.op === "eval") {
+        return { output: String((0, eval)(req.code)) };
+    }
+    if (req.op === "magic") {
+        const t0 = performance.now();
+        const dish = await chef.magic(req.input, {
+            depth: req.depth ?? 3,
+            intensiveMode: !!req.intensive,
+            extensiveLanguageSupport: !!req.extLang,
         });
+        const options = dish.value;
+        const top = Math.max(1, req.top ?? 5);
+        const results = [];
+        let ms = null;
+        for (let i = 0; i < options.length && i < top; i++) {
+            const o = options[i];
+            const recipe = o.recipe.map(step => ({ op: step.op, args: step.args }));
+            const output = recipe.length ? await bakeText(req.input, recipe) : req.input;
+            if (i === 0) ms = performance.now() - t0;
+            results.push({ recipe: recipe.map(step => step.op), recipe_full: recipe, output });
+        }
+        if (ms === null) ms = performance.now() - t0;
+        return { ms, count: options.length, results };
     }
-
-    let wordlist = common::data_path("wordlist.txt");
-    assert_eq!(load_wordlist(&wordlist).unwrap().len(), 5000);
-    group.bench_function("load_wordlist_5k", |b| {
-        b.iter(|| load_wordlist(black_box(&wordlist)).unwrap())
-    });
-    group.finish();
+    throw new Error(`unknown op ${req.op}`);
 }
 
-fn cache_entry(text: &str) -> CacheEntry {
-    let mut step = CrackResult::new(&Decoder::<DefaultDecoder>::default(), text.to_string());
-    step.unencrypted_text = Some(vec![text.to_string()]);
-    CacheEntry {
-        uuid: uuid::Uuid::new_v4(),
-        encoded_text: text.to_string(),
-        decoded_text: text.to_string(),
-        path: vec![step],
-        execution_time_ms: 1,
+const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
+process.stdout.write(JSON.stringify({ ready: true }) + "\n");
+for await (const line of rl) {
+    if (!line.trim()) continue;
+    let reply;
+    try {
+        reply = await handle(JSON.parse(line));
+    } catch (e) {
+        reply = { error: String(e && e.stack || e) };
     }
+    process.stdout.write(JSON.stringify(reply) + "\n");
 }
-
-fn cache_benches(c: &mut Criterion, db_path: &Path) {
-    database::setup_database().expect("could not create the cache database");
-    database::insert_cache(&cache_entry(PLAINTEXT)).expect("could not seed the cache");
-
-    let mut group = c.benchmark_group("startup/cache");
-    group
-        .warm_up_time(Duration::from_millis(500))
-        .measurement_time(Duration::from_secs(2));
-    group.bench_function("setup_database", |b| {
-        b.iter(|| database::setup_database().unwrap())
-    });
-    let missing = NOT_CACHED.to_string();
-    assert!(database::read_cache(&missing).unwrap().is_none());
-    group.bench_function("read_miss", |b| {
-        b.iter(|| database::read_cache(black_box(&missing)).unwrap())
-    });
-    let present = PLAINTEXT.to_string();
-    assert!(database::read_cache(&present).unwrap().is_some());
-    group.bench_function("read_hit", |b| {
-        b.iter(|| database::read_cache(black_box(&present)).unwrap())
-    });
-    // A new row each iteration, committed (and synced) like a real run.
-    group.bench_function("insert", |b| {
-        b.iter_batched(
-            || cache_entry(NOT_CACHED),
-            |entry| database::insert_cache(&entry).unwrap(),
-            BatchSize::SmallInput,
-        )
-    });
-    database::delete_cache(NOT_CACHED).unwrap();
-    group.finish();
-
-    let mut group = c.benchmark_group("startup/perform_cracking");
-    group
-        .warm_up_time(Duration::from_millis(500))
-        .measurement_time(Duration::from_secs(3));
-    let hit = perform_cracking(PLAINTEXT, common::bench_config()).unwrap();
-    assert_eq!(hit.unwrap().text[0], PLAINTEXT);
-    group.bench_function("plaintext_cache_hit", |b| {
-        b.iter_batched(
-            common::bench_config,
-            |config| perform_cracking(black_box(PLAINTEXT), config),
-            BatchSize::SmallInput,
-        )
-    });
-    // Remove the row before every iteration so each one misses and writes it back.
-    group.bench_function("plaintext_cache_miss", |b| {
-        b.iter_batched(
-            || {
-                database::delete_cache(PLAINTEXT).unwrap();
-                common::bench_config()
-            },
-            |config| perform_cracking(black_box(PLAINTEXT), config),
-            BatchSize::PerIteration,
-        )
-    });
-    group.finish();
-    let _ = std::fs::remove_file(db_path);
-}
-
-#[cfg(unix)]
-fn cli_benches(c: &mut Criterion, home: &Path) {
-    use std::process::{Command, Stdio};
-
-    let db = home.join(".ciphey").join("database.sqlite");
-    let run = |text: &str| {
-        let status = Command::new(env!("CARGO_BIN_EXE_ciphey"))
-            .args(["--disable-human-checker", "--text", text])
-            .env("HOME", home)
-            .env_remove("RUST_LOG")
-            .stdin(Stdio::null())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .expect("could not start the ciphey binary");
-        assert!(status.success(), "ciphey exited with {status}");
-    };
-    let output = Command::new(env!("CARGO_BIN_EXE_ciphey"))
-        .args(["--disable-human-checker", "--text", BASE64])
-        .env("HOME", home)
-        .env("NO_COLOR", "1")
-        .env_remove("RUST_LOG")
-        .stdin(Stdio::null())
-        .output()
-        .expect("could not start the ciphey binary");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        stdout.contains(PLAINTEXT),
-        "unexpected CLI output: {stdout}"
-    );
-
-    let mut group = c.benchmark_group("startup/cli");
-    group
-        .sampling_mode(SamplingMode::Flat)
-        .sample_size(20)
-        .warm_up_time(Duration::from_secs(1))
-        .measurement_time(Duration::from_secs(4));
-    // Cache hit: the cheapest possible run.
-    run(PLAINTEXT);
-    group.bench_function("plaintext_cache_hit", |b| b.iter(|| run(PLAINTEXT)));
-    // Fresh database: create the schema, check the input, store the result.
-    group.bench_function("plaintext_fresh_db", |b| {
-        b.iter_batched(
-            || {
-                let _ = std::fs::remove_file(&db);
-            },
-            |()| run(PLAINTEXT),
-            BatchSize::PerIteration,
-        )
-    });
-    // Fresh database plus a one-step search.
-    group.bench_function("base64_fresh_db", |b| {
-        b.iter_batched(
-            || {
-                let _ = std::fs::remove_file(&db);
-            },
-            |()| run(BASE64),
-            BatchSize::PerIteration,
-        )
-    });
-    group.finish();
-}
-
-criterion_group!(benches, startup);
-criterion_main!(benches);
 
 ```
 
-### Core Architecture Module: `examples/decode.rs`
+### Core Architecture Module: `benches/e2e/cyberchef.py`
 ```
-//! Runs single Ciphey decoders and the plaintext detector through the library API.
-//!
-//! ```sh
-//! cargo run --example decode                                # a short tour
-//! cargo run --example decode -- list                        # every decoder and its key
-//! cargo run --example decode -- caesar 'Uryyb jbeyq'        # crack with one decoder
-//! cargo run --example decode -- vigenere 'Rijvs uyvjn' KEY  # decrypt with a key
-//! cargo run --example decode -- detect 192.168.0.1          # is it plaintext?
-//! ```
+"""Client for cyberchef.mjs, a long-lived Node process that runs CyberChef's Node API.
 
-use std::process::ExitCode;
+Used by run.py (the `cyberchef` tool: Magic) and corpus.py (CyberChef's encoders). One
+process serves every case, so CyberChef's start-up (about 1.5 s to import its 500
+operations) is paid once and not counted in a case's time. A request that doesn't answer
+within its timeout kills the process; the next request starts a new one.
+"""
 
-use ciphey::detection::{detect_plaintext, DetectOptions, Detection};
-use ciphey::{decode_with, decoders, list_decoders, CipheyError, DecodeOptions, Decoded};
+import json
+import os
+import select
+import subprocess
+import tempfile
+import time
 
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    let args: Vec<&str> = args.iter().map(String::as_str).collect();
-    let result = match args.as_slice() {
-        [] => tour(),
-        ["list"] => {
-            list();
-            Ok(())
-        }
-        ["detect", text] => {
-            detect(text);
-            Ok(())
-        }
-        [decoder, text] => decode(decoder, text, None),
-        [decoder, text, key] => decode(decoder, text, Some(key)),
-        _ => {
-            eprintln!("usage: decode [list | detect <text> | <decoder> <text> [<key>]]");
-            return ExitCode::from(2);
-        }
-    };
-    match result {
-        Ok(()) => ExitCode::SUCCESS,
-        Err(error) => {
-            eprintln!("error: {error}");
-            ExitCode::FAILURE
-        }
-    }
-}
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.realpath(os.path.join(HERE, "..", ".."))
 
-/// Shows each part of the API once.
-fn tour() -> Result<(), CipheyError> {
-    println!("An encoding, with its function:");
-    show(&decoders::base64("aGVsbG8gd29ybGQ="));
 
-    println!("\nA cipher without its key, cracked:");
-    show(&decoders::caesar("Uryyb jbeyq"));
+class CyberChefError(RuntimeError):
+    pass
 
-    println!("\nThe same cipher with its key:");
-    show(&decoders::caesar_with_key("Uryyb jbeyq", 13));
 
-    println!("\nA decoder picked by name (an alias here), with a key:");
-    show(&decode_with(
-        "vigenère",
-        "Rijvs uyvjn",
-        &DecodeOptions::with_key("KEY"),
-    )?);
+class CyberChef:
+    def __init__(self, root, node="node"):
+        """`root` is the directory that holds node_modules/cyberchef (setup.sh's .tools/node). It
+        has to be inside the repository: the benchmark reads nothing outside it."""
+        root = os.path.realpath(root)
+        if not root.startswith(ROOT + os.sep):
+            raise CyberChefError(f"{root} is outside the repository {ROOT} (setup.sh installs CyberChef in .tools/node)")
+        self.root = root
+        self.node = node
+        self.proc = None
+        self.startup_seconds = None
+        self.stderr = tempfile.TemporaryFile()
+        if not os.path.isdir(os.path.join(self.root, "node_modules", "cyberchef")):
+            raise CyberChefError(f"no node_modules/cyberchef under {self.root} (run benches/e2e/setup.sh)")
 
-    println!("\nWhen no decoding passes the checks, you get them all:");
-    let decoded = decoders::caesar("xkcd");
-    println!(
-        "  {} candidates from {}, none marked as plaintext",
-        decoded.candidates.len(),
-        decoded.decoder
-    );
+    def version(self):
+        with open(os.path.join(self.root, "node_modules", "cyberchef", "package.json"), encoding="utf-8") as fh:
+            return json.load(fh)["version"]
 
-    println!("\nPlaintext detection:");
-    for text in ["192.168.0.1", "hello there general", "aGVsbG8gdGhlcmU="] {
-        detect(text);
-    }
+    def start(self):
+        t0 = time.perf_counter()
+        self.proc = subprocess.Popen(
+            [self.node, "--no-warnings", os.path.join(HERE, "cyberchef.mjs"), self.root],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=self.stderr,
+            text=True,
+            encoding="utf-8",
+            bufsize=1,
+        )
+        reply = self._read(180)
+        if not reply or not reply.get("ready"):
+            self.close()
+            self.stderr.seek(0)
+            raise CyberChefError("CyberChef worker didn't start: " + self.stderr.read().decode("utf-8", "replace")[-2000:])
+        self.startup_seconds = time.perf_counter() - t0
 
-    println!(
-        "\n{} decoders in all: cargo run --example decode -- list",
-        list_decoders().len()
-    );
-    Ok(())
-}
+    def _read(self, timeout):
+        """One reply line, or None after `timeout` seconds."""
+        deadline = time.monotonic() + timeout
+        fd = self.proc.stdout.fileno()
+        while True:
+            left = deadline - time.monotonic()
+            if left <= 0:
+                return None
+            ready, _, _ = select.select([fd], [], [], left)
+            if ready:
+                line = self.proc.stdout.readline()
+                if not line:
+                    raise CyberChefError("CyberChef worker exited")
+                return json.loads(line)
 
-/// Lists every decoder, with its aliases and the key it takes.
-fn list() {
-    for decoder in list_decoders() {
-        let mut names = vec![decoder.function];
-        names.extend(decoder.aliases);
-        println!("{} ({})", decoder.name, names.join(", "));
-        if let Some(key) = decoder.key_format {
-            println!("    key: {key}");
-        }
-    }
-}
+    def request(self, req, timeout=600):
+        """Sends one request. Returns the reply, or None on timeout (the worker is killed)."""
+        if self.proc is None or self.proc.poll() is not None:
+            self.start()
+        self.proc.stdin.write(json.dumps(req, ensure_ascii=False) + "\n")
+        self.proc.stdin.flush()
+        reply = self._read(timeout)
+        if reply is None:
+            self.close()
+            return None
+        if "error" in reply:
+            raise CyberChefError(reply["error"])
+        return reply
 
-/// Runs one decoder by name, cracking or decrypting with `key`.
-fn decode(decoder: &str, text: &str, key: Option<&str>) -> Result<(), CipheyError> {
-    let options = match key {
-        Some(key) => DecodeOptions::with_key(key),
-        None => DecodeOptions::default(),
-    };
-    show(&decode_with(decoder, text, &options)?);
-    Ok(())
-}
+    def bake(self, text, recipe):
+        return self.request({"op": "bake", "input": text, "recipe": recipe})["output"]
 
-/// Says whether `text` is plaintext and what it is.
-fn detect(text: &str) {
-    match detect_plaintext(text, &DetectOptions::default()) {
-        Some(detection) => println!("  {text:?}: {}", describe(&detection)),
-        None => println!("  {text:?}: not plaintext"),
-    }
-}
+    def magic(self, text, depth=3, intensive=True, ext_lang=False, top=5, timeout=600):
+        return self.request(
+            {"op": "magic", "input": text, "depth": depth, "intensive": intensive, "extLang": ext_lang, "top": top},
+            timeout,
+        )
 
-/// Prints a decoder's candidates, the accepted one marked with a tick.
-fn show(decoded: &Decoded) {
-    if decoded.is_empty() {
-        println!(
-            "  {}: nothing, the text isn't in its format",
-            decoded.decoder
-        );
-    }
-    for candidate in decoded.candidates.iter().take(5) {
-        let mark = if candidate.is_plaintext() { '✓' } else { ' ' };
-        print!("  {mark} {}: {:?}", decoded.decoder, candidate.text);
-        if let Some(key) = &candidate.key {
-            print!(" (key {key})");
-        }
-        if let Some(detection) = &candidate.detection {
-            print!(", {}", describe(detection));
-        }
-        println!();
-    }
-    if decoded.candidates.len() > 5 {
-        println!("    and {} more", decoded.candidates.len() - 5);
-    }
-}
+    def close(self):
+        if self.proc is not None:
+            try:
+                self.proc.kill()
+                self.proc.wait(10)
+            except Exception:
+                pass
+            self.proc = None
 
-/// What a checker found, in words.
-fn describe(detection: &Detection) -> String {
-    match detection.confidence {
-        Some(confidence) => format!(
-            "{} (by the {}, confidence {confidence})",
-            detection.description, detection.checker
-        ),
-        None => format!("{} (by the {})", detection.description, detection.checker),
-    }
-}
+```
+
+### Core Architecture Module: `benches/e2e/python_ciphey.py`
+```
+"""Run Python Ciphey (PyPI `ciphey`, 5.x) on one input and print the result as JSON.
+
+run.py starts this once per case with the Python of a venv that has Python Ciphey installed
+(see setup.sh), a fresh HOME and the input on stdin:
+
+    <venv>/bin/python python_ciphey.py < INPUT
+
+It does what `ciphey -q -t TEXT` does (ciphey/ciphey.py `main`): load the default config,
+lower the verbosity below zero, which turns the human checker (the y/N prompt) off, and run
+the default searcher and checker. `-q` only prints the plaintext; this prints the decoders
+of the path too:
+
+    {"status": "answer", "plaintext": "...", "path": ["base64", "caesar"]}
+    {"status": "none"}
+"""
+
+import io
+import json
+import os
+import sys
+
+
+def main():
+    text = io.TextIOWrapper(sys.stdin.buffer, encoding="utf-8").read()
+
+    from ciphey import iface
+
+    config = iface.Config()
+    os.makedirs(iface.Config.get_default_dir(), exist_ok=True)
+    config.load_file(create=True)
+    # `-q`: verbosity -1. EzCheck only adds the human checker at verbosity >= 0.
+    config.verbosity += -1
+    config.update_log_level(config.verbosity)
+    config.update("checker", None)
+    config.update("searcher", None)
+    config.update("default_dist", None)
+    config.complete_config()
+
+    res = config.objs["searcher"].search(text)
+    if res is None:
+        print(json.dumps({"status": "none"}))
+        return
+    value = res.path[-1].result.value
+    if isinstance(value, bytes):
+        value = value.decode("utf-8", "replace")
+    print(json.dumps({"status": "answer", "plaintext": value, "path": [step.name for step in res.path[1:]]}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -1898,486 +1683,576 @@ fn describe(detection: &Detection) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47215766` (2026-10-28)
-**Commit Message**: feat(decoders): add Pollux (Morse with digits) cracker (#1121)
+### Incident Patch 1: `f7ad87dd` (2026-11-04)
+**Commit Message**: bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines for master, 0.12.0, Python Ciphey and CyberChef (#1137)
 
-Cracks the Pollux cipher (#1000): Morse code with each dot, dash and separator written as a digit of its class. The key search tries the digit sets that split the text into Morse letters, splits the other digits into dots and dashes, ranks the readings by quadgram score and shows the checker at most 5 that are mostly dictionary words, at Low sensitivity. Text of 40 to 4,000 digits only (random digit strings of 40 are accepted 4 times in 10,000, of 45 or more never); the key is reported as . = 1 4 7, - = 2 5 8, x = 3 6 9 0. Bench fixtures and an end-to-end test included.
+* bench: end-to-end benchmark with corpus v1 and baselines for master, 0.12.0, Python Ciphey and CyberChef
 
-Closes #1000.
+- benches/data/e2e/corpus-v1.tsv: 376 frozen cases (every decoder Ciphey has, 39 encodings
+  and ciphers it doesn't have yet, hashes, chains of 2-5 layers, CTF flags, short and long
+  texts, 12 other languages, plaintext and no-answer inputs), tagged with category, the tools
+  each case is comparable on and expected failures.
+- benches/e2e/corpus.py generates it with a fixed seed from benches/data/e2e/plaintexts.tsv
+  (own sentences and public-domain Gutenberg paragraphs) using independent encoders;
+  --check reproduces it byte for byte, --verify (verify.py) decodes 267 of the 315 cases
+  with layers again with CyberChef, PyPI and the standard library.
+- benches/e2e/run.py runs any ciphey binary (fresh HOME, -d, 5 s timeout, no prompts),
+  Python Ciphey 5.14.0 and CyberChef 11.5.0 Magic, alone or two interleaved (A/B), and
+  writes a TSV and a summary (accuracy by category, median/p90/p99 time, false positives
+  and time to give up, uptime).
 
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
-
-**File**: `benches/data/decoders.toml` (modified, +18/-0)
+**File**: `.github/workflows/quickstart.yml` (modified, +9/-0)
 ```diff
-@@ -938,6 +938,24 @@ success = true
- input = "13 24 35 23 15 54  24 43  11 33  11 45 44 34 32 11 44 15 14  14 15 13 34 14 24 33 22  44 34 34 31  54 34 45  22 24 51 15  24 44  15 33 13 42 54 35 44 15 14  34 42  15 33 13 34 14 15 14  44 15 53 44  11 33 14  24 44  44 42 24 15 43  44 34  52 34 42 25  34 45 44  52 23 11 44  52 11 43  14 34 33 15  44 34  24 44  52 24 44 23 34 45 44  54 34 45  23 11 51 24 33 22  44 34  25 33 34 52  44 23 15  25 15 54  34 42  15 51 15 33  44 23 15  13 24 35 23 15 42  24 44  43 15 11 42 13 23 15 43  44 23 42 34 45 22 23  32 11 33 54  35 34 43 43 24 12 31 15  14 15 13 34 14 24 33 22 43  13 23 15 13 25 43  15 11 13 23  13 11 33 14 24 14 11 44 15  44 34  43 15 15  52 23 15 44 23 15 42  24 44  31 34 34 25 43  31 24 25 15  15 33 22 31 24 43 23  34 42  32 11 44 13 23 15 43  11  25 33 34 52 33  35 11 44 44 15 42 33  43 45 13 23  11 43  11 33  15 32 11 24 31  11 14 14 42 15 43 43  11 33 14  43 44 34 35 43  52 23 15 33  24 44  21 24 33 14 43  43 34 32 15 44 23 24 33 22  44 23 11 44  42 15 11 14 43  31 24 25 15  35 31 11 24 33 44 15 53 44  32 34 43 44  34 21  44 23 15  44 24 32 15  44 23 24 43  44 11 25 15 43  31 15 43 43  44 23 11 33  11  43 15 13 34 33 14  52 23 24 13 23  32 11 25 15 43  24 44  23 11 33 14 54  21 34 42  13 11 35 44 45 42 15  44 23 15  21 31 11 22  13 23 11 31 31 15 33 22 15 43  35 45 55 55 31 15  23 45 33 44 43  11 33 14  21 34 42  11 33 54 34 33 15  52 23 34  43 44 45 32 12 31 15 43  11 13 42 34 43 43  11  43 44 42 11 33 22 15  43 44 42 24 33 22  24 33  11  31 34 22  21 24 31 15"
- expected = "CIPHEY IS AN AUTOMATED DECODING TOOL YOU GIVE IT ENCRYPTED OR ENCODED TEXT AND IT TRIES TO WORK OUT WHAT WAS DONE TO IT WITHOUT YOU HAVING TO KNOW THE KEY OR EVEN THE CIPHER IT SEARCHES THROUGH MANY POSSIBLE DECODINGS CHECKS EACH CANDIDATE TO SEE WHETHER IT LOOKS LIKE ENGLISH OR MATCHES A KNOWN PATTERN SUCH AS AN EMAIL ADDRESS AND STOPS WHEN IT FINDS SOMETHING THAT READS LIKE PLAINTEXT MOST OF THE TIME THIS TAKES LESS THAN A SECOND WHICH MAKES IT HANDY FOR CAPTURE THE FLAG CHALLENGES PUZZLE HUNTS AND FOR ANYONE WHO STUMBLES ACROSS A STRANGE STRING IN A LOG FILE"
+@@ -94,6 +94,15 @@ jobs:
+       - name: Run cargo test
+         run: cargo test
  
-+# Pollux writes Morse code with digits, so it has no case or punctuation: the plaintext
-+# upper-cased without punctuation, as for Polybius Square, in Morse with x between letters
-+# and xx between words, then each symbol as the next digit of its class in turn, with the
-+# issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0.
-+[[case]]
-+decoder = "Pollux"
-+size = "medium"
-+success = true
-+input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-+expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
++      # The end-to-end benchmark (benches/README.md): its runner's self-test, then the 10-case
++      # smoke subset on the debug ciphey binary cargo test just built, about 3 s. Fails if the
++      # runner's parsing or verdict rules break, or a smoke case stops decoding.
++      - name: End-to-end benchmark smoke run
++        if: matrix.os == 'ubuntu-latest'
++        run: |
++          python3 benches/e2e/run.py --selftest
++          python3 benches/e2e/run.py --subset smoke --timeout 20 --check target/debug/ciphey
 +
-+[[case]]
-+decoder = "Pollux"
-+size = "long"
-+success = true
-+input = "2154371648279147104357826914071436759810342671598025832564892073514698710432751682598470143276581902358265829457103842568259718032546719471804367192034657981240751384256782195043871692580427361954087213582654791084736291054783269150843271694705368912407134671490538256978205823154687290582314568907253147164892037586129471035476825981043629582037165904823716594714082537186290548235826715904714378614729140573821695082536842957082531826950471437698120435782695820154367914780132469507147316984270143758164714970124367195034716497801243578164714970147362914710457382561489257014713682945087321586942570825314761479140871437214679051437681249582057134768192540714368721947140735184627591470316489275104714368721945087321467195470183264905382569714073169482071473165947140731846971023645719825082538426714907514371684297031654982701547314671497147038256184902537862951840714731647190423657892105823458627901584372659801342765190471347862154971470318647190423576910823456719487103426571984701243761479147031568492710347165982504827314769158047143762190473569148701432765149714037146825982073561471947081325469807147312659048731642957104713648719470215346978210457134867192405376814295038265829714053682597184032671479103564798201365947140713471698042357861947103427164971407143659714701832469750314761984270582351684790125347146719842701471365894205783164719047326914710453876214957820314576825918403275164897251083472615497038614719403712467514978025136842791471045378146721497051382467914703158467129584702514378146790147134726519804713642957081436712495820751364892705182358265497031826471495820371465971802538471642719407143675981240751382564719471034869714023751648927058134697140237516479810254367198403726915470825382169475104731847619"
-+expected = "CIPHEY IS AN AUTOMATED DECODING TOOL YOU GIVE IT ENCRYPTED OR ENCODED TEXT AND IT TRIES TO WORK OUT WHAT WAS DONE TO IT WITHOUT YOU HAVING TO KNOW THE KEY OR EVEN THE CIPHER IT SEARCHES THROUGH MANY POSSIBLE DECODINGS CHECKS EACH CANDIDATE TO SEE WHETHER IT LOOKS LIKE ENGLISH OR MATCHES A KNOWN PATTERN SUCH AS AN E
+       - name: Run MCP server tests (mcp feature)
+         # The library's tests already ran above; only run the ciphey-mcp unit tests and the
+         # JSON-RPC-over-stdio integration test.
 ```
 
-**File**: `benches/data/search.toml` (modified, +8/-0)
+**File**: `.gitignore` (modified, +4/-0)
 ```diff
-@@ -332,6 +332,14 @@ layers = ["Polybius Square"]
- input = "32 15 15 44  32 15  11 44  44 23 15  34 31 14  31 24 22 23 44 23 34 45 43 15  11 21 44 15 42  32 24 14 33 24 22 23 44  11 33 14  12 42 24 33 22  44 23 15  32 11 35  44 23 15  25 15 54  11 33 14  11  44 34 42 13 23"
- expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
- 
-+[[case]]
-+# Pollux, the issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0, digits of each class in turn
-+kind = "single"
-+name = "pollux"
-+layers = ["Pollux"]
-+input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-+expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
+@@ -23,3 +23,7 @@ doc/
+ /.idea
+ .aider*
+ .cursor
 +
- [[case]]
- # DNA codons: each letter as its alphabetically first codon in the standard genetic code,
- # each space as the stop codon TAA. The codon alphabet has no O, U or B, so the usual
++# Python bytecode, and the tools benches/e2e/setup.sh installs
++__pycache__/
++/.tools/
 ```
 
-**File**: `src/decoders/api/functions.rs` (modified, +16/-0)
+**File**: `Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -58,6 +58,7 @@ use crate::decoders::null_cipher_decoder::NullCipherDecoder;
- use crate::decoders::octal_decoder::OctalDecoder;
- use crate::decoders::ook_decoder::OokDecoder;
- use crate::decoders::playfair_decoder::PlayfairDecoder;
-+use crate::decoders::pollux_decoder::PolluxDecoder;
- use crate::decoders::polybius_decoder::PolybiusDecoder;
- use crate::decoders::punycode_decoder::PunycodeDecoder;
- use crate::decoders::quoted_printable_decoder::QuotedPrintableDecoder;
-@@ -707,6 +708,21 @@ decoder_functions! {
-     /// ```
-     playfair: PlayfairDecoder, aliases [], key Some(keys::PLAYFAIR);
+@@ -5,6 +5,8 @@ version = "0.12.1"
+ edition = "2021"
+ description = "Automated decoding tool, Ciphey but in Rust"
+ license = "MIT"
++# The end-to-end benchmark (its scripts, corpus and baseline) is for this repository, not the crate
++exclude = ["benches/e2e/", "benches/data/e2e/"]
  
-+    /// Cracks the Pollux cipher, Morse code written with digits: each digit stands for a
-+    /// dot, a dash or the separator between letters (two between words). Ciphey tries the
-+    /// digit classes that split the text into Morse letters, ranks the readings by English
-+    /// quadgram statistics and checks the best few. The key is the classes, such as
-+    /// `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`.
-+    ///
-+    /// ```
-+    /// // "HELLO WORLD" with `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`
-+    /// let decoded = ciphey::decoders::pollux("7774640754467514028890485358201240751738773");
-+    /// let plaintext = decoded.plaintext().unwrap();
-+    /// assert_eq!(plaintext.text, "HELLO WORLD");
-+    /// assert_eq!(plaintext.key.as_deref(), Some(". = 1 4 7, - = 2 5 8, x = 3 6 9 0"));
-+    /// ```
-+    pollux: PolluxDecoder, aliases [], key None;
-+
-     /// Decodes the Polybius square cipher: each letter as its row and column in a 5×5
-     /// square with I and J in one cell, written as digits (`23` is H) or as letters from
-     /// `ABCDE` or `ADFGX`. Also the 6×6 square of A–Z and 0–9, column-row order and the
+ # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+ 
 ```
 
-**File**: `src/decoders/api/tests.rs` (modified, +19/-0)
+**File**: `benches/README.md` (modified, +37/-0)
 ```diff
-@@ -824,6 +824,25 @@ fn t9_decodes() {
-     }
- }
+@@ -42,6 +42,43 @@ for id in $(target/release/deps/search-<hash> --bench --list | sed -n 's/: bench
+ done
+ ```
  
-+#[test]
-+fn pollux_decodes() {
-+    // "HELLO WORLD" with `. = 1 4 7, - = 2 5 8, x = 3 6 9 0` (issue #1000 example)
-+    let decoded = pollux("7774640754467514028890485358201240751738773");
-+    let plaintext = decoded
-+        .plaintext()
-+        .unwrap_or_else(|| panic!("no plaintext in {decoded:#?}"));
-+    assert_eq!(plaintext.text, "HELLO WORLD");
-+    assert_eq!(
-+        plaintext.key.as_deref(),
-+        Some(". = 1 4 7, - = 2 5 8, x = 3 6 9 0")
-+    );
++## End-to-end benchmark: the check for decoder PRs
 +
-+    // Empty input produces no candidates (Pollux only takes digits).
-+    assert!(pollux("").is_empty());
-+    // Non-digit input produces no candidates.
-+    assert!(pollux("hello world").is_empty());
++[`e2e/run.py`](e2e/run.py) runs whole `ciphey` binaries on a frozen corpus and reports
++accuracy and time. Corpus v1 ([`data/e2e/corpus-v1.tsv`](data/e2e/corpus-v1.tsv), 376 cases)
++has every encoding and cipher Ciphey decodes and 39 it doesn't yet, hashes, chains of
++2 to 5 layers, CTF flags, short and long texts, other languages, plaintext input and inputs
++with no answer. The method, the corpus and the baselines of master, 0.12.0, Python Ciphey
++and CyberChef Magic are in [docs/benchmark-e2e.md](../docs/benchmark-e2e.md). The runner
++needs only Python 3.9+ (Linux or macOS).
++
++A PR that adds or changes a decoder or a checker runs the **quick subset** (76 cases, about
++a minute) with master's binary as A and its own as B:
++
++```sh
++git worktree add ../ciphey-master origin/master
++(cd ../ciphey-master && cargo build --release)    # master's binary, once
++cargo build --release
++python3 benches/e2e/run.py --subset quick --check ../ciphey-master/target/release/ciphey target/release/ciphey
++```
++
++Each case runs on both binaries back to back, A first on even cases and B first on odd
++ones, each time with a fresh `HOME` (no cache), `-d` and a 5 second timeout. The report ends
++with:
++
++* **Verdicts that changed**: every case one binary got right and the other didn't, with the
++  answers and the decoder paths. A decoder PR should have no line that goes from `correct`
++  to `wrong` or `nothing`; `--check` exits 1 if there is one.
++* **Time B/A**: the geometric mean of the per-case time ratios, with a 95% confidence
++  interval (Student's t on the log ratios). Master against itself gave 0.991 (0.956 to 1.027)
++  in 54 s on the busy shared host; an interval above 1.05 is a slowdown to explain.
++
++Paste those lines and the `uptime` lines into the PR. To show what the new decoder gains, run
++its own cases of the full corpus too (they are tagged with its issue as expected failures),
++for example `--ids base45`, and drop `--subset quick` for the whole corpus (about 6 minutes
++per binary) when the change touches the search or the checkers. CI runs `run.py --selftest`
++and then `--subset smoke` (10 cases) on the debug binary.
++
+ ## Inputs
+ 
+ All inputs are checked in under [`data/`](data) so runs are comparable:
+```
+
+**File**: `benches/data/e2e/plaintexts.tsv` (added, +163/-0)
+```diff
+@@ -0,0 +1,163 @@
++# Plaintexts of the end-to-end corpus (benches/e2e/corpus.py). pool<TAB>id<TAB>source<TAB>text
++# source "own": written for this benchmark (2026-11-04), MIT like the rest of the repo.
++# source "gutenberg:<n>": a paragraph of Project Gutenberg ebook <n>, public domain in the USA,
++# whitespace collapsed. The books are held out from gibberish-or-not's training (its en_test
++# list) and are not among the books of Ciphey's quadgram table; sha256 of the files used are in
++# docs/benchmark-e2e.md.
++sent	S01	own	The quick brown fox jumps over the lazy dog.
++sent	S02	own	Meet me at the old lighthouse after midnight.
++sent	S03	own	Please remember to water the plants on Friday.
++sent	S04	own	Our train leaves from platform nine at half past seven.
++sent	S05	own	The password for the staging server changes every month.
++sent	S06	own	I left the spare key under the blue flower pot.
++sent	S07	own	Can you send me the report before the meeting tomorrow?
++sent	S08	own	The museum is closed on Mondays, but the garden stays open.
++sent	S09	own	Every morning she runs five kilometres along the river.
++sent	S10	own	Bring warm clothes, because the cabin has no heating.
++sent	S11	own	The treasure is buried three paces north of the oak tree.
++sent	S12	own	We need two more volunteers for the charity bake sale.
++sent	S13	own	Turn left at the bakery and the library is on your right.
++sent	S14	own	The concert was cancelled because of the heavy storm.
++sent	S15	own	Do not open this envelope until your birthday.
++sent	S16	own	He fixed the bug by checking the length before copying the buffer.
++sent	S17	own	Our new office has a great view of the harbour.
++sent	S18	own	The recipe calls for two eggs, a cup of flour and some milk.
++sent	S19	own	I think the answer is hidden somewhere in the second chapter.
++sent	S20	own	The cat knocked a glass of water off the kitchen table.
++sent	S21	own	Remember to back up your files before installing the update.
++sent	S22	own	The weather forecast says it will snow on Sunday afternoon.
++sent	S23	own	Grandma still writes letters by hand to all her friends.
++sent	S24	own	The quarterly results were better than anyone expected.
++sent	S25	own	Keep this message secret and destroy it after reading.
++sent	S26	own	The bridge will be closed for repairs until the end of June.
++sent	S27	own	My favourite book is about a sailor who crosses the ocean alone.
++sent	S28	own	Lunch will be served in the main hall at one o'clock.
++sent	S29	own	The detective noticed that the clock had stopped at ten past four.
++sent	S30	own	Please do not feed the ducks in the park.
++sent	S31	own	The rocket launch was delayed by a faulty sensor.
++sent	S32	own	We found an old map in the attic of the farmhouse.
++sent	S33	own	If you can read this, you have cracked the first layer.
++sent	S34	own	The library fine for late books is ten cents a day.
++sent	S35	own	Switch off the lights when you leave the laboratory.
++sent	S36	own	The orchestra rehearses every Tuesday evening in the church.
++sent	S37	own	A strong password should be long and hard to guess.
++sent	S38	own	The children built a snowman with a carrot for a nose.
++sent	S39	own	Our flight was rerouted through Lisbon because of the strike.
++sent	S40	own	The secret ingredient in the soup is a pinch of nutmeg.
++sent	S41	own	Hello, World! This is a test of the decoder.
++sent	S42	own	Send the package to the address on the back of this card.
++sent	S43	own	The farmer sold apples, pears and plums at the market.
++sent	S44	own	The server crashed at noon, so the team rolled back the release.
++sent	S45	own	We will meet again when the moon is full.
++sent	S46	own	The painting was stolen from the gallery last winter.
++sent	S47	own	Your appointment with the dentist is on Thursday at three.
++sent	S48	own	The hikers reached the summit just before sunset.
++sent	S49	own	Nobody noticed that the guard had fallen asleep.
++sent	S50	own	Thank you for helping me move into the new flat.
++letters	L01	own	ATTACK AT DAWN
++letters	L02	own	MEET ME AT THE SECRET GARDEN
++letters	L03	own	THE EAGLE HAS LANDED
++letters	L04	own	SEND MORE TROOPS TO THE NORTH GATE
++letters	L05	own	HELLO FROM THE OTHER SIDE
++letters	L06	own	THE ANSWER IS FORTY TWO
++letters	L07	own	WE RIDE AT MIDNIGHT
++letters	L08	own	KEEP CALM AND CARRY ON
++letters	L09	own	THE GOLD IS IN THE WELL
++letters	L10	own	RETREAT TO THE CASTLE
++letters	L11	own	THE PACKAGE ARRIVES ON MONDAY
++letters	L12	own	NEVER TRUST A SMILING CAT
++letters	L13	own	FIND THE KEY UNDER THE MAT
++letters	L14	own	THE BIRDS SING AT SUNRISE
++letters	L15	own	WINTER IS COMING SOON
++letters	L16	own	LOOK BEHIND THE PAINTING
++letters	L17	own	THE TRAIN LEAVES AT NOON
++letters	L18	own	SILENCE IS GOLDEN
++letters	L19	own	HAPPY BIRTHDAY MY FRIEND
++letters	L20	own	THE CODE WORD IS PELICAN
++para	P01	own	The expedition set out from the coastal village at first light. For three days the travellers followed the river inland, crossing marshes and thick forests, until they reached the foot of the mounta
+```
+
+**File**: `benches/e2e/corpus.py` (added, +1991/-0)
+```diff
+@@ -0,0 +1,1991 @@
++#!/usr/bin/env python3
++"""Generate corpus v1 of Ciphey's end-to-end benchmark (benches/data/e2e/corpus-v1.tsv).
++
++The corpus is frozen: it was generated once with SEED and committed, and this script must
++reproduce it byte for byte (`--check`). Changing the cases means a new version
++(corpus-v2.tsv) so that results stay comparable. See docs/benchmark-e2e.md.
++
++Every ciphertext comes from an implementation that is independent of Ciphey's decoders:
++Python's standard library, PyPI reference packages (pinned in setup.sh), CyberChef's
++operations (through cyberchef.py) or a short encoder written here from the published
++definition, cited next to it. `--verify` decodes every case again with a second, independent
++implementation where one exists. Which cases CyberChef is comparable on comes from Magic's
++own detection (cyberchef_tools), so generating needs the CyberChef install too.
++
++    benches/e2e/setup.sh gen && benches/e2e/setup.sh node                     # into .tools/
++    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node          # write
++    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --check  # compare
++    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --verify # decode again
++"""
++
++import argparse
++import base64
++import binascii
++import bz2
++import email.charset
++import email.header
++import gzip
++import hashlib
++import hmac
++import json
++import lzma
++import math
++import os
++import quopri
++import random
++import re
++import string
++import sys
++import urllib.parse
++import warnings
++import zlib
++
++warnings.filterwarnings("ignore", category=SyntaxWarning)  # pycipher 0.5.2's regex strings
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
++DATA = os.path.join(ROOT, "benches", "data", "e2e")
++VERSION = 1
++SEED = 20261104
++OUT = os.path.join(DATA, f"corpus-v{VERSION}.tsv")
++
++# Tools a case can be comparable on. Every case runs on Ciphey.
++CIPHEY, PY, CC, CCI = "ciphey", "python-ciphey", "cyberchef", "cyberchef-intensive"
++
++# ---------------------------------------------------------------------------------------
++# Helpers
++
++
++def u(data):
++    """bytes -> str (UTF-8)."""
++    return data.decode("utf-8")
++
++
++def text(fn):
++    """Lifts a str -> str encoder to the bytes -> bytes interface."""
++
++    def wrapped(data, rng):
++        return fn(u(data), rng).encode("utf-8")
++
++    wrapped.__name__ = fn.__name__
++    return wrapped
++
++
++def to_radix(n, digits):
++    if n == 0:
++        return digits[0]
++    out = []
++    while n:
++        n, r = divmod(n, len(digits))
++        out.append(digits[r])
++    return "".join(reversed(out))
++
++
++def shift_letters(s, k):
++    """Caesar shift by k, keeping case and everything that isn't an ASCII letter."""
++    out = []
++    for c in s:
++        if "A" <= c <= "Z":
++            out.append(chr((ord(c) - 65 + k) % 26 + 65))
++        elif "a" <= c <= "z":
++            out.append(chr((ord(c) - 97 + k) % 26 + 97))
++        else:
++            out.append(c)
++    return "".join(out)
++
++
++def map_letters(s, fn):
++    """Applies fn(index of letter among the letters, value 0-25) -> 0-25 to every ASCII letter,
++    keeping case and non-letters."""
++    out, i = [], 0
++    for c in s:
++        if c.isascii() and c.isalpha():
++            base = 65 if c.isupper() else 97
++            out.append(chr(fn(i, ord(c) - base) % 26 + base))
++            i += 1
++        else:
++            out.append(c)
++    return "".join(out)
++
++
++def letters_only(s):
++    return "".join(c for c in s.upper() if "A" <= c <= "Z")
++
++
++# ---------------------------------------------------------------------------------------
++# Encoders: (data: bytes, rng) -> bytes. Text encoders work on the UTF-8 text.
++
++# Base encodings (Python stdlib, RFC 4648)
++def b64(data, rng):
++    return base64.b64encode(data)
++
++
++def b64url(data, rng):  # RFC 4648 §5 alphabet, padding dropped as in JWTs and URLs
++    return base64.urlsafe_b64encode(data).rstrip(b"=")
++
++
++B64_STD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
++
++
++def b64_itoa64(data, rng):  # crypt(3)'s itoa64 alphabet, CyberChef's "itoa64" From Base64 preset
++    alt = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
++    return base64.b64encode(data).translate(bytes.maketrans(B64_STD.encode(), alt.encode()))
++
++
++def b32(data, rng):
++    return base64.b32encode(data)
++
++
++def b32hex(data, rng):  # RFC 4648 §7
++    return base64.b32hexencode(data)
++
++
++B32_STD = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
++
++
++def b32_crockford(data, rng):  # https://www.crockford.com/base32.html, 5 bits at a time
++    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32_STD, b"0123456789ABCDEFGHJKMNPQRSTVWXYZ"))
++
++
++def zbase32(data, rng):  # https://philzimmermann.com/docs/human-oriented-base-32-encoding.txt
++    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32
+```
+
+**File**: `benches/e2e/cyberchef.mjs` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++// CyberChef worker for benches/e2e: reads one JSON request per line on stdin and writes one
++// JSON reply per line on stdout. Started by cyberchef.py (the runner's CyberChef adapter and
++// corpus.py's CyberChef encoders), never by hand:
++//
++//   node cyberchef.mjs <dir that holds node_modules/cyberchef>
++//
++// Requests:
++//   {"op": "magic", "input": "...", "depth": 3, "intensive": true, "extLang": false, "top": 5}
++//     Runs the Magic operation (CyberChef's src/core/lib/Magic.mjs speculativeExecution, the
++//     same call as the Magic operation in the web app) and bakes the recipe of the first `top`
++//     suggestions on the whole input, because Magic only keeps the first 100 characters of
++//     each result. `ms` is the time of Magic plus the bake of the first suggestion.
++//   {"op": "bake", "input": "...", "recipe": [{"op": "To Base64", "args": [...]}]}
++//     Runs a recipe and returns its output as text (UTF-8).
++//   {"op": "checks", "hex": "..."}     (corpus.py) the operations Magic would try on these bytes:
++//     the names of the operations whose detection patterns match (Magic's findMatchingInputOps)
++//   {"op": "jsfuck", "input": "..."}   (corpus.py) JSFuck.encode from npm jsfuck, if installed
++//   {"op": "eval", "code": "..."}      (corpus.py --verify) String(eval(code))
++import { pathToFileURL } from "node:url";
++import { join } from "node:path";
++import { createInterface } from "node:readline";
++import { createRequire } from "node:module";
++
++const dir = process.argv[2];
++if (!dir) {
++    process.stderr.write("usage: node cyberchef.mjs <dir with node_modules/cyberchef>\n");
++    process.exit(2);
++}
++const chef = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/node/index.mjs")).href)).default;
++const MagicLib = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/core/lib/Magic.mjs")).href)).default;
++
++/** The text of a dish: UTF-8 decoded, as the web app shows it. */
++function dishText(dish) {
++    const buf = dish.get("ArrayBuffer");
++    return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(buf));
 +}
 +
- #[test]
- fn tap_code_decodes() {
-     assert_plaintext(
-```
-
-**File**: `src/decoders/mod.rs` (modified, +6/-0)
-```diff
-@@ -267,6 +267,8 @@ pub mod yunying_decoder;
- 
- /// The null_cipher_decoder module finds messages hidden in null ciphers such as acrostics
- pub mod null_cipher_decoder;
-+/// The pollux_decoder module cracks the Pollux cipher (Morse encoded with digits)
-+pub mod pollux_decoder;
- 
- use atbash_decoder::AtbashDecoder;
- use backslash_escape_decoder::BackslashEscapeDecoder;
-@@ -321,6 +323,7 @@ use null_cipher_decoder::NullCipherDecoder;
- use octal_decoder::OctalDecoder;
- use ook_decoder::OokDecoder;
- use playfair_decoder::PlayfairDecoder;
-+use pollux_decoder::PolluxDecoder;
- use polybius_decoder::PolybiusDecoder;
- use punycode_decoder::PunycodeDecoder;
- use quoted_printable_decoder::QuotedPrintableDecoder;
-@@ -523,6 +526,8 @@ pub enum DecoderType {
-     T9Decoder(t9_decoder::T9Decoder),
-     /// null cipher (acrostic) decoder
-     NullCipherDecoder(null_cipher_decoder::NullCipherDecoder),
-+    /// Pollux (Morse with digits) decoder
-+    PolluxDecoder(pollux_decoder::PolluxDecoder),
- }
- 
- /// Wrapper struct to hold Decoders for DECODER_MAP
-@@ -771,5 +776,6 @@ pub static DECODER_MAP: Lazy<HashMap<&str, DecoderBox>> = Lazy::new(|| {
-             "Null cipher",
-             DecoderBox::new(Decoder::<NullCipherDecoder>::new()),
-         ),
-+        ("Pollux", DecoderBox::new(Decoder::<PolluxDecoder>::new())),
-     ])
- });
-```
-
-**File**: `src/decoders/morse_code.rs` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ fn normalise_morse_string(text: &str) -> String {
- }
- 
- /// Maps morse code to its alphanumeric character, returns None for invalid morse-code
--fn morse_to_alphanumeric(text: &str) -> Option<&str> {
-+pub(crate) fn morse_to_alphanumeric(text: &str) -> Option<&str> {
-     let result = match text {
-         ".-" => "A",
-         "-..." => "B",
-```
-
-**File**: `src/decoders/pollux_decoder.rs` (added, +791/-0)
-```diff
-@@ -0,0 +1,791 @@
-+//! Crack the Pollux cipher: Morse code written with digits.
-+//!
-+//! Pollux (an [ACA](https://www.cryptogram.org/downloads/aca.info/ciphers/Pollux.pdf) cipher,
-+//! also on [dCode](https://www.dcode.fr/pollux-cipher)) writes the message in Morse code with
-+//! a separator `x` between letters and `xx` between words, then replaces every dot, dash and
-+//! separator with a digit of its class. Each of the ten digits stands for one of the three
-+//! symbols, and every symbol is written with any digit of its class, which flattens the
-+//! digits' frequencies. The key is the classes, such as `. = 1 4 7, - = 2 5 8, x = 3 6 9 0`.
-+//!
-+//! There are 3¹⁰ = 59,049 keys, far too many to show the checker, but almost all of them can
-+//! be ruled out without the checker:
-+//!
-+//! 1. Each set of the digits in the text is tried as the separators. It must split the text
-+//!    into Morse letters of 1 to [`MAX_SYMBOLS`] symbols with one or two separators between
-+//!    them (two between words), which most sets don't.
-+//! 2. For each set that does, the other digits are split into dots and dashes in every way,
-+//!    and the text is read as Morse code. A split that makes a symbol sequence that isn't in
-+//!    the Morse alphabet is dropped.
-+//! 3. Readings with more than a little punctuation, or with too few different letters
-+//!    (`HE THE THE THE T` from `1234567890` repeated), are dropped, and the rest are ranked
-+//!    by English quadgram statistics.
-+//! 4. The key search is free to make text of the letters with the shortest codes, `E`, `T`,
-+//!    `I`, `S` and `H`, which score well (`SSESS HESES`), and on random digits it finds
-+//!    short words or unspaced letters that pass for English (`EATS SEE`, `DEDIASHISEEEA`).
-+//!    So in that order only readings of two or more words, [`MIN_LETTERS`] letters or more,
-+//!    seven in eight of their words English words and few one-letter words go on (see
-+//!    [`reads_as_words`]). The
-+//!    checker, at Low sensitivity like the other classical ciphers, sees at most
-+//!    [`CANDIDATES_CHECKED`] of them. Nothing is handed on unconfirmed: the readings are
-+//!    too many to judge.
-+//!
-+//! Only text of digits alone is tried, [`MIN_DIGITS`] to [`MAX_DIGITS`] of them and at least
-+//! three different ones, so for other input the cracker costs one scan of it. The key
-+//! search reads at most the first [`SEARCH_DIGITS`] digits, without allocating, and
-+//! [`MAX_WORK`] bounds it for repetitive text, which splits many ways; the best keys then
-+//! read the whole text.
-+//!
-+//! The key reports each class's digits in the order 1 to 9, then 0, as the issue and dCode
-+//! write them. Digits that aren't in the text can't be placed and are left out.
++/** Runs a recipe on text input and returns its output as text, or null if it throws. */
++async function bakeText(input, recipe) {
++    try {
++        return dishText(await chef.bake(input, recipe));
++    } catch (e) {
++        return null;
++    }
++}
 +
-+use crate::checkers::english::is_known_word;
-+use crate::checkers::CheckerTypes;
-+use crate::decoders::morse_code::morse_to_alphanumeric;
-+use crate::storage::ngrams::quadgram_score;
-+use gibberish_or_not::Sensitivity;
-+use log::{debug, trace};
-+use once_cell::sync::Lazy;
-+use std::collections::{HashMap, HashSet};
-+
-+use super::crack_results::CrackResult;
-+use super::interface::{Crack, Decoder};
-+
-+/// Shorter text is too likely to read as something by chance. Of 10,000 random digit
-+/// strings each, the cracker accepted English like `SEE THEE LET` or `A NEW TESTED` for 46
-+/// strings of 30 digits, 21 of 35, 4 of 40 and none of 45, 50 or 60. The issue's `HELLO
-+/// WORLD` is 43 digits.
-+const MIN_DIGITS: usize = 40;
-+
-+/// Longer text isn't tried. About 1,000 letters.
-+const MAX_DIGITS: usize = 4000;
-+
-+/// The key search reads at most this many digits of the text, about 60 letters, which are
-+/// plenty to rank the keys by. The best keys then read the whole text.
-+const SEARCH_DIGITS: usize = 240;
-+
-+/// The most symbols a Morse character has (`..--..` is `?`).
-+const MAX_SYMBOLS: usize = 6;
-+
-+/// At most this many readings, best first, are looked up word by word.
-+const MAX_EXAMINED: usize = 2000;
-+
-+/// The key search stops once it has read this many digits in total, about 20 ms at worst.
-+/// Only repetitive text gets near it: random digits split into Morse letters a handful of
-+/// ways, `1234567890` repeated thousands of ways. The 40 digits of `ATTACK AT DAWN` read
-+/// 4,303 ways, 172,000 digits.
-+const MAX_WORK: usize = 500_000;
-+
-+/// A reading needs at least this many letters before the checker sees it. On random digits
-+/// the key search finds shorter English (`THE IN`, `EATS SEE`) all the time.
-+const MIN_LETTERS: usize = 10;
-+
-+/// How many readings the checker sees at most.
-+const CANDIDATES_CHECKED: usize = 5;
-+
-+/// The Pollux cracker, call:
-+/// `let pollux_decoder = Decoder::<PolluxDecoder>::new()` to create a new instance
-+/// And then call:
-+/// `result = pollux_decoder.crack(input, &checker)` to crack a Pollux ciphertext
-+/// The struct generated by new() comes from interface.rs
-+/// ```
-+/// use ciphey::decoders::pollux_decoder::PolluxDecoder;
-+/// use ciphey::decoders::interfac
-```
-
-**File**: `src/filtration_system/mod.rs` (modified, +4/-0)
-```diff
-@@ -28,6 +28,7 @@ use crate::decoders::html_entity_decoder::HtmlEntityDecoder;
- use crate::decoders::octal_decoder::OctalDecoder;
- use crate::decoders::ook_decoder::OokDecoder;
- use crate::decoders::playfair_decoder::PlayfairDecoder;
-+use crate::decoders::pollux_decoder::PolluxDecoder;
- use crate::decoders::polybius_decoder::PolybiusDecoder;
- use crate::DecoderResult;
- 
-@@ -344,6 +345,7 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
-     let baconian = Decoder::<BaconianDecoder>::new();
-     let baudot = Decoder::<BaudotDecoder>::new();
-     let polybius = Decoder::<PolybiusDecoder>::new();
-+    let pollux = Decoder::<PolluxDecoder>::new();
-     let caesardecoder = Decoder::<CaesarDecoder>::new();
-     let affine = Decoder::<AffineDecoder>::new();
-     let railfencedecoder = Decoder::<RailfenceDecoder>::new();
-@@ -515,6 +517,8 @@ pub fn filter_and_get_decoders(_text_struct: &DecoderResult) -> Decoders {
-             // Before rot47, which shifts digits to other digits that LemmeKnow can take for
-             // a number it knows, and so can win a tie in the same search step
-             Box::new(polybius),
-+            // Before rot47 for the same reason: Pollux ciphertexts are digit strings too
-+            Box::new(pollux),
-             Box::new(caesardecoder),
-             Box::new(affine),
-             Box::new(railfencedecoder),
-```
-
----
-
-### Incident Patch 2: `ddd42b8c` (2026-10-28)
-**Commit Message**: fix(jwt): accept valid JSON header whitespace (#1125)
-
-A JWT header is a JSON object, which may start with JSON whitespace, so its base64url doesn't always start with eyJ. The decoder now accepts headers whose first character is e, I, C or D ({, space, tab or line feed, carriage return), which keeps rejecting other text at the first character.
-
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
-
-**File**: `src/decoders/jwt_decoder.rs` (modified, +36/-2)
-```diff
-@@ -144,8 +144,10 @@ struct Jwt {
- /// ignored. The cheapest checks come first, so most text is rejected straight away.
- fn parse(text: &str) -> Option<Jwt> {
-     let token = strip_bearer(text.trim());
--    // `eyJ` is base64url for `{"`, which every header starts with
--    if !token.starts_with("eyJ") {
-+    // The header is base64url of a JSON object, which starts with `{` or JSON whitespace
-+    // (space, tab, line feed, carriage return). Their first base64url characters are `e`,
-+    // `I`, `C` and `D`: `eyJ` is `{"`, `IHsi` is ` {"`.
-+    if !matches!(token.as_bytes().first(), Some(b'e' | b'I' | b'C' | b'D')) {
-         return None;
-     }
- 
-@@ -372,6 +374,38 @@ mod tests {
-         assert!(result.key.is_none(), "{text:?}");
-     }
- 
-+    #[test]
-+    fn header_with_json_whitespace_decodes() {
-+        // RFC 7515 sections 3 and 5: the protected header is a UTF-8 JSON object, so it
-+        // may start with JSON whitespace. The whitespace is inside the base64url-encoded
-+        // header, not the token itself.
-+        for header in [
-+            r#"{ "alg":"none"}"#,
-+            r#" {"alg":"none"}"#,
-+            "\t{\"alg\":\"none\"}",
-+            "\n{\"alg\":\"none\"}",
-+            "\r\n{\"alg\":\"none\"}",
-+        ] {
-+            let token = format!(
-+                "{}.{}.",
-+                URL_SAFE_NO_PAD.encode(header),
-+                URL_SAFE_NO_PAD.encode(r#"{"message":"hello world"}"#),
-+            );
-+            assert_decodes_to(&token, r#"{"message":"hello world"}"#);
++async function handle(req) {
++    if (req.op === "bake") {
++        return { output: dishText(await chef.bake(req.input, req.recipe)) };
++    }
++    if (req.op === "checks") {
++        const bytes = Uint8Array.from(req.hex.match(/../g) || [], h => parseInt(h, 16));
++        const ops = new MagicLib(bytes.buffer).findMatchingInputOps().map(m => m.op);
++        return { ops: [...new Set(ops)] };
++    }
++    if (req.op === "jsfuck") {
++        const { JSFuck } = createRequire(join(dir, "package.json"))("jsfuck");
++        return { output: JSFuck.encode(req.input, false, false) };
++    }
++    if (req.op === "eval") {
++        return { output: String((0, eval)(req.code)) };
++    }
++    if (req.op === "magic") {
++        const t0 = performance.now();
++        const dish = await chef.magic(req.input, {
++            depth: req.depth ?? 3,
++            intensiveMode: !!req.intensive,
++            extensiveLanguageSupport: !!req.extLang,
++        });
++        const options = dish.value;
++        const top = Math.max(1, req.top ?? 5);
++        const results = [];
++        let ms = null;
++        for (let i = 0; i < options.length && i < top; i++) {
++            const o = options[i];
++            const recipe = o.recipe.map(step => ({ op: step.op, args: step.args }));
++            const output = recipe.length ? await bakeText(req.input, recipe) : req.input;
++            if (i === 0) ms = performance.now() - t0;
++            results.push({ recipe: recipe.map(step => step.op), recipe_full: recipe, output });
 +        }
++        if (ms === null) ms = performance.now() - t0;
++        return { ms, count: options.length, results };
 +    }
++    throw new Error(`unknown op ${req.op}`);
++}
 +
-+    #[test]
-+    fn canonical_header_decodes_and_malformed_ones_do_not() {
-+        assert_decodes_to(ALG_NONE, ALG_NONE_PAYLOAD);
-+        // "not json"
-+        assert_not_decoded("bm90IGpzb24.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        // " [1]": starts like whitespace before an object, but is an array
-+        assert_not_decoded("IFsxXQ.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        assert_not_decoded("eyJhbGciOjF9.eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
-+        assert_not_decoded("eyJhbGciOiJub25lIn0. eyJtZXNzYWdlIjoiaGVsbG8gd29ybGQifQ.");
++const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
++process.stdout.write(JSON.stringify({ ready: true }) + "\n");
++for await (const line of rl) {
++    if (!line.trim()) continue;
++    let reply;
++    try {
++        reply = await handle(JSON.parse(line));
++    } catch (e) {
++        reply = { error: String(e && e.stack || e) };
 +    }
-+
-     #[test]
-     fn jwt_io_example_decodes() {
-         let result = crack(JWT_IO);
++    process.stdout.write(JSON.stringify(reply) + "\n");
++}
 ```
 
----
-
-### Incident Patch 3: `ae0cc667` (2026-10-28)
-**Commit Message**: fix(decimal): honor explicit JavaScript UTF-16 code units (#1126)
-
-Inside a String.fromCharCode(...) wrapper the numbers are read the way JavaScript reads them: UTF-16 code units after ToUint16, so String.fromCharCode(67,97,102,195,169) is CafÃ©, not the UTF-8 Café. Raw decimal numbers are still bytes. Module docs, description and tests updated.
-
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
-
-**File**: `src/decoders/decimal_decoder.rs` (modified, +65/-11)
+**File**: `benches/e2e/cyberchef.py` (added, +106/-0)
 ```diff
-@@ -8,8 +8,11 @@
- //!   UTF-8. This is CyberChef's `From Decimal`, dCode's "ASCII code" and Python's
- //!   `list(b"...")`.
- //! * Char codes: some number is above 255. Numbers are UTF-16 code units, with surrogate pairs
--//!   joined, or code points, as with JavaScript's `String.fromCharCode(...)` and CyberChef's
--//!   `From Charcode` in base 10.
-+//!   joined, or code points, as with CyberChef's `From Charcode` in base 10.
-+//!
-+//! Inside a `String.fromCharCode(...)` wrapper the numbers are always what JavaScript makes
-+//! of them: UTF-16 code units, taken mod 65536 (ECMAScript's ToUint16), so
-+//! `String.fromCharCode(67,97,102,195,169)` is `CafÃ©`, not the UTF-8 `Café`.
- //!
- //! The numbers are separated by runs of whitespace, `,`, `;`, `:` or `-`. A
- //! `String.fromCharCode(...)` or `[...]` wrapper is removed first. A single run of digits
-@@ -64,7 +67,7 @@ impl Crack for Decoder<DecimalDecoder> {
-     fn new() -> Decoder<DecimalDecoder> {
-         Decoder {
-             name: "Decimal",
--            description: "Decimal encoding writes each character as its character code in base 10, for example 104 101 108 108 111 for \"hello\". When every number is 255 or less they are read as the bytes of UTF-8 text; otherwise they are read as Unicode character codes, as with JavaScript's String.fromCharCode.",
-+            description: "Decimal encoding writes each character as its character code in base 10, for example 104 101 108 108 111 for \"hello\". When every number is 255 or less they are read as the bytes of UTF-8 text; otherwise they are read as Unicode character codes. Inside String.fromCharCode(...) they are UTF-16 code units, as JavaScript reads them.",
-             link: "https://www.dcode.fr/ascii-code",
-             tags: vec!["decimal", "charcode", "base", "decoder"],
-             popularity: 0.6,
-@@ -123,7 +126,9 @@ impl Crack for Decoder<DecimalDecoder> {
- 
- /// Decodes decimal character codes to text, or returns `None` if `text` isn't decimal.
- fn decode_decimal(text: &str) -> Option<String> {
--    let body = strip_wrapper(text.trim()).as_bytes();
-+    let text = text.trim();
-+    let from_char_code = text.starts_with("String.fromCharCode(");
-+    let body = strip_wrapper(text).as_bytes();
-     // A single scan that rejects almost every input before anything is allocated
-     if !body
-         .iter()
-@@ -156,13 +161,21 @@ fn decode_decimal(text: &str) -> Option<String> {
-         }
-     };
- 
--    let decoded = match codes
--        .iter()
--        .map(|&code| u8::try_from(code))
--        .collect::<Result<Vec<u8>, _>>()
--    {
--        Ok(bytes) => bytes_to_string(bytes),
--        Err(_) => decode_char_codes(&codes)?,
-+    let decoded = if from_char_code {
-+        // The wrapper says how JavaScript reads the numbers: as UTF-16 code units, even
-+        // when they would all fit in bytes. String.fromCharCode applies ToUint16, so
-+        // numbers above 65535 wrap. A lone surrogate isn't text.
-+        let code_units: Vec<u16> = codes.iter().map(|&code| code as u16).collect();
-+        String::from_utf16(&code_units).ok()?
-+    } else {
-+        match codes
-+            .iter()
-+            .map(|&code| u8::try_from(code))
-+            .collect::<Result<Vec<u8>, _>>()
-+        {
-+            Ok(bytes) => bytes_to_string(bytes),
-+            Err(_) => decode_char_codes(&codes)?,
-+        }
-     };
- 
-     // Control characters mean the numbers are something else: A1Z26 `8 5 12 12 15` decodes
-@@ -269,6 +282,47 @@ mod tests {
-     // `list(b"...")`, `bytes(...).decode()`, `chr`) and the char-code ones with Node's
-     // `String.fromCharCode` / `String.fromCodePoint`.
- 
-+    #[test]
-+    fn string_from_char_code_reads_utf16_code_units() {
-+        // ECMAScript String.fromCharCode applies ToUint16 to each argument; it does not
-+        // read them as UTF-8 bytes. Checked with Node's String.fromCharCode.
-+        assert_eq!(
-+            crack("String.fromCharCode(67,97,102,195,169)").as_deref(),
-+            Some("CafÃ©"),
-+        );
-+        // 128512 (U+1F600) wraps to 0xF600
-+        assert_eq!(
-+            crack("String.fromCharCode(104,101,108,108,111,128512)").as_deref(),
-+            Some("hello\u{F600}"),
-+        );
-+        // ... and 65601 to 65, `A`
-+        assert_eq!(
-+            crack("String.fromCharCode(65601,66,67);").as_deref(),
-+            Some("ABC")
-+        );
-+        assert_eq!(
-+            crack("String.fromCharCode(55357,56832,32,104,105)").as_deref(),
-+            Some("😀 hi"),
-+        );
-+    }
+@@ -0,0 +1,106 @@
++"""Client for cyberchef.mjs, a long-lived Node process that runs CyberChef's Node API.
 +
-+    #[test]
-+    fn string_from_char_code_rejects_what_javascript_cannot_make_text_of() {
-+        // A lone high surrogate at the end
-+        assert!(crack("String.fromCharCode(104,101,55357)").is_none());
-+        // NUL, which wraps from 65536
-+        assert!(crack("String.fromCharCode(104,65536,105)").is_none());
-+    }
++Used by run.py (the `cyberchef` tool: Magic) and corpus.py (CyberChef's encoders). One
++process serves every case, so CyberChef's start-up (about 1.5 s to import its 500
++operations) is paid once and not counted in a case's time. A request that doesn't answer
++within its timeout kills the process; the next request starts a new one.
++"""
 +
-+    #[test]
-+    fn the_same_numbers_without_the_wrapper_are_bytes() {
-+        assert_eq!(crack("67 97 102 195 169").as_deref(), Some
++import json
++import os
++import select
++import subprocess
++import tempfile
++import time
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++ROOT = os.path.realpath(os.path.join(HERE, "..", ".."))
++
++
++class CyberChefError(RuntimeError):
++    pass
++
++
++class CyberChef:
++    def __init__(self, root, node="node"):
++        """`root` is the directory that holds node_modules/cyberchef (setup.sh's .tools/node). It
++        has to be inside the repository: the benchmark reads nothing outside it."""
++        root = os.path.realpath(root)
++        if not root.startswith(ROOT + os.sep):
++            raise CyberChefError(f"{root} is outside the repository {ROOT} (setup.sh installs CyberChef in .tools/node)")
++        self.root = root
++        self.node = node
++        self.proc = None
++        self.startup_seconds = None
++        self.stderr = tempfile.TemporaryFile()
++        if not os.path.isdir(os.path.join(self.root, "node_modules", "cyberchef")):
++            raise CyberChefError(f"no node_modules/cyberchef under {self.root} (run benches/e2e/setup.sh)")
++
++    def version(self):
++        with open(os.path.join(self.root, "node_modules", "cyberchef", "package.json"), encoding="utf-8") as fh:
++            return json.load(fh)["version"]
++
++    def start(self):
++        t0 = time.perf_counter()
++        self.proc = subprocess.Popen(
++            [self.node, "--no-warnings", os.path.join(HERE, "cyberchef.mjs"), self.root],
++            stdin=subprocess.PIPE,
++            stdout=subprocess.PIPE,
++            stderr=self.stderr,
++            text=True,
++            encoding="utf-8",
++            bufsize=1,
++        )
++        reply = self._read(180)
++        if not reply or not reply.get("ready"):
++            self.close()
++            self.stderr.seek(0)
++            raise CyberChefError("CyberChef worker didn't start: " + self.stderr.read().decode("utf-8", "replace")[-2000:])
++        self.startup_seconds = time.perf_counter() - t0
++
++    def _read(self, timeout):
++        """One reply line, or None after `timeout` seconds."""
++        deadline = time.monotonic() + timeout
++        fd = self.proc.stdout.fileno()
++        while True:
++            left = deadline - time.monotonic()
++            if left <= 0:
++                return None
++            ready, _, _ = select.select([fd], [], [], left)
++            if ready:
++                line = self.proc.stdout.readline()
++                if not line:
++                    raise CyberChefError("CyberChef worker exited")
++                return json.loads(line)
++
++    def request(self, req, timeout=600):
++        """Sends one request. Returns the reply, or None on timeout (the worker is killed)."""
++        if self.proc is None or self.proc.poll() is not None:
++            self.start()
++        self.proc.stdin.write(json.dumps(req, ensure_ascii=False) + "\n")
++        self.proc.stdin.flush()
++        reply = self._read(timeout)
++        if reply is None:
++            self.close()
++            return None
++        if "error" in reply:
++            raise CyberChefError(reply["error"])
++        return reply
++
++    def bake(self, text, recipe):
++        return self.request({"op": "bake", "input": text, "recipe": recipe})["output"]
++
++    def magic(self, text, depth=3, intensive=True, ext_lang=False, top=5, timeout=600):
++        return self.request(
++            {"op": "magic", "input": text, "depth": depth, "intensive": intensive, "extLang": ext_lang, "top": top},
++            timeout,
++        )
++
++    def close(self):
++        if self.proc is not None:
++            try:
++                self.proc.kill()
++                self.proc.wait(10)
++            except Exception:
++                pass
++            self.proc = None
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1126** (2026-10-28): fix(decimal): honor explicit JavaScript UTF-16 code units (@rudycelekli)
-- **PR #1125** (2026-10-28): fix(jwt): accept valid JSON header whitespace (@rudycelekli)
-- **PR #1124** (2026-10-28): build(deps): bump rustls from 0.23.27 to 0.23.45 in the cargo group across 1 directory (@dependabot[bot])
-- **PR #1123** (2026-10-28): build(deps): bump uuid from 1.26.1 to 1.28.0 (@dependabot[bot])
-- **PR #1122** (2026-10-13): ci: no duplicate push+PR test runs, drop schedules, Dependabot monthly (cost) (@bee-san)
-- **PR #1121** (2026-10-28): Add Pollux (Morse with digits) cracker (@wahajahmed010)
+- **PR #1137** (2026-11-04): bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines for master, 0.12.0, Python Ciphey and CyberChef (@bee-san)
+- **PR #1136** (2026-11-04): WebAssembly, part 1: native-only code by target, a clock and a thread-free search (@bee-san)
+- **PR #1135** (2026-11-04): ci: bump onig_sys to 69.9.3 so Linux CI builds again (GCC 15 / C23) (@bee-san)
+- **PR #1134** (2026-11-04): build(deps): bump rustls from 0.23.45 to 0.23.46 in the cargo group across 1 directory (@dependabot[bot])
+- **PR #1133** (2026-11-04): build(deps): bump serde_json from 1.0.151 to 1.0.154 (@dependabot[bot])
+- **PR #1132** (2026-11-04): build(deps): bump rmcp from 3.5.1 to 3.8.0 (@dependabot[bot])
 
 ---
 
@@ -2397,36 +2272,29 @@ Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. decoders): add Pollux (Morse with digits) cracker (#1121)
+## X. bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines 
 
 **RULE**:
-When implementing operations in `benches/data/decoders.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/quickstart.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47215766`: decoders): add Pollux (Morse with digits) cracker (#1121). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7ad87dd`: bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines for master, 0.12.0, Python Ciphey and CyberChef (#1137). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benches/data/decoders.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/quickstart.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Pollux writes Morse code with digits, so it has no case or punctuation: the plaintext
-# upper-cased without punctuation, as for Polybius Square, in Morse with x between letters
-# and xx between words, then each symbol as the next digit of its class in turn, with the
-# issue's key . = 1 4 7, - = 2 5 8, x = 3 6 9 0.
-[[case]]
-decoder = "Pollux"
-size = "medium"
-success = true
-input = "253164980325679018326950471437698250184732146975140713824671479501471382564789147013642971540837612490583716247951047382164714950378621954703814761249710543827695014713469820753182469507147316984207351826945087321469750386258912405781347146"
-expected = "MEET ME AT THE OLD LIGHTHOUSE AFTER MIDNIGHT AND BRING THE MAP THE KEY AND A TORCH"
+      # The end-to-end benchmark (benches/README.md): its runner's self-test, then the 10-case
+      # smoke subset on the debug ciphey binary cargo test just built, about 3 s. Fails if the
+      # runner's parsing or verdict rules break, or a smoke case stops decoding.
+      - name: End-to-end benchmark smoke run
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          python3 benches/e2e/run.py --selftest
+          python3 benches/e2e/run.py --subset smoke --timeout 20 --check target/debug/ciphey
 
-[[case]]
-decoder = "Pollux"
-size = "long"
-success = true
-input = "2154371648279147104357826914071436759810342671598025832564892073514698710432751682598470143276581902358265829457103842568259718032546719471804367192034657981240751384256782195043871692580427361954087213582654791084736291054783269150843271694705368912407134671490538256978205823154687290582314568907253147164892037586129471035476825981043629582037165904823716594714082537186290548235826715904714378614729140573
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2436,4 +2304,4 @@ input = "21543716482791471043578269140714367598103426715980258325648920735146987
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47215766` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7ad87dd` are properly handled with clean fallback behavior.

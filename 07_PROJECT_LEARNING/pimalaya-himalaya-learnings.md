@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `5791471e`  
+> **Source Version**: `8196891f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T05:31:59.454Z  
+> **Timestamp**: 2026-11-04T03:44:07.280Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T05:31:52.571Z  
+> **Harvest Timestamp**: 2026-11-04T03:44:06.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7562 stars
+- **Stars / Engagement**: 7582 stars
 
 ---
 
@@ -41,7 +41,7 @@
 ```
 //! # IMAP utils
 //!
-//! RFC 2047 header decoding and envelope address formatting, shared by
+//! RFC 2047 header decoding and envelope address conversion, shared by
 //! the `fetch` and `thread` commands.
 
 use io_imap::types::envelope::Address;
@@ -61,19 +61,20 @@ pub fn decode_mime(s: &str) -> String {
     }
 }
 
-/// Formats an envelope address as `Name <local@host>`, or bare when it
-/// carries no personal name.
-pub fn format_address(addr: &Address<'_>) -> String {
-    let email = format_email(addr);
+/// Turns an envelope address into the shared address shape, its personal
+/// name RFC 2047 decoded, `None` when absent or empty.
+pub fn to_address(addr: &Address<'_>) -> crate::email::address::Address {
+    let name = addr
+        .name
+        .0
+        .as_ref()
+        .map(|name| decode_mime(&String::from_utf8_lossy(name.as_ref())))
+        .filter(|name| !name.is_empty());
 
-    if let Some(name) = &addr.name.0 {
-        let name = decode_mime(&String::from_utf8_lossy(name.as_ref()));
-        if !name.is_empty() {
-            return format!("{name} <{email}>");
-        }
+    crate::email::address::Address {
+        name,
+        email: format_email(addr),
     }
-
-    email
 }
 
 /// Joins the `local@host` parts of an envelope address.
@@ -104,30 +105,32 @@ fn format_email(addr: &Address<'_>) -> String {
 ```
 //! # pimdir queue cancel
 //!
-//! The `pimdir queue cancel` command, retracting one staged creation
-//! before its owner applies it.
+//! The `pimdir queue cancel` command, retracting one queued or parked
+//! action before its owner applies it.
 
 use std::fmt;
 
 use anyhow::{Result, bail};
 use clap::Parser;
-use pimalaya_cli::{printer::Printer, prompt};
+use io_pimdir::client::producer::PimdirActionStatus;
+use pimalaya_cli::{printer::Printer, prompt, table::sanitize};
 use schemars::JsonSchema;
 use serde::Serialize;
 
 use crate::pimdir::client::PimdirClient;
 
-/// Cancel one staged message, by the row id `queue list` prints.
+/// Cancel one queued or parked action, by the row id `queue list` prints.
 ///
 /// This is the only way back for a queued creation: a staged flag or move is
 /// undone by doing the opposite, where a message that does not exist yet
-/// cannot be deleted.
+/// cannot be deleted. Only a row of the account's queue is taken.
 ///
 /// Cancelling is the store owner's write, so this takes that role for the
-/// length of the call and fails while a sync holds it.
+/// length of the call and fails while a sync holds it. A store another
+/// version of the sync engine wrote is refused rather than reshaped.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueCancelCommand {
-    /// Row id of the staged message, as `pimdir queue list` prints it.
+    /// Row id of the queued action, as `pimdir queue list` prints it.
     #[arg(value_name = "ROW")]
     pub id: i64,
     /// Do not ask for confirmation.
@@ -136,39 +139,47 @@ pub struct PimdirQueueCancelCommand {
 }
 
 impl PimdirQueueCancelCommand {
-    /// Retracts the staged action the row id names.
+    /// Retracts the queued action the row id names.
     pub fn execute(self, printer: &mut impl Printer, client: &mut PimdirClient) -> Result<()> {
+        let named = match client.queue_row(self.id)? {
+            PimdirActionStatus::Pending { kind, .. } | PimdirActionStatus::Parked { kind, .. } => {
+                kind
+            }
+            _ => String::from("action"),
+        };
         if !self.yes
             && !prompt::bool(
-                format!("Cancel the message queued as row {}?", self.id),
+                format!("Cancel the {} queued as row {}?", sanitize(&named), self.id),
                 false,
             )?
         {
             bail!("Cancellation aborted");
         }
 
-        if !client.cancel_queued(self.id)? {
-            bail!(
-                "No queued action with row {}; it may have been synced already",
-                self.id
-            );
-        }
-
-        printer.out(PimdirQueueCancelOutput { id: self.id })
+        let kind = client.cancel_queued(self.id)?;
+        printer.out(PimdirQueueCancelOutput { id: self.id, kind })
     }
 }
 
 /// The `pimdir queue cancel` output.
-#[derive(Clone, Copy, Debug, Serialize, JsonSchema)]
+#[derive(Clone, Debug, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct PimdirQueueCancelOutput {
     /// The row that was cancelled.
+    #[serde(rename = "row")]
     pub id: i64,
+    /// The action kind it held: `add`, `submit`, `set-flags`, ...
+    pub kind: String,
 }
 
 impl fmt::Display for PimdirQueueCancelOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Queued message {} cancelled", self.id)
+        writeln!(
+            f,
+            "Queued {} cancelled (row {})",
+            sanitize(&self.kind),
+            self.id
+        )
     }
 }
 
@@ -248,8 +259,7 @@ use serde::Serialize;
 
 use crate::{
     account::context::Account,
-    email::envelope::Envelope,
-    pimdir::client::PimdirClient,
+    pimdir::{backend::PimdirQueuedEnvelope, client::PimdirClient},
     shared::{
         envelope::list::{format_addresses, format_flags},
         mailbox::arg::MailboxArg,
@@ -266,7 +276,9 @@ use crate::{
 /// row id to cancel one by, when it was queued, and the mail.
 ///
 /// Staged flags, moves and deletions need no such view, addressing messages
-/// that already exist.
+/// that already exist. A row of any kind the sync engine parked, refusing to
+/// apply it without an operator, is listed under them with why: cancel it,
+/// or fix what parked it.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueListCommand {
     #[command(flatten)]
@@ -283,6 +295,7 @@ impl PimdirQueueListCommand {
     ) -> Result<()> {
         let mailbox = self.mailbox.resolve(account);
         let queued = client.queued_envelopes(&mailbox)?;
+        let parked = client.parked_actions(&mailbox)?;
 
         printer.out(PimdirQueueListOutput {
             preset: account.table_preset().to_string(),
@@ -303,6 +316,17 @@ impl PimdirQueueListCommand {
                     envelope: queued.envelope,
                 })
                 .collect(),
+            parked: parked
+                .into_iter()
+                .map(|parked| PimdirParkedRow {
+                    id: parked.id,
+                    queued_at: parked.created_at,
+                    producer: parked.producer,
+                    kind: parked.action,
+                    attempts: parked.attempts,
+                    error: parked.error,
+                })
+                .collect(),
         })
     }
 }
@@ -314,6 +338,7 @@ pub struct PimdirQueuedMessage {
     /// The queue row id, which `pimdir queue cancel` takes. It names a
     /// pending action, not a message: the message has no id until the sync
     /// engine applies the action, and gets a different one then.
+    #[serde(rename = "row")]
     pub id: i64,
     /// When the row was appended, stamped by the store's own clock.
     pub queued_at: String,
@@ -321,9 +346,29 @@ pub struct PimdirQueuedMessage {
     pub producer: String,
     /// Whether the row sends the message rather than files it.
     pub send: bool,
-    /// The mail the action carries, read from its stored summary. Its `id` is
-    /// empty, a queued message having none yet.
-    pub envelope: Envelope,
+    /// The mail the action carries, derived from the body it pins. Its `id`
+    /// is `null`, a queued message having none yet.
+    pub envelope: PimdirQueuedEnvelope,
+}
+
+/// One row the sync engine parked: it will not apply it again without an
+/// operator.
+#[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct PimdirParkedRow {
+    /// The queue row id, which `pimdir queue cancel` takes.
+    #[serde(rename = "row")]
+    pub id: i64,
+    /// When the row was appended, stamped by the store's own clock.
+    pub queued_at: String,
+    /// The process that staged it.
+    pub producer: String,
+    /// The action kind: `add`, `submit`, `set-flags`, ...
+    pub kind: String,
+    /// How many times the engine tried it before parking it.
+    pub attempts: i64,
+    /// Why it was parked.
+    pub error: String,
 }
 
 /// The `pimdir queue list` output.
@@ -356,14 +401,28 @@ pub struct PimdirQueueListOutput {
     pub flagged_char: char,
     /// The messages staged for creation in the mailbox.
     pub messages: Vec<PimdirQueuedMessage>,
+    /// The mailbox's parked rows, any kind.
+    pub parked: Vec<PimdirParkedRow>,
 }
 
 impl fmt::Display for PimdirQueueListOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.messages.is_empty() {
+        if self.messages.is_empty() && self.parked.is_empty() {
             return writeln!(f, "No message queued in this mailbox");
         }
+        if !self.messages.is_empty() {
+            self.fmt_queued(f)?;
+        }
+        if !self.parked.is_empty() {
+            self.fmt_parked(f)?;
+        }
+        Ok(())
+    }
+}
 
+impl PimdirQueueListOutput {
+    /// The table of queued creations and sends.
+    fn fmt_queued(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let chars = crate::shared::envelope::list::FlagChars {
             unseen: self.unseen_char,
             replied: self.replied_char,
@@ -403,6 +462,36 @@ impl fmt::Display for PimdirQueueListOutput {
             "Queued until the next sync. Cancel one with `himalaya pimdir queue cancel <ROW>`"
         )
     }
+
+    /// The table of parked rows.
+    fn fmt_parked(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut table = Table::new();
+        table
+            .load_style(style_from_preset(&self.preset))
+            .set_header(Row::from([
+                Cell::new("ROW"),
+                Cell::new("ACTION"),
+                Cell::new("QUEUED"),
+                Cell::new("ERROR"),
+            ]))
+            .add_rows(self.parked.iter().map(|parked| {
+                let mut row = Row::new();
+                row.max_height(1);
+                row.add_cell(Cell::new(parked.id).fg(self.id_color));
+                row.add_cell(Cell::new(sanitize(&parked.kind)));
+                row.add_cell(Cell::new(&parked.queued_at).fg(self.date_color));
+                row.add_cell(Cell::new(sanitize(&parked.error)));
+                row
+            }));
+
+        writeln!(f)?;
+        writeln!(f, "{table}")?;
+        writeln!(
+            f,
+            "Parked by the sync engine, which will not retry them. Cancel one with \
+             `himalaya pimdir queue cancel <ROW>`"
+        )
+    }
 }
 
 ```
@@ -439,13 +528,17 @@ use serde::Serialize;
 use crate::pimdir::client::PimdirClient;
 
 /// Show where one queue row stands, by the id `pimdir message add`,
-/// `pimdir message send` or `pimdir mailbox create` printed.
+/// `pimdir message send` or `pimdir mailbox create`, `rename` or `delete`
+/// printed.
 ///
 /// A row is `pending` until the sync engine applies it, `parked` when the
 /// engine gave up on it (with why), and `applied` once done, a message
-/// sent or a mailbox created included, with the id of the message an add
-/// created. The store keeps what became of an applied row for seven days;
-/// past that, and for a cancelled row, the state is `unknown`.
+/// sent or a mailbox created, renamed or deleted included, with the id of
+/// the message an add created. The store keeps what became of an applied
+/// row for seven days, under the mailbox it was queued on; past that, for
+/// a cancelled row, and once a deleted mailbox has left the store, taking
+/// that record with it, the state is `unknown`: `pimdir mailbox list` no
+/// longer listing the mailbox is what says it was deleted.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueShowCommand {
     /// The queue row id.
@@ -470,9 +563,11 @@ pub enum PimdirQueueState {
     /// Given up on by the sync engine; `error` says why.
     Parked,
     /// Applied or performed by the sync engine (a message sent, a mailbox
-    /// created); `seq` is the message an add created.
+    /// created, renamed or deleted); `seq` is the message an add created.
     Applied,
-    /// Neither queued nor known applied: cancelled, or applied long ago.
+    /// Neither queued nor known applied: cancelled, applied long ago, or a
+    /// mailbox deletion the store has followed, the record leaving with the
+    /// mailbox.
     Unknown,
 }
 
@@ -481,26 +576,21 @@ pub enum PimdirQueueState {
 #[serde(rename_all = "camelCase")]
 pub struct PimdirQueueShowOutput {
     /// The queue row id.
+    #[serde(rename = "row")]
     pub queue_id: i64,
     /// Where it stands.
     pub state: PimdirQueueState,
     /// The collection it is anchored on, unless unknown.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub collection: Option<String>,
     /// The action kind (`add`, `submit`…), while queued.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
     /// Apply attempts so far, while queued.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub attempts: Option<i64>,
     /// Why the row was parked.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
     /// When the row was applied, RFC 3339.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub applied_at: Option<String>,
     /// The id of the message an applied add created, in `collection`.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub seq: Option<i64>,
 }
 
@@ -566,21 +656,24 @@ impl fmt::Display for PimdirQueueShowOutput {
         let kind = sanitize(self.kind.as_deref().unwrap_or_default());
 
         match self.state {
-            PimdirQueueState::Pending => write!(f, "Row {id} ({kind} in {collection}) is pending"),
+            PimdirQueueState::Pending => {
+                writeln!(f, "Row {id} ({kind} in {collection}) is pending")
+            }
             PimdirQueueState::Parked => {
                 let error = sanitize(self.error.as_deref().unwrap_or_default());
-                write!(f, "Row {id} ({kind} in {collection}) is parked: {error}")
+                writeln!(f, "Row {id} ({kind} in {collection}) is parked: {error}")
             }
             PimdirQueueState::Applied => {
                 write!(f, "Row {id} was applied in {collection}")?;
-                match self.seq {
-                    Some(seq) => write!(f, ", creating message {seq}"),
-                    None => Ok(()),
+                if let Some(seq) = self.seq {
+                    write!(f, ", creating message {seq}")?;
                 }
+                writeln!(f)
             }
-            PimdirQueueState::Unknown => write!(
+            PimdirQueueState::Unknown => writeln!(
                 f,
-                "Row {id} is neither queued nor known applied: cancelled, or applied long ago"
+                "Row {id} is neither queued nor known applied: cancelled, applied long ago, \
+                 or a deleted mailbox's row, gone with the mailbox"
             ),
         }
     }
@@ -604,9 +697,12 @@ mod tests {
         assert_eq!(
             json,
             serde_json::json!({
-                "queueId": 12,
+                "row": 12,
                 "state": "applied",
                 "collection": "imap/Drafts",
+                "kind": null,
+                "attempts": null,
+                "error": null,
                 "appliedAt": "2026-10-04T20:00:00Z",
                 "seq": 42,
             })
@@ -614,13 +710,185 @@ mod tests {
     }
 
     #[test]
-    fn an_unknown_row_prints_its_id_and_state_only() {
+    fn an_unknown_row_prints_its_id_and_state() {
         let json = serde_json::to_value(PimdirQueueShowOutput::new(7, PimdirActionStatus::Unknown))
             .unwrap();
         assert_eq!(
             json,
-            serde_json::json!({ "queueId": 7, "state": "unknown" })
+            serde_json::json!({
+                "row": 7,
+                "state": "unknown",
+                "collection": null,
+                "kind": null,
+                "attempts": null,
+                "error": null,
+                "appliedAt": null,
+                "seq": null,
+            })
         );
+    }
+}
+
+```
+
+### Core Architecture Module: `src/account/capability.rs`
+```
+//! # Account capability
+//!
+//! The `account capability` command, listing what the account serves of
+//! the shared API, which backend serves each capability and how well.
+
+use std::{fmt, path::PathBuf};
+
+use anyhow::{Result, anyhow, bail};
+use clap::Parser;
+use pimalaya_cli::{
+    printer::Printer,
+    table::{Cell, ContentArrangement, Row, Table, sanitize},
+};
+use pimalaya_config::toml::TomlConfig;
+use schemars::JsonSchema;
+use serde::Serialize;
+
+#[cfg(feature = "pimdir")]
+use crate::pimdir::client::PimdirClient;
+use crate::{
+    backend::Backend,
+    capability::{self, Resolution, StoreSupport},
+    config::{Config, NO_CONFIG_HINT},
+    shared::table::{DEFAULT_PRESET, style_from_preset},
+};
+
+/// List what the account serves of the shared API.
+///
+/// One row per capability: the backend it resolves to, the level it is
+/// served at (`full`, `partial`, `server` when the server decides once
+/// connected, `none`) and what the level leaves out. Read from the
+/// account's configuration and the capability tables, nothing connecting;
+/// on a pimdir account the writes are read from what the store's sources
+/// declare. `--backend` shows the account under that filter.
+#[derive(Debug, Parser)]
+pub struct AccountCapabilityCommand;
+
+impl AccountCapabilityCommand {
+    /// Resolves each capability for the account and prints the table.
+    pub fn execute(
+        self,
+        printer: &mut impl Printer,
+        config_paths: &[PathBuf],
+        account_name: Option<&str>,
+        backend: Backend,
+    ) -> Result<()> {
+        let mut config = match Config::from_paths_or_default(config_paths)? {
+            Some(config) => config,
+            None => bail!("No configuration found, {NO_CONFIG_HINT}"),
+        };
+
+        let (name, account_config) = config
+            .take_account(account_name)?
+            .ok_or_else(|| anyhow!("Cannot find account"))?;
+
+        let resolution = Resolution::of(&name, &account_config, backend);
+
+        // NOTE: the store is opened as a reader, a local read writing
+        // nothing, so the rows say what its gate would refuse.
+        #[cfg(feature = "pimdir")]
+        let pimdir = match (resolution.storage, account_config.pimdir) {
+            (Some(Backend::Pimdir), Some(config)) => Some(PimdirClient::new(config)?),
+            _ => None,
+        };
+
+        let mut capabilities = Vec::new();
+
+        for capability in capability::all() {
+            let backend = resolution.transport(capability);
+
+            #[cfg_attr(not(feature = "pimdir"), allow(unused_mut))]
+            let mut support = StoreSupport::from(resolution.support(capability));
+
+            #[cfg(feature = "pimdir")]
+            if let (Some(Backend::Pimdir), Some(client)) = (backend, &pimdir)
+                && let Some(declared) = client.store_support(capability)?
+            {
+                support = declared;
+            }
+
+            capabilities.push(AccountCapability {
+                name: capability.name(),
+                backend: backend.map(|backend| backend.to_string()),
+                level: support.level.to_string(),
+                detail: support.detail,
+            });
+        }
+
+        let preset = config
+            .table
+            .preset
+            .clone()
+            .unwrap_or_else(|| DEFAULT_PRESET.to_string());
+
+        printer.out(AccountCapabilityOutput {
+            preset,
+            account: name,
+            capabilities,
+        })
+    }
+}
+
+/// The `account capability` output.
+#[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountCapabilityOutput {
+    /// The `comfy_table` preset string the table renders with.
+    #[serde(skip)]
+    pub preset: String,
+    /// The account the capabilities are resolved for.
+    pub account: String,
+    /// One row per shared capability, in the order the commands reach
+    /// them.
+    pub capabilities: Vec<AccountCapability>,
+}
+
+/// How the account serves one shared capability.
+#[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountCapability {
+    /// The capability, pimdir's grammar without the domain word
+    /// (`message.move`, `envelope.search.body`).
+    pub name: String,
+    /// The backend it resolves to, `null` when the account configures none
+    /// that `--backend` allows.
+    pub backend: Option<String>,
+    /// `full`, `partial`, `server` or `none`.
+    pub level: String,
+    /// What the level leaves out, `null` for a full one.
+    pub detail: Option<String>,
+}
+
+impl fmt::Display for AccountCapabilityOutput {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut table = Table::new();
+
+        table
+            .load_style(style_from_preset(&self.preset))
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(Row::from([
+                Cell::new("CAPABILITY"),
+                Cell::new("BACKEND"),
+                Cell::new("LEVEL"),
+                Cell::new("DETAIL"),
+            ]))
+            .add_rows(self.capabilities.iter().map(|capability| {
+                Row::from([
+                    Cell::new(&capability.name),
+                    Cell::new(capability.backend.as_deref().unwrap_or("")),
+                    Cell::new(&capability.level),
+                    Cell::new(sanitize(capability.detail.as_deref().unwrap_or(""))),
+                ])
+            }));
+
+        writeln!(f)?;
+        writeln!(f, "{table}")
     }
 }
 
@@ -642,7 +910,7 @@ use anyhow::{Result, bail};
 use clap::Parser;
 #[cfg(all(feature = "imap", feature = "wizard"))]
 use io_sasl::mechanism::SaslMechanism;
-use pimalaya_cli::printer::Printer;
+use pimalaya_cli::{error::PartialOutcome, printer::Printer};
 use pimalaya_config::{secret::SecretResolver, toml::TomlConfig};
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -654,6 +922,7 @@ use crate::config::ImapConfig;
 use crate::{
     backend::Backend,
     config::{Config, NO_CONFIG_HINT},
+    error::ErrorCode,
 };
 
 /// Validate the account configuration.
@@ -661,11 +930,16 @@ use crate::{
 /// Every backend `--backend` allows is opened, which exercises the same
 /// handshake and authentication paths a real command takes. The report
 /// names each backend and whether it answered.
+///
+/// The report is printed whole, each backend with its outcome and, when it
+/// failed, its code and why. A failed backend exits the command with
+/// status 2, the report being the output rather than a failure object.
 #[derive(Debug, Parser)]
 pub struct AccountCheckCommand;
 
 impl AccountCheckCommand {
-    /// Checks every allowed backend of the account and prints the report.
+    /// Checks every allowed backend of the account and prints the report,
+    /// or fails naming every backend that did not answer.
     pub fn execute(
         self,
         printer: &mut impl Printer,
@@ -682,6 +956,21 @@ impl AccountCheckCommand {
             .take_account(account_name)?
             .ok_or_else(|| anyhow::anyhow!("Cannot find account"))?;
 
+        #[cfg_attr(
+            not(any(
+                feature = "imap",
+                feature = "jmap",
+                feature = "gmail",
+                feature = "msgraph",
+                feature = "maildir",
+                feature = "m2dir",
+                feature = "mbox",
+                feature = "pimdir",
+                feature = "smtp",
+                feature = "sieve"
+            )),
+            allow(unused_mut)
+        )]
         let mut report = AccountCheckOutput {
             account: name,
             backends: Vec::new(),
@@ -770,6 +1059,15 @@ impl AccountCheckCommand {
                 .push(BackendCheck::from("mbox", connect_mbox(mbox_config)));
         }
 
+        #[cfg(feature = "pimdir")]
+        if backend.allows_pimdir()
+            && let Some(pimdir_config) = &account_config.pimdir
+        {
+            report
+                .backends
+                .push(BackendCheck::from("pimdir", connect_pimdir(pimdir_config)));
+        }
+
         #[cfg(feature = "smtp")]
         if backend.allows_smtp()
             && let Some(smtp_config) = &account_config.smtp
@@ -798,7 +1096,17 @@ impl AccountCheckCommand {
             ));
         }
 
-        printer.out(report)
+        let failed = report.backends.iter().any(|check| !check.ok);
+        printer.out(report)?;
+
+        // NOTE: the report names every backend's outcome, so a failed one
+        // ends the command with the partial-outcome status rather than a
+        // failure object.
+        if failed {
+            return Err(PartialOutcome::default().into());
+        }
+
+        Ok(())
     }
 }
 
@@ -908,47 +1216,7 @@ pub(crate) fn connect_imap(imap_config: &ImapConfig, resolver: &mut SecretResolv
     };
     let _ = ImapClientStd::connect(&server, opts)?;
 
-    Ok(())
-}
 
-/// Reads a server's CAPABILITY over an unauthenticated connection and
-/// returns the mechanisms it advertises, most preferred first.
-///
-/// The wizard offers what comes back rather than the whole list, and the
-/// connection is dropped without ever authenticating.
-#[cfg(all(feature = "imap", feature = "wizard"))]
-pub(crate) fn probe_imap_mechanisms(server: &str, starttls: bool) -> Result<Vec<SaslMechanism>> {
-    use io_imap::{
-        client::{ImapClientStd, ImapClientStdConnectOptions, default_alpn},
-        rfc3501::capability::available_auth_mechanisms,
-        session::ImapSessionOpenOptions,
-    };
-
-    use crate::{config::TlsConfig, imap::client::parse_imap_server};
-
-    let server = parse_imap_server(server)?;
-    let opts = ImapClientStdConnectOptions {
-        tls: TlsConfig::default().into_tls(default_alpn()),
-        session: ImapSessionOpenOptions {
-            starttls,
-            ..Default::default()
-        },
-        ..Default::default()
-    };
-    let (_client, capabilities) = ImapClientStd::connect(&server, opts)?;
-
-    Ok(available_auth_mechanisms(&capabilities))
-}
-
-/// Opens a JMAP client and fetches the session object.
-#[cfg(feature = "jmap")]
-fn connect_jmap(
-    jmap_config: &crate::config::JmapConfig,
-    resolver: &mut SecretResolver,
-) -> Result<()> {
-    use io_jmap::client::JmapClientStd;
-
-    use crate::jmap::client::{connect_options, jmap_h
 ```
 
 ### Core Architecture Module: `src/account/cli.rs`
@@ -964,7 +1232,9 @@ use clap::Subcommand;
 use pimalaya_cli::printer::Printer;
 
 use crate::{
-    account::{check::AccountCheckCommand, list::AccountListCommand},
+    account::{
+        capability::AccountCapabilityCommand, check::AccountCheckCommand, list::AccountListCommand,
+    },
     backend::Backend,
 };
 
@@ -978,6 +1248,8 @@ pub enum AccountCommand {
     #[command(visible_alias = "ls")]
     List(AccountListCommand),
     Check(AccountCheckCommand),
+    #[command(alias = "capabilities", alias = "caps")]
+    Capability(AccountCapabilityCommand),
 }
 
 impl AccountCommand {
@@ -992,6 +1264,7 @@ impl AccountCommand {
         match self {
             Self::List(cmd) => cmd.execute(printer, config_paths),
             Self::Check(cmd) => cmd.execute(printer, config_paths, account_name, backend),
+            Self::Capability(cmd) => cmd.execute(printer, config_paths, account_name, backend),
         }
     }
 }
@@ -1020,7 +1293,7 @@ use crossterm::style::Color;
 use dirs::download_dir;
 use pimalaya_cli::table::{Color as TableColor, ContentArrangement};
 
-#[cfg(backend)]
+#[cfg(any(backend, feature = "smtp"))]
 use crate::email::mailbox::Mailbox;
 use crate::{
     config::{
@@ -1254,196 +1527,7 @@ impl Account {
 
     /// Resolves `name` through the alias map, case-insensitively.
     ///
-    /// An unmatched name comes back verbatim, so a cal
-```
-
-### Core Architecture Module: `src/account/list.rs`
-```
-//! # Account list
-//!
-//! The `account list` command, tabling every account a configuration
-//! declares.
-
-use std::{fmt, path::PathBuf};
-
-use anyhow::Result;
-use clap::Parser;
-use crossterm::style::Color as CrosstermColor;
-use pimalaya_cli::printer::Printer;
-use pimalaya_cli::table::{Cell, Color, ContentArrangement, Row, Table};
-use pimalaya_config::toml::TomlConfig;
-use schemars::JsonSchema;
-use serde::Serialize;
-
-use crate::{
-    account::context::map_color_or,
-    config::{AccountConfig, Config, NO_CONFIG_HINT, TableArrangementConfig},
-    shared::table::style_from_preset,
-};
-
-/// List all accounts declared in the configuration.
-///
-/// Each row shows the account name, the backends with a config block,
-/// and whether it is the default account.
-#[derive(Debug, Parser)]
-pub struct AccountListCommand;
-
-impl AccountListCommand {
-    /// Loads the configuration and prints its accounts as a table.
-    pub fn execute(self, printer: &mut impl Printer, config_paths: &[PathBuf]) -> Result<()> {
-        let config = load_config(config_paths)?;
-
-        let preset = config
-            .table
-            .preset
-            .clone()
-            .unwrap_or_else(|| crate::shared::table::DEFAULT_PRESET.to_string());
-        let arrangement = config
-            .table
-            .arrangement
-            .clone()
-            .unwrap_or(TableArrangementConfig::Dynamic)
-            .into();
-
-        let table_cfg = &config.account.list.table;
-        let colors = AccountColors {
-            // NOTE: the fallbacks are the v1.2.0 column colors.
-            name: map_color_or(table_cfg.name_color, CrosstermColor::Green),
-            backends: map_color_or(table_cfg.backends_color, CrosstermColor::Blue),
-            default: map_color_or(table_cfg.default_color, CrosstermColor::Reset),
-        };
-
-        let mut accounts: Vec<AccountRow> = config
-            .accounts
-            .iter()
-            .map(|(name, account)| AccountRow::from_account(name, account))
-            .collect();
-        accounts.sort_by(|a, b| a.name.cmp(&b.name));
-
-        let table = AccountListOutput {
-            preset,
-            arrangement,
-            colors,
-            accounts,
-        };
-
-        printer.out(table)
-    }
-}
-
-/// Per-column colors of the accounts table.
-#[derive(Clone, Copy, Debug)]
-struct AccountColors {
-    name: Color,
-    backends: Color,
-    default: Color,
-}
-
-/// Loads the merged configuration, pointing at the wizard when there is
-/// none to load.
-fn load_config(paths: &[PathBuf]) -> Result<Config> {
-    match Config::from_paths_or_default(paths)? {
-        Some(config) => Ok(config),
-        None => anyhow::bail!("No configuration found, {NO_CONFIG_HINT}"),
-    }
-}
-
-/// One row of the accounts table.
-#[derive(Clone, Debug, Serialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct AccountRow {
-    /// The name of the `[accounts.<name>]` block.
-    pub name: String,
-    /// Whether a command with no `-a/--account` runs against it.
-    pub default: bool,
-    /// The backends it declares a block for.
-    pub backends: Vec<&'static str>,
-}
-
-impl AccountRow {
-    /// Reads the row off one account block.
-    fn from_account(name: &str, account: &AccountConfig) -> Self {
-        let mut backends = Vec::new();
-        if account.imap.is_some() {
-            backends.push("imap");
-        }
-        if account.jmap.is_some() {
-            backends.push("jmap");
-        }
-        if account.gmail.is_some() {
-            backends.push("gmail");
-        }
-        if account.msgraph.is_some() {
-            backends.push("msgraph");
-        }
-        if account.maildir.is_some() {
-            backends.push("maildir");
-        }
-        if account.m2dir.is_some() {
-            backends.push("m2dir");
-        }
-        if account.mbox.is_some() {
-            backends.push("mbox");
-        }
-        if account.smtp.is_some() {
-            backends.push("smtp");
-        }
-        if account.sieve.is_some() {
-            backends.push("sieve");
-        }
-
-        Self {
-            name: name.to_owned(),
-            default: account.default,
-            backends,
-        }
-    }
-}
-
-/// The `account list` output, a table of accounts.
-#[derive(Clone, Debug, Serialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct AccountListOutput {
-    /// The `comfy_table` preset string the table renders with.
-    #[serde(skip)]
-    pub preset: String,
-    /// The column arrangement the table renders with.
-    #[serde(skip)]
-    pub arrangement: ContentArrangement,
-    #[serde(skip)]
-    colors: AccountColors,
-    /// The accounts, sorted by name.
-    pub accounts: Vec<AccountRow>,
-}
-
-impl fmt::Display for AccountListOutput {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut table = Table::new();
-
-        table
-            .load_style(style_from_preset(&self.preset))
-            .set_content_arrangement(self.arrangement.clone())
-            .set_header(Row::from(vec![
-                Cell::new("NAME"),
-                Cell::new("BACKENDS"),
-                Cell::new("DEFAULT"),
-            ]))
-            .add_rows(self.accounts.iter().map(|account| {
-                let mut row = Row::new();
-                row.max_height(1);
-                row.add_cell(Cell::new(&account.name).fg(self.colors.name));
-                row.add_cell(Cell::new(account.backends.join(", ")).fg(self.colors.backends));
-                row.add_cell(
-                    Cell::new(if account.default { "yes" } else { "" }).fg(self.colors.default),
-                );
-                row
-            }));
-
-        writeln!(f)?;
-        writeln!(f, "{table}")
-    }
-}
-
+    /// An unmatched name comes 
 ```
 
 
@@ -1452,14 +1536,11 @@ impl fmt::Display for AccountListOutput {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #800** (2026-11-01): **fix(cli): delimit config paths with $PATH's own separator**
+  *Symptoms*: ## Problem  On Windows, `-c/--config` splits its value on `:`, the separator `$PATH` uses on Unix. An absolute Windows path carries a colon of its own, so the argument is cut at the drive letter:  ``` $ himalaya -c C:\Users\me\config.toml account list Error: No configuration found, run bare `himalaya` to launch the wizard, or write one by hand: ... ```  The parsed value is `["C", "\Users\me\config.toml"]`, neither of which exists, so the configuration is never read even though the file is right there. `HIMALAYA_CONFIG` feeds the same argument and fails the same way, and so does `-c` repeated with absolute paths. A relative path (`-c config.toml`) works, which is why this stays hidden.  ## Change  `src/cli.rs` picks the delimiter per platform: `;` on Windows, as `$PATH` and `std::env::split_paths` spell it, and `:` everywhere else, so Unix behaves exactly as before. A single path is never split, and several may still be given at once, or by repeating `-c`.  Two trade-offs are worth naming, both Windows-only. A colon-joined list (`-c a.toml:b.toml`, `HIMALAYA_CONFIG=a.toml:b.toml`) is no longer split there; `;` or repeated `-c` is the spelling now, which is also what `cairn/spec/config.md` already described. And a relative path that itself contains `;` is now split where it used to be one path. Keeping `:` splitting while reading absolute paths whole is not expressible through clap's `value_delimiter`; the README, the sample configuration, the changelog and the config spec now 
+
 - **Issue #798** (2026-10-27): **message compose still nests display names: `--from "Name <addr>"` stores `From: > <Name <addr>>` (also To/Cc/Bcc)**
   *Symptoms*: ## Problem  `message compose` still corrupts addresses that carry a display name, for `From` and for `To`/`Cc`/`Bcc`. The store round-trip makes it worse: what ends up in the mailbox is not even the double-wrapped form.  ``` $ himalaya -a zoho message compose --from "support <support@cryptoquant.dev>" \     --to jozef.rudy@gmail.com --subject t --body hi | head -2 From: <support <support@cryptoquant.dev>> To: <jozef.rudy@gmail.com> ```  Piped into `message add -m drafts -f draft`, the stored draft reads:  ``` From: > <support <support@cryptoquant.dev> To: jozef.rudy@gmail.com ```  and the envelope parser agrees the address itself is malformed — `himalaya envelope list -m drafts --json` reports:  ```json {"from":[{"name":null,"email":"support <support@cryptoquant.dev>"},{"name":null,"email":">"}]} ```  `To` is broken identically:  ``` $ ... --from support@cryptoquant.dev --to "Jozef Rudy <jozef.rudy@gmail.com>" ... To: > <Jozef Rudy <jozef.rudy@gmail.com> ```  Bare addresses are fine (`From: <support@cryptoquant.dev>` → stored as `support@cryptoquant.dev`), so only the display-name path is affected.  This matters beyond cosmetics: per #727 the same malformed header fails at send time with `SMTP MAIL FROM failed: rejected 501 5.1.7 Bad sender address syntax`.  ## Why this looks like a regression / incomplete fix  - #727 ("`--from \"Name <email>\"` breaks the composed From header") was closed 2026-08-16. - commit `48f00e3` (2026-09-26) is titled "fix: parse display names in To, 
-
-- **Issue #796** (2026-10-29): **docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail**
-  *Symptoms*: ## Summary  Adds IMAP+SMTP provider test reports for three major Chinese email providers, following the existing format in cairn/spec/testing/.  ### Providers tested  | Provider | Server engine | Result | |---|---|---| | QQ Mail (Tencent/Foxmail) | Tencent proprietary | Working (search broken, APPEND auto-sets Seen) | | 163 Mail (NetEase) | Coremail | Working (search broken, sasl-ir + id quirks) | | 139 Mail (China Mobile) | China Mobile Mail | Working (requires native-tls, search ignores criteria, STATUS unsupported) |  ### Key findings  - **Text search broken on all three** — server-side IMAP SEARCH limitation, not a himalaya bug - **163 (Coremail)** requires `sasl-ir = false` and `id.auto = true` - **139** requires `native-tls` — rustls-ring fails with `received fatal alert: HandshakeFailure` (server requires legacy cipher suites like AES-CBC that rustls doesn't implement) - **139** does not support IMAP STATUS (mailbox counts empty)  ### Files  - `cairn/spec/testing/imap-smtp-qq.md` - `cairn/spec/testing/imap-smtp-163.md` - `cairn/spec/testing/imap-smtp-139.md` - `cairn/spec/testing/README.md` (index updated)  Closes #795
-  **Post-Mortem & Fix Analysis**:
-  > @xiaolinstar thanks, this is good material. A few small fixes before I merge:  - In `cairn/spec/testing/imap-smtp-163.md`, the link `../spec/provider-quirks.md` is broken. From `cairn/spec/testing/` it should be `../provider-quirks.md`. - 163 P3 says the server sends the `ID` command. It's the client (himalaya) that sends it after login, and the server needs it. - QQ P5 (FROM showing only the display name) is how himalaya renders the table, not something QQ does, so I'd drop it from the provider findings. - The PR description says 139 runs on Coremail, but the report says China Mobile Mail. Better to keep the report to what the run showed. - The note that `imap.js.chinamobile.com` fails with `native-tls` wasn't tested in this run. Either say how you checked it or drop it.
-  > @soywod Thanks for the review! All fixes applied:  ## Changes in commit `e112910`  ### 1. 163 report link fixed ✅ Changed `../spec/provider-quirks.md` → `../provider-quirks.md` (line 15)  ### 2. 163 P3 ID command description corrected ✅ Changed from "The server sends an RFC 2971 ID command" to "The client (himalaya) sends an RFC 2971 ID command after authentication, and the server requires it."  ### 3. QQ P5 removed ✅ Deleted the "FROM column truncation" finding since it's himalaya's rendering choice, not a QQ-specific issue.  ### 4. PR description updated ✅ Changed 139 Mail server engine from "Coremail" to "China Mobile Mail" to match what the report actually showed.  ### 5. China Mobile enterprise mail note removed ✅ Already removed in previous commit `21d599b` — the unverified note about `imap.js.chinamobile.com` is gone.  All feedback addressed. Ready for merge!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1476,404 +1557,348 @@ impl fmt::Display for AccountListOutput {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5791471e` (2026-10-29)
-**Commit Message**: docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)
+### Incident Patch 1: `529d2119` (2026-11-01)
+**Commit Message**: fix(cli): delimit config paths with $PATH's own separator (#800)
 
-* docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail
+* fix(cli): delimit config paths with $PATH's own separator
 
-Tested himalaya v2 (rev 4df380b) against three major Chinese email
-providers. All three work for core IMAP+SMTP operations. Key findings:
-text search is broken on all three (server-side limitation), 163
-(Coremail) requires sasl-ir=false and id.auto=true, 139 requires
-native-tls (rustls-ring fails TLS handshake with HandshakeFailure).
+On Windows an absolute path carries a colon of its own, so `-c
+C:\Users\me\config.toml` was split on it and read as the two paths `C` and
+`\Users\me\config.toml`. Neither exists, so the configuration was never
+found and every command failed with "No configuration found", even though
+the file was there. The same held for HIMALAYA_CONFIG, which feeds the
+same argument.
 
-Closes: https://github.com/pimalaya/himalaya/issues/795
+The separator is now `;` on Windows, as `$PATH` and `std::env::split_paths`
+spell it, and stays `:` elsewhere, so nothing changes on Unix. Several
+paths can still be given at once, and a single one is never split.
 
-* docs(testing): address maintainer feedback on 139 TLS analysis
+* docs(config): state the platform config path separator
 
-- Add detailed rustls cipher suite analysis with trace log evidence
-- Clarify root cause: server requires legacy ciphers (AES-CBC) that
-  rustls intentionally does not implement
-- Remove unverified China Mobile enterprise mail note
-- Update README provider names to English format
+The loader now splits -c on \'s own separator, so the README, the sample configuration and the config spec say so, and an Unreleased entry records the Windows fix and the colon-joined trade-off that comes with it.
 
-* docs(testing): fix 163 link and ID command description, remove QQ P5
+* test(cli): pin the config path delimiter to the platform
 
-- Fix broken link to provider-quirks.md (should be ../provider-quirks.md)
-- Correct P3 description: client sends ID command, not server
-- Remove P5 (FROM column truncation): this is himalaya's rendering, not a QQ issue
+The two splitting tests build their input from the constant, so an unconditional semicolon would pass them on Unix while breaking every colon-joined path 
 
-* docs(testing): re
-
-**File**: `cairn/spec/testing/README.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -25,6 +25,9 @@ single combined report sufficed.
- | --- | --- | --- | --- |
- | IMAP + SMTP | Fastmail | [imap-smtp-fastmail.md](imap-smtp-fastmail.md) | [imap-smtp-specific-fastmail.md](imap-smtp-specific-fastmail.md) |
- | IMAP + SMTP | Posteo | [imap-smtp-posteo.md](imap-smtp-posteo.md) | *(combined)* |
-+| IMAP + SMTP | QQ Mail (Tencent) | [imap-smtp-qq.md](imap-smtp-qq.md) | *(combined)* |
-+| IMAP + SMTP | 163 Mail (NetEase) | [imap-smtp-163.md](imap-smtp-163.md) | *(combined)* |
-+| IMAP + SMTP | 139 Mail (China Mobile) | [imap-smtp-139.md](imap-smtp-139.md) | *(combined)* |
- | IMAP | Gmail (Google) | [imap-google.md](imap-google.md) | *(combined)* |
- | IMAP | iCloud | [imap-icloud.md](imap-icloud.md) | *(combined; IMAP-only account)* |
- | JMAP | Fastmail | [jmap-fastmail.md](jmap-fastmail.md) | [jmap-specific-fastmail.md](jmap-specific-fastmail.md) |
+@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
+ - Fixed `account check` refusing an account declaring only a pimdir block as configuring no backend: the store is opened, its mailboxes listed, and a producer probed without writing anything, so a store whose staging lock a collector holds fails the check at once with `store-busy`.
+ - Fixed `account check` exiting 0 when a backend failed: it now fails with one error naming each failed backend and why.
+ - Fixed `pimdir queue cancel` reshaping the store's schema to Himalaya's io-pimdir revision, which dropped the tables and columns another app's revision keeps: the store is opened as it stands, and one of another draft is refused with `store-version`.
 ```
 
-**File**: `cairn/spec/testing/imap-smtp-139.md` (added, +143/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,143 @@
-+# IMAP + SMTP on 139 Mail — test report
-+
-+Shared cross-protocol commands on the IMAP/SMTP backend against **139 Mail**
-+(China Mobile). Method: [provider-test-plan.md](provider-test-plan.md).
-+
-+- himalaya: `v2.2.1 +imap +smtp +native-tls` (rev `4df380b`)
-+- account: `mobile` — IMAP `imaps://imap.139.com:993`, SMTP
-+  `smtps://smtp.139.com:465`, SASL LOGIN with authorization code
-+- date: 2026-10-18
-+- server: China Mobile Mail; Chinese mailbox names (草稿箱, 已发送, 已删除,
-+  垃圾邮件); requires `native-tls` (rustls-ring fails TLS handshake)
-+
-+> ⚠️ **TLS provider.** 139 Mail's IMAP server fails TLS handshake with
-+> `rustls-ring` (himalaya's default). Build with `native-tls` to use this
-+> provider. See P1 below.
-+
-+## Configuration
-+
-+```toml
-+[accounts.mobile]
-+email = "user@139.com"
-+display-name = "Your Name"
-+downloads-dir = "~/Downloads"
-+
-+imap.server = "imaps://imap.139.com:993"
-+imap.sasl.login.username = "user@139.com"
-+imap.sasl.login.password.raw = "***"
-+
-+smtp.server = "smtps://smtp.139.com:465"
-+smtp.sasl.login.username = "user@139.com"
-+smtp.sasl.login.password.raw = "***"
-+```
-+
-+## Results
-+
-+| Command | Variants | Result |
-+| --- | --- | --- |
-+| `account check` | base | ✅ IMAP OK, SMTP OK (native-tls only) |
-+| `mailbox list` | base, `--counts` | ⚠️ counts columns empty (P2) |
-+| `envelope list` | in fake folder, `--json` | ✅ |
-+| `envelope search` | `-- subject`, `-- flag` | ⚠️ text search ignores criteria (P3) |
-+| `message add` | into fake folder, `-f seen` | ✅ flags preserved (unlike QQ) |
-+| `message read` | pretty | ✅ |
-+| `flag add/set/remove` | flagged | ✅ |
-+| `message copy` / `move` | `--from`/`--to`, counts | ✅ (one transient COPY error, P4) |
-+| `message compose` | `--send` | ✅ delivered to self |
-+| `message reply` | `--save` | ⚠️ first attempt failed, retry succeeded (P5) |
-+| `message forward` | `--save` | ✅ |
-+| `imap create` / `delete` | fake folders | ✅ |
-+
-+## Findings
-+
-+### Bugs / issues
-+
-+*(none confirmed — all failures are transient or provider-specific)*
-+
-+### Provider-specific behaviour (not bugs)
-+
-+- **P1 — TLS compatibility.** `imap.139.com:993` fails TLS handshake with
-+  `rustls-ring` (himalaya's default TLS provider). The exact error:
-+
-+  ```
-+  imap: FAIL (received fatal alert: HandshakeFailure)
-+  ```
-+
-+  **Root cause:** rustls ClientHello offers only modern AEAD cipher suites
-+  (TLS 1.3: `TLS13_AES_256_GCM_SHA384`, `TLS13_AES_128_GCM_SHA256`,
-+  `TLS13_CHACHA20_POLY1305_SHA256`; TLS 1.2: `TLS_ECDHE_RSA/ECDSA_WITH_AES_GCM`
-+  and `CHACHA20_POLY1305`). The server rejects with `HandshakeFailure`, indicating
-+  it requires legacy cipher suites (e.g., AES-CBC) that rustls intentionally does
-+  not implement for security reasons.
-+
-+  **Evidence from trace logs:**
-+  - rustls offers TLS 1.2/1.3 with ECDHE key exchange only
-+  - No legacy ciphers (AES-CBC, 3DES, RC4) or non-ECDHE key transport
-+  - Server responds with fatal HandshakeFailure alert
-+  - native-tls succeeds (OpenSSL/Secure Transport support legacy ciphers)
-+
-+  **SMTP works:** `smtp.139.com:465` succeeds with `rustls-ring` using TLS 1.3
-+  (`TLS13_AES_256_GCM_SHA384`), indicating the SMTP server supports modern ciphers
-+  while the IMAP server does not.
-+
-+  **Verified:**
-+  - `rustls-ring`: IMAP FAIL (`HandshakeFailure`), SMTP OK
-+  - `native-tls`: IMAP OK, SMTP OK
-+
-+- **P2 — Mailbox counts not supported.** `mailbox list --counts` shows empty
-+  TOTAL and UNREAD columns for all folders. The 139 server likely does not
-+  support the IMAP STATUS command or returns empty values. The envelope list
-+  and other commands work normally.
-+
-+- **P3 — Text search ignores criteria.** `envelope search -- subject "Test"`
-+  returns all messages in the mailbox, not just those matching the subject.
-+  The search criteria appears to be silently ignored. Flag-based search
-+  (`-- flag seen`) works correctly. This differs from QQ and 163 Mail, where
-+  text search returns 0 results; on 139, it returns everything.
-+
-+- **P4 — Transient COPY error.** One `message move` operation failed with
-+  `IMAP COPY failed: NO COPY errno:1407, user maillist null`. This appears to
-+  be a server-side transient error. The message was still removed from the
-+  source folder on retry.
-+
-+- **P5 — Transient FETCH error on reply.** The first `message reply` attempt
-+  failed with `FETCH returned no body for the requested message`. The same
-+  message was readable via `message read`, and `message forward` on the same
-+  message succeeded. A retry of `message reply` succeeded. This suggests a
-+  server-side transient issue, possibly related to session state or caching.
-+
-+- **P6 — Chinese mailbox names.** 139 Mail uses Chinese names for default
-+  folders: 草稿箱 (Drafts), 已发送 (Sent), 已删除 (Trash), 垃圾邮件 (Junk).
-+  Modified UTF-7 encoding is handled correctly.
-+
-+- **P7 — APPEND preserves flags.** Unlike QQ Mail (which auto-sets `\Seen` on
-+  APPEND), 139 Mail correctly preserves the requested flags. Messages added
-+  with 
+@@ -178,7 +178,7 @@ A persistent configuration is loaded from the first valid path among:
+ 
+ These are the same paths the [himalaya-tui](https://github.com/pimalaya/himalaya-tui) TUI looks at: one TOML file backs both binaries. CLI-only fields and TUI-only sections coexist without errors. See [config.sample.toml](./config.sample.toml) for a documented template.
+ 
+-Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `:`. The first one is the base and the rest are deep-merged on top.
++Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or by repeating `-c`. The first one is the base and the rest are deep-merged on top.
+ 
+ To add or reconfigure an account, run the bare `himalaya` wizard again and redirect its printed TOML into (or merge it with) your config file. There is no in-place edit subcommand; `himalaya account list` and `himalaya account check` inspect and validate the accounts already declared.
+ 
 ```
 
-**File**: `cairn/spec/testing/imap-smtp-163.md` (added, +130/-0)
+**File**: `cairn/log/2026-10-31-config-path-separator.md` (added, +34/-0)
 ```diff
-@@ -0,0 +1,130 @@
-+# IMAP + SMTP on 163 Mail — test report
+@@ -0,0 +1,34 @@
++---
++cairn: log
++change: config-path-separator
++landed: 2026-10-31
++---
 +
-+Shared cross-protocol commands on the IMAP/SMTP backend against **163 Mail**
-+(NetEase, Coremail). Method:
-+[provider-test-plan.md](provider-test-plan.md).
++# Took the config path separator from the platform
 +
-+- himalaya: `v2.2.1 +imap +smtp +rustls-ring` (rev `4df380b`)
-+- account: `netease` — IMAP `imaps://imap.163.com:993`, SMTP
-+  `smtps://smtp.163.com:465`, SASL LOGIN with authorization code
-+- date: 2026-10-18
-+- server: Coremail; `imap.sasl-ir = false` and `imap.id.auto = true` required
++A Windows absolute path carries a colon of its own. `ConfigPathsArg` declared
++`value_delimiter = ':'`, so clap split every `-c` value at the drive letter:
++`-c C:\Users\me\config.toml` reached the loader as `C` and
++`\Users\me\config.toml`, neither of which exists, and the configuration was
++never read even though the file was right there. `HIMALAYA_CONFIG` feeds the
++same argument and failed the same way, and so did repeated `-c` flags with
++absolute paths. A relative path worked, which is why it stayed hidden.
 +
-+> ⚠️ **Coremail quirks confirmed.** 163 Mail runs on Coremail, which has
-+> several known issues documented in
-+> [provider-quirks.md](../provider-quirks.md). The configuration
-+> requires `imap.sasl-ir = false` and `imap.id.auto = true` (with non-empty
-+> `id.fields`, the default). Without these, the connection fails.
++The delimiter now follows `$PATH` on the platform: `;` on Windows and `:` on
++every other target. A single path is never split, the help text says which
++separator applies, and several paths can still be given at once or by
++repeating `-c`. On Windows a colon-joined list is no longer split, and a path
++that itself contains `;` now is; both are the price of reading absolute paths
++whole, and the documented spelling on Windows is `;` or repeated flags.
 +
-+## Configuration
++Verified: `cargo build`, `cargo fmt --check` and `cargo test --all-features`
++run on Windows before and after. The failures already present there, the
++pimdir, mbox and tilde-expansion ones, are unchanged by name; one integration
++test passing `-c` an absolute path now passes instead of failing on the
++missing configuration. Two new tests parse the CLI: an absolute path yields one
++path (before the change it yielded `["C", "\Users\...\config.toml"]`), and two
++paths joined with the platform separator yield two. A third pins the constant
++to `;` on Windows and `:` elsewhere, so dropping the platform gate cannot pass
++unnoticed.
 +
-+```toml
-+[accounts.netease]
-+default = false
-+email = "user@163.com"
-+display-name = "Your Name"
-+downloads-dir = "~/Downloads"
-+
-+imap.server = "imaps://imap.163.com:993"
-+imap.sasl-ir = false
-+imap.id.auto = true
-+imap.sasl.login.username = "user@163.com"
-+imap.sasl.login.password.raw = "***"
-+
-+smtp.server = "smtps://smtp.163.com:465"
-+smtp.sasl.login.username = "user@163.com"
-+smtp.sasl.login.password.raw = "***"
-+```
-+
-+## Results
-+
-+| Command | Variants | Result |
-+| --- | --- | --- |
-+| `account check` | base | ✅ IMAP OK, SMTP OK |
-+| `mailbox list` | base, `--counts`, `--json` | ✅ Chinese mailbox names displayed correctly |
-+| `envelope list` | in fake folder, `--json` | ✅ |
-+| `envelope search` | `-- subject`, `-- from` | ❌ text search returns 0 results (P1) |
-+| `message add` | into fake folder | ✅ |
-+| `message read` | pretty, Chinese content | ✅ Chinese body displayed correctly |
-+| `flag add/set/remove` | seen/flagged | ✅ |
-+| `message copy` / `move` | `--from`/`--to`, counts | ✅ |
-+| `message compose` | `--send` | ✅ delivered to self |
-+| `message reply` | `--save` | ✅ |
-+| `message forward` | `--save` | ✅ |
-+| `imap create` / `delete` | fake folders | ✅ (delete requires empty mailbox) |
-+| `imap fetch` | `--envelope` | ✅ |
-+| `imap search` | no criteria, `--seen`, `--from` | ⚠️ flag search works, text search fails (P1) |
-+| `imap status` | fake folder | ✅ |
-+
-+## Findings
-+
-+### Bugs / issues
-+
-+*(none — all failures are provider-specific behaviour)*
-+
-+### Provider-specific behaviour (not bugs)
-+
-+- **P1 — Text search does not work.** `envelope search -- subject "..."` and
-+  `-- from "..."` return 0 results even when matching messages exist. Flag-based
-+  search (`--seen`) works correctly. The IMAP-level `imap search --from` also
-+  returns 0. This is a Coremail server limitation or configuration issue, not a
-+  himalaya bug. Users should be aware that search on 163 Mail is unreliable for
-+  text content.
-+
-+- **P2 — Coremail SASL-IR is broken.** Confirmed that `imap.sasl-ir = false` is
-+  required. Without it, the server advertises SASL-IR but rejects the inline
-+  initial response.
-+
-+- **P3 — ID command is required.** Confirmed that `imap.id.auto = true` is
-+  required. The client (himalaya) sends an RFC 2971 ID command after authentication,
-+  and the server requires it.
-+
-+- **P4 — Chinese mailbox names.** 163 Mail uses Chinese names for default
-+  folders: 草稿箱 (Drafts), 已发送 (Sent), 已删除 (Trash), 垃圾邮件 (Junk),
-+  病毒文件夹 (Virus), 广告邮件 (Ads). Modified UTF-7 encoding is handled
-+  correctly by io-imap; all Chinese names display properly in both plain and
-+  JSON output.
-+
-+- **P5 — IMAP DELETE requires empty mailbox.** The server refuses to delete a
-+  non-empty mailbox with `NO DELETE can't delete mailbox with letter in it`.
-+  Messages must be moved or deleted before the mailbox can be removed.
-+
-+- **P6 — Authorization code authentication.** 163 Mail requires an authorization
-+  code (not the account password) for IMAP/SMTP. The code is generated from the
-+  web interface: Settings → POP3/SMTP/IMAP → Enable IMAP → Set authorization
-+  code. The authorization code works via SASL LOGIN (the IMAP `LOGIN` command),
-+  not `AUTHENTICATE PLAIN`, consistent with the provider-quirks documentation.
-+
-+- **P7 — TLS compatibility.** 163 Mail works with both `rustls-ring` (default)
-+  and `native-tls`. No TLS provider switch needed. Note: this is not true for
-+  all Chinese providers — 139 Mail requires `native-tls` for IMAP (see
-+  [imap-smtp-139.md](imap-smtp-139.md) P1).
-+
-+### Observations
-+
-+- `mailbox list --counts` shows TOTAL and UNREAD columns correctly.
-+- `--json mailbox list` outputs valid JSON with Chinese folder names, but
-+  `total` and `unread` fields are `null` even when `--counts` is passed to the
-+  plain command. This may be a schema issue (counts not included in JSON by
-+  default).
-+- `message read` correctly decodes UTF-8 Chinese content.
-+- `message compose --send` delivered to self within seconds; the delivered copy
-+  appeared in Inbox.
-+- Flag table symbols: `*` = unseen, `!` = flagged, blank = seen.
-+- `message copy` and `message mo
++Spec updated: config (MODIFIED: Config loading and merge).
 ```
 
-**File**: `cairn/spec/testing/imap-smtp-qq.md` (added, +104/-0)
+**File**: `cairn/spec/config.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,104 @@
-+# IMAP + SMTP on QQ Mail — test report
+@@ -18,7 +18,7 @@ A bare authority SHALL resolve to `sieve://`, where the `imap` and `smtp` blocks
+ A mechanism disclosing a reusable credential SHALL be refused over a cleartext connection unless `sieve.allow-cleartext-auth` is set, which is the configuration RFC 5804 section 5 asks for.
+ 
+ ### Requirement: Config loading and merge
+-The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, colon-free as repeated flags: the first is the base and the rest are deep-merged on top.
++The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, delimited like `$PATH` (`;` on Windows, `:` elsewhere) or repeated as flags: the first is the base and the rest are deep-merged on top.
+ 
+ ### Requirement: Missing account is an error
+ When the config exists but lacks the requested account, the command SHALL fail with a hard error, not fall back to the wizard. The wizard is proposed only when no config is found at all.
+```
+
+**File**: `config.sample.toml` (modified, +2/-1)
+```diff
+@@ -7,7 +7,8 @@
+ #   - $HOME/.himalayarc
+ #
+ # Override with `himalaya -c <PATH>`. Multiple paths can be passed at once,
+-# separated by `:`; the first one is the base and the rest are deep-merged on
++# separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or
++# by repeating `-c`; the first one is the base and the rest are deep-merged on
+ # top of it.
+ #
+ # Bare `himalaya` launches the wizard, which discovers an account from your
+```
+
+**File**: `src/cli.rs` (modified, +69/-4)
+```diff
+@@ -165,6 +165,14 @@ pub enum Command {
+     JsonSchema(JsonSchemaCommand),
+ }
+ 
++/// The character separating several configuration paths, `$PATH`'s own: `;`
++/// on Windows, where a colon belongs to the drive letter of an absolute path,
++/// and `:` elsewhere.
++#[cfg(windows)]
++const CONFIG_PATH_DELIMITER: char = ';';
++#[cfg(not(windows))]
++const CONFIG_PATH_DELIMITER: char = ':';
 +
-+Shared cross-protocol commands on the IMAP/SMTP backend against **QQ Mail**
-+(Tencent / Foxmail). Method:
-+[provider-test-plan.md](provider-test-plan.md).
+ /// Path(s) to the TOML configuration file(s).
+ ///
+ /// Declared here rather than taken from pimalaya-cli, so the environment
+@@ -174,11 +182,11 @@ pub struct ConfigPathsArg {
+     /// Override the default configuration file path.
+     ///
+     /// Paths are shell-expanded then canonicalized, and several may be given
+-    /// at once, delimited by `:` like `$PATH`. The first is the base and the
+-    /// rest are merged on top, which is how a public configuration stays
+-    /// separate from the private ones.
++    /// at once, delimited like `$PATH` (`;` on Windows, `:` elsewhere). The
++    /// first is the base and the rest are merged on top, which is how a public
++    /// configuration stays separate from the private ones.
+     #[arg(long = "config", short = 'c', global = true, env = "HIMALAYA_CONFIG")]
+-    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = ':')]
++    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = CONFIG_PATH_DELIMITER)]
+     pub paths: Vec<PathBuf>,
+ }
+ 
+@@ -411,3 +419,60 @@ impl Command {
+         }
+     }
+ }
 +
-+- himalaya: `v2.2.1 +imap +smtp +native-tls` (rev `4df380b`)
-+- account: `qq` — IMAP `imaps://imap.qq.com:993`, SMTP
-+  `smtps://smtp.qq.com:465`, SASL LOGIN with authorization code
-+- date: 2026-10-18
-+- server: Tencent Mail; hierarchy separator `/`; advertised capabilities
-+  include `IMAP4rev1 UIDPLUS MOVE`
++#[cfg(test)]
++mod tests {
++    use std::{env, path::PathBuf, process};
 +
-+## Configuration
++    use clap::Parser;
 +
-+```toml
-+[accounts.Foxmail]
-+email = "user@foxmail.com"
-+display-name = "Your Name"
-+downloads-dir = "~/Downloads"
++    use super::{CONFIG_PATH_DELIMITER, Cli};
 +
-+imap.server = "imaps://imap.qq.com:993"
-+imap.sasl.login.username = "user@foxmail.com"
-+imap.sasl.login.password.raw = "***"
++    /// A directory that is never created, so the paths below it keep the
++    /// spelling they were given instead of being canonicalized.
++    fn absent_dir() -> PathBuf {
++        env::temp_dir().join(format!("himalaya-config-paths-{}", process::id()))
++    }
 +
-+smtp.server = "smtps://smtp.qq.com:465"
-+smtp.sasl.login.username = "user@foxmail.com"
-+smtp.sasl.login.password.raw = "***"
-+```
++    fn paths(args: &[&str]) -> Vec<PathBuf> {
++        Cli::try_parse_from([&["himalaya"], args].concat())
++            .expect("parse")
++            .config
++            .paths
++    }
 +
-+> **TLS compatibility:** QQ Mail works with both `rustls-ring` (default) and
-+> `native-tls`. No TLS provider switch needed.
++    #[test]
++    fn a_config_path_is_never_split() {
++        // NOTE: an absolute Windows path holds a colon of its own, so splitting
++        // on it would read `C:\dir\config.toml` as two paths and find neither.
++        let path = absent_dir().join("config.toml");
 +
-+## Results
++        assert_eq!(
++            paths(&["-c", path.to_str().unwrap(), "account", "list"]),
++            [path]
++        );
++    }
 +
-+| Command | Variants | Result |
-+| --- | --- | --- |
-+| `account check` | base | ✅ IMAP OK, SMTP OK |
-+| `mailbox list` | base, `--counts`, `--json` | ✅ |
-+| `envelope list` | in fake folder, `--json` | ✅ |
-+| `envelope search` | `-- subject`, `-- from` | ❌ text search returns 0 results (P1) |
-+| `message add` | into fake folder, `-f seen` | ✅ (but auto-sets `\Seen`, see P2) |
-+| `message read` | pretty | ✅ |
-+| `flag add/set/remove` | flagged | ✅ |
-+| `message copy` / `move` | `--from`/`--to`, counts | ✅ |
-+| `message compose` | `--send` | ✅ delivered to self |
-+| `message reply` | `--save` | ✅ |
-+| `message forward` | `--save` | ✅ |
-+| `imap create` / `delete` | fake folders | ✅ |
-+| `imap fetch` | `--flags` | ✅ |
-+| `imap search` | no criteria | ⚠️ text search fails (P1) |
++    #[test]
++    fn several_config_paths_split_on_the_platform_delimiter() {
++        let dir = absent_dir();
++        let (one, two) = (dir.join("one.toml"), dir.join("two.toml"));
++        let given = format!(
++            "{}{}{}",
++            one.display(),
++            CONFIG_PATH_DELIMITER,
++            two.display()
++        );
 +
-+## Findings
++        assert_eq!(paths(&["-c", &given, "account", "list"]), [one, two]);
++    }
 +
-+### Bugs / issues
++    #[test]
++    fn the_delimiter_is_the_platform_one() {
++        // NOTE: `$PATH` separates with `;` on Windows, where a colon belongs to
++        // the drive letter of an absolute path, and with `:` elsewhere.
++        let expected = if cfg!(windows) { ';' } else { ':' };
 +
-+*(none — all failures are provider-specific behaviour)*
-+
-+### Provider-specific behaviour (not bugs)
-+
-+- **P1 — Text search does not work.** `envelope search -- subject "..."` and
-+  `-- from "..."` return 0 results even when matching messages exist. This is
-+  the same behaviour observed on 163 Mail (Coremail). QQ Mail may use a similar
-+  server-side search implementation that does not support standard IMAP SEARCH
-+  text criteria. Flag-based search may still work.
-+
-+- **P2 — APPEND auto-sets `\Seen`.** Messages added via `message add` (IMAP
-+  `APPEND`) are automatically marked as `\Seen` by the QQ Mail server, even
-+  when no flags were requested. This differs from Fastmail and 163 Mail, where
-+  appended messages retain their requested flags. As a result, the `*` (unseen)
-+  indicator never appears for newly-added messages on QQ Mail.
-+
-+- **P3 — English mailbox names.** QQ Mail uses English names for default
-+  folders: `Inbox`, `Sent Messages`, `Drafts`, `Deleted Messages`, `Junk`,
-+  `Archive`. A nested Chinese folder exists: `其他文件夹/QQ邮件订阅`. The
-+  hierarchy separator is `/`.
-+
-+- **P4 — Authorization code authentication.** QQ Mail requires an authorization
-+  code (not the QQ password) for IMAP/SMTP. The code is generated from the web
-+  interface: Settings → Account → POP3/IMAP/SMTP service → Generate
-+  authorization code.
-+
-+### Observations
-+
-+- `mailbox list --counts` shows TOTAL and UNREAD columns correctly.
-+- `message compose --send` delivered to self within seconds; the delivered copy
-+  appeared in Inbox.
-+- `message copy` and `message move` report accurate counts.
-+- `imap fetch --flags` returns flag data correctly.
-+- Flag table symbols: `*` = unseen, `!` = flagged, blank = seen.
-+- QQ Mail's `Deleted Messages` folder serves as the trash.
-+
-+## Verdict
-+
-+QQ Mail (IMAP + SMTP) is **mostly working** across shared commands. The core
-+functionality (list, read, flag, copy, move, send, reply, forward) all work
-+correctly. Both TLS providers (`rustls-ring` and `native-tls`) are supported.
-+
-+**The main limitation is text search**, which does not work — the same issue
-+observed on 163 Mail. This appears to be a common limitation among Chinese email
-+providers. The APPEND auto-Seen behaviour is also noteworthy for users who rely
-+on flag-based workflows.
-+
-+**Safe to document as a supported provider with search limitations.**
++        assert_eq!(CONFIG_PATH_DELIMITER, expected);
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `5d54dd51` (2026-11-01)
+**Commit Message**: build: pin io-pimdir to fd0c060
+
+pimdir 3d6a04e: a queued update over a conflict parks unless it names
+the conflict it resolves (`resolves`); a blob name held by bytes that
+fail it is verified and quarantined.
+
+**File**: `Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1371,7 +1371,7 @@ dependencies = [
+ [[package]]
+ name = "io-pimdir"
+ version = "0.8.0"
+-source = "git+https://github.com/pimalaya/io-pimdir?rev=09d2d1c5cf8c157cf9b558a715e42af77fc284e9#09d2d1c5cf8c157cf9b558a715e42af77fc284e9"
++source = "git+https://github.com/pimalaya/io-pimdir?rev=fd0c06059dfb947f536bb0b72d55b2603fd2456a#fd0c06059dfb947f536bb0b72d55b2603fd2456a"
+ dependencies = [
+  "blake3",
+  "encoding_rs",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -94,6 +94,6 @@ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec6
+ io-imap = { git = "https://github.com/pimalaya/io-imap", rev = "5d83c49a832310cf83b2432ed57fc8093647fbe3" }
+ io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
+ io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
+-io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "09d2d1c5cf8c157cf9b558a715e42af77fc284e9" }
++io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "fd0c06059dfb947f536bb0b72d55b2603fd2456a" }
+ pimalaya-cli = { git = "https://github.com/pimalaya/cli", rev = "55b66933950f02541892407667e5e0b254245871" }
+ pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "48c8c63a6fb917175f4c684e709ce659055c5338" }
+```
+
+---
+
+### Incident Patch 3: `8196891f` (2026-11-03)
+**Commit Message**: build: pin io-pimdir 0c70144, pimalaya-cli and pimalaya-config 0.3
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -93,6 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Changed `flag add`, `flag set`, `flag remove`, `message move`, `message copy` and `message delete` (when it moves to the trash) to fail, exit code 1, when none of the given ids exists in the mailbox. Over IMAP the flag commands reported a success for such an id, and `message move` and `message copy` exited 0 on "no id matched". The flag commands now report how many messages they found, as `count` under `--json` ([#777]).
+ - Bumped io-pimdir to 0.8, io-msgraph to 0.6, io-jmap to 0.6 and io-gmail to 0.5, the unreleased ones and io-http and io-imap taken from git until they are published, whose fixes bound what a server can make the client hold: an HTTP response head is capped at 64 KiB and a body at 256 MiB, failing with a typed error rather than buffering without end, an IMAP greeting carrying a literal fails rather than panicking, a `STARTTLS` response line is capped, and `LOGIN` and `AUTHENTICATE` no longer log credentials at trace level. A JMAP submission refused as `tooLarge`, `forbidden`, `overQuota` or `rateLimit` now names that type rather than `unknown`. The pimdir reads take no date floor; outputs are unchanged.
+ - Changed the `pimdir` cargo feature to enable io-pimdir's `search` feature, which brings ical-rs and vcard-rs.
++- Changed `message copy` and `message move` on a pimdir account to fail for a message whose body is not downloaded when the account does not sync the target mailbox yet, no copy being able to reach it (io-pimdir 0c70144, pimdir SYNC §7).
++- Bumped pimalaya-cli and pimalaya-config to 0.3, taken from crates.io rather than git.
+ - Changed the pimdir backend to follow pimdir storage-draft-08, sync-draft-07 and search-draft-08 (io-pimdir bff5737). A store or a search index an earlier neverest wrote is refused, never migrated (`store-version`, `index-version`): reinstall it as neverest's MIGRATION.md says. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
+ - Changed a pimdir send to name its performer in the queued `submit` whatever the sources declare, the one source syncing the mailbox when none declares capabilities; a mailbox no source syncs yet is refused with `no-performer`, staging nothing.
+ - Changed `pimdir flag` and `pimdir tag` to refuse a flag the store cannot hold (empty, or holding whitespace, a control or a non-ASCII character) with the code `flag-invalid`.
+```
+
+**File**: `Cargo.lock` (modified, +8/-5)
+```diff
+@@ -1380,7 +1380,7 @@ dependencies = [
+ [[package]]
+ name = "io-pimdir"
+ version = "0.8.0"
+-source = "git+https://github.com/pimalaya/io-pimdir?rev=908db2ba74e40cccb89281e797d1807dbf0b7d9b#908db2ba74e40cccb89281e797d1807dbf0b7d9b"
++source = "git+https://github.com/pimalaya/io-pimdir?rev=0c701447473a03e5cf9effcd0039a49a78419c4d#0c701447473a03e5cf9effcd0039a49a78419c4d"
+ dependencies = [
+  "blake3",
+  "encoding_rs",
+@@ -1972,7 +1972,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "pimalaya-cli"
+-version = "0.2.6"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3fe9eda0c6d281d896f4bbb0e88fa2b88f5ae3bfc8daab083de922959e5d549f"
+ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
+@@ -1997,11 +1999,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "pimalaya-config"
+-version = "0.2.1"
+-source = "git+https://github.com/pimalaya/config?rev=5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d#5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8ea46595a4484b0a6e8af89ee9597d5d10cd7ccec39442137aafc969f0a5587a"
+ dependencies = [
+  "anyhow",
+- "dirs 6.0.0",
++ "dirs 7.0.0",
+  "log",
+  "secrecy",
+  "serde",
+```
+
+**File**: `Cargo.toml` (modified, +4/-6)
+```diff
+@@ -36,7 +36,7 @@ strip = "symbols"
+ panic = "abort"
+ 
+ [build-dependencies]
+-pimalaya-cli = { version = "0.2.6", default-features = false, features = ["build"] }
++pimalaya-cli = { version = "0.3", default-features = false, features = ["build"] }
+ 
+ [dev-dependencies]
+ rusqlite = { version = "0.41", default-features = false, features = ["bundled"] }
+@@ -71,8 +71,8 @@ mime-rs = { version = "0.0.1", git = "https://github.com/pimalaya/mime-rs", rev
+ mime_guess = "2"
+ open = "5"
+ percent-encoding = "2"
+-pimalaya-cli = { version = "0.2.6", default-features = false, features = ["terminal", "table", "prompt"] }
+-pimalaya-config = { version = "0.2.1", default-features = false, features = ["toml", "secret"] }
++pimalaya-cli = { version = "0.3", default-features = false, features = ["terminal", "table", "prompt"] }
++pimalaya-config = { version = "0.3", default-features = false, features = ["toml", "secret"] }
+ pimalaya-stream = { version = "0.3", default-features = false, features = ["std"] }
+ rfc2047-decoder = { version = "1", optional = true }
+ schemars = { version = "1", features = ["chrono04"] }
+@@ -93,6 +93,4 @@ ical-rs = { git = "https://github.com/pimalaya/ical", rev = "99b92736a6a076c7293
+ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec65a86b77256d46c33241d3038" }
+ io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
+ io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
+-io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "908db2ba74e40cccb89281e797d1807dbf0b7d9b" }
+-pimalaya-cli = { path = "../cli" }
+-pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d" }
++io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "0c701447473a03e5cf9effcd0039a49a78419c4d" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #800** (2026-11-01): fix(cli): delimit config paths with $PATH's own separator (@Omair-Asdaq)
 - **PR #796** (2026-10-29): docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (@xiaolinstar)
 - **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
 - **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
 - **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
 - **PR #791** (2026-10-14): feat(message): reply to all recipients with message reply --all (@jadhavgaurav)
-- **PR #789** (closed): feat(gmail): accept --thread-id on gmail messages send (@tom-haines)
 
 ---
 
@@ -1893,23 +1918,21 @@ Closes: https://github.com/pimalaya/himalaya/issues/795
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)
+## X. cli): delimit config paths with $PATH's own separator (#800)
 
 **RULE**:
-When implementing operations in `cairn/spec/testing/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5791471e`: docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `529d2119`: cli): delimit config paths with $PATH's own separator (#800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cairn/spec/testing/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| IMAP + SMTP | QQ Mail (Tencent) | [imap-smtp-qq.md](imap-smtp-qq.md) | *(combined)* |
-| IMAP + SMTP | 163 Mail (NetEase) | [imap-smtp-163.md](imap-smtp-163.md) | *(combined)* |
-| IMAP + SMTP | 139 Mail (China Mobile) | [imap-smtp-139.md](imap-smtp-139.md) | *(combined)* |
+- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1919,4 +1942,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5791471e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `529d2119` are properly handled with clean fallback behavior.

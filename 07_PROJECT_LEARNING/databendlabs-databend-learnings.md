@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `61e6a768`  
+> **Source Version**: `75a200a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:59:31.575Z  
+> **Timestamp**: 2026-11-04T22:59:05.769Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:59:23.944Z  
+> **Harvest Timestamp**: 2026-11-04T22:59:05.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20955** (2026-11-03): **fix(query): evaluate stream status in private task conditions**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Fix private tasks using the documented `WHEN STREAM_STATUS('db.stream')` syntax. The scheduler previously executed `SELECT STREAM_STATUS(...)`, but `STREAM_STATUS` is registered only as a table function. - Rewrite scalar `STREAM_STATUS` calls in task conditions to `(SELECT has_data FROM STREAM_STATUS(...))` using the parsed AST. Preserve boolean composition, casts, existing subqueries, and escaped string literals. Reject invalid scalar-call arguments and modifiers with an actionable error. Do not register a general scalar function or change ordinary SQL, Cloud task execution, or manual `EXECUTE TASK` behavior. No migration or configuration change is needed. - Add four unit tests covering both SQL dialects, composition/casts, existing expressions and table-function subqueries, invalid calls, and quoted string contents. Extend the private-task integration script with scheduled empty-stream skips, consumption of one inserted row, and repeated visible failures for an invalid stream reference. - Validation passed: `cargo test -p databend-query-task-support --lib when_condition -- --nocapture` (4 tests), `cargo clippy -p databend-query-task-support -p databend-query --lib -- -D warnings`, targeted `rustfmt --check`, `bash -n tests/task/test-private-task.sh`, formatting of the added shell block, and `git diff --check`. - The private-task end-to-end script was not run local
+- **Issue #20967** (2026-11-04): **feat(query): support runtime TopN pruning across UNION ALL**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Runtime TopN pruning (#20247) stopped at `UNION ALL`: for `SELECT ... FROM (t1 UNION ALL t2) ORDER BY k LIMIT n`, or a view defined as such a union, no branch scan got a runtime filter. This PR lets one TopN drive the runtime filters of all branch scans, and does the same for the aggregate rank limit (`GROUP BY k ORDER BY k LIMIT n` over a union).  - `RuntimeTopNFilter` is split into a shared `RuntimeTopNBoundary` (published by TopN / rank-limit sort) and per-scan `RuntimeTopNFilter`s (each with its own column id). One boundary update prunes and notifies every branch. - `register_runtime_top_n_filter` now crosses `UnionAll` (including nested ones) besides `Filter`/`EvalScalar`, and registers a filter on every eligible branch scan. An ineligible branch only skips itself. The scan's sort column is now matched by symbol through `name_mapping` instead of `display_name`. - New rule `PushDownTopNUnionScan` (`TopN -> [EvalScalar ->] UnionAll`) pushes the TopN keys, translated into each branch's columns, into the branch scans' `order_by`. Only the order is pushed, not the limit. `PushDownRankLimitAggregate` reuses the same helper (`rule/scan_order.rs`), so aggregates over a union push the order too. - Correctness: the boundary comes from rows of the union output; a block whose rows are all strictly worse cannot reach the top N whichever branch it belongs to. A branch is skipp
 
-- **Issue #20954** (2026-11-03): **feat(storage): prune segments using learned snapshot layouts**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Reduce repeated FUSE segment metadata scans by learning at most 128 ordered runs during normal reads. Use existing range pruning and binary summary probes within verified runs; unread gaps fall back to scanning. No ANALYZE, persistent range index, or block rewrites. - Include `snapshot_segment_layout_probe.py`: with 9,028 ordered segments and 43 matching segments, the model counts 68 summary reads (25 probes + 43 candidates), versus 9,028. This is a cache-disabled algorithm simulation, not a database latency benchmark; cold queries still need to learn the layout. - Skip observation for ineligible scans and reuse one snapshot lookup per pruner. Allocate the bounded directory before cache admission and charge its actual capacity; disabled layouts retain that capacity until snapshot eviction. - Add focused Rust/SQL regressions. Local validation passed: both previously failing cache accounting tests, both layout unit tests, Fuse clippy (`-D warnings`), formatting/diff checks, and the Python model/Ruff. Full CI is rerunning; two earlier SQL jobs lost their runners.  ## Tests  - [x] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functional
+- **Issue #20965** (2026-11-04): **ci: use $1 for the capture group in ClickBench Q28**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `benchmark/hits/queries/28.sql` passed `'\1'` as the replacement of `REGEXP_REPLACE`. The string literal parser turns `'\1'` into the byte `0x01` (`SELECT ascii('\1')` returns 1), and `regexp_replace` uses the Rust regex syntax `$1` for a capture group, so every matching `Referer` was replaced by `'\x01'`. On the 100M-row `hits` table the query returned 11 rows, the first being the key `'\x01'` with 66,284,655 rows, instead of 25 domains.  This PR uses `'$1'`, as the Databend query of ClickBench does (`databend/queries.sql`, line 29); the file now matches it. Q28 timings of the local and cloud benchmarks measured the wrong query until now and will change: on a local 100M-row run the corrected query takes 2.25 s instead of about 1 s.  The corrected query returns the 25 domains. With `octet_length` and `(?s)` added for the dialect differences (byte length, `.` matching newlines), its result is identical to another engine's result of the ClickBench query.  No test: this changes a benchmark query only; it was checked by running it as described above.  ## Tests  - [ ] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [x] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1197 +1217,1505 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1aedf8a9` (2026-11-03)
-**Commit Message**: fix(query): remove experimental privilege check settings (#20933)
+### Incident Patch 1: `6454b150` (2026-11-04)
+**Commit Message**: fix(storage): prevent incomplete index refresh after writes (#20909)
 
-* fix(query): remove experimental privilege check settings
+* refactor(storage): streamline compact and recluster maintenance
 
-Remove enable_experimental_rbac_check,
-enable_experimental_connection_privilege_check and
-enable_experimental_sequence_privilege_check. They could be changed per
-session, statement or HTTP request, which made stage, UDF, connection
-and sequence authorization optional for the caller. Checks, visibility
-filters and ownership maintenance now always run; the removed names are
-handled like other unknown settings.
+Use execution-time segment claims and publish-time table locks for
+lightweight compaction. Bound hook compaction to 128 source segments and
+cap auto_compaction_segments_limit at 128.
 
-- Connections and sequences: remove the SUPER bypass. CREATE requires
-  CREATE CONNECTION / CREATE SEQUENCE on the user or the current role;
-  access requires ACCESS CONNECTION / ACCESS SEQUENCE or ownership.
-- Stages, UDFs, connections and sequences write metadata and ownership
-  in one Meta transaction on CREATE and DROP. CREATE [IF NOT EXISTS]
-  keeps an existing object and its owner (also for tables), and replaces
-  a stale ownership left under the name.
-- Ownership lives only in its own key: drop the cleanup of ownership
-  privileges that older versions stored in role records.
-- Cache the sequence visibility checker per query: nextval now checks
- 
+Keep commit-lock retries for already-written output, with a one-second
+query-level lock timeout for Compact/Recluster hooks. Leave session
+settings unchanged.
 
-**File**: `src/meta/api/src/api_impl/sequence_api_impl.rs` (modified, +17/-14)
+Preserve parent-write hints across partial compaction and refresh the
+table cache before index maintenance. Log Compact/Recluster stage times.
+
+Retain block HLL, Top-N and segment-local virtual schemas during metadata
+assembly. Use physical block sizes for native compact admission and keep
+partition boundaries, force-perfect handling and the original recluster
+memory threshold unchanged.
+
+Remove redundant compact interfaces and stop reading distributed
+maintenance toggles. Retain both settings as deprecated no-ops so existing
+SET statements remain accepted.
+
+Extend existing settings, index-refresh and auto-compaction regressions.
+Validation: rustfmt --check on 24 changed Rust files; git diff --check.
+Builds, t
+
+**File**: `src/query/catalog/src/plan/partition.rs` (modified, +21/-5)
 ```diff
-@@ -17,6 +17,7 @@ use databend_common_meta_app::app_error::AppError;
- use databend_common_meta_app::app_error::SequenceError;
- use databend_common_meta_app::app_error::UnsupportedSequenceStorageVersion;
- use databend_common_meta_app::app_error::WrongSequenceCount;
-+use databend_common_meta_app::principal::OwnershipObject;
- use databend_common_meta_app::schema::CreateSequenceReply;
- use databend_common_meta_app::schema::CreateSequenceReq;
- use databend_common_meta_app::schema::DropSequenceReply;
-@@ -42,10 +43,10 @@ use log::debug;
- 
- use super::sequence_nextval_impl::NextVal;
- use crate::SequenceApi;
-+use crate::crud::create_owned_object;
- use crate::kv_app_error::KVAppError;
- use crate::kv_pb_api::KVPbApi;
- use crate::txn_backoff::txn_backoff;
--use crate::txn_condition_util::txn_cond_eq_seq;
- use crate::txn_condition_util::txn_cond_seq;
- use crate::txn_core_util::send_txn;
- use crate::txn_del;
-@@ -65,20 +66,22 @@ impl<KV: kvapi::KVApi<Error = MetaError> + ?Sized> SequenceApi for KV {
-         let storage_ident = SequenceStorageIdent::new_from(req.ident.clone());
-         let storage_value = ValueId::<SequenceStorageValue>::new(req.start);
- 
--        let conditions = if req.override_existing {
--            vec![]
--        } else {
--            vec![txn_cond_eq_seq(&req.ident, 0)]
-+        // An existing sequence is not an error here; callers report it themselves.
-+        let object = OwnershipObject::Sequence {
-+            name: req.ident.name().to_string(),
-         };
--
--        let txn = TxnRequest::new(conditions, vec![
--            txn_put_pb(&req.ident, &meta),
--            txn_put_pb(&storage_ident, &storage_value),
--        ]);
--
--        let (succ, _response) = send_txn(self, txn).await?;
--
--        Ok(CreateSequenceReply { success: succ })
-+        let success = create_owned_object(
-+            self,
-+            &req.ident,
-+            &meta,
-+            req.override_existing,
-+            &object,
-+            req.owner_role.as_deref(),
-+            &[txn_put_pb(&storage_ident, &storage_value)],
-+        )
-+        .await?;
-+
-+        Ok(CreateSequenceReply { success })
-     }
- 
-     async fn get_sequence(
-```
-
-**File**: `src/meta/api/src/kv/crud/mod.rs` (modified, +70/-0)
-```diff
-@@ -19,6 +19,10 @@ use std::marker::PhantomData;
- use std::sync::Arc;
- use std::time::Duration;
- 
-+use databend_common_meta_app::KeyWithTenant;
-+use databend_common_meta_app::principal::OwnershipInfo;
-+use databend_common_meta_app::principal::OwnershipObject;
-+use databend_common_meta_app::principal::TenantOwnershipObjectIdent;
- use databend_common_meta_app::schema::CreateOption;
- use databend_common_meta_app::tenant::Tenant;
- use databend_common_meta_app::tenant_key::errors::ExistError;
-@@ -34,6 +38,8 @@ use databend_meta_client::types::MatchSeq;
- use databend_meta_client::types::MatchSeqExt;
- use databend_meta_client::types::MetaError;
- use databend_meta_client::types::SeqV;
-+use databend_meta_client::types::TxnOp;
-+use databend_meta_client::types::TxnRequest;
- use databend_meta_client::types::With;
- pub use errors::CrudError;
- use futures::TryStreamExt;
-@@ -42,6 +48,10 @@ use seq_marked::SeqValue;
- 
- use crate::kv_pb_api::KVPbApi;
- use crate::kv_pb_api::UpsertPB;
-+use crate::send_txn;
-+use crate::txn_cond_eq_seq;
-+use crate::txn_del;
-+use crate::txn_put_pb;
- 
- /// A generic CRUD interface for meta data operations.
- ///
-@@ -130,6 +140,28 @@ where
-         Ok(())
-     }
- 
-+    /// Writes the record and its owner in one transaction; returns whether it was written.
-+    #[async_backtrace::framed]
-+    #[fastrace::trace]
-+    pub async fn add_with_ownership(
-+        &self,
-+        value: ValueOf<R>,
-+        replace: bool,
-+        object: OwnershipObject,
-+        owner: Option<&str>,
-+    ) -> Result<bool, MetaError> {
-+        create_owned_object(
-+            self.kv_api.as_ref(),
-+            &self.ident(value.name()),
-+            &value,
-+            replace,
-+            &object,
-+            owner,
-+            &[],
-+        )
-+        .await
-+    }
-+
-     #[async_backtrace::framed]
-     #[fastrace::trace]
-     pub async fn update(
-@@ -272,3 +304,41 @@ where
-         Ok(values)
+@@ -28,8 +28,10 @@ use databend_common_exception::Result;
+ use databend_meta_client::types::NodeInfo;
+ use databend_storages_common_table_meta::meta::BlockIndexMeta;
+ use databend_storages_common_table_meta::meta::BlockMeta;
++use databend_storages_common_table_meta::meta::BlockTopN;
+ use databend_storages_common_table_meta::meta::RawBlockHLL;
+ use databend_storages_common_table_meta::meta::Statistics;
++use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
+ use parking_lot::RwLock;
+ use rand::prelude::SliceRandom;
+ use rand::thread_rng;
+@@ -84,8 +86,11 @@ pub trait PartInfo: Send + Sync {
+ impl Debug for Box<dyn PartInfo> {
+     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+         match serde_json::to_string(self) {
+-            Ok(str) => write!(f, "{}", str),
+-            Err(_cause) => Err(std::fmt::Error {}),
++            Ok(json) => f.write_str(&json),
++            Err(cause) => f
++                .debug_struct("PartInfo")
++                .field("serialization_error", &cause)
++                .finish(),
+         }
      }
  }
-+
-+/// Writes an object, `extra_ops` and its owner in one transaction; returns whether it was written.
-+///
-+/// A new object never inherits an ownership left under its name by a dropped object.
-+/// An existing object is overwritten only with `replace`; with no `owner` it keeps its owner.
-+pub async fn create_owned_object<K>(
-+    kv: &(impl kvapi::KVApi<Error = MetaError> + ?Sized),
-+    key: &K,
-+    value: &K::ValueType,
-+    replace: bool,
-+    object: &OwnershipObject,
-+    owner: Option<&str>,
-+    extra_ops: &[TxnOp],
-+) -> Result<bool, MetaError>
-+where
-+    K: kvapi::Key + KeyWithTenant,
-+    K::ValueType: FromToProto + 'static,
-+{
-+    let ownership = TenantOwnershipObjectIdent::new(key.tenant(), object.clone());
-+    let set_owner = owner.map(|role| {
-+        txn_put_pb(&ownership, &OwnershipInfo {
-+            object: object.clone(),
-+            role: role.to_string(),
-+        })
-+    });
-+    let mut write = vec![txn_put_pb(key, value)];
-+    write.extend(extra_ops.iter().cloned());
-+
-+    let mut txn = TxnRequest::new(vec![txn_cond_eq_seq(key, 0)], write.clone());
-+    txn.if_then
-+        .push(set_owner.clone().unwrap_or_else(|| txn_del(&ownership)));
-+    if replace {
-+        txn.else_then = write;
-+        txn.else_then.extend(set_owner);
-+    }
-+    let (absent, _) = send_txn(kv, txn).await?;
-+    Ok(absent || replace)
+@@ -496,12 +501,22 @@ pub struct ReclusterTask {
+     pub inverted_index_sources: Vec<Vec<BlockIndexMeta>>,
+ }
+ 
+-pub type BlockMetaWithHLL = (Arc<BlockMeta>, Option<RawBlockHLL>);
++/// A surviving block keeps its segment-local virtual-column interpretation
++/// and per-block statistics when maintenance replaces the containing segment.
++#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
++pub struct RetainedBlockMeta {
++    pub block_meta: Arc<BlockMeta>,
++    pub hll: Option<RawBlockHLL>,
++    pub top_n: Option<BlockTopN>,
++    /// Local index into the enclosing container's `virtual_schemas`.
++    pub virtual_schema_index: usize,
 +}
+ 
+ #[derive(Clone, Default)]
+ pub struct ReclusterParts {
+     pub tasks: Vec<ReclusterTask>,
+-    pub remained_blocks: Vec<BlockMetaWithHLL>,
++    pub remained_blocks: Vec<RetainedBlockMeta>,
++    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
+     pub removed_segment_indexes: Vec<usize>,
+     pub removed_segment_summary: Statistics,
+ }
+@@ -514,7 +529,8 @@ impl ReclusterParts {
+ 
+ #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
+ pub struct ReclusterInfoSideCar {
+-    pub merged_blocks: Vec<BlockMetaWithHLL>,
++    pub merged_blocks: Vec<RetainedBlockMeta>,
++    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
+     pub removed_segment_indexes: Vec<usize>,
+     pub removed_statistics: Statistics,
+     /// Acquire the table lock only around refresh, sequence validation, and CAS publish.
 ```
 
-**File**: `src/meta/app/src/schema/sequence.rs` (modified, +3/-0)
+**File**: `src/query/service/src/interpreters/hook/compact_hook.rs` (modified, +71/-41)
 ```diff
-@@ -73,6 +73,9 @@ pub struct CreateSequenceReq {
+@@ -46,7 +46,6 @@ use crate::interpreters::hook::vacuum_hook::hook_vacuum_temp_files;
+ use crate::pipelines::executor::ExecutorSettings;
+ use crate::pipelines::executor::PipelineCompleteExecutor;
+ use crate::sessions::QueryContext;
+-use crate::sessions::TableContext;
+ use crate::sessions::TableContextPartitionStats;
+ use crate::sessions::TableContextProgress;
+ use crate::sessions::TableContextSettings;
+@@ -207,10 +206,10 @@ pub(crate) async fn compact_table(
+         &compact_target.database,
+         &compact_target.table,
+     )?;
+-
+     ctx.clear_table_meta_timestamps_cache();
  
-     /// See: [`SequenceMeta::storage_version`]
-     pub storage_version: u64,
-+
-+    /// Owner written in the same transaction as the sequence; see `create_owned_object`.
-+    pub owner_role: Option<String>,
+-    {
++    let compact_start = Instant::now();
++    let compact_result: Result<()> = async {
+         // do compact.
+         let compact_block = RelOperator::CompactBlock(OptimizeCompactBlock {
+             catalog: compact_target.catalog.clone(),
+@@ -243,13 +242,27 @@ pub(crate) async fn compact_table(
+             let complete_executor =
+                 PipelineCompleteExecutor::from_pipelines(pipelines, executor_settings)?;
+ 
+-            // Clears previously generated segment locations to avoid duplicate data in the refresh phase
+-            ctx.written_segment_locations().clear();
++            // Preserve parent-write hints for untouched segments and failed compaction.
++            // CommitSink adds published outputs; refresh filters out no-longer-live sources.
+             ctx.set_executor(complete_executor.get_inner())?;
+             complete_executor.execute().await?;
+             drop(complete_executor);
+         }
++        Ok(())
+     }
++    .await;
++    info!(
++        event = "compact_hook.stage_finished",
++        stage = "compact",
++        catalog = compact_target.catalog.as_str(),
++        database = compact_target.database.as_str(),
++        table = compact_target.table.as_str(),
++        elapsed_ms = compact_start.elapsed().as_millis() as u64,
++        success = compact_result.is_ok(),
++        error :? = compact_result.as_ref().err();
++        "Compact hook stage finished"
++    );
++    compact_result?;
+ 
+     {
+         let table = ctx
+@@ -264,42 +277,59 @@ pub(crate) async fn compact_table(
+         }
+         // do recluster.
+         if table.cluster_key_meta().is_some() {
+-            // evict the table from cache
+-            ctx.evict_table_from_cache(
+-                &compact_target.catalog,
+-                &compact_target.database,
+-                &compact_target.table,
+-            )?;
+-            // Spill is disabled to keep this synchronous hook fast (spilling adds
+-            // disk IO). Admission must then keep tasks inside the memory budget.
+-            // TODO: remove once the async hook is enabled.
+-            ctx.set_enable_sort_spill(false);
+-            let target = if is_materialized_view_engine(table.engine()) {
+-                MaintenanceTarget::MaterializedView {
+-                    table_id: table.get_id(),
+-                }
+-            } else {
+-                MaintenanceTarget::Table
+-            };
+-            let recluster = ReclusterPlan {
+-                catalog: compact_target.catalog,
+-                database: compact_target.database,
+-                table: compact_target.table,
+-                target,
+-                limit: Some(settings.get_auto_compaction_segments_limit()? as usize),
+-                selection: None,
+-                is_final: false,
+-            };
+-            let allow_segment_claims = lock_opt != LockTableOption::NoLock;
+-            let recluster_interpreter = ReclusterTableInterpreter::try_create(
+-                ctx.clone(),
+-                recluster,
+-                allow_segment_claims,
+-            )?;
+-            // Recluster will be done in `ReclusterTableInterpreter::execute2` directly,
+-            // we do not need to use `PipelineCompleteExecutor` to execute it.
+-            let build_res = recluster_interpreter.execute2().await?;
+-            debug_assert!(build_res.main_pipeline.is_empty());
++            let recluster_start = Instant::now();
++            let recluster_result: Result<()> = async {
++                // evict the table from cache
++                ctx.evict_table_from_cache(
++                    &compact_target.catalog,
++                    &compact_target.database,
++                    &compact_target.table,
++                )?;
++                // Spill is disabled to keep this synchronous hook fast (spilling adds
++                // disk IO). Admission must then keep tasks inside the memory budget.
++                // TODO: remove once the async hook is enabled.
++                ctx.set_enable_sort_spill(false);
++                let target = if is_materialized_view_engine(table.engine()) {
++                    MaintenanceTarget::MaterializedView {
++                        table_id: table.get_id(),
++                    }
++                } else {
++                    MaintenanceTarget::Table
++                };
++                let recluster = ReclusterPlan {
++                    catalog: compact_targ
+```
+
+**File**: `src/query/service/src/interpreters/hook/refresh_hook.rs` (modified, +40/-114)
+```diff
+@@ -17,20 +17,14 @@ databend_common_tracing::register_module_tag!("[REFRESH-HOOK]");
+ 
+ use std::sync::Arc;
+ 
+-use databend_common_ast::ast;
+ use databend_common_base::runtime::GlobalIORuntime;
+-use databend_common_catalog::table::Table;
+ use databend_common_exception::Result;
+-use databend_common_meta_app::schema::TableIndexType;
+ use databend_common_pipeline::core::ExecutionInfo;
+ use databend_common_pipeline::core::Pipeline;
+ use databend_common_pipeline::core::always_callback;
+-use databend_common_sql::plans::Plan;
+-use databend_common_sql::plans::RefreshTableIndexPlan;
++use databend_common_storages_fuse::FuseTable;
+ use log::info;
+ 
+-use crate::interpreters::Interpreter;
+-use crate::interpreters::RefreshTableIndexInterpreter;
+ use crate::interpreters::hook::resolve_current_table_name_by_id;
+ use crate::interpreters::hook::table_id_matches_target;
+ use crate::interpreters::hook::vacuum_hook::hook_clear_m_cte_temp_table;
+@@ -40,7 +34,6 @@ use crate::pipelines::executor::ExecutorSettings;
+ use crate::pipelines::executor::PipelineCompleteExecutor;
+ use crate::sessions::QueryContext;
+ use crate::sessions::TableContext;
+-use crate::sessions::TableContextSettings;
+ use crate::sessions::TableContextTableAccess;
+ use crate::sessions::TableContextTableManagement;
+ 
+@@ -69,14 +62,9 @@ pub async fn hook_refresh(ctx: Arc<QueryContext>, pipeline: &mut Pipeline, desc:
+ pub(crate) async fn execute_refresh_hook(ctx: Arc<QueryContext>, desc: RefreshDesc) -> Result<()> {
+     info!("Table hook starting refresh job");
+     match do_refresh(ctx, desc).await {
+-        Ok(_) => {
+-            info!("Refresh job completed successfully");
+-        }
+-        Err(e) => {
+-            info!("Refresh job failed: {:?}", e);
+-        }
++        Ok(_) => info!("Refresh job completed successfully"),
++        Err(e) => info!("Refresh job failed: {:?}", e),
+     }
+-
+     Ok(())
  }
  
- #[derive(Clone, Debug, PartialEq, Eq)]
+@@ -85,87 +73,58 @@ pub(crate) async fn do_refresh(ctx: Arc<QueryContext>, desc: RefreshDesc) -> Res
+         return Ok(());
+     };
+ 
+-    if desc.table_id.is_some() {
+-        ctx.evict_table_from_cache(&desc.catalog, &desc.database, &desc.table)?;
+-        ctx.clear_table_meta_timestamps_cache();
+-    }
+-
++    // Sync hooks reuse the write context too. Filter accumulated write and
++    // maintenance hints against the post-maintenance snapshot, not a cached one.
++    ctx.evict_table_from_cache(&desc.catalog, &desc.database, &desc.table)?;
+     let table = ctx
+         .get_table(&desc.catalog, &desc.database, &desc.table)
+         .await?;
+-    let table_id = table.get_id();
+     if !table_id_matches_target(
+         "refresh",
+         desc.table_id,
+-        table_id,
++        table.get_id(),
+         &desc.catalog,
+         &desc.database,
+         &desc.table,
+     ) {
+         return Ok(());
+     }
+-
+     ctx.clear_table_meta_timestamps_cache();
+-
+-    let mut plans = Vec::new();
+-
+-    // Generate sync inverted indexes.
+-    let inverted_index_plans = generate_refresh_table_index_plan(ctx.clone(), &desc, table).await?;
+-    plans.extend_from_slice(&inverted_index_plans);
+-
+-    let mut tasks = Vec::with_capacity(std::cmp::min(
+-        ctx.get_settings().get_max_threads()? as usize,
+-        plans.len(),
+-    ));
+-
+-    for plan in plans {
+-        let ctx_cloned = ctx.clone();
+-        tasks.push(async move {
+-            match plan {
+-                Plan::RefreshTableIndex(inverted_index_plan) => {
+-                    let refresh_inverted_index_interpreter =
+-                        RefreshTableIndexInterpreter::try_create(
+-                            ctx_cloned.clone(),
+-                            *inverted_index_plan,
+-                        )?;
+-                    let mut build_res = refresh_inverted_index_interpreter.execute2().await?;
+-                    if build_res.main_pipeline.is_empty() {
+-                        return Ok(());
+-                    }
+-
+-                    let settings = ctx_cloned.get_settings();
+-                    build_res.set_max_threads(settings.get_max_threads()? as usize);
+-                    let settings = ExecutorSettings::try_create(ctx_cloned.clone())?;
+-
+-                    if build_res.main_pipeline.is_complete_pipeline()? {
+-                        let query_ctx = ctx_cloned.clone();
+-                        build_res.main_pipeline.set_on_finished(always_callback(
+-                            move |_info: &ExecutionInfo| {
+-                                hook_clear_m_cte_temp_table(&query_ctx)?;
+-                                hook_vacuum_temp_files(&query_ctx)?;
+-                                hook_disk_temp_dir(&query_ctx)?;
+-                                Ok(())
+-                            },
+-                        ));
+-
+-                        let mut pipelines = build_res.sources_pipelines;
+-                        pipelines.push(build_res.main_pipeline);
+-
+-                        let complete_executor =
+-                            PipelineCompleteExecutor::from_pipelines(pipelin
 ```
 
-**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-0)
+**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +8/-9)
 ```diff
-@@ -8305,6 +8305,7 @@ impl SchemaApiTestSuite {
-                 increment: 1,
-                 comment: Some("seq".to_string()),
-                 storage_version,
-+                owner_role: None,
-             };
+@@ -70,7 +70,6 @@ use crate::pipelines::executor::ExecutorSettings;
+ use crate::pipelines::executor::PipelineCompleteExecutor;
+ use crate::schedulers::build_query_pipeline_without_render_result_set;
+ use crate::sessions::QueryContext;
+-use crate::sessions::TableContext;
+ use crate::sessions::TableContextLicense;
+ use crate::sessions::TableContextQueryState;
+ use crate::sessions::TableContextSettings;
+@@ -303,8 +302,7 @@ impl ReclusterTableInterpreter {
+         } = &self.plan;
+         // Callers that already own the lifecycle lock (for example, MV refresh) disable segment
+         // claims to avoid reacquiring the shared table lock at the commit gate.
+-        let mut use_segment_claims =
+-            self.allow_segment_claims && settings.get_enable_table_lock()?;
++        let use_segment_claims = self.allow_segment_claims && settings.get_enable_table_lock()?;
  
-             let resp = mt.create_sequence(req).await?;
-@@ -8321,6 +8322,7 @@ impl SchemaApiTestSuite {
-                 increment: 2,
-                 comment: Some("seq2".to_string()),
-                 storage_version,
-+                owner_role: None,
-             };
+         // Concurrent planning must evict this cache so the claim set is matched against the
+         // latest snapshot.
+@@ -314,10 +312,8 @@ impl ReclusterTableInterpreter {
+         let mut tbl = self.ctx.get_table(catalog, database, table).await?;
+         // Temporary tables are session-local, and their IDs are intentionally unsupported by
+         // the segment-claim and lock catalog APIs.
+-        if tbl.is_temp() {
+-            use_segment_claims = false;
+-        }
+-        let claim_manager = use_segment_claims.then(CoordinationManager::instance);
++        let claim_manager =
++            (use_segment_claims && !tbl.is_temp()).then(CoordinationManager::instance);
+         let mut claim_retries = 0;
+         let (parts, snapshot, claim_guard) = loop {
+             check_maintenance_target(tbl.as_ref(), &self.plan.target)?;
+@@ -380,7 +376,7 @@ impl ReclusterTableInterpreter {
+             tbl = self.ctx.get_table(catalog, database, table).await?;
+         };
+         let mut physical_plan =
+-            self.build_linear_plan(tbl.as_ref(), parts, snapshot, use_segment_claims)?;
++            self.build_linear_plan(tbl.as_ref(), parts, snapshot, claim_manager.is_some())?;
+         physical_plan.adjust_plan_id(&mut 0);
+         let mut build_res =
+             build_query_pipeline_without_render_result_set(&self.ctx, &physical_plan).await?;
+@@ -392,7 +388,8 @@ impl ReclusterTableInterpreter {
+             let table = self.plan.table.clone();
+             build_res.main_pipeline.set_on_finished(always_callback(
+                 move |info: &ExecutionInfo| {
+-                    ctx.written_segment_locations().clear();
++                    // Retain parent-write refresh hints and published output
++                    // locations; index refresh filters out no-longer-live sources.
+                     ctx.evict_table_from_cache(&catalog, &database, &table)?;
  
-             let resp = mt.create_sequence(req).await?;
-@@ -8346,6 +8348,7 @@ impl SchemaApiTestSuite {
-                 increment: 1,
-                 comment: Some("seq1".to_string()),
-                 storage_version,
-+                owner_role: None,
-             };
- 
-             let resp = mt.create_sequence(req).await?;
-@@ -8398,6 +8401,7 @@ impl SchemaApiTestSuite {
-                 increment: 1,
-                 comment: Some("seq1".to_string()),
-                 storage_version,
-+                owner_role: None,
-             };
- 
-             let resp = mt.create_sequence(req).await?;
+                     ctx.unload_spill_meta();
+@@ -512,6 +509,7 @@ impl ReclusterTableInterpreter {
+         let ReclusterParts {
+             tasks,
+             remained_blocks,
++            virtual_schemas,
+             removed_segment_indexes,
+             removed_segment_summary,
+         } = parts;
+@@ -546,6 +544,7 @@ impl ReclusterTableInterpreter {
+             table_meta_timestamps,
+             recluster_info: Some(ReclusterInfoSideCar {
+                 merged_blocks: remained_blocks,
++                virtual_schemas,
+                 removed_segment_indexes,
+                 removed_statistics: removed_segment_summary,
+                 acquire_commit_lock,
 ```
 
-**File**: `src/query/ee/src/storages/fuse/operations/storage_class_tests.rs` (modified, +2/-2)
+**File**: `src/query/service/src/physical_plans/physical_commit_sink.rs` (modified, +5/-16)
 ```diff
-@@ -24,7 +24,6 @@ mod real_s3 {
-     use databend_common_catalog::table::Table;
-     use databend_common_catalog::table_context::TableContextTableAccess;
-     use databend_common_meta_app::principal::UserDefinedConnection;
--    use databend_common_meta_app::schema::CreateOption;
-     use databend_common_meta_app::storage::S3StorageClass;
-     use databend_common_meta_app::storage::StorageParams;
-     use databend_common_meta_app::storage::StorageS3Config;
-@@ -263,7 +262,8 @@ mod real_s3 {
-                 .add_connection(
-                     &fixture.default_tenant(),
-                     UserDefinedConnection::new("storage_class_s3", "s3".to_owned(), params),
--                    &CreateOption::Create,
-+                    false,
-+                    None,
-                 )
-                 .await?;
-             let case = AwsCase {
+@@ -30,8 +30,6 @@ use databend_common_storages_fuse::operations::MutationGenerator;
+ use databend_common_storages_fuse::operations::TableMutationAggregator;
+ use databend_common_storages_fuse::operations::TransformMergeCommitMeta;
+ use databend_common_storages_fuse::operations::TruncateGenerator;
+-use databend_storages_common_table_meta::meta::BlockHLLState;
+-use databend_storages_common_table_meta::meta::ExtendedBlockMeta;
+ use databend_storages_common_table_meta::meta::TableMetaTimestamps;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use databend_storages_common_table_meta::readers::snapshot_reader::TableSnapshotAccessor;
+@@ -182,29 +180,20 @@ impl IPhysicalPlan for CommitSink {
+                             // extract re-cluster related mutations from physical plan
+                             let recluster_info = self.recluster_info.clone().unwrap_or_default();
+ 
+-                            let extended_merged_blocks = recluster_info
+-                                .merged_blocks
+-                                .into_iter()
+-                                .map(|(block_meta, column_hlls)| {
+-                                    Arc::new(ExtendedBlockMeta {
+-                                        block_meta: Arc::unwrap_or_clone(block_meta),
+-                                        draft_virtual_block_meta: None,
+-                                        column_hlls: column_hlls.map(BlockHLLState::Serialized),
+-                                        column_top_n: None,
+-                                    })
+-                                })
+-                                .collect::<Vec<Arc<ExtendedBlockMeta>>>();
+-
+                             TableMutationAggregator::create(
+                                 table,
+                                 builder.ctx.clone(),
+                                 base_segments,
+-                                extended_merged_blocks,
++                                vec![],
+                                 recluster_info.removed_segment_indexes,
+                                 recluster_info.removed_statistics,
+                                 *kind,
+                                 self.table_meta_timestamps,
+                             )
++                            .with_retained_blocks(
++                                recluster_info.merged_blocks,
++                                recluster_info.virtual_schemas,
++                            )
+                         });
+                 }
+ 
 ```
 
-**File**: `src/query/management/src/stage/stage_api.rs` (modified, +7/-3)
+**File**: `src/query/service/src/physical_plans/physical_compact_source.rs` (modified, +1/-2)
 ```diff
-@@ -15,12 +15,16 @@
- use databend_common_exception::Result;
- use databend_common_meta_app::principal::StageFile;
- use databend_common_meta_app::principal::StageInfo;
--use databend_common_meta_app::schema::CreateOption;
+@@ -270,8 +270,7 @@ impl PhysicalPlanBuilder {
+             meta: PhysicalPlanMeta::new("ConstantTableScan"),
+         });
  
- #[async_trait::async_trait]
- pub trait StageApi: Sync + Send {
--    // Add a stage info to /tenant/stage-name.
--    async fn add_stage(&self, stage: StageInfo, create_option: &CreateOption) -> Result<()>;
-+    /// Writes the stage and its owner in one transaction; returns whether it was written.
-+    async fn add_stage_with_owner(
-+        &self,
-+        stage: StageInfo,
-+        replace: bool,
-+        owner: Option<&str>,
-+    ) -> Result<bool>;
- 
-     async fn get_stage(&self, name: &str) -> Result<(u64, StageInfo)>;
- 
+-        let is_distributed = (!self.ctx.get_cluster().is_empty())
+-            && self.ctx.get_settings().get_enable_distributed_compact()?;
++        let is_distributed = !self.ctx.get_cluster().is_empty();
+         if is_distributed {
+             root = PhysicalPlan::new(Exchange {
+                 input: root,
 ```
 
-**File**: `src/query/management/src/stage/stage_mgr.rs` (modified, +22/-25)
+**File**: `src/query/service/src/sessions/query_ctx.rs` (modified, +0/-4)
 ```diff
-@@ -16,31 +16,29 @@ use std::sync::Arc;
- 
+@@ -89,7 +89,6 @@ use databend_common_component::FragmentId;
+ use databend_common_component::MutationState;
+ use databend_common_component::ReadBlockThresholdsState;
+ use databend_common_component::ResultCacheState;
+-use databend_common_component::SegmentLocationsState;
+ use databend_common_config::GlobalConfig;
  use databend_common_exception::ErrorCode;
  use databend_common_exception::Result;
-+use databend_common_meta_api::crud::create_owned_object;
- use databend_common_meta_api::kv_pb_api::KVPbApi;
--use databend_common_meta_api::kv_pb_api::UpsertPB;
- use databend_common_meta_api::reply::unpack_txn_reply;
- use databend_common_meta_api::txn_cond_eq_seq;
- use databend_common_meta_api::txn_cond_seq;
- use databend_common_meta_api::txn_del;
- use databend_common_meta_api::txn_put_pb;
- use databend_common_meta_app::app_error::TxnRetryMaxTimes;
-+use databend_common_meta_app::principal::OwnershipObject;
- use databend_common_meta_app::principal::StageFile;
- use databend_common_meta_app::principal::StageFileIdent;
- use databend_common_meta_app::principal::StageIdent;
- use databend_common_meta_app::principal::StageInfo;
--use databend_common_meta_app::schema::CreateOption;
- use databend_common_meta_app::tenant::Tenant;
- use databend_meta_client::kvapi;
- use databend_meta_client::kvapi::DirName;
- use databend_meta_client::kvapi::KvApiExt;
- use databend_meta_client::kvapi::ListOptions;
- use databend_meta_client::kvapi::StructKey;
- use databend_meta_client::types::ConditionResult::Eq;
--use databend_meta_client::types::MatchSeq;
- use databend_meta_client::types::MetaError;
- use databend_meta_client::types::TxnOp;
- use databend_meta_client::types::TxnRequest;
--use databend_meta_client::types::With;
- use futures::TryStreamExt;
- 
- use crate::errors::meta_service_error;
-@@ -82,27 +80,26 @@ impl StageMgr {
- impl StageApi for StageMgr {
-     #[async_backtrace::framed]
-     #[fastrace::trace]
--    async fn add_stage(&self, info: StageInfo, create_option: &CreateOption) -> Result<()> {
--        let ident = self.stage_ident(&info.stage_name);
--        let seq = MatchSeq::from(*create_option);
--        let upsert = UpsertPB::update(ident, info.clone()).with(seq);
--
--        let res = self
--            .kv_api
--            .upsert_pb(&upsert)
--            .await
--            .map_err(meta_service_error)?;
--
--        if let CreateOption::Create = create_option {
--            if res.prev.is_some() {
--                return Err(ErrorCode::StageAlreadyExists(format!(
--                    "Stage '{}' already exists.",
--                    info.stage_name
--                )));
--            }
--        }
--
--        Ok(())
-+    async fn add_stage_with_owner(
-+        &self,
-+        info: StageInfo,
-+        replace: bool,
-+        owner: Option<&str>,
-+    ) -> Result<bool> {
-+        let object = OwnershipObject::Stage {
-+            name: info.stage_name.clone(),
-+        };
-+        create_owned_object(
-+            self.kv_api.as_ref(),
-+            &self.stage_ident(&info.stage_name),
-+            &info,
-+            replace,
-+            &object,
-+            owner,
-+            &[],
-+        )
-+        .await
-+        .map_err(meta_service_error)
-     }
- 
-     #[async_backtrace::framed]
+@@ -196,8 +195,6 @@ pub struct QueryContext {
+     shared: Arc<QueryContextShared>,
+     query_settings: Arc<Settings>,
+     fragment_id: FragmentId,
+-    // Used by synchronized generate aggregating indexes when new data written.
+-    written_segment_locs: SegmentLocationsState,
+     // Temp table for materialized CTE, first string is the database_name, second string is the table_name
+     // All temp tables' catalog is `CATALOG_DEFAULT`, so we don't need to store it.
+     m_cte_temp_table: Arc<RwLock<Vec<(String, String)>>>,
+@@ -230,7 +227,6 @@ impl QueryContext {
+             shared,
+             query_settings,
+             fragment_id: Default::default(),
+-            written_segment_locs: Default::default(),
+             read_block_thresholds: Default::default(),
+             m_cte_temp_table: Arc::new(RwLock::new(Vec::new())),
+         })
 ```
 
-**File**: `src/query/management/src/udf/udf_mgr.rs` (modified, +20/-21)
+**File**: `src/query/service/src/sessions/query_ctx/context.rs` (modified, +1/-1)
 ```diff
-@@ -16,11 +16,12 @@ use std::sync::Arc;
- 
- use databend_common_exception::ErrorCode;
- use databend_common_functions::is_builtin_function;
-+use databend_common_meta_api::crud::create_owned_object;
- use databend_common_meta_api::kv_pb_api::KVPbApi;
- use databend_common_meta_api::kv_pb_api::UpsertPB;
-+use databend_common_meta_app::principal::OwnershipObject;
- use databend_common_meta_app::principal::UdfIdent;
- use databend_common_meta_app::principal::UserDefinedFunction;
--use databend_common_meta_app::schema::CreateOption;
- use databend_common_meta_app::tenant::Tenant;
- use databend_meta_client::kvapi;
- use databend_meta_client::kvapi::DirName;
-@@ -48,36 +49,34 @@ impl UdfMgr {
-         }
+@@ -41,7 +41,7 @@ impl TableContext for QueryContext {
      }
  
--    /// Add a UDF to /tenant/udf-name.
-+    /// Writes the UDF and its owner in one transaction; returns whether it was written.
-     #[async_backtrace::framed]
-     #[fastrace::trace]
--    pub async fn add_udf(
-+    pub async fn add_udf_with_owner(
-         &self,
-         info: UserDefinedFunction,
--        create_option: &CreateOption,
-+        replace: bool,
-+        owner: Option<&str>,
-     ) -> Result<Result<bool, UdfError>, UdfApiError> {
-         if let Err(e) = self.ensure_non_builtin(info.name.as_str()) {
-             return Ok(Err(e));
-         }
- 
--        let seq = MatchSeq::from(*create_option);
--
-         let key = UdfIdent::new(&self.tenant, &info.name);
--        let req = UpsertPB::insert(key, info.clone()).with(seq);
--        let res = self.kv_api.upsert_pb(&req).await?;
--
--        if let CreateOption::Create = create_option {
--            if res.prev.is_some() {
--                let err = UdfError::Exists {
--                    tenant: self.tenant.tenant_name().to_string(),
--                    name: info.name.to_string(),
--                    reason: "".to_string(),
--                };
--                return Ok(Err(err));
--            }
--        }
--
--        Ok(Ok(res.is_changed()))
-+        let object = OwnershipObject::UDF {
-+            name: info.name.clone(),
-+        };
-+        let written = create_owned_object(
-+            self.kv_api.as_ref(),
-+            &key,
-+            &info,
-+            replace,
-+            &object,
-+            owner,
-+            &[],
-+        )
-+        .await?;
-+        Ok(Ok(written))
+     fn written_segment_locations(&self) -> &SegmentLocationsState {
+-        &self.written_segment_locs
++        &self.shared.written_segment_locs
      }
  
-     /// Update a UDF to /tenant/udf-name.
+     fn as_any(&self) -> &dyn Any {
 ```
 
 ---
 
-### Incident Patch 2: `61e6a768` (2026-11-03)
-**Commit Message**: fix(query): speed up lazy prune pipeline, keep prune cache under LIMIT (#20884)
+### Incident Patch 2: `4e2c7131` (2026-11-04)
+**Commit Message**: fix(query): skip aggregate work for empty inputs and buckets (#20891)
 
-* fix(query): speed up lazy prune pipeline, keep prune cache under LIMIT
+* fix(query): skip aggregate work for empty inputs and buckets
 
-Backport of release commits fe5f15720a, d6d7be1932 and d524a7024a.
+Distributed aggregation with little or no input paid for allocations that
+nothing used:
 
-- Prune segments in the lazy prune pipeline with
-  max(max_threads, max_storage_io_requests) concurrency, like the
-  non-pipeline pruner, and go back to max_threads for block pruning.
-- Trim per-scan overhead: create the PruningContext runtime on first
-  use, hand the lazy segments to the pipeline synchronously from
-  on_init instead of spawning a runtime per scan, and cap the pipeline
-  width by the number of segments on the node.
-- Keep the prune result cache when only a runtime LIMIT filter is
-  registered. SendPartInfoSink marks the result incomplete when the
-  filter stops pruning early or drops a block, so truncated results
-  are never cached. A runtime TopN filter still disables the cache.
+- Payload::aggregate_flush_all allocated and zeroed a ~136KB
+  PayloadFlushState even for empty payloads, and the exchange serializer
+  called it once per bucket payload. Return early for empty payloads and
+  reuse one flush state in the serializer.
+- TransformFinalAggregate created its hash table (32K-slot index) at
+  construction and after each spill. Create it on the first non-empty
+  input instead.
+- TransformPartialAggregate created its hash table while the pipeline was
+  built and always emitted a block of per-bucket payloads on finish, even
+  when it aggregated nothing. Create the table on the first block and emit
+  only spilled payloads when nothing was aggregated.
 
-* fix(query): retain pruned parts only when a prune cache key exists
+Also add the release regression query where a spilled final aggregate
+feeds a join whose build side is empty; main already handles it via
+#20489.
 
-* refactor(query): simplify prune pipeline widths (fable review round 1)
+* chore(query): format partial aggregate finish
 
----------
+* chore(query): drop dead lint allow and redundant empty check (fable review round 1)
 
-Co-authored-by: Winter Zhang <[REDACTED_EMAIL]>
-
-**File**: `src/query/service/tests/it/storages/fuse/pruning_column_oriented_segment.rs` (modified, +1/-0)
+**File**: `src/query/expression/src/aggregate/payload_flush.rs` (modified, +20/-1)
 ```diff
-@@ -99,6 +99,7 @@ async fn apply_snapshot_pruning(
-         cache_key,
-         schema.clone(),
-         HashSet::new(),
-+        segment_locs.len(),
-     )?;
-     prune_pipeline.set_max_threads(1);
-     prune_pipeline.set_on_init(move || {
+@@ -185,10 +185,25 @@ impl PartitionedPayload {
+ 
+ impl Payload {
+     pub fn aggregate_flush_all(&self) -> Result<DataBlock> {
++        // A PayloadFlushState is over 100KB, do not allocate one for an empty payload.
++        if self.len() == 0 {
++            return Ok(self.empty_block(0));
++        }
++
+         let mut state = PayloadFlushState::default();
++        self.aggregate_flush_all_with_state(&mut state)
++    }
++
++    /// Same as `aggregate_flush_all`, but reuses the caller's flush state, so that
++    /// flushing many payloads does not allocate a new state for each of them.
++    pub fn aggregate_flush_all_with_state(
++        &self,
++        state: &mut PayloadFlushState,
++    ) -> Result<DataBlock> {
++        state.clear();
+         let mut blocks = vec![];
+ 
+-        while let Some(block) = self.aggregate_flush(&mut state)? {
++        while let Some(block) = self.aggregate_flush(state)? {
+             blocks.push(block);
+         }
+ 
+@@ -230,6 +245,10 @@ impl Payload {
+     }
+ 
+     pub fn group_by_flush_all(&self) -> Result<DataBlock> {
++        if self.len() == 0 {
++            return Ok(self.empty_block(0));
++        }
++
+         let mut state = PayloadFlushState::default();
+         let mut blocks = vec![];
+ 
 ```
 
-**File**: `src/query/service/tests/it/storages/fuse/pruning_pipeline.rs` (modified, +262/-12)
+**File**: `src/query/functions/tests/it/aggregates/agg_hashtable.rs` (modified, +75/-0)
 ```diff
-@@ -18,11 +18,15 @@ use std::sync::Arc;
- use databend_common_ast::ast::Engine;
- use databend_common_base::runtime::GlobalIORuntime;
- use databend_common_base::runtime::Runtime;
-+use databend_common_catalog::plan::DataSourcePlan;
- use databend_common_catalog::plan::PartInfoPtr;
-+use databend_common_catalog::plan::PartInfoType;
- use databend_common_catalog::plan::PartStatistics;
- use databend_common_catalog::plan::PushDownInfo;
- use databend_common_catalog::plan::ReadPartitionsPruningMode;
- use databend_common_catalog::query_kind::QueryKind;
-+use databend_common_catalog::runtime_filter_info::RuntimeLimitFilter;
-+use databend_common_catalog::table::Table;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use databend_common_expression::DataBlock;
-@@ -39,6 +43,7 @@ use databend_common_expression::types::number::UInt64Type;
- use databend_common_meta_app::schema::CreateOption;
- use databend_common_pipeline::core::Pipeline;
- use databend_common_sql::BloomIndexColumns;
-+use databend_common_sql::executor::table_read_plan::ToReadDataSourcePlan;
- use databend_common_sql::parse_to_filters;
- use databend_common_sql::plans::CreateTablePlan;
- use databend_common_storages_fuse::FuseBlockPartInfo;
-@@ -55,6 +60,8 @@ use databend_query::sessions::QueryContext;
- use databend_query::sessions::TableContext;
- use databend_query::sessions::TableContextPartitionStats;
- use databend_query::sessions::TableContextQueryIdentity;
-+use databend_query::sessions::TableContextRuntimeFilter;
-+use databend_query::sessions::TableContextSettings;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::storages::fuse::FUSE_OPT_KEY_BLOCK_PER_SEGMENT;
- use databend_query::storages::fuse::FUSE_OPT_KEY_ROW_PER_BLOCK;
-@@ -152,21 +159,21 @@ async fn apply_snapshot_pruning(
-     Ok((got, stats))
+@@ -28,6 +28,7 @@ use databend_common_expression::ProjectedBlock;
+ use databend_common_expression::aggregate_function::AggregateCallRef;
+ use databend_common_expression::aggregate_function::RawAggregateCall;
+ use databend_common_expression::aggregate_function::get_states_layout;
++use databend_common_expression::block_debug::assert_block_value_eq;
+ use databend_common_expression::block_debug::assert_block_value_sort_eq;
+ use databend_common_expression::types::ArgType;
+ use databend_common_expression::types::BooleanType;
+@@ -562,3 +563,77 @@ fn test_agg_hashtable_encoded_columns() {
+         }
+     }
  }
++
++// Flushing a payload with a reused `PayloadFlushState` must produce the same
++// result as flushing it with a fresh state, including for empty payloads.
++#[test]
++fn test_payload_flush_all_with_reused_state() {
++    let aggrs = vec![
++        resolve_agg("sum", Int64Type::data_type()),
++        resolve_agg("count", Int64Type::data_type()),
++    ];
++
++    // (distinct groups, radix bits): the first case has payloads larger than
++    // one flush batch, the second one has mostly empty payloads.
++    for (m, radix_bits) in [(5000_usize, 1_u64), (2, 4)] {
++        let n = m * 2;
++        let group_columns: Vec<BlockEntry> =
++            vec![Int64Type::from_data((0..n).map(|x| (x % m) as i64).collect_vec()).into()];
++        let group_types = group_columns
++            .iter()
++            .map(|c| c.data_type())
++            .collect::<Vec<_>>();
++        let args = vec![group_columns[0].clone()];
++        let params: Vec<ProjectedBlock> = aggrs.iter().map(|_| (&args).into()).collect_vec();
++
++        let config = HashTableConfig::default().with_initial_radix_bits(radix_bits);
++        let mut hashtable = AggregateHashTable::new(
++            group_types.clone(),
++            aggrs.clone(),
++            config,
++            Arc::new(Bump::new()),
++        );
++
++        let mut state = ProbeState::default();
++        hashtable
++            .add_groups(
++                &mut state,
++                (&group_columns).into(),
++                &params,
++                (&[]).into(),
++                n,
++            )
++            .unwrap();
++
++        assert_eq!(hashtable.payload.partition_count(), 1 << radix_bits);
++
++        let mut shared_state = PayloadFlushState::default();
++        let mut total_rows = 0;
++        let mut empty_payloads = 0;
++        for (_, payload) in hashtable.payload.into_bucket_payloads() {
++            let expected = payload.aggregate_flush_all().unwrap();
++            let actual = payload
++                .aggregate_flush_all_with_state(&mut shared_state)
++                .unwrap();
++
++            assert_eq!(expected.num_rows(), payload.len());
++            assert_eq!(actual.num_rows(), payload.len());
++            assert_eq!(expected.num_columns(), group_types.len() + aggrs.len());
++            assert_eq!(actual.num_columns(), expected.num_columns());
++            assert_block_value_eq(&expected, &actual);
++
++            let group_by = payload.group_by_flush_all().unwrap();
++            assert_eq!(group_by.num_rows(), payload.len());
++
++            if payload.len() == 0 {
++                empty_payloads += 1;
++            }
++            total_rows += actual.num_rows();
++        }
++
++        assert_eq!(total_rows, m);
++        if m < (1 << radix_bits) {
++            assert!(empty_payloads > 0);
++        }
++    }
++}
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/serde/aggregate_scatter.rs` (modified, +6/-1)
+```diff
+@@ -21,6 +21,7 @@ use databend_common_expression::AggregatePayload;
+ use databend_common_expression::BlockMetaInfoDowncast;
+ use databend_common_expression::DataBlock;
+ use databend_common_expression::DataSchemaRef;
++use databend_common_expression::PayloadFlushState;
+ use databend_common_expression::ProjectedBlock;
+ use databend_common_expression::group_hash_entries;
+ use databend_common_expression::group_hash_route_index;
+@@ -173,8 +174,12 @@ impl AggregateScatter {
+         let mut buckets = Vec::with_capacity(payloads.len());
+         let mut row_counts = Vec::with_capacity(payloads.len());
+         let mut blocks = Vec::with_capacity(payloads.len());
++        // One flush state (over 100KB) for all payloads instead of one per payload.
++        let mut flush_state = PayloadFlushState::default();
+         for payload in payloads {
+-            let block = payload.payload.aggregate_flush_all()?;
++            let block = payload
++                .payload
++                .aggregate_flush_all_with_state(&mut flush_state)?;
+             if block.num_rows() == 0 {
+                 continue;
+             }
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_final.rs` (modified, +132/-44)
+```diff
+@@ -56,18 +56,6 @@ use crate::pipelines::processors::transforms::aggregator::statistics::FinalAggre
+ use crate::sessions::QueryContext;
+ use crate::sessions::TableContextSettings;
  
--#[tokio::test(flavor = "multi_thread")]
--async fn test_snapshot_pruner() -> anyhow::Result<()> {
--    let fixture = TestFixture::setup().await?;
--    let ctx = fixture.new_query_ctx().await?;
+-#[allow(clippy::enum_variant_names)]
+-enum HashTable {
+-    MovedOut,
+-    AggregateHashTable(AggregateHashTable),
+-}
 -
--    fixture.create_default_database().await?;
+-impl Default for HashTable {
+-    fn default() -> Self {
+-        Self::MovedOut
+-    }
+-}
 -
--    let test_tbl_name = "test_index_helper";
-+/// Creates `test_tbl_name` with columns `a`, `b` and appends `num_blocks`
-+/// blocks of `row_per_block` rows, one block per segment. Column `a` is
-+/// always 1; column `b` equals the block index.
-+async fn create_test_table(
-+    fixture: &TestFixture,
-+    ctx: Arc<QueryContext>,
-+    test_tbl_name: &str,
-+    num_blocks: usize,
-+    row_per_block: usize,
-+) -> Result<Arc<dyn Table>> {
-     let test_schema = TableSchemaRefExt::create(vec![
-         TableField::new("a", TableDataType::Number(NumberDataType::UInt64)),
-         TableField::new("b", TableDataType::Number(NumberDataType::UInt64)),
-     ]);
+ const SPILL_BUCKET_NUM: usize = 4;
+ const SPILL_BUCKET_BITS: u64 = SPILL_BUCKET_NUM.trailing_zeros() as u64;
  
--    let num_blocks = 10;
--    let row_per_block = 10;
-     let num_blocks_opt = row_per_block.to_string();
+@@ -102,7 +90,10 @@ pub struct TransformFinalAggregate {
+     stage: Stage,
+     spilled_occurred: bool,
  
-     // create test table
-@@ -237,13 +244,32 @@ async fn test_snapshot_pruner() -> anyhow::Result<()> {
-         .await?;
+-    hashtable: HashTable,
++    // Created on the first non-empty input. With bucket shuffle there are many final
++    // processors and most of them may never receive rows, so an eagerly allocated
++    // hash table (and its hash index) per processor is pure overhead.
++    hashtable: Option<AggregateHashTable>,
+     params: Arc<AggregatorParams>,
+     flush_state: PayloadFlushState,
+     statistics: AggregationStatistics,
+@@ -132,7 +123,6 @@ impl TransformFinalAggregate {
+         let max_aggregate_spill_level =
+             (settings.get_max_aggregate_spill_level()? as usize).min(max_partition_depth);
  
-     // get the latest tbl
--    let table = catalog
-+    catalog
-         .get_table(
-             &fixture.default_tenant(),
-             fixture.default_db_name().as_str(),
-             test_tbl_name,
+-        let hashtable = Self::create_hashtable(&params, 0);
+         let flush_state = PayloadFlushState::default();
+ 
+         let spiller = AggregateSpiller::try_create(
+@@ -156,7 +146,7 @@ impl TransformFinalAggregate {
+             output_finished: WatchNotify::new(),
+             stage: Stage::Input,
+             spilled_occurred: false,
+-            hashtable: HashTable::AggregateHashTable(hashtable),
++            hashtable: None,
+             params,
+             flush_state,
+             statistics: AggregationStatistics::new("FinalAggregate"),
+@@ -189,11 +179,20 @@ impl TransformFinalAggregate {
          )
--        .await?;
-+        .await
+     }
+ 
++    /// Drop the current hash table and switch to `spilled_depth`. The next hash
++    /// table is created by `hashtable_mut` when data arrives.
+     fn reset_hashtable(&mut self, spilled_depth: usize) {
+-        let partition_depth = spilled_depth.min(self.max_partition_depth);
+-        self.hashtable =
+-            HashTable::AggregateHashTable(Self::create_hashtable(&self.params, partition_depth));
+-        self.current_partition_depth = partition_depth;
++        self.hashtable = None;
++        self.current_partition_depth = spilled_depth.min(self.max_partition_depth);
++    }
++
++    // Takes the fields separately so callers can still borrow `flush_state`.
++    fn hashtable_mut<'a>(
++        hashtable: &'a mut Option<AggregateHashTable>,
++        params: &Arc<AggregatorParams>,
++        partition_depth: usize,
++    ) -> &'a mut AggregateHashTable {
++        hashtable.get_or_insert_with(|| Self::create_hashtable(params, partition_depth))
+     }
+ 
+     // One final-aggregate processor handles both the original input stream and
+@@ -203,9 +202,7 @@ impl TransformFinalAggregate {
+     // `spilled_depth * SPILL_BUCKET_BITS`.
+     fn ensure_spill_depth(&mut self, spilled_depth: usize) {
+         let partition_depth = spilled_depth.min(self.max_partition_depth);
+-        if !matches!(&self.hashtable, HashTable::AggregateHashTable(_))
+-            || self.current_partition_depth != partition_depth
+-        {
++        if self.current_partition_depth != partition_depth {
+             self.reset_hashtable(spilled_depth);
+         }
+     }
+@@ -231,7 +228,12 @@ impl TransformFinalAggregate {
+         let rows = block.num_rows();
+         self.statistics.record_block(rows, block.memory_size());
+ 
+-        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
++        if rows != 0 {
++            let ht = Self::hashtable_mut(
++                &mut self.hashtable,
++                &self.params,
++                self.current_partition_depth,
++            );
+             let group_columns = ProjectedBlock::project(&self.params.group_columns, &block);
+             let params = self
+                 .params
+@@ -253,9 +255,12 @@ impl TransformFinalAggregate {
+             Arc::new(Bump::new()),
+         )?;
+ 
+-        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
+-            ht.combine_payloads(&partitioned_payload, &mut self.flush_state)?;
+-        }
++        let ht = Self::hashtable_mut(
++            &mut self.hashtable,
++            &self.params,
++            self.current_partition_depth,
++        );
++        ht.combine_payloads(&partitioned_payload, &mut self.flush_state)?;
+ 
+         Ok(())
+     }
+@@ -269,7 +274,12 @@ impl TransformFinalAggregate {
+         let bytes = payload.payload.memory_size();
+         self.statistics.record_block(rows, bytes);
+ 
+-        if let HashTable::AggregateHashTable(ht) = &mut self.hashtable {
++        if rows != 0 {
++            let ht = Self::hashtable_mut(
++                &mut self.hashtable,
++                &self.params,
++                self.current_partition_depth,
++            );
+             ht.combine_payload(&payload.paylo
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_partial.rs` (modified, +116/-22)
+```diff
+@@ -66,8 +66,11 @@ pub fn parse_partial_aggregate_mode(mode: &str) -> Result<PartialAggregateMode>
+ /// input blocks are forwarded unchanged as raw rows for the final aggregate to aggregate. The
+ /// partial aggregate never spills: the state bounds the table and the final aggregate spills.
+ pub struct TransformPartialAggregate {
+-    /// Taken out when the input ends.
++    /// Created on the first rows to aggregate, so that the processors of a scan pruned to zero
++    /// rows (or in bypass) do not each pay for a table while the pipeline is being built. Taken
++    /// out when the input ends.
+     table: Option<AggregateHashTable>,
++    config: HashTableConfig,
+     probe_state: ProbeState,
+     params: Arc<AggregatorParams>,
+     statistics: AggregationStatistics,
+@@ -116,18 +119,12 @@ impl TransformPartialAggregate {
+         mode: PartialAggregateMode,
+         max_table_bytes: usize,
+     ) -> Result<Box<dyn Processor>> {
+-        let table = AggregateHashTable::new(
+-            params.group_data_types.clone(),
+-            params.aggregate_functions.clone(),
+-            config,
+-            Arc::new(Bump::new()),
+-        );
+-
+         Ok(AccumulatingTransformer::create(
+             input,
+             output,
+             TransformPartialAggregate {
+-                table: Some(table),
++                table: None,
++                config,
+                 probe_state: ProbeState::default(),
+                 settings: MemorySettings::from_aggregate_settings(&ctx)?,
+                 statistics: AggregationStatistics::new("PartialAggregate"),
+@@ -189,9 +186,15 @@ impl TransformPartialAggregate {
+         let group_columns = ProjectedBlock::project(&self.params.group_columns, block);
+         let params_columns =
+             Self::aggregate_arguments(block, &self.params.aggregate_functions_arguments);
+-        let Some(table) = self.table.as_mut() else {
+-            unreachable!("[TRANSFORM-AGGREGATOR] Partial table already taken")
+-        };
++        let (params, config) = (&self.params, &self.config);
++        let table = self.table.get_or_insert_with(|| {
++            AggregateHashTable::new(
++                params.group_data_types.clone(),
++                params.aggregate_functions.clone(),
++                config.clone(),
++                Arc::new(Bump::new()),
++            )
++        });
+         let capacity = self.state.capacity();
+         let stats = self.memory.track(|| {
+             table.add_groups_partial(
+@@ -289,13 +292,13 @@ impl AccumulatingTransform for TransformPartialAggregate {
+     }
+ 
+     fn on_finish(&mut self, output: bool) -> Result<Vec<DataBlock>> {
+-        let Some(table) = self.table.take() else {
+-            return Ok(vec![]);
+-        };
+-        self.statistics.log_partial_finish_statistics(
+-            self.output_rows + table.len(),
+-            table.hash_index_resize_count(),
+-        );
++        // No table means no rows were aggregated: they were bypassed, or there were none.
++        let table = self.table.take();
++        let (table_rows, hash_index_resizes) = table.as_ref().map_or((0, 0), |table| {
++            (table.len(), table.hash_index_resize_count())
++        });
++        self.statistics
++            .log_partial_finish_statistics(self.output_rows + table_rows, hash_index_resizes);
+         let total = &self.total;
+         log::info!(
+             "[PartialAggregate] Adaptive: final_state={:?}, rows={}, new_groups={}, windows={}, emits={:?}, group_bytes={}",
+@@ -306,9 +309,100 @@ impl AccumulatingTransform for TransformPartialAggregate {
+             self.emits,
+             Self::group_bytes(&self.memory, total),
+         );
+-        if !output {
+-            return Ok(vec![]);
++        match table {
++            Some(table) if output => Ok(self.emit(table.payload)),
++            _ => Ok(vec![]),
+         }
+-        Ok(self.emit(table.payload))
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use databend_common_expression::BlockMetaInfoDowncast;
++    use databend_common_expression::DataField;
++    use databend_common_expression::DataSchema;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::DataType;
++    use databend_common_expression::types::NumberDataType;
++    use databend_common_expression::types::UInt64Type;
++
++    use super::*;
++    use crate::test_kits::TestFixture;
++
++    // Boxed like in the pipeline: the probe state alone is about 100KB, too large to
++    // keep several transforms in the test future on the test thread's stack.
++    fn create_transform(ctx: &Arc<QueryContext>) -> Result<Box<TransformPartialAggregate>> {
++        let key_type = DataType::Number(NumberDataType::UInt64);
++        let params = AggregatorParams::try_create(
++            Arc::new(DataSchema::new(vec![DataField::new(
++                "key",
++                key_type.clone(),
++            )])),
++            vec![key_type],
++            &[0],
++            &[],
++            &[],
++            false,
++            1024,
++   
+```
+
+**File**: `tests/sqllogictests/suites/query/aggregate.test` (modified, +36/-0)
+```diff
+@@ -330,6 +330,42 @@ select count(*) from (select number from numbers(2000000) group by number);
+ ----
+ 2000000
+ 
++## Most buckets are empty: only a few groups, or no input rows at all
++query II
++select number % 3 as k, sum(number) from numbers_mt(10000) group by k order by k;
++----
++0 16668333
++1 16661667
++2 16665000
++
++query I
++select count(*) from (select number % 7 as k, sum(number) from numbers_mt(10000) where number > 100000 group by k);
++----
++0
++
++statement ok
++set force_aggregate_data_spill = 1;
++
++query II
++select number % 3 as k, sum(number) from numbers_mt(10000) group by k order by k;
++----
++0 16668333
++1 16661667
++2 16665000
++
++query I
++select count(*) from (select number % 7 as k, sum(number) from numbers_mt(10000) where number > 100000 group by k);
++----
++0
++
++## Spilled final-aggregate tasks whose consumer finishes early (the other join side is empty) must not hang
++query II
++select a.k, count(*) from (select number % 4 as k from numbers_mt(1000) group by k) a join (select number % 4 as k from numbers_mt(2000) where number > 5000 group by k) b on a.k = b.k group by a.k order by a.k;
++----
++
++statement ok
++unset force_aggregate_data_spill;
++
+ 
+ ## Aggregation without Exchange source
+ query III
+```
+
+---
+
+### Incident Patch 3: `75a200a3` (2026-11-04)
+**Commit Message**: fix(storage): publish snapshot hints only after transaction commit (#20827)
+
+* fix(storage): publish snapshot hints only after transaction commit
+
+* test(storage): deduplicate transaction snapshot hint coverage
+
+* fix(query): defer temporary metadata updates on commit conflicts
+
+**File**: `src/query/service/src/catalogs/default/session_catalog.rs` (modified, +8/-3)
+```diff
+@@ -606,9 +606,14 @@ impl Catalog for SessionCatalog {
+                         .retryable_update_multi_table_meta(tenant, req)
+                         .await?
+                 };
+-                self.temp_tbl_mgr
+-                    .lock()
+-                    .update_multi_table_meta(update_temp_tables);
++                // An OCC conflict is an inner Err, not a successful commit.
++                // Keep temporary tables unchanged until persistent updates succeed;
++                // otherwise a failed retry can partially commit a mixed transaction.
++                if reply.is_ok() {
++                    self.temp_tbl_mgr
++                        .lock()
++                        .update_multi_table_meta(update_temp_tables);
++                }
+                 Ok(reply)
+             }
+             TxnState::Active => {
+```
+
+**File**: `src/query/service/tests/it/storages/fuse/operations/mod.rs` (modified, +1/-0)
+```diff
+@@ -32,6 +32,7 @@ mod purge_drop;
+ mod read_plan;
+ mod replace_into;
+ mod scan_progress;
++mod snapshot_hint;
+ mod table_analyze;
+ mod truncate;
+ mod virtual_column_pruner_reader;
+```
+
+**File**: `src/query/service/tests/it/storages/fuse/operations/snapshot_hint.rs` (added, +238/-0)
+```diff
+@@ -0,0 +1,238 @@
++// Copyright 2021 Datafuse Labs.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::sync::Arc;
++
++use databend_common_catalog::session_type::SessionType;
++use databend_common_catalog::table::Table;
++use databend_common_storages_fuse::FuseTable;
++use databend_common_storages_fuse::operations::load_last_snapshot_hint;
++use databend_common_version::BUILD_INFO;
++use databend_query::sessions::Session;
++use databend_query::sessions::TableContextTableAccess;
++use databend_query::test_kits::ConfigBuilder;
++use databend_query::test_kits::OSSSetup;
++use databend_query::test_kits::TestFixture;
++use futures::TryStreamExt;
++
++// Single-session behavior is covered by txn_snapshot_hint.test. These tests
++// control concurrent writers to exercise successful and failed commit retries.
++async fn execute(session: &Arc<Session>, sql: &str) -> anyhow::Result<()> {
++    let ctx = session.create_query_context(&BUILD_INFO).await?;
++    TestFixture::execute_query_with_ctx(ctx, sql)
++        .await?
++        .try_collect::<Vec<_>>()
++        .await?;
++    Ok(())
++}
++
++async fn table(fixture: &TestFixture, name: &str) -> anyhow::Result<FuseTable> {
++    let ctx = fixture.new_query_ctx().await?;
++    let table = ctx
++        .get_table("default", &fixture.default_db_name(), name)
++        .await?;
++    Ok(FuseTable::try_from_table(table.as_ref())?.clone())
++}
++
++async fn ids(fixture: &TestFixture, name: &str) -> anyhow::Result<Vec<String>> {
++    let blocks = fixture
++        .execute_query(&format!(
++            "SELECT id FROM {}.{name} ORDER BY id",
++            fixture.default_db_name()
++        ))
++        .await?
++        .try_collect::<Vec<_>>()
++        .await?;
++    let mut result = Vec::new();
++    for block in blocks {
++        for row in 0..block.num_rows() {
++            result.push(
++                block
++                    .get_by_offset(0)
++                    .value()
++                    .index(row)
++                    .unwrap()
++                    .to_string(),
++            );
++        }
++    }
++    Ok(result)
++}
++
++fn snapshot_path(table: &FuseTable) -> String {
++    format!(
++        "{}{}",
++        table.get_operator().info().root(),
++        table.snapshot_loc().unwrap()
++    )
++}
++
++async fn hint(table: &FuseTable) -> anyhow::Result<Option<String>> {
++    Ok(load_last_snapshot_hint(
++        table.meta_location_generator().prefix(),
++        &table.get_operator(),
++    )
++    .await?
++    .map(|hint| hint.snapshot_full_path))
++}
++
++async fn setup() -> anyhow::Result<TestFixture> {
++    // Temporary tables require a client session rather than SessionType::Dummy.
++    let fixture = TestFixture::setup_with_custom_and_session_type(
++        OSSSetup {
++            config: ConfigBuilder::create().config(),
++        },
++        SessionType::MySQL,
++    )
++    .await?;
++    fixture.create_default_database().await?;
++    fixture
++        .execute_command("SET auto_compaction_imperfect_blocks_threshold=0")
++        .await?;
++    fixture.execute_command("SET enable_auto_analyze=0").await?;
++    Ok(fixture)
 +}
 +
 +#[tokio::test(flavor = "multi_thread")]
-+async fn test_snapshot_pruner() -> anyhow::Result<()> {
-+    let fixture = TestFixture::setup().await?;
-+    let ctx = fixture.new_query_ctx().await?;
-+
-+    fixture.create_default_database().await?;
-+
-+    let num_blocks = 10;
-+    let row_per_block = 10;
-+    let table = create_test_table(
-+        &fixture,
-+        ctx.clone(),
-+        "test_index_helper",
-+        num_blocks,
-+        row_per_block,
-+    )
-+    .await?;
- 
-     let fuse_table = FuseTable::try_from_table(table.as_ref())?;
- 
-@@ -411,6 +437,230 @@ async fn test_snapshot_pruner() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+/// Runs a lazy prune pipeline built by `build_prune_pipeline` and returns the
-+/// parts it produced.
-+///
-+/// The pipeline runs to completion before the receiver is drained, so it only
-+/// works while the parts produced fit into the part channel created by
-+/// `do_build_prune_pipeline` (capacity `max(max_threads,
-+/// max_storage_io_requests)`, 8 in the tests below). Callers keep `num_blocks`
-+/// of `create_test_table` at or below that setting; with more parts the sink
-+/// blocks on `send` and the test hangs instead of failing.
-+async fn execute_lazy_prune_pipeline(
-+    ctx: Arc<QueryContext>,
-+    fuse_table: &FuseTable,
-+    prune_pipeline: Pipeline,
-+) -> Result<Vec<PartInfoPtr>> {
-+    let rx = fuse_table.pruned_result_receiver.lock().clone().unwrap();
-+    let executor =
-+        QueryPipelineExecutor::create(prune_pipeline, ExecutorSettings::try_create(ctx)?)?;
-+    executor.execute()?;
-+    let mut parts = Vec::new();
-+    while let Ok(Ok(part)) = rx.recv().await {
-+        parts.push(part);
++async fn test_transaction_snapshot_hints_after_retry() -> anyhow::Result<()> {
++    let fixture = setup().await?;
++    let db = fixture.default_db_name();
++    let writer = fixture.new_session_with_type(SessionType::Dummy).await?;
++    let names = ["hint_retry_a", "hint_retry_b"];
++    for name in names {
++        fixture
++            .execute_command(&format!("CREATE TABLE {db}.{name}(id INT, v INT)"))
++            .await?;
++        fixture
++            .execute_command(&format!("INSERT INTO {db}.{name} VALUES (1,10)"))
++            .await?;
 +    }
-+    Ok(parts)
-+}
++    let temp = "hint_retry_temp";
++    fixture
++        .execute_command(&format!("CREATE TEMP TABLE {db}.{temp}(id INT)"))
++        .await?;
++    fixture
++        .execute_command(&format!("INSERT INTO {db}.{temp} VALUES (0)"))
++        .await?;
++    let before = table(&fixture, temp).await?;
++    assert_eq!(hint(&before).await?, Some(snapshot_path(&before)));
 +
-+fn block_locations(parts: &[PartInfoPtr]) -> Vec<String> {
-+    let mut locati
++    fixture.execute_command("BEGIN").await?;
++    fixture
++        .execute_command(&format!("INSERT INTO {db}.{temp} VALUES (1)"))
++        .await?;
++    let temp_buffered = table(&fixture, temp).await?;
++    assert_ne!(temp_buffered.snapshot_loc(), before.snapshot_loc());
++    assert_eq!(hint(&before).await?, Some(snapshot_path(&before)));
++    fixture
++        .execute_command(&format!(
++            "INSERT ALL INTO {db
 ```
 
-**File**: `src/query/storages/fuse/src/operations/read_partitions.rs` (modified, +61/-23)
+**File**: `src/query/storages/fuse/src/operations/snapshot_hint.rs` (modified, +6/-0)
 ```diff
-@@ -456,7 +456,12 @@ impl FuseTable {
-         let pruner =
-             Arc::new(self.build_fuse_pruner(ctx.clone(), push_downs, table_schema.clone(), dal)?);
- 
--        let (segment_tx, segment_rx) = async_channel::bounded(max_io_requests);
-+        // The channel holds every lazy segment location at once, so the whole
-+        // list can be handed over synchronously when the pipeline is initialized.
-+        // The locations are already materialized in `lazy_init_segments`; this
-+        // only moves them, and avoids a dedicated runtime (and its threads) per
-+        // table scan just to feed a bounded channel.
-+        let (segment_tx, segment_rx) = async_channel::bounded(lazy_init_segments.len());
- 
-         match segment_format {
-             FuseSegmentFormat::Row => {
-@@ -483,29 +488,22 @@ impl FuseTable {
-                     derterministic_cache_key.clone(),
-                     table_schema.clone(),
-                     internal_column_names.clone(),
-+                    lazy_init_segments.len(),
-                 )?;
-             }
-         }
-         prune_pipeline.set_on_init(move || {
--            // We cannot use the runtime associated with the query to avoid increasing its lifetime.
--            GlobalIORuntime::instance().spawn(async move {
--                // avoid block global io runtime
--                let runtime = Runtime::with_worker_threads(2, Some("prune-pipeline".to_string()))?;
--                let join_handler = runtime.spawn(async move {
--                    for segment in lazy_init_segments {
--                        // the sql may be killed or early stop, ignore the error
--                        if let Err(_e) = segment_tx.send(segment).await {
--                            break;
--                        }
--                    }
--                    Ok::<_, ErrorCode>(())
--                });
--
--                if let Err(cause) = join_handler.await {
--                    log::warn!("Join error in prune pipeline: {:?}", cause);
-+            for segment in lazy_init_segments {
-+                // Capacity equals the number of segments and this is the only
-+                // sender, so the channel is never full here. Closed means the
-+                // receivers are gone (query killed or early stopped).
-+                if segment_tx.try_send(segment).is_err() {
-+                    break;
-                 }
--                Ok::<_, ErrorCode>(())
--            });
-+            }
-+            // Dropping the last sender closes the channel; buffered segments
-+            // are still delivered before the sources observe the close.
-+            drop(segment_tx);
-             Ok(())
-         });
- 
-@@ -678,7 +676,11 @@ impl FuseTable {
-         partitions_total: usize,
-         plan_id: u32,
-     ) -> Result<()> {
--        let max_threads = ctx.get_settings().get_max_threads()? as usize;
-+        // Every stage of this pipeline works on whole segments, so there is no
-+        // point in having more processors than segments to prune on this node
-+        // (`partitions_total` is the number of lazy segments handed to it): the
-+        // surplus would only add processors to the executor graph.
-+        let (max_threads, max_io_requests) = self.prune_pipeline_widths(&ctx, partitions_total)?;
-         prune_pipeline.add_source(
-             |output| LazySegmentReceiverSource::create(ctx.clone(), segment_rx.clone(), output),
-             max_threads,
-@@ -689,6 +691,11 @@ impl FuseTable {
-             Default::default(),
-         )?;
- 
-+        // Segment pruning is dominated by fetching segment files from storage, so
-+        // give it the same I/O concurrency as the non-pipeline pruner
-+        // (`max_storage_io_requests`) instead of `max_threads`. With a cold
-+        // cache and many segments this is otherwise several times slower.
-+        prune_pipeline.try_resize(max_io_requests)?;
-         prune_pipeline.add_transform(|input, output| {
-             SegmentPruneTransform::<PrunedCompactSegmentMeta>::create(
-                 input,
-@@ -697,6 +704,8 @@ impl FuseTable {
-                 pruner.pruning_ctx.clone(),
-             )
-         })?;
-+        // Block-level pruning below is CPU bound; go back to `max_threads`.
-+        prune_pipeline.try_resize(max_threads)?;
- 
-         // Under runtime TopN (`enable_top_n`), schedule the most promising
-         // segments first so the shared boundary converges early.
-@@ -805,9 +814,20 @@ impl FuseTable {
-             .as_ref()
-             .filter(|p| p.order_by.is_empty() && p.filters.is_none() && p.secure_filters.is_none())
-             .and_then(|p| p.limit);
--        let enable_prune_cache = enable_prune_cache_for_query(&ctx)?
-+        // A runtime `LIMIT` scan filter does not by itself make the pruning
-+        // result plan-dependent: a point lookup under `LIMIT n` prunes exactly
-+        // like the plain query as long as the limit is never reached. The sink
-+        // records whether the filter cut the result short and
-```
-
-**File**: `src/query/storages/fuse/src/operations/recluster/recluster_table.rs` (modified, +2/-1)
-```diff
-@@ -571,6 +571,7 @@ impl FuseTable {
-         // Keep segment metadata pruning bounded for large snapshot ranges. Results are accumulated
-         // in input order so strategy tie-breaking remains deterministic across pruning waves.
-         let wave_size = max_concurrency.saturating_mul(4).max(1);
-+        let pruning_runtime = pruning_ctx.pruning_runtime()?;
-         let mut metas = Vec::new();
-         let mut segment_locs = segment_locs.into_iter();
-         loop {
-@@ -582,7 +583,7 @@ impl FuseTable {
-             let worker_count = max_concurrency.min(wave.len()).max(1);
-             let batch_size = wave.len().div_ceil(worker_count);
-             let works = wave.chunks(batch_size).map(|batch| {
--                pruning_ctx.pruning_runtime.spawn({
-+                pruning_runtime.spawn({
-                     let segment_pruner = segment_pruner.clone();
-                     let batch = batch.to_vec();
-                     async move {
-```
-
-**File**: `src/query/storages/fuse/src/pruning/block_pruner.rs` (modified, +2/-2)
-```diff
-@@ -97,7 +97,7 @@ impl BlockPruner {
-             return Ok(block_metas);
-         }
- 
--        let pruning_runtime = &self.pruning_ctx.pruning_runtime;
-+        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
-         let pruning_semaphore = &self.pruning_ctx.pruning_semaphore;
-         let pruning_ctx = self.pruning_ctx.clone();
- 
-@@ -191,7 +191,7 @@ impl BlockPruner {
-     ) -> Result<Vec<(BlockMetaIndex, Arc<BlockMeta>)>> {
-         let pruning_stats = self.pruning_ctx.pruning_stats.clone();
-         let pruning_cost = self.pruning_ctx.pruning_cost.clone();
--        let pruning_runtime = &self.pruning_ctx.pruning_runtime;
-+        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
-         let pruning_semaphore = &self.pruning_ctx.pruning_semaphore;
-         let limit_pruner = self.pruning_ctx.limit_pruner.clone();
-         let range_pruner = self.pruning_ctx.range_pruner.clone();
-```
-
-**File**: `src/query/storages/fuse/src/pruning/fuse_pruner.rs` (modified, +30/-9)
-```diff
-@@ -54,6 +54,7 @@ use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
- use log::info;
- use log::warn;
- use opendal::Operator;
-+use parking_lot::Mutex;
- use rand::distributions::Bernoulli;
- use rand::distributions::Distribution;
- use rand::prelude::SliceRandom;
-@@ -85,7 +86,15 @@ use databend_common_catalog::plan::VirtualPredicateRef;
- pub struct PruningContext {
-     pub ctx: Arc<dyn TableContext>,
-     pub dal: Operator,
--    pub pruning_runtime: Arc<Runtime>,
-+    /// Dedicated runtime for the batch pruning paths (`FusePruner::pruning`,
-+    /// bloom / inverted / vector index block pruning, recluster).
-+    ///
-+    /// It is created on first use: the pipeline based pruning without index
-+    /// pruners never touches it, and spawning (and later joining) a
-+    /// `max_threads` worker runtime for every table scan is a measurable cost
-+    /// on the query critical path.
-+    pruning_runtime: Mutex<Option<Arc<Runtime>>>,
-+    pruning_runtime_threads: usize,
-     pub pruning_semaphore: Arc<Semaphore>,
- 
-     pub limit_pruner: Arc<dyn Limiter + Send + Sync>,
-@@ -271,16 +280,12 @@ impl PruningContext {
-         // Constraint the degree of parallelism
-         let max_threads = ctx.get_settings().get_max_threads()? as usize;
- 
--        // Pruning runtime.
--        let pruning_runtime = Arc::new(Runtime::with_worker_threads(
--            max_threads,
--            Some("pruning-worker".to_owned()),
--        )?);
-         let pruning_semaphore = Arc::new(Semaphore::new(max_concurrency));
-         let pruning_ctx = Arc::new(PruningContext {
-             ctx: ctx.clone(),
-             dal,
--            pruning_runtime,
-+            pruning_runtime: Mutex::new(None),
-+            pruning_runtime_threads: max_threads,
-             pruning_semaphore,
-             limit_pruner,
-             range_pruner,
-@@ -297,6 +302,20 @@ impl PruningContext {
-         });
-         Ok(pruning_ctx)
-     }
-+
-+    /// The pruning runtime, created on first use.
-+    pub fn pruning_runtime(&self) -> Result<Arc<Runtime>> {
-+        let mut guard = self.pruning_runtime.lock();
-+        if let Some(runtime) = guard.as_ref() {
-+            return Ok(runtime.clone());
+@@ -143,6 +143,12 @@ impl SnapshotHintWriter<'_> {
+         table_meta: &TableMeta,
+     ) {
+         let ctx = &self.ctx;
++        // Attached tables trust this hint without consulting the catalog. Do not
++        // expose a buffered snapshot; COMMIT publishes the final snapshot after
++        // the metadata update succeeds (and has switched to auto-commit mode).
++        if ctx.txn_mgr().lock().is_active() {
++            return;
 +        }
-+        let runtime = Arc::new(Runtime::with_worker_threads(
-+            self.pruning_runtime_threads,
-+            Some("pruning-worker".to_owned()),
-+        )?);
-+        *guard = Some(runtime.clone());
-+        Ok(runtime)
-+    }
- }
- 
- pub struct FusePruner {
-@@ -418,6 +437,7 @@ impl FusePruner {
-             Default::default(),
-         )?;
-         let block_pruner = Arc::new(BlockPruner::create(self.pruning_ctx.clone())?);
-+        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
- 
-         let mut remain = segment_locs.len() % self.max_concurrency;
-         let batch_size = segment_locs.len() / self.max_concurrency;
-@@ -430,7 +450,7 @@ impl FusePruner {
- 
-             let mut batch = segment_locs.drain(0..batch_size).collect::<Vec<_>>();
-             let inverse_range_index = self.get_inverse_range_index();
--            works.push(self.pruning_ctx.pruning_runtime.spawn({
-+            works.push(pruning_runtime.spawn({
-                 let block_pruner = block_pruner.clone();
-                 let segment_pruner = segment_pruner.clone();
-                 let pruning_ctx = self.pruning_ctx.clone();
-@@ -584,6 +604,7 @@ impl FusePruner {
-         let batch_size = block_metas.len() / self.max_concurrency;
-         let mut works = Vec::with_capacity(self.max_concurrency);
-         let block_pruner = Arc::new(BlockPruner::create(self.pruning_ctx.clone())?);
-+        let pruning_runtime = self.pruning_ctx.pruning_runtime()?;
-         let mut segment_idx = 0;
- 
-         while !block_metas.is_empty() {
-@@ -592,7 +613,7 @@ impl FusePruner {
-             remain -= gap_size;
- 
-             let batch = block_metas.drain(0..batch_size).collect::<Vec<_>>();
--            works.push(self.pruning_ctx.pruning_runtime.spawn({
-+            works.push(pruning_runtime.spawn({
-                 let block_pruner = block_pruner.clone();
-                 async move {
-                     // Build pruning tasks.
+         if let Ok(false) = ctx.get_settings().get_enable_last_snapshot_location_hint() {
+             info!(
+                 "Write last_snapshot_location_hint disabled. Snapshot {}",
 ```
 
-**File**: `src/query/storages/fuse/src/pruning/vector_index_pruner.rs` (modified, +1/-1)
+**File**: `src/query/storages/fuse/src/retry/commit.rs` (modified, +58/-0)
 ```diff
-@@ -517,7 +517,7 @@ impl VectorIndexPruner {
+@@ -34,6 +34,7 @@ use databend_storages_common_table_meta::meta::Versioned;
+ use databend_storages_common_table_meta::readers::snapshot_reader::TableSnapshotAccessor;
+ use databend_storages_common_table_meta::table::is_fuse_backed_engine;
+ use log::info;
++use log::warn;
+ use tokio::time::sleep;
  
-         let handles = self
-             .pruning_ctx
--            .pruning_runtime
-+            .pruning_runtime()?
-             .try_spawn_batch_with_owned_semaphore(self.pruning_ctx.pruning_semaphore.clone(), tasks)
+ use super::diff::SegmentsDiff;
+@@ -66,6 +67,9 @@ pub async fn commit_with_backoff(
+             .retryable_update_multi_table_meta(tenant, req.clone())
              .await?;
-         future::try_join_all(handles)
-```
-
-**File**: `src/query/storages/fuse/src/pruning_pipeline/column_oriented_block_prune.rs` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ impl AsyncSink for ColumnOrientedBlockPruneSink {
-         let block_size_col = segment.block_size_col();
-         let row_count_col = segment.row_count_col();
- 
--        let pruning_runtime = &self.block_pruner.pruning_ctx.pruning_runtime;
-+        let pruning_runtime = self.block_pruner.pruning_ctx.pruning_runtime()?;
-         let pruning_semaphore = &self.block_pruner.pruning_ctx.pruning_semaphore;
- 
-         let mut pruning_tasks = Vec::with_capacity(block_num);
-```
-
----
-
-### Incident Patch 3: `d548f3cc` (2026-11-03)
-**Commit Message**: fix(query): scan only the vector TopN rows instead of whole blocks (#20931)
-
-* fix(query): scan only the vector TopN rows instead of whole blocks
-
-* topn only deterministic order by
-
-* add topn block metas test
-
-* fix
-
-* fix
-
-* remove unused deps
-
-* fix comment
-
-**File**: `Cargo.lock` (modified, +0/-2)
-```diff
-@@ -3155,7 +3155,6 @@ dependencies = [
-  "foreign_vec",
-  "hex",
-  "log",
-- "match-template",
-  "num-traits",
-  "proptest",
-  "serde",
-@@ -3880,7 +3879,6 @@ dependencies = [
-  "prost-build 0.14.3",
-  "semver",
-  "tonic",
-- "tonic-prost",
-  "tonic-prost-build",
- ]
- 
-```
-
-**File**: `Cargo.toml` (modified, +0/-3)
-```diff
-@@ -324,7 +324,6 @@ jsonb = "0.5.6"
- jsonwebtoken = "9.3.1"
- jwt-simple = { version = "0.12.12", default-features = false, features = ["pure-rust"] }
- lenient_semver = "0.4.2"
--levenshtein_automata = "0.2.1"
- lexical-core = "1"
- libc = { version = "0.2.158" }
- libm = "0.2.6"
-@@ -465,15 +464,13 @@ sys-info = "0.9"
- sysinfo = "0.34.2"
- tantivy = { version = "0.26.2", features = ["quickwit"] }
- tantivy-common = "0.11.0"
--tantivy-fst = "0.5"
- tantivy-jieba = "0.20.0"
- tantivy-query-grammar = "0.26.0"
- temp-env = "0.3.0"
- tempfile = "3.4.0"
- terminal_size = "0.4.2"
- test-harness = "0.3.0"
- testcontainers = "0.23"
--testcontainers-modules = { version = "0.11.5", features = ["mysql", "redis"] }
- thiserror = { version = "1" }
- thrift = "0.17.0"
- tikv-jemalloc-ctl = { version = "0.6.0", features = ["use_std", "stats"] }
-```
-
-**File**: `src/common/column/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@ ethnum = { workspace = true }
- foreign_vec = { workspace = true }
- hex = { workspace = true }
- log = { workspace = true }
--match-template = { workspace = true }
- num-traits = { workspace = true }
- serde = { workspace = true, optional = true }
- serde_derive = { workspace = true, optional = true }
-```
-
-**File**: `src/meta/protos/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -11,7 +11,6 @@ num-derive = { workspace = true }
- num-traits = { workspace = true }
- prost = { workspace = true }
- tonic = { workspace = true }
--tonic-prost = { workspace = true }
- 
- [build-dependencies]
- lenient_semver = { workspace = true }
-```
-
-**File**: `src/query/catalog/src/plan/internal_column.rs` (modified, +12/-15)
-```diff
-@@ -125,8 +125,8 @@ pub struct InternalColumnMeta {
-     pub matched_rows: Option<Vec<usize>>,
-     // Optional scores for the matched rows.
-     pub matched_scores: Option<Vec<F32>>,
--    // The vector topn rows and scores in the block.
--    pub vector_scores: Option<Vec<(usize, F32)>>,
-+    /// The vector scores of the output rows, in order.
-+    pub vector_scores: Option<Vec<F32>>,
+         let Err(update_failed_tbls) = ret else {
++            // Retries can replace the buffered snapshots with merged snapshots.
++            // Publish only the locations in the request that actually committed.
++            write_snapshot_hints(ctx.as_ref(), &req).await;
+             return Ok(());
+         };
+         let Some(duration) = backoff.next_backoff() else {
+@@ -89,6 +93,60 @@ pub async fn commit_with_backoff(
+     }
  }
  
- #[typetag::serde(name = "internal_column_meta")]
-@@ -385,19 +385,16 @@ impl InternalColumn {
-                 Float32Type::from_data(scores).into()
-             }
-             InternalColumnType::VectorScore => {
--                assert!(meta.vector_scores.is_some());
--                let vector_scores = meta.vector_scores.as_ref().unwrap();
--
--                // The smaller the score, the closer the distance.
--                // Fill other rows with the maximum value and they will be filtered out.
--                let mut scores = vec![F32::from(f32::MAX); num_rows];
--                for (idx, score) in vector_scores.iter() {
--                    debug_assert!(*idx < scores.len());
--                    if let Some(val) = scores.get_mut(*idx) {
--                        *val = *score;
--                    }
--                }
--                Float32Type::from_data(scores).into()
-+                let scores = meta
-+                    .vector_scores
-+                    .as_ref()
-+                    .filter(|scores| scores.len() == num_rows)
-+                    .ok_or_else(|| {
-+                        ErrorCode::Internal(
-+                            "vector scores are missing or do not match the block rows",
-+                        )
-+                    })?;
-+                Float32Type::from_data(scores.clone()).into()
-             }
-             InternalColumnType::FileName
-             | InternalColumnType::FileRowNumber
-```
-
-**File**: `src/query/service/tests/it/indexes/vector_index/pruning.rs` (modified, +57/-6)
-```diff
-@@ -62,6 +62,7 @@ use databend_query::storages::fuse::FUSE_OPT_KEY_BLOCK_PER_SEGMENT;
- use databend_query::storages::fuse::FUSE_OPT_KEY_ROW_PER_BLOCK;
- use databend_query::test_kits::*;
- use databend_storages_common_pruner::BlockMetaIndex;
-+use databend_storages_common_pruner::VectorScores;
- use databend_storages_common_table_meta::meta::BlockMeta;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use databend_storages_common_table_meta::table::OPT_KEY_DATABASE_ID;
-@@ -792,7 +793,7 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-             vector_index: Some(vector_index),
-             ..Default::default()
-         };
--        extras.push((Some(extra), result));
-+        extras.push((Some(extra), result, false));
-     }
- 
-     // Add a filter to test filter pushdown
-@@ -1009,10 +1010,18 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-             vector_index: Some(vector_index),
-             ..Default::default()
-         };
--        extras.push((Some(extra), result));
-+        extras.push((Some(extra), result, true));
-     }
- 
--    for (extra, expected_results) in extras {
-+    for (extra, expected_results, filtered) in extras {
-+        // The expected results of filtered queries are the scores of all rows of
-+        // the blocks. Once the rows that pass the filter fill the limit, the pruner
-+        // keeps only the TopN rows: the 5 lowest scores above 2.0.
-+        let expected_results = if filtered {
-+            filtered_topn(expected_results, |score| score > 2.0, 5)
-+        } else {
-+            expected_results
-+        };
-         let block_metas = apply_block_pruning(
-             snapshot.clone(),
-             table.get_table_info().schema(),
-@@ -1027,10 +1036,21 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-         for ((block_meta_index, _), expected_scores) in
-             block_metas.iter().zip(expected_results.iter())
-         {
--            assert!(block_meta_index.vector_scores.is_some());
--            let vector_scores = block_meta_index.vector_scores.clone().unwrap();
-+            // The pruner attaches the TopN rows (`TopN`) or the scores of all rows
-+            // (`All`); compare them in row order.
-+            let mut vector_scores: Vec<(usize, F32)> = match &block_meta_index.vector_scores {
-+                Some(VectorScores::TopN(scores)) => scores
-+                    .iter()
-+                    .map(|&(row, score)| (row as usize, score))
-+                    .collect(),
-+                Some(VectorScores::All(scores)) => scores.iter().copied().enumerate().collect(),
-+                None => panic!("missing vector scores"),
-+            };
-+            vector_scores.sort_by_key(|(row, _)| *row);
-+            let mut expected_scores = expected_scores.clone();
-+            expected_scores.sort_by_key(|expected| expected.vector_idx);
-             assert_eq!(vector_scores.len(), expected_scores.len());
--            for (vector_score, expected_score) in vector_scores.iter().zip(expected_scores) {
-+            for (vector_score, expected_score) in vector_scores.iter().zip(&expected_scores) {
-                 assert_eq!(block_meta_index.segment_idx, expected_score.segment_idx);
-                 assert_eq!(block_meta_index.block_idx, expected_score.block_idx);
-                 assert_eq!(vector_score.0, expected_score.vector_idx);
-@@ -1042,6 +1062,37 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+/// The rows of `blocks` among the `limit` lowest scores that pass `filter`, if
-+/// they fill the limit; otherwise `blocks` unchanged. Blocks without such rows
-+/// are removed.
-+fn filtered_topn(
-+    blocks: Vec<Vec<VectorScoreResult>>,
-+    filter: impl Fn(f32) -> bool,
-+    limit: usize,
-+) -> Vec<Vec<VectorScoreResult>> {
-+    let mut passed: Vec<f32> = blocks
++// Like the hint write itself, operator initialization is best effort: metadata
++// has already committed, so a hint failure must not turn COMMIT into an error.
++async fn write_snapshot_hints(ctx: &dyn TableContext, req: &UpdateMultiTableMetaReq) {
++    let storage_class = match ctx.get_settings().get_s3_storage_class() {
++        Ok(storage_class) => storage_class,
++        Err(e) => {
++            warn!("Failed to initialize transaction snapshot hints: {e}");
++            return;
++        }
++    };
++    let tables = req
++        .update_table_metas
 +        .iter()
-+        .flatten()
-+        .map(|result| result.score)
-+        .filter(|&score| filter(score))
-+        .collect();
-+    if passed.len() < limit {
-+        return blocks;
-+    }
-+    passed.sort_by(f32::total_cmp);
-+    let last = passed[limit - 1];
-+    blocks
-+        .into_iter()
-+        .map(|block| {
-+            block
-+                .into_iter()
-+                .filter(|result| filter(result.score) && result.score <= last)
-+                .collect::<Vec<_>>()
++        .map(|(update, info)| {
++            (
++                update.table_id,
++                info.ident.seq,
++                &update.new_table_meta,
++                info.desc.as_str(),
++            )
 +        })
-+        .filter(|block| !block.is_empty())
-+        .collect()
++        .chain(req.update_temp_tables.iter().map(|update| {
++            (
++                update.table_id,
++                0,
++                &update.new_table_meta,
++                update.desc.as_str(),
++            )
++        }));
++    for (table_id, seq, meta, desc) in tables {
++        if !is_fuse_backed_engine(&meta.engine) {
++            continue;
++        }
++        let table =
++            match FuseTable::from_table_meta(table_id, seq, meta.clone(), storage_class, desc) {
++                Ok(table) => table,
++                Err(e) => {
++                    warn!("Failed to initialize snapshot hint for table {table_id}: {e}");
++                    continue;
++                }
++            };
++        if let Some(location) = table.snapshot_loc() {
++            FuseTable::write_last_snapshot_hint(
++                ctx,
++                &table.get_operator(),
++                table.meta_location_generator(),
++                &location,
++                meta,
++            )
++            .await;
++        }
++    }
 +}
 +
- #[derive(Debug, Clone)]
- struct VectorScoreResult {
-     segment_idx: usize,
+ async fn compute_table_segments_diffs(
+     ctx: Arc<dyn TableContext>,
+     req: &UpdateMultiTableMetaReq,
 ```
 
-**File**: `src/query/service/tests/it/storages/fuse/operations/internal_column.rs` (modified, +2/-1)
+**File**: `tests/sqllogictests/suites/http_handler/transaction/txn_snapshot_hint.test` (added, +228/-0)
 ```diff
-@@ -67,7 +67,8 @@ fn expected_data_block(
-             inner: None,
-             matched_rows: block_meta.matched_rows.clone(),
-             matched_scores: block_meta.matched_scores.clone(),
--            vector_scores: block_meta.vector_scores.clone(),
-+            // The table has no vector index.
-+            vector_scores: None,
-         };
-         let block = DataBlock::empty_with_rows(num_rows);
-         for internal_column in internal_columns {
-```
-
-**File**: `src/query/storages/common/pruner/src/block_meta.rs` (modified, +13/-2)
-```diff
-@@ -27,6 +27,17 @@ use databend_common_expression::types::DataType;
- use databend_common_expression::types::number::F32;
- use databend_storages_common_table_meta::meta::ColumnStatistics;
- 
-+/// Vector scores of a block, attached by vector pruning.
-+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq)]
-+pub enum VectorScores {
-+    /// The rows of a vector TopN and their scores, as (row, score): the scan
-+    /// outputs only these rows.
-+    TopN(Vec<(u32, F32)>),
-+    /// The score of every row, in row order: the scan outputs every row. Rows
-+    /// without a score, such as NULL vectors, hold the placeholder `f32::MAX`.
-+    All(Vec<F32>),
-+}
+@@ -0,0 +1,228 @@
++# Regression for #20752. Inspect the same storage hint used by ATTACH TABLE,
++# without requiring an enterprise license to attach the table. The dedicated
++# fs prefix follows txn_ext.test; clear it so repeated runs see only this table.
++statement ok
++create or replace database txn_snapshot_hint;
 +
- #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default, PartialEq, Eq)]
- pub struct BlockMetaIndex {
-     /// {segment|block}_id is used in `InternalColumnMeta` to generate internal column data,
-@@ -43,8 +54,8 @@ pub struct BlockMetaIndex {
-     pub matched_rows: Option<Vec<usize>>,
-     // Optional scores for the matched rows.
-     pub matched_scores: Option<Vec<F32>>,
--    // The vector topn rows and scores in the block.
--    pub vector_scores: Option<Vec<(usize, F32)>>,
-+    /// The vector scores of the rows the scan outputs.
-+    pub vector_scores: Option<VectorScores>,
-     // The optional meta of virtual columns.
-     pub virtual_block_meta: Option<VirtualBlockMetaIndex>,
- }
++statement ok
++use txn_snapshot_hint;
++
++statement ok
++set auto_compaction_imperfect_blocks_threshold=0;
++
++statement ok
++set enable_auto_analyze=0;
++
++statement ok
++create or replace stage txn_hint_stage url='fs:///tmp/http_handler_txn_snapshot_hint/persistent/';
++
++statement ok
++remove @txn_hint_stage;
++
++statement ok
++create table t(id int, v int) 'fs:///tmp/http_handler_txn_snapshot_hint/persistent/';
++
++# A table's first snapshot must not create a hint until COMMIT.
++statement ok
++begin;
++
++statement ok
++insert into t values (1,10);
++
++query I
++select count(*) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++0
++
++statement ok
++rollback;
++
++query I
++select count(*) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++0
++
++statement ok
++begin;
++
++statement ok
++insert into t values (1,10);
++
++statement ok
++commit;
++
++statement ok
++create temp table hint_before as select $1:snapshot_full_path::string as path from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++
++statement ok
++begin;
++
++statement ok
++delete from t where id=1;
++
++# The source sees its own DELETE, but the published hint must not change.
++query I
++select count(*) from t;
++----
++0
++
++statement ok
++insert into t values (1,10),(2,20);
++
++statement ok
++update t set v=-1 where id=1;
++
++statement ok
++replace into t on (id) values (1,-2),(5,50);
++
++query B
++select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++1
++
++statement ok
++rollback;
++
++query II
++select * from t;
++----
++1 10
++
++query B
++select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++1
++
++# Multiple statements must publish only the final snapshot on COMMIT.
++statement ok
++begin;
++
++statement ok
++insert into t values (2,20);
++
++statement ok
++update t set v=11 where id=1;
++
++query B
++select $1:snapshot_full_path::string = (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++1
++
++statement ok
++commit;
++
++query II
++select * from t order by id;
++----
++1 11
++2 20
++
++query B
++select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
++from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
++cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','t') limit 1) s;
++----
++1
++
++query B
++select $1:snapshot_full_path::string != (select path from hint_before) from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson');
++----
++1
++
++# COMMIT must still honor the setting that disables hint writes.
++statement ok
++set enable_last_snapshot_location_hint=0;
++
++statement ok
++begin;
++
++statement ok
++insert into t values (3,30);
++
++statement ok
++commit;
++
++query B
++select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
++from @txn_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
++cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','t') limit 1) s;
++----
++0
++
++statement ok
++set enable_last_snapshot_location_hint=1;
++
++# Temporary tables use a separate metadata-update list at COMMIT.
++statement ok
++create or replace stage txn_temp_hint_stage url='fs:///tmp/http_handler_txn_snapshot_hint/temporary/';
++
++statement ok
++remove @txn_temp_hint_stage;
++
++statement ok
++create temp table tt(id int) 'fs:///tmp/http_handler_txn_snapshot_hint/temporary/';
++
++statement ok
++insert into tt values (1);
++
++statement ok
++begin;
++
++statement ok
++insert into tt values (2);
++
++query B
++select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
++from @txn_temp_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
++cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','tt') limit 1) s;
++----
++0
++
++statement ok
++rollback;
++
++query B
++select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.snapshot_location
++from @txn_temp_hint_stage (pattern=>'.*last_snapshot_location_hint_v2', file_format=>'ndjson')
++cross join (select snapshot_location from fuse_snapshot('txn_snapshot_hint','tt') limit 1) s;
++----
++1
++
++statement ok
++begin;
++
++statement ok
++insert into tt values (2);
++
++statement ok
++commit;
++
++query B
++select right($1:snapshot_full_path::string, length(s.snapshot_location)) = s.sna
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20967** (2026-11-04): feat(query): support runtime TopN pruning across UNION ALL (@zhang2014)
+- **PR #20965** (2026-11-04): ci: use $1 for the capture group in ClickBench Q28 (@KKould)
+- **PR #20964** (2026-11-04): feat(query): prune runtime TopN by the first of several sort keys (@KKould)
+- **PR #20962** (2026-11-04): feat(query): prune group items computed from group items and constants (@KKould)
 - **PR #20955** (closed): fix(query): evaluate stream status in private task conditions (@KKould)
 - **PR #20954** (closed): feat(storage): prune segments using learned snapshot layouts (@KKould)
-- **PR #20951** (2026-11-03): refactor(query): copy runs of consecutive rows in take kernels (@SkyFan2002)
-- **PR #20949** (2026-11-03): feat(http): support catalog in /v1/session/login (@youngsofun)
-- **PR #20933** (2026-11-03): fix(query): remove experimental privilege check settings (@TCeason)
-- **PR #20932** (2026-11-03): fix(query): keep rows that tie with the last vector TopN row (@b41sh)
 
 ---
 
@@ -2427,57 +2735,52 @@ Co-authored-by: Winter Zhang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): remove experimental privilege check settings (#20933)
+## X. storage): prevent incomplete index refresh after writes (#20909)
 
 **RULE**:
-When implementing operations in `src/meta/api/src/api_impl/sequence_api_impl.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/catalog/src/plan/partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1aedf8a9`: query): remove experimental privilege check settings (#20933). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6454b150`: storage): prevent incomplete index refresh after writes (#20909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/sequence_api_impl.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/catalog/src/plan/partition.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use databend_common_meta_app::principal::OwnershipObject;
-use crate::crud::create_owned_object;
-        // An existing sequence is not an error here; callers report it themselves.
-        let object = OwnershipObject::Sequence {
-            name: req.ident.name().to_string(),
-        let success = create_owned_object(
-            self,
-            &req.ident,
-            &meta,
-            req.override_existing,
-            &object,
-            req.owner_role.as_deref(),
-            &[txn_put_pb(&storage_ident, &storage_value)],
-        )
-        .await?;
-
-        Ok(CreateSequenceReply { success })
+use databend_storages_common_table_meta::meta::BlockTopN;
+use databend_storages_common_table_meta::meta::VirtualSegmentSchema;
+            Ok(json) => f.write_str(&json),
+            Err(cause) => f
+                .debug_struct("PartInfo")
+                .field("serialization_error", &cause)
+                .finish(),
+/// A surviving block keeps its segment-local virtual-column interpretation
+/// and per-block statistics when maintenance replaces the containing segment.
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct RetainedBlockMeta {
+    pub block_meta: Arc<BlockMeta>,
+    pub hll: Option<RawBlockHLL>,
+    pub top_n: Option<BlockTopN>,
+    /// Local index into the enclosing container's `virtual_schemas`.
+    pub virtual_schema_index: usize,
+}
+    pub remained_blocks: Vec<RetainedBlockMeta>,
+    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
+    pub merged_blocks: Vec<RetainedBlockMeta>,
+    pub virtual_schemas: Vec<Option<Arc<VirtualSegmentSchema>>>,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use crate::txn_condition_util::txn_cond_eq_seq;
-        let conditions = if req.override_existing {
-            vec![]
-        } else {
-            vec![txn_cond_eq_seq(&req.ident, 0)]
-
-        let txn = TxnRequest::new(conditions, vec![
-            txn_put_pb(&req.ident, &meta),
-            txn_put_pb(&storage_ident, &storage_value),
-        ]);
-
-        let (succ, _response) = send_txn(self, txn).await?;
-
-        Ok(CreateSequenceReply { success: succ })
+            Ok(str) => write!(f, "{}", str),
+            Err(_cause) => Err(std::fmt::Error {}),
+pub type BlockMetaWithHLL = (Arc<BlockMeta>, Option<RawBlockHLL>);
+    pub remained_blocks: Vec<BlockMetaWithHLL>,
+    pub merged_blocks: Vec<BlockMetaWithHLL>,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1aedf8a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6454b150` are properly handled with clean fallback behavior.

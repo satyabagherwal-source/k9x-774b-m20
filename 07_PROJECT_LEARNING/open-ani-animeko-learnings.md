@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source**: github ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
-> **Source Version**: `8ca97e5d`  
+> **Source Version**: `bd7a42f3`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:15:46.241Z  
+> **Timestamp**: 2026-11-04T19:33:51.755Z  
 > **Learning ID**: `learn-github-open-ani-animeko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:15:45.985Z  
+> **Harvest Timestamp**: 2026-11-04T19:33:49.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Multiplatform
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 21359 stars
+- **Stars / Engagement**: 21492 stars
 
 ---
 
@@ -1031,11 +1031,14 @@ class EpisodeFetchSelectPlayState(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3678** (2026-10-28): **添加anime 4k等实时超分功能**
-  *Symptoms*: ### 建议内容  希望可以添加anime 4k等实时超分功能, 获得极大的观感提升  ### 当前 Ani 版本号  最新  ### 操作系统  Windows
+- **Issue #3691** (2026-11-02): **fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持**
+  *Symptoms*: ## 背景  下载弹窗的选源步骤原先在会话里有 BT 源时默认落到 BT 页，用户每次下载都要先切回自动匹配。另外用户切过的模式存在选源页内部的 `rememberSaveable` 里，而选源与选集两步靠 `AnimatedContent` 切换，选源页在过渡结束后会被销毁：选集后点返回、或下滑隐藏弹窗再从剧集行打开，模式都会重置为初值。之前初值是 BT，从 BT 页选资源再返回的人碰巧还在 BT 页；初值改成自动后这个问题就会暴露出来。  ## 改动  - `DownloadMediaPickerContent` 的初始模式固定为自动匹配，不随 BT 源有无或播放偏好变化。播放页的初始模式仍按设置里的 preferKind 推导，不受影响。 - 用户切过的模式挂到 `DownloadMediaPickerState` 上。这个对象由 presenter 持有，同一查询会话的两步和隐藏重开共用同一实例，正好对应「本次会话内保持」的语义，也和播放页把模式放在 ViewModel 上的做法一致。选源页改为接收宿主传入的模式与回调。 - `DownloadRequestSheet` 的两步切换外面套一层 `SaveableStateHolder`，返回选源时 BT 列表的滚动位置等 `rememberSaveable` 状态也能保住。 - 文档 media-downloads.md 与 media-selector-ui.md 同步更新默认模式与保持规则。  ## 验证  - `:app:shared:ui-download:desktopTest` 全部通过（16 个测试类）。 - `DownloadMediaPickerTest` 原「有 BT 源时默认 BT」的用例改为「有 BT 源时仍默认自动，可从菜单切到 BT」；新增回归测试用 `AnimatedContent` 模拟两步切换，切到 BT 后离开再回来仍在 BT 页，离开期间断言选源页确实被销毁。 - 修复前用同样结构的探针测试确认过：离开再回来会落到自动匹配页。  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #3670** (2026-10-28): **Complete Traditional Chinese (Taiwan) translation**
-  *Symptoms*: This fills in 42 strings that are missing from `values-zh-rTW` (they exist in English and Simplified Chinese, so Taiwanese users currently see English for them).  The new strings are taken from the Simplified Chinese file, converted with OpenCC (s2twp profile) and adjusted to the wording used in Taiwan. Existing Traditional Chinese strings are not changed; the new ones are appended at the end of each file. Placeholders and escapes are unchanged, and every file parses as valid XML.
+- **Issue #3681** (2026-11-01): **fix(datasource): JSON API 源保留条目级资源以支持播放器内切集**
+  *Symptoms*: ## 问题与行为  Closes #3680  稀饭动漫 Next 使用的 JSON API 数据源在 `fetch` 返回前按当前集裁剪资源。播放页通过 `SubjectMediaFetchSessions` 为同一条目复用查询结果，因此从第 1 集进入后，在播放器内切到第 2 集时没有 Next 的候选；退出再从详情进入第 2 集则能找到。  ## 修改  - `JsonApiMediaSource.selectMedia` 返回条目下全部可解析剧集与线路的资源，当前集筛选由现有 `MediaSelector` 完成，与 `MediaSource.fetch` 的条目级约定一致。在线查询和搜索缓存读取共用此方法。 - 保留资源 ID、集号解析、线路、播放参数与按需获取播放地址的逻辑。播放器、连播、切集、查询会话复用及其他数据源实现均未修改。 - 更新原有单集查询预期，验证各剧集的集号与各线路资源；新增在线、缓存两条路径下共用一份结果切集的回归测试，覆盖第 1、2、3 集、特别篇和切回第 1 集，并断言不额外查询或提前签发地址。特别篇继续遵守现有映射及选择器匹配规则。 - 播放地址来自剧集列表的测试使用一次查询返回的第 2、3 集资源，验证播放时列表响应仍可共用并在过期后刷新。  ## 验证  - 修复前两条新增回归测试失败；在线路径切到第 2 集时预期 4 个候选，实际为 0。 - 修复后桌面 JVM 上运行 92 个相关测试，全部通过，0 skipped：JSON API 数据源、引擎、模板与配置序列化，`SubjectMediaFetchSessionsTest`、`MediaSelectorFilterCharacterizationTest`、`MediaSelectorSubjectSeriesTest`。 - `git diff --check` 通过。  测试任务及筛选范围：  ```shell ./gradlew :app:shared:app-data:desktopTest   --tests '*domain.mediasource.jsonapi.*'   --tests '*SubjectMediaFetchSessionsTest'   --tests '*MediaSelectorFilterCharacterizationTest'   --tests '*MediaSelectorSubjectSeriesTest' ```  本机 Windows 使用项目 CI 同版本的 JBR 21（含 JCEF）；由于工作区路径含中文，测试运行时通过仓库外的临时 Gradle init script 将 classpath 映射到同一目录的英文 junction，并传入 `-Pandroid.overridePathCheck=true`。这些本地环境适配未纳入改动。  验证范围为自动化测试；未将修复打包替换已安装应用，也未对修复后的实际站点播放做运行验证。 
+  **Post-Mortem & Fix Analysis**:
+  > [`MediaSource.fetch` 的接口约定](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/datasource/api/src/commonMain/kotlin/source/MediaSource.kt#L108-L114)明确要求返回条目下全部剧集，由选择器按当前集筛选；现有 [`web-selector` 实现](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/app/shared/app-data/src/commonMain/kotlin/domain/mediasource/web/SelectorMediaSource.kt#L386-L395)也返回未按当前集裁剪的 `originalList`  似乎是这些部分干扰到了 codex  这个 PR 是希望让 JSON API 的查询行为与上述约定一致，但之前没有充分说明它会改变该配置为 `true` 时的行为  这里应仅由订阅侧调整 Next 配置并关闭 PR，还是继续统一 JSON API 的条目级查询行为，补充配置语义说明？
+  > > [`MediaSource.fetch` 的接口约定](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/datasource/api/src/commonMain/kotlin/source/MediaSource.kt#L108-L114)明确要求返回条目下全部剧集，由选择器按当前集筛选；现有 [`web-selector` 实现](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/app/shared/app-data/src/commonMain/kotlin/domain/mediasource/web/SelectorMediaSource.kt#L386-L395)也返回未按当前集裁剪的 `originalList` >  >  >  > 似乎是这些部分干扰到了 codex >  >  >  > 这个 PR 是希望让 JSON API 的查询行为与上述约定一致，但之前没有充分说明它会改变该配置为 `true` 时的行为 >  >  >  > 这里应仅由订阅侧调整 Next 配置并关闭 PR，还是继续统一 JSON API 的条目级查询行为，补充配置语义说明？  文档的问题，这个地方改数据源就行了
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1052,71 +1055,355 @@ class EpisodeFetchSelectPlayState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ca97e5d` (2026-10-28)
-**Commit Message**: Complete Traditional Chinese (Taiwan) translation (#3670)
+### Incident Patch 1: `bd7a42f3` (2026-11-02)
+**Commit Message**: fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)
 
-Co-authored-by: monarchsofchaos004-gif <[REDACTED_EMAIL]>
+下载弹窗的选源步骤原先在会话里有 BT 源时默认落到 BT 页, 现在初值固定为自动匹配,
+不随 BT 源有无或播放偏好变化; 要挑种子的用户自己切到 BT 页.
 
-**File**: `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml` (modified, +42/-0)
+用户切过的模式原先存在选源页内部的 rememberSaveable 里, 选源与选集两步靠
+AnimatedContent 切换, 选源页在过渡结束后被销毁, 选集后返回或隐藏弹窗再打开都会
+重置为初值. 现在模式挂在 DownloadMediaPickerState 上, 由 presenter 在本次会话内
+持有; 两步切换处再套一层 SaveableStateHolder, 列表滚动位置等状态返回时也能保住.
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt` (modified, +32/-17)
 ```diff
-@@ -1921,6 +1921,48 @@
-     <string name="settings_mediasource_jsonapi_unknown_variables">未知變數：%1$s</string>
-     <string name="settings_mediasource_jsonapi_play_open_video">開啟影片網址</string>
-     <string name="settings_mediasource_jsonapi_play_copy">複製</string>
-+    <string name="settings_pikpak_description">使用 PikPak 解析 BT 種子可以改善解析速度，需要訂閱 PikPak 會員。\n上方 anitorrent 設定對 PikPak 解析無效。</string>
-+    <string name="settings_pikpak_enabled">啟用 PikPak</string>
-+    <string name="settings_pikpak_username">使用者名稱</string>
-+    <string name="settings_pikpak_username_placeholder">電子郵件 / 手機號碼</string>
-+    <string name="settings_pikpak_password">密碼</string>
-+    <string name="settings_pikpak_password_description">如果你使用 Google 登入，需先在 PikPak 帳號設定裡設定密碼。</string>
-+    <string name="settings_pikpak_password_hidden">••••••••</string>
-+    <string name="settings_pikpak_drive_usage_title">雲端硬碟狀態</string>
-+    <string name="settings_pikpak_drive_usage_value">剩餘 %1$s</string>
-+    <string name="settings_pikpak_drive_usage_idle">點選測試</string>
-+    <string name="settings_pikpak_drive_usage_signed_out">未登入</string>
-+    <string name="settings_pikpak_drive_usage_failed">連線失敗：%1$s</string>
-+    <string name="settings_pikpak_legacy_title">清理雲盤上的舊快取？</string>
-+    <string name="settings_pikpak_legacy_message">雲盤的 Animeko-Playing 裡有 %1$d 項舊版留下的內容。新版解析器可以按需取流、關閉即刪，不浪費雲盤空間而且解析更快。</string>
-+    <string name="settings_pikpak_legacy_delete">永久刪除</string>
-+    <string name="settings_pikpak_legacy_keep">保留</string>
-+    <string name="settings_pikpak_legacy_failed">刪除失敗：%1$s</string>
-+    <string name="pikpak_not_enough_space_title">PikPak 雲盤空間不足</string>
-+    <string name="pikpak_not_enough_space_message">請清理雲盤空間。</string>
-+    <string name="pikpak_not_enough_space_ok">知道了</string>
-+    <string name="settings_pikpak_recommend_title">同步調整資料來源選擇器？</string>
-+    <string name="settings_pikpak_recommend_message">PikPak 只處理 BT 資源。建議把"優先資料來源型別"設為 BT，這樣預設選擇器才會實際走到 PikPak。</string>
-+    <string name="settings_pikpak_recommend_apply">應用</string>
-+    <string name="settings_pikpak_recommend_dismiss">跳過</string>
-+    <string name="settings_app_subject_title">條目標題</string>
-+    <string name="settings_app_use_original_title">顯示原名</string>
-+    <string name="settings_app_use_original_title_description">在條目列表和詳情頁優先顯示原名（通常為日文），而非中文名</string>
-+    <string name="settings_update_version_expired_title">版本過期</string>
-+    <string name="settings_update_version_expired_message">當前版本太舊，為了你的使用體驗，請更新到最新版本。\n右下角將會顯示最新版本，可以點選自動更新。如果無法更新，請前往官網下載：</string>
-+    <string name="settings_update_version_expired_message_with_latest">當前版本太舊，為了你的使用體驗，請更新到最新版本 %1$s。\n右下角將會顯示最新版本，可以點選自動更新。如果無法更新，請前往官網下載：</string>
-+    <string name="settings_update_version_expired_import_settings_hint">如果新版本要求匯入設定，請點選：</string>
-+    <string name="settings_update_version_expired_copied_to_clipboard">已複製到剪貼簿，請到新版本點選匯入</string>
-+    <string name="settings_update_version_expired_export_settings">匯出設定</string>
-+    <string name="settings_storage_backup_title">備份</string>
-+    <string name="settings_storage_backup_op_backup_title">複製應用設定到剪下板</string>
-+    <string name="settings_storage_backup_op_backup_description">複製所有應用設定到剪下板，可以在重灌後通過下方的匯入來繼承所有應用設定項。\n注意：包含帳號敏感資訊，請勿分享備份內容給他人。</string>
-+    <string name="settings_storage_backup_op_backup_error">無法匯出應用設定，請在日誌檢視錯誤資訊</string>
-+    <string name="settings_storage_backup_op_restore">從剪下板匯入應用設定</string>
-+    <string name="settings_storage_backup_op_restore_description">匯入設定會覆蓋當前應用的所有設定。</string>
-+    <string name="settings_storage_backup_op_restore_warning">這會覆蓋當前應用的所有設定，且無法復原，確認匯入嗎？</string>
-+    <string name="settings_storage_backup_op_restore_error">剪下板中內容無效或者不是設定備份內容</string>
-+    <string name="settings_storage_backup_op_restore_succees">匯入設定成功</string>
- </resources>
+@@ -45,7 +45,7 @@ import androidx.compose.runtime.key
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+-import androidx.compose.runtime.saveable.rememberSaveable
++import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+@@ -119,7 +119,13 @@ class DownloadMediaPickerState(
+      * 本次选源会话的手动查找, 点选的一集作为本集的选择; 为 `null` 时没有手动查找.
+      */
+     val manualBrowse: ManualBrowseState? = null,
+-)
++) {
++    /**
++     * 用户在模式 chip 上选的模式, `null` 表示还没选 (用初值). 放在会话状态上而不是选源页里:
++     * 选集后返回与弹窗隐藏重开都会重建选源页, 用户切过的模式要在本次会话内保持.
++     */
++    var userMode: MediaSelectorMode? by mutableStateOf(null)
++}
  
- <!--@formatter:on-->
+ /**
+  * 选集步骤: 用户已在 [DownloadMediaPickerState] 中选定 [chosen].
+@@ -203,21 +209,25 @@ private fun DownloadRequestSheet(
+         modifier = Modifier.desktopTitleBarPadding().statusBarsPadding(),
+         contentWindowInsets = { BottomSheetDefaults.windowInsets.add(WindowInsets.desktopTitleBar()) },
+     ) {
++        // AnimatedContent 在两步切换时销毁另一步的内容; 用 SaveableStateHolder 保住各步的 rememberSaveable 状态 (列表滚动位置等), 返回选源时回到原处.
++        val stateHolder = rememberSaveableStateHolder()
+         AnimatedContent(
+             targetState = episodePicker,
+             contentKey = { it != null },
+             contentAlignment = Alignment.TopCenter,
+         ) { picker ->
+-            if (picker == null) {
+-                DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
+-            } else {
+-                DownloadEpisodePicker(
+-                    picker,
+-                    onBack = onBack,
+-                    onConfirm = onConfirmEpisodes,
+-                    modifier = Modifier.padding(vertical = 12.dp)
+-                        .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
+-                )
++            stateHolder.SaveableStateProvider(picker != null) {
++                if (picker == null) {
++                    DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
++                } else {
++                    DownloadEpisodePicker(
++                        picker,
++                        onBack = onBack,
++                        onConfirm = onConfirmEpisodes,
++                        modifier = Modifier.padding(vertical = 12.dp)
++                            .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
++                    )
++                }
+             }
+         }
+     }
+@@ -256,6 +266,8 @@ private fun DownloadMediaPicker(
+         selectorState = selectorState,
+         sourceResults = presentation,
+         hasBt = hasBt,
++        userMode = selection.userMode,
++        onUserModeChange = { selection.userMode = it },
+         watching = watching,
+         fetchRequest = fetchRequest,
+         onFetchRequestChange = selection.fetchSession::setFetchRequest,
+@@ -267,10 +279,12 @@ private fun DownloadMediaPicker(
+ 
+ /**
+  * 选源步骤的界面: 标题行「数据源」+ 模式 chip, 下方按模式放自动匹配页、手动查找页或 BT 资源页.
+- * 模式在本次弹窗内保持; 初值有 BT 源 → BT, 否则 AUTO.
++ * 初值总是 AUTO, 不随 BT 源有无或播放偏好变化: 下载走自动匹配最省事, 要挑种子的用户自己切到 BT 页.
+  * 弹窗宽 640dp, BT 页因此总是紧凑列表, 手动查找总是堆叠两页.
+  *
+  * @param hasBt 会话内是否有 BT 源 (含禁用源). 为 false 时模式菜单没有 BT 项.
++ * @param userMode 用户切过的模式, `null` 用初值. 由宿主持有 ([DownloadMediaPickerState.userMode]): 本页在选集与返回之间会重建, 自己记不住.
++ * @param onUserModeChange 模式 chip 或自动匹配页的救援按钮改了模式.
+  * @param watching 要下载的集; BT 页只用它画「第 N 话」chip, 不画「正在观看」卡片.
+  * @param fetchRequest 当前生效的查询请求, 供 BT 页搜索框回显与提交; 会话未就绪时为 null.
+  * @param onSelect 用户在自动匹配页或 BT 页点了资源; 宿主进入选集步骤, 不关闭弹窗.
+@@ -281,6 +295,8 @@ internal fun DownloadMediaPickerContent(
+     selectorState: MediaSelectorState,
+     sourceResults: MediaSourceResultListPresentation,
+     hasBt: Boolean,
++    userMode: MediaSelectorMode?,
++    onUserModeChange: (MediaSelectorMode) -> Unit,
+     watching: WatchingEpisode?,
+     fetchRequest: MediaFetchRequest?,
+     onFetchRequestChange: (MediaFetchRequest) -> Unit,
+@@ -289,9 +305,8 @@ internal fun DownloadMediaPickerContent(
+     modifier: Modifier = Modifier,
+     manualBrowse: ManualBrowseState? = null,
+ ) {
+-    var userMode by rememberSaveable { mutableStateOf<MediaSelectorMode?>(null) }
+     val mode = userMode?.takeIf { it != MediaSelectorMode.MANUAL || manualBrowse != null }
+-        ?: if (hasBt) MediaSelectorMode.BT else MediaSelectorMode.AUTO
++        ?: MediaSelectorMode.AUTO
+ 
+     // 手动查找页自己处理水平边距, 并在第二页用自己的顶栏替换标题行, 所以标题行与另外两页各自加水平边距.
+     val titleRow = @Composable {
+@@ -306,7 +321,7 @@ internal fun DownloadMediaPickerContent(
+             )
+             MediaSelectorModeChip(
+                 mode,
+-                onModeChange = { userMode = it },
++                onModeChange = onUserModeChange,
+                 showBt = hasBt,
+                 showManual = manualBrowse != null,
+             )
+@@ -351,7 +366,7 @@ internal fun DownloadMediaPickerContent(
+                     selectorState,
+       
+```
+
+**File**: `app/shared/ui-download/src/desktopTest/kotlin/ui/download/subject/DownloadMediaPickerTest.kt` (modified, +51/-7)
+```diff
+@@ -9,8 +9,16 @@
+ 
+ package me.him188.ani.app.ui.download.subject
+ 
++import androidx.compose.animation.AnimatedContent
++import androidx.compose.foundation.layout.Box
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.MutableState
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.platform.testTag
+ import androidx.compose.ui.test.ComposeUiTest
+ import androidx.compose.ui.test.assertTextEquals
+ import androidx.compose.ui.test.hasTestTag
+@@ -49,9 +57,14 @@ import org.jetbrains.compose.resources.getString
+ class DownloadMediaPickerTest {
+     /**
+      * @param onManualPick 非 null 时提供手动查找, 点选的一集交给它; null 时宿主没有手动查找.
++     * @param userMode 宿主持有的模式, 默认本次组合内的局部状态.
+      */
+     @Composable
+-    private fun Picker(hasBt: Boolean, onManualPick: ((Media, ManualBrowseMemory?) -> Unit)? = null) {
++    private fun Picker(
++        hasBt: Boolean,
++        onManualPick: ((Media, ManualBrowseMemory?) -> Unit)? = null,
++        userMode: MutableState<MediaSelectorMode?> = remember { mutableStateOf(null) },
++    ) {
+         ProvideCompositionLocalsForPreview {
+             val scope = rememberBackgroundScope()
+             val manualBrowse = remember {
+@@ -68,6 +81,8 @@ class DownloadMediaPickerTest {
+                 selectorState = rememberTestMediaSelectorState(),
+                 sourceResults = TestMediaSourceResultListPresentation,
+                 hasBt = hasBt,
++                userMode = userMode.value,
++                onUserModeChange = { userMode.value = it },
+                 watching = WatchingEpisode("01", "Episode 1"),
+                 fetchRequest = TestMediaFetchRequest,
+                 onFetchRequestChange = {},
+@@ -91,19 +106,48 @@ class DownloadMediaPickerTest {
+     }
+ 
+     @Test
+-    fun `defaults to BT with BT sources and switches to auto from the menu`() = runAniComposeUiTest {
++    fun `defaults to auto even with BT sources and switches to BT from the menu`() = runAniComposeUiTest {
+         setContent { Picker(hasBt = true) }
++        onNodeWithTag(AutoMatchPageTestTags.ROOT).assertExists()
++        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertDoesNotExist()
++        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.AUTO))
++
++        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).performClick()
++        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.MANUAL)).assertDoesNotExist()
++        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.BT)).performClick()
++
+         onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
+         onNodeWithTag(AutoMatchPageTestTags.ROOT).assertDoesNotExist()
+         onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.BT))
++    }
+ 
++    @Test
++    fun `mode chosen in the picker survives leaving for the episode step and coming back`() = runAniComposeUiTest {
++        // 与 DownloadRequestSheet 一样用 AnimatedContent 在选源与选集之间切换, 选源页会被销毁重建; 模式由宿主持有.
++        val userMode = mutableStateOf<MediaSelectorMode?>(null)
++        var step by mutableStateOf(0)
++        setContent {
++            AnimatedContent(targetState = step, contentKey = { it != 0 }) { s ->
++                if (s == 0) Picker(hasBt = true, userMode = userMode) else Box(Modifier.testTag("episode_step"))
++            }
++        }
+         onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).performClick()
+-        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.MANUAL)).assertDoesNotExist()
+-        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.AUTO)).performClick()
++        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.BT)).performClick()
++        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
+ 
+-        onNodeWithTag(AutoMatchPageTestTags.ROOT).assertExists()
+-        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertDoesNotExist()
+-        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.AUTO))
++        step = 1
++        waitForIdle()
++        mainClock.advanceTimeBy(5_000)
++        waitForIdle()
++        onNodeWithTag("episode_step").assertExists()
++        onNodeWithTag(DownloadMediaPickerTestTags.ROOT).assertDoesNotExist()
++
++        step = 0
++        waitForIdle()
++        mainClock.advanceTimeBy(5_000)
++        waitForIdle()
++        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
++        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.BT))
+     }
+ 
+     @Test
+```
+
+**File**: `docs/contributing/code/media/media-downloads.md` (modified, +1/-1)
+```diff
+@@ -113,7 +113,7 @@ presenter 持有当前会话并把会话状态映射为页面状态：
+ - `AwaitingSelection` 与 `SelectingEpisodes` 共用同一个底部弹窗（`DownloadMediaPickerState` 以查询会话为准，
+   两步之间保持同一实例），分别显示选源视图与选集视图（`DownloadEpisodePicker`）。
+   选源视图与播放页的[选源界面](media-selector-ui.md)共用页面，有自动匹配、手动查找与 BT 资源三种模式；
+-  会话里有 BT 源时默认 BT。手动查找的状态由 presenter 随 `DownloadMediaPickerState` 一起创建，
++  默认自动匹配，不随 BT 源有无或播放偏好变化；切过的模式挂在 `DownloadMediaPickerState` 上，选集后返回或隐藏弹窗再打开都不重置。手动查找的状态由 presenter 随 `DownloadMediaPickerState` 一起创建，
+   点选的一集与自动匹配页点选的资源一样通过 `select` 交给会话，条目的其他集按线路里的位置生成的资源一起交给会话。底部弹窗的宽度不足以放表格，BT 列表与播放页 BT 资源页共用紧凑列表组件。
+   选集视图列出条目的全部剧集，可下载的集可勾选，默认勾选本话及之后，并提供仅本话 / 本话及之后 / 全部的快捷选择；
+   已下载与未匹配的集不可勾选。`Finished(error)` 对应添加失败的提示；取消或完成后不显示任何弹窗。
+```
+
+**File**: `docs/contributing/code/media/media-selector-ui.md` (modified, +1/-1)
+```diff
+@@ -173,7 +173,7 @@ BT 候选与 WEB 不同：同一集有几十条来自不同字幕组、分辨率
+   侧边栏太矮时例外，见下。
+ - **详情页，窄窗口**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内。
+ - **播放器**：与详情页一样，侧边栏装全部三种模式。
+-- **批量下载对话框**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内；会话里有 BT 源时默认 BT。
++- **批量下载对话框**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内；默认自动匹配，不随 BT 源有无或播放偏好变化。
+   弹窗宽度不超过 640dp，手动查找总是堆叠两页。
+   资源选定后的选集步骤见[下载管理](media-downloads.md#添加下载)。
+ 
+```
+
+---
+
+### Incident Patch 2: `e97ab2a1` (2026-11-01)
+**Commit Message**: fix(danmaku): honor location visibility settings (#3666)
+
+Check the configured location switch before placing live or repopulated danmakus, so disabled top, bottom, and floating comments cannot bypass the setting.
+
+Fixes #3665
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `danmaku/ui/src/commonMain/kotlin/DanmakuHostState.kt` (modified, +10/-0)
+```diff
+@@ -539,20 +539,23 @@ class DanmakuHostState(
+         return withContext(Dispatchers.Main.immediate) {
+             when (danmaku.danmaku.location) {
+                 DanmakuLocation.NORMAL -> {
++                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.NORMAL)) return@withContext false
+                     val floatingDanmaku = floatingTrack.firstNotNullOfOrNull {
+                         it.tryPlace(styledDanmaku, placeFrameTimeNanos, overrideSpeedMultiplier)
+                     }
+                     floatingDanmaku != null
+                 }
+ 
+                 DanmakuLocation.TOP -> {
++                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.TOP)) return@withContext false
+                     val floatingDanmaku = topTrack.firstNotNullOfOrNull {
+                         it.tryPlace(styledDanmaku, placeFrameTimeNanos)
+                     }
+                     floatingDanmaku != null
+                 }
+ 
+                 DanmakuLocation.BOTTOM -> {
++                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.BOTTOM)) return@withContext false
+                     val floatingDanmaku = bottomTrack.firstNotNullOfOrNull {
+                         it.tryPlace(styledDanmaku, placeFrameTimeNanos)
+                     }
+@@ -898,6 +901,13 @@ internal class DanmakuRepopulator(
+     }
+ }
+ 
++internal fun DanmakuConfig.isLocationEnabled(location: DanmakuLocation): Boolean =
++    when (location) {
++        DanmakuLocation.NORMAL -> enableFloating
++        DanmakuLocation.TOP -> enableTop
++        DanmakuLocation.BOTTOM -> enableBottom
++    }
++
+ private fun <D : SizeSpecifiedDanmaku, DT, T : DanmakuTrack<D, DT>>
+         MutableList<T>.setTrackCountImpl(count: Int, newInstance: List<T>.(index: Int) -> T) {
+     when {
+```
+
+**File**: `danmaku/ui/src/commonTest/kotlin/DanmakuRepopulationTest.kt` (modified, +14/-0)
+```diff
+@@ -17,11 +17,25 @@ import me.him188.ani.danmaku.api.DanmakuLocation
+ import me.him188.ani.danmaku.api.DanmakuServiceId
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
++import kotlin.test.assertFalse
+ import kotlin.test.assertTrue
+ 
+ 
+ class DanmakuRepopulatorTest {
+ 
++    @Test
++    fun `location enabled follows each danmaku setting`() {
++        val config = DanmakuConfig(
++            enableFloating = false,
++            enableTop = true,
++            enableBottom = false,
++        )
++
++        assertFalse(config.isLocationEnabled(DanmakuLocation.NORMAL))
++        assertTrue(config.isLocationEnabled(DanmakuLocation.TOP))
++        assertFalse(config.isLocationEnabled(DanmakuLocation.BOTTOM))
++    }
++
+     @Test
+     fun `repopulate with empty list - onSend should not be called`() = runTest {
+         // Arrange
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3691** (2026-11-02): fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (@Him188)
+- **PR #3681** (closed): fix(datasource): JSON API 源保留条目级资源以支持播放器内切集 (@SXP-Simon)
 - **PR #3670** (2026-10-28): Complete Traditional Chinese (Taiwan) translation (@monarchsofchaos004-gif)
+- **PR #3666** (2026-11-01): fix(danmaku): honor location visibility settings (@bighamx)
 - **PR #3658** (2026-10-24): perf(update): 桌面端下载阶段就解压并校验安装包, 点「重启更新」后只剩交换目录 (@Him188)
 - **PR #3655** (2026-10-24): ci(release): release notes 生成失败时让 step 失败, 不再用空 notes 建 release (@Him188)
-- **PR #3652** (2026-10-24): feat(datasource-test-mcp): selector_resolve_episode 支持列出搜索条目并指定展开的条目 (@Him188)
-- **PR #3651** (2026-10-23): fix(media): 合集种子按 scene 命名里的 S02E02 选对剧集文件 (@StageGuard)
-- **PR #3650** (2026-10-22): fix(adaptive): disable auto-focus on pane destination changes (@NihilDigit)
 
 ---
 
@@ -1136,43 +1423,68 @@ Co-authored-by: monarchsofchaos004-gif <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Complete Traditional Chinese (Taiwan) translation (#3670)
+## X. download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)
 
 **RULE**:
-When implementing operations in `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ca97e5d`: Complete Traditional Chinese (Taiwan) translation (#3670). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd7a42f3`: download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    <string name="settings_pikpak_description">使用 PikPak 解析 BT 種子可以改善解析速度，需要訂閱 PikPak 會員。\n上方 anitorrent 設定對 PikPak 解析無效。</string>
-    <string name="settings_pikpak_enabled">啟用 PikPak</string>
-    <string name="settings_pikpak_username">使用者名稱</string>
-    <string name="settings_pikpak_username_placeholder">電子郵件 / 手機號碼</string>
-    <string name="settings_pikpak_password">密碼</string>
-    <string name="settings_pikpak_password_description">如果你使用 Google 登入，需先在 PikPak 帳號設定裡設定密碼。</string>
-    <string name="settings_pikpak_password_hidden">••••••••</string>
-    <string name="settings_pikpak_drive_usage_title">雲端硬碟狀態</string>
-    <string name="settings_pikpak_drive_usage_value">剩餘 %1$s</string>
-    <string name="settings_pikpak_drive_usage_idle">點選測試</string>
-    <string name="settings_pikpak_drive_usage_signed_out">未登入</string>
-    <string name="settings_pikpak_drive_usage_failed">連線失敗：%1$s</string>
-    <string name="settings_pikpak_legacy_title">清理雲盤上的舊快取？</string>
-    <string name="settings_pikpak_legacy_message">雲盤的 Animeko-Playing 裡有 %1$d 項舊版留下的內容。新版解析器可以按需取流、關閉即刪，不浪費雲盤空間而且解析更快。</string>
-    <string name="settings_pikpak_legacy_delete">永久刪除</string>
-    <string name="settings_pikpak_l
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+) {
+    /**
+     * 用户在模式 chip 上选的模式, `null` 表示还没选 (用初值). 放在会话状态上而不是选源页里:
+     * 选集后返回与弹窗隐藏重开都会重建选源页, 用户切过的模式要在本次会话内保持.
+     */
+    var userMode: MediaSelectorMode? by mutableStateOf(null)
+}
+        // AnimatedContent 在两步切换时销毁另一步的内容; 用 SaveableStateHolder 保住各步的 rememberSaveable 状态 (列表滚动位置等), 返回选源时回到原处.
+        val stateHolder = rememberSaveableStateHolder()
+            stateHolder.SaveableStateProvider(picker != null) {
+                if (picker == null) {
+                    DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
+                } else {
+                    DownloadEpisodePicker(
+                        picker,
+                        onBack = onBack,
+                        onConfirm = onConfirmEpisodes,
+                        modifier = Modifier.padding(vertical = 12.dp)
+                            .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
+                    )
+                }
+        userMode = selection.userMode,
+        onUserModeChange = { selection.userMode = it },
+ * 初值总是 AUTO, 不随 BT 源有无或播放偏好变化: 下载走自动匹配最省事, 要挑种子的用户自己切到 BT 页.
+ * @param userMode 用户切过的模式, `nu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import androidx.compose.runtime.saveable.rememberSaveable
+)
+            if (picker == null) {
+                DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
+            } else {
+                DownloadEpisodePicker(
+                    picker,
+                    onBack = onBack,
+                    onConfirm = onConfirmEpisodes,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                        .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
+                )
+ * 模式在本次弹窗内保持; 初值有 BT 源 → BT, 否则 AUTO.
+    var userMode by rememberSaveable { mutableStateOf<MediaSelectorMode?>(null) }
+        ?: if (hasBt) MediaSelectorMode.BT else MediaSelectorMode.AUTO
+                onModeChange = { userMode = it },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ca97e5d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd7a42f3` are properly handled with clean fallback behavior.

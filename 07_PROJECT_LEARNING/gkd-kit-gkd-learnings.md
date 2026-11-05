@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source**: github ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
-> **Source Version**: `c45a1241`  
+> **Source Version**: `0fe172f5`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:08:57.863Z  
+> **Timestamp**: 2026-11-04T19:22:53.785Z  
 > **Learning ID**: `learn-github-gkd-kit-gkd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:08:56.595Z  
+> **Harvest Timestamp**: 2026-11-04T19:22:53.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 基于无障碍，高级选择器，订阅规则的自定义屏幕点击安卓应用 | An Android APP with custom screen tapping based on Accessibility, Advanced Selectors, and Subscription Rules
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 43771 stars
+- **Stars / Engagement**: 44010 stars
 
 ---
 
@@ -110,7 +110,7 @@ import li.gkd.app.record.AppVisitInput
 import li.gkd.app.record.RuntimeRecordRepository
 import li.gkd.app.rule.RuleSummary
 import li.gkd.app.rule.TopActivity
-import li.gkd.app.service.updateTopTaskAppId
+import li.gkd.app.service.onTopTaskAppChanged
 import li.gkd.app.settings.SettingsRepository
 import li.gkd.app.state.Loadable
 import li.gkd.app.util.Constants
@@ -120,9 +120,22 @@ import li.songe.codeorigin.CallSite
 val foregroundRulesFlow: StateFlow<ForegroundRuleSnapshot>
     get() = AndroidForegroundState.foregroundRulesFlow
 
-val topActivityFlow = foregroundRulesFlow.map { it.topActivity }.distinctUntilChanged()
 val currentTopActivity: TopActivity
     get() = foregroundRulesFlow.value.topActivity
+
+data class AndroidForegroundObservation(
+    // The latest system task, including observations the matcher filters during surface
+    // transitions.
+    val task: ForegroundIdentity?,
+    val confirmed: ForegroundIdentity,
+)
+
+val topTaskAppIdFlow =
+    AndroidForegroundState.observedForegroundFlow
+        .map { it.task?.appId.orEmpty() }
+        .distinctUntilChanged()
+val topTaskAppId: String
+    get() = AndroidForegroundState.observedForegroundFlow.value.task?.appId.orEmpty()
 
 sealed class ActivityScene {
     data object ScreenOn : ActivityScene()
@@ -150,6 +163,15 @@ object AndroidForegroundState {
             )
     val currentRule: ForegroundRuleSnapshot
         get() = synchronized(lock) { foregroundRulesFlow.value }
+
+    val observedForegroundFlow: StateFlow<AndroidForegroundObservation>
+        field =
+            MutableStateFlow(
+                AndroidForegroundObservation(
+                    task = null,
+                    confirmed = MatchingRuntime.inputs.foregroundSnapshot().confirmed,
+                ),
+            )
 
     private var page = Any()
     private var confirmedPage: Any? = null
@@ -218,19 +240,25 @@ object AndroidForegroundState {
                 AndroidAutomationSessions.service?.matchHost?.confirmForeground()
         }
 
-    private var lastAppId = Constants.systemUiAppId
+    private var lastVisitedAppId = Constants.systemUiAppId
 
+    private fun recordVisit(appId: String, time: Long, refresh: Boolean = false) {
+        val previousAppId = lastVisitedAppId
+        if (!refresh && previousAppId == appId) return
+        lastVisitedAppId = appId
+        val visit = AppVisitInput(previousAppId, appId, time)
+        appScope.launchLogged { RuntimeRecordRepository.recordVisit(visit) }
+    }
+
+    /** Returns whether this observation dispatched a top-task package change. */
     fun updateTopActivity(
         appId: String,
         activityId: String?,
         scene: ActivityScene = ActivityScene.A11y,
         sourceTimeMillis: Long? = null,
         @CallSite loc: String = "",
-    ): Unit =
+    ): Boolean =
         synchronized(lock) {
-            if (scene == ActivityScene.TaskStack) {
-                updateTopTaskAppId(appId)
-            }
             if (scene != ActivityScene.ScreenOn) {
                 val source =
                     when (scene) {
@@ -238,14 +266,28 @@ object AndroidForegroundState {
                         ActivityScene.Nodes -> ForegroundSource.Nodes
                         else -> ForegroundSource.Accessibility
                     }
+                val identity = ForegroundIdentity(appId, activityId)
                 val inputDecision =
                     MatchingRuntime.inputs.accept(
-                        MatchInput.Foreground(source, ForegroundIdentity(appId, activityId)),
+                        MatchInput.Foreground(source, identity),
                         MatchingRuntime.coordinator.policy.value,
                         sourceTimeMillis,
                     )
                 val decision = checkNotNull(inputDecision.foreground)
                 foregroundPending = decision.pending != null
+                val previousTask = observedForegroundFlow.value.task
+                val task = if (source == ForegroundSource.TaskStack) identity else previousTask
+                val taskAppChanged =
+                    source == ForegroundSource.TaskStack && appId != previousTask?.appId
+                observedForegroundFlow.value =
+                    AndroidForegroundObservation(task = task, confirmed = decision.confirmed)
+                if (taskAppChanged) {
+                    // A short task visit can end before the matcher confirms its nodes.
+                    if (decision.reason != ForegroundDecisionReason.TaskBelowSystemSurface) {
+                        recordVisit(appId, System.currentTimeMillis())
+                    }
+                    onTopTaskAppChanged(identity)
+                }
                 if (foregroundPending) {
                     if (inputDecision.cancelWork) {
                         page = Any()
@@ -254,7 +296,7 @@ object AndroidForegroundState {
                         )
                     }
                     AndroidAutomationSessions.service?.matchHost?.confirmForeground()
-                    return@synchronized
+                    return@synchronized taskAppChanged
                 }
                 if (
                     !decision.changed &&
@@ -265,7 +307,7 @@ object AndroidForegroundState {
                             decision.reason == ForegroundDecisionReason.TaskBelowSystemSurface ||
                             decision.reason == ForegroundDecisionReason.ExitingSystemSurface)
                 )
-                    return@synchronized
+                    return@synchronized taskAppChanged
                 applyTopActivity(
                     decision.confirmed.appId,
                     decision.confirmed.activityId,
@@ -273,9 +315,10 @@ object AndroidForegroundState {
                     loc,
                     appReentered = decision.appReentered,
                 )
-                return@synchronized
+                return@synchronized taskAppChanged
             }
             applyTopActivity(appId, activityId, scene, loc)
+            false
         }
 
     private fun applyTopActivity(
@@ -292,52 +335,7 @@ object AndroidForegroundState {
             when (snapshot) {
                 Loadable.Loading -> RuleAvailability.Loading
                 is Loadable.Ready -> RuleAvailability.Ready
-                is Loadable.Failure -> RuleAvailability.Failed
-            }
-        val wallTime = System.currentTimeMillis()
-        val t = RuleExecutionHost.runtime.now()
-        val oldActivity = foregroundRulesFlow.value.topActivity
-        val oldActivityRule = foregroundRulesFlow.value
-        val idChanged =
-            (appReentered ||
-                scene == ActivityScene.ScreenOn ||
-                appId != oldActivityRule.topActivity.appId)
-        val isSame =
-            !appReentered &&
-                scene != ActivityScene.ScreenOn &&
-                oldActivity.sameAs(appId, activityId)
-        val number =
-            if (isSame) {
-                oldActivity.number + 1
-            } else {
-                0
-            }
-        val topActivity =
-            if (rulesOnly) oldActivity
-            else
-                TopActivity(
-                    appId = appId,
-                    activityId =
-                        activityId ?: lastValidActivity.takeIf { it.appId == appId }?.activityId,
-                    number = number,
-                )
-        lastValidActivity = oldActivity
-        if (!rulesOnly)
-            appScope.launchLogged {
-                RuntimeRecordRepository.recordActivity(appId, activityId, wallTime)
-            }
-        // Keep foreground/visit bookkeeping active while no complete executable snapshot exists.
-        // Presentation still observes Loading/Failure; the executor receives no runnable rules.
-        val topChanged = idChanged || oldActivityRule.topActivity != topActivity
-        val ruleChanged = oldActivityRule.ruleSummary !== ruleSummary
-        if (topChanged || ruleChanged) {
-            if (ruleChanged) ruleSummary.retainUnaffectedExecution(oldActivityRule.ruleSummary)
-            if (!isSame) {
-                page = Any()
-                MatchingRuntime.coordinator.invalidate(MatchInvalidationReason.PageChanged)
-            }
-            val newActivityRule =
-                ForegroundRuleSnapsho
+                is 
 ```
 
 ### Core Architecture Module: `gkd-app/src/androidMain/kotlin/li/gkd/app/network/NetworkState.android.kt`
@@ -756,6 +754,7 @@ import li.gkd.app.META
 import li.gkd.app.logging.LogUtils
 import li.gkd.app.matching.input.currentTopActivity
 import li.gkd.app.matching.input.updateTopActivity
+import li.gkd.app.priv.requestPrivilegeRecovery
 import li.songe.codeorigin.CallSite
 
 private val visibleActivityCount = atomic(0)
@@ -787,6 +786,7 @@ private class MainActivityLifecycleObserver(
 
     override fun onResume(owner: LifecycleOwner) {
         LogUtils.i("MainActivity::onResume", loc = logLoc)
+        requestPrivilegeRecovery()
         RuntimeStateSynchronizer.requestSync(loc = logLoc)
     }
 
@@ -850,18 +850,49 @@ object RuntimeStateSynchronizer {
 ```
 package li.gkd.app.priv
 
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import li.gkd.app.appScope
 import li.gkd.app.logging.LogUtils
+import li.gkd.app.settings.SettingsRepository
+import li.gkd.app.util.launchLogged
 import priv.kit.core.Privilege
 import priv.kit.core.PrivilegeConfig
 
 object PrivilegeOwnerLifecycle {
-    private const val FOLLOW_DEATH_DELAY_MILLIS = 10 * 60 * 1000L
+    private const val FOLLOW_DEATH_DELAY_MILLIS = 60 * 60 * 1000L
     private const val APP_RESTART_PASSIVE_TIMEOUT_MILLIS = 5_000L
+    private var automatorEnabled = false
+    private var updateInstallationActive = false
 
-    fun configure(enableAutomator: Boolean) {
+    fun initialize() {
+        appScope.launchLogged(Dispatchers.IO, start = CoroutineStart.UNDISPATCHED) {
+            SettingsRepository.settings
+                .map { it.enableAutomator }
+                .distinctUntilChanged()
+                .collect(::setAutomatorEnabled)
+        }
+    }
+
+    @Synchronized
+    private fun setAutomatorEnabled(enableAutomator: Boolean) {
+        automatorEnabled = enableAutomator
+        applyConfiguration()
+    }
+
+    @Synchronized
+    fun setUpdateInstallationActive(active: Boolean) {
+        updateInstallationActive = active
+        applyConfiguration()
+    }
+
+    private fun applyConfiguration() {
         PrivilegeConfig.configure(
-            followDeathDelayMillis = if (enableAutomator) FOLLOW_DEATH_DELAY_MILLIS else 0L,
-            activeReconnectOnOwnerDeath = enableAutomator,
+            followDeathDelayMillis = FOLLOW_DEATH_DELAY_MILLIS,
+            // Only the install-success callback may relaunch the app during an update.
+            activeReconnectOnOwnerDeath = automatorEnabled && !updateInstallationActive,
         )
     }
 
@@ -918,10 +949,7 @@ package li.gkd.app.ui
 
 import android.content.Intent
 import android.net.Uri
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import li.gkd.app.crash.FileCrashStorage
 import li.gkd.app.entry.EntryActivity
@@ -930,12 +958,7 @@ import li.gkd.app.logging.LogUtils
 import li.gkd.app.permission.PermissionRequests
 import li.gkd.app.permission.PermissionStates
 import li.gkd.app.platform.service.ServiceController
-import li.gkd.app.priv.AutomationService
-import li.gkd.app.priv.privilegeContextFlow
-import li.gkd.app.priv.uiAutomationFlow
 import li.gkd.app.resources.*
-import li.gkd.app.service.A11yService
-import li.gkd.app.settings.AutomatorMode
 import li.gkd.app.settings.SettingsRepository
 import li.gkd.app.storage.FileSource
 import li.gkd.app.storage.StorageMaintenance
@@ -1022,46 +1045,7 @@ class AndroidMainState(
             }
         }
 
-    override fun close() {
-        updateAutomatorModeJob?.cancel()
-    }
-
-    private var updateAutomatorModeJob: Job? = null
-
-    private fun applyAutomatorMode(option: AutomatorMode) {
-        SettingsRepository.updateAutomatorMode(option.value)
-        A11yService.instance?.shutdown()
-        uiAutomationFlow.value?.shutdown()
-    }
-
-    fun updateAutomatorMode(option: AutomatorMode) {
-        updateAutomatorModeJob?.cancel()
-        if (SettingsRepository.settings.value.automatorMode == option.value) return
-        if (option != AutomatorMode.Automation || privilegeContextFlow.value == null) {
-            applyAutomatorMode(option)
-            return
-        }
-        updateAutomatorModeJob =
-            mainVm.scope.launch {
-                val occupied =
-                    try {
-                        withContext(Dispatchers.IO) {
-                            AutomationService.isOtherUiAutomationRunning()
-                        }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        ToastUtils.show(Res.string.automation_state_check_failed.getSync(e.message))
-                        LogUtils.e("detect automation state failed", e)
-                        return@launch
-                    }
-                if (occupied) {
-                    AutomationService.showOccupiedWarning()
-                    return@launch
-                }
-                applyAutomatorMode(option)
-            }
-    }
+    override fun close() {}
 
     init {
         mainVm.scope.launchLogged(Dispatchers.IO) {
@@ -1114,446 +1098,140 @@ class AndroidMainState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ca225ef` (2026-10-29)
-**Commit Message**: refactor: reorganize settings and provide UI hosts through composition
+### Incident Patch 1: `d3ad0521` (2026-11-01)
+**Commit Message**: fix: ignore dead binder during privilege cleanup
 
-Group advanced settings, add dedicated debug and keep-alive pages, and preserve focused navigation. Enable desktop LAN debugging with adaptive address layout. Replace page host threading with LocalUiHost and update documentation.
-
-**File**: `AGENTS.md` (modified, +4/-4)
+**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt` (modified, +13/-2)
 ```diff
-@@ -10,7 +10,7 @@
- - androidMain 普通工具、适配、UI 接入及基类按职责归入 `li.gkd.app.*`；已注册 Application、Activity、Service、磁贴、特权入口及紧密关联实现保留原身份。`com.google.android.accessibility.selecttospeak.SelectToSpeakService` 的包名、路径和注册不变。包名整理不得改变组件、路由序列化名称/参数、AIDL 或持久化兼容标识。
- - Android 权限、Activity Result、通知、悬浮窗、Service 和特权进程位于 gkd-app/src/androidMain，由真实组件管理生命周期。gkd-aidl 只编译 Binder 协议；gkd-hidden-api 只提供 stub。引用 stub 的模块必须独立完成对应字节码的 remap。
- - ViewModel、Repository、业务状态和流程在 commonMain 保持唯一实现，ViewModel 使用 `XxxViewModel` 命名。禁止同名宿主子类、空壳继承、旧路径 typealias 或纯转发包装；共享类默认不可继承，宿主在原 ViewModelStoreOwner 直接创建，复杂/复用构造可用明确工厂。
--- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual，需平台 UI 能力时显式接收所属 UiHost。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
-+- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual；页面及平台 UI 适配可从 LocalUiHost 获取所属宿主，非 Composable 平台 UI 操作仍显式接收 UiHost 或回调。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
- - 不支持的平台动作统一返回 `PlatformResult<T>`，无数据成功为 `Unit`；不得另造 Unsupported 类型或用 Boolean/null 暗示不支持。契约明确成功含义，保留异常/取消传播，不替代业务结果、用户取消或权限状态。
- - 应用仓库由应用生命周期唯一持有，禁止重复创建、可替换全局实例和无意义转发。无独立会话需求时优先使用 object；需要独立生命周期或明确依赖时允许普通类及构造注入。平台依赖先于消费者初始化，所属生命周期结束时清理协程和资源，不为测试增加生产重置接口。
- 
-@@ -19,9 +19,9 @@
- - 两端共用 commonMain 的生产页面、组件、业务和事件链，模拟输入也经过生产 Repository/ViewModel；共享代码不得直接依赖 Android Application、平台专属 Store/Service 或伪造全局实例；共享 MainViewModel 的访问遵循下述单主界面规则。Desktop 默认四标签，组件目录仅显式诊断。新增入口同时覆盖双端及下游弹窗、面板、返回路径，不用整页 Toast/占位掩盖缺失；交付需业务、读写、生命周期和验证证据。
- - 两端共用 `GkAppNavigation` 注册及 `GkNavigation` 保存状态/条目生命周期；禁止 Desktop 字符串分支注册生产路由、复制平台路由或另写保存/导航规则。普通/编辑页面过渡统一声明，公共页面只注册一次；HTTP 标签等状态读取生产来源。
- - MainViewModel 属于主界面的 ViewModelStore，页面 ViewModel 属于具体导航条目；有需要保留的页面状态或事件流程时按需创建，不为纯展示或组件瞬时状态创建。根不持有其他 ViewModel 或子 ViewModelStore；子路由用条目标准 API 获取，多次入栈实例独立、出栈清理，不预建、缓存或跨路由借用。导航不重建仓库，宿主退出清理 ViewModel/协程；Desktop 场景重载只重置页面/草稿，不清空数据或模拟配置。
--- 路由及私有 Composable 可获取页面 ViewModel、处理平台 UI；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
-+- 路由、页面及私有 Composable 可获取页面 ViewModel，并通过 LocalUiHost 处理平台 UI，无需经导航或中间页面传递宿主；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
- - Android/Desktop 均采用单主界面设计，同一应用运行实例只存在一个根 MainViewModel，其生命周期覆盖所有子页面 ViewModel。生产页面、其私有 Composable 及所属子页面 ViewModel（含 commonMain）可通过 `MainViewModel.requireCurrent()` 获取已注册的根实例，无需逐层传递。宿主完成初始化和必要绑定后注册，根实例清理时注销；静态入口只提供访问，不创建实例或延长其生命周期。主题、通用布局、可复用组件、工具、Repository、Service、悬浮窗和后台任务不得通过该入口获取，也不引入 LocalMainViewModel。
--- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。平台 UI 操作显式接收所属 UiHost 或事件回调，宿主引用绑定所属生命周期，不由页面 ViewModel 长期持有。
-+- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。LocalUiHost 由 Android 主界面根部提供当前 LocalActivity 对应的 MainActivity、Desktop 主界面根部提供当前 DesktopSession，覆盖导航及所属弹窗；仅传递宿主，不承载业务状态。非 Composable 平台 UI 操作显式接收所属 UiHost 或事件回调，不依赖宿主的操作使用普通函数；宿主引用绑定所属生命周期，不存入 ViewModel 或单例。
- - 自定义页面业务状态，包括编辑草稿及基准、搜索/筛选条件、分页、保存冲突和页面切换后需要保留的状态，优先由所属页面 ViewModel 使用 `MutableStateFlow<T>` 管理，对外暴露只读 `StateFlow<T>` 和明确修改方法，默认不使用 `rememberSaveable` 或自定义 Saver。页面状态随所属导航条目清理，不为保留它而提升到 MainViewModel；StateFlow 本身不提供落盘或进程重启恢复。
- - 滚动、焦点、动画、拖拽及简单组件展开等纯 UI 工具状态留在 Compose，允许使用官方 `rememberXxxState`；确需恢复的简单工具/组件状态可使用 `rememberSaveable`，无需恢复的瞬时状态使用 `remember`。不为规避 rememberSaveable 将这些工具状态搬入 ViewModel，也不以工具状态名义承载页面业务对象。`rememberXxxState` 不访问 ViewModel、数据库、Store、Service 或导航。组合工作使用 rememberCoroutineScope，稳定且绑定同一组合的 scope 不作冗余 remember key。主题状态、时序及深色优先级双端共用，宿主只给系统主题/色板。
- - `XxxUiState/Actions` 仅用于确有需要的复用、预览或复杂契约；UiState 是不可变快照，不含 Flow、Paging 或高频状态；多个构造路径重复映射时才提取私有构建函数。业务状态不通过 CompositionLocal 传递。
-@@ -68,7 +68,7 @@
- - 预览/控制窗口同进程，关闭控制窗口不退出 App 且可重新打开（F12）。模拟器为单一状态源，控件和 HTTP 同命令路径。系统栏由 jvmMain 窗口模拟层实时绘制，时间取当前时钟，系统栏/挖孔统一计算 Insets；不以静态或整页截图替代 UI，不把模拟网络/电量冒充真机。未实现内容如实标识，不宣称模拟成功。
- - 不支持仅针对具体动作，以非模态 Toast 显示“当前平台不支持”，不替代整页或伪造成功；编辑/列表/文件业务继续真实执行。用户明确要求的 priv-ui 模拟可修改 Desktop 授权/启动/停止状态，日志标记 simulation，不执行真实特权命令。
- - priv-ui 只用公开 PrivilegeScreen、状态/actions，禁用内部 renderer/模拟器或 INVISIBLE_MEMBER；页面及系统提示 Insets 分别注入，宿主模拟状态机与控制窗口特权可用状态同步。使用版本目录的远程稳定版，升级验证双端编译和实际页面。
--- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 127.0.0.1；桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断接入放 gkd-app/src/androidMain，由 DebugService 在 META.debuggable 为 true 时直接创建。服务统一导出，Release 启动校验 Intent 的外部调用 token，内部启动也携带，Debug 启动不校验；诊断 HTTP 使用短期凭据，工具支持 ADB 转发；Release 不装配诊断路由。语义树/操作/截图明确 app|controls，各窗口节点快照独立；操作执行真实控件，不用直接改状态冒充点击。模拟返回先收 IME，再处理弹窗/编辑/页面。
-+- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 0.0.0.0，支持本机及局域网 IPv4 访问；页面显示 127.0.0.1 与真实局域网 IPv4 地址，浏览器、诊断和桌面控制接口共用该监听。桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断
-```
-
-**File**: `docs/architecture.md` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@
- 
- 平台差异通过函数级 `expect/actual`、事件回调或原生内容槽接入；业务与领域实现保留在共享层。Desktop 只替换平台输入和能力，不执行真实 Android 自动化；不支持的具体动作返回 `PlatformResult.Unsupported`，页面、编辑和可移植文件流程仍正常工作。
- 
-+共享页面通过 `LocalUiHost.current` 获取当前平台 UI 宿主：Android 的 `UiHost` 是 `MainActivity`，应用根部从 `LocalActivity` 读取并提供；Desktop 的 `UiHost` 是 `DesktopSession`，主窗口组合提供当前会话。Provider 覆盖生产导航和所属弹窗，导航及首页标签不再逐层传递宿主。页面读取宿主后调用平台扩展；通用组件接收状态和事件回调，非 Composable 平台操作仍显式接收所需宿主。宿主不会存入 ViewModel、Repository 或单例；与宿主无关的操作（如调试端口变更通知）使用普通函数。独立组合或页面预览需要提供实际使用的平台宿主，单纯的通用组件预览无需提供。
-+
- ## 状态与生命周期
- 
- 当前应用仓库使用 `object`，平台启动先初始化真实依赖，再启动消费者；退出先提交待保存数据，再关闭应用协程、网络、数据库和日志。
-```
-
-**File**: `gkd-app/README.md` (modified, +2/-2)
-```diff
-@@ -18,7 +18,7 @@
- 
- 日常启动使用已有开发数据，默认按正常窗口启动。`--focus` 仅绕过测试模式的后台窗口启动方式，焦点交给系统决定，不主动抢焦点或置顶；绿色版也支持此参数。`--test` 自动创建隔离会话，不读取日常 profile；无测试输入时使用最小模拟清单。测试窗口默认位于可视区域之外且不主动获取系统焦点；点击任务栏图标可手动聚焦，并将窗口移回屏幕内。后台弹窗不抢焦点，手动激活后弹窗可正常接收焦点。组合 `--test --focus` 时窗口直接显示在屏幕内并允许获取焦点，数据仍然隔离。控制窗口通过标题栏齿轮或 F12 打开，关闭它不会退出 App。
- 
--Desktop 启动时自动开启唯一调试服务，监听 `127.0.0.1:<httpServerPort>`（默认 8888）。`/api/*` 为浏览器接口，`/debug/*` 为应用诊断，`/desktop/*` 为 JVM 宿主控制。实际端口写入当前会话 `debug-server.json`，改端口后更新，停止时删除。页面或 F12 控制窗口可关闭整个服务并重新开启，关闭期间所有 HTTP 接口均不可用。退出 App 时停止服务。修改 Kotlin 后先关闭本任务启动的 Desktop，再编译、重启，避免覆盖运行中的 JAR。
-+Desktop 启动时自动开启唯一调试服务，监听 `0.0.0.0:<httpServerPort>`（默认 8888），支持本机和局域网 IPv4 访问。`/api/*` 为浏览器接口，`/debug/*` 为应用诊断，`/desktop/*` 为 JVM 宿主控制。实际端口写入当前会话 `debug-server.json`，改端口后更新，停止时删除。页面或 F12 控制窗口可关闭整个服务并重新开启，关闭期间所有 HTTP 接口均不可用。退出 App 时停止服务。修改 Kotlin 后先关闭本任务启动的 Desktop，再编译、重启，避免覆盖运行中的 JAR。
- 
- 按改动范围选择命令，不必每次全部执行：
- 
-@@ -109,7 +109,7 @@ adb shell am start -n li.songe.gkd.debug/li.gkd.app.MainActivity -a li.gkd.actio
- 
- 生产页面的服务开关已接入 Desktop 生命周期管理，包括常驻通知、快照按钮、界面、事件、轨迹、截屏、HTTP、无障碍和自动化服务。HTTP 使用真实服务端，其他服务使用生命周期模拟。F12 控制窗口的“服务生命周期（模拟）”可配置成功、失败或手动完成，以及授权同意、取消或弹窗确认。截屏服务默认弹出模拟授权框；手动启动保持“启动中”，直到投递连接完成或失败事件。
- 
--运行状态由 `SimulatorStore` 统一提供，页面重载不会停止服务；退出 Desktop 后不恢复运行状态。模拟条件会保存到会话 `simulator.json`。模拟不执行 Android 自动化、真实截屏或悬浮窗。调试服务复用 Android 的共享检查路由，实际监听 `127.0.0.1:<httpServerPort>`（默认 8888），浏览器、应用诊断和桌面控制共用该监听。页面可打开真实地址；修改端口时重启监听，关闭时释放端口，并按“自动清空内存订阅”设置清理 HTTP 订阅。快照列表/文件读取、删除和订阅更新使用真实 Repository/DAO；`captureSnapshot`、`execSelector` 返回不支持，设备信息标识 Desktop。特权模拟断开会结束依赖它的自动化模拟。
-+运行状态由 `SimulatorStore` 统一提供，页面重载不会停止服务；退出 Desktop 后不恢复运行状态。模拟条件会保存到会话 `simulator.json`。模拟不执行 Android 自动化、真实截屏或悬浮窗。调试服务复用 Android 的共享检查路由，实际监听 `0.0.0.0:<httpServerPort>`（默认 8888），支持本机和局域网 IPv4 访问，浏览器、应用诊断和桌面控制共用该监听。页面显示并可打开 `127.0.0.1` 及真实局域网 IPv4 地址，进入页面或切换调试服务时重新读取网卡地址；修改端口时重启监听，关闭时释放端口，并按“自动清空内存订阅”设置清理 HTTP 订阅。快照列表/文件读取、删除和订阅更新使用真实 Repository/DAO；`captureSnapshot`、`execSelector` 返回不支持，设备信息标识 Desktop。特权模拟断开会结束依赖它的自动化模拟。
- 
- 工具默认读取日常会话 `.local/desktop/debug-server.json`；隔离宿主请使用启动日志中的连接文件，下列示例显式使用隔离会话连接文件，请替换 `<会话>`；也可使用 `--port` 指定该实例的实际端口：
- 
-```
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/ui/PrivilegeServicePage.android.kt` (modified, +1/-2)
-```diff
-@@ -11,13 +11,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
- import li.gkd.app.priv.gkdPrivilegeUiConfig
- import li.gkd.app.ui.page.GkPrivilegeTopBar
- import li.gkd.app.ui.page.PrivilegeServiceInfoDialog
--import li.gkd.app.ui.platform.UiHost
- import li.gkd.app.util.ToastUtils
- import priv.kit.ui.PrivilegeScaffold
- import priv.kit.ui.PrivilegeUiViewModel
- 
- @Composable
--actual fun PrivilegeServicePage(host: UiHost) {
-+actual fun PrivilegeServicePage() {
-     val mainVm = MainViewModel.requireCurrent()
-     val application = LocalContext.current.applicationContext as Application
-     val privilegeVm = viewModel {
-```
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/ui/WebViewPage.android.kt` (modified, +0/-2)
-```diff
-@@ -42,7 +42,6 @@ import li.gkd.app.ui.component.GkWebViewErrorContent
- import li.gkd.app.ui.navigation.WebViewRoute
- import li.gkd.app.ui.page.WebViewScreen
- import li.gkd.app.ui.platform.SystemActionFeedback
--import li.gkd.app.ui.platform.UiHost
- import li.gkd.app.ui.share.LocalDarkTheme
- import li.gkd.app.ui.share.launchUiAction
- import li.gkd.app.ui.style.scaffoldPadding
-@@ -54,7 +53,6 @@ import org.jetbrains.compose.resources.stringResource
- @Composable
- actual fun WebViewPage(
-     route: WebViewRoute,
--    host: UiHost,
- ) {
-     val mainVm = MainViewModel.requireCurrent()
-     val initUrl = route.initUrl
-```
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/ui/app/AppOverlayHost.kt` (modified, +12/-2)
-```diff
-@@ -11,15 +11,20 @@ import li.gkd.app.priv.uiAutomationOccupiedFlow
- import li.gkd.app.resources.*
- import li.gkd.app.service.A11yService
- import li.gkd.app.settings.SettingsRepository
-+import li.gkd.app.storage.createLogArchive
- import li.gkd.app.ui.component.GkPlatformWarningDialogs
- import li.gkd.app.ui.component.GkTermsAcceptDialog
- import li.gkd.app.ui.navigation.PrivilegeServiceRoute
-+import li.gkd.app.ui.platform.LocalUiHost
-+import li.gkd.app.ui.share.saveArchive
-+import li.gkd.app.ui.share.shareArchive
- import li.gkd.app.util.ToastUtils
- import li.gkd.app.util.copyText
-+import org.jetbrains.compose.resources.getString
- 
- @Composable
- fun AppOverlayHost() {
--    val activity = LocalActivity.current as MainActivity
-+    val activity = LocalUiHost.current
-     val mainVm = activity.mainVm
-     if (!SettingsRepository.termsAccepted.collectAsStateWithLifecycle().value) {
-         GkTermsAcceptDialog(
-@@ -45,7 +50,12 @@ fun AppOverlayHost() {
-         )
-         mainVm.ruleControlDialog.Render()
-         mainVm.textDialog.Render(onCopy = ::copyText)
--        mainVm.shareLog.Render(activity)
-+        mainVm.shareLog.Render(
-+            onShare = {
-+                activity.shareArchive(getString(Res.string.logs_share_file), ::createLogArchive)
-+            },
-+            onSave = { activity.saveArchive(::createLogArchive) },
-+        )
-     }
- }
- 
-```
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/ui/app/AppRoot.kt` (modified, +11/-7)
-```diff
-@@ -3,25 +3,29 @@ package li.gkd.app.ui.app
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.CompositionLocalProvider
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.zIndex
- import li.gkd.app.MainActivity
- import li.gkd.app.ui.androidState
- import li.gkd.app.ui.navigation.GkAppNavigation
-+import li.gkd.app.ui.platform.LocalUiHost
- import li.gkd.app.ui.style.AppTheme
- 
- @Composable
- fun AppRoot() {
-     val activity = androidx.activity.compose.LocalActivity.current as MainActivity
-     val mainVm = activity.mainVm
--    AppTheme {
--        Box(modifier = Modifier.fillMaxSize()) {
--            GkAppNavigation(host = activity)
--            AppOverlayHost()
--            mainVm.androidState.permissionRequests.Render(
--                modifier = Modifier.align(Alignment.TopCenter).zIndex(1f),
--            )
-+    CompositionLocalProvider(LocalUiHost provides activity) {
-+        AppTheme {
-+            Box(modifier = Modifier.fillMaxSize()) {
-+                GkAppNavigation()
-+                AppOverlayHost()
-+                mainVm.androidState.permissionRequests.Render(
-+                    modifier = Modifier.align(Alignment.TopCenter).zIndex(1f),
-+                )
-+            }
-         }
-     }
- }
-```
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/ui/settings/ServiceActions.android.kt` (modified, +1/-1)
-```diff
-@@ -111,4 +111,4 @@ actual fun eventMonitorRunning() = EventService.isRunning.collectAsStateWithLife
- actual fun trackServiceRunning() = TrackService.isRunning.collectAsStateWithLifecycle().value
- 
- // The Android service already applies port changes in its lifecycle-owned collector.
--actual fun UiHost.httpServerPortChanged() = Unit
-+actual fun httpServerPortChanged() = Unit
-```
-
----
-
-### Incident Patch 2: `56ffac10` (2026-10-29)
-**Commit Message**: fix: remove deprecated thread ID access in match benchmark
-
-**File**: `gkd-app/src/jvmMain/kotlin/li/gkd/app/development/matching/MatchBenchmark.kt` (modified, +2/-3)
-```diff
-@@ -106,7 +106,6 @@ suspend fun benchmarkMatching(input: MatchBenchmarkRequest): MatchBenchmarkRepor
-                         (ManagementFactory.getThreadMXBean() as? ThreadMXBean)?.takeIf {
-                             it.isThreadAllocatedMemorySupported && it.isThreadAllocatedMemoryEnabled
-                         }
--                    val thread = Thread.currentThread().id
-                     val adapter =
-                         CountingNodeAdapter(
-                             SimulatedNodeAdapter(
-@@ -138,7 +137,7 @@ suspend fun benchmarkMatching(input: MatchBenchmarkRequest): MatchBenchmarkRepor
-                         repeat(3) { offset ->
-                             val level = (round + offset) % 3
-                             val beforeAccess = adapter.accesses
--                            val beforeBytes = bean?.getThreadAllocatedBytes(thread)
-+                            val beforeBytes = bean?.getCurrentThreadAllocatedBytes()
-                             val start = System.nanoTime()
-                             val result =
-                                 evaluateDebugRule(
-@@ -151,7 +150,7 @@ suspend fun benchmarkMatching(input: MatchBenchmarkRequest): MatchBenchmarkRepor
-                                 )
-                             val elapsed = System.nanoTime() - start
-                             val allocated = beforeBytes?.let {
--                                checkNotNull(bean).getThreadAllocatedBytes(thread) - it
-+                                checkNotNull(bean).getCurrentThreadAllocatedBytes() - it
-                             }
-                             check(expected == null || expected == result) {
-                                 "Query result changed during benchmark; use stable rule eligibility"
-```
-
----
-
-### Incident Patch 3: `344efde8` (2026-10-29)
-**Commit Message**: refactor(crash): simplify crash report handling and improve UI interactions
-
-**File**: `gkd-app/src/commonMain/composeResources/values/strings.xml` (modified, +4/-4)
-```diff
-@@ -123,7 +123,6 @@
-     <string name="activity_switch_logs">界面切换日志</string>
-     <string name="add_success">添加成功</string>
-     <string name="advanced_settings">高级设置</string>
--    <string name="android_version_description">Android：%1$s (%2$s)</string>
-     <string name="apk_continue_suffix">，或点击下方继续操作</string>
-     <string name="apk_download_official_link">建议点此从官网下载</string>
-     <string name="apk_google_services_required">当前导出的 APK 文件只能在已安装 Google 框架的设备上才能使用，否则安装打开后会提示报错，</string>
-@@ -273,18 +272,19 @@
-     <string name="cookie_change">更换 Cookie</string>
-     <string name="copy_success">复制成功</string>
-     <string name="crash_app_description">应用：%1$s (%2$s)</string>
--    <string name="crash_details_collapse">收起崩溃详情</string>
--    <string name="crash_details_expand">展开崩溃详情</string>
-+    <string name="crash_details">崩溃详情</string>
-+    <string name="crash_details_view">查看崩溃详情</string>
-     <string name="crash_device_description">设备：%1$s</string>
-     <string name="crash_report_delete">删除崩溃记录</string>
-     <string name="crash_report_delete_confirmation">确定删除这条崩溃记录？</string>
--    <string name="crash_report_delete_current">删除这条崩溃记录</string>
-     <string name="crash_report_delete_failed">删除崩溃记录失败</string>
-     <string name="crash_reports">崩溃记录</string>
-     <string name="crash_reports_clear">清空崩溃记录</string>
-     <string name="crash_reports_clear_confirmation">确定删除全部崩溃记录？</string>
-     <string name="crash_reports_delete_partially_failed">部分崩溃记录删除失败</string>
-     <string name="crash_reports_empty">暂无崩溃记录</string>
-+    <string name="crash_system_android_description">系统：Android %1$s (API %2$s)</string>
-+    <string name="crash_system_desktop_description">系统：%1$s / %2$s</string>
-     <string name="crash_thread_description">线程：%1$s</string>
-     <string name="crash_version_thread">v%1$s (%2$s) · %3$s</string>
-     <string name="theme_mode">主题模式</string>
-```
-
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/crash/CrashReportPage.kt` (modified, +198/-137)
-```diff
-@@ -1,25 +1,29 @@
- package li.gkd.app.ui.crash
- 
-+import androidx.compose.foundation.clickable
- import androidx.compose.foundation.layout.Arrangement
--import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.fillMaxWidth
--import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.heightIn
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.width
- import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.lazy.items
-+import androidx.compose.foundation.rememberScrollState
-+import androidx.compose.foundation.text.selection.SelectionContainer
-+import androidx.compose.foundation.verticalScroll
- import androidx.compose.material3.BottomAppBar
-+import androidx.compose.material3.Button
- import androidx.compose.material3.Card
- import androidx.compose.material3.HorizontalDivider
- import androidx.compose.material3.MaterialTheme
- import androidx.compose.material3.Text
- import androidx.compose.material3.TextButton
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.remember
- import androidx.compose.ui.Alignment
-@@ -29,7 +33,9 @@ import androidx.compose.ui.unit.dp
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import androidx.lifecycle.viewmodel.compose.viewModel
- import kotlinx.coroutines.CancellationException
-+import kotlinx.coroutines.CompletableDeferred
- import kotlinx.coroutines.launch
-+import kotlinx.coroutines.yield
- import li.gkd.app.crash.CrashData
- import li.gkd.app.error.displayMessage
- import li.gkd.app.network.AppLinks
-@@ -39,15 +45,16 @@ import li.gkd.app.time.format
- import li.gkd.app.ui.MainViewModel
- import li.gkd.app.ui.component.GkCopyTextCard
- import li.gkd.app.ui.component.GkEmptyState
--import li.gkd.app.ui.component.GkExpandableSection
- import li.gkd.app.ui.component.GkFixedTimeText
-+import li.gkd.app.ui.component.GkIcon
- import li.gkd.app.ui.component.GkIconButton
- import li.gkd.app.ui.component.GkIcons
- import li.gkd.app.ui.component.GkPageBottomSpace
- import li.gkd.app.ui.component.GkScaffold
- import li.gkd.app.ui.component.GkTopAppBar
- import li.gkd.app.ui.component.gkTopAppBarScroll
- import li.gkd.app.ui.component.rememberListScrollState
-+import li.gkd.app.ui.platform.GkFullscreenDialog
- import li.gkd.app.ui.share.noRippleClickable
- import li.gkd.app.ui.style.itemHorizontalPadding
- import li.gkd.app.ui.style.itemVerticalPadding
-@@ -63,8 +70,8 @@ fun CrashReportPage() {
-     val mainVm = MainViewModel.requireCurrent()
-     val vm = viewModel { CrashReportViewModel(mainVm.takeCrashDataList()) }
-     val records by vm.crashDataState.collectAsStateWithLifecycle()
--    val expandedCrashId by vm.expandedCrashId.collectAsStateWithLifecycle()
--    fun delete(record: CrashData?) {
-+    val selected by vm.selected.collectAsStateWithLifecycle()
-+    fun delete(record: CrashData?, beforeDelete: suspend () -> Unit = {}) {
-         vm.scope.launch {
-             try {
-                 if (
-@@ -82,8 +89,8 @@ fun CrashReportPage() {
-                         error = true,
-                     )
-                 ) {
-+                    beforeDelete()
-                     if (record == null) vm.deleteAllCrashes() else vm.deleteCrash(record)
--                    if (record == null || expandedCrashId == record.id) vm.setExpandedCrashId(null)
-                     ToastUtils.show(getString(Res.string.delete_success))
+@@ -9,6 +9,7 @@ import android.content.Intent
+ import android.content.pm.PackageInfo
+ import android.content.pm.PackageManager
+ import android.graphics.Bitmap
++import android.os.DeadObjectException
+ import android.os.IBinder
+ import android.os.Process
+ import android.view.IWindowManager
+@@ -76,7 +77,11 @@ private constructor(
+                     val previous = subscription ?: return
+                     subscription = null
+                     previous.deactivate()
+-                    userService.setSystemSurfaceListener(null)
++                    try {
++                        userService.setSystemSurfaceListener(null)
++                    } catch (_: DeadObjectException) {
++                        // The remote process is gone; local cleanup is already complete.
++                    }
                  }
-             } catch (e: CancellationException) {
-@@ -153,15 +160,9 @@ fun CrashReportPage() {
-                 items = crashDataList,
-                 key = { it.id },
-             ) { crashData ->
--                val expanded = expandedCrashId == crashData.id
-                 CrashReportCard(
-                     crashData = crashData,
--                    onCopy = ::copyText,
--                    expanded = expanded,
--                    onToggle = {
--                        vm.setExpandedCrashId(if (expanded) null else crashData.id)
--                    },
--                    onDelete = { delete(crashData) },
-+                    onClick = { vm.show(crashData) },
-                 )
+                 try {
+                     combine(SettingsRepository.settings, uiAutomationFlow, A11yService.isRunning) {
+@@ -154,8 +159,14 @@ private constructor(
+                 activityManager.value.unregisterTaskStackListener(CompatTaskStackListener)
+                 taskStackListenerRegistered = false
              }
-             item(key = "crash-report-footer") {
-@@ -174,172 +175,232 @@ fun CrashReportPage() {
-             }
++        } catch (_: DeadObjectException) {
++            // A dead remote process no longer needs its listeners unregistered.
+         } finally {
+-            userServiceConnection.unbind()
++            try {
++                userServiceConnection.unbind()
++            } catch (_: DeadObjectException) {
++                // The UserService manager has already exited.
++            }
          }
      }
-+    crashDataList
-+        .find { it.id == selected }
-+        ?.let { record ->
-+            val detailsClosed = remember(record.id) { CompletableDeferred<Unit>() }
-+            DisposableEffect(detailsClosed) {
-+                onDispose { detailsClosed.complete(Unit) }
-+            }
-+            CrashReportDialog(
-+                crashData = record,
-+                onDismiss = vm::dismiss,
-
+ 
 ```
 
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/crash/CrashReportViewModel.kt` (modified, +10/-4)
+---
+
+### Incident Patch 2: `59cdfd9a` (2026-11-03)
+**Commit Message**: fix: record recent app visits from Android task changes
+
+**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/matching/input/AndroidForegroundState.kt` (modified, +18/-5)
 ```diff
-@@ -15,11 +15,15 @@ import org.jetbrains.compose.resources.getString
- class CrashReportViewModel(
-     initialCrashDataList: List<CrashData>,
- ) : BaseViewModel() {
--    val expandedCrashId: StateFlow<Long?>
--        field = MutableStateFlow<Long?>(initialCrashDataList.firstOrNull()?.id)
-+    val selected: StateFlow<Long?>
-+        field = MutableStateFlow<Long?>(null)
- 
--    fun setExpandedCrashId(value: Long?) {
--        expandedCrashId.value = value
-+    fun show(record: CrashData) {
-+        selected.value = record.id
-+    }
-+
-+    fun dismiss() {
-+        selected.value = null
-     }
- 
-     val crashDataState: StateFlow<Loadable<List<CrashData>>>
-@@ -44,6 +48,7 @@ class CrashReportViewModel(
-                 FileCrashStorage.delete(crashData)
-             }
-         if (deleted) {
-+            if (selected.value == crashData.id) dismiss()
-             crashDataState.value =
-                 Loadable.Ready(
-                     crashDataState.value.value.orEmpty().filterNot { it.id == crashData.id },
-@@ -67,6 +72,7 @@ class CrashReportViewModel(
-         if (!deleted) {
-             error(getString(Res.string.crash_reports_delete_partially_failed))
+@@ -150,7 +150,15 @@ object AndroidForegroundState {
+                 AndroidAutomationSessions.service?.matchHost?.confirmForeground()
          }
-+        dismiss()
-     }
  
-     private suspend fun reloadAfterDeleteFailure() {
+-    private var lastAppId = Constants.systemUiAppId
++    private var lastVisitedAppId = Constants.systemUiAppId
++
++    private fun recordVisit(appId: String, time: Long, refresh: Boolean = false) {
++        val previousAppId = lastVisitedAppId
++        if (!refresh && previousAppId == appId) return
++        lastVisitedAppId = appId
++        val visit = AppVisitInput(previousAppId, appId, time)
++        appScope.launchLogged { RuntimeRecordRepository.recordVisit(visit) }
++    }
+ 
+     /** Returns whether this observation dispatched a top-task package change. */
+     fun updateTopActivity(
+@@ -184,6 +192,10 @@ object AndroidForegroundState {
+                 observedForegroundFlow.value =
+                     AndroidForegroundObservation(task = task, confirmed = decision.confirmed)
+                 if (taskAppChanged) {
++                    // A short task visit can end before the matcher confirms its nodes.
++                    if (decision.reason != ForegroundDecisionReason.TaskBelowSystemSurface) {
++                        recordVisit(appId, System.currentTimeMillis())
++                    }
+                     onTopTaskAppChanged(appId)
+                 }
+                 if (foregroundPending) {
+@@ -285,10 +297,11 @@ object AndroidForegroundState {
+                     blockMatch = SettingsRepository.checkAppBlockMatch(topActivity.appId),
+                 )
+             if (idChanged) {
+-                val oldAppId = lastAppId
+-                lastAppId = appId
+-                val visit = AppVisitInput(oldAppId, appId, wallTime)
+-                appScope.launchLogged { RuntimeRecordRepository.recordVisit(visit) }
++                recordVisit(
++                    appId,
++                    wallTime,
++                    refresh = appReentered || scene == ActivityScene.ScreenOn,
++                )
+                 RuleExecutionHost.runtime.onAppChanged(t)
+                 ruleSummary.globalRules.forEach { it.resetState(t) }
+                 ruleSummary.appIdToRules[oldActivityRule.topActivity.appId]?.forEach {
+```
+
+---
+
+### Incident Patch 3: `975c890b` (2026-11-04)
+**Commit Message**: fix: enhance error logging for network failures in GithubUploadState
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/upload/GithubUploadState.kt` (modified, +6/-1)
+```diff
+@@ -20,6 +20,7 @@ import li.gkd.app.network.AppLinks
+ import li.gkd.app.network.GithubCookieException
+ import li.gkd.app.network.GithubPoliciesAsset
+ import li.gkd.app.network.GithubUploader
++import li.gkd.app.network.networkFailureSummary
+ import li.gkd.app.resources.*
+ import li.gkd.app.settings.GithubCookieStore
+ import li.gkd.app.ui.component.GithubUploadStatus
+@@ -146,7 +147,11 @@ class GithubUploadState(
+                         pendingFromCookie = items.drop(index)
+                         break
+                     } catch (e: Exception) {
+-                        LogUtils.e(e)
++                        if (networkFailureSummary(e) != null) {
++                            LogUtils.e(e.javaClass.simpleName)
++                        } else {
++                            LogUtils.e(e)
++                        }
+                         request.failures.add(item.label to (e.displayMessage()))
+                     }
+                 }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1506** (closed): new (@hhz522)
 - **PR #1500** (2026-10-29): fix: remap scope keys when appending rule groups (@jjjj31)
 - **PR #1472** (closed): fix: 自动化模式下开机自启状态服务 (@LYYZZ)
 - **PR #1470** (closed): fix(a11y): 开机后自愈无障碍服务"假在线"状态 (@LYYZZ)
 - **PR #1467** (closed): Add Japanese localization across GKD UI (@okker24)
 - **PR #1466** (closed): translation for english (@theclumsypirate)
-- **PR #1457** (closed): refactor: remove unused methods and clean up code (@KevinDoremy)
 
 ---
 
@@ -1573,34 +1251,41 @@ Group advanced settings, add dedicated debug and keep-alive pages, and preserve 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reorganize settings and provide UI hosts through composition
+## X. ignore dead binder during privilege cleanup
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ca225ef`: reorganize settings and provide UI hosts through composition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3ad0521`: ignore dead binder during privilege cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual；页面及平台 UI 适配可从 LocalUiHost 获取所属宿主，非 Composable 平台 UI 操作仍显式接收 UiHost 或回调。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
-- 路由、页面及私有 Composable 可获取页面 ViewModel，并通过 LocalUiHost 处理平台 UI，无需经导航或中间页面传递宿主；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
-- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。LocalUiHost 由 Android 主界面根部提供当前 LocalActivity 对应的 MainActivity、Desktop 主界面根部提供当前 DesktopSession，覆盖导航及所属弹窗；仅传递宿主，不承载业务状态。非 Composable 平台 UI 操作显式接收所属 UiHost 或事件回调，不依赖宿主的操作使用普通函数；宿主引用绑定所属生命周期，不存入 ViewModel 或单例。
-- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 0.0.0.0，支持本机及局域网 IPv4 访问；页面显示 127.0.0.1 与真实局域网 IPv4 地址，浏览器、诊断和桌面控制接口共用该监听。桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断
+import android.os.DeadObjectException
+                    try {
+                        userService.setSystemSurfaceListener(null)
+                    } catch (_: DeadObjectException) {
+                        // The remote process is gone; local cleanup is already complete.
+                    }
+        } catch (_: DeadObjectException) {
+            // A dead remote process no longer needs its listeners unregistered.
+            try {
+                userServiceConnection.unbind()
+            } catch (_: DeadObjectException) {
+                // The UserService manager has already exited.
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-- 平台差异优先使用对应功能包的函数级 `expect/actual`，实现文件为 `.android.kt` / `.jvm.kt`；禁止整份 ViewModel、Repository 或业务流程 actual 化。能力签名只用公共类型，不导航、弹 Toast 或读取 UI ViewModel；仅 UI 组装可用 Composable expect/actual，需平台 UI 能力时显式接收所属 UiHost。无生命周期工具只持有 Application Context，Activity/窗口引用限于生命周期绑定的 UI 会话。
-- 路由及私有 Composable 可获取页面 ViewModel、处理平台 UI；主题、通用布局、可复用组件和工具仅接收状态/事件，不通过默认参数、工厂、CompositionLocal 或全局入口隐藏获取。Service、悬浮窗、后台任务使用自身作用域和应用仓库，不借用或补建页面 ViewModel。
-- 页面 ViewModel 可组织校验、保存、确认弹窗及后续导航等事件流程，按需使用 MainViewModel 的页面能力；Compose 负责展示、收集状态、转发事件及 IME、焦点等组合/宿主相关操作。不为缩短调用增加纯转发方法，不把页面流程转移到根 ViewModel。平台 UI 操作显式接收所属 UiHost 或事件回调，宿主引用绑定所属生命周期，不由页面 ViewModel 长期持有。
-- Desktop 调试服务统一使用一个 HTTP 监听和端口，绑定 127.0.0.1；桌面控制路由位于 jvmMain，状态修改在 UI 线程。Android 的浏览器与诊断接口共用 DebugService 和配置端口，可通过局域网访问；诊断接入放 gkd-app/src/androidMain，由 DebugService 在 META.debuggable 为 true 时直接创建。服务统一导出，Release 启动校验 Intent 的外部调用 token，内部启动也携带，Debug 启动不校验；诊断 HTTP 使用短期凭据，工具支持 ADB 转发；Release 不装配诊断路由。语义树/操作/截图明确 app|controls，各窗口节点快照独立；操作执行真实控件，不用直接改状态冒充点击。模拟返回先收 IME，再处理弹窗/编辑/页面。
+                    userService.setSystemSurfaceListener(null)
+            userServiceConnection.unbind()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ca225ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3ad0521` are properly handled with clean fallback behavior.

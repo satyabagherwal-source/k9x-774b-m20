@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `4dbf7d60`  
+> **Source Version**: `61d935b6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:14:24.154Z  
+> **Timestamp**: 2026-11-04T02:26:10.407Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:14:23.788Z  
+> **Harvest Timestamp**: 2026-11-04T02:26:09.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14487 stars
+- **Stars / Engagement**: 14494 stars
 
 ---
 
@@ -1327,307 +1327,382 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8943b91` (2026-10-29)
-**Commit Message**: docs: fix broken default theme links and typos in guides (#5141)
+### Incident Patch 1: `d7320443` (2026-11-03)
+**Commit Message**: docs: add a security policy (#5157)
 
-The v6 getting-started and theming guides link to src/styles/themes/v3/LightTheme.tsx, which no longer exists on main. Point them at src/theme/schemes/LightTheme.tsx.
+Point reporters to GitHub's private vulnerability reporting and list the versions that get security fixes.
 
-Also correct spelling in the v5 guides: platfrom, Additionaly, oficially, follwing.
-
-**File**: `docs/5.x/docs/guides/fonts.md` (modified, +1/-1)
+**File**: `SECURITY.md` (added, +17/-0)
 ```diff
-@@ -152,7 +152,7 @@ If you're using TypeScript use `as const` when defining `fontConfig`.
- In the latest version fonts in theme are structured based on the `variant` keys e.g. `displayLarge` or `bodyMedium` which are then used in `Text`'s component throughout the whole library.
+@@ -0,0 +1,17 @@
++# Security policy
++
++## Supported versions
++
++| Version                                                   | Security fixes |
++| --------------------------------------------------------- | -------------- |
++| 6.x (`main`, published under the `alpha` tag until 6.0.0) | Yes            |
++| The latest 5.x release                                    | Yes            |
++| Older 5.x releases and earlier majors                     | No             |
++
++## Reporting a vulnerability
++
++Please don't report security problems in public issues, pull requests or discussions.
++
++Report them privately through GitHub instead: on the repository's Security tab, click "Report a vulnerability", or go straight to https://github.com/callstack/react-native-paper/security/advisories/new. Include what is affected (the version and the component or API), how to reproduce it, and what an attacker could do with it.
++
++The maintainers will reply in the advisory, work on a fix there with you, and credit you when it is published, unless you'd rather not be named.
+```
+
+---
+
+### Incident Patch 2: `d2f5be6e` (2026-11-03)
+**Commit Message**: docs: fix getting started for new Expo and Community CLI apps (#5159)
+
+- Expo: install the icon package before the Reanimated step, which ends
+  in `npx expo prebuild`, and rerun prebuild for projects that already
+  have native folders.
+- Usage: point Expo Router projects to the root layout and add a sample.
+- Samples: import `./App` as the Community CLI template has it, and keep
+  `AppRegistry` in the Customization sample.
+- Bundle size: tell Expo users to create `babel.config.js`, and explain
+  how the plugin sits next to the worklets plugin.
+- Community CLI: say to run `pod install`, and drop the
+  `babel-plugin-optional-require` advice: Paper and Metro already treat
+  the icon package as optional (also in the Icons guide).
+
+**File**: `docs/6.x/docs/guides/getting-started.mdx` (modified, +37/-8)
+```diff
+@@ -34,14 +34,16 @@ Minimum requirements:
+ - `react-native-worklets` **≥ 0.8.1**
+ - `react-native-safe-area-context` — version compatible with your React Native toolchain.
  
+-Follow the [React Native Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/).
+-
+ You also need to install [@react-native-vector-icons/material-design-icons](https://github.com/oblador/react-native-vector-icons/tree/master/packages/material-design-icons), because some components use these icons internally:
+ 
+ ```bash
+ npx expo install @react-native-vector-icons/material-design-icons
+ ```
+ 
++If your project already has `ios` and `android` folders from `npx expo prebuild`, run `npx expo prebuild` again after installing it, so that its config plugin can add the icon font to the native projects.
++
++Follow the [React Native Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/).
++
+ If you have a `babel.config.js` or `.babelrc` file, make sure that it includes `babel-preset-expo`.
+ 
+   </TabItem>
+@@ -71,8 +73,14 @@ npm install @react-native-vector-icons/material-design-icons
+ `@react-native-vector-icons/material-design-icons` may require some additional setup steps depending on platform. To ensure the icon font is configured correctly, please follow the upstream [installation guide](https://github.com/oblador/react-native-vector-icons?tab=readme-ov-file#setup).
+ :::
+ 
++On iOS, install the pods after adding these packages:
++
++```bash
++cd ios && pod install
++```
++
  :::info
--The default `fontFamily` is different per particular platfrom:
-+The default `fontFamily` is different per particular platform:
+-If you don't want to install vector icons, you can use [babel-plugin-optional-require](https://github.com/satya164/babel-plugin-optional-require) to opt-out.
++If you don't want to install vector icons, leave the package out. Components then show a placeholder instead of their built-in icons and log a warning for each one, so pass your own icons as described in [Use custom icons](./icons#4-use-custom-icons).
+ :::
+ 
+   </TabItem>
+@@ -93,7 +101,7 @@ module.exports = {
+ };
+ ```
+ 
+-If you created your project using Expo, it'll look something like this:
++If you created your project using Expo, it'll look something like this. New Expo projects don't include a `babel.config.js`, so create it in the project root if it's missing:
  
  ```js
- Platform.select({
-```
-
-**File**: `docs/5.x/docs/guides/getting-started.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ npm install react-native-paper
- npm install react-native-safe-area-context
- ```
+ module.exports = function (api) {
+@@ -111,6 +119,8 @@ module.exports = function (api) {
  
--Additionaly for `iOS` platform there is a requirement to link the native parts of the library:
-+Additionally for `iOS` platform there is a requirement to link the native parts of the library:
+ The plugin only works if you are importing the library using ES2015 import statements and not with `require`.
  
- ```bash
- npx pod-install
-```
-
-**File**: `docs/5.x/docs/guides/migration-guide-to-5.0.md` (modified, +4/-4)
-```diff
-@@ -14,7 +14,7 @@ Below you can find the most important information about the components whose API
++If your `babel.config.js` also lists `react-native-worklets/plugin`, as Reanimated requires for Community CLI projects, keep it in the top-level `plugins`. Babel adds the `env.production` plugins after it, which is fine because `react-native-paper/babel` only rewrites `import` statements.
++
+ :::note
+ The above examples are for the latest `react-native` using Babel 7. If you have `react-native <= 0.55`, you'll have a `.babelrc` file instead of a `babel.config.js` file and the content of the file will be different.
+ :::
+@@ -126,7 +136,7 @@ module.file_ext=.ios.js
  
- ### Installation
+ ## Usage
  
--- The `v5` has been oficially released as a stable version, which means it will be installed by default from the `npm`. In order to do that, open a Terminal in your project's folder and run:
-+- The `v5` has been officially released as a stable version, which means it will be installed by default from the `npm`. In order to do that, open a Terminal in your project's folder and run:
- 
- ```bash npm2yarn
- npm install react-native-paper
-@@ -26,7 +26,7 @@ npm install react-native-paper
- npm install react-native-safe-area-context
- ```
- 
--Additionaly for `iOS` platform there is a requirement to link the native parts of the library:
-+Additionally for `iOS` platform there is a requirement to link the native parts of the library:
- 
- ```bash
- npx pod-install
-@@ -165,7 +165,7 @@ Take a look at the suggested replacement diff:
- 
- ### Configure fonts
- 
--The existing utility called `configureFonts` was adjusted to help users configure their theme fonts in both version, that's why that function, as of today, is going to accept the object with the follwing properties as an argument:
-+The existing utility called `configureFonts` was adjusted to help users configure their theme fonts in both version, that's why that function, as of today, is going to accept the object with the following properties as an argument:
- 
- ```ts
- configureFonts(params);
-@@ -476,7 +476,7 @@ With the latest version, there is a possibility to specify whether `Drawer.Secti
- 
- #### FAB
- 
--Additionaly `FAB` may be applied in one of three available sizes, thanks to new prop `size`:
-+Additionally `FAB` may be applied in one of three available sizes, thanks to new prop `size`:
- 
- - `small` - FAB with small height (40),
- - `medium` - Appbar with default medium height (56),
-```
-
-**File**: `docs/6.x/docs/guides/getting-started.mdx` (modified, +1/-1)
-```diff
-@@ -162,7 +162,7 @@ export default function Main() {
- 
- ## Customization
- 
--You can provide a custom theme to customize the colors, typescales etc. with the `Provider` component. Check the [Material Design 3 default theme](https://github.com/callstack/react-native-paper/blob/main/src/styles/themes/v3/LightTheme.tsx) to see what customization options are supported.
-+You can provide a custom theme to customize the colors, typescales etc. with the `Provider` component. Check the [Material Design 3 default theme](https://github.com/callstack/react-native-paper/blob/main/src/theme/schemes/LightTheme.tsx) to see what customization options are supported.
+-Wrap your root component in `PaperProvider` from `react-native-paper`(if you are using versions prior to 5.8.0 you need to use `Provider`). If you have a vanilla React Native project, it's a good idea to add it in the component which is passed to `AppRegistry.registerComponent`. This will usually be in the `index.js` file. If you have an Expo project, you can do this inside the exported component in the `App.js` file.
++Wrap your root component in `PaperProvider` from `react-native-paper`(if you are using versions prior to 5.8.0 you need to use `Provider`). If you have a vanilla React Native project, it's a good idea to add it in the component which is passed to `AppRegistry.registerComponent`. This will usually be in the `index.js` file. If you have an Expo project that uses Expo Router (the default for new Expo projects), wrap the content of your root layout, `app/_layout.tsx` (or `src/app/_layout.tsx`). In an Expo project without Expo Router, you can do this inside the exported component in the `App.js` file.
  
  Example:
  
-```
-
-**File**: `docs/6.x/docs/guides/theming.mdx` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export default function Main() {
- }
+@@ -135,7 +145,7 @@ import * as React from 'react';
+ import { AppRegistry } from 'react-native';
+ import { PaperProvider } from 'react-native-paper';
+ import { name as appName } from './app.json';
+-import App from './src/App';
++import App from './App';
+ 
+ export default function Main() {
+   return (
+@@ -148,6 +158,21 @@ export default function Main() {
+ AppRegistry.registerComponent(appName, () => Main);
  ```
  
--By default React Native Paper will apply the [Material You theme (MD3)](https://github.com/callstack/react-native-paper/blob/main/src/styles/themes/v3/LightTheme.tsx) if no `theme` or `version` prop is passed to the `PaperProvider`.
-+By default React Native Paper will apply the [Material You theme (MD3)](https://github.com/callstack/react-native-paper/blob/main/src/theme/schemes/LightTheme.tsx) if no `theme` or `version` prop is passed to the `PaperProvider`.
++For an Expo Router project, the root layout can look like this:
++
++```js
++import { Stack } from 'expo-router';
++import { PaperProvider } from 'react-native-paper';
++
++export default function RootLayout() {
++  return (
++    <PaperProvider>
++      <Stack />
++    </PaperProvider>
++  );
++}
++```
++
+ The `PaperProvider` component provides the theme to all the components in the framework. It also acts as a portal to components whi
+```
+
+**File**: `docs/6.x/docs/guides/icons.mdx` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ import IconsList from '@docs/components/IconsList.tsx';
+ Many of the components render icon names using [`@react-native-vector-icons/material-design-icons`](https://github.com/oblador/react-native-vector-icons/tree/master/packages/material-design-icons). In Expo projects this usually works without extra setup. In vanilla React Native projects, install the package and complete any required platform setup as described in the [getting started guide](./getting-started).
  
- ## Accessing theme properties
+ :::note
+-If you opted out of vector icons support using [babel-plugin-optional-require](https://github.com/satya164/babel-plugin-optional-require), you won't be able to use icon names for the icon prop. Some components may not look correct without vector icons and might need extra configuration.
++If you don't install `@react-native-vector-icons/material-design-icons`, you won't be able to use icon names for the icon prop: components show a placeholder and log a warning instead. Some components may not look correct without vector icons and might need extra configuration.
+ :::
  
+ ## Using the `icon` prop
 ```
 
 ---
 
-### Incident Patch 2: `4dbf7d60` (2026-10-29)
-**Commit Message**: fix(menu): avoid focusing hidden anchors on mount (#5139)
+### Incident Patch 3: `dc196281` (2026-11-03)
+**Commit Message**: fix(menu): account for keyboard already open when Menu mounts (#5122)
 
-* fix(menu): avoid focusing hidden anchors on mount
+* fix(menu): account for keyboard already open when Menu mounts
 
-* test(menu): name animation timer duration
+Use Keyboard.metrics() when measuring layout so a Menu that mounts
+while the keyboard is visible still avoids it. Fixes #5096.
 
-**File**: `src/components/Menu/Menu.tsx` (modified, +1/-1)
+* Update src/components/Menu/Menu.tsx
+
+Co-authored-by: Mikita Kliushun <[REDACTED_EMAIL]>
+
+* fix(menu): guard Keyboard.metrics call for react-native-web
+
+* Update Menu.test.tsx
+
+* test(menu): fix duplicate jest import and restore Platform
+
+---------
+
+Co-authored-by: Manisha choudhary <[REDACTED_EMAIL]>
+Co-authored-by: Mikita Kliushun <[REDACTED_EMAIL]>
+
+**File**: `src/components/Menu/Menu.tsx` (modified, +7/-1)
 ```diff
-@@ -226,7 +226,7 @@ const Menu = ({
-   const scaleY = useSharedValue(0);
+@@ -117,6 +117,8 @@ const EASING = Easing.bezier(0.4, 0, 0.2, 1);
  
-   const keyboardHeightRef = React.useRef(0);
--  const prevVisible = React.useRef<boolean | null>(null);
-+  const prevVisible = React.useRef(visible);
-   const anchorRef = React.useRef<View | null>(null);
-   const menuRef = React.useRef<View | null>(null);
-   const isShownRef = React.useRef(false);
+ const WINDOW_LAYOUT = Dimensions.get('window');
+ 
++const getKeyboardHeight = (fallback: number) =>
++  Keyboard.metrics?.()?.height ?? fallback;
+ const DEFAULT_ELEVATION: Elevation = 2;
+ const DEFAULT_MODE = 'elevated';
+ 
+@@ -380,7 +382,9 @@ const Menu = ({
+     });
+ 
+     setWindowLayout({
+-      height: windowLayoutResult.height - keyboardHeightRef.current,
++      height:
++        windowLayoutResult.height -
++        getKeyboardHeight(keyboardHeightRef.current),
+       width: windowLayoutResult.width,
+     });
+ 
+@@ -461,6 +465,8 @@ const Menu = ({
+       'keyboardDidHide',
+       keyboardDidHide
+     );
++    // iOS does not replay keyboardDidShow for a keyboard that is already open.
++    keyboardHeightRef.current = getKeyboardHeight(keyboardHeightRef.current);
+ 
+     return () => {
+       removeListeners();
 ```
 
-**File**: `src/components/__tests__/Menu.test.tsx` (modified, +110/-3)
+**File**: `src/components/__tests__/Menu.test.tsx` (modified, +118/-6)
 ```diff
-@@ -1,6 +1,13 @@
--import { Dimensions, StyleSheet, View } from 'react-native';
+@@ -1,4 +1,4 @@
+-import { Dimensions, Platform, StyleSheet, View } from 'react-native';
++import { Dimensions, Keyboard, Platform, StyleSheet, View } from 'react-native';
+ 
+ import {
+   afterEach,
+@@ -92,27 +92,22 @@ describe('web focus', () => {
+   it('does not move focus when mounted hidden', async () => {
+     await render(makeMenu(false));
+     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
 -
--import { expect, it, jest } from '@jest/globals';
-+import { Dimensions, Platform, StyleSheet, View } from 'react-native';
-+
-+import {
-+  afterEach,
-+  beforeEach,
-+  describe,
-+  expect,
-+  it,
-+  jest,
-+} from '@jest/globals';
- import { act, screen, waitFor } from '@testing-library/react-native';
- 
- import { render } from '../../test-utils';
-@@ -10,6 +17,106 @@ import Button from '../Button/Button';
- import Menu from '../Menu/Menu';
- import Portal from '../Portal/Portal';
- 
-+describe('web focus', () => {
-+  const PAST_ANIMATION_MS = 300;
-+  const focus = jest.fn();
-+  const originalPlatform = Platform.OS;
-+  const originalHTMLElement = Object.getOwnPropertyDescriptor(
-+    globalThis,
-+    'HTMLElement'
-+  );
-+  const originalDocument = Object.getOwnPropertyDescriptor(
-+    globalThis,
-+    'document'
-+  );
-+  const originalQuerySelector = Object.getOwnPropertyDescriptor(
-+    View.prototype,
-+    'querySelector'
-+  );
-+  const originalMeasureInWindow = Object.getOwnPropertyDescriptor(
-+    View.prototype,
-+    'measureInWindow'
-+  );
-+
-+  beforeEach(() => {
-+    Platform.OS = 'web';
-+    focus.mockClear();
-+    // Native View refs stand in for DOM elements in the native test renderer.
-+    Object.defineProperty(globalThis, 'HTMLElement', {
-+      configurable: true,
-+      value: View,
-+    });
-+    Object.defineProperty(globalThis, 'document', {
-+      configurable: true,
-+      value: {
-+        addEventListener: jest.fn(),
-+        removeEventListener: jest.fn(),
-+      },
-+    });
-+    Object.defineProperty(View.prototype, 'querySelector', {
-+      configurable: true,
-+      value: () => ({ focus }),
-+    });
-+    const measureInWindow: View['measureInWindow'] = (fn) =>
-+      fn(100, 100, 80, 32);
-+    Object.defineProperty(View.prototype, 'measureInWindow', {
-+      configurable: true,
-+      value: measureInWindow,
-+    });
-+  });
-+
-+  afterEach(() => {
-+    Platform.OS = originalPlatform;
-+    for (const [target, key, descriptor] of [
-+      [globalThis, 'HTMLElement', originalHTMLElement],
-+      [globalThis, 'document', originalDocument],
-+      [View.prototype, 'querySelector', originalQuerySelector],
-+      [View.prototype, 'measureInWindow', originalMeasureInWindow],
-+    ] as const) {
-+      if (descriptor) {
-+        Object.defineProperty(target, key, descriptor);
-+      } else {
-+        Reflect.deleteProperty(target, key);
-+      }
-+    }
-+  });
-+
-+  const makeMenu = (visible: boolean) => (
-+    <Portal.Host>
-+      <Menu visible={visible} anchor={<Button>Open menu</Button>}>
-+        <Menu.Item title="Undo" />
-+      </Menu>
-+    </Portal.Host>
-+  );
-+
-+  it('does not move focus when mounted hidden', async () => {
-+    await render(makeMenu(false));
-+    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
-+
-+    expect(focus).not.toHaveBeenCalled();
-+  });
-+
-+  it('moves focus when opened and restores it when closed', async () => {
-+    const { rerender } = await render(makeMenu(false));
-+    await rerender(makeMenu(true));
-+    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
-+
-+    expect(focus).toHaveBeenCalledTimes(1);
-+
-+    await rerender(makeMenu(false));
-+    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
-+
-+    expect(focus).toHaveBeenCalledTimes(2);
-+  });
-+
-+  it('moves focus when mounted visible', async () => {
-+    await render(makeMenu(true));
-+    await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
-+
-+    expect(focus).toHaveBeenCalledTimes(1);
-+  });
-+});
-+
- it('renders visible menu', async () => {
-   const tree = (
-     await render(
-```
-
----
-
-### Incident Patch 3: `9e095e61` (2026-10-29)
-**Commit Message**: fix(list): expand accordion with id 0 in a controlled AccordionGroup (#5145)
-
-**File**: `src/components/List/ListAccordionGroup.tsx` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ const ListAccordionGroup = ({
-   return (
-     <ListAccordionGroupContext.Provider
-       value={{
--        expandedId: expandedIdProp || expandedId, // component can be controlled or uncontrolled
-+        expandedId: expandedIdProp ?? expandedId, // component can be controlled or uncontrolled
-         onAccordionPress: onAccordionPress || onAccordionPressDefault,
-       }}
-     >
-```
-
-**File**: `src/components/__tests__/ListAccordion.test.tsx` (modified, +16/-0)
-```diff
-@@ -135,6 +135,22 @@ describe('ListAccordion', () => {
-     await expect(render(<ListAccordionTest />)).resolves.toBeDefined();
+     expect(focus).not.toHaveBeenCalled();
    });
  
-+  it('expands the accordion with id={0} when it is the controlled expandedId', async () => {
-+    await render(
-+      <ListAccordionGroup expandedId={0} onAccordionPress={() => {}}>
-+        <ListAccordion title="First accordion" id={0}>
-+          <ListItem title="First accordion item" />
-+        </ListAccordion>
-+        <ListAccordion title="Second accordion" id={1}>
-+          <ListItem title="Second accordion item" />
-+        </ListAccordion>
-+      </ListAccordionGroup>
-+    );
+   it('moves focus when opened and restores it when closed', async () => {
+     const { rerender } = await render(makeMenu(false));
+     await rerender(makeMenu(true));
+     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
+-
+     expect(focus).toHaveBeenCalledTimes(1);
+-
+     await rerender(makeMenu(false));
+     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
+-
+     expect(focus).toHaveBeenCalledTimes(2);
+   });
+ 
+   it('moves focus when mounted visible', async () => {
+     await render(makeMenu(true));
+     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
+-
+     expect(focus).toHaveBeenCalledTimes(1);
+   });
+ });
+@@ -341,3 +336,120 @@ it('renders menu with mode "flat"', async () => {
+   expect(styles).not.toHaveProperty('shadowColor');
+   expect(styles).not.toHaveProperty('shadowOpacity');
+ });
 +
-+    expect(screen.getByText('First accordion item')).toBeOnTheScreen();
-+    expect(screen.queryByText('Second accordion item')).not.toBeOnTheScreen();
++it('accounts for a keyboard that is already open when the menu mounts', async () => {
++  const testID = 'keyboard-aware-menu';
++  const dimensionsSpy = jest.spyOn(Dimensions, 'get').mockReturnValue({
++    width: 400,
++    height: 800,
++    scale: 2,
++    fontScale: 2,
++  });
++  const keyboardMetricsSpy = jest.spyOn(Keyboard, 'metrics').mockReturnValue({
++    screenX: 0,
++    screenY: 500,
++    width: 400,
++    height: 300,
 +  });
 +
-   it('should throw an error when id={""}', async () => {
-     const ListAccordionTest = () => (
-       <ListAccordionGroup>
++  let measureCalls = 0;
++  const measureSpy = jest
++    .spyOn(View.prototype, 'measureInWindow')
++    .mockImplementation((fn) => {
++      measureCalls += 1;
++      if (measureCalls % 2 === 1) {
++        // Menu content is tall enough to overflow the remaining window.
++        fn(100, 100, 200, 400);
++      } else {
++        fn(100, 100, 80, 32);
++      }
++    });
++
++  function makeMenu(visible: boolean) {
++    return (
++      <Portal.Host>
++        <Menu
++          visible={visible}
++          onDismiss={jest.fn()}
++          anchor={
++            <Button mode="outlined" testID="anchor">
++              Open menu
++            </Button>
++          }
++          testID={testID}
++        >
++          <Menu.Item onPress={jest.fn()} title="Undo" />
++          <Menu.Item onPress={jest.fn()} title="Redo" />
++        </Menu>
++      </Portal.Host>
++    );
++  }
++
++  const { rerender } = await render(makeMenu(false));
++
++  await act(async () => {
++    await rerender(makeMenu(true));
++    await Promise.resolve();
++  });
++
++  await waitFor(() => {
++    // eslint-disable-next-line no-restricted-syntax -- layout height is not otherwise exposed.
++    const styles = StyleSheet.flatten(screen.getByTestId(testID).props.style);
++    // Available height is window (800) minus keyboard (300) minus top (100) minus SCREEN_INDENT (8).
++    expect(styles).toEqual(expect.objectContaining({ height: 392 }));
++  });
++
++  measureSpy.mockRestore();
++  keyboardMetricsSpy.mockRestore();
++  dimensionsSpy.mockRestore();
++});
++it('does not crash when Keyboard.metrics is unavailable (react-native-web)', async () => {
++  const testID = 'no-metrics-menu';
++  const original = Keyboard.metrics;
++  // @ts-expect-error simulate react-native-web, where metrics doesn't exist
++  Keyboard.metrics = undefined;
++
++  const dimensionsSpy = jest.spyOn(Dimensions, 'get').mockReturnValue({
++    width: 400,
++    height: 800,
++    scale: 2,
++    fontScale: 2,
++  });
++  const measureSpy = jest
++    .spyOn(View.prototype, 'measureInWindow')
++    .mockImplementation((fn) => fn(100, 100, 80, 32));
++
++  function makeMenu(visible: boolean) {
++    return (
++      <Portal.Host>
++        <Menu
++          visible={visible}
++          onDismiss={jest.fn()}
++          anchor={<Button mode="outlined">Open menu</Button>}
++          testID={testID}
++        >
++          <Menu.Item onPress={jest.fn()} title="Undo" />
++        </Menu>
++      </Portal.Host>
++    );
++  }
++
++  try {
++    const { rerender, toJSON } = await render(makeMenu(false));
++
++    await act(async () => {
++      await rerender(makeMenu(true));
++      await Promise.resolve();
++    });
++
++    await waitFor(() => {
++      const json = JSON.stringify(toJSON());
++      expect(json).toContain('"left":100');
++      expect(json).toContain('"top":100');
++    });
++  } finally {
++    Keyboard.metrics = original;
++    measureSpy.mockRestore();
++    dimensionsSpy.mockRestore();
++  }
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5149** (2026-10-29): chore: pass the release version through and infer the npm tag (@Doberjohn)
-- **PR #5147** (closed): fix: handle zero accordion group id (@bhumikabiyani)
-- **PR #5145** (2026-10-29): fix(list): expand accordion with id 0 in a controlled AccordionGroup (@RaphaelFakhri)
-- **PR #5142** (closed): docs: fix minor wording in contributing guide (@Q1w1N)
-- **PR #5141** (2026-10-29): docs: fix broken default theme links and typos in guides (@toyeshhm)
-- **PR #5139** (2026-10-29): fix(menu): avoid focusing hidden anchors on mount (@KuroGeo)
+- **PR #5160** (2026-11-03): docs: mark the 6.x docs as prerelease instead of unreleased (@Doberjohn)
+- **PR #5159** (2026-11-03): docs: fix getting started for new Expo and Community CLI apps (@Doberjohn)
+- **PR #5158** (2026-11-03): docs: improve icon search visibility in dark mode (@mensonones)
+- **PR #5157** (2026-11-03): docs: add a security policy (@Doberjohn)
+- **PR #5156** (2026-11-03): docs: point the showcase page to the show and tell discussion (@Doberjohn)
+- **PR #5154** (2026-11-03): chore(deps): refresh vulnerable transitive dependencies in the lockfile (@Doberjohn)
 
 ---
 
@@ -1647,28 +1722,44 @@ Also correct spelling in the v5 guides: platfrom, Additionaly, oficially, follwi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix broken default theme links and typos in guides (#5141)
+## X. docs: add a security policy (#5157)
 
 **RULE**:
-When implementing operations in `docs/5.x/docs/guides/fonts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8943b91`: docs: fix broken default theme links and typos in guides (#5141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7320443`: docs: add a security policy (#5157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/5.x/docs/guides/fonts.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-The default `fontFamily` is different per particular platform:
+# Security policy
+
+## Supported versions
+
+| Version                                                   | Security fixes |
+| --------------------------------------------------------- | -------------- |
+| 6.x (`main`, published under the `alpha` tag until 6.0.0) | Yes            |
+| The latest 5.x release                                    | Yes            |
+| Older 5.x releases and earlier majors                     | No             |
+
+## Reporting a vulnerability
+
+Please don't report security problems in public issues, pull requests or discussions.
+
+Report them privately through GitHub instead: on the repository's Security tab, click "Report a vulnerability", or go straight to https://github.com/callstack/react-native-paper/security/advisories/new. Include what is affected (the version and the component or API), how to reproduce it, and what an attacker could do with it.
+
+The maintainers will reply in the advisory, work on a fix there with you, and credit you when it is published, unless you'd rather not be named.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-The default `fontFamily` is different per particular platfrom:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8943b91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7320443` are properly handled with clean fallback behavior.

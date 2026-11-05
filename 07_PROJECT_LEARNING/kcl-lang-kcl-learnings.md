@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `77411c1c`  
+> **Source Version**: `c7226d05`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T21:30:09.329Z  
+> **Timestamp**: 2026-11-05T02:18:12.619Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T21:30:09.232Z  
+> **Harvest Timestamp**: 2026-11-05T02:18:12.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2440 stars
+- **Stars / Engagement**: 2442 stars
 
 ---
 
@@ -1267,178 +1267,841 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77411c1c` (2026-11-02)
-**Commit Message**: fix(runtime): split and rsplit on unicode whitespace when no separator is given (#2258)
+### Incident Patch 1: `c7226d05` (2026-11-05)
+**Commit Message**: feat: Export subcommand [--target=java] (#2261)
 
-Signed-off-by: Steve <[REDACTED_EMAIL]>
+* feat: Export subcommand [--target=python]
 
-**File**: `crates/runtime/src/value/val_str.rs` (modified, +68/-50)
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Export subcommand [--target=python]
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Export subcommand [--target=golang]
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Export subcommand [--target=java]
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Java - Enable polymorphic base classes
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* fix: Python - Regex matchin
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+* feat: Java - Selective imports based on kcl check clause
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Mihai Galos <[REDACTED_EMAIL]>
+
+**File**: `crates/api/spec.proto` (modified, +20/-0)
 ```diff
-@@ -1,12 +1,67 @@
- //! Copyright The KCL Authors. All rights reserved.
+@@ -1016,6 +1016,9 @@ service KclService {
+ 	/// Generate Go DTOs from the schemas of a KCL package.
+ 	rpc GenerateGo(GenerateGoArgs) returns (GenerateGoResult);
  
- use crate::*;
--use bstr::ByteSlice;
- use unic_ucd_bidi::BidiClass;
- use unic_ucd_category::GeneralCategory;
- use unicode_casing::CharExt;
++	/// Generate Java DTOs from the schemas of a KCL package.
++	rpc GenerateJava(GenerateJavaArgs) returns (GenerateJavaResult);
++
+ 	/// Generate documentation from the schemas of a KCL package.
+ 	///
+ 	/// # Examples
+@@ -1947,6 +1950,23 @@ message GenerateGoResult {
+ 	string go_source = 1;
+ }
  
--const ASCII_WHITESPACES: [u8; 6] = [0x20, 0x09, 0x0a, 0x0c, 0x0d, 0x0b];
-+/// Returns whether `c` is whitespace for `str.isspace()`, `str.split()` and `str.rsplit()`.
-+#[inline]
-+fn is_space_char(c: char) -> bool {
-+    use unic_ucd_bidi::bidi_class::abbr_names::*;
-+    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-+        || matches!(BidiClass::of(c), WS | B | S)
++// Message for Java DTO generation request arguments.
++message GenerateJavaArgs {
++	// Arguments for parsing the program whose schemas are exported.
++	ParseProgramArgs parse_args = 1;
++	// Java package name for the generated file's `package` clause, e.g.
++	// "com.example.dto". Empty omits the package clause entirely (valid
++	// Java — the "default package") rather than defaulting to a synthetic
++	// name as GenerateGo does, since Java (unlike Go) does not require one.
++	string package = 2;
 +}
 +
-+/// Splits `s` on runs of whitespace, at most `maxsplit` times (unlimited if negative).
-+/// The remainder after the last split is returned as is, like Python's `str.split()`.
-+fn split_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-+    let mut parts = Vec::new();
-+    let mut rest = s.trim_start_matches(is_space_char);
-+    while !rest.is_empty() {
-+        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-+            parts.push(rest);
-+            break;
-+        }
-+        match rest.find(is_space_char) {
-+            Some(end) => {
-+                parts.push(&rest[..end]);
-+                rest = rest[end..].trim_start_matches(is_space_char);
-+            }
-+            None => {
-+                parts.push(rest);
-+                break;
-+            }
-+        }
-+    }
-+    parts
++// Message for Java DTO generation response.
++message GenerateJavaResult {
++	// The generated Java source.
++	string java_source = 1;
 +}
 +
-+/// Splits `s` on runs of whitespace from the right, at most `maxsplit` times (unlimited if
-+/// negative). The remainder before the last split is returned as is, like Python's `str.rsplit()`.
-+/// The parts are returned from the right, so the caller reverses them.
-+fn rsplit_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-+    let mut parts = Vec::new();
-+    let mut rest = s.trim_end_matches(is_space_char);
-+    while !rest.is_empty() {
-+        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-+            parts.push(rest);
-+            break;
-+        }
-+        match rest.rfind(is_space_char) {
-+            Some(start) => {
-+                let width = rest[start..].chars().next().map_or(1, char::len_utf8);
-+                parts.push(&rest[start + width..]);
-+                rest = rest[..start].trim_end_matches(is_space_char);
-+            }
-+            None => {
-+                parts.push(rest);
-+                break;
-+            }
-+        }
-+    }
-+    parts
-+}
+ // Message for generate doc request arguments.
+ message GenerateDocArgs {
+ 	// Arguments for parsing the program whose schemas are documented.
+```
+
+**File**: `crates/api/src/service/capi.rs` (modified, +19/-0)
+```diff
+@@ -40,6 +40,7 @@ impl HasErrorFormat for GenerateProtoArgs {}
+ impl HasErrorFormat for GenerateRustArgs {}
+ impl HasErrorFormat for GeneratePythonArgs {}
+ impl HasErrorFormat for GenerateGoArgs {}
++impl HasErrorFormat for GenerateJavaArgs {}
+ impl HasErrorFormat for GenerateDocArgs {}
+ impl HasErrorFormat for ListMethodArgs {}
  
- /// Superscript digits that `str.isdigit()` accepts besides the ASCII digits.
- const SUPERSCRIPT_DIGITS: [u16; 10] = [
-@@ -380,12 +435,7 @@ impl ValueRef {
-                 if v.is_empty() {
-                     return ValueRef::bool(false);
-                 }
--                use unic_ucd_bidi::bidi_class::abbr_names::*;
--                let result = v.chars().all(|c| {
--                    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
--                        || matches!(BidiClass::of(c), WS | B | S)
--                });
--                ValueRef::bool(result)
-+                ValueRef::bool(v.chars().all(is_space_char))
-             }
-             _ => panic!("Invalid str object in str_isspace"),
+@@ -253,6 +254,7 @@ pub(crate) fn lookup_service_fn_ptr(name: &str) -> Option<u64> {
+         "KclService.GenerateRust" => generate_rust as *const () as u64,
+         "KclService.GeneratePython" => generate_python as *const () as u64,
+         "KclService.GenerateGo" => generate_go as *const () as u64,
++        "KclService.GenerateJava" => generate_java as *const () as u64,
+         "KclService.GenerateDoc" => generate_doc as *const () as u64,
+         // BuiltinService.Ping reuses the KclService.Ping implementation —
+         // both services share the same PingArgs/PingResult message types.
+@@ -869,6 +871,23 @@ pub(crate) fn generate_go(
+     )
+ }
+ 
++/// Service for generating Java DTOs from the schemas of a KCL package.
++pub(crate) fn generate_java(
++    serv: *mut kcl_service,
++    args: *const c_char,
++    args_len: usize,
++    result_len: *mut usize,
++) -> *const c_char {
++    call!(
++        serv,
++        args,
++        args_len,
++        result_len,
++        GenerateJavaArgs,
++        generate_java
++    )
++}
++
+ /// Service for generating documentation from the schemas of a KCL package.
+ pub(crate) fn generate_doc(
+     serv: *mut kcl_service,
+```
+
+**File**: `crates/api/src/service/gen_ident.rs` (modified, +29/-6)
+```diff
+@@ -1,12 +1,13 @@
+ //! Identifier-casing helpers shared by every schema-to-source-code emitter
+-//! (`gen_rust`, `gen_python`, and future targets such as Go or Java).
++//! (`gen_rust`, `gen_python`, `gen_go`, `gen_java`, and future targets such
++//! as TypeScript).
+ //!
+ //! Each target still owns its *field*-casing convention — Rust and Python
+-//! both use `snake_case`, but a Go emitter would want exported `PascalCase`
+-//! struct fields and a Java emitter `camelCase` fields — and its own keyword
+-//! list and escaping style (Rust's raw identifiers prefix with `r#`, Python
+-//! conventionally suffixes with `_`). Those per-target decisions stay in
+-//! each `gen_*` module as a thin wrapper around the primitives here.
++//! use `snake_case`, Go wants exported `PascalCase` struct fields, Java
++//! wants `camelCase` fields — and its own keyword list and escaping style
++//! (Rust's raw identifiers prefix with `r#`, Python/Java conventionally
++//! suffix with `_`). Those per-target decisions stay in each `gen_*` module
++//! as a thin wrapper around the primitives here.
+ 
+ /// Convert a KCL identifier (`snake_case`, `camelCase`, `kebab-case`, ...)
+ /// to `PascalCase`, suitable for a type/class/struct name. Falls back to a
+@@ -67,6 +68,19 @@ pub(crate) fn to_snake_case(name: &str) -> String {
+     result
+ }
+ 
++/// Convert a KCL identifier to `camelCase`, suitable for a Java (or future
++/// TypeScript) field name: same word-splitting as [`to_pascal_case`], with
++/// the first letter decapitalized. Never starts with a digit since
++/// `to_pascal_case` already guarantees that for its own output.
++pub(crate) fn to_camel_case(name: &str) -> String {
++    let pascal = to_pascal_case(name);
++    let mut chars = pascal.chars();
++    match chars.next() {
++        Some(first) => first.to_ascii_lowercase().to_string() + chars.as_str(),
++        None => pascal,
++    }
++}
++
+ /// Whether `name` collides with one of the target language's reserved
+ /// words, so callers know to escape it (e.g. `r#{name}` in Rust, `{name}_`
+ /// in Python).
+@@ -103,4 +117,13 @@ mod tests {
+         assert!(is_keyword("type", &["type", "match"]));
+         assert!(!is_keyword("value", &["type", "match"]));
+     }
++
++    #[test]
++    fn to_camel_case_decapitalizes_the_pascal_case_result() {
++        assert_eq!(to_camel_case("zip_code"), "zipCode");
++        assert_eq!(to_camel_case("ZipCode"), "zipCode");
++        assert_eq!(to_camel_case("my-field.name"), "myFieldName");
++        assert_eq!(to_camel_case("123"), "kcl123");
++        assert_eq!(to_camel_case(""), "kcl");
++    }
+ }
+```
+
+**File**: `crates/api/src/service/gen_java.rs` (added, +812/-0)
+```diff
+@@ -0,0 +1,812 @@
++//! Java DTO emitter from the shared package schema mapping.
++//!
++//! Unlike Go, an unused Java import is not a compile error — `javac`
++//! silently ignores it (confirmed empirically — it is not even a lint
++//! warning by default) — but this emitter still tracks which optional
++//! pieces a given file's fields/`check:` expressions actually used
++//! ([`JavaImports`]), purely to keep generated output free of an import or
++//! helper class the KCL schemas don't need, mirroring
++//! [`gen_go`](super::gen_go)'s `GoImports`.
++//!
++//! Java also imposes a constraint Go/Rust/Python don't have: a single
++//! `.java` *file* may declare at most one `public` top-level type, and that
++//! type's name must match the filename. Since this emitter has no control
++//! over what filename a caller saves its output under, every generated
++//! class is package-private (no `public` modifier) so the file compiles
++//! under any filename.
++//!
++//! The `KclRegexUtil` helper is extendable and overridable on purpose: its
++//! `match` method is an *instance* method (not `static`, which Java can
++//! only hide, never override), dispatched through a reassignable
++//! `KclRegexUtil.INSTANCE` field — the same pluggable-backend idiom used by
++//! e.g. SLF4J. A consumer can swap in custom matching behavior globally by
++//! assigning `KclRegexUtil.INSTANCE` to a subclass instance that overrides
++//! `match`, without regenerating or editing the DTO classes themselves.
++
++use std::cell::Cell;
++use std::collections::{HashMap, HashSet};
++
++use kcl_ast::ast;
++
++use crate::gpyrpc::{KclType, SchemaTypes};
++use crate::service::gen_ident::{is_keyword, to_camel_case, to_pascal_case};
++use crate::service::gen_schema::{self, SchemaNameResolver};
++
++/// Optional pieces of a generated file: the `java.util.Map` import (needed
++/// only if some field is a KCL `dict`) and the `KclRegexUtil` helper class
++/// (needed only if some `check:` uses `regex.match`). Both default to
++/// unused and are marked on demand while rendering field types and check
++/// expressions, mirroring [`gen_go`](super::gen_go)'s `GoImports`.
++#[derive(Default)]
++struct JavaImports {
++    uses_map: Cell<bool>,
++    uses_regex: Cell<bool>,
++}
++
++impl JavaImports {
++    fn mark_map(&self) {
++        self.uses_map.set(true);
++    }
++
++    fn mark_regex(&self) {
++        self.uses_regex.set(true);
++    }
++}
++
++const REGEX_UTIL_HELPER: &str = "class KclRegexUtil {\n    // Overridable: assign a subclass instance (e.g.\n    // `KclRegexUtil.INSTANCE = new KclRegexUtil() { ... };`) to customize\n    // regex matching for every generated `validate()` method.\n    static KclRegexUtil INSTANCE = new KclRegexUtil();\n\n    boolean match(String pattern, String value) {\n        return java.util.regex.Pattern.compile(pattern).matcher(value).find();\n    }\n}\n\n";
++
++pub(crate) fn generate_java(
++    mapping: &HashMap<String, SchemaTypes>,
++    package: &str,
++) -> anyhow::Result<String> {
++    let imports = JavaImports::default();
++    let body = gen_schema::generate_source(
++        mapping,
++        "Java",
++        java_type_name,
++        |out, name, ty, resolver| emit_schema(out, name, ty, resolver, &imports),
++    )?;
++
++    let mut out = String::new();
++    if !package.is_empty() {
++        out.push_str(&format!("package {package};\n\n"));
++    }
++    out.push_str("import java.util.ArrayList;\n");
++    out.push_str("import java.util.List;\n");
++    if imports.uses_map.get() {
++        out.push_str("import java.util.Map;\n");
++    }
++    out.push_str("import java.util.Objects;\n\n");
++    if imports.uses_regex.get() {
++        out.push_str(REGEX_UTIL_HELPER);
++    }
++    out.push_str(&body);
++    Ok(out)
++}
++
++fn emit_schema(
++    out: &mut String,
++    name: &str,
++    ty: &KclType,
++    resolver: &SchemaNameResolver,
++    imports: &JavaImports,
++) -> anyhow::Result<()> {
++    for line in ty.schema_doc.lines() {
++        out.push_str("//");
++        if !line.is_empty() {
++            out.push(' ');
++            out.push_str(line);
++        }
++        out.push('\n');
++    }
++    out.push_str(&format!("class {} {{\n", java_type_name(name)));
++
++    let mut properties: Vec<&String> = ty.properties.keys().collect();
++    properties.sort();
++    let mut used_field_names = HashSet::new();
++    let mut fields = Vec::with_capacity(properties.len());
++    for property in &properties {
++        let field = &ty.properties[*property];
++        if field.r#type == "function" {
++            anyhow::bail!("Java DTO generation does not support function field {property:?}");
++        }
++        if !field.description.is_empty() {
++            for line in field.description.lines() {
++                out.push_str(&format!("    // {line}\n"));
++            }
++        }
++        if !field.default.is_empty() {
++            for line in field.default.lines() {
++                out.push_str(&format!("    // KCL default: {line}\n"));
++            }
++        }
++        let field_name = java_field_
+```
+
+**File**: `crates/api/src/service/gen_python.rs` (modified, +7/-1)
+```diff
+@@ -322,7 +322,13 @@ fn render_call(call: &ast::CallExpr, context: &PythonExprContext<'_>) -> anyhow:
+         "regex.match" if call.args.len() == 2 => {
+             let value = render_expr(&call.args[0].node, context)?;
+             let pattern = render_expr(&call.args[1].node, context)?;
+-            Ok(format!("re.match({pattern}, {value}) is not None"))
++            // KCL's `regex.match` searches anywhere in the string (it
++            // compiles to `Regex::is_match`, same as Rust/Go/Java's
++            // generated checks), not just at the start — `re.search` is
++            // the matching Python primitive. `re.match` would silently
++            // reject values a pattern without its own `^` anchor should
++            // accept.
++            Ok(format!("re.search({pattern}, {value}) is not None"))
          }
-@@ -569,7 +619,7 @@ impl ValueRef {
-                     Some(v) => v.as_int(),
-                     None => -1,
-                 };
--                let splited = if let Some(pattern) = sep {
-+                let splited: Vec<ValueRef> = if let Some(pattern) = sep {
-                     let s = pattern.as_str();
-                     if maxsplit < 0 {
-                         v.split(s.as_str()).map(convert).collect()
-@@ -580,27 +630,10 @@ impl ValueRef {
-                     }
-                 } else {
-                     // Split whitespace
--                    let mut splited = Vec::new();
--                    let mut last_offset = 0;
--                    let mut count = maxsplit;
--                    for (offset, _) in
--                        v.match_indices(|c: char| c.is_ascii_whitespace() || c == '\x0b')
--                    {
--                        if last_offset == offset {
--                            last_offset += 1;
--                            continue;
--                        }
--                        if count == 0 {
--                            break;
--                        }
--                        splited.push(convert(&v[last_offset..offset]));
--                        last_offset = offset + 1;
--                        count -= 1;
--                    }
--                    if last_offset != v.len() {
--                        splited.push(convert(&v[last_offset..]));
--                    }
--                    splited
-+                    split_whitespace_n(v, maxsplit)
-+                        .into_iter()
-+                        .map(convert)
-+                        .collect()
-                 };
-                 ValueRef::list_value(Some(splited.as_slice()))
-             }
-@@ -619,7 +652,7 @@ impl ValueRef {
-                     Some(v) => v.as_int(),
-                     None => -1,
-       
+         _ => anyhow::bail!("KCL call {function:?} is not supported in Python validation"),
+     }
 ```
 
-**File**: `tests/grammar/builtins/str/split_unicode_whitespace/main.k` (added, +8/-0)
+**File**: `crates/api/src/service/jsonrpc.rs` (modified, +30/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+a = "|".join("a b　c".split())
-+b = "|".join("a b　c".rsplit())
-+c = "|".join("  a 　b c ".split(maxsplit=1))
-+d = "|".join("  a b 　c ".rsplit(maxsplit=1))
-+e = len(" 　".split())
-+f = len(" 　".rsplit())
-+g = "|".join("  a  b ".split())
-+h = "|".join("é é".rsplit())
+@@ -291,6 +291,14 @@ fn register_kcl_service(io: &mut IoHandler) {
+         };
+         futures::future::ready(catch!(kcl_service_impl, args, generate_go))
+     });
++    io.add_method("KclService.GenerateJava", |params: Params| {
++        let kcl_service_impl = KclServiceImpl::default();
++        let args: GenerateJavaArgs = match params.parse() {
++            Ok(val) => val,
++            Err(err) => return futures::future::ready(Err(err)),
++        };
++        futures::future::ready(catch!(kcl_service_impl, args, generate_java))
++    });
+     io.add_method("KclService.GenerateDoc", |params: Params| {
+         let kcl_service_impl = KclServiceImpl::default();
+         let args: GenerateDocArgs = match params.parse() {
+@@ -515,6 +523,28 @@ mod tests {
+         assert!(go_source.contains("Address Address `json:\"address\"`"));
+     }
+ 
++    #[test]
++    fn kcl_service_generate_java_dispatches() {
++        let mut io = IoHandler::default();
++        register_kcl_service(&mut io);
++        let request = serde_json::json!({
++            "jsonrpc": "2.0",
++            "method": "KclService.GenerateJava",
++            "params": {
++                "parse_args": {"paths": [gen_openapi_main_k()]}
++            },
++            "id": 1
++        })
++        .to_string();
++        let response = io
++            .handle_request_sync(&request)
++            .expect("KclService.GenerateJava should be registered");
++        let response: serde_json::Value = serde_json::from_str(&response).unwrap();
++        let java_source = response["result"]["java_source"].as_str().unwrap();
++        assert!(java_source.contains("class Person {"));
++        assert!(java_source.contains("public Address address;"));
++    }
++
+     /// The schema generator RPCs must be dispatchable through the JSON-RPC
+     /// handler, end to end from JSON params to JSON result.
+     #[test]
 ```
 
-**File**: `tests/grammar/builtins/str/split_unicode_whitespace/stdout.golden` (added, +8/-0)
+**File**: `crates/api/src/service/mod.rs` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+a: a|b|c
-+b: a|b|c
-+c: a|b c 
-+d:   a b|c
-+e: 0
-+f: 0
-+g: a|b
-+h: é|é
-\ No newline at end of file
+@@ -2,6 +2,7 @@ pub mod capi;
+ pub(crate) mod gen_doc;
+ pub(crate) mod gen_go;
+ pub(crate) mod gen_ident;
++pub(crate) mod gen_java;
+ pub(crate) mod gen_openapi;
+ pub(crate) mod gen_proto;
+ pub(crate) mod gen_python;
+@@ -57,6 +58,7 @@ pub(crate) const SERVICE_METHODS: &[&str] = &[
+     "KclService.GenerateRust",
+     "KclService.GeneratePython",
+     "KclService.GenerateGo",
++    "KclService.GenerateJava",
+     "KclService.GenerateDoc",
+     "BuiltinService.Ping",
+     "BuiltinService.ListMethod",
+```
+
+**File**: `crates/api/src/service/service_impl.rs` (modified, +274/-1)
+```diff
+@@ -41,6 +41,7 @@ use tempfile::NamedTempFile;
+ use super::SERVICE_METHODS;
+ use super::gen_doc;
+ use super::gen_go;
++use super::gen_java;
+ use super::gen_openapi;
+ use super::gen_proto;
+ use super::gen_python;
+@@ -1837,6 +1838,18 @@ impl KclServiceImpl {
+         })
+     }
+ 
++    /// Generate Java DTOs from the schemas of a KCL package.
++    pub fn generate_java(&self, args: &GenerateJavaArgs) -> anyhow::Result<GenerateJavaResult> {
++        let parse_args = args
++            .parse_args
++            .as_ref()
++            .ok_or_else(|| anyhow::anyhow!("parse_args must be set to parse a KCL program"))?;
++        let mapping = gen_schema::load_pkg_schema_types(parse_args, "")?;
++        Ok(GenerateJavaResult {
++            java_source: gen_java::generate_java(&mapping, &args.package)?,
++        })
++    }
++
+     /// Generate documentation from the schemas of a KCL package.
+     ///
+     /// The program referenced by `parse_args` is loaded and every schema
+@@ -3242,6 +3255,38 @@ mod generator_tests {
+         assert!(result.go_source.contains("errors := []string{}"));
+     }
+ 
++    #[test]
++    fn generate_java_golden_output() {
++        let serv = KclServiceImpl::default();
++        let result = serv
++            .generate_java(&GenerateJavaArgs {
++                parse_args: Some(schema_parse_args()),
++                package: String::new(),
++            })
++            .unwrap();
++        assert!(!result.java_source.contains("package "));
++        assert!(result.java_source.contains("class Person {"));
++        assert!(result.java_source.contains("public Long age;"));
++        assert!(result.java_source.contains("public Address address;"));
++        assert!(result.java_source.contains("public Object val;"));
++        assert!(result.java_source.contains("class Base {"));
++        assert!(
++            result
++                .java_source
++                .contains("List<String> errors = new ArrayList<>();")
++        );
++        // `Address.geo` is a `dict` field, so the Map import must be
++        // tracked and emitted; this fixture has no `check:` blocks at all,
++        // so the regex helper class must be tracked as unused and omitted.
++        assert!(result.java_source.contains("import java.util.Map;"));
++        assert!(
++            result
++                .java_source
++                .contains("public Map<String, Double> geo;")
++        );
++        assert!(!result.java_source.contains("KclRegexUtil"));
++    }
++
+     #[test]
+     fn generate_rust_emits_customer_dtos_and_runtime_validation() {
+         let serv = KclServiceImpl::default();
+@@ -3440,7 +3485,7 @@ fn main() {{
+         );
+         assert!(result.python_source.contains("customer must be an adult"));
+         assert!(result.python_source.contains("name must be 1..100 chars"));
+-        assert!(result.python_source.contains("re.match("));
++        assert!(result.python_source.contains("re.search("));
+         assert!(
+             result
+                 .python_source
+@@ -3622,6 +3667,166 @@ func main() {{
+         );
+     }
+ 
++    #[test]
++    fn generate_java_emits_customer_dtos_and_runtime_validation() {
++        let serv = KclServiceImpl::default();
++        let result = serv
++            .generate_java(&GenerateJavaArgs {
++                parse_args: Some(ParseProgramArgs {
++                    paths: vec![
++                        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
++                            .join("src/testdata/gen_rust/main.k")
++                            .canonicalize()
++                            .unwrap()
++                            .display()
++                            .to_string(),
++                    ],
++                    ..Default::default()
++                }),
++                package: String::new(),
++            })
++            .unwrap();
++        assert!(!result.java_source.contains("package "));
++        assert!(result.java_source.contains("class Entity {"));
++        assert!(result.java_source.contains("class Address {"));
++        assert!(result.java_source.contains("class Customer {"));
++        assert!(result.java_source.contains("public String id;"));
++        assert!(result.java_source.contains("public long version;"));
++        assert!(result.java_source.contains("public Long age;"));
++        assert!(result.java_source.contains("public double creditLimit;"));
++        assert!(
++            result
++                .java_source
++                .contains("public List<Address> addresses;")
++        );
++        assert!(
++            result
++                .java_source
++                .contains("public Address billingAddress;")
++        );
++        assert!(result.java_source.contains("KCL default: 0"));
++        assert!(result.java_source.contains("KCL default: \"EUR\""));
++        assert!(
++            result
++                .java_source
++                .contains("public List<String> validate() {")
++        );
++        assert!(result.java_source.contains("this.age != null"));
++        a
+```
+
+---
+
+### Incident Patch 2: `9ef1544b` (2026-11-05)
+**Commit Message**: perf(tools): add an eval-once mode to kcl test that evaluates the package once (#2256)
+
+* perf(tools): add an eval-once mode to kcl test that evaluates the package once
+
+`kcl test` runs every test case in its own evaluation of the package:
+TestSuite::run generates a main file that calls the case selected by the
+`_kcl_test_case_run` option, and calls exec_program once per case. Each
+case pays for parsing, resolving and evaluating every module-level
+statement of the package, so a suite whose fixture takes a second to
+build takes K seconds for K cases, however trivial the cases are.
+
+The new TestOptions::eval_once, `eval_once = 6` in the API's TestArgs,
+evaluates the package once per suite and runs every case in that
+evaluation:
+
+- Evaluator::run is split into eval and plan, and the new
+  Evaluator::call_global calls a global lambda of the main package with
+  no arguments, as a `name()` statement would. A name that is not a
+  function there fails, as such a statement would not compile, rather
+  than calling nothing and passing.
+- The new kcl_runner::exec_program_calls loads, resolves, evaluates and
+  plans the program once, then calls each name in turn. Before every
+  call it restores
+
+**File**: `crates/api/spec.proto` (modified, +14/-0)
+```diff
+@@ -1742,6 +1742,20 @@ message TestArgs {
+ 	// the source file path and line number. The aggregated result is returned
+ 	// in [TestResult.coverage]. Defaults to false.
+ 	bool coverage = 5;
++	// Flag to evaluate each test package once and run all of its test cases in
++	// that one evaluation, instead of evaluating the package again for every
++	// case. Each case still reports its own result, error and log, and a case
++	// that fails hands the next one a freshly evaluated package.
++	// NOTE: cases share the values the package defines. A case that passes
++	// after mutating one in place, e.g. a schema instance it got as a lambda
++	// argument, changes what the cases after it see, and planning, which runs
++	// before the cases, does not see the change; a suite whose cases rely on
++	// starting from the package as it is defined must not set this flag.
++	// Case durations then exclude the evaluation of the package, a planning
++	// error is always reported at the end of the generated main file, and
++	// that file selects no case, so the coverage counts each of its lines
++	// once. Defaults to false.
++	bool eval_once = 6;
+ }
+ 
+ // Message for test response.
+```
+
+**File**: `crates/api/src/capi_test.rs` (modified, +28/-0)
+```diff
+@@ -532,6 +532,34 @@ fn test_c_api_testing() {
+     );
+ }
+ 
++/// `eval_once` reaches the test tool: with it, the package is evaluated
++/// once for all its cases, so a case sees the values that the case before
++/// it mutated in place.
++#[test]
++fn test_testing_eval_once() {
++    let _test_lock = TEST_MUTEX.lock().unwrap_or_else(|p| p.into_inner());
++    let serv = crate::service::service_impl::KclServiceImpl::default();
++    let run = |eval_once| {
++        serv.test(&TestArgs {
++            pkg_list: vec!["./src/testdata/testing/eval_once/...".to_string()],
++            eval_once,
++            ..Default::default()
++        })
++        .unwrap()
++    };
++    let per_case = run(false);
++    assert_eq!(per_case.info.len(), 2);
++    assert!(per_case.info.iter().all(|info| info.error.is_empty()));
++    let once = run(true);
++    assert_eq!(once.info.len(), 2);
++    assert!(once.info[0].error.is_empty(), "{}", once.info[0].error);
++    assert!(
++        once.info[1].error.contains("n is 2"),
++        "{}",
++        once.info[1].error
++    );
++}
++
+ /// Round-trip `FormatTestReport` through the C ABI dispatcher: encode a
+ /// fixed `TestResult`, dispatch by method name, decode the report and pin
+ /// the exact rendered text (case lines, log/error lines, separator and
+```
+
+**File**: `crates/api/src/service/service_impl.rs` (modified, +1/-0)
+```diff
+@@ -1487,6 +1487,7 @@ impl KclServiceImpl {
+             run_regexp: args.run_regexp.clone(),
+             fail_fast: args.fail_fast,
+             coverage: args.coverage,
++            eval_once: args.eval_once,
+         };
+         for pkg in &args.pkg_list {
+             let suites = testing::load_test_suites(pkg, &opts)?;
+```
+
+**File**: `crates/api/src/testdata/testing/eval_once/kcl.mod` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++[package]
++name = "eval_once"
+```
+
+**File**: `crates/api/src/testdata/testing/eval_once/pkg/main.k` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++schema Counter:
++    n: int = 0
++
++counter = Counter {}
++
++bump = lambda c: Counter {
++    c.n = c.n + 1
++    c
++}
+```
+
+**File**: `crates/api/src/testdata/testing/eval_once/pkg/main_test.k` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++# Each case mutates the global `counter` in place through the lambda
++# parameter `c`. When the package is evaluated once for all the cases,
++# the second case sees the first one's change.
++test_first_bump = lambda {
++    assert bump(counter).n == 1, "n is {}".format(counter.n)
++}
++
++test_second_bump = lambda {
++    assert bump(counter).n == 1, "n is {}".format(counter.n)
++}
+```
+
+**File**: `crates/evaluator/src/lib.rs` (modified, +77/-4)
+```diff
+@@ -233,6 +233,12 @@ impl<'ctx> Evaluator<'ctx> {
+     ///
+     /// The context and evaluator state are checked when the run begins; the
+     /// host must not change the context during the run.
++    ///
++    /// A run is [`Evaluator::run`], or [`Evaluator::eval`] and the
++    /// [`Evaluator::call_global`] calls after it, which keep the decision
++    /// the evaluation made. Between those calls the host may only restore
++    /// the context to what the evaluation left, as `kcl test` does when it
++    /// evaluates a package once for all its cases.
+     #[inline]
+     pub fn set_owns_runtime_ctx(&mut self, owns: bool) {
+         self.owns_runtime_ctx = owns;
+@@ -301,18 +307,85 @@ impl<'ctx> Evaluator<'ctx> {
+ 
+     /// Evaluate the program and return the JSON and YAML result.
+     pub fn run(self: &Evaluator<'ctx>) -> Result<(String, String)> {
++        self.eval()?;
++        Ok(self.plan())
++    }
++
++    /// Evaluate every statement of the main package without planning the
++    /// result: the first half of [`Evaluator::run`].
++    pub fn eval(&self) -> Result<()> {
+         self.begin_evaluation();
+         let modules = self.program.get_modules_for_pkg(kcl_ast::MAIN_PKG);
+         self.init_scope(kcl_ast::MAIN_PKG);
+         self.compile_ast_modules(&modules);
+-        // On wasm32, runtime errors from check/assert blocks are recorded
+-        // into the context instead of panicking (panic=abort would trap the
+-        // whole WASI instance); bail out with the recorded error here.
++        self.check_recorded_error()
++    }
++
++    /// Plan the globals of an evaluated program into the JSON and YAML
++    /// result: the second half of [`Evaluator::run`]. Call it after
++    /// [`Evaluator::eval`].
++    #[inline]
++    pub fn plan(&self) -> (String, String) {
++        self.plan_globals_to_string()
++    }
++
++    /// Call the global function `name` of the main package with no
++    /// arguments, as a `name()` statement appended to the main package
++    /// would, and return its result. Call it after [`Evaluator::eval`].
++    /// A `name` that is not a function there is an error, as such a
++    /// statement would not compile.
++    ///
++    /// The `kcl test` tool uses this to run every test case in one
++    /// evaluation of the package.
++    pub fn call_global(&self, name: &str) -> Result<ValueRef> {
++        let func = self.get_variable_in_pkgpath(name, kcl_ast::MAIN_PKG);
++        if !func.is_func() {
++            return Err(anyhow::anyhow!("'{name}' is not a function"));
++        }
++        let mut args = self.list_value();
++        let kwargs = self.dict_value();
++        let vars = self.clean_and_cloned_local_vars();
++        let result = if let Some(proxy) = func.try_get_proxy() {
++            self.invoke_proxy_function(proxy, &args, &kwargs)
++        } else {
++            runtime::invoke_function(self, &func, &mut args, &kwargs)
++        };
++        self.set_local_vars(vars);
++        self.check_recorded_error()?;
++        Ok(result)
++    }
++
++    /// The depths of the stacks the evaluator pushes to while it walks
++    /// code. A call that returns leaves them as it found them, but one
++    /// that a panic interrupted, even a panic that `runtime.catch` stopped,
++    /// can leave entries behind. Compare only depths of one evaluator.
++    pub fn stack_depths(&self) -> Vec<usize> {
++        vec![
++            self.pkgpath_stack.borrow().len(),
++            self.filename_stack.borrow().len(),
++            self.target_vars.borrow().len(),
++            self.lambda_stack.borrow().len(),
++            self.schema_stack.borrow().len(),
++            self.ctx_stack.borrow().len(),
++            self.schema_expr_stack.borrow().len(),
++            self.scope_covers.borrow().len(),
++            self.config_entry_vars.borrow().len(),
++            self.backtrack_meta.borrow().len(),
++            self.pkg_scopes.borrow().values().map(Vec::len).sum(),
++            usize::from(*self.lazy_reassign.borrow()),
++        ]
++    }
++
++    /// On wasm32, runtime errors from check/assert blocks are recorded
++    /// into the context instead of panicking (panic=abort would trap the
++    /// whole WASI instance); bail out with the recorded error here.
++    #[inline]
++    fn check_recorded_error(&self) -> Result<()> {
+         #[cfg(target_arch = "wasm32")]
+         if let Some(info) = self.runtime_ctx.borrow().get_panic_info_json_string() {
+             return Err(anyhow::anyhow!(info));
+         }
+-        Ok(self.plan_globals_to_string())
++        Ok(())
+     }
+ 
+     /// Build the Source Map v3 for a planned YAML string produced by
+```
+
+**File**: `crates/evaluator/src/tests.rs` (modified, +52/-0)
+```diff
+@@ -3046,6 +3046,58 @@ fn instances_recorded_after_first_run() {
+     assert_eq!(recorded_instances(&evaluator), 5);
+ }
+ 
++/// Evaluates a program and then calls its global function `name`, as
++/// `kcl test` does to run a case in a package evaluated once, returning
++/// the result as JSON and the number of recorded instances.
++fn call_after_eval(program: &kcl_ast::ast::Program, owns: bool, name: &str) -> (String, usize) {
++    let mut evaluator =
++        Evaluator::new_with_runtime_ctx(program, Rc::new(RefCell::new(Context::new())));
++    evaluator.set_owns_runtime_ctx(owns);
++    evaluator.eval().unwrap();
++    let result = evaluator.call_global(name).unwrap();
++    (result.to_json_string(), recorded_instances(&evaluator))
++}
++
++/// A function called with `call_global` is code of the program, so in a
++/// context the evaluator owns, the instances it creates are recorded only
++/// if the program can read them, and a function that reads them sees what
++/// it sees when every instance is recorded.
++#[test]
++fn instances_in_called_functions_match_default() {
++    let unread = r#"
++schema A:
++    x: int = 1
++
++a = A {}
++f = lambda {
++    [A {x = i} for i in range(3)]
++}
++"#;
++    let p = load_instances_program(unread, false);
++    let (expected, recorded) = call_after_eval(&p.program, false, "f");
++    assert_eq!(recorded, 4);
++    let (result, recorded) = call_after_eval(&p.program, true, "f");
++    assert_eq!(result, expected);
++    assert_eq!(recorded, 0);
++
++    let read_in_call = r#"
++schema A:
++    x: int = 1
++
++a = A {}
++f = lambda {
++    b = [A {x = i} for i in range(3)]
++    len(A.instances())
++}
++"#;
++    let p = load_instances_program(read_in_call, false);
++    let (expected, _) = call_after_eval(&p.program, false, "f");
++    assert_eq!(expected, "4");
++    let (result, recorded) = call_after_eval(&p.program, true, "f");
++    assert_eq!(result, expected);
++    assert_eq!(recorded, 4);
++}
++
+ #[test]
+ fn instances_scan_rejects_locked_modules() {
+     let p = load_instances_program(UNREAD_INSTANCES, false);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2261** (2026-11-05): feat: Export subcommand [--target=java] (@mihaigalos)
+- **PR #2259** (2026-11-03): feat: Export subcommand [--target=golang] (@mihaigalos)
 - **PR #2258** (2026-11-02): fix(runtime): split and rsplit on unicode whitespace when no separator is given (@56steve)
 - **PR #2257** (2026-10-30): perf(evaluator): skip recording schema instances nothing can read (@steeling)
+- **PR #2256** (2026-11-05): perf(tools): add an eval-once mode to kcl test that evaluates the package once (@steeling)
 - **PR #2254** (2026-10-29): perf(runtime): cache compiled patterns in the regex module (@steeling)
-- **PR #2252** (2026-10-29): perf(runtime): read schema attributes without cloning the schema config (@steeling)
-- **PR #2251** (2026-10-29): fix(evaluator): restore panic info after runtime.catch catches an error (@steeling)
-- **PR #2250** (2026-10-29): perf(evaluator,runtime): drop per-lookup allocations in scope helpers and is_literal_type (@steeling)
 
 ---
 
@@ -1458,86 +2121,47 @@ Signed-off-by: Steve <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): split and rsplit on unicode whitespace when no separator is given (#22
+## X. Export subcommand [--target=java] (#2261)
 
 **RULE**:
-When implementing operations in `crates/runtime/src/value/val_str.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/api/spec.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77411c1c`: runtime): split and rsplit on unicode whitespace when no separator is given (#2258). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7226d05`: Export subcommand [--target=java] (#2261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/value/val_str.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/api/spec.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Returns whether `c` is whitespace for `str.isspace()`, `str.split()` and `str.rsplit()`.
-#[inline]
-fn is_space_char(c: char) -> bool {
-    use unic_ucd_bidi::bidi_class::abbr_names::*;
-    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-        || matches!(BidiClass::of(c), WS | B | S)
+	/// Generate Java DTOs from the schemas of a KCL package.
+	rpc GenerateJava(GenerateJavaArgs) returns (GenerateJavaResult);
+
+// Message for Java DTO generation request arguments.
+message GenerateJavaArgs {
+	// Arguments for parsing the program whose schemas are exported.
+	ParseProgramArgs parse_args = 1;
+	// Java package name for the generated file's `package` clause, e.g.
+	// "com.example.dto". Empty omits the package clause entirely (valid
+	// Java — the "default package") rather than defaulting to a synthetic
+	// name as GenerateGo does, since Java (unlike Go) does not require one.
+	string package = 2;
 }
 
-/// Splits `s` on runs of whitespace, at most `maxsplit` times (unlimited if negative).
-/// The remainder after the last split is returned as is, like Python's `str.split()`.
-fn split_whitespace_n(s: &str, maxsplit: i64) -> Vec<&str> {
-    let mut parts = Vec::new();
-    let mut rest = s.trim_start_matches(is_space_char);
-    while !rest.is_empty() {
-        if maxsplit >= 0 && parts.len() as i64 == maxsplit {
-            parts.push(rest);
-            break;
-        }
-        match rest.find(is_space_char) {
-            Some(end) => {
-                parts.push(&rest[..end]);
-                rest = rest[end..].trim_start_matches(is_space_char);
-            }
-            None => {
-                parts.push(rest);
-                break;
-            }
-        }
-    }
-    parts
+// Message for Java DTO generation response.
+message GenerateJavaResult {
+	// The generated Java source.
+	string java_source = 1;
 }
 
-/// Splits `s` on runs of whitespace from the right, at most `maxsplit` times (unlimited if
-/// negative). 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use bstr::ByteSlice;
-const ASCII_WHITESPACES: [u8; 6] = [0x20, 0x09, 0x0a, 0x0c, 0x0d, 0x0b];
-                use unic_ucd_bidi::bidi_class::abbr_names::*;
-                let result = v.chars().all(|c| {
-                    GeneralCategory::of(c) == GeneralCategory::SpaceSeparator
-                        || matches!(BidiClass::of(c), WS | B | S)
-                });
-                ValueRef::bool(result)
-                let splited = if let Some(pattern) = sep {
-                    let mut splited = Vec::new();
-                    let mut last_offset = 0;
-                    let mut count = maxsplit;
-                    for (offset, _) in
-                        v.match_indices(|c: char| c.is_ascii_whitespace() || c == '\x0b')
-                    {
-                        if last_offset == offset {
-                            last_offset += 1;
-                            continue;
-                        }
-                        if count == 0 {
-                            break;
-                        }
-                        splited.push(convert(&v[last_offset..offset]));
-                        last_offset = offset + 1;
-                        count -= 1;
-                    }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77411c1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7226d05` are properly handled with clean fallback behavior.

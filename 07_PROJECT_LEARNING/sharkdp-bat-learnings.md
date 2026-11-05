@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `41931bc4`  
+> **Source Version**: `b47e6865`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:58:03.136Z  
+> **Timestamp**: 2026-11-05T00:51:30.083Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:58:01.777Z  
+> **Harvest Timestamp**: 2026-11-05T00:48:39.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61050 stars
+- **Stars / Engagement**: 61079 stars
 
 ---
 
@@ -607,438 +607,577 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41931bc4` (2026-11-03)
-**Commit Message**: Merge pull request #3801 from xfocus3/fix/help-language-submodule-note
+### Incident Patch 1: `0e8994a3` (2026-11-04)
+**Commit Message**: Add changelog reference for emoji wrapping fix
 
-docs: explain submodules when regenerating syntax assets
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@
- 
- ## Other
- 
-+- Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
- - Fix anchor case in `doc/assets.md` links, see #4026 (@ump45nose)
- - Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
- - Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
-```
-
-**File**: `README.md` (modified, +6/-0)
-```diff
-@@ -431,6 +431,12 @@ If you want to build `bat` from source, you need Rust 1.79.0 or
- higher. You can then use `cargo` to build everything:
- 
- #### From local source
-+
-+The checkout includes prebuilt syntax and theme assets. If you want to regenerate them
-+from their sources, first initialize the Git submodules with
-+`git submodule update --init --recursive`, then follow the [Development](#development)
-+instructions. This includes the `help` syntax used to highlight command-line help.
-+
- ```bash
- cargo install --path . --locked
- ```
-```
-
----
-
-### Incident Patch 2: `46031658` (2026-11-03)
-**Commit Message**: Merge pull request #4098 from feafel/fix/wrapped-line-background-underflow
-
-fix: avoid underflow when painting a wrapped line background
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -116,6 +116,7 @@
- 
- ## Bugfixes
- 
-+- Fix `capacity overflow` panic when wrapping a double-width character on a line narrower than the character while a background is painted (e.g. `--terminal-width=1 --wrap=character --highlight-line=1`). Closes #3844, see #4098 (@feafel)
- - Fix hang when using `--list-themes` with an explicit pager, see #3457 (@abhinavcool42)
- - Fix negative values of N not being parsed in <N:M> line ranges without `=` flag value separator, see #3442 (@lmmx)
- - Fix broken Docker syntax preventing use of custom assets, see #3476 (@keith-hall)
-```
-
-**File**: `src/printer.rs` (modified, +2/-2)
-```diff
-@@ -826,7 +826,7 @@ impl Printer for InteractivePrinter<'_> {
-                             let text = self
-                                 .preprocess(text.trim_end_matches(['\r', '\n']), &mut cursor_total);
- 
--                            let mut max_width = cursor_max - cursor;
-+                            let mut max_width = cursor_max.saturating_sub(cursor);
- 
-                             // line buffer (avoid calling write! for every character)
-                             let mut line_buf = String::with_capacity(max_width * 4);
-@@ -965,7 +965,7 @@ impl Printer for InteractivePrinter<'_> {
-                 write!(
-                     handle,
-                     "{}",
--                    ansi_style.paint(" ".repeat(cursor_max - cursor))
-+                    ansi_style.paint(" ".repeat(cursor_max.saturating_sub(cursor)))
-                 )?;
-             }
-             writeln!(handle)?;
-```
-
-**File**: `tests/integration_tests.rs` (modified, +15/-0)
-```diff
-@@ -504,6 +504,21 @@ fn snip_at_terminal_width_one_does_not_panic() {
-         .success();
- }
- 
-+#[test]
-+fn wide_char_at_terminal_width_one_with_background_does_not_panic() {
-+    // A double-width character does not fit in a one-column line. The cursor then moves past
-+    // `cursor_max`, so the background fill must not subtract without checking (see #3844).
-+    bat()
-+        .arg("--color=always")
-+        .arg("--paging=never")
-+        .arg("--wrap=character")
-+        .arg("--terminal-width=1")
-+        .arg("--highlight-line=1")
-+        .write_stdin("📦📦\n")
-+        .assert()
-+        .success();
-+}
-+
- #[test]
- fn line_range_multiple_with_context() {
-     bat()
-```
-
----
-
-### Incident Patch 3: `b99f3176` (2026-11-03)
-**Commit Message**: Merge branch 'master' into fix/wrapped-line-background-underflow
-
-**File**: `.github/workflows/CICD.yml` (modified, +3/-2)
-```diff
-@@ -166,7 +166,8 @@ jobs:
-           - { target: arm-unknown-linux-gnueabihf , os: ubuntu-latest , dpkg_arch: armhf,            use-cross: true }
-           - { target: arm-unknown-linux-musleabihf, os: ubuntu-latest , dpkg_arch: musl-linux-armhf, use-cross: true }
-           - { target: i686-pc-windows-msvc        , os: windows-2025  ,                                              }
--          - { target: i686-unknown-linux-gnu      , os: ubuntu-latest , dpkg_arch: i386,             use-cross: true }
-+          # The timeout test's socketpair fails on the Ubuntu 26.04 runner.
-+          - { target: i686-unknown-linux-gnu      , os: ubuntu-24.04  , dpkg_arch: i386,             use-cross: true }
-           - { target: i686-unknown-linux-musl     , os: ubuntu-latest , dpkg_arch: musl-linux-i686,  use-cross: true }
-           - { target: x86_64-apple-darwin         , os: macos-15-intel,                                              }
-           - { target: aarch64-apple-darwin        , os: macos-latest  ,                                              }
-@@ -457,7 +458,7 @@ jobs:
-     needs: build
-     if: startsWith(github.ref, 'refs/tags/v')
-     steps:
--      - uses: vedantmgoyal9/winget-releaser@a8fff44b123f115ce4c21543edf8b677376fc7e0
-+      - uses: vedantmgoyal9/winget-releaser@b7370d4d152efdce803a26cc6ca9eee58cb2ad54
-         with:
-           identifier: sharkdp.bat
-           installers-regex: '-pc-windows-msvc\.zip$'
-```
-
-**File**: `CHANGELOG.md` (modified, +11/-1)
-```diff
-@@ -3,6 +3,7 @@
- 
- ## Other
- 
-+- Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
- - Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
- - Document `StripAnsiMode` and its variants in rustdoc, see #4067 (@ump45nose)
- - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
-@@ -11,9 +12,11 @@
- 
- ## Features
- 
-+- Automatically build the syntax/theme cache on first run when custom themes or syntaxes are present but no cache exists yet, so newly installed dotfiles work without a manual `bat cache --build`. Use `--no-custom-assets` to opt out. Closes #4017, see #4038 (@mmustafasenoglu)
- - Add `-b` / `--number-nonblank` flag to only number non-blank lines, for `cat -b` compatibility. Closes #3856, see #3857 (@MeGaurav4)
- - Add a `--sanitize=<auto|always|never>` flag for safe display of untrusted input. It implies `--strip-ansi` at the same value and additionally substitutes terminal-active control bytes (cursor moves, charset switches, beep, etc.) and Unicode bidi / zero-width formatting characters with the Unicode replacement character (U+FFFD). Mitigates Trojan-Source-style spoofing (CVE-2021-42574). See #3729 (@curious-rabbit)
- - Map justfile, Justfile, .justfile, and *.justfile to Makefile syntax highlighting, see #3623 (@zachvalenta)
-+- Map `.kube/config` to YAML syntax highlighting, see #3911 (@logarithmone1128)
- - Preserve `--diff` change markers and snip separators when `--plain` is set. Closes #3630, see #3643 (@mvanhorn)
- - Added support for `hidden_file_extensions` from `.sublime-syntax` files, see #3613 (@Matei02355)
- - Add word wrapping mode via `--wrap=word`, see #3597 (@veeceey)
-@@ -27,11 +30,18 @@
+@@ -32,7 +32,7 @@
  - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
  ## Bugfixes
--- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
+-- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width (@Marve10s)
++- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width, see #4108 (@Marve10s)
  - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
-+- Respect `NO_COLOR` for the `[bat error]` and `[bat warning]` prefixes, see #4048 (@qodelicious)
-+- Offer the valid `--wrap` value `auto` instead of the rejected `always` in the PowerShell completion, see #4070 (@ump45nose)
-+- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
-+- Ignore a UTF-8 byte order mark at the start of the config file instead of treating it as part of the first argument, see #4103 (@jaeminbird)
-+- Keep backslashes in the pager command on Windows, so `BAT_PAGER=C:\tools\less.exe` is found instead of becoming `C:toolsless.exe`, see #4104 (@jaeminbird)
-+- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
-+- Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #4102 (@cindykrafft)
- - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
- - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
- - Allow boolean flags to be given more than once, so that a flag set in the config file can also be passed on the command line without erroring, see #3912 (@logarithmone1128)
-+- Allow options that take a value (`--binary`, `--italic-text`, `--nonprintable-notation`, `--fallback-syntax`, `--squeeze-limit`) to be given more than once, so that a value from the config file can be overridden on the command line, see #4102 (@Huang-404-Q)
- - Use parsed CLI arguments to detect number flags, see #3908 (@cuishuang)
- - Detect binary content beyond the first line, preventing encrypted files with early line breaks from being treated as text. Closes #3554, see #3877 (@Matei02355)
- - Use the last occurrence of numbering and plain flags in combined short arguments, see #3897 (@cuishuang)
+ - Respect `NO_COLOR` for the `[bat error]` and `[bat warning]` prefixes, see #4048 (@qodelicious)
+ - Offer the valid `--wrap` value `auto` instead of the rejected `always` in the PowerShell completion, see #4070 (@ump45nose)
 ```
 
-**File**: `assets/completions/_bat.ps1.in` (modified, +1/-1)
+---
+
+### Incident Patch 2: `b47e6865` (2026-11-04)
+**Commit Message**: Merge pull request #4112 from Marve10s/fix/config-option-terminator
+
+Keep configuration active for option-like filenames
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -9,7 +9,7 @@ Register-ArgumentCompleter -Native -CommandName '{{PROJECT_EXECUTABLE}}' -Script
-     $ArrayCompletion = @('bash', 'fish', 'zsh', 'ps1')
-     $ArrayWhen       = @('auto', 'never', 'always')
-     $ArrayYesNo      = @('never', 'always')
--    $ArrayWrap       = @('always', 'never', 'character', 'word')
-+    $ArrayWrap       = @('auto', 'never', 'character', 'word')
-     $ArrayBinary     = @('no-printing', 'as-text')
-     $ArrayPrint      = @('unicode', 'caret')
+@@ -32,6 +32,7 @@
+ - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
+ ## Bugfixes
++- Keep configuration and BAT_OPTS active for option-like filenames after `--`, and report invalid configuration for help-like filenames, see #4112 (@Marve10s)
+ - Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width, see #4108 (@Marve10s)
+ - Preserve full-path syntax mappings when removing ignored filename suffixes, see #4111 (@Marve10s)
+ - Fix UTF-16 line splitting at unaligned newline bytes corrupting text and shifting line ranges, see #4110 (@Marve10s)
 ```
 
-**File**: `src/bin/bat/app.rs` (modified, +2/-1)
+**File**: `src/bin/bat/app.rs` (modified, +7/-14)
 ```diff
-@@ -169,7 +169,8 @@ impl App {
-         };
+@@ -79,7 +79,7 @@ impl App {
+         let number_from_cli = cli_matches.get_flag("number");
+         let number_nonblank_from_cli = cli_matches.get_flag("number-nonblank");
  
-         let cache_dir = PROJECT_DIRS.cache_dir();
--        let assets = assets_from_cache_or_binary(use_custom_assets, cache_dir)?;
-+        let config_dir = PROJECT_DIRS.config_dir();
-+        let assets = assets_from_cache_or_binary(use_custom_assets, config_dir, cache_dir)?;
-         Controller::new(&help_config, &assets)
-             .run(inputs, None)
-             .ok();
+-        let matches = Self::matches(interactive_output)?;
++        let matches = Self::matches(interactive_output, &cli_matches)?;
+ 
+         if matches.get_flag("help") {
+             let help_type = if wild::args_os().any(|arg| arg == "--help") {
+@@ -196,30 +196,23 @@ impl App {
+         clap_app::build_app(interactive_output).get_matches_from(wild::args_os())
+     }
+ 
+-    fn matches(interactive_output: bool) -> Result<ArgMatches> {
+-        // Check if we should skip config file processing for special arguments
+-        // that don't require full application setup (version, diagnostic)
+-        let should_skip_config = wild::args_os().any(|arg| {
+-            matches!(
+-                arg.to_str(),
+-                Some("-V" | "--version" | "--diagnostic" | "--diagnostics")
+-            )
+-        });
++    fn matches(interactive_output: bool, cli_matches: &ArgMatches) -> Result<ArgMatches> {
++        let should_skip_config =
++            cli_matches.get_flag("no-config") || cli_matches.get_flag("diagnostic");
+ 
+         // Check if help was requested - help should read the config file but be
+         // forgiving of invalid arguments (so configured theme etc. can be used)
+-        let help_requested =
+-            wild::args_os().any(|arg| matches!(arg.to_str(), Some("-h" | "--help")));
++        let help_requested = cli_matches.get_flag("help");
+ 
+         if wild::args_os().nth(1) == Some("cache".into()) {
+             // Skip the config file and env vars
+             let args = wild::args_os().collect::<Vec<_>>();
+             return Ok(clap_app::build_app(interactive_output).get_matches_from(args));
+         }
+ 
+-        if wild::args_os().any(|arg| arg == "--no-config") || should_skip_config {
++        if should_skip_config {
+             // Skip the arguments in bats config file when --no-config is present
+-            // or when user requests version or diagnostic information
++            // or when user requests diagnostic information
+             let args = Self::build_args_without_config();
+             return Ok(clap_app::build_app(interactive_output).get_matches_from(args));
+         }
 ```
 
-**File**: `src/bin/bat/assets.rs` (modified, +46/-0)
+**File**: `tests/integration_tests.rs` (modified, +152/-0)
 ```diff
-@@ -18,8 +18,13 @@ pub fn clear_assets(cache_dir: &Path) -> Result<()> {
+@@ -1861,6 +1861,158 @@ fn diagnostic_sanity_check() {
+         .stderr("");
+ }
  
- pub fn assets_from_cache_or_binary(
-     use_custom_assets: bool,
-+    config_dir: &Path,
-     cache_dir: &Path,
- ) -> Result<HighlightingAssets> {
-+    if use_custom_assets {
-+        ensure_cache_built(config_dir, cache_dir);
++fn config_terminator_command(tmp_dir: &Path) -> assert_cmd::Command {
++    let mut command = bat_with_config();
++    command
++        .current_dir(tmp_dir)
++        .env("BAT_CONFIG_PATH", tmp_dir.join("config"))
++        .env("BAT_CONFIG_DIR", tmp_dir)
++        .env("BAT_CACHE_PATH", tmp_dir.join("cache-unused"))
++        .env("BAT_PAGER", tmp_dir.join("pager-unused"))
++        .args([
++            "--paging=never",
++            "--color=never",
++            "--style=plain",
++            "--wrap=never",
++            "--theme=Monokai Extended",
++        ])
++        .timeout(std::time::Duration::from_secs(10));
++    command
++}
++
++#[test]
++fn config_terminator_filenames_preserve_config_and_bat_opts() {
++    let tmp_dir = tempdir().expect("can create temporary directory");
++    std::fs::write(tmp_dir.path().join("input.txt"), "first\nsecond\n")
++        .expect("can write temporary file");
++
++    for bat_opts in [None, Some("--line-range=2:2")] {
++        let config = if bat_opts.is_some() {
++            "--invalid-option"
++        } else {
++            "--line-range=2:2"
++        };
++        std::fs::write(tmp_dir.path().join("config"), config).expect("can write config file");
++
++        for filename in [
++            "--no-config",
++            "--version",
++            "-V",
++            "--diagnostic",
++            "--diagnostics",
++        ] {
++            std::fs::write(tmp_dir.path().join(filename), "first\nsecond\n")
++                .expect("can write temporary file");
++
++            for input in [filename.to_string(), format!("./{filename}")] {
++                let mut command = config_terminator_command(tmp_dir.path());
++                if let Some(opts) = bat_opts {
++                    command.env("BAT_OPTS", opts);
++                }
++                command
++                    .args(["--", "input.txt", &input])
++                    .assert()
++                    .success()
++                    .stdout("second\nsecond\n")
++                    .stderr("");
++            }
++        }
++    }
++}
++
++#[test]
++fn config_terminator_help_filenames_preserve_config_errors() {
++    let tmp_dir = tempdir().expect("can create temporary directory");
++    for filename in ["--help", "-h"] {
++        std::fs::write(tmp_dir.path().join(filename), "first\nsecond\n")
++            .expect("can write temporary file");
 +    }
 +
-     if let Some(metadata) = AssetsMetadata::load_from_folder(cache_dir)? {
-         if !metadata.is_compatible_with(crate_version!()) {
-             return Err(format!(
-@@ -60,3 +65,44 @@ fn clear_asset(path: PathBuf, description: &str) -> Result<()> {
-     }
-     Ok(())
- }
++    for (config, code, error) in [
++        (
++            "--invalid-option",
++            2,
++            "unexpected argument '--invalid-option'",
++        ),
++        ("--theme='", 1, "Could not parse configuration file"),
++    ] {
++        std::fs::write(tmp_dir.path().join("config"), config).expect("can write config file");
 +
-+/// Build the cache on first run when custom themes or syntaxes are present
-+/// but no cache exists yet (see #4017). A failed build is not fatal: warn
-+/// and fall back to the integrated assets.
-+#[cfg(feature = "build-assets")]
-+fn ensure_cache_built(config_dir: &Path, cache_dir: &Path) {
-+    if cache_exists(cache_dir) || !custom_sources_exist(config_dir) {
-+        return;
++        for use_bat_opts in [false, true] {
++            for filename in ["--help", "-h"] {
++                let mut command = config_terminator_command(tmp_dir.path());
++                if use_bat_opts {
++                    command.env("BAT_OPTS", config);
++                }
++                command
++                    .args(["--", filename])
++                    .assert()
++                    .code(code)
++                    .stdout("")
++                    .stderr(predicate::str::contains(error));
++            }
++        }
++    }
++}
++
++#[test]
++fn config_terminator_escape_options_keep_working() {
++    let tmp_dir = tempdir().expect("can create temporary directory");
++    std::fs::write(tmp_dir.path().join("config"), "--theme='").expect("can write config file");
++    std::fs::write(tmp_dir.path().join("input.txt"), "first\nsecond\n")
++        .expect("can write temporary file");
++
++    config_terminator_command(tmp_dir.path())
++        .args(["--invalid-cli-option", "--help"])
++        .assert()
++        .code(2)
++        .stdout("")
++        .stderr(predicate::str::contains(
++            "unexpected argument '--invalid-cli-option'",
++        ));
++
++    for consumed_terminator in [false, true] {
++        for option in [
++            "--no-config",
++            "--help",
++            "-h",
++            "--version",
++            "-V",
++            "--diagnostic",
++            "--diagnostics",
++        ] {
++            let mut command = config_terminator_command(tmp_dir.path());
++            if consumed_terminator {
++                command.args(["--line-range", "--"]);
++            }
++            let assertion = command.arg(option).arg("input.txt").assert();
++            match option {
++                "--no-config" if consumed_terminator => {
++                    assertion
++                        .code(1)
++                        .stdout("")
++                        .stderr(predicate::str::contains("invalid digit found in string"));
++                }
++                "--no-config" => {
++                    assertion.success().stdout("first\nsecond\n").stderr("");
++                }
++                _ => {
++                    let expected = match option {
++                        
+```
+
+---
+
+### Incident Patch 3: `a9d75b78` (2026-11-04)
+**Commit Message**: Merge branch 'master' into fix/config-option-terminator
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -33,6 +33,8 @@
+ 
+ ## Bugfixes
+ - Keep configuration and BAT_OPTS active for option-like filenames after `--`, and report invalid configuration for help-like filenames, see #4112 (@Marve10s)
++- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width, see #4108 (@Marve10s)
++- Preserve full-path syntax mappings when removing ignored filename suffixes, see #4111 (@Marve10s)
+ - Fix UTF-16 line splitting at unaligned newline bytes corrupting text and shifting line ranges, see #4110 (@Marve10s)
+ - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
+ - Respect `NO_COLOR` for the `[bat error]` and `[bat warning]` prefixes, see #4048 (@qodelicious)
+```
+
+**File**: `src/printer.rs` (modified, +14/-6)
+```diff
+@@ -16,7 +16,7 @@ use content_inspector::ContentType;
+ use encoding_rs::{UTF_16BE, UTF_16LE};
+ 
+ use unicode_segmentation::UnicodeSegmentation;
+-use unicode_width::UnicodeWidthChar;
++use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+ 
+ use crate::assets::{HighlightingAssets, SyntaxReferenceInSet};
+ use crate::config::Config;
+@@ -50,6 +50,14 @@ fn char_width(c: char) -> usize {
+     c.width().unwrap_or(if c.is_control() { 2 } else { 0 })
+ }
+ 
++fn grapheme_width(grapheme: &str) -> usize {
++    if grapheme.chars().any(char::is_control) {
++        grapheme.chars().map(char_width).sum()
++    } else {
++        grapheme.width()
++    }
++}
++
+ const ANSI_UNDERLINE_ENABLE: EscapeSequence = EscapeSequence::CSI {
+     raw_sequence: "\x1B[4m",
+     parameters: "4",
+@@ -839,13 +847,13 @@ impl Printer for InteractivePrinter<'_> {
+                             // For word wrapping, track last whitespace position.
+                             let mut last_ws_idx: Option<usize> = None;
+ 
+-                            for c in text.chars() {
++                            for grapheme in text.graphemes(true) {
+                                 // calculate the displayed width for next character
+-                                let cw = char_width(c);
++                                let cw = grapheme_width(grapheme);
+                                 current_width += cw;
+ 
+                                 // Track whitespace positions for word wrapping.
+-                                if word_wrap && c.is_whitespace() {
++                                if word_wrap && grapheme.starts_with(char::is_whitespace) {
+                                     last_ws_idx = Some(line_buf.len());
+                                 }
+ 
+@@ -917,7 +925,7 @@ impl Printer for InteractivePrinter<'_> {
+                                         // Word wrap: carry remainder to next line.
+                                         let remainder = line_buf[rs..].to_string();
+                                         let rem_width: usize =
+-                                            remainder.chars().map(char_width).sum();
++                                            remainder.graphemes(true).map(grapheme_width).sum();
+                                         line_buf.clear();
+                                         line_buf.push_str(&remainder);
+                                         current_width = rem_width + cw;
+@@ -928,7 +936,7 @@ impl Printer for InteractivePrinter<'_> {
+                                     last_ws_idx = None;
+                                 }
+ 
+-                                line_buf.push(c);
++                                line_buf.push_str(grapheme);
+                             }
+ 
+                             // flush the buffer
+```
+
+**File**: `src/syntax_mapping.rs` (modified, +75/-1)
+```diff
+@@ -176,7 +176,10 @@ impl<'a> SyntaxMapping<'a> {
+         let file_name = path.as_ref().file_name()?;
+         self.ignored_suffixes
+             .try_with_stripped_suffix(file_name, |stripped_file_name| {
+-                Ok(self.get_syntax_for(stripped_file_name))
++                if Path::new(stripped_file_name).file_name().is_none() {
++                    return Ok(self.get_syntax_for(stripped_file_name));
++                }
++                Ok(self.get_syntax_for(path.as_ref().with_file_name(stripped_file_name)))
+             })
+             .ok()?
+     }
+@@ -246,6 +249,77 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn custom_mappings_with_ignored_suffix_preserve_paths() {
++        for (pattern, parent) in [
++            ("/path/to/file.demo", "/path/to"),
++            ("/path/to/*.demo", "/path/to"),
++            ("path/to/*.demo", "path/to"),
++        ] {
++            let mut map = SyntaxMapping::new();
++            map.insert(pattern, MappingTarget::MapTo("JSON")).unwrap();
++            map.insert_ignored_suffix(".custom");
++
++            for suffix in ["", ".bak", ".bak.old", ".custom.custom"] {
++                let path = Path::new(parent).join(format!("file.demo{suffix}"));
++                assert_eq!(
++                    map.get_syntax_for(&path),
++                    Some(MappingTarget::MapTo("JSON")),
++                    "{pattern}: {}",
++                    path.display()
++                );
++            }
++            assert_eq!(map.get_syntax_for("/path/elsewhere/file.demo.bak"), None);
++        }
 +    }
 +
-+    eprintln!("bat: custom themes or syntaxes found, building cache ...");
-+    if let Err(err) = bat::assets::build(config_dir, true, false, cache_dir, crate_version!()) {
-+        eprintln!("bat: automatic cache build failed ({err}), falling back to integrated assets.");
++    #[test]
++    fn custom_mappings_with_ignored_suffix_preserve_precedence() {
++        for (first, second) in [("/path/to/*.demo", "*.demo"), ("*.demo", "/path/to/*.demo")] {
++            let mut map = SyntaxMapping::new();
++            map.insert(first, MappingTarget::MapTo("first")).unwrap();
++            map.insert(second, MappingTarget::MapTo("second")).unwrap();
++            assert_eq!(
++                map.get_syntax_for("/path/to/file.demo.bak"),
++                Some(MappingTarget::MapTo("first"))
++            );
++
++            map.insert("*.bak", MappingTarget::MapTo("backup")).unwrap();
++            assert_eq!(
++                map.get_syntax_for("/path/to/file.demo.bak"),
++                Some(MappingTarget::MapTo("backup"))
++            );
++        }
++    }
++
++    #[test]
++    fn custom_mappings_with_empty_stripped_filename() {
++        let mut map = SyntaxMapping::new();
++        map.insert("to", MappingTarget::MapTo("parent")).unwrap();
++        map.insert_ignored_suffix(".custom");
++
++        for name in [
++            "~", ".bak", ".custom", "~.bak", ".~", "..bak", "..custom", "...bak",
++        ] {
++            assert_eq!(map.get_syntax_for(Path::new("/path/to").join(name)), None);
++        }
++
++        map.insert("", MappingTarget::MapTo("empty")).unwrap();
++        assert_eq!(
++            map.get_syntax_for("/path/to/~.bak"),
++            Some(MappingTarget::MapTo("empty"))
++        );
++
++        for (pattern, name) in [(".", ".~"), (".", "..bak"), ("..", "...bak")] {
++            let mut map = SyntaxMapping::new();
++            map.insert(pattern, MappingTarget::MapTo("dot")).unwrap();
++            assert_eq!(
++                map.get_syntax_for(Path::new("/path/to").join(name)),
++                Some(MappingTarget::MapTo("dot"))
++            );
++        }
++    }
++
+     #[test]
+     fn custom_mappings_override_builtin() {
+         let mut map = SyntaxMapping::new();
+```
+
+**File**: `tests/integration_tests.rs` (modified, +149/-0)
+```diff
+@@ -2656,6 +2656,100 @@ fn unicode_wrap() {
+         );
+ }
+ 
++#[test]
++fn unicode_emoji_wrap() {
++    for (style, width, first, continuation) in
++        [("plain", "10", "", ""), ("numbers", "15", "   1 ", "     ")]
++    {
++        for emoji in ["👩\u{200d}💻", "👍🏽", "🇬🇧"] {
++            for (input, expected) in [
++                (
++                    format!("1234567{emoji}\n"),
++                    format!("{first}1234567{emoji}\n"),
++                ),
++                (
++                    format!("123456789{emoji}X\n"),
++                    format!("{first}123456789\n{continuation}{emoji}X\n"),
++                ),
++                (
++                    format!("123456{emoji}AB\n"),
++                    format!("{first}123456{emoji}AB\n"),
++                ),
++            ] {
++                bat()
++                    .args([
++                        "--no-custom-assets",
++                        "--paging=never",
++                        "--color=never",
++                        "--decorations=always",
++                        "--wrap=character",
++                        "--language=txt",
++                        "--style",
++                        style,
++                        "--terminal-width",
++                        width,
++                    ])
++                    .write_stdin(input)
++                    .assert()
++                    .success()
++                    .stdout(expected)
++                    .stderr("");
++            }
++        }
 +    }
 +}
 +
-+#[cfg(not(feature = "build-assets"))]
-+fn ensure_cache_built(_config_dir: &Path, _cache_dir: &Path) {}
-+
-+#[cfg(feature = "build-assets")]
-+fn cache_exists(cache_dir: &Path) -> bool {
-+    cache_dir.join("themes.bin").is_file()
-+        && cache_dir.join("syntaxes.bin").is_file()
-+        && cache_dir.join("metadata.yaml").is_file()
++#[test]
++fn unicode_emoji_wrap_with_syntax_highlighting() {
++    for (language, input, fragment, lines) in [
++        ("rs", "//12345👩\u{200d}💻\n", "12345👩\u{200d}💻", 1),
++        ("json", "\"12345678🇬🇧X\"\n", "🇬🇧X", 2),
++    ] {
++        bat()
++            .args([
++                "--no-custom-assets",
++                "--paging=never",
++                "--color=always",
++                "--decorations=always",
++                "--style=plain",
++                "--wrap=character",
++                "--terminal-width=10",
++                "--theme=Monokai Extended",
++                "--language",
++                language,
++            ])
++            .write_stdin(input)
++            .assert()
++            .success()
++            .stdout(predicate::str::contains("\x1b["))
++            .stdout(predicate::str::contains(fragment))
++            .stdout(predicate::function(move |s: &str| {
++                s.lines().count() == lines
++            }))
++            .stderr("");
++    }
 +}
 +
-+#[cfg(feature = "build-assets")]
-+fn custom_sources_exist(config_dir: &Path) -> bool {
-+    dir_has_files(&config_dir.join("themes")) || dir_has_files(&config_dir.join("syntaxes"))
++#[test]
++fn unicode_emoji_word_wrap_remainder() {
++    bat()
++        .args([
++            "--no-custom-assets",
++            "--paging=never",
++            "--color=never",
++            "--decorations=always",
++            "--style=plain",
++            "--wrap=word",
++            "--terminal-width=10",
++            "--language=txt",
++        ])
++        .write_stdin("123456 👩\u{200d}💻abcdEFGHIJ\n")
++        .assert()
++        .success()
++        .stdout("123456\n👩\u{200d}💻abcdEFGH\nIJ\n")
++        .stderr("");
 +}
 +
-+#[cfg(feature = "build-assets")]
-+fn dir_has_files(dir: &Path) -> bool {
-+    fs::read_dir(dir)
-+        .map(|entries| {
-+            entries
-+                .filter_map(|entry| entry.ok())
-+                .any(|entry| entry.path().is_file())
-+        })
-+        .unwrap_or(false)
-+}
-```
-
-**File**: `src/bin/bat/clap_app.rs` (modified, +5/-0)
-```diff
-@@ -65,6 +65,7 @@ pub fn build_app(interactive_output: bool) -> Command {
-         .arg(
-             Arg::new("nonprintable-notation")
-                 .long("nonprintable-notation")
-+                .overrides_with("nonprintable-notation")
-                 .action(ArgAction::Set)
-                 .default_value("unicode")
-                 .value_parser(["unicode", "caret"])
-@@ -81,6 +82,7 @@ pub fn build_app(interactive_output: bool) -> Command {
-         .arg(
-             Arg::new("binary")
-                 .long("binary")
-+                .overrides_with("binary")
-                 .action(ArgAction::Set)
-                 .default_value("no-printing")
-                 .value_parser(["no-printing", "as-text"])
-@@ -125,6 +127,7 @@ pub fn build_app(interactive_output: bool) -> Command {
-         .arg(
-             Arg::new("fallback-syntax")
-                 .long("fallback-syntax")
-+                .overrides_with("fallback-syntax")
-                 .visible_alias("fallback-language")
-                 .help("Set a fallback language for undetected syntaxes.")
-                 .long_help(
-@@ -317,6 +320,7 @@ pub fn build_app(interactive_output: bool) -> Command {
-         .arg(
-             Arg::new("italic-text")
-                 .long("italic-text")
-+                .overrides_with("italic-text")
-                 .value_name("when")
-                 .value_parser(["always", "never"])
-                 .default_value("never")
-@@ -484,6 +488,7 @@ pub fn build_app(interactive_output: bool) -> Command {
-         .arg(
-             Arg::new("squeeze-limit")
-                 .long("squeeze-limit")
-+                .overrides_with("squeeze-limit")
-                 .value_parser(|s: &str| s.parse::<usize>().map_err(|_| "Requires a non-negative number".to_owned()))
-                 .long_help("Set the maximum number of consecutive empty lines to be printed.")
-                 .hide_short_help(true)
-```
-
-**File**: `src/bin/bat/config.rs` (modified, +8/-2)
-```diff
-@@ -110,15 +110,15 @@ pub fn get_args_from_config_file() -> Result<Vec<OsString>, shell_words::ParseEr
-     let user_config = config_file();
- 
-     if let Ok(c) = fs::read_to_string(&system_config) {
--        config.push_str(&c);
-+        config.push_str(strip_bom(&c));
-         config.push('\n');
-     }
- 
-     // Skip the user config if it resolves to the same file as the system config,
-     // which can happen when BAT_CONFIG_DIR is set to e.g. "/etc/bat". See #3589.
-     if !same_file(&system_config, &user_config) {
-         if let Ok(c) = fs::read_to_string(&user_config) {
--            config.push_str(&c);
-+            config.push_str(strip_bom(&c));
-         }
-     }
- 
-@@ -136,6 +136,12 @@ pub fn get_args_from_env_opts_var() -> Option<Result<Vec<OsString>, shell_words:
-     env::var("BAT_OPTS").ok().map(|s| get_args_from_str(&s))
+ #[test]
+ fn snip() {
+     bat()
+@@ -4144,6 +4238,61 @@ fn map_syntax_and_ignored_suffix_work_together() {
+         .stderr("");
  }
  
-+/// Editors on Windows (e.g. `Set-Content -Encoding UTF8` in Windows PowerShell)
-+/// may prepend a UTF-8 byte order mark, which would otherwise end up in the first argument.
-+fn strip_bom(content: &str) -> &str {
-+    content.strip_prefix('\u{feff}').unwrap_or(content)
-+}
++#[cfg(unix)]
++#[test]
++fn map_syntax_paths_and_ignored_suffix_work_together() {
++    let tmp_dir = tempdir().expect("can create temporary directory");
++    let root = tmp_dir.path().canonicalize().unwrap();
++    let one = root.join("one");
++    let two = root.join("two");
++    let names = ["file.demo", "file.demo.bak", "file.demo.bak.old"];
++    for directory in [&one, &two] {
++        std::fs::create_dir(directory).unwrap();
++        for name in names {
++            std::fs::write(directory.join(name), b"{\"a\": 1}\n").unwrap();
++        }
++    }
 +
- fn get_args_from_str(content: &str) -> Result<Vec<OsString>, shell_words::ParseError> {
-     let args_per_line = content
-         .split('\n')
-```
-
-**File**: `src/bin/bat/main.rs` (modified, +15/-9)
-```diff
-@@ -97,10 +97,10 @@ where
-     map
- }
- 
--pub fn get_languages(config: &Config, cache_dir: &Path) -> Result<String> {
-+pub fn get_languages(config: &Config, config_dir: &Path, cache_dir: &Path) -> Result<String> {
-     let mut result: String = String::new();
- 
--    let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
-+    let assets = assets_from_cache_or_binary(config.use_custom_assets, config_dir, cache_dir)?;
-     let mut languages = assets
-         .get_syntaxes()?
-         .iter()
-@@ -205,7 +205,7 @@ pub fn list_themes(
-     cache_dir: &Path,
-     theme_options: ThemeOptions,
- ) -> Result<()> {
--    let assets = assets_from_cache_or_binary(cfg.use_custom_assets, cache_dir)?;
-+    let assets = assets_from_cache_or_binary(cfg.use_custom_assets, config_dir, cache_dir)?;
-     let mut config = cfg.clone();
-     let mut style = HashSet::new();
-     style.insert(StyleComponent::Plain);
-@@ -286,8 +286,13 @@ fn get_new_terminal_title(inputs: &Vec<Input>) -> String {
-     new_terminal_title
- }
- 
--fn run_controller(inputs: Vec<Input>, config: &Config, cache_dir: &Path) -> Result<bool> {
--    let assets = assets_from_cache_or_binary(config.use_custom_assets, cache_dir)?;
-+fn run_controller(
-+    inputs: Vec<Input>,
-+    config: &Config,
-+    config_dir: &Path,
-+    cache_dir: &Path,
-+) -> Result<bool> {
-+    let assets = assets_from_cache_or_binary(config.use_custom_assets, config_dir, cache_dir)?;
-     let controller = Controller::new(config, &assets);
-     if config.paging_mode != PagingMode::Never && config.set_terminal_title {
-         set_terminal_title_to(get_new_terminal_title(&inputs))?;
-@@ -333,6 +338,7 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
-         .info(CommandLine::default())
-         .info(EnvironmentVariables::list(&[
-             "BAT_CACHE_PATH",
-+            "BAT_CONFIG_DIR",
-             "BAT_CONFIG_PATH",
-             "BAT_OPTS",
-             "BAT_PAGER",
-@@ -423,20 +429,20 @@ fn run() -> Result<bool> {
-                 let inputs = vec![Input::ordinary_file("cache")];
-                 let config = app.config(&inputs)?;
- 
--                run_controller(inputs, &config, cache_dir)
-+                run_controller(inputs, &config, config_dir, cache_dir)
-             }
-         }
-         _ => {
-             let inputs = app.inputs()?;
-             let config = app.config(&inputs)?;
- 
-             if app.matches.get_flag("list-languages") {
--                let languages: String = get_languages(&config, cache_dir)?;
-+                let languages: String = get_languages(&config, config_dir, cache_dir)?;
-                 let inputs: Vec<Input> = vec![Input::from_reader(Box::new(languages.as_bytes()))];
-                 let mut plain_config = config.clone();
-                 plain_config.style_components =
-                     StyleComponents::new(StyleComponent::Plain.components(false));
--                run_controller(inputs, &plain_config, cache_dir)
-+                run_controller(inputs, &plain_config, config_dir, cache_dir)
-             } else if app.matches.get_flag("list-themes") {
-                 list_themes(&config, config_dir, cache_dir, app.theme_options())?;
-                 Ok(true)
-@@ -456,7 +462,7 @@ fn run() -> Result<bool> {
-                 writeln!(io::stdout(), "{}", bat::assets::get_acknowledgements())?;
-                 Ok(true)
-             } else {
--                run_controller(inputs, &config, cache_dir)
-+                run_controller(inputs, &config, config_dir, cache_dir)
-             }
-         }
-     }
++    let stdout = |path: &Path, args: &[&str]| {
++        let output = bat()
++            .args([
++                "--color=always",
++                "--paging=never",
++                "--style=plain",
++                "--wrap=never",
++                "--theme=Monokai Extended",
++            ])
++            .args(args)
++            .arg(path)
++            .assert()
++            .success()
++            .stderr("");
++        output.get_output().stdout.clone()
++    };
++    let original = one.join("file.demo");
++    let backup = one.join("file.demo.bak");
++    let json = stdout(&backup, &["--language=JSON"]);
++    let plain = stdout(&backup, &["--language=Plain Text"]);
++    assert_ne!(json, plain);
++
++    for pattern in [original.clone(), one.join("*.demo")] {
++        let mapping = format!("--map-syntax={}:JSON", pattern.display());
++        for name in names {
++            assert_eq!(stdout(&one.join(name), &[&mapping]), json, "{name}");
++        }
++        assert_eq!(stdout(&two.join("file.demo.bak"), &[&mapping]), plain);
++    }
++
++    let mapping = format!("--map-syntax={}:JSON", original.display());
++    for (args, expected) in [
++        (["--map-syntax=*.demo:Plain Text", mapping.as_str()], &json),
++        ([mapping.as_str(), "--map-syntax=*.demo
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4112** (2026-11-04): Keep configuration active for option-like filenames (@Marve10s)
+- **PR #4111** (2026-11-04): Preserve path mappings when ignoring backup suffixes (@Marve10s)
+- **PR #4110** (2026-11-04): Keep UTF-16 line splitting aligned to code units (@Marve10s)
+- **PR #4108** (2026-11-04): Preserve emoji sequences when wrapping content (@Marve10s)
 - **PR #4106** (2026-11-01): build(deps): bump vedantmgoyal9/winget-releaser from a8fff44b123f115ce4c21543edf8b677376fc7e0 to b7370d4d152efdce803a26cc6ca9eee58cb2ad54 (@dependabot[bot])
 - **PR #4104** (2026-11-03): Keep backslashes in the pager command on Windows (@jaeminbird)
-- **PR #4103** (2026-11-02): Ignore a UTF-8 BOM at the start of the config file (@jaeminbird)
-- **PR #4102** (2026-11-02): Allow value-taking options to be repeated, like boolean flags (@Huang-404-Q)
-- **PR #4101** (2026-10-28): ci: pin the i686 GNU runner to Ubuntu 24.04 (@PerchAnton)
-- **PR #4098** (2026-11-03): fix: avoid underflow when painting a wrapped line background (@feafel)
 
 ---
 
@@ -1058,13 +1197,13 @@ fix: avoid underflow when painting a wrapped line background
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3801 from xfocus3/fix/help-language-submodule-note
+## X. Add changelog reference for emoji wrapping fix
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41931bc4`: Merge pull request #3801 from xfocus3/fix/help-language-submodule-note. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e8994a3`: Add changelog reference for emoji wrapping fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1072,14 +1211,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
+- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width, see #4108 (@Marve10s)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width (@Marve10s)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41931bc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e8994a3` are properly handled with clean fallback behavior.

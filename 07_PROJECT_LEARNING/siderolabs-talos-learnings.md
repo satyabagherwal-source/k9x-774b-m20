@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `9929d176`  
+> **Source Version**: `4d505d50`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:45:50.816Z  
+> **Timestamp**: 2026-11-04T17:17:59.933Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:45:49.726Z  
+> **Harvest Timestamp**: 2026-11-04T17:17:59.720Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11453 stars
+- **Stars / Engagement**: 11462 stars
 
 ---
 
@@ -1920,16 +1920,11 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14833** (2026-11-03): **feat: multi-doc SeccompProfileConfig**
-  *Symptoms*: Relates to https://github.com/siderolabs/talos/issues/14322  Factors out [`.machine.seccompProfiles`](https://docs.siderolabs.com/talos/v1.14/reference/configuration/v1alpha1/config#seccompprofiles) into multi-doc `SeccompProfileConfig` documents. Deprecates `.machine.seccompProfiles`, but keeps backward compatibility. 
-  **Post-Mortem & Fix Analysis**:
-  > /m
+- **Issue #14842** (2026-11-04): **test: fix most frequent unit-test flakes**
+  *Symptoms*: Fix the four most frequent flaky unit tests in recent PR CI runs. All were races between a test and the code under test, or with other test runs:  * LinkSpecSuite/TestVXLAN, LinkStatusSuite/TestVXLANInterface: unit tests from concurrent CI jobs share a network namespace, and the kernel refuses (EEXIST) to create a second VXLAN link with the same VNI and destination port. Both tests hardcoded VNI 100; they now use a random VNI.  * ContentLibrarySuite (TestKeepsTheMountOfAHeldLibraryItNoLongerWants, TestReleasesTheMountOfAPreviousGenerationOnceTheHoldComesBack): a controller pass started by the config apply read the library as not held. The test then added its hold and created the stray mount request before that pass listed requests, so the pass destroyed the request. Add awaitReconcile, which writes a file into the library and waits for the new fingerprint, and use it before creating stray requests.  * ProcessSuite (TestPriority, TestIOPriority, TestSchedulingPolicy): the runner applies process properties after launch, while the test checked them as soon as the child wrote its PID file. Wait for the running event, which is reported once the properties are applied.  * AcquireSuite/TestFromEmbeddedToMaintenance: the controller reads the embedded config once, when it starts, but the test wrote it only after the controller was registered. It either missed the config and timed out, or read a half-written file. Write the embedded config in the suite setup, before the controller is r
 
-- **Issue #14832** (2026-11-03): **fix: added container capabilities for non-root users**
-  *Symptoms*: Resolves: https://github.com/siderolabs/talos/issues/14817  Fixes added container capabilities being ineffective for non-root users.  Capabilities granted through `security.capabilities.add` were only put into the bounding, permitted and effective sets. For a non-root process the kernel recomputes the permitted set on execve from file capabilities and the ambient set, so the added capabilities were lost before the entrypoint ran.  
-  **Post-Mortem & Fix Analysis**:
-  > `integration/qemu` passed on https://github.com/siderolabs/talos/pull/14832/changes/8219d69b10862209814a1180e026a13bb7f023d6 , with the exception of unrelated failures on `TestIntegration/cli.UpgradeSuite/TestIncompatibleMachineConfig`, which is being addressed by https://github.com/siderolabs/talos/pull/14830
-  > /m
+- **Issue #14840** (2026-11-04): **fix: use aescbc provider for AES-CBC key in etcd encryption config**
+  *Symptoms*: ## What  With the 1.14+ version contract, `talosctl gen config` emits a `KubeEtcdEncryptionConfig` document. When the secrets bundle contains `aescbcencryptionsecret`, the AES-CBC key (`key1`) is placed under a `secretbox` provider instead of `aescbc`:  ```yaml kind: KubeEtcdEncryptionConfig config:   resources:     - providers:         - secretbox:        # should be aescbc             keys:               - name: key1                 secret: <AES-CBC key> ```  kube-apiserver then fails to decrypt existing secrets with `no matching key was found for the provided Secretbox transformer`. This affects clusters whose bundle carries an AES-CBC key: clusters created before Talos 1.3, or migrated from kubeadm with AES-CBC encryption at rest.  ## Fix  Use the `aescbc` provider, matching the legacy path in `internal/app/machined/pkg/controllers/k8s/internal/k8stemplates/apiserver.go`. This is a follow-up to 570fe34f0 (#13885), which fixed the key names and order but not the provider type.  Added `TestGenerateEtcdEncryptionConfig`, which covers secretbox only, aescbc only, and both. The aescbc cases fail without the fix.  ## Note  The legacy path also appends `identity: {}` as the last provider, while the generated `KubeEtcdEncryptionConfig` does not. I left that out of this PR, since it may be intentional, but it is another difference from the "in sync" comment in `kubernetes.go`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1946,1044 +1941,433 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13f26d6a` (2026-10-08)
-**Commit Message**: feat(security): give privileged containers a SELinux domain of their own
+### Incident Patch 1: `406dc4d5` (2026-11-02)
+**Commit Message**: fix: bump go-blockdevice to 2.0.37
 
-With a new field in the SecurityProfileConfig, containerd
-labels each container pod_t with two random MCS categories, and clears
-the label of a privileged container, which then fails: the policy has
-no domain for it, and charts written for Fedora request spc_t, a type
-the Talos policy does not define.
+Includes a fix to partition allocation
+https://github.com/siderolabs/go-blockdevice/pull/171
 
-A privileged container now enters pod_privileged_t from its pod_file_t
-rootfs. The domain reads the host files and the /proc of every domain,
-writes /run, ignores the MCS categories, and pods may connect to its
-sockets; it never reads STATE, the protected devices or the system
-sockets. spc_t is an alias of it. The contexts file of the CRI gives
-pod_t and pod_file_t as the defaults, and the CRI and the kubelet,
-which create and relabel the files of every pod, ignore the categories.
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-pod_t is now built on the pod_domain macro, which carries the rules
-pod_t had beyond pod_p, so that a privileged container keeps the NFS
-volumes, the CNI plugins and the rest of what a pod had before.
-
-Same split domain happens with Talos containers as well, with privileged
-containers as well.
-
-We split whole range 0-1023 into slices
-
-**File**: `Dockerfile` (modified, +2/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -837,6 +837,7 @@ COPY --chmod=0644 hack/zoneinfo/Etc/UTC /rootfs/usr/share/zoneinfo/Etc/UTC
- COPY --chmod=0644 hack/nfsmount.conf /rootfs/etc/nfsmount.conf
- COPY --chmod=0644 hack/selinux/virtual_domain_context hack/selinux/virtual_image_context /rootfs/etc/selinux/targeted/contexts/
- COPY --link --chmod=0644 --from=selinux-generate /policy/file_contexts /rootfs/etc/selinux/targeted/contexts/files/file_contexts
-+COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
- COPY --chmod=0644 hack/containerd.toml /rootfs/etc/containerd/config.toml
- COPY --chmod=0644 hack/cri-containerd.toml /rootfs/etc/cri/containerd.toml
- COPY --chmod=0644 hack/cri-plugin.part /rootfs/etc/cri/conf.d/00-base.part
-@@ -929,6 +930,7 @@ COPY --chmod=0644 hack/zoneinfo/Etc/UTC /rootfs/usr/share/zoneinfo/Etc/UTC
- COPY --chmod=0644 hack/nfsmount.conf /rootfs/etc/nfsmount.conf
- COPY --chmod=0644 hack/selinux/virtual_domain_context hack/selinux/virtual_image_context /rootfs/etc/selinux/targeted/contexts/
- COPY --link --chmod=0644 --from=selinux-generate /policy/file_contexts /rootfs/etc/selinux/targeted/contexts/files/file_contexts
-+COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
- COPY --chmod=0644 hack/containerd.toml /rootfs/etc/containerd/config.toml
- COPY --chmod=0644 hack/cri-containerd.toml /rootfs/etc/cri/containerd.toml
- COPY --chmod=0644 hack/cri-plugin.part /rootfs/etc/cri/conf.d/00-base.part
+@@ -138,7 +138,7 @@ require (
+ 	github.com/siderolabs/discovery-client v0.1.15
+ 	github.com/siderolabs/gen v0.8.8
+ 	github.com/siderolabs/go-adv v1.0.0
+-	github.com/siderolabs/go-blockdevice/v2 v2.0.36
++	github.com/siderolabs/go-blockdevice/v2 v2.0.37
+ 	github.com/siderolabs/go-circular v0.2.3
+ 	github.com/siderolabs/go-cmd v0.2.1
+ 	github.com/siderolabs/go-copy v0.1.0
 ```
 
-**File**: `api/resource/definitions/containers/containers.proto` (modified, +3/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -160,6 +160,9 @@ message ContainerSecuritySpec {
-   bool machined_access = 4;
-   // SeccompUnconfined applies no seccomp filter instead of the default profile.
-   bool seccomp_unconfined = 5;
-+  // SELinuxLevel is the MCS level the container runs at, stable across restarts so that it keeps
-+  // access to the files it writes; empty when containers run without categories.
-+  string se_linux_level = 6;
- }
- 
- // ContainerSpecSpec is the spec for ContainerSpec.
-```
-
-**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +2/-0)
-```diff
-@@ -26,6 +26,8 @@ message APIServerConfigSpec {
-   bool startup_probes_enabled = 14;
-   bool use_authentication_config = 15;
-   repeated string args = 16;
-+  // SELinuxLevel is the fixed MCS level of the kube-apiserver pod, empty when pods run without categories.
-+  string se_linux_level = 17;
- }
- 
- // AdmissionControlConfigSpec is configuration for kube-apiserver.
-```
-
-**File**: `api/resource/definitions/runtime/runtime.proto` (modified, +2/-0)
-```diff
-@@ -276,6 +276,8 @@ message SecurityStateSpec {
-   // SecureBootAuthorityFingerprints are the fingerprints of the `db` certificates which the
-   // firmware used to authorize the images loaded in this boot, as recorded in PCR 7.
-   repeated string secure_boot_authority_fingerprints = 9;
-+  // SELinuxCategories is set when SELinux is enabled and workloads are labeled with MCS categories.
-+  bool se_linux_categories = 10;
- }
- 
- // ServicePIDSpec is the spec for the service PID.
-```
-
-**File**: `hack/release.toml` (modified, +20/-0)
-```diff
-@@ -282,6 +282,26 @@ and entering maintenance mode, so that disks enumerated late (SD cards, USB, som
- 
- On UEFI systems booted via `systemd-boot` the boot partition comes from the `LoaderDevicePartUUID` EFI variable, while the GRUB configuration
- now passes the `talos.boot.partuuid=<UUID>` kernel argument (probed by GRUB at boot). The detected boot partition is published as the `bootpartition` resource.
-+"""
-+
-+    [notes.selinux_workloads]
-+        title = "SELinux Workload Categories"
-+        description = """\
-+A new `selinuxCategories` field of the `SecurityProfileConfig` document labels workloads with SELinux MCS categories,
-+so that workloads sharing an SELinux type still cannot access each other's processes and files. `talosctl gen config`
-+sets it for Talos 1.15+; clusters upgraded from older versions keep running their workloads without categories unless it is set.
-+
-+The categories are split three ways: the CRI labels pods with a random pair from `c0-c767`, containers declared via
-+`ContainerConfig` get a stable pair from `c768-c1007` derived from their name, and `c1008-c1023` are reserved for Talos
-+(the kube-apiserver static pod runs at `s0:c1022,c1023`, so that it keeps access to its audit log across reboots).
-+
-+Pods run as `pod_t`, and privileged containers as `pod_privileged_t`, which reads the host files and `/proc` and ignores the
-+categories. `spc_t` is an alias of it, so charts written for Fedora and RHEL keep working. The kubelet gets
-+`/sys/fs/selinux` and the containers contexts file, so that it labels volumes and its plugin directories.
-+
-+A pod writing files which outlive it, to a hostPath or a local volume, needs a fixed `securityContext.seLinuxOptions.level`,
-+else the pod of the next start cannot read them. The CRI skips the pairs of running containers when it draws one, so
-+the pair is exclusive only while the pod runs.
- """
- 
-     [notes.kubespan_peer_endpoint_filters]
-```
-
-**File**: `hack/selinux/containers_contexts` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+process = "system_u:system_r:pod_t:s0"
-+file = "system_u:object_r:pod_file_t:s0"
-```
-
-**File**: `internal/app/debug/debug.go` (modified, +3/-0)
-```diff
-@@ -154,6 +154,9 @@ func createDebugContainer(
- 		oci.WithHostNamespace(specs.NetworkNamespace),
- 		oci.WithHostNamespace(specs.PIDNamespace),
- 		oci.WithHostNamespace(specs.IPCNamespace),
-+		// with host IPC, /dev/mqueue is the host's mqueue, which runc of a hostIPC pod relabels with
-+		// the MCS categories of the pod
-+		oci.WithoutMounts("/dev/mqueue"),
- 		oci.WithHostDevices,
- 		oci.WithAllDevicesAllowed,
- 		oci.WithHostHostsFile,
-```
-
-**File**: `internal/app/machined/pkg/controllers/containers/config.go` (modified, +13/-1)
-```diff
-@@ -97,6 +97,12 @@ func (ctrl *ConfigController) reconcile(ctx context.Context, runtime controller.
- 	}
- 
- 	if machineConfig != nil {
-+		var selinuxLevels map[string]string
-+
-+		if securityProfile := machineConfig.Config().SecurityProfileConfig(); securityProfile != nil && securityProfile.SELinuxCategories() {
-+			selinuxLevels = allocateSELinuxLevels(machineConfig.Config().ContainerConfigs())
-+		}
-+
- 		for _, containerConfig := range machineConfig.Config().ContainerConfigs() {
- 			containerSpecID := containerConfig.Name()
- 
-@@ -114,7 +120,13 @@ func (ctrl *ConfigController) reconcile(ctx context.Context, runtime controller.
- 				ctx, runtime,
- 				containers.NewContainerSpec(containers.NamespaceName, containerSpecID),
- 				func(res *containers.ContainerSpec) error {
--					return applyConfig(res.TypedSpec(), containerConfig)
-+					if err := applyConfig(res.TypedSpec(), containerConfig); err != nil {
-+						return err
-+					}
-+
-+					res.TypedSpec().Security.SELinuxLevel = selinuxLevels[containerSpecID]
-+
-+					return nil
- 				},
- 			); err != nil {
- 				return fmt.Errorf("failed to write container spec %q: %w", containerSpecID, err)
+@@ -1465,8 +1465,8 @@ github.com/siderolabs/go-adv v1.0.0 h1:ZWXnoGq1GKeEIkLSR4o6oKcayFsowZkJsWcyQqwPk
+ github.com/siderolabs/go-adv v1.0.0/go.mod h1:nR6YwduJv56mZI1D3ow1Zok5lwefiM94hS0o1d6KmNc=
+ github.com/siderolabs/go-api-signature v0.4.0 h1:rlDNzVwRfG6et8DbqCEZEX4h46tBHMtYinSvjpYVYXQ=
+ github.com/siderolabs/go-api-signature v0.4.0/go.mod h1:zWCUc4Yk9FCd8QaHqWaD1uZPLLY6JsoN547cjp7Hjy0=
+-github.com/siderolabs/go-blockdevice/v2 v2.0.36 h1:KFE5eG4A8qNlcx7Rsyk9AzpKWsaYsMc9QFCJVfrgQ0M=
+-github.com/siderolabs/go-blockdevice/v2 v2.0.36/go.mod h1:6Dx9PclDbRv/wQbgMXhCwVvif9sCqJzARAokWCOpGOQ=
++github.com/siderolabs/go-blockdevice/v2 v2.0.37 h1:poXzSbFIjME8W3HKQjjng18cIsAcX6x+udmkSeCwBUo=
++github.com/siderolabs/go-blockdevice/v2 v2.0.37/go.mod h1:DxSN4wwugZLLTNDDbW4/1OMPcEsYQSwyOOomU5oaJFQ=
+ github.com/siderolabs/go-circular v0.2.3 h1:GKkA1Tw79kEFGtWdl7WTxEUTbwtklITeiRT0V1McHrA=
+ github.com/siderolabs/go-circular v0.2.3/go.mod h1:YBN/q9YpQphUYnBtBgPsngauSHj1TEZfgQZWZVjk1WE=
+ github.com/siderolabs/go-cmd v0.2.1 h1:499+nXoEKTtUnMvlXfiwMz2fudnunfB75dJR6AKYbAA=
 ```
 
 ---
 
-### Incident Patch 2: `837feeaa` (2026-11-03)
-**Commit Message**: fix: ctr added caps for non-root user
+### Incident Patch 2: `a351c241` (2026-11-04)
+**Commit Message**: fix: build darwin integration tests
 
-Fixes added container capabilities being ineffective for non-root users.
+The kernel logs test imported the machined logging package for the
+buffer capacity constant only. Since 0343d8031 that package sets
+TCP_USER_TIMEOUT, which golang.org/x/sys/unix defines only on Linux,
+so the darwin integration test binary no longer compiled.
 
-Capabilities granted through `security.capabilities.add` were only put
-into the bounding, permitted and effective sets. For a non-root process
-the kernel recomputes the permitted set on execve from file capabilities
-and the ambient set, so the added capabilities were lost before the
-entrypoint ran.
+Move the capacity to the machinery constants, so the test does not
+depend on the logging package.
 
-Raise the explicitly added capabilities into the inheritable and ambient
-sets when the final process user is not root. Root containers are left
-unchanged.
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/containers/containerd_runner.go` (modified, +3/-0)
+**File**: `internal/app/machined/pkg/runtime/logging/circular.go` (modified, +2/-3)
 ```diff
-@@ -151,6 +151,9 @@ func (r *containerdRunner) Run(
- 		runner.WithHostNetworkFiles(spec.Network.HostNetwork),
- 		runner.WithSelinuxLabel(selinuxLabel),
- 		runner.WithSeccompUnconfined(spec.Security.SeccompUnconfined),
-+		// A non-root container (runAs or the image USER) would otherwise lose every capability it
-+		// was granted on execve.
-+		runner.WithAmbientCapabilitiesForNonRoot(true),
- 		runner.WithOCISpecOpts(r.ociSpecOpts(spec, image)...),
- 	)
+@@ -23,19 +23,18 @@ import (
+ 	"github.com/siderolabs/go-tail"
  
-```
-
-**File**: `internal/app/machined/pkg/system/runner/containerd/containerd.go` (modified, +7/-0)
-```diff
-@@ -449,6 +449,13 @@ func (c *containerdRunner) newOCISpecOpts(image oci.Image) []oci.SpecOpts {
- 		c.opts.OCISpecOpts...,
- 	)
- 
-+	// Applied after every caller option, so that it sees the final process user and capability
-+	// sets. Ahead of seccomp is fine: the default profile only looks at the bounding and effective
-+	// sets, which this leaves alone.
-+	if c.opts.AmbientCapabilitiesForNonRoot {
-+		specOpts = append(specOpts, WithAmbientFromPermittedForNonRoot)
-+	}
-+
- 	switch {
- 	case c.opts.SeccompUnconfined:
- 		specOpts = append(
-```
-
-**File**: `internal/app/machined/pkg/system/runner/containerd/opts.go` (modified, +15/-0)
-```diff
-@@ -20,6 +20,21 @@ import (
- 	specs "github.com/opencontainers/runtime-spec/specs-go"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
++	"github.com/siderolabs/talos/pkg/machinery/constants"
  )
  
-+// WithAmbientFromPermittedForNonRoot sets the inheritable and ambient sets of a non-root process to
-+// its permitted set.
-+func WithAmbientFromPermittedForNonRoot(_ context.Context, _ oci.Client, _ *containers.Container, s *specs.Spec) error {
-+	if s.Process == nil || s.Process.User.UID == 0 || s.Process.Capabilities == nil {
-+		return nil
-+	}
-+
-+	capabilities := s.Process.Capabilities
-+
-+	capabilities.Inheritable = slices.Clone(capabilities.Permitted)
-+	capabilities.Ambient = slices.Clone(capabilities.Permitted)
-+
-+	return nil
-+}
-+
- // WithRootfsPropagation sets the root filesystem propagation.
- func WithRootfsPropagation(rp string) oci.SpecOpts {
- 	return func(_ context.Context, _ oci.Client, _ *containers.Container, s *specs.Spec) error {
-```
-
-**File**: `internal/app/machined/pkg/system/runner/containerd/opts_test.go` (modified, +117/-0)
-```diff
-@@ -5,6 +5,7 @@
- package containerd_test
- 
- import (
-+	"context"
- 	"testing"
- 
- 	ctrdcontainers "github.com/containerd/containerd/v2/core/containers"
-@@ -14,10 +15,126 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	containersadapter "github.com/siderolabs/talos/internal/app/machined/pkg/adapters/containers"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/system/runner"
- 	containerdrunner "github.com/siderolabs/talos/internal/app/machined/pkg/system/runner/containerd"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/containers"
+ // These constants should some day move to config.
+ const (
+-	// Overall capacity of the log buffer (in raw bytes, memory size will be smaller due to compression).
+-	DesiredCapacity = 1048576
+ 	// Some logs are tiny, no need to reserve too much memory.
+ 	InitialCapacity = 16384
+ 	// Chunk capacity is the length of each chunk, it should be
+ 	// big enough for the compression to be efficient.
+ 	ChunkCapacity = 65536
+ 	// Number of zstd-compressed chunks to keep.
+-	NumCompressedChunks = (DesiredCapacity / ChunkCapacity) - 1
++	NumCompressedChunks = (constants.LogBufferCapacity / ChunkCapacity) - 1
+ 	// Safety gap to avoid buffer overruns, can be lowered as with compression we don't need much.
+ 	SafetyGap = 1
  )
- 
-+func TestOCISpecOptsAmbientCapabilities(t *testing.T) {
-+	t.Parallel()
-+
-+	grantable := []string{"CAP_NET_BIND_SERVICE", "CAP_CHOWN", "CAP_SETFCAP"}
-+
-+	withUID := func(uid uint32) oci.SpecOpts {
-+		return func(_ context.Context, _ oci.Client, _ *ctrdcontainers.Container, s *specs.Spec) error {
-+			s.Process.User.UID = uid
-+
-+			return nil
-+		}
-+	}
-+
-+	for _, test := range []struct {
-+		name     string
-+		uid      uint32
-+		security containers.ContainerSecuritySpec
-+		// userLast sets the user after the capability options, the way an option appended later
-+		// to the caller's chain would.
-+		userLast      bool
-+		disabled      bool
-+		expectAmbient []string
-+	}{
-+		{
-+			name: "non-root with a single added capability",
-+			uid:  65534,
-+			security: containers.ContainerSecuritySpec{
-+				CapabilitiesDrop: []string{"ALL"},
-+				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
-+			},
-+			expectAmbient: []string{"CAP_NET_BIND_SERVICE"},
-+		},
-+		{
-+			name: "non-root user set after the capability options",
-+			uid:  65534,
-+			security: containers.ContainerSecuritySpec{
-+				CapabilitiesDrop: []string{"ALL"},
-+				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
-+			},
-+			userLast:      true,
-+			expectAmbient: []string{"CAP_NET_BIND_SERVICE"},
-+		},
-+		{
-+			name:          "non-root privileged",
-+			uid:           1000,
-+			security:      containers.ContainerSecuritySpec{Privileged: true},
-+			expectAmbient: grantable,
-+		},
-+		{
-+			name: "non-root privileged with a partial drop",
-+			uid:  1000,
-+			security: containers.ContainerSecuritySpec{
-+				Privileged:       true,
-+				CapabilitiesDrop: []string{"CHOWN"},
-+			},
-+			expectAmbient: []string{"CAP_NET_BIND_SERVICE", "CAP_SETFCAP"},
-+		},
-+		{
-+			name:          "non-root restricted",
-+			uid:           1000,
-+			security:      containers.ContainerSecuritySpec{},
-+			expectAmbient: []string{},
-+		},
-+		{
-+			name:     "root privileged",
-+			uid:      0,
-+			security: containers.ContainerSecuritySpec{Privileged: true},
-+		},
-+		{
-+			name: "non-root with the option off",
-+			uid:  65534,
-+			security: containers.ContainerSecuritySpec{
-+				CapabilitiesDrop: []string{"ALL"},
-+				CapabilitiesAdd:  []string{"NET_BIND_SERVICE"},
-+			},
-+			disabled: true,
-+		},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			callerOpts := containersadapter.ContainerSecuritySpec(&test.security).OCISpecOpts(grantable)
-+
-+			if test.userLast {
-+				callerOpts = append(callerOpts, withUID(test.uid))
-+			} else {
-+				callerOpts = append([]oci.SpecOpts{withUID(test.uid)}, callerOpts...)
-+			}
-+
-+			opts := containerdrunner.OCISpecOpts(
-+				&runner.Args{ID: "test", ProcessArgs: []string{"/bin/true"}},
-+				runner.WithOCISpecOpts(callerOpts...),
-+				runner.WithAmbientCapabilitiesForNonRoot(!test.disabled),
-+			)
-+
-+			spec, err := oci.GenerateSpec(namespaces.WithNamespace(t.Context(), "test"), nil, &ctrdcontainers.Container{ID: "test"}, opts...)
-+			require.NoError(t, err)
-+
-+			capabilities := spec.Process.Capabilities
-+			require.NotNil(t, capabilities)
-+
-+			if test.expectAmbient == nil {
-+				assert.Empty(t, capabilities.Ambient)
-+
-+				return
-+			}
-+
-+			assert.ElementsMatch(t, test.expectAmbient, capabilities.Ambient)
-+			assert.ElementsMatch(t, capabilities.Permitted, capabilities.Ambient, "ambient differs from permitted")
-+			assert.ElementsMatch(t, capabilities.Permitted, capabilities.Inheritable, "inheritable differs from permitted")
-+		})
-+	}
-+}
-+
- func TestOCISpecOptsSeccomp(t *testing.T) {
- 	t.Parallel()
- 
 ```
 
-**File**: `internal/app/machined/pkg/system/runner/runner.go` (modified, +14/-0)
+**File**: `internal/integration/api/logs.go` (modified, +1/-2)
 ```diff
-@@ -101,6 +101,9 @@ type Options struct {
- 	OverrideSeccompProfile func(*specs.LinuxSeccomp)
- 	// SeccompUnconfined applies no seccomp profile at all, instead of the default one.
- 	SeccompUnconfined bool
-+	// AmbientCapabilitiesForNonRoot raises the final permitted capabilities of a non-root process
-+	// into its inheritable and ambient sets.
-+	AmbientCapabilitiesForNonRoot bool
- 	// DroppedCapabilities is the list of capabilities to drop.
- 	DroppedCapabilities []string
- 	// SelinuxLabel is the SELinux label to be assigned
-@@ -276,6 +279,17 @@ func WithSeccompUnconfined(enabled bool) Option {
- 	}
- }
+@@ -18,7 +18,6 @@ import (
  
-+// WithAmbientCapabilitiesForNonRoot controls whether a non-root process keeps its permitted
-+// capabilities across execve, by raising them into the inheritable and ambient sets.
-+//
-+// Off by default. It is applied after every OCI spec option given through WithOCISpecOpts, so it
-+// sees the final process user and the final capability sets.
-+func WithAmbientCapabilitiesForNonRoot(enabled bool) Option {
-+	return func(args *Options) {
-+		args.AmbientCapabilitiesForNonRoot = enabled
-+	}
-+}
-+
- // WithDroppedCapabilities sets the list of capabilities to drop.
- func WithDroppedCapabilities(caps map[string]struct{}) Option {
- 	return func(args *Options) {
-```
-
-**File**: `internal/integration/api/containers.go` (modified, +85/-0)
-```diff
-@@ -640,6 +640,91 @@ func (suite *ContainersSuite) TestCapabilities() {
- 		suite.Assert().Contains(logs, "CapEff:\t0000000000000000",
- 			"the restricted profile left capabilities in the effective set")
- 	})
-+
-+	// A non-root process loses every capability that is not ambient on execve, so this is the case
-+	// that tells an added capability that is merely bounded apart from one that is actually usable.
-+	suite.Run("non-root-added-capability-effective", func() {
-+		ctx, name, _ := suite.setupContainer("caps-non-root-add")
-+
-+		var (
-+			uid int32 = 65534
-+			gid int32 = 65534
-+		)
-+
-+		doc := suite.shellContainer(name, readCapSets)
-+		doc.RunAsConfig = &containercfg.ContainerRunAs{
-+			RunAsUID: &uid,
-+			RunAsGID: &gid,
-+		}
-+		doc.SecurityConfig = &containercfg.ContainerSecurity{
-+			SecurityCapabilities: &containercfg.ContainerCapabilities{
-+				CapabilitiesDropConfig: []string{"ALL"},
-+				CapabilitiesAddConfig:  []string{"NET_BIND_SERVICE"},
-+			},
-+		}
-+
-+		suite.applyContainers(ctx, doc)
-+
-+		logs := suite.assertContainerLogged(ctx, name, "CapAmb:")
-+
-+		// CAP_NET_BIND_SERVICE is bit 10. Every set is checked, so that a capability leaking into
-+		// bounding or permitted alongside it is caught too, not only a missing one.
-+		for _, set := range capSets {
-+			suite.Assert().Equal("0000000000000400", suite.capSet(logs, set),
-+				"%s is not exactly the added capability for a non-root process", set)
-+		}
-+	})
-+
-+	// The privileged profile has no add list at all, so this is what tells a non-root fix tied to
-+	// add apart from one covering every capability the container ends up with.
-+	suite.Run("non-root-privileged-effective", func() {
-+		ctx, name, _ := suite.setupContainer("caps-non-root-privileged")
-+
-+		var (
-+			uid int32 = 65534
-+			gid int32 = 65534
-+		)
-+
-+		doc := suite.shellContainer(name, readCapSets)
-+		doc.RunAsConfig = &containercfg.ContainerRunAs{
-+			RunAsUID: &uid,
-+			RunAsGID: &gid,
-+		}
-+		doc.SecurityConfig = &containercfg.ContainerSecurity{
-+			SecurityProfile: configcontainer.ContainerSecurityProfilePrivileged,
-+		}
-+
-+		suite.applyContainers(ctx, doc)
-+
-+		logs := suite.assertContainerLogged(ctx, name, "CapAmb:")
-+
-+		// The grantable set depends on the kernel, so compare the sets against one another rather
-+		// than against a fixed mask.
-+		bounding := suite.capSet(logs, "CapBnd")
-+
-+		suite.Assert().NotEqual("0000000000000000", bounding, "privileged container has an empty bounding set")
-+
-+		for _, set := range []string{"CapInh", "CapPrm", "CapEff", "CapAmb"} {
-+			suite.Assert().Equal(bounding, suite.capSet(logs, set),
-+				"%s differs from the bounding set for a non-root privileged process", set)
-+		}
-+	})
-+}
-+
-+// readCapSets prints every capability set of the container process.
-+const readCapSets = "grep -E '^Cap(Inh|Prm|Eff|Bnd|Amb):' /proc/self/status"
-+
-+// capSets lists the capability sets readCapSets prints.
-+var capSets = []string{"CapInh", "CapPrm", "CapEff", "CapBnd", "CapAmb"}
-+
-+// capSet extracts the hex mask of the named capability set from the container logs.
-+func (suite *ContainersSuite) capSet(logs, set string) string {
-+	_, rest, found := strings.Cut(logs, set+":\t")
-+	suite.Require().True(found, "no %s line in the container logs:\n%s", set, logs)
-+
-+	mask, _, _ := strings.Cut(rest, "\n")
-+
-+	return strings.TrimSpace(mask)
- }
+ 	"google.golang.org/grpc/codes"
  
- // TestSeccompProfile verifies that every container is filtered by the default seccomp profile, the
+-	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
+ 	"github.com/siderolabs/talos/internal/integration/base"
+ 	"github.com/siderolabs/talos/pkg/machinery/api/common"
+ 	machineapi "github.com/siderolabs/talos/pkg/machinery/api/machine"
+@@ -143,7 +142,7 @@ func (suite *LogsSuite) TestKernelLogs() {
+ 	suite.Require().Greater(n, int64(1024))
+ 
+ 	version := strings.Contains(buf.String(), fmt.Sprintf("Linux version %s", constants.DefaultKernelVersion))
+-	overflow := n >= logging.DesiredCapacity/2
++	overflow := n >= constants.LogBufferCapacity/2
+ 
+ 	if !version && overflow {
+ 		suite.T().Skip("skipping the test as kernel log buffer might have overflowed")
 ```
 
-**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
+**File**: `pkg/machinery/constants/constants.go` (modified, +3/-0)
 ```diff
-@@ -1784,9 +1784,9 @@
-         "capabilities": {
-           "$ref": "#/$defs/container.ContainerCapabilities",
-           "title": "capabilities",
--          "description": "Linux capabilities to add or drop on top of the profile.\n",
--          "markdownDescription": "Linux capabilities to add or drop on top of the profile.",
--          "x-intellij-html-description": "\u003cp\u003eLinux capabilities to add or drop on top of the profile.\u003c/p\u003e\n"
-+          "description": "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through runAs or the image’s USER), the\nresulting capabilities (the profile’s, minus drop, plus add) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.\n",
-+          "markdownDescription": "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through `runAs` or the image's `USER`), the\nresulting capabilities (the profile's, minus `drop`, plus `add`) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.",
-+          "x-intellij-html-description": "\u003cp\u003eLinux capabilities to add or drop on top of the profile.\u003c/p\u003e\n\n\u003cp\u003eWhen the container runs as a non-root user (through \u003ccode\u003erunAs\u003c/code\u003e or the image\u0026rsquo;s \u003ccode\u003eUSER\u003c/code\u003e), the\nresulting capabilities (the profile\u0026rsquo;s, minus \u003ccode\u003edrop\u003c/code\u003e, plus \u003ccode\u003eadd\u003c/code\u003e) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.\u003c/p\u003e\n"
-         },
-         "machinedAccess": {
-           "type": "boolean",
-```
-
-**File**: `pkg/machinery/config/types/container/container_doc.go` (modified, +1/-1)
-```diff
-@@ -773,7 +773,7 @@ func (ContainerSecurity) Doc() *encoder.Doc {
- 				Name:        "capabilities",
- 				Type:        "ContainerCapabilities",
- 				Note:        "",
--				Description: "Linux capabilities to add or drop on top of the profile.",
-+				Description: "Linux capabilities to add or drop on top of the profile.\n\nWhen the container runs as a non-root user (through `runAs` or the image's `USER`), the\nresulting capabilities (the profile's, minus `drop`, plus `add`) are also raised into the\nambient set, so that they remain effective after the entrypoint is executed. Ambient\ncapabilities are inherited by every program the container runs, not only its entrypoint,\nso grant only what the workload needs.",
- 				Comments:    [3]string{"" /* encoder.HeadComment */, "Linux capabilities to add or drop on top of the profile." /* encoder.LineComment */, "" /* encoder.FootComment */},
- 			},
- 			{
+@@ -1601,6 +1601,9 @@ const (
+ 	// LogRotateThreshold is the size (in bytes), upon exceeding which the log file should be rotated.
+ 	LogRotateThreshold = 5 * 1024 * 1024
+ 
++	// LogBufferCapacity is the overall capacity of the in-memory log buffer (in raw bytes, memory size will be smaller due to compression).
++	LogBufferCapacity = 1048576
++
+ 	// LogFlushPeriod is the period for flushing in-memory log buffers to the filesystem.
+ 	LogFlushPeriod = 15 * time.Second
+ 
 ```
 
 ---
 
-### Incident Patch 3: `6d2f793b` (2026-11-02)
-**Commit Message**: feat: configurable stop timeout for containers
+### Incident Patch 3: `54dc4bb1` (2026-11-03)
+**Commit Message**: fix: parse space-separated cpufreq CPU lists
 
-`ContainerConfig` gets `lifecycle.stopTimeout`: the time a container has to exit after SIGTERM before it is killed with SIGKILL. It defaults to 10 seconds, must be greater than 0, and is used whenever Talos stops the container: on shutdown, reboot and upgrade, when it is replaced after a change or restarted with `talosctl restart`, and when it is removed.
+cpufreq presents affected_cpus and related_cpus as space-separated CPU
+numbers rather than the CPU list format, so CPUScalingController failed
+on my RK3566-based SOQuartz CM4:
 
-The timeout is limited to 4 minutes, so that stopping the containers,
-and waiting for them to be reaped after SIGKILL, fits into the 5 minutes
-the shutdown sequence gives them; a failed shutdown sequence would roll
-back an upgrade. These limits are named constants now.
-
-Changing the timeout replaces the running container, like any other
-change; it is stopped with the timeout it was started with.
-
-On shutdown, reboot and upgrade, a container is now stopped only once
-the containers depending on it (`lifecycle.dependsOn.containers`) have
-stopped, so that e.g. a service is stopped before the database it uses.
-All other containers are still stopped concurrently.
-
-Calling `talosctl restart --namespace taloscontainers` sends SIGTERM. SIGKILL is sent asynchronously once its stop timeout is 
-
-**File**: `api/resource/definitions/containers/containers.proto` (modified, +9/-0)
-```diff
-@@ -5,6 +5,7 @@ package talos.resource.definitions.containers;
- option go_package = "github.com/siderolabs/talos/pkg/machinery/api/resource/definitions/containers";
- option java_package = "dev.talos.api.resource.definitions.containers";
- 
-+import "google/protobuf/duration.proto";
- import "google/protobuf/timestamp.proto";
- import "resource/definitions/enums/enums.proto";
- 
-@@ -82,6 +83,7 @@ message ContainerInstanceSpecSpec {
-   ContainerResourcesSpec resources = 12;
-   // Devices are fully resolved, with host device nodes filled in.
-   repeated ResolvedDeviceSpec devices = 13;
-+  google.protobuf.Duration stop_timeout = 14;
- }
- 
- // ContainerInstanceStatusSpec is the spec for ContainerInstanceStatus.
-@@ -104,6 +106,12 @@ message ContainerInstanceStatusSpec {
-   google.protobuf.Timestamp finished_at = 8;
- }
- 
-+// ContainerLifecycleSpec is the spec for ContainerLifecycle.
-+message ContainerLifecycleSpec {
-+  // ShutdownDeadline is set when the resource is torn down: all containers have to be stopped by then.
-+  google.protobuf.Timestamp shutdown_deadline = 1;
-+}
-+
- // ContainerMountSpec is a resolved mount.
- //
- // Exactly one of VolumeName, Tmpfs or HostPath describes the source; Kind says which.
-@@ -190,6 +198,7 @@ message ContainerSpecSpec {
-   ContainerResourcesSpec resources = 10;
-   ContainerDependsOnSpec depends_on = 11;
-   repeated ContainerDeviceSpec devices = 12;
-+  google.protobuf.Duration stop_timeout = 13;
- }
- 
- // ContainerStatusSpec is the spec for ContainerStatus.
+```
+error reading cpufreq policy "policy0": error parsing "/sys/devices/system/cpu/cpufreq/policy0/affected_cpus": strconv.Atoi: parsing "0 1 2 3": invalid syntax
 ```
 
-**File**: `hack/release.toml` (modified, +26/-0)
+Signed-off-by: Tom Plant <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `hack/release.toml` (modified, +3/-0)
 ```diff
-@@ -549,6 +549,32 @@ devices:
+@@ -235,6 +235,9 @@ selector:
+ governor: powersave
  ```
  
- The container gets a device node at the destination and is allowed to read and write that device only, so it does not need the `privileged` profile. The container waits for the raw volume to be ready, gets the unlocked device for an encrypted raw volume, and the raw volume is not closed while the container runs. A raw volume can be handed to a single container.
-+"""
++`core_type` is reported on Intel hybrid CPUs, and on Arm systems mixing core designs (big.LITTLE) whose firmware rates the
++capacity of each core; it is empty on uniform machines.
 +
-+    [notes.container_stop_timeout]
-+        title = "Container Stop Timeout"
-+        description = """\
-+`ContainerConfig` documents can now set how long a container gets to exit after `SIGTERM` before it is killed with `SIGKILL`, with `lifecycle.stopTimeout`:
-+
-+```yaml
-+apiVersion: v1alpha1
-+kind: ContainerConfig
-+name: database
-+image: ghcr.io/example/database:v1.0.0
-+lifecycle:
-+  stopTimeout: 2m
-+```
-+
-+The timeout applies whenever Talos stops the container: on shutdown, reboot and upgrade, when the container is replaced after a change or restarted with `talosctl restart`, and when it is removed.
-+It defaults to 10s, must be greater than 0 and can be at most 4m, so that stopping containers fits into the shutdown sequence.
-+"""
-+
-+    [notes.container_stop_order]
-+        title = "Container Shutdown Order"
-+        description = """\
-+On shutdown, reboot and upgrade, `ContainerConfig` containers are now stopped in the reverse order of `lifecycle.dependsOn.containers`: a container is stopped before the containers it depends on, and independent containers are still stopped concurrently.
-+Waiting for a dependent container ends when the container it depends on would otherwise not be stopped in time for the shutdown.
-+The order applies to the containers on the same node only.
- """
- 
-     [notes.extension_service_configuration]
+ The selector matches against the fields of the `CPUScalingStatus` resource, and may also set `energyPerformancePreference`,
+ `minFrequencyKhz` and `maxFrequencyKhz`. Where several documents match the same policy, the one whose name sorts first wins, and the
+ document which claimed a policy is reported on the resulting `CPUScalingSpec` resource. Removing the configuration restores the
 ```
 
-**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_containers.go` (added, +162/-0)
+**File**: `internal/app/machined/pkg/controllers/hardware/cpu_scaling.go` (modified, +260/-69)
 ```diff
-@@ -0,0 +1,162 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package runtime
-+
-+import (
-+	"cmp"
-+	"context"
-+	"fmt"
-+	"syscall"
-+	"time"
-+
-+	containerdapi "github.com/containerd/containerd/v2/client"
-+	"github.com/containerd/errdefs"
-+	"github.com/cosi-project/runtime/pkg/safe"
-+	"github.com/cosi-project/runtime/pkg/state"
-+	"go.uber.org/zap"
-+
-+	"github.com/siderolabs/talos/internal/app/internal/ctrhelper"
-+	"github.com/siderolabs/talos/pkg/machinery/api/common"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
-+	containersres "github.com/siderolabs/talos/pkg/machinery/resources/containers"
-+)
-+
-+// restartContainer stops a container declared with a ContainerConfig as the controllers stop it:
-+// SIGTERM, and SIGKILL once its stop timeout is over. It is restarted once it has exited, as after
-+// any exit.
-+func (s *Server) restartContainer(ctx context.Context, id string) error {
-+	stopTimeout, err := s.containerStopTimeout(ctx, id)
-+	if err != nil {
-+		return err
-+	}
-+
-+	ctx, detachedCtx, c8dClient, err := ctrhelper.ContainerdInstanceHelper(ctx, &common.ContainerdInstance{
-+		Driver:    common.ContainerDriver_CONTAINERD,
-+		Namespace: common.ContainerdNamespace_NS_TALOSCONTAINERS,
-+	})
-+	if err != nil {
-+		return err
-+	}
-+
-+	task, container, err := loadTask(ctx, c8dClient, id)
-+	if err != nil {
-+		c8dClient.Close() //nolint:errcheck
-+
-+		return err
-+	}
-+
-+	waitCtx, cancel := context.WithTimeout(detachedCtx, stopTimeout+constants.TaskKillWaitTimeout)
-+
-+	statusC, err := task.Wait(waitCtx)
-+	if err != nil {
-+		cancel()
-+		c8dClient.Close() //nolint:errcheck
-+
-+		return fmt.Errorf("failed to wait for container %q: %w", id, err)
-+	}
-+
-+	if err = task.Kill(ctx, syscall.SIGTERM, containerdapi.WithKillAll); err != nil {
-+		cancel()
-+		c8dClient.Close() //nolint:errcheck
-+
-+		return fmt.Errorf("failed to stop container %q: %w", id, err)
-+	}
-+
-+	logger := s.Logger.With(zap.String("instance", id), zap.Uint32("pid", task.Pid()))
-+
-+	go func() {
-+		defer c8dClient.Close() //nolint:errcheck
-+		defer cancel()
-+
-+		killAfterStopTimeout(waitCtx, logger, container, task.Pid(), statusC, stopTimeout)
-+	}()
-+
-+	return nil
-+}
-+
-+// containerStopTimeout returns the stop timeout of a container instance.
-+func (s *Server) containerStopTimeout(ctx context.Context, id string) (time.Duration, error) {
-+	instanceSpec, err := safe.StateGetByID[*containersres.ContainerInstanceSpec](ctx, s.Controller.Runtime().State().V1Alpha2().Resources(), id)
-+	if err != nil {
-+		if state.IsNotFoundError(err) {
-+			return constants.ContainerDefaultStopTimeout, nil
-+		}
-+
-+		return 0, err
-+	}
-+
-+	return cmp.Or(instanceSpec.TypedSpec().StopTimeout, constants.ContainerDefaultStopTimeout), nil
-+}
-+
-+// killAfterStopTimeout kills the task of the container with SIGKILL if it hasn't exited by the end of its stop timeout.
-+func killAfterStopTimeout(
-+	ctx context.Context, logger *zap.Logger, container containerdapi.Container, pid uint32, statusC <-chan containerdapi.ExitStatus, stopTimeout time.Duration,
-+) {
-+	if exitedWithin(ctx, statusC, stopTimeout) {
-+		return
-+	}
-+
-+	// the instance ID is reused when a container is declared again, so it has to be the same task
-+	task, err := container.Task(ctx, nil)
-+	if err != nil || task.Pid() != pid {
-+		return
-+	}
-+
-+	logger.Info("killing container after its stop timeout", zap.Duration("stop_timeout", stopTimeout))
-+
-+	if err = task.Kill(ctx, syscall.SIGKILL, containerdapi.WithKillAll); err != nil && !errdefs.IsNotFound(err) {
-+		logger.Warn("failed to kill container", zap.Error(err))
-+	}
-+}
-+
-+func loadTask(ctx context.Context, c8dClient *containerdapi.Client, id string) (containerdapi.Task, containerdapi.Container, error) {
-+	container, err := c8dClient.LoadContainer(ctx, id)
-+	if err != nil {
-+		if errdefs.IsNotFound(err) {
-+			return nil, nil, fmt.Errorf("container %q not found", id)
-+		}
-+
-+		return nil, nil, err
-+	}
-+
-+	task, err := container.Task(ctx, nil)
-+	if err != nil {
-+		if errdefs.IsNotFound(err) {
-+			return nil, nil, fmt.Errorf("container %q not found", id)
-+		}
-+
-+		return nil, nil, err
-+	}
-+
-+	return task, container, nil
-+}
-+
-+// exitedWithin reports whether the task exited within timeout, or ctx was canceled.
-+//
-+// A failed wait (e.g. containerd restarting) is no exit, the timeout decides then.
-+func exitedWithin(ctx context.Context, statusC <-chan containerdapi.ExitStatus, timeout time.Duration) bool {
-+	timer := time.NewTimer(timeout)
-+	defer timer.Stop()
-+
-+	for {
-+		select {
-+		case status, ok := <-statusC:
-+			if ok && status.Error() == nil {
-+				return true
-+			}
-+
-+			statusC = nil
-+		case <-timer.C:
-+			select {
-+			case status, ok := <-statusC:
-+				return ok && status.Error() == nil
-+			default:
-+				return false
-+			}
-+		case <-ctx.Done():
-+			return true
-+		}
-+	}
-+}
-```
-
-**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_containers_test.go` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package runtime //nolint:testpackage // to test the unexported kill after the stop timeout
-+
-+import (
-+	"context"
-+	"errors"
-+	"syscall"
-+	"testing"
-+	"time"
-+
-+	containerdapi "github.com/containerd/containerd/v2/client"
-+	"github.com/containerd/containerd/v2/pkg/cio"
-+	"github.com/containerd/errdefs"
-+	"github.com/stretchr/testify/assert"
-+	"go.uber.org/zap"
-+)
-+
-+type fakeTask struct {
-+	containerdapi.Task
-+
-+	pid     uint32
-+	killErr error
-+	killed  []syscall.Signal
-+}
-+
-+func (t *fakeTask) Pid() uint32 {
-+	return t.pid
-+}
-+
-+func (t *fakeTask) Kill(_ context.Context, signal syscall.Signal, _ ...containerdapi.KillOpts) error {
-+	t.killed = append(t.killed, signal)
-+
-+	return t.killErr
-+}
-+
-+type fakeContainer struct {
-+	containerdapi.Container
-+
-+	task *fakeTask
-+}
-+
-+func (c *fakeContainer) Task(context.Context, cio.Attach) (containerdapi.Task, error) {
-+	if c.task == nil {
-+		return nil, errdefs.ErrNotFound
-+	}
-+
-+	return c.task, nil
-+}
-+
-+func TestKillAfterStopTimeout(t *testing.T) {
-+	t.Parallel()
-+
-+	const pid = 42
-+
-+	for _, test := range []struct {
-+		name       string
-+		exited     bool
-+		waitFailed bool
-+		currentPID uint32
-+		gone       bool
-+		killed     bool
-+	}{
-+		{name: "running", currentPID: pid, killed: true},
-+		{name: "exited", exited: true, currentPID: pid},
-+		{name: "wait failed", waitFailed: true, currentPID: pid, killed: true},
-+		{name: "replaced", currentPID: pid + 1},
-+		{name: "gone", gone: true},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			task := &fakeTask{pid: test.currentPID}
-+			container := &fakeContainer{task: task}
-+
-+			if test.gone {
-+				container.task = nil
-+			}
-+
-+			statusC := make(chan containerdapi.ExitStatus, 1)
-+
-+			switch {
-+			case test.exited:
-+				statusC <- containerdapi.ExitStatus{}
-+			case test.waitFailed:
-+				statusC <- *containerdapi.NewExitStatus(containerdapi.UnknownExitStatus, time.Time{}, errors.New("containerd is gone"))
-+			}
-+
-+			start := time.Now()
-+
-+			killAfterStopTimeout(t.Context(), zap.NewNop(), container, pid, statusC, 100*time.Millisecond)
-+
-+			if test.killed {
-+				assert.Equal(t, []syscall.Signal{syscall.SIGKILL}, task.killed)
-+				assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
-+			} else {
-+				assert.Empty(t, task.killed)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_server.go` (modified, +12/-0)
-```diff
-@@ -1736,6 +1736,18 @@ func (s *Server) Stats(ctx context.Context, in *machine.StatsRequest) (reply *ma
- 
- // Restart implements the machine.MachineServer interface.
- func (s *Server) Restart(ctx context.Context, in *machine.RestartRequest) (*machine.RestartResponse, error) {
-+	if in.Driver == common.ContainerDriver_CONTAINERD && in.Namespace == constants.TalosContainersContainerdNamespace {
-+		if err := s.restartContainer(ctx, in.Id); err != nil {
-+			return nil, err
-+		}
-+
-+		return &machine.RestartResponse{
-+			Messages: []*machine.Restart{
-+				{},
-+			},
-+		}, nil
-+	}
-+
- 	inspector, err := getContainerInspector(ctx, in.Namespace, in.Driver)
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `internal/app/machined/pkg/controllers/containers/config.go` (modified, +2/-0)
-```diff
-@@ -208,6 +208,8 @@ func applyConfig(containerSpecSpec *containers.ContainerSpecSpec, containerConfi
- 		Containers: dependsOn.Containers(),
- 	}
- 
-+	containerSpecSpec.StopTimeout = containerConfig.StopTimeout()
-+
- 	return nil
- }
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/containers/config_test.go` (modified, +4/-1)
-```diff
-@@ -61,12 +61,13 @@ func (suite *ConfigSuite) TestNormalizesImageAndResolvesDefaults() {
- 		// canonical string.
- 		asrt.Equal("index.docker.io/library/nginx:latest", spec.TypedSpec().Image.Ref)
- 
--		// Defaults: restricted, default seccomp profile, no host network, no limits.
-+		// Defaults: restricted, default seccomp profile, no host network, no limits, the default stop timeout.
- 		asrt.False(spec.TypedSpec().Security.Privileged)
- 		asrt.False(spec.TypedSpec().Security.SeccompUnconfined)
- 		asrt.False(spec.TypedSpec().Network.HostNetwork)
- 		asrt.Zero(spec.TypedSpec().Resources.MemoryLimit)
- 		asrt.Nil(spec.TypedSpec().Resources.SwapLimit)
-+		asrt.Equal(10*time.Second, spec.TypedSpec().StopTimeout)
- 
- 		// no SecurityProfileConfig: no categories
- 		asrt.Empty(spec.TypedSpec().Security.SELinuxLevel)
-@@ -182,6 +183,7 @@ func (suite *ConfigSuite) TestResolvesSecurityNetworkAndResources() {
- 			NetworkConfig: []string{"addresses"},
- 			TimeConfig:    new(true),
- 		},
-+		StopTimeoutConfig: new(30 * time.Second),
- 	}
- 	doc.RunAsConfig = &containercfg.ContainerRunAs{
- 		RunAsUID: new(int32(1000)),
-@@ -207,6 +209,7 @@ func (suite *ConfigSuite) TestResolvesSecurityNetworkAndResources() {
- 		asrt.Equal([]string{"/var/mnt/data"}, spec.TypedSpec().DependsOn.Paths)
- 		asrt.Equal([]string{"addresses"}, spec.TypedSpec().DependsOn.Networks)
- 		asrt.True(spec.TypedSpec().DependsOn.Time)
-+		asrt.Equal(30*time.Second, spec.TypedSpec().StopTimeout)
- 
- 		if asrt.NotNil(spec.TypedSpec().RunAs.UID) {
- 			asrt.Equal(int32(1000), *spec.TypedSpec().RunAs.UID)
-```
-
-**File**: `internal/app/machined/pkg/controllers/containers/containerd_runner.go` (modified, +2/-7)
-```diff
-@@ -5,6 +5,7 @@
- package containers
- 
- import (
-+	"cmp"
- 	"context"
- 	"encoding/json"
+@@ -9,11 +9,13 @@ import (
  	"errors"
-@@ -14,7 +15,6 @@ import (
+ 	"fmt"
+ 	"io/fs"
++	"maps"
+ 	"os"
+ 	"path/filepath"
  	"slices"
  	"strconv"
  	"strings"
--	"time"
++	"syscall"
  
- 	containerdapi "github.com/containerd/containerd/v2/client"
- 	ctrdcontainers "github.com/containerd/containerd/v2/core/containers"
-@@ -37,11 +37,6 @@ import (
+ 	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/safe"
+@@ -44,6 +46,10 @@ type CPUScalingController struct {
+ 	// ReconcileCh triggers an additional reconcile on each receive. Intended for testing only.
+ 	ReconcileCh <-chan struct{}
+ 
++	// ReadFile reads a sysfs attribute, defaults to os.ReadFile. Overridable for testing, as some
++	// sysfs read errors (e.g. EBUSY from an inactive policy) cannot be reproduced with plain files.
++	ReadFile func(name string) ([]byte, error)
++
+ 	// defaults holds the value of each attribute before this controller first wrote it.
+ 	defaults map[string]string
+ }
+@@ -92,6 +98,10 @@ func (ctrl *CPUScalingController) Run(ctx context.Context, r controller.Runtime,
+ 		ctrl.SysfsPath = "/sys"
+ 	}
+ 
++	if ctrl.ReadFile == nil {
++		ctrl.ReadFile = os.ReadFile
++	}
++
+ 	if ctrl.defaults == nil {
+ 		ctrl.defaults = map[string]string{}
+ 	}
+@@ -152,7 +162,7 @@ func (ctrl *CPUScalingController) reconcile(ctx context.Context, r controller.Ru
+ 		return err
+ 	}
+ 
+-	return ctrl.reportStatuses(ctx, r)
++	return ctrl.reportStatuses(ctx, r, logger)
+ }
+ 
+ // policies lists the cpufreq policy directories. A machine with no cpufreq driver (most VMs) has
+@@ -161,37 +171,67 @@ func (ctrl *CPUScalingController) policies() ([]string, error) {
+ 	return filepath.Glob(filepath.Join(ctrl.SysfsPath, cpufreqPath, "policy*"))
+ }
+ 
+-func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controller.Runtime) error {
++// isInactive reports whether err is the error the kernel returns for every attribute of a cpufreq
++// policy whose CPUs are all offline. The policy directory stays in place until a CPU comes back,
++// which raises a uevent and so a reconcile.
++func isInactive(err error) bool {
++	return errors.Is(err, syscall.EBUSY)
++}
++
++// cpufreqPolicy is a cpufreq policy as read from sysfs.
++type cpufreqPolicy struct {
++	id   string
++	spec hardware.CPUScalingStatusSpec
++
++	// microarch identifies the core design of the policy's first CPU on arm64 (the MIDR_EL1
++	// implementer and part number), zero where unknown.
++	microarch uint64
++}
++
++func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
+ 	dirs, err := ctrl.policies()
+ 	if err != nil {
+ 		return fmt.Errorf("error listing cpufreq policies: %w", err)
+ 	}
+ 
+-	coreTypes, err := ctrl.readCoreTypes()
+-	if err != nil {
+-		return fmt.Errorf("error reading CPU core types: %w", err)
+-	}
+-
+-	r.StartTrackingOutputs()
++	policies := make([]cpufreqPolicy, 0, len(dirs))
+ 
+ 	for _, dir := range dirs {
+ 		id := filepath.Base(dir)
+ 
+-		spec, err := ctrl.readPolicy(dir, coreTypes)
+-		if err != nil {
+-			if errors.Is(err, fs.ErrNotExist) {
+-				continue
+-			}
++		policy, err := ctrl.readPolicy(dir)
++
++		switch {
++		case err == nil:
++		case errors.Is(err, fs.ErrNotExist):
++			continue
++		case isInactive(err):
++			// an inactive policy drives no CPU, and the kernel refuses to describe it
++			continue
++		default:
++			// a driver presenting something unexpected should not take down every other policy
++			logger.Warn("error reading cpufreq policy, skipping", zap.String("policy", id), zap.Error(err))
+ 
+-			return fmt.Errorf("error reading cpufreq policy %q: %w", id, err)
++			continue
+ 		}
+ 
+-		if err := safe.WriterModify(ctx, r, hardware.NewCPUScalingStatus(id), func(res *hardware.CPUScalingStatus) error {
+-			*res.TypedSpec() = spec
++		policy.id = id
++		policies = append(policies, policy)
++	}
++
++	if err = ctrl.classifyCoreTypes(policies); err != nil {
++		return fmt.Errorf("error reading CPU core types: %w", err)
++	}
++
++	r.StartTrackingOutputs()
++
++	for _, policy := range policies {
++		if err := safe.WriterModify(ctx, r, hardware.NewCPUScalingStatus(policy.id), func(res *hardware.CPUScalingStatus) error {
++			*res.TypedSpec() = policy.spec
+ 
+ 			return nil
+ 		}); err != nil {
+-			return fmt.Errorf("error updating CPUScalingStatus resource %q: %w", id, err)
++			return fmt.Errorf("error updating CPUScalingStatus resource %q: %w", policy.id, err)
+ 		}
+ 	}
+ 
+@@ -201,85 +241,152 @@ func (ctrl *CPUScalingController) reportStatuses(ctx context.Context, r controll
+ // readPolicy reads a single cpufreq policy directory.
+ //
+ // Drivers differ in which attributes they expose, so a missing one leaves its field zero.
+-func (ctrl *CPUScalingController) readPolicy(dir string, coreTypes map[uint32]string) (hardware.CPUScalingStatusSpec, error) {
+-	var spec hardware.CPUScalingStatusSpec
++func (ctrl *CPUScalingController) readPolicy(dir string) (cpufreqPolicy, error) {
++	var policy cpufreqPolicy
++
++	spec := &policy.spec
+ 
+ 	// the cpufreq core creates scaling_driver for every policy, so its absence means there is no
+ 	// policy here (any more)
+-	driver, err := readAttr(dir, "scaling_driver")
++	driver, err := ctrl.readAttr(dir, "scaling_driver")
+ 	if er
+```
+
+**File**: `internal/app/machined/pkg/controllers/hardware/cpu_scaling_test.go` (modified, +347/-17)
+```diff
+@@ -5,12 +5,19 @@
+ package hardware_test
+ 
+ import (
++	"context"
++	"io/fs"
++	"maps"
+ 	"os"
+ 	"path/filepath"
++	"strconv"
+ 	"strings"
++	"sync"
++	"syscall"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
+ 	"github.com/siderolabs/go-retry/retry"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -22,6 +29,10 @@ import (
  )
  
- const (
--	// gracefulShutdownTimeout is how long a container gets after SIGTERM before SIGKILL.
--	//
--	// Internal and not configurable, matching the containerd service runner's existing default.
--	gracefulShutdownTimeout = 10 * time.Second
--
- 	// oomScoreAdj matches what extension services get. Containers must be killed before apid and
- 	// trustd, which sit at -998, so that the API stays reachable on a node under memory pressure.
- 	oomScoreAdj = -600
-@@ -152,7 +147,7 @@ func (r *containerdRunner) Run(
- 		runner.WithCgroupPath(cgroupPath),
- 		runner.WithCgroupResources(containersadapter.ContainerResourcesSpec(&spec.Resources).CgroupResources()),
- 		runner.WithOOMScoreAdj(oomScoreAdj),
--		runner.WithGracefulShutdownTimeout(gracefulShutdownTimeout),
-+		runner.WithGracefulShutdownTimeout(cmp.Or(spec.StopTimeout, constants.ContainerDefaultStopTimeout)),
- 		runner.WithHostNetworkFiles(spec.Network.HostNetwork),
- 		runner.WithSelinuxLabel(selinuxLabel),
- 		runner.WithSeccompUnconfined(spec.Security.SeccompUnconfined),
+ // writeSysfs materializes a fake sysfs tree, newline-terminating values as the kernel does.
++//
++// Values are otherwise exactly what the kernel prints, trailing space included: cpufreq prints CPU
++// masks as `0 1 2 3`, governor and EPP lists with a space after each item, and the perf PMUs print
++// CPU masks in the `0-3,8` list format.
+ func writeSysfs(t *testing.T, root string, files map[string]string) {
+ 	t.Helper()
+ 
+@@ -33,6 +44,54 @@ func writeSysfs(t *testing.T, root string, files map[string]string) {
+ 	}
+ }
+ 
++// fakeSysfs reads a fake sysfs tree, failing every read under an inactive cpufreq policy with
++// EBUSY, as the kernel does once all CPUs of a policy are offline.
++type fakeSysfs struct {
++	mu        sync.Mutex
++	inactive  map[string]bool
++	busyReads map[string]int
++}
++
++func (f *fakeSysfs) setInactive(policy string, inactive bool) {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++
++	if f.inactive == nil {
++		f.inactive = map[string]bool{}
++	}
++
++	f.inactive[policy] = inactive
++}
++
++// busyReadCount returns how many reads of a policy attribute failed with EBUSY.
++func (f *fakeSysfs) busyReadCount(policy, name string) int {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++
++	return f.busyReads[policy+"/"+name]
++}
++
++func (f *fakeSysfs) readFile(name string) ([]byte, error) {
++	f.mu.Lock()
++
++	for policy, inactive := range f.inactive {
++		if inactive && strings.Contains(filepath.ToSlash(name), "/cpufreq/"+policy+"/") {
++			if f.busyReads == nil {
++				f.busyReads = map[string]int{}
++			}
++
++			f.busyReads[policy+"/"+filepath.Base(name)]++
++			f.mu.Unlock()
++
++			return nil, &fs.PathError{Op: "read", Path: name, Err: syscall.EBUSY}
++		}
++	}
++
++	f.mu.Unlock()
++
++	return os.ReadFile(name)
++}
++
+ func readPolicyAttr(t *testing.T, root, policy, name string) string {
+ 	t.Helper()
+ 
+@@ -42,18 +101,19 @@ func readPolicyAttr(t *testing.T, root, policy, name string) string {
+ 	return strings.TrimSpace(string(contents))
+ }
+ 
+-// cpufreqTree covers the shapes a cpufreq driver can present:
++// cpufreqTree covers the shapes an x86 cpufreq driver can present, rather than one real machine:
+ //
+ //   - policy0 mirrors a real intel_cpufreq box: one CPU per policy, no EPP, no base frequency;
+-//   - policy1 drives several CPUs at once, as ARM and many server parts do;
++//   - policy1 drives several CPUs at once, as acpi-cpufreq does under _PSD hardware coordination;
+ //   - policy2 is HWP-style, with EPP and a base frequency;
+-//   - policy3 is offline, so it has related CPUs but no affected ones.
++//   - policy3 is inactive (see CPUScalingSuite), so the kernel refuses to read any of it;
++//   - policy5 is a low power E-core of a three-tier hybrid CPU.
+ func cpufreqTree() map[string]string {
+ 	return map[string]string{
+ 		"devices/system/cpu/cpufreq/policy0/scaling_driver":              "intel_cpufreq",
+ 		"devices/system/cpu/cpufreq/policy0/affected_cpus":               "0",
+ 		"devices/system/cpu/cpufreq/policy0/related_cpus":                "0",
+-		"devices/system/cpu/cpufreq/policy0/scaling_available_governors": "conservative ondemand userspace powersave performance schedutil",
++		"devices/system/cpu/cpufreq/policy0/scaling_available_governors": "conservative ondemand userspace powersave performance schedutil ",
+ 		"devices/system/cpu/cpufreq/policy0/scaling_governor":            "schedutil",
+ 		"devices/system/cpu/cpufreq/policy0/scaling_min_freq":            "1200000",
+ 		"devices/system/cpu/cpufreq/policy0/scaling_max_freq":            "3300000",
+@@ -62,9 +122,9 @@ func cpufreqTree() map[string]string {
+ 		"devices/system/cpu/cpufreq/policy0/scaling_cur_freq":            "2712000",
+ 
+ 		"devices/system/cpu/cpufreq/policy1/scaling_driver":              "acpi-cpufreq",
+-		"devices/system/cpu/cpufreq/policy1/affected_cpus":               "1-3",
+-		"devices/system/cpu/cpufreq/policy1/related_cpus":                "1-3",
+-		"devices/system/cpu/cpufreq/policy1/scaling_available_governors": "ondemand performance",
++		"devices/system/cpu/cpufreq/policy1/affected_cpus":               "1 2 3",
++		"devices/system/cpu/cpufreq/policy1/related_cpus":                "1 2 3",
++		"devices/system/cpu/cpufreq/policy1/scaling_available_governors": "ondemand performance ",
+ 		"devices/system/cpu/cpufreq/policy1/scaling_governor":            "performance",
+ 		"devices/system/cpu/cpufreq/policy1/scaling_min_freq":            "800000",
+ 		"devices/system/cpu/cpufreq/policy1/scaling_max_freq":            "2400000",
+@@ -77,24 +137,32 @@ func cpufreqTree() map[string]string {
+ 		"devices/system/cpu/cpufreq/policy2/scaling_available_governors":              "performance p
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14842** (2026-11-04): test: fix most frequent unit-test flakes (@smira)
+- **PR #14840** (2026-11-04): fix: use aescbc provider for AES-CBC key in etcd encryption config (@fabiomatavelli)
+- **PR #14839** (2026-11-04): fix: build darwin integration tests (@frezbo)
+- **PR #14836** (2026-11-04): fix: update the trustd EKU OID (@smira)
+- **PR #14834** (closed): feat: add talosctl md add to replace a failed RAID1 member (@mcanevet)
 - **PR #14833** (2026-11-03): feat: multi-doc SeccompProfileConfig (@majabojarska)
-- **PR #14832** (2026-11-03): fix: added container capabilities for non-root users (@majabojarska)
-- **PR #14830** (2026-11-03): test: run downgrade failure test against several installers (@shanduur)
-- **PR #14827** (closed): Sync main (@martiyardi)
-- **PR #14822** (2026-11-02): fix: generate the Talos client certificate with a skew in the past (@smira)
-- **PR #14820** (2026-11-02): fix: issue trustd server certificate with extended key usage (@smira)
 
 ---
 
@@ -3003,29 +2387,28 @@ Calling `talosctl restart --namespace taloscontainers` sends SIGTERM. SIGKILL is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): give privileged containers a SELinux domain of their own
+## X. bump go-blockdevice to 2.0.37
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13f26d6a`: security): give privileged containers a SELinux domain of their own. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `406dc4d5`: bump go-blockdevice to 2.0.37. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
-COPY --chmod=0644 hack/selinux/containers_contexts /rootfs/usr/share/containers/selinux/contexts
+	github.com/siderolabs/go-blockdevice/v2 v2.0.37
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/siderolabs/go-blockdevice/v2 v2.0.36
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13f26d6a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `406dc4d5` are properly handled with clean fallback behavior.

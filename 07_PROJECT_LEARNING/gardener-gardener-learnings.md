@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `b506147f`  
+> **Source Version**: `a8da5a8a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:09:17.093Z  
+> **Timestamp**: 2026-11-04T10:12:32.581Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:09:16.193Z  
+> **Harvest Timestamp**: 2026-11-04T10:12:32.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3479 stars
+- **Stars / Engagement**: 3480 stars
 
 ---
 
@@ -726,17 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16201** (2026-11-03): **[release-v1.154] Don't rely on own writes when reading credentials rotation progress**
-  *Symptoms*: This is an automated cherry-pick of #16193  /assign rfranzke  ```bugfix operator github.com/gardener/gardener #16201 @rfranzke Fixed a race during credentials rotation where a stale cache read could undo the ETCD encryption key switch or cause rotation steps (such as taking an ETCD snapshot or creating `StorageVersionMigration` resources) to be redundantly re-run. This affects both the ETCD peer CA rollout during CA rotation and the ETCD encryption key rotation for `kube-apiserver` and `gardener-apiserver`. ```  /kind bug
+- **Issue #16213** (2026-11-04): **docs: propose per-shoot `ClusterTrustBundle` for custom CAs**
+  *Symptoms*: **What this PR does / why we need it**:  Adds a design proposal for gardenlet to create a `ClusterTrustBundle` object (`certificates.k8s.io/v1`, GA since k8s v1.37) in every shoot cluster whose seed has a custom CA trust bundle configured (`Seed.spec.settings.trustBundle.secretRef`).  Workload authors can then mount the bundle via `projected.volumes[].sources[].clusterTrustBundle`. This is the Kubernetes-native vehicle for shipping cluster trust anchors — a much better fit for user workloads than namespace-scoped ConfigMaps (require replication), image-baked CAs (couples trust policy to the image build), or mutating webhooks (operationally fragile).  This PR is doc-only: the proposal lives in `docs/proposals/` (dated format — new GEPs should live in gardener/enhancements; this document is structured to be moved over once its shape is agreed). Implementation follows once the design is accepted. Shoots on k8s < 1.37 are skipped, matching the GA version of the API.  This PR is part of a chain: - `Garden.spec.virtualCluster.gardener.trustBundleSecretRef` — virtual-garden control plane: https://github.com/gardener/gardener/pull/16210 - `Seed.spec.settings.trustBundle` — seed-system components - shoot-node system trust store — gardenlet node-init flow (sibling PR) - per-shoot `ClusterTrustBundle` (this PR) — user workloads on k8s ≥ 1.37  **Release note**: ```other operator Design proposal: per-shoot `ClusterTrustBundle` for custom CAs on k8s >= 1.37. ```
   **Post-Mortem & Fix Analysis**:
-  > Hi @gardener-prow-cherrypicker[bot]. Thanks for your PR.  I'm waiting for a [gardener](https://github.com/orgs/gardener/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  Regular contributors should [join the org](https://gardener.cloud/docs/contribute/code/roles/) to skip this step.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=gardener%2Fgardener).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-
-  > /lgtm /approve /ok-to-test
+  > Skipping CI for Draft Pull Request. If you want CI signal for your change, please convert it to an actual PR. You can still manually trigger a test run with `/test all`
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [velmiras](https://github.com/velmiras) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[docs/OWNERS](https://github.com/gardener/gardener/blob/master/docs/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["velmiras"]} -->
 
-- **Issue #16195** (2026-11-03): **Update dependency crate-ci/typos to v1.52.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [crate-ci/typos](https://redirect.github.com/crate-ci/typos) | minor | `v1.51.1` → `v1.52.0` |  ---  ### Release Notes  <details> <summary>crate-ci/typos</summary>  ### [`v1.52.0`](https://redirect.github.com/crate-ci/typos/releases/tag/v1.52.0)  [Compare Source](https://redirect.github.com/crate-ci/typos/compare/v1.51.1...v1.52.0)  #### \[1.52.0] - 2026-11-02  ##### Features  - Updated the dictionary with the [October 2026](https://redirect.github.com/crate-ci/typos/issues/1626) changes  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMDIuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjIwMi4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16212** (2026-11-04): **docs: propose distributing a custom CA trust bundle to shoot nodes**
+  *Symptoms*: **What this PR does / why we need it**:  Adds a design proposal (GEP-37) for extending gardenlet's node-bootstrap flow so shoot nodes receive a custom CA trust bundle in their system trust store (`/etc/ssl/certs/`), complementing the existing per-registry containerd CA delivery (see #13751).  Motivation: per-registry containerd CAs on `OperatingSystemConfig` cover image pulls only. Other processes on shoot nodes — kubelet, node-local-dns, OS daemons, telemetry agents — resolve TLS using the OS trust store. Operators running clusters that must reach services secured by custom CAs need those CAs present before any pod starts.  This PR is API-doc-only: a GEP-style proposal in `docs/proposals/`, intended for early feedback on the approach. The full implementation follows once the shape is agreed.  This PR is part of a chain to make custom CA trust bundles configurable across a Gardener landscape: - `Garden.spec.virtualCluster.gardener.trustBundleSecretRef` — virtual-garden control plane: #16210 - `Seed.spec.settings.trustBundle` — seed-system components (related PR, forthcoming) - shoot-node system trust store (this PR) - per-shoot `ClusterTrustBundle` (k8s >= 1.37) — user workloads (forthcoming)  **Release note**: ```other operator Design proposal: distributing a custom CA trust bundle to shoot nodes. ```
   **Post-Mortem & Fix Analysis**:
-  > /retest /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16195#issuecomment-6594694083" title="Approved">acumino</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [acumino]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > Skipping CI for Draft Pull Request. If you want CI signal for your change, please convert it to an actual PR. You can still manually trigger a test run with `/test all`
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [klocke-io](https://github.com/klocke-io) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[docs/OWNERS](https://github.com/gardener/gardener/blob/master/docs/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["klocke-io"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,210 +753,146 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69af5034` (2026-11-03)
-**Commit Message**: Fix pvc autoscaling testmachinery tests (#15863)
+### Incident Patch 1: `c20bc4dc` (2026-11-03)
+**Commit Message**: Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133)
 
-* Fix pvc autoscaling tm tests
+Enable kube-api-linter optionalorrequired for operations/v1alpha1
 
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
+Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-* Use agnhost image
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
-* Pass context as first argument to Eventually for consistency
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
-* Remove incorrect call to `Eventually` from `ensureDebugContainer`
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
-* Reduce timeouts to bring them closer to the expected test durations
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
-**File**: `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go` (modified, +136/-30)
+**File**: `.golangci.yaml.in` (modified, +7/-0)
 ```diff
-@@ -39,21 +39,28 @@ import (
- 	"k8s.io/apimachinery/pkg/api/resource"
- 	"k8s.io/apimachinery/pkg/labels"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/uuid"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 
- 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
- 	victorialogsConstants "github.com/gardener/gardener/pkg/component/observability/logging/victorialogs/constants"
-+	"github.com/gardener/gardener/pkg/utils"
- 	"github.com/gardener/gardener/test/framework"
- )
- 
- const (
--	pvcAutoscalerTestTimeout           = 60 * time.Minute
--	pvcAutoscalerCleanupTimeout        = 5 * time.Minute
--	pvcAutoscalerInitializationTimeout = 5 * time.Minute
-+	pvcAutoscalerTestTimeout           = 30 * time.Minute
-+	pvcAutoscalerCleanupTimeout        = 2 * time.Minute
-+	pvcAutoscalerInitializationTimeout = 2 * time.Minute
- 	pvcGrowthWaitInterval              = 30 * time.Second
- 	pvcGrowthWaitTimeout               = 10 * time.Minute
- 
- 	pvcFillUtilizationPercent = 75
-+
-+	debugContainerNamePrefix = "pvc-autoscaler-test-debug"
-+	// A custom agnhost image (europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost) is used instead of the upstream one (registry.k8s.io/e2e-test-images/agnhost)
-+	// because this Deployment is created in a Seed cluster and the image needs to be signed with particular keys.
-+	debugContainerImage = "europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost:2.40"
- )
- 
- type logBackend struct {
-@@ -69,11 +76,15 @@ type logBackend struct {
- var _ = Describe("Shoot PVC autoscaling for logging testing", func() {
- 	shootFramework := framework.NewShootFramework(nil)
- 
--	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace string, pvcSize resource.Quantity) error) {
-+	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace, debugContainerName string, pvcSize resource.Quantity) error) {
-+		var debugContainerName string
-+
- 		shootFramework.Beta().Serial().CIt(fmt.Sprintf("should scale %s PVC when capacity threshold is exceeded", backend.name), func(ctx context.Context) {
- 			seedClient := shootFramework.SeedClient.Client()
- 			shootNamespace := shootFramework.ShootSeedNamespace()
- 
-+			debugContainerName = debugContainerNamePrefix + "-" + utils.ComputeSHA256Hex([]byte(uuid.NewUUID()))[:5]
-+
- 			By(fmt.Sprintf("Check whether %s is deployed", backend.name))
- 			deployed, err := backend.isDeployed(ctx, seedClient, shootNamespace)
- 			framework.ExpectNoError(err)
-@@ -90,30 +101,27 @@ var _ = Describe("Shoot PVC autoscaling for logging testing", func() {
- 			shootFramework.Logger.Info("Initial PVC size", "backend", backend.name, "pvc", pvcName, "size", initialPVCSize.String())
- 
- 			By(fmt.Sprintf("Fill %s PVC to %d%% utilization to trigger pvc-autoscaler", backend.name, pvcFillUtilizationPercent))
--			Eventually(func() error {
--				return fillFunc(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
--			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
-+			Eventually(ctx, func() error {
-+				return fillFunc(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
-+			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).Should(Succeed())
- 
- 			By(fmt.Sprintf("Wait for pvc-autoscaler to grow the %s PVC", backend.name))
- 			waitUntilPVCGrows(ctx, seedClient, shootNamespace, backend.pvcLabels, initialPVCSize)
- 
- 			By(fmt.Sprintf("Wait until %s pod's filesystem reflects the new PVC size", backend.name))
--			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
-+			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
- 
- 			By("Clean up fill files")
--			Eventually(func() error {
--				_, _, err = framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootNamespace, labels.SelectorFromSet(backend.podLabels), backend.containerName,
--					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
--				)
--				return err
--			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
-+			Eventually(ctx, func() error {
-+				return cleanupFillFiles(ctx, shootFramework, backend, shootNamespace, debugContainerName)
-+			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).Should(Succeed())
- 		}, pvcAutoscalerTestTimeout, framework.WithCAfterTest(func(ctx context.Context) {
--			Eventually(func() error {
--				_, _, err := framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootFramework.ShootSeedNamespace(), labels.SelectorFromSet(backend.podLabels), backend.containerName,
--					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
--				)
--				return err
--			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
-+			if debugContainerN
+@@ -286,6 +286,7 @@ linters:
+               - jsontags
+               - nonullable
+               - optionalfields
++              - optionalorrequired
+               - uniquemarkers
+           lintersConfig:
+             optionalfields:
+@@ -340,6 +341,12 @@ linters:
+       - linters:
+           - kubeapilinter
+         path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
++      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
++      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
++      - linters:
++          - kubeapilinter
++        text: 'optionalorrequired:'
++        path-except: 'pkg/apis/(operations/v1alpha1)/[^/]+$'
+       # optionalfields: Spec/Status and other struct fields on top-level API objects have established non-pointer
+       # conventions in Kubernetes APIs. Similarly, scalar fields (int64, string) with incomplete validation
+       # are intentionally kept as value types. Converting these to pointers would be API-breaking.
 ```
 
----
-
-### Incident Patch 2: `1739beea` (2026-11-03)
-**Commit Message**: Fix shoot access pane KUBECONFIG in remote-local-setup (#16086)
-
-The 'Access the shoot cluster' pane in prepare-gardener.sh ran
-generate-kubeconfig.sh without first targeting the virtual-garden
-cluster, so it resolved against the wrong context and failed with
-NotFound/Forbidden errors.
-
-Set KUBECONFIG to the virtual-garden kubeconfig before invoking
-generate-kubeconfig.sh, matching the pattern already used in
-prepare-operator-complete.sh.
-
-Signed-off-by: Karim SAD <[REDACTED_EMAIL]>
-Co-authored-by: Karim SAD <[REDACTED_EMAIL]>
-
-**File**: `docs/deployment/content/remote-local-setup.yaml` (modified, +1/-0)
+**File**: `pkg/apis/operations/v1alpha1/generated.proto` (modified, +7/-0)
 ```diff
-@@ -348,6 +348,7 @@ spec:
-             kubectl apply -f example/provider-local/shoot.yaml
-           EOF
-           new_pane "Access the shoot cluster" <<"EOF"
-+            export KUBECONFIG=$PWD/dev-setup/kubeconfigs/virtual-garden/kubeconfig
-             KUBECONFIG=<(generate-kubeconfig.sh) kubectl get pods -A
-           EOF
-           new_pane "Run simple e2e test (create and delete shoot)" <<"EOF"
+@@ -21,9 +21,11 @@ option go_package = "github.com/gardener/gardener/pkg/apis/operations/v1alpha1";
+ // Bastion holds details about an SSH bastion for a shoot cluster.
+ message Bastion {
+   // Standard object metadata.
++  // +required
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
+ 
+   // Specification of the Bastion.
++  // +required
+   optional BastionSpec spec = 2;
+ 
+   // Most recently observed status of the Bastion.
+@@ -34,6 +36,7 @@ message Bastion {
+ // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
+ message BastionIngressPolicy {
+   // IPBlock defines an IP block that is allowed to access the bastion.
++  // +required
+   optional .k8s.io.api.networking.v1.IPBlock ipBlock = 1;
+ }
+ 
+@@ -44,12 +47,14 @@ message BastionList {
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ListMeta metadata = 1;
+ 
+   // Items is the list of Bastion.
++  // +required
+   repeated Bastion items = 2;
+ }
+ 
+ // BastionSpec is the specification of a Bastion.
+ message BastionSpec {
+   // ShootRef defines the target shoot for a Bastion. The name field of the ShootRef is immutable.
++  // +required
+   optional .k8s.io.api.core.v1.LocalObjectReference shootRef = 1;
+ 
+   // SeedName is the name of the seed to which this Bastion is currently scheduled. This field is populated
+@@ -62,9 +67,11 @@ message BastionSpec {
+   optional string providerType = 3;
+ 
+   // SSHPublicKey is the user's public key. This field is immutable.
++  // +required
+   optional string sshPublicKey = 4;
+ 
+   // Ingress controls from where the created bastion host should be reachable.
++  // +required
+   repeated BastionIngressPolicy ingress = 5;
+ }
+ 
 ```
 
----
-
-### Incident Patch 3: `dda01876` (2026-11-02)
-**Commit Message**: Revert "added a new requirement for skipping components managed via ManagedRe… (#15905)" (#16183)
-
-This reverts commit 3224a0fbb4b371ddc6354e5af3c91e75c240f83c.
-
-Signed-off-by: Tim Ebert <[REDACTED_EMAIL]>
-
-**File**: `pkg/gardenlet/operation/botanist/cleanup.go` (modified, +4/-7)
+**File**: `pkg/apis/operations/v1alpha1/types_bastion.go` (modified, +7/-0)
 ```diff
-@@ -31,7 +31,6 @@ import (
- 	"github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
- 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
- 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
--	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
- 	"github.com/gardener/gardener/pkg/client/kubernetes"
- 	"github.com/gardener/gardener/pkg/utils"
- 	"github.com/gardener/gardener/pkg/utils/flow"
-@@ -71,11 +70,9 @@ var (
- 	NotKubernetesProvider = utils.MustNewRequirement(Provider, selection.NotEquals, KubernetesProvider)
- 	// NotKubeAggregatorAutoManaged is a requirement that something is not auto-managed by Kube-Aggregator.
- 	NotKubeAggregatorAutoManaged = utils.MustNewRequirement(KubeAggregatorAutoManaged, selection.DoesNotExist)
--	// NotManagedByGardener is a requirement that something is not managed via ManagedResources.
--	NotManagedByGardener = utils.MustNewRequirement(resourcesv1alpha1.ManagedBy, selection.NotEquals, resourcesv1alpha1.GardenerManager)
+@@ -25,9 +25,11 @@ const (
+ type Bastion struct {
+ 	metav1.TypeMeta `json:",inline"`
+ 	// Standard object metadata.
++	// +required
+ 	metav1.ObjectMeta `json:"metadata" protobuf:"bytes,1,opt,name=metadata"`
  
--	// CleanupSelector is a selector that excludes system components, all resources not considered for auto cleanup and all components not managed via ManagedResources.
--	CleanupSelector = labels.NewSelector().Add(NotSystemComponent).Add(NoCleanupPrevention).Add(NotManagedByGardener)
-+	// CleanupSelector is a selector that excludes system components and all resources not considered for auto cleanup.
-+	CleanupSelector = labels.NewSelector().Add(NotSystemComponent).Add(NoCleanupPrevention)
+ 	// Specification of the Bastion.
++	// +required
+ 	Spec BastionSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
+ 	// Most recently observed status of the Bastion.
+ 	// +optional
+@@ -44,12 +46,14 @@ type BastionList struct {
+ 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
  
- 	// NoCleanupPreventionListOption are CollectionMatching that exclude system components or non-auto cleaned up resource.
- 	NoCleanupPreventionListOption = client.MatchingLabelsSelector{Selector: CleanupSelector}
-@@ -101,14 +98,14 @@ var (
- 	// ServiceCleanOption is the delete selector for Services.
- 	ServiceCleanOption = utilclient.ListWith{
- 		client.MatchingLabelsSelector{
--			Selector: labels.NewSelector().Add(NotKubernetesProvider, NotSystemComponent, NoCleanupPrevention, NotManagedByGardener),
-+			Selector: labels.NewSelector().Add(NotKubernetesProvider, NotSystemComponent, NoCleanupPrevention),
- 		},
- 	}
+ 	// Items is the list of Bastion.
++	// +required
+ 	Items []Bastion `json:"items" protobuf:"bytes,2,rep,name=items"`
+ }
  
- 	// APIServiceCleanOption is the delete selector for APIServices.
- 	APIServiceCleanOption = utilclient.ListWith{
- 		client.MatchingLabelsSelector{
--			Selector: labels.NewSelector().Add(NotSystemComponent, NotKubeAggregatorAutoManaged, NotManagedByGardener),
-+			Selector: labels.NewSelector().Add(NotSystemComponent, NotKubeAggregatorAutoManaged),
- 		},
- 	}
+ // BastionSpec is the specification of a Bastion.
+ type BastionSpec struct {
+ 	// ShootRef defines the target shoot for a Bastion. The name field of the ShootRef is immutable.
++	// +required
+ 	ShootRef corev1.LocalObjectReference `json:"shootRef" protobuf:"bytes,1,opt,name=shootRef"`
+ 	// SeedName is the name of the seed to which this Bastion is currently scheduled. This field is populated
+ 	// at the beginning of a create/reconcile operation.
+@@ -59,14 +63,17 @@ type BastionSpec struct {
+ 	// +optional
+ 	ProviderType *string `json:"providerType,omitempty" protobuf:"bytes,3,opt,name=providerType"`
+ 	// SSHPublicKey is the user's public key. This field is immutable.
++	// +required
+ 	SSHPublicKey string `json:"sshPublicKey" protobuf:"bytes,4,opt,name=sshPublicKey"`
+ 	// Ingress controls from where the created bastion host should be reachable.
++	// +required
+ 	Ingress []BastionIngressPolicy `json:"ingress" protobuf:"bytes,5,opt,name=ingress"`
+ }
+ 
+ // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
+ type BastionIngressPolicy struct {
+ 	// IPBlock defines an IP block that is allowed to access the bastion.
++	// +required
+ 	IPBlock networkingv1.IPBlock `json:"ipBlock" protobuf:"bytes,1,opt,name=ipBlock"`
+ }
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16213** (closed): docs: propose per-shoot `ClusterTrustBundle` for custom CAs (@ccwienk)
+- **PR #16212** (closed): docs: propose distributing a custom CA trust bundle to shoot nodes (@ccwienk)
+- **PR #16209** (2026-11-04): Update module github.com/docker/cli to v29.9.3+incompatible (@renovate[bot])
+- **PR #16208** (2026-11-04): Remove hidden unicode characters from a perses dashboard (@oliver-goetz)
+- **PR #16204** (2026-11-04): Cleanup extension `ManagedResource` migration (@timuthy)
 - **PR #16201** (2026-11-03): [release-v1.154] Don't rely on own writes when reading credentials rotation progress (@gardener-prow-cherrypicker[bot])
-- **PR #16195** (2026-11-03): Update dependency crate-ci/typos to v1.52.0 (@renovate[bot])
-- **PR #16194** (2026-11-03): Update module github.com/onsi/ginkgo/v2 to v2.34.0 (@renovate[bot])
-- **PR #16193** (2026-11-03): Don't rely on own writes when reading credentials rotation progress (@rfranzke)
-- **PR #16192** (2026-11-02): Update quay.io/kiwigrid/k8s-sidecar Docker tag to v2.14.3 (@renovate[bot])
-- **PR #16190** (2026-11-03): Clean up ValidatingAdmissionPolicies during shoot deletion (@pujitha24)
 
 ---
 
@@ -976,60 +912,34 @@ Signed-off-by: Tim Ebert <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pvc autoscaling testmachinery tests (#15863)
+## X. Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133)
 
 **RULE**:
-When implementing operations in `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.golangci.yaml.in`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69af5034`: pvc autoscaling testmachinery tests (#15863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c20bc4dc`: Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/testmachinery/shoots/logging/shoot_pvc_autoscaling.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yaml.in`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"k8s.io/apimachinery/pkg/util/uuid"
-	"github.com/gardener/gardener/pkg/utils"
-	pvcAutoscalerTestTimeout           = 30 * time.Minute
-	pvcAutoscalerCleanupTimeout        = 2 * time.Minute
-	pvcAutoscalerInitializationTimeout = 2 * time.Minute
-
-	debugContainerNamePrefix = "pvc-autoscaler-test-debug"
-	// A custom agnhost image (europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost) is used instead of the upstream one (registry.k8s.io/e2e-test-images/agnhost)
-	// because this Deployment is created in a Seed cluster and the image needs to be signed with particular keys.
-	debugContainerImage = "europe-docker.pkg.dev/gardener-project/releases/3rd/agnhost:2.40"
-	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace, debugContainerName string, pvcSize resource.Quantity) error) {
-		var debugContainerName string
-
-			debugContainerName = debugContainerNamePrefix + "-" + utils.ComputeSHA256Hex([]byte(uuid.NewUUID()))[:5]
-
-			Eventually(ctx, func() error {
-				return fillFunc(ctx, shootFramework, backend, shootNamespace, debugContainerName, initialPVCSize)
-			}).WithTimeout(time.Minute * 1).WithPolling(time.Se
+              - optionalorrequired
+      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
+      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
+      - linters:
+          - kubeapilinter
+        text: 'optionalorrequired:'
+        path-except: 'pkg/apis/(operations/v1alpha1)/[^/]+$'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	pvcAutoscalerTestTimeout           = 60 * time.Minute
-	pvcAutoscalerCleanupTimeout        = 5 * time.Minute
-	pvcAutoscalerInitializationTimeout = 5 * time.Minute
-	var test = func(backend logBackend, fillFunc func(ctx context.Context, f *framework.ShootFramework, backend logBackend, shootNamespace string, pvcSize resource.Quantity) error) {
-			Eventually(func() error {
-				return fillFunc(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
-			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
-			waitUntilFilesystemExpands(ctx, shootFramework, backend, shootNamespace, initialPVCSize)
-			Eventually(func() error {
-				_, _, err = framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootNamespace, labels.SelectorFromSet(backend.podLabels), backend.containerName,
-					"sh", "-c", fmt.Sprintf("rm -rf %s/fill-capacity", backend.dataDir),
-				)
-				return err
-			}).WithTimeout(time.Minute * 1).WithPolling(time.Second * 10).WithContext(ctx).Should(Succeed())
-			Eventually(func() error {
-				_, _, err := framework.PodExecByLabel(ctx, shootFramework.SeedClient, shootFramework.ShootSeedNamespace(), labels.SelectorFromSet(backend.podL
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69af5034` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c20bc4dc` are properly handled with clean fallback behavior.

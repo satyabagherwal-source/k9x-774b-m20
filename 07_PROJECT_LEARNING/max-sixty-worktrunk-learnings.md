@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `786978fd`  
+> **Source Version**: `3bf9166a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:28:35.091Z  
+> **Timestamp**: 2026-11-05T00:22:30.547Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:28:22.793Z  
+> **Harvest Timestamp**: 2026-11-05T00:22:29.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10429 stars
+- **Stars / Engagement**: 11014 stars
 
 ---
 
@@ -51,15 +51,47 @@
 // earendil-works Pi is a different agent with a different loader and API —
 // see `dev/pi-extension.ts` and `wt config plugins pi install`.
 
+import { lstatSync } from "node:fs";
+import { delimiter, join } from "node:path";
+
 import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+
+// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
+// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
+// accepts any arguments, exits 0, and reports the unknown program in a popup
+// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
+// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
+// seen for the lookup to stop where Windows' own PATH search would.
+// `undefined` means no worktrunk binary was found.
+function worktrunkBin(): string | undefined {
+  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
+  if (process.platform !== "win32") return "wt";
+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
+  const find = (name: string) =>
+    dirs
+      .map((dir) => join(dir, name))
+      .find((path) => {
+        try {
+          lstatSync(path);
+          return true;
+        } catch {
+          return false;
+        }
+      });
+  if (find("git-wt.exe")) return "git-wt.exe";
+  const wt = find("wt.exe");
+  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
+}
 
 export default function worktrunkActivity(pi: HookAPI): void {
   const run = async (
     ctx: { cwd: string },
     args: ["set", string] | ["clear"],
   ): Promise<void> => {
+    const bin = worktrunkBin();
+    if (!bin) return;
     try {
-      await pi.exec("wt", ["config", "state", "marker", ...args], {
+      await pi.exec(bin, ["config", "state", "marker", ...args], {
         cwd: ctx.cwd,
       });
     } catch {
@@ -1986,332 +2018,414 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b35ef62` (2026-11-03)
-**Commit Message**: fix(list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow (#4682)
+### Incident Patch 1: `3bf9166a` (2026-11-04)
+**Commit Message**: fix(plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698)
 
-`truncate_visible` summed per-`char` widths, so a VS16 emoji
-presentation sequence such as `♻️` (`U+267B U+FE0F`) measured 1 + 0 = 1
-cell, while the terminal and the rest of the layout
-(`UnicodeWidthStr::width`) count it as 2. A truncated Message cell
-starting with one came out one cell wider than its column, which wraps
-the row in `wt list | cat` and throws off the progressive renderer's
-cursor math. The loop now walks grapheme clusters and measures each with
-the string width, so the kept prefix agrees with every other width
-measure and a cut can no longer split a base character from its
-selector.
+The pi, oh-my-pi, and OpenCode plugins ran a bare `wt`. On Windows that
+name usually resolves to Windows Terminal's app-execution alias in
+`%LOCALAPPDATA%\Microsoft\WindowsApps`. The alias exits 0 and reports
+the unknown program in a popup, so every activity-marker update opened
+an error window. OpenCode's worktree `switch`/`remove` strategy also
+never reached worktrunk. The Claude Code and Codex hooks didn't have
+this problem because they run through `plugins/worktrunk/hooks/wt.sh`,
+which already handles this case.
 
-`unicode-segmentation` 1.12 was already in `Cargo.lock` transitively;
-this adds it as a direct dependency.
+Each plugin now has a small `worktrunkBin()` that follows `wt.sh`'s
+policy: use `WORKTRUNK_BIN` if set, otherwise use `wt` off Windows. On
+Windows, it walks `PATH` in order and prefers `git-wt.exe`, then accepts
+a `wt.exe` only if the first one found isn't under `WindowsApps`. When
+nothing usable is found, marker updates are skipped, and OpenCode's
+strategy throws an error naming `git-wt.exe` and `WORKTRUNK_BIN`. The
+helper is copied into all three files because each one is installed as a
+standalone file.
 
-The new assertions in `test_truncate_visible` fail on the old loop (`"♻️
-refactor:…"`, 13 cells for a 12-cell budget) and pass now. Running the
-issue's repro at `COLUMNS=100` against the fixed build, both Message
-cells (`✨ feat: ad…` and `♻️ refactor…`) are 12 cells.
+Verification: dev/*.ts has no test harness, so I checked locally with
+Node 22'
 
-Closes #4681 — automated triage
-
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `dev/omp-hook.ts` (modified, +33/-1)
 ```diff
-@@ -4796,6 +4796,7 @@ dependencies = [
-  "tracing-subscriber",
-  "tree-sitter-bash",
-  "tree-sitter-highlight",
-+ "unicode-segmentation",
-  "unicode-width 0.2.3",
-  "urlencoding",
-  "vergen-gitcl",
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -224,6 +224,7 @@ toml_edit = { version = "0.25", features = ["serde"] }
- # To build without C compilation requirements, use: cargo install worktrunk --no-default-features --features cli
- tree-sitter-bash = { version = "0.25.1", optional = true }
- tree-sitter-highlight = { version = "0.27", optional = true }
-+unicode-segmentation = "1.12"
- unicode-width = "0.2.1"
- wrap-ansi = "0.1"
- osc8 = "0.1.0"
-```
-
-**File**: `src/styling/line.rs` (modified, +18/-7)
-```diff
-@@ -4,14 +4,15 @@
+@@ -10,15 +10,47 @@
+ // earendil-works Pi is a different agent with a different loader and API —
+ // see `dev/pi-extension.ts` and `wt config plugins pi install`.
  
- use ansi_str::AnsiStr;
- use anstyle::Style;
--use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
-+use unicode_segmentation::UnicodeSegmentation;
-+use unicode_width::UnicodeWidthStr;
- 
- /// Truncate a styled string to a visible width budget, preserving escapes.
- ///
- /// The budget counts what the terminal draws: escape sequences (ANSI/OSC) are
--/// zero-width, and characters are measured by their unicode width, so a cut
--/// never lands inside an escape and never overshoots on wide characters. Text
--/// that already fits is returned untouched.
-+/// zero-width, and grapheme clusters are measured by their unicode width, so a
-+/// cut never lands inside an escape or a cluster and never overshoots on wide
-+/// characters. Text that already fits is returned untouched.
- ///
- /// A cut ends the kept prefix with "…", after trimming the trailing whitespace
- /// the cut exposed so no space hangs before the marker. Trimming is
-@@ -48,13 +49,15 @@ fn truncate_visible_with_ellipsis(rendered: &str, max_width: usize, ellipsis: &s
- 
-     let mut cut_at = 0;
-     let mut width = 0;
--    for (i, ch) in plain_str.char_indices() {
--        let w = UnicodeWidthChar::width(ch).unwrap_or(0);
-+    // Measure whole grapheme clusters: an emoji presentation sequence such as
-+    // `♻\u{fe0f}` draws two cells, though its chars measure 1 + 0.
-+    for (i, g) in plain_str.grapheme_indices(true) {
-+        let w = UnicodeWidthStr::width(g);
-         if width + w > budget {
-             break;
-         }
-         width += w;
--        cut_at = i + ch.len_utf8();
-+        cut_at = i + g.len();
-     }
- 
-     let mut out = rendered.ansi_cut(..cut_at).into_owned();
-@@ -257,6 +260,14 @@ mod tests {
-         // A wide character straddling the cut is dropped, not split
-         assert_eq!(truncate_visible("café ☕ and more", 7), "café…");
- 
-+        // A VS16 emoji presentation sequence draws two cells, not one, and is
-+        // kept or dropped whole
-+        assert_eq!(
-+            truncate_visible("♻\u{fe0f} refactor: something long", 12),
-+            "♻\u{fe0f} refactor…"
-+        );
-+        assert_eq!(truncate_visible("♻\u{fe0f}♻\u{fe0f}", 3), "♻\u{fe0f}…");
++import { lstatSync } from "node:fs";
++import { delimiter, join } from "node:path";
 +
-         // Zero width → empty
-         assert!(truncate_visible("hello world", 0).is_empty());
+ import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
  
-```
-
----
-
-### Incident Patch 2: `4a3ac94b` (2026-11-01)
-**Commit Message**: fix(claude): write hook markers without re-executing wt (#4619)
-
-Claude Code marker hooks now write through the repository already
-discovered by the hook process. This removes the nested `wt config state
-marker` invocation and its repeat repository discovery and worktree
-listing. Marker events remain silent and keep their existing best-effort
-behavior; the regression test failed on the old Stop hook's stderr
-output and passes with the in-process write. The five Claude hook
-integration tests pass.
-
-This addresses the synchronous process overhead. Async registrations
-still need ordered writes and Git config lock handling, so #4618 stays
-open for that work.
-
-Refs #4618 — automated triage
-
----------
-
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
-
-**File**: `src/commands/config/plugins.rs` (modified, +26/-15)
-```diff
-@@ -162,8 +162,8 @@ struct PermissionRequest {
- ///   (#3754). It never force-deletes, since Claude Code fires it on session
- ///   exit for any clean worktree (#2939).
- ///
--/// Each action runs this `wt` binary again with the command a user would type,
--/// so the hook behaves exactly as that command does.
-+/// Worktree actions run this `wt` binary again with the command a user would
-+/// type. Marker actions write through the discovered repository directly.
- pub fn handle_claude_hook() -> anyhow::Result<()> {
-     let hook: ClaudeHook = serde_json::from_reader(std::io::stdin().lock())
-         .context("Failed to parse Claude Code hook payload")?;
-@@ -173,18 +173,18 @@ pub fn handle_claude_hook() -> anyhow::Result<()> {
-     };
- 
-     match hook {
--        ClaudeHook::UserPromptSubmit {} => set_marker(&project_dir, &["set", "🤖"]),
-+        ClaudeHook::UserPromptSubmit {} => set_marker(&project_dir, Some("🤖")),
-         ClaudeHook::Notification {} | ClaudeHook::PreToolUse {} | ClaudeHook::Stop {} => {
--            set_marker(&project_dir, &["set", "💬"])
-+            set_marker(&project_dir, Some("💬"))
-         }
--        ClaudeHook::SessionEnd {} => set_marker(&project_dir, &["clear"]),
-+        ClaudeHook::SessionEnd {} => set_marker(&project_dir, None),
-         ClaudeHook::PermissionRequest(request) => {
-             // A payload `wt` can't resolve, such as a `cwd` in no repository,
-             // declines, leaving the dialog.
-             if approves_enter_worktree(&request).unwrap_or(false) {
-                 return print_allow_decision();
-             }
--            set_marker(&project_dir, &["set", "💬"])
-+            set_marker(&project_dir, Some("💬"))
-         }
-         ClaudeHook::WorktreeCreate { name } => {
-             // A directory no repository resolves from falls through to
-@@ -248,15 +248,26 @@ fn print_allow_decision() -> anyhow::Result<()> {
-     }))
- }
- 
--/// Sets or clears the activity marker of the worktree at `dir`, ignoring
--/// failure.
--fn set_marker(dir: &Path, args: &[&str]) -> anyhow::Result<()> {
--    let dir = dir.to_string_lossy();
--    let _ = run_wt(
--        Cmd::new(wt_binary()?)
--            .args(["-C", dir.as_ref(), "config", "state", "marker"])
--            .args(args.iter().copied()),
--    );
-+/// Sets or clears the activity marker in the session's launch worktree.
-+/// Marker failures never fail a Claude hook.
-+fn set_marker(dir: &Path, marker: Option<&str>) -> anyhow::Result<()> {
-+    let _ = (|| -> anyhow::Result<()> {
-+        let repo = Repository::at(dir)?;
-+        let Some(branch) = repo.current_worktree().branch()? else {
-+            return Ok(());
-+        };
-+        let key = format!("worktrunk.state.{branch}.marker");
-+        if let Some(marker) = marker {
-+            let value = serde_json::json!({
-+                "marker": marker,
-+                "set_at": worktrunk::utils::epoch_now(),
-+            });
-+            repo.set_config(&key, &value.to_string())?;
-+        } else {
-+            repo.unset_config(&key)?;
++// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
++// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
++// accepts any arguments, exits 0, and reports the unknown program in a popup
++// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
++// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
++// seen for the lookup to stop where Windows' own PATH search would.
++// `undefined` means no worktrunk binary was found.
++function worktrunkBin(): string | undefined {
++  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
++  if (process.platform !== "win32") return "wt";
++  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
++  const find = (name: string) =>
++    dirs
++      .map((dir) => join(dir, name))
++      .find((path) => {
++        try {
++          lstatSync(path);
++          return true;
++        } catch {
++          return false;
 +        }
-+        Ok(())
-+    })();
-     Ok(())
- }
- 
-```
-
-**File**: `tests/integration_tests/claude_hook.rs` (modified, +27/-0)
-```diff
-@@ -71,6 +71,10 @@ fn test_claude_hook_markers_follow_project_dir(mut repo: TestRepo) {
- 
-     let stop = run_hook(&repo, &feature, &root, r#"{"hook_event_name":"Stop"}"#);
-     assert!(stop.status.success());
-+    assert!(
-+        stop.stderr.is_empty(),
-+        "marker hook wrote to stderr: {stop:?}"
-+    );
-     assert_eq!(marker(&repo, &root), "💬");
- 
-     let end = run_hook(
-@@ -97,6 +101,29 @@ fn test_claude_hook_marker_failure_succeeds(repo: TestRepo) {
-     assert_eq!(stdout(&output), "");
- }
- 
-+/// A detached worktree has no branch to attach a marker to.
-+#[rstest]
-+fn test_claude_hook_marker_detached_worktree(repo: TestRepo) {
-+    let root = repo.root_path();
-+    let prompt = run_hook(
-+        &repo,
-+        root,
-+        root,
-+        r#"{"hook_event_name":"UserPromptSubmit"}"#,
-+    );
-+    assert!(prompt.status.success(), "{prompt:?}");
-+    assert_eq!(marker(&repo, root), "🤖");
-+
-+    repo.run_git(&["checkout", "--detach"]);
-+    let output = run_hook(&repo, root, root, r#"{"hook_event_name":"Stop"}"#);
-+    assert!(output.status.success(), "{output:?}");
-+    assert!(output.stderr.is_empty(), "{output:?}");
-+    assert_eq!(stdout(&output), "");
-+
-+    repo.run_git(&["checkout", "main"]);
-+    assert_eq!(marker(&repo, root), "🤖");
++      });
++  if (find("git-wt.exe")) return "git-wt.exe";
++  const wt = find("wt.exe");
++  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
 +}
 +
- /// `PermissionRequest` answers an `EnterWorktree` into a managed worktree with
- /// the allow decision and leaves the marker unset; any other request prints
- /// nothing, so the dialog stays, and marks the session 💬 while it waits.
+ export default function worktrunkActivity(pi: HookAPI): void {
+   const run = async (
+     ctx: { cwd: string },
+     args: ["set", string] | ["clear"],
+   ): Promise<void> => {
++    const bin = worktrunkBin();
++    if (!bin) return;
+     try {
+-      await pi.exec("wt", ["config", "state", "marker", ...args], {
++      await pi.exec(bin, ["config", "state", "marker", ...args], {
+         cwd: ctx.cwd,
+       });
+     } catch {
+```
+
+**File**: `dev/opencode-plugin.ts` (modified, +39/-4)
+```diff
+@@ -23,24 +23,53 @@
+ // versions, and a lone file in the config directory has no package to resolve.
+ 
+ import { execFile } from "node:child_process";
+-import { existsSync } from "node:fs";
+-import { basename, join } from "node:path";
++import { existsSync, lstatSync } from "node:fs";
++import { basename, delimiter, join } from "node:path";
+ import { promisify } from "node:util";
+ 
+ const execute = promisify(execFile);
+ 
+ const WORKING = "🤖";
+ const WAITING = "💬";
+ 
++// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
++// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
++// accepts any arguments, exits 0, and reports the unknown program in a popup
++// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
++// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
++// seen for the lookup to stop where Windows' own PATH search would.
++// `undefined` means no worktrunk binary was found.
++function worktrunkBin(): string | undefined {
++  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
++  if (process.platform !== "win32") return "wt";
++  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
++  const find = (name: string) =>
++    dirs
++      .map((dir) => join(dir, name))
++      .find((path) => {
++        try {
++          lstatSync(path);
++          return true;
++        } catch {
++          return false;
++        }
++      });
++  if (find("git-wt.exe")) return "git-wt.exe";
++  const wt = find("wt.exe");
++  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
++}
++
+ /**
+  * Run `wt config state marker …` in this plugin instance's worktree.
+  *
+  * `cwd` is load-bearing: the marker belongs to the worktree the session is in,
+  * not to whatever directory the host process happens to sit in.
+  */
+ async function marker(directory: string, args: string[]): Promise<void> {
++  const bin = worktrunkBin();
++  if (!bin) return;
+   try {
+-    await execute("wt", ["config", "state", "marker", ...args], { cwd: directory });
++    await execute(bin, ["config", "state", "marker", ...args], { cwd: directory });
+   } catch {
+     // `wt` may be off PATH, or the directory may no longer be a worktree. An
+     // activity marker is not worth raising an error into the session over.
+@@ -85,8 +114,14 @@ type SetupContext = {
+  * dirty worktree, a branch that already exists) says more than the exit code.
+  */
+ async function wt(args: string[], { signal }: Signal): Promise<string> {
++  const bin = worktrunkBin();
++  if (!bin) {
++    throw new Error(
++      "worktrunk not found on PATH: install it as git-wt.exe, or set WORKTRUNK_BIN; a `wt` from WindowsApps is Windows Terminal",
++    );
++  }
+   try {
+-    const { stdout } = await execute("wt", args, { signal, maxBuffer: 16 * 1024 * 1024 });
++    const { stdout } = await execute(bin, args, { signal, maxBuffer: 16 * 1024 * 1024 });
+     return stdout;
+   } catch (error) {
+     const stderr = (error as { stderr?: string }).stderr?.trim();
+```
+
+**File**: `dev/pi-extension.ts` (modified, +33/-1)
+```diff
+@@ -11,15 +11,47 @@
+ // `ExtensionAPI`. oh-my-pi is a different agent with a different loader and
+ // API — see `dev/omp-hook.ts` and `wt config plugins omp install`.
+ 
++import { lstatSync } from "node:fs";
++import { delimiter, join } from "node:path";
++
+ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+ 
++// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
++// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
++// accepts any arguments, exits 0, and reports the unknown program in a popup
++// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
++// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
++// seen for the lookup to stop where Windows' own PATH search would.
++// `undefined` means no worktrunk binary was found.
++function worktrunkBin(): string | undefined {
++  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
++  if (process.platform !== "win32") return "wt";
++  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
++  const find = (name: string) =>
++    dirs
++      .map((dir) => join(dir, name))
++      .find((path) => {
++        try {
++          lstatSync(path);
++          return true;
++        } catch {
++          return false;
++        }
++      });
++  if (find("git-wt.exe")) return "git-wt.exe";
++  const wt = find("wt.exe");
++  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
++}
++
+ export default function worktrunkActivity(pi: ExtensionAPI): void {
+   const run = async (
+     cwd: string,
+     args: ["set", string] | ["clear"],
+   ): Promise<void> => {
++    const bin = worktrunkBin();
++    if (!bin) return;
+     try {
+-      await pi.exec("wt", ["config", "state", "marker", ...args], { cwd });
++      await pi.exec(bin, ["config", "state", "marker", ...args], { cwd });
+     } catch {
+       // Activity tracking must never interrupt the host Pi session.
+     }
 ```
 
 ---
 
-### Incident Patch 3: `a8d0fdf8` (2026-11-03)
-**Commit Message**: fix(docs): stop move-changes after stash failures (#4678)
+### Incident Patch 2: `c60d061c` (2026-11-04)
+**Commit Message**: fix(alias): show project aliases with retired template variables migrated (#4690)
 
-The documented `move-changes` alias now stops when either stash
-operation fails. A failed stash push no longer starts the new worktree,
-and a failed stash pop no longer runs the forwarded command in a
-partially restored worktree.
+`wt config alias show` now displays project aliases with retired
+template variables rewritten, matching what the alias actually runs.
+Previously a project alias written as `code {{ repo_root }}` showed `{{
+repo_root }}`, while execution (via `ProjectConfig::load`) ran the
+migrated `{{ repo_path }}` — and user aliases, loaded through
+`UserConfig::load`, already showed migrated text, so the two sources
+disagreed in one listing.
 
-The docs sync test and site build passed. A shell reproduction confirmed
-that the previous command ran its follow-up after a failed stash pop and
-the revised command exits with that failure. The full pre-merge gate ran
-5,476 tests: 5,469 passed, seven failed in local environment-sensitive
-tests (including unavailable Unix sockets, shell snapshots, and signing
-key permissions). This is a documentation-only edit, so the shell
-reproduction covers the changed recipe; PR CI will verify the published
-revision.
+The cause was `load_project_aliases_silent` parsing `.config/wt.toml`
+with a bare `toml::from_str`, on the stated premise that the `aliases`
+table has no deprecated forms. The first `DEPRECATION_RULES` row
+(`migrate_template_vars_doc`) rewrites retired variables in every string
+value, aliases included. The fix runs the file through the same silent
+`migrate_content` that `wt config show` and the user-config loader use
+before deserializing, and corrects that docstring. The same listing
+feeds the `Aliases:` section of `wt --help`, which shows names only, so
+only `show` changes visibly.
 
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+`test_config_alias_show_migrates_retired_template_vars` configures a
+project alias with `{{ rep
 
-**File**: `docs/src/content/docs/extending.md` (modified, +2/-2)
+**File**: `src/commands/alias.rs` (modified, +8/-6)
 ```diff
-@@ -160,9 +160,9 @@ if git diff --quiet HEAD && test -z "$(git ls-files --others --exclude-standard)
-   wt switch --create {{ to }} --execute sh -- -c \
-     'if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- else
--  git stash push --include-untracked --quiet
-+  git stash push --include-untracked --quiet || exit
-   wt switch --create {{ to }} --execute sh -- -c \
--    'git stash pop --index; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
-+    'git stash pop --index || exit; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- fi
- '''
- ```
+@@ -885,14 +885,15 @@ fn render_aliases_help_section(
+ /// Callers (`augment_help`, `wt config alias show`) latch
+ /// `suppress_warnings()` before reaching here so the standard `UserConfig::load()`
+ /// stays quiet: no deprecation warnings, no `.new` file writes, no
+-/// approved-commands copy. Project config is parsed directly from TOML rather
+-/// than via `ProjectConfig::load` because the `aliases` table has no deprecated
+-/// forms — skipping the migration avoids the unrelated warnings entirely.
++/// approved-commands copy. Project config is migrated and parsed directly
++/// rather than via `ProjectConfig::load`, avoiding its diagnostic side
++/// effects; the migration rewrites retired template variables, so both
++/// sources show the template that runs.
+ ///
+ /// Tolerates missing or unloadable config: this is a discovery surface, not
+ /// an execution surface, so we'd rather show the built-in commands than
+ /// error out when a repo isn't detected or a config file is malformed.
+-/// `step_alias` surfaces those errors at execution time.
++/// Running the alias surfaces those errors.
+ pub(crate) fn load_aliases_for_listing() -> Vec<(String, CommandConfig, HookSource)> {
+     let repo = Repository::current().ok();
+     let project_id = repo.as_ref().and_then(|r| r.project_identifier().ok());
+@@ -923,7 +924,7 @@ pub(crate) fn load_aliases_for_listing() -> Vec<(String, CommandConfig, HookSour
+     entries
+ }
+ 
+-/// Parse `.config/wt.toml` directly, extracting just `aliases`, without
++/// Migrate and parse `.config/wt.toml`, extracting just `aliases`, without
+ /// triggering `ProjectConfig::load`'s deprecation warning and hint-writing
+ /// side effects. See `load_aliases_for_listing` for why.
+ fn load_project_aliases_silent(repo: &Repository) -> Option<BTreeMap<String, CommandConfig>> {
+@@ -932,7 +933,8 @@ fn load_project_aliases_silent(repo: &Repository) -> Option<BTreeMap<String, Com
+         return None;
+     }
+     let contents = std::fs::read_to_string(&path).ok()?;
+-    let config: ProjectConfig = toml::from_str(&contents).ok()?;
++    let migrated = worktrunk::config::migrate_content(&contents);
++    let config: ProjectConfig = toml::from_str(&migrated).ok()?;
+     Some(config.aliases)
+ }
+ 
 ```
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/extending.md` (modified, +2/-2)
+**File**: `tests/integration_tests/step_alias.rs` (modified, +25/-0)
 ```diff
-@@ -156,9 +156,9 @@ if git diff --quiet HEAD && test -z "$(git ls-files --others --exclude-standard)
-   wt switch --create {{ to }} --execute sh -- -c \
-     'if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- else
--  git stash push --include-untracked --quiet
-+  git stash push --include-untracked --quiet || exit
-   wt switch --create {{ to }} --execute sh -- -c \
--    'git stash pop --index; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
-+    'git stash pop --index || exit; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- fi
- '''
- ```
+@@ -1970,6 +1970,31 @@ command = "echo message"
+     }
+ }
+ 
++/// Project and user aliases display the templates that run: a retired
++/// template variable shows as its replacement in both sources, matching the
++/// migration execution applies.
++#[rstest]
++fn test_config_alias_show_migrates_retired_template_vars(repo: TestRepo) {
++    repo.write_project_config(
++        r#"
++[aliases]
++open = "code {{ repo_root }}"
++"#,
++    );
++    repo.commit("Add alias config");
++    repo.write_test_config(
++        r#"
++[aliases]
++here = "echo {{ worktree }}"
++"#,
++    );
++
++    let settings = setup_snapshot_settings(&repo);
++    let _guard = settings.bind_to_scope();
++
++    assert_cmd_snapshot!(make_snapshot_cmd(&repo, "config", &["alias", "show"], None));
++}
++
+ /// `wt config alias show` with no name and no aliases configured prints a note
+ /// rather than empty output.
+ #[rstest]
 ```
 
-**File**: `skills/worktrunk/reference/extending.md` (modified, +2/-2)
+**File**: `tests/snapshots/integration__integration_tests__step_alias__config_alias_show_migrates_retired_template_vars.snap` (added, +66/-0)
 ```diff
-@@ -156,9 +156,9 @@ if git diff --quiet HEAD && test -z "$(git ls-files --others --exclude-standard)
-   wt switch --create {{ to }} --execute sh -- -c \
-     'if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- else
--  git stash push --include-untracked --quiet
-+  git stash push --include-untracked --quiet || exit
-   wt switch --create {{ to }} --execute sh -- -c \
--    'git stash pop --index; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
-+    'git stash pop --index || exit; if [ "$#" -gt 0 ]; then exec "$@"; fi' worktrunk-move {{ args }}
- fi
- '''
- ```
+@@ -0,0 +1,66 @@
++---
++source: tests/integration_tests/step_alias.rs
++info:
++  program: wt
++  args:
++    - config
++    - alias
++    - show
++  env:
++    APPDATA: "[TEST_CONFIG_HOME]"
++    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
++    CLICOLOR_FORCE: "1"
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    HOME: "[TEST_HOME]"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
++    PATH: "[PATH]"
++    TERM: alacritty
++    USERPROFILE: "[TEST_HOME]"
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
++---
++success: true
++exit_code: 0
++----- stdout -----
++[2m○[22m Alias [1mhere[22m (user):
++[107m [0m [2m[0m[2m[34mecho[0m[2m [0m[2m[32m{{[0m[2m worktree_path [0m[2m[32m}}[0m
++[2m○[22m Alias [1mopen[22m (project):
++[107m [0m [2m[0m[2m[34mcode[0m[2m [0m[2m[32m{{[0m[2m repo_path [0m[2m[32m}}[0m
++
++----- stderr -----
+```
+
+---
+
+### Incident Patch 3: `0807dc3d` (2026-11-04)
+**Commit Message**: fix(deps): raise the fastrand floor so minimal-versions resolves (#4695)
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -274,7 +274,7 @@ petname-macros = "=3.2.0"
+ tempfile = "3.27"
+ # The generator tempfile names come from; the test helpers seed it per
+ # process (`testing::temp_builder`, #4692).
+-fastrand = "2.1.1"
++fastrand = "2.5"
+ 
+ # Timed waits on child processes (`Cmd::timeout`, `Cmd::delayed_stream`, the
+ # picker's pager). Replaced `wait-timeout`, whose SIGCHLD handler aborts the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4682** (2026-11-03): fix(list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow (@worktrunk-bot)
-- **PR #4679** (2026-11-03): test: format fork remote URLs without spawning gh or glab (@worktrunk-bot)
-- **PR #4678** (2026-11-03): fix(docs): stop move-changes after stash failures (@worktrunk-bot)
-- **PR #4677** (2026-11-03): Run Tend workflows on Claude (@max-sixty)
-- **PR #4676** (2026-11-03): chore: bump jdx/packslip from 1.11.2 to 1.11.3 (@dependabot[bot])
-- **PR #4669** (2026-11-03): fix(picker): flash success feedback after alt-x removes worktree (@Yash2031v)
+- **PR #4698** (2026-11-04): fix(plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (@worktrunk-bot)
+- **PR #4695** (2026-11-04): fix(deps): raise the fastrand floor so minimal-versions resolves (@worktrunk-bot)
+- **PR #4693** (2026-11-04): fix(tests): seed tempfile's name generator per process (@worktrunk-bot)
+- **PR #4690** (2026-11-04): fix(alias): show project aliases with retired template variables migrated (@worktrunk-bot)
+- **PR #4686** (2026-11-04): chore: bump taiki-e/install-action from 2.88.1 to 2.89.0 (@dependabot[bot])
+- **PR #4684** (2026-11-04): fix(remove): clear a branch's marker when wt deletes the branch (@worktrunk-bot)
 
 ---
 
@@ -2331,28 +2445,55 @@ Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow 
+## X. plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/omp-hook.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b35ef62`: list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow (#4682). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bf9166a`: plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/omp-hook.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "unicode-segmentation",
+import { lstatSync } from "node:fs";
+import { delimiter, join } from "node:path";
+
+// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
+// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
+// accepts any arguments, exits 0, and reports the unknown program in a popup
+// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
+// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
+// seen for the lookup to stop where Windows' own PATH search would.
+// `undefined` means no worktrunk binary was found.
+function worktrunkBin(): string | undefined {
+  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
+  if (process.platform !== "win32") return "wt";
+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
+  const find = (name: string) =>
+    dirs
+      .map((dir) => join(dir, name))
+      .find((path) => {
+        try {
+          lstatSync(path);
+          return true;
+        } catch {
+          return false;
+        }
+      });
+  if (find("git-wt.exe")) return "git-wt.exe";
+  const wt = find("wt.exe");
+  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : un
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      await pi.exec("wt", ["config", "state", "marker", ...args], {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b35ef62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bf9166a` are properly handled with clean fallback behavior.

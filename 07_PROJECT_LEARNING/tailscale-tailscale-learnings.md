@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `4290c03d`  
+> **Source Version**: `a967b7d8`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:22.217Z  
+> **Timestamp**: 2026-11-05T00:36:47.002Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:21.873Z  
+> **Harvest Timestamp**: 2026-11-05T00:36:46.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38587 stars
+- **Stars / Engagement**: 38636 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22154** (2026-11-04): **Subnet router on UGREEN NAS (UGOS) cannot route traffic to other LAN hosts**
+  *Symptoms*: ### What is the issue?  ### Description I am running Tailscale as a subnet router on a UGREEN NAS (UGOS). The subnet route is properly advertised and approved, and the remote client successfully installs the route. However, the client can only access the NAS itself, but cannot reach any other hosts on the local network (LAN). The NAS can reach all LAN hosts locally.  ### Technical Details - **Device:** UGREEN NAS (UGOS) - **Tailscale Version:** 1.96.4 - **Subnet Route:** 192.168.2.0/24 (Approved: yes, PrimaryRoute: yes) - **Remote Client Route Installed:** 192.168.2.0/24 -> 100.100.100.100  ### Diagnostics & Traceroute Traceroute from remote client to a LAN host (192.168.2.1): 1 mynas.trex-ph.ts.net 2 * * * (timeout)  ### Connectivity Test - **Accessible remotely:** 192.168.2.8 (NAS IP) - **Not accessible remotely:** 192.168.2.1, 192.168.2.111, 192.168.2.197  ### Bugreport ID BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89   ### Steps to reproduce  _No response_  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Android, Windows  ### OS version  _No response_  ### Tailscale version  1.96.4  ### Other software  NAS Ugreen DXP2800 system version 1.20.0.0124  ### Bug report  BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89
+
 - **Issue #22144** (2026-11-03): **iPadOS 27.2: "MagicSock function not running" after device restart, tunnel shows connected but passes no traffic or DNS**
   *Symptoms*: ### What is the issue?  On an iPad Air M4 (iPadOS 27.2), Tailscale repeatedly enters a state where the app shows "Connected" but displays the warning "MagicSock function not running". While in this state, no traffic passes through the tunnel: DNS (MagicDNS, global nameserver on a tailnet node) does not resolve, so Safari and all apps fail to load anything. Turning Tailscale off immediately restores internet access.  An iPhone (iOS 27.2) on the same Wi-Fi network, behind the same router and the same egress path, does not show the problem.  ### Steps to reproduce  Occurrences: - 2026-10-31: right after the iPadOS 27.2 update (which includes a restart). Fixed by deleting the VPN profile. - 2026-11-02: device fully powered off while away, powered on back at home; issue appeared immediately. Fixed by toggling Tailscale off and on. Bug report attached below (generated while the error was showing).  ### Are there any recent changes that introduced the issue?  Yes: the device was updated to iPadOS 27.2 on 2026-10-31, the same day the first occurrence happened.  ### OS  iOS  ### OS version  iPadOS 27.2  ### Tailscale version  1.104.4  ### Other software  Home router routes this device's traffic through a commercial OpenVPN tunnel (NordVPN). The admin console shows "Varies: Yes" (endpoint-dependent NAT) for this node, and its DERP home is New York. The iPhone that works correctly uses the same router tunnel.  ### Bug report  BUG-94caa859c8a9ae8eeb5f1189b7d83c8a95c44b839742f90c53a33a52f
-
-- **Issue #22135** (2026-11-04): **Disable Multipath TCP on listeners by default (CVE-2026-98432)**
-  *Symptoms*: ### What are you trying to do?  Since Go 1.24 the `multipathtcp` GODEBUG defaults to `2`, so on Linux every listener that doesn't call `SetMultipathTCP` explicitly is opened as `IPPROTO_MPTCP`. The official v1.104.4 binaries (go1.27.3) carry no `multipathtcp` entry in `DefaultGODEBUG`, and the tailscale/go fork keeps the upstream default. In `tailscaled` that covers the peerapi and serve listeners on the Tailscale IP, the SOCKS5/HTTP outbound proxy, and the `--debug` server. `tailscale web --listen` is affected too.  The publicly demonstrated unauthenticated remote root exploit for **CVE-2026-98432** (Linux IPv4 TCP use-after-free) needs the target to expose an MPTCP listener. Ubuntu, RHEL and their derivatives had no fixed kernel as of 2026-10-30.  ### How should we solve this?  Add `//go:debug multipathtcp=0` to the main packages that ship as binaries or images: `cmd/tailscaled`, `cmd/tailscale`, `cmd/derper`, `cmd/containerboot`, `cmd/k8s-operator`, `cmd/k8s-proxy` and `cmd/tsidp`. A `godebug` line in `go.mod` wouldn't be enough, because it is ignored when the binary is built as a versioned module, for example with `go install tailscale.com/cmd/derper@latest`. Users can opt back in with `GODEBUG=multipathtcp=2`.  This follows #15063, which already disabled MPTCP on the derper listeners because it's incompatible with `TCP_USER_TIMEOUT`.  ### What is the impact of not solving this?  Linux nodes expose MPTCP listeners they never use. Exposure is limited (peerapi and serve bin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,110 +821,214 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7f595b4` (2026-11-01)
-**Commit Message**: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
+### Incident Patch 1: `a967b7d8` (2026-10-15)
+**Commit Message**: tailcfg: add a nodecap to disable hybrid handshakes
 
-The operator user could serve a path or Unix socket if tailscaled
-found a sudo rule for them, but the check used the GECOS display name
-and so failed for most users with a 401. The check cannot be repaired
-safely: listing another user's sudo rules never prompts, so it proves
-a rule exists, not that the user has authenticated. An operator who
-had not entered their sudo password could serve any root-readable file
-or root-only socket. Require root instead and say so in the error.
+Updates tailscale/corp#50068
 
-Fixes #21204
-Fixes #21985
-Fixes #21988
+Signed-off-by: David Anderson <[REDACTED_EMAIL]>
+Change-Id: I07fc56c2eff6ab54ac9eec8ce33ea1d16a6a6964
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnauth/actor.go` (modified, +5/-3)
+**File**: `tailcfg/nodecap/nodecap.go` (modified, +9/-0)
 ```diff
-@@ -55,9 +55,11 @@ type Actor interface {
- 	// IsLocalAdmin reports whether the actor has administrative access to the
- 	// local machine, for whatever that means with respect to the current OS.
- 	//
--	// The operatorUID is only used on Unix-like platforms and specifies the ID
--	// of a local user (in the os/user.User.Uid string form) who is allowed to
--	// operate tailscaled without being root or using sudo.
-+	// The operatorUID specifies the ID of a local user (in the
-+	// os/user.User.Uid string form) who is allowed to operate tailscaled
-+	// without being root. No implementation currently consults it: on
-+	// Unix-like platforms only root is a local admin, and on Windows the
-+	// check is whether the caller's token is elevated.
- 	//
- 	// Deprecated: this method exists for compatibility with the current (as of 2024-08-27)
- 	// permission model and will be removed as we progress on tailscale/corp#18342.
+@@ -91,6 +91,15 @@ const (
+ 	// server, DERP servers, etc.)
+ 	DebugTSDNSResolution Cap = "https://tailscale.com/cap/debug-ts-dns-resolution"
+ 
++	// DisableHybridHandshakes indicates that the node should not use hybrid
++	// PQ wireguard handshakes to communicate with peers that support hybrid
++	// handshakes.
++	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
++	// the risk of the initial rollout of hybrid handshakes. It will eventually
++	// be deleted to remove the control server's ability to downgrade hybrid
++	// handshakes.
++	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
++
+ 	// FunnelPorts specifies the ports that the Funnel is available on.
+ 	// The ports are specified as a comma-separated list of port numbers or port
+ 	// ranges (e.g. "80,443,8080-8090") in the ports query parameter.
 ```
 
-**File**: `ipn/ipnserver/actor.go` (modified, +4/-24)
+---
+
+### Incident Patch 2: `274a3f20` (2026-11-04)
+**Commit Message**: feature/conn25: roll back the address assignment when the send queue is full (#22165)
+
+reserveAddresses inserts the assignment into c.assignments before
+enqueueing it, and leaves it there when the enqueue fails. The connector
+never learns about such a mapping, and nothing tell it later.
+Add addrAssignments.remove and use it to undo the insert and return both
+addresses to their pools when enqueueAddressAssignment fails. The caller
+still gets a SERVFAIL, but the next DNS query starts from a clean slate.
+
+Fixes https://github.com/tailscale/corp/issues/50917
+
+Change-Id: I5a387bdcf5a5e87e2dca44867e88ed6149678729
+
+Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
+
+**File**: `feature/conn25/addrAssignments.go` (modified, +20/-4)
 ```diff
-@@ -8,9 +8,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"net"
--	"os/exec"
- 	"runtime"
--	"time"
+@@ -145,13 +145,29 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
+ 		// TODO(mzb/fran): This is an expensive operation we could consider optimizing.
+ 		heap.Push(&a.byExpiresAt, candidate)
+ 	}
+-	delete(a.byMagicIP, v.magic)
+-	delete(a.byTransitIP, v.connectorAddr.transit)
+-	dd := domainDst{domain: v.domain, dst: v.dst}
+-	delete(a.byDomainDst, dd)
++	a.deleteFromNonHeapIndexes(v)
+ 	return v
+ }
  
- 	"tailscale.com/feature/buildfeatures"
- 	"tailscale.com/ipn"
-@@ -243,29 +241,11 @@ func connIsLocalAdmin(logf logger.Logf, ci *ipnauth.ConnIdentity, operatorUID st
- 			// is omitted for the build.
- 			return true
- 		}
-+		// Only root is a local admin. The operator user is not, even if
-+		// they could run "sudo tailscale": tailscaled cannot tell whether
-+		// they have authenticated to sudo, only that a rule exists.
- 		uid, ok := ci.Creds().UserID()
--		if !ok {
--			return false
--		}
--		// root is always admin.
--		if uid == "0" {
--			return true
--		}
--		// if non-root, must be operator AND able to execute "sudo tailscale".
--		if operatorUID != "" && uid != operatorUID {
--			return false
--		}
--		u, err := osuser.LookupByUID(uid)
--		if err != nil {
--			return false
--		}
--		// Short timeout just in case sudo hangs for some reason.
--		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
--		defer cancel()
--		if err := exec.CommandContext(ctx, "sudo", "--other-user="+u.Name, "--list", "tailscale").Run(); err != nil {
--			return false
--		}
--		return true
-+		return ok && uid == "0"
- 
- 	default:
- 		return false
++// remove removes the provided address assignment from all the indexes.
++func (a *addrAssignments) remove(as *addrs) {
++	a.deleteFromNonHeapIndexes(as)
++	for i, v := range a.byExpiresAt {
++		if v == as {
++			heap.Remove(&a.byExpiresAt, i)
++			break
++		}
++	}
++}
++
++// deleteFromNonHeapIndexes removes as from every index except byExpiresAt,
++// which the caller is responsible for.
++func (a *addrAssignments) deleteFromNonHeapIndexes(as *addrs) {
++	delete(a.byMagicIP, as.magic)
++	delete(a.byTransitIP, as.connectorAddr.transit)
++	delete(a.byDomainDst, domainDst{domain: as.domain, dst: as.dst})
++}
++
+ func (a *addrAssignments) updateExpiry(as *addrs, expiresIn time.Duration) {
+ 	now := a.clock.Now()
+ 	as.expiresAt = now.Add(expiresIn)
 ```
 
-**File**: `ipn/localapi/serve.go` (modified, +1/-1)
+**File**: `feature/conn25/client.go` (modified, +4/-2)
 ```diff
-@@ -100,7 +100,7 @@ func authorizeServeConfigForGOOSAndUserContext(goos string, configIn *ipn.ServeC
- 	case "windows":
- 		return errors.New("must be a Windows local admin to serve a path or Unix socket")
- 	case "linux", "darwin", "illumos", "solaris":
--		return errors.New("must be root, or be an operator and able to run 'sudo tailscale' to serve a path or Unix socket")
-+		return errors.New("must be root to serve a path or Unix socket")
- 	default:
- 		// We filter goos at the start of the func, this default case
- 		// should never happen.
+@@ -200,8 +200,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 		transitPool.returnAddr(tip)
+ 		return nil, err
+ 	}
+-	err = c.enqueueAddressAssignment(as)
+-	if err != nil {
++	if err := c.enqueueAddressAssignment(as); err != nil {
++		c.assignments.remove(as)
++		magicPool.returnAddr(mip)
++		transitPool.returnAddr(tip)
+ 		return nil, err
+ 	}
+ 	return as, nil
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +89/-0)
+```diff
+@@ -212,6 +212,95 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
+ 	}
+ }
+ 
++// TestReserveAddressesRollbackOnQueueFull checks that an assignment that
++// couldn't be enqueued isn't left behind. The connector never learns about such
++// an assignment, and nothing will tell it later, so keeping it would mean every
++// later lookup for the same domain/dst returns a mapping the connector can't
++// use.
++func TestReserveAddressesRollbackOnQueueFull(t *testing.T) {
++	for _, tt := range []struct {
++		name string
++		dst  netip.Addr
++	}{
++		{
++			name: "v4",
++			dst:  netip.MustParseAddr("0.0.0.1"),
++		},
++		{
++			name: "v6",
++			dst:  netip.MustParseAddr("::1"),
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			const appName = "a"
++			domain := must.Get(dnsname.ToFQDN("example.com."))
++			c := newConn25(t.Logf).client
++			c.v4MagicIPPool = newIPPool(mustIPSetFromPrefix("100.64.0.0/24"))
++			c.v6MagicIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0100::/80"))
++			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
++			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
++
++			magicPool, transitPool := c.v4MagicIPPool, c.v4TransitIPPool
++			if tt.dst.Is6() {
++				magicPool, transitPool = c.v6MagicIPPool, c.v6TransitIPPool
++			}
++
++			// Nothing reads this channel, so the first enqueue fills it and the
++			// second one fails.
++			c.addrsCh = make(chan addrs, 1)
++			if _, err := c.reserveAddresses(appName, "filler.example.com.", tt.dst, 10, testConnectorPeer, ""); err != nil {
++				t.Fatal(err)
++			}
++
++			_, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
++			if !errors.Is(err, errQueueFull) {
++				t.Fatalf("want errQueueFull, got %v", err)
++			}
++
++			// Only the filler assignment should remain, in every index.
++			if got := len(c.assignments.byMagicIP); got != 1 {
++				t.Errorf("want 1 entry in byMagicIP, got %d", got)
++			}
++			if got := len(c.assignments.byTransitIP); got != 1 {
++				t.Errorf("want 1 entry in byTransitIP, got %d", got)
++			}
++			if got := len(c.assignments.byDomainDst); got != 1 {
++				t.Errorf("want 1 entry in byDomainDst, got %d", got)
++			}
++			if got := c.assignments.byExpiresAt.Len(); got != 1 {
++				t.Errorf("want 1 entry in byExpiresAt, got %d", got)
++			}
++			if _, ok := c.assignments.lookupByDomainDst(domain, tt.dst); ok {
++				t.Error("dropped assignment is still reachable by domain/dst")
++			}
++
++			// Both addresses should be back in their pools.
++			if got := magicPool.inUseCount(); got != 1 {
++				t.Errorf("magic pool has %d addresses in use, want 1 (the filler)", got)
++			}
++			if got := transitPool.inUseCount(); got != 1 {
++				t.Errorf("transit pool has %d addresses in use, want 1 (the filler)", got)
++			}
++
++			// Once there's room again, the next attempt gets a fresh
++			// assignment and actually enqueues it.
++			<-c.addrsCh
++			as, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
++			if err != nil {
++				t.Fatal(err)
++			}
++			select {
++			case queued := <-c.addrsCh:
++				if queued.connectorAddr.transit != as.connectorAddr.transit {
++					t.Errorf("queued transit IP %v, want %v", queued.connectorAddr.transit, as.connectorAddr.transit)
++				}
++			default:
++				t.Error("reservation after rollback didn't enqueue an assignment")
++			}
++		})
++	}
++}
++
+ func TestTransitIPConnMapping(t *testing.T) {
+ 	conn25 := newConn25(t.Logf)
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22176** (2026-11-04): derp/derpserver: increase pool size to batch writer flushes (@mikeodr)
 - **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
+- **PR #22165** (2026-11-04): feature/conn25: roll back the address assignment when the send queue is full (@mazdakn)
+- **PR #22164** (closed): derp/derpserver,cmd/derper: batch writer flushes, arm the write deadline per write (@mikeodr)
 - **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
 - **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
-- **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
-- **PR #22151** (2026-11-02): go.mod: bump wireguard-go (@jwhited)
-- **PR #22150** (2026-11-02): ipn/ipnlocal: remove wireguard peers on profile switch (@cmol)
 
 ---
 
@@ -944,34 +1048,36 @@ Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket
+## X. tailcfg: add a nodecap to disable hybrid handshakes
 
 **RULE**:
-When implementing operations in `ipn/ipnauth/actor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tailcfg/nodecap/nodecap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7f595b4`: ipn/ipnserver, ipn/localapi: require root to serve a path or Unix socket. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a967b7d8`: tailcfg: add a nodecap to disable hybrid handshakes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnauth/actor.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tailcfg/nodecap/nodecap.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The operatorUID specifies the ID of a local user (in the
-	// os/user.User.Uid string form) who is allowed to operate tailscaled
-	// without being root. No implementation currently consults it: on
-	// Unix-like platforms only root is a local admin, and on Windows the
-	// check is whether the caller's token is elevated.
+	// DisableHybridHandshakes indicates that the node should not use hybrid
+	// PQ wireguard handshakes to communicate with peers that support hybrid
+	// handshakes.
+	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
+	// the risk of the initial rollout of hybrid handshakes. It will eventually
+	// be deleted to remove the control server's ability to downgrade hybrid
+	// handshakes.
+	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// The operatorUID is only used on Unix-like platforms and specifies the ID
-	// of a local user (in the os/user.User.Uid string form) who is allowed to
-	// operate tailscaled without being root or using sudo.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7f595b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a967b7d8` are properly handled with clean fallback behavior.

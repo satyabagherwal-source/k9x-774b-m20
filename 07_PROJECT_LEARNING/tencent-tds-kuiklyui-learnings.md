@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `9baf4df2`  
+> **Source Version**: `677c36f0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:45:52.569Z  
+> **Timestamp**: 2026-11-04T22:12:39.360Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:45:52.564Z  
+> **Harvest Timestamp**: 2026-11-04T22:12:39.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3617 stars
+- **Stars / Engagement**: 3629 stars
 
 ---
 
@@ -756,11 +756,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1855** (2026-10-29): **feat(web): add removeNotify doc**
+- **Issue #1866** (2026-11-04): **fix: 修复 pager 分页除零崩溃**
   *Symptoms*: 
 
-- **Issue #1853** (2026-10-30): **perf(ohos): cut redundant copies and dedup cost in JSON response parsing**
-  *Symptoms*: Four changes on the HarmonyOS JSON response path. Measured on a real device (ALN-AL00) with a 35MB / 100k-record response: parse stage -33.6%, end-to-end -16.8%.  1. DomBuilder::OnEndObject no longer calls ObjectDedupLast. Keys in parsed JSON files are unique, so building a hash table per object to collapse duplicate keys is pure waste. Inner parse 378ms -> ~310ms.  2. JsonNative.ownerFromJson: zero copy. json.toCharArray().usePinned -> json.usePinned, dropping the UTF-16 copy made before handing the text to the native parser (~48ms).  3. JsonNative.objectGet: zero copy. key.toCharArray().usePinned -> key.usePinned.  4. New JSONObject.optParsedChild: parse a string node directly. NetworkModule used to materialize the 21MB body into a Kotlin String via optString("data") and hand it back to the native parser. On OHOS the KRJSON string node payload is now passed straight to KRJSONParseUTF16, removing that copy (~59ms and ~85MB peak memory). The common layer provides a default implementation that only returns a value when data is already a structured object; android/jvm/js/apple behavior is unchanged, and parse failures still fall back to the previous {"data": <raw text>} result.  No native C/C++ API changes: reuses KRJSONGetStringUTF16 / KRJSONParseUTF16.
+- **Issue #1865** (2026-11-04): **fix(ohos): add HandleScope to CallArkTSMethod to stop NAPI handle leak**
+  *Symptoms*: ## 问题  反复进出 Kuikly 页面时，ArkTS 字符串对象随轮次线性累积且 GC 不回收。  ## 根因  `KRArkTSManager::CallArkTSMethod` 的典型调用上下文是 `KRMainThread::OnMainAsync`（uv_async 回调），**不是**"从 JS 调用进来的 native 方法"。  按 NAPI 规范：后者自带默认 handle scope，前者没有。在 uv_async 这类上下文里创建的 `napi_value` 会一直挂在 env 上，调用结束后不失效。  本函数每次调用创建 8 个参数 `napi_value`（其中 5~7 个是字符串：模块名、方法名、参数），没有 scope 包裹 → 全部被 LocalHandleRoot 持有 → GC 认为可达而不回收。  ## 修复  复用已有的 `KRNapiHandleScope`（#1729 引入）包裹函数体，RAII 保证每条 return 路径都关闭 scope。  改动：1 个文件，+2 行。  ## 测试  **方法**：Kuikly 页面（`RouterModule.openPage/closePage`）自动往返 50 轮，目标页每次 `pageDidAppear` 执行 200 次 `callModuleMethod`。跑完**静置 40 秒**再采样（避开 GC 时机干扰），对比 ArkTS 堆快照对象数。  **三组实验**（同一设备、同一工程）：  | # | 实验条件 | string | closure | LocalHandleRoot | |---|---|---|---|---| | A | 修复前，目标页调 200 次模块方法 | 25957 → **56564**（+30607） | 17063 → 17425 | 529 → **31993** | | B | 修复前，目标页 **0 次**模块方法（对照） | 25957 → 26567（+610） | 17063 → 17425 | 529 → 1996 | | C | **修复后**，目标页调 200 次模块方法 | 25720 → **25885**（+165） | 16766 → 16782 | 524 → **524** |  **现象与结论**：  1. **A 组静置不回收**：跑完瞬间 ArkTS 堆 14.0 MB，静置 40 秒后 6.85 MB（看似回收了），但 string 对象数 56564 **一个不降**——回落的 7 MB 是 array/native 的临时缓冲，泄漏部分纹丝不动。所以判据应是对象数而非堆水位。 2. **A vs B（对照）**：去掉模块调用后 string 增量从 +30607 降到 +610（降 98%），确认泄漏源是模块调用，而非页面进出本身。 3. **A vs C（修复）**：加 scope 后 string 增量 +165（降 99.5%），closure 从 +362 降到 +16，LocalHandleRoot 完全不涨（524 → 524）。 4. C 的增量（+165）**低于**对照 B（+610），说明 scope 还顺带收掉了页面进出路径上的其他临时 handle。  **修复后复测**（去掉注释后重新构建验证，确认效果一致）：string +165、closure +16、LocalHandleRoot 524 → 524，与 C 组完全吻合，无崩溃。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -777,361 +777,482 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6c33271` (2026-10-29)
-**Commit Message**: fix(web): dispatch notifications across live Kuikly pages (#1847)
+### Incident Patch 1: `10b48ae1` (2026-11-04)
+**Commit Message**: fix(ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash (#1860)
 
-Co-authored-by: zhangkaineng <[REDACTED_EMAIL]>
+* fix(ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash
 
-**File**: `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/module/KRNotifyModule.kt` (modified, +16/-7)
+- Kotlin/Native 2.1.21 RunLoopFinalizerProcessor attaches a finalizer source to the
+  main-thread run loop and constructs a ThreadStateGuard before checking the queue,
+  crashing with fault address 0xf8 if the main thread never ran Kotlin code
+  (KT-84331, fixed upstream in Kotlin 2.4.0)
+- since b20353e14 drove all sync/async context tasks onto the dedicated context
+  thread, the first Kotlin call no longer lands on the main thread, so the main
+  thread stays unregistered and the crash became reachable on every entry path
+- add KuiklyRenderFrameworkContextHandler +warmupMainThreadRuntimeWithFrameworkName:
+  which invokes the framework entry's companion class getter once on the main thread
+  (same entry isPageExistWithPageName: already uses, no business side effects),
+  deduped per framework and dispatched async-only off the main thread to avoid
+  main <-> context deadlock
+- trigger it at the top of initRenderViewWithContextCode: (guaranteed main thread),
+  before any context-thread task is scheduled
+
+* 
+
+**File**: `core-render-ios/Extension/KuiklyRenderViewControllerBaseDelegator.m` (modified, +4/-0)
 ```diff
-@@ -15,7 +15,7 @@ private data class KRCallbackWrapper(
- )
+@@ -204,6 +204,10 @@ - (void)fetchContextCodeWithResultCallback:(KuiklyContextCodeCallback)callback {
+ }
  
- /**
-- * Event notification module, web event notification does not support different pages, notifications between different pages need to use higher-level host capabilities
-+ * Notifications are shared by live Kuikly pages in the same Web runtime (including cached SPA pages).
+ - (void)initRenderViewWithContextCode:(id)contextCode {
++    // framework 模式下先在主线程完成 Kotlin/Native runtime 注册，
++    // 规避主线程 finalizer source 在未注册线程上的空队列崩溃（0xf8）
++    [KuiklyRenderFrameworkContextHandler warmupMainThreadRuntimeWithFrameworkName:
++        [contextCode isKindOfClass:[NSString class]] ? contextCode : nil];
+     [self p_disptachDelegatorLifeCycleWithSel:@selector(willInitRenderView) object:nil];
+     NSURL *resourceFolderUrl = nil;
+     if ([self.delegate respondsToSelector:@selector(resourceFolderUrlForKuikly:)]) {
+```
+
+**File**: `core-render-ios/Handler/KuiklyRenderFrameworkContextHandler.h` (modified, +8/-0)
+```diff
+@@ -36,6 +36,14 @@ NS_ASSUME_NONNULL_BEGIN
+  * @brief 根据framework名获取Kotlin/Native入口类
   */
- open class KRNotifyModule : KuiklyRenderBaseModule() {
-     // Notification event Map, cache registered event callbacks
-@@ -30,6 +30,7 @@ open class KRNotifyModule : KuiklyRenderBaseModule() {
-         super.onDestroy()
-         // clean up when module is destroyed
-         moduleInstances.remove(this)
-+        toKRMap.clear()
-     }
+ + (Class _Nullable)entryClassWithFrameworkName:(NSString *)frameworkName;
++/*
++ * @brief framework模式预热：在主线程提前执行一次Kotlin入口调用，
++ * 完成Kotlin/Native runtime的主线程注册（规避finalizer 0xf8崩溃）
++ * @discussion 本预热为 Kotlin/Native 2.1.21 专属 workaround
++ * （KT-84331，上游 2.4.0 已修复），升级 Kotlin >= 2.4.0 后可移除
++ * @param frameworkName 编译出来的framework名字
++ */
+++ (void)warmupMainThreadRuntimeWithFrameworkName:(nullable NSString *)frameworkName;
  
-     /**
-@@ -101,9 +102,9 @@ open class KRNotifyModule : KuiklyRenderBaseModule() {
-         val data = jsonObject.optString(KEY_DATA)
-         // Execute callbacks if event name exists
-         if (eventName != "") {
--            // 1. Notify other Kuikly pages (existing logic)
--            dispatchEvent(eventName, data)
--            // 2. Notify Web host (new feature - like iOS/Android/Ohos)
-+            // Include the sender once and notify cached SPA pages before returning.
-+            dispatchGlobalEventData(eventName, data)
-+            // Notify the host once per post, rather than once per receiving page.
-             dispatchToHost(eventName, data)
-         }
-     }
-@@ -123,7 +124,8 @@ open class KRNotifyModule : KuiklyRenderBaseModule() {
-      * Execute registered event callbacks
-      */
-     private fun dispatchEvent(eventName: String, data: String) {
--        toKRMap[eventName]?.forEach {
-+        // Callbacks may remove listeners while handling a notification.
-+        toKRMap[eventName]?.toList()?.forEach {
-             it.callback.invoke(data)
-         }
-     }
-@@ -160,8 +162,15 @@ open class KRNotifyModule : KuiklyRenderBaseModule() {
- 
-         // dispatch global event to all KRNotifyModule instances
-         fun dispatchGlobalEvent(eventName: String, data: JSONObject) {
--            moduleInstances.forEach { module ->
--                module.dispatchEvent(eventName, data.toString())
-+            dispatchGlobalEventData(eventName, data.toString())
-+        }
-+
-+        private fun dispatchGlobalEventData(eventName: String, data: String) {
-+            // A callback can create or destroy a page during dispatch.
-+            moduleInstances.toList().forEach { module ->
-+                if (module in moduleInstances) {
-+                    module.dispatchEvent(eventName, data)
-+                }
-             }
-         }
-     }
-```
-
----
-
-### Incident Patch 2: `583bec16` (2026-10-29)
-**Commit Message**: fix(compose): re-observe snapshot reads in KNode onChanged to refresh derived-state baseline (#1837)
-
-* fix(compose): re-observe snapshot reads in KNode onChanged to refresh derived-state baseline
-
-- onChanged re-enters observeReads instead of running update() bare, refreshing
-  the derived-state comparison baseline (recordedDerivedStateValues) and
-  re-collecting dependencies, matching androidx SnapshotStateObserver contract
-  (cf. AndroidComposeView onCommitAffecting* -> re-observe pattern)
-- pass a stable onChanged callback instance: SnapshotStateObserver keys its
-  internal ObservedScopeMap by callback identity (===) and the map list only
-  grows, so a fresh lambda per call leaks one scope map per notification and
-  fans each state change out into Fibonacci-growing duplicate updates
-  (observed on device as 1,1,2,3,5,8,13 duplicate viewUpdate calls)
-- without this, a derivedStateOf value read in viewUpdate that goes
-  true -> false -> true has its restoration suppressed (equals the stale
-  baseline), leaving the native view stuck, e.g. video black screen after
-  returning to foreground (verified on OHOS device)
-
-* fix(compose): share single onChanged callback across all KNodes
-
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/node/KNode.kt` (modified, +15/-3)
-```diff
-@@ -122,9 +122,7 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
- 
-     private val runUpdate: () -> Unit = {
-         if (isAttached) {
--            requireOwner().snapshotObserver.observeReads(this, {
--                update()
--            }, update)
-+            requireOwner().snapshotObserver.observeReads(this, OnStateChanged, update)
-         }
-     }
- 
-@@ -403,6 +401,20 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
- 
-     internal companion object {
- 
-+        /**
-+         * Shared onChanged callback for observeReads, intentionally capturing no node.
-+         * SnapshotStateObserver keys its internal ObservedScopeMap by callback identity (===):
-+         * - a fresh lambda per call leaks one map per notification, each keeping its own stale
-+         *   derived-state baseline and re-notifying the node on every state change, fanning one
-+         *   change out into N duplicate updates (observed on device as Fibonacci-growing
-+         *   duplicate viewUpdate calls: 1,1,2,3,5,8,13...);
-+         * - a per-node instance field would allocate one map per node, and every state-change
-+         *   apply then walks the whole per-node map list in drainChanges.
-+         * One shared instance keeps a single map for all nodes, matching the shared
-+         * OwnerSnapshotObserver.onCommitAffecting* callbacks of the official pattern.
-+         */
-+        private val OnStateChanged: (KNode<*>) -> Unit = { it.runUpdate() }
-+
-         internal val ShadowLayoutConstructor: (Boolean) -> (() -> KNode<*>) = { hasShadow ->
-             {
-                 val view = DivView()
-```
-
----
-
-### Incident Patch 3: `9baf4df2` (2026-10-30)
-**Commit Message**: fix(textSelection): 选区高亮绘制顺序与颜色下发修复 (#1845)
-
-* fix(textSelection): 选区高亮绘制顺序与颜色下发
-
-关联 #1793。
-
-Android：KRRichTextView.drawText 先画文字、后画选区，选区半透明高亮与已完成
-抗锯齿的文字笔画二次混合，选中文字发灰。改为先画选区、后画文字，与 iOS
-（KRLabel 的 drawTextInRect:）和鸿蒙一致。
-
-iOS：KRView+TextSelection 先调 kr_applySelectionColorToHelper: 再调
-startSelectionWithLabels:，而 setSelectionColor: 是遍历 self.labels 下发颜色的，
-此时 labels 尚未注入（循环 0 次），颜色只留在 _selectionColor 里；随后
-startSelectionWithLabels: 也没有把已持有的颜色补发给新注入的 labels，导致每个
-KRLabel.selectionColor 始终为 nil，绘制时回退到内置默认色。改在 helper 内补发，
-对调用顺序不再敏感，同时覆盖两处调用点。
-
-鸿蒙未修：属性落在容器 KRView 而选区矩形在子 KRRichTextView，UpdateSelection
-递归不带色值，打通需要改 IKRRenderViewExport 共享基类；当前环境无 HarmonyOS
-NDK 无法编译验证，按 devDocs 体例记录为延后备忘。
-
-* docs(ios): 补充在 macOS 上本地验证 core-render-ios 的做法
-
-渲染层可脱离 Kotlin/Native 单独编译成宿主原生二进制：跑逻辑断言，
-以及用 KRTextRender + KRLabel drawTextInRect: 把绘制结果渲染成位图。
-记录环境要求（目标三元组必须用宿主机架构）、链接框架、位图渲染的坐标系
-翻转、合成公式判据与阴性对照的取源码时机，以及此法覆盖不到的场景。
-
-* docs(ios): 修正本地渲染位图的配方
-
-手写 NSBitmapImageRep + CTM 翻转再直接调 drawTextInRect: 会让选区矩形与文字落在
-不同空间里，实测高亮带占 0..21 行而文字墨迹占 17..35 行，两者几乎不重叠。改用
-AppKit 视图快照 cacheDisplayInRect:toBitmapImageRep:，由视图自己的 isFlipped
-准备上下文，并补上「先断言几何再比颜色」的判据。
-
-* docs(ios): 位图判据改用同路径实测值，不套理论混合公式
-
-颜色经 AppKit 色彩空间转换会有偏移（#FFFDE7 实测成 #FF
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRRichTextView.kt` (modified, +3/-1)
-```diff
-@@ -127,8 +127,10 @@ class KRRichTextView(context: Context) : KRView(context), KRRichTextViewDrawer.C
-         textDrawer?.also {
-             canvas.save()
-             canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
--            it.draw(canvas)
-+            // 选区高亮先绘制，文字再覆盖在其上方：否则半透明高亮会与已完成抗锯齿的文字笔画二次混合，
-+            // 导致选中文字发灰、对比度下降。绘制顺序与 iOS（KRLabel）和鸿蒙保持一致。
-             parentTextSelector?.drawSelection(this, canvas)
-+            it.draw(canvas)
-             canvas.restore()
-         }
-     }
-```
-
-**File**: `core-render-ios/Extension/TextSelection/KRTextSelectionHelper.m` (modified, +18/-4)
-```diff
-@@ -64,6 +64,9 @@ @interface KRTextSelectionHelper () <UIGestureRecognizerDelegate, UIScrollViewDe
- /// Flag to track if containerView frame observer is added
- @property (nonatomic, assign) BOOL isObservingContainerFrame;
- 
-+/// 把当前持有的 selectionColor 下发给所有 labels。labels 为空时是空操作。
-+- (void)applySelectionColorToLabels;
-+
  @end
  
- @implementation KRTextSelectionHelper
-@@ -114,6 +117,13 @@ - (void)startSelectionWithLabels:(NSArray<KRLabel *> *)labels containerView:(KRV
-     self.labels = labels;
-     self.containerView = containerView;
-     
-+    // 调用方可能先 setSelectionColor: 再 startSelectionWithLabels:（此时 labels 尚为空，
-+    // 颜色只存在 _selectionColor 里），因此这里把已持有的颜色补发给刚注入的 labels，
-+    // 否则每个 KRLabel 的 selectionColor 为 nil，绘制时会回退到内置默认色。
-+    if (self.selectionColor) {
-+        [self applySelectionColorToLabels];
-+    }
-+    
-     // Reset state
-     self.startLabel = nil;
-     self.endLabel = nil;
-@@ -850,14 +860,18 @@ - (CGRect)getSelectionFrame {
-     return unionRect;
- }
- 
--- (void)setSelectionColor:(UIColor *)color {
--    _selectionColor = color;
--    // Apply to all labels
-+/// 颜色下发的唯一出口：setSelectionColor: 与 startSelectionWithLabels: 都经过这里。
-+- (void)applySelectionColorToLabels {
-     for (KRLabel *label in self.labels) {
--        label.selectionColor = color;
-+        label.selectionColor = _selectionColor;
-     }
- }
- 
-+- (void)setSelectionColor:(UIColor *)color {
-+    _selectionColor = color;
-+    [self applySelectionColorToLabels];
-+}
-+
- - (void)setCursorColor:(UIColor *)color {
-     _cursorColor = color;
-     // Apply to anchors
 ```
 
-**File**: `devDocs/ios-render-layer-local-verification.md` (added, +107/-0)
+**File**: `core-render-ios/Handler/KuiklyRenderFrameworkContextHandler.m` (modified, +46/-0)
 ```diff
-@@ -0,0 +1,107 @@
-+# 在 macOS 上本地验证 core-render-ios
+@@ -148,6 +148,52 @@ - (void)dealloc {
+ }
+ 
+ #pragma mark - public
++/*
++ * @brief framework模式预热：在主线程执行一次Kotlin入口调用
++ * @discussion Kotlin/Native 2.1.21 的 RunLoopFinalizerProcessor 会在主线程
++ * run loop 上挂 finalizer source，若主线程从未执行过 Kotlin 代码（未注册
++ * runtime），source 回调构造 ThreadStateGuard 时会崩溃（fault 0xf8）。
++ * 在主线程调用一次 companion class getter 即可完成 runtime 注册。
++ * 本预热为 Kotlin/Native 2.1.21 专属 workaround（KT-84331，
++ * 上游 2.4.0 已修复），升级 Kotlin >= 2.4.0 后可移除。
++ * @param frameworkName 编译出来的framework名字
++ */
+++ (void)warmupMainThreadRuntimeWithFrameworkName:(NSString *)frameworkName {
++    static NSMutableSet<NSString *> *warmedFrameworks = nil;
++    static dispatch_once_t onceToken;
++    dispatch_once(&onceToken, ^{
++        warmedFrameworks = [[NSMutableSet alloc] init];
++    });
++    // 与 isFrameworkWithContextCode: 的判定对齐，避免动态化场景下
++    // 把 JS bundle 内容等超长字符串误当作 framework 名处理
++    if (![frameworkName isKindOfClass:[NSString class]] ||
++        !frameworkName.length || frameworkName.length >= MAX_FRAMEWORK_NAME_LENGTH) {
++        return;
++    }
++    // 先确认入口类可解析且实现 companion，再记录去重；
++    // 解析失败（名字错误/类未加载）时不记录，下次调用可重试
++    Class entryClass = [KuiklyRenderFrameworkContextHandler entryClassWithFrameworkName:frameworkName];
++    if (!entryClass || ![entryClass respondsToSelector:@selector(companion)]) {
++        return;
++    }
++    @synchronized (warmedFrameworks) {
++        if ([warmedFrameworks containsObject:frameworkName]) {
++            return;
++        }
++        [warmedFrameworks addObject:frameworkName];
++    }
++    // companion 是 Kotlin/Native 生成的 class getter，无业务副作用，
++    // 与 isPageExistWithPageName: 中的调用同一入口
++    dispatch_block_t warmup = ^{
++        (void)[(id)entryClass performSelector:@selector(companion)];
++    };
++    if ([NSThread isMainThread]) {
++        warmup();
++    } else {
++        // 只异步派发、不等待，避免与 Context 线程互相同步等待造成死锁
++        dispatch_async(dispatch_get_main_queue(), warmup);
++    }
++}
+ /*
+  * @brief 对应contextCode是否framework模式
+  */
+```
+
+---
+
+### Incident Patch 2: `fb374b78` (2026-11-04)
+**Commit Message**: fix(ohos): add HandleScope to CallArkTSMethod to stop NAPI handle leak (#1865)
+
+反复进出 Kuikly 页面时，ArkTS 字符串对象随轮次线性累积且 GC 不回收。
+
+## 根因
+
+KRArkTSManager::CallArkTSMethod 的典型调用上下文是
+KRMainThread::OnMainAsync（uv_async 回调），而不是"从 JS 调用进来的
+native 方法"。按 NAPI 规范，后者自带默认 handle scope，前者没有。
+
+本函数每次调用创建 8 个参数 napi_value（多数是字符串：模块名、方法名、
+参数），在没有 scope 的上下文里会一直挂在 LocalHandleRoot 上，
+调用结束不失效，GC 因认为其可达而不回收。
+
+## 修复
+
+复用已有的 KRNapiHandleScope（#1729 引入）包裹函数体，
+RAII 保证每条 return 路径都关闭 scope。
+
+## 测试
+
+Kuikly 页面（RouterModule.openPage/closePage）自动往返 50 轮，
+目标页每次 pageDidAppear 执行 200 次 callModuleMethod，
+跑完静置 40 秒后采样对比堆快照对象数：
+
+    #  实验条件                          string          closure     LocalHandleRoot
+    A  修复前，目标页调 200 次模块方法    25957->56564(+30607)  +362    529->31993
+    B  修复前，目标页 0 次模块方法(对照)  25957->26567(+610)    +362    529->1996
+    C  修复后，目标页调 200 次模块方法    25720->25885(+165)    +16     524->524
+
+- A 组静置后堆水位从 14.0 MB 回落到 6.85 MB，但 string 对象数 56564
+  一个不降，说明回落的只是临时缓冲，泄漏部分未被回收。
+- A vs B：去掉模块调用后增量降 98%，确认泄漏源是模块调用而非页面进出。
+- A vs C：加 scope 后 string 增量降 99.5%，LocalHandleRoot 不再增长。
+- C 低于 B，说明 scope 同时收掉了页面进出路径上的其他临时 handle。
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/manager/KRArkTSManager.cpp` (modified, +2/-0)
+```diff
+@@ -24,6 +24,7 @@ using kuikly::util::NapiValue;
+ #include "libohos_render/manager/KRRenderManager.h"
+ #include "libohos_render/scheduler/KRContextScheduler.h"
+ #include "libohos_render/utils/KRConvertUtil.h"
++#include "libohos_render/utils/KRNapiHandleScope.h"
+ #include "libohos_render/view/KRRenderView.h"
+ 
+ napi_value CToNApiValue(napi_env env, const KRAnyValue &value) {
+@@ -93,6 +94,7 @@ KRAnyValue KRArkTSManager::CallArkTSMethod(const KRAnyValue &instanceId, KRNativ
+         return nullptr;
+     }
+     napi_env env = arkTSCallbackData_->env;
++    KRNapiHandleScope handle_scope(env);
+     napi_value callbackFun;
+     napi_get_reference_value(env, arkTSCallbackData_->callbackRef, &callbackFun);
+     napi_value callbackArgs[8] = {nullptr};
+```
+
+---
+
+### Incident Patch 3: `5c7cc1dc` (2026-11-02)
+**Commit Message**: fix(ohos): 输入框粘贴超长文本崩溃（UTF-8 截断 + 解码抛异常） (#1843)
+
+* fix(ohos): 输入框粘贴超长文本崩溃（UTF-8 截断 + 解码抛异常）
+
+关联 #1816。
+
+两级缺陷：
+
+1. KRTextFieldView::OnPasteText 按字节硬切剪贴板文本
+   min(strlen(pStr), maxLength * 4) 只是避免拷贝超大剪贴板的粗估上限，却直接
+   strncpy 切在字节上。maxLength = 4 时切在「这是一段测试文本」第 6 个汉字中间，
+   buffer 尾部留下残缺的 UTF-8 序列。
+
+2. KRUtfUtil 对非法 UTF-8 抛异常，异常穿透 OH_ArkUI_NodeEvent 回调
+   ToUTF32 / ToUTF8(u32) 在 simdutf 报错时回退到 std::wstring_convert，后者抛
+   std::range_error。该调用位于 OH_ArkUI_NodeEvent 回调内，回调外没有 catch，
+   异常直接 terminate → SIGABRT。
+
+这也解释了业务侧「改用 BYTE 限长就不崩」：BYTE 分支是纯字节算术，不调
+ConvertToU32String。
+
+修复：
+
+- ToUTF32 / ToUTF8(u32) 改用 U+FFFD 替换语义（与 16 位路径一致，KRUtfUtil.h 已
+  声明 renderer paths use replacement），不再抛异常；顺带消除 std::wstring_convert
+  带来的 4 条弃用警告。
+- 新增 UTF8BoundaryLength，把字节上限回退到 UTF-8 字符边界后再拷贝。
+
+验证：
+
+新增宿主侧用例 libohos_render/utils/test/krutfutil_test.cpp，6 组覆盖：字节截断
+粘贴、边界回退、合法输入往返、非法 UTF-8 解码、非法 UTF-32 编码、补充平面往返。
+全部通过。
+
+负向对照（同一条探针分别链接修复前后的 KRUtfUtil.cpp）：
+- 修复前：libc++abi: terminating due to uncaught exception of type
+  std::range_error: wstring_convert: from_bytes error → Abort trap 6（exit 134）
+- 修复后：ToUTF32 返回 6 个码点，exit 0
+
+* fix(ohos): 加宽路径的孤立代理项映射为 U+FFFD
+
+WidenToUTF32 原先把孤立代理项原样塞进 u32string，产出非法 UTF-32；高代理后接
+非低代理
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/input/KRTextFieldView.cpp` (modified, +5/-0)
+```diff
+@@ -17,6 +17,7 @@
+ 
+ #include "libohos_render/manager/KRKeyboardManager.h"
+ #include "libohos_render/utils/KRConvertUtil.h"
++#include "libohos_render/utils/KRUtfUtil.h"
+ #include <algorithm>
+ #include <arkui/drag_and_drop.h>
+ #include <cstddef>
+@@ -829,6 +830,10 @@ void KRTextFieldView::OnPasteText(ArkUI_NodeEvent *event) {
+             return;
+         }
+         size_t size = std::min(strlen(stringAsyncEvent->pStr), static_cast<size_t>(max_length_) * 4);
++        // 这里只是避免拷贝超大剪贴板的粗估上限，不是语义截断（语义截断由 filter 完成）。
++        // 必须回退到字符边界：buffer 随后进入 filter → CalculateTextLength，CHARACTER /
++        // VISUAL_WIDTH 分支会对它调 ConvertToU32String，残缺序列会让长度计算与截断都失真。
++        size = kuikly::util::utf::UTF8BoundaryLength(stringAsyncEvent->pStr, size);
+         char *buffer = new char[size + 1];
+         strncpy(buffer, stringAsyncEvent->pStr, size);
+         buffer[size] = '\0';
+```
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/KRUtfUtil.cpp` (modified, +60/-6)
+```diff
+@@ -15,8 +15,6 @@
+ 
+ #include "libohos_render/utils/KRUtfUtil.h"
+ 
+-#include <codecvt>
+-#include <locale>
+ #include <stdexcept>
+ #include "simdutf.h"
+ 
+@@ -25,6 +23,46 @@ namespace util {
+ namespace utf {
+ namespace {
+ 
++// Widens UTF-16 by combining surrogate pairs. A surrogate without a partner becomes U+FFFD,
++// mirroring NarrowToUTF16, so both directions apply one replacement rule and neither can emit an
++// ill-formed code point.
++std::u32string WidenToUTF32(const std::u16string &input) {
++    std::u32string out;
++    out.reserve(input.size());
++    for (size_t i = 0; i < input.size(); ++i) {
++        const char16_t unit = input[i];
++        if (unit >= 0xD800 && unit <= 0xDBFF && i + 1 < input.size() &&
++            input[i + 1] >= 0xDC00 && input[i + 1] <= 0xDFFF) {
++            out.push_back(static_cast<char32_t>(0x10000 + ((unit - 0xD800) << 10) +
++                                                (input[++i] - 0xDC00)));
++        } else if (unit >= 0xD800 && unit <= 0xDFFF) {
++            out.push_back(U'�');
++        } else {
++            out.push_back(static_cast<char32_t>(unit));
++        }
++    }
++    return out;
++}
 +
-+> 框架开发时阅读。改 `core-render-ios` 不必等 iOS 模拟器、也不必搭 Kotlin/Native 工具链：渲染层可以单独编译成宿主原生二进制，直接跑逻辑断言，甚至把 `KRLabel`、`KRRichTextView` 画出来的结果渲染成位图。
++// Supplementary code points become surrogate pairs; a surrogate half or anything above U+10FFFF
++// becomes U+FFFD.
++std::u16string NarrowToUTF16(const std::u32string &input) {
++    std::u16string out;
++    out.reserve(input.size());
++    for (const char32_t codePoint : input) {
++        if (codePoint > 0x10FFFF || (codePoint >= 0xD800 && codePoint <= 0xDFFF)) {
++            out.push_back(static_cast<char16_t>(0xFFFD));
++        } else if (codePoint > 0xFFFF) {
++            const char32_t offset = codePoint - 0x10000;
++            out.push_back(static_cast<char16_t>(0xD800 + (offset >> 10)));
++            out.push_back(static_cast<char16_t>(0xDC00 + (offset & 0x3FF)));
++        } else {
++            out.push_back(static_cast<char16_t>(codePoint));
++        }
++    }
++    return out;
++}
 +
-+## 为什么可行
+ }  // namespace
+ 
+ size_t DecodeInto(const uint8_t *input, size_t bytes, uint16_t *output, size_t capacity,
+@@ -89,8 +127,10 @@ std::u32string ToUTF32(const std::string &input) {
+     std::u32string out(input.size(), U'\0');
+     const auto result = simdutf::convert_utf8_to_utf32_with_errors(input.data(), input.size(), out.data());
+     if (result.error != simdutf::SUCCESS) {
+-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+-        return converter.from_bytes(input);
++        // Ill-formed UTF-8 reaches here (a byte-truncated buffer, for instance). Callers sit on
++        // OH_ArkUI_NodeEvent callbacks where a thrown exception terminates the process, so decode
++        // through the UTF-16 replacement path and widen it.
++        return WidenToUTF32(ToUTF16(input.data(), input.size()));
+     }
+     out.resize(result.count);
+     return out;
+@@ -107,8 +147,9 @@ std::string ToUTF8(const std::u32string &input) {
+     out.resize(input.size() * 4);
+     const auto result = simdutf::convert_utf32_to_utf8_with_errors(input.data(), input.size(), out.data());
+     if (result.error != simdutf::SUCCESS) {
+-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+-        return converter.to_bytes(input);
++        // Ill-formed UTF-32 (lone surrogate, code point above U+10FFFF) must encode, not throw.
++        const std::u16string narrowed = NarrowToUTF16(input);
++        return ToUTF8(reinterpret_cast<const uint16_t *>(narrowed.data()), narrowed.size(), false);
+     }
+     out.resize(result.count);
+     return out;
+@@ -121,6 +162,19 @@ size_t UTF16Length(const std::string &input) {
+     return simdutf::utf16_length_from_utf8_with_replacement(input.data(), input.size()).count;
+ }
+ 
++size_t UTF8BoundaryLength(const char *input, size_t bytes) {
++    // A UTF-8 sequence is at most 4 bytes, so only the last 3 bytes can hold an incomplete tail.
++    for (size_t back = 1; back <= 3 && back <= bytes; ++back) {
++        const unsigned char lead = static_cast<unsigned char>(input[bytes - back]);
++        if ((lead & 0xC0) == 0x80) {
++            continue;
++        }
++        const size_t sequenceLength = lead < 0x80 ? 1 : lead < 0xE0 ? 2 : lead < 0xF0 ? 3 : 4;
++        return bytes - back + sequenceLength > bytes ? bytes - back : bytes;
++    }
++    return bytes;
++}
 +
-+渲染层的 Kotlin 依赖只落在与 `core-*` 的桥接处，自身链接后只有系统框架和 `_main` 未定义。`MacSupport/KRUIKit.h` 提供 macOS 兼容层（`UIColor` 映射到 `NSColor`、`UILabel` 映射到 `KRUILabel` 等）。于是每个 `.m`/`.mm` 都能用 `clang` 编到 macOS 目标，配一个自带 `main` 的探针即可运行。
+ }  // namespace utf
+ }  // namespace util
+ }  // namespace kuikly
+```
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/KRUtfUtil.h` (modified, +4/-0)
+```diff
+@@ -30,6 +30,10 @@ std::string ToUTF8(const uint16_t *input, size_t units, bool strict = false);
+ std::u32string ToUTF32(const std::string &input);
+ std::string ToUTF8(const std::u32string &input);
+ 
++// Largest prefix length not exceeding bytes that ends on a UTF-8 character boundary. Byte-estimated
++// copy caps use it so a truncated buffer never carries a partial sequence.
++size_t UTF8BoundaryLength(const char *input, size_t bytes);
 +
-+实测：107 个 `.m`/`.mm` 全部编译通过；链接后未定义符号只有 CoreImage、Accelerate 与 libc++ 运行库，补上框架即可。
+ // UTF-16 unit count after Unicode maximal-subpart replacement.
+ size_t UTF16Length(const std::string &input);
+ 
+```
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/test/krutfutil_test.cpp` (added, +130/-0)
+```diff
+@@ -0,0 +1,130 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2026 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+## 环境
++// Host build:
++//   clang++ -std=c++17 -I core-render-ohos/src/main/cpp -I <simdutf>/include \
++//     krutfutil_test.cpp ../KRUtfUtil.cpp <simdutf>/src/simdutf.cpp -o krutfutil_test
 +
-+- macOS + Xcode Command Line Tools（用到 `xcrun --sdk macosx`）
-+- 目标三元组用**宿主机架构**：`$(uname -m)-apple-macos13.0`
++#include <cstdint>
++#include <cstdio>
++#include <string>
 +
-+> 宿主是 Intel 而目标写成 `arm64-apple-macos13.0` 时，编译和链接都会成功，运行时才报 `Bad CPU type in executable`。同样原因，`simctl spawn` 也会失败。
++#include "libohos_render/utils/KRUtfUtil.h"
 +
-+## 编译整个渲染层
++namespace utf = kuikly::util::utf;
 +
-+```bash
-+cd <仓库根>
-+OUT=$(pwd)/.ios-probe && rm -rf "$OUT" && mkdir -p "$OUT"
-+SDK=$(xcrun --sdk macosx --show-sdk-path)
-+TRI=$(uname -m)-apple-macos13.0
-+INC="-I core-render-ios/include -I core-render-ios -I core-render-ios/Extension \
-+     -I core-render-ios/Thread -I core-render-ios/Core -I core-render-ios/Handler \
-+     -I core-render-ios/View -I core-render-ios/Performance -I core-render-ios/Protocol \
-+     -I core-render-ios/Extension/TextSelection -I core-render-ios/Extension/Vendor \
-+     -I core-render-ios/MacSupport"
++static int g_failures = 0;
 +
-+for f in $(find core-render-ios -name '*.m' -o -name '*.mm'); do
-+  xcrun --sdk macosx clang -c -fobjc-arc -isysroot "$SDK" -target "$TRI" $INC \
-+    "$f" -o "$OUT/$(echo "$f" | tr '/' '_').o" || echo "FAIL $f"
-+done
-+```
++#define EXPECT(cond)                                                                    \
++    do {                                                                                \
++        if (!(cond)) {                                                                  \
++            std::fprintf(stderr, "%s:%d: EXPECT(%s)\n", __FILE__, __LINE__, #cond);    \
++            ++g_failures;                                                               \
++        }                                                                               \
++    } while (0)
 +
-+## 写探针并链接
++#define EXPECT_EQ_SIZE(actual, expected)                                                \
++    do {                                                                                \
++        const size_t a = static_cast<size_t>(actual);                                   \
++        const size_t e = static_cast<size_t>(expected);                                 \
++        if (a != e) {                                                                   \
++            std::fprintf(stderr, "%s:%d: got %zu, want %zu\n", __FILE__, __LINE__, a, e); \
++            ++g_failures;                                                               \
++        }                                                                               \
++    } while (0)
 +
-+探针就是一个普通 `main.m`，`#import` 要验证的头文件，退出码非 0 表示失败。
++// 「这是一段测试文本」 as UTF-8: 8 three-byte characters, 24 bytes.
++const char *kCjkText = "\xE8\xBF\x99"
++                       "\xE6\x98\xAF"
++                       "\xE4\xB8\x80"
++                       "\xE6\xAE\xB5"
++                       "\xE6\xB5\x8B"
++                       "\xE8\xAF\x95"
++                       "\xE6\x96\x87"
++                       "\xE6\x9C\xAC";
++const std::u32string kCjkCodePoints =
++    U"\u8FD9\u662F\u4E00\u6BB5\u6D4B\u8BD5\u6587\u672C";
 +
-+```bash
-+xcrun --sdk macosx clang -target "$TRI" -isysroot "$SDK" -o "$OUT/probe" "$OUT"/*.o \
-+  -framework AppKit -framework Foundation -framework QuartzCore -framework CoreGraphics \
-+  -framework CoreText -framework CoreImage -framework Accelerate -framework AVFoundation \
-+  -framework ImageIO -framework CoreMedia -framework UniformTypeIdentifiers -lc++
-+"$OUT/probe"; echo "exit=$?"
-+```
++// A paste buffer cut by a byte cap on the middle of a character, which is what
++// KRTextFieldView::OnPasteText produced before the boundary fix
++// (min(24 bytes, maxLength 4 * 4) = 16 bytes = 5 characters + 1 orphan byte).
++void TestByteTruncatedPasteDecodes() {
++    const std::string truncated(kCjkText, 16);
++    const std::u32string decoded = utf::ToUTF32(truncated);
++    EXPECT_EQ_SIZE(decoded.size(), 6);
++    EXPECT(decoded.compare(0, 5, kCjkCodePoints, 0, 5) == 0);
++    EXPECT(decoded[5] == U'\uFFFD');
++}
 +
-+> 探针目录里若有多个带 `main` 的对象文件（比如同时编了两个探针），链接会以 exit code 1 失败但默认不打印符号明细，加 `grep -E '[[:space:]]+"|error'` 看真实原因。BSD grep 不支持 `\s`。
++void TestBoundaryLengthFloorsToCharacterBoundary() {
++    // 16 bytes hold 5 complete 3-byte characters; the sixth is cut after 1 byte.
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kCjkText, 16), 15);
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kCjkText, 24), 24);
++    // A cut at a boundary stays put, including after a 4-byte sequence.
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kCjkText, 15), 15);
++    const char *kEmoji = "\xF0\x9F\x98\x80";  // U+1F600
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kEmoji, 4), 4);
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kEmoji, 1), 0);
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kEmoji, 3), 0);
++    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("abc", 2), 2);
++}
 +
-+## 把绘制结果渲染成位图
++void TestValidInputRoundTrips() {
++    EXPECT(utf::ToUTF32(kCjkText) == kCjkCodePoints);
++    EXPECT(utf::ToUTF8(kCjkCodePoints) == kCjkText);
++    EXPECT(utf::ToUTF32("") == std::u32string());
++    EXPECT(utf::ToUTF8(std::u32string()) == "");
++}
 +
-+绘制类问题可以直接出图。`KRTextRender` 有公开的 `initWithTextStorage:lineHeight:`；`KRLabel` 的 `textRender`、`selectedRange`、`selectionColor` 都是公开属性。
++// Every maximal ill-formed subpart becomes one U+FFFD, matching the UTF-16 paths.
++void TestIllFormedUTF8DecodesWithReplacement() {
++    EXPECT(utf::ToUTF32("a\xFFz") == U"a\uFFFDz");
++    EXPECT(utf::ToUTF32(std::string(kCjkText, 16))[5] == U'\uFFFD');
++    EXPECT_EQ_SIZE(utf::ToUTF32("\xE4\xB8").size(), 1);
++    EXPECT(utf::ToUTF32("\xE4\xB8").front() == U'\uFFFD');
++}
 +
-+```objc
-+NSTextStorage *ts = [[NSTextStorage alloc] initWithAttributedString:as];
-+KRTextRender *tr = [[KRTextRender alloc] initWithTextStorage:ts lineHeight:0];
-+CGSize sz = [tr textSizeWithRenderWidth:460];
-+KRLabel *label = [[KRLabel alloc] initWithFrame:NSMakeRect(0, 0, 460, ceil(sz.height))];
-+label.textRender = tr;
-+label.selectedRange = NSMakeRange(4, 10);
-+// …此处触发被测逻辑…
-+```
-+
-+绘制交给 AppKit 的视图快照，不要自己造位图上下文：
-+
-+```objc
-+// 宿主视图只负责铺容器底色
-+@interface KRProbeHostView : NSView
-+@property (nonatomic, strong) NSColor *fillColor;
-+@end
-+@implementation KRProbeHostView
-+- (void)drawRect:(NSRect)dirtyRect { [self.fillColor setFill]; NSRectFill(self.bounds); }
-+@end
-+
-+KRProbeHostView *host = [[KRProbeHostView alloc] initWithFrame:NSMakeRect(0, 0, 460, ceil(sz.height))];
-+host.fillColor = [NSColor colorWithRed:0xFF/255.0 green:0xFD/255.0 blue:0xE7/255.0 alpha:1.0];
-+[host addSubview:label];
-+[host layoutSubtreeIfNeeded];            // 必须先布局，否则快照是空的
-+NSBitmapImageRep *rep = [host bitmapImageRepForCachingDisplayInRect:host.bounds];
-+[host cacheDisplayInRect:host.bounds toBitmapImageRep:rep];
-+[[rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}] writeToFile:path atomically:YES];
-+```
-+
-+`KRUILabel` 的 `isFlipped` 返回 YES，快照接口会按视图自己的翻转设置准备绘制上下文。产出的位图是 2 倍像素（Retina），断言里的坐标要按 2 折算。
-+
-+> 不要自己建 `NSBitmapImageRep`、手动 `CGContextTranslateCTM` + `CGContextScaleCTM` 翻转后直接调 `drawTextInRect:`。选区矩形与文字会落在不同空间里，相差约一个行高：实测高亮带占 0..21 行、文字墨迹占 17..35 行，两者几乎不重叠。快照接口没有这个问题。
-+
-+## 判据
-+
-+- **逻辑类**：断言 + 退出码，逐条打印 `ok:` / `FAIL:`。
-+- **颜色按同一条渲染路径下的实测值比对**，不要套理论混合公式：颜色经 AppKit 色彩空间转换会有偏移——背景 `#FFFDE7` 实测渲染成 `#FFFDE1`，`(33,196,94)` 以 0.4 alpha 叠上去是 `#A7E2A5`，不是线性混合的 `#A6E6B0`。改动前/后同条件各渲一次，比对底色是否变化，以及命中像素数与墨迹像素数是否保持不变。
-+- **像素数不变用来区分「只换了颜色」和「选区范围也变了」**。
-+- **绘制类先断言几何，再比颜色**：文字墨迹的行范围必须落在高亮带的行范围内，高亮带的列范围要覆盖被选中的字符。只比颜色会把错位的图当成好图——错位的图颜色照样是对的。
-+- **一定要留阴性对照**：把被测文件换成改动前的版本单独链接，确认探针会失败。改动提交之前用 `git show HEAD:<path>` 取旧实现；**提交之后要写 `HEAD~1`**，否则取到的是改后代码，对照静默失效。
-+
-+## 覆盖不到的
-+
-+- `TARGET_OS_IPHONE` 分支与未做 macOS 兼容的 UIKit API：在 macOS 上要么编不过，要么走了另一条实现路径
-+- 线程、runloop、渲染时序类问题——主线程进入顺序这类缺陷在这里看不出来
-+- 真机与模拟器上的 ARM64 行为、系统版本差异
-+
-+以上仍须在 iOS 侧验证。
-+
-+## 实例
-+
-+#1793 的 iOS 一侧（选区色下发时序）用此法验证：逻辑断言修复前 4 项 FAIL、修复后全通过；快照渲染的高亮底色从 `KRLabel` 内置默认的 `#B7D7E9` 变为上层配置色 `#A7E2A5`，两版高亮像素数相同（10224）、文字墨迹数也相同（8894）——只换了颜色，选区范围与排版未动。对应 PR 见 #1845。
++// ToUTF8(u32) sits on the same callback path, so an ill-formed code point must encode, not throw.
++void TestIllFormedUTF32EncodesWithReplacement() {
++    EXPECT(utf::ToUTF8(std::u32string(1, static_cast<char32_t>(0xD800))) == "\xEF\xBF\xBD");
++    EXPECT(utf::ToUTF8(std::u32
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1855** (2026-10-29): feat(web): add removeNotify doc (@etkmao)
-- **PR #1853** (2026-10-30): perf(ohos): cut redundant copies and dedup cost in JSON response parsing (@ruifanyuan)
-- **PR #1852** (2026-10-29): fix(compose): clamp non-scrollable Lazy exact content size (@luoyibu)
-- **PR #1851** (2026-10-29): feat(ohos): sync event scheduling (@iPel)
-- **PR #1850** (2026-10-29): fix(h5App-js): render canvas at device pixel ratio (@continuing2022)
-- **PR #1849** (2026-10-29): fix(h5App-js): keep unrelated controls clickable after text selection (@continuing2022)
+- **PR #1866** (2026-11-04): fix: 修复 pager 分页除零崩溃 (@elixxli)
+- **PR #1865** (2026-11-04): fix(ohos): add HandleScope to CallArkTSMethod to stop NAPI handle leak (@yukiykchen)
+- **PR #1864** (closed): fix(ohos): release ShaderEffect ownership after brush/pen takes it (@yukiykchen)
+- **PR #1863** (2026-11-04): feat(ohos): 鸿蒙折叠态映射为 pageData.hingeStatus (@elixxli)
+- **PR #1861** (2026-11-02): docs: add 2.30.0 version description to changelog (@RoeKun)
+- **PR #1860** (2026-11-04): fix(ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash (@RoeKun)
 
 ---
 
@@ -1151,49 +1272,31 @@ AppKit 视图快照 cacheDisplayInRect:toBitmapImageRep:，由视图自己的 is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): dispatch notifications across live Kuikly pages (#1847)
+## X. ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash
 
 **RULE**:
-When implementing operations in `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/module/KRNotifyModule.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-ios/Extension/KuiklyRenderViewControllerBaseDelegator.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6c33271`: web): dispatch notifications across live Kuikly pages (#1847). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10b48ae1`: ios): warm up Kotlin/Native runtime on main thread to avoid finalizer 0xf8 crash (#1860). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/module/KRNotifyModule.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ios/Extension/KuiklyRenderViewControllerBaseDelegator.m`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
- * Notifications are shared by live Kuikly pages in the same Web runtime (including cached SPA pages).
-        toKRMap.clear()
-            // Include the sender once and notify cached SPA pages before returning.
-            dispatchGlobalEventData(eventName, data)
-            // Notify the host once per post, rather than once per receiving page.
-        // Callbacks may remove listeners while handling a notification.
-        toKRMap[eventName]?.toList()?.forEach {
-            dispatchGlobalEventData(eventName, data.toString())
-        }
-
-        private fun dispatchGlobalEventData(eventName: String, data: String) {
-            // A callback can create or destroy a page during dispatch.
-            moduleInstances.toList().forEach { module ->
-                if (module in moduleInstances) {
-                    module.dispatchEvent(eventName, data)
-                }
+    // framework 模式下先在主线程完成 Kotlin/Native runtime 注册，
+    // 规避主线程 finalizer source 在未注册线程上的空队列崩溃（0xf8）
+    [KuiklyRenderFrameworkContextHandler warmupMainThreadRuntimeWithFrameworkName:
+        [contextCode isKindOfClass:[NSString class]] ? contextCode : nil];
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
- * Event notification module, web event notification does not support different pages, notifications between different pages need to use higher-level host capabilities
-            // 1. Notify other Kuikly pages (existing logic)
-            dispatchEvent(eventName, data)
-            // 2. Notify Web host (new feature - like iOS/Android/Ohos)
-        toKRMap[eventName]?.forEach {
-            moduleInstances.forEach { module ->
-                module.dispatchEvent(eventName, data.toString())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6c33271` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10b48ae1` are properly handled with clean fallback behavior.

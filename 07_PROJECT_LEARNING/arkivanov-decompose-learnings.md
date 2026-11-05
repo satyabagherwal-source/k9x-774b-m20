@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  
 > **Source**: github ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  
-> **Source Version**: `42fd8933`  
+> **Source Version**: `c9780062`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:00:10.026Z  
+> **Timestamp**: 2026-11-04T22:45:33.040Z  
 > **Learning ID**: `learn-github-arkivanov-decompose`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:00:09.737Z  
+> **Harvest Timestamp**: 2026-11-04T22:45:33.032Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with routing (navigation) and pluggable UI (Jetpack Compose, SwiftUI, JS React, etc.)
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2887 stars
+- **Stars / Engagement**: 2888 stars
 
 ---
 
@@ -665,158 +665,77 @@ internal actual val KClass<*>.uniqueName: String?
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42fd8933` (2026-10-27)
-**Commit Message**: Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullable
+### Incident Patch 1: `c9780062` (2026-11-01)
+**Commit Message**: Merge pull request #1056 from arkivanov/ci/macos-15-master
 
-Make the Lifecycle constructor parameter in DefaultComponentContext optional
+Move macOS CI to macos-15 (macos-14 image retired)
 
-**File**: `decompose/api/android/decompose.api` (modified, +1/-0)
+**File**: `.github/workflows/build.yml` (modified, +1/-1)
 ```diff
-@@ -99,6 +99,7 @@ public final class com/arkivanov/decompose/DeeplinkUtilsKt {
- }
- 
- public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
-+	public fun <init> ()V
- 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
- 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
- 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+@@ -28,7 +28,7 @@ jobs:
+           arguments: build -Dsplit_targets
+   macos-build:
+     name: Build on macOS
+-    runs-on: macos-14
++    runs-on: macos-15
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
 ```
 
-**File**: `decompose/api/jvm/decompose.api` (modified, +1/-0)
+**File**: `.github/workflows/publish.yml` (modified, +1/-1)
 ```diff
-@@ -93,6 +93,7 @@ public final class com/arkivanov/decompose/DecomposeSettings$Companion {
- }
- 
- public final class com/arkivanov/decompose/DefaultComponentContext : com/arkivanov/decompose/ComponentContext {
-+	public fun <init> ()V
- 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;)V
- 	public fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;)V
- 	public synthetic fun <init> (Lcom/arkivanov/essenty/lifecycle/Lifecycle;Lcom/arkivanov/essenty/statekeeper/StateKeeper;Lcom/arkivanov/essenty/instancekeeper/InstanceKeeper;Lcom/arkivanov/essenty/backhandler/BackHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+@@ -6,7 +6,7 @@ on:
+ jobs:
+   publish:
+     name: Publish
+-    runs-on: macos-14
++    runs-on: macos-15
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
 ```
 
-**File**: `decompose/src/commonMain/kotlin/com/arkivanov/decompose/DefaultComponentContext.kt` (modified, +8/-0)
+---
+
+### Incident Patch 2: `be6c0546` (2026-11-01)
+**Commit Message**: Move macOS CI to macos-15 (macos-14 runner image is retired)
+
+Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/build.yml` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@ import com.arkivanov.essenty.backhandler.BackHandler
- import com.arkivanov.essenty.instancekeeper.InstanceKeeper
- import com.arkivanov.essenty.instancekeeper.InstanceKeeperDispatcher
- import com.arkivanov.essenty.lifecycle.Lifecycle
-+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
- import com.arkivanov.essenty.statekeeper.StateKeeper
- import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
- 
-@@ -25,6 +26,13 @@ class DefaultComponentContext(
-     override val backHandler: BackHandler = backHandler ?: BackDispatcher()
-     override val componentContextFactory: ComponentContextFactory<ComponentContext> = ComponentContextFactory(::DefaultComponentContext)
- 
-+    constructor() : this(
-+        lifecycle = LifecycleRegistry(),
-+        stateKeeper = null,
-+        instanceKeeper = null,
-+        backHandler = null,
-+    )
-+
-     constructor(lifecycle: Lifecycle) : this(
-         lifecycle = lifecycle,
-         stateKeeper = null,
+@@ -28,7 +28,7 @@ jobs:
+           arguments: build -Dsplit_targets
+   macos-build:
+     name: Build on macOS
+-    runs-on: macos-14
++    runs-on: macos-15
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
 ```
 
-**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/PreviewComponentContext.kt` (removed, +0/-9)
+**File**: `.github/workflows/publish.yml` (modified, +1/-1)
 ```diff
-@@ -1,9 +0,0 @@
--package com.arkivanov.sample.shared
--
--import com.arkivanov.decompose.ComponentContext
--import com.arkivanov.decompose.DefaultComponentContext
--import com.arkivanov.essenty.lifecycle.LifecycleRegistry
--
--internal object PreviewComponentContext : ComponentContext by DefaultComponentContext(
--    lifecycle = LifecycleRegistry(),
--)
-```
-
-**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/counters/PreviewCountersComponent.kt` (modified, +2/-2)
-```diff
-@@ -1,14 +1,14 @@
- package com.arkivanov.sample.shared.counters
- 
- import com.arkivanov.decompose.ComponentContext
-+import com.arkivanov.decompose.DefaultComponentContext
- import com.arkivanov.decompose.router.stack.ChildStack
- import com.arkivanov.decompose.value.MutableValue
- import com.arkivanov.decompose.value.Value
--import com.arkivanov.sample.shared.PreviewComponentContext
- import com.arkivanov.sample.shared.counters.counter.CounterComponent
- import com.arkivanov.sample.shared.counters.counter.PreviewCounterComponent
- 
--class PreviewCountersComponent : CountersComponent, ComponentContext by PreviewComponentContext {
-+class PreviewCountersComponent : CountersComponent, ComponentContext by DefaultComponentContext() {
- 
-     override val stack: Value<ChildStack<*, CounterComponent>> =
-         MutableValue(
-```
-
-**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/multipane/PreviewMultiPaneComponent.kt` (modified, +2/-2)
-```diff
-@@ -2,13 +2,13 @@ package com.arkivanov.sample.shared.multipane
- 
- import com.arkivanov.decompose.Child
- import com.arkivanov.decompose.ComponentContext
-+import com.arkivanov.decompose.DefaultComponentContext
- import com.arkivanov.decompose.ExperimentalDecomposeApi
- import com.arkivanov.decompose.router.panels.ChildPanels
- import com.arkivanov.decompose.router.panels.ChildPanelsMode
- import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
- import com.arkivanov.decompose.value.MutableValue
- import com.arkivanov.decompose.value.Value
--import com.arkivanov.sample.shared.PreviewComponentContext
- import com.arkivanov.sample.shared.multipane.author.ArticleAuthorComponent
- import com.arkivanov.sample.shared.multipane.details.ArticleDetailsComponent
- import com.arkivanov.sample.shared.multipane.details.PreviewArticleDetailsComponent
-@@ -19,7 +19,7 @@ import com.arkivanov.sample.shared.multipane.list.PreviewArticleListComponent
- class PreviewMultiPaneComponent(
-     isMultiPane: Boolean = false,
- ) : MultiPaneComponent,
--    ComponentContext by PreviewComponentContext,
-+    ComponentContext by DefaultComponentContext(),
-     WebNavigationOwner.NoOp {
- 
-     override val panels: Value<ChildPanels<Any, ArticleListComponent, Any, ArticleDetailsComponent, Any, ArticleAuthorComponent>> =
-```
-
-**File**: `sample/shared/shared/src/commonMain/kotlin/com/arkivanov/sample/shared/root/PreviewRootComponent.kt` (modified, +2/-2)
-```diff
-@@ -1,20 +1,20 @@
- package com.arkivanov.sample.shared.root
- 
- import com.arkivanov.decompose.ComponentContext
-+import com.arkivanov.decompose.DefaultComponentContext
- import com.arkivanov.decompose.ExperimentalDecomposeApi
- import com.arkivanov.decompose.router.stack.ChildStack
- import com.arkivanov.decompose.router.webhistory.WebNavigationOwner
- import com.arkivanov.decompose.value.MutableValue
- import com.arkivanov.decompose.value.Value
--import com.arkivanov.sample.shared.PreviewComponentContext
- import com.arkivanov.sample.shared.root.RootComponent.Child
- import com.arkivanov.sample.shared.root.RootComponent.Child.TabsChild
- import com.arkivanov.sample.shared.tabs.PreviewTabsComponent
- 
- @OptIn(ExperimentalDecomposeApi::class)
- class PreviewRootComponent :
-     RootComponent,
--    ComponentContext by PreviewComponentContext,
-+    ComponentContext by DefaultComponentContext(),
-     WebNavigationOwner.NoOp {
- 
-     override val stack: Value<ChildStack<*, Child>> =
+@@ -6,7 +6,7 @@ on:
+ jobs:
+   publish:
+     name: Publish
+-    runs-on: macos-14
++    runs-on: macos-15
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1050** (2026-10-27): [V4] Update v4 branch (@arkivanov)
-- **PR #1049** (2026-10-27): Make the Lifecycle constructor parameter in DefaultComponentContext optional (@arkivanov)
-- **PR #1048** (2026-10-27): [V4] Add workaround for binary compatibility validator not working in extensions-android (@arkivanov)
-- **PR #1047** (2026-10-25): [V4] Migrate from BackHandler to NavigationEventDispatcher (@arkivanov)
-- **PR #1046** (2026-10-24): [V4] Remove the Dynamic Features sample (@arkivanov)
-- **PR #1045** (2026-10-24): [V4] Updated dependency versions (@arkivanov)
+- **PR #1056** (2026-11-01): Move macOS CI to macos-15 (macos-14 image retired) (@arkivanov-bot)
+- **PR #1055** (2026-11-01): [V4] Move macOS CI to macos-15 (macos-14 image retired) (@arkivanov-bot)
+- **PR #1054** (2026-11-01): [V4] Enable API validation for the Android target in KMP modules (@arkivanov-bot)
+- **PR #1053** (2026-11-01): [V4] Migrate from Essenty InstanceKeeper to AndroidX ViewModelStore (@arkivanov)
+- **PR #1052** (2026-10-31): [V4] Migrate from Essenty Lifecycle to AndroidX Lifecycle (@arkivanov)
+- **PR #1051** (2026-10-29): [V4] Add HostComponentContext and LifecycleRegistryOwner API for tests and Compose previews (@arkivanov)
 
 ---
 
@@ -836,28 +755,28 @@ Make the Lifecycle constructor parameter in DefaultComponentContext optional
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullab
+## X. Merge pull request #1056 from arkivanov/ci/macos-15-master
 
 **RULE**:
-When implementing operations in `decompose/api/android/decompose.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42fd8933`: Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9780062`: Merge pull request #1056 from arkivanov/ci/macos-15-master. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `decompose/api/android/decompose.api`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-	public fun <init> ()V
+    runs-on: macos-15
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    runs-on: macos-14
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42fd8933` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9780062` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `049d8557`  
+> **Source Version**: `c7fc4d48`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:24:27.394Z  
+> **Timestamp**: 2026-11-04T22:34:51.054Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:24:27.386Z  
+> **Harvest Timestamp**: 2026-11-04T22:34:51.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2082 stars
+- **Stars / Engagement**: 2084 stars
 
 ---
 
@@ -1459,13 +1459,17 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5586** (2026-11-02): **chore(deps): bump k8s.io/streaming from 0.37.1 to 0.37.2 in the k8s group across 1 directory**
-  *Symptoms*: Bumps the k8s group with 1 update in the / directory: [k8s.io/streaming](https://github.com/kubernetes/streaming).  Updates `k8s.io/streaming` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/kubernetes/streaming/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=k8s.io/streaming&package-manager=go_modules&previous-version=0.37.1&new-version=0.37.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore <dependency name> major version` will close this group update PR and stop Dependabot creating any more for the specific dependency's major version (un
+- **Issue #5607** (2026-11-04): **docs: update custom init package tutorial**
+  *Symptoms*: ## Description  Refresh the Custom Init Packages tutorial for current Zarf behavior and structured logging.  The tutorial now uses the current `packages/init/v1alpha1` package definition, documents the supported image and registry override configuration, and removes obsolete package-creation confirmation and pre-v0.26 guidance.  The troubleshooting example is shared with Tutorial 0 through `package_create_error.html` and was updated in the earlier package-creation tutorial PR, so it is unchanged here.  ## Screenshots <img width="867" height="687" alt="create-custom-init" src="https://github.com/user-attachments/assets/a8638996-a81e-4eff-ae1e-78cd3025006f" /> <img width="850" height="189" alt="customize" src="https://github.com/user-attachments/assets/31dfe114-6a88-4b7a-a4c9-a551a9ecdff6" /> <img width="852" height="556" alt="swapping-images-01" src="https://github.com/user-attachments/assets/57ce6763-99df-4e39-8017-b69e0e3cb8e6" /> <img width="829" height="740" alt="swapping-images-02" src="https://github.com/user-attachments/assets/a2503cc8-246f-4d83-99c0-8c7b4f3ed727" /> <img width="831" height="582" alt="swapping-images-03" src="https://github.com/user-attachments/assets/4180d694-4945-4452-a67f-45ea08447841" /> <img width="846" height="122" alt="removing-components" src="https://github.com/user-attachments/assets/b40ac6fa-5a8c-4f2f-8b29-25c8ea418498" />   ## Related Issue  Relates to #4057  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x]
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 1ac9517cdbbed8b3998fe5205cf607abb29c4aee | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6ae7dd0da8a01fd081b09f3a |
+  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 1cb060b5bde4c094d93f5fc5c247785f32b01da8 |
+  > Hi @shaversj appreciate the PR, but I actually stood up a PR yesterday to update this https://github.com/zarf-dev/zarf/pull/5598 as it should now reflect v1beta1, so I am closing this out. 
 
-- **Issue #5581** (2026-11-01): **refactor(packager)!: decouple cosign, syft and cloud SDKs from sdk consumers**
-  *Symptoms*: Following up on #5564, importing `pkg/packager` in SDK programs currently pulls in over 3,000 packages and around 160MB of binary because it directly links cosign, syft, and cloud KMS SDKs (AWS, Azure, GCP), even if you're only loading or deploying a package.  To keep `pkg/packager` lightweight, this PR puts signing, verification, and SBOM creation behind small interfaces (`signature.Signer`, `signature.Verifier`, and `assemble.SBOMGenerator`). The actual cosign and syft implementations are now wired in at the CLI level (`src/cmd`). The cloud KMS blank imports were also moved to the CLI so SDK consumers only link the providers they need. We also moved the cosign tag helper out of `pkg/utils` to stop pulling cosign into generic utils.  With these changes, `go list -deps ./src/pkg/packager` drops from 3,144 down to 1,576 packages (~50% reduction). I've added unit tests covering the new interfaces, package signing/verification roundtrips, and syft generation, and verified that existing unit tests, `go vet`, and E2E package signing workflows all pass.  Closes #5564
+- **Issue #5605** (2026-11-04): **feat!: remove deprecated commands and flags**
+  *Symptoms*: ## Description  This removes all the deprecated commands and flags that have a direct replacement. Doesn't touch tools that are not in Zarf's control.  The only flags that remain are `--signing-key` and `--signing-key-pass` on `zarf package publish` because otherwise skeletons don't have a way to be signed. These can be removed alongside v1alpha1.  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 54a70ec6d6ad7066d8bc6e2edcc21e6aa4dd499a | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aeb509b20494e239ecf19cd |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :x: Patch coverage is `31.42857%` with `24 lines` in your changes missing coverage. Please review.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Patch % | Lines | |---|---|---| | [src/cmd/connect.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?src=pr&el=tree&filepath=src%2Fcmd%2Fconnect.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2NtZC9jb25uZWN0Lmdv) | 10.00% | [9 Missing :warning: ](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1482,900 +1486,657 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `049d8557` (2026-11-03)
-**Commit Message**: refactor!: replace global architecture state with per-operation options (#5498)
+### Incident Patch 1: `c7fc4d48` (2026-11-04)
+**Commit Message**: feat!: remove daemon pull through crane (#5568)
 
-Signed-off-by: Jason Washburn <[REDACTED_EMAIL]>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `src/cmd/architecture_test.go` (added, +111/-0)
+**File**: `src/pkg/feature/feature.go` (modified, +5/-6)
 ```diff
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
-+
-+package cmd
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"runtime"
-+	"testing"
-+
-+	"github.com/spf13/cobra"
-+	"github.com/stretchr/testify/require"
-+	"github.com/zarf-dev/zarf/src/config"
-+	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
-+	"github.com/zarf-dev/zarf/src/pkg/packager/load"
-+	"github.com/zarf-dev/zarf/src/test/testutil"
-+)
-+
-+func TestArchitectureFlagConfigPrecedence(t *testing.T) {
-+	previous, previousErr := v, vConfigError
-+	t.Cleanup(func() { v, vConfigError = previous, previousErr })
-+	for _, tt := range []struct {
-+		name, config, env, flag, want string
-+	}{
-+		{"flag over environment and config", "s390x", "arm64", "amd64", "amd64"},
-+		{"environment over config", "s390x", "arm64", "", "arm64"},
-+		{"config", "s390x", "", "", "s390x"},
-+		{"omitted stays empty", "", "", "", ""},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			configPath := filepath.Join(t.TempDir(), "zarf-config.toml")
-+			require.NoError(t, os.WriteFile(configPath, []byte(fmt.Sprintf("architecture = %q\n", tt.config)), 0o600))
-+			t.Setenv("ZARF_CONFIG", configPath)
-+			t.Setenv("ZARF_ARCHITECTURE", tt.env)
-+			initViper()
-+			require.NoError(t, vConfigError)
-+			architecture := &architectureOptions{}
-+			cmd := &cobra.Command{}
-+			setupRootFlags(cmd, architecture)
-+			args := []string{}
-+			if tt.flag != "" {
-+				args = append(args, "--architecture", tt.flag)
-+			}
-+			require.NoError(t, cmd.ParseFlags(args))
-+			require.Equal(t, tt.want, architecture.selectedArchitecture(), "parsing must update operation options before execution")
-+		})
-+	}
-+}
-+
-+func TestArchitectureCommandIsolation(t *testing.T) {
-+	previous, previousErr := v, vConfigError
-+	t.Cleanup(func() { v, vConfigError = previous, previousErr })
-+	configPath := filepath.Join(t.TempDir(), "zarf-config.toml")
-+	require.NoError(t, os.WriteFile(configPath, nil, 0o600))
-+	t.Setenv("ZARF_CONFIG", configPath)
-+	t.Setenv("ZARF_ARCHITECTURE", "")
-+	initViper()
-+
-+	target := "arm64"
-+	if runtime.GOARCH == target {
-+		target = "amd64"
-+	}
-+	source := t.TempDir()
-+	require.NoError(t, os.WriteFile(filepath.Join(source, layout.ZarfYAML), []byte(`kind: ZarfPackageConfig
-+metadata:
-+  name: isolated
-+components:
-+  - name: empty
-+`), 0o600))
-+	first := NewZarfCommand()
-+	require.NoError(t, first.ParseFlags([]string{"--architecture", target}))
-+	second := NewZarfCommand()
-+
-+	// Constructing another tree must not reset the first tree's selection.
-+	for _, tt := range []struct {
-+		cmd  *cobra.Command
-+		want string
-+	}{{first, target}, {second, runtime.GOARCH}} {
-+		output := t.TempDir()
-+		create, _, err := tt.cmd.Find([]string{"package", "create"})
-+		require.NoError(t, err)
-+		require.NoError(t, create.ParseFlags([]string{"--output", output, "--confirm", "--skip-sbom", "--cache", t.TempDir()}))
-+		create.SetContext(testutil.TestContext(t))
-+		require.NoError(t, create.RunE(create, []string{source}))
-+		require.FileExists(t, filepath.Join(output, "zarf-package-isolated-"+tt.want+".tar.zst"))
-+
-+		definition, err := load.PackageDefinition(testutil.TestContext(t), source, load.DefinitionOptions{CachePath: t.TempDir()})
-+		require.NoError(t, err)
-+		require.Equal(t, runtime.GOARCH, definition.Metadata.Architecture, "library calls must not inherit CLI selection")
-+	}
-+}
-+
-+func TestInitArchitectureDiscovery(t *testing.T) {
-+	t.Chdir(t.TempDir())
-+	target := "arm64"
-+	if runtime.GOARCH == target {
-+		target = "amd64"
-+	}
-+	for _, arch := range []string{target, runtime.GOARCH} {
-+		name := fmt.Sprintf("zarf-init-%s-%s.tar.zst", arch, config.CLIVersion)
-+		require.NoError(t, os.WriteFile(name, nil, 0o600))
-+	}
-+	for _, tt := range []struct{ option, want string }{{target, target}, {"", runtime.GOARCH}} {
-+		o := initOptions{architectureOptions: &architectureOptions{architecture: tt.option}}
-+		found, err := o.findInitPackage(testutil.TestContext(t))
-+		require.NoError(t, err)
-+		require.Equal(t, fmt.Sprintf("zarf-init-%s-%s.tar.zst", tt.want, config.CLIVersion), found)
-+	}
-+}
+@@ -248,12 +248,11 @@ func init() {
+ 			Stage:   Beta,
+ 		},
+ 		{
+-			Name: DockerDaemonDirectPull,
+-			Description: "Saves images from the local Docker daemon directly via the engine's OCI image export " +
+-				"disabling this feature falls back to pulling with Crane.",
+-			Enabled: true,
+-			Since:   "v0.80.0",
+-			Stage:   GA,
++			Name:        DockerDaemonDirectPull,
++			Description: "Saves daemon source through direct Docker API interactions. Disabling once enabled Crane daemon pulls, but no longer has any effect",
++			Enabled:     true,
++			Since:       "v0.80.0",
++			Stage:       GA,
+ 		},
+ 		{
+ 			Name:        SBOMViewer,
 ```
 
-**File**: `src/cmd/dev.go` (modified, +38/-22)
+**File**: `src/pkg/images/pull.go` (modified, +13/-122)
 ```diff
-@@ -63,7 +63,7 @@ func parseValues(ctx context.Context, valuesFiles []string, setValues map[string
- 	return values, nil
- }
- 
--func newDevCommand() *cobra.Command {
-+func newDevCommand(architecture *architectureOptions) *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:     "dev",
- 		Aliases: []string{"prepare", "prep"},
-@@ -72,30 +72,31 @@ func newDevCommand() *cobra.Command {
- 
- 	v := getViper()
- 
--	cmd.AddCommand(newDevDeployCommand(v))
-+	cmd.AddCommand(newDevDeployCommand(v, architecture))
- 	cmd.AddCommand(newDevGenerateCommand())
- 	cmd.AddCommand(newDevPatchGitCommand())
- 	cmd.AddCommand(newDevSha256SumCommand())
--	cmd.AddCommand(newDevInspectCommand(v))
--	cmd.AddCommand(newDevFindImagesCommand(v))
-+	cmd.AddCommand(newDevInspectCommand(v, architecture))
-+	cmd.AddCommand(newDevFindImagesCommand(v, architecture))
- 	cmd.AddCommand(newDevGenerateConfigCommand())
--	cmd.AddCommand(newDevGenerateSchemaCommand(v))
--	cmd.AddCommand(newDevLintCommand(v))
-+	cmd.AddCommand(newDevGenerateSchemaCommand(v, architecture))
-+	cmd.AddCommand(newDevLintCommand(v, architecture))
- 	cmd.AddCommand(newDevUpgradeSchemaCommand())
- 	cmd.AddCommand(newDevTemplateCommand(v))
- 
- 	return cmd
- }
- 
- type devGenerateSchemaOptions struct {
-+	*architectureOptions
- 	flavor         string
- 	setPkgTmpl     map[string]string
- 	update         bool
- 	deleteNotFound bool
- }
- 
--func newDevGenerateSchemaCommand(v *viper.Viper) *cobra.Command {
--	o := &devGenerateSchemaOptions{}
-+func newDevGenerateSchemaCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
-+	o := &devGenerateSchemaOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:   "generate-schema [ PATH ]",
-@@ -125,6 +126,7 @@ func (o *devGenerateSchemaOptions) run(ctx context.Context, args []string) error
- 	}
- 	schema, err := packager.GenerateValuesSchema(ctx, basePath, packager.GenerateValuesSchemaOptions{
- 		DefinitionOptions: load.DefinitionOptions{
-+			Architecture:     o.selectedArchitecture(),
- 			Flavor:           o.flavor,
- 			SetVariables:     o.setPkgTmpl,
- 			IsInteractive:    true,
-@@ -146,25 +148,26 @@ func (o *devGenerateSchemaOptions) run(ctx context.Context, args []string) error
- 	return nil
- }
- 
--func newDevInspectCommand(v *viper.Viper) *cobra.Command {
-+func newDevInspectCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:   "inspect",
- 		Short: "Commands to gather information about a Zarf package from its definition",
+@@ -19,17 +19,11 @@ import (
+ 	"github.com/docker/cli/cli/command"
+ 	"github.com/docker/cli/cli/context/docker"
+ 	"github.com/docker/cli/cli/flags"
+-	"github.com/google/go-containerregistry/pkg/name"
+-	cranev1 "github.com/google/go-containerregistry/pkg/v1"
+-	"github.com/google/go-containerregistry/pkg/v1/daemon"
+-	"github.com/google/go-containerregistry/pkg/v1/empty"
+-	clayout "github.com/google/go-containerregistry/pkg/v1/layout"
+ 	"github.com/mholt/archives"
+ 	"github.com/moby/moby/client"
+ 	"github.com/moby/moby/client/pkg/versions"
+ 	"github.com/zarf-dev/zarf/src/api"
+ 	"github.com/zarf-dev/zarf/src/config"
+-	"github.com/zarf-dev/zarf/src/internal/checksum"
+ 	"github.com/zarf-dev/zarf/src/pkg/logger"
+ 	"golang.org/x/sync/errgroup"
+ 	"oras.land/oras-go/v2"
+@@ -39,7 +33,6 @@ import (
+ 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
+ 	"github.com/zarf-dev/zarf/src/internal/dns"
+ 	"github.com/zarf-dev/zarf/src/pkg/archive"
+-	"github.com/zarf-dev/zarf/src/pkg/feature"
+ 	"github.com/zarf-dev/zarf/src/pkg/helpers"
+ 	orasCache "github.com/zarf-dev/zarf/src/pkg/oci/cache"
+ 	"github.com/zarf-dev/zarf/src/pkg/ocischeme"
+@@ -350,40 +343,35 @@ func pullFromDockerDaemon(ctx context.Context, daemonImages []imageWithOverride,
+ 	defer func() {
+ 		err = errors.Join(err, cli.Close())
+ 	}()
+-	// Saving images directly from the Docker daemon's OCI image export is faster and simpler than Crane, but it
+-	// requires Docker engine v25.0+, the first version to export the OCI layout format. For older versions
+-	// or if the feature flag is disabled, we fall back to Crane.
+-	directPull := feature.IsEnabled(feature.DockerDaemonDirectPull) && daemonSupportsOCIExport(ctx, cli)
++	if err := checkDaemonOCIExportSupport(ctx, cli); err != nil {
++		return nil, err
++	}
+ 	for index, daemonImage := range daemonImages {
+-		var pullErr error
+-		if directPull {
+-			pullErr = saveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count)
+-		} else {
+-			pullErr = craneSaveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count)
+-		}
+-		if pullErr != nil {
+-			return nil, pullErr
++		if err := saveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count); err != nil {
++			return nil, err
+ 		}
+ 		pulledImages = append(pulledImages, PulledImage{Image: daemonImage.request.Image})
  	}
  
--	cmd.AddCommand(newDevInspectDefinitionCommand(v))
--	cmd.AddCommand(newDevInspectManifestsCommand(v))
--	cmd.AddCommand(newDevInspectValuesFilesCommand(v))
-+	cmd.AddCommand(newDevInspectDefinitionCommand(v, architecture))
-+	cmd.AddCommand(newDevInspectManifestsCommand(v, architecture))
-+	cmd.AddCommand(newDevInspectValuesFilesCommand(v, architecture))
- 	return cmd
+ 	return pulledImages, nil
  }
  
- type devInspectDefinitionOptions struct {
-+	*architectureOptions
- 	flavor     string
- 	setPkgTmpl map[string]string
- }
+-// minDockerVersionForOCIExport is the first Docker engine version (released Jan 2024) to export images in the OCI
+-// layout format via ImageSave.
++// minDockerVersionForOCIExport is the first Docker engine version to export images in OCI layout format via ImageSave.
+ var minDockerVersionForOCIExport = semver.MustParse("25.0.0")
  
--func newDevInspectDefinitionCommand(v *viper.Viper) *cobra.Command {
--	o := &devInspectDefinitionOptions{}
-+func newDevInspectDefinitionCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
-+	o := &devInspectDefinitionOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:   "definition [ PATH ]",
-@@ -190,6 +193,7 @@ func (o *devInspectDefinitionOptions) run(cmd *cobra.Command, args []string) err
- 		return err
+-func daemonSupportsOCIExport(ctx context.Context, cli *client.Client) bool {
++func checkDaemonOCIExportSupport(ctx context.Context, cli *client.Client) error {
+ 	v, err := cli.ServerVersion(ctx, client.ServerVersionOptions{})
+ 	if err != nil {
+-		return false
++		return fmt.Errorf("failed to get Docker server version: %w", err)
  	}
- 	loadOpts := load.DefinitionOptions{
-+		Architecture:     o.selectedArchitecture(),
- 		Flavor:           o.flavor,
- 		SetVariables:     o.setPkgTmpl,
- 		CachePath:        cachePath,
-@@ -249,6 +253,7 @@ func (o *devInspectDefinitionOptions) run(cmd *cobra.Command, args []string) err
- }
- 
- type devInspectManifestsOptions struct {
-+	*architectureOptions
- 	enableKustomizePlugins bool
- 	flavor                 string
- 	createSetPkgTmpl       map[string]string
-@@ -265,8 +270,9 @@ func newDevInspectManifestsOptions() devInspectManifestsOptions {
+ 	ver, err := semver.NewVersion(v.Version)
+ 	if err != nil {
+-		return false
++		return fmt.Errorf("failed to parse Docker server version %q: %w", v.Version, err)
++	}
++	if ver.LessThan(minDockerVersionForOCIExport) {
++		return fmt.Errorf("pulling images from the Docker daemon requires Docker >=%s; found %s", minDockerVersionForOCIExport, v.Version)
  	}
+-	return !ver.LessThan(minDockerVersionForOCIExport)
++	return nil
  }
  
--func newDevInspectManifestsCommand(v *viper.Viper) *cobra.Command {
-+func newDevInspectManifestsCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
- 	o := newDevInspectManifestsOptions()
-+	o.architectureOptions = architecture
- 
- 	cmd := &cobra.Command{
- 		Use:   "manifests [ PATH ]",
-@@ -309,6 +315,7 @@ func (o *devInspectManifestsOptions) run(ctx context.Context, args []string) err
- 	}
- 
- 	opts := packager.InspectDefinitionResourcesOptions{
-+		Architecture:           o.selectedArchitecture(),
- 		EnableKustomizePlugins: o.enableKustomizePlugins,
- 		CreateSetVariables:     o.createSetPkgTmpl,
- 		DeploySetVariables:     o.deploySetVariables,
-@@ -349,6 +356,7 @@ func (o *devInspectManifestsOptions) run(ctx context.Context, args []string) err
+ // saveImageFromDockerDaemon exports a single image from the Docker daemon via the engine's OCI image export
+@@ -438,103 +426,6 @@ func saveImageFromDockerDaemon(ctx context.Context, cli *client.Client, dst *oci
+ 	return err
  }
  
- type devInspectValuesFilesOptions struct {
-+	*architectureOptions
- 	enableKustomizePlugins bool
- 	flavor                 string
- 	components             string
-@@ -366,8 +374,9 @@ func newDevInspectValuesF
+-// craneSaveImageFromDockerDaemon exports a single image from the Docker daemon using Crane and copies it into dst.
+-// Crane handles the older, pre-OCI-layout Docker export formats
+-func craneSaveImageFromDockerDaemon(ctx context.Context, cli *client.Client, dst *oci.Store, daemonImage imageWithOverride, arch string, concurrency, index, count int) (err error) {
+-	l := logger.From(ctx)
+-	l.Warn("pulling from the Docker daemon using the legacy method. This method will be removed in Zarf v1.0. Upgrade Docker to >=v25.0.0 for continued daemon functionality")
+-	tmpDir, err := utils.MakeTempDir(config.CommonOptions.TempDirectory)
+-	if err != nil {
+-		return fmt.Errorf("failed to make temp directory: %w", err)
+-	}
+-	defer func() {
+-		err = errors.Join(err, os.RemoveAll(tmpDir))
+-	}()
+-	reference, err := name.ParseReference(daemonImage.overridden.Reference)
+-	if err != nil {
+-		return fmt.Errorf("failed to parse reference: %w", err)
+-	}
+-	// Use unbuffered opener to avoid OOM Kill issues https://github.com/zarf-dev/zarf/issues/1214.
+-	// This will also take forever to load large images.
+-	img, err := daemon.Image(reference, daemon.WithUnbufferedOpener(), daemon.WithClient(cli))
+-	if err != nil {
+-		return fmt.Errorf("failed to load from docker daemon: 
 ```
 
-**File**: `src/cmd/initialize.go` (modified, +8/-8)
+**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/README.md` (removed, +0/-11)
 ```diff
-@@ -37,6 +37,7 @@ import (
- )
- 
- type initOptions struct {
-+	*architectureOptions
- 	setVariables               map[string]string
- 	valuesFiles                []string
- 	setValues                  map[string]string
-@@ -60,8 +61,8 @@ type initOptions struct {
- 	packageVerifyFlags
- }
- 
--func newInitCommand() *cobra.Command {
--	o := &initOptions{}
-+func newInitCommand(architecture *architectureOptions) *cobra.Command {
-+	o := &initOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:     "init [ PACKAGE_SOURCE ]",
-@@ -194,10 +195,8 @@ func (o *initOptions) run(cmd *cobra.Command, args []string) error {
- 	if len(args) > 0 {
- 		packageSource = args[0]
- 	} else {
--		initPackageName := config.GetInitPackageName()
+@@ -1,11 +0,0 @@
+-# `daemon`
 -
- 		// Try to use an init-package in the executable directory if none exist in current working directory
--		packageSource, err = o.findInitPackage(cmd.Context(), initPackageName)
-+		packageSource, err = o.findInitPackage(cmd.Context())
- 		if err != nil {
- 			return err
- 		}
-@@ -229,7 +228,7 @@ func (o *initOptions) run(cmd *cobra.Command, args []string) error {
- 		VerifyBlobOptions:    o.buildVerifyBlobOptions(cmd, v),
- 		VerificationStrategy: o.verify.toStrategy(),
- 		Filter:               filter,
--		Architecture:         config.GetArch(),
-+		Architecture:         o.selectedArchitecture(),
- 		CachePath:            cachePath,
- 		RemoteOptions:        defaultRemoteOptions(),
- 	}
-@@ -272,7 +271,8 @@ func (o *initOptions) run(cmd *cobra.Command, args []string) error {
- 	return nil
- }
- 
--func (o *initOptions) findInitPackage(ctx context.Context, initPackageName string) (string, error) {
-+func (o *initOptions) findInitPackage(ctx context.Context) (string, error) {
-+	initPackageName := config.GetInitPackageName(o.selectedArchitecture())
- 	// First, look for the init package in the current working directory
- 	if !helpers.InvalidPath(initPackageName) {
- 		return initPackageName, nil
-@@ -346,7 +346,7 @@ func (o *initOptions) downloadInitPackage(ctx context.Context, cacheDirectory st
- 		}
- 
- 		pullOptions := packager.PullOptions{
--			Architecture:   config.GetArch(),
-+			Architecture:   o.selectedArchitecture(),
- 			OCIConcurrency: o.ociConcurrency,
- 			CachePath:      cachePath,
- 		}
+-[![GoDoc](https://godoc.org/github.com/google/go-containerregistry/pkg/v1/daemon?status.svg)](https://godoc.org/github.com/google/go-containerregistry/pkg/v1/daemon)
+-
+-The `daemon` package enables reading/writing images from/to the docker daemon.
+-
+-It is not fully fleshed out, but is useful for interoperability, see various issues:
+-
+-* https://github.com/google/go-containerregistry/issues/205
+-* https://github.com/google/go-containerregistry/issues/552
+-* https://github.com/google/go-containerregistry/issues/627
 ```
 
-**File**: `src/cmd/package.go` (modified, +81/-58)
+**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/doc.go` (removed, +0/-17)
 ```diff
-@@ -47,7 +47,7 @@ import (
- 	"github.com/zarf-dev/zarf/src/types"
- )
- 
--func newPackageCommand() *cobra.Command {
-+func newPackageCommand(architecture *architectureOptions) *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:     "package",
- 		Aliases: []string{"p"},
-@@ -56,16 +56,16 @@ func newPackageCommand() *cobra.Command {
- 
- 	v := getViper()
- 
--	cmd.AddCommand(newPackageCreateCommand(v))
--	cmd.AddCommand(newPackageDeployCommand(v))
--	cmd.AddCommand(newPackageMirrorResourcesCommand(v))
--	cmd.AddCommand(newPackageInspectCommand(v))
--	cmd.AddCommand(newPackageRemoveCommand(v))
-+	cmd.AddCommand(newPackageCreateCommand(v, architecture))
-+	cmd.AddCommand(newPackageDeployCommand(v, architecture))
-+	cmd.AddCommand(newPackageMirrorResourcesCommand(v, architecture))
-+	cmd.AddCommand(newPackageInspectCommand(v, architecture))
-+	cmd.AddCommand(newPackageRemoveCommand(v, architecture))
- 	cmd.AddCommand(newPackageListCommand())
--	cmd.AddCommand(newPackagePublishCommand(v))
--	cmd.AddCommand(newPackagePullCommand(v))
--	cmd.AddCommand(newPackageSignCommand(v))
--	cmd.AddCommand(newPackageVerifyCommand(v))
-+	cmd.AddCommand(newPackagePublishCommand(v, architecture))
-+	cmd.AddCommand(newPackagePullCommand(v, architecture))
-+	cmd.AddCommand(newPackageSignCommand(v, architecture))
-+	cmd.AddCommand(newPackageVerifyCommand(v, architecture))
- 
- 	return cmd
- }
-@@ -212,6 +212,7 @@ func (f *packageSigningFlags) validateSigningMode() error {
- }
- 
- type packageCreateOptions struct {
-+	*architectureOptions
- 	confirm                 bool
- 	output                  string
- 	differentialPackagePath string
-@@ -227,8 +228,8 @@ type packageCreateOptions struct {
- 	packageSigningFlags
- }
- 
--func newPackageCreateCommand(v *viper.Viper) *cobra.Command {
--	o := &packageCreateOptions{}
-+func newPackageCreateCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
-+	o := &packageCreateOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:     "create [ PATH ]",
-@@ -370,6 +371,7 @@ func (o *packageCreateOptions) run(cmd *cobra.Command, args []string) error {
- 		return err
- 	}
- 	opt := packager.CreateOptions{
-+		Architecture:            o.selectedArchitecture(),
- 		Flavor:                  o.flavor,
- 		RegistryOverrides:       overrides,
- 		SignBlobOptions:         signOpts,
-@@ -399,6 +401,7 @@ func (o *packageCreateOptions) run(cmd *cobra.Command, args []string) error {
- }
- 
- type packageDeployOptions struct {
-+	*architectureOptions
- 	valuesFiles                []string
- 	namespaceOverride          string
- 	confirm                    bool
-@@ -418,8 +421,8 @@ type packageDeployOptions struct {
- 	packageVerifyFlags
- }
- 
--func newPackageDeployCommand(v *viper.Viper) *cobra.Command {
--	o := &packageDeployOptions{}
-+func newPackageDeployCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
-+	o := &packageDeployOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:     "deploy [ PACKAGE_SOURCE ]",
-@@ -502,7 +505,7 @@ func (o *packageDeployOptions) run(cmd *cobra.Command, args []string) (err error
- 		VerifyBlobOptions:    o.buildVerifyBlobOptions(cmd, v),
- 		VerificationStrategy: o.verify.toStrategy(),
- 		Filter:               filter,
--		Architecture:         config.GetArch(),
-+		Architecture:         o.selectedArchitecture(),
- 		OCIConcurrency:       o.ociConcurrency,
- 		RemoteOptions:        defaultRemoteOptions(),
- 		CachePath:            cachePath,
-@@ -674,6 +677,7 @@ func getPackageYAMLHints(pkg api.Package, setVariables map[string]string) map[st
- }
- 
- type packageMirrorResourcesOptions struct {
-+	*architectureOptions
- 	mirrorImages       bool
- 	mirrorRepos        bool
- 	confirm            bool
-@@ -687,8 +691,8 @@ type packageMirrorResourcesOptions struct {
- 	packageVerifyFlags
- }
- 
--func newPackageMirrorResourcesCommand(v *viper.Viper) *cobra.Command {
--	o := &packageMirrorResourcesOptions{}
-+func newPackageMirrorResourcesCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
-+	o := &packageMirrorResourcesOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:     "mirror-resources [ PACKAGE_SOURCE ]",
-@@ -772,7 +776,7 @@ func (o *packageMirrorResourcesOptions) run(cmd *cobra.Command, args []string) (
- 		VerifyBlobOptions:    o.buildVerifyBlobOptions(cmd, v),
- 		VerificationStrategy: o.verify.toStrategy(),
- 		Filter:               filter,
--		Architecture:         config.GetArch(),
-+		Architecture:         o.selectedArchitecture(),
- 		OCIConcurrency:       o.ociConcurrency,
- 		RemoteOptions:        defaultRemoteOptions(),
- 		CachePath:            cachePath,
-@@ -859,7 +863,7 @@ func (o *packageMirrorResourcesOptions) run(cmd *cobra.Command, args []string) (
- 	return nil
- }
- 
--func newPackageInspectCommand(v *viper.Viper) *cobra.Command {
-+func newPackageInspectCommand(v *viper.Viper, architecture *architectureOptions) *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:     "inspect",
- 		Aliases: []string{"i"},
-@@ -875,22 +879,
+@@ -1,17 +0,0 @@
+-// Copyright 2018 Google LLC All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//    http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-// Package daemon provides facilities for reading/writing v1.Image from/to
+-// a running daemon.
+-package daemon
 ```
 
-**File**: `src/cmd/package_test.go` (modified, +8/-7)
+**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/image.go` (removed, +0/-378)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
-+	"runtime"
- 	"strings"
- 	"testing"
- 
-@@ -368,7 +369,7 @@ func TestPackageInspectManifests(t *testing.T) {
- 				setValues:    tc.setValues,
- 				components:   tc.components,
- 			}
--			packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, config.GetArch()))
-+			packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, runtime.GOARCH))
- 			testCmd := &cobra.Command{}
- 			testCmd.SetContext(context.Background())
- 			err = opts.run(testCmd, []string{packagePath})
-@@ -534,7 +535,7 @@ func checkPackageValuesInspectFiles(t *testing.T, tc ValuesFilesTestData) {
- 		setValues:    tc.setValues,
- 		components:   tc.components,
- 	}
--	packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, config.GetArch()))
-+	packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, runtime.GOARCH))
- 	testCmd := &cobra.Command{}
- 	testCmd.SetContext(context.Background())
- 	err = opts.run(testCmd, []string{packagePath})
-@@ -733,7 +734,7 @@ func TestPackageInspectDocumentation(t *testing.T) {
- 				keys:      tc.keys,
- 				outputDir: outputDir,
- 			}
--			packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, config.GetArch()))
-+			packagePath := filepath.Join(tmpdir, fmt.Sprintf("zarf-package-%s-%s.tar.zst", tc.packageName, runtime.GOARCH))
- 
- 			// Create a cobra command with context for the run method
- 			inspectCmd := &cobra.Command{}
-@@ -769,7 +770,7 @@ func newTestViper() *viper.Viper {
- func TestSignConfirmNotViperBound(t *testing.T) {
- 	t.Parallel()
- 	v := newTestViper()
--	cmd := newPackageSignCommand(v)
-+	cmd := newPackageSignCommand(v, nil)
- 	f := cmd.Flags().Lookup("confirm")
- 	require.NotNil(t, f)
- 	require.Equal(t, "false", f.DefValue, "--confirm must default to false and must not be bound to viper")
-@@ -805,7 +806,7 @@ func TestSignTlogUploadEnvRespected(t *testing.T) {
- 	require.True(t, v.IsSet(VPkgSignTlogUpload))
- 	require.False(t, v.GetBool(VPkgSignTlogUpload))
- 
--	cmd := newPackageSignCommand(v)
-+	cmd := newPackageSignCommand(v, nil)
- 	f := cmd.Flags().Lookup("tlog-upload")
- 	require.Equal(t, "false", f.DefValue, "env var must flow through to flag default")
- }
-@@ -916,7 +917,7 @@ func TestVerifyInsecureIgnoreTlogDefaultTrue(t *testing.T) {
- 	require.False(t, v.IsSet(VPkgInsecureIgnoreTlog),
- 		"VPkgInsecureIgnoreTlog must not have a viper default; the keyless guard relies on IsSet() being false when the user has not configured the key")
- 
--	cmd := newPackageVerifyCommand(v)
-+	cmd := newPackageVerifyCommand(v, nil)
- 	f := cmd.Flags().Lookup("insecure-ignore-tlog")
- 	require.Equal(t, "true", f.DefValue, "flag must still default to true for air-gap compat when no config is provided")
- }
-@@ -928,7 +929,7 @@ func TestVerifyInsecureIgnoreTlogEnvRespected(t *testing.T) {
- 	require.True(t, v.IsSet(VPkgInsecureIgnoreTlog))
- 	require.False(t, v.GetBool(VPkgInsecureIgnoreTlog))
- 
--	cmd := newPackageVerifyCommand(v)
-+	cmd := newPackageVerifyCommand(v, nil)
- 	f := cmd.Flags().Lookup("insecure-ignore-tlog")
- 	require.Equal(t, "false", f.DefValue, "env var must flow through to flag default")
- }
+@@ -1,378 +0,0 @@
+-// Copyright 2018 Google LLC All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//    http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package daemon
+-
+-import (
+-	"bytes"
+-	"context"
+-	"io"
+-	"os"
+-	"runtime"
+-	"sync"
+-	"time"
+-
+-	api "github.com/moby/moby/api/types/image"
+-
+-	"github.com/google/go-containerregistry/pkg/name"
+-	v1 "github.com/google/go-containerregistry/pkg/v1"
+-	"github.com/google/go-containerregistry/pkg/v1/tarball"
+-	"github.com/google/go-containerregistry/pkg/v1/types"
+-	specs "github.com/moby/docker-image-spec/specs-go/v1"
+-)
+-
+-type image struct {
+-	ref          name.Reference
+-	opener       *imageOpener
+-	tarballImage v1.Image
+-	computed     bool
+-	id           *v1.Hash
+-	configFile   *v1.ConfigFile
+-
+-	once sync.Once
+-	err  error
+-}
+-
+-type imageOpener struct {
+-	ref name.Reference
+-	ctx context.Context
+-
+-	bufferMode bufferMode
+-	client     Client
+-
+-	once    sync.Once
+-	bytes   []byte
+-	tmpPath string
+-	err     error
+-}
+-
+-func (i *imageOpener) saveImage() (io.ReadCloser, error) {
+-	return i.client.ImageSave(i.ctx, []string{i.ref.Name()})
+-}
+-
+-func (i *imageOpener) bufferedOpener() (io.ReadCloser, error) {
+-	// Store the tarball in memory and return a new reader into the bytes each time we need to access something.
+-	i.once.Do(func() {
+-		i.bytes, i.err = func() ([]byte, error) {
+-			rc, err := i.saveImage()
+-			if err != nil {
+-				return nil, err
+-			}
+-			defer rc.Close()
+-
+-			return io.ReadAll(rc)
+-		}()
+-	})
+-
+-	// Wrap the bytes in a ReadCloser so it looks like an opened file.
+-	return io.NopCloser(bytes.NewReader(i.bytes)), i.err
+-}
+-
+-func (i *imageOpener) fileBackedOpener() (io.ReadCloser, error) {
+-	i.once.Do(func() {
+-		rc, err := i.saveImage()
+-		if err != nil {
+-			i.err = err
+-			return
+-		}
+-		defer rc.Close()
+-
+-		f, err := os.CreateTemp("", "go-containerregistry-*.tar")
+-		if err != nil {
+-			i.err = err
+-			return
+-		}
+-
+-		if _, err := io.Copy(f, rc); err != nil {
+-			f.Close()
+-			os.Remove(f.Name())
+-			i.err = err
+-			return
+-		}
+-		f.Close()
+-		i.tmpPath = f.Name()
+-
+-		runtime.AddCleanup(i, func(path string) {
+-			_ = os.Remove(path)
+-		}, i.tmpPath)
+-	})
+-
+-	if i.err != nil {
+-		return nil, i.err
+-	}
+-	return os.Open(i.tmpPath)
+-}
+-
+-func (i *imageOpener) opener() tarball.Opener {
+-	switch i.bufferMode {
+-	case bufferMemory:
+-		return i.bufferedOpener
+-	case bufferFile:
+-		return i.fileBackedOpener
+-	default:
+-		return i.saveImage
+-	}
+-}
+-
+-// Image provides access to an image reference from the Docker daemon,
+-// applying functional options to the underlying imageOpener before
+-// resolving the reference into a v1.Image.
+-func Image(ref name.Reference, options ...Option) (v1.Image, error) {
+-	o, err := makeOptions(options...)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	i := &imageOpener{
+-		ref:        ref,
+-		bufferMode: o.bufferMode,
+-		client:     o.client,
+-		ctx:        o.ctx,
+-	}
+-
+-	img := &image{
+-		ref:    ref,
+-		opener: i,
+-	}
+-
+-	// Eagerly fetch Image ID to ensure it actually exists.
+-	// https://github.com/google/go-containerregistry/issues/1186
+-	id, err := img.ConfigName()
+-	if err != nil {
+-		return nil, err
+-	}
+-	img.id = &id
+-
+-	return img, nil
+-}
+-
+-func (i *image) initialize() error {
+-	// Don't re-initialize tarball if already initialized.
+-	if i.tarballImage == nil {
+-		i.once.Do(func() {
+-			i.tarballImage, i.err = tarball.Image(i.opener.opener(), nil)
+-		})
+-	}
+-	return i.err
+-}
+-
+-func (i *image) compute() error {
+-	// Don't re-compute if already computed.
+-	if i.computed {
+-		return nil
+-	}
+-
+-	inspect, err := i.opener.client.ImageInspect(i.opener.ctx, i.ref.String())
+-	if err != nil {
+-		return err
+-	}
+-
+-	configFile, err := i.computeConfigFile(inspect.InspectResponse)
+-	if err != nil {
+-		return err
+-	}
+-
+-	i.configFile = configFile
+-	i.computed = true
+-
+-	return nil
+-}
+-
+-func (i *image) Layers() ([]v1.Layer, error) {
+-	if err := i.initialize(); err != nil {
+-		return nil, err
+-	}
+-	return i.tarballImage.Layers()
+-}
+-
+-func (i *image) MediaType() (types.MediaType, error) {
+-	if err := i.initialize(); err != nil {
+-		return "", err
+-	}
+-	return i.tarballImage.MediaType()
+-}
+-
+-func (i *image) Size() (int64, error) {
+-	if err := i.initialize(); err != nil {
+-		return 0, err
+-	}
+-	return i.tarballImage.Size()
+-}
+-
+-func (i *image) ConfigName() (v1.Hash, error) {
+-	if i.id != nil {
+-		return *i.id, nil
+-	}
+-	res, err := i.opener.client.ImageInspect(i.opener.ctx, i.ref.String())
+-	if err != nil {
+-		return v1.Hash{}, err
+-	}
+-	ret
 ```
 
-**File**: `src/cmd/root.go` (modified, +20/-7)
+**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/options.go` (removed, +0/-125)
 ```diff
-@@ -71,6 +71,18 @@ func (o *outputFormat) Type() string {
- 
- var rootCmd = NewZarfCommand()
- 
-+// architectureOptions belongs to one command tree and is shared with its operations.
-+type architectureOptions struct {
-+	architecture string
-+}
-+
-+func (o *architectureOptions) selectedArchitecture() string {
-+	if o == nil {
-+		return ""
-+	}
-+	return o.architecture
-+}
-+
- func preRun(cmd *cobra.Command, _ []string) error {
- 	// This ensures the field manager is set to Zarf during any Helm SDK actions
- 	kube.ManagedFieldsManager = cluster.FieldManagerName
-@@ -179,6 +191,7 @@ func run(cmd *cobra.Command, _ []string) {
- 
- // NewZarfCommand creates the `zarf` command and its nested children.
- func NewZarfCommand() *cobra.Command {
-+	architecture := &architectureOptions{}
- 	rootCmd := &cobra.Command{
- 		Use:          "zarf COMMAND",
- 		Short:        lang.RootCmdShort,
-@@ -196,23 +209,23 @@ func NewZarfCommand() *cobra.Command {
- 	// to ensure the config defaulting doesn't kick in, and inject values
- 	// into zart tools update-creds command
- 	// see https://github.com/zarf-dev/zarf/pull/3340#discussion_r1889221826
--	rootCmd.AddCommand(newToolsCommand())
-+	rootCmd.AddCommand(newToolsCommand(architecture))
- 
- 	// TODO(soltysh): consider adding command groups
- 	rootCmd.AddCommand(newConnectCommand())
- 	rootCmd.AddCommand(sayCommand())
- 	rootCmd.AddCommand(newDestroyCommand())
--	rootCmd.AddCommand(newDevCommand())
--	rootCmd.AddCommand(newInitCommand())
-+	rootCmd.AddCommand(newDevCommand(architecture))
-+	rootCmd.AddCommand(newInitCommand(architecture))
- 	rootCmd.AddCommand(newInternalCommand(rootCmd))
- 	rootCmd.AddCommand(newComponentCommand())
--	rootCmd.AddCommand(newPackageCommand())
-+	rootCmd.AddCommand(newPackageCommand(architecture))
- 
- 	rootCmd.AddCommand(newVersionCommand())
- 
- 	// Setup flags - skip for vendor-only commands
- 	if !checkVendorOnlyFromArgs() {
--		setupRootFlags(rootCmd)
-+		setupRootFlags(rootCmd, architecture)
- 	}
- 
- 	setupGroupedFlagUsage(rootCmd)
-@@ -221,7 +234,7 @@ func NewZarfCommand() *cobra.Command {
- }
- 
- // setupRootFlags sets up the persistent flags for the root command
--func setupRootFlags(rootCmd *cobra.Command) {
-+func setupRootFlags(rootCmd *cobra.Command, architecture *architectureOptions) {
- 	var showNoProgressDeprecation bool
- 	vpr := getViper()
- 
-@@ -244,7 +257,7 @@ func setupRootFlags(rootCmd *cobra.Command) {
- 	_ = rootCmd.PersistentFlags().MarkDeprecated("no-progress", "Progress bars and spinners were removed with --log-format=legacy, this flag will be removed in a future version of Zarf.")
- 
- 	// Core functionality
--	rootCmd.PersistentFlags().StringVarP(&config.CLIArch, "architecture", archShorthand, vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
-+	rootCmd.PersistentFlags().StringVarP(&architecture.architecture, "architecture", archShorthand, vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
- 	cachePath = vpr.GetString(VCache)
- 	if cachePath == "" {
- 		cachePath = vpr.GetString(VZarfCache)
+@@ -1,125 +0,0 @@
+-// Copyright 2018 Google LLC All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//    http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package daemon
+-
+-import (
+-	"context"
+-	"io"
+-
+-	"github.com/moby/moby/client"
+-)
+-
+-// ImageOption is an alias for Option.
+-// Deprecated: Use Option instead.
+-type ImageOption Option
+-
+-// Option is a functional option for daemon operations.
+-type Option func(*options)
+-
+-// bufferMode controls how the image tarball is buffered.
+-type bufferMode int
+-
+-const (
+-	bufferMemory bufferMode = iota // default: buffer entire image in memory
+-	bufferNone                     // no buffering: re-save on each access
+-	bufferFile                     // buffer to a temp file on disk
+-)
+-
+-type options struct {
+-	ctx        context.Context
+-	client     Client
+-	bufferMode bufferMode
+-}
+-
+-var defaultClient = func() (Client, error) {
+-	return client.New(client.FromEnv)
+-}
+-
+-func makeOptions(opts ...Option) (*options, error) {
+-	o := &options{
+-		bufferMode: bufferMemory,
+-		ctx:        context.Background(),
+-	}
+-	for _, opt := range opts {
+-		opt(o)
+-	}
+-
+-	if o.client == nil {
+-		apiClient, err := defaultClient()
+-		if err != nil {
+-			return nil, err
+-		}
+-		o.client = apiClient
+-	}
+-	_, _ = o.client.Ping(o.ctx, client.PingOptions{
+-		NegotiateAPIVersion: true,
+-	})
+-
+-	return o, nil
+-}
+-
+-// WithBufferedOpener buffers the entire image into memory.
+-func WithBufferedOpener() Option {
+-	return func(o *options) {
+-		o.bufferMode = bufferMemory
+-	}
+-}
+-
+-// WithUnbufferedOpener streams the image to avoid buffering it.
+-// Each access triggers a new image save.
+-func WithUnbufferedOpener() Option {
+-	return func(o *options) {
+-		o.bufferMode = bufferNone
+-	}
+-}
+-
+-// WithFileBufferedOpener buffers the image to a temporary file on disk.
+-// This avoids holding the entire image in memory while still only
+-// performing a single image save. The temporary file is cleaned up via
+-// runtime.AddCleanup on the imageOpener.
+-func WithFileBufferedOpener() Option {
+-	return func(o *options) {
+-		o.bufferMode = bufferFile
+-	}
+-}
+-
+-// WithClient is a functional option to allow injecting a docker client.
+-//
+-// By default, github.com/moby/moby/client.FromEnv is used.
+-func WithClient(client Client) Option {
+-	return func(o *options) {
+-		o.client = client
+-	}
+-}
+-
+-// WithContext is a functional option to pass through a context.Context.
+-//
+-// By default, context.Background() is used.
+-func WithContext(ctx context.Context) Option {
+-	return func(o *options) {
+-		o.ctx = ctx
+-	}
+-}
+-
+-// Client represents the subset of a docker client that the daemon
+-// package uses.
+-type Client interface {
+-	Ping(ctx context.Context, options client.PingOptions) (client.PingResult, error)
+-	ImageSave(ctx context.Context, images []string, _ ...client.ImageSaveOption) (client.ImageSaveResult, error)
+-	ImageLoad(ctx context.Context, input io.Reader, _ ...client.ImageLoadOption) (client.ImageLoadResult, error)
+-	ImageTag(ctx context.Context, options client.ImageTagOptions) (client.ImageTagResult, error)
+-	ImageInspect(ctx context.Context, image string, _ ...client.ImageInspectOption) (client.ImageInspectResult, error)
+-	ImageHistory(ctx context.Context, image string, _ ...client.ImageHistoryOption) (client.ImageHistoryResult, error)
+-}
 ```
 
-**File**: `src/cmd/tools.go` (modified, +2/-2)
+**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/write.go` (removed, +0/-88)
 ```diff
-@@ -11,7 +11,7 @@ import (
- 	"github.com/zarf-dev/zarf/src/config/lang"
- )
- 
--func newToolsCommand() *cobra.Command {
-+func newToolsCommand(architecture *architectureOptions) *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:     "tools",
- 		Aliases: []string{"t"},
-@@ -32,7 +32,7 @@ func newToolsCommand() *cobra.Command {
- 	cmd.AddCommand(newGetCredsCommand())
- 	cmd.AddCommand(newUpdateCredsCommand(v))
- 	cmd.AddCommand(newClearCacheCommand())
--	cmd.AddCommand(newDownloadInitCommand())
-+	cmd.AddCommand(newDownloadInitCommand(architecture))
- 	cmd.AddCommand(newGenPKICommand())
- 	cmd.AddCommand(newGenKeyCommand())
- 	cmd.AddCommand(newTrustedRootCommand())
+@@ -1,88 +0,0 @@
+-// Copyright 2018 Google LLC All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//    http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package daemon
+-
+-import (
+-	"fmt"
+-	"io"
+-
+-	"github.com/google/go-containerregistry/pkg/name"
+-	v1 "github.com/google/go-containerregistry/pkg/v1"
+-	"github.com/google/go-containerregistry/pkg/v1/tarball"
+-	"github.com/moby/moby/client"
+-)
+-
+-// Tag adds a tag to an already existent image.
+-func Tag(src, dest name.Tag, options ...Option) error {
+-	o, err := makeOptions(options...)
+-	if err != nil {
+-		return err
+-	}
+-
+-	_, err = o.client.ImageTag(o.ctx, client.ImageTagOptions{
+-		Source: src.String(),
+-		Target: dest.String(),
+-	})
+-	return err
+-}
+-
+-// Write saves the image into the daemon as the given tag.
+-func Write(tag name.Tag, img v1.Image, options ...Option) (string, error) {
+-	o, err := makeOptions(options...)
+-	if err != nil {
+-		return "", err
+-	}
+-
+-	// If we already have this image by this image ID, we can skip loading it.
+-	id, err := img.ConfigName()
+-	if err != nil {
+-		return "", fmt.Errorf("computing image ID: %w", err)
+-	}
+-	if resp, err := o.client.ImageInspect(o.ctx, id.String()); err == nil {
+-		want := tag.String()
+-
+-		// If we already have this tag, we can skip tagging it.
+-		for _, have := range resp.RepoTags {
+-			if have == want {
+-				return "", nil
+-			}
+-		}
+-
+-		_, err = o.client.ImageTag(o.ctx, client.ImageTagOptions{
+-			Source: id.String(),
+-			Target: want,
+-		})
+-
+-		return "", err
+-	}
+-
+-	pr, pw := io.Pipe()
+-	go func() {
+-		_ = pw.CloseWithError(tarball.Write(tag, img, pw))
+-	}()
+-
+-	// write the image in docker save format first, then load it
+-	resp, err := o.client.ImageLoad(o.ctx, pr, client.ImageLoadWithQuiet(false))
+-	if err != nil {
+-		return "", fmt.Errorf("error loading image: %w", err)
+-	}
+-	defer resp.Close()
+-	b, err := io.ReadAll(resp)
+-	response := string(b)
+-	if err != nil {
+-		return response, fmt.Errorf("error reading load response body: %w", err)
+-	}
+-	return response, nil
+-}
 ```
 
-**File**: `src/cmd/zarf_tools.go` (modified, +4/-3)
+**File**: `vendor/modules.txt` (modified, +0/-1)
 ```diff
-@@ -846,12 +846,13 @@ func (o *clearCacheOptions) run(cmd *cobra.Command, _ []string) error {
- }
- 
- type downloadInitOptions struct {
-+	*architectureOptions
- 	version         string
- 	outputDirectory string
- }
- 
--func newDownloadInitCommand() *cobra.Command {
--	o := &downloadInitOptions{}
-+func newDownloadInitCommand(architecture *architectureOptions) *cobra.Command {
-+	o := &downloadInitOptions{architectureOptions: architecture}
- 
- 	cmd := &cobra.Command{
- 		Use:   "download-init",
-@@ -896,7 +897,7 @@ func (o *downloadInitOptions) run(cmd *cobra.Command, _ []string) error {
- 	}
- 
- 	pullOptions := packager.PullOptions{
--		Architecture: config.GetArch(),
-+		Architecture: o.selectedArchitecture(),
- 		CachePath:    cachePath,
- 	}
- 
+@@ -1918,7 +1918,6 @@ github.com/google/go-containerregistry/pkg/name
+ github.com/google/go-containerregistry/pkg/registry
+ github.com/google/go-containerregistry/pkg/v1
+ github.com/google/go-containerregistry/pkg/v1/cache
+-github.com/google/go-containerregistry/pkg/v1/daemon
+ github.com/google/go-containerregistry/pkg/v1/empty
+ github.com/google/go-containerregistry/pkg/v1/google
+ github.com/google/go-containerregistry/pkg/v1/layout
 ```
 
 ---
 
-### Incident Patch 2: `f8e60d08` (2026-11-02)
-**Commit Message**: feat!: remove sbom viewer (#5563)
+### Incident Patch 2: `f3961a93` (2026-11-04)
+**Commit Message**: feat!: remove zarf tools registry export (#5562)
 
 Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `site/src/content/docs/commands/zarf_package_create.md` (modified, +0/-1)
-```diff
-@@ -38,7 +38,6 @@ zarf package create [ PATH ] [flags]
-   -o, --output string               Specify the output (either a directory or an oci:// URL) for the created Zarf package
-       --registry-override strings   Specify a mapping of domains to override on package create when pulling images (e.g. --registry-override docker.io=dockerio-reg.enterprise.intranet)
-       --rekor-url string            Rekor transparency log URL. Override for private Sigstore deployments. (default "https://rekor.sigstore.dev")
--  -s, --sbom                        View SBOM contents after creating the package
-       --sbom-out string             Specify an output directory for the SBOMs from the created Zarf package
-       --set stringToString          Specify package templates to set on the command line (KEY=value) (default [])
-       --signing-key string          Private key for signing packages. Accepts either a local file path or a Cosign-supported key provider
-```
 
-**File**: `site/src/content/docs/ref/create.mdx` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ graph TD
-     A29{Is multipart?}
-     A29-->|Yes|A30(split package archive)-->A31
-     A29-->|No|A31
--    A31(handle sbom view/out flags)
-+    A31(handle sbom-out flag)
- 
-     A999[Abort]:::fail
- 
-```
-
-**File**: `src/cmd/package.go` (modified, +0/-2)
-```diff
-@@ -216,7 +216,6 @@ type packageCreateOptions struct {
- 	output                  string
- 	differentialPackagePath string
- 	setVariables            map[string]string
--	sbom                    bool
- 	sbomOutput              string
- 	skipSBOM                bool
- 	maxPackageSizeMB        int
-@@ -256,7 +255,6 @@ func newPackageCreateCommand(v *viper.Viper) *cobra.Command {
- 
- 	cmd.Flags().StringVar(&o.differentialPackagePath, "differential", v.GetString(VPkgCreateDifferential), lang.CmdPackageCreateFlagDifferential)
- 	cmd.Flags().StringToStringVar(&o.setVariables, "set", v.GetStringMapString(VPkgCreateSet), lang.CmdPackageCreateFlagSetPkgTmpl)
--	cmd.Flags().BoolVarP(&o.sbom, "sbom", "s", v.GetBool(VPkgCreateSbom), lang.CmdPackageCreateFlagSbom)
- 	cmd.Flags().StringVar(&o.sbomOutput, "sbom-out", v.GetString(VPkgCreateSbomOutput), lang.CmdPackageCreateFlagSbomOut)
- 	cmd.Flags().BoolVar(&o.skipSBOM, "skip-sbom", v.GetBool(VPkgCreateSkipSbom), lang.CmdPackageCreateFlagSkipSbom)
- 	cmd.Flags().IntVarP(&o.maxPackageSizeMB, "max-package-size", "m", v.GetInt(VPkgCreateMaxPackageSize), lang.CmdPackageCreateFlagMaxPackageSize)
-```
-
-**File**: `src/cmd/viper.go` (modified, +0/-1)
-```diff
-@@ -96,7 +96,6 @@ const (
- 
- 	VPkgCreateSet                  = "package.create.set"
- 	VPkgCreateOutput               = "package.create.output"
--	VPkgCreateSbom                 = "package.create.sbom"
- 	VPkgCreateSbomOutput           = "package.create.sbom_output"
- 	VPkgCreateSkipSbom             = "package.create.skip_sbom"
- 	VPkgCreateMaxPackageSize       = "package.create.max_package_size"
-```
-
-**File**: `src/config/lang/english.go` (modified, +0/-1)
-```diff
-@@ -275,7 +275,6 @@ $ zarf package mirror-resources zarf-package-my-app-amd64-1.0.0.tar.zst --repos
- 	CmdPackageCreateFlagSetPkgTmpl            = "Specify package templates to set on the command line (KEY=value)"
- 	CmdPackageCreateFlagSetVariables          = "Specify package variables to set on the command line (KEY=value)"
- 	CmdPackageCreateFlagOutput                = "Specify the output (either a directory or an oci:// URL) for the created Zarf package"
--	CmdPackageCreateFlagSbom                  = "View SBOM contents after creating the package"
- 	CmdPackageCreateFlagSbomOut               = "Specify an output directory for the SBOMs from the created Zarf package"
- 	CmdPackageCreateFlagSkipSbom              = "Skip generating SBOM for this package"
- 	CmdPackageCreateFlagMaxPackageSize        = "Specify the maximum size of the package in megabytes, packages larger than this will be split into multiple parts to be loaded onto smaller media (i.e. DVDs). Use 0 to disable splitting."
-```
-
-**File**: `src/pkg/feature/feature.go` (modified, +2/-1)
-```diff
-@@ -257,9 +257,10 @@ func init() {
- 		},
- 		{
- 			Name:        SBOMViewer,
--			Description: "Enables deprecated SBOM viewer HTML generation during package creation.",
-+			Description: "Retired: Enabled deprecated SBOM viewer HTML generation during package creation",
- 			Enabled:     false,
- 			Since:       "v0.86.0",
-+			Until:       "v1.0.0",
- 			Stage:       Deprecated,
- 		},
- 		{
-```
-
-**File**: `src/pkg/packager/assemble/assemble_test.go` (modified, +0/-2)
-```diff
-@@ -1230,9 +1230,7 @@ func TestCreateAbsolutePathImports(t *testing.T) {
- 	require.NoError(t, err)
- 	require.FileExists(t, filepath.Join(importedFileComponent, "0", "file.txt"))
- 
--	// File-only packages include component SBOMs but not the deprecated viewer by default.
- 	err = pkgLayout.GetSBOM(ctx, tmpdir, nil)
- 	require.NoError(t, err)
- 	require.FileExists(t, filepath.Join(tmpdir, "zarf-component-file-import.json"))
--	require.NoFileExists(t, filepath.Join(tmpdir, "sbom-viewer-zarf-component-file-import.html"))
- }
-```
-
-**File**: `src/pkg/packager/assemble/sbom.go` (modified, +28/-157)
-```diff
-@@ -5,11 +5,9 @@ package assemble
- 
- import (
- 	"context"
--	"embed"
- 	"encoding/json"
- 	"errors"
- 	"fmt"
--	"html/template"
- 	"os"
- 	"path/filepath"
- 	"strconv"
-@@ -31,12 +29,11 @@ import (
- 	v1 "github.com/google/go-containerregistry/pkg/v1"
- 	clayout "github.com/google/go-containerregistry/pkg/v1/layout"
- 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
--	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 
- 	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/pkg/archive"
--	"github.com/zarf-dev/zarf/src/pkg/feature"
-+	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 	"github.com/zarf-dev/zarf/src/pkg/images"
- 	"github.com/zarf-dev/zarf/src/pkg/logger"
- 	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
-@@ -46,9 +43,6 @@ import (
- 
- const componentPrefix = "zarf-component-"
- 
--//go:embed viewer/*
--var viewerAssets embed.FS
--
- type imageSBOMTarget struct {
- 	img                v1.Image
- 	resourceIdentifier string
-@@ -113,15 +107,15 @@ func generateGranularSBOMs(ctx context.Context, pkg api.Package, buildPath strin
- 	l := logger.From(ctx)
- 	for index, target := range targets {
- 		l.Info("creating image SBOM", "reference", target.resourceIdentifier, "count", fmt.Sprintf("%d/%d", index+1, len(targets)))
--		if _, err := createImageSBOMResource(ctx, cachePath, buildPath, target.img, target.resourceIdentifier, target.imageReference); err != nil {
-+		if err := createImageSBOMResource(ctx, cachePath, buildPath, target.img, target.resourceIdentifier, target.imageReference); err != nil {
- 			return fmt.Errorf("failed to create image sbom: %w", err)
- 		}
- 	}
- 	for _, component := range pkg.Components {
- 		if len(component.Files) == 0 {
- 			continue
- 		}
--		if _, err := createFileSBOMResource(ctx, component, buildPath, buildPath); err != nil {
-+		if err := createFileSBOMResource(ctx, component, buildPath, buildPath); err != nil {
- 			return err
- 		}
- 	}
-@@ -137,124 +131,90 @@ func generateArchivedSBOMs(ctx context.Context, pkg api.Package, buildPath strin
- 		err = errors.Join(err, os.RemoveAll(outputPath))
- 	}()
- 
--	sbomViewerEnabled := feature.IsEnabled(feature.SBOMViewer)
--	var jsonList []byte
--	if sbomViewerEnabled {
--		componentSBOMs := make([]string, 0, len(pkg.Components))
--		for _, component := range pkg.Components {
--			if len(component.Files) > 0 || len(component.DataInjections) > 0 {
--				componentSBOMs = append(componentSBOMs, component.Name)
--			}
--		}
--		identifiers := make([]string, 0, len(targets))
--		for _, target := range targets {
--			identifiers = append(identifiers, target.resourceIdentifier)
--		}
--		jsonList, err = generateJSONList(componentSBOMs, identifiers)
--		if err != nil {
--			return err
--		}
--	}
--
- 	l := logger.From(ctx)
- 	for index, target := range targets {
- 		l.Info("creating image SBOM", "reference", target.resourceIdentifier, "count", fmt.Sprintf("%d/%d", index+1, len(targets)))
--		jsonData, err := createImageSBOM(ctx, cachePath, outputPath, target.img, target.resourceIdentifier)
--		if err != nil {
-+		if err := createImageSBOM(ctx, cachePath, outputPath, target.img, target.resourceIdentifier); err != nil {
- 			return fmt.Errorf("failed to create image sbom: %w", err)
- 		}
--		if sbomViewerEnabled {
--			if err := createSBOMViewerAsset(outputPath, target.resourceIdentifier, jsonData, jsonList); err != nil {
--				return err
--			}
--		}
- 	}
- 	for _, component := range pkg.Components {
- 		if len(component.Files) == 0 && len(component.DataInjections) == 0 {
- 			continue
- 		}
--		jsonData, err := createFileSBOM(ctx, component, outputPath, buildPath)
--		if err != nil {
-+		if err := createFileSBOM(ctx, component, outputPath, buildPath); err != nil {
- 			return err
- 		}
--		if sbomViewerEnabled {
--			if err := createSBOMViewerAsset(outputPath, fmt.Sprintf("%s%s", componentPrefix, component.Name), jsonData, jsonList); err != nil {
--				return err
--			}
--		}
- 	}
- 	return createReproducibleTarballFromDir(outputPath, "", filepath.Join(buildPath, layout.SBOMTar), false)
- }
- 
--func createImageSBOM(ctx context.Context, cachePath, outputPath string, img v1.Image, identifier string) ([]byte, error) {
-+func createImageSBOM(ctx context.Context, cachePath, outputPath string, img v1.Image, identifier string) error {
- 	filename := layout.NormalizeSBOMFilename(fmt.Sprintf("%s.json", identifier))
- 	return createImageSBOMAtPath(ctx, cachePath, filepath.Join(outputPath, filename), img, identifier)
- }
- 
- // createImageSBOMResource stores an image SBOM under resourceIdentifier while recording imageReference in the SBOM.
--func createImageSBOMResource(ctx context.Context, cachePath, outputPath string, img v1.Image, resourceIdentifier, imageReference string) ([]byte, error) {
-+func createImageSBOMResource(ctx context.Context, cachePath, outputPath string, img v1.Image, resourceIdentifier, imageReference string) error {
- 	resourcePath := filepath.FromSlash(layout.ImageSBOMResourcePath(resourceIdentifier))
- 	return createImageSBOMAtPath(ctx, cachePath, filepath.Join(outpu
-```
 
 #### Recent Merged Pull Requests:
+- **PR #5607** (closed): docs: update custom init package tutorial (@shaversj)
+- **PR #5605** (2026-11-04): feat!: remove deprecated commands and flags (@AustinAbro321)
+- **PR #5599** (closed): feat!: respect component ordering (@brandtkeller)
+- **PR #5597** (2026-11-04): feat(oci): added chuncked retryable resumable blob pulls (@sgettys)
+- **PR #5595** (2026-11-04): chore(deps): bump github.com/docker/cli from 29.8.2+incompatible to 29.9.2+incompatible (@dependabot[bot])
 - **PR #5586** (2026-11-02): chore(deps): bump k8s.io/streaming from 0.37.1 to 0.37.2 in the k8s group across 1 directory (@dependabot[bot])
-- **PR #5581** (closed): refactor(packager)!: decouple cosign, syft and cloud SDKs from sdk consumers (@Daniel-park10)
-- **PR #5579** (2026-11-02): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #5578** (2026-11-02): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
-- **PR #5577** (closed): refactor(images): move mediatype predicates to leaf package (@Daniel-park10)
-- **PR #5571** (2026-11-02): chore: release please v1 configuration (@brandtkeller)
 
 ---
 
@@ -2395,65 +2156,37 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refactor!: replace global architecture state with per-operation options (#5498)
+## X. feat!: remove daemon pull through crane (#5568)
 
 **RULE**:
-When implementing operations in `src/cmd/architecture_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/feature/feature.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `049d8557`: refactor!: replace global architecture state with per-operation options (#5498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7fc4d48`: feat!: remove daemon pull through crane (#5568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/architecture_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/feature/feature.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
-
-package cmd
-
-import (
-	"fmt"
-	"os"
-	"path/filepath"
-	"runtime"
-	"testing"
-
-	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/require"
-	"github.com/zarf-dev/zarf/src/config"
-	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
-	"github.com/zarf-dev/zarf/src/pkg/packager/load"
-	"github.com/zarf-dev/zarf/src/test/testutil"
-)
-
-func TestArchitectureFlagConfigPrecedence(t *testing.T) {
-	previous, previousErr := v, vConfigError
-	t.Cleanup(func() { v, vConfigError = previous, previousErr })
-	for _, tt := range []struct {
-		name, config, env, flag, want string
-	}{
-		{"flag over environment and config", "s390x", "arm64", "amd64", "amd64"},
-		{"environment over config", "s390x", "arm64", "", "arm64"},
-		{"config", "s390x", "", "", "s390x"},
-		{"omitted stays empty", "", "", "", ""},
-	} {
-		t.Run(tt.name, func(t *testing.T) {
-			configPath := filepath.Join(t.TempDir(), "zarf-config.toml")
-			require.NoError(t, os.WriteFile(configPath, []byte(fmt.Sprintf("architecture = %q\n", tt.config)), 0o600))
-			t.Setenv("ZARF_CONFIG", configPath)
-			t.Setenv("ZARF_ARCHITECTURE", tt.env)
-			initViper()
-			
+			Name:        DockerDaemonDirectPull,
+			Description: "Saves daemon source through direct Docker API interactions. Disabling once enabled Crane daemon pulls, but no longer has any effect",
+			Enabled:     true,
+			Since:       "v0.80.0",
+			Stage:       GA,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			Name: DockerDaemonDirectPull,
+			Description: "Saves images from the local Docker daemon directly via the engine's OCI image export " +
+				"disabling this feature falls back to pulling with Crane.",
+			Enabled: true,
+			Since:   "v0.80.0",
+			Stage:   GA,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `049d8557` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7fc4d48` are properly handled with clean fallback behavior.

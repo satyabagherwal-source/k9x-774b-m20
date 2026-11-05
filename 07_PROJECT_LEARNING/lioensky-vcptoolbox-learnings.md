@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `018cd7fa`  
+> **Source Version**: `72e964e2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:44:35.312Z  
+> **Timestamp**: 2026-11-05T00:48:51.775Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:44:34.398Z  
+> **Harvest Timestamp**: 2026-11-05T00:48:51.770Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2426 stars
+- **Stars / Engagement**: 2428 stars
 
 ---
 
@@ -1785,13 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #574** (2026-11-04): **[Bug] Plugin.js Static 插件超时终止后误报 ERROR（Windows taskkill 导致 exit 信号判断失效）**
+  *Symptoms*: ## 问题描述  Static 插件在 Windows 上超时被终止后，日志会误报 ERROR，即使进程是被超时机制正常终止的。  ## 复现条件  1. 一个 static 插件在超时窗口内输出了 stderr（例如用 `console.error()` 写日志） 2. 该插件的扫描时间超过 `plugin.communication.timeout`（默认 60 秒） 3. 超时后 `taskkill /T /F /PID` 终止进程  ## 实际行为  日志输出： ``` [PluginManager] Static plugin "文件树生成器" exited with code 1. Stderr: [FileTreeGenerator] Plugin invoked... Scanning directory... ```  这被当作插件崩溃处理，但实际上进程只是超时被正常终止。  ## 根本原因  `Plugin.js:421-431` 的 exit 处理有两层超时豁免：  ```javascript pluginProcess.on('exit', (code, signal) => {     processExited = true;     clearTimeout(timeoutId);     if (signal === 'SIGKILL' || signal === 'SIGTERM') {         // 被强制终止（超时），已经在 timeout 回调中 resolve 了，这里直接返回         return;     }     if (code === 1 && !output.trim() && !errorOutput.trim()) {         // Windows taskkill 导致的退出码 1，且无有效输出，视为超时终止         return;     }     // ... 否则报 ERROR }); ```  **第一层豁免**（`signal === 'SIGKILL' || signal === 'SIGTERM'`）在 Windows 上无效：`taskkill /T /F` 终止进程时，Node.js 的 exit 事件中 `signal` 字段通常是 `null` 或 `SIGHUP`，不会是 `SIGKILL`/`SIGTERM`。  **第二层豁免**（`code === 1 && !output.trim() && !errorOutput.trim()`）要求进程被杀前不能有任何 stderr 输出。但很多插件用 `console.error()` 写日志到 stderr，超时被杀时 stderr 非空，豁免不成立，落入 `code !== 0` 分支报 ERROR。  ## 建议修复方案  超时回调中已经标记了 `processExited`，但没有标记"是被超时杀死的"。建议在超时回调中设置一个 `timedOut` 标志，exit 处理中优先检查该标志：  ```javascript let timedOut = false;  const timeoutId = setTimeout(() => {     if (!processExited) {         timedOut = true;         this._killProcessTree(pluginProcess.pid, plugin.name);      
+
 - **Issue #573** (2026-11-03): **fix(security): 修复 TVS 变量编辑接口路径遍历漏洞**
   *Symptoms*: ## 修复说明  修复了 `routes/admin/tvs.js` 中 GET/POST/DELETE `/admin_api/tvsvars/:fileName` 端点的路径遍历漏洞（Issue #572）。  ## 漏洞详情  - **漏洞类型**：路径遍历漏洞（Path Traversal） - **漏洞位置**：`routes/admin/tvs.js` 中所有使用 `path.join(TVS_FILES_DIR, fileName)` 的端点 - **攻击向量**：`POST /admin_api/tvsvars/..%2F..%2FPlugin%2FAgentAssistant%2Fconfig.txt` 可越权写入系统任意文件 - **影响**：任意文件写入，可能导致 RCE  ## 修复内容  ### 新增函数  1. **`isPathInsideRoot(targetPath, rootPath)`**    - 用 `path.resolve()` 解析目标路径    - 检查解析后的路径是否在根目录内    - 通过 `startsWith(resolvedRoot + path.sep)` 确保不会误匹配同前缀目录  2. **`safeResolveUnderTVSTxt(relativePath)`**    - 调用 `isPathInsideRoot()` 校验    - 额外检查不允许解析到根目录本身    - 返回安全的绝对路径  ### 端点修改  - **GET `/tvsvars/:fileName`**：使用 `safeResolveUnderTVSTxt()` 替代直接 `path.join()` - **POST `/tvsvars/:fileName`**：同上 - **DELETE `/tvsvars/:fileName`**：同上 - 不通过校验时返回 `403 Forbidden` + `{error: "Invalid path: outside TVS root"}`  ## 验证  - ✅ 攻击路径 `/admin_api/tvsvars/../../Plugin/AgentAssistant/config.txt` 返回 403 - ✅ 合法路径 `valid_name.txt` 正常读写 - ✅ 非法文件名（非 .txt 结尾）仍返回 400  ## 相关链接  - Issue: #572 - 修复分支: `fix/tvs-path-traversal-validation` 
-
-- **Issue #572** (2026-11-03): **[安全修复] routes/admin/tvs.js 存在路径遍历漏洞，可越权写入系统任意文件**
-  *Symptoms*: ## 漏洞描述  **漏洞类型**：路径遍历漏洞（Path Traversal）  **漏洞位置**：`routes/admin/tvs.js` 中的 `POST/DELETE /admin_api/tvsvars/:fileName` 端点  **漏洞详情**： - 原代码直接使用 `path.join(TVS_FILES_DIR, fileName)` 拼接路径，没有对 `fileName` 进行路径校验 - 攻击者可通过 `../../../Plugin/AgentAssistant/config.txt` 等相对路径穿越 TVS 根目录，写入系统任意文件 - 示例攻击：`POST http://127.0.0.1:6006/admin_api/tvsvars/../../Plugin/AgentAssistant/config.txt` 可越权写入系统配置文件  **影响**： - 任意文件写入（Write-what-where 漏洞） - 可能导致系统被植入恶意代码、篡改配置文件、甚至获取 RCE  **严重等级**：高危  ## 修复方案  在 `routes/admin/tvs.js` 中添加两个校验函数：  1. **`isPathInsideRoot(targetPath, rootPath)`**：用 `path.resolve()` 解析后检查是否在根目录内 2. **`safeResolveUnderTVSTxt(relativePath)`**：在根目录校验基础上，额外检查不能解析到根目录本身，不允许 `..` 穿越  在 GET / POST / DELETE 三个端点调用 `safeResolveUnderTVSTxt()`，不通过则返回 403 Forbidden。  ## 修复代码  已在本地修复并验证： - 攻击路径 `/admin_api/tvsvars/../../Plugin/AgentAssistant/config.txt` 现在返回 403 - 合法路径（如 `valid_name.txt`）仍可正常读写  ## 建议  1. 建议作者确认是否需要审计其他类似路径处理逻辑（`routes/admin/` 下其他文件） 2. 建议添加单元测试覆盖路径穿越场景 3. 建议将此修复合入主分支
-  **Post-Mortem & Fix Analysis**:
-  > 已引入全局遍历攻击防火墙。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1808,672 +1806,35 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46164239` (2026-11-02)
-**Commit Message**: Merge pull request #571 from Cimo-Yu/fix/rivermemo-rrf-score-contract
+### Incident Patch 1: `72e964e2` (2026-11-04)
+**Commit Message**: fix1
 
-fix(rivermemo): separate wormhole RRF ranking from baseline scores
-
-**File**: `docs/RIVERMEMO_RRF_SCORE_CONTRACT.md` (added, +72/-0)
+**File**: `Plugin.js` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,72 @@
-+# RiverMemo RRF ranking/score contract
-+
-+## Scope
-+
-+Conditional wormhole RRF previously overwrote `ScoredWork.final_score` for the entire active batch.
-+Consequently `score` changed units depending on route activation. Absolute quality thresholds
-+could discard candidates whose original baseline quality was sufficient.
-+
-+This patch changes only the destination of the existing fusion result:
-+- `ranking_score` carries the unchanged multi-route maximum RRF formula and Omega gate.
-+- Every path, including early returns, initializes `ranking_score` from `final_score`.
-+- The readout call site stably sorts by `ranking_score`, retaining baseline order for ties.
-+- `final_score` remains the candidate's own clipped baseline component sum.
-+- There is no extra wormhole quality bonus or score reassignment.
-+
-+Output array order / rank is authoritative for retrieval order. `score` is not necessarily
-+monotonically decreasing. Explicit score-based postprocessors (including TimeDecay) may
-+override retrieval order according to their existing policy.
-+
-+No MGS changes, dual-field diagnostics, gate changes, formula retuning or binary artifacts
-+are included in this PR.
-+
-+## Executable input dataset
-+
-+`rust-vexus-lite/tests/fixtures/rrf_score_contract.json` contains synthetic, non-private
-+candidate baselines and route flows. The Rust tests load it with `include_str!` and exercise
-+the production `fuse_rrf` function.
-+
-+Coverage:
-+- active multi-route maximum (not sum), ordinary-edge flow reference;
-+- no-ordinary-edge fallback, zero-reference early return and empty candidates;
-+- baseline quality preserved bit-for-bit, including an eligible candidate below threshold;
-+- fusion order checked against independently computed legacy RRF keys;
-+- include_trace true/false at the fusion-function level;
-+- inactive stable baseline ties;
-+- existing event-order regression now checks the independent ranking key.
-+
-+These are function-level contract tests, not a complete serialized API / plugin-chain matrix.
-+
-+Run from repository root:
-+
-+    cargo +stable test --manifest-path rust-vexus-lite/Cargo.toml --lib
-+    node --test tests/rrfOutputEvidence.test.js
-+
-+## Real-corpus numeric output evidence
-+
-+`rust-vexus-lite/tests/fixtures/rrf_real_output_evidence.json` is a white-list export of
-+85 prior mechanism cases in ABBA rounds. Candidate IDs are remapped within each case.
-+No diary text, source paths, raw embeddings, credentials or SQLite files are included.
-+
-+`tests/rrfOutputEvidence.test.js` independently recomputes these recorded-output checks:
-+- all 85 paired result orders identical;
-+- 10 route-active cases (including repeated sources with different parameters);
-+- 960 candidate score records changed from the fusion key back to quality scores;
-+- baseline threshold >=0.5 retention: 4,839 -> 5,743, delta 904, reproduced in both rounds;
-+- modified output scores match clipped baseline components.
-+
-+IMPORTANT: this is an output evidence dataset, NOT the original native replay inputs.
-+It cannot independently regenerate graph observations. The previous experiment used a
-+combined MGS/RRF/diagnostics build; it is not presented as an isolated RRF-only experiment.
-+The RRF-only source patch is tested separately with the executable synthetic input dataset.
-+No claims of improved relevance, recall, performance or TimeDecay correctness follow from
-+these records. The threshold calculation is offline filtering, not a plugin-chain replay.
-+
-+For a private local run, the exporter can reproduce this file:
-+
-+    node scripts/export_rrf_contract_evidence.js <private-ABBA-output-directory> <output.json>
-+
-+The original private corpus is intentionally not published. Its 85 cases include 25
-+addressed wormhole probes, 25 highest-similarity co-file tag-pair probes, 20 synthetic
-+88/12 mixtures of real tag vectors, and 15 real-graph alpha variants. All are mechanism
-+probes, not independently labelled natural-language relevance judgments.
-\ No newline at end of file
-```
-
-**File**: `rust-vexus-lite/src/rivermemo_topology_v3.rs` (modified, +13/-4)
-```diff
-@@ -2221,6 +2221,7 @@ struct ScoredWork {
-     path_bonus: f64,
-     anchor_bonus: f64,
-     final_score: f64,
-+    ranking_score: f64,
- }
+@@ -397,10 +397,12 @@ class PluginManager extends EventEmitter {
+             let output = '';
+             let errorOutput = '';
+             let processExited = false;
++            let timedOut = false;
+             const timeoutDuration = plugin.communication?.timeout || 60000; // 增加默认超时时间到 1 分钟
  
- #[derive(Clone, Serialize)]
-@@ -2615,6 +2616,7 @@ fn assign_v3_scores(
-         item.gated_bonus = (item.v2_bonus * graph_gate)
-             .min(positive(config.topology_bonus_cap - item.path_bonus));
-         item.final_score = clamp01(item.pure_score + item.path_bonus + item.gated_bonus + item.anchor_bonus);
-+        item.ranking_score = item.final_score;
-     }
- }
- 
-@@ -2997,6 +2999,7 @@ pub(crate) fn run_native_with_connection(
-                 path_bonus,
-                 anchor_bonus: 0.0,
-                 final_score: 0.0,
-+                ranking_score: 0.0,
-             }
-         })
-         .collect();
-@@ -3020,7 +3023,7 @@ pub(crate) fn run_native_with_connection(
-     });
-     let wormhole_traces = wormhole::fuse_rrf(&mut work, &wormhole_model, &input, &omega);
-     // Stable sort retains the complete baseline comparator for equal fusion scores.
--    work.sort_by(|a, b| b.final_score.total_cmp(&a.final_score));
-+    work.sort_by(|a, b| b.ranking_score.total_cmp(&a.ranking_score));
-     let ranked_count = work.len();
- 
-     let results: Vec<NativeResultItem> = work
-@@ -3519,7 +3522,7 @@ mod stoploss_tests {
-             anchor: AnchorOutput { exact_contacts: exact, explicit_exact_contacts: exact,
-                 strength, ..AnchorOutput::default() },
-             v2_bonus: 0.0, gated_bonus: 0.0, path_bonus: 0.03,
--            anchor_bonus: 0.0, final_score: 0.0,
-+            anchor_bonus: 0.0, final_score: 0.0, ranking_score: 0.0,
-         }
-     }
-     fn omega() -> OmegaOutput {
-@@ -3557,7 +3560,13 @@ mod stoploss_tests {
-         event.final_score = 0.53;
-         let mut candidates = vec![phone.clone(),event.clone()];
-         let traces = wormhole::fuse_rrf(&mut candidates, &model, &input, &omega());
--        assert!(candidates[1].final_score > candidates[0].final_score);
-+        assert!(candidates[1].ranking_score > candidates[0].ranking_score);
-+        assert_eq!(candidates[0].final_score.to_bits(), phone.final_score.to_bits());
-+        assert_eq!(candidates[1].final_score.to_bits(), event.final_score.to_bits());
-+        let mut ranked = candidates.clone();
-+        ranked.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
-+        assert_eq!(ranked[0].curve.id, 20);
-+        assert_eq!(ranked.iter().filter(|c| c.final_score >= 0.5).count(), 2);
-         assert_eq!(candidates[0].anchor_bonus, phone.anchor_bonus);
-         assert_eq!(candidates[1].gated_bonus, event.gated_bonus);
-         assert_eq!(traces[&10]["wormholeContribution"], 0.0);
-@@ -3710,7 +3719,7 @@ mod conservative_topology_tests {
-             pure_score: 0.64, field_score: 0.64, field_resonance_bonus: 0.0,
-             graph_score: 0.6, direct_evidence: 0.8, role: String::new(),
-             anchor: AnchorOutput::default(), v2_bonus: 0.0, gated_bonus: 0.0,
--            path_bonus: 0.02, anchor_bonus: 0.0, final_score: 0.0,
-+            path_bonus: 0.02, anchor_bonus: 0.0, final_score: 0.0, ranking_score: 0.0,
-         }
-     }
-     fn omega() -> OmegaOutput {
-```
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +98/-2)
-```diff
-@@ -423,6 +423,9 @@ pub(super) fn fuse_rrf(work: &mut [ScoredWork], model: &Model,
-             .fold(0.0_f64, f64::max)
-     };
-     let mut traces = HashMap::new();
-+    for item in work.iter_mut() {
-+        item.ranking_score = item.final_score;
-+    }
-     if reference <= 0.0 || work.is_empty() { return traces; }
-     let mut contributions = vec![0.0_f64; work.len()];
-     let mut winners = vec![Value::Null; work.len()];
-@@ -454,15 +457,108 @@ pub(super) fn fuse_rrf(work: &mut [ScoredWork], model: &Model,
-     for (i, item) in work.iter_mut().enumerate() {
-         let baseline = item.final_score;
-         let baseline_rrf = 1.0 / (K + (i + 1) as f64);
--        if active { item.final_score = baseline_rrf + contributions[i]; }
-+        item.ranking_score = if active { baseline_rrf + contributions[i] } else { baseline };
-         traces.insert(item.curve.id, serde_json::json!({
-             "active": active, "k": K, "baselineRank": i + 1,
-             "baselineScore": baseline, "baselineContribution": baseline_rrf,
-             "wormholeContribution": contributions[i], "winner": winners[i],
--            "fusedScore": item.final_score,
-+            "fusedScore": item.ranking_score,
-             "referenceMode": if ordinary_max > 0.0 { "maximum-observed-ordinary-flow" }
-                 else { "maximum-observed-flow-no-ordinary-edge" }
-         }));
-     }
-     traces
-+}
-+
-+#[cfg(test)]
-+mod score_contract_fixture_tests {
-+    use super::*;
-+    use serde_json::json;
-+
-+    fn candidate(id: i64, baseline: f64, eligible: bool) -> ScoredWork {
-+        ScoredWork {
-+            curve: Curve {
-+                id, file_id: id,
-+                tags: if eligible { vec![TagData { id: 2, name: "synthetic-target".into(),
-+                    position: 0, vector: Arc::from(vec![1.0_f32,0.0]), chunk_cosine: 1.0 }] } else { vec![] },
-+                chunk_vector: Arc::from(if eligible { vec![1.0_f32,0.0] } else { vec![0.0_f32,1.0] }),
-+                query_score: baseline, denoised_score: baseline, local_score: baseline,
-+                transfer_score: baseline, bm25_score: 0.0, time_score: 0.0,
-+                anchor_score: 0.0, union_score: baseline, union_rank: id as usize, sources: vec![],
-+            },
-+            geometry: GeometryOutput::default(), topology: TopologyOutput::default(),
-+            observables: ObservableOutput::default(), pure_score: baseline, field_score: baseline,
-+            field_resonance_bonus: 0.0, graph_score: 0.0, direct_evidence: 0.0,
-+            role: String::new(), anchor: AnchorOutput::default(), v2_bonus: 0.0,
-+            gated_bonus: 0.0, path_bonus: 0.0, anchor_bonus: 0.0,
-+            final_score: baseline, ranking_score: -1.0,
-+        }
-+    }
-+
-+    #[test]
-+    fn public_dataset_preserves_rrf_order_and_candidate_quality_scores() {
-+        let fixture: Value = serde_json::from_str(include_str!("../tests/fixtures/rrf_score_contract.json")).unwrap();
-+        let omega_value = fixture["omega"].as_f64().unwrap();
-+        let omega = OmegaOutput { omega: omega_value, omega_edge: 1.0, omega_emerge: 1.0,
-+            omega_flow: 1.0, regime: "dense".into(), active_edges: 3,
-+            seed_nodes: 1, reached_nodes: 3, emergent_nodes: 2, complete_observation: true };
-+        for scenario in fixture["scenarios"].as_array().unwrap() {
-+            for trace in [true, false] {
-+                let ordinary = scenario["ordinaryFlow"].as_f64().unwrap();
-+                let flows: Vec<f64> = scenario["flows"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect();
-+                let mut edges = vec![];
-+                if ordinary > 0.0 {
-+                    edges.push(json!({"sourceId":1,"targetId":4,"flow":ordinary,"wormhole":false}));
-+                    edges.push(json!({"sourceId":1,"targetId":1,"flow":99,"wormhole":false}));
-+                    edges.push(json!({"sourceId":4,"targetId":1,"flow":88,"wormhole":false,"immediateReturn":true}));
+             const timeoutId = setTimeout(() => {
+                 if (!processExited) {
++                    timedOut = true;
+                     console.log(`[PluginManager] Static plugin "${plugin.name}" has completed its work cycle (${timeoutDuration}ms), terminating background process.`);
+                     this._killProcessTree(pluginProcess.pid, plugin.name);
+                     // 超时不作为错误 - static 插件完成工作周期后返回已收集的输出
+@@ -421,6 +423,10 @@ class PluginManager extends EventEmitter {
+             pluginProcess.on('exit', (code, signal) => {
+                 processExited = true;
+                 clearTimeout(timeoutId);
++                if (timedOut) {
++                    // 超时已返回收集的输出；Windows taskkill 的退出码/信号及 stderr 不代表插件崩溃。
++                    return;
 +                }
-+                for flow in &flows { edges.push(json!({"sourceId":1,"targetId":2,"flow":flow,"wormhole":true})); }
-+                let mut input: NativeInput = serde_json::from_value(json!({
-+                    "query":{"vector":[1,0]}, "queryState":{"completeObservation":true,
-+                    "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],"riverEdges":edges}
-+                })).unwrap();
-+                input.include_trace = trace;
-+                let model = Model { eligible_routes: flows.len(), routes: flows.iter().map(|flow| Route {
-+                    source_id: 1, target_id: 2, flow: *flow, relative_flow: 1.0,
-+                    vector: Arc::from(vec![1.0_f32,0.0]),
-+                }).collect() };
-+                let mut items: Vec<_> = fixture["candidates"].as_array().unwrap().iter().map(|c|
-+                    candidate(c["id"].as_i64().unwrap(), c["baseline"].as_f64().unwrap(), c["eligible"].as_bool().unwrap())).collect();
-+                let baseline: Vec<_
-```
-
-**File**: `rust-vexus-lite/tests/fixtures/rrf_score_contract.json` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+{
-+  "schema": "rrf-score-contract-fixture-v1",
-+  "provenance": "Synthetic numerical input, not production text or a relevance benchmark.",
-+  "omega": 0.8,
-+  "threshold": 0.5,
-+  "candidates": [
-+    {"id": 30, "baseline": 0.9, "eligible": false},
-+    {"id": 20, "baseline": 0.7, "eligible": true},
-+    {"id": 10, "baseline": 0.4, "eligible": true}
-+  ],
-+  "scenarios": [
-+    {"name": "ordinary-reference-multi-route", "ordinaryFlow": 0.2, "flows": [0.4, 0.8], "reference": 0.2, "expectedOrder": [20, 10, 30]},
-+    {"name": "no-ordinary-fallback", "ordinaryFlow": 0.0, "flows": [0.4, 0.8], "reference": 0.8, "expectedOrder": [20, 10, 30]},
-+    {"name": "no-route", "ordinaryFlow": 0.2, "flows": [], "reference": 0.2, "expectedOrder": [30, 20, 10]},
-+    {"name": "early-return-zero-reference", "ordinaryFlow": 0.0, "flows": [], "reference": 0.0, "expectedOrder": [30, 20, 10]}
-+  ]
-+}
-\ No newline at end of file
-```
-
-**File**: `scripts/export_rrf_contract_evidence.js` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+'use strict';
-+// Output evidence, NOT native replay inputs.
-+const fs=require('node:fs'),path=require('node:path');
-+const [root,output]=process.argv.slice(2);
-+if(!root||!output)throw Error('usage: node scripts/export_rrf_contract_evidence.js private-dir output.json');
-+const rounds=Object.fromEntries(['A1','B1','B2','A2'].map(n=>[n,JSON.parse(fs.readFileSync(path.join(root,n+'.json'),'utf8'))]));
-+const result={
-+ schema:'rrf-anonymized-output-evidence-v1',
-+ provenance:'Private-corpus ABBA outputs from combined MGS/RRF/diagnostics build, NOT RRF-only native replay.',
-+ limitations:['No corpus, query embeddings or native observations.','Candidate IDs remapped within each case.',
-+ 'Not relevance labels; retention is not recall quality.','No TimeDecay or plugin-chain replay.'],
-+ bindingHashes:Object.fromEntries(Object.entries(rounds).map(([n,v])=>[n,v.bindingHash])),cases:[]
-+};
-+for(let i=0;i<rounds.A1.rows.length;i++){
-+ const old=rounds.A1.rows[i],map=new Map(old.results.map((r,j)=>[r.id,j+1])),runs={};
-+ for(const [n,data] of Object.entries(rounds)){
-+ const row=data.rows[i];if(row.error||row.id!==old.id)throw Error('Failed or mismatched case');
-+ runs[n]={poolHash:row.poolHash,vectorHash:row.vectorHash,results:row.results.map(r=>({
-+ candidate:map.get(r.id),score:r.score,baseline:r.baseline,active:r.rrf?.active===true,
-+ fusedScore:r.rrf?.fusedScore??null}))};
-+ if(runs[n].results.some(r=>!r.candidate))throw Error('Candidate set changed');
-+ }
-+ result.cases.push({case:i+1,bucket:old.bucket,runs});
-+}
-+fs.writeFileSync(output,JSON.stringify(result)+'\n');
-\ No newline at end of file
-```
-
-**File**: `tests/rrfOutputEvidence.test.js` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+'use strict';
-+const test=require('node:test');
-+const assert=require('node:assert/strict');
-+const evidence=require('../rust-vexus-lite/tests/fixtures/rrf_real_output_evidence.json');
-+test('anonymized ABBA output evidence preserves order and quality-score contract',()=>{
-+    assert.equal(evidence.cases.length,85);
-+    let oldPassed=0,newPassed=0,active=0,changed=0;
-+    for(const c of evidence.cases){
-+        const {A1,B1,B2,A2}=c.runs;
-+        const order=r=>r.results.map(x=>x.candidate);
-+        assert.equal(A1.poolHash,B1.poolHash);
-+        for(const r of [B1,B2,A2]) assert.deepEqual(order(r),order(A1));
-+        assert.deepEqual(A1.results,A2.results);
-+        assert.deepEqual(B1.results,B2.results);
-+        const by=new Map(B1.results.map(r=>[r.candidate,r]));
-+        if(A1.results.some(r=>r.active))active++;
-+        for(const a of A1.results){
-+            const b=by.get(a.candidate);
-+            assert(Number.isFinite(b.score)&&b.score>=0&&b.score<=1);
-+            assert(Math.abs(b.score-b.baseline)<=1e-12);
-+            assert.equal(a.active,b.active);
-+            if(a.active) assert.equal(a.fusedScore,b.fusedScore);
-+            oldPassed+=Number(a.score>=0.5);
-+            newPassed+=Number(b.score>=0.5);
-+            changed+=Number(Math.abs(a.score-b.score)>1e-12);
-+        }
-+    }
-+    assert.equal(active,10); // Includes same-source parameter variants, not independent events.
-+    assert.equal(changed,960);
-+    assert.equal(oldPassed,4839);
-+    assert.equal(newPassed,5743);
-+    assert.equal(newPassed-oldPassed,904);
-+});
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `32345bfe` (2026-11-02)
-**Commit Message**: fix(rivermemo): separate wormhole RRF ranking from quality scores
-
-**File**: `docs/RIVERMEMO_RRF_SCORE_CONTRACT.md` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+# RiverMemo RRF ranking/score contract
-+
-+## Scope
-+
-+Conditional wormhole RRF previously overwrote `ScoredWork.final_score` for the entire active batch.
-+Consequently `score` changed units depending on route activation. Absolute quality thresholds
-+could discard candidates whose original baseline quality was sufficient.
-+
-+This patch changes only the destination of the existing fusion result:
-+- `ranking_score` carries the unchanged multi-route maximum RRF formula and Omega gate.
-+- Every path, including early returns, initializes `ranking_score` from `final_score`.
-+- The readout call site stably sorts by `ranking_score`, retaining baseline order for ties.
-+- `final_score` remains the candidate's own clipped baseline component sum.
-+- There is no extra wormhole quality bonus or score reassignment.
-+
-+Output array order / rank is authoritative for retrieval order. `score` is not necessarily
-+monotonically decreasing. Explicit score-based postprocessors (including TimeDecay) may
-+override retrieval order according to their existing policy.
-+
-+No MGS changes, dual-field diagnostics, gate changes, formula retuning or binary artifacts
-+are included in this PR.
-+
-+## Executable input dataset
-+
-+`rust-vexus-lite/tests/fixtures/rrf_score_contract.json` contains synthetic, non-private
-+candidate baselines and route flows. The Rust tests load it with `include_str!` and exercise
-+the production `fuse_rrf` function.
-+
-+Coverage:
-+- active multi-route maximum (not sum), ordinary-edge flow reference;
-+- no-ordinary-edge fallback, zero-reference early return and empty candidates;
-+- baseline quality preserved bit-for-bit, including an eligible candidate below threshold;
-+- fusion order checked against independently computed legacy RRF keys;
-+- include_trace true/false at the fusion-function level;
-+- inactive stable baseline ties;
-+- existing event-order regression now checks the independent ranking key.
-+
-+These are function-level contract tests, not a complete serialized API / plugin-chain matrix.
-+
-+Run from repository root:
-+
-+    cargo +stable test --manifest-path rust-vexus-lite/Cargo.toml --lib
-+    node --test tests/rrfOutputEvidence.test.js
-+
-+## Real-corpus numeric output evidence
-+
-+`rust-vexus-lite/tests/fixtures/rrf_real_output_evidence.json` is a white-list export of
-+85 prior mechanism cases in ABBA rounds. Candidate IDs are remapped within each case.
-+No diary text, source paths, raw embeddings, credentials or SQLite files are included.
-+
-+`tests/rrfOutputEvidence.test.js` independently recomputes these recorded-output checks:
-+- all 85 paired result orders identical;
-+- 10 route-active cases (including repeated sources with different parameters);
-+- 960 candidate score records changed from the fusion key back to quality scores;
-+- baseline threshold >=0.5 retention: 4,839 -> 5,743, delta 904, reproduced in both rounds;
-+- modified output scores match clipped baseline components.
-+
-+IMPORTANT: this is an output evidence dataset, NOT the original native replay inputs.
-+It cannot independently regenerate graph observations. The previous experiment used a
-+combined MGS/RRF/diagnostics build; it is not presented as an isolated RRF-only experiment.
-+The RRF-only source patch is tested separately with the executable synthetic input dataset.
-+No claims of improved relevance, recall, performance or TimeDecay correctness follow from
-+these records. The threshold calculation is offline filtering, not a plugin-chain replay.
-+
-+For a private local run, the exporter can reproduce this file:
-+
-+    node scripts/export_rrf_contract_evidence.js <private-ABBA-output-directory> <output.json>
-+
-+The original private corpus is intentionally not published. Its 85 cases include 25
-+addressed wormhole probes, 25 highest-similarity co-file tag-pair probes, 20 synthetic
-+88/12 mixtures of real tag vectors, and 15 real-graph alpha variants. All are mechanism
-+probes, not independently labelled natural-language relevance judgments.
-\ No newline at end of file
-```
-
-**File**: `rust-vexus-lite/src/rivermemo_topology_v3.rs` (modified, +13/-4)
-```diff
-@@ -2221,6 +2221,7 @@ struct ScoredWork {
-     path_bonus: f64,
-     anchor_bonus: f64,
-     final_score: f64,
-+    ranking_score: f64,
- }
- 
- #[derive(Clone, Serialize)]
-@@ -2615,6 +2616,7 @@ fn assign_v3_scores(
-         item.gated_bonus = (item.v2_bonus * graph_gate)
-             .min(positive(config.topology_bonus_cap - item.path_bonus));
-         item.final_score = clamp01(item.pure_score + item.path_bonus + item.gated_bonus + item.anchor_bonus);
-+        item.ranking_score = item.final_score;
-     }
- }
- 
-@@ -2997,6 +2999,7 @@ pub(crate) fn run_native_with_connection(
-                 path_bonus,
-                 anchor_bonus: 0.0,
-                 final_score: 0.0,
-+                ranking_score: 0.0,
-             }
-         })
-         .collect();
-@@ -3020,7 +3023,7 @@ pub(crate) fn run_native_with_connection(
-     });
-     let wormhole_traces = wormhole::fuse_rrf(&mut work, &wormhole_model, &input, &omega);
-     // Stable sort retains the complete baseline comparator for equal fusion scores.
--    work.sort_by(|a, b| b.final_score.total_cmp(&a.final_score));
-+    work.sort_by(|a, b| b.ranking_score.total_cmp(&a.ranking_score));
-     let ranked_count = work.len();
- 
-     let results: Vec<NativeResultItem> = work
-@@ -3519,7 +3522,7 @@ mod stoploss_tests {
-             anchor: AnchorOutput { exact_contacts: exact, explicit_exact_contacts: exact,
-                 strength, ..AnchorOutput::default() },
-             v2_bonus: 0.0, gated_bonus: 0.0, path_bonus: 0.03,
--            anchor_bonus: 0.0, final_score: 0.0,
-+            anchor_bonus: 0.0, final_score: 0.0, ranking_score: 0.0,
-         }
-     }
-     fn omega() -> OmegaOutput {
-@@ -3557,7 +3560,13 @@ mod stoploss_tests {
-         event.final_score = 0.53;
-         let mut candidates = vec![phone.clone(),event.clone()];
-         let traces = wormhole::fuse_rrf(&mut candidates, &model, &input, &omega());
--        assert!(candidates[1].final_score > candidates[0].final_score);
-+        assert!(candidates[1].ranking_score > candidates[0].ranking_score);
-+        assert_eq!(candidates[0].final_score.to_bits(), phone.final_score.to_bits());
-+        assert_eq!(candidates[1].final_score.to_bits(), event.final_score.to_bits());
-+        let mut ranked = candidates.clone();
-+        ranked.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
-+        assert_eq!(ranked[0].curve.id, 20);
-+        assert_eq!(ranked.iter().filter(|c| c.final_score >= 0.5).count(), 2);
-         assert_eq!(candidates[0].anchor_bonus, phone.anchor_bonus);
-         assert_eq!(candidates[1].gated_bonus, event.gated_bonus);
-         assert_eq!(traces[&10]["wormholeContribution"], 0.0);
-@@ -3710,7 +3719,7 @@ mod conservative_topology_tests {
-             pure_score: 0.64, field_score: 0.64, field_resonance_bonus: 0.0,
-             graph_score: 0.6, direct_evidence: 0.8, role: String::new(),
-             anchor: AnchorOutput::default(), v2_bonus: 0.0, gated_bonus: 0.0,
--            path_bonus: 0.02, anchor_bonus: 0.0, final_score: 0.0,
-+            path_bonus: 0.02, anchor_bonus: 0.0, final_score: 0.0, ranking_score: 0.0,
-         }
-     }
-     fn omega() -> OmegaOutput {
-```
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +98/-2)
-```diff
-@@ -423,6 +423,9 @@ pub(super) fn fuse_rrf(work: &mut [ScoredWork], model: &Model,
-             .fold(0.0_f64, f64::max)
-     };
-     let mut traces = HashMap::new();
-+    for item in work.iter_mut() {
-+        item.ranking_score = item.final_score;
-+    }
-     if reference <= 0.0 || work.is_empty() { return traces; }
-     let mut contributions = vec![0.0_f64; work.len()];
-     let mut winners = vec![Value::Null; work.len()];
-@@ -454,15 +457,108 @@ pub(super) fn fuse_rrf(work: &mut [ScoredWork], model: &Model,
-     for (i, item) in work.iter_mut().enumerate() {
-         let baseline = item.final_score;
-         let baseline_rrf = 1.0 / (K + (i + 1) as f64);
--        if active { item.final_score = baseline_rrf + contributions[i]; }
-+        item.ranking_score = if active { baseline_rrf + contributions[i] } else { baseline };
-         traces.insert(item.curve.id, serde_json::json!({
-             "active": active, "k": K, "baselineRank": i + 1,
-             "baselineScore": baseline, "baselineContribution": baseline_rrf,
-             "wormholeContribution": contributions[i], "winner": winners[i],
--            "fusedScore": item.final_score,
-+            "fusedScore": item.ranking_score,
-             "referenceMode": if ordinary_max > 0.0 { "maximum-observed-ordinary-flow" }
-                 else { "maximum-observed-flow-no-ordinary-edge" }
-         }));
-     }
-     traces
-+}
-+
-+#[cfg(test)]
-+mod score_contract_fixture_tests {
-+    use super::*;
-+    use serde_json::json;
-+
-+    fn candidate(id: i64, baseline: f64, eligible: bool) -> ScoredWork {
-+        ScoredWork {
-+            curve: Curve {
-+                id, file_id: id,
-+                tags: if eligible { vec![TagData { id: 2, name: "synthetic-target".into(),
-+                    position: 0, vector: Arc::from(vec![1.0_f32,0.0]), chunk_cosine: 1.0 }] } else { vec![] },
-+                chunk_vector: Arc::from(if eligible { vec![1.0_f32,0.0] } else { vec![0.0_f32,1.0] }),
-+                query_score: baseline, denoised_score: baseline, local_score: baseline,
-+                transfer_score: baseline, bm25_score: 0.0, time_score: 0.0,
-+                anchor_score: 0.0, union_score: baseline, union_rank: id as usize, sources: vec![],
-+            },
-+            geometry: GeometryOutput::default(), topology: TopologyOutput::default(),
-+            observables: ObservableOutput::default(), pure_score: baseline, field_score: baseline,
-+            field_resonance_bonus: 0.0, graph_score: 0.0, direct_evidence: 0.0,
-+            role: String::new(), anchor: AnchorOutput::default(), v2_bonus: 0.0,
-+            gated_bonus: 0.0, path_bonus: 0.0, anchor_bonus: 0.0,
-+            final_score: baseline, ranking_score: -1.0,
-+        }
-+    }
-+
-+    #[test]
-+    fn public_dataset_preserves_rrf_order_and_candidate_quality_scores() {
-+        let fixture: Value = serde_json::from_str(include_str!("../tests/fixtures/rrf_score_contract.json")).unwrap();
-+        let omega_value = fixture["omega"].as_f64().unwrap();
-+        let omega = OmegaOutput { omega: omega_value, omega_edge: 1.0, omega_emerge: 1.0,
-+            omega_flow: 1.0, regime: "dense".into(), active_edges: 3,
-+            seed_nodes: 1, reached_nodes: 3, emergent_nodes: 2, complete_observation: true };
-+        for scenario in fixture["scenarios"].as_array().unwrap() {
-+            for trace in [true, false] {
-+                let ordinary = scenario["ordinaryFlow"].as_f64().unwrap();
-+                let flows: Vec<f64> = scenario["flows"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect();
-+                let mut edges = vec![];
-+                if ordinary > 0.0 {
-+                    edges.push(json!({"sourceId":1,"targetId":4,"flow":ordinary,"wormhole":false}));
-+                    edges.push(json!({"sourceId":1,"targetId":1,"flow":99,"wormhole":false}));
-+                    edges.push(json!({"sourceId":4,"targetId":1,"flow":88,"wormhole":false,"immediateReturn":true}));
-+                }
-+                for flow in &flows { edges.push(json!({"sourceId":1,"targetId":2,"flow":flow,"wormhole":true})); }
-+                let mut input: NativeInput = serde_json::from_value(json!({
-+                    "query":{"vector":[1,0]}, "queryState":{"completeObservation":true,
-+                    "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],"riverEdges":edges}
-+                })).unwrap();
-+                input.include_trace = trace;
-+                let model = Model { eligible_routes: flows.len(), routes: flows.iter().map(|flow| Route {
-+                    source_id: 1, target_id: 2, flow: *flow, relative_flow: 1.0,
-+                    vector: Arc::from(vec![1.0_f32,0.0]),
-+                }).collect() };
-+                let mut items: Vec<_> = fixture["candidates"].as_array().unwrap().iter().map(|c|
-+                    candidate(c["id"].as_i64().unwrap(), c["baseline"].as_f64().unwrap(), c["eligible"].as_bool().unwrap())).collect();
-+                let baseline: Vec<_
-```
-
-**File**: `rust-vexus-lite/tests/fixtures/rrf_score_contract.json` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+{
-+  "schema": "rrf-score-contract-fixture-v1",
-+  "provenance": "Synthetic numerical input, not production text or a relevance benchmark.",
-+  "omega": 0.8,
-+  "threshold": 0.5,
-+  "candidates": [
-+    {"id": 30, "baseline": 0.9, "eligible": false},
-+    {"id": 20, "baseline": 0.7, "eligible": true},
-+    {"id": 10, "baseline": 0.4, "eligible": true}
-+  ],
-+  "scenarios": [
-+    {"name": "ordinary-reference-multi-route", "ordinaryFlow": 0.2, "flows": [0.4, 0.8], "reference": 0.2, "expectedOrder": [20, 10, 30]},
-+    {"name": "no-ordinary-fallback", "ordinaryFlow": 0.0, "flows": [0.4, 0.8], "reference": 0.8, "expectedOrder": [20, 10, 30]},
-+    {"name": "no-route", "ordinaryFlow": 0.2, "flows": [], "reference": 0.2, "expectedOrder": [30, 20, 10]},
-+    {"name": "early-return-zero-reference", "ordinaryFlow": 0.0, "flows": [], "reference": 0.0, "expectedOrder": [30, 20, 10]}
-+  ]
-+}
-\ No newline at end of file
-```
-
-**File**: `scripts/export_rrf_contract_evidence.js` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+'use strict';
-+// Output evidence, NOT native replay inputs.
-+const fs=require('node:fs'),path=require('node:path');
-+const [root,output]=process.argv.slice(2);
-+if(!root||!output)throw Error('usage: node scripts/export_rrf_contract_evidence.js private-dir output.json');
-+const rounds=Object.fromEntries(['A1','B1','B2','A2'].map(n=>[n,JSON.parse(fs.readFileSync(path.join(root,n+'.json'),'utf8'))]));
-+const result={
-+ schema:'rrf-anonymized-output-evidence-v1',
-+ provenance:'Private-corpus ABBA outputs from combined MGS/RRF/diagnostics build, NOT RRF-only native replay.',
-+ limitations:['No corpus, query embeddings or native observations.','Candidate IDs remapped within each case.',
-+ 'Not relevance labels; retention is not recall quality.','No TimeDecay or plugin-chain replay.'],
-+ bindingHashes:Object.fromEntries(Object.entries(rounds).map(([n,v])=>[n,v.bindingHash])),cases:[]
-+};
-+for(let i=0;i<rounds.A1.rows.length;i++){
-+ const old=rounds.A1.rows[i],map=new Map(old.results.map((r,j)=>[r.id,j+1])),runs={};
-+ for(const [n,data] of Object.entries(rounds)){
-+ const row=data.rows[i];if(row.error||row.id!==old.id)throw Error('Failed or mismatched case');
-+ runs[n]={poolHash:row.poolHash,vectorHash:row.vectorHash,results:row.results.map(r=>({
-+ candidate:map.get(r.id),score:r.score,baseline:r.baseline,active:r.rrf?.active===true,
-+ fusedScore:r.rrf?.fusedScore??null}))};
-+ if(runs[n].results.some(r=>!r.candidate))throw Error('Candidate set changed');
-+ }
-+ result.cases.push({case:i+1,bucket:old.bucket,runs});
-+}
-+fs.writeFileSync(output,JSON.stringify(result)+'\n');
-\ No newline at end of file
-```
-
-**File**: `tests/rrfOutputEvidence.test.js` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+'use strict';
-+const test=require('node:test');
-+const assert=require('node:assert/strict');
-+const evidence=require('../rust-vexus-lite/tests/fixtures/rrf_real_output_evidence.json');
-+test('anonymized ABBA output evidence preserves order and quality-score contract',()=>{
-+    assert.equal(evidence.cases.length,85);
-+    let oldPassed=0,newPassed=0,active=0,changed=0;
-+    for(const c of evidence.cases){
-+        const {A1,B1,B2,A2}=c.runs;
-+        const order=r=>r.results.map(x=>x.candidate);
-+        assert.equal(A1.poolHash,B1.poolHash);
-+        for(const r of [B1,B2,A2]) assert.deepEqual(order(r),order(A1));
-+        assert.deepEqual(A1.results,A2.results);
-+        assert.deepEqual(B1.results,B2.results);
-+        const by=new Map(B1.results.map(r=>[r.candidate,r]));
-+        if(A1.results.some(r=>r.active))active++;
-+        for(const a of A1.results){
-+            const b=by.get(a.candidate);
-+            assert(Number.isFinite(b.score)&&b.score>=0&&b.score<=1);
-+            assert(Math.abs(b.score-b.baseline)<=1e-12);
-+            assert.equal(a.active,b.active);
-+            if(a.active) assert.equal(a.fusedScore,b.fusedScore);
-+            oldPassed+=Number(a.score>=0.5);
-+            newPassed+=Number(b.score>=0.5);
-+            changed+=Number(Math.abs(a.score-b.score)>1e-12);
-+        }
-+    }
-+    assert.equal(active,10); // Includes same-source parameter variants, not independent events.
-+    assert.equal(changed,960);
-+    assert.equal(oldPassed,4839);
-+    assert.equal(newPassed,5743);
-+    assert.equal(newPassed-oldPassed,904);
-+});
-\ No newline at end of file
+                 if (signal === 'SIGKILL' || signal === 'SIGTERM') {
+                     // 被强制终止（超时），已经在 timeout 回调中 resolve 了，这里直接返回
+                     return;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2502,45 +1863,26 @@ fix(rivermemo): separate wormhole RRF ranking from baseline scores
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #571 from Cimo-Yu/fix/rivermemo-rrf-score-contract
+## X. Empirical Invariant Guard in Plugin.js
 
 **RULE**:
-When implementing operations in `docs/RIVERMEMO_RRF_SCORE_CONTRACT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46164239`: Merge pull request #571 from Cimo-Yu/fix/rivermemo-rrf-score-contract. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72e964e2`: fix1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/RIVERMEMO_RRF_SCORE_CONTRACT.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-# RiverMemo RRF ranking/score contract
-
-## Scope
-
-Conditional wormhole RRF previously overwrote `ScoredWork.final_score` for the entire active batch.
-Consequently `score` changed units depending on route activation. Absolute quality thresholds
-could discard candidates whose original baseline quality was sufficient.
-
-This patch changes only the destination of the existing fusion result:
-- `ranking_score` carries the unchanged multi-route maximum RRF formula and Omega gate.
-- Every path, including early returns, initializes `ranking_score` from `final_score`.
-- The readout call site stably sorts by `ranking_score`, retaining baseline order for ties.
-- `final_score` remains the candidate's own clipped baseline component sum.
-- There is no extra wormhole quality bonus or score reassignment.
-
-Output array order / rank is authoritative for retrieval order. `score` is not necessarily
-monotonically decreasing. Explicit score-based postprocessors (including TimeDecay) may
-override retrieval order according to their existing policy.
-
-No MGS changes, dual-field diagnostics, gate changes, formula retuning or binary artifacts
-are included in this PR.
-
-## Executable input dataset
-
-`rust-vexus-li
+            let timedOut = false;
+                    timedOut = true;
+                if (timedOut) {
+                    // 超时已返回收集的输出；Windows taskkill 的退出码/信号及 stderr 不代表插件崩溃。
+                    return;
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2550,4 +1892,4 @@ are included in this PR.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46164239` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72e964e2` are properly handled with clean fallback behavior.

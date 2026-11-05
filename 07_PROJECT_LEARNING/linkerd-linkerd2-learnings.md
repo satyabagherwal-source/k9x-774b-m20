@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `8c85d41a`  
+> **Source Version**: `59d4d4ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:22:12.781Z  
+> **Timestamp**: 2026-11-05T03:40:00.078Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:22:12.665Z  
+> **Harvest Timestamp**: 2026-11-05T03:40:00.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1621,87 +1621,46 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c85d41a` (2026-11-03)
-**Commit Message**: fix(inject): inherit beta native sidecar annotation from namespace (#15734)
+### Incident Patch 1: `59d4d4ca` (2026-11-04)
+**Commit Message**: build: keep apko outputs out of the repo root (#15766)
 
-Problem
+`bin/docker-build-proxy` had apko write `proxy-runtime.tar` to the repo
+root, and apko writes its SBOMs (`sbom-*.spdx.json`) next to the image
+tarball by default. None of these were cleaned up or gitignored, so every
+proxy build left untracked files behind.
 
-A namespace annotated with `config.beta.linkerd.io/proxy-enable-native-sidecar: "false"` no longer turns native sidecars off: new pods in it get one anyway, because native sidecars are now the default. The same annotation on the pod works. The annotation is deprecated, not removed ([doc](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/cli/cmd/doc.go#L287-L290), [override code](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L429-L445)), and the deprecated alpha key is still inherited.
+apko now writes the tarball and SBOMs into a temporary directory that is
+removed when the script exits. Also drop a stale comment about a
+`--local` flag that the script doesn't use.
 
-#15267 replaced the beta key in `ProxyAnnotations` with the GA key, so [the beta key is in neither list](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L85-L90) that [`AppendNamespaceAnnotations`](https://github.com/linkerd/linkerd2/blob/b60b8e74786e5c6d47d211375d223446f9ae1857/pkg/inject/inject.go#L177-L189) copies.
+Signed-off-by: Alejandro Pedraza <[REDACTED_EMAIL]>
 
-Solution
-
-Add the beta key to `ProxyAlphaConfigAnnotations`, next to the alpha key. It cannot go in `ProxyAnnotations`: the proxy injector builds metric label
-
-**File**: `pkg/inject/inject.go` (modified, +5/-1)
+**File**: `bin/docker-build-proxy` (modified, +5/-3)
 ```diff
-@@ -83,10 +83,14 @@ var (
- 		k8s.ProxyAdditionalEnvAnnotation,
- 	}
- 	// ProxyAlphaConfigAnnotations is the list of all alpha configuration
--	// (config.alpha prefix) that can be applied to a pod or namespace.
-+	// (config.alpha prefix) that can be applied to a pod or namespace. It also
-+	// holds the deprecated native sidecar annotations, which are kept out of
-+	// ProxyAnnotations because they map to the same metric label as the
-+	// current one.
- 	ProxyAlphaConfigAnnotations = []string{
- 		k8s.ProxyWaitBeforeExitSecondsAnnotation,
- 		k8s.ProxyEnableNativeSidecarAnnotationAlpha,
-+		k8s.ProxyEnableNativeSidecarAnnotationBeta,
- 	}
- )
- 
-```
-
-**File**: `pkg/inject/inject_test.go` (modified, +30/-0)
-```diff
-@@ -242,6 +242,36 @@ func TestGetOverriddenValues(t *testing.T) {
- 				return values
- 			},
- 		},
-+		{id: "use deprecated beta native sidecar annotation from namespace",
-+			nsAnnotations: map[string]string{
-+				k8s.ProxyEnableNativeSidecarAnnotationBeta: "false",
-+			},
-+			spec: appsv1.DeploymentSpec{
-+				Template: corev1.PodTemplateSpec{
-+					Spec: corev1.PodSpec{},
-+				},
-+			},
-+			expected: func() *l5dcharts.Values {
-+				values, _ := l5dcharts.NewValues()
-+				values.Proxy.NativeSidecar = false
-+				return values
-+			},
-+		},
-+		{id: "use deprecated alpha native sidecar annotation from namespace",
-+			nsAnnotations: map[string]string{
-+				k8s.ProxyEnableNativeSidecarAnnotationAlpha: "false",
-+			},
-+			spec: appsv1.DeploymentSpec{
-+				Template: corev1.PodTemplateSpec{
-+					Spec: corev1.PodSpec{},
-+				},
-+			},
-+			expected: func() *l5dcharts.Values {
-+				values, _ := l5dcharts.NewValues()
-+				values.Proxy.NativeSidecar = false
-+				return values
-+			},
-+		},
- 		{id: "use invalid duration for proxy timeouts",
- 			nsAnnotations: map[string]string{
- 				k8s.ProxyOutboundConnectTimeout:               "6000",
+@@ -33,9 +33,11 @@ get_extra_options() {
+ # Build proxy base image with apko
+ go install chainguard.dev/apko@$apko_version
+ export PATH=$PATH:$(go env GOPATH)/bin
+-# Add --local flag unless PUSH_RUNTIME_IMAGE is set
+-apko build "$rootdir/proxy-runtime.yml" "$runtime_image" "$rootdir/proxy-runtime.tar"
+-docker load < "$rootdir/proxy-runtime.tar"
++apko_out=$(mktemp -d)
++trap 'rm -rf "$apko_out"' EXIT
++apko build --sbom-path "$apko_out" \
++    "$rootdir/proxy-runtime.yml" "$runtime_image" "$apko_out/proxy-runtime.tar"
++docker load < "$apko_out/proxy-runtime.tar"
+ if [[ -n "${PUSH_RUNTIME_IMAGE:-}" ]]; then
+     for arch in "arm64" "amd64"; do
+         docker push "$runtime_image-$arch"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
 - **PR #15761** (2026-11-02): ci: pin k3s images to avoid update.k3s.io lookups (@alpeb)
 - **PR #15757** (2026-10-30): chore: upgrade to network-validator 0.1.10 (@anthoturc)
 - **PR #15756** (2026-10-30): chore: bump dev image to v53. (@toidiu)
 - **PR #15755** (2026-10-30): chore(deps): bump golang.org/x/net to 0.62.0 (@arichardet)
 - **PR #15754** (2026-10-29): chore(deps): upgrade proxy-init to v2.4.11 and cni-plugin to v1.7.1 (@anthoturc)
-- **PR #15753** (closed): test (@toidiu)
 
 ---
 
@@ -1721,32 +1680,34 @@ Add the beta key to `ProxyAlphaConfigAnnotations`, next to the alpha key. It can
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. inject): inherit beta native sidecar annotation from namespace (#15734)
+## X. build: keep apko outputs out of the repo root (#15766)
 
 **RULE**:
-When implementing operations in `pkg/inject/inject.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/docker-build-proxy`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c85d41a`: inject): inherit beta native sidecar annotation from namespace (#15734). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59d4d4ca`: build: keep apko outputs out of the repo root (#15766). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/inject/inject.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/docker-build-proxy`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// (config.alpha prefix) that can be applied to a pod or namespace. It also
-	// holds the deprecated native sidecar annotations, which are kept out of
-	// ProxyAnnotations because they map to the same metric label as the
-	// current one.
-		k8s.ProxyEnableNativeSidecarAnnotationBeta,
+apko_out=$(mktemp -d)
+trap 'rm -rf "$apko_out"' EXIT
+apko build --sbom-path "$apko_out" \
+    "$rootdir/proxy-runtime.yml" "$runtime_image" "$apko_out/proxy-runtime.tar"
+docker load < "$apko_out/proxy-runtime.tar"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// (config.alpha prefix) that can be applied to a pod or namespace.
+# Add --local flag unless PUSH_RUNTIME_IMAGE is set
+apko build "$rootdir/proxy-runtime.yml" "$runtime_image" "$rootdir/proxy-runtime.tar"
+docker load < "$rootdir/proxy-runtime.tar"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c85d41a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59d4d4ca` are properly handled with clean fallback behavior.

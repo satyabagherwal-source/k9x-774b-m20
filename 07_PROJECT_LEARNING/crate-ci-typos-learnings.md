@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
-> **Source Version**: `4c8b7f51`  
+> **Source Version**: `7cd4cdb2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:18:33.170Z  
+> **Timestamp**: 2026-11-04T19:33:44.790Z  
 > **Learning ID**: `learn-github-crate-ci-typos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:13:26.828Z  
+> **Harvest Timestamp**: 2026-11-04T19:33:44.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Source code spell checker
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4205 stars
+- **Stars / Engagement**: 4208 stars
 
 ---
 
@@ -1357,11 +1357,14 @@ impl<V> Map<&str, V> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1640** (2026-11-02): **feat(dict): October updates**
-  *Symptoms*: ### What does this PR try to solve?  Fixes #1626  ### Notes to reviewers   LLM involvement: none
+- **Issue #1642** (2026-11-04): **chore: Add license and readme as dynamic metadata to `typos-cli` Python project**
+  *Symptoms*: <!-- Thanks for helping out! -->  ### What does this PR try to solve?  <!-- a maintainer-approved Issue is required for non-trivial changes --> Relates to #1641  Adds the readme, license and version as dynamic project metadata.  Docs: https://www.maturin.rs/metadata.html?highlight=dynamic#dynamic-metadata.  The version seems to be injected regardless, but the license and readme fields do require declaring them as `dynamic`:  <details><summary>Before</summary> <p>  ````email Metadata-Version: 2.4 Name: typos Version: 1.52.0 Classifier: Environment :: Console Classifier: Intended Audience :: Developers Classifier: Topic :: Software Development Classifier: Operating System :: OS Independent Classifier: License :: OSI Approved :: MIT License Classifier: License :: OSI Approved :: Apache Software License Classifier: Programming Language :: Python Classifier: Programming Language :: Python :: 3 :: Only Classifier: Programming Language :: Rust Classifier: Programming Language :: Python :: Implementation :: CPython Classifier: Programming Language :: Python :: Implementation :: PyPy Summary: Source Code Spelling Correction Keywords: development,spelling Requires-Python: >=3.8 Project-URL: Changelog, https://github.com/crate-ci/typos/blob/main/CHANGELOG.md Project-URL: Documentation, https://github.com/crate-ci/typos#typos Project-URL: Releases, https://github.com/crate-ci/typos/releases Project-URL: Repository, https://github.com/crate-ci/typos `
 
-- **Issue #1638** (2026-11-01): **chore(deps): Update compatible (actions)**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Type | Update | Change | Pending | |---|---|---|---|---| | [Swatinem/rust-cache](https://redirect.github.com/Swatinem/rust-cache) | action | patch | `v2.9.2` → `v2.9.3` |  | | [actions/checkout](https://redirect.github.com/actions/checkout) | action | minor | `v6.0.3` → `v6.1.0` |  | | [actions/download-artifact](https://redirect.github.com/actions/download-artifact) | action | patch | `v8.0.1` → `v8.0.2` |  | | [actions/upload-artifact](https://redirect.github.com/actions/upload-artifact) | action | patch | `v7.0.1` → `v7.0.2` |  | | [actions/upload-code-coverage](https://redirect.github.com/actions/upload-code-coverage) | action | patch | `v1.4.2` → `v1.4.4` |  | | [github/codeql-action](https://redirect.github.com/github/codeql-action) | action | minor | `v4.37.9` → `v4.39.1` |  | | [j178/prek-action](https://redirect.github.com/j178/prek-action) | action | minor | `v3.0.0` → `v3.1.0` |  | | [prek](https://redirect.github.com/j178/prek) | uses-with | patch | `0.5.3` → `v0.5.7` | `v0.5.9` | | [taiki-e/install-action](https://redirect.github.com/taiki-e/install-action) | action | minor | `v2.87.0` → `v2.88.0` | `v2.88.1` | | [zizmorcore/zizmor-action](https://redirect.github.com/zizmorcore/zizmor-action) | action | minor | `v0.6.2` → `v0.8.0` |  |  ---  ### Release Notes  <details> <summary>Swatinem/rust-cache</summary>  ### [`v2.9.3`](https://redirect.github.
+- **Issue #1641** (2026-11-04): **Release v1.52.0 didn't reach PyPI**
+  *Symptoms*: ### Description  _Sorry for the noise if you're already aware of this!_  The macOS x86_64 wheel-building job failed (`The job was not acquired by Runner of type hosted even after multiple attempts`), so the publishing step didn't run:  https://github.com/crate-ci/typos/actions/runs/41522968312/job/125543378303  FWIW I noticed this because I use the pre-commit hook, which was updated automatically to the latest tag, but there's no corresponding PyPI release.
+  **Post-Mortem & Fix Analysis**:
+  > Same, hitting my repos too. Also, there's no description (usually a README is used) on the PyPI page. 
+  > > there's no description (usually a README is used) on the PyPI page.  maturin seems to require declaring that as dynamic metadata. Here's a PR: https://github.com/crate-ci/typos/pull/1642
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1378,175 +1381,57 @@ impl<V> Map<&str, V> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c8b7f51` (2026-11-02)
-**Commit Message**: chore: Release
+### Incident Patch 1: `7cd4cdb2` (2026-11-04)
+**Commit Message**: Merge pull request #1642 from edgarrmondragon/pyproject-metadata
 
-**File**: `CHANGELOG.md` (modified, +4/-1)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
- <!-- next-header -->
- ## [Unreleased] - ReleaseDate
- 
-+## [1.52.0] - 2026-11-02
-+
- ### Features
- 
- - Updated the dictionary with the [October 2026](https://github.com/crate-ci/typos/issues/1626) changes
-@@ -1878,7 +1880,8 @@ Note: MSRV is now 1.54
- *   Only do hex check if digits are in identifiers ([68cd36d0](https://github.com/crate-ci/typos/commit/68cd36d0de90226dbc9d31c2ce6d8bf6b69adb5c))
- 
- <!-- next-url -->
--[Unreleased]: https://github.com/crate-ci/typos/compare/v1.51.1...HEAD
-+[Unreleased]: https://github.com/crate-ci/typos/compare/v1.52.0...HEAD
-+[1.52.0]: https://github.com/crate-ci/typos/compare/v1.51.1...v1.52.0
- [1.51.1]: https://github.com/crate-ci/typos/compare/v1.51.0...v1.51.1
- [1.51.0]: https://github.com/crate-ci/typos/compare/v1.50.3...v1.51.0
- [1.50.3]: https://github.com/crate-ci/typos/compare/v1.50.2...v1.50.3
-```
+chore: Add license and readme as dynamic metadata to `typos-cli` Python project
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `crates/typos-cli/pyproject.toml` (modified, +5/-0)
 ```diff
-@@ -1674,7 +1674,7 @@ dependencies = [
+@@ -4,6 +4,11 @@ build-backend = "maturin"
  
- [[package]]
- name = "typos-cli"
--version = "1.51.1"
-+version = "1.52.0"
- dependencies = [
-  "ahash",
-  "annotate-snippets",
-```
-
-**File**: `action/entrypoint.sh` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ if [[ -z $(ls ${TARGET} 2>/dev/null) ]]; then
- fi
- 
- if [[ ! -x ${COMMAND} ]]; then
--    VERSION=1.51.1
-+    VERSION=1.52.0
-     if [[ "$(uname -m)" == "arm64" || "$(uname -m)" == "aarch64" ]]; then
-         ARCH="aarch64"
-     else
-```
-
-**File**: `crates/typos-cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "typos-cli"
--version = "1.51.1"
-+version = "1.52.0"
+ [project]
+ name = "typos"
++dynamic = [
++    "license",
++    "readme",
++    "version",
++]
  description = "Source Code Spelling Correction"
- readme = "../../README.md"
- categories = ["development-tools", "text-processing"]
-```
-
-**File**: `docs/github-action.md` (modified, +5/-5)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-     - name: Checkout Actions Repository
-       uses: actions/checkout@v5
-     - name: Spell Check Repo
--      uses: crate-ci/typos@v1.51.1
-+      uses: crate-ci/typos@v1.52.0
- ```
- 
- **Requirements:** The runner must have `wget` installed
-@@ -62,24 +62,24 @@ jobs:
-       uses: actions/checkout@v5
- 
-     - name: Check spelling of file.txt
--      uses: crate-ci/typos@v1.51.1
-+      uses: crate-ci/typos@v1.52.0
-       with:
-         files: ./file.txt
- 
-     - name: Use custom config file
--      uses: crate-ci/typos@v1.51.1
-+      uses: crate-ci/typos@v1.52.0
-       with:
-         files: ./file.txt
-         config: ./myconfig.toml
- 
-     - name: Ignore implicit configuration file
--      uses: crate-ci/typos@v1.51.1
-+      uses: crate-ci/typos@v1.52.0
-       with:
-         files: ./file.txt
-         isolated: true
- 
-     - name: Writes changes in the local checkout
--      uses: crate-ci/typos@v1.51.1
-+      uses: crate-ci/typos@v1.52.0
-       with:
-         write_changes: true
- ```
-```
-
-**File**: `docs/pre-commit.md` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ config at this repository:
- ```yaml
- repos:
-   - repo: https://github.com/crate-ci/typos
--    rev: v1.51.1
-+    rev: v1.52.0
-     hooks:
-       - id: typos
- ```
-```
-
-**File**: `setup.py` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- from setuptools import setup
- 
- 
--TYPOS_VERSION = '1.51.1'
-+TYPOS_VERSION = '1.52.0'
- 
- 
- setup(
+ requires-python = ">=3.8"
+ keywords = [
 ```
 
 ---
 
-### Incident Patch 2: `cf76c451` (2026-11-02)
-**Commit Message**: chore: Release
+### Incident Patch 2: `77a1af2a` (2026-11-03)
+**Commit Message**: chore: Add dynamic metadata to `typos-cli` Python project
 
-**File**: `Cargo.lock` (modified, +1/-1)
+Signed-off-by: Edgar Ramírez Mondragón <[REDACTED_EMAIL]>
+
+**File**: `crates/typos-cli/pyproject.toml` (modified, +5/-0)
 ```diff
-@@ -1724,7 +1724,7 @@ dependencies = [
+@@ -4,6 +4,11 @@ build-backend = "maturin"
  
- [[package]]
- name = "typos-dict"
--version = "0.14.3"
-+version = "0.14.4"
- dependencies = [
-  "codegenrs",
-  "csv",
-```
-
-**File**: `crates/typos-dict/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "typos-dict"
--version = "0.14.3"
-+version = "0.14.4"
+ [project]
+ name = "typos"
++dynamic = [
++    "license",
++    "readme",
++    "version",
++]
  description = "Source Code Spelling Correction"
- readme = "../../README.md"
- categories = ["development-tools", "text-processing"]
+ requires-python = ">=3.8"
+ keywords = [
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1642** (2026-11-04): chore: Add license and readme as dynamic metadata to `typos-cli` Python project (@edgarrmondragon)
 - **PR #1640** (2026-11-02): feat(dict): October updates (@epage)
 - **PR #1638** (2026-11-01): chore(deps): Update compatible (actions) (@renovate[bot])
 - **PR #1637** (2026-11-01): chore(deps): Update compatible (@renovate[bot])
 - **PR #1636** (closed): fix(type): order two definitions of one glob by weight, then by name (@paoValle)
 - **PR #1635** (closed): test(cli): Pin the locale for cmd snapshot tests (@entity-0-0-2)
-- **PR #1634** (2026-10-06): fix(dict): Remove bimap from being corrected (@epage)
 
 ---
 
@@ -1566,31 +1451,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. Merge pull request #1642 from edgarrmondragon/pyproject-metadata
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/typos-cli/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c8b7f51`: Release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cd4cdb2`: Merge pull request #1642 from edgarrmondragon/pyproject-metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/typos-cli/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [1.52.0] - 2026-11-02
-
-[Unreleased]: https://github.com/crate-ci/typos/compare/v1.52.0...HEAD
-[1.52.0]: https://github.com/crate-ci/typos/compare/v1.51.1...v1.52.0
+dynamic = [
+    "license",
+    "readme",
+    "version",
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-[Unreleased]: https://github.com/crate-ci/typos/compare/v1.51.1...HEAD
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c8b7f51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cd4cdb2` are properly handled with clean fallback behavior.

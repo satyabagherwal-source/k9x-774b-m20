@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `16a017ee`  
+> **Source Version**: `cbac86f3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:18:54.623Z  
+> **Timestamp**: 2026-11-04T07:49:06.942Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:18:54.616Z  
+> **Harvest Timestamp**: 2026-11-04T07:49:06.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10061 stars
+- **Stars / Engagement**: 10063 stars
 
 ---
 
@@ -742,6 +742,26 @@ export const isString = (obj) => typeof obj === 'string';
 
 export const isObject = (obj) => typeof obj === 'object' && obj !== null;
 
+// An i18nFormat plugin (i18next-icu, i18next-mf2, i18next-fluent) replaces the core interpolation, so
+// interpolation.escapeValue does not apply to the values it inserts
+export const getFormatPlugin = (i18n) => {
+  const plugin = i18n?.services?.i18nFormat;
+  return typeof plugin?.parse === 'function' ? plugin : undefined;
+};
+
+const htmlEscapes = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+// only strings: numbers, dates and objects reach the formatter unchanged
+export const escapeStringValues = (values) => {
+  if (!values) return values;
+  const escaped = {};
+  Object.keys(values).forEach((k) => {
+    const v = values[k];
+    escaped[k] = isString(v) ? v.replace(/[&<>"']/g, (c) => htmlEscapes[c]) : v;
+  });
+  return escaped;
+};
+
 ```
 
 ### Core Architecture Module: `IcuTransWithoutContext.d.ts`
@@ -791,7 +811,6 @@ export type TransProps<
   KPrefix = undefined,
   TContext extends string | undefined = undefined,
   TOpt extends TOptions & { context?: TContext } = { context: TContext },
-  Ret = TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt>,
   E = React.HTMLProps<HTMLDivElement>,
 > = E & {
   children?: TransChild | readonly TransChild[];
@@ -806,7 +825,9 @@ export type TransProps<
   ns?: Ns | (Ns extends readonly (infer S extends string)[] ? S : never);
   parent?: string | React.ComponentType<any> | null; // used in React.createElement if not null
   tOptions?: TOpt;
-  values?: InterpolationMap<Ret>;
+  // keep the return type inside this property: as a type parameter of `Trans`, it was also
+  // computed for every key of the namespace, which is slow with large resources
+  values?: InterpolationMap<TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt>>;
   shouldUnescape?: boolean;
   t?: TFunction<Ns, KPrefix>;
 };
@@ -818,14 +839,9 @@ export interface TransLegacy {
     KPrefix = undefined,
     TContext extends string | undefined = undefined,
     TOpt extends TOptions & { context?: TContext } = { context: TContext },
-    Ret extends TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt> = TFunctionReturn<
-      Ns,
-      _AppendKeyPrefix<Key, KPrefix>,
-      TOpt
-    >,
     E = React.HTMLProps<HTMLDivElement>,
   >(
-    props: TransProps<Key, Ns, KPrefix, TContext, TOpt, Ret, E>,
+    props: TransProps<Key, Ns, KPrefix, TContext, TOpt, E>,
   ): React.ReactElement;
 }
 
@@ -964,77 +980,180 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1a69455` (2026-10-25)
-**Commit Message**: build
+### Incident Patch 1: `cbac86f3` (2026-11-03)
+**Commit Message**: README: drop the Locize ad image; the sponsor banner and the text saying who builds Locize stay
 
-**File**: `react-i18next.js` (modified, +2/-1)
+**File**: `README.md` (modified, +0/-2)
 ```diff
-@@ -3811,7 +3811,8 @@
-     } = i18nOptions;
-     const nsOrContext = ns || defaultNSFromContext || i18n?.options?.defaultNS;
-     const unstableNamespaces = isString(nsOrContext) ? [nsOrContext] : nsOrContext || ['translation'];
--    const namespaces = React.useMemo(() => unstableNamespaces, unstableNamespaces);
-+    const namespacesKey = JSON.stringify(unstableNamespaces);
-+    const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
-     i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
-     const revisionRef = React.useRef(0);
-     const subscribe = React.useCallback(callback => {
+@@ -184,8 +184,6 @@ Needing a translation management? Want to edit your translations with an InConte
+ 
+ **Now with a [Free plan](https://www.locize.com/pricing?utm_source=react_i18next_readme&utm_medium=github&utm_campaign=readme) for small projects!** Perfect for hobbyists or getting started.
+ 
+-![Locize](https://www.locize.com/img/ads/github_locize.png)
+-
+ By using [Locize](https://www.locize.com/?utm_source=react_i18next_readme&utm_medium=github&utm_campaign=readme) you directly support the future of i18next and react-i18next.
+ 
+ ---
+```
+
+**File**: `example/react-component-lib/README.md` (modified, +0/-2)
+```diff
+@@ -2,8 +2,6 @@
+ 
+ Needing a translation management? Want to edit your translations with an InContext Editor? Use the original provided to you by the maintainers of i18next!
+ 
+-![locize](https://www.locize.com/img/ads/github_locize.png)
+-
+ With using [locize](https://www.locize.com/?utm_source=react_i18next_react_component_lib_readme&utm_medium=github&utm_campaign=example_react_component_lib_readme) you directly support the future of i18next and react-i18next.
+ 
+ ## Here you find a react example for locize:
+```
+
+**File**: `example/react-localstorage/README.md` (modified, +0/-2)
+```diff
+@@ -2,8 +2,6 @@
+ 
+ Needing a translation management? Want to edit your translations with an InContext Editor? Use the original provided to you by the maintainers of i18next!
+ 
+-![locize](https://www.locize.com/img/ads/github_locize.png)
+-
+ With using [locize](https://www.locize.com/?utm_source=react_i18next_react_localstorage_readme&utm_medium=github&utm_campaign=example_react_localstorage_readme) you directly support the future of i18next and react-i18next.
+ 
+ ## Here you find a react example for locize:
+```
+
+**File**: `example/react/README.md` (modified, +0/-2)
+```diff
+@@ -2,8 +2,6 @@
+ 
+ Needing a translation management? Want to edit your translations with an InContext Editor? Use the original provided to you by the maintainers of i18next!
+ 
+-![locize](https://www.locize.com/img/ads/github_locize.png)
+-
+ With using [locize](https://www.locize.com/?utm_source=react_i18next_react_readme&utm_medium=github&utm_campaign=example_react_readme) you directly support the future of i18next and react-i18next.
+ 
+ ## Here you find a react example for locize:
 ```
 
 ---
 
-### Incident Patch 2: `46564b65` (2026-10-25)
-**Commit Message**: fix: refresh translations when namespaces are added (#1945)
+### Incident Patch 2: `a98b743e` (2026-11-03)
+**Commit Message**: fix(types): compute the Trans values type inside the prop again (#1947)
 
-**File**: `src/useTranslation.js` (modified, +2/-1)
+17.0.2 added a Ret type parameter to TransLegacy. As a type parameter, the return type is also computed for every key of the namespace, which is slow with large resources. const Key, which fixes #1913, is kept.
+
+Fixes #1946
+
+Signed-off-by: Alexey Duduk <[REDACTED_EMAIL]>
+
+**File**: `TransWithoutContext.d.ts` (modified, +4/-8)
 ```diff
-@@ -53,7 +53,8 @@ export const useTranslation = (ns, props = {}) => {
- 
-   const nsOrContext = ns || defaultNSFromContext || i18n?.options?.defaultNS;
-   const unstableNamespaces = isString(nsOrContext) ? [nsOrContext] : nsOrContext || ['translation'];
--  const namespaces = useMemo(() => unstableNamespaces, unstableNamespaces);
-+  const namespacesKey = JSON.stringify(unstableNamespaces);
-+  const namespaces = useMemo(() => unstableNamespaces, [namespacesKey]);
- 
-   i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
+@@ -32,7 +32,6 @@ export type TransProps<
+   KPrefix = undefined,
+   TContext extends string | undefined = undefined,
+   TOpt extends TOptions & { context?: TContext } = { context: TContext },
+-  Ret = TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt>,
+   E = React.HTMLProps<HTMLDivElement>,
+ > = E & {
+   children?: TransChild | readonly TransChild[];
+@@ -47,7 +46,9 @@ export type TransProps<
+   ns?: Ns | (Ns extends readonly (infer S extends string)[] ? S : never);
+   parent?: string | React.ComponentType<any> | null; // used in React.createElement if not null
+   tOptions?: TOpt;
+-  values?: InterpolationMap<Ret>;
++  // keep the return type inside this property: as a type parameter of `Trans`, it was also
++  // computed for every key of the namespace, which is slow with large resources
++  values?: InterpolationMap<TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt>>;
+   shouldUnescape?: boolean;
+   t?: TFunction<Ns, KPrefix>;
+ };
+@@ -59,14 +60,9 @@ export interface TransLegacy {
+     KPrefix = undefined,
+     TContext extends string | undefined = undefined,
+     TOpt extends TOptions & { context?: TContext } = { context: TContext },
+-    Ret extends TFunctionReturn<Ns, _AppendKeyPrefix<Key, KPrefix>, TOpt> = TFunctionReturn<
+-      Ns,
+-      _AppendKeyPrefix<Key, KPrefix>,
+-      TOpt
+-    >,
+     E = React.HTMLProps<HTMLDivElement>,
+   >(
+-    props: TransProps<Key, Ns, KPrefix, TContext, TOpt, Ret, E>,
++    props: TransProps<Key, Ns, KPrefix, TContext, TOpt, E>,
+   ): React.ReactElement;
+ }
  
 ```
 
-**File**: `test/useTranslation.spec.jsx` (modified, +17/-0)
+**File**: `test/typescript/custom-types/i18next.d.ts` (modified, +1/-0)
 ```diff
-@@ -248,6 +248,23 @@ describe('useTranslation', () => {
-   });
+@@ -9,6 +9,7 @@ declare module 'i18next' {
+         foo: 'foo';
+         bar: 'bar';
+         title: 'Title: <strong>{{appName}}</strong>';
++        greeting: 'Hello {{userName}}';
  
-   describe('namespace change', () => {
-+    it('uses a newly added fallback namespace', () => {
-+      i18nInstance.addResource('en', 'nsB', 'onlyInB', 'B');
-+      let ns = ['nsA'];
-+      const { result, rerender } = renderHook(() =>
-+        useTranslation(ns, { i18n: i18nInstance, nsMode: 'fallback' }),
-+      );
-+      expect(result.current.t('onlyInB')).toBe('onlyInB');
+         some: 'some';
+         some_me: 'some context';
+```
+
+**File**: `test/typescript/custom-types/issue1913-jsx.test.tsx` (modified, +9/-0)
+```diff
+@@ -29,4 +29,13 @@ describe('issue #1913 - values prop should only require variables for the given
+       <Trans t={t} ns="custom" i18nKey="title" values={{ appName: 'My App' }} />,
+     );
+   });
 +
-+      ns = ['nsA', 'nsB'];
-+      rerender();
-+      expect(result.current.t('onlyInB')).toBe('B');
-+
-+      ns = ['nsA'];
-+      rerender();
-+      expect(result.current.t('onlyInB')).toBe('onlyInB');
-+    });
-+
-     it('should return a t bound to the new namespace', () => {
-       i18nInstance.addResource('en', 'nsA', 'k', 'A');
-       i18nInstance.addResource('en', 'nsB', 'k', 'B');
++  it('should reject variables of another key', () => {
++    const { t } = useTranslation();
++    assertType<React.ReactElement>(<Trans t={t} i18nKey="greeting" values={{ userName: 'Ann' }} />);
++    // @ts-expect-error - 'userName' belongs to 'greeting', not to 'title'
++    assertType<React.ReactElement>(<Trans t={t} i18nKey="title" values={{ userName: 'Ann' }} />);
++    // @ts-expect-error - 'appName' belongs to 'title', not to 'greeting'
++    assertType<React.ReactElement>(<Trans i18nKey="greeting" values={{ appName: 'My App' }} />);
++  });
+ });
+```
+
+---
+
+### Incident Patch 3: `31325a14` (2026-11-01)
+**Commit Message**: build
+
+**File**: `react-i18next.js` (modified, +10/-0)
+```diff
+@@ -3131,12 +3131,22 @@
+         escapeValue: true
+       }
+     };
++    const interpolationOptions = {
++      ...i18n.options?.interpolation,
++      ...mergedTOptions.interpolation
++    };
++    const escapeFn = interpolationOptions.escape || i18n.services?.interpolator?.escape;
++    const childPlaceholders = Object.keys(valuesFromChildren).map(name => `${interpolationOptions.prefix ?? '{{'}${name}${interpolationOptions.suffix ?? '}}'}`);
++    const keepChildPlaceholders = interpolateBeforeParsing && !formatPlugin && childPlaceholders.length > 0 && interpolationOptions.skipOnVariables !== false && !mergedTOptions.missingInterpolationHandler && !i18n.options?.missingInterpolationHandler && typeof escapeFn === 'function' && childPlaceholders.every(placeholder => escapeFn(placeholder) === placeholder);
+     const escapeForPlugin = escapeValues && formatPlugin ? escapeStringValues : v => v;
+     const combinedTOpts = {
+       ...escapeForPlugin(mergedTOptions),
+       context: context || mergedTOptions.context,
+       count,
+       ...escapeForPlugin(values),
++      ...(keepChildPlaceholders && {
++        missingInterpolationHandler: (str, match, opts) => opts && Object.prototype.hasOwnProperty.call(opts, match[1].trim()) ? '' : match[0]
++      }),
+       ...interpolationOverride,
+       defaultValue,
+       ns: namespaces
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1947** (2026-11-03): fix(types): compute the Trans values type inside the prop again (@leshaduduk)
 - **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@lprnmns)
 - **PR #1944** (2026-10-24): fix(Trans): don't drop an interpolation variable named format (@Pharex38)
 - **PR #1943** (2026-10-24): fix(IcuTrans): decode each HTML entity only once (@Pharex38)
 - **PR #1942** (2026-10-24): fix(Trans): use the count passed in tOptions (@nk-batman21)
 - **PR #1941** (2026-10-23): fix(Trans): fall back to the last key of an i18nKey array, like t() (@nk-batman21)
-- **PR #1940** (2026-10-22): fix(IcuTrans): decode numeric entities above U+FFFF (@nk-batman21)
 
 ---
 
@@ -1048,35 +1167,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Empirical Invariant Guard in react-i18next.js
-
-**RULE**:
-When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e1a69455`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Verified production-grade fix pattern:
-    const namespacesKey = JSON.stringify(unstableNamespaces);
-    const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-    const namespaces = React.useMemo(() => unstableNamespaces, unstableNamespaces);
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1a69455` are properly handled with clean fallback behavior.

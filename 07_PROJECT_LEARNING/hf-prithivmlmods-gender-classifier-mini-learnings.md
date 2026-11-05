@@ -3,7 +3,7 @@
 > **Source Version**: `hf-prithivml`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-31T11:09:33.794Z  
+> **Timestamp**: 2026-11-05T01:40:47.756Z  
 > **Learning ID**: `learn-huggingface-prithivmlmods-gender-classifier-mini`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,374 +17,253 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem:**
-The repository implements a lightweight, fine-tuned vision-language model (VLM) for binary gender classification (Female/Male) from images. It leverages the **SigLIP** (Sigmoid Loss for Language Image Pre-Training) architecture, specifically `SiglipForImageClassification`, which decouples the vision and text towers while maintaining a shared embedding space. The model is fine-tuned from `google/siglip2-base-patch16-224` to achieve 97.2% accuracy on a 5,000-sample dataset.
+The repository implements a lightweight, fine-tuned Vision-Language Model (VLM) for binary gender classification (Female/Male) from images. It leverages the **SigLIP** (Sigmoid Loss for Language Image Pre-Training) architecture, specifically `SiglipForImageClassification`, fine-tuned from `google/siglip2-base-patch16-224`. The system solves the problem of mapping high-dimensional visual feature vectors to a low-dimensional probability distribution over two discrete classes with high precision (97.2% accuracy).
 
 **Architectural Boundaries:**
-1.  **Inference Boundary:** The system is strictly an inference pipeline. It does not contain training loops, data augmentation pipelines, or distributed training logic.
-2.  **Modality Boundary:** Input is strictly visual (RGB images). The text tower of SigLIP is present in the architecture but is not actively used for prompt-based inference in the provided snippet; it relies on the pre-trained classification head (`classifier` layer) appended to the vision tower's pooled output.
-3.  **Interface Boundary:** The user-facing interface is a Gradio web app. The core logic is a single function `gender_classification` that bridges raw NumPy arrays to PyTorch tensors and back to Python dictionaries.
+1.  **Inference Core:** A PyTorch model instance (`SiglipForImageClassification`) encapsulating the Vision Transformer (ViT) and Text Encoder. The boundary is defined by the `forward` pass which accepts preprocessed tensors and returns logits.
+2.  **Preprocessing Boundary:** The `AutoImageProcessor` acts as the interface between raw pixel data (NumPy/PIL) and the model's expected tensor format. It handles resizing (224x224), normalization, and channel ordering (RGB).
+3.  **Application Layer:** A Gradio interface serves as the API gateway, handling HTTP requests, image decoding, and result serialization.
+4.  **State Ownership:** The model weights are static (frozen) during inference. The only mutable state is the input tensor buffer and the output probability vector.
 
 **Critical Subsystem Abstractions:**
-*   **`SiglipForImageClassification`**: A Hugging Face `PreTrainedModel` subclass. It encapsulates the `SiglipVisionModel` (encoder) and a linear `classifier` head.
-*   **`AutoImageProcessor`**: Handles the transformation of raw pixel data (NumPy/PIL) into normalized tensors suitable for the vision transformer (resizing to 224x224, patching to 16x16, normalization).
-*   **Gradio Interface**: A reactive UI layer that manages state, file uploads, and result rendering.
-
-**State Ownership:**
-*   **Model Weights:** Owned by the `model` object (GPU/CPU memory).
-*   **Inference State:** Stateless per request. Each call to `gender_classification` creates new tensors, performs forward pass, and discards intermediate activations.
-*   **UI State:** Managed by Gradio's internal event loop.
-
----
+*   **SigLIP Dual-Encoder:** Unlike CLIP, SigLIP uses a sigmoid loss function during training, which decouples the positive and negative pairs. This results in a more robust feature space for classification tasks where the number of classes is small (binary here).
+*   **Logit-to-Probability Mapping:** The system relies on the `softmax` function to convert raw logits into a valid probability distribution. The invariant is that the sum of probabilities must equal 1.0.
+*   **Label Mapping:** A strict bidirectional mapping between integer indices (0, 1) and semantic labels ("Female ♀", "Male ♂") is maintained in `config.json` (`id2label`/`label2id`).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Strict Tensor-Array Boundary Conversion Invariant
+### 1. Strict Tensor Shape & Dtype Alignment Inference
 **RULE**:
-When bridging between UI frameworks (which often use NumPy arrays) and Deep Learning frameworks (which use PyTorch tensors), you MUST explicitly convert data types and dimensions at the boundary. You MUST NOT pass raw NumPy arrays directly into model forward passes without ensuring they are converted to the correct tensor type, device, and channel order (RGB vs BGR).
+When loading a pre-trained model for inference, the input tensor's shape, dtype, and device MUST strictly match the model's expected configuration. Specifically, for image classification models, the input MUST be a 4D tensor `[Batch, Channels, Height, Width]` with `float32` (or `float16` if mixed precision is enabled) dtype, and the model MUST be on the same device (CPU/CUDA) as the input tensor.
 
 **WHY**:
-PyTorch models expect `torch.Tensor` objects on a specific device (CPU/CUDA). NumPy arrays are CPU-only and have different memory layouts. Passing a NumPy array directly can lead to:
-1.  **Device Mismatch Errors**: If the model is on GPU, the input must be on GPU.
-2.  **Channel Order Mismatches**: PIL/NumPy often use RGB, while some internal representations might expect BGR or specific normalization.
-3.  **Dimensionality Errors**: Models expect 4D tensors `(Batch, Channels, Height, Width)`. NumPy images are often 3D `(Height, Width, Channels)`.
+Mismatched dtypes (e.g., passing `float64` to a `float32` model) cause silent precision loss or explicit runtime errors (`RuntimeError: expected scalar type Float but found Double`). Mismatched devices (e.g., model on CUDA, input on CPU) cause immediate crashes. Mismatched shapes (e.g., missing batch dimension) cause broadcasting errors or incorrect feature extraction.
 
 **WHEN TO APPLY**:
-Any system integrating UI inputs (images, audio, text) with PyTorch/TensorFlow models.
+Any PyTorch/TensorFlow inference pipeline, especially when integrating third-party processors or custom data loaders.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+from transformers import AutoImageProcessor, SiglipForImageClassification
 from PIL import Image
 import numpy as np
 
-def safe_image_to_tensor(image_input, processor, device):
-    """
-    Safely converts a UI image input to a model-ready tensor.
-    """
-    # 1. Ensure PIL Image object (handles various input types)
-    if isinstance(image_input, np.ndarray):
-        # Ensure RGB order if coming from BGR sources (e.g., OpenCV)
-        if image_input.shape[2] == 3:
-            image_pil = Image.fromarray(image_input).convert("RGB")
-        else:
-            raise ValueError("Unsupported image channels")
-    elif isinstance(image_input, Image.Image):
-        image_pil = image_input.convert("RGB")
-    else:
-        raise TypeError("Input must be PIL Image or NumPy array")
+def safe_inference(model, processor, image_np):
+    # 1. Ensure image is RGB and correct size
+    image = Image.fromarray(image_np).convert("RGB")
     
-    # 2. Use Processor to handle resizing, patching, and normalization
-    # processor returns a dict with 'pixel_values' as a tensor
-    inputs = processor(images=image_pil, return_tensors="pt")
+    # 2. Process to tensor
+    inputs = processor(images=image, return_tensors="pt")
     
-    # 3. Move to correct device
+    # 3. CRITICAL: Move inputs to the same device as the model
+    device = next(model.parameters()).device
     inputs = {k: v.to(device) for k, v in inputs.items()}
     
-    return inputs
-
-# Usage
-# inputs = safe_image_to_tensor(user_upload, processor, device="cuda")
+    # 4. Ensure dtype matches model's expected dtype
+    # For SigLIP, usually float32 or float16
+    if model.config.torch_dtype == torch.float16:
+        inputs = {k: v.half() for k, v in inputs.items()}
+    
+    # 5. Inference
+    with torch.no_grad():
+        outputs = model(**inputs)
+        logits = outputs.logits
+    
+    return logits
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER do this:
-# 1. Assuming NumPy is compatible with PyTorch
-model(np_array) # TypeError: expected Tensor as element 0 in argument 0
-
-# 2. Forgetting to move to GPU
-model_on_gpu(pixel_values_on_cpu) # RuntimeError: Expected all tensors to be on the same device
-
-# 3. Hardcoding channel order without verification
-# If input is BGR and model expects RGB, classification will be garbage
+# ANTI-PATTERN: Assuming device/dtype alignment
+inputs = processor(images=image, return_tensors="pt")
+# If model is on CUDA and inputs are on CPU, this crashes:
+outputs = model(**inputs) 
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Pass a random NumPy array, verify the output of the conversion function is a `torch.Tensor` with shape `(1, 3, 224, 224)` and correct device.
-2.  **Integration Test**: Run inference on a known image and assert the output probability is within [0, 1] and sums to 1.
+```python
+assert next(model.parameters()).device == next(iter(inputs.values())).device
+assert next(model.parameters()).dtype == next(iter(inputs.values())).dtype
+```
 
-### 2. Probabilistic Output Normalization & Label Mapping Invariant
+### 2. Probabilistic Output Normalization & Label Index Safety
 **RULE**:
-When converting model logits to human-readable predictions, you MUST apply softmax to obtain probabilities, MUST squeeze batch dimensions, and MUST map indices to labels using a strict, immutable dictionary. You MUST NOT return raw logits or assume label order without explicit mapping.
+When converting model logits to human-readable predictions, the softmax normalization MUST be applied over the correct dimension (typically `dim=1` for classification), and the index-to-label mapping MUST be validated against the model's `config.id2label` to prevent index-out-of-bounds errors or mislabeling.
 
 **WHY**:
-1.  **Logits are unbounded**: Raw logits can be negative or very large. They are not probabilities.
-2.  **Batch Dimension**: Models often return outputs with a batch dimension `(1, num_classes)`. UIs expect a flat list or dict.
-3.  **Label Drift**: If the model is retrained or labels are reordered, hardcoded indices will break. Explicit mapping prevents silent misclassification.
+Using `dim=0` instead of `dim=1` in softmax normalizes across the batch, not the classes, resulting in invalid probabilities. Hardcoding label indices (e.g., `0` for Female, `1` for Male) without checking `config.id2label` leads to silent misclassification if the model's label order changes or if the config is updated.
 
 **WHEN TO APPLY**:
-Any classification task where model outputs need to be displayed to users.
+Any classification task where logits are converted to probabilities and mapped to semantic labels.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch.nn.functional as F
 
-def logits_to_predictions(logits, label_map):
-    """
-    Converts logits to a dictionary of label: probability.
-    """
-    # 1. Apply softmax to get probabilities
+def safe_prediction(logits, id2label):
+    # 1. Softmax over class dimension (dim=1)
     probs = F.softmax(logits, dim=1)
     
-    # 2. Squeeze batch dimension (1, num_classes) -> (num_classes,)
-    probs = probs.squeeze().tolist()
+    # 2. Get the most likely class index
+    pred_idx = torch.argmax(probs, dim=1).item()
     
-    # 3. Map indices to labels
-    predictions = {}
-    for i, prob in enumerate(probs):
-        if i in label_map:
-            predictions[label_map[i]] = round(prob, 4)
-        else:
-            raise ValueError(f"Label index {i} not found in label_map")
-            
-    return predictions
-
-# Usage
-# label_map = {0: "Female", 1: "Male"}
-# preds = logits_to_predictions(outputs.logits, label_map)
+    # 3. Validate index against id2label
+    if pred_idx not in id2label:
+        raise ValueError(f"Prediction index {pred_idx} not found in id2label: {id2label}")
+    
+    label = id2label[pred_idx]
+    confidence = probs[0][pred_idx].item()
+    
+    return label, confidence
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER do this:
-# 1. Returning raw logits
-return outputs.logits # User sees [12.3, -4.5] instead of probabilities
-
-# 2. Assuming label order
-# If model changes, "Female" might become index 1
-return {"Female": probs[0], "Male": probs[1]} # Fragile
-
-# 3. Forgetting to squeeze
-return probs.tolist() # Returns [[0.9, 0.1]] instead of [0.9, 0.1]
+# ANTI-PATTERN: Hardcoded labels and wrong softmax dim
+probs = torch.softmax(logits, dim=0) # Wrong dim
+labels = {0: "Female", 1: "Male"} # Hardcoded, ignores config
+pred = labels[0] # Always returns Female, ignores actual prediction
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Pass a known logit tensor, verify the output dictionary keys match the label map and values sum to 1.
-2.  **Edge Case Test**: Pass a logit tensor with a batch size > 1, verify it raises an error or handles it correctly (depending on design).
+```python
+# Unit test: Ensure softmax sums to 1
+assert torch.allclose(torch.sum(probs, dim=1), torch.ones(probs.shape[0]))
+# Unit test: Ensure label mapping is consistent
+assert id2label[0] == "Female ♀"
+assert id2label[1] == "Male ♂"
+```
 
----
+### 3. Image Preprocessing Invariant: RGB Conversion & Size Enforcement
+**RULE**:
+Before passing an image to a vision model's processor, the image MUST be converted to RGB mode and resized to the model's expected input size (e.g., 224x224 for SigLIP). Grayscale or RGBA images MUST be explicitly converted to RGB to avoid channel mismatch errors.
+
+**WHY**:
+Vision models expect a fixed number of channels (3 for RGB). Passing a grayscale image (1 channel) or RGBA (4 channels) causes a shape mismatch in the convolutional layers. Resizing is critical because the positional embeddings in the ViT are tied to the patch grid size.
+
+**WHEN TO APPLY**:
+Any image classification or segmentation task using ViT-based models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from PIL import Image
+
+def preprocess_image(image_np):
+    # 1. Convert to PIL Image
+    image = Image.fromarray(image_np)
+    
+    # 2. Enforce RGB mode
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    
+    # 3. Resize to expected size (e.g., 224x224)
+    # Note: The processor usually handles this, but explicit control is safer
+    image = image.resize((224, 224))
+    
+    return image
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming image is already RGB and correct size
+image = Image.fromarray(image_np)
+# If image_np is grayscale, this will fail in the model
+inputs = processor(images=image, return_tensors="pt")
+```
+
+**VERIFICATION METHOD**:
+```python
+assert image.mode == "RGB"
+assert image.size == (224, 224)
+```
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or post-mortems. Therefore, no real incidents can be documented. This section is intentionally empty to maintain forensic integrity.*
-
----
+*Note: The provided repository data contains no commit history, bug issues, or post-mortems. Therefore, no real incidents can be documented. The following section is intentionally left empty to adhere to the forensic mandate of only reporting observed evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Type Coercion in `tolist()`**: `torch.Tensor.tolist()` converts to native Python types. For a 1D tensor, it returns a list of floats. For a 2D tensor, it returns a list of lists. Always verify the dimensionality before calling `.tolist()`.
-*   **Label Mapping Keys**: In the provided code, `labels = {"0": "Female ♀", "1": "Male ♂"}` uses string keys. However, `probs` is a list indexed by integers. The code `labels[str(i)]` correctly converts the integer index to a string for lookup. **Invariant**: Always ensure the key type in your label map matches the type of the index you are using. If your label map uses integer keys, do not convert the index to string.
-*   **Rounding Precision**: `round(probs[i], 3)` is used for display. This is safe for UI but should not be used for downstream logic that requires high precision.
+*   **Type Coercion in Label Mapping**: In the provided code, `labels[str(i)]` is used. If `i` is a numpy integer (`np.int64`), `str(i)` produces `"0"` or `"1"`. However, if `i` is a float (e.g., `0.0`), `str(i)` produces `"0.0"`, which will cause a `KeyError` if the dictionary keys are `"0"` and `"1"`. **Invariant**: Always cast indices to `int` before string conversion: `labels[str(int(i))]`.
+*   **Softmax Dimension**: `torch.nn.functional.softmax(logits, dim=1)` is critical. If `logits` is a 1D tensor (single image, no batch), `dim=1` is out of bounds. **Invariant**: Ensure `logits` is at least 2D. If `logits.dim() == 1`, unsqueeze: `logits = logits.unsqueeze(0)`.
 
 ### 2. Infinite Loop & Recursion Guards
-*   **No Recursion**: The inference pipeline is strictly linear. No recursion is present.
-*   **Gradio Event Loop**: Gradio manages its own event loop. The `gender_classification` function is synchronous. If it blocks for too long (e.g., due to a large image or slow GPU), it will block the UI thread. **Invariant**: For long-running tasks, use Gradio's `queue` system or asynchronous handlers.
+*   **No Recursion**: The inference pipeline is linear. No recursion is present.
+*   **Gradio Event Loop**: Gradio handles its own event loop. No manual loop guards are needed in the user code.
 
 ### 3. UI & UX Micro-Mechanics
-*   **Image Conversion**: `Image.fromarray(image).convert("RGB")` ensures the image is in RGB format. If the input is grayscale, `.convert("RGB")` will duplicate the channel. If the input is RGBA, it will drop the alpha channel. **Invariant**: Always explicitly convert to the expected color space.
-*   **Gradio Input Type**: `gr.Image(type="numpy")` ensures the input to the function is a NumPy array. If this is changed to `type="pil"`, the function must be updated to handle PIL images.
+*   **Image Upload Handling**: Gradio's `gr.Image(type="numpy")` ensures the input is a NumPy array. The code then converts it to PIL: `Image.fromarray(image).convert("RGB")`. **Invariant**: Always handle the case where the input image might be in a different mode (e.g., "L" for grayscale, "RGBA" for transparency). The `.convert("RGB")` call is essential.
+*   **Label Display**: `gr.Label(label="Prediction Scores")` displays the probabilities. **Invariant**: Ensure the dictionary keys are human-readable and the values are floats rounded to 3 decimal places for clarity.
 
 ### 4. Backend Concurrency & Memory Safety
-*   **`torch.no_grad()`**: The inference is wrapped in `torch.no_grad()`. This disables gradient computation, reducing memory usage and speeding up inference. **Invariant**: Always use `torch.no_grad()` for inference.
-*   **Memory Leaks**: The `inputs` and `outputs` tensors are local variables. They will be garbage collected after the function returns. However, if the model is on GPU, ensure that the GPU memory is freed. PyTorch's garbage collector handles this, but for long-running services, consider explicitly deleting large tensors.
+*   **Thread Safety**: PyTorch models are not thread-safe by default. If the Gradio app is accessed by multiple users concurrently, the `model(**inputs)` call could lead to race conditions if the model's internal state is modified. **Invariant**: Use `torch.no_grad()` to disable gradient computation, which reduces memory usage and avoids modifying the model's state. For high-concurrency scenarios, consider using a model server (e.g., TorchServe) or a queue-based system.
+*   **Memory Leaks**: The `inputs` and `outputs` tensors are local variables and should be garbage collected after the function returns. **Invariant**: Ensure no global references to tensors are held.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Null/Undefined Chaining**: The code does not handle cases where `image` is `None` or an invalid type. **Invariant**: Add input validation at the start of the function.
-*   **Off-by-One Boundary Checks**: The loop `for i in range(len(probs))` is safe because `probs` is a list of length `num_classes`. However, if `label_map` does not have all indices, `labels[str(i)]` will raise a `KeyError`. **Invariant**: Use `label_map.get(str(i), "Unknown")` to handle missing labels gracefully.
-
----
+*   **Null/Undefined Chaining**: The code assumes `image` is not `None`. **Invariant**: Add a check: `if image is None: raise ValueError("Image is None")`.
+*   **Off-by-One Boundary Checks**: The loop `for i in range(len(probs))` is safe as long as `probs` is a list of length 2. **Invariant**: Assert `len(probs) == 2` before the loop.
+*   **Error Boundary Containment**: The `gender_classification` function does not have a try-except block. **Invariant**: Wrap the inference in a try-except to catch `RuntimeError` (e.g., CUDA out of memory) and return a user-friendly error message.
 
 ## 5. The 9 Deep Learning Dimensions
 
-### 1. Architecture
-*   **Subsystem Boundaries**: The system is divided into three clear subsystems: (1) Data Ingestion (Gradio), (2) Preprocessing (AutoImageProcessor), and (3) Inference (SiglipForImageClassification).
-*   **Decoupling**: The model is decoupled from the UI. The `gender_classification` function is a pure function that can be tested independently of Gradio.
-*   **State Ownership**: The model state is owned by the `model` object. The UI state is owned by Gradio. There is no shared mutable state between them.
-
-### 2. Core Abstractions
-*   **Key Types**: `torch.Tensor`, `PIL.Image`, `np.ndarray`, `dict`.
-*   **Domain Primitives**: `logits`, `probs`, `labels`.
-*   **Invariant Contracts**: The model must return logits of shape `(1, num_classes)`. The processor must return a dict with a `pixel_values` key.
-
-### 3. Error Handling
-*   **Fault Boundaries**: The `gender_classification` function is the primary fault boundary. It does not catch exceptions. If the model fails, the error will propagate to Gradio, which will display it to the user.
-*   **Graceful Degradation**: There is no graceful degradation. If the model fails, the request fails.
-*   **Retries**: There are no retries.
-
-### 4. Testing
-*   **Property Testing**: Not present in the repository.
-*   **Mock Invariants**: Not present.
-*   **Integration Harnesses**: The Gradio interface serves as a manual integration harness.
-*   **Regression Shields**: The README provides a classification report, which can be used as a regression shield. If the model's accuracy drops below 97%, it should be flagged.
-
-### 5. Security
-*   **Threat Model**: The primary threat is malicious input images that could cause the model to crash or produce incorrect results.
-*   **Credential Boundaries**: No credentials are used.
-*   **Sanitization**: The image is converted to RGB and resized to 224x224. This sanitizes the input to some extent.
-*   **Memory Safety**: PyTorch is memory-safe. However, large images could cause out-of-memory errors.
-*   **Least Privilege**: The model runs with the same privileges as the user.
-
-### 6. Performance
-*   **Latency Profiles**: The latency is dominated by the forward pass of the SigLIP model. For a 224x224 image, this is typically <100ms on a modern GPU.
-*   **Asymptotic Complexity**: The complexity of the forward pass is O(N^2) with respect to the number of patches, where N is the number of patches. For 224x224 with 16x16 patches, N=196.
-*   **Caching**: No caching is used.
-*   **Zero-Copy**: No zero-copy is used. The image is copied from NumPy to PyTorch.
-*   **Concurrency Bottlenecks**: The model is not thread-safe. If multiple requests are processed concurrently, they must be serialized.
-
-### 7. Deployment
-*   **CI/CD Invariants**: Not present in the repository.
-*   **Container Constraints**: The model can be deployed in a Docker container with CUDA support.
-*   **Reproducible Builds**: The model weights are fixed. The code is simple and reproducible.
-*   **Runtime Flags**: No runtime flags are used.
-
-### 8. Agent Patterns
-*   **Tooling Interfaces**: The model is a tool that can be called by an AI agent.
-*   **Prompt Chains**: Not applicable.
-*   **Loop Guards**: Not applicable.
-*   **Context Budget Optimization**: Not applicable.
-
-### 9. Data Flow
-*   **Mutation Lifecycles**: The image is mutated from NumPy to PIL to PyTorch. The logits are mutated to probabilities.
-*   **Streams**: No streams are used.
-*   **Serializers**: The model weights are serialized in PyTorch format.
-*   **Network Protocol Barriers**: The Gradio interface uses HTTP/WebSocket.
-
----
+1.  **Architecture**: The system is a monolithic inference pipeline. The model, processor, and UI are tightly coupled in a single script. There is no separation of concerns between the model serving layer and the application layer.
+2.  **Core Abstractions**: The core abstraction is the `SiglipForImageClassification` model, which encapsulates the ViT and the classification head. The `AutoImageProcessor` is the abstraction for data preprocessing.
+3.  **Error Handling**: Minimal. No explicit error handling is present in the provided code. Errors will propagate up to the Gradio interface, which will display a generic error message.
+4.  **Testing**: No tests are provided in the repository. The accuracy metrics are reported in the README, but there is no automated test suite to verify the model's behavior.
+5.  **Security**: The model is hosted on Hugging Face, which provides some level of security (e.g., access control). However, the Gradio interface is exposed to the public, which could be a security risk if not properly secured.
+6.  **Performance**: The model is a "Mini" version, implying it is optimized for speed and memory efficiency. The use of `torch.no_grad()` reduces memory usage. The model is likely to be fast on CPU and GPU.
+7.  **Deployment**: The model is deployed via Hugging Face Hub. The Gradio interface is launched locally. There is no CI/CD pipeline or containerization.
+8.  **Agent Patterns**: No agent patterns are present. The system is a simple inference pipeline.
+9.  **Data Flow**: The data flow is linear: Image -> Preprocessing -> Model -> Logits -> Softmax -> Probabilities -> Labels. There are no streams or serializers.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### 1. Pattern
-**Verified, production-grade implementation pattern**:
-```python
-import torch
-import torch.nn.functional as F
-from PIL import Image
-import numpy as np
-
-class GenderClassifier:
-    def __init__(self, model_name, device="cpu"):
-        self.model = SiglipForImageClassification.from_pretrained(model_name).to(device)
-        self.processor = AutoImageProcessor.from_pretrained(model_name)
-        self.device = device
-        self.label_map = {0: "Female ♀", 1: "Male ♂"}
-        
-    def predict(self, image):
-        # Input validation
-        if not isinstance(image, (np.ndarray, Image.Image)):
-            raise TypeError("Input must be a NumPy array or PIL Image")
-            
-        # Convert to PIL Image
-        if isinstance(image, np.ndarray):
-            image = Image.fromarray(image).convert("RGB")
-        else:
-            image = image.convert("RGB")
-            
-        # Preprocess
-        inputs = self.processor(images=image, return_tensors="pt").to(self.device)
-        
-        # Inference
-        with torch.no_grad():
-            outputs = self.model(**inputs)
-            logits = outputs.logits
-            probs = F.softmax(logits, dim=1).squeeze().tolist()
-            
-        # Map to labels
-        predictions = {self.label_map[i]: round(probs[i], 4) for i in range(len(probs))}
-        
-        return predictions
-```
-
-### 2. Rule
-**Universal invariant**:
-MUST convert all image inputs to a consistent format (PIL Image, RGB) before preprocessing. MUST apply softmax to logits before converting to probabilities. MUST map indices to labels using an explicit dictionary.
-
-### 3. Architecture Principle
-**High-level architectural law and structural trade-off**:
-The system follows a **Pipeline Architecture** where each stage (Ingestion, Preprocessing, Inference, Post-processing) is decoupled. This allows for easy testing and replacement of individual stages. The trade-off is that the pipeline is synchronous, which can be a bottleneck for high-throughput applications.
-
-### 4. Failure Mode
-**Precise technical breakdown of the bug/crash/exploit observed**:
-1.  **Device Mismatch**: If the model is on GPU and the input is on CPU, the forward pass will fail with a `RuntimeError`.
-2.  **Label Mismatch**: If the label map does not match the model's output indices, the predictions will be incorrect.
-3.  **Memory Leak**: If the model is not properly garbage collected, GPU memory can leak.
-
-### 5. Reusable Skill
-**Step-by-step procedural workflow/checklist for an AI coding agent**:
-1.  Load the model and processor from Hugging Face.
-2.  Move the model to the correct device (CPU/GPU).
-3.  Define a label map that matches the model's output indices.
-4.  Create a prediction function that:
-    *   Validates the input.
-    *   Converts the input to a PIL Image.
-    *   Preprocesses the image using the processor.
-    *   Moves the preprocessed image to the correct device.
-    *   Runs the model in `no_grad` mode.
-    *   Applies softmax to the logits.
-    *   Maps the probabilities to labels.
-5.  Test the prediction function with a known image.
-
-### 6. Decision
-**Engineering design trade-off and forensic rationale why alternatives were rejected**:
-*   **Decision**: Use `SiglipForImageClassification` instead of a custom model.
-*   **Rationale**: SigLIP is a well-optimized, pre-trained model that can be fine-tuned for specific tasks. It is more efficient and accurate than a custom model.
-*   **Rejected Alternative**: Using a custom CNN. Rejected because it would require more data and training time.
-
-### 7. Anti-pattern
-**Negative constraint with concrete "bad code" to NEVER write**:
-```python
-# NEVER do this:
-def bad_predict(image):
-    # No input validation
-    # No device management
-    # No softmax
-    # No label mapping
-    return model(image).logits
-```
-
-### 8. Verification Method
-**Concrete automated test, assert, lint, or check to prove compliance**:
-1.  **Unit Test**: Test the prediction function with a known image and assert the output is a dictionary with the correct keys and values.
-2.  **Integration Test**: Test the Gradio interface with a real image and assert the output is displayed correctly.
-3.  **Lint Check**: Use a linter to check for unused variables, undefined names, and other common errors.
-
----
+1.  **Pattern**: The "Safe Inference" pattern, which ensures device/dtype alignment, RGB conversion, and label index safety.
+2.  **Rule**: The three universal engineering rules derived in Section 2.
+3.  **Architecture Principle**: The "Monolithic Inference" principle, where the model, processor, and UI are tightly coupled. This is suitable for simple applications but not for scalable systems.
+4.  **Failure Mode**: The "Device Mismatch" failure mode, where the model and input tensors are on different devices, causing a runtime error.
+5.  **Reusable Skill**: The "Image Preprocessing" skill, which involves converting images to RGB, resizing them, and passing them to the processor.
+6.  **Decision**: The decision to use SigLIP over CLIP, based on its superior performance for classification tasks with a small number of classes.
+7.  **Anti-pattern**: The "Hardcoded Labels" anti-pattern, where label indices are hardcoded instead of being read from the model's config.
+8.  **Verification Method**: The "Softmax Sum" verification method, which ensures that the probabilities sum to 1.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Environment Setup**:
-    *   Install `transformers`, `torch`, `pillow`, and `gradio`.
-    *   Ensure CUDA is available if using GPU.
+1.  **Load Model and Processor**:
+    *   [ ] Load the model using `SiglipForImageClassification.from_pretrained`.
+    *   [ ] Load the processor using `AutoImageProcessor.from_pretrained`.
+    *   [ ] Verify that the model and processor are from the same repository.
 
-2.  **Model Loading**:
-    *   Load the model using `SiglipForImageClassification.from_pretrained`.
-    *   Load the processor using `AutoImageProcessor.from_pretrained`.
-    *   Move the model to the correct device.
+2.  **Preprocess Image**:
+    *   [ ] Convert the input image to a PIL Image.
+    *   [ ] Convert the image to RGB mode.
+    *   [ ] Resize the image to the model's expected size (e.g., 224x224).
+    *   [ ] Pass the image to the processor to get the input tensors.
 
-3.  **Label Mapping**:
-    *   Define a label map that matches the model's output indices.
-    *   Verify the label map against the model's `config.id2label`.
+3.  **Align Device and Dtype**:
+    *   [ ] Get the device of the model using `next(model.parameters()).device`.
+    *   [ ] Move the input tensors to the same device.
+    *   [ ] Ensure the dtype of the input tensors matches the model's expected dtype.
 
-4.  **Prediction Function**:
-    *   Validate the input.
-    *   Convert the input to a PIL Image.
-    *   Preprocess the image using the processor.
-    *   Move the preprocessed image to the correct device.
-    *   Run the model in `no_grad` mode.
-    *   Apply softmax to the logits.
-    *   Map the probabilities to labels.
+4.  **Run Inference**:
+    *   [ ] Use `torch.no_grad()` to disable gradient computation.
+    *   [ ] Pass the input tensors to the model to get the logits.
 
-5.  **UI Integration**:
-    *   Create a Gradio interface.
-    *   Connect the prediction function to the interface.
-    *   Test the interface with a real image.
+5.  **Convert Logits to Probabilities**:
+    *   [ ] Apply softmax to the logits over the class dimension (`dim=1`).
+    *   [ ] Ensure the probabilities sum to 1.
 
-6.  **Testing**:
-    *   Write unit tests for the prediction function.
-    *   Write integration tests for the Gradio interface.
-    *   Run the tests and fix any failures.
+6.  **Map Probabilities to Labels**:
+    *   [ ] Get the most likely class index using `torch.argmax`.
+    *   [ ] Map the index to the label using the model's `config.id2label`.
+    *   [ ] Validate that the index is present in `id2label`.
 
-7.  **Deployment**:
-    *   Package the application in a Docker container.
-    *   Deploy the container to a cloud provider.
-    *   Monitor the application for errors and performance issues.
+7.  **Return Prediction**:
+    *   [ ] Return the label and the confidence score.
+    *   [ ] Round the confidence score to 3 decimal places.
+
+8.  **Handle Errors**:
+    *   [ ] Wrap the inference in a try-except block.
+    *   [ ] Catch `RuntimeError` and return a user-friendly error message.
+    *   [ ] Log the error for debugging purposes.

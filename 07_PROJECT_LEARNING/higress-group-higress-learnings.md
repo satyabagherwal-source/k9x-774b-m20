@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `03a91cb3`  
+> **Source Version**: `a89b18dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:02:31.929Z  
+> **Timestamp**: 2026-11-04T17:37:24.571Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:02:31.307Z  
+> **Harvest Timestamp**: 2026-11-04T17:37:24.383Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9705 stars
+- **Stars / Engagement**: 9708 stars
 
 ---
 
@@ -1736,11 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5294** (2026-11-03): **fix(mcp): bind user-level access to consumers**
-  *Symptoms*: ## Summary `mcp-session` (stacked on the header-sanitization change): user-level MCP server access is now bound to the authenticated consumer.  - With `enable_user_level_server: true`, the authenticated Higress consumer is the user identity; the URL-path `uid` is only a routing parameter — a mismatch is rejected (403), and a missing trusted principal is rejected (401). - Per-user configuration storage and reads are keyed by `(serverName, consumer)`; rate-limit buckets and whitelist checks use the verified principal instead of the path uid. - No unauthenticated legacy mode; existing user-level deployments need consumer authentication configured and their per-user data considered migrated.  ## Tests Missing/valid/forged consumer; cross-uid read and write denied; whitelist impersonation denied; rate-limit bucket isolation; Redis error path. Green on host; e2e in CI. 
+- **Issue #5305** (2026-11-04): **fix(mcp-server): support 2025-11-25 Tools clients**
+  *Symptoms*: ## I. Summary  Requests carrying `MCP-Protocol-Version: 2025-11-25` currently fail before initialize negotiation. Add that known version to the existing downstream handshake/Tools path, return it when requested, and keep discovery/error declarations consistent. Preserve the existing `2025-06-18` fallback for other unsupported initialization-body versions and strict unknown/modern identity rejection.  Production changes are limited to version classification, initialization and discovery. Upstream protocol selection and optional MCP capabilities retain their current boundaries. The normal runtime entry now exercises an equivalent pre-fix/fixed Tools comparison; historical business/control oracles remain pinned.  ## II. Related issue  Fixes #5302. Planning: Proposal #5303 and Design #5304; implementation TASK-5304001 and verification TASK-5304002.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace or formatting. - [x] **Verified maintainer/administrator exception:** Material agent participation; live canonical-repository identity/role checks are recorded below. - [ ] **Material agent participation:** Material participation without the verified exception.  Normal-path timed obligation
 
-- **Issue #5293** (2026-11-03): **fix(mcp): remove client config headers on ingress**
-  *Symptoms*: ## Summary `mcp-session`: the `x-higress-mcpserver-config` request header is now removed at ingress before it can influence per-user MCP server configuration.  - Stripped at `DecodeHeaders` entry (before URL parsing and route matching), plus on generated MCP routes (including registry-provided VirtualServices), and route add/set operations can no longer inject it. - Only a successful, non-empty dynamic config lookup writes the header; empty or errored lookups leave nothing behind (no client-supplied residue), while static MCP server configuration remains the fallback. - The internal header name is unchanged (rolling-upgrade friendly).  ## Tests Malformed / unmatched / REST / streamable / SSE / unknown-upstream path shapes; valid, empty, and errored lookups; forged-header stripping; static fallback preserved. Green on host; e2e in CI. 
+- **Issue #5304** (2026-11-04): **Design: Bounded MCP 2025-11-25 compatibility for mcp-server Tools workflows**
+  *Symptoms*: <!-- issue-spec:issue=design change=mcp-server-20251125-tools-compat version=1 -->  - Proposal Issue: 5303  ## Context  Implement Proposal #5303 for report #5302 by adding `2025-11-25` to the existing downstream initialize-based Tools path. Keep the unknown-body fallback at `2025-06-18`, reject unsupported version headers, and preserve modern `2026-07-28` validation and existing upstream protocol selection.  This Issue is the authoritative Design carrier. It defines a bounded compatibility measure, not complete implementation of every `2025-11-25` feature. AI assisted its preparation under explicit user authorization. The original publication did not claim implementation or test completion. The normal contribution path requires maintainer approval of the Proposal and Design; this run uses the verified administrator exception documented below.  ## Current Implementation Locations  Freeze the pre-fix comparison at upstream [`03a91cb3fbe2664ac190868ee062ca6bccbba4e2`](https://github.com/higress-group/higress/commit/03a91cb3fbe2664ac190868ee062ca6bccbba4e2), `mcp-server/VERSION=2.0.4-alpha`. If the implementation base changes, compare the relevant source and refresh this design's assumptions before reusing evidence.  1. `server/plugin.go:onHttpRequestHeaders` captures the transport before consuming protocol identity headers. 2. `protocol.HasModernIdentityHeaders` treats a nonempty version absent from `legacyVersions` as modern identity. Missing `2025-11-25` therefore reaches the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,1616 +1757,323 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6532bcef` (2026-11-01)
-**Commit Message**: fix(plugins): add configurable Redis failure handling (#5287)
+### Incident Patch 1: `a89b18dc` (2026-11-04)
+**Commit Message**: fix(mcp-server): support 2025-11-25 Tools clients (5305)
 
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+Signed-off-by: xunmu <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md` (modified, +1/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +3/-1)
 ```diff
-@@ -39,6 +39,7 @@ description: 基于 Key 集群限流插件配置参考
- | show_limit_quota_header | bool | 否 | false | 响应头中是否显示 `X-RateLimit-Limit`（限制的总请求数）和 `X-RateLimit-Remaining`（剩余还可以发送的请求数） |
- | rejected_code           | int | 否 | 429 | 请求被限流时，返回的 HTTP 状态码                                                         |
- | rejected_msg            | string | 否 | Too many requests | 请求被限流时，返回的响应体                                                               |
-+| failure_mode            | string | 否 | fail_open | Redis 调用失败、超时或响应异常时的策略：`fail_open` 放行请求；`fail_closed` 返回固定 503。需要严格限流时使用 `fail_closed`。 |
- | redis                   | object          | 是                                                           | -                 | redis 相关配置                                                                  |
+@@ -248,7 +248,9 @@ Legacy/Modern 的完整 UTF-8 JSON-RPC 请求体上限统一为 **100 MiB**，
  
- `global_threshold` 中每一项的配置字段说明。
-```
-
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/README_EN.md` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ It supports three rate limiting modes:
- | show_limit_quota_header  | bool          | No                                        | false             | Whether to display `X-RateLimit-Limit` (total allowed requests) and `X-RateLimit-Remaining` (remaining allowed requests) in the response header. |  
- | rejected_code            | int           | No                                        | 429               | HTTP status code returned when a request is rate-limited.                  |  
- | rejected_msg             | string        | No                                        | Too many requests | Response body returned when a request is rate-limited.                      |  
-+| failure_mode             | string        | No                                        | fail_open         | Policy for Redis call failures, timeouts, and invalid responses: `fail_open` allows the request; `fail_closed` returns a fixed 503. Use `fail_closed` when rate limiting must remain strict during Redis failures. |
- | redis                    | object        | Yes                                       | -                   | Configuration for Redis.                                                   |  
+ ## 协议支持与后端连接
  
- ### Configuration Fields for `global_threshold`
-```
-
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/config/config.go` (modified, +12/-0)
-```diff
-@@ -43,6 +43,9 @@ const (
- 	DefaultRejectedCode uint32 = 429
- 	DefaultRejectedMsg  string = "Too many requests"
- 
-+	FailureModeFailOpen   = "fail_open"
-+	FailureModeFailClosed = "fail_closed"
+-插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18` 和 `2026-07-28` 的工具服务能力。
++插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18`、`2025-11-25` 和 `2026-07-28` 的工具服务能力。
 +
- 	Second           int64 = 1
- 	SecondsPerMinute       = 60 * Second
- 	SecondsPerHour         = 60 * SecondsPerMinute
-@@ -66,6 +69,7 @@ type ClusterKeyRateLimitConfig struct {
- 	ShowLimitQuotaHeader bool             // 响应头中是否显示X-RateLimit-Limit和X-RateLimit-Remaining
- 	RejectedCode         uint32           // 当请求超过阈值被拒绝时,返回的HTTP状态码
- 	RejectedMsg          string           // 当请求超过阈值被拒绝时,返回的响应体
-+	FailureMode          string
- 	RedisClient          wrapper.RedisClient
- }
++`2025-11-25` 的支持限定于现有 `initialize` → `notifications/initialized` → `tools/list` / `tools/call` 工作流；明确请求该版本时返回相同版本。无版本头且初始化正文请求未知版本时，兼容回退仍为 `2025-06-18`；未知版本头继续被拒绝。此项兼容不扩展 Tasks、Sampling、URL Elicitation、OAuth 或传输能力，也不改变后端版本选择策略。
  
-@@ -161,6 +165,14 @@ func ParseClusterKeyRateLimitConfig(json gjson.Result, config *ClusterKeyRateLim
- 	} else {
- 		config.RejectedMsg = DefaultRejectedMsg
- 	}
-+
-+	config.FailureMode = FailureModeFailOpen
-+	if failureMode := json.Get("failure_mode"); failureMode.Exists() {
-+		config.FailureMode = failureMode.String()
-+	}
-+	if config.FailureMode != FailureModeFailOpen && config.FailureMode != FailureModeFailClosed {
-+		return fmt.Errorf("invalid failure_mode %q: must be %q or %q", config.FailureMode, FailureModeFailOpen, FailureModeFailClosed)
-+	}
- 	return nil
- }
+ 使用内置工具或 REST-to-MCP 时，无需配置后端 MCP 协议策略。代理已有 MCP Server 时，需要根据后端能力配置 `transport` 和 `protocolStrategy`。
  
 ```
 
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/config/config_test.go` (modified, +7/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +3/-1)
 ```diff
-@@ -46,6 +46,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 					Count:      100,
- 					TimeWindow: Second,
- 				},
-+				FailureMode:  FailureModeFailOpen,
- 				RejectedCode: DefaultRejectedCode,
- 				RejectedMsg:  DefaultRejectedMsg,
- 			},
-@@ -64,6 +65,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 					Count:      1000,
- 					TimeWindow: SecondsPerMinute,
- 				},
-+				FailureMode:  FailureModeFailOpen,
- 				RejectedCode: DefaultRejectedCode,
- 				RejectedMsg:  DefaultRejectedMsg,
- 			},
-@@ -112,6 +114,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 						},
- 					},
- 				},
-+				FailureMode:  FailureModeFailOpen,
- 				RejectedCode: DefaultRejectedCode,
- 				RejectedMsg:  DefaultRejectedMsg,
- 			},
-@@ -163,6 +166,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 						},
- 					},
- 				},
-+				FailureMode:  FailureModeFailOpen,
- 				RejectedCode: DefaultRejectedCode,
- 				RejectedMsg:  DefaultRejectedMsg,
- 			},
-@@ -200,6 +204,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 					},
- 				},
- 				ShowLimitQuotaHeader: false,
-+				FailureMode:          FailureModeFailOpen,
- 				RejectedCode:         DefaultRejectedCode,
- 				RejectedMsg:          DefaultRejectedMsg,
- 			},
-@@ -225,6 +230,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 					Count:      100,
- 					TimeWindow: Second,
- 				},
-+				FailureMode:  FailureModeFailOpen,
- 				RejectedCode: 403,
- 				RejectedMsg:  "Forbidden",
- 			},
-@@ -243,6 +249,7 @@ func TestParseClusterKeyRateLimitConfig(t *testing.T) {
- 					TimeWindow: Second,
- 				},
- 				ShowLimitQuotaHeader: true,
-+				FailureMode:          FailureModeFailOpen,
- 				RejectedCode:         DefaultRejectedCode,
- 				RejectedMsg:          DefaultRejectedMsg,
- 			},
+@@ -252,7 +252,9 @@ Legacy and Modern share a **100 MiB** limit for the complete UTF-8 JSON-RPC body
+ 
+ ## Protocol Support and Backend Connections
+ 
+-The plugin supports tool services using MCP `2024-11-05`, `2025-03-26`, `2025-06-18`, and `2026-07-28`.
++The plugin supports tool services using MCP `2024-11-05`, `2025-03-26`, `2025-06-18`, `2025-11-25`, and `2026-07-28`.
++
++`2025-11-25` support covers the existing `initialize` → `notifications/initialized` → `tools/list` / `tools/call` workflow, negotiating the same version when requested. An unknown initialize-body version without a version header still falls back to `2025-06-18`; unknown version headers remain rejected. This compatibility addition does not expand Tasks, Sampling, URL Elicitation, OAuth or transport capabilities, or change backend version selection.
+ 
+ Built-in tools and REST-to-MCP do not require a backend MCP protocol strategy. When proxying an existing MCP server, configure `transport` and `protocolStrategy` according to the backend's capabilities.
+ 
 ```
 
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/main.go` (modified, +50/-7)
+**File**: `plugins/wasm-go/extensions/mcp-server/conformance_test.go` (modified, +4/-4)
 ```diff
-@@ -140,25 +140,53 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
- 	}
- 
- 	err := cfg.RedisClient.Eval(MultiKeyFixedWindowScript, n, keys, args, func(response resp.Value) {
-+		if err := response.Error(); err != nil {
-+			log.Errorf("redis call error: %v", err)
-+			handleRedisFailure(cfg, true)
-+			return
-+		}
-+
-+		if response.Type() != resp.Array {
-+			log.Errorf("unexpected redis response type %s", response.Type())
-+			handleRedisFailure(cfg, true)
-+			return
-+		}
- 		arr := response.Array()
- 		if len(arr) != n {
- 			log.Errorf("redis response length mismatch: got %d, want %d", len(arr), n)
--			_ = proxywasm.ResumeHttpRequest()
-+			handleRedisFailure(cfg, true)
- 			return
- 		}
- 
- 		// 使用 math.MaxFloat64 初始化，避免在 arr[0] 校验前预先读取
- 		tightestIdx := 0
- 		tightestRatio := math.MaxFloat64
-+		tuples := make([][3]int, n)
- 
- 		for i, sub := range arr {
-+			if sub.Type() != resp.Array {
-+				log.Errorf("unexpected redis sub-array response type %s", sub.Type())
-+				handleRedisFailure(cfg, true)
-+				return
-+			}
- 			a := sub.Array()
- 			if len(a) != 3 {
- 				log.Errorf("redis sub-array length mismatch: got %d, want 3", len(a))
--				_ = proxywasm.ResumeHttpRequest()
-+				handleRedisFailure(cfg, true)
- 				return
- 			}
--			threshold, current, ttl := a[0].Integer(), a[1].Integer(), a[2].Integer()
-+			for _, value := range a {
-+				if value.Type() != resp.Integer {
-+					log.Errorf("unexpected redis counter response type %s", value.Type())
-+					handleRedisFailure(cfg, true)
-+					return
-+				}
-+			}
-+			tuples[i] = [3]int{a[0].Integer(), a[1].Integer(), a[2].Integer()}
-+		}
-+
-+		for i, tuple := range tuples {
-+			threshold, current, ttl := tuple[0], tuple[1], tuple[2]
- 			log.Debugf("cluster-key-rate-limit:   eval rule[%d] key=%s threshold=%d current=%d ttl=%ds",
- 				i, matched[i].key, threshold, current, ttl)
- 
-@@ -181,8 +209,8 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
- 		}
- 
- 		// 未触发：写入 tightest 规则到 LimitContext，供 onHttpResponseHeaders 读取 X-RateLimit-* 头
--		tightSub := arr[tightestIdx].Array()
--		tightThreshold, tightCurrent, tightTtl := tightSub[0].Integer(), tightSub[1].Integer(), tightSub[2].Integer()
-+		tightestTuple := tuples[tightestIdx]
-+		tightThreshold, tightCurrent, tightTtl := tightestTuple[0], tightestTuple[1], tightestTuple[2]
- 		log.Debugf("cluster-key-rate-limit: all %d rule(s) within threshold, tightest rule[%d] key=%s (count=%d remaining=%d reset=%ds)",
- 			n, tightestIdx, matched[tightestIdx].key, tightThreshold, tightThreshold-tightCurrent, tightTtl)
- 		ctx.SetContext(LimitContextKey, LimitContext{
-@@ -195,8 +223,7 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.ClusterKeyRateLimi
- 	})
- 
- 	if err != nil {
--		log.Errorf("redis call failed: %v", err)
--		return types.ActionContinue
-+		return handleRedisDispatchError(cfg, err)
- 	}
- 	return types.HeaderStopAllIterationAndWatermark
- }
-@@ -352,6 +379,22 @@ func getDownStreamIp(rule config.LimitRuleItem) (net.IP, error) {
- 	return realIP, nil
- }
- 
-+func handleRedisDispatchError(cfg config.ClusterKeyRateLimitConfig, err error) types.Action {
-+	log.Errorf("redis call failed: %v", err)
-+	return handleRedisFailure(cfg, false)
-+}
-+
-+func handleRedisFailure(cfg config.ClusterKeyRateLimitConfig, resumeOnOpen bool) types.Action {
-+	if cfg.FailureMode == config.FailureModeFailClosed {
-+		proxywasm.SendHttpResponse(503, nil, []byte("Service Unavailable"), -1)
-+		return types.ActionPause
-+	}
-+	if resumeOnOpen {
-+		_ = proxywasm.ResumeHttpRequest()
-+	}
-+	return types.ActionContinue
-+}
-+
- func rejected(config config.ClusterKeyRateLimitConfig, context LimitContext) {
- 	headers := make(map[string][]string)
- 	headers[RateLimitResetHeader] = []string{strconv.Itoa(context.reset)}
-```
-
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/main_test.go` (modified, +173/-0)
-```diff
-@@ -16,14 +16,17 @@ package main
- 
- import (
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"strings"
- 	"testing"
- 
- 	"cluster-key-rate-limit/config"
- 
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/proxytest"
- 	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
- 	"github.com/higress-group/wasm-go/pkg/test"
-+	"github.com/higress-group/wasm-go/pkg/wrapper"
- 	"github.com/stretchr/testify/require"
- 	"github.com/tidwall/resp"
- )
-@@ -296,6 +299,7 @@ func TestParseConfig(t *testing.T) {
- 			require.True(t, parsedConfig.ShowLimitQuotaHeader)
- 			require.Equal(t, uint32(429), parsedConfig.RejectedCode)
- 			require.Equal(t, "Too many requests", parsedConfig.RejectedMsg)
-+			require.Equal(t, config.FailureModeFailOpen, parsedConfig.FailureMode)
- 		})
- 
- 		// 测试基于请求参数的限流配置解析
-@@ -417,6 +421,12 @@ func TestParseConfig(t *testing.T) {
- 			require.Equal(t, config.RegexpType, parsedConfig.RuleItems[0].ConfigItems[0].ConfigType)
- 			require.True(t, parsedConfig.ShowLimitQuotaHeader)
- 		})
-+
-+		t.Run("invalid failure mode", func(t *testing.T) {
-+			host, status := test.NewTestHost(configWithFailureMode(globalThresholdConfig, "invalid"))
-+			defer host.Reset()
-+			require.Equal(t, types.OnPluginStartStatusFailed, status)
-+		})
- 	})
- }
- 
-@@ -814,6 +824,169 @@ func TestOnHttpRequestHeaders(t *testing.T) {
- 	})
- }
- 
-+func configWithFailureMode(raw json.RawMessage, mode string) json.RawMessage {
-+	var value map[string]interface{}
-+	if err := json.Unmarshal(raw, &value); err != nil {
-+		panic(err)
-+	}
-+	value["failure_mode"] = mode
-+	result, err := json.Marshal(value)
-+	if err != nil {
-+		panic(err)
-+	}
-+	return result
-+}
-+
-+type dispatchErrorRedisClient struct {
-+	wrapper.RedisClient
-+	calls int
-+}
-+
-+func (c *dispatchErrorRedisClient) Eval(string, int, []interface{}, []interface{}, wrapper.RedisResponseCallback) error {
-+	c.calls++
-+	return errors.New("dispatch failed")
-+}
-+
-+type dispatchTestContext struct {
-+	wrapper.HttpContext
-+}
-+
-+func (*dispatchTestContext) DisableReroute() {}
-+func (*dispatchTestContext) Host() string    { return "example.com" }
-+func (*dispatchTestContext) Path() string    { return "/api/test" }
-+
-+func TestRedisDispatchFailureModes(t *testing.T) {
-+	test.RunGoTest(t, func(t *testing.T) {
-+		for _, mode := range []string{config.FailureModeFailOpen, config.FailureModeFailClosed} {
-+			t.Run(mode, func(t *testing.T) {
-+				host, status := test.NewTestHost(configWithFailureMode(headerLimitConfig, mode))
-+				defer host.Reset()
-+				require.Equal(t, types.OnPluginStartStatusOK, status)
-+
-+				matchedConfig, err := host.GetMatchConfig()
-+				require.NoError(t, err)
-+				cfg := matchedConfig.(*config.ClusterKeyRateLimitConfig)
-+				cfg.GlobalThreshold = &config.GlobalThreshold{Count: 1000, TimeWindow: 60}
-+				cfg.RuleItems = nil
-+				client := &dispatchErrorRedisClient{}
-+				cfg.RedisClient = client
-+
-+				action := host.CallOnHttpRequestHeaders([][2]string{
-+					{":authority", "example.com"},
-+					{":path", "/api/test"},
-+					{":method", "GET"},
-+				})
-+				require.Equal(t, types.ActionContinue, action)
-+				action = onHttpRequestHeaders(&dispatchTestContext{}, *cfg)
-+
-+				require.Equal(t, 1, client.calls)
-+				if mode == config.FailureModeFailOpen {
-+					require.Equal(t, types.ActionContinue, action)
-+					requireFailOpenRequest(t, host)
-+				} else {
-+					require.Equal(t, types.ActionPause, action)
-+					requireFailureResponseWithoutQuotaHeaders(t, host.GetLocalResponse())
-+				}
-+				host.CompleteHttp()
-+			})
-+		}
-+	})
-+}
-+
-+func TestRedisCallbackFailureModes(t *testing.T) {
-+	test.RunTest(t, func(t *testing.T) {
-+		tests := []struct {
-+			name      string
-+			rawConfig json.RawMessage
-+			status    int32
-+			response  []byte
-+		}{
-+			{name: "callback error", response: test.CreateRedisRespError("redis error")},
-+			{name: "timeout", status: 1},
-+			{name: "protocol error", response: []byte("invalid-resp")},
-+			{name: "malformed response", response: test.CreateRedisRespString("unexpected")},
-+			{name: "malformed scalar tuple", response: []byte("*1\r\n*3\r\n+OK\r\n+OK\r\n+OK\r\n")},
-+			{
-+				name:      "malformed scalar tuple after triggered rule",
-+				rawConfig: hybridLimitConfig,
-+				response:  []byte("*2\r\n*3\r\n:10000\r\n:10001\r\n:60\r\n*3\r\n:100\r\n+OK\r\n:60\r\n"),
-+			},
-+		}
-+		for _, mode := range []string{config.FailureModeFailOpen, config.FailureModeFailClosed} {
-+			for _, tt := range tests {
-+				t.Run(mode+"/"+tt.name, func(t *testing.T) {
-+					rawConfig := tt.rawConfig
-+					if rawConfig == nil {
-+						rawConfig = globalThresholdConfig
-+					}
-+					host, status := test.NewTestHost(configWithFailureMode(rawConfig, mode))
-+					defer host.Reset()
-+					require.Equal(t, types.OnPluginStartStatusOK, status)
-+
-+					action := host.CallOnHttpRequestHeaders([][2]string{
-+						{":authority", "example.com"},
-+						{":path", "/api/test"},
-+						{":method", "GET"},
-+						{"x-api-key", "vip-key"},
-+					})
-+					require.Equal(t, types.HeaderStopAllIterationAndWaterma
-```
-
-**File**: `plugins/wasm-go/extensions/replay-protection/README.md` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ description: 防重放攻击插件配置参考
- | `reject_code`        | int    | 否   | 429        | 拒绝请求时返回的状态码             |
- | `reject_msg`         | string | 否   | `Replay Attack Detected` | 拒绝请求时返回的错误信息           |
- | `validate_base64`    | bool    | 否   | false | 是否校验 nonce 的 base64 编码格式 |
-+| `failure_mode` | string | 否 | `fail_closed` | Redis 调用失败、超时或响应异常时的策略：`fail_closed` 返回固定 503；`fail_open` 放行请求。可用性优先且接受暂时跳过 nonce 去重时可选择 `fail_open`。 |
- | `redis` | Object | 是   | -              | redis 相关配置 |
- 
- `redis` 中每一项的配置字段说明
-```
-
-**File**: `plugins/wasm-go/extensions/replay-protection/README_EN.md` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ Plugin execution priority: `800`
- | `reject_code`        | int    | No   | 429        | The status code returned when a request is rejected.             |
- | `reject_msg`         | string | No   | `Replay Attack Detected` | The error message returned when a request is rejected.           |
- | `validate_base64`    | bool    | No   | false | Whether to verify the Base64 encoding format of the nonce. |
-+| `failure_mode` | string | No | `fail_closed` | Policy for Redis call failures, timeouts, and invalid responses: `fail_closed` returns a fixed 503; `fail_open` allows the request. Choose `fail_open` only when availability takes priority over temporary nonce deduplication. |
- | `redis` | Object | Yes   | -              | Redis-related configuration |
- 
- Description of each configuration field in `redis`
-```
-
----
-
-### Incident Patch 2: `5638911c` (2026-11-01)
-**Commit Message**: test(plugins): add HTTP/2 DATA body regression coverage (#5286)
-
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-go/extensions/ext-auth/go.mod` (modified, +3/-0)
-```diff
-@@ -14,6 +14,8 @@ require (
- 	github.com/tidwall/gjson v1.18.0
- )
- 
-+require golang.org/x/text v0.28.0 // indirect
-+
- require (
- 	github.com/davecgh/go-spew v1.1.1 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
-@@ -23,5 +25,6 @@ require (
- 	github.com/tidwall/pretty v1.2.1 // indirect
- 	github.com/tidwall/resp v0.1.1 // indirect
- 	github.com/tidwall/sjson v1.2.5 // indirect
-+	golang.org/x/net v0.43.0
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
- )
-```
-
-**File**: `plugins/wasm-go/extensions/ext-auth/go.sum` (modified, +4/-0)
-```diff
-@@ -24,6 +24,10 @@ github.com/tidwall/resp v0.1.1 h1:Ly20wkhqKTmDUPlyM1S7pWo5kk0tDu8OoC/vFArXmwE=
- github.com/tidwall/resp v0.1.1/go.mod h1:3/FrruOBAxPTPtundW0VXgmsQ4ZBA0Aw714lVYgwFa0=
- github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
- github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
-+golang.org/x/net v0.43.0 h1:lat02VYK2j4aLzMzecihNvTlJNQUq316m2Mr9rnM6YE=
-+golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
-+golang.org/x/text v0.28.0 h1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=
-+golang.org/x/text v0.28.0/go.mod h1:U8nCwOR8jO/marOQ0QbDiOngZVEBB7MAiitBuMjXiNU=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
- gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
-```
-
-**File**: `plugins/wasm-go/extensions/ext-auth/http2_body_test.go` (added, +160/-0)
-```diff
-@@ -0,0 +1,160 @@
-+// Copyright (c) 2024 Alibaba Group Holding Ltd.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"bytes"
-+	"io"
-+	"net"
-+	"testing"
-+	"time"
-+
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
-+	"github.com/higress-group/wasm-go/pkg/test"
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/net/http2"
-+	"golang.org/x/net/http2/hpack"
-+)
-+
-+type extAuthHTTP2Result struct {
-+	headerAction types.Action
-+	bodyActions  []types.Action
-+}
-+
-+// Raw frames make DATA boundaries and omitted content headers deterministic.
-+func runExtAuthHTTP2Request(t *testing.T, host test.TestHost, headers [][2]string, chunks [][]byte) extAuthHTTP2Result {
-+	t.Helper()
-+	clientConn, serverConn := net.Pipe()
-+	defer clientConn.Close()
-+	deadline := time.Now().Add(5 * time.Second)
-+	require.NoError(t, clientConn.SetDeadline(deadline))
-+	require.NoError(t, serverConn.SetDeadline(deadline))
-+
-+	var result extAuthHTTP2Result
-+	done := make(chan error, 1)
-+	go func() {
-+		defer serverConn.Close()
-+		preface := make([]byte, len(http2.ClientPreface))
-+		if _, err := io.ReadFull(serverConn, preface); err != nil {
-+			done <- err
-+			return
-+		}
-+		framer := http2.NewFramer(serverConn, serverConn)
-+		for {
-+			frame, err := framer.ReadFrame()
-+			if err != nil {
-+				done <- err
-+				return
-+			}
-+			switch f := frame.(type) {
-+			case *http2.HeadersFrame:
-+				decoder := hpack.NewDecoder(4096, nil)
-+				fields, err := decoder.DecodeFull(f.HeaderBlockFragment())
-+				if err != nil {
-+					done <- err
-+					return
-+				}
-+				requestHeaders := make([][2]string, 0, len(fields))
-+				for _, field := range fields {
-+					requestHeaders = append(requestHeaders, [2]string{field.Name, field.Value})
-+				}
-+				result.headerAction = host.CallOnHttpRequestHeaders(requestHeaders)
-+			case *http2.DataFrame:
-+				result.bodyActions = append(result.bodyActions, host.CallOnHttpStreamingRequestBody(f.Data(), f.StreamEnded()))
-+				if f.StreamEnded() {
-+					done <- nil
-+					return
-+				}
-+			}
-+		}
-+	}()
-+
-+	_, err := io.WriteString(clientConn, http2.ClientPreface)
-+	require.NoError(t, err)
-+	framer := http2.NewFramer(clientConn, clientConn)
-+	require.NoError(t, framer.WriteSettings())
-+	var block bytes.Buffer
-+	encoder := hpack.NewEncoder(&block)
-+	for _, header := range headers {
-+		require.NoError(t, encoder.WriteField(hpack.HeaderField{Name: header[0], Value: header[1]}))
-+	}
-+	require.NoError(t, framer.WriteHeaders(http2.HeadersFrameParam{
-+		StreamID:      1,
-+		BlockFragment: block.Bytes(),
-+		EndHeaders:    true,
-+	}))
-+	for i, chunk := range chunks {
-+		require.NoError(t, framer.WriteData(1, i == len(chunks)-1, chunk))
-+	}
-+	require.NoError(t, <-done)
-+	return result
-+}
-+
-+func TestExtAuthHTTP2BodyDelivery(t *testing.T) {
-+	test.RunGoTest(t, func(t *testing.T) {
-+		payload := []byte("body-over-http2-data")
-+		tests := []struct {
-+			name   string
-+			chunks [][]byte
-+		}{
-+			{name: "single DATA without content headers", chunks: [][]byte{payload}},
-+			{name: "multiple DATA frames", chunks: [][]byte{payload[:3], payload[3:8], payload[8:]}},
-+			{name: "empty then non-empty DATA", chunks: [][]byte{{}, payload}},
-+			{name: "non-empty DATA then empty END_STREAM", chunks: [][]byte{payload, {}}},
-+		}
-+		for _, tt := range tests {
-+			t.Run(tt.name, func(t *testing.T) {
-+				host, status := test.NewTestHost(withRequestBodyConfig)
-+				defer host.Reset()
-+				require.Equal(t, types.OnPluginStartStatusOK, status)
-+
-+				result := runExtAuthHTTP2Request(t, host, [][2]string{
-+					{":method", "POST"}, {":scheme", "http"}, {":path", "/users"}, {":authority", "example.com"},
-+				}, tt.chunks)
-+
-+				require.Equal(t, types.ActionPause, result.headerAction)
-+				require.Len(t, result.bodyActions, len(tt.chunks))
-+				for i, action := range result.bodyActions {
-+					require.Equal(t, types.ActionPause, action, "unexpected body-phase action for DATA frame %d", i)
-+				}
-+				callouts := host.GetHttpCalloutAttributes()
-+				require.Len(t, callouts, 1)
-+				require.Equal(t, payload, callouts[0].Body)
-+			})
-+		}
-+	})
-+}
-+
-+func TestExtAuthHTTP2EncodedBodyCompatibility(t *testing.T) {
-+	test.RunGoTest(t, func(t *testing.T) {
-+		host, status := test.NewTestHost(withRequestBodyConfig)
-+		defer host.Reset()
-+		require.Equal(t, types.OnPluginStartStatusOK, status)
-+
-+		payload := []byte("encoded-body")
-+		result := runExtAuthHTTP2Request(t, host, [][2]string{
-+			{":method", "POST"}, {":sc
-```
-
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.mod` (modified, +3/-0)
-```diff
-@@ -11,6 +11,8 @@ require (
- 	github.com/tidwall/gjson v1.18.0
- )
- 
-+require golang.org/x/text v0.28.0 // indirect
-+
- require (
- 	github.com/davecgh/go-spew v1.1.1 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
-@@ -20,5 +22,6 @@ require (
- 	github.com/tidwall/pretty v1.2.1 // indirect
- 	github.com/tidwall/resp v0.1.1 // indirect
- 	github.com/tidwall/sjson v1.2.5 // indirect
-+	golang.org/x/net v0.43.0
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
- )
-```
-
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.sum` (modified, +4/-0)
-```diff
-@@ -24,6 +24,10 @@ github.com/tidwall/resp v0.1.1 h1:Ly20wkhqKTmDUPlyM1S7pWo5kk0tDu8OoC/vFArXmwE=
- github.com/tidwall/resp v0.1.1/go.mod h1:3/FrruOBAxPTPtundW0VXgmsQ4ZBA0Aw714lVYgwFa0=
- github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
- github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
-+golang.org/x/net v0.43.0 h1:lat02VYK2j4aLzMzecihNvTlJNQUq316m2Mr9rnM6YE=
-+golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
-+golang.org/x/text v0.28.0 h1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=
-+golang.org/x/text v0.28.0/go.mod h1:U8nCwOR8jO/marOQ0QbDiOngZVEBB7MAiitBuMjXiNU=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
- gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
-```
-
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/http2_body_test.go` (added, +159/-0)
-```diff
-@@ -0,0 +1,159 @@
-+// Copyright (c) 2025 Alibaba Group Holding Ltd.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"bytes"
-+	"io"
-+	"net"
-+	"testing"
-+	"time"
-+
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
-+	"github.com/higress-group/wasm-go/pkg/test"
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/net/http2"
-+	"golang.org/x/net/http2/hpack"
-+)
-+
-+type hmacHTTP2Result struct {
-+	headerAction types.Action
-+	bodyActions  []types.Action
-+}
-+
-+// Raw frames make DATA boundaries and omitted content headers deterministic.
-+func runHmacHTTP2Request(t *testing.T, host test.TestHost, headers [][2]string, chunks [][]byte) hmacHTTP2Result {
-+	t.Helper()
-+	clientConn, serverConn := net.Pipe()
-+	defer clientConn.Close()
-+	deadline := time.Now().Add(5 * time.Second)
-+	require.NoError(t, clientConn.SetDeadline(deadline))
-+	require.NoError(t, serverConn.SetDeadline(deadline))
-+
-+	var result hmacHTTP2Result
-+	done := make(chan error, 1)
-+	go func() {
-+		defer serverConn.Close()
-+		preface := make([]byte, len(http2.ClientPreface))
-+		if _, err := io.ReadFull(serverConn, preface); err != nil {
-+			done <- err
-+			return
-+		}
-+		framer := http2.NewFramer(serverConn, serverConn)
-+		for {
-+			frame, err := framer.ReadFrame()
-+			if err != nil {
-+				done <- err
-+				return
-+			}
-+			switch f := frame.(type) {
-+			case *http2.HeadersFrame:
-+				decoder := hpack.NewDecoder(4096, nil)
-+				fields, err := decoder.DecodeFull(f.HeaderBlockFragment())
-+				if err != nil {
-+					done <- err
-+					return
-+				}
-+				requestHeaders := make([][2]string, 0, len(fields))
-+				for _, field := range fields {
-+					requestHeaders = append(requestHeaders, [2]string{field.Name, field.Value})
-+				}
-+				result.headerAction = host.CallOnHttpRequestHeaders(requestHeaders)
-+			case *http2.DataFrame:
-+				result.bodyActions = append(result.bodyActions, host.CallOnHttpStreamingRequestBody(f.Data(), f.StreamEnded()))
-+				if f.StreamEnded() {
-+					done <- nil
-+					return
-+				}
-+			}
-+		}
-+	}()
-+
-+	_, err := io.WriteString(clientConn, http2.ClientPreface)
-+	require.NoError(t, err)
-+	framer := http2.NewFramer(clientConn, clientConn)
-+	require.NoError(t, framer.WriteSettings())
-+	var block bytes.Buffer
-+	encoder := hpack.NewEncoder(&block)
-+	for _, header := range headers {
-+		require.NoError(t, encoder.WriteField(hpack.HeaderField{Name: header[0], Value: header[1]}))
-+	}
-+	require.NoError(t, framer.WriteHeaders(http2.HeadersFrameParam{
-+		StreamID:      1,
-+		BlockFragment: block.Bytes(),
-+		EndHeaders:    true,
-+	}))
-+	for i, chunk := range chunks {
-+		require.NoError(t, framer.WriteData(1, i == len(chunks)-1, chunk))
-+	}
-+	require.NoError(t, <-done)
-+	return result
-+}
-+
-+func TestHmacHTTP2BodyDigest(t *testing.T) {
-+	test.RunGoTest(t, func(t *testing.T) {
-+		payload := []byte("body-over-http2-data")
-+		tests := []struct {
-+			name            string
-+			chunks          [][]byte
-+			incorrectDigest bool
-+		}{
-+			{name: "single DATA without content headers", chunks: [][]byte{payload}},
-+			{name: "multiple DATA frames", chunks: [][]byte{payload[:3], payload[3:8], payload[8:]}},
-+			{name: "empty then non-empty DATA with incorrect digest", chunks: [][]byte{{}, payload}, incorrectDigest: true},
-+			{name: "non-empty DATA then empty END_STREAM", chunks: [][]byte{payload, {}}},
-+		}
-+		for _, tt := range tests {
-+			t.Run(tt.name, func(t *testing.T) {
-+				host, status := test.NewTestHost(createConfig(
-+					[]map[string]interface{}{{"name": "consumer1", "access_key": "ak1", "secret_key": "sk1"}},
-+					map[string]interface{}{"global_auth": true, "validate_request_body": true},
-+				))
-+				defer host.Reset()
-+				require.Equal(t, types.OnPluginStartStatusOK, status)
-+
-+				date := gmt()
-+				auth := authHeaderRequestTargetDate("ak1", "sk1", "hmac-sha256", "POST", "/p", date)
-+				digestBody := payload
-+				if tt.incorrectDigest {
-+					digestBody = []byte("different")
-+				}
-+				result := runHmacHTTP2Request(t, host, [][2]string{
-+					{":method", "POST"}, {":scheme", "http"}, {":path", "/p"}, {":authority", "e.com"},
-+					{"authorization", auth}, {"date", date}, {"digest", calculateBodyDigest(digestBody)},
-+				}, tt.chunks)
-+
-+				require.Equal(t, types.ActionPause, result.headerAction,
-+					"HeaderStopIteration must hold the request for body validation")
-+				require.Len(t, result.bodyActions, len(tt.chunks))
-+				for i, action := range result.bodyActions {
-+					expected := type
-```
-
----
-
-### Incident Patch 3: `03a91cb3` (2026-11-03)
-**Commit Message**: fix(mcp): remove user-level mode and validate sessions (5294)
-
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
-
-**File**: `pkg/ingress/kube/configmap/mcp_server.go` (modified, +21/-60)
-```diff
-@@ -56,16 +56,6 @@ type SecretKeyReference struct {
- 	Key string `json:"key,omitempty"`
- }
- 
--// MCPRatelimitConfig defines the configuration for rate limit
--type MCPRatelimitConfig struct {
--	// The limit of the rate limit
--	Limit int64 `json:"limit,omitempty"`
--	// The window of the rate limit
--	Window int64 `json:"window,omitempty"`
--	// The white list of the rate limit
--	WhiteList []string `json:"white_list,omitempty"`
--}
--
- // SSEServer defines the configuration for Server-Sent Events (SSE) server
- type SSEServer struct {
- 	// The name of the SSE server
-@@ -82,6 +72,9 @@ type SSEServer struct {
- 
- // MatchRule defines a rule for matching requests
- type MatchRule struct {
-+	// Name of the MCP server that owns this rule. When empty, mcp-session
-+	// binds sessions to the rule's own match key.
-+	ServerName string `json:"server_name,omitempty"`
- 	// Domain pattern, supports wildcards
- 	MatchRuleDomain string `json:"match_rule_domain,omitempty"`
- 	// Path pattern to match
-@@ -108,18 +101,13 @@ type McpServer struct {
- 	Servers []*SSEServer `json:"servers,omitempty"`
- 	// List of match rules for filtering requests
- 	MatchList []*MatchRule `json:"match_list,omitempty"`
--	// Flag to control whether user level server is enabled
--	EnableUserLevelServer bool `json:"enable_user_level_server,omitempty"`
--	// Rate limit config for MCP server
--	Ratelimit *MCPRatelimitConfig `json:"rate_limit,omitempty"`
- }
- 
- func NewDefaultMcpServer() *McpServer {
- 	return &McpServer{
--		Enable:                false,
--		Servers:               make([]*SSEServer, 0),
--		MatchList:             make([]*MatchRule, 0),
--		EnableUserLevelServer: false,
-+		Enable:    false,
-+		Servers:   make([]*SSEServer, 0),
-+		MatchList: make([]*MatchRule, 0),
- 	}
- }
- 
-@@ -171,9 +159,11 @@ type golangPluginConfig struct {
- 	Value interface{} `json:"value"`
- }
- 
--// mcpSessionMatchRule is the wire form of a match_list entry. Every field is
--// always emitted, matching what mcp-session's ParseMatchList expects.
-+// mcpSessionMatchRule is the wire form of a match_list entry. Match fields are
-+// always emitted, matching what mcp-session's ParseMatchList expects;
-+// server_name is omitted when the rule has no server identity.
- type mcpSessionMatchRule struct {
-+	ServerName        string `json:"server_name,omitempty"`
- 	MatchRuleDomain   string `json:"match_rule_domain"`
- 	MatchRulePath     string `json:"match_rule_path"`
- 	MatchRuleType     string `json:"match_rule_type"`
-@@ -189,18 +179,10 @@ type mcpSessionRedisConfig struct {
- 	DB       int    `json:"db"`
- }
- 
--type mcpSessionRateLimitConfig struct {
--	Limit     int64    `json:"limit"`
--	Window    int64    `json:"window"`
--	WhiteList []string `json:"white_list"`
--}
--
- type mcpSessionPluginValue struct {
--	Redis                 *mcpSessionRedisConfig     `json:"redis"`
--	RateLimit             *mcpSessionRateLimitConfig `json:"rate_limit"`
--	SSEPathSuffix         string                     `json:"sse_path_suffix"`
--	MatchList             []mcpSessionMatchRule      `json:"match_list"`
--	EnableUserLevelServer bool                       `json:"enable_user_level_server"`
-+	Redis         *mcpSessionRedisConfig `json:"redis"`
-+	SSEPathSuffix string                 `json:"sse_path_suffix"`
-+	MatchList     []mcpSessionMatchRule  `json:"match_list"`
- }
- 
- // mcpServerEntry is the wire form of a servers entry. domain_list and config
-@@ -232,6 +214,7 @@ func newGolangFilterConfig(pluginName string, value interface{}) golangFilterCon
- 
- func newMcpSessionMatchRule(rule *MatchRule) mcpSessionMatchRule {
- 	return mcpSessionMatchRule{
-+		ServerName:        rule.ServerName,
- 		MatchRuleDomain:   rule.MatchRuleDomain,
- 		MatchRulePath:     rule.MatchRulePath,
- 		MatchRuleType:     rule.MatchRuleType,
-@@ -307,6 +290,9 @@ func validMatchRule(rule *MatchRule) error {
- 	if rule.EnablePathRewrite && rule.UpstreamType != "sse" {
- 		return errors.New("path rewrite is only supported for SSE upstream type")
- 	}
-+	if err := mcpserver.ValidateRuleValue("server_name", rule.ServerName); err != nil {
-+		return err
-+	}
- 	// An empty domain is allowed and matches any host, so only the character
- 	// constraints are enforced here.
- 	return mcpserver.ValidateRuleContent([]string{rule.MatchRuleDomain}, rule.MatchRulePath, rule.PathRewritePrefix)
-@@ -326,10 +312,6 @@ func validMcpServer(m *McpServer) error {
- 		}
- 	}
- 
--	if m.EnableUserLevelServer && m.Redis == nil {
--		return errors.New("redis config cannot be empty when user level server is enabled")
--	}
--
- 	// Validate match rule types
- 	for _, rule := range m.MatchList {
- 		if err := validMatchRule(rule); err != nil {
-@@ -375,17 +357,8 @@ func deepCopyMcpServer(mcp *McpServer) (*McpServer, error) {
- 			}
- 		}
- 	}
--	if mcp.Ratelimit != nil {
--		newMcp.Ratelimit = &MCPRatelimitConfig{
--			Limit:     mcp.Ratelimit.Limit,
--			Window:    mcp.Ratelimit.Window,
--			WhiteList: mcp.Ratelimit.WhiteList,
--		}
--	}
- 	newMcp.SSEPathSuffix = mcp.SSEPathSuffix
- 
--	newMcp.EnableUserLevelServer = mcp.Enabl
-```
-
-**File**: `pkg/ingress/kube/configmap/mcp_server_test.go` (modified, +16/-62)
-```diff
-@@ -48,20 +48,18 @@ func Test_validMcpServer(t *testing.T) {
- 		{
- 			name: "enabled but no redis config",
- 			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: false,
--				Redis:                 nil,
--				MatchList:             []*MatchRule{},
--				Servers:               []*SSEServer{},
-+				Enable:    true,
-+				Redis:     nil,
-+				MatchList: []*MatchRule{},
-+				Servers:   []*SSEServer{},
- 			},
- 			wantErr: nil,
- 		},
- 		{
- 			name: "enabled but bad match_rule_type",
- 			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: false,
--				Redis:                 nil,
-+				Enable: true,
-+				Redis:  nil,
- 				MatchList: []*MatchRule{
- 					{
- 						MatchRuleDomain: "*",
-@@ -76,9 +74,8 @@ func Test_validMcpServer(t *testing.T) {
- 		{
- 			name: "enabled but bad upstream_type",
- 			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: false,
--				Redis:                 nil,
-+				Enable: true,
-+				Redis:  nil,
- 				MatchList: []*MatchRule{
- 					{
- 						MatchRuleDomain: "*",
-@@ -94,9 +91,8 @@ func Test_validMcpServer(t *testing.T) {
- 		{
- 			name: "enabled but path rewrite with unsupported upstream type",
- 			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: false,
--				Redis:                 nil,
-+				Enable: true,
-+				Redis:  nil,
- 				MatchList: []*MatchRule{
- 					{
- 						MatchRuleDomain:   "*",
-@@ -111,17 +107,6 @@ func Test_validMcpServer(t *testing.T) {
- 			},
- 			wantErr: errors.New("path rewrite is only supported for SSE upstream type"),
- 		},
--		{
--			name: "enabled with user level server but no redis config",
--			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: true,
--				Redis:                 nil,
--				MatchList:             []*MatchRule{},
--				Servers:               []*SSEServer{},
--			},
--			wantErr: errors.New("redis config cannot be empty when user level server is enabled"),
--		},
- 		{
- 			name: "redis config with password secret missing name",
- 			mcp: &McpServer{
-@@ -149,8 +134,7 @@ func Test_validMcpServer(t *testing.T) {
- 		{
- 			name: "valid config with redis",
- 			mcp: &McpServer{
--				Enable:                true,
--				EnableUserLevelServer: true,
-+				Enable: true,
- 				Redis: &RedisConfig{
- 					Address:  "localhost:6379",
- 					Username: "default",
-@@ -569,19 +553,6 @@ func TestMcpServerController_ValidHigressConfig(t *testing.T) {
- 			},
- 			wantErr: nil,
- 		},
--		{
--			name: "invalid config - user level server without redis",
--			higressConfig: &HigressConfig{
--				McpServer: &McpServer{
--					Enable:                true,
--					EnableUserLevelServer: true,
--					Redis:                 nil,
--					MatchList:             []*MatchRule{},
--					Servers:               []*SSEServer{},
--				},
--			},
--			wantErr: errors.New("redis config cannot be empty when user level server is enabled"),
--		},
- 	}
- 
- 	for _, tt := range tests {
-@@ -670,10 +641,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 							"password": "",
- 							"db": 0
- 						},
--						"rate_limit": null,
- 						"sse_path_suffix": "",
--						"match_list": [],
--						"enable_user_level_server": false
-+						"match_list": []
+@@ -138,7 +138,7 @@ func TestOfficial20260728PositiveRequestsAndCapabilityHonesty(t *testing.T) {
+ 				case "server/discover":
+ 					minimumTools := readOfficialFixture(t, "tools-minimum-capability.json")
+ 					require.JSONEq(t, string(minimumTools), gjson.GetBytes(response.Data, "result.capabilities").Raw)
+-					require.JSONEq(t, `["2024-11-05","2025-03-26","2025-06-18","2026-07-28"]`, gjson.GetBytes(response.Data, "result.supportedVersions").Raw)
++					require.JSONEq(t, `["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"]`, gjson.GetBytes(response.Data, "result.supportedVersions").Raw)
+ 					assertCacheWireContract(t, response)
+ 					for _, path := range []string{
+ 						"result.capabilities.tools.listChanged",
+@@ -152,7 +152,7 @@ func TestOfficial20260728PositiveRequestsAndCapabilityHonesty(t *testing.T) {
+ 					} {
+ 						require.False(t, gjson.GetBytes(response.Data, path).Exists(), "%s leaked in %s", path, response.Data)
  					}
- 				}
- 			}`,
-@@ -710,12 +679,6 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 						PathRewritePrefix: "/mcp",
- 					},
- 				},
--				EnableUserLevelServer: true,
--				Ratelimit: &MCPRatelimitConfig{
--					Limit:     100,
--					Window:    3600,
--					WhiteList: []string{"user1", "user2"},
--				},
- 			},
- 			wantJSON: `{
- 				"@type": "type.googleapis.com/envoy.extensions.filters.http.golang.v3alpha.Config",
-@@ -731,11 +694,6 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 							"password": "pass",
- 							"db": 1
- 						},
--						"rate_limit": {
--							"limit": 100,
--							"window": 3600,
--							"white_list": ["user1","user2"]
--						},
- 						"sse_path_suffix": "/sse",
- 						"match_list": [{
- 							"match_rule_domain": "*",
-@@ -758,8 +716,7 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 							"upstream_type": "sse",
- 							"enable_path_rewrite": true,
- 							"path_rewrite_prefix": "/mcp"
--						}],
--						"enable_user_level_server": true
-+						}]
- 					}
- 				}
- 			}`,
-@@ -793,10 +750,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 							"password": "${secret.test-namespace/redis-credentials.password}",
- 							"db": 0
- 						},
--						"rate_limit": null,
- 						"sse_path_suffix": "",
--						"match_list": [],
--						"enable_user_level_server": false
-+						"match_list": []
- 					}
- 				}
- 			}`,
-@@ -830,10 +785,8 @@ func TestMcpServerController_constructMcpSessionStruct(t *testing.T) {
- 							"password": "${secret.other-ns/redis-credentials.password}",
- 							"db": 0
- 						},
--						"rate_limit": null,
- 						"sse_path_suffix": "",
--						"match_list": [],
--						"enable_user_level_server": false
-+						"matc
+-					require.False(t, gjson.GetBytes(response.Data, `result.supportedVersions.#(=="2025-11-25")`).Exists())
++					require.True(t, gjson.GetBytes(response.Data, `result.supportedVersions.#(=="2025-11-25")`).Exists())
+ 				case "tools/list":
+ 					require.Equal(t, "get_weather", gjson.GetBytes(response.Data, "result.tools.0.name").String())
+ 					assertCacheWireContract(t, response)
+@@ -358,7 +358,7 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
+ 		Code:       -32022,
+ 		Message:    "unsupported MCP protocol version",
+ 		ID:         `"list-tools-example"`,
+-		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2026-07-28"],"requested":"1900-01-01"}`,
++		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"],"requested":"1900-01-01"}`,
+ 		Reference:  "unsupported-version-error.json",
+ 	}
+ 
+@@ -369,7 +369,7 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
+ 		Code:       -32022,
+ 		Message:    "unsupported MCP protocol version",
+ 		ID:         "null",
+-		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2026-07-28"],"requested":"1900-01-01"}`,
++		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"],"requested":"1900-01-01"}`,
+ 		Reference:  "unsupported-version-error.json",
+ 	}
+ 
 ```
 
-**File**: `plugins/golang-filter/mcp-session/common/match.go` (modified, +23/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@ package common
- 
- import (
- 	"regexp"
-+	"strconv"
- 	"strings"
- 
- 	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
-@@ -40,6 +41,7 @@ type HostMatcher struct {
- 
- // MatchRule defines the structure for a matching rule
- type MatchRule struct {
-+	ServerName        string       `json:"server_name"`         // MCP server that owns this rule, when known
- 	MatchRuleDomain   string       `json:"match_rule_domain"`   // Domain pattern, supports wildcards
- 	MatchRulePath     string       `json:"match_rule_path"`     // Path pattern to match
- 	MatchRuleType     RuleType     `json:"match_rule_type"`     // Type of match rule
-@@ -55,6 +57,9 @@ func ParseMatchList(matchListConfig []interface{}) []MatchRule {
- 	for _, item := range matchListConfig {
- 		if ruleMap, ok := item.(map[string]interface{}); ok {
- 			rule := MatchRule{}
-+			if serverName, ok := ruleMap["server_name"].(string); ok {
-+				rule.ServerName = serverName
-+			}
- 			if domain, ok := ruleMap["match_rule_domain"].(string); ok {
- 				rule.MatchRuleDomain = domain
+@@ -3668,7 +3668,7 @@ func TestPlugin_McpProtocolVersionUnsupportedRejected(t *testing.T) {
+ 				"code": -32022,
+ 				"message": "unsupported MCP protocol version",
+ 				"data": {
+-					"supported": ["2024-11-05", "2025-03-26", "2025-06-18", "2026-07-28"],
++					"supported": ["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25", "2026-07-28"],
+ 					"requested": "9999-99-99"
+ 				}
  			}
-@@ -101,6 +106,24 @@ func ParseMatchList(matchListConfig []interface{}) []MatchRule {
- 	return matchList
- }
- 
-+// SessionServerName returns the identity a session must be bound to for this
-+// rule. A rule that carries an explicit server name uses it directly. When the
-+// server name is unavailable, the rule's own match key is used so that distinct
-+// rules never share sessions. There is deliberately no global fallback: using
-+// one would make sessions replayable across routes.
-+func (rule MatchRule) SessionServerName() string {
-+	if rule.ServerName != "" {
-+		return rule.ServerName
-+	}
-+	return "rule:" +
-+		encodeKeyComponent(rule.MatchRuleDomain) + ":" +
-+		encodeKeyComponent(rule.MatchRulePath) + ":" +
-+		encodeKeyComponent(string(rule.MatchRuleType)) + ":" +
-+		encodeKeyComponent(string(rule.UpstreamType)) + ":" +
-+		encodeKeyComponent(strconv.FormatBool(rule.EnablePathRewrite)) + ":" +
-+		encodeKeyComponent(rule.PathRewritePrefix)
-+}
-+
- // stripPortFromHost removes port from host string
- // Port removing code is inspired by
- // https://github.com/envoyproxy/envoy/blob/v1.17.0/source/common/http/header_utility.cc#L219
 ```
 
-**File**: `plugins/golang-filter/mcp-session/common/match_test.go` (added, +53/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +30/-1)
 ```diff
-@@ -0,0 +1,53 @@
-+package common
+@@ -1,7 +1,7 @@
+ # MCP compatibility runtime verification
+ 
+ The default `run.sh` entry delegates to `run-compat.sh`. This loop builds a clean
+-exact candidate and two pinned sources, uses the existing Compose backend,
++exact candidate and three pinned sources, uses the existing Compose backend,
+ Envoy renderer, bounded lifecycle helpers and evidence finalizer, then runs the
+ existing routing regression runner. It does not certify native, official-client
+ or kind acceptance; those checks remain separate verification commands.
+@@ -40,6 +40,7 @@ name; it neither reads provider credentials nor operates on a Kubernetes cluster
+ | --- | --- | --- |
+ | Business oracle | `958b5e7f8e0062d1e26963d008e7be4b707fa715` | Corresponding historical Legacy business path |
+ | Control/scope baseline | `bde990b4bfc7ecb581338e2d0ae858aaedb2fd69` | Retained probe/handshake/cancellation and instructions scope |
++| November compatibility baseline | `03a91cb3fbe2664ac190868ee062ca6bccbba4e2` | Same-input rejection/fallback comparison for downstream `2025-11-25` |
+ | Candidate | Clean checkout HEAD | Independent acceptance assertions and corresponding business comparison |
+ 
+ The control binary also runs five explicitly labelled diagnostic red cases:
+@@ -60,6 +61,34 @@ external request target/method and vendor response templates are adapted to the
+ observable local backend. Their source and derived fixture hashes and exact
+ adaptations are recorded in `builtin-manifest.json`.
+ 
++## Downstream `2025-11-25` comparison
 +
-+import (
-+	"strings"
-+	"testing"
++The normal entry also builds the dedicated pre-fix module and runs 17 focused
++cases (21 exchanges) against that module and the candidate. The historical
++business oracle and control/scope baseline retain their original roles and
++expectations. Both new variants load `plugin.wasm` through byte-identical Envoy
++configuration and receive the same request bodies and headers; their config,
++request and header hashes must match during finalization.
 +
-+	"github.com/stretchr/testify/require"
-+)
++`nov25-<variant>.json` preserves the responses and assertions separately. It
++checks initialize with/without a version header, older same-version negotiation,
++unknown-body fallback fixed at `2025-06-18`, unknown-header and strict modern
++identity rejection, and exact discovery versions/capabilities/result metadata.
++The complete initialize -> initialized -> list -> successful call -> failed call
++sequence uses a deterministic legacy RealMCP peer. Its descriptor/input schema,
++client IDs, content and `isError` are asserted. The baseline rejects every
++November-header request before any backend operation; the candidate records
++three upstream handshakes and exactly three business operations. The ledger
++records upstream protocol/initialize versions and a synthetic session alias to
++prove the downstream version is not copied upstream or executed twice.
 +
-+func TestParseMatchListCarriesServerName(t *testing.T) {
-+	rules := ParseMatchList([]interface{}{
-+		map[string]interface{}{
-+			"server_name":       "orders",
-+			"match_rule_domain": "orders.example.com",
-+			"match_rule_path":   "/mcp",
-+			"match_rule_type":   "prefix",
-+			"upstream_type":     "rest",
-+		},
-+	})
++This is existing handshake-based Tools coverage. It adds no optional MCP
++capabilities or upstream version policy, and preserves the upstream-only
++`2025-11-25` auto-detection rejection tests. Finalization requires both complete
++focused exchange/access ledgers, source/module/toolchain/Wasm identities,
++equivalent config/input hashes and successful cleanup. Native fixture self-tests
++do not claim real Envoy acceptance.
 +
-+	require.Len(t, rules, 1)
-+	require.Equal(t, "orders", rules[0].ServerName)
-+	require.Equal(t, "orders", rules[0].SessionServerName())
-+}
-+
-+func TestSessionServerNameUsesServerName(t *testing.T) {
-+	rule := MatchRule{ServerName: "server-A"}
-+	require.Equal(t, "server-A", rule.SessionServerName())
-+}
-+
-+func TestSessionServerNameFallsBackToRuleKey(t *testing.T) {
-+	ruleA := MatchRule{
-+		MatchRuleDomain: "a.example.com",
-+		MatchRulePath:   "/server-a",
-+		MatchRuleType:   PrefixMatch,
-+		UpstreamType:    RestUpstream,
-+	}
-+	ruleB := MatchRule{
-+		MatchRuleDomain: "b.example.com",
-+		MatchRulePath:   "/server-b",
-+		MatchRuleType:   PrefixMatch,
-+		UpstreamType:    RestUpstream,
-+	}
-+
-+	nameA := ruleA.SessionServerName()
-+	require.True(t, strings.HasPrefix(nameA, "rule:"))
-+	require.NotEqual(t, nameA, ruleB.SessionServerName())
-+
-+	// The key is stable for the same rule and changes with its match fields.
-+	require.Equal(t, nameA, ruleA.SessionServerName())
-+	ruleA.MatchRulePath = "/server-c"
-+	require.NotEqual(t, nameA, ruleA.SessionServerName())
-+}
+ ## Independent cases and observability
+ 
+ `compat_contract.py` enumerates unique case IDs and expected per-case downstream
 ```
 
-**File**: `plugins/golang-filter/mcp-session/common/redis.go` (modified, +4/-23)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_backend.py` (modified, +14/-1)
 ```diff
-@@ -2,13 +2,16 @@ package common
+@@ -8,7 +8,7 @@
+ import threading
+ from urllib.parse import parse_qs, quote, urlsplit
  
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"time"
+-from compat_contract import JSONNumber, MODERN, strict_request, token, unique_json, SSE_GET_AUTH_BODY, SSE_GET_AUTH_CHALLENGES, body_record
++from compat_contract import JSONNumber, MODERN, strict_request, token, unique_json, NOV25_TOOL, SSE_GET_AUTH_BODY, SSE_GET_AUTH_CHALLENGES, body_record
+ from typed_canonical import canonical_json_sha256, loads_typed
  
- 	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
- 	"github.com/go-redis/redis/v8"
- )
- 
-+var ErrKeyNotExist = errors.New("key does not exist")
-+
- type RedisConfig struct {
- 	address  string
- 	username string
-@@ -233,7 +236,7 @@ func (r *RedisClient) Set(key string, value string, expiration time.Duration) er
- func (r *RedisClient) Get(key string) (string, error) {
- 	value, err := r.client.Get(r.ctx, key).Result()
- 	if err == redis.Nil {
--		return "", fmt.Errorf("key does not exist")
-+		return "", ErrKeyNotExist
- 	} else if err != nil {
- 		return "", fmt.Errorf("failed to get key: %w", err)
- 	}
-@@ -250,30 +253,8 @@ func (r *RedisClient) Get(key string) (string, error) {
- 	return value, nil
- }
- 
--// Expire sets the expiration time for a key
--func (r *RedisClient) Expire(key string, expiration time.Duration) error {
--	ok, err := r.client.Expire(r.ctx, key, expiration).Result()
--	if err != nil {
--		return fmt.Errorf("failed to set expiration for key: %w", err)
--	}
--	if !ok {
--		return fmt.Errorf("key does not exist")
--	}
--	return nil
--}
--
- // Close closes the Redis client and stops the keepalive goroutine
- func (r *RedisClient) Close() error {
- 	r.cancel()
- 	return r.client.Close()
- }
--
--// Eval executes a Lua script
--func (r *RedisClient) Eval(script string, numKeys int, keys []string, args []interface{}) (interface{}, error) {
--	result, err := r.client.Eval(r.ctx, script, keys, args...).Result()
--	if err != nil {
--		return nil, fmt.Errorf("failed to execute Lua script: %w", err)
--	}
--
--	return result, nil
--}
+ LOCK = threading.Lock()
+@@ -66,6 +66,9 @@ def record(handler, raw, request=None, rejection=None):
+              "ordinaryHeaders": handler.headers.get_all("X-Ordinary", []),
+              "rpcBodyBytes": len(raw), "rpcBodySha256": hashlib.sha256(raw).hexdigest(),
+              "accepted": rejection is None, "rejection": rejection,
++             "protocolVersion": handler.headers.get("MCP-Protocol-Version"),
++             "initializeVersion": (request.get("params") or {}).get("protocolVersion") if method == "initialize" else None,
++             "sessionAlias": "nov25-upstream" if handler.headers.get("Mcp-Session-Id") == "nov25-upstream-session" else "other" if handler.headers.get("Mcp-Session-Id") else None,
+              "initializeCapabilityKeys": sorted((request.get("params") or {}).get("capabilities", {})) if method == "initialize" else None}
+     if request.get("params") is not None:
+         event["paramsTypedSha256"] = canonical_json_sha256(request["params"])
+@@ -202,6 +205,16 @@ def post(handler, body):
+             result = result[:-1] + b',"padding":"' + b"x" * ((1 << 20) + 1) + b'"}'
+         if mode == "deep":
+             result = result[:-1] + b',"deep":' + b'[' * 70 + b'0' + b']' * 70 + b'}'
++    if headers.get("X-Compat-Nov25") == "1":
++        if method == "initialize":
++            raw_response(handler, 200, rpc_response(rpc_id, result), headers=(("Mcp-Session-Id", "nov25-upstream-session"),))
++            return True
++        if method == "tools/list":
++            result = json.dumps({"tools": [NOV25_TOOL]}, separators=(",", ":")).encode()
++        elif method == "tools/call":
++            arguments = request.get("params", {}).get("arguments", {})
++            failed = arguments.get("fail") is True
++            result = json.dumps({"content": [{"type": "text", "text": "synthetic execution failed" if failed else "echo:" + arguments.get("value", "")}], "isError": failed}, separators=(",", ":")).encode()
+     response = rpc_response(rpc_id, result, mode == "rpc-error")
+     if path == "/unified/messages":
+         key = handler.headers.get("X-Compat-Case", "unassociated")
 ```
 
-**File**: `plugins/golang-filter/mcp-session/common/session_registry.go` (added, +64/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_contract.py` (modified, +28/-1)
 ```diff
-@@ -0,0 +1,64 @@
-+package common
+@@ -181,7 +181,7 @@ def body_record(raw):
+ 
+ def exchange_count(case):
+     """Independent per-case downstream request count, including counter controls."""
+-    return {"input": 4, "descriptors": 7, "builtin": 2}.get(case["kind"], 1)
++    return case.get("exchanges", {"input": 4, "descriptors": 7, "builtin": 2}.get(case["kind"], 1))
+ 
+ 
+ SSE_GET_AUTH_AFFECTED = "10f72611286e9d81b83094249b1af8787a12a3ac"
+@@ -196,3 +196,30 @@ def sse_get_auth_cases():
+              "rpcId": '\"client\\u002did\"' if profile == "legacy" else "" if profile == "notification" else "null" if method == "tools/list" else "1.50"}
+             for profile in ("legacy", "modern", "notification")
+             for method in ("tools/list", "tools/call") for status in (401, 403)]
 +
-+import (
-+	"errors"
-+	"fmt"
-+	"strconv"
-+	"time"
-+)
 +
-+const sessionTimeout = 24 * time.Hour
++# A dedicated bug baseline; historical business and control pins remain unchanged.
++NOV25_BASELINE = "03a91cb3fbe2664ac190868ee062ca6bccbba4e2"
++NOV25 = "2025-11-25"
++NOV25_OLD_VERSIONS = ["2024-11-05", "2025-03-26", "2025-06-18", MODERN]
++NOV25_VERSIONS = NOV25_OLD_VERSIONS[:-1] + [NOV25, MODERN]
++NOV25_TOOL = {"name": "echo", "description": "synthetic Tools compatibility fixture",
++              "inputSchema": {"type": "object", "properties": {"value": {"type": "string"}, "fail": {"type": "boolean"}}, "required": ["value"]}}
 +
-+type SessionRegistry interface {
-+	RegisterSession(serverName, sessionID string) error
-+	ValidateSession(serverName, sessionID string) (bool, error)
-+}
 +
-+type sessionRegistryClient interface {
-+	Set(key string, value string, expiration time.Duration) error
-+	Get(key string) (string, error)
-+}
++def nov25_cases():
++    """Same finite traffic plan for the pre-fix and candidate binaries."""
++    rows = [{"id": "nov25/" + kind, "kind": kind, "exchanges": 1}
++            for kind in ("initialize-header", "initialize-body", "fallback", "modern-body-fallback", "unknown-header",
++                         "missing-version", "empty-version", "duplicate-version", "handshake-modern-identity",
++                         "handshake-modern-meta", "modern-missing-meta", "modern-mismatched-meta", "discovery")]
++    rows += [{"id": "nov25/old/" + version, "kind": "old", "version": version, "exchanges": 1}
++             for version in NOV25_OLD_VERSIONS[:-1]]
++    rows += [{"id": "nov25/tools-workflow", "kind": "tools-workflow", "exchanges": 5}]
++    return rows
 +
-+type RedisSessionRegistry struct {
-+	client sessionRegistryClient
-+}
 +
-+func NewRedisSessionRegistry(redisClient *RedisClient) SessionRegistry {
-+	return &RedisSessionRegistry{client: redisClient}
-+}
-+
-+func encodeKeyComponent(value string) string {
-+	return strconv.Itoa(len(value)) + ":" + value
-+}
-+
-+func getSessionRegistryKey(serverName, sessionID string) string {
-+	return "mcp-server-session:v1:" + encodeKeyComponent(serverName) + ":" + encodeKeyComponent(sessionID)
-+}
-+
-+func (r *RedisSessionRegistry) RegisterSession(serverName, sessionID string) error {
-+	if err := r.client.Set(getSessionRegistryKey(serverName, sessionID), serverName, sessionTimeout); err != nil {
-+		return fmt.Errorf("failed to register MCP session: %w", err)
-+	}
-+	return nil
-+}
-+
-+func (r *RedisSessionRegistry) ValidateSession(serverName, sessionID string) (bool, error) {
-+	key := getSessionRegistryKey(serverName, sessionID)
-+	value, err := r.client.Get(key)
-+	if err != nil {
-+		if errors.Is(err, ErrKeyNotExist) {
-+			return false, nil
-+		}
-+		return false, fmt.Errorf("failed to validate MCP session: %w", err)
-+	}
-+	if value != serverName {
-+		return false, nil
-+	}
-+	// Sliding validity: an actively used session is re-registered with the
-+	// full TTL so long-lived SSE connections do not expire mid-use, while
-+	// abandoned sessions still age out after the idle timeout.
-+	if err := r.client.Set(key, value, sessionTimeout); err != nil {
-+		return false, fmt.Errorf("failed to refresh MCP session: %w", err)
-+	}
-+	return true, nil
-+}
++def nov25_request(method, params=None, rpc_id="nov25-client"):
++    value = {"jsonrpc": "2.0", "method": method, "params": params or {}}
++    if method != "notifications/initialized": value["id"] = rpc_id
++    return json.dumps(value, separators=(",", ":")).encode()
 ```
 
-**File**: `plugins/golang-filter/mcp-session/common/session_registry_test.go` (added, +211/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_evidence.py` (modified, +63/-2)
 ```diff
-@@ -0,0 +1,211 @@
-+package common
-+
-+import (
-+	"errors"
-+	"net/http"
-+	"testing"
-+	"time"
-+
-+	"github.com/envoyproxy/envoy/contrib/golang/common/go/api"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+type registryTestClient struct {
-+	values      map[string]string
-+	expirations map[string]time.Duration
-+	expiresAt   map[string]time.Time
-+	setCalls    int
-+	now         func() time.Time
-+	setErr      error
-+	getErr      error
-+}
-+
-+func (c *registryTestClient) currentTime() time.Time {
-+	if c.now != nil {
-+		return c.now()
-+	}
-+	return time.Now()
-+}
-+
-+func (c *registryTestClient) Set(key string, value string, expiration time.Duration) error {
-+	if c.setErr != nil {
-+		return c.setErr
-+	}
-+	if c.values == nil {
-+		c.values = make(map[string]string)
-+	}
-+	if c.expirations == nil {
-+		c.expirations = make(map[string]time.Duration)
-+	}
-+	if c.expiresAt == nil {
-+		c.expiresAt = make(map[string]time.Time)
-+	}
-+	c.values[key] = value
-+	c.expirations[key] = expiration
-+	c.expiresAt[key] = c.currentTime().Add(expiration)
-+	c.setCalls++
-+	return nil
-+}
-+
-+func (c *registryTestClient) Get(key string) (string, error) {
-+	if c.getErr != nil {
-+		return "", c.getErr
-+	}
-+	value, ok := c.values[key]
-+	if !ok {
-+		return "", ErrKeyNotExist
-+	}
-+	if expiry, ok := c.expiresAt[key]; ok && !c.currentTime().Before(expiry) {
-+		delete(c.values, key)
-+		delete(c.expirations, key)
-+		delete(c.expiresAt, key)
-+		return "", ErrKeyNotExist
-+	}
-+	return value, nil
-+}
-+
-+func TestRedisSessionRegistryValidatesServerBinding(t *testing.T) {
-+	client := &registryTestClient{
-+		values:      make(map[string]string),
-+		expirations: make(map[string]time.Duration),
-+	}
-+	registry := &RedisSessionRegistry{client: client}
-+
-+	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
-+	require.Equal(t, sessionTimeout, client.expirations[getSessionRegistryKey("server-A", "session-1")])
-+
-+	valid, err := registry.ValidateSession("server-A", "session-1")
-+	require.NoError(t, err)
-+	require.True(t, valid)
-+
-+	valid, err = registry.ValidateSession("server-B", "session-1")
-+	require.NoError(t, err)
-+	require.False(t, valid)
-+
-+	valid, err = registry.ValidateSession("server-A", "unknown")
-+	require.NoError(t, err)
-+	require.False(t, valid)
-+}
-+
-+func TestRedisSessionRegistryReturnsStoreErrors(t *testing.T) {
-+	storeErr := errors.New("redis unavailable")
-+	registry := &RedisSessionRegistry{client: &registryTestClient{getErr: storeErr}}
-+
-+	valid, err := registry.ValidateSession("server-A", "session-1")
-+	require.False(t, valid)
-+	require.ErrorIs(t, err, storeErr)
-+
-+	registry = &RedisSessionRegistry{client: &registryTestClient{setErr: storeErr}}
-+	require.ErrorIs(t, registry.RegisterSession("server-A", "session-1"), storeErr)
-+}
-+
-+func TestRedisSessionRegistryRefreshesOnSuccessfulValidation(t *testing.T) {
-+	now := time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC)
-+	client := &registryTestClient{now: func() time.Time { return now }}
-+	registry := &RedisSessionRegistry{client: client}
-+	key := getSessionRegistryKey("server-A", "session-1")
-+
-+	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
-+	require.Equal(t, 1, client.setCalls)
-+	require.Equal(t, sessionTimeout, client.expirations[key])
-+	firstExpiry := client.expiresAt[key]
-+
-+	// A validation 23 hours after registration must re-SET the full TTL.
-+	now = now.Add(23 * time.Hour)
-+	valid, err := registry.ValidateSession("server-A", "session-1")
-+	require.NoError(t, err)
-+	require.True(t, valid)
-+	require.Equal(t, 2, client.setCalls)
-+	require.Equal(t, sessionTimeout, client.expirations[key])
-+	require.Equal(t, now.Add(sessionTimeout), client.expiresAt[key])
-+	require.True(t, client.expiresAt[key].After(firstExpiry))
-+
-+	// 25 hours after registration the original TTL would have expired, but the
-+	// refreshed session is still valid.
-+	now = now.Add(2 * time.Hour)
-+	valid, err = registry.ValidateSession("server-A", "session-1")
-+	require.NoError(t, err)
-+	require.True(t, valid)
-+	require.Equal(t, 3, client.setCalls)
-+}
-+
-+func TestRedisSessionRegistryDoesNotRefreshRejectedSession(t *testing.T) {
-+	client := &registryTestClient{}
-+	registry := &RedisSessionRegistry{client: client}
-+
-+	require.NoError(t, registry.RegisterSession("server-A", "session-1"))
-+	require.Equal(t, 1, client.setCalls)
-+
-+	valid, err := registry.ValidateSession("server-B", "session-1")
-+	require.NoError(t, err)
-+	require.False(t, valid)
-+	require.Equal(t, 1, client.setCalls)
-+}
-+
-+func TestRedisSessionRegistryFailsWhenRefreshFails(t *testing.T) {
-+	storeErr := errors.New("redis unavailable")
-+	key := getSessionRegistryKey("server-A", "session-1")
-+	client := &registryTestClient{
-+		values: map[string]string{key: "server-A"},
-+		setErr: storeErr,
-+	}
-+	registry := &RedisSessionRegistry{client: client}
-+
-+	valid, err := registry.ValidateSession("server-A", "session-1")
-+	require.False(t, valid)
-+	require.ErrorIs(t, err, storeErr)
-+}
-+
-+func TestSessionRegistryKeyUsesComponentSafeEncoding(t *testing.T) {
-+	l
-```
-
-**File**: `plugins/golang-filter/mcp-session/common/sse.go` (modified, +33/-8)
-```diff
-@@ -22,11 +22,13 @@ func GetSSEChannelName(sessionID string) string {
- // It provides real-time communication capabilities over HTTP using the SSE protocol.
- type SSEServer struct {
- 	server          *MCPServer
-+	serverName      string
- 	baseURL         string
- 	messageEndpoint string
- 	sseEndpoint     string
- 	sessions        sync.Map
- 	redisClient     *RedisClient // Redis client for pub/sub
-+	sessionRegistry SessionRegistry
- }
+@@ -71,6 +71,66 @@ def core_ledger_errors(expected, snapshot, log):
+     return errors
  
- func (s *SSEServer) GetMessageEndpoint() string {
-@@ -38,7 +40,7 @@ func (s *SSEServer) GetSSEEndpoint() string {
- }
  
- func (s *SSEServer) GetServerName() string {
--	return s.server.name
-+	return s.serverName
- }
- 
- // Option defines a function type for configuring SSEServer
-@@ -65,16 +67,32 @@ func WithSSEEndpoint(endpoint string) Option {
- 	}
- }
- 
-+// WithServerName overrides the identity used to bind sessions to a server.
-+// The filter sets this per request from the matched MCP server rule so that a
-+// session issued for one route cannot be replayed on another.
-+func WithServerName(serverName string) Option {
-+	return func(s *SSEServer) {
-+		s.serverName = serverName
-+	}
-+}
++def nov25_errors(root, inputs):
++    """Require exact baseline, equivalent binary inputs and complete red/green traffic."""
++    errors, snapshots = [], {}
++    if inputs.get("nov25Baseline") != contract.NOV25_BASELINE:
++        errors.append("November pre-fix source pin differs")
++    entry = inputs.get("versions", {}).get("nov25-baseline", {})
++    candidate = inputs.get("versions", {}).get("candidate", {})
++    wasm = root / "plain-nov25-baseline.wasm"
++    if entry.get("source") != contract.NOV25_BASELINE or not wasm.is_file() or entry.get("wasm", {}).get("plain") != hashlib.sha256(wasm.read_bytes()).hexdigest():
++        errors.append("November baseline source/Wasm identity differs")
++    if not entry.get("go") or entry.get("go") != candidate.get("go") or not entry.get("moduleFiles") or entry.get("moduleFiles") != candidate.get("moduleFiles"):
++        errors.append("November baseline/candidate toolchain or module inputs differ")
++    configs = inputs.get("nov25Configs", {})
++    if set(configs) != {"nov25-baseline", "candidate"} or len(set(configs.values())) != 1:
++        errors.append("November baseline/candidate configs differ")
++    expected = contract.nov25_cases()
++    for variant in ("nov25-baseline", "candidate"):
++        try:
++            config = root / f"envoy-nov25-{variant}.yaml"
++            if configs.get(variant) != hashlib.sha256(config.read_bytes()).hexdigest():
++                errors.append("November config identity differs: " + variant)
++            snapshot = json.loads((root / f"nov25-{variant}.json").read_text())
++            rows = snapshot.get("cases", [])
++            if snapshot.get("baseline") != contract.NOV25_BASELINE or snapshot.get("expectedCases") != expected or not contract.complete(expected, rows) or any(row.get("status") != "PASS" for row in rows):
++                errors.append("November incomplete/failed cases: " + variant)
++            snapshots[variant] = snapshot
++            log = (root / f"gateway-nov25-{variant}.log").read_text(errors="replace")
++            errors.extend("November " + variant + " " + error for error in core_ledger_errors(expected, snapshot, log))
++            if "plugin start successfully" not in log:
++                errors.append("November Wasm loading marker missing: " + variant)
++        except (OSError, ValueError, KeyError) as error:
++            errors.append("November evidence unavailable: " + str(error))
++    if set(snapshots) == {"nov25-baseline", "candidate"}:
++        def requests(role):
++            return [{key: row.get(key) for key in ("case", "port", "request", "requestHeadersSha256")} for row in snapshots[role].get("exchanges", [])]
++        if requests("nov25-baseline") != requests("candidate") or any(not row.get("request") or not row.get("requestHeadersSha256") for row in snapshots["candidate"].get("exchanges", [])):
++            errors.append("November baseline/candidate traffic inputs differ")
++    return errors
 +
- func WithRedisClient(redisClient *RedisClient) Option {
- 	return func(s *SSEServer) {
- 		s.redisClient = redisClient
- 	}
- }
- 
-+func WithSessionRegistry(registry SessionRegistry) Option {
-+	return func(s *SSEServer) {
-+		s.sessionRegistry = registry
-+	}
-+}
 +
- // NewSSEServer creates a new SSE server instance with the given MCP server and options.
- func NewSSEServer(server *MCPServer, opts ...Option) *SSEServer {
- 	s := &SSEServer{
- 		server:          server,
-+		serverName:      server.name,
- 		sseEndpoint:     "/sse",
- 		messageEndpoint: "/message",
- 	}
-@@ -86,11 +104,25 @@ func NewSSEServer(server *MCPServer, opts ...Option) *SSEServer {
- 	return s
- }
- 
-+// registerSession binds a generated session to this server's identity.
-+func (s *SSEServer) registerSession(sessionID string) error {
-+	if s.sessionRegistry == nil {
-+		return nil
-+	}
-+	return s.sessionRegistry.RegisterSession(s.serverName, sessionID)
-+}
++def retained_control_sequence(row):
++    detail = row.get("detail", {})
++    if row["case"] != "auto-concurrent-legacy-session-isolation":
++        return detail.get("upstreamSequence")
++    # Only this two-request barrier case permits different global interleavings.
++    # Reuse its live oracle before comparing the stable, ordered request paths.
++    backends = detail["backendEvents"]
++    if set(backends) != {"backend-primary"}:
++        raise ValueError("concurrent legacy backend ownership differs")
++    events = backends["backend-primary"]
++    verify_auto.check_legacy_sessions({"events": events, "auto": detail["backendState"]}, {"alice": "alice", "bob": "bob"})
++    methods = [event["rpcMethod"] for event in events]
++    if detail["upstreamSequence"] != methods or [event["seq"] for event in events] != list(range(1, 9)):
++        raise ValueError("concurrent legacy sequence differs from its event ledger")
++    if methods[:methods.index(verify_auto.CALL)].count(verify_auto.NOTIFY) != 2:
++        raise ValueError("concurrent legacy business preceded the initialized barrier")
++    return {key: [event["rpcMethod"] for event in events if event["requestKey"] == key]
++            for key in ("alice", "bob")}
 +
- // handleSSE handles incoming SSE connection requests.
- // It sets up appropriate headers and creates a new session for the client.
- func (s *SSEServer) HandleSSE(cb api.FilterCallbackHandler, stopChan chan struct{}) {
- 	sessionID := uuid.New().String()
- 
-+	if err := s.registerSession(sessionID); err != nil {
-+		api.LogErrorf("Failed to register MCP session: %v", err)
-+		cb.EncoderFilterCallbacks().SendLocalReply(http.StatusServiceUnavailable, "", nil, 0, "")
-+		return
-+	}
 +
- 	s.sessions.Store(sessionID, true)
- 	defer s.sessions.Delete(sessionID)
- 
-@@ -219,13 +251,6 @@ func (s *SSEServer) HandleMessage(w http.ResponseWriter, r *http.Request, body j
- 		ctx = WithIstiodToken(ctx, istiodToken)
- 	}
- 
--	//TODO： check session id
--	// _, ok := s.sessions.Load(sessionID)
--	// if !ok {
--	// 	s.writeJSONRPCError(w, nil, mcp.INVALID_PARAMS, "Invalid session ID")
--	// 	return
--	// }
--
- 	// Process message through MCPServer
- 	response := s.server.HandleMessage(ctx, body)
- 	var status int
+ def finalize(root):
+     root = Path(root)
+     errors, variants, coverage = [], {}, {}
+@@ -84,6 +144,7 @@ def finalize(root):
+         inputs = {}
+         errors.append("inputs unavailable: " + str(error))
+     errors.extend(metadata_errors(root, inputs))
++    errors.extend(nov25_errors(root, inputs))
+     for variant in ("oracle", "control", "candidate"):
+         try:
+             snapshot = json.loads((root / f"compat-{variant}.json").read_text())
+@@ -133,7 +194,7 @@ def finalize(root):
+             rows = controls["cases"]
+             if controls["expectedCases"] != [name for name, _ in verify_auto.cases(None)] or not completeness(controls["expectedCases"], rows) or any(row.get("status") != "PASS" for 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5305** (2026-11-04): fix(mcp-server): support 2025-11-25 Tools clients (@sunxia0)
 - **PR #5294** (2026-11-03): fix(mcp): bind user-level access to consumers (@johnlanni)
 - **PR #5293** (2026-11-03): fix(mcp): remove client config headers on ingress (@johnlanni)
 - **PR #5292** (2026-11-02): fix(plugins): isolate ai-cache data by consumer (@johnlanni)
 - **PR #5291** (2026-11-01): fix(plugins): require raw bodies for request validation (@johnlanni)
 - **PR #5289** (2026-11-01): fix(request-validation): validate all JSON body types (@johnlanni)
-- **PR #5288** (2026-11-01): fix(hmac-auth-apisix): default signed headers to date (@johnlanni)
 
 ---
 
@@ -3386,28 +2093,30 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugins): add configurable Redis failure handling (#5287)
+## X. mcp-server): support 2025-11-25 Tools clients (5305)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6532bcef`: plugins): add configurable Redis failure handling (#5287). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a89b18dc`: mcp-server): support 2025-11-25 Tools clients (5305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/cluster-key-rate-limit/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| failure_mode            | string | 否 | fail_open | Redis 调用失败、超时或响应异常时的策略：`fail_open` 放行请求；`fail_closed` 返回固定 503。需要严格限流时使用 `fail_closed`。 |
+插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18`、`2025-11-25` 和 `2026-07-28` 的工具服务能力。
+
+`2025-11-25` 的支持限定于现有 `initialize` → `notifications/initialized` → `tools/list` / `tools/call` 工作流；明确请求该版本时返回相同版本。无版本头且初始化正文请求未知版本时，兼容回退仍为 `2025-06-18`；未知版本头继续被拒绝。此项兼容不扩展 Tasks、Sampling、URL Elicitation、OAuth 或传输能力，也不改变后端版本选择策略。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18` 和 `2026-07-28` 的工具服务能力。
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6532bcef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a89b18dc` are properly handled with clean fallback behavior.

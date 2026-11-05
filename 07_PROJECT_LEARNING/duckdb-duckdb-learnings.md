@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `c96ae32c`  
+> **Source Version**: `80b9c969`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:11:29.069Z  
+> **Timestamp**: 2026-11-04T18:28:48.325Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:11:28.884Z  
+> **Harvest Timestamp**: 2026-11-04T18:28:48.069Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42778 stars
+- **Stars / Engagement**: 42810 stars
 
 ---
 
@@ -256,7 +256,7 @@ struct KahanAvgState {
 	void Combine(const KahanAvgState &other) {
 		this->count += other.count;
 		KahanAddInternal(other.value, this->value, this->err);
-		KahanAddInternal(-other.err, this->value, this->err);
+		this->err += other.err;
 	}
 };
 
@@ -436,56 +436,62 @@ struct TimestampAverageOperation : public DiscreteAverageOperation {
 	}
 };
 
-//! A state with the maximum count holds only infinities, reject imported ones that hold other values
-void ValidateTimestampAverageStates(const_data_ptr_t states, idx_t count, idx_t stride) {
-	for (idx_t i = 0; i < count; i++) {
-		const auto state = Load<AvgState<hugeint_t>>(states + i * stride);
-		if (state.count == TimestampAverageOperation::INFINITE_COUNT &&
-		    (state.value < hugeint_t(TimestampAverageOperation::POSITIVE_INFINITY) ||
-		     state.value > hugeint_t(TimestampAverageOperation::BOTH_INFINITIES))) {
-			throw InvalidInputException(
-			    "Invalid avg state - with a count of %llu the value must be 1 (infinity), 2 (-infinity) or 3 (both), "
-			    "not %s",
-			    state.count, state.value.ToString());
+//! The average of timestamps in nanosecond resolution - mirrors TimestampAverageOperation, but
+//! interprets the state value as a nanosecond timestamp so infinity is the ns infinity
+template <class NS_TIMESTAMP>
+struct TimestampNSAverageOperation : public DiscreteAverageOperation {
+	static constexpr uint64_t INFINITE_COUNT = NumericLimits<uint64_t>::Maximum();
+	static constexpr uint64_t POSITIVE_INFINITY = 1;
+	static constexpr uint64_t NEGATIVE_INFINITY = 2;
+	static constexpr uint64_t BOTH_INFINITIES = POSITIVE_INFINITY | NEGATIVE_INFINITY;
+
+	template <class STATE>
+	static void AddInfinities(STATE &state, uint64_t infinities) {
+		if (state.count != INFINITE_COUNT) {
+			state.count = INFINITE_COUNT;
+			state.value = hugeint_t(0);
+		}
+		state.value.lower |= infinities;
+	}
+
+	static uint64_t GetInfinity(int64_t input) {
+		return input > 0 ? POSITIVE_INFINITY : NEGATIVE_INFINITY;
+	}
+
+	template <class STATE, class OP>
+	static void Combine(const STATE &source, STATE &target, AggregateInputData &) {
+		if (source.count == INFINITE_COUNT) {
+			AddInfinities(target, source.value.lower);
+		} else if (source.count != 0 && target.count != INFINITE_COUNT) {
+			if (target.count == 0) {
+				// an empty target holds no sum
+				target.value = hugeint_t(0);
+			}
+			if (!TryAddOperator::Operation(target.count, source.count, target.count) ||
+			    target.count == INFINITE_COUNT) {
+				throw OutOfRangeException("Overflow in aggregate state combine");
+			}
+			CombineSumStateValue(target.value, source.value);
 		}
 	}
-}
 
-AggregateStateLayout TimestampAverageStateLayout(AggregateLayoutInput &input) {
-	auto layout = AggregateFunction::StructStateLayout<AvgState<hugeint_t>>(input);
-	layout.validate_state = ValidateTimestampAverageStates;
-	return layout;
-}
-
-//! The average of TIME values is within a day - reject imported states that average outside of it
-void ValidateTimeAverageStates(const_data_ptr_t states, idx_t count, idx_t stride) {
-	for (idx_t i = 0; i < count; i++) {
-		const auto state = Load<AvgState<hugeint_t>>(states + i * stride);
-		if (state.count == 0) {
-			continue;
-		}
-		const auto max_value = hugeint_t(0, state.count) * hugeint_t(Interval::MICROS_PER_DAY);
-		if (state.value < 0 || state.value > max_value) {
-			throw InvalidInputException("Invalid avg state - the average of %s over %llu values is not a valid time",
-			                            state.value.ToString(), state.count);
-		}
-	}
-}
-
-AggregateStateLayout TimeAverageStateLayout(AggregateLayoutInput &input) {
-	auto layout = AggregateFunction::StructStateLayout<AvgState<hugeint_t>>(input);
-	layout.validate_state = ValidateTimeAverageStates;
-	return layout;
-}
-
-struct HugeintAverageOperation : public BaseSumOperation<AverageSetOperation, HugeintAdd> {
 	template <class STATE, class OP>
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
-		RepeatedAverageState::Combine(source, target, input, count);
+		if (source.count == INFINITE_COUNT) {
+			if (count > 0) {
+				AddInfinities(target, source.value.lower);
+			}
+		} else if (target.count != INFINITE_COUNT) {
+			DiscreteAverageOperation::RepeatedCombine<STATE, OP>(source, target, input, count);
+			if (target.count == INFINITE_COUNT) {
+				throw OutOfRangeException("Overflow in repeated aggregate state combine");
+			}
+		}
 	}
 
-	template <class T, class STATE>
-	static void Fin
+	template <class INPUT_TYPE, class STATE, class OP>
+	static void Operation(STATE &state, const INPUT_TYPE &input, AggregateUnaryInput &unary_input) {
+		if (DUCKDB_UNLIKELY(!NS_TIMESTAMP(input).IsFinite(
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -1998,11 +2004,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28325** (2026-11-03): **Altertable v2.0-cyanoptera**
-  *Symptoms*: 
+- **Issue #28378** (2026-11-04): **Update extension_entries.hpp for sirius**
+  *Symptoms*: Fixes the `check-extension-entries` failure seen in https://github.com/duckdb/duckdb/actions/runs/41835675960: adds the `gpu_execution` (function and setting) and `sirius_status` entries provided by the sirius extension.
 
-- **Issue #28306** (2026-11-03): **round: round halfway cases away from zero without std::round**
-  *Symptoms*:  Please backport to v2.0-cyanoptera.  `round` of a DOUBLE rounded through `std::round`, both with a precision (`RoundHalfAwayFromZero::Nearest`) and without one (`RoundOperator`). The MinGW C runtime's `round` rounds 0.49999999999999994, the largest double below 0.5, up to 1, so on the MinGW build `round(-0.49999999999999994::DOUBLE, 0)` returns `-1.0` and `round(0.049999999999999996::DOUBLE, 1)` returns `0.1`. `test/sql/function/numeric/test_round_double_exact_midpoint.test`, added in #28019, fails on MinGW for that reason ([job](https://github.com/duckdb/duckdb/actions/runs/41624429032/job/125890377678)); `round_even` in the same query is right, because it goes through `RoundToNearestEven` instead.  This adds `RoundToNearestAwayFromZero` to `numeric_utils.hpp`, next to `RoundToNearestEven` and built the same way from `std::trunc` and the fraction, and uses it in both places. The v2.0-cyanoptera branch rounds through the same `std::round` calls, so it has the same wrong results on MinGW, only without a test that shows them.  **Tests**  - `test/common/test_numeric_utils.cpp`: halfway cases, the largest double and float below a half, the sign of zero and non-finite values, under every rounding mode the platform supports. - `test_round_double_exact_midpoint.test`: `round` without a precision of values just below a half. 
+- **Issue #28347** (2026-11-04): **Fall back to a generic select for BETWEEN over nested types**
+  *Symptoms*: `BETWEEN` over nested values fails with an internal-looking error as soon as it is executed as a filter:  ```sql CREATE TABLE sheet(cell STRUCT(col VARCHAR, "row" INTEGER)); INSERT INTO sheet VALUES ({'col': 'A', 'row': 1}); SELECT count(*) FROM sheet WHERE cell BETWEEN {'col': 'A', 'row': 1} AND {'col': 'B', 'row': 2}; -- Invalid type Error: Invalid Type [STRUCT(col VARCHAR, "row" INTEGER)]: Invalid type for BETWEEN ```  This surfaced while porting the spreadsheet evaluator from the "One WITH RECURSIVE is Worth Many GOTOs" (SIGMOD 2021) workload, which ranges over cell-address structs with `s.cell BETWEEN e.from_cell AND e.to_cell`. The failure is not new, it reproduces on 1.2.1, 1.3.2 and 1.4.3 as well as current main.  The same `BETWEEN` works in a projection and as a conjunction of two comparisons. The binder splits a copyable `BETWEEN` input into `x >= lo AND x <= hi`, so the single-expression form is only executed when the filter combiner folds the comparisons back into one `BoundBetween` (constant bounds) or when the input is not copyable (volatile, parameter, subquery). In those cases the filter runs through the `__between` select callback, and `BetweenLoopTypeSwitch` threw for every physical type without a templated `TernaryExecutor` path. The execute path (`BetweenFunction`) already supports nested types through the `VectorOperations` comparisons.  The fix adds a generic fallback to the select path for types the templated switch does not cover. It evaluates the two 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2019,812 +2025,441 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94be654e` (2026-11-03)
-**Commit Message**: Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791)
+### Incident Patch 1: `4379c69f` (2026-11-04)
+**Commit Message**: fix(cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27919)
 
-## Pull in the upstream Brotli decoder fix for CVE-2026-111497 (closes
-#27660)
+The top-level `CMakeLists.txt` unconditionally set
+`CMAKE_MSVC_RUNTIME_LIBRARY` to
+`"MultiThreaded$<$<CONFIG:Debug>:Debug>"`, which overrides values passed
+by users (e.g. `-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL`) or
+injected by toolchain files (Conan, vcpkg). Downstream projects linking
+`duckdb_static` with the dynamic MSVC runtime (`/MD`) fail with
+`LNK2038` runtime mismatch errors.
 
-Ports
-[google/brotli@0ed4268a](https://github.com/google/brotli/commit/0ed4268a4401abcb4472096340477cf4af7d1a2b)
-("Detect and report invalid stream earlier", shipped in v1.2.1) into the
-vendored `third_party/brotli` (currently 1.1.0).
+This PR guards the default setting with `if(NOT DEFINED
+CMAKE_MSVC_RUNTIME_LIBRARY)` so explicit user configurations and
+toolchain defaults are preserved while retaining the static runtime as
+the default when unspecified.
 
-### What the fix does
+Fixes #27643.
 
-`DecodeBlockTypeAndLength` used to collapse two distinct conditions — a
-*format error* on an invalid block switch and *need-more-input* — into a
-single `BROTLI_FALSE`, and the `BROTLI_SAFE` fast path discarded the
-return value entirely. A malformed stream that declares a single block
-type but reaches a block-switch point therefore kept decoding with stale
-block-type state (stale `htree_command` / distance-tree index), which is
-the out-of-bounds write from
-[CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
-(Node.js advisory 2026-10-21).
-
-Because the vendored copy carries DuckDB modifications (namespace,
-allocator, header renames), this is a faithful semantic port rather than
-a file replacement:
-- `DecodeBlockTypeAndLength` + the literal/command/dis
-
-**File**: `third_party/brotli/dec/decode.cpp` (modified, +54/-30)
+**File**: `CMakeLists.txt` (modified, +3/-1)
 ```diff
-@@ -1072,15 +1072,15 @@ static BrotliDecoderErrorCode DecodeContextMap(brotli_reg_t context_map_size, br
+@@ -77,7 +77,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
+ set(CMAKE_VERBOSE_MAKEFILE OFF)
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ set(CMAKE_MACOSX_RPATH 1)
+-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
++if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
++  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
++endif()
  
- /* Decodes a command or literal and updates block type ring-buffer.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
- 	brotli_reg_t max_block_type = s->num_block_types[tree_type];
- 	const HuffmanCode *type_tree = &s->block_type_trees[tree_type * BROTLI_HUFFMAN_MAX_SIZE_258];
- 	const HuffmanCode *len_tree = &s->block_len_trees[tree_type * BROTLI_HUFFMAN_MAX_SIZE_26];
- 	BrotliBitReader *br = &s->br;
- 	brotli_reg_t *ringbuffer = &s->block_type_rb[tree_type * 2];
- 	brotli_reg_t block_type;
- 	if (max_block_type <= 1) {
--		return BROTLI_FALSE;
-+		return BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH;
- 	}
- 
- 	/* Read 0..15 + 3..39 bits. */
-@@ -1090,12 +1090,13 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecode
- 	} else {
- 		BrotliBitReaderState memento;
- 		BrotliBitReaderSaveState(br, &memento);
--		if (!SafeReadSymbol(type_tree, br, &block_type))
--			return BROTLI_FALSE;
-+		if (!SafeReadSymbol(type_tree, br, &block_type)) {
-+			return BROTLI_DECODER_NEEDS_MORE_INPUT;
-+		}
- 		if (!SafeReadBlockLength(s, &s->block_length[tree_type], len_tree, br)) {
- 			s->substate_read_block_length = BROTLI_STATE_READ_BLOCK_LENGTH_NONE;
- 			BrotliBitReaderRestoreState(br, &memento);
--			return BROTLI_FALSE;
-+			return BROTLI_DECODER_NEEDS_MORE_INPUT;
- 		}
- 	}
- 
-@@ -1111,7 +1112,7 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecode
- 	}
- 	ringbuffer[0] = ringbuffer[1];
- 	ringbuffer[1] = block_type;
--	return BROTLI_TRUE;
-+	return BROTLI_DECODER_SUCCESS;
- }
- 
- static BROTLI_INLINE void DetectTrivialLiteralBlockTypes(BrotliDecoderState *s) {
-@@ -1148,56 +1149,59 @@ static BROTLI_INLINE void PrepareLiteralDecoding(BrotliDecoderState *s) {
- 
- /* Decodes the block type and updates the state for literal context.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
--	if (!DecodeBlockTypeAndLength(safe, s, 0)) {
--		return BROTLI_FALSE;
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-+	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 0);
-+	if (result != BROTLI_DECODER_SUCCESS) {
-+		return result;
- 	}
- 	PrepareLiteralDecoding(s);
--	return BROTLI_TRUE;
-+	return BROTLI_DECODER_SUCCESS;
- }
- 
--static void BROTLI_NOINLINE DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
--	DecodeLiteralBlockSwitchInternal(0, s);
-+static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-+	return DecodeLiteralBlockSwitchInternal(0, s);
- }
- 
--static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-+static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
- 	return DecodeLiteralBlockSwitchInternal(1, s);
- }
- 
- /* Block switch for insert/copy length.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
--	if (!DecodeBlockTypeAndLength(safe, s, 1)) {
--		return BROTLI_FALSE;
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-+	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 1);
-+	if (result != BROTLI_DECODER_SUCCESS) {
-+		return result;
- 	}
- 	s->htree_command = s->insert_copy_hgroup.htrees[s->block_type_rb[3]];
--	return BROTLI_TRUE;
-+	return BROTLI_DECODER_SUCCESS;
- }
- 
--static void BROTLI_NOINLINE DecodeCommandBlockSwitch(BrotliDecoderState *s) {
--	DecodeCommandBlockSwitchInternal(0, s);
-+static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeCommandBlockSwitch(BrotliDecoderState *s) {
-+	return DecodeCommandBlockSwitchInternal(0, s);
- }
- 
--static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
-+static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
- 	return DecodeCommandBlockSwitchInternal(1, s);
- }
- 
- /* Block switch for distance codes.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
--	if (!DecodeBlockTypeAndLength(safe, s, 2)) {
--		return BROTLI_FALSE;
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-+	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 2);
-+	if (result != BROTLI_DECODER_SUCCESS) {
-+		return result;
- 	}
- 	s->dist_context_map_slice = s->dist_context_map + (s->block_type_rb[5] << BROTLI_DISTANCE_CONTEXT_BITS);
- 	s->dist_htree_index = s->dist_context_map_slice[s->distance_context];
--	return BROTLI_TRUE;
-+	return BROTLI_DECODER_SUCCESS;
- }
- 
--stat
-```
-
-**File**: `third_party/brotli/include/brotli/decode.h` (modified, +1/-3)
-```diff
-@@ -83,9 +83,7 @@ typedef enum {
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_1, -14) SEPARATOR              \
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_2, -15) SEPARATOR              \
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, DISTANCE, -16) SEPARATOR               \
--                                                                           \
--  /* -17 code is reserved */                                               \
--                                                                           \
-+  BROTLI_ERROR_CODE(_ERROR_FORMAT_, BLOCK_SWITCH, -17) SEPARATOR           \
-   BROTLI_ERROR_CODE(_ERROR_, COMPOUND_DICTIONARY, -18) SEPARATOR           \
-   BROTLI_ERROR_CODE(_ERROR_, DICTIONARY_NOT_SET, -19) SEPARATOR            \
-   BROTLI_ERROR_CODE(_ERROR_, INVALID_ARGUMENTS, -20) SEPARATOR             \
+ if(NOT DEFINED CMAKE_C_COMPILER_LAUNCHER)
+   find_program(COMPILER_LAUNCHER NAMES ccache sccache)
 ```
 
 ---
 
-### Incident Patch 2: `a5748954` (2026-11-03)
-**Commit Message**: Fix missed borrow in UHUGEINT subtraction overflow check (#28283)
+### Incident Patch 2: `f2919b52` (2026-11-04)
+**Commit Message**: Fix `fsum`/`favg` precision and overflow (#28346)
 
-## What a user sees
+Fixes #28160, #28161, #28162, #28164
 
-Subtracting a large `UHUGEINT` from a small one silently returns a
-wrapped value instead of an error:
+| Issue | Query | Before | After |
+| ------ | -------------------------------- | --------------------- |
+----- |
+| #28160 | `favg(0.1, 0.3)` | `0.19999999999999998` | `0.2` |
+| #28161 | `fsum(1e16, 1, -1e16)` | `0` | `1` |
+| #28162 | `fsum(3.67e17, 14*37, -3.67e17)` | `512` | `518` |
+| #28164 | `fsum(1e308, 1e308, -1e308)` | `NaN` | `inf` |
 
-```sql
-SELECT 0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT;
--- 1        (expected: Out of Range Error)
-SELECT 7::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT;
--- 8
-```
+All 4 come from the shared Kahan summation helper:
+- **Wrong error estimate:** Kahan only computes the rounding error
+correctly when the running sum is larger than the value being added. It
+now use Neumaier summation, which is exact either way.
+- **Error discarded:** `fsum` ignored the accumulated error when
+producing its result. A new `KahanFinalize` returns `sum - err` and used
+by `fsum` and `favg`.
+- **NaN on overflow:** overflowing sum turned the error into `inf - inf
+= NaN`. The correction is now skipped once the sum is not finite, so the
+result is `+/- inf`, matching `sum()`.
 
-`0::UHUGEINT - 1::UHUGEINT` does raise the error, so this only affects
-the pairs where the right-hand side's upper 64 bits are large enough for
-the wrapped upper half to land at or below the left-hand side's upper
-half.
+Added `test_kahan_precision.test`, covering the issue cases,
+inf/NaN/NULL inputs, and merged partial sums from window functions,
+parallel aggregation and GROUP BY.
 
-Because the same helper is used to derive the statistics of `a - b` from
-`min(a) - max(b)`, a table can also get a wrong minimum for the
-expression, and the optimizer then prunes filters that every row
-satisfies:
-
-```sql
-CREATE TABLE t(a UHUGEINT, b UHUGEINT);
-INSERT INTO t VALUES (0, 0), (340282366920938463463374607431768211455, 340282366920938463463374607431768211455);
-SELECT a - b FROM t;                   -- 0, 0 (correct)
-SELECT count(*) FROM t WHERE a - b = 0; -- 0   (expected 2)
-SELECT count(*) FROM t WHERE a - b < 1; -- 0   (expected 2)
-```
-
-With `SET debug_verify_stats
-
-**File**: `src/common/types/uhugeint.cpp` (modified, +7/-3)
+**File**: `extension/core_functions/aggregate/algebraic/avg.cpp` (modified, +2/-2)
 ```diff
-@@ -317,9 +317,13 @@ bool Uhugeint::TryAddInPlace(uhugeint_t &lhs, uhugeint_t rhs) {
+@@ -49,7 +49,7 @@ struct KahanAvgState {
+ 	void Combine(const KahanAvgState &other) {
+ 		this->count += other.count;
+ 		KahanAddInternal(other.value, this->value, this->err);
+-		KahanAddInternal(-other.err, this->value, this->err);
++		this->err += other.err;
+ 	}
+ };
+ 
+@@ -417,7 +417,7 @@ struct KahanAverageOperation : public BaseSumOperation<AverageSetOperation, Kaha
+ 		if (state.count == 0) {
+ 			finalize_data.ReturnNull();
+ 		} else {
+-			target = (state.value / state.count) - (state.err / state.count);
++			target = KahanFinalize(state.value, state.err) / static_cast<double>(state.count);
+ 		}
+ 	}
+ };
+```
+
+**File**: `extension/core_functions/aggregate/distributive/sum.cpp` (modified, +1/-1)
+```diff
+@@ -218,7 +218,7 @@ struct KahanSumOperation : public BaseSumOperation<KahanSumSetOperation, KahanAd
+ 		if (!state.is_set) {
+ 			finalize_data.ReturnNull();
+ 		} else {
+-			target = state.value;
++			target = KahanFinalize(state.value, state.err);
+ 		}
+ 	}
+ };
+```
+
+**File**: `extension/core_functions/include/core_functions/aggregate/sum_helpers.hpp` (modified, +13/-4)
+```diff
+@@ -12,6 +12,7 @@
+ #include "duckdb/common/exception.hpp"
+ #include "duckdb/common/operator/add.hpp"
+ #include "duckdb/common/operator/multiply.hpp"
++#include "duckdb/common/types/value.hpp"
+ #include "duckdb/function/aggregate_state.hpp"
+ #include "duckdb/function/aggregate_state_layout.hpp"
+ #include "duckdb/common/operator/cast_operators.hpp"
+@@ -66,13 +67,21 @@ struct RepeatedStateValue {
+ 	}
+ };
+ 
++//! Neumaier summation: the exact rounding error of each addition (TwoSum) is accumulated in err
++//! The compensated sum is summed - err
+ static inline void KahanAddInternal(double input, double &summed, double &err) {
+-	double diff = input - err;
+-	double newval = summed + diff;
+-	err = (newval - summed) - diff;
++	double newval = summed + input;
++	double input_part = newval - summed;
++	double rounding = (summed - (newval - input_part)) + (input - input_part);
++	err -= rounding;
+ 	summed = newval;
  }
  
- bool Uhugeint::TrySubtractInPlace(uhugeint_t &lhs, uhugeint_t rhs) {
--	uint64_t new_upper = lhs.upper - rhs.upper - ((lhs.lower - rhs.lower) > lhs.lower);
--	bool no_overflow = !(new_upper > lhs.upper);
--	lhs.lower -= rhs.lower;
-+	uint64_t new_lower = lhs.lower - rhs.lower;
-+	uint64_t borrow = new_lower > lhs.lower;
-+	uint64_t new_upper = lhs.upper - rhs.upper - borrow;
-+	// the result is out of range exactly when rhs > lhs, i.e. when the upper half underflows
-+	// either directly or through the borrow of the lower half
-+	bool no_overflow = !(rhs.upper > lhs.upper || (rhs.upper == lhs.upper && borrow));
-+	lhs.lower = new_lower;
- 	lhs.upper = new_upper;
- 	return no_overflow;
- }
++static inline double KahanFinalize(double summed, double err) {
++	// once the sum overflows the error term is meaningless (inf - inf)
++	return Value::IsFinite(summed) ? summed - err : summed;
++}
++
+ template <class T>
+ static inline void CombineSumStateValue(T &target, const T &source) {
+ 	if constexpr (std::is_same<T, hugeint_t>::value) {
+@@ -101,7 +110,7 @@ struct KahanSumState {
+ 	void Combine(const KahanSumState &other) {
+ 		this->is_set = other.is_set || this->is_set;
+ 		KahanAddInternal(other.value, this->value, this->err);
+-		KahanAddInternal(-other.err, this->value, this->err);
++		this->err += other.err;
+ 	}
+ };
+ 
 ```
 
-**File**: `test/sql/types/uhugeint/uhugeint_subtract_overflow.test` (added, +94/-0)
+**File**: `test/sql/aggregate/aggregates/test_kahan_precision.test` (added, +97/-0)
 ```diff
-@@ -0,0 +1,94 @@
-+# name: test/sql/types/uhugeint/uhugeint_subtract_overflow.test
-+# description: UHUGEINT subtraction must detect the borrow out of the lower 64 bits
-+# group: [uhugeint]
+@@ -0,0 +1,97 @@
++# name: test/sql/aggregate/aggregates/test_kahan_precision.test
++# description: fsum and favg compensate rounding errors regardless of operand magnitude and do not produce NaN on overflow
++# group: [aggregates]
 +
-+# a negative result is out of range, also when the borrow from the lower half
-+# brings the upper half back to the left operand's upper half
-+statement error
-+SELECT 0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
++# small values summed before the large values cancel
++query II
++SELECT printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM (VALUES (1e16::DOUBLE), (1.0), (-1e16)) t(v);
 +----
-+Out of Range Error
-+
-+statement error
-+SELECT 1::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
-+----
-+Out of Range Error
-+
-+statement error
-+SELECT 7::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
-+----
-+Out of Range Error
-+
-+statement error
-+SELECT 18446744073709551615::UHUGEINT - 18446744073709551616::UHUGEINT
-+----
-+Out of Range Error
-+
-+statement error
-+SELECT 18446744073709551616::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
-+----
-+Out of Range Error
-+
-+statement error
-+SELECT 340282366920938463463374607431768211454::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT
-+----
-+Out of Range Error
++1	0.33333333333333331
 +
 +query I
-+SELECT TRY(0::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT)
-+----
-+NULL
-+
-+# results that are in range, with and without a borrow
-+query IIII
-+SELECT 340282366920938463463374607431768211455::UHUGEINT - 340282366920938463463374607431768211455::UHUGEINT,
-+       340282366920938463463374607431768211455::UHUGEINT - 7::UHUGEINT,
-+       18446744073709551616::UHUGEINT - 1::UHUGEINT,
-+       340282366920938463463374607431768211455::UHUGEINT - 18446744073709551616::UHUGEINT
-+----
-+0	340282366920938463463374607431768211448	18446744073709551615	340282366920938463444927863358058659839
-+
-+# subtraction over a table: the statistics of a - b are derived from min(a) - max(b),
-+# and a missed overflow there used to give the column a wrong minimum
-+statement ok
-+CREATE TABLE t(a UHUGEINT, b UHUGEINT);
-+
-+statement ok
-+INSERT INTO t VALUES (0, 0), (340282366920938463463374607431768211455, 340282366920938463463374607431768211455);
-+
-+query I
-+SELECT a - b FROM t
-+----
-+0
-+0
-+
-+query I
-+SELECT a - b FROM t WHERE a - b = 0
-+----
-+0
-+0
-+
-+query I
-+SELECT count(*) FROM t WHERE a - b < 1
++SELECT printf('%.17g', fsum(v)) FROM (VALUES (1.0::DOUBLE), (1e100), (1.0), (-1e100)) t(v);
 +----
 +2
 +
++# small values added to a large value that later cancels
 +query I
-+SELECT count(*) FROM t WHERE a - b >= 1
++SELECT printf('%.17g', fsum(v)) FROM (
++	SELECT 3.6686354453820154e17::DOUBLE AS v
++	UNION ALL SELECT 37.0::DOUBLE FROM range(14)
++	UNION ALL SELECT -3.6686354453820154e17::DOUBLE
++);
 +----
-+0
++518
++
++# the input is larger than the running sum
++query II
++SELECT printf('%.17g', favg(v)), printf('%.17g', fsum(v)) FROM (VALUES (0.1::DOUBLE), (0.3)) t(v);
++----
++0.20000000000000001	0.40000000000000002
++
++# an overflowing running sum yields infinity instead of NaN
++query II
++SELECT fsum(v), favg(v) FROM (VALUES (1e308::DOUBLE), (1e308), (-1e308)) t(v);
++----
++inf	inf
++
++query II
++SELECT fsum(v), favg(v) FROM (VALUES (-1e308::DOUBLE), (-1e308), (1e308)) t(v);
++----
++-inf	-inf
++
++query II
++SELECT fsum(v), favg(v) FROM (VALUES (1.0::DOUBLE), ('inf'::DOUBLE), (2.0)) t(v);
++----
++inf	inf
++
++query II
++SELECT isnan(fsum(v)), isnan(favg(v)) FROM (VALUES ('inf'::DOUBLE), ('-inf'::DOUBLE)) t(v);
++----
++true	true
++
++query II
++SELECT isnan(fsum(v)), isnan(favg(v)) FROM (VALUES (1.0::DOUBLE), ('nan'::DOUBLE)) t(v);
++----
++true	true
++
++query II
++SELECT fsum(v), favg(v) FROM (VALUES (NULL::DOUBLE)) t(v);
++----
++NULL	NULL
++
++# combining states: window segment trees
++query II
++SELECT DISTINCT printf('%.17g', fsum(v) OVER w), printf('%.17g', favg(v) OVER w) FROM (
++	SELECT i, CASE WHEN i = 0 THEN 1e16::DOUBLE WHEN i = 999 THEN -1e16::DOUBLE ELSE 1.0 END AS v
++	FROM range(1000) r(i)
++) WINDOW w AS (ORDER BY i ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING);
++----
++998	0.998
++
++query I
++SELECT DISTINCT fsum(v) OVER (ORDER BY i ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM (
++	SELECT i, CASE WHEN i = 999 THEN -1e308::DOUBLE ELSE 1e308::DOUBLE END AS v FROM range(1000) r(i)
++);
++----
++inf
++
++# combining states: parallel aggregation over many row groups
++statement ok
++SET threads=4;
 +
 +statement ok
-+INSERT INTO t VALUES (7, 340282366920938463463374607431768211455);
++CREATE TABLE big AS
++SELECT i, CASE WHEN i = 0 THEN 1e16::DOUBLE WHEN i = 999999 THEN -1e16::DOUBLE ELSE 1.0 END AS v
++FROM range(1000000) r(i);
 +
-+statement error
-+SELECT a - b FROM t
++query II
++SELECT printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM big;
 +----
-+Out of Range Error
++999998	0.99999800000000005
 +
-+query I
-+SELECT TRY(a - b) FROM t ORDER BY ALL
++query III
++SELECT i % 2 AS g, printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM big GROUP BY g ORDER BY g;
 +----
-+0
-+0
-+NULL
++0	10000000000500000	20000000001
++1	-9999999999500000	-19999999999
 ```
 
 ---
 
-### Incident Patch 3: `1a703fdb` (2026-11-03)
-**Commit Message**: Fix/dict fsst size estimate (#25785)
+### Incident Patch 3: `485c6387` (2026-11-04)
+**Commit Message**: Some small Parquet reader UB fixes (#28318)
 
-## Problem
+Fix three signed overflows on corrupt Parquet input: decimal decoding,
+page-index row counts, and INT96 nanosecond conversion.
 
-`DictFSSTAnalyzeState::FinalAnalyze()` was a single line:
-
-```cpp
-return LossyNumericCast<idx_t>((double)total_string_length / 2.0);
-```
-
-DICT_FSST reported "half the raw bytes" for any input — never looking at
-the cardinality of the data, never accounting for the dictionary being
-rebuilt for every block, not even using `total_count`. Compression
-selection picks the method with the **lowest** estimate, so DICT_FSST
-could win with a size it cannot deliver.
-
-Two shapes of data hit this:
-
-- **Duplicates spread further apart than one block's dictionary can
-reach.** Every block re-stores the values it sees, so almost nothing is
-deduplicated.
-- **Large unique values.** Only one or two fit per block, so each block
-is mostly empty.
-
-Both end up needing far more blocks than the estimate suggests, and a
-block a large dictionary leaves mostly empty still costs a full block. A
-ratio of the raw size cannot express that. The dictionary compression
-this superseded could: it charges `segment_count * block_size`.
-
-## Reproduction
-
-300k rows, 300 distinct values of 5760 bytes, scattered, 16KB block
-size:
-
-```sql
-ATTACH 'repro.db' AS db (BLOCK_SIZE 16
-
-**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_large_dictionary.benchmark` (added, +17/-0)
+**File**: `extension/parquet/include/parquet_decimal_utils.hpp` (modified, +15/-12)
 ```diff
-@@ -0,0 +1,17 @@
-+# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_large_dictionary.benchmark
-+# description: Storing short strings with tens of thousands of distinct values, so every block holds a large dictionary
-+# group: [dictionary]
-+
-+name Dictionary Compression Write
-+group dictionary
-+storage persistent v1.4.0
-+require_reinit
-+
-+load
-+PRAGMA force_compression='dict_fsst';
-+DROP TABLE IF EXISTS test;
-+CREATE OR REPLACE TABLE src AS SELECT (hash(i) % 50_000)::VARCHAR AS i FROM range(0, 50_000_000) tbl(i);
-+
-+run
-+CREATE TABLE test AS SELECT * FROM src;
-+checkpoint;
-```
-
-**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_large_scattered.benchmark` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_large_scattered.benchmark
-+# description: Storing large values whose duplicates are spread further apart than one block's dictionary
-+# group: [dictionary]
-+
-+name Dictionary Compression Write
-+group dictionary
-+storage persistent v1.4.0
-+require_reinit
-+
-+load
-+PRAGMA force_compression='dict_fsst';
-+DROP TABLE IF EXISTS test;
-+CREATE OR REPLACE TABLE vals AS
-+	SELECT g AS grp, (SELECT string_agg(md5(g::VARCHAR || '-' || x::VARCHAR), '') FROM range(180) x) AS txt
-+	FROM range(300) t(g);
-+CREATE OR REPLACE TABLE src AS
-+	SELECT vals.txt AS i FROM (SELECT (hash(i) % 300) AS grp FROM range(0, 100_000) tbl(i)) t JOIN vals USING (grp);
-+
-+run
-+CREATE TABLE test AS SELECT * FROM src;
-+checkpoint;
-```
-
-**File**: `benchmark/micro/compression/dictionary/dict_fsst_analyze_small_blocks.benchmark` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+# name: benchmark/micro/compression/dictionary/dict_fsst_analyze_small_blocks.benchmark
-+# description: Storing short strings with 16KB blocks, so the block-local dictionary is rebuilt often
-+# group: [dictionary]
-+
-+name Dictionary Compression Write
-+group dictionary
-+require_reinit
-+
-+load
-+ATTACH ':memory:' AS small_blocks (BLOCK_SIZE 16384);
-+PRAGMA force_compression='dict_fsst';
-+CREATE OR REPLACE TABLE small_blocks.src AS SELECT (100 + (i%1000))::VARCHAR AS i FROM range(0, 20_000_000) tbl(i);
-+
-+run
-+CREATE TABLE small_blocks.test AS SELECT * FROM small_blocks.src;
-+CHECKPOINT small_blocks;
-```
-
-**File**: `benchmark/micro/compression/dictionary/dict_fsst_selection_small_blocks.benchmark` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+# name: benchmark/micro/compression/dictionary/dict_fsst_selection_small_blocks.benchmark
-+# description: Storing large scattered duplicates with 16KB blocks, leaving the compression choice to the size estimates
-+# group: [dictionary]
-+
-+name Dictionary Compression Write
-+group dictionary
-+require_reinit
-+
-+load
-+ATTACH ':memory:' AS small_blocks (BLOCK_SIZE 16384);
-+CREATE OR REPLACE TABLE small_blocks.vals AS
-+	SELECT g AS grp, (SELECT string_agg(md5(g::VARCHAR || '-' || x::VARCHAR), '') FROM range(180) x) AS txt
-+	FROM range(300) t(g);
-+
-+run
-+CREATE TABLE small_blocks.test AS
-+	SELECT vals.txt AS i FROM (SELECT (hash(i) % 300) AS grp FROM range(0, 300_000) tbl(i)) t JOIN small_blocks.vals vals USING (grp);
-+CHECKPOINT small_blocks;
-```
-
-**File**: `src/include/duckdb/common/primitive_dictionary.hpp` (modified, +40/-5)
-```diff
-@@ -9,8 +9,10 @@
+@@ -9,7 +9,6 @@
  #pragma once
  
- #include "duckdb/common/types/string_type.hpp"
-+#include "duckdb/common/types/hash.hpp"
- #include "duckdb/common/allocator.hpp"
- #include "duckdb/common/serializer/memory_stream.hpp"
-+#include "duckdb/common/vector.hpp"
+ #include "column_reader.hpp"
+-#include "reader/templated_column_reader.hpp"
  
  namespace duckdb {
  
-@@ -40,6 +42,8 @@ template <class SRC, class TGT = SRC, class OP = PrimitiveCastOperator>
- class PrimitiveDictionary {
- private:
- 	static constexpr idx_t LOAD_FACTOR = 2;
-+	//! Clear sweeps every slot once the occupied slots exceed this fraction of the capacity
-+	static constexpr idx_t CLEAR_SWEEP_FACTOR = 8;
- 
- 	static constexpr uint32_t INVALID_INDEX = static_cast<uint32_t>(-1);
- 	struct primitive_dictionary_entry_t {
-@@ -66,24 +70,35 @@ class PrimitiveDictionary {
- 	                                              : capacity * sizeof(TGT))),
- 	      target_stream(allocated_target.get(), allocated_target.GetSize()),
- 	      dictionary(reinterpret_cast<primitive_dictionary_entry_t *>(allocated_dictionary.get())), full(false) {
--		Clear();
-+		ClearAllSlots();
- 	}
- 
- public:
- 	//! Insert value into dictionary (if not full)
- 	template <bool ADD_TO_TARGET = false>
- 	void Insert(SRC value) {
- 		if (full) {
-+			// nothing can be inserted anymore, so do not pay for the hash
- 			return;
+@@ -31,26 +30,30 @@ class ParquetDecimalUtils {
+ 			auto byte = *(pointer + (size - i - 1));
+ 			res_ptr[i] = positive ? byte : byte ^ 0xFF;
  		}
--		auto &entry = Lookup(value);
-+		Insert<ADD_TO_TARGET>(value, Hash(value));
-+	}
-+
-+	//! Insert value into dictionary (if not full), reusing the hash a Lookup computed for it
-+	template <bool ADD_TO_TARGET = false>
-+	void Insert(SRC value, hash_t hash) {
-+		if (full) {
-+			return;
-+		}
-+		auto &entry = Lookup(value, hash);
- 		if (entry.IsEmpty()) {
- 			if (size + 1 > maximum_size || (ADD_TO_TARGET && !AddToTarget(value))) {
- 				full = true;
- 				return;
++		bool invalid = false;
+ 		// Verify that there are only 0s here
+-		if (size > sizeof(PHYSICAL_TYPE)) {
+-			for (idx_t i = sizeof(PHYSICAL_TYPE); i < size; i++) {
+-				auto byte = *(pointer + (size - i - 1));
+-				if (!positive) {
+-					byte ^= 0xFF;
+-				}
+-				if (byte != 0) {
+-					throw InvalidInputException("Invalid decimal encoding in Parquet file");
+-				}
++		for (idx_t i = sizeof(PHYSICAL_TYPE); i < size; i++) {
++			auto byte = *(pointer + (size - i - 1));
++			if (!positive) {
++				byte ^= 0xFF;
  			}
- 			entry.value = value;
- 			entry.index = size++;
-+			occupied.push_back(UnsafeNumericCast<uint32_t>(&entry - dictionary));
- 		}
- 	}
- 
-@@ -148,25 +163,43 @@ class PrimitiveDictionary {
- 	void Reset() {
- 		allocated_dictionary.Reset();
- 		allocated_target.Reset();
-+		occupied = vector<uint32_t>();
- 	}
- 
-+	//! Empty the dictionary, in time proportional to the entries it holds rather than to its capacity
- 	void Clear() {
--		for (idx_t i = 0; i < capacity; i++) {
--			dictionary[i].index = INVALID_INDEX;
-+		if (occupied.size() * CLEAR_SWEEP_FACTOR < capacity) {
-+			for (auto offset : occupied) {
-+				dictionary[offset].index = INVALID_INDEX;
-+			}
-+		} else {
-+			ClearAllSlots();
- 		}
-+		occupied.clear();
- 		size = 0;
- 		full = false;
- 	}
- 	//! Look up a value in the dictionary using linear probing
- 	primitive_dictionary_entry_t &Lookup(const SRC &value) const {
--		auto offset = Hash(value) & capacity_mask;
-+		return Lookup(value, Hash(value));
-+	}
-+
-+	//! Look up a value with its precomputed hash
-+	primitive_dictionary_entry_t &Lookup(const SRC &value, hash_t hash) const {
-+		auto offset = hash & capacity_mask;
- 		while (!dictionary[offset].IsEmpty() && dictionary[offset].value != value) {
- 			++offset &= capacity_mask;
- 		}
- 		return dictionary[offset];
- 	}
- 
- private:
-+	void ClearAllSlots() {
-+		for (idx_t i = 0; i < capacity; i++) {
-+			dictionary[i].index = INVALID_INDEX;
++			invalid |= byte != 0;
 +		}
-+	}
-+
- 	//! Write a value to the target data (if source is not string)
- 	template <typename S = SRC, typename std::enable_if<!std::is_same<S, string_t>::value, int>::type = 0>
- 	bool AddToTarget(const SRC &src_value) {
-@@ -251,6 +284,8 @@ class PrimitiveDictionary {
++		invalid |= res < 0;
++		if (invalid) {
++			ThrowInvalidDecimalEncoding();
+ 		}
+ 		if (!positive) {
+-			res += 1;
+-			return -res;
++			// Negate before subtracting one to keep the minimum signed value representable.
++			return -res - 1;
+ 		}
+ 		return res;
+ 	}
  
- 	//! Pointers to allocated regions for convenience
- 	primitive_dictionary_entry_t *const dictionary;
-+	//! Offsets of the filled slots, so Clear does not have to sweep the whole capacity
-+	vector<uint32_t> occupied;
- 
- 	//! More values inserted than possible
- 	bool full;
-```
-
-**File**: `src/include/duckdb/storage/compression/dict_fsst/analyze.hpp` (modified, +89/-1)
-```diff
-@@ -1,6 +1,10 @@
- #pragma once
- 
-+#include "duckdb/common/bitpacking.hpp"
-+#include "duckdb/common/primitive_dictionary.hpp"
-+#include "duckdb/common/types/string_heap.hpp"
- #include "duckdb/function/compression_function.hpp"
-+#include "duckdb/storage/compression/dict_fsst/common.hpp"
- 
- namespace duckdb {
- 
-@@ -10,13 +14,61 @@ namespace dict_fsst {
- // Analyze
- //===--------------------------------------------------------------------===//
- struct DictFSSTAnalyzeState : public AnalyzeState {
-+public:
-+	//! Distinct values the set of a simulated block starts out with, and the factor it grows by when it fills up
-+	static constexpr idx_t INITIAL_SET_SIZE = 1024;
-+	static constexpr idx_t SET_GROWTH_FACTOR = 4;
-+	//! Fixed point scale of 'fsst_ratio'
-+	static constexpr idx_t FSST_RATIO_SCALE = 1024;
-+	//! Bytes beyond twice the input length that FSST needs in its output buffer, as specified in fsst.h
-+	static constexpr idx_t FSST_OUTPUT_SLACK = 7;
-+	//! Amount of the dictionary of a block that is encoded to measure the ratio, which is what FSST trains on
-+	static constexpr idx_t FSST_MEASURE_SIZE = 16384;
-+	//! Number of times a full block considers encoding its dictionary between two measurements
-+	static constexpr idx_t FSST_MEASURE_INTERVAL = 4;
-+
- public:
- 	explicit DictFSSTAnalyzeState(BlockManager &block_manager);
- 
- public:
- 	bool Analyze(const Vector &input);
- 	idx_t FinalAnalyze();
- 
-+	//! Space one block with an unencoded dictionary needs to hold the given amount of tuples and dictionary entries
-+	static idx_t RequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size, idx_t max_string_length);
-+	//! Same for the layout of the given mode, where an encoded dictionary also stores the symbol table
-+	static idx_t RequiredSpace(DictionaryAppendState mode, idx_t tuple_count, idx_t unique_count, idx_t dict_size,
-+	                           idx_t max_string_length, idx_t symbol_table_size);
+ 	static unique_ptr<ColumnReader> CreateReader(const ParquetReader &reader, const ParquetColumnSchema &schema);
 +
 +private:
-+	//! Account for a tuple that reuses a dictionary index (NULL or a repeated value); false if the block is full, or
-+	//! if it decided to store every value, in which case the tuple has to be stored like a new value
-+	bool TryAddIndexOnlyTuple();
-+	//! Account for a value the current block has not seen, flushing the block first if it does not fit. The hash is
-+	//! only passed when the caller had to compute it, a block that stores every value does not need one.
-+	void AddNewString(const string_t &str, optional_idx hash);
-+	void FlushSimulatedBlock();
-+	//! Space a flushed segment of the given size takes on disk: the partial block manager packs small segments
-+	//! together, but a segment above its limit gets a block of its own
-+	idx_t SegmentCharge(idx_t required_space) const;
-+	unique_ptr<PrimitiveDictionary<string_t>> MakeSet(idx_t size) const;
-+	void GrowSet();
-+
-+	//! Space the current block can use: it reserves room for a symbol table until it is known to not need one
-+	idx_t AvailableSpace() const;
-+	//! Space the current block needs for the given contents, in the mode and with the symbol table it has
-+	idx_t BlockRequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size, idx_t max_string_length) const;
-+	//! Length of a value of the given length once FSST encoded, according to the measured ratio
-+	idx_t EncodedLength(idx_t length) const;
-+	//! Length a value takes in the dictionary of the current block
-+	idx_t StoredLength(idx_t length) const;
-+	//! The block is full for an unencoded dictionary: decide how to continue, the way the writer does when it is
-+	//! full (DictFSSTCompressionState::TryEncode)
-+	void SwitchFromRegular();
-+	DictionaryAppendState ChooseEncoding();
-+	//! FSST encode the dictionary of the current block, to learn how well values compress and how big the table is
-+	void MeasureFSST();
-+
- public:
- 	idx_t max_string_length = 0;
- 	bool contains_nulls = false;
-@@ -26,8 +78,44 @@ struct DictFSSTAnalyzeState : public AnalyzeState {
- 	idx_t fsst_string_size_limit = 0;
- 	//! Flag which disables the usage of FSST if worst-case encoding blowup does not fit the block size.
- 	bool disable_fsst = false;
--	idx_t total_string_length = 0;
- 	idx_t total_count = 0;
-+
-+	//! The dictionary is block-local, so the size estimate has to simulate how values pack into blocks:
-+	//! duplicates that end up in different blocks are stored once per block, not once in total.
-+	//! Space charged for the simulated blocks flushed so far, see SegmentCharge
-+	idx_t simulated_space = 0;
-+	//! How the current simulated block stores its values, which changes when it fills up (see SwitchFromRegular)
-+	DictionaryAppendState current_mode = DictionaryAppendState::REGULAR;
-+	idx_t current_tuple_count = 0;
-+	idx_t current_unique_count = 0;
-+	//! Size of the dictionary and of its longest entry, as stored in the mode of the block
-+	idx_t current_dict_size = 0;
-+	idx_t current_max_string_length = 0;
-+	//! Size of the symbol table of the block, 0 as long as its dictionary is not encoded
-+	idx_t current_symbol_tabl
-```
-
-**File**: `src/include/duckdb/storage/compression/dict_fsst/common.hpp` (modified, +6/-0)
-```diff
-@@ -37,8 +37,14 @@ struct DictFSSTCompression {
- 	//! Dictionary header size at the beginning of the string segment (offset + length)
- 	static constexpr uint16_t DICTIONARY_HEADER_SIZE = sizeof(dict_fsst_compression_header_t);
- 	static constexpr idx_t STRING_SIZE_LIMIT = 16384;
-+	//! Dictionary size from which the writer considers FSST encoding it, and the saving it has to achieve
-+	static constexpr idx_t DICTIONARY_ENCODE_THRESHOLD = 4096;
++	[[noreturn]] static void ThrowInvalidDecimalEncoding();
  };
  
-+static inline bool IsEncoded(DictionaryAppendState state) {
-+	return state == DictionaryAppendState::ENCODED || state == DictionaryAppendState::ENCODED_ALL_UNIQUE;
-+}
-+
- } // namespace dict_fsst
- 
- } // namespace duckdb
+ template <>
 ```
 
-**File**: `src/storage/compression/dict_fsst/analyze.cpp` (modified, +332/-2)
+**File**: `extension/parquet/parquet_metadata.cpp` (modified, +7/-1)
 ```diff
-@@ -1,7 +1,10 @@
- #include "duckdb/storage/compression/dict_fsst/analyze.hpp"
+@@ -25,6 +25,7 @@
+ #include "duckdb/common/multi_file/multi_file_data.hpp"
+ #include "duckdb/common/mutex.hpp"
+ #include "duckdb/common/open_file_info.hpp"
++#include "duckdb/common/operator/subtract.hpp"
+ #include "duckdb/common/optional_idx.hpp"
+ #include "duckdb/common/optional_ptr.hpp"
+ #include "duckdb/common/pair.hpp"
+@@ -1164,7 +1165,12 @@ void ParquetPageIndexProcessor::ReadRow(vector<reference<Vector>> &output, idx_t
+ 		first_row_index = Value::BIGINT(location.first_row_index);
+ 		const auto next_row =
+ 		    page_idx + 1 < locations.size() ? locations[page_idx + 1].first_row_index : row_group.num_rows;
+-		num_rows = Value::BIGINT(next_row - location.first_row_index);
++		int64_t page_row_count;
++		if (!TrySubtractOperator::Operation(next_row, location.first_row_index, page_row_count)) {
++			throw DataCorruptionException("Failed to read file \"%s\": metadata is corrupt. Page row count overflows",
++			                              reader.file.path);
++		}
++		num_rows = Value::BIGINT(page_row_count);
+ 	}
+ 	// page_offset
+ 	output[5].get().Append(offset);
+```
+
+**File**: `extension/parquet/parquet_timestamp.cpp` (modified, +3/-1)
+```diff
+@@ -2,6 +2,7 @@
  
- #include "duckdb/common/bitpacking.hpp"
-+#include "duckdb/common/types/hash.hpp"
- #include "duckdb/common/types/vector.hpp"
-+#include "duckdb/storage/block_manager.hpp"
-+#include "duckdb/storage/buffer_manager.hpp"
- #include "duckdb/storage/compression/dict_fsst/common.hpp"
+ #include "duckdb/common/operator/add.hpp"
+ #include "duckdb/common/operator/multiply.hpp"
++#include "duckdb/common/operator/subtract.hpp"
+ #include "duckdb/common/types/date.hpp"
+ #include "duckdb/common/types/time.hpp"
+ #include "duckdb/common/types/timestamp.hpp"
+@@ -44,7 +45,8 @@ static int64_t ImpalaTimestampToNanoseconds(const Int96 &impala_timestamp) {
+ 	if (days_since_epoch < 0) {
+ 		//	Don't saturate the minimum value by going past it
+ 		if (!TryMultiplyOperator::Operation(days_since_epoch + 1, NANOSECONDS_PER_DAY, day_nanoseconds) ||
+-		    !TryAddOperator::Operation(day_nanoseconds, nanoseconds - NANOSECONDS_PER_DAY, result)) {
++		    !TrySubtractOperator::Operation(nanoseconds, NANOSECONDS_PER_DAY, nanoseconds) ||
++		    !TryAddOperator::Operation(day_nanoseconds, nanoseconds, result)) {
+ 			// out of range for TIMESTAMP_NS - saturate to -infinity
+ 			return timestamp_ns_t::ninfinity().value;
+ 		}
+```
+
+**File**: `extension/parquet/reader/decimal_column_reader.cpp` (modified, +4/-0)
+```diff
+@@ -13,6 +13,10 @@ namespace duckdb {
+ class ParquetReader;
+ struct hugeint_t;
  
- namespace duckdb {
-@@ -53,17 +56,311 @@ DictFSSTAnalyzeState::DictFSSTAnalyzeState(BlockManager &block_manager) : Analyz
- 
- 	string_size_limit = GetStringSizeLimit(block_size, false);
- 	fsst_string_size_limit = GetStringSizeLimit(block_size, true);
-+
-+	// a block cannot hold more distinct strings than half its size in bytes, matching the compression state
-+	max_set_size = block_size / 2;
-+	// most blocks hold few distinct values, so start small and grow the set only when it runs out of room
-+	current_set_size = MinValue(INITIAL_SET_SIZE, max_set_size);
-+	current_set = MakeSet(current_set_size);
-+	current_required_space = BlockRequiredSpace(0, 0, 0, 0);
++[[noreturn]] void ParquetDecimalUtils::ThrowInvalidDecimalEncoding() {
++	throw DataCorruptionException("Invalid decimal encoding in Parquet file");
 +}
 +
-+unique_ptr<PrimitiveDictionary<string_t>> DictFSSTAnalyzeState::MakeSet(idx_t size) const {
-+	auto &allocator = info.GetBlockManager().buffer_manager.GetBufferAllocator();
-+	return make_uniq<PrimitiveDictionary<string_t>>(allocator, size, 1);
-+}
+ template <bool FIXED>
+ static unique_ptr<ColumnReader> CreateDecimalReaderInternal(const ParquetReader &reader,
+                                                             const ParquetColumnSchema &schema) {
+```
+
+**File**: `test/parquet/corrupt/decimal_stats_signed_overflow.test` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++# name: test/parquet/corrupt/decimal_stats_signed_overflow.test
++# description: Decode minimum signed decimal statistics without overflowing
++# group: [corrupt]
 +
-+void DictFSSTAnalyzeState::GrowSet() {
-+	D_ASSERT(current_set_size < max_set_size);
-+	current_set_size = MinValue(current_set_size * SET_GROWTH_FACTOR, max_set_size);
-+	auto grown = MakeSet(current_set_size);
-+	// the strings live in 'heap', so the entries carry over as they are
-+	current_set->IterateValues([&](const string_t &value, const string_t &) { grown->Insert(value); });
-+	current_set = std::move(grown);
-+}
++require parquet
 +
-+idx_t DictFSSTAnalyzeState::RequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size,
-+                                          idx_t max_string_length) {
-+	return RequiredSpace(DictionaryAppendState::NOT_ENCODED, tuple_count, unique_count, dict_size, max_string_length,
-+	                     0);
-+}
++# The minimum statistic encodes INT32_MIN, which does not fit in DECIMAL(9,2).
++query TT
++SELECT stats_min_value, stats_max_value FROM parquet_metadata('data/parquet-testing/corrupt/decimal_stats_signed_overflow.parquet');
++----
++NULL	123.45
 +
-+idx_t DictFSSTAnalyzeState::RequiredSpace(DictionaryAppendState mode, idx_t tuple_count, idx_t unique_count,
-+                                          idx_t dict_size, idx_t max_string_length, idx_t symbol_table_size) {
-+	// index 0 of the dictionary is reserved for NULL
-+	const idx_t dict_count = unique_count + 1;
++# Ignore the invalid statistic without pruning valid data.
++query I
++SELECT val FROM read_parquet('data/parquet-testing/corrupt/decimal_stats_signed_overflow.parquet') WHERE val > 100;
++----
++123.45
++123.45
++123.45
++123.45
+```
+
+**File**: `test/parquet/corrupt/int96_nanosecond_subtraction_overflow.test` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++# name: test/parquet/corrupt/int96_nanosecond_subtraction_overflow.test
++# description: Saturate out-of-range INT96 timestamps without signed subtraction overflow
++# group: [corrupt]
 +
-+	const auto string_lengths_width = BitpackingPrimitives::MinimumBitWidth(max_string_length);
-+	const auto string_lengths_space = BitpackingPrimitives::GetRequiredSize(dict_count, string_lengths_width);
++require parquet
 +
-+	idx_t required_space = AlignValue<idx_t>(sizeof(dict_fsst_compression_header_t));
-+	required_space += dict_size;
-+	required_space = AlignValue<idx_t>(required_space);
-+	if (IsEncoded(mode)) {
-+		required_space += symbol_table_size;
-+		required_space = AlignValue<idx_t>(required_space);
-+	}
-+	required_space += string_lengths_space;
-+	required_space = AlignValue<idx_t>(required_space);
-+	if (mode != DictionaryAppendState::ENCODED_ALL_UNIQUE) {
-+		// when every value is stored there is no selection buffer
-+		const auto dictionary_indices_width = BitpackingPrimitives::MinimumBitWidth(dict_count - 1);
-+		required_space += BitpackingPrimitives::GetRequiredSize(tuple_count, dictionary_indices_width);
-+	}
-+	return required_space;
-+}
++# INT64_MIN nanoseconds on the day before the epoch is below the TIMESTAMP_NS range.
++query T
++SELECT ts::VARCHAR FROM read_parquet('data/parquet-testing/corrupt/int96_nanosecond_subtraction_overflow.parquet', int96_as='timestamp_ns');
++----
++-infinity
+```
+
+**File**: `test/parquet/corrupt/page_index_row_count_overflow.test` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++# name: test/parquet/corrupt/page_index_row_count_overflow.test
++# description: Reject overflowing row counts in page index metadata
++# group: [corrupt]
 +
-+idx_t DictFSSTAnalyzeState::BlockRequiredSpace(idx_t tuple_count, idx_t unique_count, idx_t dict_size,
-+                                               idx_t max_string_length) const {
-+	return RequiredSpace(current_mode, tuple_count, unique_count, dict_size, max_string_length,
-+	                     current_symbol_table_size);
-+}
++require parquet
 +
-+idx_t DictFSSTAnalyzeState::AvailableSpace() const {
-+	if (current_mode == DictionaryAppendState::REGULAR) {
-+		return info.GetBlockSize() - DictFSSTCompression::FSST_SYMBOL_TABLE_SIZE;
-+	}
-+	return info.GetBlockSize();
-+}
-+
-+idx_t DictFSSTAnalyzeState::EncodedLength(idx_t length) const {
-+	if (!length) {
-+		return 0;
-+	}
-+	return MaxValue<idx_t>((length * fsst_ratio + FSST_RATIO_SCALE - 1) / FSST_RATIO_SCALE, 1);
-+}
-+
-+idx_t DictFSSTAnalyzeState::StoredLength(idx_t length) const {
-+	return IsEncoded(current_mode) ? EncodedLength(length) : length;
-+}
-+
-+idx_t DictFSSTAnalyzeState::SegmentCharge(idx_t required_space) const {
-+	// a segment above the limit is written to a block of its own whose remainder is lost, a smaller one is packed
-+	// with other segments, see PartialBlockManager::RetainOrFlush
-+	if (required_space > info.GetCompactionFlushLimit()) {
-+		return info.GetBlockSize();
-+	}
-+	return AlignValue<idx_t>(required_space);
-+}
-+
-+void DictFSSTAnalyzeState::MeasureFSST() {
-+	// The writer trains the symbol table on the dictionary of the block. FSST only looks at a sample of what it is
-+	// given, so the first values of the block are enough to tell how well the dictionary compresses.
-+	vector<unsigned char> dictionary;
-+	vector<size_t> lengths;
-+	dictionary.reserve(measure_sample_size);
-+	lengths.reserve(measure_sample.size());
-+	for (auto &value : measure_s
++# The last page starts at INT64_MIN, so subtracting it from the row group size overflows.
++statement error
++SELECT * FROM parquet_page_index('data/parquet-testing/corrupt/page_index_row_count_overflow.parquet');
++----
++Page row count overflows
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28325** (closed): Altertable v2.0-cyanoptera (@redox)
-- **PR #28306** (closed): round: round halfway cases away from zero without std::round (@louie-duck)
-- **PR #28304** (closed): Batch the Ready To Merge fixes for wrong results and parsing (@Robinho-MR)
-- **PR #28303** (closed): Batch the Ready To Merge fixes for crashes and INTERNAL errors (@Robinho-MR)
-- **PR #28296** (closed): Expose the VARIANT layout through the v2 C API vector child accessors (@h4nsmuller)
-- **PR #28295** (2026-11-03): Make async_task_synchronous_batch layout deterministic (@Robinho-MR)
+- **PR #28378** (2026-11-04): Update extension_entries.hpp for sirius (@Robinho-MR)
+- **PR #28347** (2026-11-04): Fall back to a generic select for BETWEEN over nested types (@kryonix)
+- **PR #28346** (2026-11-04): Fix `fsum`/`favg` precision and overflow (@alonfaraj)
+- **PR #28340** (2026-11-04): [C-API-V2] Make error_info setters a no-op for a null info handle (@DinosL)
+- **PR #28339** (closed): Add min/max/total list length statistics (@Robinho-MR)
+- **PR #28337** (2026-11-04): Create loggers without taking `LogManager::lock` (@dentiny)
 
 ---
 
@@ -2844,70 +2479,30 @@ ATTACH 'repro.db' AS db (BLOCK_SIZE 16
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791)
+## X. cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27
 
 **RULE**:
-When implementing operations in `third_party/brotli/dec/decode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94be654e`: Pull in upstream Brotli decoder fix (CVE-2026-111497) (#27791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4379c69f`: cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `third_party/brotli/dec/decode.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-static BROTLI_INLINE BrotliDecoderErrorCode DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
-		return BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH;
-		if (!SafeReadSymbol(type_tree, br, &block_type)) {
-			return BROTLI_DECODER_NEEDS_MORE_INPUT;
-		}
-			return BROTLI_DECODER_NEEDS_MORE_INPUT;
-	return BROTLI_DECODER_SUCCESS;
-static BROTLI_INLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 0);
-	if (result != BROTLI_DECODER_SUCCESS) {
-		return result;
-	return BROTLI_DECODER_SUCCESS;
-static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-	return DecodeLiteralBlockSwitchInternal(0, s);
-static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-static BROTLI_INLINE BrotliDecoderErrorCode DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-	BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 1);
-	if (result != BROTLI_DECODER_SUCCESS) {
-		return result;
-	return BROTLI_DECODER_SUCCESS;
-static BROTLI_NOINLINE BrotliDecoderErrorCode DecodeCommandBlockS
+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(int safe, BrotliDecoderState *s, int tree_type) {
-		return BROTLI_FALSE;
-		if (!SafeReadSymbol(type_tree, br, &block_type))
-			return BROTLI_FALSE;
-			return BROTLI_FALSE;
-	return BROTLI_TRUE;
-static BROTLI_INLINE BROTLI_BOOL DecodeLiteralBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-	if (!DecodeBlockTypeAndLength(safe, s, 0)) {
-		return BROTLI_FALSE;
-	return BROTLI_TRUE;
-static void BROTLI_NOINLINE DecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-	DecodeLiteralBlockSwitchInternal(0, s);
-static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeLiteralBlockSwitch(BrotliDecoderState *s) {
-static BROTLI_INLINE BROTLI_BOOL DecodeCommandBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-	if (!DecodeBlockTypeAndLength(safe, s, 1)) {
-		return BROTLI_FALSE;
-	return BROTLI_TRUE;
-static void BROTLI_NOINLINE DecodeCommandBlockSwitch(BrotliDecoderState *s) {
-	DecodeCommandBlockSwitchInternal(0, s);
-static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeCommandBlockSwitch(BrotliDecoderState *s) {
-static BROTLI_INLINE BROTLI_BOOL DecodeDistanceBlockSwitchInternal(int safe, BrotliDecoderState *s) {
-	if (!DecodeBlockTypeAndLength(safe, s, 2)) {
-		r
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94be654e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4379c69f` are properly handled with clean fallback behavior.

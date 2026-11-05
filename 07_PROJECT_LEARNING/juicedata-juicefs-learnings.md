@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `3c1e052e`  
+> **Source Version**: `f8e3bc7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:45:49.384Z  
+> **Timestamp**: 2026-11-05T02:55:16.911Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:45:48.277Z  
+> **Harvest Timestamp**: 2026-11-05T02:55:16.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14618 stars
+- **Stars / Engagement**: 14675 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7798** (2026-11-03): **cmd/dump: warn when flags are ignored with --binary or --subdir**
-  *Symptoms*: `dump --binary` always exports the whole volume and ignores `--subdir`, `--fast` and `--skip-trash`, but this was only mentioned in `--help`. A user running `dump --binary --subdir /a` got a full-volume dump without any notice. `--fast` is also silently ignored for JSON dumps with `--subdir`.  Log a warning for each ignored flag, and document these interactions in the English and Chinese command references. Dump behavior is unchanged.  Validation: `go vet ./cmd/`, and manual dumps on a SQLite volume covering `--binary` with `--subdir`/`--fast`/`--skip-trash`, JSON `--subdir` with `--fast`, and `--subdir /` (no warning). 
+- **Issue #7805** (2026-11-05): **sdk: prevent root group membership from granting superuser access**
+  *Symptoms*: The Python SDK passed root's group names (concatenated) to libjfs as `supergroup`. When root belongs only to the `root` group, every member of `root` was treated as superuser and could read root-only files.  Changes: - Python passes the same legacy string as `rootGroup` (used only to map that group to GID 0) and an empty `supergroup`. Existing file GIDs are unchanged; non-root members of `root` only get normal group permissions. - libjfs: `isSuperuser` ignores an empty supergroup; `lookupGid`/`gid2name` use `rootGroup`, falling back to `supergroup` so Java behavior is unchanged; `rootGroup` is excluded from the filesystem cache key.  Compatibility: libjfs is bundled with the Python SDK. If mixed manually, new Python with old libjfs loses the GID 0 mapping for `root`, and old Python with new libjfs keeps the old elevation. 
 
-- **Issue #7797** (2026-11-03): **meta: treat .trash as an ordinary name under subdir mounts**
-  *Symptoms*: The `.trash` name reservation in `Mknod`/`Link`/`Unlink`/`Rmdir`/`Rename`/`Clone` was checked before the chroot translation, while `Lookup` checks it after. Under a subdir mount, an ordinary `.trash` directory in the mount root was visible but returned EPERM on create/remove/rename/clone.  Apply `checkRoot` before the reservation checks so the name is reserved only at the real volume root. This matches `Lookup` and the VFS layer, which already drops the `.trash` internal node for subdir mounts.  The change is in `baseMeta`, so all engine families behave the same, and the metadata format does not change. Regression test added in `pkg/meta/subdir_test.go` (fails before the fix); passes on Redis, SQLite, memkv and Badger.
+- **Issue #7804** (2026-11-04): **meta: resolve quota and forced paths relative to the subdir root**
+  *Symptoms*: After `Chroot`, `HandleQuota` resolves directory paths from the volume root, but `Mkdir`, `GetSummary` and `GetPaths` in the same flow are relative to the mounted root. With a client chrooted to `/sub`:  - Setting a quota on `/` stores it on the volume root, but usage is computed for `/sub`. - `--create /x` creates `/sub/x` but looks it up under the volume root, so a second run fails with EEXIST. - Paths returned by list cannot be used to get the quota back.  `Resolve(force=true)` also ignores both `parent` and the mounted root.  Fix: - `resolve` starts from `m.root`. - The forced `Resolve` starts from `checkRoot(parent)`. - Quota list reports the mounted root as `/` and skips quotas outside it.  Processes that do not chroot (`m.root == 1`), such as `juicefs quota`, `juicefs config` and tier, are unaffected. Tests are added in `pkg/meta/subdir_test.go`, and existing tests that used volume-root paths under chroot are updated. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,232 +1176,166 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c1e052e` (2026-11-03)
-**Commit Message**: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
+### Incident Patch 1: `f8e3bc7b` (2026-11-05)
+**Commit Message**: sdk: prevent root group membership from granting superuser access (#7805)
 
-**File**: `cmd/dump.go` (modified, +12/-1)
+Signed-off-by: miyang <[REDACTED_EMAIL]>
+Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+
+**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +37/-1)
 ```diff
-@@ -164,7 +164,18 @@ func dump(ctx *cli.Context) error {
- 		threads = 1
- 	}
+@@ -1,8 +1,10 @@
+ import errno
+ from array import array
+ import fractions
++import grp
+ import io
+ import unittest
++from unittest.mock import patch
+ import os
+ import pwd
+ import stat
+@@ -20,8 +22,11 @@
  
--	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
-+	isBinary := ctx.Bool("binary")
-+	if isBinary {
-+		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
-+			if ctx.IsSet(flag) {
-+				logger.Warnf("--%s is ignored with --binary", flag)
-+			}
-+		}
-+	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
-+		logger.Warnf("--fast is ignored with --subdir")
-+	}
+ 
+ class FileTests(unittest.TestCase):
++    def open_client(self):
++        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
 +
-+	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
- 	if err == nil {
- 		if dst == "" {
- 			dst = "STDOUT"
+     def setUp(self):
+-        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
++        self.v = self.open_client()
+         if not self.v.exists(TESTFN):
+             self.v.mkdir(TESTFN)
+ 
+@@ -130,6 +135,37 @@ def test_makedir(self):
+ 
+ 
+ class ChownFileTests(FileTests):
++    def test_root_group_read_permissions(self):
++        self.v.chmod(TESTFN, 0o755)
++        self.create_file(TESTFILE)
++        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
++                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
++        groups = {gid: grp.struct_group((name, "x", gid, []))
++                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
++        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
++        legacy_gid = 2730912965
++        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
++            legacy_gid &= 0x7fffffff
++        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
++            with self.subTest(root_groups=root_groups):
++                self.v.chown(TESTFILE, 0, file_gid)
++                self.v.chmod(TESTFILE, denied_mode)
++                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
++                with patch.object(os, "geteuid", return_value=1001), \
++                        patch.object(pwd, "getpwuid", side_effect=users.__getitem__), \
++                        patch.object(grp, "getgrgid", side_effect=groups.__getitem__), \
++                        patch.object(os, "getgrouplist", side_effect=lambda name, gid: memberships[name]):
++                    member = self.open_client()
++                self.addCleanup(member.close)
++                with self.assertRaises(OSError) as denied:
++                    with member.open(TESTFILE, "rb") as f:
++                        f.read()
++                self.assertEqual(denied.exception.errno, errno.EACCES)
++
++                self.v.chmod(TESTFILE, 0o440)
++                with member.open(TESTFILE, "rb") as f:
++                    self.assertEqual(f.read(), b"content")
++
+     def test_chown_uid_gid_arguments_must_be_index(self):
+         stat = self.v.stat(TESTFN)
+         uid = stat.st_uid
 ```
 
-**File**: `docs/en/reference/command_reference.mdx` (modified, +3/-3)
+**File**: `sdk/java/libjfs/main.go` (modified, +8/-3)
 ```diff
-@@ -425,11 +425,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
- |-|-|
- |`META-URL`|Database URL of the metadata engine. See [JuiceFS supported metadata engines](../reference/how_to_set_up_metadata_engine.md) for details.|
- |`FILE`|Export file path, if not specified, it will be exported to standard output. If the filename ends with `.gz`, it will be automatically compressed.|
--|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist.|
-+|`--subdir=path`|Only export metadata for the specified subdirectory, which must already exist. Ignored with `--binary`, which always exports the whole volume.|
- |`--keep-secret-key` <VersionAdd>1.1</VersionAdd> |Export object storage authentication information, the default is `false`. Since it is exported in plain text, pay attention to data security when using it. If the export file does not contain object storage authentication information, you need to use [`juicefs config`](#config) to reconfigure object storage authentication information after the subsequent import is completed.|
- |`--threads=10` <VersionAdd>1.2</VersionAdd>|number of threads to dump metadata. (default: 10)|
--|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump.|
--|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash.|
-+|`--fast` <VersionAdd>1.2</VersionAdd>|Use more memory to speedup dump. Ignored with `--subdir` or `--binary`.|
-+|`--skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash. Ignored with `--binary`.|
- 
- ### `juicefs load` {#load}
- 
-```
-
-**File**: `docs/zh_cn/reference/command_reference.mdx` (modified, +3/-3)
-```diff
-@@ -422,11 +422,11 @@ juicefs dump redis://localhost sub-meta-dump.json --subdir /dir/in/jfs
- |-|-|
- |`META-URL`|用于元数据存储的数据库 URL，详情查看[「JuiceFS 支持的元数据引擎」](../reference/how_to_set_up_metadata_engine.md)。|
- |`FILE`|导出文件路径，如果不指定，则会导出到标准输出。如果文件名以 `.gz` 结尾，将会自动压缩。|
--|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。|
-+|`--subdir=path`|只导出指定子目录的元数据，该目录必须已存在。与 `--binary` 同时使用时会被忽略，始终导出整个文件系统。|
- |`--keep-secret-key` <VersionAdd>1.1</VersionAdd>|导出对象存储认证信息，默认为 `false`。由于是明文导出，使用时注意数据安全。如果导出文件不包含对象存储认证信息，后续的导入完成后，需要用 [`juicefs config`](#config) 重新配置对象存储认证信息。|
- |`--threads=10` <VersionAdd>1.2</VersionAdd>|并发线程数，默认 10。|
--|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。|
--|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。|
-+|`--fast` <VersionAdd>1.2</VersionAdd>|使用更多内存来加速导出。与 `--subdir` 或 `--binary` 同时使用时会被忽略。|
-+|`--skip-trash` <VersionAdd>1.2</VersionAdd>|跳过回收站中的文件和目录。与 `--binary` 同时使用时会被忽略。|
- 
- ### `juicefs load` {#load}
- 
-```
-
----
-
-### Incident Patch 2: `db13db48` (2026-11-03)
-**Commit Message**: meta: treat .trash as an ordinary name under subdir mounts (#7797)
-
-**File**: `pkg/meta/base.go` (modified, +7/-7)
-```diff
-@@ -1675,6 +1675,7 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
- 	if _type < TypeFile || _type > TypeSocket {
- 		return syscall.EINVAL
+@@ -270,7 +270,7 @@ func (w *wrapper) isSuperuser(name string, groups []string) bool {
  	}
-+	parent = m.checkRoot(parent)
- 	if parent.IsTrash() && m.replay.Load() == nil {
- 		return syscall.EPERM
+ 	sg := w.getSuperGroup()
+ 	for _, g := range groups {
+-		if g == sg {
++		if sg != "" && g == sg {
+ 			return true
+ 		}
  	}
-@@ -1692,7 +1693,6 @@ func (m *baseMeta) Mknod(ctx Context, parent Ino, name string, _type uint8, mode
- 	}
- 
- 	defer m.timeit("Mknod", time.Now())
--	parent = m.checkRoot(parent)
- 	var space, inodes int64 = align4K(0), 1
- 	// check group quota in transaction
- 	if !(parent == TrashInode && _type == TypeDirectory) {
-@@ -1776,6 +1776,7 @@ func (m *baseMeta) Symlink(ctx Context, parent Ino, name string, path string, in
+@@ -285,7 +285,7 @@ func (w *wrapper) lookupUid(name string) uint32 {
  }
  
- func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr) syscall.Errno {
-+	parent = m.checkRoot(parent)
- 	if parent.IsTrash() {
- 		return syscall.EPERM
+ func (w *wrapper) lookupGid(group string) uint32 {
+-	if group == w.supergroup {
++	if group == w.conf.RootGroup {
+ 		return 0
  	}
-@@ -1796,7 +1797,6 @@ func (m *baseMeta) Link(ctx Context, inode, parent Ino, name string, attr *Attr)
- 	if attr == nil {
- 		attr = &Attr{}
- 	}
--	parent = m.checkRoot(parent)
- 	if st := m.GetAttr(ctx, inode, attr); st != 0 {
- 		return st
- 	}
-@@ -1868,6 +1868,7 @@ func (m *baseMeta) ReadLink(ctx Context, inode Ino, path *[]byte) syscall.Errno
+ 	return uint32(w.m.lookupGroup(group))
+@@ -308,7 +308,7 @@ func (w *wrapper) uid2name(uid uint32) string {
  }
  
- func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash ...bool) syscall.Errno {
-+	parent = m.checkRoot(parent)
- 	if parent == RootInode && name == TrashName || parent.IsTrash() && ctx.Uid() != 0 {
- 		return syscall.EPERM
+ func (w *wrapper) gid2name(gid uint32) string {
+-	group := w.supergroup
++	group := w.conf.RootGroup
+ 	if gid > 0 {
+ 		group = w.m.lookupGroupID(gid)
  	}
-@@ -1876,7 +1877,6 @@ func (m *baseMeta) Unlink(ctx Context, parent Ino, name string, skipCheckTrash .
- 	}
+@@ -392,6 +392,7 @@ type javaConf struct {
+ 	PushRemoteWriteAuth string `json:"pushRemoteWriteAuth"`
+ 	GuidMask            string `json:"guidMask"`
+ 	Caller              int    `json:"caller"`
++	RootGroup           string `json:"rootGroup"` // Group name mapped to GID 0.
+ 	Subdir              string `json:"subdir"`
  
- 	defer m.timeit("Unlink", time.Now())
--	parent = m.checkRoot(parent)
- 	var attr Attr
- 	err := m.en.doUnlink(ctx, parent, name, &attr, skipCheckTrash...)
- 	if err == 0 {
-@@ -1899,6 +1899,7 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
- 	if name == ".." {
- 		return syscall.ENOTEMPTY
- 	}
-+	parent = m.checkRoot(parent)
- 	if parent == RootInode && name == TrashName || parent == TrashInode && m.replay.Load() == nil || parent.IsTrash() && ctx.Uid() != 0 {
- 		return syscall.EPERM
- 	}
-@@ -1907,7 +1908,6 @@ func (m *baseMeta) Rmdir(ctx Context, parent Ino, name string, skipCheckTrash ..
- 	}
- 
- 	defer m.timeit("Rmdir", time.Now())
--	parent = m.checkRoot(parent)
- 	var inode Ino
- 	var oldAttr Attr
- 	st := m.en.doRmdir(ctx, parent, name, &inode, &oldAttr, skipCheckTrash...)
-@@ -1965,6 +1965,8 @@ func (m *baseMeta) BatchClone(ctx Context, srcParent Ino, dstParent Ino, entries
+ 	AuthMethod string `json:"authMethod,omitempty"`
+@@ -404,6 +405,7 @@ func cleanConf(conf javaConf) javaConf {
+ 	conf.AuthMethod = ""
+ 	conf.RealUser = ""
+ 	conf.SuperFS = false
++	conf.RootGroup = ""
+ 	return conf
  }
  
- func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst Ino, nameDst string, flags uint32, inode *Ino, attr *Attr) syscall.Errno {
-+	parentSrc = m.checkRoot(parentSrc)
-+	parentDst = m.checkRoot(parentDst)
- 	if parentSrc == RootInode && nameSrc == TrashName || parentDst == RootInode && nameDst == TrashName {
- 		return syscall.EPERM
+@@ -431,6 +433,9 @@ func getOrCreate(name, user, groups, superuser, supergroup string, conf javaConf
+ 		}
+ 		logger.Infof("JuiceFileSystem created for user:%s groups:%s", user, groups)
  	}
-@@ -1993,8 +1995,6 @@ func (m *baseMeta) Rename(ctx Context, parentSrc Ino, nameSrc string, parentDst
- 	if attr == nil {
- 		attr = &Attr{}
- 	}
--	parentSrc = m.checkRoot(parentSrc)
--	parentDst = m.checkRoot(parentDst)
- 	var quotaSrc, quotaDst Ino
- 	if !parentSrc.IsTrash() {
- 		quotaSrc, _ = m.getQuotaParent(ctx, parentSrc)
-@@ -3461,6 +3461,7 @@ func (m *baseMeta) ScanDeletedObject(ctx Context, tss trashSliceScan, pss pendin
- 
- func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name string, cmode uint8, cumask uint16, concurrency uint8, count, total *uint64) syscall.Errno {
- 
-+	parent = m.checkRoot(parent)
- 	if srcIno.IsTrash() || srcParentIno.IsTrash() || parent.IsTrash() || (parent == RootInode && name == TrashName) {
- 		return syscall.EPERM
- 	}
-@@ -3473,7 +3474,6 @@ func (m *baseMeta) Clone(ctx Context, srcParentIno, srcIno, parent Ino, name str
- 	}
- 
- 	defer m.timeit("Clone", time.Now())
--	parent = m.checkRoot(parent)
- 
- 	var attr Attr
- 	var eno syscall.Errno
++	if conf.RootGroup == "" {
++		conf.RootGroup = supergroup
++	}
+ 	w := &wrapper{jfs, name, nil, m, user, superuser, supergroup, conf}
+ 	if formats[name] != nil && formats[name].KerbConf != "" {
+ 		if _, ok := superuserChangedCb[name]; !ok {
 ```
 
-**File**: `pkg/meta/subdir_test.go` (modified, +36/-0)
+**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +5/-3)
 ```diff
-@@ -353,6 +353,42 @@ func testSubdirOperations(t *testing.T, m Meta) {
- 				require.Zero(t, base.en.doLookup(ctx, clone, file, &child, &attr))
- 				assert.Equal(t, uint8(TypeFile), attr.Typ)
- 			}},
-+			{"TrashName", func(t *testing.T, parent, realParent, otherParent Ino) {
-+				var got Ino
-+				var attr Attr
-+				var count, total uint64
-+				if realParent == RootInode { // the trash name is reserved only at the real volume root
-+					target := create(t, parent, file)
-+					var inode Ino
-+					assert.Equal(t, syscall.EPERM, m.Mknod(ctx, parent, TrashName, TypeFile, 0644, 0, 0, "", &inode, nil))
-+					assert.Equal(t, syscall.EPERM, m.Mkdir(ctx, parent, TrashName, 0755, 0, 0, &inode, nil))
-+					assert.Equal(t, syscall.EPERM, m.Link(ctx, target, parent, TrashName, nil))
-+					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
-+					assert.Equal(t, syscall.EPERM, m.Rename(ctx, parent, TrashName, parent, dir, 0, nil, nil))
-+					assert.Equal(t, syscall.EPERM, m.Unlink(ctx, parent, TrashName))
-+					assert.Equal(t, syscall.EPERM, m.Rmdir(ctx, parent, TrashName))
-+					assert.Equal(t, syscall.EPERM, m.Clone(ctx, parent, target, parent, TrashName, 0, 0, 1, &count, &total))
-+					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
-+					assert.Equal(t, TrashInode, got)
-+				} else { // under a subdir it is an ordinary name
-+					d := mkdir(t, parent, TrashName)
-+					lookup(t, realParent, TrashName, d)
-+					require.Zero(t, m.Lookup(ctx, parent, TrashName, &got, &attr, false))
-+					assert.Equal(t, d, got)
-+					require.Zero(t, m.Rmdir(ctx, parent, TrashName, true))
-+					lookup(t, realParent, TrashName, 0)
-+					inode := create(t, parent, TrashName)
-+					require.Zero(t, m.Rename(ctx, parent, TrashName, parent, file, 0, nil, nil))
-+					lookup(t, realParent, file, inode)
-+					require.Zero(t, m.Rename(ctx, parent, file, parent, TrashName, 0, nil, nil))
-+					lookup(t, realParent, TrashName, inode)
-+					require.Zero(t, m.Link(ctx, inode, parent, link, nil))
-+					require.Zero(t, m.Unlink(ctx, parent, link, true))
-+					require.Zero(t, m.Clone(ctx, parent, inode, parent, dir, 0, 0, 1, &count, &total))
-+					require.Zero(t, m.Unlink(ctx, parent, TrashName, true))
-+					lookup(t, realParent, TrashName, 0)
-+				}
-+			}},
- 			{"SummaryQuotaStatFS", func(t *testing.T, parent, realParent, otherParent Ino) {
- 				var before, after Summary
- 				require.Zero(t, m.GetSummary(ctx, parent, &before, true, true))
+@@ -161,14 +161,16 @@ def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False,
+         kwargs["pushRemoteWriteAuth"] = push_remote_write_auth
+         kwargs["caller"] = 1
+ 
+-        jsonConf = json.dumps(kwargs, sort_keys=True)
+         self.umask = os.umask(0)
+         os.umask(self.umask)
+         user = pwd.getpwuid(os.geteuid())
+         groups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(user.pw_name, user.pw_gid)]
+         superuser = pwd.getpwuid(0)
+-        supergroups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(superuser.pw_name, superuser.pw_gid)]
+-        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), ''.join(supergroups).encode())
++        # Preserve the legacy GID mapping without granting superuser access to the group.
++        supergids = os.getgrouplist(superuser.pw_name, superuser.pw_gid)
++        kwargs["rootGroup"] = ''.join(grp.getgrgid(gid).gr_name for gid in supergids)
++        jsonConf = json.dumps(kwargs, sort_keys=True)
++        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), b'')
+ 
+     def __del__(self):
+         self.close(terminate=False)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7798** (2026-11-03): cmd/dump: warn when flags are ignored with --binary or --subdir (@jiefenghuang)
-- **PR #7797** (2026-11-03): meta: treat .trash as an ordinary name under subdir mounts (@jiefenghuang)
-- **PR #7795** (closed): pkg/object: fix connection retirement aborting Expect: 100-continue u… (@xiaozhuang-a)
-- **PR #7793** (2026-11-03): meta: respect read-only mode and umask when auto-creating subdir (@jiefenghuang)
-- **PR #7791** (2026-11-02): deps: upgrade go-ceph from v0.18.0 to v0.38.0 (@SandyXSD)
-- **PR #7785** (2026-10-30): meta/redis: do not recreate removed dir quotas when flushing usage (@Ducheved)
+- **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
+- **PR #7804** (closed): meta: resolve quota and forced paths relative to the subdir root (@jiefenghuang)
+- **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
+- **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
+- **PR #7800** (2026-11-04): meta: keep dumped nextInode and nextChunk when loading JSON dump (@jiefenghuang)
+- **PR #7799** (2026-11-04): meta: keep only subtree directory quotas in subdir dump (@jiefenghuang)
 
 ---
 
@@ -1421,39 +1355,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/dump: warn when flags are ignored with --binary or --subdir (#7798)
+## X. sdk: prevent root group membership from granting superuser access (#7805)
 
 **RULE**:
-When implementing operations in `cmd/dump.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c1e052e`: cmd/dump: warn when flags are ignored with --binary or --subdir (#7798). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8e3bc7b`: sdk: prevent root group membership from granting superuser access (#7805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dump.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	isBinary := ctx.Bool("binary")
-	if isBinary {
-		for _, flag := range []string{"subdir", "fast", "skip-trash"} {
-			if ctx.IsSet(flag) {
-				logger.Warnf("--%s is ignored with --binary", flag)
-			}
-		}
-	} else if strings.Trim(metaConf.Subdir, "/") != "" && ctx.Bool("fast") {
-		logger.Warnf("--fast is ignored with --subdir")
-	}
+import grp
+from unittest.mock import patch
+    def open_client(self):
+        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
 
-	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), isBinary)
+        self.v = self.open_client()
+    def test_root_group_read_permissions(self):
+        self.v.chmod(TESTFN, 0o755)
+        self.create_file(TESTFILE)
+        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
+                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
+        groups = {gid: grp.struct_group((name, "x", gid, []))
+                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
+        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
+        legacy_gid = 2730912965
+        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
+            legacy_gid &= 0x7fffffff
+        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
+            with self.subTest(root_groups=root_groups):
+                self.v.chown(TESTFILE, 0, file_gid)
+                self.v.chmod(TESTFILE, denied_mode)
+                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
+                w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	err := dumpMeta(m, dst, threads, ctx.Bool("keep-secret-key"), ctx.Bool("fast"), ctx.Bool("skip-trash"), ctx.Bool("binary"))
+        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c1e052e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8e3bc7b` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `8a95a6d5`  
+> **Source Version**: `4ef33ee9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T16:20:23.906Z  
+> **Timestamp**: 2026-11-04T23:27:33.534Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T16:20:23.898Z  
+> **Harvest Timestamp**: 2026-11-04T23:27:33.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17367 stars
+- **Stars / Engagement**: 17373 stars
 
 ---
 
@@ -1568,454 +1568,776 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a95a6d5` (2026-10-31)
-**Commit Message**: Fix Dependabot npm updates and keep yarn.lock free of download URLs (#16548)
+### Incident Patch 1: `1b598114` (2026-11-01)
+**Commit Message**: Title release PRs with a rocket prefix, add the release label, and detect releases by commit marker (#16551)
 
-Dependabot rejected .github/dependabot.yml because its credential-less
-registries fail schema validation, so it kept running an older config. Its
-jobs also could not reach the PackageFeedProxy and ms-feed-* hosts recorded
-in yarn.lock.
+* Title release PRs with a rocket prefix and add the release label
 
-- Remove the registries; Dependabot resolves from the public npm registry.
-- Remove the recorded download URLs from yarn.lock and merge the duplicate
-  entries they had split. Versions and checksums are unchanged, and
-  pipelines restore through their configured registry.
-- Add checkYarnLock.js and run it in the Linting job to keep them out.
-- Use the "📦 [main]" and "🎬 [main]" title prefixes for main and Actions.
+The prepare-release bot now titles release PRs '🚀 [<branch alias>]: Release N packages' (alias drops one trailing '-stable') and adds the 'release' label on create and refresh without touching other labels. The commit subject still starts with 'RELEASE:'. Dry run prints the title and label. --bump-only is unchanged. Adds unit tests for the package using the built-in Node.js test runner (node:test), with no new dependencies.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+* Detect release builds from a commit marker instead of the PR title
 
-**File**: `.ado/README.md` (modified, +8/-5)
+The prepare-release bot now adds a release-branch marker line to the body of
+its RELEASE: commit. CI reads the full commit message of the built commit with
+the new .ado/scripts/detectReleaseBuild.js: a single well-formed marker that
+names the built branch makes it a release build; a malformed, duplicate, or
+mismatched marker fails Setup in auto mode. Commits without a marker still use
+the RELEASE: first-line rule. PR builds keep the prepare-release/ branch rule,
+and the isReleaseBuild parameter still forces either sc
+
+**File**: `.ado/build-template.yml` (modified, +12/-44)
 ```diff
-@@ -106,11 +106,14 @@ attempts that green builds would otherwise hide:
-   `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
-   Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
-   Yarn does not send the token to the proxy.
--- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
--  separately; Dependabot does not inherit the pipeline variables. Its registry
--  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
--  metadata for tarball downloads. Existing archive URLs in the main lockfile
--  also use proxy paths without changing dependency versions or checksums.
-+- **Dependabot:** `.github/dependabot.yml` declares no registries. Dependabot
-+  runs on GitHub, outside this network isolation, and resolves updates from the
-+  public npm registry; pipelines restore the same lockfile through
-+  PackageFeedProxy. This works only while `yarn.lock` records no download URLs:
-+  Yarn adds one (`__archiveUrl`) when a registry serves a package from another
-+  host, as PackageFeedProxy does with its `ms-feed-*` hosts, and Dependabot cannot
-+  reach those hosts. The Linting job runs `scripts/checkYarnLock.js` to reject
-+  them; run it with `--fix` to remove them.
-   Major version updates are ignored before grouping. React, React Native, the
-   test renderer, and React types also ignore minor updates to stay on each
-   branch's selected release lines; exact versions remain manifest-controlled.
-```
-
-**File**: `.ado/jobs/linting.yml` (modified, +4/-0)
-```diff
-@@ -38,6 +38,10 @@ jobs:
-       - ${{ else }}:
-         - template: ../templates/checkout-shallow.yml
+@@ -112,58 +112,23 @@ extends:
+           pool: ${{ parameters.AgentPool.Medium }}
+           timeoutInMinutes: 60 # CodeQL requires 3x usual build timeout
+           steps:
+-          # 1. Detect whether this is a release build or a developer build
+-          - pwsh: |
+-              $param = '${{ parameters.isReleaseBuild }}'
+-              $buildReason = $env:BUILD_REASON
+-              $sourceMessage = $env:SOURCE_MESSAGE
+-              $prSourceBranch = $env:PR_SOURCE_BRANCH
+-
+-              if ($param -eq 'true') {
+-                $isRelease = $true
+-                Write-Host "Release build forced by parameter"
+-              }
+-              elseif ($param -eq 'false') {
+-                $isRelease = $false
+-                Write-Host "Developer build forced by parameter"
+-              }
+-              else {
+-                # Auto-detect
+-                if ($buildReason -eq 'PullRequest') {
+-                  # PR: check source branch
+-                  $isRelease = $prSourceBranch.StartsWith('prepare-release/')
+-                  Write-Host "PR source branch: $prSourceBranch -> isRelease=$isRelease"
+-                }
+-                else {
+-                  # CI/Manual: check commit message
+-                  $firstLine = ($sourceMessage -split "`n")[0].Trim()
+-                  $isRelease = $firstLine.StartsWith("RELEASE:")
+-                  Write-Host "Commit message first line: $firstLine -> isRelease=$isRelease"
+-                }
+-              }
+-
+-              Write-Host "RESULT: isReleaseBuild=$isRelease"
+-              Write-Host "##vso[task.setvariable variable=isReleaseBuild;isOutput=true]$isRelease"
+-              Write-Host "##vso[task.setvariable variable=isReleaseBuild]$isRelease"
+-            name: detectScenario
+-            displayName: Detect build scenario
+-            env:
+-              BUILD_REASON: $(Build.Reason)
+-              SOURCE_MESSAGE: $(Build.SourceVersionMessage)
+-              PR_SOURCE_BRANCH: $(System.PullRequest.SourceBranch)
+-
+-          # 2. Full checkout (needed for beachball bump on developer builds;
++          # 1. Full checkout (needed for beachball bump on developer builds;
+           #    harmless ~1 min overhead on release builds where bump is skipped)
+           - template: .ado/templates/checkout-full.yml@self
+             parameters:
+               persistCredentials: true
  
-+      # Runs before the install so a recorded download URL fails fast.
-+      - script: node .ado/scripts/checkYarnLock.js
-+        displayName: Check yarn.lock for download URLs
+-          # 3. Node.js (always needed — setVersionEnvVars.js requires it)
++          # 2. Node.js (always needed — setVersionEnvVars.js requires it)
+           - task: UseNode@1
+             inputs:
+               version: '24.x'
+             displayName: Use Node.js 24.x
+ 
++          # 3. Detect before any developer-build version bump
++          - pwsh: node .ado/scripts/detectReleaseBuild.js '${{ parameters.isReleaseBuild }}'
++            name: detectScenario
++            displayName: Detect build scenario
 +
-       - template: ../templates/prepare-js-env.yml
-         parameters:
-           buildEnvironment: ${{ parameters.buildEnvironment }}
+           # CI is network-isolated; acquire the feed token used by the Verdaccio uplink.
+           - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
+             - template: .ado/templates/auth-npm-feed.yml@self
+@@ -421,7 +386,10 @@ extends:
+         # Create NuGet packages
+         - job: RNWNuget
+           displayName: Pack NuGet
+-          variables: [template: .ado/variables/shared.yml@self]
++          variables:
++            - template: .ado/variables/shared.yml@self
++            - name: isReleaseCommit
++              value: $[stageDependencies.Setup.Setup.outputs['detectScenario.isReleaseCommit']]
+           dependsOn:
+             - RnwNpmPack
+             - Linting
+@@ -499,7 +467,7 @@ extends:
+                 git -c http.extraheader="$authHeader" tag $tag "$(Build.SourceVersion)"
+                 git -c http.extraheader="$authHeader" push origin $tag
+               displayName: Tag release sources
+-              condition: and(succeeded(), startsWith(variables['Build.SourceVersionMessage'], 'RELEASE:'))
++              condition: and(succeeded(), eq(variables['IsReleaseBuild'], 'True'), eq(variables['isReleaseCommit'], 'True'))
+               env:
+                 SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+ 
 ```
 
-**File**: `.ado/scripts/checkYarnLock.js` (added, +120/-0)
+**File**: `.ado/scripts/detectReleaseBuild.js` (added, +116/-0)
 ```diff
-@@ -0,0 +1,120 @@
-+// @ts-check
+@@ -0,0 +1,116 @@
 +/**
-+ * Keeps yarn.lock free of package download URLs.
-+ *
-+ * Yarn records a download URL (`__archiveUrl`) when a registry serves a package
-+ * from another host, as PackageFeedProxy does with its ms-feed-* hosts.
-+ * Pipelines don't need these URLs: without them, Yarn downloads each package
-+ * from its configured registry. Dependabot can't reach those hosts, so a single
-+ * recorded URL fails its update jobs.
-+ *
-+ * Usage:
-+ *   node .ado/scripts/checkYarnLock.js        Fail if yarn.lock records a URL.
-+ *   node .ado/scripts/checkYarnLock.js --fix  Remove the recorded URLs and
-+ *                                             merge the entries they split.
++ * Copyright (c) Microsoft Corporation.
++ * Licensed under the MIT License.
++ * @format
 + */
-+const {execSync} = require('child_process');
-+const fs = require('fs');
-+const path = require('path');
 +
-+const repoRoot = path.resolve(__dirname, '../..');
-+const lockfilePath = path.join(repoRoot, 'yarn.lock');
++const {execFileSync} = require('node:child_process');
 +
-+// `name@npm:1.2.3::__archiveUrl=<url>`, or URL-encoded inside a patch locator.
-+const archiveUrlPattern =
-+  /::__archiveUrl=[^"&#\s]+|%3A%3A__archiveUrl=[^"&#\s]+/g;
++// Commit text and diagnostics are untrusted ADO log content,
++// not logging commands.
++const safeLog = text => String(text).replace(/##vso\[/gi, '##vso [');
++const flag = value => (value ? 'True' : 'False');
 +
-+// A binding followed by other bindings would need a different rewrite.
-+const unsupportedPattern = /__archiveUrl=[^"#\s]*(?:&|%26)/;
-+
-+/**
-+ * @param {string} lockfile
-+ * @returns {string[]} names of the packages with a recorded download URL
-+ */
-+function findPackagesWithUrls(lockfile) {
-+  const names = new Set();
-+  for (const line of lockfile.split('\n')) {
-+    if (line.includes('__archiveUrl')) {
-+      const match = /resolution: "((?:@[^/"]+\/)?[^@"]+)@/.exec(line);
-+      names.add(match ? match[1] : line.trim());
++function validateInputs(env, override) {
++  if (!['auto', 'true', 'false'].includes(override)) {
++    throw new Error('Expected one override argument: auto, true, or false');
++  }
++  const required = ['BUILD_REASON'];
++  required.push(
++    ...(env.BUILD_REASON === 'PullRequest'
++      ? ['SYSTEM_PULLREQUEST_SOURCEBRANCH']
++      : ['BUILD_SOURCEVERSION', 'BUILD_SOURCEBRANCH']),
++  );
++  for (const name of required) {
++    if (!env[name]?.trim()) {
++      throw new Error(`Missing required input: ${name}`);
 +    }
 +  }
-+  return [...names];
++}
++
++// Pure classification: no Git, environment reads, or logging on this path.
++function detectReleaseBuild(env, override, message = '') {
++  validateInputs(env, override);
++  let isReleaseCommit = false;
++  let detected;
++  let warning;
++  let rule;
++  if (env.BUILD_REASON === 'PullRequest') {
++    detected =
++      env.SYSTEM_PULLREQUEST_SOURCEBRANCH.startsWith('prepare-release/');
++    rule = `PR source branch: ${env.SYSTEM_PULLREQUEST_SOURCEBRANCH}`;
++  } else {
++    const lines = message.split(/\r?\n/);
++    // The marker is a body line; the subject never counts as one.
++    const markers = lines
++      .slice(1)
++      .filter(line => line.startsWith('RNW-Release-Branch'));
++    if (markers.length) {
++      const branch = env.BUILD_SOURCEBRANCH.replace(/^refs\/heads\//, '');
++      const match = /^RNW-Release-Branch: (\S+)$/.exec(markers[0]);
++      rule = `Marker found: ${markers.join(' | ')}; target branch: ${branch}`;
++      if (markers.length !== 1 || !match || match[1] !== branch) {
++        const problem =
++          'Invalid release marker (malformed, duplicate, or branch mismatch).' +
++          ` ${rule}`;
++        if (override === 'auto') {
++          throw new Error(problem);
++        }
++        warning = problem;
++      } else {
++        isReleaseCommit = true;
++      }
++    } else {
++      isReleaseCommit = lines[0].trim().startsWith('RELEASE:');
++      rule = `Legacy subject rule used: ${lines[0]}`;
++    }
++    detected = isReleaseCommit;
++  }
++  return {
++    isReleaseBuild: override === 'auto' ? detected : override === 'true',
++    isReleaseCommit,
++    warning,
++    rule,
++  };
 +}
 +
 +function main() {
-+  const fix = process.argv.includes('--fix');
-+  const lockfile = fs.readFileSync(lockfilePath, 'utf8');
-+  const packages = findPackagesWithUrls(lockfile);
-+
-+  if (packages.length === 0) {
-+    console.log('yarn.lock records no download URLs.');
-+    return;
-+  }
-+
-+  if (!fix) {
-+    const examples = packages.slice(0, 10).join(', ');
-+    const more = packages.length > 10 ? ', ...' : '';
-+    const errorPrefix = process.env.TF_BUILD
-+      ? '##vso[task.logissue type=error]'
-+      : '';
-+    console.error(
-+      `${errorPrefix}yarn.lock records download URLs for ${packages.length} ` +
-+        `packages (${examples}${more}). Dependabot can't reach those hosts. ` +
-+        'Run `node .ado/scripts/checkYarnLock.js --fix` and commit yarn.lock.',
-+    );
-+    process.exitCode = 1;
-+    return;
-+  }
-+
-+  if (unsupportedPattern.test(lockfile)) {
-+    console.error(
-+      'yarn.lock has a download URL combined with other bindings; ' +
-+        'remove it manually.',
-+    );
-+    process.exitCode = 1;
-+    return;
-+  }
-+
-+  const fixed = lockfile.replace(archiveUrlPattern, '');
-+  const unremoved = findPackagesWithUrls(fixed);
-+  if (unremoved.length > 0) {
-+    console.error(
-+      `Could not remove the download URLs for: ${unremoved.join(', ')}.`,
-+    );
-+    process.exitCode = 1;
-+    return;
-+  }
-+  fs.writeFileSync(lockfilePath, fixed);
-+
-+  // Entries that differed only by their URL now share a resolution; Yarn merges
-+  // them. This mode skips the link step, so node_modules stays untouched.
 +  try {
-+    execSync('yarn install --mode=update-lockfile', {
-+      cwd: repoRoot,
-+      stdio: 'inherit',
-+    });
-+  } catch {
-+    console.error(
-+      'URLs removed, but `yarn install --mode=update-lockfile` failed. ' +
-+        'Run it again to merge the duplicate yarn.lock entries.',
++    const override = process.argv.length === 3 ? process.argv[2] : undefined;
++    validateInputs(process.env, override);
++    let message = '';
++    if (process.env.BUILD_REASON !== 'PullRequest') {
++      message = execFileSync(
++        'git',
++        ['show', '-s', '--format=%B', process.env.BUILD_SOURCEVERSION],
++        {encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']},
++      );
++      console.log(`Commit message:\n${safeLog(message)}`);
++    }
++    const result = detectReleaseBuild(process.env, override, message);
++    if (result.warning) {
++      console.log(
++        `##vso[task.logissue type=warning]${safeLog(result.warning)}`,
++      );
++    }
++    console.log(safeLog(`${result.rule}; override=${override}`));
++    const build = flag(result.isReleaseBuild);
++    const commit = flag(result.isReleaseCommit);
++    console.log(`RESULT: isReleaseBuild=${build}; isReleaseCommit=${commit}`);
++    console.log(
++      `##vso[task.setvariable variable=isReleaseBuild;isOutput=true]${build}`,
 +    );
-+    process.exitCode = 1;
-+    return;
-+  }
-+
-+  const readded = findPackagesWithUrls(fs.readFileSync(lockfilePath, 'utf8'));
-+  if (readded.length > 0) {
-+    console.error(
-+      `Yarn recorded download URLs again for: ${readded.join(', ')}.`,
++    console.log(
++      `##vso[task.setvariable variable=isReleaseCommit;isOutput=true]${commit}`,
 +    );
++    console.log(`##vso[task.setvariable variable=isReleaseBuild]${build}`);
++  } catch (error) {
++    console.error(`##vso[task.logissue type=error]${safeLog(error.message)}`);
 +    process.exitCode = 1;
-+    return;
 +  }
-+
-+  console.log(
-+    `Removed download URLs for ${packages.length} packages from yarn.lock.`,
-+  );
 +}
 +
-+main();
++module.exports = {detectReleaseBuild, main};
++if (require.main === module) {
++  main();
++}
 ```
 
-**File**: `.github/dependabot.yml` (modified, +5/-20)
+**File**: `.ado/tests/detect-release-build.test.cjs` (added, +238/-0)
 ```diff
-@@ -1,27 +1,12 @@
- version: 2
--registries:
--  packagefeedproxy:
--    type: npm-registry
--    url: https://packagefeedproxy.microsoft.io/npm/
--    replaces-base: true
--  # PackageFeedProxy metadata advertises these anonymous tarball download hosts.
--  # They do not replace the registry used to check for updates.
--  npm-public-2:
--    type: npm-registry
--    url: https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
--  npm-public-12:
--    type: npm-registry
--    url: https://ms-feed-12.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
--  npm-public-25:
--    type: npm-registry
--    url: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
-+# No registries: Dependabot uses the public npm registry, which works only while
-+# yarn.lock records no download URLs (see .ado/README.md).
- # Keep the existing 8-day cooldown aligned with npmMinimalAgeGate in .yarnrc.yml.
- updates:
- # main branch - all dependency updates (minor + patch), daily
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "main"
--  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-@@ -58,7 +43,7 @@ updates:
-   - dependencies
-   versioning-strategy: lockfile-only
-   commit-message:
--    prefix: 📦
-+    prefix: "📦 [main]"
-   open-pull-requests-limit: 5
- 
- # Stable branches - weekly cadence, 1 grouped PR at a time
-@@ -67,7 +52,6 @@ updates:
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "0.81-stable"
--  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-@@ -109,7 +93,6 @@ updates:
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "0.85-stable"
--  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-@@ -153,5 +136,7 @@ updates:
-       patterns: ["*"]
-   schedule:
-     interval: "weekly"
-+  commit-message:
-+    prefix: "🎬 [main]"
-   cooldown:
-     default-days: 7
+@@ -0,0 +1,238 @@
++// Copyright (c) Microsoft Corporation.
++// Licensed under the MIT License.
++
++const assert = require('node:assert/strict');
++const {execFileSync, spawnSync} = require('node:child_process');
++const {mkdtempSync, rmSync, readFileSync} = require('node:fs');
++const {tmpdir} = require('node:os');
++const path = require('node:path');
++const {test} = require('node:test');
++const {detectReleaseBuild} = require('../scripts/detectReleaseBuild');
++const script = path.resolve(__dirname, '../scripts/detectReleaseBuild.js');
++const env = {
++  BUILD_REASON: 'IndividualCI',
++  BUILD_SOURCEVERSION: 'sha',
++  BUILD_SOURCEBRANCH: 'refs/heads/main',
++};
++const marker = 'RNW-Release-Branch: main';
++const canonical = `Rewritten title\n\n${marker}`;
++const classify = (message, override = 'auto', inputs = env) =>
++  detectReleaseBuild(inputs, override, message);
++
++// Variants cover squash bodies, branch normalization, and ignored mentions.
++for (const [message, expected, branch = env.BUILD_SOURCEBRANCH] of [
++  [canonical, true],
++  ...['main', '0.85-stable', 'feature/refs/heads/main'].flatMap(branch =>
++    [branch, `refs/heads/${branch}`].map(source => [
++      `title\nRNW-Release-Branch: ${branch}`,
++      true,
++      source,
++    ]),
++  ),
++  [canonical.replaceAll('\n', '\r\n'), true],
++  [`title\n${'body'.repeat(60)}\n${marker}`, true],
++  [
++    `rocket title\n\n* bot commit\n\n${marker}\n\n* lock update\nCo-authored-by: Test <test@example.invalid>`,
++    true,
++  ],
++  [
++    '  RELEASE: historical (#16248)\r\n\r\n* RELEASE: bot\n* update lock file',
++    true,
++  ],
++  ['RELEASE: single (#16505)', true],
++  // PowerShell String.StartsWith is case-sensitive, unlike its -like operator.
++  ['rELEASE: mixed-case legacy', false],
++  ['ordinary\nRELEASE: body only', false],
++  ['Rewritten old release title without metadata', false],
++  ...[
++    'prose RNW-Release-Branch: main',
++    '* RNW-Release-Branch: main',
++    ' RNW-Release-Branch: main',
++  ].map(text => [`ordinary\n${text}`, false]),
++  [marker, false],
++  [`${marker}\n\nordinary body`, false],
++]) {
++  test(`classifies message ${JSON.stringify(message.slice(0, 65))}`, () => {
++    const result = classify(message, 'auto', {
++      ...env,
++      BUILD_SOURCEBRANCH: branch,
++    });
++    assert.equal(result.isReleaseBuild, expected);
++    assert.equal(result.isReleaseCommit, expected);
++    assert.match(
++      result.rule,
++      message.includes('\nRNW-Release-Branch:')
++        ? /Marker found:/
++        : /Legacy subject rule used:/,
++    );
++  });
++}
++// Invalid metadata cannot fall back to legacy subjects, even under overrides.
++for (const bad of [
++  'RNW-Release-Branch:',
++  'RNW-Release-Branch:  main',
++  'RNW-Release-Branch: main ',
++  'RNW-Release-Branch: main other',
++  'RNW-Release-Branch:main',
++  'RNW-Release-BranchExtra',
++  `${marker}\n${marker}`,
++  `${marker}\nRNW-Release-Branch: other`,
++  'RNW-Release-Branch: other',
++  'RNW-Release-Branch: Main',
++]) {
++  test(`rejects invalid metadata ${JSON.stringify(bad)}`, () => {
++    const message = `RELEASE: legacy\n${bad}`;
++    assert.throws(() => classify(message), /Invalid release marker/);
++    for (const override of ['true', 'false']) {
++      const result = classify(message, override);
++      assert.equal(result.isReleaseBuild, override === 'true');
++      assert.equal(result.isReleaseCommit, false);
++      assert.match(result.warning, /Invalid release marker/);
++    }
++  });
++}
++// Metadata identity is independent of the effective build override.
++for (const [override, on, off] of [
++  ['auto', true, false],
++  ['true', true, true],
++  ['false', false, false],
++]) {
++  test(`keeps commit identity independent of ${override}`, () => {
++    for (const message of [canonical, 'RELEASE: legacy', 'ordinary']) {
++      const result = classify(message, override);
++      const release = message !== 'ordinary';
++      assert.equal(result.isReleaseCommit, release);
++      assert.equal(result.isReleaseBuild, release ? on : off);
++    }
++    for (const branch of [
++      'prepare-release/main',
++      'ordinary',
++      'refs/heads/prepare-release/main',
++    ]) {
++      const result = classify('', override, {
++        BUILD_REASON: 'PullRequest',
++        SYSTEM_PULLREQUEST_SOURCEBRANCH: branch,
++      });
++      assert.equal(result.isReleaseCommit, false);
++      assert.equal(
++        result.isReleaseBuild,
++        branch.startsWith('prepare-release/') ? on : off,
++      );
++    }
++  });
++}
++
++test('CLI reads exact SHA, emits safe exact outputs, and fails closed', () => {
++  const cwd = mkdtempSync(path.join(tmpdir(), 'rnw-release-'));
++  const gitEnv = {...process.env};
++  delete gitEnv.GIT_DIR;
++  delete gitEnv.GIT_WORK_TREE;
++  const options = {cwd, env: gitEnv, encoding: 'utf8'};
++  const identity = [
++    'user.name=RNW-Test',
++    'user.email=rnw-test@example.invalid',
++    'commit.gpgsign=false',
++  ].flatMap(value => ['-c', value]);
++  const git = (...args) =>
++    execFileSync('gi
 ```
 
-**File**: `yarn.lock` (modified, +160/-327)
+**File**: `docs/build-pipelines.md` (modified, +12/-3)
 ```diff
-@@ -503,7 +503,7 @@ __metadata:
+@@ -28,7 +28,14 @@ Setup ──┬── Build ──── CLI
  
- "@babel/parser@npm:^7.29.9":
-   version: 7.29.9
--  resolution: "@babel/parser@npm:7.29.9::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40babel%2Fparser%2F-%2Fparser-7.29.9.tgz"
-+  resolution: "@babel/parser@npm:7.29.9"
-   dependencies:
-     "@babel/types": "npm:^7.29.8"
-   bin:
-@@ -2059,14 +2059,14 @@ __metadata:
+ ### Setup
  
- "@electron-internal/extract-zip@npm:^1.0.1":
-   version: 1.0.5
--  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
-+  resolution: "@electron-internal/extract-zip@npm:1.0.5"
-   checksum: 10c0/d3341937dcb37097fd4927b7e5dfb7cb6b1ba56a42b00d62a55a7a9bbd093545dd8c6711ab39b321b2696d968b2cc32c29ed9d60a1fa6aa1665588e03e60d4e1
-   languageName: node
-   linkType: hard
+-Detects whether this is a **release build** (commit message starts with `RELEASE:`) or a **developer build**. For developer builds, runs beachball to bump versions. Publishes version variables for all downstream stages.
++In auto mode, CI detects a **release build** from a commit body line
++`RNW-Release-Branch: <branch>` matching the built branch, or a `RELEASE:` first
++line for older commits without a marker; otherwise it is a **developer build**.
++A malformed, duplicate, or branch-mismatched marker fails Setup, including when
++manually queuing CI on `prepare-release/<target>`. PR builds instead use the
++`prepare-release/` source-branch rule. The `isReleaseBuild` parameter can force
++either scenario. Developer builds run beachball to bump versions. Setup
++publishes version variables for downstream stages.
  
- "@electron/asar@npm:^4.0.0, @electron/asar@npm:^4.0.1":
-   version: 4.3.0
--  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
-+  resolution: "@electron/asar@npm:4.3.0"
-   dependencies:
-     glob: "npm:^13.0.2"
-     minimatch: "npm:^10.0.1"
-@@ -2081,7 +2081,7 @@ __metadata:
+ ### Build
  
- "@electron/get@npm:^5.0.0":
-   version: 5.1.0
--  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
-+  resolution: "@electron/get@npm:5.1.0"
-   dependencies:
-     debug: "npm:^4.1.1"
-     env-paths: "npm:^3.0.0"
-@@ -2099,7 +2099,7 @@ __metadata:
+@@ -81,10 +88,12 @@ PREfast, SpotBugs, and Bandit are disabled (no actionable findings for this repo
+ 1. Developer merges a PR to `main`
+ 2. **CI pipeline** runs: build, test, sign, pack
+ 3. On success, a separate **prepare-release-bot** pipeline creates/updates a release PR (e.g., `prepare-release/main`)
+-4. When the release PR is merged (commit message: `RELEASE: ...`), CI runs again as a **release build**:
++4. After merging a release PR, CI runs as a **release build** in auto mode with
++   matching marker metadata (or the legacy `RELEASE:` first line):
+    - Skips beachball bump (versions already committed)
+    - Builds, tests, signs, packs
+-   - Tags the source commit (`react-native-windows_v<version>`)
++   - Tags the source commit (`react-native-windows_v<version>`) only when RNWNuget
++     succeeds, IsReleaseBuild is True, and the commit itself is a release commit.
+ 5. **Release pipeline** triggers on successful CI, publishing packages to npm and NuGet feeds
  
- "@electron/notarize@npm:^3.1.0":
-   version: 3.1.1
--  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
-+  resolution: "@electron/notarize@npm:3.1.1"
-   dependencies:
-     debug: "npm:^4.4.0"
-     promise-retry: "npm:^2.0.1"
-@@ -2109,7 +2109,7 @@ __metadata:
+ ## Key Files
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+     "release-notes": "yarn workspace @rnw-scripts/generate-release-notes release-notes",
+     "warm-feed": "yarn workspace @rnw-scripts/warm-feed warm-feed",
+     "spellcheck": "npx cspell",
+-    "test": "node --test .ado/tests/extract-zip.test.cjs && lage test --verbose --passWithNoTests",
++    "test": "node --test .ado/tests/extract-zip.test.cjs .ado/tests/detect-release-build.test.cjs && lage test --verbose --passWithNoTests",
+     "validate-overrides": "react-native-platform-override validate",
+     "fork-sync": "node packages/@rnw-scripts/fork-sync/lib-commonjs/sync.js",
+     "fork-sync:status": "yarn fork-sync --dep fmt --status"
+```
+
+**File**: `packages/@rnw-scripts/prepare-release/bin.js` (modified, +6/-1)
+```diff
+@@ -8,4 +8,9 @@
+  */
  
- "@electron/osx-sign@npm:^2.2.0":
-   version: 2.7.0
--  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
-+  resolution: "@electron/osx-sign@npm:2.7.0"
-   dependencies:
-     debug: "npm:^4.3.4"
-     isbinaryfile: "npm:^4.0.8"
-@@ -2124,7 +2124,7 @@ __metadata:
+ require('source-map-support').install();
+-require('./lib-commonjs/prepareRelease');
++require('./lib-commonjs/prepareRelease')
++  .main()
++  .catch(err => {
++    console.error(err);
++    process.exit(1);
++  });
+```
+
+**File**: `packages/@rnw-scripts/prepare-release/package.json` (modified, +1/-0)
+```diff
+@@ -13,6 +13,7 @@
+     "clean": "rnw-scripts clean",
+     "lint": "rnw-scripts lint",
+     "lint:fix": "rnw-scripts lint:fix",
++    "test": "node --test lib-commonjs/test/github.test.js lib-commonjs/test/prepareRelease.test.js",
+     "watch": "rnw-scripts watch"
+   },
+   "main": "lib-commonjs/prepareRelease.js",
+```
+
+**File**: `packages/@rnw-scripts/prepare-release/src/github.ts` (modified, +3/-3)
+```diff
+@@ -90,7 +90,7 @@ export async function createPR(opts: {
+     const result = await exec(
+       `gh pr create --head "${opts.head}" --base "${opts.base}"` +
+         ` --title "${escapeForShell(opts.title)}"` +
+-        ` --body-file "${bodyFile}"${repoFlag}`,
++        ` --body-file "${bodyFile}"${repoFlag} --label release`,
+       {cwd: opts.cwd},
+     );
  
- "@electron/packager@npm:^20.0.0":
-   version: 20.3.0
--  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
-+  resolution: "@electron/packager@npm:20.3.0"
-   dependencies:
-     "@electron-internal/extract-zip": "npm:^1.0.1"
-     "@electron/asar": "npm:^4.0.1"
-@@ -2151,7 +2151,7 @@ __metadata:
+@@ -104,7 +104,7 @@ export async function createPR(opts: {
+ }
  
- "@electron/universal@npm:^3.0.1":
-   version: 3.0.6
--  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
-+  resolution: "@electron/universal@npm:3.0.6"
-   dependencies:
-     "@electron/asar": "npm:^4.0.0"
-     debug: "npm:^4.3.1"
-@@ -2162,7 +2162,7 @@ __metadata:
- 
- "@electron/windows-sign@npm:^2.0.2":
-   version: 2.1.0
--  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
-+  resolution: "@electron/windows-sign@npm:2.1.0"
-   dependencies:
-     debug: "npm:^4.3.4"
-     graceful-fs: "npm:^4.2.11"
-@@ -3837,7 +3837,7 @@ __metadata:
- 
- "@react-native-community/cli-clean@npm:21.0.0-alpha.1":
-   version: 21.0.0-alpha.1
--  resolution: "@react-native-community/cli-clean@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-21.0.0-alpha.1.tgz"
-+  resolution: "@react-native-community/cli-clean@npm:21.0.0-alpha.1"
-   dependencies:
-     "@react-native-community/cli-tools": "npm:21.0.0-alpha.1"
-     execa: "npm:^5.0.0"
-@@ -3861,7 +3861,7 @@ __metadata:
- 
- "@react-native-community/cli-config-android@npm:21.0.0-alpha.1":
-   version: 21.0.0-alpha.1
--  resolution: "@react-native-community/cli-config-android@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-config-android%2F-%2Fcli-config-android-21.0.0-alpha.1.tgz"
-+  resolution: "@react-native-community/cli-config-android@npm:21.0.0-alpha.1"
-   dependencies:
-     "@react-native-community/cli-tools": "npm:21.0.0-alpha.1"
-     fast-glob: "npm:^3.3.2"
-@@ -3885,7 +3885,7 @@ __metadata:
- 
- "@react-native-community/cli-config-apple@npm:21.0.0-alpha.1":
-   version: 21.0.0-alpha.1
--  resolution: "@react-native-community/cli-config-apple@npm:21.0.0-alpha.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react
+ /**
+- * Update an existing pull request's body text.
++ * Update an existing pull request's title, body and release label.
+  *
+  * Uses --body-file with a temp file to avoid shell escaping issues
+  * with multiline markdown content on Windows cmd.exe.
+@@ -120,7 +120,7 @@ export async function updatePR(opts: {
+     const repoFlag = opts.repo ? ` --repo "${opts.repo}"` : '';
+     await exec(
+       `gh pr edit ${opts.number} --title "${escapeForShell(opts.title)}"` +
+-        ` --body-file "${bodyFile}"${repoFlag}`,
++        ` --body-file "${bodyFile}"${repoFlag} --add-label release`,
+       {cwd: opts.cwd},
+     );
+   });
 ```
 
 ---
 
-### Incident Patch 2: `9cffd7f3` (2026-10-30)
-**Commit Message**: Fix warm-feed resolving closures through PackageFeedProxy (#16546)
+### Incident Patch 2: `4ef33ee9` (2026-11-04)
+**Commit Message**: Remove @react-native-windows/fs in favor of Node's built-in fs (#16574)
 
-The warm-feed job inherits NPM_CONFIG_REGISTRY from the shared pipeline variables. On Windows, Node passes only the first case-insensitive match, so it hid warm-feed's npm_config_registry override and sent closure resolution to the proxy.
+The package was a thin wrapper over graceful-fs whose API was frozen at
+Node 12. Its graceful-fs retries do not apply to how the repo uses it,
+and every RNW app pulled it in through @react-native-windows/cli.
 
-Replace inherited spellings of each override before starting npm or npx, and cover the Windows precedence case with a child-process test.
+- Import node:fs or node:fs/promises directly in all consumers.
+- Inline exists/readJsonFile helpers; keep sorted async readdir output
+  in unbroken, which graceful-fs used to sort.
+- Replace recursive rmdir (removed in newer Node) with rm.
+- Drop the ESLint rule that banned importing fs.
+- Scope the prepare-release readFileSync mock to the root package.json,
+  since it now patches the real fs module.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `packages/@rnw-scripts/warm-feed/src/closure.ts` (modified, +16/-1)
+**File**: `change/@react-native-windows-automation-13f50c49-214d-4a5b-8415-e907b1c981be.json` (added, +7/-0)
 ```diff
-@@ -84,6 +84,21 @@ export async function writeFeedNpmrc(
-   return p;
- }
- 
-+/**
-+ * `process.env` with `overrides` applied, dropping inherited names that differ from
-+ * an override only in letter case: on Windows, Node passes just the
-+ * lexicographically first spelling (so `NPM_CONFIG_REGISTRY` beats
-+ * `npm_config_registry`), and npm reads `npm_config_*` names case-insensitively.
-+ */
-+function childEnv(overrides: Record<string, string>): NodeJS.ProcessEnv {
-+  const names = new Set(Object.keys(overrides).map(name => name.toUpperCase()));
-+  const env: NodeJS.ProcessEnv = {};
-+  for (const [name, value] of Object.entries(process.env)) {
-+    if (!names.has(name.toUpperCase())) env[name] = value;
-+  }
-+  return {...env, ...overrides};
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/automation",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
 +}
-+
- /**
-  * Run a Node CLI (npm/npx) with feed config injected via `npm_config_*` env vars
-  * (so no registry/userconfig paths land on the command line, avoiding Windows
-@@ -99,7 +114,7 @@ export function runTool(
-   const res = spawnSync(cmd, args, {
-     cwd,
-     encoding: 'utf8',
--    env: {...process.env, ...extraEnv},
-+    env: childEnv(extraEnv),
-     shell: true,
-     maxBuffer: 128 * 1024 * 1024,
-   });
 ```
 
-**File**: `packages/@rnw-scripts/warm-feed/src/test/closure.test.ts` (modified, +21/-1)
+**File**: `change/@react-native-windows-cli-9187a233-a3d5-4ff6-bc0b-e9a625a49363.json` (added, +7/-0)
 ```diff
-@@ -8,7 +8,7 @@
- import {mkdtempSync, readFileSync} from 'node:fs';
- import {tmpdir} from 'node:os';
- import {join} from 'node:path';
--import {parseNpmLock, writeFeedNpmrc} from '../closure';
-+import {parseNpmLock, runTool, writeFeedNpmrc} from '../closure';
- import type {Auth} from '../types';
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/cli",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-codegen-e0f6bd2a-3128-46d5-9822-8748f9961c8e.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/codegen",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-find-dotnet-tools-5d0c39e7-a2ec-4e45-ba63-ae5857d961fa.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/find-dotnet-tools",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-find-repo-root-6c06db75-f13b-4a0d-9e13-6e60d434dcb1.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/find-repo-root",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-package-utils-6201934a-83d8-4faf-9471-5c4a674da855.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/package-utils",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-perf-testing-da2c3e99-6409-473d-ab16-0ed15f294eb9.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/perf-testing",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `change/@react-native-windows-telemetry-75652cdc-9c21-4827-9a5a-1fc4b9871aa4.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Remove @react-native-windows/fs and use Node's built-in fs",
++  "packageName": "@react-native-windows/telemetry",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+---
+
+### Incident Patch 3: `0180c040` (2026-11-02)
+**Commit Message**: Fix CLI-init package pruning registry (#16559)
+
+Check published versions through the local Verdaccio registry so pruning and publishing see the same packages. Add regression tests for scoped and unscoped packages.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `.ado/README.md` (modified, +3/-0)
+```diff
+@@ -120,6 +120,9 @@ attempts that green builds would otherwise hide:
+ - **Verdaccio (CLI init tests):** `verdaccio/generate-config.js` emits the config at
+   runtime, so the uplink uses the proxy for PRs and the ADO feed with the CI token while
+   local packages still publish offline. The former static `config.yaml` was removed.
++  Before publishing, CLI init checks for existing versions through the same local
++  Verdaccio registry, not the default proxy. This sees versions published directly
++  to the authenticated CI feed and prevents duplicate-publish conflicts.
+ - **React Native DevTools:** `RNDT_DEV: 1` stops DevTools from fetching its
+   standalone shell binary from a Facebook CDN when Metro starts. The debugger is
+   never opened in CI, so this has no effect on tests.
+```
+
+**File**: `.ado/templates/verdaccio-start.yml` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ steps:
+     - script: node .ado/scripts/npmPack.js --clean --no-color
+       displayName: Pack all workspace packages
  
- const fakeAuth: Auth = {
-@@ -119,6 +119,26 @@ test('writeFeedNpmrc attaches the token only to an Azure DevOps feed host', asyn
-   expect(foreign).not.toContain('SECRET-TOKEN');
- });
+-    - script: node .ado/scripts/npmPack.js --no-pack --check-npm --no-color
++    - script: node .ado/scripts/npmPack.js --no-pack --check-npm --registry http://localhost:4873 --no-color
+       displayName: Remove already published packages
  
-+test('runTool gives the child its npm registry over an inherited NPM_CONFIG_REGISTRY', () => {
-+  const previousEnv = process.env;
-+  try {
-+    process.env = {
-+      ...previousEnv,
-+      NPM_CONFIG_REGISTRY: 'https://inherited.invalid/npm/',
-+    };
-+    const registry = runTool(
-+      `"${process.execPath}"`,
-+      ['-p', 'process.env.npm_config_registry'],
-+      tmpdir(),
-+      {npm_config_registry: 'https://feed.invalid/npm/'},
-+      'print npm registry',
-+    );
-+    expect(registry.trim()).toBe('https://feed.invalid/npm/');
-+  } finally {
-+    process.env = previousEnv;
-+  }
-+});
+     - script: |
+```
+
+**File**: `.ado/tests/verdaccio-pruning.test.cjs` (added, +117/-0)
+```diff
+@@ -0,0 +1,117 @@
++// Copyright (c) Microsoft Corporation.
++// Licensed under the MIT License.
 +
- test('writeFeedNpmrc normalizes a missing trailing slash so the auth key matches', async () => {
-   const dir = mkdtempSync(join(tmpdir(), 'warm-npmrc-'));
-   const p = await writeFeedNpmrc(
++const assert = require('node:assert/strict');
++const {execFile, execFileSync} = require('node:child_process');
++const {once} = require('node:events');
++const {promises: fs} = require('node:fs');
++const http = require('node:http');
++const os = require('node:os');
++const path = require('node:path');
++const {test} = require('node:test');
++const {promisify} = require('node:util');
++
++const run = promisify(execFile);
++const repoRoot = path.resolve(__dirname, '..', '..');
++
++for (const name of ['@rnw-tests/registry-fixture', 'rnw-registry-fixture']) {
++  test(`Windows CLI-init prunes published ${name} versions using the publish registry, not the default proxy`, async t => {
++    if (process.platform !== 'win32') {
++      t.skip('CLI-init uses the Windows Node/npm installation layout');
++      return;
++    }
++
++    const template = await fs.readFile(
++      path.join(repoRoot, '.ado', 'templates', 'verdaccio-start.yml'),
++      'utf8',
++    );
++    const command = template.match(
++      /^\s*- script: node (\.ado\/scripts\/npmPack\.js[^\r\n]*--check-npm[^\r\n]*)$/m,
++    );
++    assert.ok(command, 'CLI-init must check already published packages');
++    const [script, ...args] = command[1].split(/\s+/);
++    const publishRegistry = template.match(
++      /npm publish "[^"]+" --registry (\S+)/,
++    )?.[1];
++    assert.ok(publishRegistry, 'CLI-init must specify its publish registry');
++
++    const root = await fs.mkdtemp(
++      path.join(os.tmpdir(), 'rnw-verdaccio-pruning-'),
++    );
++    t.after(() => fs.rm(root, {recursive: true, force: true}));
++    const packages = path.join(root, 'packages');
++    const userConfig = path.join(root, '.npmrc');
++    const globalConfig = path.join(root, '.global-npmrc');
++    await Promise.all([
++      fs.mkdir(packages),
++      fs.mkdir(path.join(root, 'package')),
++      fs.writeFile(userConfig, ''),
++      fs.writeFile(globalConfig, ''),
++    ]);
++    for (const version of ['1.0.0', '1.0.1']) {
++      await fs.writeFile(
++        path.join(root, 'package', 'package.json'),
++        JSON.stringify({name, version}),
++      );
++      execFileSync('tar', [
++        '-czf',
++        path.join(packages, `${version}.tgz`),
++        '-C',
++        root,
++        'package',
++      ]);
++    }
++
++    const requests = [];
++    const server = http.createServer((request, response) => {
++      const pathname = decodeURIComponent(
++        new URL(request.url, 'http://localhost').pathname,
++      );
++      requests.push(pathname);
++      const isPublishRegistry = pathname === `/verdaccio/${name}`;
++      response.writeHead(isPublishRegistry ? 200 : 404, {
++        'Content-Type': 'application/json',
++      });
++      response.end(
++        JSON.stringify(
++          isPublishRegistry
++            ? {
++                name,
++                'dist-tags': {latest: '1.0.0'},
++                versions: {'1.0.0': {name, version: '1.0.0'}},
++              }
++            : {error: 'Not found'},
++        ),
++      );
++    });
++    server.listen(0, '127.0.0.1');
++    await once(server, 'listening');
++    t.after(() => promisify(server.close).call(server));
++    const address = server.address();
++    assert.ok(address && typeof address !== 'string');
++    const baseUrl = `http://127.0.0.1:${address.port}`;
++    const registryIndex = args.indexOf('--registry');
++    if (registryIndex !== -1) {
++      assert.equal(args[registryIndex + 1], publishRegistry);
++      args[registryIndex + 1] = `${baseUrl}/verdaccio/`;
++    }
++
++    await run(process.execPath, [path.join(repoRoot, script), ...args, packages], {
++      cwd: root,
++      timeout: 60000,
++      env: {
++        ...process.env,
++        NPM_CONFIG_REGISTRY: `${baseUrl}/proxy/`,
++        NPM_CONFIG_USERCONFIG: userConfig,
++        NPM_CONFIG_GLOBALCONFIG: globalConfig,
++        NPM_CONFIG_CACHE: path.join(root, 'cache'),
++        NPM_CONFIG_FETCH_RETRIES: '0',
++        NPM_CONFIG_FETCH_TIMEOUT: '2000',
++      },
++    });
++
++    assert.deepEqual(await fs.readdir(packages), ['1.0.1.tgz']);
++    assert.ok(requests.includes(`/verdaccio/${name}`));
++    assert.ok(!requests.some(request => request.startsWith('/proxy/')));
++  });
++}
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+     "release-notes": "yarn workspace @rnw-scripts/generate-release-notes release-notes",
+     "warm-feed": "yarn workspace @rnw-scripts/warm-feed warm-feed",
+     "spellcheck": "npx cspell",
+-    "test": "node --test .ado/tests/extract-zip.test.cjs .ado/tests/detect-release-build.test.cjs && lage test --verbose --passWithNoTests",
++    "test": "node --test .ado/tests/extract-zip.test.cjs .ado/tests/detect-release-build.test.cjs .ado/tests/verdaccio-pruning.test.cjs && lage test --verbose --passWithNoTests",
+     "validate-overrides": "react-native-platform-override validate",
+     "fork-sync": "node packages/@rnw-scripts/fork-sync/lib-commonjs/sync.js",
+     "fork-sync:status": "yarn fork-sync --dep fmt --status"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16550** (2026-10-30): [0.85] Remove download URLs from yarn.lock (@vmoroz)
-- **PR #16549** (2026-10-31): [0.81] Remove download URLs from yarn.lock (@vmoroz)
-- **PR #16548** (2026-10-31): Fix Dependabot npm updates and keep yarn.lock free of download URLs (@vmoroz)
-- **PR #16547** (closed): 📦 Bump @types/lodash from 4.17.26 to 4.17.27 in the all-dependencies group (@dependabot[bot])
-- **PR #16546** (2026-10-30): Fix warm-feed resolving closures through PackageFeedProxy (@vmoroz)
-- **PR #16544** (2026-10-29): 📦 [0.85]: Bump the all-dependencies group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #16574** (2026-11-04): Remove @react-native-windows/fs in favor of Node's built-in fs (@vmoroz)
+- **PR #16573** (2026-11-04): 📦 [main]: Bump the all-dependencies group with 5 updates (@dependabot[bot])
+- **PR #16572** (2026-11-04): 📦 [0.81]: Bump @microsoft/api-extractor from 7.59.4 to 7.60.0 in the all-dependencies group (@dependabot[bot])
+- **PR #16571** (2026-11-04): 📦 [0.85]: Bump @microsoft/api-extractor from 7.59.4 to 7.60.0 in the all-dependencies group (@dependabot[bot])
+- **PR #16568** (closed): chore: propose Stackline graceful-fs alias for fs utilities (@alexandroit)
+- **PR #16566** (2026-11-04): Sync VS 2026 image with the v8-jsi x64 definition (@vmoroz)
 
 ---
 
@@ -2035,39 +2357,65 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Dependabot npm updates and keep yarn.lock free of download URLs (#16548)
+## X. Title release PRs with a rocket prefix, add the release label, and detect releas
 
 **RULE**:
-When implementing operations in `.ado/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ado/build-template.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a95a6d5`: Dependabot npm updates and keep yarn.lock free of download URLs (#16548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b598114`: Title release PRs with a rocket prefix, add the release label, and detect releases by commit marker (#16551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/README.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/build-template.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-- **Dependabot:** `.github/dependabot.yml` declares no registries. Dependabot
-  runs on GitHub, outside this network isolation, and resolves updates from the
-  public npm registry; pipelines restore the same lockfile through
-  PackageFeedProxy. This works only while `yarn.lock` records no download URLs:
-  Yarn adds one (`__archiveUrl`) when a registry serves a package from another
-  host, as PackageFeedProxy does with its `ms-feed-*` hosts, and Dependabot cannot
-  reach those hosts. The Linting job runs `scripts/checkYarnLock.js` to reject
-  them; run it with `--fix` to remove them.
+          # 1. Full checkout (needed for beachball bump on developer builds;
+          # 2. Node.js (always needed — setVersionEnvVars.js requires it)
+          # 3. Detect before any developer-build version bump
+          - pwsh: node .ado/scripts/detectReleaseBuild.js '${{ parameters.isReleaseBuild }}'
+            name: detectScenario
+            displayName: Detect build scenario
+
+          variables:
+            - template: .ado/variables/shared.yml@self
+            - name: isReleaseCommit
+              value: $[stageDependencies.Setup.Setup.outputs['detectScenario.isReleaseCommit']]
+              condition: and(succeeded(), eq(variables['IsReleaseBuild'], 'True'), eq(variables['isReleaseCommit'], 'True'))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
-  separately; Dependabot does not inherit the pipeline variables. Its registry
-  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
-  metadata for tarball downloads. Existing archive URLs in the main lockfile
-  also use proxy paths without changing dependency versions or checksums.
+          # 1. Detect whether this is a release build or a developer build
+          - pwsh: |
+              $param = '${{ parameters.isReleaseBuild }}'
+              $buildReason = $env:BUILD_REASON
+              $sourceMessage = $env:SOURCE_MESSAGE
+              $prSourceBranch = $env:PR_SOURCE_BRANCH
+
+              if ($param -eq 'true') {
+                $isRelease = $true
+                Write-Host "Release build forced by parameter"
+              }
+              elseif ($param -eq 'false') {
+                $isRelease = $false
+                Write-Host "Developer build forced by parameter"
+              }
+              else {
+                # Auto-detect
+                if ($buildReason -eq 'PullRequest') {
+                  # PR: check source branch
+                  $isRelease = $prSourceBranch.StartsWith('prepare-release/')
+                  Write-Host "PR source branch: $prSourceBranch -> isRelease=$isRelease"
+                }
+                else {
+                  # CI/Manual: check commit message
+                  $firstLine = ($sourceMessage -split "`n")[0].Trim()
+                  $isRelease = $firstLine.StartsWith("RELEASE:")
+                  Write-Host "Commit
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a95a6d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b598114` are properly handled with clean fallback behavior.

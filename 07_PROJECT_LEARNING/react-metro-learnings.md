@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `fcced577`  
+> **Source Version**: `db6a361c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:07:25.930Z  
+> **Timestamp**: 2026-11-04T17:17:56.217Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:07:25.923Z  
+> **Harvest Timestamp**: 2026-11-04T17:17:56.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5659 stars
+- **Stars / Engagement**: 5662 stars
 
 ---
 
@@ -1204,22 +1204,10 @@ import readline from 'node:readline';
 import tty from 'node:tty';
 import util from 'node:util';
 
-const {promisify} = util;
-
 type UnderlyingStream = Socket | Writable;
 
-// use "readline/promises" instead when not experimental anymore
-const moveCursor = promisify(readline.moveCursor);
-const clearScreenDown = promisify(readline.clearScreenDown);
-const streamWrite = promisify(
-  (
-    stream: UnderlyingStream,
-    chunk: Buffer | Uint8Array | string,
-    callback?: (data: any) => void,
-  ) => {
-    return stream.write(chunk, callback);
-  },
-);
+const STATUS_UPDATE_DELAY_MS = 33;
+const NON_TTY_STATUS_THROTTLE_MS = 3500;
 
 /**
  * Cut a string into an array of strings of the specified maximum size. A newline
@@ -1294,131 +1282,146 @@ function getTTYStream(stream: UnderlyingStream): ?tty.WriteStream {
  * single responsibility of handling status messages.
  */
 export default class Terminal {
-  #logLines: Array<string>;
-  #nextStatusStr: string;
-  #statusStr: string;
+  #status: string;
+  #writtenStatus: string;
   #stream: UnderlyingStream;
   #ttyStream: ?tty.WriteStream;
   #updatePromise: Promise<void> | null;
+  #lastWritePromise: Promise<void>;
   #isUpdating: boolean;
-  #isPendingUpdate: boolean;
-  #shouldFlush: boolean;
-  #writeStatusThrottled: string => void;
+  #hasPendingUpdate: boolean;
+  #isFlushRequested: boolean;
+  #writeNonTTYStatusThrottled: string => void;
   #bytesWrittenAfterStatus: ?number;
 
   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
-    this.#logLines = [];
-    this.#nextStatusStr = '';
-    this.#statusStr = '';
+    this.#status = '';
+    this.#writtenStatus = '';
     this.#stream = stream;
     this.#ttyStream = (opts.ttyPrint ?? true) ? getTTYStream(stream) : null;
     this.#updatePromise = null;
+    this.#lastWritePromise = Promise.resolve();
     this.#isUpdating = false;
-    this.#isPendingUpdate = false;
-    this.#shouldFlush = false;
-    this.#writeStatusThrottled = throttle(
-      status => this.#stream.write(status),
-      3500,
+    this.#hasPendingUpdate = false;
+    this.#isFlushRequested = false;
+    this.#writeNonTTYStatusThrottled = throttle(
+      status => this.#write(status),
+      NON_TTY_STATUS_THROTTLE_MS,
     );
   }
 
   /**
-   * Schedule an update of the status and log lines.
+   * Schedule an update of the status.
    * If there's an ongoing update, schedule another one after the current one.
    * If there are two updates scheduled, do nothing, as the second update will
-   * take care of the latest status and log lines.
+   * take care of the latest status.
    */
-  #scheduleUpdate() {
+  #scheduleStatusUpdate() {
     if (this.#isUpdating) {
-      this.#isPendingUpdate = true;
+      this.#hasPendingUpdate = true;
       return;
     }
 
     this.#isUpdating = true;
-    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
-      while (this.#isPendingUpdate) {
-        if (!this.#shouldFlush) {
-          await new Promise(resolve => setTimeout(resolve, 33));
+    this.#updatePromise = this.#writeStatus().then(async () => {
+      while (this.#hasPendingUpdate) {
+        if (!this.#isFlushRequested) {
+          await new Promise(resolve =>
+            setTimeout(resolve, STATUS_UPDATE_DELAY_MS),
+          );
         }
-        this.#isPendingUpdate = false;
-        await Promise.all(this.#updateSync());
+        this.#hasPendingUpdate = false;
+        await this.#writeStatus();
       }
       this.#isUpdating = false;
-      this.#shouldFlush = false;
+      this.#isFlushRequested = false;
     });
   }
 
   async waitForUpdates(): Promise<void> {
     await (this.#updatePromise || Promise.resolve());
+    await this.#lastWritePromise;
   }
 
   /**
-   * Useful for calling console/stdout directly after terminal logs
-   * Otherwise, you could end up with mangled output when the queued
-   * update starts writing to stream after a delay.
+   * Writes the pending status without starting another update delay, and
+   * resolves once all writes are done. Useful before writing to the stream
+   * directly or exiting, so the latest status shows before that output.
    */
   async flush(): Promise<void> {
     if (this.#isUpdating) {
-      this.#shouldFlush = true;
+      this.#isFlushRequested = true;
     }
     await this.waitForUpdates();
     // $FlowFixMe[prop-missing]
-    this.#writeStatusThrottled.flush();
+    this.#writeNonTTYStatusThrottled.flush();
+    await this.#lastWritePromise;
+  }
+
+  /**
+   * Writes to the stream, tracking the write's completion. Writes to a stream
+   * complete in order, so the last write's completion covers all of them.
+   */
+  #write(chunk: string): void {
+    this.#lastWritePromise = new Promise(resolve =>
+      this.#stream.write(chunk, () => resolve()),
+    );
   }
 
   /**
    * Issues the update's writes without awaiting in between, so no other output
-   * can land in the middle of an update. Returns the pending writes.
+   * can land in the middle of an update. Resolves when the writes are done.
    */
-  #updateSync(): Array<Promise<unknown>> {
+  async #writeStatus(): Promise<void> {
     const ttyStream = this.#ttyStream;
+    const status = this.#status;
 
-    const nextStatusStr = this.#nextStatusStr;
-    const statusStr = this.#statusStr;
-    const logLines = this.#logLines;
-
-    // reset these here to not have them changed while updating
-    this.#statusStr = nextStatusStr;
-    this.#logLines = [];
-
-    if (statusStr === nextStatusStr && logLines.length === 0) {
-      return [];
+    if (this.#writtenStatus === status) {
+      return;
     }
 
-    const writes: Array<Promise<unknown>> = [];
+    if (!ttyStream) {
+      this.#writeNonTTYStatusThrottled(status.length > 0 ? status + '\n' : '');
+      this.#writtenStatus = status;
+      return;
+    }
+
+    this.#discardWrittenStatus(ttyStream);
+    if (status.length > 0) {
+      this.#write(status + '\n');
+    }
+    this.#writtenStatus = status;
+    this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
+    await this.#lastWritePromise;
+  }
+
+  /**
+   * Discards the written status by erasing it from the screen or, when it
+   * can't be reliably erased, by ignoring it and letting it drift with the
+   * scrollbar.
+   */
+  #discardWrittenStatus(ttyStream: tty.WriteStream): void {
+    const writtenStatus = this.#writtenStatus;
+    this.#writtenStatus = '';
 
     if (
-      ttyStream &&
-      statusStr.length > 0 &&
-      // If anything printed outside of Terminal (like direct console.log),
-      // don't try to clear latest status, and just print a new one instead
-      // or we might delete that external print
-      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
+      writtenStatus.length === 0 ||
+      // If output printed outside of Terminal (like direct console.log) is
+      // detected, the status can't be erased without erasing that output too,
+      // so it is ignored and left to drift with the scrollbar.
+      // Detection compares bytes written, as the number of lines printed can't
+      // be known without overriding the stdout/stderr globals
+      getBytesWritten(ttyStream) !== this.#bytesWrittenAfterStatus
     ) {
-      const statusLinesCount = statusStr.split('\n').length - 1;
-      // extra -1 because we print the status with a trailing new line
-      writes.push(
-        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
-        clearScreenDown(ttyStream),
-      );
+      return;
     }
 
-    if (logLines.length > 0) {
-      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
-    }
-
-    if (ttyStream) {
-      if (nextStatusStr.length > 0) {
-        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
-      }
-      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
-    } else {
-      this.#writeStatusThrottled(
-        nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
-      );
-    }
-
-    return writes;
+    const statusLinesCount = writtenStatus.split('\n').length - 1;
+    // extra -1 because we print the status with a trailing new line
+    readline.moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+    this.#lastWritePromise = new Promise(resolve =>
+      readline.clearScreenDown(ttyStream, () => resolve()),
+    );
   }
 
   /**
@@ -1429,33 +1432,31 @@ export default class Terminal {
    * file, then we don't care too much about having a progress bar.
    */
   status(format: string, ...args: Array<unknown>): string {
-    const nextStatusStr = this.#nextStatusStr;
+    const previousStatus = this.#status;
 
-    const statusStr = util.format(format, ...args);
-    this.#nextStatusStr = this.#ttyStream
-      ? chunkString(statusStr, this.#ttyStream.columns).join('\n')
-      : statusStr;
+    const status = util.format(format, ...args);
+    this.#status = this.#ttyStream
+      ? chunkString(status, this.#ttyStream.columns).join('\n')
+      : status;
 
-    this.#scheduleUpdate();
+    this.#scheduleStatusUpdate();
 
-    return nextStatusStr;
+    return previousStatus;
   }
 
   /**
    * Similar to `console.log`, except it moves the status/progress text out of
    * the way correctly. In non-interactive terminals this is the same as
-   * `console.log`.
+   * `console.log`. The line is written immediately, so it keeps its order
+   * relative to other output.
    */
   log(format: string, ...args: Array<unknown>): void {
-    const line = util.format(format, ...args);
-
     if (this.#ttyStream) {
-      this.#logLines.push(line);
-    } else {
-      void streamWrite(this.#stream, line + '\n');
+      this.#discardWrittenStatus(this.#ttyStream);
     }
+    this.#write(util.format(format, ...args) + '\n');
 
-    this.#scheduleUpdate();
+    this.#scheduleStatusUpdate();
   }
 
   /**
@@ -1463,8 +1464,9 @@ export default class Terminal {
    * status was the last one of a series of updates.
    */
   persistStatus(): void {
-    this.log(this.#nextStatusStr);
-    this.#nextStatusStr = '';
+    const status = this.#status;
+    this.#status = '';
+    this.log(status);
   }
 }
 
@@ -1497,210 +1499,142 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcced577` (2026-10-30)
-**Commit Message**: Don't clear over output printed outside of Terminal
+### Incident Patch 1: `434cc446` (2026-11-02)
+**Commit Message**: Fix JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)
 
-Summary:
-`Terminal` redraws its interactive status by moving the cursor up over the status lines and clearing to the end of the screen. Anything printed without going through `Terminal` (a dependency's `console.log`, `console.error`, Node deprecation warnings) lands inside that area and is erased by the next redraw.
-
-This keeps that output with a minimal change, without patching `console`, `process.stdout.write` or any other global:
-- After each status write, `Terminal` saves the stream's `bytesWritten`. When the stream is stdout or stderr, it uses the sum of both, as they usually share the terminal.
-- Before the next redraw, if the counter changed, something else printed after the status. `Terminal` then skips the cursor-up and clear and prints the new status below that output.
-- The writes of an update are issued without awaiting in between (`#updateSync`), so other output can't land between the cursor move, the clear and the new status.
-- The `--tty-print` help text in `fb-metro-cli` no longer says console output gets deleted by the status.
-
-Known limits: each time other output is detected, the previous status stays in the his
-
-**File**: `packages/metro-core/src/Terminal.js` (modified, +41/-13)
+**File**: `packages/metro/src/DeltaBundler/Worker.flow.js` (modified, +6/-0)
 ```diff
-@@ -49,6 +49,21 @@ function chunkString(str: string, size: number): Array<string> {
-   return str.match(new RegExp(`(?:${SKIP_ANSI}.){1,${size}}`, 'g')) || [];
- }
+@@ -47,6 +47,12 @@ type Data = Readonly<{
+   transformFileEndLogEntry: LogEntry,
+ }>;
  
-+/**
-+ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
-+ * usually share the terminal (e.g. `console.error()`).
-+ */
-+function getBytesWritten(stream: tty.WriteStream): number {
-+  if (stream !== process.stdout && stream !== process.stderr) {
-+    return stream.bytesWritten;
-+  }
-+
-+  return (
-+    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
-+    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
-+  );
-+}
++// jest-worker assigns the ID of the worker to JEST_WORKER_ID in a worker thread,
++// regardless of the `env` it is given. Transform output must not depend on the
++// worker that produced it, and a Babel plugin may inline any environment
++// variable.
++delete process.env.JEST_WORKER_ID;
 +
  /**
-  * Get the stream as a TTY if it effectively looks like a valid TTY.
-  */
-@@ -102,6 +117,7 @@ export default class Terminal {
-   #isPendingUpdate: boolean;
-   #shouldFlush: boolean;
-   #writeStatusThrottled: string => void;
-+  #bytesWrittenAfterStatus: ?number;
- 
-   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
-     this.#logLines = [];
-@@ -132,13 +148,13 @@ export default class Terminal {
-     }
- 
-     this.#isUpdating = true;
--    this.#updatePromise = this.#update().then(async () => {
-+    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
-       while (this.#isPendingUpdate) {
-         if (!this.#shouldFlush) {
-           await new Promise(resolve => setTimeout(resolve, 33));
-         }
-         this.#isPendingUpdate = false;
--        await this.#update();
-+        await Promise.all(this.#updateSync());
-       }
-       this.#isUpdating = false;
-       this.#shouldFlush = false;
-@@ -164,12 +180,10 @@ export default class Terminal {
-   }
- 
-   /**
--   * Clear and write the new status, logging in bulk in-between. Doing this in a
--   * throttled way (in a different tick than the calls to `log()` and
--   * `status()`) prevents us from repeatedly rewriting the status in case
--   * `terminal.log()` is called several times.
-+   * Issues the update's writes without awaiting in between, so no other output
-+   * can land in the middle of an update. Returns the pending writes.
-    */
--  async #update(): Promise<void> {
-+  #updateSync(): Array<Promise<unknown>> {
-     const ttyStream = this.#ttyStream;
- 
-     const nextStatusStr = this.#nextStatusStr;
-@@ -181,29 +195,43 @@ export default class Terminal {
-     this.#logLines = [];
- 
-     if (statusStr === nextStatusStr && logLines.length === 0) {
--      return;
-+      return [];
-     }
- 
--    if (ttyStream && statusStr.length > 0) {
-+    const writes: Array<Promise<unknown>> = [];
-+
-+    if (
-+      ttyStream &&
-+      statusStr.length > 0 &&
-+      // If anything printed outside of Terminal (like direct console.log),
-+      // don't try to clear latest status, and just print a new one instead
-+      // or we might delete that external print
-+      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
-+    ) {
-       const statusLinesCount = statusStr.split('\n').length - 1;
-       // extra -1 because we print the status with a trailing new line
--      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
--      await clearScreenDown(ttyStream);
-+      writes.push(
-+        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
-+        clearScreenDown(ttyStream),
-+      );
-     }
- 
-     if (logLines.length > 0) {
--      await streamWrite(this.#stream, logLines.join('\n') + '\n');
-+      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
-     }
- 
-     if (ttyStream) {
-       if (nextStatusStr.length > 0) {
--        await streamWrite(this.#stream, nextStatusStr + '\n');
-+        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
-       }
-+      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
-     } else {
-       this.#writeStatusThrottled(
-         nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
-       );
-     }
-+
-+    return writes;
-   }
- 
-   /**
+  * When the `Buffer` is sent over the worker thread it gets serialized into a JSON object.
+  * This helper method will deserialize it if needed.
 ```
 
-**File**: `packages/metro-core/src/__tests__/Terminal-test.js` (modified, +15/-0)
+**File**: `packages/metro/src/DeltaBundler/__tests__/WorkerFarm-environment-test.js` (added, +50/-0)
 ```diff
-@@ -54,12 +54,15 @@ describe.each([false, true])(
-           ? require('node:tty').WriteStream.prototype
-           : require('node:net').Socket,
-       );
-+      let bytesWritten = 0;
-+      Object.defineProperty(stream, 'bytesWritten', {get: () => bytesWritten});
-       Object.assign(stream, {
-         cursor: 0,
-         buffer: ' '.repeat(columns * lines).split(''),
-         columns,
-         lines,
-         write(str, callback = () => {}) {
-+          bytesWritten += str.length;
-           for (let i = 0; i < str.length; ++i) {
-             if (str[i] === '\n') {
-               this.cursor = this.cursor - (this.cursor % columns) + columns;
-@@ -181,6 +184,18 @@ describe.each([false, true])(
-       }
-     });
- 
-+    test('keeps output written outside of Terminal', async () => {
-+      const {stream, terminal} = prepare({isTTY: true, ttyPrint});
-+      terminal.status('status');
-+      await terminal.flush();
-+      stream.write('external\n');
-+      terminal.status('status2');
-+      await terminal.flush();
-+      expect(stream.buffer.join('').trim()).toEqual(
-+        'status    external  status2',
-+      );
-+    });
+@@ -0,0 +1,50 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @format
++ * @oncall react_native
++ */
 +
-     test('flush- multi-line', async () => {
-       const {stream, terminal} = prepare({isTTY: true, ttyPrint});
-       terminal.log('foo');
++'use strict';
++
++const WorkerFarm = require('../WorkerFarm').default;
++const {getDefaultConfig} = require('metro-config');
++
++jest.setTimeout(60 * 1000);
++jest.useRealTimers();
++
++async function getWorkerEnv(unstable_workerThreads) {
++  const config = await getDefaultConfig(__dirname);
++  const farm = new WorkerFarm(
++    {
++      ...config,
++      maxWorkers: 2,
++      projectRoot: __dirname,
++      transformer: {...config.transformer, unstable_workerThreads},
++    },
++    {
++      transformerPath: require.resolve('./envSnapshotTransformer'),
++      transformerConfig: {},
++    },
++  );
++  try {
++    const {result} = await farm.transform('file.js', {}, Buffer.from(''));
++    return JSON.parse(result.output[0].data.code);
++  } finally {
++    await farm.kill();
++  }
++}
++
++test('a transformer observes the same environment in worker threads and child processes', async () => {
++  const [inThread, inProcess] = await Promise.all([
++    getWorkerEnv(true),
++    getWorkerEnv(false),
++  ]);
++
++  expect(inThread.envAtLoad.JEST_WORKER_ID).toBeUndefined();
++  expect(inThread.envAtCall.JEST_WORKER_ID).toBeUndefined();
++  expect(inThread).toEqual(inProcess);
++});
+```
+
+**File**: `packages/metro/src/DeltaBundler/__tests__/envSnapshotTransformer.js` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @format
++ * @oncall react_native
++ */
++
++'use strict';
++
++// A transformer reporting the environment it observes as its output, both when
++// it is loaded and when it is called.
++const envAtLoad = {...process.env};
++
++module.exports = {
++  transform: async () => ({
++    dependencies: [],
++    output: [
++      {
++        type: 'js/module',
++        data: {
++          code: JSON.stringify({envAtLoad, envAtCall: {...process.env}}),
++          lineCount: 1,
++          map: [],
++          functionMap: null,
++        },
++      },
++    ],
++  }),
++};
 ```
 
 ---
 
-### Incident Patch 2: `bd3fa8cb` (2026-10-30)
-**Commit Message**: Upgrade Flow in fbsource
+### Incident Patch 2: `97f9e8ad` (2026-11-04)
+**Commit Message**: Remove obsolete FlowFixMe for @jridgewell/sourcemap-codec import (#2167)
 
-Summary:
-Upgrade Flow.
-
-___
-
-landed-with-radar-review
-
-Differential Revision: D128608923
-
-Pull Request resolved: https://github.com/react/metro/pull/2136
-
-**File**: `packages/metro/src/lib/formatBundlingError.js` (modified, +1/-0)
+**File**: `packages/metro-transform-worker/src/index.js` (modified, +0/-1)
 ```diff
-@@ -66,6 +66,7 @@ export default function formatBundlingError(
-       errors: [
-         {
-           description: error.message,
-+          // $FlowFixMe[prop-missing]
-           filename: error.filename,
-           lineNumber: error.lineNumber,
-         },
+@@ -42,7 +42,6 @@ import {transformFromAstSync, traverse} from '@babel/core';
+ import generate from '@babel/generator';
+ import * as babylon from '@babel/parser';
+ import * as types from '@babel/types';
+-// $FlowFixMe[cannot-resolve-module] - No typings at Meta (OSS uses a libdef)
+ import {decode as decodeMappings} from '@jridgewell/sourcemap-codec';
+ import {stableHash} from 'metro-cache';
+ import {getCacheKey as metroGetCacheKey} from 'metro-cache-key';
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2136** (2026-10-30): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #2132** (2026-10-29): Enable unstable_disableInputAstCloning by default (@vzaidman)
-- **PR #2131** (2026-10-29): Upgrade flow in fbsource (@SamChou19815)
-- **PR #2130** (2026-10-30): Don't clear over output printed outside of Terminal (@vzaidman)
-- **PR #2129** (2026-10-30): Docs: Format the docs with prettier (@vzaidman)
-- **PR #2126** (closed): CODE_OF_CONDUCT.md (@king2168)
+- **PR #2167** (2026-11-04): Remove obsolete FlowFixMe for @jridgewell/sourcemap-codec import (@vzaidman)
+- **PR #2165** (closed): Check that flow-typed/jest.js covers the jest-mock MockInstance API (@vzaidman)
+- **PR #2164** (2026-11-03): Rename sourcemap-codec libdef to .js.flow (@vzaidman)
+- **PR #2163** (2026-11-03): Add getMockImplementation to Jest libdef and guard its use in Server test (@vzaidman)
+- **PR #2162** (2026-11-04): Keep Terminal logs in order with other stdout/stderr output (@vzaidman)
+- **PR #2160** (2026-11-04): Resolver: Optionally read "exports" from the package root (@robhogan)
 
 ---
 
@@ -1720,70 +1654,33 @@ Pull Request resolved: https://github.com/react/metro/pull/2136
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't clear over output printed outside of Terminal
+## X. JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)
 
 **RULE**:
-When implementing operations in `packages/metro-core/src/Terminal.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro/src/DeltaBundler/Worker.flow.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcced577`: Don't clear over output printed outside of Terminal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `434cc446`: JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-core/src/Terminal.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro/src/DeltaBundler/Worker.flow.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-/**
- * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
- * usually share the terminal (e.g. `console.error()`).
- */
-function getBytesWritten(stream: tty.WriteStream): number {
-  if (stream !== process.stdout && stream !== process.stderr) {
-    return stream.bytesWritten;
-  }
+// jest-worker assigns the ID of the worker to JEST_WORKER_ID in a worker thread,
+// regardless of the `env` it is given. Transform output must not depend on the
+// worker that produced it, and a Babel plugin may inline any environment
+// variable.
+delete process.env.JEST_WORKER_ID;
 
-  return (
-    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
-    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
-  );
-}
-
-  #bytesWrittenAfterStatus: ?number;
-    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
-        await Promise.all(this.#updateSync());
-   * Issues the update's writes without awaiting in between, so no other output
-   * can land in the middle of an update. Returns the pending writes.
-  #updateSync(): Array<Promise<unknown>> {
-      return [];
-    const writes: Array<Promise<unknown>> = [];
-
-    if (
-      ttyStream &&
-      statusStr.length > 0 &&
-      // If anything printed outside of Terminal (like direct console.log),
-      // don't try to clear latest status, and just print a new one instead
-      // or we might delete that external print
-      getBytesWritten(ttyStream) === t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    this.#updatePromise = this.#update().then(async () => {
-        await this.#update();
-   * Clear and write the new status, logging in bulk in-between. Doing this in a
-   * throttled way (in a different tick than the calls to `log()` and
-   * `status()`) prevents us from repeatedly rewriting the status in case
-   * `terminal.log()` is called several times.
-  async #update(): Promise<void> {
-      return;
-    if (ttyStream && statusStr.length > 0) {
-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
-      await clearScreenDown(ttyStream);
-      await streamWrite(this.#stream, logLines.join('\n') + '\n');
-        await streamWrite(this.#stream, nextStatusStr + '\n');
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcced577` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `434cc446` are properly handled with clean fallback behavior.

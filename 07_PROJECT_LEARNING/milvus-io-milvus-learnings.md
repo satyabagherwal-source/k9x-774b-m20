@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `1cee5900`  
+> **Source Version**: `f830e57c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:27:38.256Z  
+> **Timestamp**: 2026-11-04T20:10:10.175Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:27:37.624Z  
+> **Harvest Timestamp**: 2026-11-04T20:10:10.072Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46574 stars
+- **Stars / Engagement**: 46595 stars
 
 ---
 
@@ -1412,11 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55064** (2026-11-03): **fix: [hotfix-3.0.5] prefer safe JSON indexes over stats**
-  *Symptoms*: issue: #55001 pr: #55006  JSON predicates on segments with shredding stats currently bypass usable path indexes. Backport #55006 to `hotfix-3.0.5`, adapting its execution-path fallback and tests to this branch's existing index interfaces.  Ordinary unary comparisons, IN, binary ranges, and EXISTS prefer a usable index, then fall back to JSON stats. Keep three safeguards before scalar-index pinning:  - JSON string pattern predicates retain the existing stats path when eligible, avoiding the flat-index regex failure on keys such as `(`. - Precision-sensitive numeric bounds and IN literals retain exact stats comparisons before any scalar-index pin, including floating values at ±2^53 that numeric indexes can confuse with adjacent integers. Every IN literal is checked, even when the first literal is small. - JSON_CONTAINS / ANY / ALL retain their existing stats path when eligible. This preserves null/missing/non-array semantics and avoids loading an index that would subsequently be rejected.  EXISTS now passes paths relative to the flat index root, matching the other scalar-index executors; a query on `/a/b` uses `/b` when the index is rooted at `/a`.  This hotfix intentionally keeps contains and pattern predicates conservative instead of importing master's index-capability selector. It does not fix Tantivy's underlying regex handling or the existing array-index validity gap on segments without eligible stats. NGRAM's existing execution path is unchanged.  Validation: - `git diff 
+- **Issue #55138** (2026-11-04): **fix: [3.0] release MinioChunkManager's AWS SDK reference when the process exits**
+  *Symptoms*: issue: #55128 pr: #55131  Cherry-pick of #55131 to 3.0. The patch applies cleanly: `MinioChunkManager.h` and `RemoteChunkManagerSingleton.h` are identical on both branches, and 3.0's `MinioChunkManager.cpp` differs from master only in credential handling, away from the changed lines. 3.0 builds the same AWS SDK (1.11.842), its milvus-storage pin (ab1d5fd4) releases its own reference through `FinalizeS3` as master's does, and `RemoteChunkManagerSingleton` is the only static owner of a remote chunk manager there too.  ## What  - MinioChunkManager takes its AWS SDK reference through `InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with `std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with the options the SDK was initialized with, unless `ShutdownSDKAPI` has released the reference already. While the process runs nothing changes: managers coming and going still leave the SDK initialized. - `RemoteChunkManagerSingleton::GetInstance` allocates the instance and never destroys it. The remote chunk manager already lives as long as the process (`Release` keeps it), and its static destructor would otherwise destroy an S3 client after the SDK was shut down at exit. It is the only static owner of a remote chunk manager in segcore; the others are created per task.  ## Why  A process that runs exit handlers destroys the SDK's static objects while MinioChunkManager's reference keeps the SDK initialized. The default client bootstrap then shuts down from its static d
 
-- **Issue #55063** (2026-11-03): **fix: [hotfix-3.0.5] preserve candidate masks in logical and GIS filters**
-  *Symptoms*: Backport of #55057 via the 3.0 backport #55060 to hotfix-3.0.5 for issue #55018 items 01, 05 and 07.  Preserve inherited candidate masks during nested logical evaluation and restore them on exit. Refine indexed GIS candidates within the active batch and skip masked raw geometry work.  Also fix an existing cursor mismatch for nonnullable scalar IS NULL / IS NOT NULL: a skipped batch must advance the constant-result cursor so the final partial batch has the correct length. This is item 01 and is independent of the inherited-mask change.  This includes the 3.0 backport and the subsequent master ownership-transfer update.  pr: #55057  Move the inherited bitmap into local ownership after the first child returns and restore it on exit, avoiding an additional deep copy.  issue: #55018  Validation: no hotfix build or test run was completed; the earlier validation job was cancelled before test execution. The ownership-transfer update was verified on master commit 01b9fdcadc with 348 targeted C++ tests, with no separate Dev CLI validation on this hotfix branch.  Suggested reading order: ConjunctExpr/EvalCtx mask scope and ownership transfer, NullExpr skipped-batch cursor handling, then GISFunctionFilterExpr raw/indexed evaluation. The remaining changes are focused regressions. 
+- **Issue #55131** (2026-11-04): **fix: release MinioChunkManager's AWS SDK reference when the process exits**
+  *Symptoms*: issue: #55128  ## What  - MinioChunkManager takes its AWS SDK reference through `InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with `std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with the options the SDK was initialized with, unless `ShutdownSDKAPI` has released the reference already. While the process runs nothing changes: managers coming and going still leave the SDK initialized. - `RemoteChunkManagerSingleton::GetInstance` allocates the instance and never destroys it. The remote chunk manager already lives as long as the process (`Release` keeps it), and its static destructor would otherwise destroy an S3 client after the SDK was shut down at exit. It is the only static owner of a remote chunk manager in segcore; the others are created per task.  ## Why  A process that runs exit handlers destroys the SDK's static objects while MinioChunkManager's reference keeps the SDK initialized. The default client bootstrap then shuts down from its static destructor, and the cleanup thread that starts races the destruction of the SDK's log redirection: a CRT thread crashes in `s_aws_logger_redirect_get_log_level`. `Aws::ShutdownAPI` counts references, so with this change whichever holder releases last, MinioChunkManager or milvus-storage's `FinalizeS3`, shuts the SDK down before its static objects are destroyed.  ## Effect on Milvus  None for the milvus binary: `os.Exit` and the return from `main` end with `exit_group`, so exit handlers never run. C++ te
+  **Post-Mortem & Fix Analysis**:
+  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+  > <!-- team2-arev:debate-D235ee857e4 --> > **Must-fix issues introduced by this PR: 0** > **Merge recommendation:** Mergeable as-is — this review found no must-fix issue introduced by this PR.  Adversarial review found no issues requiring changes.  **Verified:** - `internal/core/src/storage/minio/MinioChunkManager.cpp:406-410`: `init_count_.exchange(0) > 0` results in exactly one `Aws::ShutdownAPI` call. That matches the single `Aws::InitAPI` call made on the 0→1 transition (`:272-273`, `:327-328`). When `ShutdownSDKAPI` has already brought the count back to 0, the handler does nothing. - `internal/core/src/storage/minio/MinioChunkManager.cpp:397-401`: `std::call_once` ensures `atexit` is registered only once. If the SDK is initialized again after an explicit shutdown, `sdk_options_at_init` is overwritten, so the handler shuts down with the options from the most recent init. - `internal/core/src/storage/minio/MinioChunkManager.cpp:405`: the handler takes `client_mutex_`, the same mutex b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1433,1301 +1436,876 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20d2246e` (2026-11-03)
-**Commit Message**: fix: prevent CDC replicator panic after source scanner termination (#54663)
+### Incident Patch 1: `eabafc85` (2026-11-04)
+**Commit Message**: fix: release MinioChunkManager's AWS SDK reference when the process exits (#55131)
 
-## Summary
+issue: #55128
 
-Prevent the CDC ChannelReplicator from dereferencing a nil message after
-the source scanner terminates and closes its message channel.
+## What
 
-## Root Cause
+- MinioChunkManager takes its AWS SDK reference through
+`InitSDKAPIUntilExit`, which registers `ReleaseSDKAPIAtExit` with
+`std::atexit` once. At exit the handler calls `Aws::ShutdownAPI` with
+the options the SDK was initialized with, unless `ShutdownSDKAPI` has
+released the reference already. While the process runs nothing changes:
+managers coming and going still leave the SDK initialized.
+- `RemoteChunkManagerSingleton::GetInstance` allocates the instance and
+never destroys it. The remote chunk manager already lives as long as the
+process (`Release` keeps it), and its static destructor would otherwise
+destroy an S3 client after the SDK was shut down at exit. It is the only
+static owner of a remote chunk manager in segcore; the others are
+created per task.
 
-`startConsumeLoop` previously ignored the channel receive status and did
-not observe scanner completion. A receive from a closed channel returned
-a nil `message.ImmutableMessage`, which was then dereferenced through
-`MessageType()`.
+## Why
 
-Transient scanner and broker failures are already handled by the
-existing resumable consumer. The ChannelReplicator should handle an
-outer scanner termination safely without introducing a second recovery
-loop.
+A process that runs exit handlers destroys the SDK's static objects
+while MinioChunkManager's reference keeps the SDK initialized. The
+default client bootstrap then shuts down from its static destructor, and
+the cleanup thread that starts races the destruction of the SDK's log
+redirection: a CRT thread crashes in
+`
 
-## Changes
-
-- Check the channel receive status before processing a message.
-- Observe scanner completion and propagate scanner errors.
-- Exit cleanly when replication or scanner context is canceled.
-- Log an unexpected scanner termination and let the existing cleanup
-path close the scanner and replication stream.
-- Add regression tests for closed channels, scanner errors, and
-cancellation.
-
-## Testing
-
-- `gofmt -d
-internal/cdc/replication/replicatemanager/channel_replicator.go
-internal/cdc/replication/replicat
-
-**File**: `internal/cdc/replication/replicatemanager/channel_replicator.go` (modified, +38/-5)
+**File**: `internal/core/src/storage/RemoteChunkManagerSingleton.h` (modified, +6/-2)
 ```diff
-@@ -51,6 +51,8 @@ type Replicator interface {
+@@ -33,8 +33,12 @@ class RemoteChunkManagerSingleton {
  
- var _ Replicator = (*channelReplicator)(nil)
+     static RemoteChunkManagerSingleton&
+     GetInstance() {
+-        static RemoteChunkManagerSingleton instance;
+-        return instance;
++        // Never destroyed. The remote chunk manager lives as long as the
++        // process, since Release keeps it, and a static destructor would
++        // destroy its client after MinioChunkManager released the AWS SDK at
++        // exit, which the SDK does not allow.
++        static auto* instance = new RemoteChunkManagerSingleton();
++        return *instance;
+     }
  
-+var errScannerClosed = errors.New("replication source scanner closed")
-+
- // channelReplicator is the implementation of ChannelReplicator.
- type channelReplicator struct {
- 	channel       *meta.ReplicateChannel
-@@ -106,7 +108,11 @@ func (r *channelReplicator) StartReplication() {
- 				break INIT_LOOP
- 			}
- 		}
--		r.startConsumeLoop()
-+		if err := r.startConsumeLoop(); err != nil &&
-+			!errors.Is(err, context.Canceled) &&
-+			!errors.Is(err, replicatestream.ErrReplicationRemoved) {
-+			logger.Warn(context.TODO(), "replication source scanner stopped", mlog.Err(err))
-+		}
- 	}()
- }
- 
-@@ -170,16 +176,25 @@ func (r *channelReplicator) init() error {
- }
- 
- // startConsumeLoop starts the replicate loop.
--func (r *channelReplicator) startConsumeLoop() {
-+func (r *channelReplicator) startConsumeLoop() error {
- 	logger := mlog.With(mlog.String("key", r.channel.Key), mlog.Int64("modRevision", r.channel.ModRevision))
- 	logger.Info(context.TODO(), "start consume loop")
-+	var scannerDone <-chan struct{}
-+	if r.msgScanner != nil {
-+		scannerDone = r.msgScanner.Done()
-+	}
- 
- 	for {
- 		select {
- 		case <-r.asyncNotifier.Context().Done():
- 			logger.Info(context.TODO(), "consume loop stopped")
--			return
--		case msg := <-r.msgChan:
-+			return nil
-+		case <-scannerDone:
-+			return r.scannerStoppedError(true)
-+		case msg, ok := <-r.msgChan:
-+			if !ok {
-+				return r.scannerStoppedError(false)
-+			}
- 			// A topology change older than this task describes a past state, not an
- 			// instruction. Forwarding it would make the secondary act on it — a
- 			// configuration that no longer lists the secondary turns it back into a
-@@ -207,13 +222,31 @@ func (r *channelReplicator) startConsumeLoop() {
- 					// series. Deleting after BlockUntilFinish ensures no
- 					// in-flight confirm re-creates the series afterwards.
- 					replicatestream.DeleteLastReplicatedTimeTick(r.channel.Value)
--					return
-+					return replicatestream.ErrReplicationRemoved
- 				}
- 			}
- 		}
- 	}
- }
- 
-+func (r *channelReplicator) scannerStoppedError(scannerDone bool) error {
-+	if r.msgScanner == nil {
-+		return errScannerClosed
-+	}
-+
-+	if !scannerDone {
-+		select {
-+		case <-r.msgScanner.Done():
-+		case <-r.asyncNotifier.Context().Done():
-+			return r.asyncNotifier.Context().Err()
-+		}
-+	}
-+	if err := r.msgScanner.Error(); err != nil {
-+		return errors.Wrap(err, "replication source scanner stopped")
-+	}
-+	return errScannerClosed
-+}
-+
- func (r *channelReplicator) getReplicateCheckpoint() (*utility.ReplicateCheckpoint, error) {
- 	logger := mlog.With(mlog.String("key", r.channel.Key), mlog.Int64("modRevision", r.channel.ModRevision))
- 
+     void
 ```
 
-**File**: `internal/cdc/replication/replicatemanager/channel_replicator_test.go` (modified, +135/-0)
+**File**: `internal/core/src/storage/minio/MinioChunkManager.cpp` (modified, +37/-3)
 ```diff
-@@ -22,6 +22,7 @@ import (
+@@ -32,6 +32,7 @@
+ #include <algorithm>
+ #include <cctype>
+ #include <chrono>
++#include <cstdlib>
+ #include <exception>
+ #include <functional>
+ #include <mutex>
+@@ -75,6 +76,11 @@ std::mutex MinioChunkManager::client_mutex_;
+ 
+ namespace {
+ 
++// The options the SDK was last initialized with: Aws::ShutdownAPI undoes what
++// Aws::InitAPI set up from them.
++Aws::SDKOptions sdk_options_at_init;
++std::once_flag release_sdk_at_exit;
++
+ std::mutex&
+ GcsEndpointsMutex() {
+     static std::mutex mutex;
+@@ -310,7 +316,7 @@ MinioChunkManager::InitSDKAPI(RemoteStorageType type,
+         sdk_options_.loggingOptions.logger_create_fn = [log_level]() {
+             return std::make_shared<AwsLogger>(log_level);
+         };
+-        Aws::InitAPI(sdk_options_);
++        InitSDKAPIUntilExit(sdk_options_);
+     }
+ }
+ 
+@@ -363,7 +369,7 @@ MinioChunkManager::InitSDKAPIDefault(const std::string& log_level_str,
+         sdk_options_.loggingOptions.logger_create_fn = [log_level]() {
+             return std::make_shared<AwsLogger>(log_level);
+         };
+-        Aws::InitAPI(sdk_options_);
++        InitSDKAPIUntilExit(sdk_options_);
+     }
+ }
+ 
+@@ -376,6 +382,34 @@ MinioChunkManager::ShutdownSDKAPI() {
+     }
+ }
+ 
++// MinioChunkManagers share one reference to the AWS SDK. The first manager
++// takes it, and managers coming and going do not release it, since the SDK
++// would then have to be initialized again for the next one (#42459). It is
++// released when the process exits instead. A Go process ends with exit_group
++// and runs no exit handlers, but a host process that runs them would
++// otherwise destroy the SDK's static objects while the SDK is still
++// initialized: the default client bootstrap then shuts down from its static
++// destructor, and the cleanup thread that starts races the destruction of the
++// SDK's log redirection (a SIGSEGV in s_aws_logger_redirect_get_log_level).
++// Aws::ShutdownAPI counts references, so whichever holder releases the SDK
++// last shuts it down, this one or milvus-storage's own release at exit.
++void
++MinioChunkManager::InitSDKAPIUntilExit(const Aws::SDKOptions& options) {
++    Aws::InitAPI(options);
++    sdk_options_at_init = options;
++    std::call_once(release_sdk_at_exit,
++                   [] { std::atexit(MinioChunkManager::ReleaseSDKAPIAtExit); });
++}
++
++void
++MinioChunkManager::ReleaseSDKAPIAtExit() {
++    std::scoped_lock lock{client_mutex_};
++    // ShutdownSDKAPI may have released the reference already.
++    if (init_count_.exchange(0) > 0) {
++        Aws::ShutdownAPI(sdk_options_at_init);
++    }
++}
++
+ void
+ MinioChunkManager::BuildS3Client(
+     const StorageConfig& storage_config,
+@@ -654,7 +688,7 @@ MinioChunkManager::MinioChunkManager(const StorageConfig& storage_config)
+ 
+ MinioChunkManager::~MinioChunkManager() {
+     client_.reset();
+-    // ShutdownSDKAPI();
++    // The SDK reference outlives the manager: see InitSDKAPIUntilExit.
+ }
+ 
+ uint64_t
+```
+
+**File**: `internal/core/src/storage/minio/MinioChunkManager.h` (modified, +7/-0)
+```diff
+@@ -312,6 +312,13 @@ class MinioChunkManager : public ChunkManager {
+     static bool
+     NeedChecksumOverride(const std::string& cloud_provider);
+ 
++    // Aws::InitAPI, whose reference ReleaseSDKAPIAtExit drops when the
++    // process exits. Called with client_mutex_ held.
++    static void
++    InitSDKAPIUntilExit(const Aws::SDKOptions& options);
++    static void
++    ReleaseSDKAPIAtExit();
++
+     Aws::SDKOptions sdk_options_;
+     static std::atomic<size_t> init_count_;
+     static std::mutex client_mutex_;
+```
+
+---
+
+### Incident Patch 2: `1fe17a49` (2026-11-04)
+**Commit Message**: fix: Replay deltalogs when reopening external milvus-table segments (#54736)
+
+issue: #54735
+
+### Problem
+
+A milvus-table refresh reuses a target segment when every fragment
+identity is unchanged. The identity is the source segment manifest path
+**including its version**, plus the row range
+(`packed.FragmentIdentity`). Snapshot-level L0 deltalogs are attached to
+every fragment (`buildMilvusTableFileInfosFromSnapshotMetadata`).
+
+Trigger: the source table deletes rows, and a new snapshot is taken
+**before source L0 compaction** folds those deletes into the source
+segments. The source segment manifests keep their versions, so the
+refresh keeps the target segments. Their L0 deltalog sets differ, so
+`refreshMilvusTableSegmentManifest` only rewrites their manifests to
+include the new deltalogs. QueryCoord sees the newer manifest and sends
+a reopen.
+
+QueryNode reopen only switched the segcore view and never loaded the new
+deltalogs, so the deleted rows stayed visible. Because the new manifest
+was already reported, QueryCoord never retried. One such refresh affects
+every kept segment of the collection. The deletes took effect only after
+a full reload (release/load, QueryNode restart, balanc
+
+**File**: `internal/core/unittest/test_sealed.cpp` (modified, +32/-0)
+```diff
+@@ -5037,6 +5037,38 @@ TEST(SealedSegmentReopen, LazySchemaReopenDoesNotWaitForReopenMutex) {
+     EXPECT_EQ(sealed->TestGetSchemaSnapshot()->get_schema_version(), 300);
+ }
+ 
++TEST(SealedSegmentReopen, ReplayedDeletesSurviveReopen) {
++    auto schema = std::make_shared<Schema>();
++    auto pk_id = schema->AddDebugField("pk", DataType::INT64);
++    schema->set_primary_field_id(pk_id);
++    schema->set_schema_version(100);
++    auto dataset = DataGen(schema, 10);
++    auto segment = CreateSealedWithFieldDataLoaded(schema, dataset);
++    auto* sealed = dynamic_cast<ChunkedSegmentSealedImpl*>(segment.get());
++    ASSERT_NE(sealed, nullptr);
++
++    auto pks = dataset.get_col<int64_t>(pk_id);
++    auto ids = std::make_unique<IdArray>();
++    ids->mutable_int_id()->add_data(pks[0]);
++    std::vector<Timestamp> timestamps{1000};
++    LoadDeletedRecordInfo deletes = {timestamps.data(), ids.get(), 1};
++    segment->LoadDeletedRecord(deletes);
++    ASSERT_EQ(segment->get_deleted_count(), 1);
++
++    // A later reopen must retain deletes; retrying their application is idempotent.
++    auto next_schema = std::make_shared<Schema>();
++    auto next_pk = next_schema->AddDebugField("pk", DataType::INT64);
++    next_schema->set_primary_field_id(next_pk);
++    next_schema->set_schema_version(101);
++    EXPECT_NO_THROW(sealed->Reopen(next_schema));
++    segment->LoadDeletedRecord(deletes);
++    EXPECT_EQ(segment->get_deleted_count(), 1);
++    BitsetType mask(10, false);
++    auto view = BitsetTypeView(mask);
++    segment->mask_with_delete(view, 10, 2000);
++    EXPECT_EQ(mask.count(), 1);
++}
++
+ TEST(SealedSegmentReopen, SchemaOnlyReopenPublishesDefaultFilledState) {
+     auto old_schema = std::make_shared<Schema>();
+     old_schema->AddDebugField("pk", DataType::INT64);
+```
+
+**File**: `internal/querynodev2/segments/segment.go` (modified, +14/-0)
+```diff
+@@ -1306,6 +1306,15 @@ func (s *LocalSegment) Load(ctx context.Context) error {
+ }
+ 
+ func (s *LocalSegment) Reopen(ctx context.Context, newLoadInfo *querypb.SegmentLoadInfo) error {
++	return s.reopen(ctx, newLoadInfo, nil)
++}
++
++// reopen runs the optional delete replay before publishing newLoadInfo. If the
++// replay fails, the old load info stays reported so the QueryCoord checker can
++// schedule another reopen, independently of the RPC error retry classification.
++// Segcore has already switched views; rows pending deletion can remain visible
++// until a later replay succeeds (permanent source errors require repair).
++func (s *LocalSegment) reopen(ctx context.Context, newLoadInfo *querypb.SegmentLoadInfo, replayDeletes func() error) error {
+ 	if !s.ptrLock.PinIfNotReleased() {
+ 		return merr.WrapErrSegmentNotLoaded(s.ID(), "segment released during reopen")
+ 	}
+@@ -1327,6 +1336,11 @@ func (s *LocalSegment) Reopen(ctx context.Context, newLoadInfo *querypb.SegmentL
+ 	if err != nil {
+ 		return err
+ 	}
++	if replayDeletes != nil {
++		if err := replayDeletes(); err != nil {
++			return merr.Wrap(err, "replay deltalogs after reopen")
++		}
++	}
+ 	s.syncFieldIndexes(newLoadInfo.GetIndexInfos())
+ 	if s.relatedDataSize != nil {
+ 		s.relatedDataSize.Store(calculateSegmentLogSize(newLoadInfo))
+```
+
+**File**: `internal/querynodev2/segments/segment_loader.go` (modified, +41/-1)
+```diff
+@@ -27,6 +27,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"io"
++	"maps"
+ 	"math"
+ 	"path"
+ 	"strconv"
+@@ -2104,7 +2105,19 @@ func (loader *segmentLoader) ReopenSegments(ctx context.Context,
+ 			configureUseTakeForOutput(info, collection.Schema())
+ 		}
+ 
+-		err := segment.Reopen(ctx, info)
++		var err error
++		local, ok := segment.(*LocalSegment)
++		if ok && collection != nil && typeutil.IsExternalCollection(collection.Schema()) &&
++			typeutil.NewStorageColumnResolver(collection.Schema()).IsMilvusTable() &&
++			!deltaSourceUnchanged(local.LoadInfo(), info) {
++			// External refresh may add deletes to the new manifest; replay them
++			// before the new load info is published.
++			err = local.reopen(ctx, info, func() error {
++				return loader.loadDeltalogs(ctx, local, info)
++			})
++		} else {
++			err = segment.Reopen(ctx, info)
++		}
+ 		if err != nil {
+ 			mlog.Warn(context.TODO(), "failed to reopen segment", mlog.Int64("segmentID", info.GetSegmentID()), mlog.Err(err))
+ 			return err
+@@ -2114,6 +2127,33 @@ func (loader *segmentLoader) ReopenSegments(ctx context.Context,
+ 	return nil
+ }
+ 
++// deltaSourceUnchanged reports whether incoming references the same delete
++// sources as the published load info. Reopen publishes load info only after a
++// successful replay, so an unchanged source (e.g. index-only reopen) has
++// already been applied. Child manifests are not kept in the runtime load info,
++// so their presence always forces a replay.
++func deltaSourceUnchanged(current, incoming *querypb.SegmentLoadInfo) bool {
++	if len(incoming.GetChildManifestPaths()) != 0 || current.GetManifestPath() != incoming.GetManifestPath() {
++		return false
++	}
++	// Files are immutable; ordering and repeated references do not change their contents.
++	type identity struct {
++		fieldID int64
++		logID   int64
++		path    string
++	}
++	sources := func(info *querypb.SegmentLoadInfo) map[identity]struct{} {
++		result := make(map[identity]struct{})
++		for _, field := range info.GetDeltalogs() {
++			for _, log := range field.GetBinlogs() {
++				result[identity{field.GetFieldID(), log.GetLogID(), log.GetLogPath()}] = struct{}{}
++			}
++		}
++		return result
++	}
++	return maps.Equal(sources(current), sources(incoming))
++}
++
+ func getBinlogDataDiskSize(fieldBinlog *datapb.FieldBinlog) int64 {
+ 	fieldSize := int64(0)
+ 	for _, binlog := range fieldBinlog.Binlogs {
+```
+
+**File**: `internal/querynodev2/segments/segment_loader_test.go` (modified, +365/-0)
+```diff
+@@ -24,19 +24,25 @@ import (
+ 	"testing"
  	"time"
  
- 	"github.com/apache/pulsar-client-go/pulsar"
-+	"github.com/cockroachdb/errors"
- 	"github.com/prometheus/client_golang/prometheus/testutil"
++	"github.com/apache/arrow/go/v17/arrow"
++	"github.com/apache/arrow/go/v17/arrow/array"
++	"github.com/apache/arrow/go/v17/arrow/memory"
+ 	"github.com/bytedance/mockey"
+ 	"github.com/cockroachdb/errors"
  	"github.com/stretchr/testify/assert"
- 	mock "github.com/stretchr/testify/mock"
-@@ -65,6 +66,7 @@ func TestChannelReplicator_StartReplicateChannel(t *testing.T) {
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/stretchr/testify/suite"
+ 	"go.uber.org/atomic"
++	"google.golang.org/protobuf/proto"
  
- 	scanner := mock_streaming.NewMockScanner(t)
- 	scanner.EXPECT().Close().Return()
-+	scanner.EXPECT().Done().Return(make(chan struct{})).Once()
- 	wal := mock_streaming.NewMockWALAccesser(t)
- 	wal.EXPECT().Read(mock.Anything, mock.Anything).Return(scanner)
- 	streaming.SetWALForTest(wal)
-@@ -159,6 +161,139 @@ func TestChannelReplicatorConsumeLoopDeletesLagSeriesOnRemoval(t *testing.T) {
- 	assert.False(t, metrics.CDCLastReplicatedTimeTick.DeleteLabelValues(source, target))
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ 	"github.com/milvus-io/milvus/internal/mocks/util/mock_segcore"
++	"github.com/milvus-io/milvus/internal/querynodev2/segments/state"
+ 	"github.com/milvus-io/milvus/internal/storage"
+ 	"github.com/milvus-io/milvus/internal/storagev2/packed"
+ 	"github.com/milvus-io/milvus/internal/util/initcore"
++	"github.com/milvus-io/milvus/internal/util/segcore"
+ 	"github.com/milvus-io/milvus/internal/util/segcore/loadresource"
+ 	"github.com/milvus-io/milvus/pkg/v3/common"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+@@ -132,6 +138,291 @@ func (eofRecordReader) Close() error {
+ 	return nil
  }
  
-+func TestChannelReplicatorConsumeLoopStopsOnClosedMessageChannel(t *testing.T) {
-+	replicator := &channelReplicator{
-+		channel:       &meta.ReplicateChannel{},
-+		msgChan:       make(adaptor.ChanMessageHandler),
-+		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
++type reopenTestCore struct{ segcore.CSegment }
++
++type reopenDeltaReader struct {
++	record storage.Record
++	read   bool
++}
++
++func (r *reopenDeltaReader) Next() (storage.Record, error) {
++	if r.read {
++		return nil, io.EOF
 +	}
++	r.read = true
++	return r.record, nil
++}
 +
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- replicator.startConsumeLoop()
-+	}()
-+	close(replicator.msgChan)
++func (r *reopenDeltaReader) Close() error {
++	r.record.Release()
++	return nil
++}
 +
-+	select {
-+	case err := <-done:
-+		assert.ErrorIs(t, err, errScannerClosed)
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not stop after message channel was closed")
++func newReopenTestSegment(schema *schemapb.CollectionSchema, info *querypb.SegmentLoadInfo) *LocalSegment {
++	return &LocalSegment{
++		baseSegment: baseSegment{
++			collection: NewCollectionWithoutSegcoreForTest(info.GetCollectionID(), schema),
++			loadInfo:   atomic.NewPointer(info),
++		},
++		ptrLock:            state.NewLoadStateLock(state.LoadStateDataLoaded),
++		csegment:           &reopenTestCore{},
++		lastDeltaTimestamp: atomic.NewUint64(0),
++		fieldIndexes:       typeutil.NewConcurrentMap[int64, *IndexedFieldInfo](),
 +	}
 +}
 +
-+func TestChannelReplicatorConsumeLoopReturnsScannerError(t *testing.T) {
-+	scannerDone := make(chan struct{})
-+	scannerErr := errors.New("source scanner failed")
-+	scanner := mock_streaming.NewMockScanner(t)
-+	scanner.EXPECT().Done().Return(scannerDone).Once()
-+	scanner.EXPECT().Error().Return(scannerErr).Once()
++func TestReopenSegmentsExternalDeltalogs(t *testing.T) {
++	paramtable.Init()
++	params := paramtable.Get()
++	statsKey := params.CommonCfg.EnabledJSONKeyStats.Key
++	statsValue := params.CommonCfg.EnabledJSONKeyStats.GetValue()
++	require.NoError(t, params.Save(statsKey, "false"))
++	t.Cleanup(func() { require.NoError(t, params.Save(statsKey, statsValue)) })
++	for _, scenario := range []struct {
++		name      string
++		virtualPK bool
++		failure   string
++		permanent bool
++	}{
++		{name: "real_pk_success", failure: "none"},
++		{name: "virtual_pk_success", virtualPK: true, failure: "none"},
++		{name: "reopen_failure", failure: "reopen"},
++		{name: "read_failure", failure: "read"},
++		{name: "apply_failure", failure: "apply"},
++		{name: "permanent_read_failure", failure: "read", permanent: true},
++		{name: "permanent_apply_failure", failure: "apply", permanent: true},
++		{name: "virtual_pk_read_failure", virtualPK: true, failure: "read"},
++	} {
++		t.Run(scenario.name, func(t *testing.T) {
++			failure := scenario.failure
++			ctx := context.Background()
++			manager := NewManager()
++			schema := milvusTableCollectionSchema(scenario.virtualPK)
++			schema.ExternalSource = "s3://source-bucket/snapshots/100/metadata/200.json"
++			manager.Collection.(*collectionManager).collections[1000] = NewCollectionWithoutSegcoreForTest(1000, schema)
++			oldInfo := &querypb.SegmentLoadInfo{
++				CollectionID: 1000, SegmentID: 3000,
++				ManifestPath: packed.MarshalManifestPath("files/insert_log/1000/2000/3000", 1),
++			}
++			newInfo := &querypb.SegmentLoadInfo{
++				CollectionID: 1000, SegmentID: 3000,
++				ManifestPath: packed.MarshalManifestPath("files/insert_log/1000/2000/3000", 2),
++			}
++			segment := newReopenTestSegment(schema, oldInfo)
++			// Deletes from the old manifest were already applied; replay only
++			// reads the newly added deltalog.
++			segment.lastDeltaTimestamp.Store(50)
++			manager.Segment.(*segmentManager).globalSegments.Put(ctx, SegmentTypeSealed, segment)
++			loader := &segmentLoader{manager: manager, loadingSegments: typeutil.NewConcurrentMap[int64, *loadResult]()}
++			resourcePatch := mockey.Mock((*segmentLoader).requestResource).Return(requestResourceResult{}, nil).Build()
++			defer resourcePatch.UnPatch()
++			freePatch := mockey.Mock((*segmentLoader).freeRequestResource).Return().Build()
++			defer freePatch.UnPatch()
 +
-+	replicator := &channelReplicator{
-+		channel:       &meta.ReplicateChannel{},
-+		msgChan:       make(adaptor.ChanMessageHandler),
-+		msgScanner:    scanner,
-+		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
-+	}
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- replicator.startConsumeLoop()
-+	}()
-+	close(scannerDone)
-+
-+	select {
-+	case err := <-done:
-+		assert.ErrorIs(t, err, scannerErr)
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not stop after scanner was done")
-+	}
-+}
-+
-+func TestChannelReplicatorConsumeLoopClosedMessageChannelWithScanner(t *testing.T) {
-+	scannerDone := make(chan struct{})
-+	scannerDoneCalls := make(chan struct{}, 2)
-+	scannerErr := errors.New("source scanner failed")
-+	scanner := mock_streaming.NewMockScanner(t)
-+	scanner.EXPECT().Done().
-+		Run(func() { scannerDoneCalls <- struct{}{} }).
-+		Return(scannerDone).Twice()
-+	scanner.EXPECT().Error().Return(scannerErr).Once()
-+
-+	replicator := &channelReplicator{
-+		channel:       &meta.ReplicateChannel{},
-+		msgChan:       make(adaptor.ChanMessageHandler),
-+		msgScanner:    scanner,
-+		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
-+	}
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- replicator.startConsumeLoop()
-+	}()
-+
-+	select {
-+	case <-scannerDoneCalls:
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not initialize scanner completion channel")
-+	}
-+	close(replicator.msgChan)
-+	select {
-+	case <-scannerDoneCalls:
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not wait for scanner completion after channel close")
-+	}
-+	close(scannerDone)
-+
-+	select {
-+	case err := <-done:
-+		assert.ErrorIs(t, err, scannerErr)
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not return the scanner error")
-+	}
-+}
-+
-+func TestChannelReplicatorConsumeLoopClosedMessageChannelCancellation(t *testing.T) {
-+	scannerDone := make(chan struct{})
-+	scannerDoneCalls := make(chan struct{}, 2)
-+	scanner := mock_streaming.NewMockScanner(t)
-+	scanner.EXPECT().Done().
-+		Run(func() { scannerDoneCalls <- struct{}{} }).
-+		Return(scannerDone).Twice()
-+
-+	replicator := &channelReplicator{
-+		channel:       &meta.ReplicateChannel{},
-+		msgChan:       make(adaptor.ChanMessageHandler),
-+		msgScanner:    scanner,
-+		asyncNotifier: syncutil.NewAsyncTaskNotifier[struct{}](),
-+	}
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- replicator.startConsumeLoop()
-+	}()
-+
-+	select {
-+	case <-scannerDoneCalls:
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not initialize scanner completion channel")
-+	}
-+	close(replicator.msgChan)
-+	select {
-+	case <-scannerDoneCalls:
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not wait for scanner completion after channel close")
-+	}
-+	replicator.asyncNotifier.Cancel()
-+
-+	select {
-+	case err := <-done:
-+		assert.ErrorIs(t, err, context.Canceled)
-+	case <-time.After(time.Second):
-+		t.Fatal("consume loop did not stop after cancellation")
-+	}
-+}
-+
- func TestChannelReplicatorInitMetricFromInitializedCheckpoint(t *testing.T) {
- 	source, target := "TestInitMetric-source", "TestInitMetric-target"
- 	checkpoint := tsoutil.ComposeTSByTime(time.Now().Add(-5 * time.Minute))
++			injected := merr.Wrap(merr.ErrIoTooManyRequests, "injected reopen failure")
++			if scenario.permanent {
++				injected = merr.Wrap(merr.ErrParameterInvalid, "injected permanent failure")
++			}
++			var calls []string
++			failed := false
++			expectedInfo := oldInfo
++			failOnce := func(stage string) error {
++				calls = append(calls, stage)
++				assert.Same(t, expectedInfo, segment.LoadInfo(), "load info must not be published before replay completes")
++				if failure == stage && !failed {
++					failed = true
++					return injected
++				}
++				return nil
++			}
++			corePatch := mockey.Mock((*reopenTestCore)
 ```
 
 ---
 
-### Incident Patch 2: `92a260c3` (2026-11-02)
-**Commit Message**: fix: address post-merge review comments on the SegIdx refactor (#54826)
+### Incident Patch 3: `fc28ab6b` (2026-11-04)
+**Commit Message**: enhance: add native TSan builds with LLVM Archer (#53895)
 
-issue: #53567
+## What changed
 
-Follow-up to #54182. Fixes four review comments posted after it merged.
+Add an opt-in `USE_TSAN=ON` CMake build for Linux CPU development with
+LLVM 20 and upstream Archer. Native race investigations can use the
+standard build and runtime entry points without maintaining custom
+OpenMP synchronization wrappers.
 
-- `fix: avoid draining an exhausted growing load channel`
-([r4400447632](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400447632)):
-when the producer of a StorageV2 growing load fails, the consumer has
-already taken the close marker, and the unwind guard added in #51180
-popped the empty channel again and blocked forever. The guard now skips
-the drain once the channel is exhausted. This bug predates the SegIdx
-refactor. A regression test loads a parquet file with a damaged data
-page and expects the original StorageError instead of a hang.
-- `fix: classify invalid MARISA key ids`
-([r4400445984](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400445984)):
-ReverseKey checks a persisted key id against the trie key count and
-throws DataFormatBroken, instead of letting MARISA throw an untyped
-exception that surfaces as UnexpectedError.
-- `fix: classify invalid sorted index coordinates`
-([r4400446533](https://github.com/milvus-io/milvus/pull/54182#discussion_r4400446533)):
-the five sorted-reader checks on 
+- Use a shared LLVM TSan runtime across Core, source dependencies, the
+parser wrapper and cgo; reject incompatible sanitizer/GPU combinations
+and mixed build outputs.
+- Rebuild six synchronization-sensitive Conan packages with distinct
+TSan identities, use pthread OpenBLAS to avoid mixing OpenMP runtimes,
+and verify installed dependencies.
+- Package libomp, Archer and the matching LLVM symbolizer; activate
+Archer automatically and fail detected races with exit code 66.
+- Add synchronized and intentionally racy C/C++/OpenMP controls, plus
+two Clang narrowing-conversion compatibility fixes.
 
-**File**: `internal/core/src/index/scalar/marisa/MarisaIndexReader.cpp` (modified, +14/-4)
+issue: #53763
+
+design doc:
+docs/design-docs/design_docs/20260928-native-thread-sanitizer.md
+
+## Verification
+
+- Full native + Go build and container packaging passed; the deployed
+service reached Healthy. Runtime dependency auditing checked 163 ELF
+files without unresolved dependencies,
+
+**File**: `Makefile` (modified, +39/-4)
 ```diff
-@@ -70,7 +70,17 @@ SetRowsForKey(const MarisaIndexStorage& data,
- }
+@@ -55,6 +55,38 @@ ifeq ($(USE_ASAN), ON)
+ 	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),use_asan
+ endif
  
- std::string_view
--ReverseKey(const marisa::Trie& trie, size_t key_id, marisa::Agent& agent) {
-+ReverseKey(const marisa::Trie& trie,
-+           size_t key_id,
-+           marisa::Agent& agent,
-+           int64_t row = -1) {
-+    if (key_id >= trie.num_keys()) {
-+        ThrowInfo(DataFormatBroken,
-+                  "marisa key id {} exceeds key count {} for row {}",
-+                  key_id,
-+                  trie.num_keys(),
-+                  row);
-+    }
-     agent.set_query(key_id);
-     trie.reverse_lookup(agent);
-     return {agent.key().ptr(), agent.key().length()};
-@@ -320,7 +330,7 @@ MarisaIndexReader::Lookup(int64_t offset) const {
-     }
-     marisa::Agent agent;
-     const auto value =
--        ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent);
-+        ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent, offset);
-     return std::string(value);
- }
++USE_TSAN ?= OFF
++export USE_TSAN
++# Preserve Go's default C++ flags when the caller did not provide an override.
++CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
++ifneq ($(USE_TSAN),ON)
++ifneq ($(USE_TSAN),OFF)
++$(error USE_TSAN must be ON or OFF)
++endif
++endif
++use_tsan = $(USE_TSAN)
++TSAN_GO_LDFLAGS :=
++ifeq ($(USE_TSAN), ON)
++ifneq ($(OS),Linux)
++$(error USE_TSAN currently requires Linux)
++endif
++ifeq ($(USE_ASAN), ON)
++$(error USE_ASAN and USE_TSAN are mutually exclusive)
++endif
++ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
++$(error USE_TSAN cannot be combined with Go -race)
++endif
++	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
++	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
++	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
++	MILVUS_LLVM_ROOT ?= /usr/lib/llvm-20
++	override CC := $(MILVUS_LLVM_ROOT)/bin/clang
++	override CXX := $(MILVUS_LLVM_ROOT)/bin/clang++
++	export CC CXX MILVUS_LLVM_ROOT
++	MILVUS_GO_BUILD_TAGS := dynamic,sonic,$(SONIC_PLUGIN_SYNC_TAG)
++	TSAN_GO_LDFLAGS := -linkmode=external
++endif
++
+ use_dynamic_simd = ON
+ ifdef USE_DYNAMIC_SIMD
+ 	use_dynamic_simd = ${USE_DYNAMIC_SIMD}
+@@ -126,6 +158,9 @@ endif
+ unexport WITH_GPU
  
-@@ -346,8 +356,8 @@ MarisaIndexReader::Gather(
-             out(i, nullptr, false);
-             continue;
-         }
--        const auto value =
--            ReverseKey(*storage_->trie, static_cast<size_t>(key_id), agent);
-+        const auto value = ReverseKey(
-+            *storage_->trie, static_cast<size_t>(key_id), agent, offset);
-         out(i, &value, true);
-     }
- }
+ ifneq ($(filter ON on TRUE True true 1,$(WITH_GPU)),)
++    ifeq ($(USE_TSAN),ON)
++        $(error USE_TSAN does not support GPU builds)
++    endif
+     ifneq ($(index_engine),cardinal)
+         MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),cuda
+     endif
+@@ -149,7 +184,7 @@ build-go:
+ 	@echo "Building Milvus ..."
+ 	@source $(PWD)/scripts/setenv.sh && \
+ 		mkdir -p $(INSTALL_PATH) && go env -w CGO_ENABLED="1" && \
+-		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
++		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(TSAN_GO_LDFLAGS) $(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
+ 		-tags "$(MILVUS_GO_BUILD_TAGS)" -o $(INSTALL_PATH)/milvus $(PWD)/cmd/main.go 1>/dev/null
+ 
+ get-build-deps:
+@@ -350,15 +385,15 @@ check-segcore-codes-product: generate-segcore-codes
+ 
+ build-cpp: generated-proto plan-parser-lib
+ 	@echo "Building Milvus cpp library ..."
+-	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
++	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
+ 
+ build-cpp-with-unittest: generated-proto plan-parser-lib
+ 	@echo "Building Milvus cpp library with unittest ... "
+-	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -u -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
++	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -u -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
+ 
+ build-cpp-with-coverage: generated-proto plan-parser-lib
+ 	@echo "Building Milvus cpp library with coverage and unittest ..."
+-	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -u -c -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
++	@(env TANTIVY_ANALYZER_REMOTE_TLS=$(tantivy_analyzer_remote_tls) bash $(PWD)/scripts/core_build.sh -t ${mode} -a ${use_asan} -T ${use_tsan} -u -c -n ${use_disk_index} -y ${use_dynamic_simd} ${AZURE_OPTION} -x ${index_engine} -G ${WITH_GPU} -f $(tantivy_features) -S ${use_svs} -R ${with_crt})
+ 
+ check-proto-product: generated-proto
+ 	 @(env bash $(PWD)/scripts/check_proto_product.sh)
 ```
 
-**File**: `internal/core/src/index/scalar/sort/SortedIndexReader.cpp` (modified, +30/-20)
+**File**: `build/build_image.sh` (modified, +12/-0)
 ```diff
-@@ -381,21 +381,25 @@ PrefixRange(const SortedStringLayout& layout, std::string_view prefix) {
+@@ -44,6 +44,9 @@ fi
  
- void
- SetNumericRow(TargetBitmap& result, size_t row, bool value) {
--    AssertInfo(row < result.size(),
--               "sorted numeric row {} exceeds count {}",
--               row,
--               result.size());
-+    if (row >= result.size()) {
-+        ThrowInfo(DataFormatBroken,
-+                  "sorted numeric row {} exceeds count {}",
-+                  row,
-+                  result.size());
-+    }
-     result[row] = value;
- }
+ echo ${IMAGE_ARCH}
  
- void
- SetPosting(TargetBitmap& result, const SortedStringPostingView& posting) {
-     for (size_t i = 0; i < posting.size; ++i) {
-         const auto row = posting.At(i);
--        AssertInfo(static_cast<size_t>(row) < result.size(),
--                   "sorted string row {} exceeds count {}",
--                   row,
--                   result.size());
-+        if (static_cast<size_t>(row) >= result.size()) {
-+            ThrowInfo(DataFormatBroken,
-+                      "sorted string row {} exceeds count {}",
-+                      row,
-+                      result.size());
-+        }
-         result.set(row);
-     }
- }
-@@ -404,10 +408,12 @@ void
- ClearPosting(TargetBitmap& result, const SortedStringPostingView& posting) {
-     for (size_t i = 0; i < posting.size; ++i) {
-         const auto row = posting.At(i);
--        AssertInfo(static_cast<size_t>(row) < result.size(),
--                   "sorted string row {} exceeds count {}",
--                   row,
--                   result.size());
-+        if (static_cast<size_t>(row) >= result.size()) {
-+            ThrowInfo(DataFormatBroken,
-+                      "sorted string row {} exceeds count {}",
-+                      row,
-+                      result.size());
-+        }
-         result.reset(row);
-     }
- }
-@@ -860,10 +866,12 @@ SortedIndexReader<T>::Lookup(int64_t offset) const {
-                "sorted offset map does not cover row {}",
-                row);
-     const auto index = state_.idx_to_offsets[row];
--    AssertInfo(storage_.ValidReverseIndex(index),
--               "sorted value offset {} is invalid for row {}",
--               index,
--               row);
-+    if (!storage_.ValidReverseIndex(index)) {
-+        ThrowInfo(DataFormatBroken,
-+                  "sorted value offset {} is invalid for row {}",
-+                  index,
-+                  row);
-+    }
-     return owned_t<T>(storage_.ValueAt(static_cast<size_t>(index)));
- }
++source "${toplevel}/scripts/sanitizer_env.sh"
++milvus_sanitizer_env "${toplevel}"
++
+ if [[ "$USE_ASAN" == "ON" ]]; then
+     if [[ "$OS_NAME" == "ubuntu20.04" ]]; then
+         BUILD_ARGS="${BUILD_ARGS:---build-arg TARGETARCH=${IMAGE_ARCH} --build-arg MILVUS_ASAN_LIB=/milvus/lib/libasan.so.6}"
+@@ -56,6 +59,15 @@ else
+     BUILD_ARGS="${BUILD_ARGS:---build-arg TARGETARCH=${IMAGE_ARCH}}"
+ fi
  
-@@ -896,10 +904,12 @@ SortedIndexReader<T>::Gather(
-                    "sorted offset map does not cover row {}",
-                    row);
-         const auto index = state_.idx_to_offsets[coordinate];
--        AssertInfo(storage_.ValidReverseIndex(index),
--                   "sorted value offset {} is invalid for row {}",
--                   index,
--                   row);
-+        if (!storage_.ValidReverseIndex(index)) {
-+            ThrowInfo(DataFormatBroken,
-+                      "sorted value offset {} is invalid for row {}",
-+                      index,
-+                      row);
-+        }
-         const auto value = storage_.ValueAt(static_cast<size_t>(index));
-         out(i, &value, true);
-     }
++if [[ "${MILVUS_ENABLE_TSAN}" == "ON" ]]; then
++    BUILD_ARGS="${BUILD_ARGS} --build-arg MILVUS_JEMALLOC_LIB="
++    if [[ -f "${toplevel}/lib/milvus-archer" ]]; then
++        python3 "${toplevel}/internal/core/milvus_tsan.py" verify "${toplevel}/lib"
++        python3 "${toplevel}/internal/core/milvus_tsan.py" verify-runtime "${toplevel}/lib"
++        BUILD_ARGS="${BUILD_ARGS} --build-arg MILVUS_ARCHER_LIB=/milvus/lib/libarcher.so --build-arg MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66:suppressions=/milvus/lib/tsan.supp:external_symbolizer_path=/milvus/lib/llvm-symbolizer"
++    fi
++fi
++
+ pushd "${toplevel}"
+ 
+ docker build --network host ${BUILD_ARGS} --platform linux/${IMAGE_ARCH} -f "./build/docker/milvus/${OS_NAME}/Dockerfile" -t "${MILVUS_IMAGE_REPO}:${MILVUS_IMAGE_TAG}" .
 ```
 
-**File**: `internal/core/src/indexbuilder/BuildSession.cpp` (modified, +10/-8)
+**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +6/-1)
 ```diff
-@@ -749,14 +749,16 @@ BuildSession::RunToArtifact() {
-             AssertInfo(missing_rows >= 0,
-                        "index-build missing row count {} is negative",
-                        missing_rows);
--            AssertInfo(
--                missing_rows == 0 || field_spec_.nullable ||
--                    file_manager_context_.fieldDataMeta.field_schema
--                        .has_default_value(),
--                "index-build source is missing {} rows for non-nullable field "
--                "{} without a default value",
--                missing_rows,
--                req_.field_id.get());
-+            if (missing_rows > 0 && !field_spec_.nullable &&
-+                !file_manager_context_.fieldDataMeta.field_schema
-+                     .has_default_value()) {
-+                ThrowInfo(DataFormatBroken,
-+                          "index-build source is missing {} rows for "
-+                          "non-nullable field "
-+                          "{} without a default value",
-+                          missing_rows,
-+                          req_.field_id.get());
-+            }
-             while (missing_rows > 0) {
-                 const auto batch_rows = MissingBatchRows(
-                     field_spec_.estimated_missing_row_bytes, missing_rows);
+@@ -15,6 +15,9 @@ FROM amazonlinux:2023
+ 
+ ARG TARGETARCH
+ ARG MILVUS_ASAN_LIB
++ARG MILVUS_ARCHER_LIB
++ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
++ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
+ ARG MILVUS_RUNTIME_USER=milvus:milvus
+ 
+ COPY --from=uv /uv /usr/local/bin/uv
+@@ -50,7 +53,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
+ 
+ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+-ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
++ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
++ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
++ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
 ```
 
-**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +10/-4)
+**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +6/-1)
 ```diff
-@@ -2212,12 +2212,16 @@ SegmentGrowingImpl::load_column_group_data_internal(
-         // pushing into the bounded channel. If the consumer loop below
-         // throws, unblock the task and wait for it before unwinding
-         // (see #46958).
-+        bool channel_exhausted = false;
-         auto drain_on_unwind = folly::makeGuard([&]() {
--            try {
--                std::shared_ptr<milvus::ArrowDataWrapper> discard;
--                while (column_group_info.arrow_reader_channel->pop(discard)) {
-+            if (!channel_exhausted) {
-+                try {
-+                    std::shared_ptr<milvus::ArrowDataWrapper> discard;
-+                    while (
-+                        column_group_info.arrow_reader_channel->pop(discard)) {
-+                    }
-+                } catch (...) {
-                 }
--            } catch (...) {
-             }
-             storage::DrainFuture(load_future);
-         });
-@@ -2279,6 +2283,8 @@ SegmentGrowingImpl::load_column_group_data_internal(
-                 }
-             }
-         }
-+        // The loop consumed the close marker, even if the producer failed.
-+        channel_exhausted = true;
-         // access underlying feature to get exception if any
-         load_future.get();
-         drain_on_unwind.dismiss();
+@@ -15,6 +15,9 @@ FROM rockylinux/rockylinux:9
+ 
+ ARG TARGETARCH
+ ARG MILVUS_ASAN_LIB
++ARG MILVUS_ARCHER_LIB
++ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
++ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
+ ARG MILVUS_RUNTIME_USER=milvus:milvus
+ 
+ COPY --from=uv /uv /usr/local/bin/uv
+@@ -52,7 +55,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
+ 
+ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+-ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
++ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
++ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
++ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
 ```
 
-**File**: `internal/core/src/segcore/SegmentGrowingStorageV2Test.cpp` (modified, +84/-0)
+**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +6/-1)
 ```diff
-@@ -21,9 +21,11 @@
- #include <arrow/record_batch.h>
- #include <arrow/util/key_value_metadata.h>
- #include <parquet/properties.h>
-+#include <unistd.h>
- #include <stdlib.h>
- #include <algorithm>
- #include <cstdint>
-+#include <csignal>
- #include <iostream>
- #include <map>
- #include <memory>
-@@ -44,6 +46,7 @@
- #include "common/Types.h"
- #include "common/Utils.h"
- #include "common/protobuf_utils.h"
-+#include "folly/ScopeGuard.h"
- #include "gtest/gtest.h"
- #include "knowhere/comp/index_param.h"
- #include "milvus-storage/common/config.h"
-@@ -202,6 +205,87 @@ TEST_F(TestGrowingStorageV2, LoadFieldData) {
-     segment->LoadFieldData(load_info);
- }
+@@ -15,6 +15,9 @@ FROM ubuntu:focal-20240530
  
-+TEST_F(TestGrowingStorageV2, ProducerReadFailurePreservesErrorWithoutHanging) {
-+    const auto directory = path_ + "/growing-producer-read-failure";
-+    auto cleanup = folly::makeGuard([&] { (void)fs_->DeleteDir(directory); });
-+    const auto check_failure = [&] {
-+        ASSERT_TRUE(fs_->CreateDir(directory).ok());
-+        const auto path = directory + "/1";
-+        std::vector<std::string> paths{path};
-+        milvus_storage::StorageConfig config{};
-+        std::vector<std::vector<int>> column_groups{{0, 1, 2}};
-+        auto result = milvus_storage::PackedRecordBatchWriter::Make(
-+            fs_, paths, schema_, config, column_groups, 16 * 1024 * 1024);
-+        auto writer = result.ValueOrDie();
-+        ASSERT_TRUE(writer->Write(record_batch_).ok());
-+        ASSERT_TRUE(writer->Close().ok());
-+
-+        auto reader =
-+            milvus_storage::FileRowGroupReader::Make(fs_, path).ValueOrDie();
-+        auto metadata = reader->file_metadata()->GetParquetMetadata();
-+        const auto column = metadata->RowGroup(0)->ColumnChunk(0);
-+        const auto data_offset = column->data_page_offset();
-+        const auto chunk_start = column->has_dictionary_page()
-+                                     ? column->dictionary_page_offset()
-+                                     : data_offset;
-+        ASSERT_GE(data_offset, 4);
-+        ASSERT_LE(data_offset + 16,
-+                  chunk_start + column->total_compressed_size());
-+        ASSERT_TRUE(reader->Close().ok());
-+        auto input = fs_->OpenInputFile(path).ValueOrDie();
-+        const auto size = input->GetSize().ValueOrDie();
-+        auto damaged = input->ReadAt(0, size).ValueOrDie()->ToString();
-+        ASSERT_LE(data_offset + 16, damaged.size());
-+        ASSERT_TRUE(input->Close().ok());
-+        std::fill_n(damaged.begin() + data_offset, 16, '\xff');
-+        auto output = fs_->OpenOutputStream(path).ValueOrDie();
-+        ASSERT_TRUE(output->Write(damaged.data(), damaged.size()).ok());
-+        ASSERT_TRUE(output->Close().ok());
-+
-+        auto schema = std::make_shared<Schema>();
-+        schema->AddDebugField("ts", DataType::INT64, true);
-+        const auto pk = schema->AddDebugField("pk", DataType::INT64, false);
-+        schema->AddDebugField("str", DataType::VARCHAR, true);
-+        schema->set_primary_field_id(pk);
-+        auto segment = CreateGrowingSegment(schema, empty_index_meta);
-+        const auto rows = record_batch_->num_rows();
-+        LoadFieldDataInfo info;
-+        info.storage_version = 2;
-+        info.field_infos = {
-+            {0, FieldBinlogInfo{0, rows, {rows}, {rows}, false, "", {path}}}};
-+        try {
-+            segment->LoadFieldData(info);
-+            FAIL() << "expected producer read failure";
-+        } catch (const SegcoreError& error) {
-+            EXPECT_EQ(error.get_error_code(), StorageError);
-+            const auto prefix =
-+                "[StorageV2] Failed to read row group 0 from file " + path;
-+            EXPECT_NE(std::string(error.what()).find(prefix),
-+                      std::string::npos);
-+        }
-+    };
-+
-+    const auto previous_style = ::testing::FLAGS_gtest_death_test_style;
-+    auto restore_style = folly::makeGuard(
-+        [&] { ::testing::FLAGS_gtest_death_test_style = previous_style; });
-+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
-+    ASSERT_EXIT(
-+        {
-+            sigset_t signals;
-+            if (std::signal(SIGALRM, SIG_DFL) == SIG_ERR ||
-+                ::sigemptyset(&signals) != 0 ||
-+                ::sigaddset(&signals, SIGALRM) != 0 ||
-+                ::sigprocmask(SIG_UNBLOCK, &signals, nullptr) != 0) {
-+                std::_Exit(2);
-+            }
-+            ::alarm(15);
-+            check_failure();
-+            std::_Exit(::testing::Test::HasFailure() ? 1 : 0);
-+        },
-+        ::testing::ExitedWithCode(0),
-+        "");
-+}
-+
- // Regression for add-field + legacy StorageV2 data: a growing segment written
- // by StorageV2 can have a TEXT field added to its schema afterwards (AddField)
- // while its binlogs carry no TEXT column and it has no StorageV3 manifest. The
+ ARG TARGETARCH
+ ARG MILVUS_ASAN_LIB
++ARG MILVUS_ARCHER_LIB
++ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
++ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
+ ARG MILVUS_RUNTIME_USER=milvus:milvus
+ 
+ COPY --from=uv /uv /usr/local/bin/uv
+@@ -59,7 +62,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
+ 
+ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+-ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
++ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
++ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
++ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
+ 
+ # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
 ```
 
----
-
-### Incident Patch 3: `21ee765c` (2026-11-03)
-**Commit Message**: enhance: [ElemNull 4] row-level and element-level filters on element-nullable struct sub-fields, with search tests and struct sub-field fixes (#54792)
-
-Fourth layer (EN4) of the element-null / nested-Array stack. Base:
-`Element-Null-3` (#54791).
-
-issue: https://github.com/milvus-io/milvus/issues/51162
-
-## Row-level filters on element-nullable struct sub-fields
-
-### What changes
-
-Row-level filters now evaluate element-nullable and nested struct
-sub-fields. These native-list Arrays are read through `ArrayValueView`,
-which exposes per-element validity. No plan proto change.
-
-- **C3, subscript comparisons** (`s[i][b] op v`, `in`, `like`, range,
-arithmetic): a null element or an out-of-bounds subscript gives UNKNOWN,
-which stays UNKNOWN under `NOT`.
-- Subscripts are parsed with a range check, so an overflowing index
-counts as out of bounds and does not raise an error.
-- An empty set is FALSE for every row, as `x IN ()` is in SQL: `arr[i]
-in []` and `s[i][b] in []` are FALSE on an out-of-bounds subscript, a
-null element and a null row, and `not (... in [])` is TRUE. This is the
-behavior from before element-nullable sub-fields.
-- **C7**: in `array_contains` / `_any` / `_all` on `s[b]`, a 
-
-**File**: `internal/core/src/common/ArrayValue.h` (modified, +59/-0)
+**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +6/-1)
 ```diff
-@@ -263,6 +263,65 @@ class ArrayValueView {
-             *type_, *child_, static_cast<size_t>(begin_ + index));
-     }
+@@ -15,6 +15,9 @@ FROM ubuntu:jammy-20240530
  
-+    // Whether this scalar Array equals the literal. Null is an ordinary value
-+    // and a literal cannot spell it, so a value holding a null element never
-+    // equals one. Mirrors ArrayView::is_same_array.
-+    bool
-+    is_same_array(const proto::plan::Array& literal) const {
-+        const auto length = size();
-+        if (static_cast<size_t>(literal.array_size()) != length) {
-+            return false;
-+        }
-+        if (length == 0) {
-+            return true;
-+        }
-+        if (!literal.same_type()) {
-+            return false;
-+        }
-+        const auto type = element_type();
-+        const auto expected_val_case =
-+            array_detail::ExpectedLiteralValCase(type);
-+        if (expected_val_case ==
-+            proto::plan::GenericValue::ValCase::VAL_NOT_SET) {
-+            return false;
-+        }
-+        for (size_t i = 0; i < length; ++i) {
-+            const auto& expected = literal.array(static_cast<int>(i));
-+            if (!is_valid(i) || expected.val_case() != expected_val_case) {
-+                return false;
-+            }
-+            bool same = false;
-+            switch (type) {
-+                case DataType::BOOL:
-+                    same = get_data_unchecked<bool>(i) == expected.bool_val();
-+                    break;
-+                case DataType::INT8:
-+                case DataType::INT16:
-+                case DataType::INT32:
-+                case DataType::INT64:
-+                    same =
-+                        get_data_unchecked<int64_t>(i) == expected.int64_val();
-+                    break;
-+                case DataType::FLOAT:
-+                    same = get_data_unchecked<float>(i) ==
-+                           static_cast<float>(expected.float_val());
-+                    break;
-+                case DataType::DOUBLE:
-+                    same =
-+                        get_data_unchecked<double>(i) == expected.float_val();
-+                    break;
-+                default:
-+                    same = get_data_unchecked<std::string_view>(i) ==
-+                           expected.string_val();
-+                    break;
-+            }
-+            if (!same) {
-+                return false;
-+            }
-+        }
-+        return true;
-+    }
-+
-     void
-     output_data(ScalarFieldProto& output) const {
-         assert(type_ != nullptr && child_ != nullptr);
+ ARG TARGETARCH
+ ARG MILVUS_ASAN_LIB
++ARG MILVUS_ARCHER_LIB
++ARG MILVUS_TSAN_OPTIONS=halt_on_error=1:exitcode=66
++ARG MILVUS_JEMALLOC_LIB=/milvus/lib/libjemalloc.so
+ ARG MILVUS_RUNTIME_USER=milvus:milvus
+ 
+ COPY --from=uv /uv /usr/local/bin/uv
+@@ -59,7 +62,9 @@ RUN uv --no-cache pip install --python python3.12 --system --break-system-packag
+ 
+ ENV PATH=/milvus/bin:$PATH
+ ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
+-ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:/milvus/lib/libjemalloc.so
++ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
++ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
++ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
+ ENV MALLOC_CONF=background_thread:true
+ ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
+ 
 ```
 
-**File**: `internal/core/src/common/ArrayValueTest.cpp` (modified, +11/-2)
+**File**: `docs/design-docs/design_docs/20260928-native-thread-sanitizer.md` (added, +246/-0)
 ```diff
-@@ -1176,8 +1176,17 @@ TEST(ArrayValue, GrowingSegmentRetrievesNullableScalarElements) {
-         segment->bulk_subscript(nullptr, array_field, &result_offset, 1);
-     ASSERT_EQ(result->scalars().array_data().data_size(), 1);
-     AssertProtoEqual(*row, result->scalars().array_data().data(0));
--    EXPECT_ANY_THROW(segment->chunk_view<ArrayValueView>(
--        nullptr, array_field, 0, std::make_pair(0, 1)));
-+    // Row filters read element-nullable rows as ArrayValueView, which
-+    // exposes element validity.
-+    auto views = segment->chunk_view<ArrayValueView>(
-+        nullptr, array_field, 0, std::make_pair(0, 1));
-+    const auto& [view_rows, view_valid] = views.get();
-+    ASSERT_EQ(view_rows.size(), 1);
-+    ASSERT_EQ(view_rows[0].size(), 3);
-+    EXPECT_TRUE(view_rows[0].is_valid(0));
-+    EXPECT_FALSE(view_rows[0].is_valid(1));
-+    EXPECT_TRUE(view_rows[0].is_valid(2));
-+    EXPECT_EQ(view_rows[0].get_data_unchecked<int64_t>(2), 16);
-     auto offsets = segment->GetStructElementOffsets(array_field);
-     ASSERT_NE(offsets, nullptr);
-     EXPECT_EQ(offsets->GetRowCount(), 1);
+@@ -0,0 +1,246 @@
++# MEP: Native ThreadSanitizer builds with LLVM Archer
++
++- **Created:** 2026-09-28
++- **Author(s):** @zhuwenxing
++- **Status:** Under Review
++- **Component:** Other (native build and test infrastructure)
++- **Related Issues:** #53763
++
++## Summary
++
++`USE_TSAN` is an opt-in CMake option for 64-bit Linux CPU builds with LLVM 20 (Clang, compiler-rt,
++libomp and Archer). It instruments Milvus C/C++ targets and CMake source dependencies with
++`-fsanitize=thread`, debug information, and frame pointers. It is independent of
++`BUILD_UNIT_TEST` and defaults to `OFF`. ASan and TSan cannot be combined.
++
++This is a native-code diagnostic build, not a claim of whole-process race
++coverage. Go `-race` is a separate build. Stable Rust/Cargo builds and ordinary
++prebuilt Conan packages do not become instrumented when this option is enabled.
++GPU builds are rejected. Runtime compatibility and dependency coverage must be
++validated for the particular compiler, container, and dependency versions used.
++
++## Motivation
++
++Native concurrency investigations currently require manual sanitizer flags,
++dependency rebuilds and OpenMP synchronization controls. A repeatable build
++must expose application races without treating invisible OpenMP synchronization
++as a missing lock. The build also needs to preserve symbols and runtime
++compatibility when artifacts move from a compiler environment into an image.
++
++## Public Interfaces
++
++The existing build entry points propagate the option:
++
++```bash
++make USE_TSAN=ON mode=RelWithDebInfo build-cpp-with-unittest
++make USE_TSAN=ON mode=RelWithDebInfo install
++```
++
++These are commands for the Linux build environment with LLVM 20 installed.
++`MILVUS_LLVM_ROOT` defaults to `/usr/lib/llvm-20`; the build scripts select its
++Clang drivers and fail if the compiler-rt, libomp or Archer library is absent.
++The native/cgo links use `-shared-libsan` so DSOs and the Go executable share
++one LLVM TSan runtime. The C++ ABI remains `libstdc++11`.
++
++The direct Core script accepts `-T ON`. Direct CMake users pass
++`-DUSE_TSAN=ON` along with their existing Conan toolchain, install prefix and
++other configuration arguments. Use a separate worktree/build/install tree and
++Cargo cache from ordinary or ASan builds. CMake rejects changing
++to or from TSan in a build/install tree already marked with another mode.
++For direct CMake invocation, first prepare the parser prerequisite with
++`USE_TSAN=ON bash scripts/build_plan_parser.sh`; CMake cannot change an already
++built parser wrapper.
++
++`cmake/Sanitizers.cmake` is loaded before dependency and source subdirectories.
++Its directory compile options reach the OBJECT libraries aggregated into
++`milvus_core`; flags attached only to the final shared library would not
++instrument those objects. Link options reach shared libraries and executables.
++Both C and C++ compiler/runtime links are checked during configuration.
++
++ASan flags are centralized in the same module. The Tantivy C++ helpers no longer
++implicitly enable ASan just because the build type is Debug; select `USE_ASAN`
++explicitly. TSan builds skip jemalloc and split DWARF. The handwritten parser
++wrapper build and Go/cgo compilation receive their own TSan flags.
++
++## Design Details
++
++### Conan dependency variants
++
++The standard build scripts rebuild Folly, milvus-common, libevent, oneTBB,
++GEOS and gtest with TSan by default. Synchronization in prebuilt Folly is not
++visible to TSan and can produce reports during service startup. The generated
++host profile selects Clang 20 and C++20 for Core and these six packages,
++retains the default compiler identity for other packages and build tools and makes sanitizer flags part of
++package IDs. A scoped Conan hook preserves the flags that the Folly recipe
++otherwise overwrites. The generated dependency manifest verifies native symbols
++and records package revisions and library hashes.
++
++OpenBLAS uses its pthread backend in the TSan profile. Its default GCC/Fortran
++OpenMP backend would introduce `libgomp` alongside LLVM `libomp`; pthread BLAS
++preserves parallelism without mixing OpenMP runtimes. Other Conan dependencies
++remain prebuilt. For broader native dependency
++instrumentation, opt into the provided full host profile (this broader profile
++still requires validation of each recipe):
++
++```bash
++mkdir -p cmake_build
++python3 internal/core/milvus_tsan.py profile --all > cmake_build/tsan-all.profile
++CONAN_HOST_PROFILE="$PWD/cmake_build/tsan-all.profile" \
++    make USE_TSAN=ON mode=RelWithDebInfo build-cpp-with-unittest
++```
++
++The full profile extends `default` and configures C/C++ compile flags and executable/
++shared-library link flags. It includes those settings and the sanitizer marker
++in Conan package IDs. `--build=missing` can therefore reuse TSan variants without
++silently substituting ordinary packages. Build-context tools retain the normal
++profile. A custom compiler profile must match the Core compiler and runtime.
++
++The 
 ```
 
-**File**: `internal/core/src/exec/expression/BinaryArithOpEvalRangeExpr.cpp` (modified, +461/-427)
+**File**: `internal/core/CMakeLists.txt` (modified, +17/-7)
 ```diff
-@@ -119,16 +119,14 @@ PhyBinaryArithOpEvalRangeExpr::Eval(EvalCtx& context, VectorPtr& result) {
-             switch (value_type) {
-                 case proto::plan::GenericValue::ValCase::kInt64Val: {
-                     if (is_array_length) {
--                        if (is_nested_array) {
--                            if (expr_->column_.element_level_) {
--                                result = ExecArrayLength<ArrayValueView,
--                                                         int64_t,
--                                                         true>(input);
--                            } else {
--                                result = ExecArrayLength<ArrayValueView,
--                                                         int64_t,
--                                                         false>(input);
--                            }
-+                        if (is_nested_array && expr_->column_.element_level_) {
-+                            result =
-+                                ExecArrayLength<ArrayValueView, int64_t, true>(
-+                                    input);
-+                        } else if (is_native_list_array_) {
-+                            result =
-+                                ExecArrayLength<ArrayValueView, int64_t, false>(
-+                                    input);
-                         } else {
-                             result = ExecArrayLength<ArrayView, int64_t, false>(
-                                 input);
-@@ -140,16 +138,14 @@ PhyBinaryArithOpEvalRangeExpr::Eval(EvalCtx& context, VectorPtr& result) {
-                 }
-                 case proto::plan::GenericValue::ValCase::kFloatVal: {
-                     if (is_array_length) {
--                        if (is_nested_array) {
--                            if (expr_->column_.element_level_) {
--                                result = ExecArrayLength<ArrayValueView,
--                                                         double,
--                                                         true>(input);
--                            } else {
--                                result = ExecArrayLength<ArrayValueView,
--                                                         double,
--                                                         false>(input);
--                            }
-+                        if (is_nested_array && expr_->column_.element_level_) {
-+                            result =
-+                                ExecArrayLength<ArrayValueView, double, true>(
-+                                    input);
-+                        } else if (is_native_list_array_) {
-+                            result =
-+                                ExecArrayLength<ArrayValueView, double, false>(
-+                                    input);
-                         } else {
-                             result = ExecArrayLength<ArrayView, double, false>(
-                                 input);
-@@ -791,10 +787,7 @@ PhyBinaryArithOpEvalRangeExpr::ExecRangeVisitorImplForArray(
-     TargetBitmapView res(res_vec->GetRawData(), real_batch_size);
-     TargetBitmapView valid_res(res_vec->GetValidRawData(), real_batch_size);
+@@ -83,6 +83,8 @@ endif ()
  
--    int index = -1;
--    if (expr_->column_.nested_path_.size() > 0) {
--        index = std::stoi(expr_->column_.nested_path_[0]);
--    }
-+    int index = ParseArraySubscript(expr_->column_.nested_path_);
-     auto op_type = expr_->op_type_;
-     auto arith_type = expr_->arith_op_type_;
-     auto value = value_arg_.GetValue<ValueType>();
-@@ -821,20 +814,27 @@ PhyBinaryArithOpEvalRangeExpr::ExecRangeVisitorImplForArray(
-                 valid_res[i] = false;                                     \
-                 continue;                                                 \
-             }                                                             \
--            if (index >= data[offset].length()) {                         \
-+            if (!HasArrayElementAt(data[offset], index)) {                \
-                 res[i] = false;                                           \
-                 valid_res[i] = false;                                     \
-                 continue;                                                 \
-             }                                                             \
--            auto value = data[offset].get_data_unchecked<GetType>(index); \
-+            auto value =                                                  \
-+                data[offset].template get_data_unchecked<GetType>(index); \
-             res[i] = (cmp);                                               \
-         }                                                                 \
-     } while (false)
+ set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
+ include( Utils )
++include( DefineOptions )
++include( Sanitizers )
  
--    auto execute_sub_batch =
--        [ op_type,
--          arith_type ]<FilterType filter_type = FilterType::sequential>(
--            const ArrayView* data,
-+    if (is_nested_array_field_) {
-+        ThrowInfo(ErrorCode::Unsupported,
-+                  "nested ARRAY field {} does not support 
-```
-
-**File**: `internal/core/src/exec/expression/BinaryRangeExpr.cpp` (modified, +104/-99)
-```diff
-@@ -366,10 +366,9 @@ PhyBinaryRangeFilterExpr::PreCheckOverflow(HighPrecisionType& val1,
-         [this, batch_size](OffsetVector* input) -> ColumnVectorPtr {
-         TargetBitmap valid_res;
-         if (expr_->column_.element_level_) {
--            valid_res = TargetBitmap(batch_size, true);
--            if (input == nullptr) {
--                MoveCursor();
--            }
-+            // A null element stays UNKNOWN. Without input this consumes the
-+            // batch.
-+            valid_res = ProcessElementValidity(input, batch_size);
-         } else if (input != nullptr) {
-             valid_res =
-                 ProcessChunksForValidByOffsets<T>(UseIndexCursor(), *input);
-@@ -1030,16 +1029,23 @@ PhyBinaryRangeFilterExpr::ExecRangeVisitorImplForArray(EvalCtx& context) {
-     const ValueType& val1 = lower_arg_.GetValue<ValueType>();
-     const ValueType& val2 = upper_arg_.GetValue<ValueType>();
+ # **************************** Build time, type and code version ****************************
+ get_current_time( BUILD_TIME )
+@@ -188,12 +190,11 @@ find_package(Azure REQUIRED)
+ include( CTest )
+ include( BuildUtils )
+ include( AwsRuntime )
+-include( DefineOptions )
  
--    int index = -1;
--    if (expr_->column_.nested_path_.size() > 0) {
--        index = std::stoi(expr_->column_.nested_path_[0]);
--    }
-+    int index = ParseArraySubscript(expr_->column_.nested_path_);
+ # ---- Split DWARF (Linux only) ----
+ # Keep this opt-in: .dwo files stay in the build tree and are not included in
+ # installed artifacts or the published debug image by default.
+-if (LINUX AND MILVUS_USE_SPLIT_DWARF AND NOT USE_ASAN STREQUAL "ON")
++if (LINUX AND MILVUS_USE_SPLIT_DWARF AND NOT USE_ASAN AND NOT USE_TSAN)
+     check_cxx_compiler_flag("-gsplit-dwarf" HAS_SPLIT_DWARF)
+     if (HAS_SPLIT_DWARF)
+         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gsplit-dwarf")
+@@ -204,6 +205,20 @@ endif ()
  
-+    if (is_nested_array_field_) {
-+        ThrowInfo(ErrorCode::Unsupported,
-+                  "nested ARRAY field {} does not support element range "
-+                  "predicates",
-+                  field_id_.get());
-+    }
-     size_t processed_cursor = 0;
--    auto execute_sub_batch =
--        [ lower_inclusive, upper_inclusive, &processed_cursor, &
--          bitmap_input ]<FilterType filter_type = FilterType::sequential>(
--            const milvus::ArrayView* data,
-+    auto make_sub_batch = [&]<typename ArrayType>() {
-+        return [
-+            lower_inclusive,
-+            upper_inclusive,
-+            &processed_cursor,
-+            &bitmap_input
-+        ]<FilterType filter_type = FilterType::sequential>(
-+            const ArrayType* data,
-             ValidityView valid_data,
-             const int32_t* offsets,
-             const int size,
-@@ -1048,96 +1054,95 @@ PhyBinaryRangeFilterExpr::ExecRangeVisitorImplForArray(EvalCtx& context) {
-             const ValueType& val1,
-             const ValueType& val2,
-             int index) {
--        AssertInfo(index >= 0,
--                   "array element range predicate requires nested path");
--        // If data is nullptr, this chunk was skipped by SkipIndex.
--        // We only need to update processed_cursor for bitmap_input indexing.
--        if (data == nullptr) {
--            processed_cursor += size;
--            return;
--        }
--        if (lower_inclusive && upper_inclusive) {
--            BinaryRangeElementFuncForArray<ValueType, true, true, filter_type>
--                func;
--            func(val1,
--                 val2,
--                 index,
--                 data,
--                 valid_data,
--                 size,
--                 res,
--                 valid_res,
--                 bitmap_input,
--                 processed_cursor,
--                 offsets);
--        } else if (lower_inclusive && !upper_inclusive) {
--            BinaryRangeElementFuncForArray<ValueType, true, false, filter_type>
--                func;
--            func(val1,
--                 val2,
--                 index,
--                 data,
--                 valid_data,
--                 size,
--                 res,
--                 valid_res,
--                 bitmap_input,
--                 processed_cursor,
--                 offsets);
--
--        } else if (!lower_inclusive && upper_inclusive) {
--            BinaryRangeElementFuncForArray<ValueType, false, true, filter_type>
--                func;
--            func(val1,
--                 val2,
--                 index,
--                 data,
--                 valid_data,
--                 size,
--                 res,
--                 valid_res,
--                 bitmap_input,
--                 processed_cursor,
--                 offsets);
-+            AssertInfo(index >= 0,
-+                       "array element range predicate requires nested path");
-+            // If data is nullptr, this chunk was skipped by SkipIndex.
-+            // We only need to update processed_cursor for bitmap_input indexing.
-+            if (data == nullptr) {
-+                processed_cursor += size;
-+                return;
-+            }
-+            if (lower_inclusive && upper_inclusive) {
-+                BinaryRangeElementFuncForArray<ValueType,
-+                                               true,
-+                                               true,
-+                                               filter_type,
-+                                               ArrayType>
-+                    func;
-+                func(val1,
-+                     val2,
-+                     index,
-+                     data,
-+                     valid_data,
-+                     size,
-+                     res,
-+                     valid_res,
-+                     bitmap_input,
-+                     processed_cursor
-```
-
-**File**: `internal/core/src/exec/expression/BinaryRangeExpr.h` (modified, +6/-4)
-```diff
-@@ -190,7 +190,8 @@ struct BinaryRangeElementFuncForJson {
- template <typename ValueType,
-           bool lower_inclusive,
-           bool upper_inclusive,
--          FilterType filter_type = FilterType::sequential>
-+          FilterType filter_type = FilterType::sequential,
-+          typename ArrayType = milvus::ArrayView>
- struct BinaryRangeElementFuncForArray {
-     using GetType = std::conditional_t<std::is_same_v<ValueType, std::string>,
-                                        std::string_view,
-@@ -199,7 +200,7 @@ struct BinaryRangeElementFuncForArray {
-     operator()(const ValueType& val1,
-                const ValueType& val2,
-                int index,
--               const milvus::ArrayView* src,
-+               const ArrayType* src,
-                ValidityView valid_data,
-                size_t n,
-                TargetBitmapView res,
-@@ -222,12 +223,13 @@ struct BinaryRangeElementFuncForArray {
-                 res[i] = valid_res[i] = false;
-                 continue;
-             }
--            if (index >= src[offset].length()) {
-+            if (!HasArrayElementAt(src[offset], index)) {
-                 res[i] = false;
-                 valid_res[i] = false;
-                 continue;
-             }
--            auto value = src[offset].get_data_unchecked<GetType>(index);
-+            auto value =
-+                src[offset].template get_data_unchecked<GetType>(index);
-             if constexpr (lower_inclusive && upper_inclusive) {
-                 res[i] = val1 <= value && value <= val2;
-             } else if constexpr (lower_inclusive && !upper_inclusive) {
-```
-
-**File**: `internal/core/src/exec/expression/Expr.h` (modified, +336/-63)
-```diff
-@@ -18,9 +18,11 @@
+ include( ExternalProject )
+ include( GNUInstallDirs )
++foreach(_libdir lib lib64)
++    set(_sanitizer_marker "${CMAKE_INSTALL_PREFIX}/${_libdir}/milvus-sanitizer")
++    if(EXISTS "${_sanitizer_marker}")
++        file(READ "${_sanitizer_marker}" _installed_sanitizer)
++        string(STRIP "${_installed_sanitizer}" _installed_sanitizer)
++        if(NOT _installed_sanitizer STREQUAL MILVUS_SANITIZER AND
++           (_installed_sanitizer STREQUAL "thread" OR USE_TSAN))
++            message(FATAL_ERROR "Changing TSan mode requires a fresh install directory")
++        endif()
++    endif()
++endforeach()
++file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/milvus-sanitizer" "${MILVUS_SANITIZER}\n")
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/milvus-sanitizer"
++        DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+ include( FetchContent )
  
- #include <algorithm>
- #include <bit>
-+#include <charconv>
- #include <chrono>
- #include <cmath>
- #include <exception>
-+#include <limits>
- #include <memory>
- #include <mutex>
- #include <optional>
-@@ -86,6 +88,81 @@ CanUseSkipFilter(bool is_nullable, bool null_rejecting) {
- using SkipChunkFn =
-     std::function<bool(const FieldSkipMetricsView&, int64_t chunk_id)>;
- 
-+// Logical element count of one ARRAY row, null elements included.
-+template <typename ArrayType>
-+inline size_t
-+ArrayRowLength(const ArrayType& row) {
-+    if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
-+        return row.size();
-+    } else {
-+        return static_cast<size_t>(row.length());
-+    }
-+}
-+
-+// Subscript of an ARRAY operand (`a[i]`, `s[i][x]`), parsed from
-+// nested_path[0]. kWholeArrayOperand: no subscript, the operand is the whole
-+// row.
-+inline constexpr int kWholeArrayOperand = -1;
-+// A subscript that names no element: above INT_MAX or negative. It is never
-+// kWholeArrayOperand, and HasArrayElementAt / NestedArrayElementAt treat it as
-+// out of bounds, so the operand is UNKNOWN.
-+inline constexpr int kArraySubscriptOutOfRange =
-+    std::numeric_limits<int>::max();
-+
-+inline int
-+ParseArraySubscript(const std::vector<std::string>& nested_path) {
-+    if (nested_path.empty()) {
-+        return kWholeArrayOperand;
-+    }
-+    const auto& text = nested_path[0];
-+    const char* last = text.data() + text.size();
-+    int index = 0;
-+    const auto [end, ec] = std::from_chars(text.data(), last, index);
-+    // The plan parser emits only decimal digits here.
-+    AssertInfo(ec != std::errc::invalid_argument && end == last,
-+               "invalid array subscript '{}'",
-+               text);
-+    if (ec == std::errc::result_out_of_range || index < 0) {
-+        return kArraySubscriptOutOfRange;
-+    }
-+    return index;
-+}
-+
-+// Whether row[index] is a non-null element. A subscript that misses (out of
-+// bounds or a null element) evaluates to UNKNOWN.
-+template <typename ArrayType>
-+inline bool
-+HasArrayElementAt(const ArrayType& row, int index) {
-+    if (index < 0 || index == kArraySubscriptOutOfRange ||
-+        static_cast<size_t>(index) >= ArrayRowLength(row)) {
-+        return false;
-+    }
-+    if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
-+        return row.is_valid(index);
-+    } else {
-+        return true;
-+    }
-+}
-+
-+// `s[i][tags]` on a nested Array field: the inner Array of struct element i,
-+// or nullopt (NULL) when element i is missing or null.
-+inline std::optional<ArrayValueView>
-+NestedArrayElementAt(const ArrayValueView& row, int index) {
-+    if (index < 0 || index == kArraySubscriptOutOfRange ||
-+        static_cast<size_t>(index) >= row.size()) {
-+        return std::nullopt;
-+    }
-+    auto inner = row.array_at(index);
-+    if (inner.is_null()) {
-+        return std::nullopt;
-+    }
-+    return inner;
-+}
-+
-+// ElementType of an element-level visit that reads element validity only.
-+// Its batches carry a placeholder data pointer that must not be read.
-+struct ElementValidityOnly {};
-+
- // IndexPathSelection.h owns ExprExecPath and metadata-only path selection.
- // Capability inspection must not pin a cold reader to choose an execution path.
- 
-@@ -518,7 +595,10 @@ class SegmentExpr : public Expr {
-         auto field_meta = segment_->get_field_meta(field_id_);
-         field_type_ = field_meta.get_data_type();
-         is_nullable_ = field_meta.is_nullable();
--        has_nullable_array_element_ = field_meta.has_nullable_array_element();
-+        is_native_list_array_ = field_meta.get_data_type() == DataType::ARRAY &&
-+                                field_meta.is_native_list_array();
-+        is_nested_array_field_ = field_meta.is_nested_array();
-+        is_element_nullable_ = field_meta.is_element_nullable();
- 
-         if (segment_->is_primary_field(field_id_) &&
-             IsPrimaryKeyDataType(field_meta.get_data_type())) {
-@@ -2079,18 +2159,27 @@ class SegmentExpr : public Expr {
-         }
-     }
- 
-+    // std::vector<bool> has no data(), so bool elements use FixedVector.
-+    template <typename ElementType>
-+    using ElementValueBuffer =
-+        std::conditional_t<std::is_same_v<ElementType, bool>,
-+                           FixedVector<bool>,
-+                           std::vector<ElementType>>;
-+
-     // Normalize one physical ARRAY row into batches of logical ElementType.
-     // Scalar ARRAY rows expose their leaf payload, while recursive ARRAY rows
-     // expose their child ArrayValueView values. The caller only sees the
--    // uniform (data, valid_data, size) batch contract.
-+    // uniform (data, valid_data, size) batch contract. A null element is
-+    // reported through valid_data; its value slot is a default value.
-     template <typename ElementType, typename RowType, typename Consumer>
-     static void
-     VisitArrayElementRun(const RowType& row,
-                          int32_t first_element,
-                          
-```
-
-**File**: `internal/core/src/exec/expression/JsonContainsExpr.cpp` (modified, +76/-17)
-```diff
-@@ -136,7 +136,10 @@ PhyJsonContainsFilterExpr::Eval(EvalCtx& context, VectorPtr& result) {
-     const bool is_element_level_array =
-         expr_->column_.data_type_ == DataType::ARRAY &&
-         expr_->column_.element_level_;
--    if (expr_->vals_.empty() && !is_element_level_array) {
-+    // array_contains*(s[i][tags], []) still yields UNKNOWN for a missing or
-+    // null element, so it takes the data path.
-+    if (expr_->vals_.empty() && !is_element_level_array &&
-+        !IsNestedArrayElementOperand()) {
-         auto real_batch_size =
-             has_offset_input_ ? input->size() : GetNextBatchSize();
-         if (real_batch_size == 0) {
-@@ -333,6 +336,10 @@ PhyJsonContainsFilterExpr::ExecArrayContains(EvalCtx& context) {
-         return ExecArrayContainsImpl<ArrayValueView, ExprValueType, true>(
-             context);
-     }
-+    if (is_native_list_array_) {
-+        return ExecArrayContainsImpl<ArrayValueView, ExprValueType, false>(
-+            context);
-+    }
-     return ExecArrayContainsImpl<ArrayView, ExprValueType, false>(context);
- }
- 
-@@ -375,8 +382,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
-                "ARRAY contains element-level mismatch: plan={}, executor={}",
-                expr_->column_.element_level_,
-                ElementLevel);
--    AssertInfo(expr_->column_.nested_path_.size() == 0,
--               "[ExecArrayContains]nested path must be null");
-+    const int nested_index =
-+        ArrayContainsNestedIndex<ArrayType, ElementLevel>();
- 
-     auto res_vec =
-         std::make_shared<ColumnVector>(TargetBitmap(real_batch_size, false),
-@@ -397,8 +404,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
- 
-     int processed_cursor = 0;
-     auto execute_sub_batch =
--        [&processed_cursor, &
--         bitmap_input ]<FilterType filter_type = FilterType::sequential>(
-+        [&processed_cursor, &bitmap_input,
-+         nested_index ]<FilterType filter_type = FilterType::sequential>(
-             const ArrayType* data,
-             ValidityView valid_data,
-             const int32_t* offsets,
-@@ -412,10 +419,15 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
-             processed_cursor += size;
-             return;
-         }
--        auto executor = [&](size_t i) {
--            const auto& array = data[i];
-+        // Null elements match no value.
-+        auto executor = [&](const ArrayType& array) {
-             const auto array_size = GetArrayRowSize(array);
-             for (size_t j = 0; j < array_size; ++j) {
-+                if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
-+                    if (!array.is_valid(j)) {
-+                        continue;
-+                    }
-+                }
-                 if (elements.find(array.template get_data_unchecked<GetType>(
-                         j)) != elements.end()) {
-                     return true;
-@@ -436,7 +448,19 @@ PhyJsonContainsFilterExpr::ExecArrayContainsImpl(EvalCtx& context) {
-             if (has_bitmap_input && !bitmap_input[processed_cursor + i]) {
-                 continue;
-             }
--            res[i] = executor(offset);
-+            if constexpr (std::is_same_v<ArrayType, ArrayValueView>) {
-+                if (nested_index >= 0) {
-+                    auto inner =
-+                        NestedArrayElementAt(data[offset], nested_index);
-+                    if (!inner.has_value()) {
-+                        res[i] = valid_res[i] = false;
-+                        continue;
-+                    }
-+                    res[i] = executor(*inner);
-+                    continue;
-+                }
-+            }
-+            res[i] = executor(data[offset]);
-         }
-         processed_cursor += size;
-     };
-@@ -977,6 +1001,10 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAll(EvalCtx& context) {
-         return ExecArrayContainsAllImpl<ArrayValueView, ExprValueType, true>(
-             context);
-     }
-+    if (is_native_list_array_) {
-+        return ExecArrayContainsAllImpl<ArrayValueView, ExprValueType, false>(
-+            context);
-+    }
-     return ExecArrayContainsAllImpl<ArrayView, ExprValueType, false>(context);
- }
- 
-@@ -989,8 +1017,8 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAllImpl(EvalCtx& context) {
-                            ExprValueType>;
-     auto* input = context.get_offset_input();
-     const auto& bitmap_input = context.get_bitmap_input();
--    AssertInfo(expr_->column_.nested_path_.size() == 0,
--               "[ExecArrayContainsAll]nested path must be null");
-+    const int nested_index =
-+        ArrayContainsNestedIndex<ArrayType, ElementLevel>();
-     auto next_batch_size = GetNextRealBatchSize(input, ElementLevel);
-     if (!next_batch_size.has_value()) {
-         return nullptr;
-@@ -1028,8 +1056,13 @@ PhyJsonContainsFilterExpr::ExecArrayContainsAllImpl(EvalCtx& context) {
-     std::vector<uint64_t> found_large(
-         matcher.use_small() ? 0 : matcher.num_words()
-```
-
-**File**: `internal/core/src/exec/expression/JsonContainsExpr.h` (modified, +25/-1)
-```diff
-@@ -519,7 +519,8 @@ class PhyJsonContainsFilterExpr : public SegmentExpr {
-             return;
-         }
-         if (expr_->column_.data_type_ == DataType::ARRAY &&
--            (expr_->column_.element_level_ || expr_->vals_.empty())) {
-+            (expr_->column_.element_level_ || expr_->vals_.empty() ||
-+             is_native_list_array_)) {
-             exec_path_ = ExprExecPath::RawData;
-             return;
-         }
-@@ -562,6 +563,29 @@ class PhyJsonContainsFilterExpr : public SegmentExpr {
-     VectorPtr
-     ExecArrayContainsImpl(EvalCtx& context);
- 
-+    // Struct element index i for array_contains*(s[i][tags], ...) on a
-+    // nested Array field, or kWholeArrayOperand when the row itself is the
-+    // operand.
-+    template <typename ArrayType, bool ElementLevel>
-+    int
-+    ArrayContainsNestedIndex() const {
-+        if constexpr (std::is_same_v<ArrayType, ArrayValueView> &&
-+                      !ElementLevel) {
-+            if (IsNestedArrayElementOperand()) {
-+                return ParseArraySubscript(expr_->column_.nested_path_);
-+            }
-+            if (is_nested_array_field_) {
-+                ThrowInfo(ErrorCode::Unsupported,
-+                          "array_contains on nested ARRAY field {} requires "
-+                          "a struct element index",
-+                          field_id_.get());
-+            }
-+        }
-+        AssertInfo(expr_->column_.nested_path_.empty(),
-+                   "[ExecArrayContains]nested path must be null");
-+        return kWholeArrayOperand;
-+    }
-+
-     template <typename ExprValueType>
-     VectorPtr
-     ExecJsonContainsAll(EvalCtx& context);
+ include_directories( thirdparty )
+@@ -228,11 +243,6 @@ if (LINUX OR MSYS)
+                   "-Wno-error"
+                   "-Wno-all"
+                   )
+-    if (USE_ASAN STREQUAL "ON")
+-        message( STATUS "Building Milvus Core Using AddressSanitizer")
+-        add_compile_options(-fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address)
+-        add_link_options(-fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address)
+-    endif()
+     if (CMAKE_BUILD_TYPE STREQUAL "Release")
+         append_flags( CMAKE_CXX_FLAGS
+                 "-O3"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55064** (2026-11-03): fix: [hotfix-3.0.5] prefer safe JSON indexes over stats (@sparknack)
-- **PR #55063** (2026-11-03): fix: [hotfix-3.0.5] preserve candidate masks in logical and GIS filters (@zhengbuqian)
-- **PR #55060** (2026-11-03): fix: [3.0] preserve candidate masks in logical and GIS filters (@zhengbuqian)
-- **PR #55058** (2026-11-03): fix: [2.6] preserve candidate masks in logical and GIS filters (@zhengbuqian)
-- **PR #55057** (2026-11-03): fix: preserve candidate masks in logical and GIS filters (@zhengbuqian)
-- **PR #55042** (closed): fix: [3.0] keep array-index JSON paths off a flat index on the whole field (@xiaofan-luan)
+- **PR #55138** (2026-11-04): fix: [3.0] release MinioChunkManager's AWS SDK reference when the process exits (@santiago-wjq)
+- **PR #55131** (2026-11-04): fix: release MinioChunkManager's AWS SDK reference when the process exits (@santiago-wjq)
+- **PR #55120** (2026-11-04): enhance: reduce StreamingNode metadata memory overhead (@sijie-ni-0214)
+- **PR #55105** (2026-11-04): fix: count each proxy request once at boundary (@congqixia)
+- **PR #55101** (2026-11-04): build(deps): upgrade AWS SDK to 1.11.921 and CRT to 0.44.3 (@jiaqizho)
+- **PR #55096** (2026-11-04): fix: [cp3.0]don't blacklist a healthy delegator when the client cancels (@bigsheeper)
 
 ---
 
@@ -2747,69 +2325,34 @@ behavior from before element-nullable sub-fields.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prevent CDC replicator panic after source scanner termination (#54663)
+## X. release MinioChunkManager's AWS SDK reference when the process exits (#55131)
 
 **RULE**:
-When implementing operations in `internal/cdc/replication/replicatemanager/channel_replicator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/storage/RemoteChunkManagerSingleton.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20d2246e`: prevent CDC replicator panic after source scanner termination (#54663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eabafc85`: release MinioChunkManager's AWS SDK reference when the process exits (#55131). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cdc/replication/replicatemanager/channel_replicator.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/storage/RemoteChunkManagerSingleton.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var errScannerClosed = errors.New("replication source scanner closed")
-
-		if err := r.startConsumeLoop(); err != nil &&
-			!errors.Is(err, context.Canceled) &&
-			!errors.Is(err, replicatestream.ErrReplicationRemoved) {
-			logger.Warn(context.TODO(), "replication source scanner stopped", mlog.Err(err))
-		}
-func (r *channelReplicator) startConsumeLoop() error {
-	var scannerDone <-chan struct{}
-	if r.msgScanner != nil {
-		scannerDone = r.msgScanner.Done()
-	}
-			return nil
-		case <-scannerDone:
-			return r.scannerStoppedError(true)
-		case msg, ok := <-r.msgChan:
-			if !ok {
-				return r.scannerStoppedError(false)
-			}
-					return replicatestream.ErrReplicationRemoved
-func (r *channelReplicator) scannerStoppedError(scannerDone bool) error {
-	if r.msgScanner == nil {
-		return errScannerClosed
-	}
-
-	if !scannerDone {
-		select {
-		case <-r.msgScanner.Done():
-		case <-r.asyncNotifier.Context().Done():
-			return r.asyncNotifier.Context().Err()
-		}
-	}
-	if err := r.msgScanner.Error(); err != nil {
-		return errors.Wrap(err, "replication source scanner stopped")
-	}
-	return errScannerClosed
-}
-
+        // Never destroyed. The remote chunk manager lives as long as the
+        // process, since Release keeps it, and a static destructor would
+        // destroy its client after MinioChunkManager released the AWS SDK at
+        // exit, which the SDK does not allow.
+        static auto* instance = new RemoteChunkManagerSingleton();
+        return *instance;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		r.startConsumeLoop()
-func (r *channelReplicator) startConsumeLoop() {
-			return
-		case msg := <-r.msgChan:
-					return
+        static RemoteChunkManagerSingleton instance;
+        return instance;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20d2246e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eabafc85` are properly handled with clean fallback behavior.

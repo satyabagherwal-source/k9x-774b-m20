@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `2308b7ba`  
+> **Source Version**: `a66a1f88`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:38:39.590Z  
+> **Timestamp**: 2026-11-04T23:34:46.508Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:38:39.420Z  
+> **Harvest Timestamp**: 2026-11-04T23:34:46.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4449 stars
+- **Stars / Engagement**: 4448 stars
 
 ---
 
@@ -555,313 +555,40 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c480b784` (2026-11-02)
-**Commit Message**: Revert "Remove LR integration test retries added to suppress flakiness"
+### Incident Patch 1: `a66a1f88` (2026-11-04)
+**Commit Message**: Fix typo in change entries
 
-This reverts commit 4b5d3bc998963a57b790cc61699e83235a76caea.
-
-to unblock CI.
-
-**File**: `server/src/test/java/io/crate/integrationtests/LogicalReplicationITest.java` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +1/-1)
 ```diff
-@@ -35,6 +35,7 @@
- import org.elasticsearch.cluster.metadata.Metadata;
- import org.elasticsearch.cluster.node.DiscoveryNode;
- import org.elasticsearch.cluster.service.ClusterService;
-+import org.junit.Rule;
- import org.junit.Test;
+@@ -195,6 +195,6 @@ Fixes
+   was promoted to primary.
  
- import io.crate.exceptions.DependentObjectsExists;
-@@ -48,12 +49,16 @@
- import io.crate.replication.logical.metadata.SubscriptionsMetadata;
- import io.crate.role.Role;
- import io.crate.role.Roles;
-+import io.crate.testing.RetryRule;
- import io.crate.testing.UseRandomizedSchema;
- 
- 
- @UseRandomizedSchema(random = false)
- public class LogicalReplicationITest extends LogicalReplicationITestCase {
- 
-+    @Rule
-+    public RetryRule retryRule = new RetryRule(3);
-+
-     @Test
-     public void test_create_publication_checks_owner_was_not_deleted_before_creation() {
-         executeOnPublisher("CREATE TABLE doc.t1 (id INT)");
+ - Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
+-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now required
++  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
+   to have ``AL`` privilege to avoid a security issue when authenticated user can
+   can switch to CrateDB's unauthenticated internal transport protocol.
 ```
 
-**File**: `server/src/test/java/io/crate/integrationtests/MetadataTrackerITest.java` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +1/-1)
 ```diff
-@@ -29,17 +29,22 @@
- import java.util.List;
- import java.util.concurrent.TimeUnit;
+@@ -200,6 +200,6 @@ Fixes
+   was promoted to primary.
  
-+import org.junit.Rule;
- import org.junit.Test;
- 
- import io.crate.exceptions.OperationOnInaccessibleRelationException;
- import io.crate.exceptions.UnsupportedFeatureException;
- import io.crate.replication.logical.LogicalReplicationService;
- import io.crate.replication.logical.MetadataTracker;
-+import io.crate.testing.RetryRule;
- import io.crate.testing.UseRandomizedSchema;
- 
- @UseRandomizedSchema(random = false)
- public class MetadataTrackerITest extends LogicalReplicationITestCase {
- 
-+    @Rule
-+    public RetryRule retryRule = new RetryRule(3);
-+
-     @Test
-     public void test_schema_changes_of_subscribed_table_is_replicated() throws Exception {
-         executeOnPublisher("CREATE TABLE t1 (id INT) WITH(" + defaultTableSettings() + ")");
-```
-
----
-
-### Incident Patch 2: `2308b7ba` (2026-11-02)
-**Commit Message**: Fix intermittent logical replication stall after initial restore
-
-The initial restore can complete before its completion listener is
-registered. Register the listener, then check whether the restore has
-already completed. If so, notify the listener immediately.
-
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +5/-0)
-```diff
-@@ -89,6 +89,11 @@ Fixes
-   state and stop replicating after a publisher restart if the subscriber sent
-   requests before the publisher's transport service was ready to handle them.
- 
-+- Fixed an issue that could leave logical replication subscriptions stuck
-+  in the restoring state after the initial restore had completed,
-+  preventing schema updates and the creation of new partitions on the
-+  subscriber.
-+
- - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
-   drop non-equality filters (e.g., a greater-than condition) that are combined
-   with an equality filter over the same two tables. The issue also caused
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +5/-0)
-```diff
-@@ -94,6 +94,11 @@ Fixes
-   state and stop replicating after a publisher restart if the subscriber sent
-   requests before the publisher's transport service was ready to handle them.
- 
-+- Fixed an issue that could leave logical replication subscriptions stuck
-+  in the restoring state after the initial restore had completed,
-+  preventing schema updates and the creation of new partitions on the
-+  subscriber.
-+
- - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
-   drop non-equality filters (e.g., a greater-than condition) that are combined
-   with an equality filter over the same two tables. The issue also caused
-```
-
-**File**: `server/src/main/java/io/crate/replication/logical/LogicalReplicationService.java` (modified, +1/-2)
-```diff
-@@ -346,8 +346,7 @@ private CompletableFuture<Boolean> afterReplicationStarted(String subscriptionNa
-             return onRestoreInfo.apply(response.getRestoreInfo());
-         } else {
-             FutureActionListener<RestoreSnapshotResponse> restoreFuture = new FutureActionListener<>();
--            // Restore still in progress, add listener to wait for it
--            clusterService.addListener(new RestoreClusterStateListener(clusterService, response, restoreFuture));
-+            new RestoreClusterStateListener(clusterService, response, restoreFuture).start();
-             return restoreFuture.thenCompose(resp -> onRestoreInfo.apply(resp.getRestoreInfo()));
-         }
-     }
-```
-
-**File**: `server/src/main/java/org/elasticsearch/action/admin/cluster/snapshots/restore/RestoreClusterStateListener.java` (modified, +19/-1)
-```diff
-@@ -44,6 +44,7 @@ public class RestoreClusterStateListener implements ClusterStateListener {
-     private final ClusterService clusterService;
-     private final String uuid;
-     private final ActionListener<RestoreSnapshotResponse> listener;
-+    private boolean completed;
- 
- 
-     public RestoreClusterStateListener(ClusterService clusterService,
-@@ -54,17 +55,34 @@ public RestoreClusterStateListener(ClusterService clusterService,
-         this.listener = listener;
-     }
- 
-+    public synchronized void start() {
-+        assert completed == false : "Cannot start a restore listener that has already completed";
-+        clusterService.addListener(this);
-+        boolean restoreAlreadyCompleted = restoreInProgress(clusterService.state(), uuid) == null;
-+        // If the restore is already completed, remove the listener and complete the response directly.
-+        if (restoreAlreadyCompleted) {
-+            completed = true;
-+            clusterService.removeListener(this);
-+            listener.onResponse(new RestoreSnapshotResponse((RestoreInfo) null));
-+        }
-+    }
-+
-     @Override
--    public void clusterChanged(ClusterChangedEvent changedEvent) {
-+    public synchronized void clusterChanged(ClusterChangedEvent changedEvent) {
-+        if (completed) {
-+            return;
-+        }
-         final RestoreInProgress.Entry prevEntry = restoreInProgress(changedEvent.previousState(), uuid);
-         final RestoreInProgress.Entry newEntry = restoreInProgress(changedEvent.state(), uuid);
-         if (prevEntry == null) {
-             // When there is a master failure after a restore has been started, this listener might not be registered
-             // on the current master and as such it might miss some intermediary cluster states due to batching.
-             // Clean up listener in that case and acknowledge completion of restore operation to client.
-+            completed = true;
-             clusterService.removeListener(this);
-             listener.onResponse(new RestoreSnapshotResponse((RestoreInfo) null));
-         } else if (newEntry == null) {
-+            completed = true;
-             clusterService.removeListener(this);
-             Map<ShardId, RestoreInProgress.ShardRestoreStatus> shards = prevEntry.shards();
-             assert prevEntry.state().completed() : "expected completed snapshot state but was " + prevEntry.state();
-```
-
-**File**: `server/src/main/java/org/elasticsearch/action/admin/cluster/snapshots/restore/TransportRestoreSnapshot.java` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ protected void masterOperation(final RestoreSnapshotRequest request,
-             @Override
-             public void onResponse(RestoreCompletionResponse restoreCompletionResponse) {
-                 if (restoreCompletionResponse.getRestoreInfo() == null && request.waitForCompletion()) {
--                    clusterService.addListener(new RestoreClusterStateListener(clusterService, restoreCompletionResponse, listener));
-+                    new RestoreClusterStateListener(clusterService, restoreCompletionResponse, listener).start();
-                 } else {
-                     listener.onResponse(new RestoreSnapshotResponse(restoreCompletionResponse.getRestoreInfo()));
-                 }
-```
-
-**File**: `server/src/test/java/org/elasticsearch/action/admin/cluster/snapshots/restore/RestoreClusterStateListenerTest.java` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+/*
-+ * Licensed to Crate.io GmbH ("Crate") under one or more contributor
-+ * license agreements.  See the NOTICE file distributed with this work for
-+ * additional information regarding copyright ownership.  Crate licenses
-+ * this file to you under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.  You may
-+ * obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-+ * License for the specific language governing permissions and limitations
-+ * under the License.
-+ *
-+ * However, if you have executed another commercial license agreement
-+ * with Crate these terms will supersede the license and you may use the
-+ * software solely pursuant to the terms of the relevant commercial agreement.
-+ */
-+
-+package org.elasticsearch.action.admin.cluster.snapshots.restore;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.verify;
-+import static org.mockito.Mockito.when;
-+
-+import org.elasticsearch.cluster.ClusterName;
-+import org.elasticsearch.cluster.ClusterState;
-+import org.elasticsearch.cluster.service.ClusterService;
-+import org.elasticsearch.snapshots.RestoreService.RestoreCompletionResponse;
-+import org.elasticsearch.test.ESTestCase;
-+import org.junit.Test;
-+
-+import io.crate.concurrent.FutureActionListener;
-+
-+public class RestoreClusterStateListenerTest extends ESTestCase {
-+
-+    @Test
-+    public void test_restore_completed_before_registration_does_not_wait_for_another_event() {
-+        var clusterService = mock(ClusterService.class);
-+        when(clusterService.state()).thenReturn(ClusterState.builder(ClusterName.DEFAULT).build());
-+        var response = mock(RestoreCompletionResponse.class);
-+        when(response.getUuid()).thenReturn("restore-1");
-+        var result = new FutureActionListener<RestoreSnapshotResponse>();
-+        var listener = new RestoreClusterStateListener(clusterService, response, result);
-+
-+        listener.start();
-+
-+        assertThat(result.isDone()).isTrue();
-+        assertThat(result.join().getRestoreInfo()).isNull();
-+        verify(clusterService).removeListener(listener);
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `382e5520` (2026-11-03)
-**Commit Message**: Update release notes to reflect backport of pgwire pipelining fixes
-
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +9/-0)
-```diff
-@@ -46,6 +46,15 @@ series.
- Fixes
- =====
- 
-+- Fixed some issues in the PostgreSQL wire protocol implementation that:
-+
-+  - Disallowed pipelining select queries after write queries
-+  - Caused failures if pipelining statements using new objects immediately after
-+    DDL statements created those objects, if there was no intermediate ``sync``
-+    message between those statements.
-+  - Could cause clients to appear stuck if a statement within a pipeline had an
-+    execution error.
-+
- - Fixed an issue that caused CrateDB to send the wrong transaction state within
-   a ``ReadyForQuery`` message to clients using the PostgreSQL Wire Protocol in
-   response to queries sent in the simple query mode after a ``BEGIN``. This
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +9/-0)
-```diff
-@@ -51,6 +51,15 @@ series.
- Fixes
- =====
- 
-+- Fixed some issues in the PostgreSQL wire protocol implementation that:
-+
-+  - Disallowed pipelining select queries after write queries
-+  - Caused failures if pipelining statements using new objects immediately after
-+    DDL statements created those objects, if there was no intermediate ``sync``
-+    message between those statements.
-+  - Could cause clients to appear stuck if a statement within a pipeline had an
-+    execution error.
-+
- - Fixed an issue that caused CrateDB to send the wrong transaction state within
-   a ``ReadyForQuery`` message to clients using the PostgreSQL Wire Protocol in
-   response to queries sent in the simple query mode after a ``BEGIN``. This
-```
-
-**File**: `docs/appendices/release-notes/6.6.0.rst` (modified, +0/-5)
-```diff
-@@ -63,11 +63,6 @@ SQL Standard and PostgreSQL Compatibility
- - Added a ``bool`` alias for the :ref:`boolean <type-boolean>` type for improved
-   PostgreSQL compatibility.
- 
--- Extended the PostgreSQL wire protocol support for pipelining DDL or DML
--  statements followed by DQL statements without an intermediate ``sync`` message
--  between the statements. This is for example used by the ``psycopg`` client if
--  using their experimental pipeline support.
--
- - Added the ``_name`` array type (OID ``1003``) to the
-   :ref:`pg_type <postgres-pg_type>` table, allowing PostgreSQL clients to bind
-   ``name[]`` parameters. The ``typarray`` of ``name`` changed from ``-1`` to
+ - Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
+-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now required
++  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
+   to have ``AL`` privilege to avoid a security issue when authenticated user can
+   can switch to CrateDB's unauthenticated internal transport protocol.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20545** (2026-11-03): Fix intermittent logical replication stall after initial restore (backport #20536) (@mergify[bot])
-- **PR #20544** (2026-11-03): Fix intermittent logical replication stall after initial restore (backport #20536) (@mergify[bot])
-- **PR #20543** (2026-11-03): Start logical replication tracker on replica promotion (backport #20540) (@mergify[bot])
-- **PR #20542** (2026-11-03): Start logical replication tracker on replica promotion (backport #20540) (@mergify[bot])
-- **PR #20541** (2026-11-03): Update JDK to 25.0.5+8 (@mfussenegger)
-- **PR #20540** (2026-11-03): Start logical replication tracker on replica promotion (@BaurzhanSakhariev)
+- **PR #20560** (2026-11-04): Fix typo in change entries (backport #20557) (@mergify[bot])
+- **PR #20559** (2026-11-04): Fix typo in change entries (backport #20557) (@mergify[bot])
+- **PR #20557** (2026-11-04): Fix typo in change entries (@BaurzhanSakhariev)
+- **PR #20556** (2026-11-04): Reflect releases 6.4.7 and 6.5.1 (@BaurzhanSakhariev)
+- **PR #20555** (2026-11-04): Bump version to 6.5.2-SNAPSHOT; reflect 6.4.7 release (@BaurzhanSakhariev)
+- **PR #20554** (2026-11-04): Release 6.4.7 (@BaurzhanSakhariev)
 
 ---
 
@@ -881,32 +608,28 @@ already completed. If so, notify the listener immediately.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Remove LR integration test retries added to suppress flakiness"
+## X. typo in change entries
 
 **RULE**:
-When implementing operations in `server/src/test/java/io/crate/integrationtests/LogicalReplicationITest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c480b784`: Revert "Remove LR integration test retries added to suppress flakiness". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a66a1f88`: typo in change entries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/test/java/io/crate/integrationtests/LogicalReplicationITest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.junit.Rule;
-import io.crate.testing.RetryRule;
-    @Rule
-    public RetryRule retryRule = new RetryRule(3);
-
+  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now required
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c480b784` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a66a1f88` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source**: github ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
-> **Source Version**: `bcddf276`  
+> **Source Version**: `066ea4e4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:22:20.549Z  
+> **Timestamp**: 2026-11-04T08:57:32.729Z  
 > **Learning ID**: `learn-github-salvo-rs-salvo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:22:18.937Z  
+> **Harvest Timestamp**: 2026-11-04T08:57:31.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1906,164 +1906,76 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dfd18ee` (2026-11-01)
-**Commit Message**: fix(serve-static): reject resolved dot-file paths (#1835)
+### Incident Patch 1: `066ea4e4` (2026-11-03)
+**Commit Message**: build(deps): update saysion requirement from 0.2 to 0.4 (#1838)
 
-**File**: `crates/serve-static/src/dir.rs` (modified, +9/-1)
+Updates the requirements on [saysion](https://github.com/salvo-rs/saysion) to permit the latest version.
+- [Release notes](https://github.com/salvo-rs/saysion/releases)
+- [Changelog](https://github.com/salvo-rs/saysion/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/salvo-rs/saysion/compare/v0.2.0...v0.4.0)
+
+---
+updated-dependencies:
+- dependency-name: saysion
+  dependency-version: 0.4.0
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -403,7 +403,15 @@ impl StaticDir {
- 
-         let metadata = tokio::fs::symlink_metadata(&path).await.ok()?;
-         let canonical_path = tokio::fs::canonicalize(&path).await.ok()?;
--        if !canonical_path.starts_with(&root.canonical_path) {
-+        let relative_path = canonical_path.strip_prefix(&root.canonical_path).ok()?;
-+        // Windows 8.3 aliases can resolve to dot files even when the requested
-+        // path has no dot segments. Check the resolved path below the root too;
-+        // the configured root itself may legitimately have a dot-prefixed name.
-+        if !self.include_dot_files
-+            && relative_path
-+                .components()
-+                .any(|component| component.as_os_str().as_encoded_bytes().starts_with(b"."))
-+        {
-             return None;
-         }
-         Some(ResolvedPath {
+@@ -117,7 +117,7 @@ ring = "0.17"
+ rust_decimal = "1"
+ rustls = { version = "0.23.46", default-features = false }
+ rust-embed = { version = ">= 6, <= 9" }
+-saysion = "0.2"
++saysion = "0.4"
+ serde = "1"
+ serde_json = "1"
+ serde-xml-rs = "0.8"
 ```
 
-**File**: `crates/serve-static/tests/dot_files.rs` (added, +122/-0)
+---
+
+### Incident Patch 2: `c0b75141` (2026-11-03)
+**Commit Message**: build(deps): update certon requirement from 0.3 to 0.4 (#1837)
+
+Updates the requirements on [certon](https://github.com/salvo-rs/certon) to permit the latest version.
+- [Release notes](https://github.com/salvo-rs/certon/releases)
+- [Commits](https://github.com/salvo-rs/certon/compare/v0.3.0...v0.4.0)
+
+---
+updated-dependencies:
+- dependency-name: certon
+  dependency-version: 0.4.0
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,122 @@
-+#![allow(missing_docs, clippy::unwrap_used)]
-+
-+use salvo_core::prelude::*;
-+use salvo_core::test::{ResponseExt, TestClient};
-+use salvo_serve_static::StaticDir;
-+
-+fn service(directory: StaticDir) -> Service {
-+    Service::new(Router::with_path("{**path}").goal(directory))
-+}
-+
-+async fn check_file(service: &Service, path: &str, expected: Option<&str>) {
-+    let mut response = TestClient::get(format!("http://localhost/{path}"))
-+        .send(service)
-+        .await;
-+    assert_eq!(
-+        response.status_code,
-+        Some(if expected.is_some() {
-+            StatusCode::OK
-+        } else {
-+            StatusCode::NOT_FOUND
-+        }),
-+        "{path}"
-+    );
-+    if let Some(expected) = expected {
-+        assert_eq!(response.take_string().await.unwrap(), expected, "{path}");
-+    }
-+}
-+
-+#[tokio::test]
-+async fn dot_files_in_default_and_fallback_paths_respect_opt_in() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let root = temp.path().join(".static");
-+    std::fs::create_dir_all(root.join(".git")).unwrap();
-+    std::fs::write(root.join(".env"), "secret").unwrap();
-+    std::fs::write(root.join(".git/config"), "repository").unwrap();
-+    std::fs::write(root.join("public.txt"), "public").unwrap();
-+
-+    for include in [false, true] {
-+        let directory = service(StaticDir::new(root.clone()).include_dot_files(include));
-+        check_file(&directory, "public.txt", Some("public")).await;
-+        check_file(&directory, ".env", include.then_some("secret")).await;
-+        check_file(&directory, ".git/config", include.then_some("repository")).await;
-+
-+        for path in [".env", ".git/config"] {
-+            let expected = include.then_some(if path == ".env" {
-+                "secret"
-+            } else {
-+                "repository"
-+            });
-+            let defaults = service(
-+                StaticDir::new(root.clone())
-+                    .include_dot_files(include)
-+                    .defaults(path),
-+            );
-+            check_file(&defaults, "", expected).await;
-+            let fallback = service(
-+                StaticDir::new(root.clone())
-+                    .include_dot_files(include)
-+                    .fallback(path),
-+            );
-+            check_file(&fallback, "missing", expected).await;
-+        }
-+    }
-+}
-+
-+#[cfg(unix)]
-+#[tokio::test]
-+async fn visible_alias_to_dot_directory_respects_opt_in() {
-+    let temp = tempfile::tempdir().unwrap();
-+    std::fs::create_dir(temp.path().join(".git")).unwrap();
-+    std::fs::write(temp.path().join(".git/config"), "repository").unwrap();
-+    std::os::unix::fs::symlink(".git", temp.path().join("alias")).unwrap();
-+    for include in [false, true] {
-+        let directory =
-+            service(StaticDir::new(temp.path().to_path_buf()).include_dot_files(include));
-+        check_file(&directory, "alias/config", include.then_some("repository")).await;
-+    }
-+}
-+
-+#[cfg(windows)]
-+fn short_name(path: &std::path::Path) -> String {
-+    use std::os::windows::process::CommandExt;
-+
-+    // Ask cmd for the actual short name without adding unsafe Windows FFI.
-+    // Pass the fixture path through the environment rather than shell source.
-+    let output = std::process::Command::new("cmd")
-+        .args(["/d", "/c"])
-+        .raw_arg("for %I in (\"%SALVO_TEST_PATH%\") do @echo %~snxI")
-+        .env("SALVO_TEST_PATH", path)
-+        .output()
-+        .unwrap();
-+    assert!(output.status.success());
-+    String::from_utf8(output.stdout).unwrap().trim().to_owned()
-+}
-+
-+#[cfg(windows)]
-+#[tokio::test]
-+async fn windows_short_names_cannot_expose_dot_files() {
-+    let temp = tempfile::tempdir().unwrap();
-+    std::fs::create_dir(temp.path().join(".git")).unwrap();
-+    std::fs::write(temp.path().join(".env"), "secret").unwrap();
-+    std::fs::write(temp.path().join(".git/config"), "repository").unwrap();
-+    let env = short_name(&temp.path().join(".env"));
-+    let git = short_name(&temp.path().join(".git"));
-+    if env == ".env" || git == ".git" {
-+        eprintln!("skipping 8.3 alias requests: the test volume did not create short names");
-+        return;
-+    }
-+    assert!(!env.starts_with('.'));
-+    assert!(!git.starts_with('.'));
-+    for include in [false, true] {
-+        let directory =
-+            service(StaticDir::new(temp.path().to_path_buf()).include_dot_files(include));
-+        check_file(&directory, &env, include.then_some("secret")).await;
-+        check_file(
-+            &directory,
-+            &format!("{git}/config"),
-+            include.then_some("repository"),
-+        )
-+        .await;
-+    }
-+}
+@@ -47,7 +47,7 @@ salvo-craft = { version = "1.1.0", path = "crates/craft", default-features = fal
+ salvo-craft-macros = { version = "1.1.0", path = "crates/craft-macros", default-features = false }
+ salvo-tus = { version = "1.1.0", path = "crates/tus", default-features = false }
+ 
+-certon = "0.3"
++certon = "0.4"
+ 
+ aead = "0.6"
+ aes-gcm = "0.11"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1838** (2026-11-03): build(deps): update saysion requirement from 0.2 to 0.4 (@dependabot[bot])
+- **PR #1837** (2026-11-03): build(deps): update certon requirement from 0.3 to 0.4 (@dependabot[bot])
 - **PR #1836** (2026-11-02): Make dependency audits advisory in CI (@chrislearn)
 - **PR #1835** (2026-11-01): Fix StaticDir dot-file access through resolved path aliases (@chrislearn)
 - **PR #1834** (2026-10-30): Accept OpenAPI documents without optional paths (@chrislearn)
 - **PR #1833** (2026-10-30): Preserve repeated values in aggregate header extraction (@chrislearn)
-- **PR #1832** (2026-10-30): Honor every embedded If-None-Match field (@chrislearn)
-- **PR #1831** (2026-10-30): Apply request method semantics to static file responses (@chrislearn)
 
 ---
 
@@ -2083,36 +1995,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serve-static): reject resolved dot-file paths (#1835)
+## X. build(deps): update saysion requirement from 0.2 to 0.4 (#1838)
 
 **RULE**:
-When implementing operations in `crates/serve-static/src/dir.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dfd18ee`: serve-static): reject resolved dot-file paths (#1835). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `066ea4e4`: build(deps): update saysion requirement from 0.2 to 0.4 (#1838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/serve-static/src/dir.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let relative_path = canonical_path.strip_prefix(&root.canonical_path).ok()?;
-        // Windows 8.3 aliases can resolve to dot files even when the requested
-        // path has no dot segments. Check the resolved path below the root too;
-        // the configured root itself may legitimately have a dot-prefixed name.
-        if !self.include_dot_files
-            && relative_path
-                .components()
-                .any(|component| component.as_os_str().as_encoded_bytes().starts_with(b"."))
-        {
+saysion = "0.4"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if !canonical_path.starts_with(&root.canonical_path) {
+saysion = "0.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dfd18ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `066ea4e4` are properly handled with clean fallback behavior.

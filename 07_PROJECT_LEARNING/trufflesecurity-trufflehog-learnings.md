@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `ab78e911`  
+> **Source Version**: `93633ac7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:06:43.885Z  
+> **Timestamp**: 2026-11-04T08:06:05.283Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:06:43.878Z  
+> **Harvest Timestamp**: 2026-11-04T08:02:57.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28829 stars
+- **Stars / Engagement**: 28845 stars
 
 ---
 
@@ -1140,239 +1140,556 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84ee682a` (2026-11-03)
-**Commit Message**: Update github.com/trufflesecurity/ldap-verify digest to 0f42b08 (#5503)
+### Incident Patch 1: `93633ac7` (2026-11-04)
+**Commit Message**: Clean up Jenkins source logging for per-source debug (#5520)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* Clean up Jenkins source logging for per-source debug
 
-**File**: `go.mod` (modified, +1/-1)
+The Jenkins HTTP client now logs with each request's context, and retry
+waits stop on cancel. Fix levels, redact endpoint URLs, fail Init on an
+empty endpoint, and add log tests with the logtest helpers
+
+* Return the cancel error when a retry wait is cut short
+
+* Find the ctx logger in wrapped contexts, close retry bodies
+
+**File**: `pkg/context/context.go` (modified, +15/-4)
 ```diff
-@@ -98,7 +98,7 @@ require (
- 	github.com/testcontainers/testcontainers-go/modules/mysql v0.42.0
- 	github.com/testcontainers/testcontainers-go/modules/postgres v0.42.1-0.20260423004847-9fc0246c3859
- 	github.com/trufflesecurity/disk-buffer-reader v0.2.1
--	github.com/trufflesecurity/ldap-verify v0.0.0-20261012152128-4a15fafb6e19
-+	github.com/trufflesecurity/ldap-verify v0.0.0-20261027153024-0f42b087ac22
- 	github.com/ulikunitz/xz v0.5.17
- 	github.com/wasilibs/go-re2 v1.12.0
- 	github.com/xo/dburl v0.23.8
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -685,8 +685,8 @@ github.com/tklauser/numcpus v0.12.0 h1:NR85qdvHA9pFse3x3weVZ0r0ST8R6l5RHbZrlRaqo
- github.com/tklauser/numcpus v0.12.0/go.mod h1:ABHeXzJnr/qqwguhClkZKT1/8VABcYrsyUiUGobwWJg=
- github.com/trufflesecurity/disk-buffer-reader v0.2.1 h1:K9nNpX3xeWT2E6YRjlcc1X5c1NjgV9JS5T9aw2FjA8Q=
- github.com/trufflesecurity/disk-buffer-reader v0.2.1/go.mod h1:uYwTCdxzV0o+qaeBMxflOsq4eu2WjrE46qGR2e80O9Y=
--github.com/trufflesecurity/ldap-verify v0.0.0-20261012152128-4a15fafb6e19 h1:iddN9+fcH4R23rCNJsXI6Cztk/lmgJPAxUTEHK5Gvjo=
--github.com/trufflesecurity/ldap-verify v0.0.0-20261012152128-4a15fafb6e19/go.mod h1:VQbB7BbEEjTfPqN9dT/3jksvk1p1uj5YQZLMZ8Unu6E=
-+github.com/trufflesecurity/ldap-verify v0.0.0-20261027153024-0f42b087ac22 h1:lbABktKd25aKgb53HLUWwZ5gKjLVvJ7DbKXJ6minS0E=
-+github.com/trufflesecurity/ldap-verify v0.0.0-20261027153024-0f42b087ac22/go.mod h1:VQbB7BbEEjTfPqN9dT/3jksvk1p1uj5YQZLMZ8Unu6E=
- github.com/trufflesecurity/overseer v1.2.8 h1:VXlWPiwYaQmwNxY2W1rVulEAG9O6iF1S0LX3wionWYM=
- github.com/trufflesecurity/overseer v1.2.8/go.mod h1:Dt6Y9LFpM+C/3rRWpy4//4iS5qrbb0pL3XvZqMd4zhg=
- github.com/trufflesecurity/touchfile v0.1.1 h1:Snhd5VEa8Cxd+D60nvLEj2kVeb1omY2tWwnhDhjTqdo=
-```
-
----
-
-### Incident Patch 2: `240ccdd9` (2026-11-03)
-**Commit Message**: Fix Git diff scans at shallow clone boundaries (#5360)
-
-* Fix shallow Git diff scans at the graft boundary
-
-* Cover advanced shallow merge bases and fetch-depth errors
-
-**File**: `pkg/gitparse/gitparse.go` (modified, +1/-0)
-```diff
-@@ -546,6 +546,7 @@ func (c *Parser) prepGitArgs(source string, head string, base string, excludedGl
+@@ -198,15 +198,26 @@ func AddLogger(parent context.Context) Context {
+ 	}
+ 	// If the logger exists in the grab bag (and is the correct type),
+ 	// return that.
+-	if logEntryVal := parent.Value(logEntryKey); logEntryVal != nil {
+-		if logger, ok := logEntryVal.(logr.Logger); ok {
+-			return WithLogger(parent, logger)
+-		}
++	if logger, ok := LoggerFromContext(parent); ok {
++		return WithLogger(parent, logger)
+ 	}
+ 	// Otherwise, add the default logger.
+ 	return WithLogger(parent, defaultLogger)
+ }
  
- 	absPath, err := filepath.Abs(source)
- 	if err == nil {
-+		// Keep this restricted environment in sync with the merge-base lookup in git.normalizeConfig.
- 		if !isBare {
- 			args.env = append(args.env, "GIT_DIR="+filepath.Join(absPath, ".git"))
- 		} else {
++// LoggerFromContext returns the logger carried by ctx, and false if it has none.
++// Unlike AddLogger, it tells the caller when there is no logger, so the caller can
++// fall back to its own logger instead of the default one. It also finds the logger
++// when ctx is a Context wrapped in a plain context.Context, for example by net/http
++// when a client has a Timeout.
++func LoggerFromContext(ctx context.Context) (logr.Logger, bool) {
++	if loggerCtx, ok := ctx.(Context); ok {
++		return loggerCtx.Logger(), true
++	}
++	logger, ok := ctx.Value(logEntryKey).(logr.Logger)
++	return logger, ok
++}
++
+ // SetDefaultLogger sets the package-level global default logger that will be
+ // used for Background and TODO contexts. On startup, the default logger will
+ // be configured to output logs to stderr. Use logr.Discard() to disable all
 ```
 
-**File**: `pkg/sources/git/git.go` (modified, +41/-7)
+**File**: `pkg/context/context_test.go` (modified, +23/-0)
 ```diff
-@@ -1362,7 +1362,7 @@ func (s *Git) ScanRepo(ctx context.Context, repo *git.Repository, repoPath strin
- 	if scanOptions == nil {
- 		scanOptions = NewScanOptions()
+@@ -274,3 +274,26 @@ func TestWithLogLevel_Clamped(t *testing.T) {
+ 		})
  	}
--	if err := normalizeConfig(scanOptions, repo); err != nil {
-+	if err := normalizeConfig(ctx, scanOptions, repo, repoPath); err != nil {
- 		return err
- 	}
- 	start := time.Now().Unix()
-@@ -1414,7 +1414,7 @@ func (s *Git) ScanRepo(ctx context.Context, repo *git.Repository, repoPath strin
- // other non-hash references. This ensures that both the base and head commits are resolved to actual commit hashes.
- // If either commit cannot be resolved, it returns early.
- // If both are resolved, it finds and sets the merge base in scanOptions.
--func normalizeConfig(scanOptions *ScanOptions, repo *git.Repository) error {
-+func normalizeConfig(ctx context.Context, scanOptions *ScanOptions, repo *git.Repository, repoPath string) error {
- 	baseCommit, err := resolveAndSetCommit(repo, &scanOptions.BaseHash)
- 	if err != nil {
- 		return err
-@@ -1429,16 +1429,50 @@ func normalizeConfig(scanOptions *ScanOptions, repo *git.Repository) error {
- 		return nil
- 	}
+ }
++
++func TestLoggerFromContext(t *testing.T) {
++	logger := logr.Discard().WithName("test")
++
++	t.Run("Context", func(t *testing.T) {
++		got, ok := LoggerFromContext(WithLogger(context.Background(), logger))
++		assert.True(t, ok)
++		assert.Equal(t, logger, got)
++	})
++
++	t.Run("Context wrapped in a plain context", func(t *testing.T) {
++		wrapped, cancel := context.WithTimeout(WithLogger(context.Background(), logger), time.Minute)
++		defer cancel()
++		got, ok := LoggerFromContext(wrapped)
++		assert.True(t, ok)
++		assert.Equal(t, logger, got)
++	})
++
++	t.Run("plain context without a logger", func(t *testing.T) {
++		_, ok := LoggerFromContext(context.Background())
++		assert.False(t, ok)
++	})
++}
+```
+
+**File**: `pkg/roundtripper/roundtripper.go` (modified, +25/-14)
+```diff
+@@ -2,7 +2,6 @@ package roundtripper
  
--	// If baseCommit is an ancestor of headCommit, update c.BaseRef to be the common ancestor.
--	mergeBase, err := headCommit.MergeBase(baseCommit)
-+	// Use the same Git history and object database as the parser, including shallow grafts.
-+	// Keep this environment in sync with gitparse.prepGitArgs.
-+	absPath, err := filepath.Abs(repoPath)
- 	if err != nil {
-+		return fmt.Errorf("unable to resolve repository path: %w", err)
+ import (
+ 	"crypto/tls"
+-	"fmt"
+ 	"net/http"
+ 	"strconv"
+ 	"strings"
+@@ -65,10 +64,17 @@ func NewRoundTripper(original http.RoundTripper, opts ...func(*RoundTripper)) *R
+ }
+ 
+ func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
++	// Log with the request's context when it has a logger, so the lines get the caller's fields and log level
++	// (including per-source debug). r.logger is the fallback for requests made without one.
++	baseLogger := r.logger
++	if logger, ok := context.LoggerFromContext(req.Context()); ok {
++		baseLogger = logger
 +	}
-+	gitDir := filepath.Join(absPath, gitDirName)
-+	isBare := isRepoBare(repoPath)
-+	if isBare {
-+		gitDir = absPath
-+	}
-+	cmd := exec.CommandContext(ctx, "git", "-C", repoPath, "merge-base", headCommit.Hash.String(), baseCommit.Hash.String())
-+	// Replace the process environment so GIT_DIR or GIT_TRACE cannot redirect or pollute this lookup.
-+	cmd.Env = []string{"GIT_DIR=" + gitDir}
-+	if isBare {
-+		for _, key := range []string{"GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES"} {
-+			if value := os.Getenv(key); value != "" {
-+				cmd.Env = append(cmd.Env, key+"="+value)
++
+ 	retries := 0
+ 	for {
+ 		// Use the redacted URL so a password in it (user:pass@host) is never logged.
+-		logger := r.logger.WithValues(
++		logger := baseLogger.WithValues(
+ 			"method", req.Method,
+ 			"url", req.URL.Redacted(),
+ 		)
+@@ -77,17 +83,11 @@ func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+ 			req.SetBasicAuth(r.username, r.password)
+ 		}
+ 
+-		authMethod := determineAuth(req)
+ 		if r.LoggingRoundtripper != nil {
+-			logger.V(5).Info(fmt.Sprintf("sending request with %s", authMethod))
++			logger.V(5).Info("sending request", "auth", determineAuth(req))
+ 		}
+ 
+ 		response, err := r.original.RoundTrip(req)
+-		if err != nil {
+-			logger.V(5).Info("got error while sending request",
+-				"error", err,
+-			)
+-		}
+ 
+ 		if r.LoggingRoundtripper != nil && response != nil {
+ 			logger.V(5).Info("got response",
+@@ -98,21 +98,32 @@ func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+ 		reason, shouldRetry, duration := r.shouldRetryRequest(response, err)
+ 		if shouldRetry {
+ 			if retries >= int(r.maxRetries) {
+-				r.logger.V(2).Info("max retries reached",
+-					"host", req.Host,
++				logger.V(4).Info("max retries reached",
+ 					"reason", reason,
+ 					"retries", retries,
+ 				)
+ 				return response, err
+ 			}
+-			r.logger.V(2).Info("retrying request",
+-				"host", req.Host,
++			logger.V(4).Info("retrying request",
+ 				"reason", reason,
+ 				"retries", retries,
++				"wait", duration,
+ 			)
+ 
+ 			retries++
+-			time.Sleep(duration)
++			// This response is dropped for the retry or the cancel below, so close it here or the
++			// connection leaks.
++			if response != nil {
++				_ = response.Body.Close()
 +			}
-+		}
++			// Stop waiting if the caller gives up, a retry wait can be 30 seconds or more.
++			select {
++			case <-req.Context().Done():
++				// Return the cancel, not the last attempt's result, so the caller sees an interrupt
++				// rather than an HTTP failure.
++				return nil, req.Context().Err()
++			case <-time.After(duration):
++			}
+ 			continue
+ 		}
+ 
+```
+
+**File**: `pkg/roundtripper/roundtripper_test.go` (modified, +100/-0)
+```diff
+@@ -1,12 +1,17 @@
+ package roundtripper
+ 
+ import (
++	"context"
+ 	"fmt"
++	"io"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
++	"time"
+ 
++	"github.com/go-logr/logr"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -34,3 +39,98 @@ func TestRoundTripper_DebugLogsHidePasswordInURL(t *testing.T) {
+ 		assert.NotContains(t, fields, "hunter2")
+ 	}
+ }
++
++func TestRoundTripper_CancelDuringRetryWait(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusInternalServerError)
++	}))
++	defer server.Close()
++
++	client := &http.Client{Transport: NewRoundTripper(nil,
++		WithRetryable(WithShouldRetry5XXDuration(30*time.Second)),
++	)}
++
++	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
++	defer cancel()
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
++	require.NoError(t, err)
++
++	start := time.Now()
++	resp, err := client.Do(req)
++	if resp != nil {
++		_ = resp.Body.Close()
 +	}
-+	out, err := cmd.Output()
++
++	assert.Nil(t, resp)
++	assert.ErrorIs(t, err, context.DeadlineExceeded)
++	assert.Less(t, time.Since(start), 5*time.Second)
++}
++
++func TestRoundTripper_LogsWithWrappedRequestContext(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
++	defer server.Close()
++
++	// A client Timeout makes net/http wrap the request ctx in a plain context.
++	// The lines must still use the ctx logger, not the discarding fallback.
++	ctx, logs := logtest.SourceContext(true)
++	client := &http.Client{
++		Timeout:   5 * time.Second,
++		Transport: NewRoundTripper(nil, WithLogger(logr.Discard()), WithLogging()),
++	}
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
++	require.NoError(t, err)
++
++	resp, err := client.Do(req)
++	require.NoError(t, err)
++	require.NoError(t, resp.Body.Close())
++
++	logtest.CheckSourceLines(t, logs.All())
++}
++
++// closeTracker counts how many response bodies were closed.
++type closeTracker struct {
++	original http.RoundTripper
++	closed   atomic.Int32
++}
++
++func (c *closeTracker) RoundTrip(req *http.Request) (*http.Response, error) {
++	resp, err := c.original.RoundTrip(req)
++	if resp != nil {
++		resp.Body = &trackedBody{ReadCloser: resp.Body, closed: &c.closed}
++	}
++	return resp, err
++}
++
++type trackedBody struct {
++	io.ReadCloser
++	closed *atomic.Int32
++}
++
++func (b *trackedBody) Close() error {
++	b.closed.Add(1)
++	return b.ReadCloser.Close()
++}
++
++func TestRoundTripper_ClosesBodyBeforeRetry(t *testing.T) {
++	var calls atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if calls.Add(1) == 1 {
++			w.WriteHeader(http.StatusInternalServerError)
++		}
++	}))
++	defer server.Close()
++
++	tracker := &closeTracker{original: http.DefaultTransport}
++	client := &http.Client{Transport: NewRoundTripper(tracker,
++		WithRetryable(WithShouldRetry5XXDuration(time.Millisecond)),
++	)}
++
++	resp, err := client.Get(server.URL)
++	require.NoError(t, err)
++	assert.Equal(t, http.StatusOK, resp.StatusCode)
++
++	// The 500 was closed before the retry. The 200 is still open for the caller.
++	assert.EqualValues(t, 1, tracker.closed.Load())
++	require.NoError(t, resp.Body.Close())
++	assert.EqualValues(t, 2, tracker.closed.Load())
++}
+```
+
+**File**: `pkg/sources/jenkins/README.md` (modified, +13/-1)
+```diff
+@@ -149,6 +149,18 @@ trufflehog jenkins --url https://jenkins.example.com
+ trufflehog jenkins --url https://jenkins.example.com --username my-username --password my-password --insecure-skip-verify-tls
+ ```
+ 
++## Debug Logs
++
++With debug on for this source (`debug: true` in the config), the scan logs:
++
++- `V(1)`: `initialized Jenkins source` with the auth method (never the credentials), the endpoint with any password redacted, and whether TLS verification is skipped, then the number of jobs found.
++- `V(2)`: `got builds` for each job, with its build count.
++- `V(3)`: the objects listed in each folder, each object as it is processed, and `chunking build` for each build.
++- `V(4)`: each Jenkins API page request, `Skipping object` with a `reason` for objects that are not a supported job type, and each retry of a request.
++- `V(5)`: each HTTP request with its auth type, and each response status code.
++
++Lines carry `job_name`, `build_number` and the other job and build fields where they apply. Failures to get a job's builds or a build log are logged as errors at the default level.
++
+ ## Troubleshooting
+ 
+ ### Common Issues
+@@ -174,4 +186,4 @@ trufflehog jenkins --url https://jenkins.example.com --username my-username --pa
+ ---
+ 
+ **Issue**: Some jobs are missing from the scan
+-**Solution**: TruffleHog only scans Freestyle projects and Pipeline jobs, and only recurses into the plain Jenkins folder type. A job of another type, or one nested inside a different kind of container, is silently skipped.
++**Solution**: TruffleHog only scans Freestyle projects and Pipeline jobs, and only recurses into the plain Jenkins folder type. A job of another type, or one nested inside a different kind of container, is skipped. With debug on, the scan logs `Skipping object` for each one.
+```
+
+**File**: `pkg/sources/jenkins/jenkins.go` (modified, +23/-21)
+```diff
+@@ -93,7 +93,6 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
+ 
+ 	const retryDelay = time.Second * 30
+ 	opts = append(opts,
+-		roundtripper.WithLogger(aCtx.Logger()),
+ 		roundtripper.WithLogging(),
+ 		roundtripper.WithRetryable(
+ 			roundtripper.WithShouldRetry5XXDuration(retryDelay),
+@@ -134,21 +133,29 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
+ 		return errors.Errorf("unknown or unspecified authentication method provided for Jenkins source %q (unauthenticated scans must be explicitly configured)", name)
+ 	}
+ 
++	if unparsedURL == "" {
++		return errors.New("Jenkins source requires an endpoint URL")
++	}
+ 	s.url, err = url.Parse(unparsedURL)
+-	if err != nil || unparsedURL == "" {
+-		return errors.WrapPrefix(err, fmt.Sprintf("Invalid endpoint URL given for Jenkins source: %s", unparsedURL), 0)
 +	if err != nil {
-+		var exitErr *exec.ExitError
-+		if errors.As(err, &exitErr) {
-+			if exitErr.ExitCode() == 1 && len(exitErr.Stderr) == 0 {
-+				message := "unable to resolve merge base: no merge base found"
-+				shallowCmd := exec.CommandContext(ctx, "git", "-C", repoPath, "rev-parse", "--is-shallow-repository")
-+				shallowCmd.Env = cmd.Env
-+				if shallow, shallowErr := shallowCmd.Output(); shallowErr == nil && strings.TrimSpace(string(shallow)) == "true" {
-+					message += " (repository is shallow; fetch more history)"
-+				}
-+				return errors.New(message)
-+			}
-+			return fmt.Errorf("unable to resolve merge base: %w: %s", err, strings.TrimSpace(string(exitErr.Stderr)))
++		// A *url.Error repeats the raw URL, which can hold a password, so keep only the cause.
++		var urlErr *url.Error
++		if errors.As(err, &urlErr) {
++			err = urlErr.Err
 +		}
- 		return fmt.Errorf("unable to resolve merge base: %w", err)
- 	}
--	if len(mergeBase) == 0 {
--		return fmt.Errorf("unable to resolve merge base: no merge base found")
-+	mergeBase := strings.TrimSpace(string(out))
-+	if mergeBase == "" {
-+		return errors.New("unable to resolve merge base: no merge base found")
++		return errors.WrapPrefix(err, "Invalid endpoint URL given for Jenkins source", 0)
  	}
  
--	scanOptions.BaseHash = mergeBase[0].Hash.String()
-+	scanOptions.BaseHash = mergeBase
+ 	aCtx.Logger().V(1).Info("initialized Jenkins source",
+ 		"auth_method", authMethod,
+-		"url_raw", unparsedURL,
+-		"url_parsed", s.url.String())
++		"endpoint", s.url.Redacted(),
++		"insecure_skip_verify_tls", conn.GetInsecureSkipVerifyTls())
  
  	return nil
  }
+ 
+-func (s *Source) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+-	request, err := http.NewRequest(method, url, body)
++func (s *Source) NewRequest(ctx context.Context, method, url string, body io.Reader) (*http.Request, error) {
++	request, err := http.NewRequestWithContext(ctx, method, url, body)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -231,9 +238,6 @@ func (c *jobCollector) UnitErr(_ context.Context, err error) error { return err
+ // the reporter returns an error, which aborts the walk and is returned to the
+ // caller.
+ func (s *Source) walkJobs(ctx context.Context, absolutePath string, reporter sources.UnitReporter) error {
+-	ctx.Logger().V(3).Info("getting objects",
+-		"path", absolutePath)
+-
+ 	objects, err := s.GetJenkinsObjectsForPath(ctx, absolutePath)
+ 	if err != nil {
+ 		return reporter.UnitErr(ctx, errors.WrapPrefix(err, fmt.Sprintf("failed to get Jenkins objects for path %q", absolutePath), 0))
+@@ -269,6 +273,7 @@ func (s *Source) walkJobs(ctx context.Context, absolutePath string, reporter sou
+ 
+ 		if job.Class != "hudson.model.FreeStyleProject" &&
+ 			job.Class != "org.jenkinsci.plugins.workflow.job.WorkflowJob" {
++			ctx.Logger().V(4).Info("Skipping object", "reason", "unsupported class")
+ 			continue
+ 		}
+ 
+@@ -300,7 +305,7 @@ func (s *Source) GetJenkinsObjectsForPath(ctx context.Context, absolutePath stri
+ 
+ 		// The endpoint URL can hold a password, so log the redacted form.
+ 		ctx.Logger().V(4).Info("executing query", "query_url", baseUrl.Redacted())
+-		req, err := s.NewRequest(http.MethodGet, baseUrl.String(), nil)
++		req, err := s.NewRequest(ctx, http.MethodGet, baseUrl.String(), nil)
+ 		if err != nil {
+ 			return res, errors.WrapPrefix(err, "Failed to create new request to get jenkins jobs", 0)
+ 		}
+@@ -337,16 +342,14 @@ func (s *Source) GetJenkinsBuilds(ctx context.Context, jobAbsolutePath string) (
+ 	ctx = context.WithValues(ctx,
+ 		"job_path", jobAbsolutePath)
+ 
+-	ctx.Logger().V(2).Info("getting builds")
+-
+ 	builds := JenkinsBuildResponse{}
+ 	buildsUrl := *s.url
+ 	for i := 0; true; i += 100 {
+ 		buildsUrl.Path = path.Join(jobAbsolutePath, "api/json")
+ 		params := url.Values{}
+ 		params.Set("tree", fmt.Sprintf("builds[number,url]{%d,%d}", i, i+100))
+ 		buildsUrl.RawQuery = params.Encode()
+-		req, err := s.NewRequest(http.MethodGet, buildsUrl.String(), nil)
++		req, err := s.NewRequest(ctx, http.MethodGet, buildsUrl.String(), nil)
+ 		if err != nil {
+ 			return builds, errors.WrapPrefix(err, "Failed to create new request to get jenkins builds", 0)
+ 		}
+@@ -440,7 +443,7 @@ func (s *Source) chunkBuild(
+ 	projectName string,
+ 	chunksChan chan *sources.Chunk,
+ ) error {
+-	ctx.Logger().V(2).Info("chunking build")
++	ctx.Logger().V(3).Info("chunking build")
+ 
+ 	parsedUrl, err := url.Parse(build.Url)
+ 	if err != nil {
+@@ -449,23 +452,23 @@ func (s *Source) chunkBuild(
+ 	buildLogURL := *s.url
+ 	buildLogURL.Path = path.Join(parsedUrl.Path, "consoleText")
+ 	ctx = context.WithValues(ctx,
+-		"build_log_url", buildLogURL.String())
++		"build_log_url", buildLogURL.Redacted())
+ 
+-	req, err := s.NewRequest(http.MethodGet, buildLogURL.String(), nil)
++	req, err := s.NewRequest(ctx, http.MethodGet, buildLogURL.String(), nil)
+ 	if err != nil {
+-		return fmt.Errorf("failed to create HTTP request to %q: %w", buildLogURL.String(), err)
++		return fmt.Errorf("failed to create HTTP request to %q: %w", buildLogURL.Redacted(), err)
+ 	}
+ 
+ 	resp, err := s.client.Do(req)
+ 	if err != nil {
+-		return fmt.Errorf("could not retrieve build log from %q: %w", buildLogURL.String(), err)
++		return fmt.
 ```
 
-**File**: `pkg/sources/git/git_test.go` (modified, +89/-27)
+**File**: `pkg/sources/jenkins/jenkins_test.go` (modified, +88/-0)
 ```diff
-@@ -1889,10 +1889,9 @@ func TestScanRepo_BaseMergedIntoHead(t *testing.T) {
- // TestNormalizeConfig_BaseWithoutHead pins what normalizeConfig does and does
- // not do with a base and no head: it resolves the base to a hash and leaves the
- // head empty. The parser then walks --all ^base (see gitparse.Parser.RepoPath).
--// normalizeConfig must not invent a head, because that would route the
--// base-only shape through MergeBase, which go-git cannot compute across the
--// graft of a shallow clone, including the --shallow-since clone
--// prepareRepoSinceCommit makes for exactly this shape.
-+// normalizeConfig must not invent a head, because that would narrow the
-+// base-only scan to one branch. prepareRepoSinceCommit makes a shallow clone
-+// with the base at its graft boundary for exactly this shape.
- func TestNormalizeConfig_BaseWithoutHead(t *testing.T) {
- 	// main: A; feature: A -> B, checked out.
- 	path := setupTestRepo(t, "base-without-head")
-@@ -1920,9 +1919,8 @@ func TestNormalizeConfig_BaseWithoutHead(t *testing.T) {
- 		},
- 		{
- 			// The pre-commit hook passes HEAD as both ends (main.go). Both
--			// resolve to the same hash and MergeBase short-circuits without
--			// walking history, so the empty HEAD..HEAD range is safe on a
--			// shallow local clone too.
-+			// resolve to the same hash, so the empty HEAD..HEAD range is safe
-+			// on a shallow local clone too.
- 			name: "base HEAD and head HEAD resolve to the same commit",
- 			base: "HEAD", head: "HEAD", wantBase: shaB, wantHead: shaB,
- 		},
-@@ -1940,7 +1938,7 @@ func TestNormalizeConfig_BaseWithoutHead(t *testing.T) {
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			opts := NewScanOptions(ScanOptionBaseHash(tt.base), ScanOptionHeadCommit(tt.head))
--			assert.NoError(t, normalizeConfig(opts, repo))
-+			assert.NoError(t, normalizeConfig(context.Background(), opts, repo, path))
- 			assert.Equal(t, tt.wantBase, opts.BaseHash, "BaseHash")
- 			assert.Equal(t, tt.wantHead, opts.HeadHash, "HeadHash")
- 		})
-@@ -2201,18 +2199,13 @@ func TestScanRepo_BaseNotUsable(t *testing.T) {
- 	}
+@@ -11,9 +11,11 @@ import (
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+@@ -297,3 +299,89 @@ func TestJenkinsChunkBuildDirect(t *testing.T) {
+ 	expectedLink := server.URL + "/job/test-project/123/consoleText"
+ 	assert.Equal(t, expectedLink, jenkinsMetadata.Link)
  }
- 
--// TestScanRepo_ShallowClone pins where the graft boundary of a shallow clone
--// starts to matter for a diff scan. git itself handles a truncated history
--// fine, so the boundary that counts is the one go-git needs to walk in
--// normalizeConfig: MergeBase loads a commit's parents before it can recognize
--// the commit as the range boundary (bfsCommitIterator.Next), so a base sitting
--// on the graft has no resolvable merge base.
-+// TestScanRepo_ShallowClone verifies that a diff scan can use a base at the
-+// graft boundary when Git can resolve it, even without the base's parent.
- //
--// That walk only runs when both ends are supplied. With a base alone the
--// parser defaults the head to HEAD and git computes the range, so the same
--// clone scans cleanly; this is the shape `--since-commit X` without `--branch`
--// takes against a GitHub URL, where prepareRepoSinceCommit clones with
--// --shallow-since and puts X on the graft. See
-+// Merge-base lookup only runs when both ends are supplied. With a base alone,
-+// the parser lets Git compute the range across all refs; this is the shape
-+// `--since-commit X` without `--branch` takes against a GitHub URL, where
-+// prepareRepoSinceCommit clones with --shallow-since and puts X on the graft. See
- // https://github.com/trufflesecurity/trufflehog/issues/4895 for the both-ends
- // failure surfacing on GitLab.
- func TestScanRepo_ShallowClone(t *testing.T) {
-@@ -2259,18 +2252,88 @@ func TestScanRepo_ShallowClone(t *testing.T) {
- 
- 				got, _, err := scanRepoRange(ctx, t, shallow, base, head)
- 
--				assert.ErrorContains(t, err, "unable to resolve merge base")
--				assert.Empty(t, got, "an unresolvable merge base must fail the scan, not scan an arbitrary range")
-+				assert.NoError(t, err)
-+				assert.True(t, got[head], "the one commit since base should have been scanned; got %v", got)
-+				assert.False(t, got[base], "the base is excluded from its own range")
++
++func TestSource_DebugLogging(t *testing.T) {
++	const (
++		testSecret  = "jenkinsdebuglogtestsecret"
++		urlPassword = "jenkinsdebuglogurlpassword"
++		password    = "jenkinsdebuglogpassword"
++	)
++
++	mux := http.NewServeMux()
++	server := httptest.NewServer(mux)
++	defer server.Close()
++
++	mux.HandleFunc("/api/json", func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		_, _ = fmt.Fprintf(w, `{"jobs":[`+
++			`{"_class":"org.jenkinsci.plugins.workflow.job.WorkflowJob","name":"good","url":"%[1]s/job/good/"},`+
++			`{"_class":"hudson.model.ExternalJob","name":"external","url":"%[1]s/job/external/"},`+
++			`{"_class":"hudson.model.FreeStyleProject","name":"missing","url":"%[1]s/job/missing/"}]}`, server.URL)
++	})
++	mux.HandleFunc("/job/good/api/json", func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		_, _ = fmt.Fprintf(w, `{"builds":[{"number":1,"url":"%s/job/good/1/"}]}`, server.URL)
++	})
++	mux.HandleFunc("/job/good/1/consoleText", func(w http.ResponseWriter, r *http.Request) {
++		_, _ = fmt.Fprint(w, "token = "+testSecret)
++	})
++	// Builds for "missing" are not handled, so the mux returns 404 and the source logs an error.
++
++	endpoint := strings.Replace(server.URL, "http://", "http://user:"+urlPassword+"@", 1)
++	conn, err := anypb.New(&sourcespb.Jenkins{
++		Endpoint: endpoint,
++		Credential: &sourcespb.Jenkins_BasicAuth{
++			BasicAuth: &credentialspb.BasicAuth{Username: "user", Password: password},
++		},
++	})
++	require.NoError(t, err)
++
++	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
++		t.Helper()
++		ctx, logs := logtest.SourceContext(debug)
++		s := new(Source)
++		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
++		if debug {
++			logtest.CheckInitLine(t, logs.All())
++		}
++
++		chunksCh := make(chan *sources.Chunk, 10)
++		require.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
++		require.NotEmpty(t, chunksCh)
++		return logs.All()
++	}
++
++	t.Run("debug on", func(t *testing.T) {
++		logtest.CheckSourceLines(t, runSource(t, true), testSecret, urlPassword, password)
++	})
++
++	t.Run("debug off", func(t *testing.T) {
++		logtest.CheckNoDebugLines(t, runSource(t, false))
++	})
++}
++
++func TestInit_EndpointErrors(t *testing.T) {
++	const urlPassword = "jenkinsinittesturlpassword"
++
++	tests := []struct {
++		name     string
++		endpoint string
++	}{
++		{name: "empty endpoint", endpoint: ""},
++		{name: "invalid endpoint", endpoint: "http://user:" + urlPassword + "@host:badport"},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			conn, err := anypb.New(&sourcespb.Jenkins{
++				Endpoint:   tc.endpoint,
++				Credential: &sourcespb.Jenkins_Unauthenticated{},
 +			})
++			require.NoError(t, err)
 +
-+			t.Run("main advances past the feature fork", func(t *testing.T) {
-+				ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-+				defer cancel()
-+
-+				origin := setupTestRepo(t, "advanced-main-origin")
-+				addTestFileAndCommit(t, origin, "a.txt", "a\n")
-+				addTestFileAndCommit(t, origin, "fork.txt", "fork\n")
-+				runGit(t, origin, "branch", "-M", "main")
-+				fork := gitRevParse(t, origin, "HEAD")
-+				runGit(t, origin, "switch", "-q", "-c", "feature")
-+				addTestFileAndCommit(t, origin, "feature.txt", "feature\n")
-+				featureHead := gitRevParse(t, origin, "HEAD")
-+
-+				shallow := filepath.Join(t.TempDir(), "shallow-feature")
-+				runGit(t, "", "clone", "-q", "--depth", "2", "--no-single-branch", "-b", "feature", "file://"+origin, shallow)
-+				runGit(t, origin, "switch", "-q", "main")
-+				addTestFileAndCommit(t, origin, "main-1.txt", "main 1\n")
-+				addTestFileAndCommit(t, origin, "main-2.txt", "main 2\n")
-
++			err = new(Source).Init(context.Background(), "test source", 1, 1, false, conn, 1)
++			require.Error(t, err)
++			assert.NotContains(t, err.Error(), urlPassword)
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5520** (2026-11-04): Clean up Jenkins source logging for per-source debug (@kashifkhan0771)
 - **PR #5519** (2026-11-03): Use shared logtest helpers in source debug logging tests (@kashifkhan0771)
 - **PR #5510** (2026-11-03): Clean up Postman source logging for per-source debug (@kashifkhan0771)
 - **PR #5509** (2026-11-03): Clean up GCS source logging for per-source debug (@kashifkhan0771)
 - **PR #5505** (2026-11-03): Update module go.mongodb.org/mongo-driver to v1.17.10 (@renovate[bot])
 - **PR #5504** (2026-11-03): Update module github.com/ulikunitz/xz to v0.5.17 (@renovate[bot])
-- **PR #5503** (2026-11-03): Update github.com/trufflesecurity/ldap-verify digest to 0f42b08 (@renovate[bot])
 
 ---
 
@@ -1392,28 +1709,45 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update github.com/trufflesecurity/ldap-verify digest to 0f42b08 (#5503)
+## X. Clean up Jenkins source logging for per-source debug (#5520)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/context/context.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84ee682a`: Update github.com/trufflesecurity/ldap-verify digest to 0f42b08 (#5503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93633ac7`: Clean up Jenkins source logging for per-source debug (#5520). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/context/context.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/trufflesecurity/ldap-verify v0.0.0-20261027153024-0f42b087ac22
+	if logger, ok := LoggerFromContext(parent); ok {
+		return WithLogger(parent, logger)
+// LoggerFromContext returns the logger carried by ctx, and false if it has none.
+// Unlike AddLogger, it tells the caller when there is no logger, so the caller can
+// fall back to its own logger instead of the default one. It also finds the logger
+// when ctx is a Context wrapped in a plain context.Context, for example by net/http
+// when a client has a Timeout.
+func LoggerFromContext(ctx context.Context) (logr.Logger, bool) {
+	if loggerCtx, ok := ctx.(Context); ok {
+		return loggerCtx.Logger(), true
+	}
+	logger, ok := ctx.Value(logEntryKey).(logr.Logger)
+	return logger, ok
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/trufflesecurity/ldap-verify v0.0.0-20261012152128-4a15fafb6e19
+	if logEntryVal := parent.Value(logEntryKey); logEntryVal != nil {
+		if logger, ok := logEntryVal.(logr.Logger); ok {
+			return WithLogger(parent, logger)
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84ee682a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93633ac7` are properly handled with clean fallback behavior.

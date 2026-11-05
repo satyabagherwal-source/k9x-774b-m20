@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `6badb1c8`  
+> **Source Version**: `1a192aab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:24:32.630Z  
+> **Timestamp**: 2026-11-05T01:33:22.928Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:24:31.988Z  
+> **Harvest Timestamp**: 2026-11-05T01:33:22.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3991 stars
+- **Stars / Engagement**: 3996 stars
 
 ---
 
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5065** (2026-11-04): **build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.2 to 2.22.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.3</h2> <h2>What's Changed</h2> <ul> <li>Added support for Avrea-hosted runners (enterprise tier)</li> <li>Fixed unexpected blocking of allowed connections caused by GitHub’s DNS resolver and outbound proxy experiment on GitHub-hosted Linux runners</li> <li>Added a feature flag to disable implicit AWS endpoint allowances on self-hosted Linux runners (enterprise tier)</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3">https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/46b06cea07f9e64621fdf066ba77ac6915163d43"><code>46b06ce</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/711">#711</a> from step-security/rc-46</li> <li><a href="https://github.com/step-security/harden-runner/commit/f82eb4b6de966921660011feba8a0e8ec1fe0687"><code>f82eb4b</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/710">#710</a> from h0x0er/jatin/tp-avrea</li> <
+
 - **Issue #5062** (2026-11-01): **build(deps): bump joi from 18.2.9 to 18.3.1**
   *Symptoms*: Bumps [joi](https://github.com/hapijs/joi) from 18.2.9 to 18.3.1. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hapijs/joi/commit/4009bfb93639b7da53b7cb1de2e2d8617d36d5f5"><code>4009bfb</code></a> 18.3.1</li> <li><a href="https://github.com/hapijs/joi/commit/976cf13200141af811eaf38cfb7d7ff489329ab8"><code>976cf13</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3165">#3165</a> from hapijs/fix/rename-prototype-keys</li> <li><a href="https://github.com/hapijs/joi/commit/9d821164386e22ccbf0c90aa5a68fbb5827d79ae"><code>9d82116</code></a> fix: rename to prototype-named keys</li> <li><a href="https://github.com/hapijs/joi/commit/316d08d81210d93fb0d9e5ff54ce7f731af0c052"><code>316d08d</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3164">#3164</a> from hapijs/fix/messages-proto-language</li> <li><a href="https://github.com/hapijs/joi/commit/76f5771e1afe527cfda24be0e1a920ffa54888d6"><code>76f5771</code></a> fix: reject <strong>proto</strong> as a messages language</li> <li><a href="https://github.com/hapijs/joi/commit/bc1b041e1700e355279d9b26e05856b83a10b031"><code>bc1b041</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3162">#3162</a> from hapijs/fix/email-multiple-split</li> <li><a href="https://github.com/hapijs/joi/commit/03dc1d909818503b06240dadc81e9227ed2649cf"><code>03dc1d9</code></a> fix: linear split for email multiple</li> <li><a href="ht
-
-- **Issue #5061** (2026-11-01): **build(deps-dev): bump prettier from 3.9.9 to 3.9.10**
-  *Symptoms*: Bumps [prettier](https://github.com/prettier/prettier) from 3.9.9 to 3.9.10. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/prettier/prettier/releases">prettier's releases</a>.</em></p> <blockquote> <h2>3.9.10</h2> <ul> <li>Markdown: Update <code>micromark-extension-gfm-table</code> to fix the table parse issue on performance (<a href="https://redirect.github.com/prettier/prettier/pull/20266">#20266</a> by <a href="https://github.com/fisker"><code>@​fisker</code></a>)</li> </ul> <p>🔗 <a href="https://github.com/prettier/prettier/blob/3.9.10/CHANGELOG.md#3910">Changelog</a></p> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/prettier/prettier/blob/main/CHANGELOG.md">prettier's changelog</a>.</em></p> <blockquote> <h1>3.9.10</h1> <p><a href="https://github.com/prettier/prettier/compare/3.9.9...3.9.10">diff</a></p> <h4>Markdown: Update <code>micromark-extension-gfm-table</code> to fix the table parse issue on performance (<a href="https://redirect.github.com/prettier/prettier/pull/20266">#20266</a> by <a href="https://github.com/fisker"><code>@​fisker</code></a>)</h4> <p>See <a href="https://github.com/micromark/micromark-extension-gfm-table/commit/4f43ead37b786bc531d924530d4ab4c714886267">https://github.com/micromark/micromark-extension-gfm-table/commit/4f43ead37b786bc531d924530d4ab4c714886267</a> for details.</p> </blockquote> </details> <details> <summary>Commits</summ
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,300 +709,73 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d16c3c00` (2026-11-01)
-**Commit Message**: build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061)
-
-Bumps [prettier](https://github.com/prettier/prettier) from 3.9.9 to
-3.9.10.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/prettier/prettier/releases">prettier's
-releases</a>.</em></p>
-<blockquote>
-<h2>3.9.10</h2>
-<ul>
-<li>Markdown: Update <code>micromark-extension-gfm-table</code> to fix
-the table parse issue on performance (<a
-href="https://redirect.github.com/prettier/prettier/pull/20266">#20266</a>
-by <a href="https://github.com/fisker"><code>@​fisker</code></a>)</li>
-</ul>
-<p>🔗 <a
-href="https://github.com/prettier/prettier/blob/3.9.10/CHANGELOG.md#3910">Changelog</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com/prettier/prettier/blob/main/CHANGELOG.md">prettier's
-changelog</a>.</em></p>
-<blockquote>
-<h1>3.9.10</h1>
-<p><a
-href="https://github.com/prettier/prettier/compare/3.9.9...3.9.10">diff</a></p>
-<h4>Markdown: Update <code>micromark-extension-gfm-table</code> to fix
-the table parse issue on performance (<a
-href="https://redirect.github.com/prettier/prettier/pull/20266">#20266</a>
-by <a href="https:/
-
-**File**: `package-lock.json` (modified, +4/-4)
-```diff
-@@ -11,7 +11,7 @@
-       "devDependencies": {
-         "@commitlint/cli": "^21.2.4",
-         "@commitlint/config-conventional": "^21.2.2",
--        "prettier": "3.9.9"
-+        "prettier": "3.9.10"
-       }
-     },
-     "node_modules/@alcalzone/ansi-tokenize": {
-@@ -2663,9 +2663,9 @@
-       "license": "ISC"
-     },
-     "node_modules/prettier": {
--      "version": "3.9.9",
--      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.9.tgz",
--      "integrity": "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg==",
-+      "version": "3.9.10",
-+      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
-+      "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
-       "dev": true,
-       "license": "MIT",
-       "bin": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-   "devDependencies": {
-     "@commitlint/cli": "^21.2.4",
-     "@commitlint/config-conventional": "^21.2.2",
--    "prettier": "3.9.9"
-+    "prettier": "3.9.10"
-   },
-   "allowScripts": {
-     "puppeteer@25.6.0": true
-```
-
----
-
-### Incident Patch 2: `4d82d236` (2026-11-01)
-**Commit Message**: build(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (#5059)
+### Incident Patch 1: `1a192aab` (2026-11-04)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)
 
 Bumps
-[@commitlint/cli](https://github.com/conventional-changelog/commitlint/tree/HEAD/@commitlint/cli)
-from 21.2.3 to 21.2.4.
+[step-security/harden-runner](https://github.com/step-security/harden-runner)
+from 2.22.2 to 2.22.3.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/conventional-changelog/commitlint/releases">@​commitlint/cli's
+href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
 releases</a>.</em></p>
 <blockquote>
-<h2>v21.2.4</h2>
-<h2><a
-href="https://github.com/conventional-changelog/commitlint/compare/v21.2.3...v21.2.4">21.2.4</a>
-(2026-10-18)</h2>
-<h3>Bug Fixes</h3>
+<h2>v2.22.3</h2>
+<h2>What's Changed</h2>
 <ul>
-<li>fix(load): replace config file arrays with seed arrays by <a
-href="https://github.com/escapedcat"><code>@​escapedcat</code></a> in <a
-href="https://redirect.github.com/conventional-changelog/commitlint/pull/5056">conventional-changelog/commitlint#5056</a></li>
-<li>fix: update dependency jsonc to v3 by <a
-href="https://github.com/renovate"><code>@​renovate</code></a>[bot] in
-<a
-href="https://redirect.github.com/conventional-changelog/commitlint/pull/5020">conventional-changelog/commitlint#5020</a></li>
+<li>Added support for Avrea-hosted runners (enterprise tier)</li>
+<li>Fixed unexpected blocking of allowed connections caused by GitHub’s
+DNS resolver and outbound proxy experiment on GitHub-hosted Linux
+runners</li>
+<li>Added a feature flag to disable implicit AWS endpoint allowances on
+self-hosted Linux runners (enterprise tier)</li>
 </ul>
-<h3>Performance Improvements</h3>
-<ul>
-<li>perf(load): load typescript configs with jiti directly by <a
-href="https://github.com/escap
-
-**File**: `package-lock.json` (modified, +28/-461)
-```diff
-@@ -9,7 +9,7 @@
-         "@umbrelladocs/linkspector": "^0.5.6"
-       },
-       "devDependencies": {
--        "@commitlint/cli": "^21.2.3",
-+        "@commitlint/cli": "^21.2.4",
-         "@commitlint/config-conventional": "^21.2.2",
-         "prettier": "3.9.9"
-       }
-@@ -63,16 +63,16 @@
-       }
-     },
-     "node_modules/@commitlint/cli": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/cli/-/cli-21.2.3.tgz",
--      "integrity": "sha512-5yOX6IRjcrIReCxpyAd04hgI/yhUMpVBJ/ouwFV0wk9yx5+fYRDWZWJ5h55Tbedgfol+5m2mU5nqzbB8g3v0vQ==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/cli/-/cli-21.2.4.tgz",
-+      "integrity": "sha512-g3M/wrQdElqGH5vROIeL2QiYIxrzqUkhCgsDyDlWfKEyQdCt10OyMB28W2cJtpZ+VNGMvmaN923infr1hOfyrg==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@commitlint/config-conventional": "^21.2.3",
-+        "@commitlint/config-conventional": "^21.2.4",
-         "@commitlint/format": "^21.2.3",
--        "@commitlint/lint": "^21.2.3",
--        "@commitlint/load": "^21.2.3",
-+        "@commitlint/lint": "^21.2.4",
-+        "@commitlint/load": "^21.2.4",
-         "@commitlint/read": "^21.2.3",
-         "@commitlint/types": "^21.2.3",
-         "tinyexec": "^1.0.0",
-@@ -86,9 +86,9 @@
-       }
-     },
-     "node_modules/@commitlint/config-conventional": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/config-conventional/-/config-conventional-21.2.3.tgz",
--      "integrity": "sha512-EP2n5DN2GwRWNVrLX0Jx3mpQlW5PfFi9HnD9OJ8hN/H0xFqpCFyHeGDhg+0P8/21iMMcdkcQgbNqmVklebqYsQ==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/config-conventional/-/config-conventional-21.2.4.tgz",
-+      "integrity": "sha512-IRldtwgNmR0SySR7wizFbhRmq45lPt6H3XCNTMyVN7jrPLgi8JlTRR6Eg1HLWUQt9P1Lh3k6eY25ilDa47EE6w==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -114,9 +114,9 @@
-       }
-     },
-     "node_modules/@commitlint/ensure": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/ensure/-/ensure-21.2.3.tgz",
--      "integrity": "sha512-gEjNKgRocbODI5/sMx2Qc9XOf2/zFTNV2aEK1QZ4gKDKxDC/VR7us3QtIX1C5d5xxHxx0I/tEbYbdSP1Am2LwA==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/ensure/-/ensure-21.2.4.tgz",
-+      "integrity": "sha512-woLOLV4pBMUBLyr5+MDM3WSG1r+eb2DObkysFSDxqyDUE4c6hZUOrpebJb2f8XcP3zKGJLb8H5w2suERVGI+Ag==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -166,25 +166,25 @@
-       }
-     },
-     "node_modules/@commitlint/lint": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/lint/-/lint-21.2.3.tgz",
--      "integrity": "sha512-lUZcSuVLLEDkhge9ERk8Rp+FXQtrUhCK+h328BFnzKXrTuXGdqiYMEpTlNWdZaOrjyMhMJaz354ZaWEGJxcLeg==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/lint/-/lint-21.2.4.tgz",
-+      "integrity": "sha512-HR8SGl1oEGfi/cqyBipanVY0a9CfEzIcJjPC37t7oQedaUUngw3d5E17g5Cfr2S3p6KsZM7UOHFq5fXHLRh7DQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@commitlint/is-ignored": "^21.2.3",
-         "@commitlint/parse": "^21.2.3",
--        "@commitlint/rules": "^21.2.3",
-+        "@commitlint/rules": "^21.2.4",
-         "@commitlint/types": "^21.2.3"
-       },
-       "engines": {
-         "node": ">=22.12.0"
-       }
-     },
-     "node_modules/@commitlint/load": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/load/-/load-21.2.3.tgz",
--      "integrity": "sha512-cDrL8lOo23Lk7knGzQdjbFcq7z2JgvjwV6PhbESVvEc+Fe21MeLjPKBJi8nKjg7j+jh79CVbVSUbZc104thXRw==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/load/-/load-21.2.4.tgz",
-+      "integrity": "sha512-Gi+aAW9nL8XPgvg8kIO0gZOw1/ePvpDLkv1bm8tj0RqenhNtCzk0frtctJhl41uIAP7OSx9bgQ6HCOa9En4g2Q==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -193,9 +193,9 @@
-         "@commitlint/resolve-extends": "^21.2.3",
-         "@commitlint/types": "^21.2.3",
-         "cosmiconfig": "^9.0.1",
--        "cosmiconfig-typescript-loader": "^6.1.0",
-         "es-toolkit": "^1.46.0",
-         "is-plain-obj": "^4.1.0",
-+        "jiti": "^2.6.1",
-         "picocolors": "^1.1.1"
-       },
-       "engines": {
-@@ -261,13 +261,13 @@
-       }
-     },
-     "node_modules/@commitlint/rules": {
--      "version": "21.2.3",
--      "resolved": "https://registry.npmjs.org/@commitlint/rules/-/rules-21.2.3.tgz",
--      "integrity": "sha512-5+YnI/LuTx3JDl9GjqfP2z9x96M8KKDrd+4jOel/T0L1BB3oAmBlSN8xppf63QsudiVEgR8C0gRoAMrPVrms6g==",
-+      "version": "21.2.4",
-+      "resolved": "https://registry.npmjs.org/@commitlint/rules/-/rules-21.2.4.tgz",
-+      "integrity": "sha512-wranK/aevXs/WiW4N3orQlXY4sU2pQWjRSjN7I3TsZmP146Rr4CpsG38lpyqVcbNfMgvUVGy7ffYm7nCziTUwg==",
-       "dev": true,
-       "l
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-     "@umbrelladocs/linkspector": "^0.5.6"
-   },
-   "devDependencies": {
--    "@commitlint/cli": "^21.2.3",
-+    "@commitlint/cli": "^21.2.4",
-     "@commitlint/config-conventional": "^21.2.2",
-     "prettier": "3.9.9"
-   },
-```
-
----
-
-### Incident Patch 3: `1cea8233` (2026-11-01)
-**Commit Message**: build(deps): bump joi from 18.2.9 to 18.3.1 (#5062)
-
-Bumps [joi](https://github.com/hapijs/joi) from 18.2.9 to 18.3.1.
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3">https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3</a></p>
+</blockquote>
+</details>
 <details>
 <summary>Commits</summary>
 <ul>
 <li><a
-href="https://github.com/hapijs/joi/commit/4009bfb93639b7da53b7cb1de2e2d8617d36d5f5"><code>4009bfb</code></a>
-18.3.1</li>
-<li><a
-href="https://github.com/hapijs/joi/commit/976cf13200141af811eaf38cfb7d7ff489329ab8"><code>976cf13</code></a>
+href="https://github.com/step-security/harden-runner/commit/46b06cea07f9e64621fdf066ba77ac6915163d43"><code>46b06ce</code></a>
 Merge pull request <a
-href="https://redirect.github.com/hapijs/joi/issues/3165">#3165</a> from
-hapijs/fix/rename-prototype-keys</li>
-<li><a
-href="https://github.com/hapijs/joi/commit/9d821164386e22ccbf0c90aa5a68fbb5827d79ae"><code>9d82116</code></a>
-fix: rename to prototype-named keys</li>
-<li><a
-href="https://github.com/hapijs/joi/commit/316d08d81210d93fb0d9e5ff54ce7f731af0c052"><code>316d08d</code></a>
-Merge pull request <a
-href="https://redirect.github.com/hapijs/joi/issues/3164">#3164</a> from
-hapijs/fix/messages-proto-language</li>
-<li><a
-href="https://github.com/hapijs/joi/commit/76f5771e1afe527cfda24be0e1a920ffa54888d6"><code>76f5771</code></a>
-fix: reject <strong>proto</strong> as a messages language</li>
-<li><a
-href="https://github.com/hapijs/joi/commit/bc1b041e1700e355279d
+href="ht
 
-**File**: `package-lock.json` (modified, +3/-3)
+**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
-@@ -1509,9 +1509,9 @@
-       }
-     },
-     "node_modules/joi": {
--      "version": "18.2.9",
--      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
--      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
-+      "version": "18.3.1",
-+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.3.1.tgz",
-+      "integrity": "sha512-mV9M4Llh4va3NT90p7KBtQhoZqjs8xLX7EWYE4y/GG3yLF6REbIBEHSUb0UX1JXRht2w5tiLSsvmpYc5akiqIw==",
-       "license": "BSD-3-Clause",
-       "dependencies": {
-         "@hapi/address": "^5.1.1",
+@@ -27,7 +27,7 @@ jobs:
+         target: [FuzzConfigJSON, FuzzTXTQuoted]
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ jobs:
+ 
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5065** (2026-11-04): build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (@dependabot[bot])
 - **PR #5062** (2026-11-01): build(deps): bump joi from 18.2.9 to 18.3.1 (@dependabot[bot])
 - **PR #5061** (2026-11-01): build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (@dependabot[bot])
 - **PR #5060** (closed): build(deps-dev): bump @commitlint/config-conventional from 21.2.3 to 21.2.4 (@dependabot[bot])
 - **PR #5059** (2026-11-01): build(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (@dependabot[bot])
 - **PR #5058** (2026-11-01): build(deps): bump alpine from 3.24.2 to 3.24.3 (@dependabot[bot])
-- **PR #5056** (2026-11-02): chore(p/AKAMAIEDGEDNS): upgrade to AkamaiOPEN-edgegrid-golang/v14 (@TomOnTime)
 
 ---
 
@@ -1022,34 +795,28 @@ href="https://github.com/hapijs/joi/commit/bc1b041e1700e355279d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061)
+## X. build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d16c3c00`: build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a192aab`: build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "prettier": "3.9.10"
-      "version": "3.9.10",
-      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
-      "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        "prettier": "3.9.9"
-      "version": "3.9.9",
-      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.9.tgz",
-      "integrity": "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg==",
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d16c3c00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a192aab` are properly handled with clean fallback behavior.

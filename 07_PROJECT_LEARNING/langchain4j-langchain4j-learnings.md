@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `28f8ba4a`  
+> **Source Version**: `a82bcc47`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:13:18.616Z  
+> **Timestamp**: 2026-11-04T22:20:17.164Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:13:18.407Z  
+> **Harvest Timestamp**: 2026-11-04T22:20:17.155Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13350 stars
+- **Stars / Engagement**: 13356 stars
 
 ---
 
@@ -838,1181 +838,332 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ce59cd7` (2026-11-03)
-**Commit Message**: fix(mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (#6954)
-
-## Issue
-Part of
-https://github.com/langchain4j/langchain4j/security/advisories/GHSA-89ff-7rm6-783j
+### Incident Patch 1: `a82bcc47` (2026-11-04)
+**Commit Message**: Fix VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (#6983)
 
 ## Change
-An MCP server could make the client buffer an unbounded amount of data
-by sending a message that never ends, until the client ran out of
-memory.
+Since #6964, `VertexAiGeminiStreamingChatModel` reports an unsupported
+request parameter (for example `stopSequences`) to the handler's
+`onError()` instead of throwing it from `chat(request, handler)`. The
+shared
+`AbstractStreamingChatModelIT.should_fail_if_stopSequences_parameter_is_not_supported`
+still expected the exception to be thrown, so it failed on `main` after
+waiting 30 seconds.
 
-Both network transports now limit the size of a single message received
-from the server. The limit is set with the new `maxMessageSize` builder
-option and defaults to 20 MiB.
+- `AbstractStreamingChatModelIT` gets a hook,
+`reportsUnsupportedParametersThroughOnError()` (default `false`). When a
+model returns `true`, the test checks that `chat(request, handler)` does
+not throw and that the handler's `onError()` receives the
+`UnsupportedFeatureException`.
+- `VertexAiGeminiStreamingChatModelIT` returns `true`.
 
-- `StreamableHttpMcpTransport`: the limit applies to the data of each
-SSE event (in responses and on the subsidiary channel) and to the whole
-body of any other response, such as a JSON response or the answer to a
-notification. The response parser passes lines longer than 64 KiB on in
-fragments, so the transport counts the bytes before it buffers them.
-When a message is too large, the transport closes the stream: the
-pending request fails and the subsidiary channel reconnects.
-- `WebSocketMcpTransport`: a larger message closes the connection with
-status 1009 (message too big), and all pending requests fail.
+Other streaming models are not affected.
 
-The warning that is logged in this case does not 
+## General checklist
+- [X] There are no breaking changes (API, behaviour)
+- [X] I have added unit and/or integration tests for my change
+- [ ] The tests cover both positive and negative cases
+- [ ] I have manually run all the unit and integration tests in the
+module I have added/changed, and they are all green (the c
 
-**File**: `docs/docs/tutorials/mcp.md` (modified, +12/-0)
+**File**: `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java` (modified, +19/-0)
 ```diff
-@@ -75,6 +75,14 @@ With the modern protocol (2026-07-28), notifications are received via `subscript
- It is disabled by default. If the server does not support it, the transport logs a warning and continues without it.
- If the stream breaks after being established, the transport reconnects automatically (respecting the server's `retry` value, defaulting to 5 seconds).
- 
-+**_NOTE:_** A single message received from the server can be at most 20 MiB by default: the data of one event
-+on an SSE stream (in a response or on the subsidiary channel), or the whole body of any other response, such as
-+a JSON response. If the server sends a larger message, the transport closes the stream and drops the message:
-+the pending request fails, and the subsidiary channel reconnects. This keeps a misbehaving server from filling
-+the client's memory. The size is that of the JSON text, so binary content such as images, which is base64-encoded,
-+takes about a third more than its raw size. To change the limit, set it on the builder, for example
-+`.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
-+
- #### Custom HTTP client
- 
- By default, the Streamable HTTP transport sends its requests with the JDK HTTP client
-@@ -166,6 +174,10 @@ McpTransport transport = WebSocketMcpTransport.builder()
-         .build();
- ```
- 
-+**_NOTE:_** As with the Streamable HTTP transport, a single message received from the server can be at most
-+20 MiB by default. If the server sends a larger message, the transport closes the connection and all pending
-+requests fail. To change the limit, set it on the builder, for example `.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
-+
- For the Docker stdio transport, you first need to add a module to your pom.xml:
- 
- ```xml
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/http/McpResponseParser.java` (modified, +39/-2)
-```diff
-@@ -19,9 +19,13 @@
-  * The transport handles JSON responses and retains its SSE field handling, including {@code id} and {@code retry},
-  * which would otherwise be lost when parsing with the default SSE parser.
-  * Line endings are retained separately so that non-SSE response bodies can be reconstructed without modification.
-+ * A line longer than {@link #MAX_LINE_FRAGMENT_BYTES} is passed on in several {@linkplain Line#partial() partial}
-+ * fragments, so that the transport, rather than this parser, decides how much of a line it is willing to buffer.
-  */
- final class McpResponseParser implements ServerSentEventParser {
- 
-+    static final int MAX_LINE_FRAGMENT_BYTES = 64 * 1024;
-+
-     @Override
-     public void parse(InputStream httpResponseBody, ServerSentEventListener listener) {
-         var handle = new DefaultServerSentEventParsingHandle(httpResponseBody);
-@@ -61,15 +65,36 @@ private static void emit(
-     static final class Line extends ServerSentEvent {
- 
-         private final String ending;
-+        private final boolean partial;
-+        private final int byteLength;
- 
--        private Line(String data, String ending) {
-+        private Line(String data, String ending, boolean partial, int byteLength) {
-             super(null, data);
-             this.ending = ending;
-+            this.partial = partial;
-+            this.byteLength = byteLength;
-         }
- 
-+        /**
-+         * The line terminator, or an empty string for a partial fragment or a final line without a terminator.
-+         */
-         String ending() {
-             return ending;
-         }
-+
-+        /**
-+         * Whether this is a fragment of a longer line that continues in the next {@link Line}.
-+         */
-+        boolean partial() {
-+            return partial;
-+        }
-+
-+        /**
-+         * The number of bytes received for this line or fragment, excluding the line terminator.
-+         */
-+        int byteLength() {
-+            return byteLength;
-+        }
-     }
- 
-     private static final class LineParser implements Incremental {
-@@ -97,6 +122,12 @@ public List<ServerSentEvent> feed(ByteBuffer bytes) {
-                 } else {
-                     // UTF-8 continuation bytes cannot contain CR or LF. Decode only complete lines so that
-                     // multi-byte characters split across chunks remain intact, without rescanning buffered bytes.
-+                    // A long line is split before a byte that starts a character, which keeps fragments decodable;
-+                    // a run of continuation bytes longer than any valid character is invalid UTF-8 and split anyway.
-+                    if (pending.size() >= MAX_LINE_FRAGMENT_BYTES
-+                            && ((next & 0xC0) != 0x80 || pending.size() >= MAX_LINE_FRAGMENT_BYTES + 3)) {
-+                        lines.add(fragment());
-+                    }
-                     pending.write(next);
-                 }
-             }
-@@ -113,7 +144,13 @@ public List<ServerSentEvent> flush() {
-         }
- 
-         private Line line(String ending) {
--            var line = new Line(pending.toString(UTF_8), ending);
-+            var line = new Line(pending.toString(UTF_8), ending, false, pending.size());
-+            pending.reset();
-+            return line;
-+        }
-+
-+        private Line fragment() {
-+            var line = new Line(pending.toString(UTF_8), "", true, pending.size());
-             pending.reset();
-             return line;
-         }
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/http/StreamableHttpMcpTransport.java` (modified, +82/-4)
-```diff
-@@ -1,6 +1,7 @@
- package dev.langchain4j.mcp.client.transport.http;
- 
- import static dev.langchain4j.internal.Utils.getOrDefault;
-+import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
- import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
- 
- import dev.langchain4j.Experimental;
-@@ -49,6 +50,8 @@
- public class StreamableHttpMcpTransport implements McpTransport {
-     private static final Logger LOG = LoggerFactory.getLogger(StreamableHttpMcpTransport.class);
-     private static final long DEFAULT_SUBSIDIARY_RETRY_MS = 5000;
-+    private static final int DEFAULT_MAX_MESSAGE_SIZE = 20 * 1024 * 1024;
-+    private static final int SSE_DATA_FIELD_NAME_LENGTH = "data:".length();
-     private final String url;
-     private final McpHeadersSupplier customHeadersSupplier;
-     private final boolean logResponses;
-@@ -67,6 +70,7 @@ public class StreamableHttpMcpTransport implements McpTransport {
- 
-     // Subsidiary SSE channel fields
-     private final boolean subsidiaryChannelEnabled;
-+    private final int maxMessageSize;
-     private volatile Runnable onFailureCallback;
-     private volatile boolean subsidiaryChannelEstablished;
-     private final AtomicReference<String> subsidiaryLastEventId = new AtomicReference<>();
-@@ -85,6 +89,8 @@ public StreamableHttpMcpTransport(StreamableHttpMcpTransport.Builder builder) {
-         customHeadersSupplier = getOrDefault(builder.customHeadersSupplier, (i) -> Map.of());
-         sslContext = builder.sslContext;
-         subsidiaryChannelEnabled = builder.subsidiaryChannelEnabled;
-+        maxMessageSize =
-+                ensureGreaterThanZero(getOrDefault(builder.maxMessageSize, DEFAULT_MAX_MESSAGE_SIZE), "maxMessageSize");
-         executor = getOrDefault(builder.executor, DefaultExecutorProvider.getDefaultExecutor());
-         responseExecutor = builder.executor;
-         if (builder.httpClientBuilder != null && builder.httpClient != null) {
-@@ -544,8 +550,12 @@ private final class HttpExchange implements Flow.Subscriber<HttpStreamingEvent>
-         private final CapturedContext requestContext;
-         private final AtomicBoolean finished = new AtomicBoolean();
-         private final StringBuilder body = new StringBuilder();
-+        private long bodyBytes;
-         private final StringBuilder sseData = new StringBuilder();
-         private boolean sseDataPresent;
-+        private long sseDataBytes;
-+        private final StringBuilder sseLine = new StringBuilder();
-+        private long sseLineBytes;
-         private volatile Flow.Subscription subscription;
-         private boolean sseResponse;
-         private boolean responseReceived;
-@@ -611,9 +621,9 @@ private void handleNext(HttpStreamingEvent event) {
-                             errorResponse.statusCode(), "Unexpected status code: " + errorResponse.statusCode()));
-                 } else if (event instanceof McpResponseParser.Line line) {
-                     if (sseResponse) {
--                        handleSseLine(line.data());
-+                        handleSseFragment(line);
-                     } else {
--                        body.append(line.data()).append(line.ending());
-+                        handleBodyFragment(line);
-                     }
-                 }
-             } catch (RuntimeException e) {
-@@ -644,7 +654,50 @@ private void onResponse(SuccessfulHttpResponse response) {
-             }
-         }
- 
--        private void handleSseLine(String line) {
-+        /**
-+         * Buffers the body of a response that is not an SSE stream, failing the exchange once it exceeds
-+         * {@code maxMessageSize}, so that a server cannot make the client buffer an unbounded amount of data.
-+         */
-+        private void handleBodyFragment(McpResponseParser.Line fragment) {
-+            bodyBytes += fragment.byteLength() + fragment.ending().length();
-+            if (bodyBytes > maxMessageSize) {
-+                failMessageTooLarge();
-+                return;
-+            }
-+            body.append(fragment.data()).append(fragment.ending());
-+        }
-+
-+        /**
-+         * Reassembles lines that the parser split into fragments, failing the exchange once the data of the
-+         * current event and the line being read exceed {@code maxMessageSize}, so that a server cannot
-+         * make the client buffer an unbounded amount of data. The line being read still contains its field name,
-+         * so a {@code data:} line that carries exactly {@code maxMessageSize} bytes is accepted.
-+         */
-+        private void handleSseFragment(McpResponseParser.Line fragment) {
-+            sseLineBytes += fragment.byteLength();
-+            if (sseDataBytes + sseLineBytes > maxMessageSize + SSE_DATA_FIELD_NAME_LENGTH) {
-+                failMessageTooLarge();
-+                return;
-+            }
-+            sseLine.append(fragment.data());
-+            if (fragment.partial()) {
-+                return;
-+            }
-+            String line = sseLine.toString(
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/websocket/WebSocketMcpListener.java` (modified, +59/-0)
-```diff
-@@ -1,33 +1,56 @@
- package dev.langchain4j.mcp.client.transport.websocket;
- 
-+import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
-+
- import dev.langchain4j.mcp.client.transport.McpOperationHandler;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
- import java.net.http.WebSocket;
- import java.nio.ByteBuffer;
- import java.util.concurrent.CompletionStage;
-+import java.util.concurrent.TimeUnit;
- 
- 
- public class WebSocketMcpListener implements WebSocket.Listener {
- 
-+    private static final int MESSAGE_TOO_BIG = 1009;
-+
-     private final McpOperationHandler operationHandler;
-     private final Logger trafficLogger;
-     private final boolean logResponses;
-     private final Runnable onCloseCallback;
-     private final Logger logger = LoggerFactory.getLogger(WebSocketMcpListener.class);
-     private final Runnable onFailureCallback;
-+    private final int maxMessageSize;
- 
- 
-     public WebSocketMcpListener(McpOperationHandler operationHandler,
-                                 Logger trafficLogger,
-                                 boolean logResponses,
-                                 Runnable onCloseCallback,
-                                 Runnable onFailureCallback) {
-+        this(operationHandler, trafficLogger, logResponses, onCloseCallback, onFailureCallback,
-+                WebSocketMcpTransport.DEFAULT_MAX_MESSAGE_SIZE);
-+    }
-+
-+    /**
-+     * Creates a listener that closes the connection when a single message received from the server
-+     * is larger than {@code maxMessageSize} bytes.
-+     *
-+     * @since 1.24.0
-+     */
-+    public WebSocketMcpListener(McpOperationHandler operationHandler,
-+                                Logger trafficLogger,
-+                                boolean logResponses,
-+                                Runnable onCloseCallback,
-+                                Runnable onFailureCallback,
-+                                int maxMessageSize) {
-         this.operationHandler = operationHandler;
-         this.trafficLogger = trafficLogger;
-         this.logResponses = logResponses;
-         this.onCloseCallback = onCloseCallback;
-         this.onFailureCallback = onFailureCallback;
-+        this.maxMessageSize = ensureGreaterThanZero(maxMessageSize, "maxMessageSize");
-     }
- 
-     @Override
-@@ -37,13 +60,20 @@ public void onOpen(WebSocket webSocket) {
-     }
- 
-     private volatile StringBuilder receivedMessage = new StringBuilder();
-+    private long receivedMessageBytes;
- 
-     @Override
-     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-+        receivedMessageBytes += utf8Length(data);
-+        if (receivedMessageBytes > maxMessageSize) {
-+            closeBecauseMessageIsTooBig(webSocket);
-+            return null;
-+        }
-         receivedMessage.append(data);
-         if(last) {
-             String completeMessage = receivedMessage.toString();
-             receivedMessage = new StringBuilder();
-+            receivedMessageBytes = 0;
-             if (logResponses) {
-                 trafficLogger.info("< " + completeMessage);
-             }
-@@ -57,6 +87,35 @@ public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean
-         return null;
-     }
- 
-+    private void closeBecauseMessageIsTooBig(WebSocket webSocket) {
-+        receivedMessage = new StringBuilder();
-+        receivedMessageBytes = 0;
-+        String reason = "Message from the MCP server exceeds the maximum size of " + maxMessageSize
-+                + " bytes; use WebSocketMcpTransport.Builder.maxMessageSize to raise the limit";
-+        logger.warn("Closing the WebSocket connection: {}", reason);
-+        operationHandler.cancelAllPendingOperations(reason);
-+        onCloseCallback.run();
-+        webSocket
-+                .sendClose(MESSAGE_TOO_BIG, "Message too big")
-+                .orTimeout(5, TimeUnit.SECONDS)
-+                .whenComplete((ws, error) -> webSocket.abort());
-+    }
-+
-+    private static long utf8Length(CharSequence text) {
-+        long length = 0;
-+        for (int i = 0; i < text.length(); i++) {
-+            char c = text.charAt(i);
-+            if (c < 0x80) {
-+                length += 1;
-+            } else if (c < 0x800 || Character.isSurrogate(c)) {
-+                length += 2;
-+            } else {
-+                length += 3;
-+            }
-+        }
-+        return length;
-+    }
-+
-     @Override
-     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-         logger.debug("Websocket connection closed with status {} and reason: {}", statusCode, reason);
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/transport/websocket/WebSocketMcpTransport.java` (modified, +27/-1)
-```diff
-@@ -1,6 +1,7 @@
- package dev.langchain4j.mcp.client.transport.websocket;
- 
- import static dev.langchain4j.internal.Utils.getOrDefault;
-+import static dev.langchain4j.internal.ValidationUtils.ensureGreaterThanZero;
- import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
- 
- import dev.langchain4j.mcp.client.McpCallContext;
-@@ -31,6 +32,7 @@
- 
- public class WebSocketMcpTransport implements McpTransport {
-     private static final Logger LOG = LoggerFactory.getLogger(WebSocketMcpTransport.class);
-+    static final int DEFAULT_MAX_MESSAGE_SIZE = 20 * 1024 * 1024;
-     private final String url;
-     private final McpHeadersSupplier headersSupplier;
-     private final boolean logResponses;
-@@ -39,6 +41,7 @@ public class WebSocketMcpTransport implements McpTransport {
-     private volatile McpOperationHandler operationHandler;
-     private volatile McpInitializeRequest initializeRequest;
-     private final Duration connectTimeout;
-+    private final int maxMessageSize;
-     private volatile SSLContext sslContext;
-     private volatile HttpClient httpClient;
-     private final Executor executor;
-@@ -52,6 +55,8 @@ public WebSocketMcpTransport(Builder builder) {
-         this.logRequests = builder.logRequests;
-         this.trafficLog = getOrDefault(builder.logger, McpLoggers.traffic());
-         this.connectTimeout = getOrDefault(builder.timeout, Duration.ofSeconds(60));
-+        this.maxMessageSize =
-+                ensureGreaterThanZero(getOrDefault(builder.maxMessageSize, DEFAULT_MAX_MESSAGE_SIZE), "maxMessageSize");
-         this.headersSupplier = getOrDefault(builder.headersSupplier, (i) -> Map.of());
-         this.executor = builder.executor;
-         this.sslContext = builder.sslContext;
-@@ -125,7 +130,8 @@ private synchronized CompletableFuture<WebSocket> startWebSocket() {
-                             // so all running operations were lost anyway.
-                             webSocketRef.set(null);
-                         },
--                        actionOnFailure));
-+                        actionOnFailure,
-+                        maxMessageSize));
-         // if the initialize method was already called and we know the necessary data for initialization, schedule
-         // a new initialization right away
-         if (this.initializeRequest != null) {
-@@ -271,6 +277,7 @@ public static class Builder {
-         private Duration timeout;
-         private SSLContext sslContext;
-         private McpHeadersSupplier headersSupplier;
-+        private Integer maxMessageSize;
- 
-         public Builder logResponses(boolean logResponses) {
-             this.logResponses = logResponses;
-@@ -331,6 +338,25 @@ public Builder headersSupplier(McpHeadersSupplier headersSupplier) {
-             return this;
-         }
- 
-+        /**
-+         * The maximum size, in bytes, of a single message received from the server.
-+         * When a server sends a larger message, the transport closes the connection with status 1009
-+         * (message too big) and all pending requests fail. This protects the client against servers that send
-+         * an endless or huge message, which would otherwise be buffered in memory until it runs out.
-+         * The size is that of the JSON text, so binary content such as images, which is base64-encoded,
-+         * takes about a third more than its raw size.
-+         * Defaults to 20 MiB.
-+         *
-+         * @param maxMessageSize the maximum message size in bytes, must be greater than zero;
-+         *                       {@code null} means the default
-+         * @return this builder
-+         * @since 1.24.0
-+         */
-+        public Builder maxMessageSize(Integer maxMessageSize) {
-+            this.maxMessageSize = maxMessageSize;
-+            return this;
-+        }
-+
-         public WebSocketMcpTransport build() {
-             return new WebSocketMcpTransport(this);
-         }
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/StreamableHttpMcpTransportMaxMessageSizeTest.java` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+package dev.langchain4j.mcp.client.transport;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+import com.sun.net.httpserver.HttpExchange;
-+import com.sun.net.httpserver.HttpServer;
-+import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
-+import dev.langchain4j.mcp.protocol.McpListToolsRequest;
-+import java.io.IOException;
-+import java.io.OutputStream;
-+import java.net.InetSocketAddress;
-+import java.nio.charset.StandardCharsets;
-+import java.util.Collections;
-+import java.util.Map;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.ConcurrentHashMap;
-+import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.TimeUnit;
-+import org.junit.jupiter.api.AfterEach;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.ValueSource;
-+
-+/**
-+ * A server must not be able to make the client buffer an unbounded amount of data
-+ * by sending a message that never ends, neither as an SSE event nor as a JSON response.
-+ */
-+class StreamableHttpMcpTransportMaxMessageSizeTest {
-+
-+    private static final int LIMIT = 256 * 1024;
-+    private static final String RESPONSE_PREFIX =
-+            "{\"jsonrpc\":\"2.0\",\"id\":7,\"result\":{\"tools\":[],\"padding\":\"";
-+    private static final String RESPONSE_SUFFIX = "\"}}";
-+
-+    private HttpServer server;
-+    private StreamableHttpMcpTransport transport;
-+    private final Map<Long, CompletableFuture<String>> pendingOperations = new ConcurrentHashMap<>();
-+
-+    @FunctionalInterface
-+    interface ResponseWriter {
-+        void write(OutputStream out) throws IOException;
-+    }
-+
-+    private void startServer(String contentType, ResponseWriter writer) throws IOException {
-+        startServer(contentType, writer, LIMIT);
-+    }
-+
-+    private void startServer(String contentType, ResponseWriter writer, Integer maxMessageSize)
-+            throws IOException {
-+        server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
-+        server.createContext("/mcp", exchange -> respond(exchange, contentType, writer));
-+        server.start();
-+        transport = StreamableHttpMcpTransport.builder()
-+                .url("http://localhost:" + server.getAddress().getPort() + "/mcp")
-+                .setHttpVersion1_1()
-+                .maxMessageSize(maxMessageSize)
-+                .build();
-+        transport.start(new McpOperationHandler(
-+                pendingOperations,
-+                Collections::emptyList,
-+                transport,
-+                null,
-+                () -> {},
-+                null,
-+                () -> {},
-+                null,
-+                null,
-+                null,
-+                null,
-+                null,
-+                null));
-+    }
-+
-+    private static void respond(HttpExchange exchange, String contentType, ResponseWriter writer) throws IOException {
-+        exchange.getRequestBody().readAllBytes();
-+        exchange.getResponseHeaders().set("Content-Type", contentType);
-+        exchange.sendResponseHeaders(200, 0);
-+        try (OutputStream out = exchange.getResponseBody()) {
-+            writer.write(out);
-+        } catch (IOException e) {
-+            // the client closed the stream
-+        }
-+    }
-+
-+    /**
-+     * Writes the given chunk until the client closes the connection (or a safety cap far above the limit is reached).
-+     */
-+    private static void writeEndlessly(OutputStream out, String chunk) throws IOException {
-+        byte[] bytes = chunk.getBytes(StandardCharsets.UTF_8);
-+        for (long written = 0; written < 64L * LIMIT; written += bytes.length) {
-+            out.write(bytes);
-+            out.flush();
-+        }
-+    }
-+
-+    @AfterEach
-+    void tearDown() throws IOException {
-+        if (transport != null) {
-+            transport.close();
-+        }
-+        if (server != null) {
-+            server.stop(0);
-+        }
-+    }
-+
-+    @Test
-+    void delivers_a_message_spanning_several_line_fragments_below_the_limit() throws Exception {
-+        String padding = "x".repeat(LIMIT / 2);
-+        startServer(
-+                "text/event-stream",
-+                out -> out.write(("data:" + RESPONSE_PREFIX + padding + RESPONSE_SUFFIX + "\n\n")
-+                        .getBytes(StandardCharsets.UTF_8)));
-+
-+        CompletableFuture<String> response = transport.sendRequest(new McpListToolsRequest(7L, null));
-+
-+        assertThat(response.get(10, TimeUnit.SECONDS)).isEqualTo(RESPONSE_PREFIX + padding + RESPONSE_SUFFIX);
-+    }
-+
-+    @Test
-+    void fails_on_a_line_that_never_ends() throws Exception {
-+        startServer("text/event-stream", out -> {
-+            out.write("data: ".getBytes(StandardCharsets.UTF_8));
-+            writeEndlessly(out, "x".repeat(8192));
-+        });
-+
-+        CompletableFuture<String> response = transport.s
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/StreamableHttpMcpTransportSpiTest.java` (modified, +46/-0)
-```diff
-@@ -604,6 +604,52 @@ void should_use_supplied_client_for_subsidiary_channel_and_resume_with_event_id(
-         assertThat(reconnect.isCancelled()).isTrue();
-     }
- 
-+    @Test
-+    void should_reconnect_subsidiary_channel_when_a_message_exceeds_the_maximum_size() throws Exception {
-+        start(builder().subsidiaryChannel(true).maxMessageSize(1024));
-+        CompletableFuture<String> initialized = transport.sendInitializeRequest(new McpInitializeRequest(0L));
-+        StreamExchange initialization = httpClient.nextExchange();
-+        initialization.open(200, Map.of("Content-Type", List.of("application/json")));
-+        initialization.body(INITIALIZE_RESULT);
-+        initialization.complete();
-+        StreamExchange notification = httpClient.nextExchange();
-+        notification.open(202, Map.of());
-+        notification.complete();
-+
-+        StreamExchange channel = httpClient.nextExchange();
-+        channel.open(200, Map.of("Content-Type", List.of("text/event-stream")));
-+        assertThat(initialized.get(5, TimeUnit.SECONDS)).isEqualTo(INITIALIZE_RESULT);
-+        channel.body("retry: 0\n\ndata: " + "x".repeat(600) + "\n");
-+        channel.body("data: " + "x".repeat(600) + "\n");
-+
-+        assertThat(channel.isCancelled()).isTrue();
-+        StreamExchange reconnect = httpClient.nextExchange();
-+        assertThat(reconnect.request().method()).isEqualTo(HttpMethod.GET);
-+        transport.close();
-+    }
-+
-+    @ParameterizedTest
-+    @ValueSource(strings = {"text/event-stream", "application/json"})
-+    void should_limit_the_response_to_a_notification(String contentType) throws Exception {
-+        start(builder().maxMessageSize(1024));
-+        CompletableFuture<String> initialized = transport.sendInitializeRequest(new McpInitializeRequest(0L));
-+        StreamExchange initialization = httpClient.nextExchange();
-+        initialization.open(200, Map.of("Content-Type", List.of("application/json")));
-+        initialization.body(INITIALIZE_RESULT);
-+        initialization.complete();
-+        StreamExchange notification = httpClient.nextExchange();
-+        notification.open(200, Map.of("Content-Type", List.of(contentType)));
-+
-+        notification.body(("data: " + "x".repeat(600) + "\n").repeat(2));
-+
-+        assertThat(notification.isCancelled()).isTrue();
-+        assertThatThrownBy(() -> initialized.get(5, TimeUnit.SECONDS))
-+                .isInstanceOf(ExecutionException.class)
-+                .cause()
-+                .isInstanceOf(IllegalStateException.class)
-+                .hasMessageContaining("exceeds the maximum size of 1024 bytes");
-+    }
-+
-     @Test
-     void should_handle_responses_from_supplied_client_on_configured_executor() throws Exception {
-         ExecutorService executor = Executors.newSingleThreadExecutor(task -> new Thread(task, "mcp-test-executor"));
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/transport/http/McpResponseParserTest.java` (modified, +48/-2)
-```diff
-@@ -11,6 +11,7 @@
- import java.io.InputStream;
- import java.nio.ByteBuffer;
- import java.util.ArrayList;
-+import java.util.Arrays;
- import java.util.List;
- import org.junit.jupiter.api.Test;
+@@ -16,6 +16,7 @@
+ import org.junit.jupiter.api.condition.EnabledIf;
  import org.junit.jupiter.params.ParameterizedTest;
-@@ -119,14 +120,59 @@ void incremental_handles_direct_buffers_and_large_unterminated_lines() {
-         String body = "x".repeat(100_000) + "🦋";
-         byte[] bytes = body.getBytes(UTF_8);
-         var incremental = parser.incremental();
-+        List<ServerSentEvent> actual = new ArrayList<>();
-         for (int offset = 0; offset < bytes.length; offset += 31) {
-             var chunk = ByteBuffer.allocateDirect(Math.min(31, bytes.length - offset));
-             chunk.put(bytes, offset, chunk.capacity()).flip();
--            assertThat(incremental.feed(chunk)).isEmpty();
-+            actual.addAll(incremental.feed(chunk));
-             assertThat(chunk.hasRemaining()).isFalse();
-         }
-+        actual.addAll(incremental.flush());
-+
-+        assertThat(actual).hasSize(2);
-+        assertThat(((McpResponseParser.Line) actual.get(0)).partial()).isTrue();
-+        assertThat(((McpResponseParser.Line) actual.get(1)).partial()).isFalse();
-+        assertThat(reconstruct(actual)).isEqualTo(body);
-+    }
+ import org.junit.jupiter.params.provider.MethodSource;
++import org.mockito.ArgumentCaptor;
  
--        assertThat(incremental.flush()).extracting(ServerSentEvent::data).containsExactly(body);
-+    @Test
-+    void splits_long_lines_into_bounded_fragments_at_character_boundaries() {
-+        int max = McpResponseParser.MAX_LINE_FRAGMENT_BYTES;
-+        // two-byte characters, offset by one byte so that a fragment cannot end exactly at the limit
-+        String line = "x" + "ž".repeat(max * 2);
-+        String body = line + "\nnext\n";
-+
-+        List<ServerSentEvent> lines = parse(body);
-+
-+        assertThat(reconstruct(lines)).isEqualTo(body);
-+        assertThat(lines).allSatisfy(event -> {
-+            var fragment = (McpResponseParser.Line) event;
-+            assertThat(fragment.byteLength()).isEqualTo(fragment.data().getBytes(UTF_8).length);
-+            assertThat(fragment.byteLength()).isLessThanOrEqualTo(max + 3);
-+        });
-+        assertThat(lines)
-+                .extracting(event -> ((McpResponseParser.Line) event).partial())
-+                .containsExactly(true, true, true, false, false);
-+        assertThat(lines).extracting(ServerSentEvent::data).last().isEqualTo("next");
-+    }
-+
-+    @Test
-+    void bounds_fragments_of_invalid_utf8() {
-+        byte[] bytes = new byte[McpResponseParser.MAX_LINE_FRAGMENT_BYTES * 3];
-+        Arrays.fill(bytes, (byte) 0x80);
-+        var incremental = parser.incremental();
-+
-+        List<ServerSentEvent> lines = new ArrayList<>(incremental.feed(ByteBuffer.wrap(bytes)));
-+        lines.addAll(incremental.flush());
-+
-+        assertThat(lines).hasSizeGreaterThan(1);
-+        assertThat(lines)
-+                .allSatisfy(event -> assertThat(((McpResponseParser.Line) event).byteLength())
-+                        .isLessThanOrEqualTo(McpResponseParser.MAX_LINE_FRAGMENT_BYTES + 3));
-+        assertThat(lines.stream()
-+                        .mapToInt(event -> ((McpResponseParser.Line) event).byteLength())
-+                        .sum())
-+                .isEqualTo(bytes.length);
-     }
- 
-     @Test
-```
-
----
-
-### Incident Patch 2: `2635ca0a` (2026-11-02)
-**Commit Message**: fix(agentic): honor @Agent(optional = true) on non-AI agents (#6924)
-
-## Issue
-
-Fixes #6921
-
-## Change
-
-`@Agent(optional = true)` was only wired for AI agents:
-`AgentUtil.nonAiAgentToExecutor` never read `annotation.optional()`, and
-`NonAiAgentInstance` had no `optional` field, so a non-AI agent declared
-`optional = true` still failed the whole agentic system with
-`MissingArgumentException` when one of its arguments was missing from
-the scope, instead of being silently skipped.
-
-The skip machinery in `AgentExecutor.internalExecute` is already shared
-by both kinds of agents, so this change only carries the flag from the
-`@Agent` annotation into `NonAiAgentInstance`: a new `optional` field
-with an `optional()` override, a constructor overload that takes it (the
-existing constructors default to `false`), and the flag threaded through
-the `AgentUtil.nonAiAgentInvoker` overloads. The `@HumanInTheLoop`
-creation path passes `false` explicitly, matching its annotation, which
-has no `optional` attribute.
-
-Out of scope: the programmatic `AgentSpecsProvider` and
-`AgenticScopeFunction` APIs cannot declare an agent optional (they
-expose no `optional()` accessor); only the `@Agent` annotation pa
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/AgenticServices.java` (modified, +9/-7)
-```diff
-@@ -322,7 +322,7 @@ public static A2AClientBuilder<UntypedAgent> a2aBuilder(String a2aServerUrl, Str
-      * @return a new A2AClientBuilder instance
-      */
-     public static <T> A2AClientBuilder<T> a2aBuilder(String a2aServerUrl, Class<T> agentServiceClass) {
--        return A2AService.get().a2aBuilder(a2aServerUrl,null, agentServiceClass);
-+        return A2AService.get().a2aBuilder(a2aServerUrl, null, agentServiceClass);
-     }
- 
-     /**
-@@ -874,10 +874,12 @@ private static AgentExecutor createA2AClientAgent(Class<?> agentServiceClass, Me
- 
-     private static AgentExecutor createRegistryAgent(Class<?> agentServiceClass, Method registryMethod) {
-         if (activationCondition(agentServiceClass) != null) {
--            throw new AgenticSystemConfigurationException("An @ActivationCondition is not supported on the @RegistryAgent "
--                    + agentServiceClass.getName() + ", because its agent is taken already built from the registry. "
--                    + "Set the activation condition when building the agent registered as '"
--                    + registryMethod.getAnnotation(RegistryAgent.class).value() + "'.");
-+            throw new AgenticSystemConfigurationException(
-+                    "An @ActivationCondition is not supported on the @RegistryAgent "
-+                            + agentServiceClass.getName()
-+                            + ", because its agent is taken already built from the registry. "
-+                            + "Set the activation condition when building the agent registered as '"
-+                            + registryMethod.getAnnotation(RegistryAgent.class).value() + "'.");
-         }
-         String registryName = registryMethod.getAnnotation(RegistryAgent.class).value();
-         AgentInstance agent = AgentsRegistry.get().getAgent(registryName);
-@@ -943,8 +945,7 @@ private static AgentExecutor createMcpClientAgent(Class<?> agentServiceClass, Me
-         var mcpAgent = mcpMethod.getAnnotation(McpClientAgent.class);
- 
-         Object mcpClient = selectMethod(
--                        agentServiceClass,
--                        method -> method.isAnnotationPresent(McpClientSupplier.class))
-+                        agentServiceClass, method -> method.isAnnotationPresent(McpClientSupplier.class))
-                 .map(method -> {
-                     checkReturnType(method, Object.class);
-                     return invokeSupplierWithResolvers(agentServiceClass, method, Object.class);
-@@ -1008,6 +1009,7 @@ private static AgentExecutor createHumanInTheLoopAgent(Class<?> agentServiceClas
-                 humanInTheLoop.description(),
-                 humanInTheLoop.outputKey(),
-                 humanInTheLoop.async(),
-+                false,
-                 activationCondition(agentServiceClass));
-         return new AgentExecutor(agentInvoker, humanInTheLoopBuilder.build());
-     }
-```
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java` (modified, +17/-3)
-```diff
-@@ -139,11 +139,19 @@ public static AgentExecutor nonAiAgentToExecutor(Object agent, Method agenticMet
-         String description = isNullOrBlank(annotation.description()) ? annotation.value() : annotation.description();
-         String outputKey = AgentUtil.outputKey(annotation.outputKey(), annotation.typedOutputKey());
-         return new AgentExecutor(
--                nonAiAgentInvoker(agent, agenticMethod, name, description, outputKey, annotation.async()), agent);
-+                nonAiAgentInvoker(
-+                        agent, agenticMethod, name, description, outputKey, annotation.async(), annotation.optional()),
-+                agent);
-     }
- 
-     private static AgentInvoker nonAiAgentInvoker(
--            Object agent, Method agenticMethod, String name, String description, String outputKey, boolean async) {
-+            Object agent,
-+            Method agenticMethod,
-+            String name,
-+            String description,
-+            String outputKey,
-+            boolean async,
-+            boolean optional) {
-         if (agent instanceof AgentSpecsProvider spec) {
-             return AgentInvoker.fromSpec(spec, agenticMethod, name);
-         }
-@@ -156,6 +164,7 @@ private static AgentInvoker nonAiAgentInvoker(
-                     description,
-                     outputKey,
-                     async,
-+                    optional,
-                     DeclarativeUtil.activationCondition(agentClass));
-         }
-         // the parameters of an agent passed as an instance are not provided by a SupplierParameterResolver
-@@ -165,12 +174,13 @@ private static AgentInvoker nonAiAgentInvoker(
-                 description,
-                 outputKey,
-                 async,
-+                optional,
-                 DeclarativeUtil.activationCondition(agent.getClass()));
-     }
- 
-     public static AgentInvoker nonAiAgentInvoker(
-             Method agenticMethod, String name, String description, String outputKey, boolean async) {
--        return nonAiAgentInvoker(agenticMethod, name, description, outputKey, async, null);
-+        return nonAiAgentInvoker(agenticMethod, name, description, outputKey, async, false, null);
-     }
- 
-     public static AgentInvoker nonAiAgentInvoker(
-@@ -179,6 +189,7 @@ public static AgentInvoker nonAiAgentInvoker(
-             String description,
-             String outputKey,
-             boolean async,
-+            boolean optional,
-             AgentCondition activationCondition) {
-         return AgentInvoker.fromMethod(
-                 new NonAiAgentInstance(
-@@ -188,6 +199,7 @@ public static AgentInvoker nonAiAgentInvoker(
-                         agenticMethod.getGenericReturnType(),
-                         outputKey,
-                         async,
-+                        optional,
-                         argumentsFromMethod(agenticMethod),
-                         null,
-                         activationCondition),
-@@ -205,6 +217,7 @@ public static AgentInvoker nonAiAgentInvoker(
-             String description,
-             String outputKey,
-             boolean async,
-+            boolean optional,
-             AgentCondition activationCondition) {
-         Method agenticMethod = parameters.method();
-         NonAiAgentInstance agentInstance = new NonAiAgentInstance(
-@@ -214,6 +227,7 @@ public static AgentInvoker nonAiAgentInvoker(
-                 agenticMethod.getGenericReturnType(),
-                 outputKey,
-                 async,
-+                optional,
-                 parameters.frameworkArguments(),
-                 null,
-                 activationCondition);
-```
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/NonAiAgentInstance.java` (modified, +82/-32)
-```diff
-@@ -1,5 +1,7 @@
- package dev.langchain4j.agentic.internal;
- 
-+import static dev.langchain4j.agentic.observability.ComposedAgentListener.composeWithInherited;
-+
- import dev.langchain4j.agentic.observability.AgentListener;
- import dev.langchain4j.agentic.observability.ComposedAgentListener;
- import dev.langchain4j.agentic.planner.AgentArgument;
-@@ -12,15 +14,14 @@
+ import java.util.ArrayList;
  import java.util.List;
- import java.util.Objects;
- 
--import static dev.langchain4j.agentic.observability.ComposedAgentListener.composeWithInherited;
--
- public class NonAiAgentInstance implements AgentInstance, InternalAgent {
-     private final Class<?> type;
-     private final String name;
-     private final String description;
-     private final Type outputType;
-     private final String outputKey;
-     private final boolean async;
-+    private final boolean optional;
-     private final List<AgentArgument> arguments;
-     private final AgentCondition activationCondition;
- 
-@@ -29,22 +30,50 @@ public class NonAiAgentInstance implements AgentInstance, InternalAgent {
-     private InternalAgent parent;
-     private String agentId;
- 
--    public NonAiAgentInstance(Class<?> type, String name, String description,
--            Type outputType, String outputKey, boolean async, List<AgentArgument> arguments,
-+    public NonAiAgentInstance(
-+            Class<?> type,
-+            String name,
-+            String description,
-+            Type outputType,
-+            String outputKey,
-+            boolean async,
-+            List<AgentArgument> arguments,
-             AgentListener listener) {
--        this(type, name, description, outputType, outputKey, async, arguments, listener, null);
--    }
--
--    public NonAiAgentInstance(Class<?> type, String name, String description,
--            Type outputType, String outputKey, boolean async, List<AgentArgument> arguments,
--            AgentListener listener, AgentCondition activationCondition) {
-+        this(type, name, description, outputType, outputKey, async, false, arguments, listener, null);
-+    }
-+
-+    public NonAiAgentInstance(
-+            Class<?> type,
-+            String name,
-+            String description,
-+            Type outputType,
-+            String outputKey,
-+            boolean async,
-+            List<AgentArgument> arguments,
-+            AgentListener listener,
-+            AgentCondition activationCondition) {
-+        this(type, name, description, outputType, outputKey, async, false, arguments, listener, activationCondition);
-+    }
-+
-+    public NonAiAgentInstance(
-+            Class<?> type,
-+            String name,
-+            String description,
-+            Type outputType,
-+            String outputKey,
-+            boolean async,
-+            boolean optional,
-+            List<AgentArgument> arguments,
-+            AgentListener listener,
-+            AgentCondition activationCondition) {
-         this.type = type;
-         this.name = name;
-         this.agentId = name;
-         this.description = description;
-         this.outputType = outputType;
-         this.outputKey = outputKey;
-         this.async = async;
-+        this.optional = optional;
-         this.arguments = arguments;
-         this.listener = listener;
-         this.activationCondition = activationCondition;
-@@ -67,7 +96,9 @@ public List<AgentInstance> subagents() {
- 
-     @Override
-     public AgenticSystemTopology topology() {
--        return type == HumanInTheLoop.class ? AgenticSystemTopology.HUMAN_IN_THE_LOOP : AgenticSystemTopology.NON_AI_AGENT;
-+        return type == HumanInTheLoop.class
-+                ? AgenticSystemTopology.HUMAN_IN_THE_LOOP
-+                : AgenticSystemTopology.NON_AI_AGENT;
+@@ -166,6 +167,14 @@ protected boolean supportsStreamingCancellation() {
+         return true;
      }
  
++    /**
++     * Whether the model reports a request it cannot handle (e.g. an unsupported parameter) to the handler's
++     * {@code onError()} instead of throwing it from {@code chat(request, handler)}.
++     */
++    protected boolean reportsUnsupportedParametersThroughOnError() {
++        return false;
++    }
++
      @Override
-@@ -105,6 +136,11 @@ public boolean async() {
-         return async;
+     protected boolean assertThreads() {
+         return streamingModes().equals(List.of(StreamingMode.HANDLER));
+@@ -399,6 +408,16 @@ public void onComplete() {
+                     .hasMessageContaining("not support");
+             assertThat(onNextCalled).isFalse();
+             assertThat(onCompleteCalled).isFalse();
++        } else if (reportsUnsupportedParametersThroughOnError()) {
++            StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
++            assertThatCode(() -> model.chat(chatRequest, handler)).doesNotThrowAnyException();
++            ArgumentCaptor<Throwable> error = ArgumentCaptor.forClass(Throwable.class);
++            verify(handler, timeout(30_000)).onError(error.capture());
++            assertThat(error.getValue())
++                    .isExactlyInstanceOf(UnsupportedFeatureException.class)
++                    .hasMessageContaining("stopSequences")
++                    .hasMessageContaining("not support");
++            verify(handler, never()).onCompleteResponse(any());
+         } else {
+             StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
+             assertThatThrownBy(() -> model.chat(chatRequest, handler))
+```
+
+**File**: `langchain4j-vertex-ai-gemini/src/test/java/dev/langchain4j/model/vertexai/gemini/common/VertexAiGeminiStreamingChatModelIT.java` (modified, +5/-0)
+```diff
+@@ -48,6 +48,11 @@ protected boolean supportsStopSequencesParameter() {
+         return false; // TODO implement
      }
  
 +    @Override
-+    public boolean optional() {
-+        return optional;
++    protected boolean reportsUnsupportedParametersThroughOnError() {
++        return true;
 +    }
 +
      @Override
-     public List<AgentArgument> arguments() {
-         return arguments;
-@@ -122,7 +158,9 @@ public AgentListener listener() {
+     protected boolean supportsToolChoiceRequired() {
+         return false; // TODO implement
+```
+
+---
+
+### Incident Patch 2: `aad19f6c` (2026-11-04)
+**Commit Message**: fix(mcp): coerce scope values to the declared parameter types (#6938)
+
+## Issue
+Closes #6937
+
+## Change
+
+`McpClientAgentInvoker`'s typed path built its invocation arguments
+inline, duplicating a subset of `AgentUtil.agentInvocationArguments()`:
+it read each value from the scope and threw `MissingArgumentException`
+when a required one was absent (added in #5477), but it skipped
+`adaptValueToType()`, skipped `AgentArgument.defaultValue()`, and never
+wrote the coerced value back to the scope.
+
+This delegates the typed path to
+`AgentUtil.agentInvocationArguments(agenticScope, arguments)`, which is
+what `A2AClientAgentInvoker` already does. Behaviour for the untyped
+path is unchanged.
+
+Concretely, an agent method declared as
+
+```java
+@Agent(description = "List records")
+String list(@V("limit") int limit);
+```
+
+used to fail with `AgentInvocationException: Failed to invoke agent
+method ... / Caused by: IllegalArgumentException: argument type
+mismatch` whenever `limit` sat in the scope as a `String`, and now sends
+`{"limit":5}`. The hand-written `inputKeys` field and helper are gone
+because nothing else used them.
+
+## Tests
+
+Two tests in `McpAgentTest`:
+
+- `typed_mcp_agent_coerces_scope_va
+
+**File**: `langchain4j-agentic-mcp/src/main/java/dev/langchain4j/agentic/mcp/McpClientAgentInvoker.java` (modified, +2/-29)
+```diff
+@@ -1,5 +1,6 @@
+ package dev.langchain4j.agentic.mcp;
  
-     @Override
-     public void registerInheritedParentListener(AgentListener parentListener) {
--        if (parentListener != null && parentListener.inheritedBySubagents() && isNewListener(listener, parentListener)) {
-+        if (parentListener != null
-+                && parentListener.inheritedBySubagents()
-+                && isNewListener(listener, parentListener)) {
-             listener = composeWithInherited(listener(), parentListener);
-         }
++import static dev.langchain4j.agentic.internal.AgentUtil.agentInvocationArguments;
+ import static dev.langchain4j.agentic.internal.AgentUtil.argumentsFromMethod;
+ import static dev.langchain4j.agentic.internal.AgentUtil.untypedAgentInvocationArguments;
+ 
+@@ -17,15 +18,12 @@
+ import dev.langchain4j.agentic.scope.AgenticScope;
+ import java.lang.reflect.Method;
+ import java.lang.reflect.Type;
+-import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+-import java.util.stream.Stream;
+ 
+ public class McpClientAgentInvoker implements AgentInvoker {
+ 
+     private String agentId;
+-    private final String[] inputKeys;
+     private final Map<String, String> inputDescriptions;
+ 
+     private final McpClientInstance mcpClientInstance;
+@@ -43,21 +41,12 @@ public McpClientAgentInvoker(McpClientInstance mcpClientInstance, Method method)
+         this.toolName = mcpClientInstance.toolName();
+         this.toolDescription = mcpClientInstance.toolDescription();
+         this.agentId = name();
+-        this.inputKeys = inputKeys(mcpClientInstance);
+         this.inputDescriptions = mcpClientInstance.inputDescriptions();
+         this.arguments = isUntyped()
+                 ? mcpClientInstance.arguments()
+                 : McpSchemaToType.mergeDescriptions(argumentsFromMethod(method), inputDescriptions);
      }
-@@ -142,34 +180,46 @@ public boolean equals(Object obj) {
-         if (obj == this) return true;
-         if (obj == null || obj.getClass() != this.getClass()) return false;
-         var that = (NonAiAgentInstance) obj;
--        return Objects.equals(this.type, that.type) &&
--                Objects.equals(this.name, that.name) &&
--                Objects.equals(this.description, that.description) &&
--                Objects.equals(this.outputType, that.outputType) &&
--                Objects.equals(this.outputKey, tha
+ 
+-    private String[] inputKeys(McpClientInstance mcpClientInstance) {
+-        return isUntyped()
+-                ? mcpClientInstance.inputKeys()
+-                : Stream.of(method.getParameters())
+-                        .map(AgentInvoker::parameterName)
+-                        .toArray(String[]::new);
+-    }
+-
+     @Override
+     public String name() {
+         return toolName;
+@@ -128,23 +117,7 @@ public AgentInvocationArguments toInvocationArguments(AgenticScope agenticScope)
+             }
+             return untypedAgentInvocationArguments(agenticScope);
+         }
+-        return agentInvocationArguments(agenticScope);
+-    }
+-
+-    private AgentInvocationArguments agentInvocationArguments(AgenticScope agenticScope) {
+-        Map<String, Object> namedArgs = new HashMap<>();
+-        Object[] positionalArgs = new Object[inputKeys.length];
+-
+-        int i = 0;
+-        for (String argName : inputKeys) {
+-            Object argValue = agenticScope.readState(argName);
+-            if (argValue == null) {
+-                throw new MissingArgumentException(argName);
+-            }
+-            positionalArgs[i++] = argValue;
+-            namedArgs.put(argName, argValue);
+-        }
+-        return new AgentInvocationArguments(namedArgs, positionalArgs);
++        return agentInvocationArguments(agenticScope, arguments);
+     }
+ 
+     private boolean isUntyped() {
 ```
 
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/NonAiOptionalAgentTest.java` (added, +109/-0)
+**File**: `langchain4j-agentic-mcp/src/test/java/dev/langchain4j/agentic/mcp/McpAgentTest.java` (modified, +52/-0)
 ```diff
-@@ -0,0 +1,109 @@
-+package dev.langchain4j.agentic;
+@@ -20,6 +20,7 @@
+ import dev.langchain4j.agentic.scope.AgentInvocation;
+ import dev.langchain4j.agentic.scope.AgenticScope;
+ import dev.langchain4j.agentic.scope.ResultWithAgenticScope;
++import dev.langchain4j.internal.Json;
+ import dev.langchain4j.mcp.client.McpClient;
+ import dev.langchain4j.model.chat.request.json.JsonAnyOfSchema;
+ import dev.langchain4j.model.chat.request.json.JsonArraySchema;
+@@ -809,4 +810,55 @@ void typed_mcp_agent_in_workflow_throws_on_missing_required_input() {
+                 .isInstanceOf(MissingArgumentException.class)
+                 .hasMessageContaining("language");
+     }
 +
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
++    public interface TypedLimitAgent {
 +
-+import dev.langchain4j.agentic.agent.MissingArgumentException;
-+import dev.langchain4j.agentic.declarative.SequenceAgent;
-+import dev.langchain4j.agentic.scope.ResultWithAgenticScope;
-+import dev.langchain4j.service.V;
-+import java.util.Map;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+
-+/**
-+ * The {@code optional} attribute of {@code @Agent} is honored for non-AI agents: when one of its
-+ * arguments is missing from the agentic scope, the agent is skipped instead of failing the whole
-+ * agentic system.
-+ */
-+class NonAiOptionalAgentTest {
-+
-+    static final AtomicInteger FIX_INVOCATIONS = new AtomicInteger();
-+
-+    public static class Analyzer {
-+
-+        @Agent(description = "Analyzes the request", outputKey = "analysis")
-+        public static String analyze(@V("request") String request) {
-+            return "analysis of " + request;
-+        }
++        @Agent(description = "List records")
++        String list(@V("limit") int limit);
 +    }
 +
-+    public static class FixDelegator {
-+
-+        @Agent(description = "Delegates the fix to a remote service", outputKey = "fix", optional = true)
-+        public static String applyFix(@V("repoUrl") String repoUrl) {
-+            FIX_INVOCATIONS.incrementAndGet();
-+            return "fixed " + repoUrl;
-+        }
-+    }
-+
-+    public static class MandatoryFixDelegator {
-+
-+        @Agent(description = "Delegates the fix to a remote service", outputKey = "fix")
-+        public static String applyFix(@V("repoUrl") String repoUrl) {
-+            FIX_INVOCATIONS.incrementAndGet();
-+            return "fixed " + repoUrl;
-+        }
-+    }
-+
-+    public interface Pipeline {
-+
-+        @SequenceAgent(
-+                outputKey = "analysis",
-+                subAgents = {Analyzer.class, FixDelegator.class})
-+        ResultWithAgenticScope<String> process(@V("request") String request);
-+    }
-+
-+    @BeforeEach
-+    void resetInvocations() {
-+        FIX_INVOCATIONS.set(0);
-+    }
-+
-+    @Test
-+    void optional_non_ai_agent_is_skipped_when_its_argument_is_missing() {
-+        UntypedAgent workflow = AgenticServices.sequenceBuilder()
-+                .subAgents(Analyzer.class, FixDelegator.class)
-+                .outputKey("analysis")
++    private static McpClient mockLimitClient() {
++        McpClient mcpClient = mock(McpClient.class);
++        ToolSpecification toolSpec = ToolSpecification.builder()
++                .name("list_records")
++                .description("List records")
++                .parameters(JsonObjectSchema.builder()
++                        .addProperty("limit", new JsonIntegerSchema())
++                        .build())
 +                .build();
-+
-+        assertThat(workflow.invoke(Map.of("request", "the request"))).isEqualTo("analysis of the request");
-+        assertThat(FIX_INVOCATIONS).hasValue(0);
++        when(mcpClient.listTools()).thenReturn(List.of(toolSpec));
++        mockToolResult(mcpClient, "ok");
++        return mcpClient;
 +    }
 +
 +    @Test
-+    void optional_non_ai_agent_runs_when_its_argument_is_present() {
-+        UntypedAgent workflow = AgenticServices.sequenceBuilder()
-+                .subAgents(Analyzer.class, FixDelegator.class)
-+                .outputKey("fix")
-+                .build();
++    void typed_mcp_agent_coerces_scope_values_to_the_declared_parameter_types() {
++        McpClient mcpClient = mockLimitClient();
 +
-+        assertThat(workflow.invoke(Map.of("request", "the request", "repoUrl", "http://repo")))
-+                .isEqualTo("fixed http://repo");
-+        assertThat(FIX_INVOCATIONS).hasValue(1);
++        TypedLimitAgent records =
++                McpAgent.builder(mcpClient, TypedLimitAgent.class).build();
++        UntypedAgent pipeline =
++                AgenticServices.sequenceBuilder().subAgents(records).build();
++
++        // A previous agent's String output leaves a String in the scope, while the agent method declares an int.
++        pipeline.invoke(Map.of("limit", "5"));
++
++        ArgumentCaptor<ToolExecutionRequest> captor = ArgumentCaptor.forClass(ToolExecutionRequest.class);
++        verify(mcpClient).executeTool(captor.capture());
++
++        assertThat(Json.fromJson(captor.getValue().arguments(), Map.class)).containsEntry("limit", 5);
 +    }
 +
 +    @Test
-+    void non_optional_non_ai_agent_fails_when_its_argument_is_missing() {
-+        UntypedAgent workflow = AgenticServices.sequenceBuilder()
-+                .subAgents(Analyzer.class, MandatoryFixDelegator.class)
-+                .outputKey("analysis")
-+                .build();
++    void typed_mcp_agent_rejects_a_scope_value_that_cannot_be_coerced() {
++        McpClient mcpClient = mockLimitClient();
 +
-+        assertThat(assertThrows(
-+                        MissingArgumentException.class, () -> workflow.invoke(Map.of("request", "the request"))))
-+                .hasMessageContaining("repoUrl");
++        TypedLimitAgent records =
++                McpAgent.builder(mcpClient, TypedLimitAgent.class).build();
++        UntypedAgent pipeline =
++                AgenticServices.sequenceBuilder().subAgents(records).build();
++
++        assertThatThrownBy(() -> pipeline.invoke(Map.of("limit", "not-a-number")))
++                .isInstanceOf(NumberFormatException.class);
 +    }
-+
-+    @Test
-+    void declarative_optional_non_ai_agent_is_skipped_in_a_sequence() {
-+        Pipeline pipeline = AgenticServices.createAgenticSystem(Pipeline.class);
-+
-+        ResultWithAgenticScope<String> result = pipeline.process("the request");
-+
-+        assertThat(result.result()).isEqualTo("analysis of the request");
-+        assertThat(result.agenticScope().readState("fix")).isNull();
-+        assertThat(result.agenticScope().readState("analysis")).isEqualTo("analysis of the request");
-+        assertThat(FIX_INVOCATIONS).hasValue(0);
-+    }
-+}
+ }
 ```
 
 ---
 
-### Incident Patch 3: `ee159440` (2026-11-03)
-**Commit Message**: fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (#6949)
+### Incident Patch 3: `ac10f8c4` (2026-11-04)
+**Commit Message**: Build the modules before generating Javadoc in the docs workflow (#6968)
 
-This PR contains the following updates:
+## Issue
+No linked issue. The "Documentation: build and deploy" workflow failed
+on main after #6112:
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [com.google.code.gson:gson](https://redirect.github.com/google/gson) |
-`2.14.0` → `2.15.0` |
-![age](https://developer.mend.io/api/mc/badges/age/maven/com.google.code.gson:gson/2.15.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.google.code.gson:gson/2.14.0/2.15.0?slim=true)
-|
+```
+Could not find artifact dev.langchain4j:langchain4j-hibernate:jar:tests:1.24.0-beta34-SNAPSHOT in central-portal-snapshots
+```
 
----
+## Change
+The workflow ran `mvn javadoc:aggregate -DskipTests` without building
+the modules. So Maven took the repository's own artifacts from Central
+snapshots, and the build failed whenever main was ahead of the latest
+snapshot:
+- after a new test-jar: `langchain4j-hibernate:tests`, added in #6112;
+- after a version bump: `langchain4j-core:tests:1.24.0-SNAPSHOT`, on
+2026-10-29.
 
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/2069) for more information.
+It now runs `mvn -B -DskipTests -DembeddingsSkipDownload -T8C
+test-compile javadoc:aggregate`. Maven uses the classes compiled in the
+same build, the same way the Java CI workflow does (`test
+javadoc:aggregate`). The Javadoc is also built from the current code,
+not from the last snapshot.
 
----
+Checked locally on main (a3f92b0d6):
+- the old command fails with the same error as CI;
+- the new command passes, and the generated Javadoc includes
+`MilvusDatabaseKind` from the new module.
 
-### Configuration
+The docs job takes a bit 
 
-📅 **Schedule**: (UTC)
-
-- Branch creation
-  - At any time (no schedule defined)
-- Automerge
-  - At any time (no schedule defined)
-
-🚦 **Automerge**: Disabled by config. Please merge this manually once you
-are satisfied.
-
-♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the
-rebase/retry checkbox.
-
-🔕 **Ignore**: Close this PR and you won't be reminded about this update
-again.
-
----
-
-- [ ] <!-- rebase-check -->If you want to rebase/r
-
-**File**: `langchain4j-agentic-a2a/pom.xml` (modified, +1/-1)
+**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@
-             <dependency>
-                 <groupId>com.google.code.gson</groupId>
-                 <artifactId>gson</artifactId>
--                <version>2.14.0</version>
-+                <version>2.15.0</version>
-             </dependency>
-             <dependency>
-                 <groupId>com.google.errorprone</groupId>
+@@ -34,7 +34,7 @@ jobs:
+           cache: 'maven'
+ 
+       - name: Generate Javadoc
+-        run: mvn javadoc:aggregate -DskipTests
++        run: mvn -B -DskipTests -DembeddingsSkipDownload -T8C test-compile javadoc:aggregate
+ 
+       - name: Set up Node.js
+         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6983** (2026-11-04): Fix VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (@dliubarskyi)
+- **PR #6968** (2026-11-04): Build the modules before generating Javadoc in the docs workflow (@dliubarskyi)
+- **PR #6964** (2026-11-04): Pass the AI Service invocation id to model, embedding store and content retriever listeners (@dliubarskyi)
+- **PR #6963** (2026-11-04): Limit the size of messages received by the Streamable HTTP and WebSocket MCP transports (backport of #6954 to 1.19.x) (@jmartisk)
+- **PR #6962** (2026-11-04): Limit the size of messages received by the Streamable HTTP and WebSocket MCP transports (backport of #6954 to 1.11.x) (@jmartisk)
 - **PR #6959** (2026-11-03): Add ScoringModelListener to observe scoring (re-ranking) model calls (@dliubarskyi)
-- **PR #6954** (2026-11-03): fix(mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (@jmartisk)
-- **PR #6949** (2026-11-03): fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (@renovate[bot])
-- **PR #6945** (2026-11-02): pgvector: reject `java.util.Date` and `java.sql.Timestamp` filter values with a clear message (@dliubarskyi)
-- **PR #6944** (2026-11-03): chore(deps): update dependency com.diffplug.spotless:spotless-maven-plugin to v2.46.1 (@renovate[bot])
-- **PR #6943** (2026-11-03): fix(deps): update dependency com.couchbase.client:java-client to v3.13.0 (@renovate[bot])
 
 ---
 
@@ -2032,32 +1183,39 @@ again.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): limit the size of messages received by the Streamable HTTP and WebSocket t
+## X. VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through o
 
 **RULE**:
-When implementing operations in `docs/docs/tutorials/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ce59cd7`: mcp): limit the size of messages received by the Streamable HTTP and WebSocket transports (#6954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a82bcc47`: VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (#6983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/mcp.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-core/src/test/java/dev/langchain4j/model/chat/common/AbstractStreamingChatModelIT.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-**_NOTE:_** A single message received from the server can be at most 20 MiB by default: the data of one event
-on an SSE stream (in a response or on the subsidiary channel), or the whole body of any other response, such as
-a JSON response. If the server sends a larger message, the transport closes the stream and drops the message:
-the pending request fails, and the subsidiary channel reconnects. This keeps a misbehaving server from filling
-the client's memory. The size is that of the JSON text, so binary content such as images, which is base64-encoded,
-takes about a third more than its raw size. To change the limit, set it on the builder, for example
-`.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
+import org.mockito.ArgumentCaptor;
+    /**
+     * Whether the model reports a request it cannot handle (e.g. an unsupported parameter) to the handler's
+     * {@code onError()} instead of throwing it from {@code chat(request, handler)}.
+     */
+    protected boolean reportsUnsupportedParametersThroughOnError() {
+        return false;
+    }
 
-**_NOTE:_** As with the Streamable HTTP transport, a single message received from the server can be at most
-20 MiB by default. If the server sends a larger message, the transport closes the connection and all pending
-requests fail. To change the limit, set it on the builder, for example `.maxMessageSize(50 * 1024 * 1024)` for 50 MiB.
-
+        } else if (reportsUnsupportedParametersThroughOnError()) {
+            StreamingChatResponseHandler handler = mock(StreamingChatResponseHandler.class);
+            assertThatCode(() -> model.chat(chatRequest, handler)).doesNotThrowAnyException();
+            ArgumentCaptor<Throwable> error = ArgumentCaptor.forClass(Throwable.class);
+            verify(handler, timeout(30_000)).onError(error.capture());
+            assertThat(error.getValue())
+                    .isExactlyInstanceOf(UnsupportedFeatureException.class)
+                    .hasMessageContaining("stopSequences")
+                    .hasMessageContaining("not support");
+            verify(handler, never()).onCompleteResponse(any());
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2067,4 +1225,4 @@ requests fail. To change the limit, set it on the builder, for example `.maxMess
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ce59cd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a82bcc47` are properly handled with clean fallback behavior.

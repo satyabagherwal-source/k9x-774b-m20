@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `8deb3872`  
+> **Source Version**: `351f4207`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:09:22.676Z  
+> **Timestamp**: 2026-11-04T11:09:30.729Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:09:21.920Z  
+> **Harvest Timestamp**: 2026-11-04T11:09:29.922Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6782 stars
+- **Stars / Engagement**: 6784 stars
 
 ---
 
@@ -1651,13 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10118** (2026-11-03): **fix: include peer context in distributed query errors**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None.  ## What's changed and what's your intention?  Distributed information-schema query failures can report `Failed to do Flight get` without identifying the datanode, making errors such as DNS failures difficult to investigate.  Include the target address in the `FlightGet` error message and attach the datanode peer (ID and address) to information-extension query errors. This preserves node context in the propagated error chain.  This change improves error reporting only; it does not change DNS resolution, connection handling, or retry behavior.  Validation: - Rust formatting and `git diff --check` passed. - Client and catalog tests were blocked because the configured Cargo build directory was read-only.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [x] Merge during the nightly window <!-- nightly-merge --> 
+- **Issue #10149** (2026-11-04): **fix: test**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  Minor fixture fix  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [x] Merge during the nightly window <!-- nightly-merge -->  <!-- Eligible PRs enter the merge queue hourly from 02:10 through 08:10 Beijing time (UTC+8), up to five per run. Uncheck to opt out and remove the `merge nightly` label; this does not enable immediate merging. Maintainers can use **Merge when ready** to merge earlier. Changing this checkbox does not cancel an existing queue entry or manually enabled auto-merge. --> 
 
-- **Issue #10117** (2026-11-03): **fix(promql): land the native admission change on narthex (#10071)**
-  *Symptoms*: Carries #10071 onto `narthex`.  #10071 merged into its own base branch, and #10072 had already merged into `narthex` using the head recorded before that, so `narthex` got the serde change without the admission change. This merge brings `narthex` into the branch, leaving only #10071's five files as the delta.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **15** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9974: fix\(sqlness\)\: isolate protocol sessions between cases](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9974) - [PR 9995: test\(promql\)\: cover global topk variants and hybrid range gaps](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9995) - [PR 9996: feat\(flow\)\: support caller\-owned fenced increm
+- **Issue #10146** (2026-11-04): **fix(ci): increase nightly JSONBench runner root volume**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  [Failed Nightly JSONBench run](https://github.com/GreptimeTeam/greptimedb/actions/runs/41781882983/job/126415640930)  ## What's changed and what's your intention?  Nightly JSONBench exhausted the runner's 8 GiB AMI-default root volume, crashing the GitHub Actions worker with `No space left on device`. The dataset volume is mounted read-only; database storage, WAL, and compaction files still use the root volume.  Configure a 500 GiB root volume for Nightly JSONBench and forward the optional `ec2-volume-size` input through the shared start-runner action. Other workflows retain the AMI default when they omit this input.  Validation: YAML parsing, input wiring checks across all seven start-runner calls, and `git diff --check` passed. The AWS workflow has not been rerun; actual peak disk usage remains unmeasured. Rust tests and build checks were not run because this change only updates Actions YAML.  ## PR Checklist  - [x] I have written the necessary rustdoc comments. (Not applicable: Actions YAML only.) - [x] I have added the necessary unit tests and integration tests. (Static YAML and input wiring checks; no new runtime logic.) - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. (The new action input is optional.) - [x] Schema or data changes are backward compatible. (No schema or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1674,250 +1672,645 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a09ebc70` (2026-11-02)
-**Commit Message**: feat(postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs) (#10050)
+### Incident Patch 1: `351f4207` (2026-11-04)
+**Commit Message**: fix(meta): invalidate all datanode tables on address change (#9986)
 
-feat(postgres): OTLP binary payload ingest via COPY FROM STDIN
+When a datanode restarts with a new address, metasrv invalidated cached
+table routes only for the tables in that heartbeat's region stats. The
+first heartbeat after a restart often reports few or no regions (e.g.
+with init_regions_in_background), so frontends kept dialing the old
+address until metadata_cache_ttl expired.
 
-COPY FROM STDIN WITH (FORMAT otlp [, signal '...'] [, <options>]) ingests
-one binary OTLP protobuf message over the postgres wire protocol — the
-first binary COPY format (wire format code 1) — for all three signals:
+Read the previous address via prev_kv when saving it, and when it
+changed (or a failed save of the same epoch is retried) invalidate
+every table registered for the datanode in __dn_table.
 
-- signal 'metrics' (default): ExportMetricsServiceRequest, completed
-  through OpenTelemetryProtocolHandler::metrics with the same context
-  preparation as the HTTP route (OtlpMetricCtx from the options); rows
-  are accepted data points.
-- signal 'traces': ExportTraceServiceRequest through ::traces, with the
-  trace table name and pipeline name/version/params from the options
-  (an explicit pipeline name is required, exactly like the HTTP traces
-  endpoint); rows are accepted spans.
-- signal 'logs': ExportLogsServiceRequest through ::logs, with the log
-  table name, pipeline options and extract keys from the options, and
-  the same OtlpLogDirect default as the HTTP route; rows are affected
-  rows.
+Signed-off-by: Floris Smit <[REDACTED_EMAIL]>
+Co-authored-by: Weny Xu <[REDACTED_EMAIL]>
 
-The WITH options carry what the HTTP endpoints take as request headers,
-reusing the HTTP path's own parsing helper
-
-**File**: `src/frontend/src/server.rs` (modified, +2/-0)
+**File**: `src/meta-srv/AGENTS.md` (modified, +2/-0)
 ```diff
-@@ -409,6 +409,7 @@ where
- 
-         if opts.postgres.enable {
-             // Init PosgresSQL Server
-+            let with_metric_engine = effective_prom_store_options(&opts).with_metric_engine;
-             let opts = &opts.postgres;
-             let pg_addr = parse_addr(&opts.addr)?;
- 
-@@ -430,6 +431,7 @@ where
-                     Some(self.instance.process_manager().clone()),
-                 )
-                 .with_influxdb_handler(instance.clone())
-+                .with_otlp_handler(instance.clone(), with_metric_engine)
-                 .with_batching_enabled(postgres_batching),
-             ) as Box<dyn Server>;
- 
+@@ -43,6 +43,8 @@ abstraction, election, key encoding, and the DDL manager live in `common-meta`;
+   `handler/utils.rs` for per-node address persistence. Datanode address
+   updates retain the statistics handler's per-node ordering. Address epochs are
+   confirmed only after a successful save; cache invalidation remains best effort.
++  A changed datanode address invalidates every table on that node (`__dn_table`),
++  not only the tables in the current heartbeat.
+ - **Datanode process fence**: before the handler chain, the leader's heartbeat
+   session checks a datanode request's non-zero `node_epoch` against the highest
+   one recorded under `__datanode_epoch`, read and raised through the leader
 ```
 
-**File**: `src/servers/src/postgres.rs` (modified, +15/-1)
+**File**: `src/meta-srv/src/handler/collect_stats_handler.rs` (modified, +205/-8)
 ```diff
-@@ -44,7 +44,9 @@ use session::context::Channel;
- use self::auth_handler::{PgUserProviderSource, ZeroPidSecretKeyGenerator};
- use self::handler::DefaultQueryParser;
- use crate::query_handler::sql::ServerSqlQueryHandlerRef;
--use crate::query_handler::{CopyInHandlerRef, InfluxdbLineProtocolHandlerRef};
-+use crate::query_handler::{
-+    CopyInHandlerRef, InfluxdbLineProtocolHandlerRef, OpenTelemetryProtocolHandlerRef,
-+};
- 
- pub(crate) struct GreptimeDBStartupParameters {
-     version: String,
-@@ -86,6 +88,12 @@ pub struct PostgresServerHandlerInner {
-     /// Absent on servers not wired for it; such connections reject the
-     /// influxdb format when a copy starts.
-     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
-+    /// Executes the OTLP payload flushed by a table-less
-+    /// `COPY FROM STDIN WITH (FORMAT otlp)` — the same handler the
-+    /// OTLP/HTTP endpoints use — plus the with-metric-engine flag the
-+    /// HTTP wiring passes from its options.
-+    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
-+    otlp_with_metric_engine: bool,
-     force_tls: bool,
-     auth_driver: AuthDriver<Arc<GreptimeDBStartupParameters>, UserInfoRef>,
-     /// SCRAM selected; failures get the uniform metric label.
-@@ -106,6 +114,10 @@ pub(crate) struct MakePostgresServerHandler {
-     copy_in_handler: CopyInHandlerRef,
-     #[builder(default)]
-     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
-+    #[builder(default)]
-+    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
-+    #[builder(default)]
-+    otlp_with_metric_engine: bool,
-     user_provider: Option<UserProviderRef>,
-     #[builder(default = "Arc::new(GreptimeDBStartupParameters::new())")]
-     param_provider: Arc<GreptimeDBStartupParameters>,
-@@ -157,6 +169,8 @@ impl MakePostgresServerHandler {
-                 .map(|p| Arc::new(PgUserProviderSource::new(p))),
-             copy_in_handler: self.copy_in_handler.clone(),
-             influxdb_handler: self.influxdb_handler.clone(),
-+            otlp_handler: self.otlp_handler.clone(),
-+            otlp_with_metric_engine: self.otlp_with_metric_engine,
-             force_tls: self.force_tls,
-             auth_driver: AuthDriver::new(self.param_provider.clone())
-                 .with_pid_secret_key_generator(Arc::new(ZeroPidSecretKeyGenerator)),
-```
-
-**File**: `src/servers/src/postgres/copy_in/codec.rs` (modified, +7/-0)
-```diff
-@@ -55,6 +55,7 @@ use pgwire::error::PgWireResult;
- 
- use crate::postgres::copy_in::csv::CsvCodec;
- use crate::postgres::copy_in::influxdb::InfluxdbOptions;
-+use crate::postgres::copy_in::otlp::OtlpOptions;
- 
- /// A resolved COPY FROM STDIN format with its validated options.
- #[derive(Debug, Clone)]
-@@ -67,6 +68,12 @@ pub(super) enum CopyFormat {
-     /// pipeline the HTTP write endpoints use (one COPY statement is one
-     /// ingestion request; streaming ingest is not supported).
-     Influxdb(InfluxdbOptions),
-+    /// Table-less, **binary** OTLP: one `ExportMetricsServiceRequest`,
-+    /// `ExportTraceServiceRequest` or `ExportLogsServiceRequest`
-+    /// protobuf message, buffered whole and completed through the
-+    /// matching OTLP pipeline the OTLP/HTTP endpoints use. Advertises
-+    /// wire format code 1.
-+    Otlp(OtlpOptions),
- }
- 
- /// A parsed, insertable row: one gRPC value per targeted column, in COPY
-```
-
-**File**: `src/servers/src/postgres/copy_in/mod.rs` (modified, +222/-9)
-```diff
-@@ -35,19 +35,22 @@ mod codec;
- mod csv;
- mod influxdb;
- mod options;
-+mod otlp;
- mod parse;
- 
- use std::fmt::Debug;
+@@ -16,14 +16,17 @@ use std::cmp::Ordering;
  use std::sync::Arc;
  
- use crate::influxdb::InfluxdbRequest;
-+use crate::query_handler::PipelineHandlerRef;
- use api::helper::ColumnDataTypeWrapper;
- use api::v1::column_def::options_from_column_schema;
- use api::v1::{
-     Row as GrpcRow, RowInsertRequest, RowInsertRequests, Rows as GrpcRows, SemanticType,
- };
- use async_trait::async_trait;
- use codec::{CopyFormat, RecordParser};
-+use common_catalog::consts::{TRACE_TABLE_NAME, TRACE_TABLE_NAME_SESSION_KEY};
- use common_grpc::precision::Precision;
- use common_query::OutputData;
- use common_telemetry::{info, warn};
-@@ -57,12 +60,15 @@ use datatypes::data_type::DataType;
- use datatypes::schema::{ColumnSchema, SchemaRef};
- use futures::{Sink, SinkExt, stream};
- use influxdb::InfluxdbOptions;
-+use otel_arrow_rust::proto::opentelemetry::collector::metrics::v1::ExportMetricsServiceRequest;
-+use otlp::{OtlpOptions, OtlpSignal};
- use pgwire::api::copy::CopyHandler;
- use pgwire::api::results::{CopyResponse, Response, Tag};
- use pgwire::api::{ClientInfo, PgWireConnectionState};
- use pgwire::error::{ErrorInfo, PgWireError, PgWireResult};
- use pgwire::messages::PgWireBackendMessage;
- use pgwire::messages::copy::{CopyData, CopyDone, CopyFail};
-+use prost::Message;
- use session::context::QueryContextRef;
- use table::metadata::TableInfo;
+ use api::v1::meta::{HeartbeatRequest, Peer, Role};
++use common_meta::DatanodeId;
+ use common_meta::datanode::{DatanodeStatKey, DatanodeStatValue, Stat};
+ use common_meta::instruction::CacheIdent;
+ use common_meta::key::MetadataKey;
+-use common_meta::key::node_address::NodeAddressKey;
++use common_meta::key::node_address::{NodeAddressKey, NodeAddressValue};
+ use common_meta::rpc::store::PutRequest;
+ use common_telemetry::{error, warn};
+ use dashmap::DashMap;
++use futures::TryStreamExt;
+ use snafu::ResultExt;
++use store_api::storage::TableId;
+ use tokio::sync::Mutex;
  
-@@ -84,11 +90,10 @@ use crate::postgres::utils::convert_err;
- /// the per-batch fixed costs negligible.
- pub(crate) const COPY_IN_FLUSH_ROWS: usize = 32768;
- 
--/// Upper bound of an influxdb COPY FROM STDIN payload. One COPY
--/// statement is one bounded ingestion request (the whole payload is
--/// buffered like one HTTP write body); a larger import is multiple COPY
--/// statements. Streaming ingest may arrive later, with framing owned by
--/// the shared line-protocol parser rather than the COPY layer.
-+/// Upper bound of a table-less COPY FROM STDIN payload (influxdb line
-+/// protocol, OTLP). One COPY statement is one bounded ingestion request
-+/// (the whole payload is buffered like one HTTP request body); a larger
-+/// import is multiple COPY statements.
- pub(crate) const COPY_IN_MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
- 
- /// Builds a format from the format-neutral option set.
-@@ -102,6 +107,8 @@ const REGISTERED_FORMATS: &[(&str, FormatBuilder)] = &[
-     ("csv", csv::build_csv_codec),
-     ("influxdb", influxdb::build_influxdb_codec),
-     ("influxdb_line", influxdb::build_influxdb_codec),
-+    ("otlp", otlp::build_otlp_codec),
-+    ("otlp_metrics", otlp::build_otlp_codec),
-     ("text", build_unimplemented_text_codec),
-     ("txt", build_unimplemented_text_codec),
-     ("binary", build_unimplemented_binary_codec),
-@@ -268,6 +275,10 @@ enum Payload {
-         data: Vec<u8>,
-         precision: Option<Precision>,
-     },
-+    /// The whole buffered OTLP payload with its validated options,
-+    /// decoded and completed as one request at `CopyDone` through the
-+    /// matching OTLP pipeline.
-+    Otlp { data: Vec<u8>, options: OtlpOptions },
+ use crate::error::{self, Result};
+@@ -196,14 +199,43 @@ async fn update_datanode_address(updater: &NodeAddressUpdater, ctx: &Context, st
+         .inspect_err(|e| {
+             error!(e; "Failed to update datanode address, node: {}, address: {}", stat.id, stat.addr);
+         });
+-    if let Ok(true) = updated {
+-        let cache_idents = stat
+-            .table_ids()
+-            .into_iter()
+-            .map(CacheIdent::TableId)
+-            .collect::<Vec<_>>();
+-        utils::invalidate_address_caches(ctx, stat.id, &cache_idents).await;
++    let Ok(Some(saved)) = updated else {
++        return;
++    };
++
++    let mut table_ids = stat.table_ids();
++    // Cached table routes embed the address, and a restarted datanode's first
++    // heartbeat may report few regions, so invalidate every table on the node.
++    // A failed earlier attempt may already have stored the new address, which
++    // hides the change from this save.
++    if saved.retried || address_changed(saved.output.as_ref(), &stat.addr) {
++        match datanode_table_ids(ctx, stat.id).await {
++            Ok(ids) => table_ids.extend(ids),
++            Err(e) => {
++                error!(e; "Failed to list tables of datanode {} for address invalidation", stat.id)
++            }
++        }
+     }
++    let cache_idents = table_ids
++        .into_iter()
++        .map(CacheIdent::TableId)
++        .collect::<Vec<_>>();
++    utils::invalidate_address_caches(ctx, stat.id, &cache_idents).await;
++}
++
++/// A missing or undecodable previous address counts as changed.
++fn address_changed(previous: Option<&NodeAddressValue>, addr: &str) -> bool {
++    previous.is_none_or(|previous| previous.peer.addr != addr)
++}
++
++async fn datanode_table_ids(ctx: &Context, datanode_id: DatanodeId) -> Result<Vec<TableId>> {
++    ctx.table_metadata_manager
++        .datanode_table_manager()
++        .tables(datanode_id)
++        .map_ok(|value| value.table_id)
++        .try_collect()
++        .await
++        .context(error::TableMetadataManagerSnafu)
  }
  
- impl CopyInState {
-@@ -327,6 +338,22 @@ impl CopyInState {
+ #[cfg(test)]
+@@ -214,8 +246,11 @@ mod tests {
+     use std::thread;
+     use std::time::Duration;
+ 
++    use common_meta::cache_invalidator::{CacheInvalidator, Context as InvalidationContext};
+     use common_meta::datanode::DatanodeStatKey;
+     use common_meta::error::{Error as MetaError, Result as MetaResult};
++    use common_meta::key::datanode_table::{DatanodeTableKey, DatanodeTableValue, RegionInfo};
++    use common_meta::key::{MetadataValue, RegionRoleSet};
+     use common_meta::kv_backend::{KvBackend, KvBackendRef, ResettableKvBackend, TxnService};
+     use common_meta::rpc::store::{
+         BatchDeleteRequest, BatchDeleteResponse, BatchGetRequest, BatchGetResponse,
+@@ -537,6 +572,168 @@ mod tests {
          }
      }
  
-+    /// State for the OTLP format: the whole binary payload is buffered
-+    /// and completed once at `CopyDone` through the matching OTLP
-+    /// pipeline. Binary: the advertised wire format code is 1.
-+    fn new_otlp(options: &OtlpOptions, query_ctx: QueryContextRef) -> Self {
-+        Self {
-+            query_ctx,
-+            payload: Payload::Otlp {
-+                data: Vec::new(),
-+                options: options.clone(),
-+            },
-+            codec_name: "otlp",
-+            codec_format_code: 1,
-+            rows_written: 0,
++    #[derive(Default)]
++    struct RecordingCacheInvalidator {
++        calls: StdMutex<Vec<Vec<CacheIdent>>>,
++    }
++
++    impl RecordingCacheInvalidator {
++        fn table_ids_per_call(&self) -> Vec<Vec<TableId>> {
++            self.calls
++                .lock()
++                .unwrap()
++                .iter()
++                .map(|idents| {
++                    let mut ids = idents
++                        .iter()
++                        .map(|ident| match ident {
++                            CacheIdent::TableId(id) => *id,
++                            other => panic!("unexpected cache ident: {other:?}"),
++                        })
++                        .collect::<Vec<_>>();
++                    ids.sort_unstable();
++                    ids
++                })
++                .collect()
 +        }
 +    }
 +
-     /// The wire format code advertised to the client.
-     pub(crate) fn format_code(&self) -> i8 {
-         self.codec_format_code
-@@ -337,7 +364,7 @@ impl CopyInState {
-     fn feed(&mut self, data: &[u8]) -> PgWireResult<()> {
-         match &mut self.payload {
-             Payload::Table { parser, rows, .. } => rows.extend(parser.feed(data)?),
--            Payload::Influxdb { data: buffered, .. } => {
-+            Payload::Influxdb { data: buffered, .. } | Payload::Otlp { data: buffered, .. } => {
-                 if buffered.len() + data.len() > COPY_IN_MAX_PAYLOAD_BYTES {
-                     return Err(bad_copy_data(format!(
-                         "COPY FROM STDIN payload exceeds the {} limit; split the import into multiple COPY statements",
-@@ -356,7 +383,7 @@ impl CopyInState {
-         match &mut self.payload {
-             Payload::Table { parser, rows, .. } => rows.extend(parser.finish()?),
-             // The whole payload is one request body; nothing to finalize.
--            Payload::Influxdb { .. } => {}
-+            Payload::Influxdb { .. } | Payload::Otlp { .. } => {}
-         }
-         Ok(())
-     }
-@@ -365,7 +392,7 @@ impl CopyInState {
-         match &self.payload {
-             Payload::Table { rows, 
++    #[async_trait::async_trait]
++    impl CacheInvalidator for RecordingCacheInvalidator {
++        async fn invalidate(
++            &self,
++            _: &InvalidationContext,
++            idents: &[CacheIdent],
++        ) -> MetaResult<()> {
++            self.calls.lock().unwrap().push(idents.to_vec());
++            Ok(())
++        }
++
++        fn invalidate_all(&self) -> MetaResult<()> {
++            Ok(())
++        }
++    }
++
++    async fn register_datanode_tables(ctx: &Context, datanode_id: u64, table_ids: &[TableId]) {
++        for table_id in table_ids {
++            let value = DatanodeTableValue::new(
++                *table_id,
++                RegionRoleSet::new(vec![0], vec![]),
++                RegionInfo::default(),
++         
 ```
 
-**File**: `src/servers/src/postgres/copy_in/otlp.rs` (added, +307/-0)
+**File**: `src/meta-srv/src/handler/remap_flow_peer_handler.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,307 @@
+@@ -54,7 +54,7 @@ impl HeartbeatHandler for RemapFlowPeerHandler {
+                 // Address errors must not prevent later heartbeat handlers from running.
+                 error!(e; "Failed to update flownode address, peer: {:?}", peer);
+             });
+-        if let Ok(true) = updated {
++        if let Ok(Some(_)) = updated {
+             let cache_idents = [CacheIdent::FlowNodeAddressChange(peer.id)];
+             utils::invalidate_address_caches(ctx, peer.id, &cache_idents).await;
+         }
+```
+
+**File**: `src/meta-srv/src/handler/utils.rs` (modified, +46/-22)
+```diff
+@@ -44,19 +44,27 @@ struct NodeAddressEpochs {
+     saved_epoch: Option<u64>,
+ }
+ 
++/// The outcome of a successful address save.
++pub(crate) struct SavedAddress<T> {
++    pub(crate) output: T,
++    /// An earlier save of this epoch failed or was cancelled, but its write
++    /// may still have reached the store.
++    pub(crate) retried: bool,
++}
++
+ impl NodeAddressUpdater {
+-    /// Saves a new or previously failed epoch. Returns true only when this call
+-    /// saved the address, or false when the heartbeat is stale or already saved.
++    /// Saves a new or previously failed epoch. Returns `None` when the
++    /// heartbeat is stale or already saved.
+     /// Cache invalidation is separate and does not affect acknowledgement.
+-    pub(crate) async fn update_if_needed<F, Fut>(
++    pub(crate) async fn update_if_needed<T, F, Fut>(
+         &self,
+         node: (Role, u64),
+         epoch: u64,
+         save: F,
+-    ) -> Result<bool>
++    ) -> Result<Option<SavedAddress<T>>>
+     where
+         F: FnOnce() -> Fut,
+-        Fut: Future<Output = Result<()>>,
++        Fut: Future<Output = Result<T>>,
+     {
+         // Never retain a DashMap guard across await, even while waiting for a
+         // different node: its entry may live in the same shard.
+@@ -66,34 +74,43 @@ impl NodeAddressUpdater {
+         };
+         let mut state = state.lock().await;
+         if state.seen_epoch.is_some_and(|seen| epoch < seen) || state.saved_epoch == Some(epoch) {
+-            return Ok(false);
++            return Ok(None);
+         }
+ 
+         // Seeing an epoch rejects stale heartbeats, but only a successful save
+         // suppresses retries of that same epoch. Cancellation also leaves it retryable.
++        let retried = state.seen_epoch == Some(epoch);
+         state.seen_epoch = Some(epoch);
+-        save().await?;
++        let output = save().await?;
+         state.saved_epoch = Some(epoch);
+-        Ok(true)
++        Ok(Some(SavedAddress { output, retried }))
+     }
+ }
+ 
+-/// Persists an address through the leader cache.
+-pub(crate) async fn save_node_address(ctx: &Context, key: Vec<u8>, peer: Peer) -> Result<()> {
++/// Persists an address through the leader cache and returns the one it
++/// replaced, treating an undecodable value as absent.
++pub(crate) async fn save_node_address(
++    ctx: &Context,
++    key: Vec<u8>,
++    peer: Peer,
++) -> Result<Option<NodeAddressValue>> {
+     let address = NodeAddressValue::new(peer);
+     let value = address
+         .try_as_raw_value()
+         .context(InvalidNodeInfoFormatSnafu)?;
+-    ctx.leader_cached_kv_backend
++    let resp = ctx
++        .leader_cached_kv_backend
+         .put(PutRequest {
+             key,
+             value,
+-            prev_kv: false,
++            prev_kv: true,
+         })
+         .await
+         .context(KvBackendSnafu)?;
+     info!("Successfully updated node address: {:?}", address.peer);
+-    Ok(())
++    Ok(resp
++        .prev_kv
++        .and_then(|kv| NodeAddressValue::try_from_raw_value(&kv.value).ok()))
+ }
+ 
+ /// Preserves the existing best-effort notification behavior. Notification
+@@ -127,7 +144,7 @@ mod tests {
+         let key = (Role::Datanode, 1);
+         assert!(
+             updater
+-                .update_if_needed(key, 2, || async {
++                .update_if_needed::<(), _, _>(key, 2, || async {
+                     crate::error::UnexpectedSnafu {
+                         violated: "injected save failure",
+                     }
+@@ -137,32 +154,36 @@ mod tests {
+                 .is_err()
+         );
+         assert!(
+-            !updater
+-                .update_if_needed(key, 1, || async {
++            updater
++                .update_if_needed::<(), _, _>(key, 1, || async {
+                     panic!("stale heartbeat must not save");
+                 })
+                 .await
+                 .unwrap()
++                .is_none()
+         );
+         assert!(
+             updater
+                 .update_if_needed(key, 2, || async { Ok(()) })
+                 .await
+                 .unwrap()
++                .is_some_and(|saved| saved.retried)
+         );
+         assert!(
+-            !updater
+-                .update_if_needed(key, 2, || async {
++            updater
++                .update_if_needed::<(), _, _>(key, 2, || async {
+                     panic!("successful epoch must not save again");
+                 })
+                 .await
+                 .unwrap()
++                .is_none()
+         );
+         assert!(
+             updater
+                 .update_if_needed(key, 3, || async { Ok(()) })
+                 .await
+                 .unwrap()
++                .is_some_and(|saved| !saved.retried)
+         );
+     }
+ 
+@@ -190,6 +211,7 @@ mod tests {
+             .await
+             .unwrap()
+             .unwrap()
++            .is_some()
+         );
+     }
+ 
+@@ -248,6 +270,7 @@ mod tests {
+                                         })
+                                         .await
+                    
+```
+
+---
+
+### Incident Patch 2: `e38b84a9` (2026-11-04)
+**Commit Message**: fix(mito2): prevent automatic compaction candidate starvation (#9946)
+
+* fix(mito2): prevent automatic compaction candidate starvation
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* fix(mito2): share fair compaction candidate planning
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* fix(mito2): include L0 peers in fair closed merges
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* feat(mito2): observe TWCS planning and promoted picks
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* refactor(mito2): move compaction pick history into scheduler
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* refactor(mito2): simplify compaction pick history helpers
+
+Separate history observation from selection and gate test-only access.\nSimplify candidate collection and consolidate redundant tests.
+
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+
+* refactor(mito2): acknowledge fair picks at selection
+
+A selected key consumes its fairness turn when the plan is accepted instead of after a successful execution. Drop the pending-selection state, input-id matching and execution hooks; rejected or failed attempts retry with normal priority, so a promoted key can no longer hold the front slot indefinitely.
+
+
+**File**: `src/mito2/AGENTS.md` (modified, +5/-0)
+```diff
+@@ -99,6 +99,11 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+   only close/drop unregisters them. See `compaction/scheduler/state.rs`.
+ - Local compaction units use the snapshot-free `CompactionContext`. Retaining a
+   full `CompactionRegion` in a unit pins other units' inputs and delays SST purge.
++- Candidate waiting history is owned by the region scheduler (`scheduler/history.rs`).
++  Background planning works on a private snapshot; only a fenced result may replace
++  resident history, and an accepted plan consumes the fairness turn for each selected
++  key. Execution success or failure must not rewrite waiting ages. TWCS discovery
++  must not mutate scheduler state.
+ - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
+   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
+   bytes when grouping rows by series.
+```
+
+**File**: `src/mito2/src/compaction/last_non_null.rs` (modified, +251/-69)
+```diff
+@@ -58,49 +58,61 @@ impl Picker for LastNonNullPicker {
+         let max_outputs = self.base_picker.max_background_tasks;
+ 
+         // Find all possible compaction seeds
+-        let Some(mut all_seeds) = self
++        let Some(all_seeds) = self
+             .base_picker
+             .pick_with_output_limit(region, None)
+             .await?
+         else {
+             return Ok(None);
+         };
+-        let version = region.current_version.clone();
+-        common_runtime::spawn_blocking_compact(move || {
+-            let expired: HashSet<_> = all_seeds
+-                .expired_ssts
+-                .iter()
+-                .map(FileHandle::file_id)
+-                .collect();
+-            // Include busy files and all levels/windows. Request ranges and
+-            // TWCS size/file-count limits only constrain seeds, not correctness.
+-            let all_files = version
+-                .ssts
+-                .levels()
+-                .iter()
+-                .flat_map(|level| level.files())
+-                .filter(|file| !expired.contains(&file.file_id()))
+-                .cloned()
+-                .collect();
+-            all_seeds.outputs =
+-                build_closed_outputs(all_seeds.outputs, all_files, &version.metadata);
+-            all_seeds.outputs.retain(|output| {
+-                inputs_precede_memtables(&output.inputs, version.memtable_min_sequence)
+-            });
+-            if let Some(limit) = max_outputs {
+-                // Only eligible closures consume the budget. Keep the high-priority
+-                // tail because the compactor pops from the end of the output list.
+-                let excess = all_seeds.outputs.len().saturating_sub(limit);
+-                all_seeds.outputs.drain(..excess);
+-            }
+-            (!all_seeds.outputs.is_empty() || !all_seeds.expired_ssts.is_empty())
+-                .then_some(all_seeds)
+-        })
+-        .await
+-        .context(JoinSnafu)
++        let (output, _) = close_outputs(region, all_seeds, max_outputs).await?;
++        Ok(output)
+     }
+ }
+ 
++/// Attempts seeds in priority order until valid closures fill the output budget.
++/// Returns indices into the original seed list for all attempted/absorbed seeds,
++/// including rejected closures but excluding seeds left behind by the budget.
++pub(crate) async fn close_outputs(
++    region: &CompactionRegion,
++    mut all_seeds: PickerOutput,
++    max_outputs: Option<usize>,
++) -> Result<(Option<PickerOutput>, Vec<usize>)> {
++    let version = region.current_version.clone();
++    common_runtime::spawn_blocking_compact(move || {
++        let expired: HashSet<_> = all_seeds
++            .expired_ssts
++            .iter()
++            .map(FileHandle::file_id)
++            .collect();
++        // Include busy files and all levels/windows. Request ranges and
++        // TWCS size/file-count limits only constrain seeds, not correctness.
++        let all_files = version
++            .ssts
++            .levels()
++            .iter()
++            .flat_map(|level| level.files())
++            .filter(|file| !expired.contains(&file.file_id()))
++            .cloned()
++            .collect();
++        let (outputs, attempted_seeds) = build_closed_outputs(
++            all_seeds.outputs,
++            all_files,
++            &version.metadata,
++            ClosureLimits {
++                max_outputs,
++                memtable_min_sequence: version.memtable_min_sequence,
++            },
++        );
++        all_seeds.outputs = outputs;
++        let output = (!all_seeds.outputs.is_empty() || !all_seeds.expired_ssts.is_empty())
++            .then_some(all_seeds);
++        (output, attempted_seeds)
++    })
++    .await
++    .context(JoinSnafu)
++}
++
+ /// Imported SSTs can be newer than pending writes. A merge must not attach an
+ /// old field to a sequence above an intermediate version left in a memtable.
+ pub(super) fn inputs_precede_memtables(
+@@ -116,14 +128,22 @@ pub(super) fn inputs_precede_memtables(
+     })
+ }
+ 
++/// Constraints checked on complete closures, never on partial seed inputs.
++#[derive(Default)]
++struct ClosureLimits {
++    max_outputs: Option<usize>,
++    memtable_min_sequence: Option<SequenceNumber>,
++}
++
+ /// Each seed and snapshot file is consumed at most once. Absorbing a seed also
+ /// absorbs its disconnected members: a merge stream must never be split across
+ /// independently scheduled outputs.
+ fn build_closed_outputs(
+     seeds: Vec<CompactionOutput>,
+     files: Vec<FileHandle>,
+     metadata: &RegionMetadataRef,
+-) -> Vec<CompactionOutput> {
++    limits: ClosureLimits,
++) -> (Vec<CompactionOutput>, Vec<usize>) {
+     // Maps every seed input to its seed, so a closure that reaches that input
+     // can absorb the rest of the seed instead of letting it schedule separately.
+     let seed_by_file: HashMap<_, _> = seeds
+@@ -137,17 +157,29 @@ fn build_closed_outputs(
+     let mut outputs = Vec::new();
+     // The compactor pops from the end; retain TWCS's seed prio
+```
+
+**File**: `src/mito2/src/compaction/picker.rs` (modified, +26/-15)
+```diff
+@@ -140,21 +140,7 @@ pub fn new_picker(
+         // within each disjoint, half-open output range, including LastNonNull.
+         Arc::new(WindowedCompactionPicker::new(window).with_time_range(time_range)) as Arc<_>
+     } else {
+-        let picker = match &region_options.compaction {
+-            CompactionOptions::Twcs(twcs_opts) => TwcsPicker {
+-                trigger_file_num: twcs_opts.active_window_trigger_file_num,
+-                active_window_l1_merge_trigger: twcs_opts.active_window_l1_merge_trigger,
+-                inactive_window_trigger_file_num: twcs_opts.inactive_window_trigger_file_num,
+-                inactive_window_l1_merge_trigger: twcs_opts.inactive_window_l1_merge_trigger,
+-                time_window_seconds: twcs_opts.time_window_seconds(),
+-                max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
+-                append_mode: region_options.append_mode,
+-                merge_mode: region_options.merge_mode(),
+-                max_background_tasks,
+-                time_range,
+-                all_windows_inactive: manual,
+-            },
+-        };
++        let picker = new_twcs_picker(region_options, max_background_tasks, time_range, manual);
+         if region_options.merge_mode() == MergeMode::LastNonNull {
+             // LastNonNull correctness spans windows and levels, so wrap the seed
+             // picker instead of trusting TWCS's independent windows.
+@@ -165,6 +151,31 @@ pub fn new_picker(
+     }
+ }
+ 
++/// Builds the stateless TWCS strategy used for discovery and legacy picks.
++pub(crate) fn new_twcs_picker(
++    region_options: &RegionOptions,
++    max_background_tasks: Option<usize>,
++    time_range: Option<TimestampRange>,
++    manual: bool,
++) -> TwcsPicker {
++    match &region_options.compaction {
++        CompactionOptions::Twcs(twcs_opts) => TwcsPicker {
++            trigger_file_num: twcs_opts.active_window_trigger_file_num,
++            active_window_l1_merge_trigger: twcs_opts.active_window_l1_merge_trigger,
++            inactive_window_trigger_file_num: twcs_opts.inactive_window_trigger_file_num,
++            inactive_window_l1_merge_trigger: twcs_opts.inactive_window_l1_merge_trigger,
++            time_window_seconds: twcs_opts.time_window_seconds(),
++            max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
++            append_mode: region_options.append_mode,
++            merge_mode: region_options.merge_mode(),
++            max_background_tasks,
++            time_range,
++            all_windows_inactive: manual,
++            metrics: Default::default(),
++        },
++    }
++}
++
+ /// Finds all expired SSTs across levels.
+ pub(super) fn get_expired_ssts(
+     levels: &[LevelMeta],
+```
+
+**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +9/-4)
+```diff
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++pub(crate) mod history;
+ mod local;
+ mod planning;
+ mod state;
+@@ -27,6 +28,8 @@ use common_telemetry::{debug, error, info, warn};
+ use common_time::range::TimestampRange;
+ pub(crate) use planning::CompactionPickFinished;
+ pub use planning::CompactionRequest;
++#[cfg(test)]
++pub(crate) use planning::pick_automatic_for_test;
+ pub(crate) use state::CompactionExecution;
+ use state::{CompactionStatus, CompactionTrigger, DdlExecution, PendingCompaction};
+ use store_api::storage::RegionId;
+@@ -561,6 +564,9 @@ impl CompactionScheduler {
+         // Publish the picking phase before dispatching background planning.
+         let plan_id = Self::next_plan_id(&mut self.next_plan_id);
+         status.start_picking_with_trigger(plan_id, trigger);
++        let pick_history = (trigger == CompactionTrigger::Automatic
++            && matches!(compact_options, compact_request::Options::Regular(_)))
++        .then(|| status.pick_history.clone());
+         let request = status.new_compaction_request(
+             self.request_sender.clone(),
+             self.engine_config.clone(),
+@@ -569,6 +575,7 @@ impl CompactionScheduler {
+             self.listener.clone(),
+             schema_metadata_manager,
+             max_parallelism,
++            pick_history,
+         );
+         status.merge_waiter(waiter);
+         self.dispatch_compaction_planning(plan_id, request, compact_options, time_range, trigger);
+@@ -610,6 +617,7 @@ impl CompactionScheduler {
+             self.listener.clone(),
+             schema_metadata_manager,
+             max_parallelism,
++            None,
+         );
+         status.merge_waiter(waiter);
+         // Bump the counter through a disjoint field borrow so the `status`
+@@ -639,10 +647,6 @@ impl CompactionScheduler {
+         schema_metadata_manager: SchemaMetadataManagerRef,
+         made_progress: bool,
+     ) -> CompactionTransition {
+-        if !self.region_status.contains_key(&region_id) {
+-            return CompactionTransition::NoAction;
+-        }
+-
+         if let Some(ddls) = self.take_ready_ddls(region_id) {
+             return CompactionTransition::DdlReady(ddls);
+         }
+@@ -698,6 +702,7 @@ impl CompactionScheduler {
+             self.listener.clone(),
+             schema_metadata_manager,
+             MAX_PARALLEL_COMPACTION,
++            Some(status.pick_history.clone()),
+         );
+         // Bump the counter through a disjoint field borrow so the `status`
+         // borrow stays alive; nothing could have removed the status since it
+```
+
+**File**: `src/mito2/src/compaction/scheduler/history.rs` (added, +215/-0)
+```diff
+@@ -0,0 +1,215 @@
 +// Copyright 2023 Greptime Team
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1932,890 +2325,449 @@ reusing the HTTP path's own parsing helper
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+//! The `otlp` format for COPY FROM STDIN: one binary OTLP payload for
-+//! any of the three signals — `ExportMetricsServiceRequest`,
-+//! `ExportTraceServiceRequest` or `ExportLogsServiceRequest`.
-+//!
-+//! `COPY FROM STDIN WITH (FORMAT otlp [, signal 'traces'] [, <options>])`
-+//! is a GreptimeDB-specific, **binary** format (wire format code 1).
-+//! Like the influxdb format it is table-less and does not decode here:
-+//! the whole payload is buffered until `CopyDone` — exactly like an
-+//! OTLP/HTTP request body — then decoded and completed through the
-+//! frontend's `OpenTelemetryProtocolHandler`, the same path the
-+//! `/v1/otlp/v1/{metrics,traces,logs}` endpoints use, under the
-+//! connection's regular postgres query context.
-+//!
-+//! The `WITH` options carry what the HTTP endpoints take as request
-+//! headers; values already provided by the postgres session (database,
-+//! user, permissions) are not repeated. Option semantics, defaults and
-+//! parsing helpers are shared with the HTTP extractors (`truthy`,
-+//! `SelectInfo`, `GreptimePipelineParams`, `PipelineWay`), so the two
-+//! ingestion routes cannot drift.
-+//!
-+//! One COPY statement is one bounded ingestion request (see
-+//! [`crate::postgres::copy_in::COPY_IN_MAX_PAYLOAD_BYTES`]).
++use std::cmp::Reverse;
++use std::collections::{HashMap, HashSet};
++use std::time::{Duration, Instant};
 +
-+use ahash::HashSet;
++use prometheus::IntCounterVec;
 +
-+use pgwire::error::PgWireResult;
-+use pipeline::truthy;
-+use session::protocol_ctx::OtlpMetricTranslationStrategy;
++use crate::compaction::twcs::{PickClass, WindowCandidate};
++use crate::metrics::TWCS_SELECTED_CANDIDATES;
 +
-+use crate::postgres::copy_in::bad_copy_data;
-+use crate::postgres::copy_in::codec::CopyFormat;
-+use crate::postgres::copy_in::options::{CopyOptionSet, CopyOptionValue};
++/// Waiting compensation starts after one minute. This is a promotion threshold,
++/// not a deadline: an executing batch is never preempted to run an overdue pick.
++/// It is checked at pick time and does not wake the scheduler on its own.
++const PROMOTION_DELAY: Duration = Duration::from_secs(60);
 +
-+/// The format's validated options: the signal and its header-equivalent
-+/// configuration, carried to the flush that completes the copy.
-+#[derive(Debug, Clone)]
-+pub(super) struct OtlpOptions {
-+    pub(super) signal: OtlpSignal,
++/// A work identity survives file replacement and picking epochs, but not a region
++/// incarnation. Different classes in the same window retain independent ages.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub(crate) struct PickKey {
++    /// Window identity, independent of the current input files.
++    pub(crate) window: i64,
++    /// Work category whose waiting age is tracked independently in this window.
++    pub(crate) class: PickClass,
 +}
 +
-+#[derive(Debug, Clone)]
-+pub(super) enum OtlpSignal {
-+    /// Metric options mirroring the `x-greptime-otlp-metric-*` headers.
-+    Metrics {
-+        /// Persist all resource attributes; `resource_attrs` then acts
-+        /// as an exclude list, otherwise as an include list.
-+        promote_all_resource_attrs: bool,
-+        resource_attrs: HashSet<String>,
-+        promote_scope_attrs: bool,
-+        translation_strategy: OtlpMetricTranslationStrategy,
-+    },
-+    /// Trace options mirroring `x-greptime-trace-table-name` and the
-+    /// pipeline headers. The raw pipeline-params string is parsed by the
-+    /// shared `GreptimePipelineParams::from_params` when the copy
-+    /// completes, like the HTTP request does.
-+    Traces {
-+        table_name: Option<String>,
-+        pipeline_name: Option<String>,
-+        pipeline_version: Option<String>,
-+        pipeline_params: Option<String>,
-+    },
-+    /// Log options mirroring `x-greptime-log-table-name`,
-+    /// `x-greptime-log-extract-keys` and the pipeline headers.
-+    Logs {
-+        table_name: Option<String>,
-+        pipeline_name: Option<String>,
-+        pipeline_version: Option<String>,
-+        pipeline_params: Option<String>,
-+        extract_keys: Option<String>,
-+    },
++impl From<&WindowCandidate> for PickKey {
++    fn from(candidate: &WindowCandidate) -> Self {
++        Self {
++            window: candidate.window,
++            class: candidate.pick.class,
++        }
++    }
 +}
 +
-+pub(super) fn build_otlp_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
-+    let signal = options.take_string("signal")?;
-+    let metric_options = (
-+        take_truthy(&mut options, "promote_all_resource_attrs")?,
-+        options.take_string("resource_attrs")?,
-+        take_truthy(&mut options, "promote_scope_attrs")?,
-+        options.take_string("translation_strategy")?,
-+    );
-+    let trace_log_options = (
-+        options.take_string("table_name")?,
-+        options.take_string("pipeline_name")?,
-+        options.take_string("pipeline_version")?,
-+        options.take_string("pipeline_params")?,
-+    );
-+    let extract_keys = options.take_string("extract_keys")?;
-+    options.reject_leftovers("otlp")?;
++/// Region-resident scheduling metadata. It owns no file handles or reservations.
++/// Planning works on a private snapshot; the accepted plan consumes one fairness
++/// turn per selected key. Execution success or failure does not rewrite ages.
++#[derive(Debug, Clone)]
++pub(crate) struct PickHistory {
++    /// First observation or last fairness turn for each eligible key.
++    /// Repeated picks preserve this timestamp until the key is selected.
++    waiting: HashMap<PickKey, Instant>,
++    selected_metrics: IntCounterVec,
++}
 +
-+    let unexpected = |option: &str| {
-+        bad_copy_data(format!(
-+            "COPY option \"{option}\" does not apply to the selected signal"
-+        ))
-+    };
-+    let signal = match signal.as_deref() {
-+        None | Some("metrics") => {
-+            if trace_log_options != (None, None, None, None) || extract_keys.is_some() {
-+                return Err(unexpected("table_name/pipeline/extract_keys"));
-+            }
-+            let (promote_all, resource_attrs, promote_scope, strategy) = metric_options;
-+            let 
-```
-
-**File**: `src/servers/src/postgres/server.rs` (modified, +22/-0)
-```diff
-@@ -31,6 +31,7 @@ use crate::error::Result;
- use crate::postgres::{MakePostgresServerHandler, MakePostgresServerHandlerBuilder};
- use crate::query_handler::CopyInHandlerRef;
- use crate::query_handler::InfluxdbLineProtocolHandlerRef;
-+use crate::query_handler::OpenTelemetryProtocolHandlerRef;
- use crate::query_handler::sql::ServerSqlQueryHandlerRef;
- use crate::server::{AbortableStream, BaseTcpServer, Server};
- use crate::tls::ReloadableTlsServerConfig;
-@@ -42,6 +43,8 @@ pub struct PostgresServer {
-     keep_alive_secs: u64,
-     batching_enabled: bool,
-     influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
-+    otlp_handler: Option<OpenTelemetryProtocolHandlerRef>,
-+    otlp_with_metric_engine: bool,
-     bind_addr: Option<SocketAddr>,
-     process_manager: Option<ProcessManagerRef>,
- }
-@@ -80,6 +83,8 @@ impl PostgresServer {
-             keep_alive_secs,
-             batching_enabled: false,
-             influxdb_handler: None,
-+            otlp_handler: None,
-+            otlp_with_metric_engine: false,
-             bind_addr: None,
-             process_manager,
-         }
-@@ -100,6 +105,21 @@ impl PostgresServer {
-         self
-     }
- 
-+    /// Wires the OTLP handler used by table-less
-+    /// `COPY FROM STDIN WITH (FORMAT otlp)` — the same handler the
-+    /// OTLP/HTTP endpoints use, so the payload runs through the
-+    /// identical pipeline. `with_metric_engine` carries the same flag
-+    /// the HTTP wiring passes from its options.
-+    pub fn with_otlp_handler(
-+        mut self,
-+        handler: OpenTelemetryProtocolHandlerRef,
-+        with_metric_engine: bool,
-+    ) -> Self {
-+        self.otlp_handler = Some(handler);
-+        self.otlp_with_metric_engine = with_metric_engine;
-+        self
++impl Default for PickHistory {
++    fn default() -> Self {
++        Self {
++            waiting: HashMap::new(),
++            selected_metrics: TWCS_SELECTED_CANDIDATES.clone(),
++        }
++    }
++}
++
++/// Ascending fairness order: promoted work, oldest age, class, then newest window.
++#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
++struct PickPriority {
++    not_promoted: bool,
++    since: Option<Instant>,
++    class: PickClass,
++    window: Reverse<i64>,
++}
++
++impl PickHistory {
++    /// Refreshes all eligible identities before selection limits hide any work.
++    /// Preserves surviving ages and drops absent keys without changing selection.
++    fn observe(&mut self, keys: impl Iterator<Item = PickKey>, now: Instant) {
++        let live: HashSet<_> = keys.collect();
++        self.waiting.retain(|key, _| live.contains(key));
++        for key in live {
++            self.waiting.entry(key).or_insert(now);
++        }
 +    }
 +
-     fn accept(
-         &self,
-         io_runtime: Runtime,
-@@ -115,6 +135,8 @@ impl PostgresServer {
-             query_handler: make_handler.query_handler.clone(),
-             copy_in_handler: make_handler.copy_in_handler.clone(),
-             influxdb_handler: self.influxdb_handler.clone(),
-+            otlp_handler: self.otlp_handler.clone(),
-+            otlp_with_metric_engine: self.otlp_with_metric_engine,
-             user_provider: make_handler.user_provider.clone(),
-             param_provider: make_handler.param_provider.clone(),
-             force_tls: make_handler.force_tls,
++    /// Returns an ascending sort key: promoted work first, oldest waiting first.
++    /// Below [`PROMOTION_DELAY`], age does not affect class/newest-window ordering.
++    /// One shared `now` keeps the comparator consistent across the entire sort.
++    fn priority(&self, key: PickKey, now: Instant) -> PickPriority {
++        let overdue = self
++            .waiting
++            .get(&key)
++            .copied()
++            .filter(|since| now.saturating_duration_since(*since) >= PROMOTION_DELAY);
++        PickPriority {
++            not_promoted: overdue.is_none(),
++            since: overdue,
++            class: key.class,
++            window: Reverse(key.window),
++        }
++    }
++
++    /// Consumes the fairness turn for `key`. Only an accepted plan installs the
++    /// private snapshot, so rejected or stale plans never advance resident ages.
++    fn serve(&mut self, key: PickKey, now: Instant) {
++        self.waiting.insert(key, now);
++    }
++
++    /// Observes all eligible work and ranks one alternative per window without
++    /// consuming a fairness turn. The caller acknowledges only attempted work
++    /// after applying its output budget and semantic closure policy.
++    pub(crate) fn rank_candidates(
++        &mut self,
++        mut candidates: Vec<WindowCandidate>,
++        now: Instant,
++    ) -> Vec<WindowCandidate> {
++        self.observe(candidates.iter().map(PickKey::from), now);
++        candidates.sort_by_key(|candidate| self.priority(PickKey::from(candidate), now));
++        // Alternatives may share files or semantic dependencies within a window.
++        let mut windows = HashSet::new();
++        candidates.retain(|can
 ```
 
-**File**: `tests-integration/src/test_util.rs` (modified, +6/-3)
+**File**: `src/mito2/src/compaction/scheduler/planning.rs` (modified, +99/-26)
 ```diff
-@@ -1216,7 +1216,8 @@ pub async fn setup_pg_server_with_slow_query_threshold(
-             None,
-             None,
-         )
--        .with_influxdb_handler(fe_instance_ref.clone()),
-+        .with_influxdb_handler(fe_instance_ref.clone())
-+        .with_otlp_handler(fe_instance_ref.clone(), true),
-     );
+@@ -31,7 +31,9 @@ use tokio::sync::mpsc::{self, Sender};
+ use crate::access_layer::AccessLayerRef;
+ use crate::cache::CacheManagerRef;
+ use crate::compaction::compactor::{CompactionRegion, CompactionVersion};
+-use crate::compaction::picker::{PickerOutput, new_picker};
++use crate::compaction::last_non_null;
++use crate::compaction::picker::{PickerOutput, new_picker, new_twcs_picker};
++use crate::compaction::scheduler::history::{PickHistory, PickKey};
+ use crate::compaction::scheduler::state::{
+     CompactingFiles, CompactionExecution, CompactionPhase, CompactionTrigger,
+ };
+@@ -44,7 +46,7 @@ use crate::metrics::{
+     COMPACTION_MEMORY_REJECTED, COMPACTION_STAGE_ELAPSED, INFLIGHT_COMPACTION_COUNT,
+ };
+ use crate::region::ManifestContextRef;
+-use crate::region::options::RegionOptions;
++use crate::region::options::{MergeMode, RegionOptions};
+ use crate::request::{BackgroundNotify, OutputTx, WorkerRequest, WorkerRequestWithTime};
+ use crate::schedule::remote_job_scheduler::{
+     CompactionJob, DefaultNotifier, RemoteJob, RemoteJobSchedulerRef,
+@@ -55,6 +57,8 @@ use crate::worker::WorkerListener;
  
-     pg_server
-@@ -1263,7 +1264,8 @@ pub async fn setup_pg_server_with_user_provider(
-             user_provider,
-             None,
-         )
--        .with_influxdb_handler(fe_instance_ref.clone()),
-+        .with_influxdb_handler(fe_instance_ref.clone())
-+        .with_otlp_handler(fe_instance_ref.clone(), true),
-     );
- 
-     pg_server
-@@ -1322,7 +1324,8 @@ pub async fn setup_pg_server_with_prom_native_histogram(
-             None,
-             None,
-         )
--        .with_influxdb_handler(instance.fe_instance().clone()),
-+        .with_influxdb_handler(instance.fe_instance().clone())
-+        .with_otlp_handler(instance.fe_instance().clone(), true),
-     );
- 
-     pg_server
-```
-
-**File**: `tests-integration/src/tests/postgres_copy_in_test.rs` (modified, +354/-0)
-```diff
-@@ -819,3 +819,357 @@ async fn test_postgres_copy_in_influxdb_invalid_utf8_and_trailing_record() {
- 
-     server.shutdown().await.unwrap();
+ /// Region compaction request.
+ pub struct CompactionRequest {
++    /// Private snapshot for automatic regular planning; manual requests carry none.
++    pub(crate) pick_history: Option<PickHistory>,
+     pub(crate) engine_config: Arc<MitoConfig>,
+     pub(crate) current_version: CompactionVersion,
+     pub(crate) access_layer: AccessLayerRef,
+@@ -78,7 +82,8 @@ impl CompactionRequest {
+ /// Result returned to the worker after background compaction planning.
+ pub(crate) enum CompactionPlanningResult {
+     Prepared(PreparedCompaction),
+-    NoPlan,
++    /// Returns automatic history even for an empty plan, to prune stale eligibility.
++    NoPlan(Option<PickHistory>),
+     Error(Arc<Error>),
  }
-+
-+/// `COPY FROM STDIN WITH (FORMAT otlp)` ingests one binary OTLP
-+/// ExportMetricsServiceRequest through the same pipeline as the OTLP/HTTP
-+/// endpoint — and validates binary (format code 1) COPY support, including
-+/// payloads split across CopyData chunks.
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn test_postgres_copy_in_otlp_binary() {
-+    use otel_arrow_rust::proto::opentelemetry::collector::metrics::v1::ExportMetricsServiceRequest;
-+    use otel_arrow_rust::proto::opentelemetry::common::v1::any_value;
-+    use otel_arrow_rust::proto::opentelemetry::common::v1::{AnyValue, KeyValue};
-+    use otel_arrow_rust::proto::opentelemetry::metrics::v1::number_data_point::Value;
-+    use otel_arrow_rust::proto::opentelemetry::metrics::v1::{
-+        Gauge, Metric, NumberDataPoint, ResourceMetrics, ScopeMetrics, metric,
-+    };
-+    use prost::Message;
-+
-+    init_default_ut_logging();
-+    let (_guard, server) = setup_pg_server(StorageType::File, "pg_copy_in_otlp").await;
-+    let port = server.bind_addr().unwrap().port();
-+    let client = connect(port).await;
-+
-+    let request = ExportMetricsServiceRequest {
-+        resource_metrics: vec![ResourceMetrics {
-+            scope_metrics: vec![ScopeMetrics {
-+                metrics: vec![Metric {
-+                    name: "copy_otlp_gauge".into(),
-+                    data: Some(metric::Data::Gauge(Gauge {
-+                        data_points: vec![
-+                            NumberDataPoint {
-+                                time_unix_nano: 1_700_000_000_000_000_000,
-+                                value: Some(Value::AsDouble(1.5)),
-+                                attributes: vec![KeyValue {
-+                                    key: "host".into(),
-+                                    value: Some(AnyValue {
-+                                        value: Some(any_value::Value::StringValue("a".into())),
-+                                    }),
-+                                }],
-+                                ..Default::default()
-+                            },
-+                            NumberDataPoint {
-+                                time_unix_nano: 1_700_000_001_000_000_000,
-+                                value: Some(Value::AsDouble(2.5)),
-+                                attributes: vec![KeyValue {
-+                                    key: "host".into(),
-+                                    value: Some(AnyValue {
-+                                        value: Some(any_value::Value::StringValue("b".into())),
-+                                    }),
-+                                }],
-+                                ..Default::default()
-+                            },
-+                        ],
-+                    })),
-+                    ..Default::default()
-+                }],
-+                ..Default::default()
-+            }],
-+            ..Default::default()
-+        }],
-+    };
-+    let body = request.encode_to_vec();
-+
-+    // Feed the binary payload in small chunks: the message spans CopyData
-+    // boundaries exactly like a large text payload would.
-+    let rows = feed_copy_in(
-+        &client,
-+        "COPY FROM STDIN WITH (FORMAT otlp)",
-+        body.chunks(9).map(Bytes::copy_from_slice).collect(),
-+    )
-+    .await
-+    .unwrap();
-+    assert_eq!(rows, 2);
-+
-+    let messages = client
-+        .simple_query("SELECT host, greptime_value FROM copy_otlp_gauge ORDER BY host")
-+        .await
-+        .unwrap();
-+    let rows: Vec<(String, String)> = messages
+ 
+@@ -89,7 +94,7 @@ impl fmt::Debug for CompactionPlanningResult {
+                 .debug_tuple("Prepared")
+                 .field(&prepared.compaction_region.region_id)
+                 .finish(),
+-            Self::NoPlan => f.write_str("NoPlan"),
++            Self::NoPlan(_) => f.write_str("NoPlan"),
+             Self::Error(err) => f.debug_tuple("Error").field(err).finish(),
+         }
+     }
+@@ -104,12 +109,64 @@ pub(crate) struct CompactionPickFinished {
+ }
+ 
+ pub(crate) struct PreparedCompaction {
++    /// Updated automatic snapshot, installed only after the worker accepts the plan.
++    /// Manual planning returns `None` and leaves resident waiting ages unchanged.
++    pick_history: Option<PickHistory>,
+     pub(super) compaction_region: CompactionRegion,
+     pub(super) picker_output: PickerOutput,
+     start_time: Instant,
+     ttl: TimeToLive,
+ }
+ 
++/// Scheduler policy applied between stateless discovery and semantic closure.
++/// Runs on the planning runtime with a private history snapshot, never on the
++/// worker or through a shared mutex. Stale results cannot mutate resident state.
++async fn pick_automatic(
++    region: &CompactionRegion,
++    history: &mut PickHistory,
++    max_outputs: Option<usize>,
++    time_range: Option<TimestampRange>,
++) -> Result<Option<PickerOutput>> {
++    let picker = new_twcs_picker(&region.region_options, max_outputs, time_range, false);
++    let mut candidates = picker.discover(region).await?;
++    let last_non_null = region.region_options.merge_mode() == MergeMode::LastNonNull;
++    let now = Instant::now();
++    candidates.candidates = history.rank_candidates(candidates.candidates, now);
++    if !last_non_null {
++        candidates
++            .candidates
++            .truncate(max_outputs.unwrap_or(usize::MAX));
++    }
++    // finish() reverses candidates for the compactor's pop order. Keep seed
++    // identities in that same order without retaining them in execution state.
++    let keys: Vec<_> = candidates
++        .candidates
 +        .iter()
-+        .filter_map(|m| {
-+            let tokio_postgres::SimpleQueryMessage::Row(row) = m else {
-+                return None;
-+            };
-+            Some((
-+                row.get(0).unwrap_or("").to_string(),
-+                row.get(1).unwrap_or("").to_string(),
-+            ))
-+        })
++        .rev()
++        .map(PickKey::from)
 +        .collect();
-+    assert_eq!(
-+        rows,
-+        vec![("a".into(), "1.5".into()), ("b".into(), "2.5".into())]
-+    );
-+
-+    // Garbage bytes fail the copy and the connection stays usable.
-+    let error = feed_copy_in(
-+        &client,
-+        "COPY FROM STDIN WITH (FORMAT otlp)",
-+        vec![Bytes::from_static(b"\xff\xff\xff\xff")],
-+    )
-+    .await
-+    .unwrap_err();
-+    assert!(
-+        error
-+            .as_db_error()
-+            .map(|d| d.message().contains("invalid OTLP payload"))
-+            .unwrap_or(false),
-+        "unexpected error: {error}"
-+    );
-+    let messages = client.simple_query("SELECT 1").await.unwrap();
-+    assert!(!messages.is_empty());
-+
-+    server.shutdown().await.unwrap();
++    let output = candidates.finish().await?;
++    if last_non_null {
++        let (output, attempted_seeds) =
++            last_non_null::close_outputs(region, output, max_outputs).await?;
++        history.acknowledge(attempted_seeds.into_iter().map(|index| keys[index]), now);
++        Ok(output)
++    } else {
++        history.acknowledge(keys.into_iter(), now);
++        Ok((!output.outputs.is_empty() || !output.expired_ssts.is_empty()).then_some(output))
++    }
 +}
 +
-+/// `COPY FROM STDIN WITH (FORMAT otlp, signal 'traces')` ingests one
-+/// binary ExportTraceServiceRequest through the same pipeline as the
-+/// OTLP/HTTP traces endpoint, honoring the trace-table-name option.
-+#[tokio::test(flavor = "multi_thread", w
-```
-
----
-
-### Incident Patch 2: `8deb3872` (2026-11-03)
-**Commit Message**: fix: include peer context in distributed query errors (#10118)
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-**File**: `src/catalog/src/error.rs` (modified, +2/-1)
-```diff
-@@ -291,8 +291,9 @@ pub enum Error {
-         location: Location,
-     },
- 
--    #[snafu(display("Failed to handle query"))]
-+    #[snafu(display("Failed to handle query, addr: {}", addr))]
-     HandleQuery {
-+        addr: String,
-         source: common_meta::error::Error,
-         #[snafu(implicit)]
-         location: Location,
-```
-
-**File**: `src/catalog/src/information_extension.rs` (modified, +3/-1)
-```diff
-@@ -84,7 +84,9 @@ impl DistributedInformationExtension {
-                         header: None,
-                     })
-                     .await
--                    .context(crate::error::HandleQuerySnafu)
-+                    .context(crate::error::HandleQuerySnafu {
-+                        addr: node.peer.addr,
-+                    })
-             }
-         }))
-         .await?;
-```
-
-**File**: `src/client/src/error.rs` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ pub enum Error {
-         location: Location,
-     },
- 
--    #[snafu(display("Failed to do Flight get, code: {}", tonic_code))]
-+    #[snafu(display("Failed to do Flight get, addr: {}, code: {}", addr, tonic_code))]
-     FlightGet {
-         addr: String,
-         tonic_code: Code,
-```
-
----
-
-### Incident Patch 3: `c17a5e09` (2026-11-03)
-**Commit Message**: fix(auth): preserve physical metric table targets (#10084)
-
-* fix(auth): preserve physical metric table targets
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* fix: nit
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-**File**: `src/auth/src/permission.rs` (modified, +74/-2)
-```diff
-@@ -34,6 +34,9 @@ pub struct PermissionTableTarget {
-     pub catalog: String,
-     pub schema: String,
-     pub table: String,
-+    /// Set from catalog metadata, never from a client-supplied table name.
-+    /// Physical metric tables contain data belonging to multiple logical tables.
-+    pub is_physical_metric_table: bool,
- }
- 
- impl PermissionTableTarget {
-@@ -47,8 +50,15 @@ impl PermissionTableTarget {
-             catalog: catalog.into(),
-             schema: schema.into(),
-             table: table.into(),
-+            is_physical_metric_table: false,
-         }
-     }
++/// Exercises automatic selection and closure from cross-module regression tests.
++#[cfg(test)]
++pub(crate) async fn pick_automatic_for_test(
++    region: &CompactionRegion,
++    history: &mut PickHistory,
++    max_outputs: Option<usize>,
++) -> Result<Option<PickerOutput>> {
++    pick_automatic(region, history, max_outputs, None).await
++}
 +
-+    /// Sets whether catalog metadata identifies this target as a physical metric table.
-+    pub fn with_physical_metric_table(mut self, is_physical_metric_table: bool) -> Self {
-+        self.is_physical_metric_table = is_physical_metric_table;
-+        self
-+    }
- }
- 
- /// The result of resolving every table target in a permission request.
-@@ -183,6 +193,11 @@ pub enum PermissionReq<'a> {
-     GrpcRequest(&'a Request),
-     SqlStatement(&'a Statement),
-     Action(PermissionAction),
-+    /// Enumerates a schema's metadata without accessing any table data.
-+    SchemaRead {
-+        catalog: &'a str,
-+        schema: &'a str,
-+    },
-     BulkInsert {
-         catalog: &'a str,
-         schema: &'a str,
-@@ -199,6 +214,7 @@ impl<'a> PermissionReq<'a> {
-             }
-             PermissionReq::SqlStatement(stmt) => stmt.is_readonly(),
-             PermissionReq::Action(action) => action.access_mode() == AccessMode::Read,
-+            PermissionReq::SchemaRead { .. } => true,
- 
-             PermissionReq::GrpcRequest(_) | PermissionReq::BulkInsert { .. } => false,
-         }
-@@ -241,6 +257,17 @@ pub trait PermissionChecker: Send + Sync {
-         true
-     }
- 
-+    /// Extracts user-visible gRPC targets before the frontend classifies them
-+    /// using catalog metadata. Unrecognized requests must fail closed.
-+    fn grpc_table_targets(
-+        &self,
-+        _request: &Request,
-+        _catalog: &str,
-+        _schema: &str,
-+    ) -> PermissionTableTargets {
-+        PermissionTableTargets::Unresolved
-+    }
-+
-     /// Checks the operation privilege and its resolved user-visible table targets.
-     ///
-     /// [`PermissionTableTargets::Resolved`] with an empty vector still requires
-@@ -296,6 +323,18 @@ impl PermissionChecker for Option<&PermissionCheckerRef> {
-         }
-     }
- 
-+    fn grpc_table_targets(
-+        &self,
-+        request: &Request,
-+        catalog: &str,
-+        schema: &str,
-+    ) -> PermissionTableTargets {
-+        match self {
-+            Some(checker) => checker.grpc_table_targets(request, catalog, schema),
-+            None => PermissionTableTargets::Unresolved,
-+        }
-+    }
-+
-     fn check_permission_with_table_targets(
+ impl CompactionScheduler {
+     pub(super) fn dispatch_compaction_planning(
          &self,
-         user_info: UserInfoRef,
-@@ -386,6 +425,20 @@ mod tests {
-             Ok(PermissionResp::Reject)
-         }
- 
-+        fn grpc_table_targets(
-+            &self,
-+            request: &Request,
-+            catalog: &str,
-+            schema: &str,
-+        ) -> PermissionTableTargets {
-+            match request {
-+                Request::RowInserts(requests) => {
-+                    PermissionTableTargets::from_row_insert_requests(catalog, schema, requests)
-+                }
-+                _ => PermissionTableTargets::Unresolved,
-+            }
-+        }
-+
-         fn check_permission_with_table_targets(
-             &self,
-             _user_info: UserInfoRef,
-@@ -600,8 +653,8 @@ mod tests {
- 
-     #[test]
-     fn test_table_target_permission_forwarding() {
--        let checker: PermissionCheckerRef = Arc::new(TargetAwarePermissionChecker);
--        let checker = Some(&checker);
-+        let inner_checker: PermissionCheckerRef = Arc::new(TargetAwarePermissionChecker);
-+        let checker = Some(&inner_checker);
-         assert!(checker.uses_table_targets());
- 
-         let allowed = checker
-@@ -658,6 +711,25 @@ mod tests {
- 
-         let no_checker: Option<&PermissionCheckerRef> = None;
-         assert!(!no_checker.uses_table_targets());
-+        for request in [
-+            Request::RowInserts(RowInsertRequests {
-+                inserts: vec![api::v1::RowInsertRequest {
-+                    table_name: "allowed".to_string(),
-+                    ..Default::default()
-+                }],
-+            }),
-+            Request::RowInserts(RowInsertRequests::default()),
-+            Request::Query(api::v1::QueryRequest::default()),
-+        ] {
-+            assert_eq!(
-+                inner_checker.grpc_table_targets(&request, "catalog", "schema"),
-+                checker.grpc_table_targets(&request, "catalog", "schema"),
-+            );
-+            assert_eq!(
-+                PermissionTableTargets::Unresolved,
-+                no_checker.grpc_table_targets(&request, "catalog", "schema"),
-+            );
-+        }
-         let allowed = no_checker
-             .check_permission_with_table_targets(
-                 crate::userinfo_by_
-```
-
-**File**: `src/frontend/src/instance.rs` (modified, +135/-21)
-```diff
-@@ -1238,29 +1238,16 @@ impl Instance {
-             let mut seen = HashSet::with_capacity(targets.len());
-             targets.retain(|target| seen.insert(target.clone()));
-         }
--        if let [target] = targets.as_slice() {
--            return if self
--                .is_physical_query_permission_target(target, query_ctx)
--                .await?
--            {
--                Ok(PermissionTableTargets::Unresolved)
--            } else {
--                Ok(PermissionTableTargets::resolved(targets))
--            };
--        }
--
-         // Bound catalog load and inspect results in target order to preserve serial semantics.
--        for chunk in targets.chunks(CONCURRENCY) {
-+        for chunk in targets.chunks_mut(CONCURRENCY) {
-             let results = future::join_all(
-                 chunk
-                     .iter()
-                     .map(|target| self.is_physical_query_permission_target(target, query_ctx)),
+@@ -201,22 +258,16 @@ impl CompactionScheduler {
              )
-             .await;
--            for result in results {
--                if result? {
--                    return Ok(PermissionTableTargets::Unresolved);
--                }
-+            for (target, result) in chunk.iter_mut().zip(results) {
-+                target.is_physical_metric_table = result?;
-             }
-         }
+         });
  
-@@ -1494,6 +1481,35 @@ impl PrometheusHandler for Instance {
-         Ok(allowed)
-     }
- 
-+    async fn filter_metadata_schema_names(
-+        &self,
-+        schema_names: Vec<String>,
-+        query_ctx: &QueryContextRef,
-+    ) -> server_error::Result<Vec<String>> {
-+        let checker = self.plugins.get::<PermissionCheckerRef>();
-+        let mut allowed = Vec::with_capacity(schema_names.len());
-+        for schema in schema_names {
-+            match checker
-+                .as_ref()
-+                .check_permission(
-+                    query_ctx.current_user(),
-+                    PermissionReq::SchemaRead {
-+                        catalog: query_ctx.current_catalog(),
-+                        schema: &schema,
-+                    },
-+                )
-+                .context(AuthSnafu)
-+            {
-+                Ok(_) => allowed.push(schema),
-+                Err(error)
-+                    if error.status_code()
-+                        == common_error::status_code::StatusCode::PermissionDenied => {}
-+                Err(error) => return Err(error),
-+            }
-+        }
-+        Ok(allowed)
-+    }
-+
-     async fn query_metric_names(
-         &self,
-         matchers: Vec<Matcher>,
-@@ -2121,9 +2137,9 @@ mod tests {
-         ) -> auth::error::Result<PermissionResp> {
-             let reject = match targets {
-                 PermissionTableTargets::Unresolved => true,
--                PermissionTableTargets::Resolved(targets) => {
--                    targets.iter().any(|target| target.table == "denied")
--                }
-+                PermissionTableTargets::Resolved(targets) => targets
-+                    .iter()
-+                    .any(|target| target.table == "denied" || target.is_physical_metric_table),
-             };
-             Ok(if reject {
-                 PermissionResp::Reject
-@@ -3553,6 +3569,103 @@ mod tests {
-         Ok(())
-     }
- 
-+    #[tokio::test]
-+    async fn test_physical_target_permission_reaches_checker() -> TestResult<()> {
-+        struct PhysicalChecker {
-+            allow: bool,
-+        }
-+        impl PermissionChecker for PhysicalChecker {
-+            fn check_permission(
-+                &self,
-+                _: UserInfoRef,
-+                _: PermissionReq,
-+            ) -> auth::error::Result<PermissionResp> {
-+                Ok(PermissionResp::Allow)
-+            }
-+
-+            fn grpc_table_targets(
-+                &self,
-+                request: &api::v1::greptime_request::Request,
-+                catalog: &str,
-+                schema: &str,
-+            ) -> PermissionTableTargets {
-+                let api::v1::greptime_request::Request::Ddl(ddl) = request else {
-+                    panic!("expected DDL")
-+                };
-+                let Some(api::v1::ddl_request::Expr::CommentOn(comment)) = &ddl.expr else {
-+                    panic!("expected comment")
-+                };
-+                PermissionTableTargets::resolved(vec![PermissionTableTarget::new(
-+                    catalog,
-+                    schema,
-+                    &comment.object_name,
-+                )])
-+            }
-+
-+            fn check_permission_with_table_targets(
-+                &self,
-+                _: UserInfoRef,
-+                _: PermissionReq,
-+                targets: PermissionTableTargets,
-+            ) -> auth::error::Result<PermissionResp> {
-+                let PermissionTableTargets::Resolved(targets) = targets else {
-+                    panic!("physical target must retain its identity")
-+                };
-+                assert_eq!(targets.len(), 1);
-+                assert_eq!(targets[0].catalog, "greptime");
-+                assert_eq!(targ
+-        // Avoid queuing serial outputs from a stale snapshot. Repicking after each
+-        /
 ```
 
-**File**: `src/frontend/src/instance/grpc.rs` (modified, +33/-1)
+**File**: `src/mito2/src/compaction/scheduler/state.rs` (modified, +6/-0)
 ```diff
-@@ -27,7 +27,8 @@ use api::v1::{
- use async_stream::try_stream;
- use async_trait::async_trait;
- use auth::{
--    PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp, PermissionTableTargets,
-+    PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp, PermissionTableTarget,
-+    PermissionTableTargets,
- };
- use common_error::ext::BoxedError;
- use common_grpc::flight::do_put::DoPutResponse;
-@@ -85,6 +86,20 @@ impl GrpcQueryHandler for Instance {
-                         Some(&ctx.current_schema()),
-                     )
-                     .context(PermissionSnafu)?;
-+
-+                if let Some(checker) = self.plugins.get::<PermissionCheckerRef>()
-+                    && checker.uses_table_targets()
-+                {
-+                    let targets = checker.grpc_table_targets(
-+                        &request,
-+                        ctx.current_catalog(),
-+                        &ctx.current_schema(),
-+                    );
-+                    let targets = self.resolve_query_permission_targets(targets, &ctx)
-+                        .await.map_err(BoxedError::new).context(ExternalSnafu)?;
-+                    self.check_table_permission(&ctx, PermissionReq::GrpcRequest(&request), targets)
-+                        .context(PermissionSnafu)?;
-+                }
-             }
+@@ -28,6 +28,7 @@ use crate::access_layer::AccessLayerRef;
+ use crate::cache::CacheManagerRef;
+ use crate::compaction::compactor::CompactionVersion;
+ use crate::compaction::picker::PickerOutput;
++use crate::compaction::scheduler::history::PickHistory;
+ use crate::compaction::scheduler::local::LocalCompaction;
+ use crate::compaction::scheduler::planning::CompactionRequest;
+ use crate::config::MitoConfig;
+@@ -319,6 +320,8 @@ impl DdlExecution {
  
-             let output = match request {
-@@ -439,6 +454,23 @@ impl Instance {
-                             table_name: table_name.to_string(),
-                         })?;
+ /// Scheduling state retained for the lifetime of a loaded region.
+ pub(super) struct CompactionStatus {
++    /// Resident automatic-pick history, retained across batches until region unload.
++    pub(crate) pick_history: PickHistory,
+     /// Id of the region.
+     pub(super) region_id: RegionId,
+     /// Version control of the region.
+@@ -350,6 +353,7 @@ impl CompactionStatus {
+         access_layer: AccessLayerRef,
+     ) -> CompactionStatus {
+         CompactionStatus {
++            pick_history: PickHistory::default(),
+             region_id,
+             version_control,
+             access_layer,
+@@ -524,11 +528,13 @@ impl CompactionStatus {
+         listener: WorkerListener,
+         schema_metadata_manager: SchemaMetadataManagerRef,
+         max_parallelism: usize,
++        pick_history: Option<PickHistory>,
+     ) -> CompactionRequest {
+         let current_version = CompactionVersion::from(self.version_control.current().version);
+         let start_time = Instant::now();
  
-+                    let target = PermissionTableTarget::new(
-+                        &table_name.catalog_name,
-+                        &table_name.schema_name,
-+                        &table_name.table_name,
-+                    )
-+                    .with_physical_metric_table(table.table_info().is_physical_table());
-+                    plugins.get::<PermissionCheckerRef>().as_ref()
-+                        .check_permission_with_table_targets(
-+                            ctx.current_user(),
-+                            PermissionReq::BulkInsert {
-+                                catalog: &table_name.catalog_name,
-+                                schema: &table_name.schema_name,
-+                                table: &table_name.table_name,
-+                            },
-+                            PermissionTableTargets::resolved(vec![target]),
-+                        ).context(PermissionSnafu)?;
-+
-                     // Check permissions for the table
-                     let interceptor_ref = plugins.get::<GrpcQueryInterceptorRef<Error>>();
-                     let interceptor = interceptor_ref.as_ref();
+         CompactionRequest {
++            pick_history,
+             engine_config,
+             current_version,
+             access_layer: self.access_layer.clone(),
 ```
 
-**File**: `src/servers/src/http/prometheus.rs` (modified, +273/-250)
+**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +259/-7)
 ```diff
-@@ -60,7 +60,7 @@ use serde::de::{self, MapAccess, Visitor};
- use serde::{Deserialize, Serialize};
- use serde_json::Value;
- use session::context::{QueryContext, QueryContextRef};
--use snafu::{Location, OptionExt, ResultExt};
-+use snafu::{Location, OptionExt, ResultExt, ensure};
- use store_api::metric_engine_consts::{
-     DATA_SCHEMA_TABLE_ID_COLUMN_NAME, DATA_SCHEMA_TSID_COLUMN_NAME, LOGICAL_TABLE_METADATA_KEY,
- };
-@@ -1828,61 +1828,17 @@ pub async fn label_values_query(
-         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(table_names));
-     } else if label_name == FIELD_NAME_LABEL {
-         try_call_return_response!(handler.check_query_permission(&[], &query_ctx).await);
--        let enumerate_all = matches.is_empty();
--        let metric_names = matches
--            .iter()
--            .map(|selector| retrieve_exact_metric_name_from_promql(selector))
--            .collect::<Vec<_>>();
--        if metric_names.iter().any(Option::is_none) {
--            try_call_return_response!(
--                handler
--                    .check_query_target_permission(PermissionTableTargets::Unresolved, &query_ctx,)
--                    .await
--            );
--        }
--        let metric_names = metric_names.into_iter().flatten().collect::<Vec<_>>();
--
--        try_call_return_response!(
--            handler
--                .check_query_target_permission(
--                    current_schema_metric_targets(&query_ctx, &metric_names),
--                    &query_ctx,
--                )
--                .await
--        );
--
--        let (field_columns, table_names) = if !enumerate_all && metric_names.is_empty() {
--            (HashSet::new(), Vec::new())
--        } else {
--            handle_schema_err!(
--                retrieve_field_names(&query_ctx, handler.catalog_manager(), metric_names).await
--            )
--            .unwrap_or_default()
--        };
--        try_call_return_response!(
--            handler
--                .check_query_target_permission(
--                    current_schema_metric_targets(&query_ctx, &table_names),
--                    &query_ctx,
--                )
--                .await
--        );
-+        let field_columns =
-+            handle_schema_err!(retrieve_field_names(&query_ctx, &handler, matches).await)
-+                .unwrap_or_default();
-         let mut field_columns = field_columns.into_iter().collect::<Vec<_>>();
-         field_columns.sort_unstable();
-         truncate_results(&mut field_columns, params.limit);
-         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(field_columns));
-     } else if is_database_selection_label(&label_name) {
-         try_call_return_response!(handler.check_query_permission(&[], &query_ctx).await);
--        let catalog_manager = handler.catalog_manager();
--
--        let (mut schema_names, targets) = try_call_return_response!(
--            retrieve_schema_names(&query_ctx, catalog_manager, matches).await
--        );
--        try_call_return_response!(
--            handler
--                .check_query_target_permission(targets, &query_ctx)
--                .await
--        );
-+        let mut schema_names =
-+            try_call_return_response!(retrieve_schema_names(&query_ctx, &handler, matches).await);
-         truncate_results(&mut schema_names, params.limit);
-         return PrometheusJsonResponse::success(PrometheusResponse::LabelValues(schema_names));
-     }
-@@ -2300,100 +2256,132 @@ fn table_has_native_histogram_value(table_info: &TableInfo) -> bool {
-         .any(|column| is_native_histogram_value_type(&column.data_type))
+@@ -13,7 +13,7 @@
+ // limitations under the License.
+ 
+ use std::assert_matches;
+-use std::time::Duration;
++use std::time::{Duration, Instant};
+ 
+ use api::v1::region::StrictWindow;
+ use api::v1::region::compact_request::Options;
+@@ -28,10 +28,12 @@ use tokio::sync::{Barrier, mpsc, oneshot};
+ 
+ use crate::compaction::memory_manager::{CompactionMemoryGuard, new_compaction_memory_manager};
+ use crate::compaction::picker::PickerOutput;
++use crate::compaction::scheduler::history::PickKey;
+ use crate::compaction::scheduler::planning::CompactionPlanningResult;
+ use crate::compaction::scheduler::state::{CompactingFiles, CompactionPhase};
+ use crate::compaction::scheduler::*;
+ use crate::compaction::test_util::new_file_handle;
++use crate::compaction::twcs::PickClass;
+ use crate::compaction::{CompactionOutput, find_dynamic_options};
+ use crate::config::MitoConfig;
+ use crate::error::InvalidSchedulerStateSnafu;
+@@ -412,6 +414,137 @@ async fn test_resident_region_survives_terminal_cycles_and_truncate() {
+     assert!(!scheduler.region_status.contains_key(&id));
  }
  
--async fn retrieve_field_names(
--    query_ctx: &QueryContext,
--    manager: CatalogManagerRef,
--    matches: Vec<String>,
--) -> Result<(HashSet<String>, Vec<String>)> {
--    let mut field_columns = HashSet::new();
--    let mut table_names = Vec::new();
--    let catalog = query_ctx.current_catalog();
--    let schema = query_ctx.current_schema();
-+fn metadata_name_selectors(matches: &[String]) -> Result<Vec<Vec<Matcher>>> {
-+    matches
-+        .iter()
-+        .map(|query| {
-+            let expr = promql_parser::parser::parse(query)
-+                .map_err(|reason| InvalidQuerySnafu { reason }.build())?;
-+            let PromqlExpr::VectorSelector(mut selector) = expr else {
-+                return InvalidQuerySnafu {
-+                    reason: "expected vector selector".to_string(),
-+                }
-+                .fail();
-+            };
-+            ensure!(
-+                selector.matchers.or_matchers.is_empty(),
-+                InvalidQuerySnafu {
-+                    reason: "OR matchers are not supported in schema and field metadata queries"
-+                        .to_string(),
-+                }
-+            );
-+            Ok(take_metric_name_matchers(&mut selector))
-+        })
-+        .collect()
++#[tokio::test]
++async fn test_pick_history_survives_cycles_but_not_region_replacement() {
++    let env = SchedulerEnv::new().await;
++    let (tx, _rx) = mpsc::channel(8);
++    let mut scheduler = env.mock_compaction_scheduler(tx);
++    let version = Arc::new(VersionControlBuilder::new().build());
++    let id = version.region_id();
++    scheduler.register_region(&version, &env.access_layer);
++    let key = PickKey {
++        window: 0,
++        class: PickClass::FileReduction,
++    };
++    let start = Instant::now();
++    scheduler
++        .region_status
++        .get_mut(&id)
++        .unwrap()
++        .pick_history
++        .observe_for_test([key].into_iter(), start);
++    let later = start + Duration::from_secs(120);
++    let priority = scheduler.region_status[&id]
++        .pick_history
++        .promoted_since_for_test(key, later);
++    assert!(priority.is_some());
++    scheduler.region_status.get_mut(&id).unwrap().become_idle();
++    scheduler.register_region(&version, &env.access_layer);
++    assert_eq!(
++        priority,
++        scheduler.region_status[&id]
++            .pick_history
++            .promoted_since_for_test(key, later)
++    );
++    scheduler.on_compaction_failed(id, Arc::new(InvalidSchedulerStateSnafu.build()));
++    assert_eq!(
++        priority,
++        scheduler.region_status[&id]
++            .pick_history
++            .promoted_since_for_test(key, later)
++    );
++    let manifest = env
++        .mock_manifest_context(version.current().version.metadata.clone())
++        .await;
++    let (schemas, _) = mock_schema_metadata_manager();
++    let mut request = scheduler.region_status[&id].new_compaction_request(
++        scheduler.request_sender.clone(),
++        scheduler.engine_config.clone(),
++        scheduler.cache_manager.clone(),
++        &manifest,
++        scheduler.listener.clone(),
++        schemas,
++        1,
++        Some(scheduler.region_status[&id].pick_history.clone()),
++    );
++    let history = request.pick_history.as_mut().unwrap();
++    assert_eq!(priority, history.promoted_since_for_test(key, later));
++    history.observe_for_test(std::iter::empty(), later);
++    assert_eq!(
++        priority,
++        scheduler.region_status[&id]
++            .pick_history
++            .promoted_since_for_test(key, later)
++    );
++    let replacement = Arc::new(VersionControlBuilder::new().build());
++    scheduler.register_region(&replacement, &env.access_layer);
++    assert!(
++        scheduler.region_status[&id]
++            .pick_history
++            .promoted_since_for_test(key, later)
++            .is_none()
++    );
 +}
- 
--    if matches.is_empty() {
--        // query all tables if no matcher is provided
--        let mut tables = manager.tables(catalog
++
++#[rstest::rstest]
++#[case::accepted_empty_plan(false)]
++#[case::failed_plan(true)]
++#[tokio::test]
++async fn test_empty_plan_prunes_history_but_failed_plan_preserves_it(#[case] failed: bool) {
++    let env = SchedulerEnv::new().await;
++    let (tx, _rx) = mpsc::channel(4);
++    let mut scheduler = env.mock_compaction_scheduler(tx);
++    let version = Arc::new(VersionControlBuilder::new().build());
++    let id = version.region_id();
++    let manifest = env
++        .mock_manifest_context(version.current().version.metadata.clone())
++        .await;
++    let (schemas, _) = mock_schema_metadata_manager();
++    scheduler.register_region(&version, &env.access_layer);
++    let status = scheduler.region_status.get_mut(&id).unwrap();
++    let key = PickKey {
++        window: 0,
++        class: PickClass::FileReduction,
++    };
++    let start = Instant::now();
++    let now = start + Duration::from_secs(120);
++    status
++        .pick_history
++        .observe_for_test([key].into_iter(), start);
++    status.start_picking_with_trigger(7, CompactionTrigger::Automatic);
++    let mut planned_history = status.pick_history.clone();
++    planned_history.observe_for_test(std::iter::empty(), now);
++    assert!(
++        status
++            .pick_history
++            .promoted_since_for_test(key, now)
++            .is_som
 ```
 
-**File**: `src/servers/src/prometheus_handler.rs` (modified, +8/-1)
+---
+
+### Incident Patch 3: `4633c37d` (2026-11-04)
+**Commit Message**: fix: test (#10149)
+
+fix: fixture
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+**File**: `src/cmd/src/frontend.rs` (modified, +3/-1)
 ```diff
-@@ -168,14 +168,21 @@ pub trait PrometheusHandler {
-         query_ctx: &QueryContextRef,
-     ) -> Result<()>;
+@@ -850,7 +850,9 @@ mod tests {
+         assert!(!debug.contains("cli-secret"));
+         assert!(debug.contains("[REDACTED]"));
  
--    /// Removes inaccessible metric names from logical-table metadata enumeration results.
-+    /// Removes inaccessible names from non-physical table metadata enumeration results.
-     async fn filter_metadata_metric_names(
-         &self,
-         metric_names: Vec<String>,
-         schema: &str,
-         query_ctx: &QueryContextRef,
-     ) -> Result<Vec<String>>;
+-        let fe_opts = command.load_options(&Default::default()).unwrap().component;
++        let mut fe_opts = command.load_options(&Default::default()).unwrap().component;
++        // Downstream frontend plugins require a meta client outside standalone mode.
++        fe_opts.meta_client = Some(MetaClientOptions::default());
  
-+    /// Removes schemas the user cannot access from metadata enumeration results.
-+    async fn filter_metadata_schema_names(
-+        &self,
-+        schema_names: Vec<String>,
-+        query_ctx: &QueryContextRef,
-+    ) -> Result<Vec<String>>;
-+
-     /// Query metric table names by the `__name__` matchers.
-     async fn query_metric_names(
-         &self,
+         let mut plugins = Plugins::new();
+         plugins::setup_frontend_plugins_pre_build(&mut plugins, &[], &fe_opts, None)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10149** (2026-11-04): fix: test (@shuiyisong)
+- **PR #10146** (2026-11-04): fix(ci): increase nightly JSONBench runner root volume (@MichaelScofield)
+- **PR #10139** (closed): feat(mito2): certify logical row counts of compaction outputs (@Aumnertic)
+- **PR #10130** (2026-11-04): refactor(meta): separate migration construction and drain child tracking (@WenyXu)
+- **PR #10123** (2026-11-04): fix: register trigger procedure loaders through DdlManager (@fengys1996)
 - **PR #10118** (2026-11-03): fix: include peer context in distributed query errors (@WenyXu)
-- **PR #10117** (2026-11-03): fix(promql): land the native admission change on narthex (#10071) (@discord9)
-- **PR #10116** (2026-11-03): chore(ci): use standard AWS secrets in CI workflows (@daviderli614)
-- **PR #10108** (2026-11-03): fix(prometheus): report the metric name only where the aggregation keeps it (@discord9)
-- **PR #10102** (closed): test(meta): verify streamed drain recovery and grouped migration children (@WenyXu)
-- **PR #10100** (2026-11-02): fix(meta): forward flushed Parquet bytes in region statistics (@WenyXu)
 
 ---
 
@@ -2835,22 +2787,22 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs
+## X. meta): invalidate all datanode tables on address change (#9986)
 
 **RULE**:
-When implementing operations in `src/frontend/src/server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta-srv/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a09ebc70`: postgres): OTLP binary payload ingest via COPY FROM STDIN (metrics, traces, logs) (#10050). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `351f4207`: meta): invalidate all datanode tables on address change (#9986). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/src/server.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta-srv/AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let with_metric_engine = effective_prom_store_options(&opts).with_metric_engine;
-                .with_otlp_handler(instance.clone(), with_metric_engine)
+  A changed datanode address invalidates every table on that node (`__dn_table`),
+  not only the tables in the current heartbeat.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2860,4 +2812,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a09ebc70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `351f4207` are properly handled with clean fallback behavior.

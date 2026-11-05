@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/olric-data-olric-learnings.md`  
 > **Source**: github ([https://github.com/olric-data/olric](https://github.com/olric-data/olric))  
-> **Source Version**: `c49c44a8`  
+> **Source Version**: `9092df94`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:53:54.456Z  
+> **Timestamp**: 2026-11-04T16:50:14.926Z  
 > **Learning ID**: `learn-github-olric-data-olric`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/olric-data-olric-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/olric-data/olric](https://github.com/olric-data/olric))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:53:54.447Z  
+> **Harvest Timestamp**: 2026-11-04T16:50:14.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed, in-memory key/value store and cache. It can be used as an embedded Go library and a language-independent service.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3500 stars
+- **Stars / Engagement**: 3503 stars
 
 ---
 
@@ -1670,177 +1670,311 @@ func (i *ClusterIterator) Close() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3f9991f` (2026-04-03)
-**Commit Message**: Fix minor typo in package documentation for `ramblock`
+### Incident Patch 1: `e74a4954` (2026-09-03)
+**Commit Message**: Rebuild the routing table without serially probing every partition
 
-**File**: `internal/ramblock/ramblock.go` (modified, +1/-1)
+fillRoutingTable asks each partition owner how many keys it holds so empty
+owners can be pruned. That probe is a blocking network round trip and it ran
+once per owner per partition, sequentially, while updateRouting held the
+routing table lock on the single cluster-event goroutine.
+
+With the default PartitionCount of 271 that is 271 sequential round trips per
+routing update. Healthy nodes answer in microseconds so it goes unnoticed, but
+once owners are slow the cost is linear: measured 13.9s at 50ms per probe and
+54.9s at 200ms. A joining node gives up after BootstrapTimeout, 10s by default,
+so it never receives a routing table and exits. Its restart churns membership
+and triggers another rebuild, which keeps the cluster wedged until every node
+is restarted and the partitions are empty again.
+
+Probe partitions concurrently, bound each probe, and skip owners that already
+failed during the same rebuild. The same 200ms case now completes in 1.8s.
+
+A failed probe still leaves the owner in place; pruning on an unanswered probe
+would drop an owner that may hold data.
+
+**File**: `internal/cluster/routingtable/distribute.go` (modified, +77/-31)
 ```diff
-@@ -13,7 +13,7 @@
- // limitations under the License.
+@@ -15,14 +15,17 @@
+ package routingtable
  
- /*
--Package ramblock implements a GC friendly in-memory storage engine by using
-+Package ramblock implements a GC-friendly in-memory storage engine by using
- built-in maps and byte slices. It also supports compaction.
- */
- package ramblock
-```
-
----
-
-### Incident Patch 2: `0ce1e6a8` (2026-06-12)
-**Commit Message**: fix pipeline Get & GetPut panic on missing keys
-
-**File**: `pipeline.go` (modified, +34/-2)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"bytes"
- 	"context"
+ import (
++	"context"
  	"errors"
-+	"fmt"
- 	"runtime"
- 	"strconv"
- 	"sync"
-@@ -164,8 +165,15 @@ func (f *FutureGet) Result() (*GetResponse, error) {
- 		if cmd.Err() != nil {
- 			return nil, processProtocolError(cmd.Err())
- 		}
-+		value, nilValue, err := pipelineStringValue(cmd)
-+		if err != nil {
-+			return nil, err
-+		}
-+		if nilValue {
-+			return nil, ErrKeyNotFound
-+		}
- 		stringCmd := redis.NewStringCmd(context.Background(), cmd.Args()...)
--		stringCmd.SetVal(cmd.(*redis.Cmd).Val().(string))
-+		stringCmd.SetVal(value)
- 		return f.dp.dm.makeGetResponse(stringCmd)
- 	default:
- 		return nil, ErrNotReady
-@@ -392,8 +400,15 @@ func (f *FutureGetPut) Result() (*GetResponse, error) {
- 		if cmd.Err() != nil {
- 			return nil, processProtocolError(cmd.Err())
- 		}
-+		value, nilValue, err := pipelineStringValue(cmd)
-+		if err != nil {
-+			return nil, err
-+		}
-+		if nilValue {
-+			return nil, nil
-+		}
- 		stringCmd := redis.NewStringCmd(context.Background(), cmd.Args()...)
--		stringCmd.SetVal(cmd.(*redis.Cmd).Val().(string))
-+		stringCmd.SetVal(value)
- 		return f.dp.dm.makeGetResponse(stringCmd)
- 	default:
- 		return nil, ErrNotReady
-@@ -645,3 +660,20 @@ func putPipelineCmdsIntoPool(cmds []redis.Cmder) {
- 	cmds = cmds[:0]
- 	pipelineCmdPool.Put(cmds)
- }
-+
-+func pipelineStringValue(cmd redis.Cmder) (string, bool, error) {
-+	redisCmd, ok := cmd.(*redis.Cmd)
-+	if !ok {
-+		return "", false, fmt.Errorf("unexpected pipeline command type %T", cmd)
-+	}
-+
-+	value := redisCmd.Val()
-+	if value == nil {
-+		return "", true, nil
-+	}
-+	stringValue, ok := value.(string)
-+	if !ok {
-+		return "", false, fmt.Errorf("unexpected pipeline command value type %T", value)
-+	}
-+	return stringValue, false, nil
-+}
-```
-
-**File**: `pipeline_test.go` (modified, +41/-1)
-```diff
-@@ -20,8 +20,10 @@ import (
- 	"testing"
- 	"time"
++	"sync"
++	"time"
  
--	"github.com/olric-data/olric/internal/testutil"
-+	"github.com/redis/go-redis/v9"
- 	"github.com/stretchr/testify/require"
-+
-+	"github.com/olric-data/olric/internal/testutil"
+ 	"github.com/buraksezer/consistent"
+ 	"github.com/olric-data/olric/internal/discovery"
+ 	"github.com/olric-data/olric/internal/protocol"
  )
  
- func TestDMapPipeline_Put(t *testing.T) {
-@@ -107,6 +109,25 @@ func TestDMapPipeline_Get(t *testing.T) {
- 	}
+-func (r *RoutingTable) distributePrimaryCopies(partID uint64) []discovery.Member {
++func (r *RoutingTable) distributePrimaryCopies(partID uint64, unreachable *unreachableOwners) []discovery.Member {
+ 	// First you need to create a copy of the owners list. Don't modify the current list.
+ 	part := r.primary.PartitionByID(partID)
+ 	owners := make([]discovery.Member, part.OwnerCount())
+@@ -59,21 +62,9 @@ func (r *RoutingTable) distributePrimaryCopies(partID uint64) []discovery.Member
+ 	// Prune empty nodes
+ 	for i := 0; i < len(owners); i++ {
+ 		owner := owners[i]
+-		cmd := protocol.NewLengthOfPart(partID).Command(r.ctx)
+-		rc := r.client.Get(owner.String())
+-		err := rc.Process(r.ctx, cmd)
+-		if err != nil {
+-			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+-				"partition: %d: %v", partID, err)
+-			// Pass it. If the node is down, memberlist package will send a leave event.
+-			continue
+-		}
+-
+-		count, err := cmd.Result()
+-		if err != nil {
+-			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+-				"partition: %d: %v", partID, err)
+-			// Pass it. If the node is down, memberlist package will send a leave event.
++		count, ok := r.partitionKeyCount(partID, owner, false, unreachable)
++		if !ok {
++			// Unknown. If the node is down, memberlist will send a leave event.
+ 			continue
+ 		}
+ 
+@@ -120,7 +111,7 @@ func isOwner(member discovery.Member, owners []consistent.Member) bool {
+ 	return false
  }
  
-+func TestFutureGet_Result_NilPipelineValue(t *testing.T) {
-+	cmd := redis.NewCmd(context.Background(), "dm.get", "mydmap", "missing", "RW")
-+	cmd.SetVal(nil)
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	future := &FutureGet{
-+		dp: &DMapPipeline{
-+			result: map[uint64][]redis.Cmder{0: {cmd}},
-+		},
-+		ctx:       ctx,
-+		closedCtx: context.Background(),
-+	}
-+
-+	res, err := future.Result()
-+	require.Nil(t, res)
-+	require.ErrorIs(t, err, ErrKeyNotFound)
-+}
-+
- func TestDMapPipeline_Delete(t *testing.T) {
- 	cluster := newTestOlricCluster(t)
- 	db := cluster.addMember(t)
-@@ -293,6 +314,25 @@ func TestDMapPipeline_GetPut(t *testing.T) {
- 	}
- }
+-func (r *RoutingTable) distributeBackups(partID uint64) []discovery.Member {
++func (r *RoutingTable) distributeBackups(partID uint64, unreachable *unreachableOwners) []discovery.Member {
+ 	part := r.backup.PartitionByID(partID)
+ 	owners := make([]discovery.Member, part.OwnerCount())
+ 	copy(owners, part.Owners())
+@@ -167,20 +158,9 @@ func (r *RoutingTable) distributeBackups(partID uint64) []discovery.Member {
+ 	// Prune empty nodes
+ 	for i := 0; i < len(owners); i++ {
+ 		backup := owners[i]
+-		cmd := protocol.NewLengthOfPart(partID).SetReplica().Command(r.ctx)
+-		rc := r.client.Get(backup.String())
+-		err := rc.Process(r.ctx, cmd)
+-		if err != nil {
+-			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+-				"partition: %d: %v", partID, err)
+-			// Pass it. If the node is down, memberlist package will send a leave event.
+-			continue
+-		}
+-		count, err := cmd.Result()
+-		if err != nil {
+-			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+-				"partition: %d: %v", partID, err)
+-			// Pass it. If the node is down, memberlist package will send a leave event.
++		count, ok := r.partitionKeyCount(partID, backup, true, unreachable)
++		if !ok {
++			// Unknown. If the node is down, memberlist will send a leave event.
+ 			continue
+ 		}
  
-+func TestFutureGetPut_Result_NilPipelineValue(t *testing.T) {
-+	cmd := redis.NewCmd(context.Background(), "dm.getput", "mydmap", "key", "value", "RW")
-+	cmd.SetVal(nil)
+@@ -225,3 +205,69 @@ func (r *RoutingTable) distributeBackups(partID uint64) []discovery.Member {
+ 	}
+ 	return owners
+ }
 +
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	future := &FutureGetPut{
-+		dp: &DMapPipeline{
-+			result: map[uint64][]redis.Cmder{0: {cmd}},
-+		},
-+		ctx:       ctx,
-+		closedCtx: context.Background(),
-+	}
-+
-+	res, err := future.Result()
-+	require.NoError(t, err)
-+	require.Nil(t, res)
++// unreachableOwners tracks owners whose probe failed during one fillRoutingTable
++// pass so the remaining partitions skip them instead of paying the timeout again.
++type unreachableOwners struct {
++	mu sync.Mutex
++	m  map[string]struct{}
 +}
 +
- func TestDMapPipeline_IncrByFloat(t *testing.T) {
- 	cluster := newTestOlricCluster(t)
- 	db := cluster.addMember(t)
++func newUnreachableOwners() *unreachableOwners {
++	return &unreachableOwners{m: make(map[string]struct{})}
++}
++
++func (u *unreachableOwners) has(addr string) bool {
++	u.mu.Lock()
++	defer u.mu.Unlock()
++	_, ok := u.m[addr]
++	return ok
++}
++
++func (u *unreachableOwners) add(addr string) {
++	u.mu.Lock()
++	defer u.mu.Unlock()
++	u.m[addr] = struct{}{}
++}
++
++// probeTimeout bounds a single partition key-count probe. The probe is a cheap
++// bookkeeping question, so a slow answer means the owner is unhealthy, not that
++// the answer is worth waiting for.
++const probeTimeout = 250 * time.Millisecond
++
++// partitionKeyCount asks an owner how many keys it holds for a partition.
++//
++// fillRoutingTable runs this for every owner of every partition, so an owner
++// that blocks costs PartitionCount timeouts per routing update, which stalls the
++// coordinator's event loop for minutes and leaves joining nodes without a
++// routing table. unreachable is per fillRoutingTable pass: once an owner fails,
++// the remaining partitions skip it. ok=false means "unknown", and callers keep
++// the owner rather than pruning on a failed probe.
++func (r *RoutingTable) partitionKeyCount(partID uint64, owner discovery.Member, replica bool, unreachable *unreachableOwners) (int64, bool) {
++	addr := owner.String()
++	if unreachable.has(addr) {
++		return 0, false
++	}
++
++	ctx, cancel := context.WithTimeout(r.ctx, probeTimeout)
++	defer cancel()
++
++	builder := protocol.NewLengthOfPart(partID)
++	if replica {
++		builder = builder.SetReplica()
++	}
++	cmd := builder.Command(ctx)
++
++	if err := r.client.Get(addr).Process(ctx, cmd); err != nil {
++		r.log.V(6).Printf("[DEBUG
 ```
 
----
-
-### Incident Patch 3: `630870d6` (2026-08-12)
-**Commit Message**: chore: remove Go Report Card badge and add build status, release badges
-
-**File**: `README.md` (modified, +2/-2)
+**File**: `internal/cluster/routingtable/probe_test.go` (added, +80/-0)
 ```diff
-@@ -1,6 +1,6 @@
--# Olric [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Olric%3A+Distributed+and+in-memory+key%2Fvalue+database.+It+can+be+used+both+as+an+embedded+Go+library+and+as+a+language-independent+service.+&url=https://github.com/olric-data/olric/&hashtags=golang,distributed,database)
-+# Olric
+@@ -0,0 +1,80 @@
++// Copyright 2018-2025 The Olric Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package routingtable
++
++import (
++	"testing"
++	"time"
++
++	"github.com/olric-data/olric/internal/discovery"
++	"github.com/olric-data/olric/internal/testutil"
++)
++
++func TestUnreachableOwners(t *testing.T) {
++	u := newUnreachableOwners()
++
++	if u.has("127.0.0.1:1") {
++		t.Fatal("empty set reported a member as unreachable")
++	}
++
++	u.add("127.0.0.1:1")
++	if !u.has("127.0.0.1:1") {
++		t.Fatal("added member was not reported as unreachable")
++	}
++	if u.has("127.0.0.1:2") {
++		t.Fatal("unrelated member was reported as unreachable")
++	}
++}
++
++// A probe to an owner that never answers must give up quickly, and every later
++// partition must skip that owner outright. Serially probing PartitionCount
++// partitions against one unresponsive owner is what stalls a routing table
++// rebuild long enough for joining nodes to give up and crashloop.
++func TestPartitionKeyCountBoundsAndMemoizes(t *testing.T) {
++	cluster := newTestCluster()
++	defer cluster.cancel()
++
++	rt, err := cluster.addNode(testutil.NewConfig())
++	if err != nil {
++		t.Fatalf("Expected nil. Got: %v", err)
++	}
++
++	// Port 1 is not listening, so the probe can only end in a timeout.
++	dead := discovery.Member{Name: "127.0.0.1:1"}
++	unreachable := newUnreachableOwners()
++
++	start := time.Now()
++	_, ok := rt.partitionKeyCount(0, dead, false, unreachable)
++	firstCall := time.Since(start)
++
++	if ok {
++		t.Fatal("probe against a dead address reported a usable key count")
++	}
++	if firstCall > 5*time.Second {
++		t.Fatalf("probe took %v, want it bounded near %v", firstCall, probeTimeout)
++	}
++	if !unreachable.has(dead.String()) {
++		t.Fatal("failed probe did not mark the owner unreachable")
++	}
++
++	// Every remaining partition must now skip this owner rather than pay again.
++	start = time.Now()
++	if _, ok = rt.partitionKeyCount(1, dead, false, unreachable); ok {
++		t.Fatal("memoized probe reported a usable key count")
++	}
++	if secondCall := time.Since(start); secondCall > 50*time.Millisecond {
++		t.Fatalf("memoized probe took %v, want it to return immediately", secondCall)
++	}
++}
+```
+
+**File**: `internal/cluster/routingtable/routingtable.go` (modified, +27/-7)
+```diff
+@@ -33,6 +33,7 @@ import (
+ 	"github.com/olric-data/olric/internal/server"
+ 	"github.com/olric-data/olric/internal/service"
+ 	"github.com/olric-data/olric/pkg/flog"
++	"golang.org/x/sync/errgroup"
+ )
  
--[![Go Reference](https://pkg.go.dev/badge/github.com/olric-data/olric/.svg)](https://pkg.go.dev/github.com/olric-data/olric/) [![Go Report Card](https://goreportcard.com/badge/olric-data/olric)](https://goreportcard.com/report/github.com/olric-data/olric/) [![Discord](https://img.shields.io/discord/721708998021087273.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ahK7Vjr8We) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-+[![Go Reference](https://pkg.go.dev/badge/github.com/olric-data/olric/.svg)](https://pkg.go.dev/github.com/olric-data/olric/) [![Build](https://github.com/olric-data/olric/actions/workflows/ci.yml/badge.svg)](https://github.com/olric-data/olric/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/olric-data/olric)](https://github.com/olric-data/olric/releases/latest) [![Discord](https://img.shields.io/discord/721708998021087273.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ahK7Vjr8We) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+ // ErrClusterQuorum means that the cluster could not reach a healthy numbers of members to operate.
+@@ -209,22 +210,41 @@ func (r *RoutingTable) CheckBootstrap() error {
+ 	})
+ }
  
- Distributed In-Memory Cache & Key/Value Store
++// fillRoutingTableConcurrency caps parallel partition probes during a routing
++// table rebuild.
++const fillRoutingTableConcurrency = 32
++
+ func (r *RoutingTable) fillRoutingTable() {
+ 	if r.config.ReplicaCount > int(r.NumMembers()) {
+ 		r.log.V(1).Printf("[WARN] Desired replica count is %d and "+
+ 			"the cluster has %d members currently",
+ 			r.config.ReplicaCount, r.NumMembers())
+ 	}
++	// Each partition probes its owners over the network. Serially that is
++	// PartitionCount round trips per routing update, so even mildly slow owners
++	// push a single update past the joining node's bootstrap timeout and stall
++	// the coordinator's event loop.
++	unreachable := newUnreachableOwners()
+ 	table := make(map[uint64]*route)
++	var tableMtx sync.Mutex
++	var g errgroup.Group
++	g.SetLimit(fillRoutingTableConcurrency)
++
+ 	for partID := uint64(0); partID < r.config.PartitionCount; partID++ {
+-		rt := &route{
+-			Owners: r.distributePrimaryCopies(partID),
+-		}
+-		if r.config.ReplicaCount > config.MinimumReplicaCount {
+-			rt.Backups = r.distributeBackups(partID)
+-		}
+-		table[partID] = rt
++		g.Go(func() error {
++			rt := &route{
++				Owners: r.distributePrimaryCopies(partID, unreachable),
++			}
++			if r.config.ReplicaCount > config.MinimumReplicaCount {
++				rt.Backups = r.distributeBackups(partID, unreachable)
++			}
++			tableMtx.Lock()
++			table[partID] = rt
++			tableMtx.Unlock()
++			return nil
++		})
+ 	}
++	_ = g.Wait()
+ 	r.table = table
+ }
  
 ```
 
@@ -1870,28 +2004,92 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minor typo in package documentation for `ramblock`
+## X. Rebuild the routing table without serially probing every partition
 
 **RULE**:
-When implementing operations in `internal/ramblock/ramblock.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in olric-data/olric. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/cluster/routingtable/distribute.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in olric-data/olric. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3f9991f`: minor typo in package documentation for `ramblock`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e74a4954`: Rebuild the routing table without serially probing every partition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/ramblock/ramblock.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cluster/routingtable/distribute.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Package ramblock implements a GC-friendly in-memory storage engine by using
+	"context"
+	"sync"
+	"time"
+func (r *RoutingTable) distributePrimaryCopies(partID uint64, unreachable *unreachableOwners) []discovery.Member {
+		count, ok := r.partitionKeyCount(partID, owner, false, unreachable)
+		if !ok {
+			// Unknown. If the node is down, memberlist will send a leave event.
+func (r *RoutingTable) distributeBackups(partID uint64, unreachable *unreachableOwners) []discovery.Member {
+		count, ok := r.partitionKeyCount(partID, backup, true, unreachable)
+		if !ok {
+			// Unknown. If the node is down, memberlist will send a leave event.
+
+// unreachableOwners tracks owners whose probe failed during one fillRoutingTable
+// pass so the remaining partitions skip them instead of paying the timeout again.
+type unreachableOwners struct {
+	mu sync.Mutex
+	m  map[string]struct{}
+}
+
+func newUnreachableOwners() *unreachableOwners {
+	return &unreachableOwners{m: make(map[string]struct{})}
+}
+
+func (u *unreachableOwners) has(addr string) bool {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	_, ok := u.m[addr]
+	return ok
+}
+
+func (u *unreachableOwners) add(addr string) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	u.m[addr] = struct{}{}
+}
+
+// probeTimeout bounds a single partition key-count probe. The pro
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Package ramblock implements a GC friendly in-memory storage engine by using
+func (r *RoutingTable) distributePrimaryCopies(partID uint64) []discovery.Member {
+		cmd := protocol.NewLengthOfPart(partID).Command(r.ctx)
+		rc := r.client.Get(owner.String())
+		err := rc.Process(r.ctx, cmd)
+		if err != nil {
+			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+				"partition: %d: %v", partID, err)
+			// Pass it. If the node is down, memberlist package will send a leave event.
+			continue
+		}
+
+		count, err := cmd.Result()
+		if err != nil {
+			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+				"partition: %d: %v", partID, err)
+			// Pass it. If the node is down, memberlist package will send a leave event.
+func (r *RoutingTable) distributeBackups(partID uint64) []discovery.Member {
+		cmd := protocol.NewLengthOfPart(partID).SetReplica().Command(r.ctx)
+		rc := r.client.Get(backup.String())
+		err := rc.Process(r.ctx, cmd)
+		if err != nil {
+			r.log.V(6).Printf("[DEBUG] Failed to check key count on backup "+
+				"partition: %d: %v", partID, err)
+			// Pass it. If the node is down, memberlist package will send a leave event.
+			continue
+		}
+		count, err := cmd.Result()
+		if err != nil {
+			r.log.V(6).Printf("[DEBUG] Failed to check key 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3f9991f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e74a4954` are properly handled with clean fallback behavior.

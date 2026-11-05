@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `fc82aedd`  
+> **Source Version**: `b24a3efb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:18:05.442Z  
+> **Timestamp**: 2026-11-04T16:34:38.399Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:16:20.011Z  
+> **Harvest Timestamp**: 2026-11-04T16:34:37.984Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4783 stars
+- **Stars / Engagement**: 4784 stars
 
 ---
 
@@ -2067,642 +2067,488 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49f5c348` (2026-11-03)
-**Commit Message**: REQUIREMENTS(cpu) from real usage — Security (#57899)
+### Incident Patch 1: `b24a3efb` (2026-11-04)
+**Commit Message**: EXT-2580 Hive log UI actions (#57953)
 
-**File**: `ydb/core/security/ldap_auth_provider/ut/ya.make` (modified, +1/-1)
+**File**: `ydb/core/mind/hive/balancer.cpp` (modified, +3/-1)
 ```diff
-@@ -6,7 +6,7 @@ SIZE(MEDIUM)
- IF (SANITIZER_TYPE)
-     REQUIREMENTS(cpu:2)
- ELSE()
--    REQUIREMENTS(cpu:2)
-+    REQUIREMENTS(cpu:1)
- ENDIF()
+@@ -561,14 +561,16 @@ class THiveBalancer : public NActors::TActorBootstrapped<THiveBalancer>, public
+     }
+ };
  
- PEERDIR(
+-void THive::StartHiveBalancer(TBalancerSettings&& settings) {
++bool THive::StartHiveBalancer(TBalancerSettings&& settings) {
+     if (IsItPossibleToStartBalancer(settings.Type)) {
+         LastBalancerTrigger = settings.Type;
+         LastBalancerSuppression.reset();
+         auto* balancer = new THiveBalancer(this, std::move(settings));
+         SubActors.emplace_back(balancer);
+         RegisterWithSameMailbox(balancer);
++        return true;
+     }
++    return false;
+ }
+ 
+ } // NHive
 ```
 
-**File**: `ydb/core/security/ut/ya.make` (modified, +1/-1)
+**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +6/-0)
 ```diff
-@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/security)
- FORK_SUBTESTS()
- 
- SIZE(MEDIUM)
--REQUIREMENTS(cpu:2)
-+REQUIREMENTS(cpu:1)
- 
- IF (SANITIZER_TYPE)
-     SUPPRESSIONS(tsan.supp)
-```
-
-**File**: `ydb/services/scheme_secret/ut/fast/ya.make` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ SIZE(MEDIUM)
- IF (SANITIZER_TYPE)
-     REQUIREMENTS(cpu:2)
- ELSE()
--    REQUIREMENTS(cpu:2)
-+    REQUIREMENTS(cpu:1)
- ENDIF()
- 
- PEERDIR(
-```
-
----
-
-### Incident Patch 2: `c69ce13c` (2026-11-03)
-**Commit Message**: REQUIREMENTS(cpu) from real usage — fq (#57895)
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/kqp/runtime/streaming/ut/ya.make` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/kqp/runtime/streaming)
- FORK_SUBTESTS()
- 
- SIZE(MEDIUM)
--REQUIREMENTS(cpu:4)
-+REQUIREMENTS(cpu:1)
- 
- SRCS(
-     kqp_streaming_aggregation_ut.cpp
-```
-
-**File**: `ydb/core/kqp/script_executions/table_queries/ut/ya.make` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ SIZE(MEDIUM)
- IF (SANITIZER_TYPE)
-     REQUIREMENTS(cpu:4)
- ELSE()
--    REQUIREMENTS(cpu:2)
-+    REQUIREMENTS(cpu:1)
- ENDIF()
- 
- SRCS(
-```
-
-**File**: `ydb/core/kqp/ut/federated_query/datastreams/ya.make` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/core/kqp)
- FORK_SUBTESTS()
- SPLIT_FACTOR(60)
- 
--REQUIREMENTS(cpu:2)
-+REQUIREMENTS(cpu:1)
- 
- IF (SANITIZER_TYPE)
-     SIZE(LARGE)
-```
-
-**File**: `ydb/core/kqp/ut/federated_query/s3/ya.make` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- UNITTEST_FOR(ydb/core/kqp)
- 
--REQUIREMENTS(cpu:2)
-+REQUIREMENTS(cpu:1)
- 
- IF (SANITIZER_TYPE)
-     SIZE(LARGE)
-```
-
-**File**: `ydb/core/kqp/ut/federated_query/scheme/ya.make` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ SIZE(MEDIUM)
- IF (SANITIZER_TYPE)
-     REQUIREMENTS(cpu:4)
- ELSE()
--    REQUIREMENTS(cpu:2)
-+    REQUIREMENTS(cpu:1)
- ENDIF()
- 
- SRCS(
-```
-
-**File**: `ydb/core/kqp/ut/federated_query/ydb_external/ya.make` (modified, +1/-0)
-```diff
-@@ -20,4 +20,5 @@ PEERDIR(
- 
- YQL_LAST_ABI_VERSION()
- 
-+REQUIREMENTS(cpu:1)
- END()
-```
-
-**File**: `ydb/core/local_proxy/local_pq_client/ut/ya.make` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ UNITTEST_FOR(ydb/core/local_proxy/local_pq_client)
- 
- FORK_SUBTESTS()
- 
--REQUIREMENTS(cpu:2)
-+REQUIREMENTS(cpu:1)
- SIZE(MEDIUM)
- 
- SRCS(
-```
-
-**File**: `ydb/services/fq/ut_integration/ya.make` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ UNITTEST_FOR(ydb/services/fq)
- FORK_SUBTESTS()
- 
- SIZE(MEDIUM)
--REQUIREMENTS(cpu:2)
-+REQUIREMENTS(cpu:1)
- 
- SRCS(
-     ut_utils.cpp
-```
-
----
-
-### Incident Patch 3: `3bb03d9b` (2026-11-03)
-**Commit Message**: Fix OLAP Allure descriptions for sanitized HTML (#57994)
-
-Co-authored-by: iddqdex <[REDACTED_EMAIL]>
-
-**File**: `ydb/tests/olap/lib/allure-html-plugin/README.md` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+# YDB Allure description styles
-+
-+Restore table borders, spacing, headings, lists, code fonts and cell backgrounds
-+in OLAP test descriptions generated by Allure 2.46.1.
-+
-+Allure sanitizes description HTML and removes inline styles, classes and
-+`details`/`summary`. The report theme also resets the default formatting of
-+HTML elements. This directory provides two ways to apply an external stylesheet:
-+a postprocessing script and an Allure CSS plugin.
-+
-+## After `ya make --allure`
-+
-+Run from the repository root, after the report has been generated and before
-+publishing it:
-+
-+```bash
-+python3 ydb/tests/olap/lib/allure-html-plugin/style_report.py /path/to/allure
-+```
-+
-+The argument is the generated report directory containing `index.html`.
-+Python 3.8 or newer is sufficient; no third-party Python packages are needed.
-+
-+The script copies `static/styles.css` to `ydb-description.css` in the report
-+and inserts a stylesheet link into `index.html`. It does not change test results
-+or attachments. Repeated execution updates the CSS without duplicating the link.
-+A missing report or invalid style markers cause a nonzero exit.
-+
-+Run the script again after every report regeneration. Publish the whole report
-+directory, including `ydb-description.css`.
-+
-+The ordinary `ya make --allure /path/to/allure` invocation does not load this
-+plugin automatically.
-+
-+## As an Allure CSS plugin
-+
-+Use this route when invoking `allure generate` separately. It requires Java,
-+the raw Allure results and a configuration that includes this plugin.
-+
-+The plugin consists of:
-+
-+```text
-+allure-plugin.yml
-+static/
-+    styles.css
-+```
-+
-+Preserve the standard plugin list when creating a custom configuration. From
-+the repository root, this example copies the installed configuration and adds
-+the absolute path to this directory:
-+
-+```bash
-+PLUGIN_DIR="$(pwd)/ydb/tests/olap/lib/allure-html-plugin"
-+ALLURE_BIN="$(./ya tool --print-path allure)"
-+JAVA_BIN="$(./ya tool --print-path java)"
-+export JAVA_HOME="$(dirname "$(dirname "$JAVA_BIN")")"
-+
-+cp "$(dirname "$ALLURE_BIN")/../config/allure.yml" /tmp/ydb-allure.yml
-+printf '  - %s\n' "$PLUGIN_DIR" >> /tmp/ydb-allure.yml
-+
-+./ya tool allure generate /path/to/allure-results \
-+    --config /tmp/ydb-allure.yml \
-+    -o /path/to/new-report
-+```
-+
-+The input is a directory of raw `*-result.json`, container and attachment files,
-+not an already generated HTML report. Saved `allure.tar` results can be extracted
-+into a separate input directory before generation.
-+
-+Allure copies the stylesheet into `plugin/ydb-description/styles.css` in the
-+generated report and adds the link itself. The plugin directory and custom
-+configuration are needed during generation; the resulting report is standalone.
-+The postprocessing script is not needed for this route.
-+
-+## Cell backgrounds and `abbr`
-+
-+Before passing the description to Allure, `allure_utils.py` copies the background
-+color of each `td`/`th` into an attribute such as `abbr="bg-ccffcc"`.
-+Unlike `style` and `class`, `abbr` survives Allure sanitization.
-+
-+A cell's own background takes precedence over its row's background. Row colors
-+are propagated to each cell, including header cells. Nested tables are handled
-+separately. Original inline styles remain available in the `description.html`
-+attachment.
-+
-+The stylesheet maps the markers to the original colors:
-+
-+| Background | Marker |
-+| --- | --- |
-+| `#90EE90` | `bg-90ee90` |
-+| `#ccffcc` | `bg-ccffcc` |
-+| `#e0f0e0` | `bg-e0f0e0` |
-+| `#eeffcc` | `bg-eeffcc` |
-+| `#f0f0f0` | `bg-f0f0f0` |
-+| `#f5f5f5` | `bg-f5f5f5` |
-+| `#FA8072` | `bg-fa8072` |
-+| `#ffcccc` | `bg-ffcccc` |
-+| `#ffffcc` | `bg-ffffcc` |
-+
-+These are the fixed cell colors currently used under `ydb/tests/olap/lib` and
-+`ydb/tests/olap/load`. Add matching rules for both `td` and `th` when introducing
-+another color.
-+
-+The common `ydb/tests/olap/lib` library embeds the stylesheet with
-+`RESOURCE_FILES`. Load and scenario tests receive the resource transitively;
-+no per-test `DATA` declarations or source-tree access are required.
-+
-+During test execution, background colors are checked against the embedded
-+stylesheet. Each color must have matching `abbr` selectors for both `td` and
-+`th`. An unknown color raises `ValueError` and fails the test while generating
-+its description. Short hex colors, named colors and RGB functions also fail;
-+use a six-digit `#RRGGBB` value. A missing resource is an error as well.
-+
-+When adding a color, update `static/styles.css` in the same change and rebuild
-+the test binary. Generate and publish the report using the stylesheet from the
-+same revision as the test binary; the runtime check cannot validate a stylesheet
-+supplied later by a different checkout.
-+
-+## Collapsible content and attachments
-+
-+External CSS cannot restore tags removed by Allure. Log-retrieval commands are
-+therefore shown as text steps inside the collapsible `Артефакты` step in
-+`Test body`. They ar
-```
-
-**File**: `ydb/tests/olap/lib/allure-html-plugin/allure-plugin.yml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+id: ydb-description
-+name: YDB test description styles
-+description: Restore readable tables and text formatting in YDB test descriptions
-+cssFiles:
-+  - styles.css
-```
-
-**File**: `ydb/tests/olap/lib/allure-html-plugin/static/styles.css` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+.description__text {
-+  line-height: 1.5;
-+  overflow-x: auto;
-+}
-+
-+.description__text strong,
-+.description__text b {
-+  font-weight: 600;
-+}
-+
-+.description__text h3,
-+.description__text h4 {
-+  font-weight: 600;
-+  margin: 1em 0 0.5em;
-+}
-+
-+.description__text ul,
-+.description__text ol {
-+  margin: 0.5em 0;
-+  padding-inline-start: 1.5em;
-+}
-+
-+.description__text ul {
-+  list-style: disc;
-+}
-+
-+.description__text ol {
-+  list-style: decimal;
-+}
-+
-+.description__text table {
-+  border-collapse: collapse;
-+  margin: 0.75em 0;
-+}
-+
-+.description__text th,
-+.description__text td {
-+  border: 1px solid var(--color-border-subtle, currentColor);
-+  padding: 0.4em 0.65em;
-+  text-align: start;
-+  vertical-align: top;
-+}
-+
-+.description__text th {
-+  background-color: color-mix(in srgb, currentColor 6%, transparent);
-+  font-weight: 600;
-+}
-+
-+.description__text pre,
-+.description__text code {
-+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-+}
-+
-+.description__text pre {
-+  overflow-x: auto;
-+  white-space: pre;
-+}
-+
-+/* Cell colors are carried by abbr because Allure removes style and class. */
-+
-+.description__text td[abbr="bg-ccffcc"],
-+.description__text th[abbr="bg-ccffcc"] {
-+  background-color: #ccffcc;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-ffcccc"],
-+.description__text th[abbr="bg-ffcccc"] {
-+  background-color: #ffcccc;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-ffffcc"],
-+.description__text th[abbr="bg-ffffcc"] {
-+  background-color: #ffffcc;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-f0f0f0"],
-+.description__text th[abbr="bg-f0f0f0"] {
-+  background-color: #f0f0f0;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-e0f0e0"],
-+.description__text th[abbr="bg-e0f0e0"] {
-+  background-color: #e0f0e0;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-90ee90"],
-+.description__text th[abbr="bg-90ee90"] {
-+  background-color: #90ee90;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-fa8072"],
-+.description__text th[abbr="bg-fa8072"] {
-+  background-color: #fa8072;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-eeffcc"],
-+.description__text th[abbr="bg-eeffcc"] {
-+  background-color: #eeffcc;
-+  color: #16202a;
-+}
-+
-+.description__text td[abbr="bg-f5f5f5"],
-+.description__text th[abbr="bg-f5f5f5"] {
-+  background-color: #f5f5f5;
-+  color: #16202a;
-+}
-```
-
-**File**: `ydb/tests/olap/lib/allure-html-plugin/style_report.py` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+#!/usr/bin/env python3
-+"""Apply YDB description styles to a report generated by ya make --allure.
-+
-+Usage: python3 style_report.py /path/to/allure
-+Run this after each report generation and before publishing the report.
-+Only the report index and a separate CSS file are changed.
-+"""
-+
-+import argparse
-+import re
-+from pathlib import Path
-+
-+
-+STYLE_FILE = "ydb-description.css"
-+START = "<!-- ydb-description-styles:start -->"
-+END = "<!-- ydb-description-styles:end -->"
-+
-+
-+def style_report(report_dir: Path) -> None:
-+    index_path = report_dir / "index.html"
-+    html = index_path.read_text(encoding="utf-8")
-+    css = (Path(__file__).resolve().parent / "static" / "styles.css").read_bytes()
-+    block = (
-+        START + "\n"
-+        + '<link rel="stylesheet" href="' + STYLE_FILE + '">\n'
-+        + END
-+    )
-+    if START in html or END in html:
-+        pattern = re.compile(re.escape(START) + r".*?" + re.escape(END), re.DOTALL)
-+        if html.count(START) != 1 or html.count(END) != 1:
-+            raise ValueError("Report has incomplete or duplicate YDB style markers")
-+        updated, count = pattern.subn(lambda _: block, html)
-+        if count != 1:
-+            raise ValueError("Report has invalid YDB style markers")
-+    else:
-+        head_end = re.search(r"</head\s*>", html, re.IGNORECASE)
-+        if head_end is None:
-+            raise ValueError("Report index.html has no closing head tag")
-+        updated = html[:head_end.start()] + block + "\n" + html[head_end.start():]
-+
-+    css_path = report_dir / STYLE_FILE
-+    if not css_path.is_file() or css_path.read_bytes() != css:
-+        css_path.write_bytes(css)
-+    if updated != html:
-+        index_path.write_text(updated, encoding="utf-8")
-+
-+
-+def main() -> None:
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("report_dir", type=Path, help="Generated Allure report directory")
-+    args = parser.parse_args()
-+    try:
-+        style_report(args.report_dir)
-+    except (OSError, ValueError) as error:
-+        parser.exit(1, f"Cannot style report: {error}\n")
-+    print(f"YDB description styles applied to {args.report_dir}")
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `ydb/tests/olap/lib/allure_utils.py` (modified, +114/-2)
-```diff
-@@ -1,5 +1,10 @@
- from __future__ import annotations
- from collections import defaultdict
-+from html import escape
-+from html.parser import HTMLParser
-+from functools import lru_cache
-+from library.python.resource import resfs_read
-+import re
- import allure
- from ydb.tests.olap.lib.ydb_cluster import YdbCluster
- from ydb.tests.olap.lib.results_processor import ResultsProcessor
-@@ -14,6 +19,99 @@
- import logging
- 
- 
-+_DESCRIPTION_CSS_RESOURCE = 'ydb/tests/olap/lib/allure-html-plugin/static/styles.css'
-+
-+
-+@lru_cache(maxsize=1)
-+def _description_cell_colors() -> frozenset[str]:
-+    css = resfs_read(_DESCRIPTION_CSS_RESOURCE)
-+    if css is None:
-+        raise RuntimeError(f'Missing embedded Allure stylesheet: {_DESCRIPTION_CSS_RESOURCE}')
-+    css = re.sub(r'/\*.*?\*/', '', css.decode('utf-8'), flags=re.DOTALL)
-+    selectors = re.findall(r'\b(td|th)\[abbr="bg-([0-9a-fA-F]{6})"\]', css)
-+    by_tag = {
-+        tag: {'#' + color.lower() for cell_tag, color in selectors if cell_tag == tag}
-+        for tag in ('td', 'th')
+@@ -2796,7 +2796,13 @@ void THive::Handle(NConsole::TEvConsole::TEvConfigNotificationRequest::TPtr& ev)
+     const NKikimrConsole::TConfigNotificationRequest& record = ev->Get()->Record;
+     ClusterConfig = record.GetConfig().GetHiveConfig();
+     NodeBrokerEpoch = TDuration::MicroSeconds(record.GetConfig().GetNodeBrokerConfig().GetEpochDuration());
++    const NKikimrConfig::THiveConfig previousConfig = CurrentConfig;
+     BuildCurrentConfig();
++    if (TString changes = GetHiveConfigDiffText(previousConfig, CurrentConfig)) {
++        YDB_LOG_INFO("Handle TEvConsole::TEvConfigNotificationRequest: effective config changed",
++            {"logPrefix", GetLogPrefix()},
++            {"changes", changes});
 +    }
-+    colors = frozenset(by_tag['td'] & by_tag['th'])
-+    if not colors:
-+        raise ValueError(f'No cell background rules found in {_DESCRIPTION_CSS_RESOURCE}')
-+    return colors
+     YDB_LOG_DEBUG("Handle TEvConsole::TEvConfigNotificationRequest: merged config",
+         {"logPrefix", GetLogPrefix()},
+         {"config", CurrentConfig});
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +8/-2)
+```diff
+@@ -128,6 +128,12 @@ TString GetResourceValuesHtml(const TResourceRawValues& values);
+ NJson::TJsonValue GetResourceValuesJson(const TResourceRawValues& values);
+ NJson::TJsonValue GetResourceValuesJson(const TResourceRawValues& values, const TResourceRawValues& maximum);
+ TString GetResourceValuesHtml(const NKikimrTabletBase::TMetrics& values);
 +
++// value of a THiveConfig field in single-line text form; a repeated field is rendered as [a, b, c], an absent singular field as <unset>
++TString GetHiveConfigFieldText(const NKikimrConfig::THiveConfig& config, const google::protobuf::FieldDescriptor* field);
 +
-+class _CellColorMarkers(HTMLParser):
-+    """Keep cell backgrounds through Allure sanitization using allowed abbr attributes."""
-+
-+    def __init__(self):
-+        super().__init__(convert_charrefs=False)
-+        self.output = []
-+        self.row_color = None
-+        self.table_rows = []
-+
-+    @staticmethod
-+    def _background(attrs):
-+        attrs = dict(attrs)
-+        backgrounds = re.findall(
-+            r'(?:^|;)\s*background(?:-color)?\s*:\s*([^;]*)(?=;|$)',
-+            attrs.get('style') or '',
-+            flags=re.IGNORECASE,
-+        )
-+        color = backgrounds[-1] if backgrounds else attrs.get('bgcolor') or ''
-+        color = color.strip().lower()
-+        if not color:
-+            return None
-+        if not re.fullmatch(r'#[0-9a-f]{6}', color):
-+            raise ValueError(f'Unsupported Allure cell background {color!r}; use #RRGGBB')
-+        if color not in _description_cell_colors():
-+            raise ValueError(
-+                f'Allure cell background {color!r} has no td/th rules in '
-+                f'{_DESCRIPTION_CSS_RESOURCE}; add matching abbr selectors to the stylesheet'
-+            )
-+        return color
-+
-+    def handle_starttag(self, tag, attrs):
-+        text = self.get_starttag_text()
-+        if tag == 'table':
-+            self.table_rows.append(self.row_color)
-+            self.row_color = None
-+        elif tag == 'tr':
-+            self.row_color = self._background(attrs)
-+        elif tag in ('td', 'th'):
-+            color = self._background(attrs) or self.row_color
-+            if color and 'abbr' not in dict(attrs):
-+                text = text[:-1] + f' abbr="bg-{color[1:]}">'
-+        self.output.append(text)
-+
-+    def handle_endtag(self, tag):
-+        self.output.append(f'</{tag}>')
-+        if tag == 'tr':
-+            self.row_color = None
-+        elif tag == 'table':
-+            self.row_color = self.table_rows.pop() if self.table_rows else None
-+
-+    def handle_startendtag(self, tag, attrs):
-+        self.output.append(self.get_starttag_text())
-+
-+    def handle_data(self, data):
-+        self.output.append(data)
-+
-+    def handle_entityref(self, name):
-+        self.output.append(f'&{name};')
-+
-+    def handle_charref(self, name):
-+        self.output.append(f'&#{name};')
-+
-+    def handle_comment(self, data):
-+        self.output.append(f'<!--{data}-->')
-+
-+
-+def _mark_cell_colors(html: str) -> str:
-+    parser = _CellColorMarkers()
-+    parser.feed(html)
-+    parser.close()
-+    return ''.join(parser.output)
-+
-+
- class NodeErrors:
-     def __init__(self, node: YdbCluster.Node, message: str):
-         self.node = node
-@@ -124,7 +222,7 @@ def _produce_verify_report(verify_errors) -> str:
-         html += f'<details style="margin-bottom: 15px"><summary style="display: list-item">{verify}</summary>'
-         html += '<table border="1" cellpadding="2px" style="margin-top: 5px"><tr><th>Node</th><th>VERIFY failed times</th></tr>'
-         for host, triggered_times in verify_info['hosts_count'].items():
--            html += f'<tr bgcolor="{'  # 90EE90' if triggered_times == 0 else '#FA8072'}"><td>{host}</td><td>{triggered_times}</td></tr>'
-+            html += f'<tr bgcolor="{'#90EE90' if triggered_times == 0 else '#FA8072'}"><td>{host}</td><td>{triggered_times}</td></tr>'
-         html += f'</table><br/><code>{''.join(verify_info['full_trace']).replace('\n', '<br/>')}</code></details>'
-     return html
++// "Field: from -> to" for every field that differs between the two configs, "; "-separated; empty when they are equal
++TString GetHiveConfigDiffText(const NKikimrConfig::THiveConfig& from, const NKikimrConfig::THiveConfig& to);
+ TString GetResourceValuesHtml(const TMetrics& values);
+ NJson::TJsonValue GetResourceValuesJson(const NKikimrTabletBase::TMetrics& values);
+ ui64 GetReadThroughput(const NKikimrTabletBase::TMetrics& values);
+@@ -264,10 +270,10 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     bool IsItPossibleToStartBalancer(EBalancerType balancerType);
+     // balancerType is empty when the suppression is not about a specific type
+     void LogBalancerNotStarted(const TString& balancerType, EBalancerSuppressReason reason);
+-    void StartHiveBalancer(TBalancerSettings&& settings);
++    bool StartHiveBalancer(TBalancerSettings&& settings);
+     THiveDrain* StartHiveDrain(TDrainTarget target, TDrainSettings settings);
+     void StartHiveFill(TNodeId nodeId, const TActorId& initiator);
+-    void StartHiveStorageBalancer(TStorageBalancerSettings settings);
++    bool StartHiveStorageBalancer(TStorageBalancerSettings settings);
+     // starts a new reassign for every tablet in the list
+     void StartReassignActor(std::vector<TReassignOperation> operations, const TActorId& source, ui32 maxInFlight, TString description, std::unique_ptr<IReassignCallback> callback);
+     // continues reassigns of tablets that were left in the middle of it (e.g. by a Hive restart)
+```
+
+**File**: `ydb/core/mind/hive/hive_statics.cpp` (modified, +40/-0)
+```diff
+@@ -1,10 +1,50 @@
+ #include "hive_impl.h"
  
-@@ -953,6 +1051,7 @@ def _pretty_str(s):
-         </tbody></table>
-     '''
+ #include <library/cpp/json/json_value.h>
++#include <google/protobuf/text_format.h>
++#include <util/string/strip.h>
  
-+    description_body_start = len(html)
-     html += _set_node_errors(node_errors)
-     html += _produce_verify_report(verify_errors)
-     logs_in_html = external_param_is_true('save_san_logs_in_html')
-@@ -973,5 +1072,18 @@ def _pretty_str(s):
-     else:
+ namespace NKikimr {
+ namespace NHive {
+ 
++TString GetHiveConfigFieldText(const NKikimrConfig::THiveConfig& config, const google::protobuf::FieldDescriptor* field) {
++    google::protobuf::TextFormat::Printer printer;
++    printer.SetSingleLineMode(true);
++    TProtoStringType value;
++    if (!field->is_repeated()) {
++        // an absent field is not the same as its default: e.g. absent MinCPUScatterToBalance falls back to MinScatterToBalance
++        if (field->has_presence() && !config.GetReflection()->HasField(config, field)) {
++            return "<unset>";
++        }
++        printer.PrintFieldValueToString(config, field, -1, &value);
++        return TString(value);
++    }
++    TStringBuilder result;
++    result << '[';
++    int size = config.GetReflection()->FieldSize(config, field);
++    for (int i = 0; i < size; ++i) {
++        value.clear();
++        printer.PrintFieldValueToString(config, field, i, &value);
++        result << (i ? ", " : "") << StripString(TString(value));
++    }
++    result << ']';
++    return result;
++}
++
++TString GetHiveConfigDiffText(const NKikimrConfig::THiveConfig& from, const NKikimrConfig::THiveConfig& to) {
++    TStringBuilder result;
++    const google::protobuf::Descriptor* descriptor = NKikimrConfig::THiveConfig::GetDescriptor();
++    for (int i = 0; i < descriptor->field_count(); ++i) {
++        const google::protobuf::FieldDescriptor* field = descriptor->field(i);
++        TString fromValue = GetHiveConfigFieldText(from, field);
++        TString toValue = GetHiveConfigFieldText(to, field);
++        if (fromValue != toValue) {
++            result << (result.empty() ? "" : "; ") << field->name() << ": " << fromValue << " -> " << toValue;
++        }
++    }
++    return result;
++}
++
+ TResourceRawValues ResourceRawValuesFromMetrics(const NKikimrTabletBase::TMetrics& metrics) {
+     TResourceRawValues values = {};
+     if (metrics.HasCounter()) {
+```
+
+**File**: `ydb/core/mind/hive/monitoring.cpp` (modified, +195/-36)
+```diff
+@@ -20,21 +20,58 @@ namespace NHive {
+ static constexpr ui64 MAX_REASSIGNS_WITHOUT_CONFIRMATION = 1000;
+ static constexpr i64 REASSIGN_CONFIRMATION_ERROR_MARGIN = 10;
+ 
+-TLoggedMonTransaction::TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& ev, THive* self) {
+-    Index = ++self->OperationsLogIndex;
++TString GetMonUser(const NMon::TEvRemoteHttpInfo* ev) {
++    const auto& query = ev->ExtendedQuery;
++    if (!query) {
++        return {};
++    }
++    NACLib::TUserToken token(query->GetUserToken());
++    return token.GetUserSID();
++}
++
++TString GetMonUserForLog(const NMon::TEvRemoteHttpInfo* ev) {
++    TString user = GetMonUser(ev);
++    return user.empty() ? TString("anonymous") : user;
++}
+ 
+-    const auto& query = ev->Get()->ExtendedQuery;
+-    if (query) {
+-        NACLib::TUserToken token(query->GetUserToken());
+-        User = token.GetUserSID();
++TLoggedMonTransaction::TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& ev, THive* self)
++    : Index(++self->OperationsLogIndex)
++    , User(GetMonUser(ev->Get()))
++    , LogPrefix(self->GetLogPrefix())
++{}
++
++// JSON object -> structured log fields: a nested object becomes "key.subkey" fields, an array is written as JSON text
++static NActors::NStructuredLog::TStructuredMessage JsonToStructuredMessage(const NJson::TJsonValue& json) {
++    using namespace NActors::NStructuredLog;
++    TStructuredMessage message;
++    for (const auto& [key, value] : json.GetMap()) {
++        switch (value.GetType()) {
++            case NJson::JSON_UNDEFINED:
++            case NJson::JSON_NULL:
++                break;
++            case NJson::JSON_MAP:
++                message.AppendSubMessage(TKeyName(key), JsonToStructuredMessage(value));
++                break;
++            case NJson::JSON_STRING:
++                message.AppendValue({TKeyName(key)}, value.GetString());
++                break;
++            default:
++                message.AppendValue({TKeyName(key)}, NJson::WriteJson(value, false));
++                break;
++        }
+     }
++    return message;
+ }
+ 
+-void TLoggedMonTransaction::WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op) {
++void TLoggedMonTransaction::WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op, TStringBuf description) {
+     TStringStream str;
+     NJson::WriteJson(&str, &op);
+     TInstant timestamp = TActivationContext::Now();
+     db.Table<Schema::OperationsLog>().Key(Index).Update<Schema::OperationsLog::User, Schema::OperationsLog::OperationTimestamp, Schema::OperationsLog::Operation>(User, timestamp.MilliSeconds(), str.Str());
++    YDB_LOG_INFO(description,
++        {"logPrefix", LogPrefix},
++        {"user", GetUserForLog()},
++        JsonToStructuredMessage(op));
+ }
+ 
+ TCgiParameters GetParams(const NMon::TEvRemoteHttpInfo* ev) {
+@@ -828,6 +865,7 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
+     TAutoPtr<NMon::TEvRemoteHttpInfo> Event;
+     bool ChangeRequest = false;
+     std::optional<TString> Status;
++    TStringBuilder Changes; // applied changes in "Name: from -> to" form, for the operations log
+ 
+     TTxMonEvent_Settings(const TActorId &source, NMon::TEvRemoteHttpInfo::TPtr& ev, TSelf *hive)
+         : TBase(hive)
+@@ -912,12 +950,33 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
+         }
+     }
+ 
++    void AddChange(const TString& change) {
++        Changes << (Changes.empty() ? "" : "; ") << change;
++    }
++
++    static TString GetAllowedMetricsText(const TVector<i64>& metrics) {
++        const auto* descriptor = NKikimrTabletBase::TMetrics::descriptor();
++        TStringBuilder result;
++        for (auto metricNum : metrics) {
++            const auto* field = descriptor->FindFieldByNumber(metricNum);
++            result << (result.empty() ? "" : ",");
++            if (field) {
++                result << field->name();
++            } else {
++                result << metricNum;
++            }
++        }
++        return result.empty() ? TString("none") : TString(result);
++    }
++
+     bool Execute(TTransactionContext& txc, const TActorContext&) override {
+         const auto params(GetParams(Event.Get()));
+         NIceDb::TNiceDb db(txc.DB);
+ 
+         NJson::TJsonValue jsonOperation;
+         auto& configUpdates = jsonOperation["ConfigUpdates"];
++        const NKikimrConfig::THiveConfig previousConfig = Self->CurrentConfig;
++        const NKikimrConfig::THiveConfig previousDatabaseConfig = Self->DatabaseConfig;
+ 
+         UpdateConfig(db, "MaxTabletsScheduled", configUpdates, TSchemeIds::State::MaxTabletsScheduled);
+         UpdateConfig(db, "MaxBootBatchSize", configUpdates, TSchemeIds::State::MaxBootBatchSize);
+@@ -1058,6 +1117,24 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
+             Self->BuildCurrentConfig();
+             db.Table<Schema::State>().Key(TSchemeIds::State::DefaultState).Update<Schema::State::Config>(Self->DatabaseConfig);
+             Self->Pro
+```
+
+**File**: `ydb/core/mind/hive/monitoring.h` (modified, +8/-1)
+```diff
+@@ -11,11 +11,12 @@ class TLoggedMonTransaction {
+ private:
+     ui64 Index;
+     TString User;
++    TString LogPrefix;
+ 
+ protected:
+     TLoggedMonTransaction(const NMon::TEvRemoteHttpInfo::TPtr& evi, THive* self);
+ 
+-    void WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op);
++    void WriteOperation(NIceDb::TNiceDb& db, const NJson::TJsonValue& op, TStringBuf description);
+ 
+     TString GetUserForLog() const {
+         return User.empty() ? TString("anonymous") : User;
+@@ -24,6 +25,12 @@ class TLoggedMonTransaction {
+ 
+ TCgiParameters GetParams(const NMon::TEvRemoteHttpInfo* ev);
+ 
++// user SID from the request's auth token; empty when the request carries no token
++TString GetMonUser(const NMon::TEvRemoteHttpInfo* ev);
++
++// the same with "anonymous" instead of an empty SID: for log lines and event history
++TString GetMonUserForLog(const NMon::TEvRemoteHttpInfo* ev);
++
+ struct THttpStatus {
+     static const inline TString OK = "200 Ok";
+     static const inline TString BAD_REQUEST = "400 Bad Request";
+```
+
+**File**: `ydb/core/mind/hive/storage_balancer.cpp` (modified, +3/-1)
+```diff
+@@ -206,12 +206,14 @@ class THiveStorageBalancer : public NActors::TActorBootstrapped<THiveStorageBala
+     }
+ };
+ 
+-void THive::StartHiveStorageBalancer(TStorageBalancerSettings settings) {
++bool THive::StartHiveStorageBalancer(TStorageBalancerSettings settings) {
+     if (IsItPossibleToStartBalancer(EBalancerType::Storage)) {
+         auto* balancer = new THiveStorageBalancer(this, std::move(settings));
+         SubActors.emplace_back(balancer);
+         RegisterWithSameMailbox(balancer);
++        return true;
+     }
++    return false;
+ }
+ 
+ } // NHive
+```
+
+---
+
+### Incident Patch 2: `256b1726` (2026-11-04)
+**Commit Message**: Fix MIN in columnshard value aggregation signals (#58052)
+
+**File**: `ydb/library/signals/agent.cpp` (modified, +4/-4)
+```diff
+@@ -17,8 +17,8 @@ bool TValueAggregationAgent::CalcAggregationsAndClean(i64& sum, i64& minValue, i
+     }
+     sum = 0;
+     const TInstant now = TInstant::Now();
+-    auto minValueLocal = Values.front()->GetValue(now);
+-    auto maxValueLocal = Values.front()->GetValue(now);
++    std::optional<i64> minValueLocal;
++    std::optional<i64> maxValueLocal;
+     for (auto it = Values.begin(); it != Values.end();) {
+         if (it->use_count() == 1) {
+             it = Values.erase(it);
+@@ -41,8 +41,8 @@ bool TValueAggregationAgent::CalcAggregationsAndClean(i64& sum, i64& minValue, i
+     if (!maxValueLocal) {
+         return false;
+     }
+-    minValue = maxValueLocal.value_or(0);
+-    maxValue = maxValueLocal.value_or(0);
++    minValue = *minValueLocal;
++    maxValue = *maxValueLocal;
+     return true;
+ }
  
 ```
 
-**File**: `ydb/tests/olap/lib/ya.make` (modified, +6/-0)
+**File**: `ydb/library/signals/ut/agent_ut.cpp` (added, +26/-0)
 ```diff
-@@ -13,7 +13,13 @@ PY3_LIBRARY()
-         ydb_cli.py
-     )
- 
-+    RESOURCE_FILES(
-+        PREFIX ydb/tests/olap/lib/
-+        allure-html-plugin/static/styles.css
-+    )
+@@ -0,0 +1,26 @@
++#include <ydb/library/signals/agent.h>
++#include <ydb/library/signals/owner.h>
 +
-     PEERDIR(
-+        library/python/resource
-         contrib/python/allure-pytest
-         contrib/python/allure-python-commons
-         contrib/python/PyYAML
++#include <library/cpp/testing/gtest/gtest.h>
++
++namespace NKikimr::NColumnShard {
++
++TEST(TValueAggregationAgentTest, MinMaxSum) {
++    auto root = MakeIntrusive<NMonitoring::TDynamicCounters>();
++    TCommonCountersOwner owner("test", root);
++    TValueAggregationAgent agent("Value", owner);
++    // Released at once: the agent holds the last reference and must skip it.
++    agent.GetClient()->SetValue(100);
++    auto low = agent.GetClient();
++    auto high = agent.GetClient();
++    low->SetValue(3);
++    high->SetValue(7);
++    agent.ResendStatus();
++    auto group = root->FindSubgroup("module_id", "test");
++    ASSERT_TRUE(group);
++    EXPECT_EQ(group->FindCounter("Aggregation/MIN/Value")->Val(), 3);
++    EXPECT_EQ(group->FindCounter("Aggregation/MAX/Value")->Val(), 7);
++    EXPECT_EQ(group->FindCounter("Aggregation/SUM/Value")->Val(), 10);
++}
++
++} // namespace NKikimr::NColumnShard
+```
+
+**File**: `ydb/library/signals/ut/ya.make` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++GTEST()
++
++PEERDIR(
++    ydb/library/signals
++)
++
++SRCS(
++    agent_ut.cpp
++)
++
++END()
+```
+
+**File**: `ydb/library/signals/ya.make` (modified, +4/-0)
+```diff
+@@ -19,3 +19,7 @@ PEERDIR(
+ )
+ 
+ END()
++
++RECURSE_FOR_TESTS(
++    ut
++)
+```
+
+---
+
+### Incident Patch 3: `72f6b992` (2026-11-04)
+**Commit Message**: Fix simulated deadlines in paused replication bootstrap retry tests (#58135)
+
+**File**: `ydb/core/tx/replication/controller/schema_change_ut.cpp` (modified, +21/-7)
+```diff
+@@ -2707,7 +2707,8 @@ Y_UNIT_TEST_SUITE(StreamResultFreshness) {
+ }
+ 
+ Y_UNIT_TEST_SUITE(StreamRetry) {
+-    void RetryPausedBootstrapWithPublicConfig(bool failConsumer, bool changeCredentials) {
++    void RetryPausedBootstrapWithPublicConfig(bool failConsumer, bool changeCredentials,
++            TDuration responseDelay = TDuration::Zero()) {
+         TTestEnv env(true, NTestHelpers::ERuntimeMode::Simulated);
+         auto& runtime = env.GetRuntime();
+         CreateSourceTable(env, "bootstrap");
+@@ -2734,6 +2735,7 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+ 
+         bool rejectSource = true;
+         bool holdResults = true;
++        THashSet<TActorId> delayedCreators;
+         TVector<TAutoPtr<IEventHandle>> pending;
+         auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
+             if (!ev->HasEvent()) {
+@@ -2765,6 +2767,14 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+                 return;
+             }
+ 
++            if (responseDelay && delayedCreators.insert(ev->Sender).second) {
++                // Visit a timestamp past the old deadline before delivering the result.
++                runtime.Schedule(new IEventHandle(env.GetSender(), env.GetSender(), new TEvents::TEvWakeup()),
++                    responseDelay - TDuration::Seconds(1));
++                runtime.Schedule(ev.Release(), responseDelay);
++                return;
++            }
++
+             pending.push_back(std::move(ev));
+         });
+         const auto info = StartReplication(
+@@ -2776,12 +2786,13 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+             NKikimrSchemeOp::EIndexTypeGlobal,
+             true,
+             false);
++        // Source setup uses real SDK callbacks, independently of simulated
++        // time. The test runner's wall-clock timeout bounds these waits.
+         runtime.WaitFor(
+             "failed PAUSED source setup",
+             [&] {
+                 return DescribeReplication(env, info)->Get()->Record.GetState().HasError();
+-            },
+-            TDuration::Seconds(30));
++            });
+         const auto failed = DescribeReplication(env, info);
+         UNIT_ASSERT_VALUES_EQUAL(failed->Get()->Record.TargetsSize(), 1);
+         const TWorkerId worker(1, failed->Get()->Record.GetTargets(0).GetId(), 0);
+@@ -2815,17 +2826,16 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+         UNIT_ASSERT_C(altered.IsSuccess(), altered.GetIssues().ToString());
+         runtime.WaitFor(
+             "retried source setup result",
+-            [&] { return pending.size() == 1; },
+-            TDuration::Seconds(30));
++            [&] { return pending.size() == 1; });
+         UNIT_ASSERT_VALUES_EQUAL(readStream(TReplication::EStreamState::Creating), stream);
+         UNIT_ASSERT(DescribeReplication(env, info)->Get()->Record.GetState().HasPaused());
+ 
+         // The retry must survive a crash between its durable reset and success.
+         RestartController(env, info.ControllerId);
+         runtime.WaitFor(
+             "retried source setup after restart",
+-            [&] { return pending.size() == 2; },
+-            TDuration::Seconds(30));
++            [&] { return pending.size() == 2; });
++        UNIT_ASSERT_VALUES_EQUAL(delayedCreators.size(), responseDelay ? 2 : 0);
+         UNIT_ASSERT_VALUES_EQUAL(readStream(TReplication::EStreamState::Creating), stream);
+         holdResults = false;
+         runtime.Send(pending.back().Release());
+@@ -2875,6 +2885,10 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+         RetryPausedBootstrapWithPublicConfig(false, true);
+     }
+ 
++    Y_UNIT_TEST(PausedBootstrapCredentialRetryWithDelayedSourceResults) {
++        RetryPausedBootstrapWithPublicConfig(false, true, TDuration::Minutes(1));
++    }
++
+     Y_UNIT_TEST(PausedBootstrapUnchangedCredentialRetryAfterConsumerFailure) {
+         RetryPausedBootstrapWithPublicConfig(true, false);
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58019** (2026-11-03): Make YDB test data paths independent of repository layout (@iddqdex)
-- **PR #58005** (2026-11-03): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58003** (2026-11-03): Add missing recurse for relative database test recipe (@iddqdex)
-- **PR #58000** (2026-11-03): Stabilize Console handshake tests against background proposals (@CyberROFL)
-- **PR #57997** (2026-11-03): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #57996** (2026-11-03): [Backport stable-26-2] Document feature flags and experimental functionality (@nataliaboldyreva)
+- **PR #58152** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58146** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58136** (2026-11-04): EXT-2580 Log unexpected tablet death at heavier level (@UgnineSirdis)
+- **PR #58135** (2026-11-04): Fix simulated deadlines in paused replication bootstrap retry tests (@CyberROFL)
+- **PR #58133** (2026-11-04): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58132** (2026-11-04): Stabilize StateStorage follower recovery test warmup (@mregrock)
 
 ---
 
@@ -2722,28 +2568,30 @@ Co-authored-by: iddqdex <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. REQUIREMENTS(cpu) from real usage — Security (#57899)
+## X. EXT-2580 Hive log UI actions (#57953)
 
 **RULE**:
-When implementing operations in `ydb/core/security/ldap_auth_provider/ut/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/mind/hive/balancer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49f5c348`: REQUIREMENTS(cpu) from real usage — Security (#57899). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b24a3efb`: EXT-2580 Hive log UI actions (#57953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/security/ldap_auth_provider/ut/ya.make`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/balancer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    REQUIREMENTS(cpu:1)
+bool THive::StartHiveBalancer(TBalancerSettings&& settings) {
+        return true;
+    return false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    REQUIREMENTS(cpu:2)
+void THive::StartHiveBalancer(TBalancerSettings&& settings) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49f5c348` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b24a3efb` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `85162c24`  
+> **Source Version**: `10f77d75`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T15:36:32.271Z  
+> **Timestamp**: 2026-11-04T22:52:28.334Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T15:36:32.265Z  
+> **Harvest Timestamp**: 2026-11-04T22:52:28.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 73431 stars
+- **Stars / Engagement**: 73895 stars
 
 ---
 
@@ -1251,9 +1251,10 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"slices"
 	"strings"
 	"time"
+
+	"github.com/charmbracelet/x/ansi"
 
 	"github.com/tw93/mole/internal/units"
 )
@@ -1264,61 +1265,32 @@ var subCellBlocks = [8]string{"", "▏", "▎", "▍", "▌", "▋", "▊", "▉
 
 func displayPath(path string) string {
 	home, err := os.UserHomeDir()
+	home = strings.TrimSuffix(home, "/")
 	if err != nil || home == "" {
 		return path
 	}
-	if strings.HasPrefix(path, home) {
-		return strings.Replace(path, home, "~", 1)
+	if path == home {
+		return "~"
+	}
+	if rest, ok := strings.CutPrefix(path, home+"/"); ok {
+		return "~/" + rest
 	}
 	return path
 }
 
 // truncateMiddle trims the middle, keeping head and tail.
 func truncateMiddle(s string, maxWidth int) string {
-	runes := []rune(s)
-	currentWidth := displayWidth(s)
-
-	if currentWidth <= maxWidth {
+	maxWidth = max(0, maxWidth)
+	width := displayWidth(s)
+	if width <= maxWidth {
 		return s
 	}
-
 	if maxWidth < 10 {
-		width := 0
-		for i, r := range runes {
-			width += runeWidth(r)
-			if width > maxWidth {
-				return string(runes[:i])
-			}
-		}
-		return s
+		return ansi.Truncate(s, maxWidth, "")
 	}
-
-	targetHeadWidth := (maxWidth - 3) / 3
-	targetTailWidth := maxWidth - 3 - targetHeadWidth
-
-	headWidth := 0
-	headIdx := 0
-	for i, r := range runes {
-		w := runeWidth(r)
-		if headWidth+w > targetHeadWidth {
-			break
-		}
-		headWidth += w
-		headIdx = i + 1
-	}
-
-	tailWidth := 0
-	tailIdx := len(runes)
-	for i, r := range slices.Backward(runes) {
-		w := runeWidth(r)
-		if tailWidth+w > targetTailWidth {
-			break
-		}
-		tailWidth += w
-		tailIdx = i
-	}
-
-	return string(runes[:headIdx]) + "..." + string(runes[tailIdx:])
+	head := (maxWidth - 3) / 3
+	tail := maxWidth - 3 - head
+	return ansi.Truncate(s, head, "") + "..." + ansi.TruncateLeft(s, width-tail, "")
 }
 
 func formatNumber(n int64) string {
@@ -1403,36 +1375,9 @@ func coloredProgressBar(value, maxValue int64, percent float64) string {
 	return bar.String()
 }
 
-// runeWidth returns display width for wide characters and emoji.
-func runeWidth(r rune) int {
-	if r >= 0x4E00 && r <= 0x9FFF || // CJK Unified Ideographs
-		r >= 0x3400 && r <= 0x4DBF || // CJK Extension A
-		r >= 0x20000 && r <= 0x2A6DF || // CJK Extension B
-		r >= 0x2A700 && r <= 0x2B73F || // CJK Extension C
-		r >= 0x2B740 && r <= 0x2B81F || // CJK Extension D
-		r >= 0x2B820 && r <= 0x2CEAF || // CJK Extension E
-		r >= 0x3040 && r <= 0x30FF || // Hiragana and Katakana
-		r >= 0x31F0 && r <= 0x31FF || // Katakana Phonetic Extensions
-		r >= 0xAC00 && r <= 0xD7AF || // Hangul Syllables
-		r >= 0xFF00 && r <= 0xFFEF || // Fullwidth Forms
-		r >= 0x1F300 && r <= 0x1F6FF || // Miscellaneous Symbols and Pictographs (includes Transport)
-		r >= 0x1F900 && r <= 0x1F9FF || // Supplemental Symbols and Pictographs
-		r >= 0x2600 && r <= 0x26FF || // Miscellaneous Symbols
-		r >= 0x2700 && r <= 0x27BF || // Dingbats
-		r >= 0xFE10 && r <= 0xFE1F || // Vertical Forms
-		r >= 0x1F000 && r <= 0x1F02F { // Mahjong Tiles
-		return 2
-	}
-	return 1
-}
-
-func displayWidth(s string) int {
-	width := 0
-	for _, r := range s {
-		width += runeWidth(r)
-	}
-	return width
-}
+// Width and truncation share the terminal library's grapheme rules, including
+// combining accents, halfwidth kana, CJK punctuation and joined emoji.
+func displayWidth(s string) int { return ansi.StringWidth(s) }
 
 // calculateNameWidth computes name column width from terminal width.
 func calculateNameWidth(termWidth int) int {
@@ -1449,35 +1394,12 @@ func calculateNameWidth(termWidth int) int {
 }
 
 func trimNameWithWidth(name string, maxWidth int) string {
-	const (
-		ellipsis      = "..."
-		ellipsisWidth = 3
-	)
-
-	runes := []rune(name)
-	widths := make([]int, len(runes))
-	for i, r := range runes {
-		widths[i] = runeWidth(r)
+	maxWidth = max(0, maxWidth)
+	tail := "..."
+	if maxWidth < len(tail) {
+		tail = ""
 	}
-
-	currentWidth := 0
-	for i, w := range widths {
-		if currentWidth+w > maxWidth {
-			subWidth := currentWidth
-			j := i
-			for j > 0 && subWidth+ellipsisWidth > maxWidth {
-				j--
-				subWidth -= widths[j]
-			}
-			if j == 0 {
-				return ellipsis
-			}
-			return string(runes[:j]) + ellipsis
-		}
-		currentWidth += w
-	}
-
-	return name
+	return ansi.Truncate(name, maxWidth, tail)
 }
 
 func padName(name string, targetWidth int) string {
@@ -1993,11 +1915,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1878** (2026-10-29): **[Mac App Bug] In**
-  *Symptoms*: ### Mole Mac app version  1.18.0 (343)  ### macOS version  27.2.0  ### Mac model  MacBookPro18,1 (Apple M1 Pro)  ### Affected area  Optimize  ### What happened?  After optimizing, in Spotlight the switch „Show Related Content“ is turned on, I keep it always turned off.  ### Steps to reproduce  1. Open Mole 2. Go to "Optimize" 3. Klick in Optimize  4. Mole is working and finishing  5. When I open System Settings on MacOS in the Menu in the upper left corner of MacOS, the switch „Show Related Content“ is turned on, although it is always set to off.  ### Expected behavior  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/be4dd83e-706b-47eb-82fd-b12ffc275245" />  ### Screenshots or safe logs  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/0b1c4ecc-58f6-4d9b-8a7f-670ddd041463" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #1912** (2026-11-04): **[BUG] Not cleaning Spotify cache**
+  *Symptoms*: ## Before submitting  Run `mo update` to install the latest stable version, then check `mo --version`. Reproduce the problem with that version. If updating itself fails, report that failure and your installed version.  - [x] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  `mo clean` not removing Spotify cache Located at: _~/Library/Caches/com.spotify.client_ ## Steps to reproduce  1. Run command: `mo clean` 2. Spotify cache still there  ## Expected behavior  Remove Spotify cache  ## Debug logs  Run the command with `--debug` and paste the output:  ```bash mo <command> --debug # Example: mo clean --debug ```  <details> <summary>Debug output</summary>  ```text Clean Your Mac  ◎ Use --dry-run to preview, --whitelist to manage protected paths ✓ Admin access already available  ⚙ Apple Silicon | Free space: 116.16GB ⚙ Whitelist: 22 core patterns active  ➤ System   ⠲ Cleaning system caches...[DEBUG] Finding, sudo, in /Library/Caches: *.cache, age: 7d, type: f   ⠴ Cleaning system caches...[DEBUG] Privileged cleanup scan failed for /Library/Caches (status 1) [DEBUG] System caches cleanup incomplete (status 1)   ⠲ Cleaning system crash reports...[DEBUG] Finding, sudo, in /Library/Logs/DiagnosticReports: *, age: 7d, type: f   ⠲ Cleaning system logs...[DEBUG] Finding, sudo, in /private/var/log: *.log, age: 7d, type: f   ⠖ Cleaning third-party system logs...[DEBUG] Directory does not exist, skipping: /Library/Logs/Adobe   ⠲ Cleaning
 
-- **Issue #1877** (2026-10-28): **[Mac App Bug]**
-  *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  macOS 27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Clean  ### What happened?  在 **清理** 页面（Clean）中央出现了一个大面积的亮粉色方块，覆盖了原本应该显示的图标和文案区域，导致页面内容严重错乱。方块旁边还能看到一个小小的圆形图标，页面文字"山雨涤尘垢，潮退万象新"也被粉色方块遮挡了一部分。  **切换到其他 Tab（如「软件」）再切回「清理」页面后，粉色方块消失，页面恢复正常显示。**  这种现象看起来像是图片/纹理首次加载失败、SwiftUI/AppKit Canvas 未正确绘制、或是 Metal/Shader 层在首次渲染时的占位异常（品红色 placeholder）。   ### Steps to reproduce  1. 打开 Mole，进入 **清理** 页面。 2. 观察页面中央是否出现大面积亮粉色方块，覆盖图标和文案。 3. 切换到 **软件**（或其他）Tab。 4. 再切回 **清理** 页面 —— 粉色方块消失，显示正常。  ### Expected behavior  清理页面首次进入时应直接正确渲染出图标，不应出现任何颜色异常的占位方块。  ### Screenshots or safe logs  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/ab239a2f-3fa8-4ed8-a1b7-a566c034eb37" />  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/e3ad38a6-c627-4558-bd92-3a9cfc72b071" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #1896** (2026-11-02): **[BUG] Uninstalling docker yields `line 72: [[: invalid regular expression `': empty (sub)expression` errors**
+  *Symptoms*: ## Before submitting  Run `mo update` to install the latest stable version, then check `mo --version`. Reproduce the problem with that version. If updating itself fails, report that failure and your installed version.  - [X] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  I noticed that there's an error on the command line when uninstalling Docker from my mac: ``` /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 110: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 110: [[: invalid regular expression `': empty (sub)expression  ====================================================================== Uninstall complete Removed 1 app · 2.08GB: Docker ⊙ Kept 3 system-level paths, which Mole never removes ======================================================================  /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2014,515 +1936,316 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21d44166` (2026-10-31)
-**Commit Message**: fix(clean): clean the yarn berry global cache instead of ~/.yarn/cache
+### Incident Patch 1: `5324a06e` (2026-11-04)
+**Commit Message**: fix(ui): fit CJK names by display width in uninstall --list and spinners
 
-The "Yarn cache" row cleaned ~/.yarn/cache/*, which Yarn never writes:
-Berry keeps .yarn/cache inside each project and its shared global cache
-in ~/.yarn/berry/cache, and Classic on macOS uses ~/Library/Caches/Yarn,
-which the next row already cleans. So the row was always empty and the
-Berry global cache was never offered.
+bin/uninstall.sh runs under LC_ALL=C, so the --list UNINSTALL NAME column, the app name when no cask owns it, was cut with a byte slice and padded by bytes: a long CJK name split a character and every CJK row pushed SIZE two to nine cells left. format_spinner_message counted characters or bytes depending on the locale, so a CJK app name either overflowed the line, which breaks the in-place spinner redraw, or was cut mid-character. Both now use get_display_width and truncate_by_display_width, as the NAME column already did; an ASCII spinner message keeps the fork-free path. Same class as the status and analyze width fixes.
 
-The row now cleans ~/.yarn/berry/cache/* as "Yarn Berry cache", same
-tier and plain safe_clean as before. The whitelist catalog row follows
-it ("Yarn Berry package cache"), and ~/.yarn/cache joins the list of
-rows no cleanup consults, so a protected entry still keeps the cache
-the cleaner deletes. A saved ~/.yarn/cache line keeps working as a
-custom pattern. Mole Mac made the same change.
+Verified: the new uninstall --list and format_spinner_message cases fail on the old code (split UTF-8, SIZE at 98 and 105 instead of 107, width 52 over 32) and pass now; ./scripts/check.sh --no-format and the full ./scripts/test.sh pass (2403 Bats, 0 skipped). The uninstall change is in --list rendering only and touches no removal sink.
 
-Verified: the new "clean_dev_npm cleans the Yarn Berry global cache,
-not the unused ~/.yarn/cache" case and the two updated
-manage_whitelist.bats cases were red on the old code and are green;
-manage_whitelist.bats 51/51 ok; scripts/check.sh --no-format passes.
-clean_dev_caches.bats has five owner-root failures that fail the same
-way on untouched origin/main. Revert: git revert this commit.
-
-**File**: `lib/clean/dev.sh` (modified, +4/-1)
+**File**: `bin/uninstall.sh` (modified, +9/-2)
 ```diff
-@@ -717,7 +717,10 @@ clean_dev_npm() {
-     note_activity
-     safe_clean ~/.tnpm/_cacache/* "tnpm cache directory"
-     safe_clean ~/.tnpm/_logs/* "tnpm logs"
--    safe_clean ~/.yarn/cache/* "Yarn cache"
-+    # Yarn Berry keeps .yarn/cache inside each project and its shared global
-+    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
-+    # Classic on macOS uses ~/Library/Caches/Yarn.
-+    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
-     safe_clean ~/Library/Caches/Yarn/* "Yarn v1 cache"
- }
- # Resolve a cache root to its physical location and prove that it remains a
+@@ -1982,26 +1982,33 @@ uninstall_list_apps() {
+         # printf counts bytes (LC_ALL=C), but CJK chars are 3 bytes yet only
+         # 2 display columns wide, so we pad with the extra bytes to land on
+         # the correct visual column.
++        # The uninstall name is the app name when no cask owns the app, so it
++        # gets the same treatment: a byte slice would split a CJK character.
+         local name_trunc name_display_w name_byte_count name_printf_w
++        local un_trunc un_display_w un_byte_count un_printf_w
+         name_trunc=$(truncate_by_display_width "$app_name" 34)
+         name_display_w=$(get_display_width "$name_trunc")
++        un_trunc=$(truncate_by_display_width "$uninstall_name" 28)
++        un_display_w=$(get_display_width "$un_trunc")
+ 
+         # Get byte count in C locale for printf
+         local old_lc="${LC_ALL:-}"
+         export LC_ALL=C
+         name_byte_count=${#name_trunc}
++        un_byte_count=${#un_trunc}
+         if [[ -n "$old_lc" ]]; then
+             export LC_ALL="$old_lc"
+         else
+             unset LC_ALL
+         fi
+ 
+         name_printf_w=$((36 + name_byte_count - name_display_w))
++        un_printf_w=$((30 + un_byte_count - un_display_w))
+ 
+-        printf "%-*s %-30s %-30s %8s\n" \
++        printf "%-*s %-30s %-*s %8s\n" \
+             "$name_printf_w" "$name_trunc" \
+             "${bundle_id:0:28}" \
+-            "${uninstall_name:0:28}" \
++            "$un_printf_w" "$un_trunc" \
+             "$size_display"
+     done
+ 
 ```
 
-**File**: `lib/manage/whitelist.sh` (modified, +1/-1)
+**File**: `lib/core/ui.sh` (modified, +8/-5)
 ```diff
-@@ -138,7 +138,7 @@ pip Python package cache|$HOME/Library/Caches/pip/*|package_manager
- uv Python package cache|$HOME/.cache/uv/*|package_manager
- tealdeer tldr pages cache|$HOME/Library/Caches/tealdeer/tldr-pages|package_manager
- Homebrew downloaded packages|$HOME/Library/Caches/Homebrew/*|package_manager
--Yarn package manager cache|$HOME/.yarn/cache/*|package_manager
-+Yarn Berry package cache|$HOME/.yarn/berry/cache/*|package_manager
- Yarn v1 package cache|$HOME/Library/Caches/Yarn/*|package_manager
- pnpm package store|$HOME/Library/pnpm/store/*|package_manager
- Bun package cache|$HOME/.bun/install/cache/*|package_manager
+@@ -369,12 +369,15 @@ format_spinner_message() {
+         available=20
+     fi
+ 
+-    if [[ ${#message} -gt $available ]]; then
+-        if [[ $available -gt 3 ]]; then
+-            message="${message:0:$((available - 3))}..."
+-        else
+-            message="${message:0:$available}"
++    # An app or file name can make the message non-ASCII. ${#message} then
++    # counts bytes under LC_ALL=C or characters otherwise, neither of which is
++    # the width a CJK name takes, and a byte slice splits a character.
++    if [[ "$message" == *[![:ascii:]]* ]]; then
++        if (($(get_display_width "$message") > available)); then
++            message=$(truncate_by_display_width "$message" "$available")
+         fi
++    elif [[ ${#message} -gt $available ]]; then
++        message="${message:0:$((available - 3))}..."
+     fi
+ 
+     printf "%s" "$message"
 ```
 
-**File**: `tests/clean_dev_caches.bats` (modified, +25/-0)
+**File**: `tests/core_common.bats` (modified, +20/-0)
 ```diff
-@@ -682,6 +682,31 @@ EOF
-     [[ "$output" == *"npm prebuilds|$HOME/.npm/_prebuilds/*"* ]]
+@@ -25,6 +25,26 @@ setup() {
+     [ "$result" = $'⠖\n⠲\n⠴\n⠦' ]
  }
  
-+# Yarn Berry writes .yarn/cache inside each project and its global cache in
-+# ~/.yarn/berry/cache; ~/.yarn/cache was a row that never held anything.
-+@test "clean_dev_npm cleans the Yarn Berry global cache, not the unused ~/.yarn/cache" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
++@test "format_spinner_message fits a CJK name by display width in both locales" {
++    local locale
++    for locale in C en_US.UTF-8; do
++        # shellcheck disable=SC2016  # the inner bash expands these
++        run env HOME="$HOME" LC_ALL="$locale" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc -c '
++            source "$PROJECT_ROOT/lib/core/common.sh"
++            tput() { echo 40; }
++            format_spinner_message "Removing 网易云音乐网易云音乐网易云音乐网易云音乐..."
++        '
++        [ "$status" -eq 0 ] || return 1
++        local msg="$output"
++        # 40 columns leave 32 for the message; a split character is invalid UTF-8.
++        printf '%s' "$msg" | /usr/bin/iconv -f UTF-8 -t UTF-8 > /dev/null || { echo "$locale split: $msg"; return 1; }
++        run python3 -I -c 'import sys, unicodedata; print(sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in sys.argv[1]))' "$msg"
++        [ "$status" -eq 0 ] || return 1
++        (( output <= 32 )) || { echo "$locale width $output: $msg"; return 1; }
++        [[ "$msg" == "Removing 网"*"..." ]] || { echo "$locale: $msg"; return 1; }
++    done
++}
++
+ @test "detect_architecture maps current CPU to friendly label" {
+     expected="Intel"
+     if [[ "$(uname -m)" == "arm64" ]]; then
+```
+
+**File**: `tests/uninstall.bats` (modified, +60/-0)
+```diff
+@@ -5768,6 +5768,66 @@ INNER
+     [[ "$output" == *'"source": "App"'* ]]
+ }
+ 
++@test "uninstall --list text table keeps the size column aligned for CJK uninstall names" {
++    if ! /usr/bin/script -q /dev/null /usr/bin/true < /dev/null > /dev/null 2>&1; then
++        skip "script cannot allocate a TTY in this environment"
++    fi
++    local apps_cache="$BATS_TEST_TMPDIR/list-cjk.cache"
++    # 15 CJK characters: 30 cells and 45 bytes, longer than the 28-cell column.
++    cat > "$apps_cache" << 'CACHE'
++1700000000|/Applications/Slack.app|Slack|com.tinyspeck.slackmacgap|180MB|Today|184320
++1700000000|/Applications/Music163.app|网易云音乐网易云音乐网易云音乐|com.netease.163music|90MB|Today|92160
++1700000000|/Applications/WeChat.app|微信|com.tencent.xinWeChat|20MB|Today|20480
++CACHE
++    local driver="$BATS_TEST_TMPDIR/list-cjk.sh"
++    cat > "$driver" << 'DRIVER'
 +set -euo pipefail
++source "$PROJECT_ROOT/bin/uninstall.sh"
++log_operation_session_start() { :; }
++show_uninstall_help() { :; }
++hide_cursor() { :; }
++show_cursor() { :; }
++clear_screen() { :; }
++scan_applications() { printf '%s\n' "$APPS_CACHE_FILE"; }
++load_applications() {
++    apps_data=()
++    while IFS='|' read -r epoch app_path app_name bundle_id size last_used size_kb; do
++        apps_data+=("$epoch|$app_path|$app_name|$bundle_id|$size|$last_used|${size_kb:-0}")
++    done < "$1"
++}
++is_homebrew_available() { return 1; }
++get_brew_cask_name() { return 1; }
++uninstall_normalize_size_display() { echo "$1"; }
++main --list
++DRIVER
++
++    local raw="$BATS_TEST_TMPDIR/list-cjk.raw"
++    PROJECT_ROOT="$PROJECT_ROOT" HOME="$HOME" MOLE_TEST_NO_AUTH=1 TERM=xterm-256color \
++        APPS_CACHE_FILE="$apps_cache" LANG=en_US.UTF-8 \
++        /usr/bin/script -q "$raw" /bin/bash --noprofile --norc "$driver" < /dev/null > /dev/null 2>&1 || true
++
++    # Print the display column where each row's size starts; a byte slice or
++    # byte padding moves the CJK row's size left, and a split character makes
++    # the table invalid UTF-8.
++    run python3 -I -c '
++import sys, unicodedata
++text = open(sys.argv[1], "rb").read().decode("utf-8", "replace")
++if "\ufffd" in text:
++    print("SPLIT")
++def width(s):
++    return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in s)
++for line in text.replace("\r", "").splitlines():
++    for size in ("180MB", "90MB", "20MB"):
++        if line.rstrip().endswith(size):
++            print(size, width(line.rstrip()))
++' "$raw"
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"180MB 107"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"90MB 107"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"20MB 107"* ]] || { echo "$output"; return 1; }
++    [[ "$output" != *"SPLIT"* ]] || { echo "$output"; return 1; }
++}
++
+ @test "uninstall --list emits JSON array when stdout is piped" {
+     local apps_cache
+     apps_cache="$(mktemp "${BATS_TEST_TMPDIR:-$BATS_RUN_TMPDIR:-$HOME}/tmp-list-json.XXXXXX")"
+```
+
+---
+
+### Incident Patch 2: `c70d4731` (2026-11-04)
+**Commit Message**: fix(status): shorten names by display width, not bytes (#1917)
+
+shorten compared and sliced process names by bytes while its callers pass a display width, so CJK, accented and curly-apostrophe names were cut while they still fit and a cut could split a UTF-8 rune. Measure with ansi.StringWidth and cut with ansi.Truncate; ASCII output is unchanged. Verified by TestShorten (5 of the 6 new cases fail on the old code).
+
+**File**: `cmd/status/view.go` (modified, +7/-2)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/charmbracelet/lipgloss"
++	"github.com/charmbracelet/x/ansi"
+ 
+ 	"github.com/tw93/mole/internal/units"
+ )
+@@ -1102,11 +1103,15 @@ func humanBytesCompact(v uint64) string {
+ 	return units.BytesBinCompact(v)
+ }
+ 
++// shorten fits s into maxLen terminal cells, ending a cut with "…". It counts
++// display width rather than bytes, so a multi-byte name (CJK, accents, the
++// curly apostrophe in "Kevin’s") is not cut in the middle of a character or
++// shortened while it still fits.
+ func shorten(s string, maxLen int) string {
+-	if len(s) <= maxLen {
++	if ansi.StringWidth(s) <= maxLen {
+ 		return s
+ 	}
+-	return s[:maxLen-1] + "…"
++	return ansi.Truncate(s, maxLen, "…")
+ }
+ 
+ func remainingLineWidth(width int, prefix string) int {
+```
+
+**File**: `cmd/status/view_test.go` (modified, +9/-0)
+```diff
+@@ -153,6 +153,15 @@ func TestShorten(t *testing.T) {
+ 		// Edge cases.
+ 		{"maxLen 1", "hello", 1, "…"},
+ 		{"maxLen 2", "hello", 2, "h…"},
++
++		// Width is counted in terminal cells, not bytes, and a cut never
++		// splits a multi-byte character.
++		{"curly apostrophe fits", "Kevin’s Mac", 11, "Kevin’s Mac"},
++		{"cut after curly apostrophe", "Kevin’s MacBook Pro", 9, "Kevin’s …"},
++		{"cut inside multi-byte rune", "Kevin’s Mac", 6, "Kevin…"},
++		{"accented name fits", "Café Helper", 11, "Café Helper"},
++		{"wide characters fit", "카카오톡", 8, "카카오톡"},
++		{"wide characters cut", "카카오톡 Helper", 7, "카카오…"},
+ 	}
+ 
+ 	for _, tt := range tests {
+```
+
+---
+
+### Incident Patch 3: `364dbba1` (2026-11-04)
+**Commit Message**: fix(core): leave the caller's errexit alone in the shell timeout fallback
+
+The shell fallback of run_with_timeout wrapped its wait in set +e / set -e,
+so a caller that had turned errexit off (clean's per-section loop, the
+uninstall selector, the privileged find preflight in file_ops.sh) came
+back with it on, and a later failing command could end the run. The perl
+and timeout-binary backends never touch errexit, so only Macs without
+either behaved this way.
+
+The wait now records its status with `|| exit_code=$?`, which keeps
+errexit from firing without toggling it.
+
+Verified: "run_with_timeout shell fallback leaves the caller's errexit as
+it was" reads ERREXIT_ON after a set +e caller on the old code and
+ERREXIT_OFF now; tests/core_timeout.bats, tests/manage_sudo.bats, the full
+MOLE_TEST_NO_AUTH=1 ./scripts/test.sh and check.sh --no-format pass.
+
+**File**: `lib/core/timeout.sh` (modified, +4/-5)
+```diff
+@@ -442,12 +442,11 @@ run_with_timeout() {
+         _mole_cleanup_timeout_killer "$killer_pid"
+     fi
+ 
+-    # Wait for command to complete
++    # Wait for command to complete. `|| exit_code=$?` keeps a failing status
++    # from tripping errexit without toggling it, so a caller that runs with
++    # errexit off gets it back off.
+     local exit_code=0
+-    set +e
+-    wait "$cmd_pid" 2> /dev/null
+-    exit_code=$?
+-    set -e
++    wait "$cmd_pid" 2> /dev/null || exit_code=$?
+ 
+     _mole_cleanup_timeout_killer "$killer_pid"
+ 
+```
+
+**File**: `tests/core_timeout.bats` (modified, +20/-0)
+```diff
+@@ -696,6 +696,26 @@ EOF
+     [[ "$output" == *"echo CALLER_TRAP"* ]] || { echo "$output"; return 1; }
+ }
+ 
++@test "run_with_timeout shell fallback leaves the caller's errexit as it was" {
++    run env PROJECT_ROOT="${BATS_TEST_DIRNAME}/.." /bin/bash --noprofile --norc << 'EOF'
 +source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/dev.sh"
-+start_section_spinner() { :; }
-+stop_section_spinner() { :; }
-+clean_tool_cache() { :; }
-+clean_pnpm_stores() { :; }
-+clean_corepack_cache() { :; }
-+clean_bun_cache() { :; }
-+safe_clean() { echo "$2|$1"; }
-+note_activity() { :; }
-+npm() { return 1; }
-+clean_dev_npm
++MO_TIMEOUT_BIN="" MO_TIMEOUT_PERL_BIN=""
++set +e
++rc=0
++run_with_timeout 5 /bin/sh -c 'exit 3' || rc=$?
++[[ $- == *e* ]] && echo "ERREXIT_ON" || echo "ERREXIT_OFF"
++echo "RC_OFF=$rc"
++set -e
++rc=0
++run_with_timeout 5 /bin/sh -c 'exit 3' || rc=$?
++[[ $- == *e* ]] && echo "ERREXIT_ON" || echo "ERREXIT_OFF"
++echo "RC_ON=$rc"
 +EOF
 +
 +    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"Yarn Berry cache|$HOME/.yarn/berry/cache/*"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" == *"Yarn v1 cache|$HOME/Library/Caches/Yarn/*"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" != *"|$HOME/.yarn/cache/"* ]]
++    [[ "$output" == *"ERREXIT_OFF"$'\n'"RC_OFF=3"$'\n'"ERREXIT_ON"$'\n'"RC_ON=3"* ]] || { echo "$output"; return 1; }
 +}
 +
- @test "clean_dev_jvm never enters daemon cleanup while Gradle is running" {
-     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
- set -euo pipefail
-```
-
-**File**: `tests/manage_whitelist.bats` (modified, +5/-5)
-```diff
-@@ -849,11 +849,11 @@ EOF
-     local test_home="$HOME/rows-delete-paths"
-     rm -rf "$test_home"
-     mkdir -p "$test_home/Library/Caches/pip/http" \
--        "$test_home/.yarn/cache" "$test_home/Library/Caches/Yarn/v6" \
-+        "$test_home/.yarn/berry/cache" "$test_home/Library/Caches/Yarn/v6" \
-         "$test_home/.gem/specs" "$test_home/.gem/ruby/3.2.0/cache" \
-         "$test_home/.local/share/containers/storage/tmp"
-     touch "$test_home/Library/Caches/pip/http/a" \
--        "$test_home/.yarn/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
-+        "$test_home/.yarn/berry/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
-         "$test_home/.gem/specs/a" "$test_home/.gem/ruby/3.2.0/cache/a.gem" \
-         "$test_home/.local/share/containers/storage/tmp/a"
- 
-@@ -916,7 +916,7 @@ pattern_for_row() {
- 
- rows=(
-     "pip Python package cache|pip cache"
--    "Yarn package manager cache|Yarn cache"
-+    "Yarn Berry package cache|Yarn Berry cache"
-     "Yarn v1 package cache|Yarn v1 cache"
-     "RubyGems package cache|gem package cache"
-     "RubyGems spec cache|gem spec cache"
-@@ -976,7 +976,7 @@ EOF
-     local dead
-     # shellcheck disable=SC2016  # Literal $HOME spellings, as the inventory prints them.
-     for dead in \
--        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.gem/cache/' \
-+        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.yarn/cache/' '$HOME/.gem/cache/' \
-         '$HOME/.local/share/containers/cache/' \
-         '$HOME/.rustup/toolchains/' '$HOME/.ccache/' '$HOME/.cache/sccache/' \
-         '$HOME/.cache/flutter/' '$HOME/.cache/selenium/' '$HOME/.ollama/'; do
-@@ -987,7 +987,7 @@ EOF
-     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
-     [[ "$output" == *'|$HOME/Library/Caches/pip/*|'* ]] || return 1
-     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
--    [[ "$output" == *'|$HOME/.yarn/cache/*|'* ]] || return 1
-+    [[ "$output" == *'|$HOME/.yarn/berry/cache/*|'* ]] || return 1
- }
- 
- # The Toolbox cleaner only strips whitelist patterns that start at its own apps
-```
-
----
-
-### Incident Patch 2: `3b0f94df` (2026-10-30)
-**Commit Message**: fix(clean): never treat the llama.cpp model store as a cache
-
-llama.cpp downloads -hf model weights, multi-GB GGUF files, into its
-default LLAMA_CACHE at ~/Library/Caches/llama.cpp, which the generic
-~/Library/Caches sweep reached, so mo clean deleted downloaded models.
-The folder joins SAFETY_WHITELIST_PATTERNS, which stays merged in even
-when the user saved a custom whitelist. Mole Mac blocks the same folder.
-The custom-whitelist test that now also covers it was renamed, so the
-I-13 incident row follows the new name.
-
-Verified: the renamed clean_user_core.bats case fails without the pattern
-and passes now; audit_incidents.py, check.sh --no-format and the full
-test.sh suite pass.
-Rollback: git revert this commit.
-
-**File**: `docs/incidents.md` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ when it was confirmed by reading the history, otherwise `unknown`.
- | I-10 | 2026-10-27 | Dry-run find scans sized and recorded each candidate twice and returned 1 when no preview ledger was set up (#1865) | 70eed1b0 | a703eddc | review | `safe_find_delete dry run records each target once without removal fallthrough (#1865)`, `safe_sudo_find_delete dry run records targets once and tracks count (#1865)` |
- | I-11 | 2026-10-27 | `mo clean` removed installed npx packages while running commands still needed their resources and modules (#1870) | unknown | f954e2fd | unit | `clean_dev_npm preserves installed npx packages in default and custom caches (#1870)` |
- | I-12 | 2026-10-30 | `mo purge --debug` kept every node_modules as "Could not inspect" and exited 1, because `run_with_timeout`'s debug notice landed in the captured lsof output; found by the V1.66.0 release e2e | unknown | e4686b6e | unit | `run_with_timeout keeps its debug notice out of captured command output`, `purge node project process check reads an idle project as idle under --debug` |
--| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx` |
-+| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models` |
- | I-14 | 2026-10-26 | Users whose network needed the macOS system proxy did not receive background update notices because curl connected directly | unknown | 2748db02 | field | `background update lookup waits longer and follows the system proxy while foreground lookups do not` |
- | I-15 | 2026-10-26 | Old flat Analyze cache files remained for users who no longer ran Analyze, and a large accumulated directory froze tools that listed it | unknown | a152d651 | review | `legacy analyzer cache sweep removes only flat analyzer files from ~/.cache/mole`, `legacy analyzer cache sweep skips dry runs and a symlinked cache root`, `clean starts the legacy analyzer cache sweep in the background` |
- | I-16 | 2026-10-30 | Simulator cleanup could treat failed optional metadata reads as an absent key and suppress cancellation, allowing a device leaf to be removed after an incomplete probe | 437227e1 | f8950db2 | unit | `simulator device metadata timeouts retain the device and signals stop later devices` |
-```
-
-**File**: `lib/core/base.sh` (modified, +4/-0)
-```diff
-@@ -221,6 +221,10 @@ declare -a SAFETY_WHITELIST_PATTERNS=(
-     "$HOME/Library/Caches/pypoetry/virtualenvs*"
-     "$HOME/Library/Caches/org.R-project.R/R/renv/*"
-     "$HOME/Library/Caches/pnpm/dlx*"
-+    # llama.cpp downloads `-hf` model weights (multi-GB GGUF files) into its
-+    # default LLAMA_CACHE here; they are user-chosen models, not a cache that
-+    # rebuilds on its own. Mole Mac blocks the same folder (2026-10-29).
-+    "$HOME/Library/Caches/llama.cpp"
- )
- 
- # Resolve the cache root used by GitHub CLI without following filesystem
-```
-
-**File**: `tests/clean_user_core.bats` (modified, +6/-1)
-```diff
-@@ -711,7 +711,7 @@ EOF
-     done
- }
- 
--@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx" {
-+@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models" {
-     # clean_user_essentials sweeps every child of ~/Library/Caches, and
-     # load_mole_whitelist replaces DEFAULT_WHITELIST_PATTERNS wholesale once a
-     # user saves one entry of their own. Anything that breaks macOS search,
-@@ -726,6 +726,7 @@ EOF
-         "$test_home/Library/Caches/pypoetry/virtualenvs/proj-abc123" \
-         "$test_home/Library/Caches/org.R-project.R/R/renv/cache/v5/pkg" \
-         "$test_home/Library/Caches/pnpm/dlx/abc123" \
-+        "$test_home/Library/Caches/llama.cpp" \
-         "$test_home/Library/Caches/com.example.unprotected"
-     printf '%s\n' "$test_home/.cache/keep-my-own-thing/*" > "$test_home/.config/mole/whitelist"
- 
-@@ -745,6 +746,8 @@ for probe in \
-     "$HOME/Library/Caches/org.R-project.R" \
-     "$HOME/Library/Caches/pnpm/dlx/abc123" \
-     "$HOME/Library/Caches/pnpm" \
-+    "$HOME/Library/Caches/llama.cpp" \
-+    "$HOME/Library/Caches/llama.cpp/model-Q4_K_M.gguf" \
-     "$HOME/Library/Caches/com.example.unprotected"; do
-     if is_path_whitelisted "$probe"; then
-         printf 'PROTECTED=%s\n' "${probe#"$HOME"/}"
-@@ -777,6 +780,8 @@ EOF
-     [[ "$output" == *"PROTECTED=Library/Caches/org.R-project.R"$'\n'* ]] || return 1
-     [[ "$output" == *"PROTECTED=Library/Caches/pnpm/dlx/abc123"* ]] || return 1
-     [[ "$output" == *"PROTECTED=Library/Caches/pnpm"$'\n'* ]] || return 1
-+    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp"$'\n'* ]] || return 1
-+    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp/model-Q4_K_M.gguf"* ]] || return 1
-     [[ "$output" == *"CUSTOM_KEPT"* ]] || return 1
-     rm -rf "$test_home"
- }
-```
-
----
-
-### Incident Patch 3: `1bc5f1d5` (2026-10-31)
-**Commit Message**: feat(clean): quieter rows, visible waits and a clearer result
-
-Three problems in `mo clean` output: rows asking the user to run a
-command themselves were unclear, some waits had no loading, and the
-result did not show how much was done.
-
-- Review rows (DerivedData, archives, simulators, pnpm store, AI
-  worktrees, Docker, Time Machine, Rust and NDK versions) go through
-  mole_review_row: label linked to its folder, size, one fact Mole works
-  out itself ("8 builds, May to Aug", "4 simulators", "v10 and v11
-  stores", "1.95.0 and nightly besides stable"). No command to copy.
-- DerivedData already cleaned under Developer tools is not listed again
-  under Large files.
-- Scanning, DerivedData filtering and Trash measuring show a spinner;
-  first output of a dry run goes from 2.31s to 0.22s.
-- A 0B row is hidden only when its sizing completed; WeChat and Feishu
-  containers print one row per kind; plurals read "1 item".
-- The whitelist line no longer lists every pattern. Summary is
-  "Removed: X · N items" (dry run "Potential space"), plus the list or
-  free space.
-- Glyphs: dry-run rows use a circle, info uses the gear, follow-up
-  arrows in slim and uninstall use the review glyph, tou
-
-**File**: `.claude/rules/clean.md` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
- 
- - `bin/clean.sh` owns clean command orchestration, section output, and safe cleanup execution. Run `MOLE_TEST_NO_AUTH=1 bats tests/clean_core.bats tests/clean_apps.bats tests/cli.bats tests/clean_summary_cancel.bats tests/clean_developer_state.bats`.
- - Section output follows one fixed rhythm: title, then loading state, then content, then one trailing blank line, for every section. When touching any step of it, re-run the command and read the whole rendered output (column alignment, block spacing, icon consistency) instead of patching the one step that was reported.
-+- **Rows report what Mole did, once.** A `safe_clean` row that measured 0B still removes and counts its items but prints nothing, unless a sizing timeout made the 0B unknown; roots that share a label clean in one call so per-profile caches read as one row; Large files skips the DerivedData row once developer tools covered every project (`_MOLE_DERIVED_DATA_COVERED`); counts go through `mole_count_label` (`1 item`). The summary box holds two lines: `Removed: X · N items` plus the free-space line, or `Potential space: X · N items` plus the file list. Locked by `safe_clean removes a 0B target without printing a row for it` (`tests/clean_core.bats`), `clean_wechat_container_caches cleans every web profile in one row per cache kind` and `large files leaves out DerivedData that developer tools already covered`.
-+- **Review rows go through `mole_review_row`: `⊙ label · value · fact`.** On a terminal the label is an OSC 8 link to the path, so the row carries no path or command field; plain output keeps the path last. The fact is worked out read-only and bounded (`_large_dir_fact`: simulator count, archive builds and month range, pnpm store versions, project count; version folders besides the default for Rust and NDK) and is dropped, never guessed, when its probe fails. Do not add a command for the user to run where Mole can state the fact itself; two of three suggested commands freed nothing on the maintainer's Mac (2026-10-31). Locked by `large files links each review label to its full path` and `large files names what the simulator and pnpm rows hold` in `tests/clean_user_core.bats`.
- - `_safe_clean_impl` skips targets that do not currently exist before expensive policy probes, then filters protected, whitelisted, and compiled-model targets before consulting the dry-run guard or registering previews. Every surviving target is revalidated at its action boundary, so preview and real cleanup keep the same eligible set. A delete guard that refuses only the path it was handed names it in `_MOLE_SAFE_CLEAN_SKIP_PATH`, which skips that target and continues the batch; any other nonzero guard status stops with 75 and a timeout or signal cancels. `safe_clean_guarded skips only the path its guard names and keeps going` in `tests/clean_core.bats` locks it.
- - `normalize_paths_for_cleanup` collapses a Gradle DSL path only in the `<version>/groovy-dsl|kotlin-dsl/<hash>` layout, because the `*` in its case glob spans slashes and a deeper directory that merely contains `groovy-dsl` would otherwise widen to its parent.
- - **A `declare -f` probe into `bin/` is a shared shim, never a per-file copy.** Asking whether `safe_clean_guarded` or `defer_cleanup_family` exists is asking whether `bin/clean.sh` is loaded: always in production, never in a standalone Bats case. Use `mole_defer_cleanup_family`, or call `safe_clean_guarded` directly and let the test supply it. The audited fallback cap may decrease after consolidation but needs an explicit reason to increase. Do not hoist `_safe_clean_impl` into `lib/core/`; many tests intentionally replace `safe_clean`, and bypassing that seam turns assertions into real deletion attempts under their fixture `HOME`.
-```
-
-**File**: `README.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_CN.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_DE.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_FR.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_JA.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_KR.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
-```
-
-**File**: `README_RU.md` (modified, +5/-5)
-```diff
-@@ -189,7 +189,7 @@ Clean Your Mac
- 
- ======================================================================
- Cleanup complete
--Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
-+Removed: 4.5GB · 97 items
- Free space: 223.5GB (+4.5GB)
- ======================================================================
- ```
-@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
-   ✓ No sustained high-CPU bottleneck detected
- 
- ➤ Finder Cache Refresh
--  → QuickLook thumbnails refreshed
--  → Icon services cache rebuilt
-+  ✓ QuickLook thumbnails refreshed
-+  ✓ Icon services cache rebuilt
- 
- ➤ Network Cache Refresh
--  → DNS cache refreshed
-+  ✓ DNS cache refreshed
- 
- ➤ Database Optimization
-   ◎ Close these apps before database optimization: Safari
- 
- ➤ Disk Health
--  → Disk verify skipped
-+  ✓ Disk verify skipped
- 
- ======================================================================
- Optimization Complete
+ @test "run_with_timeout passes the caller's stdin through every backend" {
+     # The simulator metadata check feeds awk and the Finder and login item
+     # paths feed osascript through stdin; the shell backend used to hand them
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1890** (2026-10-30): feat(clean): add BrowserOS cache cleanup support (@thecoldblooded)
-- **PR #1889** (2026-10-30): fix(clean): show verbose Docker usage hint (@r266-tech)
-- **PR #1887** (closed): fix(whitelist): include Bun package cache in cache catalog (@viniciusdsandrade)
-- **PR #1881** (closed): perf(clean): measure Large files rows while the sections before it run (@sebastianbreguel)
-- **PR #1880** (2026-10-29): perf(clean): start the project cache scan before the first section (@sebastianbreguel)
-- **PR #1879** (2026-10-29): perf(clean): stop waiting on a held uv cache lock (@sebastianbreguel)
+- **PR #1917** (2026-11-04): fix(status): shorten names by display width, not bytes (@kevin9327)
+- **PR #1914** (2026-11-04): fix(units): step up a unit when BytesSI rounds to 1000.0 (@kevin9327)
+- **PR #1910** (2026-11-04): docs(readme): document timeout tuning environment variables (@jampueroc)
+- **PR #1909** (closed): docs: propose localized terminal output for the macOS CLI (@dkoryto)
+- **PR #1908** (2026-11-04): docs(readme): add Polish translation (@dkoryto)
+- **PR #1907** (2026-11-03): chore(deps): bump github.com/shirou/gopsutil/v4 from 4.26.9 to 4.26.10 (@dependabot[bot])
 
 ---
 
@@ -2542,31 +2265,37 @@ result did not show how much was done.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean): clean the yarn berry global cache instead of ~/.yarn/cache
+## X. ui): fit CJK names by display width in uninstall --list and spinners
 
 **RULE**:
-When implementing operations in `lib/clean/dev.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/uninstall.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21d44166`: clean): clean the yarn berry global cache instead of ~/.yarn/cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5324a06e`: ui): fit CJK names by display width in uninstall --list and spinners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/dev.sh`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/uninstall.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-    # Yarn Berry keeps .yarn/cache inside each project and its shared global
-    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
-    # Classic on macOS uses ~/Library/Caches/Yarn.
-    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
+        # The uninstall name is the app name when no cask owns the app, so it
+        # gets the same treatment: a byte slice would split a CJK character.
+        local un_trunc un_display_w un_byte_count un_printf_w
+        un_trunc=$(truncate_by_display_width "$uninstall_name" 28)
+        un_display_w=$(get_display_width "$un_trunc")
+        un_byte_count=${#un_trunc}
+        un_printf_w=$((30 + un_byte_count - un_display_w))
+        printf "%-*s %-30s %-*s %8s\n" \
+            "$un_printf_w" "$un_trunc" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-    safe_clean ~/.yarn/cache/* "Yarn cache"
+        printf "%-*s %-30s %-30s %8s\n" \
+            "${uninstall_name:0:28}" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21d44166` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5324a06e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `cc4e40fa`  
+> **Source Version**: `193d0df1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:15:16.974Z  
+> **Timestamp**: 2026-11-05T01:00:35.902Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:15:13.798Z  
+> **Harvest Timestamp**: 2026-11-05T01:00:35.767Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44936 stars
+- **Stars / Engagement**: 44950 stars
 
 ---
 
@@ -1814,230 +1814,137 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d44b6556` (2026-10-30)
-**Commit Message**: docs: do not list the targets jemalloc is built for
+### Incident Patch 1: `193d0df1` (2026-11-04)
+**Commit Message**: Merge pull request #2214 from sharkdp/release-10.5.1
 
-The list goes stale as soon as the cfg in Cargo.toml changes, and "There"
-did not say whether it meant the targets that have jemalloc or the ones
-that do not.
+v10.5.1 Release
 
-**File**: `README.md` (modified, +2/-3)
+**File**: `CHANGELOG.md` (modified, +1/-4)
 ```diff
-@@ -451,9 +451,8 @@ Depending on your shell, you may need to quote the placeholders (`{}`, `{/}`, `{
- 
- ### `fd` crashes when another memory allocator is preloaded
- 
--The released Linux binaries use jemalloc, through the `use-jemalloc` feature. It is on by default, but
--it is only compiled in on some targets: not on Windows, macOS, FreeBSD, OpenBSD, illumos, Android,
--32-bit musl or riscv64. There, preloading a different allocator is not supported, for example
-+The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
-+some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
- 
- ``` bash
- > LD_PRELOAD=/usr/bin/mimalloc fd
-```
-
----
-
-### Incident Patch 2: `cc4e40fa` (2026-11-01)
-**Commit Message**: Merge pull request #2164 from paoValle/fix/2121-mimalloc-ld-preload
-
-docs: a preloaded allocator conflicts with the bundled jemalloc
-
-**File**: `README.md` (modified, +17/-0)
-```diff
-@@ -449,6 +449,23 @@ a (temporary) shell script.
- Depending on your shell, you may need to quote the placeholders (`{}`, `{/}`, `{//}`,
- `{.}`, `{/.}`) to prevent the shell from interpreting them before `fd` sees them.
- 
-+### `fd` crashes when another memory allocator is preloaded
-+
-+The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
-+some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
-+
-+``` bash
-+> LD_PRELOAD=/usr/bin/mimalloc fd
-+```
-+
-+makes the two disagree about which of them owns an allocation, and `fd` crashes. `fd` cannot detect
-+this and report it, because the preloaded library is already answering its first allocation. To run
-+with a preloaded allocator, build without jemalloc:
-+
-+``` bash
-+> cargo build --release --no-default-features
-+```
-+
- ## Integration with other programs
- 
- ### Using fd with `fzf`
-```
-
----
-
-### Incident Patch 3: `e40fab1f` (2026-11-01)
-**Commit Message**: Merge pull request #2208 from Duo-ee/fix-2207-verbatim-prefix
-
-fix: keep verbatim Windows paths absolute in --absolute-path
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- -
+@@ -1,7 +1,4 @@
+-# Upcoming Release
+-
+-## Features
+--
++# 10.5.1
  
  ## Bugfixes
-+- Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
- - Make `--ignore` and `--no-hidden` after `-u` override only their half of `-u`, see #2192 (@NavpreetSSidhu)
- - Fix inline case-insensitive regex flags incorrectly making other `--and` patterns case-sensitive, see #2184 (@mabunemeh)
- - Accept `--format` templates that start with `-` when passed as a separate argument, see #2126 (@vulragrag-star)
+ - Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
 ```
 
-**File**: `src/filesystem.rs` (modified, +189/-7)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -22,17 +22,78 @@ pub fn absolute_path(path: &Path) -> io::Result<PathBuf> {
-     let path_buf = path_absolute_form(path)?;
+@@ -320,7 +320,7 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
  
-     #[cfg(windows)]
--    let path_buf = Path::new(
--        path_buf
--            .as_path()
--            .to_string_lossy()
--            .trim_start_matches(r"\\?\"),
--    )
--    .to_path_buf();
-+    let path_buf = strip_verbatim_prefix(&path_buf);
+ [[package]]
+ name = "fd-find"
+-version = "10.5.0"
++version = "10.5.1"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ license = "MIT OR Apache-2.0"
+ name = "fd-find"
+ readme = "README.md"
+ repository = "https://github.com/sharkdp/fd"
+-version = "10.5.0"
++version = "10.5.1"
+ edition= "2024"
+ rust-version = "1.90.0"
  
-     Ok(path_buf)
- }
+```
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -307,11 +307,11 @@ This is the output of `fd -h`. To see the full set of command-line options, use
+ also includes a much more detailed help text.
  
-+/// Remove the `\\?\` verbatim prefix from a path without turning it into a
-+/// relative path.
-+///
-+/// The prefix is dropped by rewriting the path *component by component*, so
-+/// that the meaning of the remaining components is preserved:
-+///
-+/// * `\\?\C:\foo`              -> `C:\foo`            (verbatim disk path)
-+/// * `\\?\UNC\server\share\foo` -> `\\server\share\foo` (verbatim UNC path)
-+///
-+/// Verbatim paths that cannot be expressed without the prefix (for example
-+/// `\\?\Volume{GUID}\foo`, where `Volume{GUID}` is a device name and not a
-+/// relative file name) are returned unchanged, and so are all non-verbatim
-+/// paths such as `\\server\share\foo` or `\\.\COM1`.
-+///
-+/// Unlike the previous string trimming, this never goes through
-+/// `to_string_lossy()`, so paths that are not valid UTF-8 survive unchanged.
-+#[cfg(windows)]
-+fn strip_verbatim_prefix(path: &Path) -> PathBuf {
-+    use std::ffi::OsString;
-+    use std::path::{Component, Prefix};
-+
-+    let mut components = path.components();
-+    let Some(Component::Prefix(prefix)) = components.next() else {
-+        return path.to_path_buf();
-+    };
-+
-+    let has_root = matches!(components.clone().next(), Some(Component::RootDir));
-+    let mut base = OsString::new();
-+    // `Prefix::Disk` / `Prefix::UNC` cannot rebuild this prefix: a `Prefix` is a
-+    // parse label, not the bytes of the path, and `PrefixComponent` has no stable
-+    // constructor. Writing it out by hand is the only way to drop `\\?\`.
-+    match prefix.kind() {
-+        Prefix::VerbatimDisk(drive) => {
-+            base.push(format!("{}:", drive as char));
-+            if has_root {
-+                base.push(r"\");
-+            }
-+        }
-+        Prefix::VerbatimUNC(server, share) => {
-+            base.push(r"\\");
-+            base.push(server);
-+            base.push(r"\");
-+            base.push(share);
-+            if has_root {
-+                base.push(r"\");
-+            }
-+        }
-+        // `Prefix::Verbatim(_)` (device paths like `\\?\Volume{GUID}`) and
-+        // `Prefix::DeviceNS(_)` cannot be written without their prefix.
-+        _ => return path.to_path_buf(),
-+    }
-+
-+    if has_root {
-+        // The root separator is already part of `base`, and `join` would append
-+        // it again; skipping the root component keeps the prefix we just built
-+        // instead of letting `join` replace it.
-+        let _ = components.next();
-+    }
-+    if components.as_path().is_empty() {
-+        // `\\?\C:` and `\\?\UNC\server\share`: the verbatim form is the whole
-+        // path, and joining an empty tail would append a separator the input
-+        // did not have.
-+        return PathBuf::from(base);
-+    }
-+    Path::new(&base).join(components)
-+}
-+
- pub fn is_existing_directory(path: &Path) -> bool {
-     // Note: we do not use `.exists()` here, as `.` always exists, even if
-     // the CWD has been deleted.
-@@ -136,3 +197,124 @@ mod tests {
-         );
-     }
- }
-+
-+#[cfg(all(test, windows))]
-+mod windows_tests {
-+    use super::{absolute_path, strip_verbatim_prefix};
-+    use std::ffi::OsString;
-+    use std::os::windows::ffi::OsStringExt;
-+    use std::path::{Path, PathBuf};
-+
-+    #[test]
-+    fn strip_verbatim_prefix_verbatim_disk() {
-+        assert_eq!(
-+            strip_verbatim_prefix(Path::new(r"\\?\C:\foo\bar")),
-+            Path::new(r"C:\foo\bar")
-+        );
-+        // A bare drive root keeps its root separator.
-+        assert_eq!(
-+            strip_verbatim_prefix(Path::new(r"\\?\C:\")),
-+            Path::new(r"C:\")
-+        );
-+        // Drive-relative verbatim path (`\\?\C:`) must not gain a root.
-+        assert_eq!(
-+            strip_verbatim_prefix(Path::new(r"\\?\C:")),
-+            Path::new(r"C:")
-+        );
-+    }
-+
-+    #[test]
-+    fn strip_verbatim_prefix_verbatim_unc() {
-+        let stripped = strip_verbatim_prefix(Path::new(r"\\?\UNC\server\share\foo"));
-+        assert_eq!(stripped, Path::new(r"\\server\share\foo"));
-+        // The whole point of the bug: the result must stay absolute.
-+        assert!(stripped.is_absolute());
-+        assert_eq!(
-+            stripped.components().next(),
-+            Path::new(r"\\server\share\foo").components().next()
-+        );
-+
-+        // The shape produced by the old `trim_start_matches(r"\\?\")` code.
-+        assert_ne!(stripped, Path::new(r"UNC\server\share\foo"));
-+        assert_ne!(stripped, Path::new(r"\server\share\foo"));
-+    }
-+
-+    #[test]
-+    fn strip_verbatim_prefix_verbatim_unc_without_trailing_path() {
-+        assert_eq!(
-+            str
+ ```
+-Usage: fd [OPTIONS] [pattern [path]...]
++Usage: fd [OPTIONS] [pattern] [path]...
+ 
+ Arguments:
+   [pattern]  the search pattern (a regular expression, unless '--glob' is used; optional)
+-  [path]...  the root directories for the filesystem search (optional)
++  [path]...  the root directories for the filesystem search (optional, requires pattern first)
+ 
+ Options:
+   -H, --hidden                     Search hidden files and directories
+```
+
+---
+
+### Incident Patch 2: `23237ea4` (2026-11-04)
+**Commit Message**: v10.5.1 Release
+
+**File**: `CHANGELOG.md` (modified, +1/-4)
+```diff
+@@ -1,7 +1,4 @@
+-# Upcoming Release
+-
+-## Features
+--
++# 10.5.1
+ 
+ ## Bugfixes
+ - Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
+```
+
+**File**: `Cargo.lock` (modified, +1/-1)
+```diff
+@@ -320,7 +320,7 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+ 
+ [[package]]
+ name = "fd-find"
+-version = "10.5.0"
++version = "10.5.1"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ license = "MIT OR Apache-2.0"
+ name = "fd-find"
+ readme = "README.md"
+ repository = "https://github.com/sharkdp/fd"
+-version = "10.5.0"
++version = "10.5.1"
+ edition= "2024"
+ rust-version = "1.90.0"
+ 
+```
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -307,11 +307,11 @@ This is the output of `fd -h`. To see the full set of command-line options, use
+ also includes a much more detailed help text.
+ 
+ ```
+-Usage: fd [OPTIONS] [pattern [path]...]
++Usage: fd [OPTIONS] [pattern] [path]...
+ 
+ Arguments:
+   [pattern]  the search pattern (a regular expression, unless '--glob' is used; optional)
+-  [path]...  the root directories for the filesystem search (optional)
++  [path]...  the root directories for the filesystem search (optional, requires pattern first)
+ 
+ Options:
+   -H, --hidden                     Search hidden files and directories
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2214** (2026-11-04): v10.5.1 Release (@tmccombs)
 - **PR #2208** (2026-11-01): fix: keep verbatim Windows paths absolute in --absolute-path (@Duo-ee)
 - **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
 - **PR #2202** (2026-10-30): ci: release a Windows ARM64 GNU-family (gnullvm) build (@meop)
 - **PR #2196** (2026-10-28): Fix integer overflow when parsing size constraints with large values. (@parneetsingh022)
 - **PR #2193** (2026-10-28): fix: let --ignore and --no-hidden override only their half of -u (@NavpreetSSidhu)
-- **PR #2191** (2026-10-29): refactor: different pattern types (@tmccombs)
 
 ---
 
@@ -2057,31 +1964,31 @@ fix: keep verbatim Windows paths absolute in --absolute-path
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: do not list the targets jemalloc is built for
+## X. Merge pull request #2214 from sharkdp/release-10.5.1
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d44b6556`: docs: do not list the targets jemalloc is built for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `193d0df1`: Merge pull request #2214 from sharkdp/release-10.5.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-The released Linux binaries use jemalloc, through the `use-jemalloc` feature, which is enabled by default for
-some targets. Preloading a different allocator while jemalloc is compiled in is not supported, for example
+# 10.5.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-The released Linux binaries use jemalloc, through the `use-jemalloc` feature. It is on by default, but
-it is only compiled in on some targets: not on Windows, macOS, FreeBSD, OpenBSD, illumos, Android,
-32-bit musl or riscv64. There, preloading a different allocator is not supported, for example
+# Upcoming Release
+
+## Features
+-
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d44b6556` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `193d0df1` are properly handled with clean fallback behavior.

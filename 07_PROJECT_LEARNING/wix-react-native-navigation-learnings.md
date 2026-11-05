@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md`  
 > **Source**: github ([https://github.com/wix/react-native-navigation](https://github.com/wix/react-native-navigation))  
-> **Source Version**: `3cd6bfea`  
+> **Source Version**: `f5ab5e81`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:30:49.151Z  
+> **Timestamp**: 2026-11-04T02:53:30.563Z  
 > **Learning ID**: `learn-github-wix-react-native-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wix/react-native-navigation](https://github.com/wix/react-native-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:30:48.017Z  
+> **Harvest Timestamp**: 2026-11-04T02:53:29.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A complete native navigation solution for React Native
 - **Primary Language / Ecosystem**: MDX
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 13172 stars
+- **Stars / Engagement**: 13170 stars
 
 ---
 
@@ -395,11 +395,11 @@ val Float.dp: Int
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8373** (2026-11-02): **docs(release): npm trust CLI flag and E409 recovery**
+  *Symptoms*: Two notes learned while testing the same release tooling end to end for react-native-ui-lib (wix/react-native-ui-lib#4056) on real npm:  - `npm trust github … --allow-publish` is needed to allow direct publish from the CLI; npm 11.12.1 lacks the flag and fails with an unexplained `E400`, 11.17.0 works. - Resuming while npm still hides a fresh upload fails with `E409 Cannot publish over previously staged version`; waiting until the version is visible and resuming again completes the release.  Docs only.
+
 - **Issue #8371** (2026-10-22): **fix(ci): wait for npm to make a published version visible**
   *Symptoms*: After `npm publish`, npm runs an automated malware scan and the version stays unavailable (registry returns 404) until it finishes. Usually ~5 min, can be 15+, no documented upper bound. The release scripts checked the registry once, right after publish, so the `publish` job failed even though the package was published (run 39783204995) and needed a manual `resume`.  - poll the registry after publish until the version matches the artifact (every 30s, up to 30 min) - same wait in `finalize` - `publish` and `finalize` job timeout 10 -> 40 min - if the limit is hit, fail with the existing "resume the same release" message (resume is still safe) - tests: 404 then visible, and the attempts limit  Limit and interval are my choice; npm gives no guarantee. Source: https://github.blog/changelog/2026-07-28-npm-publish-time-malware-scanning-and-dual-use-metadata/
-
-- **Issue #8370** (2026-10-22): **fix(ci): release dry run artifact path + upload-artifact node24**
-  *Symptoms*: Dry run failed in `prepare`: `Invalid pattern '.../../release-artifacts/'` (`..` not allowed).  - `RELEASE_DIR` no longer contains `..` - `upload-artifact` -> v7.0.2 (SHA-pinned, node24) - Node 24.19.0 -> 24.22.1 in release workflows  Failed run: https://github.com/wix/react-native-navigation/actions/runs/39752938670
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -416,281 +416,43 @@ val Float.dp: Int
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63e6ba88` (2026-10-20)
-**Commit Message**: fix(website): point package-lock.json at the public npm registry (#8368)
+### Incident Patch 1: `f5ab5e81` (2026-11-02)
+**Commit Message**: docs(release): npm trust CLI flag and E409 recovery (#8373)
 
-
-
----
-
-### Incident Patch 2: `3cd6bfea` (2026-10-22)
-**Commit Message**: fix(ci): wait for npm to make a published version visible (#8371)
-
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
+**File**: `docs/RELEASING.md` (modified, +9/-0)
 ```diff
-@@ -160,7 +160,7 @@ jobs:
-     needs: [prepare, record]
-     environment: npm-release
-     runs-on: ubuntu-24.04
--    timeout-minutes: 10
-+    timeout-minutes: 40
-     permissions:
-       contents: read
-       actions: read
-@@ -190,7 +190,7 @@ jobs:
-     needs: [prepare, publish]
-     environment: npm-release
-     runs-on: ubuntu-24.04
--    timeout-minutes: 10
-+    timeout-minutes: 40
-     permissions:
-       contents: write
-       actions: read
-```
-
-**File**: `scripts/release/index.cjs` (modified, +5/-11)
-```diff
-@@ -1,14 +1,7 @@
- const fs = require('node:fs');
- const path = require('node:path');
- const adapter = require('./rnn.cjs');
--const {
--  check,
--  version,
--  compareVersions,
--  createPlan,
--  isReleaseRunPath,
--  publicationState,
--} = require('./policy.cjs');
-+const { check, version, compareVersions, createPlan, isReleaseRunPath } = require('./policy.cjs');
- const { githubClient, registryVersion } = require('./http.cjs');
- const {
-   prefix,
-@@ -21,7 +14,7 @@ const {
- } = require('./github.cjs');
- const { exec, integrity, pack, readManifest, verifyReleaseCommit } = require('./artifact.cjs');
- const { renderNotes } = require('./notes.cjs');
--const { publishPackages } = require('./publication.cjs');
-+const { publishPackages, waitUntilVisible } = require('./publication.cjs');
+@@ -29,6 +29,14 @@ enabling publication. Creating or merging the workflow does not configure npm tr
+    workflow. Standalone `npm dist-tag` permission is not needed. See
+    [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
  
- const directory = path.resolve(process.env.RELEASE_DIR || '.release-artifacts');
- const context = {
-@@ -321,8 +314,9 @@ async function finalize(github) {
-   const manifest = await verifiedArtifact(github);
-   for (const pkg of manifest.packages) {
-     check(
--      publicationState(pkg, await registryVersion(pkg.name, pkg.version, { allow404: true })) ===
--        'complete',
-+      (await waitUntilVisible(pkg, (name, selected) =>
-+        registryVersion(name, selected, { allow404: true })
-+      )) === 'complete',
-       'Cannot finalize an unpublished package'
-     );
-   }
-```
-
-**File**: `scripts/release/publication.cjs` (modified, +17/-3)
-```diff
-@@ -1,8 +1,22 @@
-+const { setTimeout: delay } = require('node:timers/promises');
- const { check, compareVersions, publicationState } = require('./policy.cjs');
- 
-+// npm scans new versions before exposing them, so the registry answers 404 for a while after a
-+// successful publish. Usually minutes, with no documented upper bound.
-+const VISIBILITY_POLL = { intervalMs: 30_000, attempts: 60, sleep: delay };
++   From the CLI, this needs an npm with `--allow-publish` (11.17.0 has it, 11.12.1 does not
++   and fails with an unexplained `E400`):
 +
-+async function waitUntilVisible(pkg, lookup, { intervalMs, attempts, sleep } = VISIBILITY_POLL) {
-+  for (let attempt = 1; ; attempt++) {
-+    const published = await lookup(pkg.name, pkg.version);
-+    if (published !== null) return publicationState(pkg, published);
-+    if (attempt >= attempts) return 'publish';
-+    await sleep(intervalMs);
-+  }
-+}
++   ```sh
++   npm trust github react-native-navigation --file release.yml \
++     --repo wix/react-native-navigation --env npm-release --allow-publish
++   ```
 +
- // Deliberately takes an ordered package list: multi-package adopters can resume
- // after the first publish succeeds without incrementing every workspace version.
--async function publishPackages(packages, { lookup, publish, report = () => {} }) {
-+async function publishPackages(packages, { lookup, publish, report = () => {}, poll }) {
-   for (const pkg of packages) {
-     if (publicationState(pkg, await lookup(pkg.name, pkg.version)) === 'complete') {
-       report(`${pkg.name}@${pkg.version} already matches the artifact; skipping npm publish.`);
-@@ -17,11 +31,11 @@ async function publishPackages(packages, { lookup, publish, report = () => {} })
-     }
-     await publish(pkg);
-     check(
--      publicationState(pkg, await lookup(pkg.name, pkg.version)) === 'complete',
-+      (await waitUntilVisible(pkg, lookup, poll)) === 'complete',
-       `Registry has not confirmed ${pkg.name}@${pkg.version}; resume the same release once visible`
-     );
-     report(`Published ${pkg.name}@${pkg.version} with tag ${pkg.npmTag}.`);
-   }
- }
- 
--module.exports = { publishPackages };
-+module.exports = { publishPackages, waitUntilVisible };
-```
-
-**File**: `scripts/release/publication.test.cjs` (modified, +31/-1)
-```diff
-@@ -1,6 +1,6 @@
- const { test } = require('node:test');
- const assert = require('node:assert/strict');
--const { publishPackages } = require('./publication.cjs');
-+const { publishPackages, waitUntilVisible } = require('./publication.cjs');
- 
- const pkg = { name: 'example', version: '2.0.0', npmTag: 'latest', integrity: 'sha512-exact' };
- const published = (p) => ({ name: p.name, version: p.version, dist: { integrity: p.integrity } });
-@@ -85,7 +85,37 @@ test('an unconfirmed publish fails, preserving the selected version for recovery
-     publishPackages([pkg], {
-       lookup: async () => null,
-       publish: async () => {},
-+      poll: { intervalMs: 0, attempts: 3, sleep: async () => {} },
-     }),
-     /not confirmed/
-   );
- });
-+
-+test('a version hidden by npm validation is awaited, not treated as a failure', async () => {
-+  let lookups = 0;
-+  const sleeps = [];
-+  const lookup = async (_name, selected) => {
-+    if (selected === 'latest') return { version: '1.0.0' };
-+    return ++lookups > 3 ? published(pkg) : null;
-+  };
-+  await publishPackages([pkg], {
-+    lookup,
-+    publish: async () => {},
-+    poll: { intervalMs: 5, attempts: 10, sleep: async (ms) => sleeps.push(ms) },
-+  });
-+  assert.deepEqual(sleeps, [5, 5]);
-+});
-+
-+test('waitUntilVisible stops after the configured attempts', async () => {
-+  let calls = 0;
-+  const state = await waitUntilVisible(
-+    pkg,
-+    async () => {
-+      calls++;
-+      return null;
-+    },
-+    { intervalMs: 0, attempts: 4, sleep: async () => {} }
-+  );
-+  assert.equal(state, 'publish');
-+  assert.equal(calls, 4);
-+});
-```
-
----
-
-### Incident Patch 3: `f91df935` (2026-10-22)
-**Commit Message**: fix(ci): release dry run artifact path + upload-artifact node24 (#8370)
-
-* fix(ci): release artifact path without '..' and bump upload-artifact to node24
-* fix(ci): bump upload-artifact to v7.0.2 (node24)
-* fix(ci): bump Node to 24.22.1 in release workflows
-* docs: update tested Node/npm pair
-
-**File**: `.github/workflows/release-checks.yml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ jobs:
-           persist-credentials: false
-       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-         with:
--          node-version: '24.19.0'
-+          node-version: '24.22.1'
-           package-manager-cache: false
-       - name: Test release authorization and recovery
-         run: node --test scripts/release/*.test.cjs
-```
-
-**File**: `.github/workflows/release.yml` (modified, +6/-6)
-```diff
-@@ -47,7 +47,7 @@ env:
-   RELEASE_REMOVE_DOCUMENTATION_VERSION: ${{ inputs.remove_documentation_version }}
-   RELEASE_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
-   RELEASE_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLISH_ENABLED }}
--  RELEASE_DIR: ${{ github.workspace }}/../release-artifacts
-+  RELEASE_DIR: /home/runner/work/_temp/release-artifacts
-   GH_TOKEN: ${{ github.token }}
- 
- jobs:
-@@ -71,7 +71,7 @@ jobs:
-           persist-credentials: false
-       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-         with:
--          node-version: '24.19.0'
-+          node-version: '24.22.1'
-           package-manager-cache: false
-       - name: Check admin authorization
-         run: node scripts/release/index.cjs authorize
-@@ -117,7 +117,7 @@ jobs:
-       - name: Pack and record immutable release inputs
-         if: inputs.operation != 'resume'
-         run: node scripts/release/index.cjs prepare-artifact
--      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         if: inputs.operation != 'resume'
-         id: upload
-         with:
-@@ -144,7 +144,7 @@ jobs:
-           persist-credentials: false
-       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-         with:
--          node-version: '24.19.0'
-+          node-version: '24.22.1'
-           package-manager-cache: false
-       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-         with:
-@@ -174,7 +174,7 @@ jobs:
-           persist-credentials: false
-       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-         with:
--          node-version: '24.19.0'
-+          node-version: '24.22.1'
-           package-manager-cache: false
-       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-         with:
-@@ -205,7 +205,7 @@ jobs:
-           persist-credentials: false
-       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-         with:
--          node-version: '24.19.0'
-+          node-version: '24.22.1'
-           package-manager-cache: false
-       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-         with:
-```
-
-**File**: `docs/RELEASING.md` (modified, +2/-2)
-```diff
-@@ -47,7 +47,7 @@ enabling publication. Creating or merging the workflow does not configure npm tr
- 
- No npm write token is needed in GitHub. `GITHUB_TOKEN` performs repository bookkeeping;
- only the publish job has `id-token: write`. Publishing runs on a GitHub-hosted Ubuntu
--runner. The workflow uses Node 24.19.0, including npm 11.17.0; update this tested pair
-+runner. The workflow uses Node 24.22.1, including npm 11.19.1; update this tested pair
- together. Older npm releases can execute `prepare` during `npm pack --ignore-scripts`.
- 
- ## Start a release
-@@ -146,7 +146,7 @@ state rather than assuming every click is queued indefinitely.
- 
- ## Validate changes to the release tooling
- 
--With Node 24.19.0 and npm 11.17.0:
-+With Node 24.22.1 and npm 11.19.1:
- 
- ```sh
- node --test scripts/release/*.test.cjs
+ 3. Enable GitHub Actions for this repository. Check Wix's Actions policy permits the pinned checkout, setup-node, upload-artifact,
+    and download-artifact actions. Allow workflow-created pull requests. Ensure existing
+    repository rules permit version branches and release tags without a bypass.
+@@ -129,6 +137,7 @@ resume dispatch may finish GitHub bookkeeping for an already published matching
+ | Same version and same integrity already published | Skip publication and finish GitHub steps                                   |
+ | Same version with different integrity             | Stop; investigate the conflicting publication                              |
+ | Registry failure or lost response                 | Fail without choosing another version; resume when healthy                 |
++| `E409 Cannot publish over previously staged`      | npm still hides that upload; wait until the version is visible and resume  |
+ | Existing branch/tag/PR matches                    | Reuse it                                                                   |
+ | Existing branch/tag/PR conflicts                  | Stop; never force-push or move a tag                                       |
+ | Dry-run artifact selected                         | Reject; start a fresh publish run                                          |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8373** (2026-11-02): docs(release): npm trust CLI flag and E409 recovery (@noomorph)
 - **PR #8371** (2026-10-22): fix(ci): wait for npm to make a published version visible (@noomorph)
 - **PR #8370** (2026-10-22): fix(ci): release dry run artifact path + upload-artifact node24 (@noomorph)
 - **PR #8368** (2026-10-20): fix(website): point package-lock.json at the public npm registry (@noomorph)
 - **PR #8367** (2026-10-20): fix(release): tag the source commit instead of the release commit (@noomorph)
 - **PR #8366** (2026-10-20): ci: move npm releases to admin-dispatched GitHub Actions (@yedidyak)
-- **PR #8363** (2026-09-09): iOS: Fix bottom tabs visibility on iOS 18 (@guyca)
 
 ---
 
@@ -710,30 +472,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): wait for npm to make a published version visible (#8371)
+## X. docs(release): npm trust CLI flag and E409 recovery (#8373)
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/RELEASING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3cd6bfea`: ci): wait for npm to make a published version visible (#8371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5ab5e81`: docs(release): npm trust CLI flag and E409 recovery (#8373). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing MDX data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing MDX data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/RELEASING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```mdx
 // Verified production-grade fix pattern:
-    timeout-minutes: 40
-    timeout-minutes: 40
+   From the CLI, this needs an npm with `--allow-publish` (11.17.0 has it, 11.12.1 does not
+   and fails with an unexplained `E400`):
+
+   ```sh
+   npm trust github react-native-navigation --file release.yml \
+     --repo wix/react-native-navigation --env npm-release --allow-publish
+   ```
+
+| `E409 Cannot publish over previously staged`      | npm still hides that upload; wait until the version is visible and resume  |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```mdx
 // Anti-pattern to NEVER write (induced failure mode):
-    timeout-minutes: 10
-    timeout-minutes: 10
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3cd6bfea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5ab5e81` are properly handled with clean fallback behavior.

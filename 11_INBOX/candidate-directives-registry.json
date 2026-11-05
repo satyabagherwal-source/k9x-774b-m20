@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T01:44:35.605Z",
+  "last_updated": "2026-11-05T02:55:10.505Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3753,6 +3753,149 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-WA5M",
+      "directive_title": "docs: add a security policy (#5157)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "callstack/react-native-paper",
+      "source_commit": "61d935b6",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-callstack-react-native-paper"
+    },
+    {
+      "id": "CD-LZ62",
+      "directive_title": "NUC 77 List and Population Extreme Items",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "a7fed6ab",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-4LZG",
+      "directive_title": "NUC 78 Extends Clauses for Subclasses",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "a4d4c4a7",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-B8I3",
+      "directive_title": "Empirical Invariant Guard in LogicalCollection.cpp",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "ad2fd90c",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-arangodb-arangodb"
+    },
+    {
+      "id": "CD-VUEZ",
+      "directive_title": "NUC 80 List and Population Averages",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "5b3f3e76",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-0J3X",
+      "directive_title": "[ty] Fix class-pattern exhaustiveness after class identity checks (#30045)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "astral-sh/ruff",
+      "source_commit": "62852de1",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-astral-sh-ruff"
+    },
+    {
+      "id": "CD-2KNL",
+      "directive_title": "Update README.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "kosi-libs/Kodein",
+      "source_commit": "8ef0da27",
+      "date_staged": "2026-11-04",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kosi-libs-kodein"
+    },
+    {
+      "id": "CD-UZPP",
+      "directive_title": "Empirical Invariant Guard in Plugin.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "72e964e2",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-A2ZL",
+      "directive_title": "Merge pull request #2214 from sharkdp/release-10.5.1",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sharkdp/fd",
+      "source_commit": "193d0df1",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-sharkdp-fd"
+    },
+    {
+      "id": "CD-SV74",
+      "directive_title": "items): find the app behind a hidden item listed without one (#1444)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "thaw-app/Thaw",
+      "source_commit": "fa2b68af",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-thaw-app-thaw"
+    },
+    {
+      "id": "CD-BUEY",
+      "directive_title": "NUC 81 Object Spread Entries",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "9bd304a7",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-3TVW",
+      "directive_title": "docs: update sidecar-injection.md following guidelines (#17405)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "4440cc62",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-argoproj-argo-workflows"
+    },
+    {
+      "id": "CD-DFAH",
+      "directive_title": "Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "97d3bfe5",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

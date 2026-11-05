@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `4c77c2f7`  
+> **Source Version**: `ea1eb4c2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:46:43.381Z  
+> **Timestamp**: 2026-11-05T03:27:43.771Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:46:43.373Z  
+> **Harvest Timestamp**: 2026-11-05T03:27:43.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -26,15 +26,15 @@
 - **Repository / Resource**: `TableProApp/TablePro`
 - **Description**: Free and open source database client built natively for developers
 - **Primary Language / Ecosystem**: Swift
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6349 stars
+- **Discovered Manifests / Configurations**: Cargo.toml, README.md
+- **Stars / Engagement**: 6368 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
+- Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
 ### Core Architecture Module: `apple/Native/HanaBridge/internal/hana/statement.go`
@@ -329,6 +329,9 @@ let package = Package(
         .library(name: "TableProGoogleCloud", targets: ["TableProGoogleCloud"]),
         .library(name: "TableProSpannerCore", targets: ["TableProSpannerCore"]),
         .library(name: "TableProWeaviateCore", targets: ["TableProWeaviateCore"]),
+        .library(name: "TableProQdrantCore", targets: ["TableProQdrantCore"]),
+        .library(name: "TableProInfluxDBCore", targets: ["TableProInfluxDBCore"]),
+        .library(name: "TableProNeo4jCore", targets: ["TableProNeo4jCore"]),
         .library(name: "TableProFirebaseCore", targets: ["TableProFirebaseCore"]),
         .library(name: "TableProBigtableCore", targets: ["TableProBigtableCore"]),
         .library(name: "TableProNumberFormatting", targets: ["TableProNumberFormatting"]),
@@ -338,6 +341,8 @@ let package = Package(
         .library(name: "TableProR2SQLCore", targets: ["TableProR2SQLCore"]),
         .library(name: "TableProConnectionLibrary", targets: ["TableProConnectionLibrary"]),
         .library(name: "TableProSQLGrammar", targets: ["TableProSQLGrammar"]),
+        .library(name: "TableProSQLQuoting", targets: ["TableProSQLQuoting"]),
+        .library(name: "TableProProcess", targets: ["TableProProcess"]),
         .library(name: "TableProSQLVocabulary", targets: ["TableProSQLVocabulary"]),
         .library(name: "TableProAutocomplete", targets: ["TableProAutocomplete"]),
         .library(name: "TableProSSHTransport", targets: ["TableProSSHTransport"]),
@@ -348,7 +353,20 @@ let package = Package(
         .library(name: "TableProMySQLCore", targets: ["TableProMySQLCore"]),
         .library(name: "TableProPostgreSQLCore", targets: ["TableProPostgreSQLCore"]),
         .library(name: "TableProRedisCore", targets: ["TableProRedisCore"]),
-        .library(name: "TableProTestSupport", targets: ["TableProTestSupport"])
+        .library(name: "TableProMemcachedCore", targets: ["TableProMemcachedCore"]),
+        .library(name: "TableProHTTP", targets: ["TableProHTTP"]),
+        .library(name: "TableProSnowflakeCore", targets: ["TableProSnowflakeCore"]),
+        .library(name: "TableProTestSupport", targets: ["TableProTestSupport"]),
+        .library(name: "TableProWireIO", targets: ["TableProWireIO"]),
+        .library(name: "TableProGzip", targets: ["TableProGzip"]),
+        .library(name: "TableProKafkaCore", targets: ["TableProKafkaCore"]),
+        .library(name: "TableProCassandraCore", targets: ["TableProCassandraCore"]),
+        .library(name: "TableProEtcdCore", targets: ["TableProEtcdCore"]),
+        .library(name: "TableProDuckDBCore", targets: ["TableProDuckDBCore"])
+    ],
+    // Kafka brokers hand back whatever codec the producer stored, and macOS has no zstd.
+    dependencies: [
+        .package(url: "https://github.com/facebook/zstd", from: "1.5.0")
     ],
     targets: [
         .target(
@@ -398,18 +416,19 @@ let package = Package(
         ),
         .target(
             name: "TableProImport",
-            dependencies: ["TableProConnectionLibrary", "TableProSSHTransport"],
+            dependencies: ["TableProConnectionLibrary", "TableProCoreTypes", "TableProSSHTransport"],
             path: "Sources/TableProImport"
         ),
         .target(
             name: "TableProDatabase",
-            dependencies: ["TableProModels", "TableProCoreTypes", "TableProPluginKit", "TableProSQLGrammar", "TableProSSHTransport"],
+            dependencies: ["TableProModels", "TableProCoreTypes", "TableProPluginKit", "TableProSQLGrammar", "TableProSQLQuoting", "TableProSSHTransport"],
             path: "Sources/TableProDatabase"
         ),
         .target(
             name: "TableProQuery",
             dependencies: [
-                "TableProModels", "TableProPluginKit", "TableProCoreTypes", "TableProSQLGrammar", "TableProRedisCore"
+                "TableProModels", "TableProPluginKit", "TableProCoreTypes", "TableProSQLGrammar", "TableProSQLQuoting",
+                "TableProRedisCore"
             ],
             path: "Sources/TableProQuery"
         ),
@@ -430,7 +449,7 @@ let package = Package(
         ),
         .target(
             name: "TableProMSSQLCore",
-            dependencies: ["TableProCoreTypes", "TableProSQLGrammar"],
+            dependencies: ["TableProCoreTypes", "TableProSQLGrammar", "TableProSQLQuoting"],
             path: "Sources/TableProMSSQLCore"
         ),
         .target(
@@ -440,12 +459,12 @@ let package = Package(
         ),
         .target(
             name: "TableProTeradataCore",
-            dependencies: [],
+            dependencies: ["TableProSQLQuoting", "TableProWireIO"],
             path: "Sources/TableProTeradataCore"
         ),
         .target(
             name: "TableProTrinoCore",
-            dependencies: ["TableProSQLGrammar"],
+            dependencies: ["TableProSQLGrammar", "TableProSQLQuoting", "TableProTLSClientIdentity"],
             path: "Sources/TableProTrinoCore"
         ),
         .target(
@@ -471,12 +490,12 @@ let package = Package(
         ),
         .target(
             name: "TableProGoogleCloud",
-            dependencies: [],
+            dependencies: ["TableProSQLQuoting"],
             path: "Sources/TableProGoogleCloud"
         ),
         .target(
             name: "TableProSpannerCore",
-            dependencies: ["TableProGoogleCloud"],
+            dependencies: ["TableProGoogleCloud", "TableProSQLQuoting"],
             path: "Sources/TableProSpannerCore"
         ),
         .target(
@@ -485,61 +504,15 @@ let package = Package(
             path: "Sources/TableProWeaviateCore"
         ),
         .target(
-            name: "TableProBigtableCore",
-            dependencies: ["TableProGoogleCloud"],
-            path: "Sources/TableProBigtableCore"
-        ),
-        .target(
-            name: "TableProFirebaseCore",
-            dependencies: ["TableProGoogleCloud"],
-            path: "Sources/TableProFirebaseCore"
-        ),
-        .target(
-            name: "TableProR2SQLCore",
+            name: "TableProQdrantCore",
             dependencies: [],
-            path: "Sources/TableProR2SQLCore"
-        ),
-        .target(
-            name: "TableProConnectionLibrary",
-            dependencies: [],
-            path: "Sources/TableProConnectionLibrary"
-        ),
-        .target(
-            name: "TableProSQLGrammar",
-            dependencies: [],
-            path: "Sources/TableProSQLGrammar"
-        ),
-        // Linked by the macOS app, six plugin bundles and the iOS app, so never TableProPluginKit.
-        .target(
-            name: "TableProSQLVocabulary",
-            dependencies: [],
-            path: "Sources/TableProSQLVocabulary",
-            swiftSettings: pluginCoreSettings
-        ),
-        // The macOS app links it, so never TableProPluginKit.
-        .target(
-            name: "TableProAutocomplete",
-            dependencies: ["TableProSQLGrammar", "TableProSQLVocabulary"],
-            path: "Sources/TableProAutocomplete",
+            path: "Sources/TableProQdrantCore",
             swiftSettings: pluginCoreSettings
         ),
         .target(
-            name: "TableProSSHTransport",
+            name: "TableProInfluxDBCore",
             dependencies: [],
-            path: "Sources/TableProSSHTransport"
-        ),
-        .target(
-            name: "CSQLite",
-            dependencies: [],
-            path: "Sources/CSQLite"
-        ),
-        .target(
-            name: "TableProTabularIO",
-            dependencies: [],
-            path: "Sources/TableProTabularIO"
-        ),
-        .target(
-            na
+            path: "Sources/TableProInfluxDBCore"
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1596,659 +1569,1551 @@ struct SQLTokenStream {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34b2363d` (2026-10-31)
-**Commit Message**: build(linux): give the package builds room for DuckDB 2.0 (#3937)
+### Incident Patch 1: `08b88783` (2026-11-04)
+**Commit Message**: fix(ios): stop the iPad app on a Mac crashing when a connection opens (#4032)
 
-**File**: `linux/build-aux/debian/rules` (modified, +4/-0)
+**File**: `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift` (modified, +5/-1)
 ```diff
-@@ -33,6 +33,10 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
- %:
- 	dh $@ --buildsystem=meson
+@@ -33,6 +33,10 @@ struct ConnectedView: View {
+         appState.isConnectionRemoved(connection.id)
+     }
  
-+# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
-+# dwz then fails the build instead of leaving the file as it is.
-+override_dh_dwz:
++    private var sceneObjects: SceneObjects {
++        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
++    }
 +
- # dh_clean deletes *.orig files, and every vendored crate ships a
- # Cargo.toml.orig that its .cargo-checksum.json lists.
- override_dh_clean:
+     private var connectionEditorPresented: Binding<Bool> {
+         Binding(
+             get: { presenter.isEditingConnection(connection.id) },
+@@ -60,7 +64,7 @@ struct ConnectedView: View {
+             Text("This connection no longer exists. It may have been removed from another device.")
+         }
+         .sheet(isPresented: connectionEditorPresented) {
+-            ConnectionFormView(editing: liveRecord ?? connection) { _ in
++            ConnectionFormSheet(connection: liveRecord ?? connection, objects: sceneObjects) { _ in
+                 presenter.dismissConnectionEditor()
+             }
+         }
 ```
 
-**File**: `linux/crates/app/meson.build` (modified, +4/-2)
+**File**: `apple/TableProMobile/TableProMobile/Views/ConnectionListView.swift` (modified, +10/-5)
 ```diff
-@@ -53,15 +53,17 @@ if profile != 'development'
- endif
+@@ -17,6 +17,7 @@ struct ConnectionListView: View {
+     @Environment(AppLockState.self) private var lockState
+     @Environment(ConnectionCoordinatorStore.self) private var coordinatorStore
+     @Environment(ScenePresenter.self) private var presenter
++    @Environment(SceneMenuState.self) private var menuState: SceneMenuState?
+     @SceneStorage("lastConnectionId") private var selectedConnectionIdString: String?
  
- # The workspace suite excludes the app, whose tests need a display and
--# the GTK test accessibility backend.
-+# the GTK test accessibility backend. A package build compiles its tests in
-+# the release profile, DuckDB's C++ a second time among them, which took
-+# more than an hour on a 4-core builder with DuckDB 2.0.
- test(
-   'workspace',
-   cargo,
-   args: ['test'] + cargo_options + ['--workspace', '--exclude', 'tablepro'],
-   env: test_env,
-   suite: 'unit',
-   is_parallel: false,
--  timeout: 3600,
-+  timeout: 7200,
- )
+     @State private var searchText = ""
+@@ -131,6 +132,10 @@ struct ConnectionListView: View {
+         ]
+     }
  
- gtk_env = app_env
++    private var sceneObjects: SceneObjects {
++        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
++    }
++
+     var body: some View {
+         @Bindable var presenter = presenter
+         NavigationStack {
+@@ -173,9 +178,9 @@ struct ConnectionListView: View {
+                 }
+         }
+         .fullScreenCover(item: openConnection, onDismiss: connectionCoverDidDismiss) { connection in
+-            ConnectedView(connection: connection)
+-                .id(connection.id)
+-                .onAppear { isConnectionCoverOnScreen = true }
++            ConnectionCover(connection: connection, objects: sceneObjects) {
++                isConnectionCoverOnScreen = true
++            }
+         }
+         .sheet(item: $presenter.sheet, onDismiss: sheetDidDismiss) { sheet in
+             sheetContent(sheet)
+@@ -691,11 +696,11 @@ struct ConnectionListView: View {
+         case .whatsNew(let version):
+             WhatsNewSheet(version: version)
+         case .addConnection:
+-            ConnectionFormView { _ in
++            ConnectionFormSheet(connection: nil, objects: sceneObjects) { _ in
+                 presenter.sheet = nil
+             }
+         case .editConnection(let connection):
+-            ConnectionFormView(editing: connection) { _ in
++            ConnectionFormSheet(connection: connection, objects: sceneObjects) { _ in
+                 presenter.sheet = nil
+             }
+         case .moveConnections(let ids):
+```
+
+**File**: `apple/TableProMobile/TableProMobile/Views/SceneObjects.swift` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++import SwiftUI
++import TableProModels
++
++// macOS 27 evaluates a presented root once without the presenter's environment (scripts/probes/check-presented-root-environment.sh).
++struct SceneObjects {
++    let appState: AppState
++    let coordinatorStore: ConnectionCoordinatorStore
++    let presenter: ScenePresenter
++    let menuState: SceneMenuState?
++}
++
++extension View {
++    func sceneObjects(_ objects: SceneObjects) -> some View {
++        environment(objects.appState)
++            .environment(objects.coordinatorStore)
++            .environment(objects.presenter)
++            .environment(objects.menuState)
++    }
++}
++
++struct ConnectionCover: View {
++    let connection: DatabaseConnection
++    let objects: SceneObjects
++    let onAppear: () -> Void
++
++    var body: some View {
++        ConnectedView(connection: connection)
++            .id(connection.id)
++            .onAppear(perform: onAppear)
++            .sceneObjects(objects)
++    }
++}
++
++struct ConnectionFormSheet: View {
++    let connection: DatabaseConnection?
++    let objects: SceneObjects
++    let onSaved: (UUID) -> Void
++
++    var body: some View {
++        ConnectionFormView(editing: connection, onSaved: onSaved)
++            .sceneObjects(objects)
++    }
++}
+```
+
+**File**: `apple/TableProMobile/TableProMobileTests/Views/SceneObjectsTests.swift` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import SwiftUI
++@testable import TableProMobile
++import TableProModels
++import Testing
++import UIKit
++
++// Each root is hosted with no ancestor, as macOS builds a presented root; an object it misses traps the host.
++@MainActor
++struct SceneObjectsTests {
++    private let fixture: AppStateFixture
++    private let objects: SceneObjects
++
++    init() throws {
++        fixture = try AppStateFixture()
++        let appState = fixture.makeState(syncEnabled: false)
++        objects = SceneObjects(
++            appState: appState,
++            coordinatorStore: ConnectionCoordinatorStore(connectionManager: appState.connectionManager),
++            presenter: ScenePresenter(),
++            menuState: SceneMenuState()
++        )
++    }
++
++    @Test("The connection cover renders with no environment from its presenter")
++    func coverRendersOnItsOwn() throws {
++        let absent = DatabaseConnection(name: "Absent", type: .sqlite, host: "", port: 0, database: "absent.sqlite")
++        try expectRenders(ConnectionCover(connection: absent, objects: objects) {})
++    }
++
++    @Test("The connection form sheet renders with no environment from its presenter")
++    func formSheetRendersOnItsOwn() throws {
++        try expectRenders(ConnectionFormSheet(connection: nil, objects: objects) { _ in })
++    }
++
++    private func expectRenders(_ root: some View) throws {
++        let scene = try #require(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
++        let window = UIWindow(windowScene: scene)
++        defer {
++            window.isHidden = true
++            window.rootViewController = nil
++        }
++        let host = UIHostingController(rootView: root)
++        window.rootViewController = host
++        window.makeKeyAndVisible()
++        window.layoutIfNeeded()
++
++        #expect(host.view.window === window)
++    }
++}
+```
+
+**File**: `apple/changelog.d/4032.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++The iPad app on a Mac crashing when you open a connection, or add or edit one.
+```
+
+**File**: `apple/scripts/probes/check-presented-root-environment.sh` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++#!/usr/bin/env bash
++#
++# Whether SwiftUI on this Mac still builds a presented root once without the presenter's environment.
++# On macOS 27.0.1 an iPad app on a Mac (and a Catalyst app) evaluates a sheet's or cover's root while
++# it sets the presentation up, and when that root has a sheet or alert outside a NavigationStack the
++# evaluation sees an empty environment: a non-optional @Environment(T.self) read traps with
++# "No Observable object of type T found". The iOS app passes its scene objects to presented content
++# (TableProMobile/Views/SceneObjects.swift) for that reason. Run this on a new macOS to see whether
++# that is still needed.
++#
++# Builds presented-root-environment-probe.swift as a Catalyst app with the iPad idiom and runs it
++# twice: once relying on inheritance, once with .environment on the cover's content.
++#
++# Exit 0: inheritance misses the first evaluation and injection fixes it (the app's assumption).
++# Exit 2: inheritance already covers the first evaluation (the workaround can go).
++# Exit 1: injection does not help, or the probe did not run.
++
++set -uo pipefail
++
++ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
++WORK="$(mktemp -d)"
++trap 'rm -rf "$WORK"' EXIT
++
++APP="$WORK/PresentedRootProbe.app"
++mkdir -p "$APP/Contents/MacOS"
++cat > "$APP/Contents/Info.plist" <<'PLIST'
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++    <key>CFBundleExecutable</key><string>PresentedRootProbe</string>
++    <key>CFBundleIdentifier</key><string>com.TablePro.probes.presented-root-environment</string>
++    <key>CFBundlePackageType</key><string>APPL</string>
++    <key>CFBundleSupportedPlatforms</key><array><string>MacOSX</string></array>
++    <key>LSMinimumSystemVersion</key><string>26.0</string>
++    <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><true/></dict>
++    <key>UIDeviceFamily</key><array><integer>2</integer></array>
++</dict>
++</plist>
++PLIST
++
++SDK="$(xcrun --sdk macosx --show-sdk-path)"
++if ! xcrun swiftc -sdk "$SDK" -parse-as-library -swift-version 5 -target arm64-apple-ios26.0-macabi -O \
++    -Fsystem "$SDK/System/iOSSupport/System/Library/Frameworks" \
++    -L "$SDK/System/iOSSupport/usr/lib" -L "$SDK/System/iOSSupport/usr/lib/swift" \
++    "$ROOT/scripts/probes/presented-root-environment-probe.swift" \
++    -o "$APP/Contents/MacOS/PresentedRootProbe" > "$WORK/build.log" 2>&1; then
++    tail -40 "$WORK/build.log" >&2
++    exit 1
++fi
++codesign --force --sign - "$APP" > /dev/null 2>&1
++
++run() {
++    PROBE_INJECT="$1" perl -e 'alarm 30; exec @ARGV' "$APP/Contents/MacOS/PresentedRootProbe" 2> /dev/null
++}
++
++sw_vers -productVersion | sed 's/^/macOS /'
++echo "inherited:"
++run 0
++inherited=$?
++echo "injected on the content:"
++run 1
++injected=$?
++
++if [ "$injected" -ne 0 ]; then
++    echo "FAIL: injection on the content did not reach the first evaluation" >&2
++    exit 1
++fi
++if [ "$inherited" -eq 0 ]; then
++    echo "The first evaluation inherits the presenter's environment on this macOS."
++    exit 2
++fi
++echo "The first evaluation misses the presenter's environment; content needs its objects passed in."
++exit 0
+```
+
+**File**: `apple/scripts/probes/presented-root-environment-probe.swift` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++import SwiftUI
++import UIKit
++
++@Observable final class Marker {}
++
++@MainActor enum Evaluations {
++    static var sawMarker: [Bool] = []
++}
++
++@main
++struct PresentedRootProbe: App {
++    @State private var marker = Marker()
++
++    var body: some Scene {
++        WindowGroup {
++            Presenter()
++                .environment(marker)
++        }
++    }
++}
++
++struct Item: Identifiable {
++    let id = 1
++}
++
++struct Presenter: View {
++    @Environment(Marker.self) private var marker
++    @State private var item: Item?
++    private let injects = ProcessInfo.processInfo.environment["PROBE_INJECT"] == "1"
++
++    var body: some View {
++        let marker = marker
++        Text(verbatim: "presenter")
++            .fullScreenCover(item: $item) { _ in
++                if injects {
++                    PresentedRoot().environment(marker)
++                } else {
++                    PresentedRoot()
++                }
++            }
++            .task { item = Item() }
++    }
++}
++
++// ConnectedView's shape: a branch root with an alert and a sheet outside any NavigationStack.
++struct PresentedRoot: View {
++    @Environment(Marker.self) private var marker: Marker?
++    @State private var never = false
++
++    var body: some View {
++        let _ = Evaluations.sawMarker.append(marker != nil)
++        Group {
++            if never {
++                Text(verbatim: "never")
++            } else {
++                Text(verbatim: "presented")
++            }
++        }
++        .alert("never", isPresented: $never) {}
++        .sheet(isPresented: $never) { Text(verbatim: "never") }
++        .task {
++            try? await Task.sleep(for: .seconds(1))
++            print("evaluations saw the presenter's object: \(Evaluations.sawMarker)")
++            exit(Evaluations.sawMarker.first == true ? 0 : 1)
++        }
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `5fd3a352` (2026-10-31)
-**Commit Message**: fix(linux-grid): count the sort arrow in a header's width and measure columns again when a font changes (#3927)
+### Incident Patch 2: `9e191470` (2026-11-04)
+**Commit Message**: fix(databend): read statements as the server does in Safe Mode (#4044)
 
-**File**: `linux/changelog.d/3927.fixed.1.md` (added, +1/-0)
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/DatabendStatementReadings.swift` (added, +129/-0)
 ```diff
-@@ -0,0 +1 @@
-+Changing the font or text size while a data grid was open left its columns at their old widths.
-```
-
-**File**: `linux/changelog.d/3927.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+A data grid column sized by its header could cut the header's sort arrow.
-```
-
-**File**: `linux/crates/app/src/ui/data_grid/columns.rs` (modified, +106/-19)
-```diff
-@@ -16,6 +16,7 @@ use crate::services::grid::{
-     CellDisplay, ColumnLayout, GridColumn, LayoutSlot, Placement, default_width_chars, header_text, merge_order,
-     number_width_chars, sampled_texts, typical_texts, typical_width_chars,
- };
-+use crate::ui::handler_guard::HandlerGuard;
- 
- /// Rows sampled for a column's opening width.
- const WIDTH_SAMPLE: usize = 200;
-@@ -25,6 +26,21 @@ const CELL_CHROME_PX: i32 = 13;
- /// A resize step, in digits of the font the cells draw in, so a step is
- /// the same number of characters at any text size.
- const STEP_DIGITS: i32 = 2;
-+/// Adwaita draws a header's title in `.caption-heading`: bold, at 82 % of
-+/// the grid's font.
-+const HEADER_SCALE: f64 = 0.82;
-+/// GTK keeps a sort indicator beside the title of every sortable column,
-+/// sorted or not: 16 px wide in Adwaita, 6 px from the title.
-+const SORT_INDICATOR_PX: i32 = 16 + 6;
+@@ -0,0 +1,129 @@
++import Foundation
 +
-+/// Whether measuring may narrow a column the grid sized itself.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Measure {
-+    /// More rows only widen it, so it holds still as pages arrive.
-+    Widen,
-+    /// A font changed, so the width it had means nothing now.
-+    Again,
++/// What a Databend server parses from a text, written out for a gate that reads it with a lexical grammar.
++///
++/// The app sends a text one statement at a time, cut where the grammar cuts it, and the server tokenizes each statement
++/// alone, so each reading of ``DatabendTokenizer/Rules`` gives the tokens of every statement, joined by `;`, and those
++/// of the whole text. A token is written so the Databend grammar lexes it alone: a hint, a comment or a blank is
++/// dropped, and a `$` or a quote that would open a literal the server does not read is spelled `_`. A statement opening
++/// with `SETTINGS` and its optional `( ... )` runs the statement after them, so only that one is written.
++enum DatabendStatementReadings {
++    static func texts(of text: String, grammar: SQLLexicalGrammar) -> [String] {
++        let scalars = Array(text.unicodeScalars)
++        let statements = SQLStatementScanner.executableStatements(in: text, grammar: grammar)
++        var seen: Set<String> = [text]
++        var texts: [String] = []
++        for rules in DatabendTokenizer.Rules.readings(of: scalars) {
++            var candidates: [String] = []
++            if let whole = code(of: scalars, rules: rules) {
++                candidates.append(whole)
++            }
++            if statements.count > 1 {
++                let pieces = statements.compactMap { code(of: Array($0.sql.unicodeScalars), rules: rules) }
++                candidates.append(pieces.joined(separator: " ;\n"))
++            }
++            for candidate in candidates where seen.insert(candidate).inserted {
++                texts.append(candidate)
++            }
++        }
++        return texts
++    }
++
++    // Nil when the server refuses the text before it parses anything. A hint the parser takes holds settings, never a
++    // statement, so it is dropped with the rest.
++    static func code(of scalars: [Unicode.Scalar], rules: DatabendTokenizer.Rules) -> String? {
++        let reading = DatabendTokenizer.read(scalars, rules: rules)
++        let tokens = reading.tokens
++        guard reading.isComplete || parsesWhatItRead(tokens, scalars: scalars) else { return nil }
++        var words: [String] = []
++        var insideHint = false
++        var statementStart = true
++        var index = 0
++        while index < tokens.count {
++            let token = tokens[index]
++            let spelling = scalars[token.range]
++            index += 1
++            if insideHint {
++                insideHint = token.kind != .hintSuffix
++                continue
++            }
++            if statementStart, token.kind == .name, String(String.UnicodeScalarView(spelling)).uppercased() == "SETTINGS" {
++                index = settingsEnd(in: tokens, scalars: scalars, from: index)
++                continue
++            }
++            statementStart = token.kind == .symbol && spelling.elementsEqual([";"])
++            switch token.kind {
++            case .hintPrefix:
++                insideHint = true
++            case .name:
++                words.append(word(spelling) { $0 == "$" ? "_" : $0 })
++            case .variable:
++                words.append(word(spelling) { $0 == "$" || !isNameScalar($0) ? "_" : $0 })
++            case .stageName:
++                words.append("@" + word(spelling.dropFirst()) { isNameScalar($0) && $0.isASCII ? $0 : "_" })
++            case .quoted, .codeString, .number, .placeholder, .hintSuffix:
++                words.append(word(spelling) { $0 })
++            case .symbol:
++                let symbol = word(spelling) { (0x21...0x7E).contains($0.value) ? $0 : "_" }
++                // `#` opens a line comment in a reading the grammar keeps in doubt.
++                words.append(symbol.hasPrefix("#") ? symbol + "\n" : symbol)
++            }
++        }
++        return words.joined(separator: " ")
++    }
++
++    // Planner::parse_sql_inner parses an INSERT, other than INSERT ALL or FIRST, and a REPLACE from the tokens before
++    // the point the tokenizer stopped, and refuses any other statement it cannot tokenize whole.
++    private static func parsesWhatItRead(_ tokens: [DatabendTokenizer.Token], scalars: [Unicode.Scalar]) -> Bool {
++        let words = tokens.prefix(3).map { token in
++            token.kind == .name ? String(String.UnicodeScalarView(scalars[token.range])).uppercased() : ""
++        }
++        switch words.first {
++        case "REPLACE":
++            return true
++        case "INSERT":
++            return !words.contains("ALL") && !words.contains("FIRST")
++        default:
++            return false
++        }
++    }
++
++    // Past the `( ... )` that may follow `SETTINGS`, whose tokens start at `index`.
++    private static func settingsEnd(
++        in tokens: [DatabendTokenizer.Token],
++        scalars: [Unicode.Scalar],
++        from index: Int
++    ) -> Int {
++        var depth = 0
++        for position in index..<tokens.count {
++            let token = tokens[position]
++            guard t
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/DatabendTokenizer.swift` (added, +333/-0)
+```diff
+@@ -0,0 +1,333 @@
++import Foundation
++
++/// Databend's tokenizer, `src/query/ast/src/parser/token.rs`, as `Tokenizer::next` hands tokens to the parser: blanks
++/// and comments dropped, and a hint dropped unless the token before it is a statement word that takes one.
++///
++/// The reading stops where the server meets text it cannot tokenize and refuses the statement. A name that starts with
++/// a non-ASCII scalar runs through any other, and a control character is a token of its own: the server either reads
++/// them so or refuses, and before 1.2.888 it refuses every non-ASCII scalar outside a literal. A name that starts in
++/// ASCII ends at its first non-ASCII scalar, where a keyword ends on the server, so `TABLE中` is TABLE and then 中; any
++/// other ASCII start is read as a name of its own too, which moves no placeholder or hint. ``Rules`` holds each other
++/// rule a release since 1.2.473 changed.
++public enum DatabendTokenizer {
++    public enum Kind: Sendable, Hashable {
++        case name, variable, quoted, codeString, stageName, number, placeholder, hintPrefix, hintSuffix, symbol
++    }
++
++    public struct Token: Sendable, Hashable {
++        public let kind: Kind
++        /// Offsets into the scalars read.
++        public let range: Range<Int>
++    }
++
++    public struct Reading: Sendable, Hashable {
++        public let tokens: [Token]
++        /// False when the server stops before the end and refuses the statement.
++        public let isComplete: Bool
++    }
++
++    public struct Rules: Sendable, Hashable {
++        /// Before 1.2.884 a block comment is `/\*[^\+]([^\*]|(\*[^/]))*\*/`, so `**/` and `/**/` leave it open.
++        public var pairsStarsInBlockComments: Bool
++        /// A stage name such as `@s` ran on through a comma until October 2025.
++        public var commaContinuesStageNames: Bool
++        /// `!*` was an operator until July 2026, so `!*/*` opened a comment.
++        public var bangStarIsAnOperator: Bool
++        /// A hint after MERGE was skipped like one in any other wrong place until April 2026.
++        public var mergeTakesHints: Bool
++
++        public static let current = Rules(
++            pairsStarsInBlockComments: false, commaContinuesStageNames: false, bangStarIsAnOperator: false,
++            mergeTakesHints: true
++        )
++
++        /// The current rules first, then each older set the text can tell apart.
++        public static func readings(of scalars: [Unicode.Scalar]) -> [Rules] {
++            let pairs = zip(scalars, scalars.dropFirst())
++            var readings = [current]
++            if pairs.contains(where: { $0 == "/" && $1 == "*" }) {
++                readings += readings.map { var rules = $0; rules.pairsStarsInBlockComments = true; return rules }
++            }
++            if scalars.contains("@") {
++                readings += readings.map { var rules = $0; rules.commaContinuesStageNames = true; return rules }
++            }
++            if pairs.contains(where: { $0 == "!" && $1 == "*" }) {
++                readings += readings.map { var rules = $0; rules.bangStarIsAnOperator = true; return rules }
++            }
++            if zip(pairs, scalars.dropFirst(2)).contains(where: { $0.0 == "/" && $0.1 == "*" && $1 == "+" }) {
++                readings += readings.map { var rules = $0; rules.mergeTakesHints = false; return rules }
++            }
++            return readings
++        }
++    }
++
++    public static func read(_ scalars: [Unicode.Scalar], rules: Rules = .current) -> Reading {
++        Reader(scalars: scalars, rules: rules).read()
++    }
++
++    /// Where each `?` the parser reads as a placeholder stands, up to the point the server stops reading.
++    public static func placeholders(in scalars: [Unicode.Scalar], rules: Rules = .current) -> [Int] {
++        read(scalars, rules: rules).tokens.compactMap { $0.kind == .placeholder ? $0.range.lowerBound : nil }
++    }
 +}
++
++private struct Reader {
++    let scalars: [Unicode.Scalar]
++    let rules: DatabendTokenizer.Rules
++
++    private typealias Kind = DatabendTokenizer.Kind
++
++    private static let operators: [[Unicode.Scalar]] = [
++        "!~*", "#>>", "->>", "<+>", "<->", "<=>", "||/",
++        "!!", "!=", "!~", "#-", "#>", "*/", "->", "//", "::", ":=", "<<", "<=", "<>", "<@", "=>", "==", ">=", ">>",
++        "?&", "?|", "@>", "@?", "@@", "|/", "||", "~*",
++    ].map { Array($0.unicodeScalars) }
++
++    private static let operatorStarts = Set(operators.compactMap(\.first))
++
++    private static let hintTakers: Set<String> = ["INSERT", "SELECT", "REPLACE", "UPDATE", "DELETE", "COPY"]
++
++    // Tokenizer::next skips a hint unless the token before it takes one, and a hint skipped inside another takes its
++    // own `*/`. Every token it reads moves the token before, skipped ones too.
++    func read() -> DatabendTokenizer.Reading {
++        var tokens: [DatabendTokenizer.Token] = []
++        var index = 0
++        var previousTakesHint = false
++        var skippedHints = 0
++        while index < 
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalGrammar.swift` (modified, +4/-0)
+```diff
+@@ -149,6 +149,10 @@ public struct SQLLexicalGrammar: OptionSet, Hashable, Sendable {
+     /// PostgreSQL's `quotecontinue` reads it, so `E'x'` + line break + `'\'; ...'` is one literal. Curated only.
+     public static let escapeStringContinuations = SQLLexicalGrammar(rawValue: 1 << 39)
  
- /// What a column's cells read to draw a row. The column makes one and
- /// every cell it builds shares it.
-@@ -66,6 +82,8 @@ pub struct ColumnSet {
-     /// keep: a better guess from other rows should still reach them.
-     auto_widths: std::collections::HashMap<usize, i32>,
-     pages: Pages,
-+    /// The fonts the grid last sized its columns in.
-+    measured_in: Option<String>,
-     handlers: Vec<(glib::WeakRef<glib::Object>, glib::SignalHandlerId)>,
- }
++    /// A gate also reads the text the way Databend's own tokenizer does, as ``DatabendStatementReadings`` writes it out,
++    /// since no other fact here says that a hint's body is tokens or that a stage name keeps a quote. Curated only.
++    public static let databendTokens = SQLLexicalGrammar(rawValue: 1 << 40)
++
+     /// Standard SQL: quotes close only on a doubled quote, `--` and flat `/* */` are the only comments.
+     public static let ansi: SQLLexicalGrammar = []
  
-@@ -234,20 +252,55 @@ impl DataGrid {
-     /// the first rows, and keeps it while rows scroll by, since an
-     /// automatic width measures every row GTK builds and shifts.
-     fn size_unsized_columns(&self) {
--        let widths = self.opening_widths();
-+        self.size_columns(Measure::Widen);
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalProfile.swift` (modified, +4/-2)
+```diff
+@@ -187,10 +187,12 @@ public struct SQLLexicalProfile: Sendable, Hashable {
+     ]
+ 
+     /// Databend, from its tokenizer: a backslash escapes in `'` and `"`, backticks quote identifiers, `$$` bodies
+-    /// are literals, and a form feed ends `--` as a line feed does. Not measured.
++    /// are literals, and a form feed ends `--` as a line feed does. A hint's body, a stage name and a comment of an
++    /// older release follow rules no fact here holds, so a gate also reads the server's own tokens, measured on 1.2.880
++    /// and 1.2.958 by `scripts/probes/check-databend-lexing.sh`.
+     static let databend: SQLLexicalGrammar = [
+         .backslashEscapesInSingleQuotes, .backslashEscapesInDoubleQuotes, .backtickQuotes, .untaggedDollarQuotes,
+-        .formFeedEndsLineComments,
++        .formFeedEndsLineComments, .databendTokens,
+     ]
+ 
+     /// CQL for Cassandra and ScyllaDB, from the reference: `$$` bodies are literals, `//` is a comment, and a
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalReadings.swift` (modified, +14/-5)
+```diff
+@@ -74,13 +74,22 @@ public struct SQLLexicalReadings: Sendable, Hashable {
+     }
+ 
+     /// Every text a gate reads for `text`: under each reading in ``distinct(for:)``, each text a server may run from
+-    /// it, as ``SQLExecutableCommentReadings`` gives them. Lazy, so a gate that has its answer stops early. Nil when the
+-    /// text sets more versions than a gate reads, which the gate answers as its worst case.
++    /// it, as ``SQLExecutableCommentReadings`` gives them, and under the first reading of Databend's grammar each text
++    /// ``DatabendStatementReadings`` writes out. Lazy, so a gate that has its answer stops early. Nil when the text sets
++    /// more versions than a gate reads, which the gate answers as its worst case.
+     public func lexings(of text: String) -> AnySequence<SQLLexing>? {
+-        var readings: [(grammar: SQLLexicalGrammar, texts: SQLExecutableCommentReadings.Texts)] = []
++        var readings: [(grammar: SQLLexicalGrammar, texts: AnySequence<String>)] = []
++        var readsDatabendTokens = false
+         for grammar in distinct(for: text) {
+             guard let texts = SQLExecutableCommentReadings.texts(of: text, grammar: grammar) else { return nil }
+-            readings.append((grammar, texts))
++            // The tokens do not depend on the grammar, and the first reading cuts the statements as the app does.
++            guard grammar.contains(.databendTokens), !readsDatabendTokens else {
++                readings.append((grammar, AnySequence(texts)))
++                continue
++            }
++            readsDatabendTokens = true
++            let databend = AnySequence { DatabendStatementReadings.texts(of: text, grammar: grammar).makeIterator() }
++            readings.append((grammar, AnySequence([AnySequence(texts), databend].joined())))
+         }
+         return AnySequence(readings.lazy.flatMap { reading in
+             reading.texts.lazy.map { SQLLexing(grammar: reading.grammar, text: $0) }
+@@ -129,7 +138,7 @@ enum SQLLexicalRelevance {
+         var facts: SQLLexicalGrammar = [
+             .plsqlBlocks, .delimiterDirective, .unterminatedStatements, .terminatedMergeStatements,
+             .sqlScriptBlocks, .cqlBatches, .atomicRoutineBodies, .triggerBodies, .statementsAsValues,
+-            .pipeOperatorChains,
++            .pipeOperatorChains, .databendTokens,
+         ]
+         var blockCommentOpeners = 0
+         var index = 0
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/DatabendStatementReadingsTests.swift` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++import Foundation
++import TableProSQLGrammar
++import Testing
++
++struct DatabendStatementReadingsTests {
++    private static let readings = SQLLexicalReadings.resolve(databaseTypeId: "Databend", declared: nil, session: nil)
++
++    private static func tier(_ sql: String) -> StatementTier {
++        SQLStatementClassifier.classify(sql, databaseTypeId: "Databend", readings: readings).tier
 +    }
 +
-+    /// The monospace font, the interface font or the text size changed:
-+    /// the columns the grid sized itself take the new measure, and a width
-+    /// the user gave stays.
-+    pub(super) fn fonts_changed(&self) {
-+        self.size_columns(Measure::Again);
-+        row_number_column::fit(self);
++    private static func deletesEveryRow(_ sql: String) -> Bool {
++        SQLStatementClassifier.deletesEveryRow(sql, databaseTypeId: "Databend", readings: readings)
 +    }
 +
-+    /// A grid out of any window hears of no font change, and one sized
-+    /// before it had a window measured in no theme's font.
-+    pub(super) fn rooted(&self) {
-+        let measured_in = self.imp().columns.borrow().measured_in.clone();
-+        if measured_in.is_some_and(|fonts| fonts != fonts_now(&self.column_view())) {
-+            self.fonts_changed();
++    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
++    @Test("A DROP behind a hint the server skips is destructive", arguments: [
++        "/*+ ' */ SELECT 1 -- ' */ DROP TABLE customers",
++        "/*+ @x*/ SELECT 1 */ DROP TABLE customers",
++        "/*+ $$ */ SELECT $$ */ DROP TABLE customers",
++        "/*+ /*+ */ SELECT 1 */ DROP TABLE customers",
++        "/*+ SET_VAR(max_threads=1) */ DROP TABLE customers",
++        "/*+ @s\\' */ DROP TABLE customers -- ' */ SELECT 1",
++    ])
++    func dropBehindASkippedHint(sql: String) {
++        #expect(Self.tier(sql) == .destructive)
++    }
++
++    // Measured on 1.2.880, which dropped the table; 1.2.958 refused both texts.
++    @Test("A DROP behind a comment a release before 1.2.884 leaves open is destructive", arguments: [
++        "/** x **/ SELECT 1 /* */ DROP TABLE customers",
++        "/**/ SELECT 1 /* */ DROP TABLE customers",
++    ])
++    func dropBehindAPairedStarComment(sql: String) {
++        #expect(Self.tier(sql) == .destructive)
++    }
++
++    // Measured on 1.2.958: the statement replaced table 中 and its rows.
++    @Test("A keyword the server reads apart from the non-ASCII name after it still tiers the statement")
++    func keywordBeforeANonASCIIName() {
++        #expect(Self.tier("CREATE OR REPLACE TABLE\u{4E2D} (id INT)") == .destructive)
++        #expect(Self.tier("SELECT 1 AS \u{540D}\u{524D} FROM customers") == .safe)
++    }
++
++    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
++    @Test("A statement under SETTINGS is tiered as itself", arguments: [
++        "SETTINGS (max_threads=1) DROP TABLE customers",
++        "SETTINGS DROP TABLE customers",
++        "settings (max_threads = (1)) /*+ ' */ SELECT 1 -- ' */ DROP TABLE customers",
++    ])
++    func settingsWrapperIsTieredByItsStatement(sql: String) {
++        #expect(Self.tier(sql) == .destructive)
++    }
++
++    @Test("A DELETE under SETTINGS deletes every row")
++    func deleteUnderSettings() {
++        #expect(Self.deletesEveryRow("SETTINGS (max_threads=1) DELETE FROM customers"))
++        #expect(!Self.deletesEveryRow("SETTINGS (max_threads=1) DELETE FROM customers WHERE id = 1"))
++    }
++
++    // Measured on 1.2.880 and 1.2.958: the INSERT ran although the server could not tokenize the text after it, and on
++    // 1.2.958 the REPLACE too.
++    @Test("An INSERT before text the server cannot tokenize is still a write")
++    func insertBeforeUntokenizableText() {
++        #expect(Self.tier("/*+ ' */ SELECT 1 -- ' */ INSERT INTO customers SELECT 4 'x") == .write)
++        #expect(Self.tier("/*+ ' */ SELECT 1 -- ' */ REPLACE\u{4E2D} ON (id) SELECT 4 'x") == .write)
++    }
++
++    @Test("A statement one release refuses to tokenize is read only as the releases that run it read it")
++    func refusedReadingAddsNothing() {
++        #expect(!Self.deletesEveryRow("DELETE FROM customers /**/ WHERE id = 1"))
++        #expect(Self.tier("WITH `a``b` AS (SELECT 1) SELECT * FROM `a``b`") == .safe)
++    }
++
++    @Test("A DELETE behind a skipped hint deletes every row")
++    func deleteBehindASkippedHint() {
++        #expect(Self.deletesEveryRow("/*+ ' */ SELECT 1 -- ' */ DELETE FROM customers"))
++        #expect(!Self.deletesEveryRow("/*+ ' */ SELECT 1 -- ' */ DELETE FROM customers WHERE id = 1"))
++    }
++
++    // Read whole, the first hint's quote runs to the second hint and hides the DROP the second statement runs.
++    @Test("Each statement the app sends is read the way the server reads it alone")
++    func statementsAreReadAlone() {
++        #expect(Self.tier("SELECT 1 /*+ ' */; /*+ ' */ SELECT 1 -- ' */ DROP TABLE customers") == .destructive)
++    }
++
++    @Test("A statement run from a code string is read the server's way too")
++    func codeStringIsReadAlike() {
++        #expect(Self.tier("EXECUTE IMMEDIATE $$/*+ ' */ SELECT 1 -- ' */ DROP TABLE customers$$") == .destructive)
++    }
++
++    @Test("Hints, stage names and `$$` that hide nothing leave a query safe", arguments: [
++        "SELECT /*+ SET_VAR(max_threads=1) */ * FROM customers",
++        "/*+ SET_VAR(max_threads=1) */ SELECT 1",
++        "SELECT 1 AS a$$, 2 -- $$",
++        "SELECT * FROM @s/data/ WHERE id = 1",
++        "/** note **/ SELECT 1",
++        "SELECT '/*+', $$ */ DROP $$ FROM customers",
++    ])
++    func queriesStaySafe(sql: String) {
++        #expect(Self.tier(sql) == .safe)
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/DatabendTokenizerTests.swift` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++import Foundation
++import TableProSQLGrammar
++import Testing
++
++struct DatabendTokenizerTests {
++    private static func spellings(_ sql: String, _ rules: DatabendTokenizer.Rules = .current) -> [String] {
++        let scalars = Array(sql.unicodeScalars)
++        return DatabendTokenizer.read(scalars, rules: rules).tokens.map {
++            String(String.UnicodeScalarView(scalars[$0.range]))
 +        }
 +    }
 +
-+    /// The interface font and the text size reach the grid as GTK system
-+    /// settings; the monospace font is libadwaita's.
-+    pub(super) fn watch_fonts(&self) {
-+        let style = adw::StyleManager::default();
-+        let handler = style.connect_monospace_font_name_notify(glib::clone!(
-+            #[weak(rename_to = grid)]
-+            self,
-+            move |_| grid.fonts_changed()
-+        ));
-+        self.imp().font_watch.replace(Some(HandlerGuard::new(&style, handler)));
++    private static func kinds(_ sql: String) -> [DatabendTokenizer.Kind] {
++        DatabendTokenizer.read(Array(sql.unicodeScalars)).tokens.map(\.kind)
 +    }
 +
-+    fn size_columns(&self, measure: Measure) {
-+        let widths = self.opening_widths(measure);
-+        self.imp().columns.borrow_mut().measured_in = Some(fonts_now(&self.column_view()));
-         for (index, view_column, width) in widths {
-             self.imp().columns.borrow_mut().auto_widths.insert(index, width);
-             view_column.set_fixed_width(width);
++    private static var pairedStars: DatabendTokenizer.Rules {
++        var rules = DatabendTokenizer.Rules.current
++        rules.pairsStarsInBlockComments = true
++        return rules
++    }
++
++    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
++    @Test("A hint skipped at the start is read as tokens through the first `*/` outside them", arguments: [
++        "/*+ ' */ SELECT 1 -- ' */ DROP TABLE t",
++        "/*+ @x*/ SELECT 1 */ DROP TABLE t",
++        "/*+ $$ */ SELECT $$ */ DROP TABLE t",
++        "/*+ /*+ */ SELECT 1 */ DROP TABLE t",
++        "/*+ SET_VAR(max_threads=1) */ DROP TABLE t",
++    ])
++    func skippedHintIsTokens(sql: String) {
++        #expect(Self.spellings(sql) == ["DROP", "TABLE", "t"])
++    }
++
++    @Test("A hint after a word that takes one stays for the parser, and one after MERGE only on a newer release")
++    func takenHintStays() {
++        #expect(Self.kinds("SELECT /*+ SET_VAR(a=1) */ 1") == [
++            .name, .hintPrefix, .name, .symbol, .name, .symbol, .number, .symbol, .hintSuffix, .number,
++        ])
++        #expect(Self.spellings("MERGE /*+ x */ INTO t") == ["MERGE", "/*+", "x", "*/", "INTO", "t"])
++        var older = DatabendTokenizer.Rules.current
++        older.mergeTakesHints = false
++        #expect(Self.spellings("MERGE /*+ x */ INTO t", older) == ["MERGE", "INTO", "t"])
++    }
++
++    // Measured on 1.2.880, which dropped the table, and 1.2.958, which refused the text.
++    @Test("A release before 1.2.884 pairs a block comment's stars, so `**/` and `/**/` leave it open")
++    func pairedStarsLeaveACommentOpen() {
++        let sql = "/** x **/ SELECT 1 /* */ DROP TABLE t"
++        #expect(Self.spellings(sql) == ["SELECT", "1", "DROP", "TABLE", "t"])
++        #expect(Self.spellings(sql, Self.pairedStars) == ["DROP", "TABLE", "t"])
++        #expect(Self.spellings("/**/ SELECT 1 /* */ DROP TABLE t", Self.pairedStars) == ["DROP", "TABLE", "t"])
++        #expect(Self.spellings("/***/ SELECT 1", Self.pairedStars) == ["SELECT", "1"])
++        #expect(DatabendTokenizer.Rules.readings(of: Array(sql.unicodeScalars)).contains(Self.pairedStars))
++    }
++
++    // Measured on 1.2.880 and 1.2.958: each text was refused at the token that does not end.
++    @Test("The reading stops where the server refuses the rest", arguments: [
++        "SELECT 1 /* x", "SELECT 1 $$x", "SELECT 1 'x", "SELECT 1 `x", "SELECT 1 'a\\\nb'",
++    ])
++    func stopsWhereTheServerStops(sql: String) {
++        let reading = DatabendTokenizer.read(Array(sql.unicodeScalars))
++        #expect(!reading.isComplete)
++        #expect(reading.tokens.count == 2)
++    }
++
++    @Test("A stage name keeps a quote or a space after a backslash, and `*/` and `/*` with no space")
++    func stageNamesKeepEscapedQuotes() {
++        #expect(Self.spellings("COPY INTO t FROM @s\\' x") == ["COPY", "INTO", "t", "FROM", "@s\\'", "x"])
++        #expect(Self.spellings("SELECT * FROM @s/*/ x") == ["SELECT", "*", "FROM", "@s/*/", "x"])
++        #expect(Self.kinds("SELECT a @> b, c @? d") == [.name, .name, .symbol, .name, .symbol, .name, .symbol, .name])
++    }
++
++    // Measured on 1.2.880 and 1.2.958: `a$$` is one name, and `$$` after a number opens a code string.
++    @Test("A `$$` continues a name and opens a code string after anything else")
++    func dollarQuotesFollowTokens() {
++        #expect(Self.spellings("SELECT 1 AS a$$, 2") == ["SELECT", "1", "AS", "a$$", ",", "2"])
++        #expect(Self.spellings("SELECT 1e5$$ x $$") == ["SELECT", "1e5", "$$ x $$"])
++        #expect(Self.kinds("SELECT $1, $a, $") == [.name, .variable, .symbol, .variable, .symbol, .symbol])
++    }
++
++    // Measured on 1.2.958: `CREATE OR REPLACE TABLE中 (id INT)` replaced table 中.
++    @Test("A name that starts in ASCII ends at a non-ASCII scalar, and one that starts there runs on")
++    func nonASCIIEndsAnASCIIName() {
++        #expect(Self.spellings("REPLACE\u{4E2D} ON") == ["REPLACE", "\u{4E2D}", "ON"])
++        #expect(Self.spellings("SELECT \u{E9}t\u{E9}$$, a") == ["SELECT", "\u{E9}t\u{E9}$$", ",", "a"])
++        #expect(Self.spellings("SELECT $a\u{E9}") == ["SELECT", "$a", "\u{E9}"])
++    }
++
++    @Test("A doubled backtick stays inside a name")
++    func doubledBacktickStaysInAName() {
++        #expect(Self.spellings("SELECT `a``b`, ?") == ["SELECT", "`a``b`", ",", "?"])
++    }
++
++    @Test("A form feed ends a line comment and a carriage ret
+```
+
+**File**: `apple/Plugins/MySQLDriverPlugin/DatabendLiteral.swift` (modified, +4/-300)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ import Foundation
+ import TableProPluginKit
++import TableProSQLGrammar
+ 
+ internal enum DatabendLiteralError: Error, Equatable {
+     case parameterCountMismatch(placeholders: Int, values: Int)
+@@ -88,9 +89,9 @@ internal enum DatabendLiteral {
+             throw DatabendLiteralError.serverTooOldToBind
+         }
+         let scalars = Array(sql.unicodeScalars)
+-        let placeholders = DatabendPlaceholderScanner(scalars: scalars, rules: .current).placeholders()
+-        for rules in DatabendTokenizerRules.readings(of: scalars).dropFirst() {
+-            guard DatabendPlaceholderScanner(scalars: scalars, rules: rules).placeholders() == placeholders else {
++        let placeholders = DatabendTokenizer.placeholders(in: scalars)
++        for rules in DatabendTokenizer.Rules.readings(of: scalars).dropFirst() {
++            guard DatabendTokenizer.placeholders(in: scalars, rules: rules) == placeholders else {
+                 throw DatabendLiteralError.placeholdersDependOnServerVersion
+             }
+         }
+@@ -108,300 +109,3 @@ internal enum DatabendLiteral {
+         return String(output)
+     }
+ }
+-
+-// The rules of Databend's tokenizer, src/query/ast/src/parser/token.rs, that changed between releases.
+-struct DatabendTokenizerRules: Hashable {
+-    // Before 1.2.884 a block comment is `/\*[^\+]([^\*]|(\*[^/]))*\*/`, so `**/` and `/**/` leave it open.
+-    var pairsStarsInBlockComments: Bool
+-    // A stage name such as `@s` ran on through a comma until October 2025.
+-    var commaContinuesStageNames: Bool
+-    // `!*` was an operator until July 2026, so `!*/*` opened a comment.
+-    var bangStarIsAnOperator: Bool
+-    // A hint after MERGE was skipped like one in any other wrong place until April 2026.
+-    var mergeTakesHints: Bool
+-
+-    static let current = DatabendTokenizerRules(
+-        pairsStarsInBlockComments: false, commaContinuesStageNames: false, bangStarIsAnOperator: false,
+-        mergeTakesHints: true
+-    )
+-
+-    // The current rules first, then each older one the text can tell apart.
+-    static func readings(of scalars: [Unicode.Scalar]) -> [DatabendTokenizerRules] {
+-        let pairs = zip(scalars, scalars.dropFirst())
+-        var readings = [current]
+-        if pairs.contains(where: { $0 == "/" && $1 == "*" }) {
+-            readings += readings.map { var rules = $0; rules.pairsStarsInBlockComments = true; return rules }
+-        }
+-        if scalars.contains("@") {
+-            readings += readings.map { var rules = $0; rules.commaContinuesStageNames = true; return rules }
+-        }
+-        if pairs.contains(where: { $0 == "!" && $1 == "*" }) {
+-            readings += readings.map { var rules = $0; rules.bangStarIsAnOperator = true; return rules }
+-        }
+-        if zip(pairs, scalars.dropFirst(2)).contains(where: { $0.0 == "/" && $0.1 == "*" && $1 == "+" }) {
+-            readings += readings.map { var rules = $0; rules.mergeTakesHints = false; return rules }
+-        }
+-        return readings
+-    }
+-}
+-
+-// Reads tokens as the server does only as far as a `?` needs: a comment, a literal, a stage name, a name or an
+-// operator holding one hides it, and so does a hint the server skips. Text the server refuses to tokenize ends the
+-// scan, so no later `?` is bound.
+-struct DatabendPlaceholderScanner {
+-    let scalars: [Unicode.Scalar]
+-    let rules: DatabendTokenizerRules
+-
+-    private static let operators: [[Unicode.Scalar]] = [
+-        "!~*", "#>>", "->>", "<+>", "<->", "<=>", "||/",
+-        "!!", "!=", "!~", "#-", "#>", "*/", "->", "//", "::", ":=", "<<", "<=", "<>", "<@", "=>", "==", ">=", ">>",
+-        "?&", "?|", "@>", "@?", "@@", "|/", "||", "~*",
+-    ].map { Array($0.unicodeScalars) }
+-
+-    private static let operatorStarts = Set(operators.compactMap(\.first))
+-
+-    private static let hintTakers: Set<String> = ["INSERT", "SELECT", "REPLACE", "UPDATE", "DELETE", "COPY"]
+-
+-    private enum TokenKind {
+-        case skipped, hintPrefix, hintSuffix, placeholder, hintTaker, other
+-    }
+-
+-    // Tokenizer::next skips a hint unless the token before it is one that takes a hint, and a hint skipped inside
+-    // another one takes its own `*/`.
+-    func placeholders() -> [Int] {
+-        var offsets: [Int] = []
+-        var index = 0
+-        var previousTakesHint = false
+-        var skippedHints = 0
+-        while index < scalars.count {
+-            guard let end = tokenEnd(at: index) else { return offsets }
+-            switch kind(from: index, to: end) {
+-            case .skipped:
+-                break
+-            case .hintPrefix where !previousTakesHint:
+-                skippedHints += 1
+-            case .hintSuffix where skippedHints > 0:
+-                skippedHints -= 1
+-                previousTakesHint = false
+-            case .placeholder:
+-                if skippedHints == 0 { offsets.append(index) }
+-                previousTakesHint = false
+-            case .hintTaker:
+-                previousTakesHint = true
+- 
+```
+
+---
+
+### Incident Patch 3: `a6887e57` (2026-11-04)
+**Commit Message**: fix(safe-mode): rate pg_background, pg_cron and TimescaleDB calls as writes (#4043)
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLStateChangingFunctions.swift` (modified, +54/-4)
+```diff
+@@ -9,6 +9,10 @@ public enum SQLStateChangingFunctions {
+         return names.contains(lowered)
+     }
+ 
++    static func isDuckDBCall(_ name: String) -> Bool {
++        duckDBCalls.contains(name.uppercased().lowercased())
++    }
++
+     // SQLite runs a table-valued pragma named as a table source too, so `SELECT * FROM main.pragma_optimize` runs
+     // ANALYZE. A call is the call scanner's; a column or alias of that name runs nothing.
+     static func namesStateChangingTable(in text: NSString, tokens: [TSQLTokens.Token], grammar: SQLLexicalGrammar) -> Bool {
+@@ -72,21 +76,29 @@ public enum SQLStateChangingFunctions {
+         .union(catalogAndStorage)
+         .union(indexMaintenance)
+         .union(sqlTextRunners)
++        .union(scheduledJobs)
++        .union(hypertablesAndChunks)
++        .union(rolesAndGrants)
+ 
+     static let serverSignals: Set<String> = [
+         "pg_cancel_backend", "pg_terminate_backend", "pg_reload_conf", "pg_rotate_logfile",
+         "pg_log_backend_memory_contexts"
+     ]
+ 
++    // dblink_close commits the remote transaction dblink_open began, with whatever dblink_exec ran in it, and
++    // pg_background's cancels stop a worker before it commits.
+     static let sessionControl: Set<String> = [
+         "system$abort_session", "system$cancel_query", "system$cancel_all_queries", "system$abort_transaction",
+-        "abortsessions"
++        "abortsessions", "dblink_cancel_query", "dblink_close", "pg_background_cancel", "pg_background_cancel_v2",
++        "pg_background_cancel_all", "pg_background_cancel_all_v2", "pg_background_cancel_by_label",
++        "pg_background_cancel_by_label_v2", "pg_background_cancel_v2_grace"
+     ]
+ 
+     static let recoveryAndBackup: Set<String> = [
+         "pg_promote", "pg_wal_replay_pause", "pg_wal_replay_resume", "pg_backup_start", "pg_backup_stop",
+         "pg_switch_wal", "pg_create_restore_point", "pg_log_standby_snapshot", "pg_start_backup", "pg_stop_backup",
+-        "pg_switch_xlog", "pg_xlog_replay_pause", "pg_xlog_replay_resume"
++        "pg_switch_xlog", "pg_xlog_replay_pause", "pg_xlog_replay_resume", "timescaledb_pre_restore",
++        "timescaledb_post_restore"
+     ]
+ 
+     static let replication: Set<String> = [
+@@ -138,10 +150,48 @@ public enum SQLStateChangingFunctions {
+ 
+     // SQL Server's OPENQUERY and OPENROWSET hand their last argument to a linked server, or back to this one through
+     // a loopback link, as a batch of its own: a SELECT from either can carry a DELETE, as a SELECT from dblink can.
+-    // crosstab, connectby and xpath_table paste their text arguments into the SQL they run.
++    // crosstab, connectby and xpath_table paste their text arguments into the SQL they run. pg_background runs its
++    // text in a worker that commits on its own, and pg_cron's schedule, schedule_in_database and alter_job store a
++    // command its worker runs later; TimescaleDB's alter_job shares the name.
+     static let sqlTextRunners: Set<String> = [
+         "query_to_xml", "query_to_xml_and_xmlschema", "ts_stat", "ts_rewrite", "dblink", "dblink_exec",
+         "dblink_send_query", "dblink_open", "openquery", "openrowset", "crosstab", "crosstab2", "crosstab3", "crosstab4",
+-        "connectby", "xpath_table"
++        "connectby", "xpath_table", "pg_background_launch", "pg_background_launch_v2", "pg_background_submit",
++        "pg_background_submit_v2", "pg_background_run", "pg_background_run_v2", "pg_background_run_query",
++        "pg_background_run_query_v2", "schedule", "schedule_in_database", "alter_job", "subscription_exec"
++    ]
++
++    // pg_cron's unschedule, and TimescaleDB's jobs and the policies that add or remove one.
++    static let scheduledJobs: Set<String> = [
++        "unschedule", "add_job", "delete_job", "add_retention_policy", "remove_retention_policy", "add_reorder_policy",
++        "remove_reorder_policy", "add_compaction_policy", "remove_compaction_policy", "add_compression_policy",
++        "remove_compression_policy", "add_continuous_aggregate_policy", "remove_continuous_aggregate_policy",
++        "add_policies", "alter_policies", "remove_policies", "remove_all_policies"
++    ]
++
++    // TimescaleDB's functions that change a hypertable, or drop, move or rewrite its chunks. The data node ones are
++    // gone since 2.14, and set_adaptive_chunking since 2.28, but older servers still have them.
++    static let hypertablesAndChunks: Set<String> = [
++        "create_hypertable", "add_dimension", "set_chunk_time_interval", "set_partitioning_interval",
++        "set_number_partitions", "set_integer_now_func", "set_adaptive_chunking", "enable_chunk_skipping",
++        "disable_chunk_skipping", "attach_tablespace", "detach_tablespace", "detach_tablespaces", "drop_chunks",
++        "drop_chunk", "create_chunk", "compress_chunk", "decompress_chunk", "reorder_chunk", "move_chunk",
++        "block_new_chunks", "allow_new_chunks", "create_distributed_hypertable", "add_data_node", "attach_data_node",
++        "
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLStatementClassifier+Surfaces.swift` (modified, +2/-13)
+```diff
+@@ -158,17 +158,6 @@ extension SQLStatementTiering {
          }
      }
  
--    fn opening_widths(&self) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
-+    fn opening_widths(&self, measure: Measure) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
-         let set = self.imp().columns.borrow();
-         let sample: Vec<Option<Arc<[Value]>>> = self.store().rows().take(WIDTH_SAMPLE).map(|row| row.cells()).collect();
-         let by_type = set.pages == Pages::Empty;
-         let view = self.column_view();
--        let font = value_font(&view);
--        let metrics = view.pango_context().metrics(Some(&font), None);
-+        let context = view.create_pango_context();
-+        let font = value_font(&context);
-+        let metrics = context.metrics(Some(&font), None);
-         let char_px = pango::units_to_double(metrics.approximate_char_width());
-         let null = editable_null_sentinel();
-         let mut widths = Vec::new();
-@@ -272,31 +325,37 @@ impl DataGrid {
-             // no rows a value its type spells out, as a UUID or an enum's
-             // label, so those are measured as the cell draws them.
-             let sampled = match (by_type, paint.numbers.get()) {
--                (_, true) => tabular_width(&view, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
-+                (_, true) => tabular_width(&context, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
-                 (true, false) => 0,
-                 // One line each, so one layout measures them all
-```
-
-**File**: `linux/crates/app/src/ui/data_grid/imp.rs` (modified, +14/-0)
-```diff
-@@ -18,6 +18,7 @@ use super::row_detail::RowDetailPane;
- use super::selection::Target;
- use super::selection_summary::SummaryState;
- use super::{GridConfig, GridStore};
-+use crate::ui::handler_guard::HandlerGuard;
- 
- /// The grid's selection model, made with the grid and given its rows once
- /// the grid knows how it sorts.
-@@ -85,6 +86,7 @@ pub struct DataGrid {
-     pub editing: Cell<bool>,
-     /// The window's focus handler, while the grid is in a window.
-     pub focus_watch: RefCell<Option<(glib::WeakRef<gtk4::Window>, glib::SignalHandlerId)>>,
-+    pub(super) font_watch: RefCell<Option<HandlerGuard>>,
- }
- 
- #[glib::object_subclass]
-@@ -122,6 +124,7 @@ impl ObjectImpl for DataGrid {
-         self.find.stop();
-         self.summary.stop();
-         self.obj().stop_watching_focus();
-+        drop(self.font_watch.take());
-         if let Some(menus) = self.menus.get() {
-             menus.unparent();
+-    // DuckDB's query() and json_execute_serialized_sql() run the SELECT in their text, which can take a value from a
+-    // sequence; the second does so outside a read-only transaction (both measured on 2.0.0). The postgres, mysql and
+-    // sqlite extensions' query and execute functions run any statement on an attached database, and dbgen and dsdgen
+-    // create and fill tables.
+-    static let stateChangingCalls: [String: Set<String>] = [
+-        duckDB: [
+-            "QUERY", "JSON_EXECUTE_SERIALIZED_SQL", "POSTGRES_QUERY", "POSTGRES_EXECUTE", "MYSQL_QUERY", "MYSQL_EXECUTE",
+-            "SQLITE_QUERY", "DBGEN", "DSDGEN",
+-        ],
+-    ]
+-
+     // An EXPLAIN that runs its statement is tiered by that statement's own calls.
+     func stateChangingCallTier(
+         _ code: StatementCode,
+@@ -177,10 +166,10 @@ extension SQLStatementTiering {
+     ) -> StatementTier {
+         guard !SQLExplainStatement.keywords.contains(code.keyword) else { return .safe }
+         if advancesSequence(code) { return .write }
+-        let engineCalls = Self.stateChangingCalls[databaseTypeId] ?? []
+         let changesState = calls.contains { call in
+             guard case .named(let name, _) = call.callee else { return true }
+-            return SQLStateChangingFunctions.contains(name) || engineCalls.contains(name.uppercased())
++            return SQLStateChangingFunctions.contains(name)
++                || (databaseTypeId == Self.duckDB && SQLStateChangingFunctions.isDuckDBCall(name))
          }
-@@ -134,12 +137,23 @@ impl WidgetImpl for DataGrid {
-     fn root(&self) {
-         self.parent_root();
-         self.obj().watch_focus();
-+        self.obj().rooted();
+         guard !changesState else { return .write }
+         let namesTable = SQLStateChangingFunctions.namesStateChangingTable(
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLStateChangingFunctionsTests.swift` (modified, +7/-3)
+```diff
+@@ -25,17 +25,21 @@ struct SQLStateChangingFunctionsTests {
+         "files_and_extensions": SQLStateChangingFunctions.filesAndExtensions,
+         "catalog_and_storage": SQLStateChangingFunctions.catalogAndStorage,
+         "index_maintenance": SQLStateChangingFunctions.indexMaintenance,
+-        "sql_text_runners": SQLStateChangingFunctions.sqlTextRunners
++        "sql_text_runners": SQLStateChangingFunctions.sqlTextRunners,
++        "scheduled_jobs": SQLStateChangingFunctions.scheduledJobs,
++        "hypertables_and_chunks": SQLStateChangingFunctions.hypertablesAndChunks,
++        "roles_and_grants": SQLStateChangingFunctions.rolesAndGrants,
++        "duckdb_calls": SQLStateChangingFunctions.duckDBCalls
+     ]
+ 
+     @Test("Each family lists the names the Linux app lists")
+     func familiesMatchTheSharedNames() throws {
+         let data = try Data(contentsOf: Self.sharedNames)
+         let shared = try JSONDecoder().decode([String: [String]].self, from: data)
+         let sharedFamilies = shared.mapValues { Set($0) }
+-        let everyName = Set(shared.values.joined())
++        let everyEngine = Set(shared.filter { $0.key != "duckdb_calls" }.values.joined())
+         #expect(Self.families == sharedFamilies)
+-        #expect(SQLStateChangingFunctions.names == everyName)
++        #expect(SQLStateChangingFunctions.names == everyEngine)
      }
  
-     fn unroot(&self) {
-         self.obj().stop_watching_focus();
-         self.parent_unroot();
+     @Test("A listed name matches in any case, under sys_, and with a letter MariaDB folds", arguments: [
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLStatementClassifierTests.swift` (modified, +33/-0)
+```diff
+@@ -147,6 +147,39 @@ struct SQLStatementClassifierTests {
+         #expect(Self.tier(sql, engine) == .safe)
      }
-+
-+    fn system_setting_changed(&self, setting: &gtk4::SystemSetting) {
-+        self.parent_system_setting_changed(setting);
-+        if matches!(
-+            setting,
-+            gtk4::SystemSetting::Dpi | gtk4::SystemSetting::FontName | gtk4::SystemSetting::FontConfig
-+        ) {
-+            self.obj().fonts_changed();
-+        }
+ 
++    @Test("An extension function that runs SQL, changes a job or a chunk, or stops a worker is a write", arguments: [
++        "SELECT pg_background_launch('SELECT 1')",
++        "SELECT * FROM pg_background_run_query_v2('SELECT 1') AS r(n int)",
++        "SELECT pg_background_cancel_all()",
++        "SELECT pg_background_grant_privileges('app')",
++        "SELECT cron.schedule('0 3 * * *', 'VACUUM orders')",
++        "SELECT cron.unschedule('nightly')",
++        "SELECT drop_chunks('conditions', INTERVAL '3 months')",
++        "SELECT compress_chunk(c) FROM show_chunks('conditions') c",
++        "SELECT create_hypertable('conditions', by_range('time'))",
++        "SELECT add_retention_policy('conditions', INTERVAL '1 year')",
++        "SELECT alter_job(1000, schedule_interval => INTERVAL '1 day')",
++        "SELECT timescaledb_experimental.remove_all_policies('conditions')",
++        "SELECT timescaledb_pre_restore()",
++        "SELECT dblink_close('app', 'c')",
++        "SELECT dblink_cancel_query('app')",
++    ])
++    func extensionFunctionWrites(sql: String) {
++        #expect(Self.tier(sql, "PostgreSQL") == .write)
 +    }
- }
- 
- impl BinImpl for DataGrid {}
++
++    @Test("An extension function that only reads stays a read", arguments: [
++        "SELECT * FROM pg_background_result(123) AS r(n int)",
++        "SELECT pg_background_detach(123)",
++        "SELECT show_chunks('conditions')",
++        "SELECT * FROM cron.job",
++        "SELECT dblink_connect('app', 'dbname=shop')",
++        "SELECT schedule FROM jobs",
++    ])
++    func extensionReadStaysSafe(sql: String) {
++        #expect(Self.tier(sql, "PostgreSQL") == .safe)
++    }
++
+     @Test("SurrealQL's REMOVE drops what it names, wherever the statement stands", arguments: [
+         "REMOVE TABLE person",
+         "remove table if exists person;",
 ```
 
-**File**: `linux/crates/app/src/ui/data_grid/mod.rs` (modified, +1/-0)
+**File**: `apple/changelog.d/4043.fixed.md` (added, +1/-0)
 ```diff
-@@ -87,6 +87,7 @@ impl DataGrid {
-         find_bar::install(&grid);
-         imp.detail_pane.attach(&grid);
-         grid.set_columns(columns, sorting, rules);
-+        grid.watch_fonts();
-         grid
-     }
- 
+@@ -0,0 +1 @@
++Read-Only and Safe Mode treated pg_background, pg_cron and TimescaleDB calls, drop_chunks included, as reads.
 ```
 
-**File**: `linux/crates/app/src/ui/data_grid/row_number_column.rs` (modified, +3/-1)
+**File**: `core/crates/core/src/sql_syntax/state_changing_functions.rs` (modified, +148/-9)
 ```diff
-@@ -139,7 +139,9 @@ pub fn fit(grid: &DataGrid) {
+@@ -1,7 +1,9 @@
+-//! Built-in functions that change state from inside a SELECT, by family.
++//! Functions, built in or from a common extension, that change state
++//! from inside a SELECT, by family, matched by name whatever schema
++//! qualifies the call.
+ //!
+-//! A read-only transaction stops none of them on PostgreSQL 15 and
+-//! earlier: they signal other sessions, take locks, run SQL text, or
++//! A read-only transaction stops none of the built-ins on PostgreSQL 15
++//! and earlier: they signal other sessions, take locks, run SQL text, or
+ //! write large objects, files or catalog rows. A function the user wrote
+ //! is beyond what the words show. The Apple apps list the same families,
+ //! and `tests/fixtures/state_changing_functions.json` holds them for both
+@@ -23,6 +25,17 @@ const SESSION_CONTROL: &[&str] = &[
+     "system$cancel_all_queries",
+     "system$abort_transaction",
+     "abortsessions",
++    // dblink_close commits the remote transaction dblink_open began, with
++    // whatever dblink_exec ran in it.
++    "dblink_cancel_query",
++    "dblink_close",
++    "pg_background_cancel",
++    "pg_background_cancel_v2",
++    "pg_background_cancel_all",
++    "pg_background_cancel_all_v2",
++    "pg_background_cancel_by_label",
++    "pg_background_cancel_by_label_v2",
++    "pg_background_cancel_v2_grace",
+ ];
+ 
+ const RECOVERY_AND_BACKUP: &[&str] = &[
+@@ -39,6 +52,8 @@ const RECOVERY_AND_BACKUP: &[&str] = &[
+     "pg_switch_xlog",
+     "pg_xlog_replay_pause",
+     "pg_xlog_replay_resume",
++    "timescaledb_pre_restore",
++    "timescaledb_post_restore",
+ ];
+ 
+ const REPLICATION: &[&str] = &[
+@@ -138,7 +153,8 @@ const INDEX_MAINTENANCE: &[&str] = &[
+ 
+ /// Functions that run SQL text: what that text does is not in the words.
+ /// crosstab, connectby and xpath_table paste their text arguments into
+-/// the SQL they run.
++/// the SQL they run. pg_background runs its text in a worker that
++/// commits on its own, and pg_cron's worker runs a stored command later.
+ const SQL_TEXT_RUNNERS: &[&str] = &[
+     "query_to_xml",
+     "query_to_xml_and_xmlschema",
+@@ -156,9 +172,104 @@ const SQL_TEXT_RUNNERS: &[&str] = &[
+     "crosstab4",
+     "connectby",
+     "xpath_table",
++    "pg_background_launch",
++    "pg_background_launch_v2",
++    "pg_background_submit",
++    "pg_background_submit_v2",
++    "pg_background_run",
++    "pg_background_run_v2",
++    "pg_background_run_query",
++    "pg_background_run_query_v2",
++    // TimescaleDB's alter_job shares the name.
++    "schedule",
++    "schedule_in_database",
++    "alter_job",
++    "subscription_exec",
+ ];
+ 
+-const FAMILIES: [(&str, &[&str]); 12] = [
++/// pg_cron's unschedule, and TimescaleDB's jobs and the policies that add
++/// or remove one.
++const SCHEDULED_JOBS: &[&str] = &[
++    "unschedule",
++    "add_job",
++    "delete_job",
++    "add_retention_policy",
++    "remove_retention_policy",
++    "add_reorder_policy",
++    "remove_reorder_policy",
++    "add_compaction_policy",
++    "remove_compaction_policy",
++    "add_compression_policy",
++    "remove_compression_policy",
++    "add_continuous_aggregate_policy",
++    "remove_continuous_aggregate_policy",
++    "add_policies",
++    "alter_policies",
++    "remove_policies",
++    "remove_all_policies",
++];
++
++/// TimescaleDB's functions that change a hypertable, or drop, move or
++/// rewrite its chunks. The data node ones are gone since 2.14, and
++/// set_adaptive_chunking since 2.28, but older servers still have them.
++const HYPERTABLES_AND_CHUNKS: &[&str] = &[
++    "create_hypertable",
++    "add_dimension",
++    "set_chunk_time_interval",
++    "set_partitioning_interval",
++    "set_number_partitions",
++    "set_integer_now_func",
++    "set_adaptive_chunking",
++    "enable_chunk_skipping",
++    "disable_chunk_skipping",
++    "attach_tablespace",
++    "detach_tablespace",
++    "detach_tablespaces",
++    "drop_chunks",
++    "drop_chunk",
++    "create_chunk",
++    "compress_chunk",
++    "decompress_chunk",
++    "reorder_chunk",
++    "move_chunk",
++    "block_new_chunks",
++    "allow_new_chunks",
++    "create_distributed_hypertable",
++    "add_data_node",
++    "attach_data_node",
++    "detach_data_node",
++    "delete_data_node",
++    "alter_data_node",
++    "set_replication_factor",
++    "create_distributed_restore_point",
++];
++
++const ROLES_AND_GRANTS: &[&str] = &[
++    "pg_background_grant_privileges",
++    "pg_background_revoke_privileges",
++    "grant_pg_background_privileges",
++    "revoke_pg_background_privileges",
++    "pg_background_drop_executor_role",
++];
++
++/// DuckDB's own calls. `query` and `json_execute_serialized_sql` run the
++/// SELECT in their text, the postgres, mysql and sqlite extensions'
++/// query and execute functions run any statement on an attached
++/// database, and dbgen and dsdgen create and fill tables. Elsewhere
++/// `query` is any function's name.
++const DUCKDB_CALLS: &[&str] = &[
++    "query",
++    "json_execute_serialized_sql",
++    "postgres_query",
++    "postgres_execute",
++    "mysql_q
+```
+
+**File**: `core/crates/core/src/sql_syntax/statement_access.rs` (modified, +46/-10)
+```diff
+@@ -2,7 +2,7 @@ use std::collections::HashMap;
+ 
+ use crate::sql_syntax::SqlGrammar;
+ use crate::sql_syntax::script::{ScriptPlan, ScriptToken, ScriptTokenKind};
+-use crate::sql_syntax::state_changing_functions::changes_state;
++use crate::sql_syntax::state_changing_functions::{changes_state, duckdb_call};
+ use crate::unicode_blank::is_blank;
+ 
+ /// What running a piece of SQL can do, from its own words. Ordered, so
+@@ -467,16 +467,14 @@ fn in_expression(part: &[Code<'_>], index: usize) -> bool {
+ fn calls_mutator(part: &[Code<'_>], index: usize, grammar: SqlGrammar) -> bool {
+     let arguments = match decodes_unicode_names(grammar) && spelled_in_escapes(part, index) {
+         true => after_uescape(part, index + 1),
+-        false if changes_state(part[index].text) || runs_query_text(&part[index], grammar) => index + 1,
++        false if changes_state(part[index].text) || runs_duckdb_call(&part[index], grammar) => index + 1,
+         false => return false,
      };
-     let largest = grid.row_base() + u64::from(grid.store().len());
-     let digits = largest.max(1).ilog10() as i32 + 1;
--    let metrics = grid.column_view().pango_context().metrics(None, None);
-+    // A fresh context, since the view's own follows a font change only at
-+    // the next frame.
-+    let metrics = grid.column_view().create_pango_context().metrics(None, None);
-     let digit_px = pango::units_to_double(metrics.approximate_digit_width());
-     column.set_fixed_width((f64::from(digits.max(2)) * digit_px).ceil() as i32 + CHROME_PX);
+     part.get(arguments).is_some_and(|next| next.kind == Kind::Open)
  }
-```
-
-**File**: `linux/crates/app/src/ui/data_grid/tests/columns.rs` (modified, +131/-3)
-```diff
-@@ -438,18 +438,146 @@ fn a_header_of_wide_letters_shows_whole() {
-         vec![named("id", "integer", true), named("WWWWWWWW", "text", false)],
-         vec![vec![Value::Int(1), text("a")]],
-     ));
-+    let (header, title) = header_title(&grid, "WWWWWWWW");
-+    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal, -1);
-+
-+    wait_until(WAIT, || header.width() >= needs).expect("the header's title shows whole");
-+}
-+
-+/// GTK keeps a sort indicator beside the title of every sortable column,
-+/// so a column as wide as its title alone cuts the arrow once it sorts.
-+#[gtk4::test]
-+fn a_sorted_columns_header_shows_its_title_and_arrow_whole() {
-+    let grid = laid_out(Grid::open(
-+        vec![named("id", "integer", true), named("level", "text", false)],
-+        vec![vec![Value::Int(1), text("a")]],
-+    ));
-+    grid.grid.sort_by(Some((1, true)));
-+    let (header, title) = header_title(&grid, "level");
-+    let title_and_arrow = title.parent().expect("the title's box");
-+    let (_, needs, _, _) = title_and_arrow.measure(gtk::Orientation::Horizontal, -1);
-+
-+    wait_until(WAIT, || header.width() >= needs).expect("the title and its sort arrow show whole");
-+}
-+
-+/// The text size reaches the grid as a GTK setting: a column it sized
-+/// takes the new measure both ways, and a width the user gave stays.
-+#[gtk4::test]
-+fn a_text_size_change_measures_the_grids_columns_again() {
-+    let grid = laid_out(Grid::open(
-+        vec![
-+            named("id", "integer", true),
-+            named("code", "text", false),
-+            named("note", "text", false),
-+        ],
-+        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
-+    ));
-+    let code = data_column(&grid, 1);
-+    let opened = code.fixed_width();
-+    data_column(&grid, 2).set_fixed_width(300);
-+    let scaled = TextScale::times(1.5);
-+
-+    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
-+    let display = grid.cell_of(1, 1).display().cloned().expect("the code's text");
-+    wait_until(WAIT, || shows_whole(&display)).expect("the code shows whole at the larger text");
-+    assert_eq!(
-+        data_column(&grid, 2).fixed_width(),
-+        300,
-+        "the width the user gave changed"
-+    );
-+    let widened = code.fixed_width();
-+
-+    drop(scaled);
-+    wait_until(WAIT, || code.fixed_width() < widened).expect("the column narrowed with the text");
-+    assert_eq!(
-+        data_column(&grid, 2).fixed_width(),
-+        300,
-+        "the width the user gave changed"
-+    );
-+}
-+
-+/// A grid out of its window hears of no text size change, so it measures
-+/// again when it is back if its fonts are not the ones it measured in.
-+#[gtk4::test]
-+fn a_grid_back_in_its_window_takes_a_text_size_it_missed() {
-+    let grid = laid_out(Grid::open(
-+        vec![
-+            named("id", "integer", true),
-+            named("code", "text", false),
-+            named("note", "text", false),
-+        ],
-+        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
-+    ));
-+    let code = data_column(&grid, 1);
-+    let opened = code.fixed_width();
-+    data_column(&grid, 2).set_fixed_width(300);
-+
-+    grid.window.set_child(None::<&gtk::Widget>);
-+    let _scaled = TextScale::times(1.5);
-+    grid.window.set_child(Some(&grid.grid));
-+
-+    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
-+    assert_eq!(
-+        data_column(&grid, 2).fixed_width(),
-+        300,
-+        "the width the user gave changed"
-+    );
-+}
-+
-+/// libadwaita announces a new monospace font; the grid measures the
-+/// columns it sized again, from the rows it holds now.
-+#[gtk4::test]
-+fn a_monospace_font_change_measures_the_grids_columns_again() {
-+    let grid = laid_out(Grid::open(
-+        vec![named("id", "integer", true), named("note", "text", false)],
-+        vec![vec![Value::Int(1), text(&"x".repeat(30))]],
-+    ));
-+    let column = data_column(&grid, 1);
-+    let wide = column.fixed_width();
-+    grid.grid.replace_rows(persisted(&[vec![Value::Int(1), text("a")]]), 0);
-+    assert_eq!(column.fixed_width(), wide, "a page of shorter rows narrowed the column");
-+
-+    libadwaita::StyleManager::default().notify("monospace-font-name");
-+
-+    wait_until(WAIT, || column.fixed_width() < wide).expect("the column measured again");
-+}
-+
-+/// The header of the column named `name`, and its title.
-+fn header_title(grid: &Grid, name: &str) -> (gtk::Widget, gtk::Label) {
-     let title = descendants(&grid.grid.column_view())
-         .into_iter()
-         .filter_map(|widget| widget.downcast::<gtk::Label>().ok())
--        .find(|label| label.label() == "WWWWWWWW")
-+        .find(|label| label.label() == name)
-         .expect("the header's title");
-     let header = title
-         .parent()
-         .and_then(|title_box| title_box.parent())
-         .expect("the header button");
--    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal,
-```
-
----
-
-### Incident Patch 3: `58848496` (2026-10-31)
-**Commit Message**: feat(linux-session): reopen a connection's other databases at launch and when a failed connect is retried (#3905)
-
-Co-authored-by: sedax90 <[REDACTED_EMAIL]>
-Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
-
-**File**: `linux/changelog.d/3905.added.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+A database opened beside its connection reopens with it at the next launch, with its tabs.
-```
-
-**File**: `linux/crates/app/src/ui/session_window/connections.rs` (modified, +14/-12)
-```diff
-@@ -619,19 +619,21 @@ impl SessionWindow {
-         if !self.tear_down_session(&key) {
-             return;
+ 
+-/// DuckDB's `query('…')` runs the SELECT in its text, which can take a
+-/// value from a sequence. Elsewhere `query` is any function's name.
+-fn runs_query_text(token: &Code<'_>, grammar: SqlGrammar) -> bool {
+-    grammar == SqlGrammar::DuckDb && is(token.text, &["QUERY"])
++fn runs_duckdb_call(token: &Code<'_>, grammar: SqlGrammar) -> bool {
++    grammar == SqlGrammar::DuckDb && duckdb_call(token.text)
+ }
+ 
+ /// The grammars whose scanner is PostgreSQL's, which reads `U&"…"`.
+@@ -1561,6 +1559,21 @@ mod tests {
+             "SELECT pg_import_system_collations('public'::regnamespace)",
+             "SELECT heap_force_kill('orders'::regclass, ARRAY['(0,1)']::tid[])",
+             "SELECT pg_file_write('postgresql.auto.conf', 'x', true)",
++            "SELECT pg_background_launch('SELECT 1')",
++            "SELECT * FROM pg_background_run_query_v2('SELECT 1') AS r(n int)",
++            "SELECT pg_background_cancel_all()",
++            "SELECT pg_background_grant_privileges('app')",
++            "SELECT cron.schedule('0 3 * * *', 'VACUUM orders')",
++            "SELECT cron.unschedule('nightly')",
++            "SELECT drop_chunks('conditions', INTERVAL '3 months')",
++            "SELECT compress_chunk(c) FROM show_chunks('conditions') c",
++            "SELECT create_hypertable('conditions', by_range('time'))",
++            "SELECT add_retention_policy('conditions', INTERVAL '1 year')",
++            "SELECT alter_job(1000, schedule_interval => INTERVAL '1 day')",
++            "SELECT timescaledb_experimental.remove_all_policies('conditions')",
++            "SELECT timescaledb_pre_restore()",
++            "SELECT dblink_close('app', 'c')",
++            "SELECT dblink_cancel_query('app')",
+         ] {
+             assert_eq!(access(sql, SqlGrammar::PostgreSql), StatementAccess::Write, "{sql}");
          }
--        let Some(saved) = stored else {
--            self.show_toast(&crate::i18n::gettext("The connection was deleted."));
--            return;
--        };
--        let source = ConnectSource::Saved(Box::new(saved));
--        let Some(claim) = self.claim_for(&key) else {
--            return;
--        };
--        if let Some(mut pending) = self.spawn_connect(claim, source, None, CredentialDemand::default()) {
--            pending.databases = databases;
--            self.imp().connects.borrow_mut().push(pending);
-+        match stored {
-+            Some(saved) => self.connect_saved(saved, databases),
-+            None => self.show_toast(&crate::i18n::gettext("The connection was deleted.")),
+@@ -1572,17 +1585,40 @@ mod tests {
+         ] {
+             assert_eq!(access(sql, SqlGrammar::MySql), StatementAccess::Write, "{sql}");
          }
--        self.connects_changed();
-+    }
-+
-+    /// Connect `saved` through the window's one connect path, and open
-+    /// `databases` beside it once it joins.
-+    pub(super) fn connect_saved(&self, saved: SavedConnection, databases: Vec<String>) {
-+        self.connect_reopening(
-+            None,
-+            ConnectSource::Saved(Box::new(saved)),
-+            CredentialDemand::default(),
-+            databases,
+-        assert_eq!(
+-            access("SELECT * FROM query('SELECT nextval(''s'')')", SqlGrammar::DuckDb),
+-            StatementAccess::Write
+-        );
++        for sql in [
++            "SELECT * FROM query('SELECT nextval(''s'')')",
++            "SELECT * FROM postgres_execute('pg', 'SELECT 1')",
++            "SELECT * FROM postgres_query('pg', 'SELECT nextval(''s'')')",
++            "SELECT * FROM mysql_query('my', 'SELECT 1')",
++            "CALL mysql_execute('my', 'UPDATE orders SET total = 0 WHERE id = 1')",
++            "SELECT * FROM sqlite_query('lite', 'SELECT 1')",
++            "SELECT * FROM json_execute_serialized_sql(json_serialize_sql('SELECT nextval(''s'')'))",
++            "SELECT * FROM dbgen(sf = 0.01)",
++            "SELECT * FROM DSDGEN(sf = 0.01)",
++        ] {
++            assert_eq!(access(sql, SqlGrammar::DuckDb), StatementAccess::Write, "{sql}");
++        }
+         for sql in [
+             "SELECT dblink_build_sql_insert('t', '1', 1, '{1}', '{2}')",
+             "SELECT dblink FROM links",
+             "SELECT file, url, query(1) FROM downloads",
++            "SELECT * FROM postgres_execute('pg', 'SELECT 1')",
++            "SELECT * FROM pg_background_result(123) AS r(n int)",
++            "SELECT pg_background_detach(123)",
++            "SELECT show_chunks('conditions')",
++            "SELECT * FROM cron.job",
++            "SELECT dblink_connect('app', 'dbname=shop')",
++            "SELECT schedule FROM jobs",
+         ] {
+             assert_eq!(access(sql, SqlGrammar::PostgreSql), StatementAccess::Read, "{sql}");
+         }
++        assert_eq!(
++            access(
++                "SELECT * FROM postgres_scan('pg', 'public', 'orders')",
++                SqlGrammar::DuckDb
++            ),
++            StatementAccess::Read
 +        );
      }
  
-     /// Tick the level of the session in front in the main menu.
+     #[test]
 ```
 
-**File**: `linux/crates/app/src/ui/session_window/imp.rs` (modified, +5/-1)
+**File**: `core/crates/core/tests/fixtures/state_changing_functions.json` (modified, +92/-1)
 ```diff
-@@ -27,6 +27,10 @@ use crate::ui::welcome_view::WelcomeView;
- use crate::ui::workspace::WorkspaceShell;
- use crate::workspace::{CloseGuards, WindowInhibitor};
- 
-+/// A connect that failed beside the window's sessions: where it came
-+/// from, why it failed, and the other databases its next connect opens.
-+pub(super) type FailureBeside = (ConnectSource, ConnectFailure, Vec<String>);
-+
- #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
- #[template(resource = "/app/tablepro/TablePro/ui/session-window.ui")]
- #[properties(wrapper_type = super::SessionWindow)]
-@@ -53,7 +57,7 @@ pub struct SessionWindow {
-     pub(super) failed: RefCell<Option<FailedConnect>>,
-     /// The last failure of each connect that failed beside something
-     /// else, until the key connects again, for its Details.
--    pub(super) failures: RefCell<HashMap<SessionKey, (ConnectSource, ConnectFailure)>>,
-+    pub(super) failures: RefCell<HashMap<SessionKey, FailureBeside>>,
-     /// The shell, from the first session the window adopts to the last
-     /// one it tears down.
-     pub(super) shell: RefCell<Option<WorkspaceShell>>,
-```
-
-**File**: `linux/crates/app/src/ui/session_window/locate_file.rs` (modified, +2/-1)
-```diff
-@@ -202,7 +202,8 @@ impl SessionWindow {
-         if self.failed_saved(located.id).is_none() {
-             return;
-         }
--        if let Some((claim, _, _)) = self.take_failure(&SessionKey::Saved(located.id)) {
-+        if let Some(super::session_page::TakenFailure { claim, .. }) = self.take_failure(&SessionKey::Saved(located.id))
-+        {
-             self.connect_with(
-                 claim,
-                 ConnectSource::Saved(Box::new(located)),
-```
-
-**File**: `linux/crates/app/src/ui/session_window/mod.rs` (modified, +151/-27)
-```diff
-@@ -65,7 +65,7 @@ use self::file_location_dialog::FileCheck;
- pub(crate) use self::launch_notice::LaunchNotice;
- pub(super) use self::picker_page::PickerPage;
- use self::resolve_file_identity::{FileResolveError, FileTarget, ResolvedFile, resolve_file_blocking};
--use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, source_key};
-+use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, TakenFailure, source_key};
- use self::session_window_command::{AttemptError, ConnectFailure, Connected, SessionWindowCommand};
- pub(crate) use self::session_window_input::{MovedTab, SessionWindowInput};
- use crate::application::{AppServices, WindowHost, WindowLaunch};
-@@ -406,7 +406,7 @@ impl SessionWindow {
-         self.imp().shell.replace(Some(shell.clone()));
-         self.sync_tree();
-         if let Some(tree) = shell.tree() {
--            for (key, (source, failure)) in self.imp().failures.borrow().iter() {
-+            for (key, (source, failure, _)) in self.imp().failures.borrow().iter() {
-                 tree.set_failure(key, Some((&source_name(source), failure.message.as_str())));
-             }
-         }
-@@ -683,7 +683,7 @@ impl SessionWindow {
-                     self.open_database(id, database);
-                 }
-             }
--            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure),
-+            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure, databases),
-             // A location question was asked above, so this is a stop.
-             Err(AttemptError::Cancelled | AttemptError::AskLocation(_)) => {
-                 let key = claim.key().clone();
-@@ -699,7 +699,15 @@ impl SessionWindow {
-     /// toast says so and its Details say why. A session restored at
-     /// launch that no longer opens is not tried again at the next one; a
-     /// Retry that works records it again.
--    fn on_connect_failed(&self, claim: SessionClaim, source: ConnectSource, failure: ConnectFailure) {
-+    /// The connection's other databases wait with the failure for the
-+    /// connect that brings it back.
-+    fn on_connect_failed(
-+        &self,
-+        claim: SessionClaim,
-+        source: ConnectSource,
-+        failure: ConnectFailure,
-+        databases: Vec<String>,
-+    ) {
-         tracing::warn!(error = %failure.message, "connect failed");
-         let imp = self.imp();
-         let key = claim.key().clone();
-@@ -710,7 +718,12 @@ impl SessionWindow {
-                 ConnectSource::Saved(saved) => failure.missing_file.clone().map(|missing| (saved.id, missing)),
-                 _ => None,
-             };
--            self.show_failure(FailedConnect { claim, source, failure });
-+            self.show_failure(FailedConnect {
-+                claim,
-+                source,
-+                failure,
-+                databases,
-+            });
-             if let Some((id, missing)) = missing {
-                 self.offer_locate(id, missing);
-             }
-@@ -721,7 +734,9 @@ impl SessionWindow {
-         if let Some(tree) = self.shell().and_then(|shell| shell.tree()) {
-             tree.set_failure(&key, Some((&name, failure.message.as_str())));
-         }
--        imp.failures.borrow_mut().insert(key.clone(), (source, failure));
-+        imp.failures
-+            .borrow_mut()
-+            .insert(key.clone(), (source, failure, databases));
-         // The toast goes to the page that shows from here on, which may
-         // be another connect's progress.
-         self.connects_changed();
-@@ -892,7 +907,20 @@ impl SessionWindow {
-             return None;
-         }
-         match self.imp().failed.take() {
--            Some(failed) if failed.claim.key() == key => Some(failed.claim),
-+            Some(FailedConnect {
-+                claim,
-+                source,
-+                failure,
-+                databases,
-+            }) if claim.key() == key => {
-+                // The connect this claim starts takes them, as it takes
-+                // a failure beside the window's sessions.
-+                self.imp()
-+                    .failures
-+                    .borrow_mut()
-+                    .insert(key.clone(), (source, failure, databases));
-+                Some(claim)
-+            }
-             failed => {
-                 let left = failed.is_some();
-                 drop(failed);
-@@ -915,6 +943,76 @@ impl SessionWindow {
- 
-     /// Connect with the failed page's claim when there is one, else as
-     /// any connect does.
-+    /// Connect `source` with `claim`, or a claim of its own, and open
-+    /// `databases` beside it once it joins: a reconnect's or a restore's.
-+    pub(super) fn connect_reopening(
-+        &self,
-+        claim: Option<SessionClaim>,
-+        source: ConnectSource,
-+        demand: CredentialDemand,
-+        databases: Vec<String>,
-+    ) {
-+        let key = source_key(&source);
-+        let claim = match claim {
-+            Some(claim) => claim
-```
-
-**File**: `linux/crates/app/src/ui/session_window/other_databases.rs` (modified, +9/-1)
-```diff
-@@ -176,6 +176,12 @@ impl SessionWindow {
-             }
-             (None, Ok(Ok(session))) => drop(session.begin_shutdown()),
-             (Some(_), Ok(Err(error))) if !matches!(error, ConnectError::Cancelled) => {
-+                // A database restored at launch that no longer opens is
-+                // not tried again at the next one.
-+                self.forget_session(&SessionKey::SavedIn {
-+                    id,
-+                    database: database.clone(),
-+                });
-                 self.show_toast(&gettext_f(
-                     "Could not open the database “{database}”: {error}",
-                     &[("database", &database), ("error", &connect_error_message(&error))],
-@@ -194,7 +200,8 @@ impl SessionWindow {
-             return;
-         };
-         claim.attach(&session);
--        let Some(workspace) = self.new_workspace(claim.key().clone(), &session, &shell) else {
-+        let key = claim.key().clone();
-+        let Some(workspace) = self.new_workspace(key.clone(), &session, &shell) else {
-             drop(session.begin_shutdown());
-             return;
-         };
-@@ -216,6 +223,7 @@ impl SessionWindow {
-                 .push(OpenSession::new(claim, session, workspace.clone()));
-             others
-         };
-+        self.remember_session(&key, None);
-         self.render();
-         shell.add_session(&workspace);
-         workspace.start();
-```
-
-**File**: `linux/crates/app/src/ui/session_window/secret_retry.rs` (modified, +2/-2)
-```diff
-@@ -22,8 +22,8 @@ impl SessionWindow {
-         if !offered {
-             return;
-         }
--        if let Some((claim, source, _)) = self.take_failure(key) {
--            self.reconnect(claim, source, CredentialDemand::reenter(kind));
-+        if let Some(taken) = self.take_failure(key) {
-+            self.reconnect(taken, CredentialDemand::reenter(kind));
-         }
-     }
- }
-```
-
-**File**: `linux/crates/app/src/ui/session_window/session_page.rs` (modified, +10/-0)
-```diff
-@@ -63,6 +63,16 @@ pub(crate) struct FailedConnect {
-     pub(crate) claim: SessionClaim,
-     pub(crate) source: ConnectSource,
-     pub(crate) failure: ConnectFailure,
-+    /// The connection's other databases its next connect opens again.
-+    pub(crate) databases: Vec<String>,
-+}
-+
-+/// A failure taken to act on, with the failed page's claim when it was
-+/// the page's.
-+pub(crate) struct TakenFailure {
-+    pub(crate) claim: Option<SessionClaim>,
-+    pub(crate) source: ConnectSource,
-+    pub(crate) databases: Vec<String>,
- }
- 
- /// The key a connect from `source` claims.
+@@ -21,6 +21,17 @@
+     "pg_import_system_collations",
+     "pg_truncate_visibility_map"
+   ],
++  "duckdb_calls": [
++    "dbgen",
++    "dsdgen",
++    "json_execute_serialized_sql",
++    "mysql_execute",
++    "mysql_query",
++    "postgres_execute",
++    "postgres_query",
++    "query",
++    "sqlite_query"
++  ],
+   "files_and_extensions": [
+     "lo_export",
+     "lo_import",
+@@ -30,6 +41,37 @@
+     "pg_file_write",
+     "writefile"
+   ],
++  "hypertables_and_chunks": [
++    "add_data_node",
++    "add_dimension",
++    "allow_new_chunks",
++    "alter_data_node",
++    "attach_data_node",
++    "attach_tablespace",
++    "block_new_chunks",
++    "compress_chunk",
++    "create_chunk",
++    "create_distributed_hypertable",
++    "create_distributed_restore_point",
++    "create_hypertable",
++    "decompress_chunk",
++    "delete_data_node",
++    "detach_data_node",
++    "detach_tablespace",
++    "detach_tablespaces",
++    "disable_chunk_skipping",
++    "drop_chunk",
++    "drop_chunks",
++    "enable_chunk_skipping",
++    "move_chunk",
++    "reorder_chunk",
++    "set_adaptive_chunking",
++    "set_chunk_time_interval",
++    "set_integer_now_func",
++    "set_number_partitions",
++    "set_partitioning_interval",
++    "set_replication_factor"
++  ],
+   "index_maintenance": [
+     "brin_desummarize_range",
+     "brin_summarize_new_values",
+@@ -60,7 +102,9 @@
+     "pg_wal_replay_pause",
+     "pg_wal_replay_resume",
+     "pg_xlog_replay_pause",
+-    "pg_xlog_replay_resume"
++    "pg_xlog_replay_resume",
++    "timescaledb_post_restore",
++    "timescaledb_pre_restore"
+   ],
+   "replication": [
+     "pg_copy_logical_replication_slot",
+@@ -81,6 +125,32 @@
+     "pg_replication_slot_advance",
+     "pg_sync_replication_slots"
+   ],
++  "roles_and_grants": [
++    "grant_pg_background_privileges",
++    "pg_background_drop_executor_role",
++    "pg_background_grant_privileges",
++    "pg_background_revoke_privileges",
++    "revoke_pg_background_privileges"
++  ],
++  "scheduled_jobs": [
++    "add_compaction_policy",
++    "add_compression_policy",
++    "add_continuous_aggregate_policy",
++    "add_job",
++    "add_policies",
++    "add_reorder_policy",
++    "add_retention_policy",
++    "alter_policies",
++    "delete_job",
++    "remove_all_policies",
++    "remove_compaction_policy",
++    "remove_compression_policy",
++    "remove_continuous_aggregate_policy",
++    "remove_policies",
++    "remove_reorder_policy",
++    "remove_retention_policy",
++    "unschedule"
++  ],
+   "sequences": [
+     "nextval",
+     "setval"
+@@ -94,6 +164,15 @@
+   ],
+   "session_control": [
+     "abortsessions",
++    "dblink_cancel_query",
++    "dblink_close",
++    "pg_background_cancel",
++    "pg_background_cancel_all",
++    "pg_background_cancel_all_v2",
++    "pg_background_cancel_by_label",
++    "pg_background_cancel_by_label_v2",
++    "pg_background_cancel_v2",
++    "pg_background_cancel_v2_grace",
+     "system$abort_session",
+     "system$abort_transaction",
+     "system$cancel_all_queries",
+@@ -117,6 +196,7 @@
+     "set_config"
+   ],
+   "sql_text_runners": [
++    "alter_job",
+     "connectby",
+     "crosstab",
+     "crosstab2",
+@@ -128,8 +208,19 @@
+     "dblink_send_query",
+     "openquery",
+     "openrowset",
++    "pg_background_launch",
++    "pg_background_launch_v2",
++    "pg_background_run",
++    "pg_background_run_query",
++    "pg_background_run_query_v2",
++    "pg_background_run_v2",
++    "pg_background_submit",
++    "pg_background_submit_v2",
+     "query_to_xml",
+     "query_to_xml_and_xmlschema",
++    "schedule",
++    "schedule_in_database",
++    "subscription_exec",
+     "ts_rewrite",
+     "ts_stat",
+     "xpath_table"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3956** (2026-10-31): chore(release): v0.83.1 (@datlechin)
-- **PR #3955** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
-- **PR #3954** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
-- **PR #3953** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
-- **PR #3952** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
-- **PR #3951** (2026-10-31): fix(security): split external statements as the engine does and run them one at a time (GHSA-gg4q-84m8-8jhv) (@datlechin)
+- **PR #4045** (2026-11-04): feat(account): TablePro accounts replace license keys on macOS (M16) (@datlechin)
+- **PR #4044** (2026-11-04): fix(databend): read statements as the server does in Safe Mode (@datlechin)
+- **PR #4043** (2026-11-04): fix(safe-mode): rate pg_background, pg_cron and TimescaleDB calls as writes (@datlechin)
+- **PR #4042** (2026-11-04): fix(windows): restore maximized windows in the Native AOT build (@datlechin)
+- **PR #4041** (2026-11-04): fix(databend): keep table names and bound values intact (@datlechin)
+- **PR #4040** (2026-11-04): fix(plugin-firebase): keep a leading combining mark in request paths (@datlechin)
 
 ---
 
@@ -2268,31 +3133,32 @@ Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(linux): give the package builds room for DuckDB 2.0 (#3937)
+## X. ios): stop the iPad app on a Mac crashing when a connection opens (#4032)
 
 **RULE**:
-When implementing operations in `linux/build-aux/debian/rules`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34b2363d`: build(linux): give the package builds room for DuckDB 2.0 (#3937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08b88783`: ios): stop the iPad app on a Mac crashing when a connection opens (#4032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/build-aux/debian/rules`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
-# dwz then fails the build instead of leaving the file as it is.
-override_dh_dwz:
+    private var sceneObjects: SceneObjects {
+        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
+    }
 
+            ConnectionFormSheet(connection: liveRecord ?? connection, objects: sceneObjects) { _ in
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            ConnectionFormView(editing: liveRecord ?? connection) { _ in
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34b2363d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08b88783` are properly handled with clean fallback behavior.

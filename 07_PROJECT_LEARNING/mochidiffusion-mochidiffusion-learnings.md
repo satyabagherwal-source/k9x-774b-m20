@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md`  
 > **Source**: github ([https://github.com/MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion))  
-> **Source Version**: `5e978c69`  
+> **Source Version**: `d23807f2`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:54:50.098Z  
+> **Timestamp**: 2026-11-05T02:11:35.247Z  
 > **Learning ID**: `learn-github-mochidiffusion-mochidiffusion`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:54:50.090Z  
+> **Harvest Timestamp**: 2026-11-05T02:11:35.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run Stable Diffusion on Mac natively
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7972 stars
+- **Stars / Engagement**: 7973 stars
 
 ---
 
@@ -1030,18 +1030,17 @@ nonisolated protocol GenerationEngineRuntime: Sendable {
     /// A hosted service may finish an image we stopped waiting for, and bill for it,
     /// so the UI says so rather than implying a cancel is free.
     var cancellationMayLeaveWorkBilled: Bool { get }
+
+    /// Called when the queue holds no further request for this runtime: it has
+    /// emptied, or the next request belongs to another engine. A runtime that keeps
+    /// a model loaded between requests frees it here. The default does nothing.
+    ///
+    /// Never called while `run` is in progress on this runtime.
+    func queueDrained() async
 }
 
 nonisolated extension GenerationEngineRuntime {
-    func idleTimeout(for request: GenerationRequest) -> Duration? { nil }
-    var cancellationMayLeaveWorkBilled: Bool { false }
-}
-
-/// The immutable half of an engine: what it is, what models it has, and how it
-/// turns the UI's draft into a request payload.
-///
-/// Separate from `GenerationEngineRuntime`, which owns loaded pipelines and the
-/// active generation, so the UI can read engine and model facts withou
+    func idleTimeout(for request: GenerationRequest) -> Duration? {
 ```
 
 ### Core Architecture Module: `Mochi Diffusion/Support/GenerationState.swift`
@@ -1182,8 +1181,67 @@ import Foundation
 /// actor. Actors are reentrant at every suspension point and `run` suspends four
 /// times, so a second call would otherwise interleave and reset the C library's
 /// process-global callback route and cancel flag under the first.
+///
+/// The loaded context is kept between requests for the same model directory, so
+/// a queue of them loads the transformer once. It is freed when a request names
+/// another directory, when a request fails or is cancelled, and when the queue
+/// holds no more Iris work. With Reduce Memory Usage on, it is also freed before
+/// a request that will load the text encoder, so the encoder and a transformer
+/// are never resident together.
 actor IrisEngineRuntime: GenerationEngineRuntime {
     private static let embeddingCache = FluxPromptEmbeddingCache(maxEntries: 16)
+
+    /// A loaded Iris context and the directory it was loaded from.
+    ///
+    /// Not `Sendable`: the pointer is only ever used on this actor, inside the
+    /// `IrisSingleFlight` lease.
+    nonisolated private struct LoadedContext {
+        let ctx: OpaquePointer
+        let modelDir: String
+    }
+
+    private var loaded: LoadedContext?
+
+    /// Whether a context loaded from `loadedModelDir` is kept for a request.
+    ///
+    /// It must have come from the request's own `modelDir`. With `reduceMemory`
+    /// it must also leave the text encoder unloaded, which holds only when the
+    /// request takes its prompt from the embedding cache: the model runs no
+    /// guidance, at most one reference is given, and the prompt is cached. A
+    /// guidance-running model and a multi-reference request encode inside Iris,
+    /// so they always load the encoder.
+    nonisolated static func keepsLoadedContext(
+        loadedModelDir: String?,
+        for modelDir: String,
+        reduceMemory: Bool,
+        family: IrisModelFamily,
+        referenceCount: Int,
+        promptIsCached: Bool
+    ) -> Bool {
+        guard loadedModelDir == modelDir else { return false }
+        guard reduceMemory else { return true }
+        return usesEmbeddingCache(family: family, referenceCount: referenceCount)
+            && promptIsCached
+    }
+
+    /// Whether a request encodes its prompt through the embedding cache rather
+    /// than inside an Iris entry point. The `_with_embeddings` entry points run no
+    /// classifier-free guidance, and `iris_multiref` has no `_with_embeddings`
+    /// variant.
+    nonisolated static func usesEmbeddingCache(
+        family: IrisModelFamily, referenceCount: Int
+    ) -> Bool {
+        family != .fluxKleinBase && referenceCount <= 1
+    }
+
+    func queueDrained() async {
+        guard loaded != nil else { return }
+        // The lease, because freeing touches the same process-wide Metal caches a
+        // generation holding it would be using.
+        await IrisSingleFlight.shared.acquire()
+        freeLoadedContext()
+        await IrisSingleFlight.shared.release()
+    }
 
     func run(
         request: GenerationRequest,
@@ -1247,19 +1305,37 @@ actor IrisEngineRuntime: GenerationEngineRuntime {
             IrisCallbackRouter.shared.end(session: session)
             session.emit(.preview(nil))
         }
-        guard let ctx = iris_load_dir(modelDir) else {
-            throw IrisRuntimeError.loadFailed(fluxErrorMessage())
+        let promptIsCached = await Self.embeddingCache.contains(
+            modelDir: modelDir, prompt: request.prompt)
+        if let loaded,
+            !Self.keepsLoadedContext(
+                loadedModelDir: loaded.modelDir,
+                for: modelDir,
+                reduceMemory: payload.reduceMemory,
+                family: payload.family,
+                referenceCount: request.inputImageData.count,
+                promptIsCached: promptIsCached
+            )
+        {
+            freeLoadedContext()
         }
+        let ctx = try context(for: modelDir)
         // Every reference the request carried, decoded below. Declared here so
         // the cleanup that follows owns each image as soon as it is appended.
         var referenceImages: [UnsafeMutablePointer<iris_image>] = []
+        // Set only once the request has run to the end uncancelled. A throw or a
+        // cancel can stop Iris part-way, so the context is not trusted for the
+        // next request.
+        var keepsContext = false
         // Registered straight after the context exists, so a throw from
         // reference decoding or prompt encoding frees it too.
         defer {
             iris_set_step_image_callback(ctx, nil)
             iris_set_step_callback(nil)
             iris_set_phase_callback(nil)
-            iris_free(ctx)
+            if !keepsContext {
+                freeLoadedContext()
+            }
             for image in referenceImages {
                 iris_image_free(image)
             }
@@ -1273,7 +1349,12 @@ actor IrisEngineRuntime: GenerationEngineRuntime {
         } else {
             iris_set_step_image_callback(ctx, nil)
         }
-        let isDistilled = iris_is_distilled(ctx) != 0
+        // The `_with_embeddings` entry points run no classifier-free guidance, so
+        // they are right exactly when the model runs none: a distilled Klein, or
+        // Z-Image, whose index carries no distillation flag. Encoding the prompt
+        // once here also keeps the text encoder from reloading for every image
+        // in a batch while the transformer is resident.
+        let runsWithoutGuidance = iris_is_distilled(ctx) != 0 || iris_is_zimage(ctx) != 0
 
         var embeddingLength: Int32 = 0
         var embeddings: [Float]?
@@ -1293,7 +1374,7 @@ actor IrisEngineRuntime: GenerationEngineRuntime {
         // prepared here would be discarded.
         let usesMultiref = referenceImages.count > 1
 
-        if isDistilled, !usesMultiref {
+        if runsWithoutGuidance, !usesMultiref {
             if let cached = await Self.embeddingCache.lookup(
                 modelDir: modelDir,
                 prompt: request.prompt
@@ -1312,104 +1393,7 @@ actor IrisEngineRuntime: GenerationEngineRuntime {
                     )
                 }
                 let elementCount = Int(embeddingLength) * textDim
-                let rawEmbeddings = Array(UnsafeBufferPointer(start: encoded, count: elementCount))
-                free(encoded)
-
-                await Self.embeddingCache.store(
-                    modelDir: modelDir,
-                    prompt: request.prompt,
-                    seqLen: embeddingLength,
-                    values: rawEmbeddings
-                )
-
-                if let canonical = await Self.embeddingCache.lookup(
-                    modelDir: modelDir,
-                    prompt: request.prompt
-                ) {
-                    embeddingLength = canonical.seqLen
-                    embeddings = canonical.values
-                } else {
-                    // Fallback preserves forward progress if cache write/read fails.
-                    embeddings = rawEmbeddings
-                }
-            }
-            // Keep peak memory lower before transformer work, even on cache hits.
-            iris_release_text_encoder(ctx)
-        }
-
-        var seed = request.seed
-
-        for _ in 0..<request.numberOfImages {
-            if session.isCancelled {
-                break
-            }
-
-            var params = iris_params.defaultParams
-            params.width = Int32(request.size.width)
-            params.height = Int32(request.size.height)
-            // Resolved by IrisEngine.plan, so the queue, the generator and the
-            // saved metadata cannot disagree about how many steps ran.
-            params.num_steps = Int32(payload.stepCount)
-            params.seed = Int64(seed)
-
-            let image: UnsafeMutablePointer<iris_image>?
-            if usesMultiref {
-                image = Self.generateMultiref(
-                    ctx: ctx,
-                    prompt: request.prompt,
-                    references: referenceImages,
-                    params: &params
-                )
-            } else if let startingFluxImage = referenceImages.first {
-                if isDistilled, let embeddings {
-                    image = Self.generateImg2ImgWithEmbeddings(
-                        ctx: ctx,
-                        embeddings: embeddings,
-                        embeddingLength: embeddingLength,
-                        startingFluxImage: startingFluxImage,
-                        params: &params
-                    )
-                } else {
-                    image = iris_img2img(ctx, request.prompt, startingFluxImage, &params)
-                }
-            } else {
-                if isDistilled, let embeddings {
-                    image = Self.generateWithEmbeddings(
-                        ctx: ctx,
-                        embeddings: embeddings,
-                        embeddingLength: embeddingLength,
-                        params: &params
-                    )
-                } else {
-                    image = iris_generate(ctx, request.prompt, &params)
-                }
-            }
-
-            guard let image else {
-                if session.isCancelled {
-                    break
-                }
-                throw IrisRuntimeError.generateFailed(fluxErrorMessage())
-            }
-            defer { iris_image_free(image) }
-
-            let metadata = Self.metadata(
-                request: request,
-                payload: payload,
-                width: Int(image.pointee.width),
-                height: Int(image.pointee.height),
-                seed: seed,
-                generatedDate: Date.now
-            )
-
-            guard let cgImage = Self.makeCGImage(from: UnsafePointer(image)),
-                let imageData = await metadata.pngData(for: cgImage)
-            else {
-                throw IrisRuntimeError.encodeFailed
-            }
-
-            let result = GenerationResult(metadata: metadata, imageData: imageData)
-            try await onRes
+                let rawEmbeddings = Array(UnsafeBufferPointer(st
 ```
 
 ### Core Architecture Module: `Mochi Diffusion/Support/LocalEngines.swift`
@@ -1581,7 +1565,7 @@ nonisolated struct CoreMLStableDiffusionEngine: GenerationEngineDescriptor {
 /// Iris: FLUX.2 and Z-Image models in diffusers layout, run through the bundled
 /// Iris library.
 nonisolated struct IrisEngine: GenerationEngineDescriptor {
-    typealias Model = IrisFluxKleinModel
+    typealias Model = IrisModel
     typealias Payload = IrisGenerationPayload
 
     static let id = EngineID.iris
@@ -1612,12 +1596,12 @@ nonisolated struct IrisEngine: GenerationEngineDescriptor {
         return .ready
     }
 
-    func discoverModels(_ context: ModelDiscoveryContext) async throws -> [IrisFluxKleinModel] {
+    func discoverModels(_ context: ModelDiscoveryContext) async throws -> [IrisModel] {
         try context.localModelDirectories()
-            .compactMap { IrisFluxKleinModel(url: $0, name: ModelID.localKey(for: $0)) }
+            .compactMap { IrisModel(url: $0, name: ModelID.localKey(for: $0)) }
     }
 
-    func plan(draft: GenerationDraft, model: IrisFluxKleinModel) throws
+    func plan(draft: GenerationDraft, model: IrisModel) throws
         -> GenerationPlan<IrisGenerationPayload>
     {
         // Read from the model's constraints, which is the same declaration the
@@ -1649,7 +1633,8 @@ nonisolated struct IrisEngine: GenerationEngineDescriptor {
             payload: IrisGenerationPayload(
                 modelDirectory: model.url.path(percentEncoded: false),
                 family: model.family,
-                stepCount: stepCount ?? model.family.s
+                stepCount: stepCount ?? model.family.stepCount,
+                guidanceSc
 ```
 
 ### Core Architecture Module: `Mochi Diffusion/Support/OpenAIEngineRuntime.swift`
@@ -1927,623 +1912,217 @@ nonisolated final class OpenAIEngineRuntime: GenerationEngineRuntime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bbbed99` (2026-09-28)
-**Commit Message**: fix: keep Quick Look bound to a State mirror
+### Incident Patch 1: `ae2c0f37` (2026-10-31)
+**Commit Message**: fix: move iris.c to the attention reduction fix
 
-quickLookPreview reads its binding off the main thread. A Binding(get:set:)
-over the main-actor QuickLookState traps on that read under Swift 6
-isolation checking, so previewing an image crashed the app. A State
-mirror synced by onChange has no such check.
+Z-Image's context refiner ran attention at the raw prompt token count,
+and the Iris kernels summed the softmax wrongly for lengths under 256
+that aren't powers of two, so nearly every prompt got slightly wrong
+caption attention. The same kernels set threadgroup memory lengths that
+Metal API Validation rejects, which aborted Debug runs from Xcode.
+
+iris.h and iris_metal.h are unchanged; only kernel code and threadgroup
+memory sizes differ from c41bce4.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `Mochi Diffusion/MochiDiffusionApp.swift` (modified, +12/-13)
+**File**: `iris.c` (modified, +1/-1)
 ```diff
-@@ -18,23 +18,15 @@ struct MochiDiffusionApp: App {
-     @State private var store: ImageGallery
-     @State private var notificationController: NotificationController
-     @State private var quickLook: QuickLookState
-+    /// Mirrors `quickLook.url` for `quickLookPreview`, which reads its binding off the
-+    /// main thread. A `Binding(get:set:)` over the main-actor `QuickLookState` would
-+    /// trap on that read under Swift 6 isolation checking; a `@State` binding does not.
-+    @State private var quickLookURL: URL?
- 
-     private let thumbnailProvider: GalleryThumbnailProvider
-     private let fullImageProvider: GalleryFullImageProvider
-     private let updaterController: SPUStandardUpdaterController
- 
--    /// The preview reports dismissal by clearing the URL, which closes the shared
--    /// state. It never sets a URL of its own, so only that write is handled.
--    private var quickLookURL: Binding<URL?> {
--        let quickLook = quickLook
--        return Binding(
--            get: { quickLook.url },
--            set: { newValue in
--                if newValue == nil { quickLook.close() }
--            }
--        )
--    }
--
-     init() {
-         let configStore = ConfigStore()
-         // One repository for every writer, so filename allocation covers all of
-@@ -107,7 +99,14 @@ struct MochiDiffusionApp: App {
-                         "com.apple.MetalPerformanceShadersGraph", isDirectory: true)
-                     try? FileManager.default.removeItem(at: mpsURL)
-                 }
--                .quickLookPreview(quickLookURL)
-+                .onChange(of: quickLook.url) { _, newValue in
-+                    if quickLookURL != newValue { quickLookURL = newValue }
-+                }
-+                // The preview reports dismissal by clearing the URL.
-+                .onChange(of: quickLookURL) { _, newValue in
-+                    if newValue == nil { quickLook.close() }
-+                }
-+                .quickLookPreview($quickLookURL)
-         }
-         .environment(configStore)
-         .environment(generationController)
+@@ -1 +1 @@
+-Subproject commit c41bce43fb6dffd2b4efb61938e6d60af69063ef
++Subproject commit 8337730034f1d81fe91c389b7210eadcc29c7bb7
 ```
 
 ---
 
-### Incident Patch 2: `b1a4ed14` (2026-09-27)
-**Commit Message**: fix: stop the Core ML batch seed from overflowing
+### Incident Patch 2: `e41da883` (2026-11-02)
+**Commit Message**: build: add a script that lists new and changed localizable strings
 
-The Core ML runtime advanced the batch seed with a trapping += 1, so any
-batch starting at UInt32.max crashed after writing its last image. Core ML
-and Iris now advance seeds through GenerationSeed, which wraps UInt32.max
-to 1, and random seeds are drawn from 1...UInt32.max. Seed 0 is reserved
-for "random" in the sidebar, so an image recorded with it could not be
-reproduced through Copy Options.
+scripts/localization_diff.sh exports the English strings at two
+revisions with xcodebuild -exportLocalizations, the export the CI
+workflow uploads to Crowdin, and prints the strings that are new,
+changed or removed, with their translator comments. Each revision is
+built in a temporary worktree first, because the export cannot build
+the Iris library on its own.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `Mochi Diffusion.xcodeproj/project.pbxproj` (modified, +4/-0)
+**File**: `scripts/localization_diff.sh` (added, +128/-0)
 ```diff
-@@ -108,6 +108,7 @@
- 		AA50000000000000000001982 /* QueueLivenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000001981 /* QueueLivenessTests.swift */; };
- 		AA50000000000000000002082 /* GenerationResultPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000002081 /* GenerationResultPathTests.swift */; };
- 		AA50000000000000000002096 /* SchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000002095 /* SchedulerTests.swift */; };
-+		AA50000000000000000002098 /* GenerationSeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000002097 /* GenerationSeedTests.swift */; };
- 		AA50000000000000000002094 /* IrisConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000002093 /* IrisConversionTests.swift */; };
- 		AA50000000000000000002092 /* GalleryBrowsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000002091 /* GalleryBrowsingTests.swift */; };
- 		AA50000000000000000001992 /* GenerationOwnershipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50000000000000000001991 /* GenerationOwnershipTests.swift */; };
-@@ -272,6 +273,7 @@
- 		AA50000000000000000001981 /* QueueLivenessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueLivenessTests.swift; sourceTree = "<group>"; };
- 		AA50000000000000000002081 /* GenerationResultPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationResultPathTests.swift; sourceTree = "<group>"; };
- 		AA50000000000000000002095 /* SchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerTests.swift; sourceTree = "<group>"; };
-+		AA50000000000000000002097 /* GenerationSeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationSeedTests.swift; sourceTree = "<group>"; };
- 		AA50000000000000000002093 /* IrisConversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IrisConversionTests.swift; sourceTree = "<group>"; };
- 		AA50000000000000000002091 /* GalleryBrowsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryBrowsingTests.swift; sourceTree = "<group>"; };
- 		AA50000000000000000001991 /* GenerationOwnershipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationOwnershipTests.swift; sourceTree = "<group>"; };
-@@ -534,6 +536,7 @@
- 				AA50000000000000000001981 /* QueueLivenessTests.swift */,
- 				AA50000000000000000002081 /* GenerationResultPathTests.swift */,
- 				AA50000000000000000002095 /* SchedulerTests.swift */,
-+				AA50000000000000000002097 /* GenerationSeedTests.swift */,
- 				AA50000000000000000002093 /* IrisConversionTests.swift */,
- 				AA50000000000000000002091 /* GalleryBrowsingTests.swift */,
- 				AA70000000000000000000011 /* GalleryLoadingTests.swift */,
-@@ -910,6 +913,7 @@
- 				AA50000000000000000001982 /* QueueLivenessTests.swift in Sources */,
- 				AA50000000000000000002082 /* GenerationResultPathTests.swift in Sources */,
- 				AA50000000000000000002096 /* SchedulerTests.swift in Sources */,
-+				AA50000000000000000002098 /* GenerationSeedTests.swift in Sources */,
- 				AA50000000000000000002094 /* IrisConversionTests.swift in Sources */,
- 				AA50000000000000000002092 /* GalleryBrowsingTests.swift in Sources */,
- 				AA70000000000000000000012 /* GalleryLoadingTests.swift in Sources */,
-```
-
-**File**: `Mochi Diffusion/Support/CoreMLEngineRuntime.swift` (modified, +1/-1)
-```diff
-@@ -292,7 +292,7 @@ actor CoreMLEngineRuntime: GenerationEngineRuntime {
-                 )
-                 try await onResult(GenerationResult(metadata: metadata, imageData: data))
-             }
--            pipelineConfig.seed += 1
-+            pipelineConfig.seed = GenerationSeed.next(after: pipelineConfig.seed)
-         }
-     }
- 
-```
-
-**File**: `Mochi Diffusion/Support/GenerationController.swift` (modified, +1/-1)
-```diff
-@@ -1187,7 +1187,7 @@ final class GenerationController {
-             guidanceScale: Float(configStore.guidanceScale),
-             scheduler: configStore.scheduler,
-             quality: configStore.quality,
--            seed: seed == 0 ? UInt32.random(in: 0..<UInt32.max) : seed,
-+            seed: seed == 0 ? GenerationSeed.random() : seed,
-             numberOfImages: Int(numberOfImages),
-             computeUnitPreference: configStore.mlComputeUnitPreference,
-             reduceMemory: configStore.reduceMemory,
-```
-
-**File**: `Mochi Diffusion/Support/GenerationEngine.swift` (modified, +16/-0)
-```diff
-@@ -47,6 +47,22 @@ nonisolated struct ModelDiscoveryContext: Sendable {
-     }
- }
- 
-+/// The seeds a generation uses.
-+///
-+/// The sidebar reserves seed 0 for "random", so no generated image is given
-+/// seed 0: an image recorded with it could not be reproduced through Copy Options.
-+nonisolated enum GenerationSeed {
-+    static func random() -> UInt32 {
-+        UInt32.random(in: 1...UInt32.max)
-+    }
+@@ -0,0 +1,128 @@
++#!/bin/bash
++# Lists the English localizable strings that are new, changed or removed between
++# two revisions, as Crowdin will see them.
++#
++# Each revision is checked out in a temporary worktree, built, and exported with
++# xcodebuild -exportLocalizations, the same export the CI workflow uploads. The
++# export cannot build the Iris library itself, so each revision is built first.
++# Your checkout is not changed.
++#
++# Usage: scripts/localization_diff.sh <old-revision> [new-revision]
++#   new-revision defaults to HEAD.
++#
++# Tools: Xcode, git and uv.
++set -euo pipefail
 +
-+    /// The seed for the image after one generated with `seed` in the same batch.
-+    /// Wraps from `UInt32.max` to 1.
-+    static func next(after seed: UInt32) -> UInt32 {
-+        seed == .max ? 1 : seed + 1
-+    }
++cd "$(dirname "$0")/.." || exit 1
++
++if [ $# -lt 1 ] || [ $# -gt 2 ]; then
++  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
++  exit 2
++fi
++old_rev="$(git rev-parse --verify "$1^{commit}")"
++new_rev="$(git rev-parse --verify "${2:-HEAD}^{commit}")"
++
++work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mochi-l10n.XXXXXX")"
++cleanup() {
++  for name in old new; do
++    if [ -d "$work_dir/$name" ]; then
++      git worktree remove --force "$work_dir/$name" >/dev/null 2>&1 || true
++    fi
++  done
++  rm -rf "$work_dir"
++}
++trap cleanup EXIT
++
++export_strings() {
++  local name="$1" rev="$2"
++  local tree="$work_dir/$name"
++  echo "==> Exporting strings at $(git rev-parse --short "$rev")" >&2
++  git worktree add --quiet --detach "$tree" "$rev"
++  git -C "$tree" submodule update --quiet --init
++  local xcodebuild_args=(
++    -project "$tree/Mochi Diffusion.xcodeproj"
++    -scheme "Mochi Diffusion"
++    -configuration Debug
++    -derivedDataPath "$work_dir/$name-derived"
++    CODE_SIGNING_ALLOWED=NO
++  )
++  xcodebuild build "${xcodebuild_args[@]}" >"$work_dir/$name-build.log" 2>&1 \
++    || { echo "error: build failed at $rev; see $work_dir/$name-build.log" >&2; exit 1; }
++  xcodebuild -exportLocalizations "${xcodebuild_args[@]}" \
++    -localizationPath "$work_dir/$name-export" -exportLanguage en \
++    >"$work_dir/$name-export.log" 2>&1 \
++    || { echo "error: export failed at $rev; see $work_dir/$name-export.log" >&2; exit 1; }
 +}
 +
- /// Everything the sidebar holds, handed to an engine so it can decide what its own
- /// generation needs.
- ///
-```
-
-**File**: `Mochi Diffusion/Support/IrisEngineRuntime.swift` (modified, +1/-1)
-```diff
-@@ -263,7 +263,7 @@ actor IrisEngineRuntime: GenerationEngineRuntime {
- 
-             let result = GenerationResult(metadata: metadata, imageData: imageData)
-             try await onResult(result)
--            seed &+= 1
-+            seed = GenerationSeed.next(after: seed)
-         }
-     }
- 
-```
-
-**File**: `Mochi DiffusionTests/GenerationSeedTests.swift` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+//
-+//  GenerationSeedTests.swift
-+//  Mochi DiffusionTests
-+//
++export_strings old "$old_rev"
++export_strings new "$new_rev"
 +
-+import Testing
++uv run --no-project --quiet python -I - \
++  "$work_dir/old-export/en.xcloc/Localized Contents/en.xliff" \
++  "$work_dir/new-export/en.xcloc/Localized Contents/en.xliff" \
++  "$work_dir/new" <<'PY'
++import subprocess
++import sys
++import xml.etree.ElementTree as ET
 +
-+@testable import Mochi_Diffusion
++NS = {"x": "urn:oasis:names:tc:xliff:document:1.2"}
 +
-+/// Pins that batch seeds advance without overflowing and that no generated image
-+/// is given seed 0, which the sidebar reserves for "random".
-+struct GenerationSeedTests {
-+    @Test("A batch seed advances by one", arguments: [UInt32(1), 41, UInt32.max - 1])
-+    func advancesByOne(seed: UInt32) {
-+        #expect(GenerationSeed.next(after: seed) == seed + 1)
-+    }
 +
-+    @Test("A batch seed wraps from UInt32.max to 1")
-+    func wrapsPastMaximum() {
-+        #expect(GenerationSeed.next(after: .max) == 1)
-+    }
++def units(path):
++    found = {}
++    for file in ET.parse(path).getroot().findall("x:file", NS):
++        original = file.get("original", "")
++        for unit in file.iter("{%s}trans-unit" % NS["x"]):
++            source = unit.find("x:source", NS)
++            note = unit.find("x:note", NS)
++            found[(original, unit.get("id"))] = (
++                source.text if source is not None else "",
++                note.text if note is not None else "",
++            )
++    return found
 +
-+    @Test("A batch starting at UInt32.max never uses seed 0")
-+    func batchFromMaximumSkipsZero() {
-+        var seeds: [UInt32] = [.max]
-+        for _ in 0..<3 {
-+            seeds.append(GenerationSeed.next(after: seeds.last!))
-+        }
-+        #expect(seeds == [.max, 1, 2, 3])
-+    }
 +
-+    @Test("A random seed is never 0")
-+    func randomSeedIsNeverZero() {
-+        for _ in 0..<10_000 {
-+            #expect(GenerationSeed.random() != 0)
-+        }
-+    }
-+}
++def used_in(tree, text):
++    """Swift files that contain `text` as a string literal."""
++    if not text:
++        return []
++    result = subprocess.run(
++        ["git", "-C", tree, "grep", "-l", "-F", f'"{text}"', "--", "Mochi Diffusion"],
++        capture_output=True, text=True,
++    )
++    return result.stdout.splitlines()
++
++
++old, new, tree = units(sys.argv[1]), units(sys.argv[2]), sys.argv[3]
++added = sorted(new.keys() - old.keys())
++removed = sorted(old.keys() - new.keys())
++changed = sorted(k for k in new.keys() & old.keys() if new[k] != old[k])
++
++
++def show(key, values):
++    original, unit_id = key
++    source, note = values
++    print(f"- {unit_id!r}  ({original})")
++    if source != unit_id:
++        print(f"    text:    {source!r}")
++    print(f"    comment: {note!r}" if note else "    comment: (none)")
++
++
++print(f"NEW ({len(added)})")
++for key in added:
++    show(key, new[key])
++    files = used_in(tree, new[key][0])
++    if files:
++        print(f"    used in: {', '.join(files)}")
++print(f"\nCHANGED ({len(changed)})")
++for key in changed:
++    show(key, new[key])
++    old_source, old_note = old[key]
++    if old_source != new[key][0]:
++        print(f"    was:     {old_source!r}")
++    if old_note != new[key][1]:
++        print(f"    comment was: {old_note!r}")
++print(f"\nREMOVED ({len(removed)})")
++for key in removed:
++    show(key, old[key])
++PY
 ```
 
 ---
 
-### Incident Patch 3: `25c45d72` (2026-09-28)
-**Commit Message**: test: pin compatibility text and cover exports, Copy Options and overflow
+### Incident Patch 3: `b26f7a0a` (2026-11-02)
+**Commit Message**: build(deps): bump github.com/apple/swift-argument-parser (#526)
 
-CompatibilityTextTests pins the exact AUTOMATIC1111 text Mochi's generation
-and export paths write for Core ML, Iris, a sparse hosted record, Unicode and
-section-marker prompts, and converted released and foreign images. Musubi's
-wire probe checks text of these shapes with the pinned AUTOMATIC1111 and
-Civitai readers.
+Bumps [github.com/apple/swift-argument-parser](https://github.com/apple/swift-argument-parser) from 1.3.0 to 1.8.2.
+- [Release notes](https://github.com/apple/swift-argument-parser/releases)
+- [Changelog](https://github.com/apple/swift-argument-parser/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/apple/swift-argument-parser/compare/1.3.0...6a52f3251125d74daf04fcbd5e6f08a75d074382)
 
-New tests also cover Save All with mixed PNG, JPEG and HEIC sources, Copy
-Options from generated and foreign files, and metadata that exceeds the
-description or native record limits.
+---
+updated-dependencies:
+- dependency-name: github.com/apple/swift-argument-parser
+  dependency-version: 1.8.2
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `AGENTS.md` (modified, +9/-2)
+**File**: `Mochi Diffusion.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
 ```diff
-@@ -187,7 +187,13 @@ The multi-engine foundation is implemented. Current ownership and contracts foll
-     `MetadataDetail`. Never present or restore an unrecorded value as a default.
-   - A fresh generation's gallery record is built by the same mapping as reading its file.
-   - Export always produces PNG: a PNG is copied byte for byte; JPEG and HEIC convert, carrying
--    a released Mochi caption as a native record and foreign AUTOMATIC1111 text unchanged.
-+    a released Mochi caption as a native record and foreign AUTOMATIC1111 text unchanged. A
-+    released caption's scheduler is written under the sampler label a fresh image uses.
-+  - `CompatibilityTextTests` pins the AUTOMATIC1111 text written for each engine and
-+    conversion. Musubi's wire probe checks text of those shapes with the pinned AUTOMATIC1111
-+    and Civitai readers. A model is recorded by name only, so Civitai does not identify it as a
-+    resource. Mochi 6.1.2 and earlier import only a caption naming its `Generator`, so they skip
-+    images from newer versions.
-   - Sampler names: DPM-Solver++ is written as `DPM++ 2M`, PNDM as `PLMS`, flow matching under
-     Mochi's own name. `Scheduler(samplerLabel:)` maps them back for Copy Options.
- 
-@@ -224,7 +230,8 @@ The multi-engine foundation is implemented. Current ownership and contracts foll
-   - Gallery: `GalleryLoadingTests`, `GalleryImageProviderTests`.
-   - Hosted engine and credentials: `OpenAIImageEngineTests`, `OpenAIRuntimeTests`,
-     `OpenAICredentialCheckTests`, `SecretStoreTests`.
--  - Metadata: `GenerationMetadataTests`, `MetadataRoundTripTests`, `ImageExportTests`.
-+  - Metadata: `GenerationMetadataTests`, `MetadataRoundTripTests`, `ImageExportTests`,
-+    `CompatibilityTextTests`.
-   - Support: `ControlNetLinkTests`.
-   - Fixtures are synthetic directories containing only the files the production sniffing
-     code inspects, so no real model weights are required.
-```
-
-**File**: `Mochi Diffusion.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -130,6 +130,7 @@
- 		AA70000000000000000000012 /* GalleryLoadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70000000000000000000011 /* GalleryLoadingTests.swift */; };
- 		AA70000000000000000000022 /* GalleryImageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70000000000000000000021 /* GalleryImageProviderTests.swift */; };
- 		AA70000000000000000000032 /* ImageExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70000000000000000000031 /* ImageExportTests.swift */; };
-+		AA70000000000000000000062 /* CompatibilityTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70000000000000000000061 /* CompatibilityTextTests.swift */; };
- 		AA7500000000000000000001 /* FilterablePicker in Frameworks */ = {isa = PBXBuildFile; productRef = AA7500000000000000000002 /* FilterablePicker */; };
- 		AA8800000000000000000001 /* Musubi in Frameworks */ = {isa = PBXBuildFile; productRef = AA8800000000000000000002 /* Musubi */; };
- 		AA7600000000000000000002 /* CoreMLPipelineCacheKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7600000000000000000001 /* CoreMLPipelineCacheKeyTests.swift */; };
-@@ -295,6 +296,7 @@
- 		AA70000000000000000000011 /* GalleryLoadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryLoadingTests.swift; sourceTree = "<group>"; };
- 		AA70000000000000000000021 /* GalleryImageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryImageProviderTests.swift; sourceTree = "<group>"; };
- 		AA70000000000000000000031 /* ImageExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExportTests.swift; sourceTree = "<group>"; };
-+		AA70000000000000000000061 /* CompatibilityTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatibilityTextTests.swift; sourceTree = "<group>"; };
- 		AA7600000000000000000001 /* CoreMLPipelineCacheKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLPipelineCacheKeyTests.swift; sourceTree = "<group>"; };
- 		AA80000000000000000000011 /* GalleryImageProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryImageProviders.swift; sourceTree = "<group>"; };
- 		BF36895C2F2F3BDA006501CE /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-@@ -542,6 +544,7 @@
- 				AA70000000000000000000011 /* GalleryLoadingTests.swift */,
- 				AA70000000000000000000021 /* GalleryImageProviderTests.swift */,
- 				AA70000000000000000000031 /* ImageExportTests.swift */,
-+				AA70000000000000000000061 /* CompatibilityTextTests.swift */,
- 				AA50000000000000000001991 /* GenerationOwnershipTests.swift */,
- 				AA50000000000000000002001 /* IdleTimeoutTests.swift */,
- 				AA70000000000000000000051 /* CancellationBindingTests.swift */,
-@@ -920,6 +923,7 @@
- 				AA70000000000000000000012 /* GalleryLoadingTests.swift in Sources */,
- 				AA70000000000000000000022 /* GalleryImageProviderTests.swift in Sources */,
- 				AA70000000000000000000032 /* ImageExportTests.swift in Sources */,
-+				AA70000000000000000000062 /* CompatibilityTextTests.swift in Sources */,
- 				AA50000000000000000001992 /* GenerationOwnershipTests.swift in Sources */,
- 				AA50000000000000000002002 /* IdleTimeoutTests.swift in Sources */,
- 				AA70000000000000000000052 /* CancellationBindingTests.swift in Sources */,
-```
-
-**File**: `Mochi DiffusionTests/CompatibilityTextTests.swift` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+//
-+//  CompatibilityTextTests.swift
-+//  Mochi DiffusionTests
-+//
-+
-+import AppKit
-+import CoreGraphics
-+import CoreML
-+import Foundation
-+import ImageIO
-+import Musubi
-+import Testing
-+import UniformTypeIdentifiers
-+
-+@testable import Mochi_Diffusion
-+
-+/// Pins the exact AUTOMATIC1111 text Mochi's generation and export paths write
-+/// for each engine and conversion. Musubi's wire probe checks that text of
-+/// these shapes with the pinned AUTOMATIC1111 and Civitai readers.
-+struct CompatibilityTextTests {
-+    struct Case: Sendable, CustomTestStringConvertible {
-+        let name: String
-+        /// The complete AUTOMATIC1111 text, or `nil` when none is written.
-+        let parameters: String?
-+        let bytes: @Sendable @MainActor (TempDirectory) async throws -> Data
-+
-+        var testDescription: String { name }
-+    }
-+
-+    static let software = "Software: Mochi Diffusion \(NSApplication.appVersion)"
-+
-+    static func generated(_ name: String, _ metadata: GenerationMetadata, parameters: String?)
-+        -> Case
-+    {
-+        Case(name: name, parameters: parameters) { _ in
-+            try #require(await metadata.pngData(for: makeCGImage(width: 24, height: 16)))
-+        }
-+    }
-+
-+    static func converted(
-+        _ name: String, type: UTType, parameters: String?,
-+        properties: @escaping @Sendable () -> [CFString: Any]
-+    ) -> Case {
-+        Case(name: name, parameters: parameters) { temp in
-+            let source = temp.appending("\(name).\(type.preferredFilenameExtension!)")
-+            let data = CFDataCreateMutable(nil, 0)!
-+            let destination = try #require(
-+                CGImageDestinationCreateWithData(data, type.identifier as CFString, 1, nil))
-+            CGImageDestinationAddImage(destination, makeCGImage(), properties() as CFDictionary)
-+            try #require(CGImageDestinationFinalize(destination))
-+            try (data as Data).write(to: source, options: .atomic)
-+            return try #require(ImageMetadataWriter.exportPNG(from: source))
-+        }
-+    }
-+
-+    static func released(_ caption: String, version: String) -> [CFString: Any] {
-+        [
-+            kCGImagePropertyIPTCDictionary: [
-+                kCGImagePropertyIPTCCaptionAbstract: caption,
-+                kCGImagePropertyIPTCOriginatingProgram: "Mochi Diffusion",
-+                kCGImagePropertyIPTCProgramVersion: version,
-+            ]
-+        ]
-+    }
-+
-+    static func metadata(
-+        prompt: String = "a red cube on a table",
-+        negativePrompt: String? = "blurry",
-+        model: String,
-+        engine: EngineID = .coreMLStableDiffusion,
-+        architecture: String?,
-+        quality: String? = nil,
-+        startingImage: String? = nil,
-+        strength: Double? = nil,
-+        controlNet: String? = nil,
-+        controlNetImage: String? = nil,
-+        inputImages: [String]? = nil,
-+        scheduler: Scheduler?,
-+        mlComputeUnit: MLComputeUnits? = .cpuAndNeuralEngine,
-+        seed: UInt32?,
-+        steps: Int?,
-+        guidanceScale: Double?
-+    ) -> GenerationMetadata {
-+        GenerationMetadata(
-+            prompt: prompt, negativePrompt: negativePrompt, width: 24, height: 16, model: model,
-+            engine: engine.rawValue, modelKey: model, architecture: architecture,
-+            quality: quality, startingImage: startingImage, strength: strength,
-+            controlNet: controlNet, controlNetImage: controlNetImage, inputImages: inputImages,
-+            scheduler: scheduler, mlComputeUnit: mlComputeUnit, seed: seed, steps: steps,
-+            guidanceScale: guidanceScale,
-+            generatedDate: Date(timeIntervalSince1970: 1_790_000_000), metadataFields: [])
-+    }
-+
-+    static let cases: [Case] = [
-+        // SDXL's DPM-Solver++ spaces its steps with Karras sigmas.
-+        generated(
-+            "coreml-sdxl",
-+            metadata(
-+                model: "sdxl-base", architecture: SDModel.ModelType.sdxl.displayName,
-+                scheduler: .dpmSolverMultistepScheduler, seed: UInt32.max, steps: 30,
-+                guidanceScale: 7),
-+            parameters: """
-+                a red cube on a table
-+                Negative prompt: blurry
-+                Steps: 30, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7.0, \
-+                Seed: 4294967295, Size: 24x16, Model: sdxl-base, \(software)
-+                """),
-+        // The starting image's strength is recorded. ControlNet has no
-+        // AUTOMATIC1111 field outside its extension, so only the native record
-+        // names it.
-+        generated(
-+            "coreml-img2img-controlnet",
-+            metadata(
-+                model: "sd-1.5", architecture: SDModel.ModelType.sd15.displayName,
-+                startingImage: "start.png", strength: 0.6, controlNet: "canny",
-+                controlNetImage: "edges.png", scheduler: .pndmScheduler, seed: 42, steps: 20,
-+                guidanceScale: 7.5),
-+            parameters: ""
-```
-
-**File**: `Mochi DiffusionTests/GalleryLoadingTests.swift` (modified, +52/-0)
-```diff
-@@ -5,6 +5,7 @@
- 
- import CoreGraphics
- import Foundation
-+import ImageIO
- import Testing
- import UniformTypeIdentifiers
- 
-@@ -483,6 +484,57 @@ struct GalleryLoadingTests {
-         #expect(exported.metadataFields == [.prompt])
-         #expect(exported.prompt == "a cat")
-     }
-+
-+    @Test("Save All copies a generated PNG exactly and converts released JPEG and HEIC to PNG")
-+    func saveAllMixedFormats() async throws {
-+        let generated = MetadataRoundTripTests.coreMLMetadata(prompt: "a generated cat")
-+        try #require(await generated.pngData(for: makeCGImage()))
-+            .write(to: imageDir.appending(path: "generated.png"))
-+        for (name, type) in [("released.jpg", UTType.jpeg), ("released.heic", .heic)] {
-+            let data = CFDataCreateMutable(nil, 0)!
-+            let destination = try #require(
-+                CGImageDestinationCreateWithData(data, type.identifier as CFString, 1, nil))
-+            let caption = releasedCaption([
-+                (.includeInImage, "a released \(type.preferredFilenameExtension!)"),
-+                (.seed, "42"),
-+                (.generator, "Mochi Diffusion 6.0"),
-+            ])
-+            let properties = [
-+                kCGImagePropertyIPTCDictionary: [
-+                    kCGImagePropertyIPTCCaptionAbstract: caption,
-+                    kCGImagePropertyIPTCOriginatingProgram: "Mochi Diffusion",
-+                    kCGImagePropertyIPTCProgramVersion: "6.0",
-+                ]
-+            ]
-+            CGImageDestinationAddImage(destination, makeCGImage(), properties as CFDictionary)
-+            try #require(CGImageDestinationFinalize(destination))
-+            try (data as Data).write(to: imageDir.appending(path: name))
-+        }
-+        let gallery = ImageGallery()
-+        let controller = try await makeSettledController(gallery: gallery)
-+        let exportDir = try temp.subdirectory("export")
-+        try #require(gallery.images.count == 3)
-+
-+        await controller.saveAll(to: exportDir)
-+
-+        for (index, sdi) in gallery.images.enumerated() {
-+            let source = URL(fileURLWithPath: sdi.path)
-+            let exported = exportDir.appending(
-+                path: sdi.filenameWithoutExtension(count: index + 1) + ".png")
-+            let data = try Data(contentsOf: exported)
-+            let record = try #require(createImageRecordFromURL(exported))
-+            #expect(record.prompt == sdi.prompt)
-+            #expect(record.metadataFields == gallery.metadataFields(for: sdi.id))
-+            if source.pathExtension == "png" {
-+                #expect(data == (try Data(contentsOf: source)))
-+                #expect(record.startingImage == "starting.png")
-+                #expect(record.controlNetImage == "control.png")
-+            } else {
-+                #expect(data.starts(with: [0x89, 0x50, 0x4E, 0x47]))
-+                #expect(record.seed == 42)
-+            }
-+        }
-+    }
- }
- 
- extension Collection {
-```
-
-**File**: `Mochi DiffusionTests/GenerationConfigRestorationTests.swift` (modified, +69/-0)
-```diff
-@@ -4,6 +4,7 @@
- //
- 
- import CoreGraphics
-+import CoreML
- import Foundation
- import Testing
- 
-@@ -524,6 +525,74 @@ struct GenerationConfigRestorationTests {
-         #expect(configStore.strength == 0.35)
-     }
- 
-+    /// The gallery image of the file at `url`, read the way the gallery reads it.
-+    private func galleryImage(readFrom url: URL, in gallery: ImageGallery) throws -> SDImage {
-+        let record = try #require(createImageRecordFromURL(url))
-+        let sdi = try #require(createSDImage(from: record))
-+        gallery.replaceAll([(image: sdi, metadataFields: record.metadataFields)])
-+        return sdi
-+    }
-+
-+    @Test("Copy Options restores the settings a generated file recorded")
-+    func restoreFromGeneratedFile() async throws {
-+        try makeSDModelFixture(at: modelDir.appending(path: "core"))
-+        let metadata = GenerationMetadata(
-+            prompt: "a cat\nwearing a hat", negativePrompt: "blurry", width: 512, height: 512,
-+            model: "core", engine: EngineID.coreMLStableDiffusion.rawValue, modelKey: "core",
-+            architecture: SDModel.ModelType.sd15.displayName, quality: nil, startingImage: nil,
-+            strength: nil, controlNet: nil, controlNetImage: nil, inputImages: nil,
-+            scheduler: .pndmScheduler, mlComputeUnit: .cpuAndGPU, seed: UInt32.max, steps: 23,
-+            guidanceScale: 6.5, generatedDate: Date(), metadataFields: [])
-+        let url = temp.appending("generated.png")
-+        try #require(await metadata.pngData(for: makeCGImage())).write(to: url)
-+        let gallery = ImageGallery()
-+        let sdi = try galleryImage(readFrom: url, in: gallery)
-+        let controller = makeController(gallery: gallery)
-+        await controller.loadModels()
-+        try selectModel("gpt-image-2", on: controller)
-+
-+        await controller.copyToPrompt(sdi)
-+
-+        #expect(controller.currentModelId == ModelID(engine: .coreMLStableDiffusion, key: "core"))
-+        #expect(configStore.prompt == "a cat\nwearing a hat")
-+        #expect(configStore.negativePrompt == "blurry")
-+        #expect(configStore.steps == 23)
-+        #expect(configStore.guidanceScale == 6.5)
-+        #expect(configStore.scheduler == .pndmScheduler)
-+        #expect(controller.seed == UInt32.max)
-+        #expect(configStore.mlComputeUnitPreference == ComputeUnitPreference(exact: .cpuAndGPU))
-+    }
-+
-+    @Test("Copy Options from another application's image restores only what Mochi can use")
-+    func restoreFromForeignFile() async throws {
-+        try makeSDModelFixture(at: modelDir.appending(path: "core"))
-+        let url = temp.appending("foreign.png")
-+        try PNGTestChunks.write(
-+            textChunks: [
-+                (
-+                    "parameters",
-+                    "a dog\nNegative prompt: cat\nSteps: 12, Sampler: Euler a, CFG scale: 5, Seed: 8589934592, Size: 8x8, Model: dreamshaper"
-+                )
-+            ], to: url)
-+        let gallery = ImageGallery()
-+        let sdi = try galleryImage(readFrom: url, in: gallery)
-+        let controller = makeController(gallery: gallery)
-+        await controller.loadModels()
-+        try selectModel("core", on: controller)
-+        configStore.scheduler = .dpmSolverMultistepScheduler
-+        controller.seed = 7
-+
-+        await controller.copyToPrompt(sdi)
-+
-+        #expect(configStore.prompt == "a dog")
-+        #expect(configStore.negativePrompt == "cat")
-+        #expect(configStore.steps == 12)
-+        #expect(configStore.guidanceScale == 5)
-+        // Neither a sampler Mochi does not offer nor a seed above UInt32 is restored.
-+        #expect(configStore.scheduler == .dpmSolverMultistepScheduler)
-+        #expect(controller.seed == 7)
-+    }
-+
-     @Test("Legacy gallery metadata falls back to an unambiguous display name")
-     func legacyModelNameFallbackStillWorks() async throws {
-         try makeSDModelFixture(at: modelDir.appending(path: "legacy-core"))
-```
-
-**File**: `Mochi DiffusionTests/MetadataRoundTripTests.swift` (modified, +20/-0)
-```diff
-@@ -193,6 +193,26 @@ struct MetadataRoundTripTests {
-         #expect(record.prompt == prompt)
-     }
- 
-+    @Test("A prompt too long to repeat in the description keeps both records")
-+    func longPromptDropsOnlyTheDescription() async throws {
-+        let prompt = String(repeating: "a cat wearing a hat, ", count: 2_000)
-+        let data = try #require(
-+            await Self.coreMLMetadata(prompt: prompt).pngData(for: makeCGImage()))
-+        let url = temp.appending("long.png")
-+        try data.write(to: url, options: .atomic)
-+
-+        #expect(xmpDescription(of: data) == nil)
-+        #expect(data.range(of: Data("parameters\0".utf8)) != nil)
-+        #expect(try #require(createImageRecordFromURL(url)).prompt == prompt)
-+    }
-+
-+    @Test("An image whose native record exceeds its limit is not written")
-+    func oversizedRecordIsNotWritten() async {
-+        let prompt = String(repeating: "a cat wearing a hat, ", count: 4_000)
-+
-+        #expect(await Self.coreMLMetadata(prompt: prompt).pngData(for: makeCGImage()) == nil)
-+    }
-+
-     // MARK: - Released and foreign images
- 
-     /// Writes an image the way released Mochi Diffusion did: an IPTC caption
+@@ -41,8 +41,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/apple/swift-argument-parser.git",
+       "state" : {
+-        "revision" : "c8ed701b513cf5177118a175d85fbbbcd707ab41",
+-        "version" : "1.3.0"
++        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
++        "version" : "1.8.2"
+       }
+     },
+     {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #525** (closed): build(deps): bump github.com/huggingface/swift-transformers from 0.1.8 to 1.3.4 (@dependabot[bot])
-- **PR #522** (2026-09-26): New Crowdin updates (@itsjoshpark)
-- **PR #520** (2026-09-26): build(deps): bump crowdin/github-action from 2.16.3 to 3.0.2 (@dependabot[bot])
-- **PR #519** (closed): build(deps): bump crowdin/github-action from 2.16.3 to 3.0.1 (@dependabot[bot])
-- **PR #518** (closed): build(deps): bump crowdin/github-action from 2.16.3 to 3.0.0 (@dependabot[bot])
-- **PR #517** (closed): build(deps): bump crowdin/github-action from 2.16.3 to 2.17.1 (@dependabot[bot])
+- **PR #534** (2026-11-02): Release 6.3 (@gdbing)
+- **PR #533** (2026-11-02): build(deps): bump github.com/sparkle-project/sparkle from 2.9.0 to 2.10.1 (@dependabot[bot])
+- **PR #532** (2026-11-02): build(deps): bump github.com/gdbing/filterablepicker from 1.0.1 to 1.1.0 (@dependabot[bot])
+- **PR #531** (2026-11-02): build(deps): bump crowdin/github-action from 3.0.2 to 3.5.0 (@dependabot[bot])
+- **PR #530** (2026-11-02): build(deps): bump github.com/huggingface/swift-transformers from 0.1.8 to 1.3.5 (@dependabot[bot])
+- **PR #529** (2026-11-02): build(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 
 ---
 
@@ -2563,51 +2142,28 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep Quick Look bound to a State mirror
+## X. move iris.c to the attention reduction fix
 
 **RULE**:
-When implementing operations in `Mochi Diffusion/MochiDiffusionApp.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MochiDiffusion/MochiDiffusion. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `iris.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MochiDiffusion/MochiDiffusion. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2bbbed99`: keep Quick Look bound to a State mirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae2c0f37`: move iris.c to the attention reduction fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Mochi Diffusion/MochiDiffusionApp.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `iris.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Mirrors `quickLook.url` for `quickLookPreview`, which reads its binding off the
-    /// main thread. A `Binding(get:set:)` over the main-actor `QuickLookState` would
-    /// trap on that read under Swift 6 isolation checking; a `@State` binding does not.
-    @State private var quickLookURL: URL?
-                .onChange(of: quickLook.url) { _, newValue in
-                    if quickLookURL != newValue { quickLookURL = newValue }
-                }
-                // The preview reports dismissal by clearing the URL.
-                .onChange(of: quickLookURL) { _, newValue in
-                    if newValue == nil { quickLook.close() }
-                }
-                .quickLookPreview($quickLookURL)
+Subproject commit 8337730034f1d81fe91c389b7210eadcc29c7bb7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    /// The preview reports dismissal by clearing the URL, which closes the shared
-    /// state. It never sets a URL of its own, so only that write is handled.
-    private var quickLookURL: Binding<URL?> {
-        let quickLook = quickLook
-        return Binding(
-            get: { quickLook.url },
-            set: { newValue in
-                if newValue == nil { quickLook.close() }
-            }
-        )
-    }
-
-                .quickLookPreview(quickLookURL)
+Subproject commit c41bce43fb6dffd2b4efb61938e6d60af69063ef
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bbbed99` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae2c0f37` are properly handled with clean fallback behavior.

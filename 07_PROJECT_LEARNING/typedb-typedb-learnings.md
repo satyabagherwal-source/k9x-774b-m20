@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `77d1bd0e`  
+> **Source Version**: `bcf3dc11`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T23:28:41.818Z  
+> **Timestamp**: 2026-11-05T03:46:35.377Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T23:28:41.815Z  
+> **Harvest Timestamp**: 2026-11-05T03:46:35.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4495 stars
+- **Stars / Engagement**: 4500 stars
 
 ---
 
@@ -1834,11 +1834,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8046** (2026-11-04): **Prepare release 3.14.2**
+  *Symptoms*: ## Product change and motivation  Bump version and generate release notes.  ## Implementation
+
 - **Issue #8040** (2026-10-29): **Don't let transaction services excessively hold query manager refs**
   *Symptoms*: ## Product change and motivation  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.  ## Implementation  The gRPC and HTTP transaction services kept a strong reference to the transaction's query manager, and with it the database's query cache, until the service ended, up to 500 ms after a commit or close while draining the request stream. `Database::delete` needs exclusive ownership of the query cache, so a delete in that window panicked.  The services now hold the query manager weakly, so it is released together with the transaction on every path.
-
-- **Issue #8039** (2026-10-28): **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
-  *Symptoms*: ## Product change and motivation  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endpoint accepts clients without a client certificate, following what the gRPC endpoint already does. Client certificates that clients present are still verified against the CA.  TypeDB drivers, Console, and Studio have no option to send a client certificate. When running a server like this: ``` typedb server --server.encryption.enabled=true --server.encryption.certificate=server.pem \     --server.encryption.certificate-key=server-key.pem --server.encryption.ca-certificate=ca.pem ```  **Before:** - Console and drivers successfully connect over gRPC. - Studio, the HTTP drivers, and `curl --cacert ca.pem https://host:8000/v1/version` fail with `tlsv13 alert certificate required`.  **After:** both protocols accept them.  Setting `ca-certificate` does not make client certificates mandatory on either endpoint: it only rejects clients that present a certificate the CA did not sign. Most databases either use the same allowance pattern or explicitly expose "force client certificate verification" in the server's config. We support what already works in gRPC.  ## Implementation Add `allow_unauthenticated` to the `WebPkiClientVerifier` builder for HTTP. It is the alternative to `tonic`'s `client_auth_optional(true)` when we set a CA certificate.  Ignore the error of installing the default `rustls` crypto provider if a p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1855,435 +1855,103 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77d1bd0e` (2026-10-29)
-**Commit Message**: Don't let transaction services excessively hold query manager refs (#8040)
+### Incident Patch 1: `bcf3dc11` (2026-11-04)
+**Commit Message**: Prepare release 3.14.2 (#8046)
 
 ## Product change and motivation
 
-Fix a server crash when a database is deleted right after a transaction
-on it commits or closes. The delete could panic with "Cannot get
-exclusive ownership of inner of Arc<QueryCache>", stopping the server.
+Bump version and generate release notes.
 
 ## Implementation
 
-The gRPC and HTTP transaction services kept a strong reference to the
-transaction's query manager, and with it the database's query cache,
-until the service ended, up to 500 ms after a commit or close while
-draining the request stream. `Database::delete` needs exclusive
-ownership of the query cache, so a delete in that window panicked.
-
-The services now hold the query manager weakly, so it is released
-together with the transaction on every path.
-
-**File**: `server/service/grpc/transaction_service.rs` (modified, +6/-6)
+**File**: `RELEASE_NOTES_LATEST.md` (modified, +37/-200)
 ```diff
-@@ -11,7 +11,7 @@ use std::{
-         ControlFlow,
-         ControlFlow::{Break, Continue},
-     },
--    sync::Arc,
-+    sync::{Arc, Weak},
-     time::Duration,
- };
+@@ -1,244 +1,81 @@
+ **Download from TypeDB Package Repository:**
  
-@@ -147,7 +147,7 @@ pub(crate) struct TransactionService {
+-[Distributions for 3.14.1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.1)
++[Distributions for 3.14.2](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2)
  
-     is_open: bool,
-     transaction: Option<Transaction>,
--    query_manager: Option<Arc<QueryManager>>,
-+    query_manager: Weak<QueryManager>,
-     query_queue: VecDeque<(Uuid, QueueOptions, Arc<TypeQLPipeline>, Option<GivenRowsGrpc>, String)>,
-     query_responders: HashMap<Uuid, (JoinHandle<()>, QueryStreamTransmitter)>,
-     running_write_query: Option<(Uuid, JoinHandle<(Transaction, WriteQueryResult)>)>,
-@@ -183,7 +183,7 @@ impl TransactionService {
+ **Pull the Docker image:**
  
-             is_open: false,
-             transaction: None,
--            query_manager: None,
-+            query_manager: Weak::new(),
-             query_queue: VecDeque::with_capacity(20),
-             query_responders: HashMap::new(),
-             running_write_query: None,
-@@ -484,7 +484,7 @@ impl TransactionService {
-             transaction.load_kind(),
-             ClientEndpoint::Grpc,
-         ));
--        self.query_manager = Some(transaction.query_manager());
-+        self.query_manager = Arc::downgrade(&transaction.query_manager());
-         self.transaction = Some(transaction);
-         self.timeout_at = init_transaction_timeout(Some(transaction_timeout_millis));
-         self.is_open = true;
-@@ -769,7 +769,7 @@ impl TransactionService {
-         analyse_req: typedb_protocol::analyze::Req,
-     ) -> Result<ControlFlow<(), ()>, Status> {
-         let query = analyse_req.query;
--        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
-+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
-             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
-             Ok(ParsedQuery::Schema(_)) => {
-                 let response =
-@@ -813,7 +813,7 @@ impl TransactionService {
+-```docker pull typedb/typedb:3.14.1```
++```docker pull typedb/typedb:3.14.2```
  
-         let query = query_req.query;
-         let given_rows = query_req.given.map(GivenRowsGrpc);
--        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
-+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
-             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
-             Ok(ParsedQuery::Schema(schema_query)) => {
-                 // schema queries are handled immediately so there is a query response or a fatal Status
+ 
+ ## New Features
+-- **Reject importing relations without roleplayers**
+-  
+-  TypeDB currently does not preserve relations without role players on disk, and it is impossible to export a database containing independent relations. However, external migration tools can produce migration streams with such relations, which will lead to future data loss, as these relations cannot exist after migration.
+-  
+-  To avoid this, we explicitly reject such relations until a possible analogue of explicit `@independent` is introduced for relations.
+-  
+-  
++
+ 
+ ## Bugs Fixed
+-- **Fix query planner memory leak**
+-  Fix a memory leak in the query plan cache that made long write-only workloads grow without bound. While commits arrive and no queries run, as during database import, the cache kept a full copy of the database statistics for every commit. 
+-  
+-  Additionally, expose `start_importer` from `DatabaseOperator` as `pub` for external users.
+-  
+-  
+-- **Checkpoint before serving imported databases**
+-  
+-  Finalising an import closed the staged database without a checkpoint, so the reopen replayed every commit since the last periodic checkpoint, all held in memory at once. During an import, that is up to a minute of the heaviest writes, and potentially several GB of memory, all to recover state the database already had.
+-  
+-  `DatabaseOpenError::StatisticsPersist` (DBO18) is removed: a statistics persistence failure at startup is now reported as `StatisticsInitialise` (DBO11).
+-  
+-  
+-- **Fulfill all transaction requests on release**
+-  
+-  Fixed bug where statistics updater would block a concurrent schema transaction from opening indefinitely.
+-  
+-  
+-- **Fix linux CI build**
+-  
+-  Update TypeDB Dependencies to fix all CI builds for Linux.
+-  
+-  
+-- **Fix attribute equality regression**
+-  
+-  Equality lookups on long strings, such as `match $n isa name; $n == "fixed_prefix_with_unique_tail_1234"` were tweaked to do scan rather than point lookup in #7869.  Strings longer than 16 bytes are stored under a hash rather than inline, scanning the entire bucket even when looking for a specific value rather than a range. Equality now uses the value's exact key again, while range comparisons keep using the order-preserving prefix-based search.
+-  
+-  While fixing this, value comparisons on attribute variables were reworked so that all comparisons on a variable are combined before the storage lookup, which fixed several related bugs:
+-  
+-  - **Missed answers when seeking with a bound of another value type.** When several `has` constraints were joined on an owner, the seek used the comparison bound in its own value type. A bound of a different type, such as a double against an integer attribute, could skip valid answers: `$p has age $a; $p has name $n; $a > 10.5;` could drop `age 11`. The same seek could skip long strings that sort after a bound, and datetime-tz values at the same instant in another time zone.
+-  - **Double bounds on decimal attributes** were converted incorrectly, so `match $x isa cost; $x == 10.5;` missed `10.5dec`.
+-  - **Sorting by values that have no ordering** (duration, struct) panicked at runtime. It is now a compile-time error, `UnorderedValueTypeForSortVariable`, for both attribute and computed value variables.
+-  - **Comparisons between attribute variables** are now type-checked per comparator: `<`, `<=`, `>`, `>=` only for value types that have an ordering, and `like`/`contains` only for strings. `contains` between non-string attributes could previously panic.
+-  - **Contradictory comparisons** on one variable (`$x > 10; $x < 5;`) are recognised up front and return no answers without scanning, in most lookup paths.
++- **Don't let transaction services excessively hold query manager refs**
+   
+-  We also change the behaviour durations, which now compare as equal using `==`, but are not range-orderable or sortable.
++  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.
+   
+   
+-- **Avoid blocking the transaction reservation queue on lock timeouts**
++- **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
+   
+-  Fix a bug where a timed-out schema transaction opening request could get stuck in the queue, blocking new schema and write transactions from opening. 
++  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endp
 ```
 
-**File**: `server/service/http/transaction_service.rs` (modified, +6/-6)
+**File**: `VERSION` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@ use std::{
-         ControlFlow,
-         ControlFlow::{Break, Continue},
-     },
--    sync::Arc,
-+    sync::{Arc, Weak},
- };
- 
- use compiler::query_structure::PipelineStructure;
-@@ -159,7 +159,7 @@ pub(crate) struct TransactionService {
-     timeout_at: Instant,
- 
-     transaction: Option<Transaction>,
--    query_manager: Option<QueryManager>,
-+    query_manager: Weak<QueryManager>,
-     query_queue: VecDeque<(TransactionResponder, QueueOptions, Arc<TypeQLPipeline>, Option<GivenRowsHttp>, String)>,
-     running_write_query: Option<(TransactionResponder, JoinHandle<(Transaction, WriteQueryResult)>)>,
-     running_read_queries: JoinSet<ControlFlow<(), ()>>,
-@@ -256,7 +256,7 @@ impl TransactionService {
-             timeout_at: init_transaction_timeout(None),
- 
-             transaction: None,
--            query_manager: None,
-+            query_manager: Weak::new(),
-             query_queue: VecDeque::with_capacity(20),
-             running_write_query: None,
-             running_read_queries: JoinSet::new(),
-@@ -292,7 +292,7 @@ impl TransactionService {
-             transaction.load_kind(),
-             ClientEndpoint::Http,
-         ));
--        self.query_manager = Some(with_readable_transaction!(&transaction, |txn| { (*txn.query_manager).clone() }));
-+        self.query_manager = with_readable_transaction!(&transaction, |txn| { Arc::downgrade(&txn.query_manager) });
-         self.transaction = Some(transaction);
-         self.timeout_at = init_transaction_timeout(Some(transaction_timeout_millis));
- 
-@@ -660,7 +660,7 @@ impl TransactionService {
-         }
- 
-         // Step 1 (parse) needs no transaction, so this is safe even while a write holds it.
--        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
-+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
-             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
-             Ok(ParsedQuery::Schema(schema_query)) => {
-                 // schema queries are handled immediately so there is a query response or a fatal error
-@@ -1215,7 +1215,7 @@ impl TransactionService {
- 
-     async fn handle_analyse_query(&mut self, query: String, responder: TransactionResponder) -> ControlFlow<(), ()> {
-         // Step 1 (parse) needs no transaction, so this is safe even while a write holds it.
--        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
-+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
-             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
-             Ok(ParsedQuery::Schema(_)) => {
-                 respond_error_and_return_break!(responder, TransactionServiceError::AnalyseQueryExpectsPipeline {});
-```
-
----
-
-### Incident Patch 2: `ddc372fc` (2026-10-28)
-**Commit Message**: Let the HTTP endpoint accept clients without a client certificate, matching gRPC (#8039)
-
-## Product change and motivation
-
-Sync up the client certificate validation rules between gRPC and HTTP
-when `ca-certificate` is set. Now, the HTTP endpoint accepts clients
-without a client certificate, following what the gRPC endpoint already
-does. Client certificates that clients present are still verified
-against the CA.
-
-TypeDB drivers, Console, and Studio have no option to send a client
-certificate. When running a server like this:
-```
-typedb server --server.encryption.enabled=true --server.encryption.certificate=server.pem \
-    --server.encryption.certificate-key=server-key.pem --server.encryption.ca-certificate=ca.pem
-```
-
-**Before:**
-- Console and drivers successfully connect over gRPC.
-- Studio, the HTTP drivers, and `curl --cacert ca.pem
-https://host:8000/v1/version` fail with `tlsv13 alert certificate
-required`.
-
-**After:** both protocols accept them.
-
-Setting `ca-certificate` does not make client certificates mandatory on
-either endpoint: it only rejects clients that present a certificate the
-CA did not sign. Most databases either use the same allowance pattern or
-explicitly expos
-
-**File**: `.factory/automation.yml` (modified, +1/-0)
-```diff
-@@ -98,6 +98,7 @@ build:
-         bazel test --config=ci $(bazel query 'kind(rust_test, //function/tests/...)') --test_output=streamed
-         bazel test --config=ci $(bazel query 'kind(rust_test, //ir/tests/...)') --test_output=streamed
-         bazel test --config=ci $(bazel query 'kind(rust_test, //query/tests/...)') --test_output=streamed
-+        bazel test --config=ci $(bazel query 'kind(rust_test, //server/tests/...)') --test_output=streamed
-         # TODO: Uncomment!
-         # bazel test --config=ci $(bazel query 'kind(rust_test, //storage/tests/...)') --test_output=streamed
-         bazel test --config=ci //storage/tests:test_mvcc //storage/tests:test_snapshot //storage/tests:test_isolation \
-```
-
-**File**: `server/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -203,3 +203,7 @@
- [[test]]
- 	name = "test_admin_service"
- 	path = "service/admin/admin_service_test.rs"
-+
-+[[test]]
-+	name = "test_encryption"
-+	path = "tests/encryption.rs"
-```
-
-**File**: `server/error.rs` (modified, +0/-1)
-```diff
-@@ -93,7 +93,6 @@ typedb_error! {
-         HttpCouldNotReadRootCa(21, "Could not read root CA from '{path}' for the HTTP server.", path: String, source: Arc<RustlsCertError>),
-         HttpInvalidRootCa(22, "Invalid root CA for the HTTP server.", source: Arc<RustlsVerifierError>),
-         HttpTlsFailedConfiguration(23, "Failed to configure TLS for the HTTP server.", source: Arc<tokio_rustls::rustls::Error>),
--        HttpTlsUnsetDefaultCryptoProvider(24, "Failed to install default crypto provider for the HTTP server TLS configuration."),
-         HttpTlsPemFileError(25, "Invalid PEM file specified for the HTTP server.", source: Arc<tokio_rustls::rustls::pki_types::pem::Error>),
-         ServerState(26, "Invalid server state.", typedb_source: ArcServerStateError),
-         AddressResolutionFailed(27, "Could not resolve address '{address}'.", address: String, source: Arc<io::Error>),
-```
-
-**File**: `server/lib.rs` (modified, +5/-5)
-```diff
-@@ -299,7 +299,7 @@ impl Server {
-         background_tasks_spawner: TokioTaskSpawner,
-         admin_serve_override: Option<AdminServeFuture>,
-     ) -> Result<(), ServerOpenError> {
--        Self::install_default_encryption_provider()?;
-+        Self::install_default_encryption_provider();
- 
-         let mut servers: Vec<Pin<Box<dyn Future<Output = Result<(), ServerOpenError>> + Send>>> = Vec::new();
- 
-@@ -583,10 +583,10 @@ impl Server {
-         }
-     }
- 
--    fn install_default_encryption_provider() -> Result<(), ServerOpenError> {
--        tokio_rustls::rustls::crypto::ring::default_provider()
--            .install_default()
--            .map_err(|_| ServerOpenError::HttpTlsUnsetDefaultCryptoProvider {})
-+    fn install_default_encryption_provider() {
-+        // `install_default` fails only if a process-wide provider is already installed (by an earlier server in
-+        // this process or another crate), which rustls then uses
-+        let _ = tokio_rustls::rustls::crypto::ring::default_provider().install_default();
-     }
- 
-     pub fn server_state(&self) -> Arc<ServerState> {
-```
-
-**File**: `server/parameters/cli.rs` (modified, +2/-1)
-```diff
-@@ -76,7 +76,8 @@ pub struct CLIArgs {
-     #[arg(long = "server.encryption.certificate-key", value_name = "FILE")]
-     pub server_encryption_certificate_key: Option<String>,
- 
--    /// Encryption CA in PEM format
-+    /// CA certificate in PEM format used to verify client certificates, if clients present one. Clients without a
-+    /// certificate are still accepted
-     #[arg(long = "server.encryption.ca-certificate", value_name = "FILE")]
-     pub server_encryption_ca_certificate: Option<String>,
- 
-```
-
-**File**: `server/service/http/encryption.rs` (modified, +1/-0)
-```diff
-@@ -59,6 +59,7 @@ pub(crate) fn prepare_tls_config(
-             }
-             Some(
-                 WebPkiClientVerifier::builder(Arc::new(client_auth_roots))
-+                    .allow_unauthenticated()
-                     .build()
-                     .map_err(|source| ServerOpenError::HttpInvalidRootCa { source: Arc::new(source) })?,
-             )
-```
-
-**File**: `server/tests/BUILD` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+# This Source Code Form is subject to the terms of the Mozilla Public
-+# License, v. 2.0. If a copy of the MPL was not distributed with this
-+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-+
-+load("@typedb_dependencies//tool/checkstyle:rules.bzl", "checkstyle_test")
-+load("@rules_rust//rust:defs.bzl", "rust_test", "rustfmt_test")
-+package(default_visibility = ["//visibility:public",])
-+
-+rust_test(
-+    name = "test_encryption",
-+    srcs = ["encryption.rs"],
-+    data = ["//server:config.yml"],
-+    deps = [
-+        "//resource",
-+        "//server",
-+        "//util/test:test_utils",
-+
-+        "@crates//:tokio",
-+        "@crates//:tokio-rustls",
-+    ]
-+)
-+
-+rustfmt_test(
-+    name = "rustfmt_test",
-+    targets = [
-+        ":test_encryption",
-+    ],
-+    size = "small",
-+)
-+
-+checkstyle_test(
-+    name = "checkstyle",
-+    include = glob(["*"]),
-+    license_type = "mpl-header",
-+)
-```
-
-**File**: `server/tests/encryption.rs` (added, +308/-0)
-```diff
-@@ -0,0 +1,308 @@
-+/*
-+ * This Source Code Form is subject to the terms of the Mozilla Public
-+ * License, v. 2.0. If a copy of the MPL was not distributed with this
-+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
-+ */
-+
-+use std::{
-+    net::{SocketAddr, TcpListener},
-+    path::{Path, PathBuf},
-+    sync::{Arc, LazyLock},
-+    time::Duration,
-+};
-+
-+use resource::distribution_info::DistributionInfo;
-+use server::{
-+    ServerBuilder,
-+    error::ServerOpenError,
-+    parameters::config::{ConfigBuilder, DiagnosticsConfig, EncryptionConfig},
-+};
-+use test_utils::{TempDir, create_tmp_storage_dir};
-+use tokio::{
-+    io::{AsyncReadExt, AsyncWriteExt},
-+    net::TcpStream,
-+    sync::{Mutex, watch},
-+    task::JoinHandle,
-+};
-+use tokio_rustls::{
-+    TlsConnector,
-+    rustls::{
-+        ClientConfig, RootCertStore,
-+        crypto::ring::default_provider,
-+        pki_types::{CertificateDer, PrivateKeyDer, ServerName, pem::PemObject},
-+    },
-+};
-+
-+const HTTP2_SETTINGS_FRAME_TYPE: u8 = 0x4;
-+
-+const DISTRIBUTION_INFO: DistributionInfo =
-+    DistributionInfo { logo: "logo", distribution: "TypeDB CE TEST", version: "0.0.0-test" };
-+
-+// Test-only certificates (EC P-256, valid for 100 years): a CA, a server certificate for 'localhost'
-+// and a client certificate signed by it, and a client certificate signed by an unrelated CA.
-+const CA_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
-+MIIBmjCCAT+gAwIBAgIUeXX3y2t3srD1KO4q/Ywv3akJB9kwCgYIKoZIzj0EAwIw
-+GTEXMBUGA1UEAwwOVHlwZURCIHRlc3QgQ0EwIBcNMjYxMDI0MTE1MTQ2WhgPMjEy
-+NjA5MzAxMTUxNDZaMBkxFzAVBgNVBAMMDlR5cGVEQiB0ZXN0IENBMFkwEwYHKoZI
-+zj0CAQYIKoZIzj0DAQcDQgAEsaqmk8pEQ/L1A1umD3SL6prNHv0PtQl3zfDRG4+n
-+LkFGPfXKgK6qh1RxSA47ycTyfBhz4AVFDc7cIxlnZ23zOqNjMGEwHQYDVR0OBBYE
-+FJJenktDHldT1kKlwMmTsmgVju6MMB8GA1UdIwQYMBaAFJJenktDHldT1kKlwMmT
-+smgVju6MMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgIEMAoGCCqGSM49
-+BAMCA0kAMEYCIQCVXDj4G3TIzyycOLyuMMhKSOJ9MA1iEQW5Cnxov78fbwIhAMqr
-+QGITAj95W8HgJUPQB0k1cQckY3/CYQL8z2EKglov
-+-----END CERTIFICATE-----
-+";
-+const SERVER_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
-+MIIBhjCCASygAwIBAgIJAOFKz6nAUso4MAoGCCqGSM49BAMCMBkxFzAVBgNVBAMM
-+DlR5cGVEQiB0ZXN0IENBMCAXDTI2MTAyNDExNTE0NloYDzIxMjYwOTMwMTE1MTQ2
-+WjARMQ8wDQYDVQQDDAZzZXJ2ZXIwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAR8
-+evgpckA47ayvKObDgQNmo/QGCqvERH7QzTOetMCvgF3nQH19Y1R7eBmCZsf0SQGC
-+iRvept3ExEML5CtDhy5Vo2MwYTAUBgNVHREEDTALgglsb2NhbGhvc3QwCQYDVR0T
-+BAIwADAdBgNVHQ4EFgQUi+nTDxXwGzpYJfCxs/Lg2n+N98gwHwYDVR0jBBgwFoAU
-+kl6eS0MeV1PWQqXAyZOyaBWO7owwCgYIKoZIzj0EAwIDSAAwRQIhAOx/pEZWLwSm
-+SR6cJUoC/aBd2kums8nOjrQ13q6UXKE8AiAYZYMPlUuPvFK8dvq2t+ebZuL9H5Cw
-+j4E1xCbvELY5Jg==
-+-----END CERTIFICATE-----
-+";
-+const SERVER_KEY: &str = r"-----BEGIN PRIVATE KEY-----
-+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgIu7frd6r4IP7YPHt
-+w0bcgaM0bbSmYXkFQk98z2rwRRqhRANCAAR8evgpckA47ayvKObDgQNmo/QGCqvE
-+RH7QzTOetMCvgF3nQH19Y1R7eBmCZsf0SQGCiRvept3ExEML5CtDhy5V
-+-----END PRIVATE KEY-----
-+";
-+const CLIENT_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
-+MIIBgzCCASmgAwIBAgIJAJC+1oxb+cNJMAoGCCqGSM49BAMCMBkxFzAVBgNVBAMM
-+DlR5cGVEQiB0ZXN0IENBMCAXDTI2MTAyNDExNTE0NloYDzIxMjYwOTMwMTE1MTQ2
-+WjARMQ8wDQYDVQQDDAZjbGllbnQwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATC
-+MmlSIzg5z6paXJ5fNTOOjVGlX5oZeFbfg/VbSxm3DhsDzk4fdvrsr6XMHZmoY619
-+9LjlVkkbcMcol0uFqBJfo2AwXjARBgNVHREECjAIggZjbGllbnQwCQYDVR0TBAIw
-+ADAdBgNVHQ4EFgQU6P27Vd8bx4cHDIPpNQ1UV4vrhUgwHwYDVR0jBBgwFoAUkl6e
-+S0MeV1PWQqXAyZOyaBWO7owwCgYIKoZIzj0EAwIDSAAwRQIgNoN3yA8xmbwI/gIB
-+hc1NJaM9djGwneaWEI8Gmx7mUs0CIQCJEW7n3TbAkyj2jMNdUP4cmEbXW2NpFc5i
-+GsiWq+92EA==
-+-----END CERTIFICATE-----
-+";
-+const CLIENT_KEY: &str = r"-----BEGIN PRIVATE KEY-----
-+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg0yf6XjsVaFlwWm+m
-+lf91GC3ONCTk4LP5kXmpC2CWIG+hRANCAATCMmlSIzg5z6paXJ5fNTOOjVGlX5oZ
-+eFbfg/VbSxm3DhsDzk4fdvrsr6XMHZmoY6199LjlVkkbcMcol0uFqBJf
-+-----END PRIVATE KEY-----
-+";
-+const FOREIGN_CLIENT_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
-+MIIBkTCCATigAwIBAgIIH0UlCWQWm9cwCgYIKoZIzj0EAwIwITEfMB0GA1UEAwwW
-+VHlwZURCIHRlc3QgZm9yZWlnbiBDQTAgFw0yNjEwMjQxMTUxNDZaGA8yMTI2MDkz
-+MDExNTE0NlowGTEXMBUGA1UEAwwOZm9yZWlnbi1jbGllbnQwWTATBgcqhkjOPQIB
-+BggqhkjOPQMBBwNCAAQ8ugpMgZ9M1qrLezvW7UzqMfWZFEjbe8TJqwxNtKJteno5
-+7TQvOB+oMwbLEF8hIdveMgU+6imkY0m2/JfMM2Tzo2AwXjARBgNVHREECjAIggZj
-+bGllbnQwCQYDVR0TBAIwADAdBgNVHQ4EFgQUwPsjwJHZtzXICnxFKBLZVXphbhAw
-+HwYDVR0jBBgwFoAULCwpqE40qBy/r6dNUERa/3dq7TswCgYIKoZIzj0EAwIDRwAw
-+RAIgKStUBM4ErD8W1+zFwxSria4rnou0m/tzhsiG6MfVCL8CIDqKvkYLzN4zwyyH
-+iKPV7iDXS/+AxrlYd+J1KVx4X4kH
-+-----END CERTIFICATE-----
-+";
-+const FOREIGN_CLIENT_KEY: &str = r"-----BEGIN PRIVATE KEY-----
-+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgqiMeIW/cpGQP6Qx8
-+68LTu+fOn7jG1BFC/8EYL+Mfw7mhRANCAAQ8ugpMgZ9M1qrLezvW7UzqMfWZFEjb
-+e8TJqwxNtKJteno57TQvOB+oMwbLEF8hIdveMgU+6imkY0m2/JfMM2Tz
-+-----END PRIVATE KEY-----
-+";
-+
-+#[derive(Debug, Clone, Copy)]
-+enum Endpoint {
-+    Grpc,
-+    Http,
-+}
-+
-+const ENDPOINTS: [Endpoint; 2] = [Endpoint::Grpc, Endpoint::Http];
-+
-+static SERVER_LOCK: LazyLock<Mutex<()>> = LazyLock:
+@@ -1 +1 @@
+-3.14.1
+\ No newline at end of file
++3.14.2
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8040** (2026-10-29): Don't let transaction services excessively hold query manager refs (@farost)
-- **PR #8039** (2026-10-28): Let the HTTP endpoint accept clients without a client certificate, matching gRPC (@farost)
+- **PR #8046** (2026-11-04): Prepare release 3.14.2 (@dmitrii-ubskii)
+- **PR #8040** (2026-10-29): Don't let transaction services excessively hold query manager refs (@genovoselov)
+- **PR #8039** (2026-10-28): Let the HTTP endpoint accept clients without a client certificate, matching gRPC (@genovoselov)
 - **PR #8037** (2026-10-24): Drop HTTP transaction service lock while handling request (@flyingsilverfin)
 - **PR #8036** (2026-10-24): Fix concurrent read queries within a transaction over HTTP (@flyingsilverfin)
 - **PR #8035** (2026-10-27): Bound the query caches by query size, not entry count (@caniko)
-- **PR #8033** (2026-10-22): Prepare release 3.14.1 (@flyingsilverfin)
 
 ---
 
@@ -2303,38 +1971,51 @@ explicitly expos
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't let transaction services excessively hold query manager refs (#8040)
+## X. Prepare release 3.14.2 (#8046)
 
 **RULE**:
-When implementing operations in `server/service/grpc/transaction_service.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE_NOTES_LATEST.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77d1bd0e`: Don't let transaction services excessively hold query manager refs (#8040). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcf3dc11`: Prepare release 3.14.2 (#8046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/service/grpc/transaction_service.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE_NOTES_LATEST.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    sync::{Arc, Weak},
-    query_manager: Weak<QueryManager>,
-            query_manager: Weak::new(),
-        self.query_manager = Arc::downgrade(&transaction.query_manager());
-        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
-        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+[Distributions for 3.14.2](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2)
+```docker pull typedb/typedb:3.14.2```
+
+- **Don't let transaction services excessively hold query manager refs**
+  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.
+- **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
+  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    sync::Arc,
-    query_manager: Option<Arc<QueryManager>>,
-            query_manager: None,
-        self.query_manager = Some(transaction.query_manager());
-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
+[Distributions for 3.14.1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.1)
+```docker pull typedb/typedb:3.14.1```
+- **Reject importing relations without roleplayers**
+  
+  TypeDB currently does not preserve relations without role players on disk, and it is impossible to export a database containing independent relations. However, external migration tools can produce migration streams with such relations, which will lead to future data loss, as these relations cannot exist after migration.
+  
+  To avoid this, we explicitly reject such relations until a possible analogue of explicit `@independent` is introduced for relations.
+  
+  
+- **Fix query planner memory leak**
+  Fix a memory leak in the query plan cache that made long write-only workloads grow without bound. While commits arrive and no queries run, as during database import, the cache kept a full copy of the database statistics for every commit. 
+  
+  Additionally, expose `start_importer` from `DatabaseOperator` as `pub` for external users.
+  
+  
+- **Checkpoint before serving imported databases**
+  
+  Finalising an import closed the staged database without a checkpoint, so 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77d1bd0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcf3dc11` are properly handled with clean fallback behavior.

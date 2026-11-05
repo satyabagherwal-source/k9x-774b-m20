@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `ca8a1dad`  
+> **Source Version**: `d218233a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:52:24.131Z  
+> **Timestamp**: 2026-11-04T18:57:34.784Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:52:23.941Z  
+> **Harvest Timestamp**: 2026-11-04T18:57:34.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5754 stars
+- **Stars / Engagement**: 5756 stars
 
 ---
 
@@ -984,13 +984,11 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8019** (2026-11-02): **build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images**
-  *Symptoms*: Bumps alpine from 3.24.2 to 3.24.3.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.2&new-version=3.24.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
+- **Issue #8025** (2026-11-04): **chore(chart): bump default Kubernetes and etcd versions**
+  *Symptoms*: **What type of PR is this?**  /kind cleanup  **What this PR does / why we need it**:  Update the Helm chart default images for kube-apiserver and kube-controller-manager from v1.36.2 to v1.37.1, and etcd from 3.6.8-0 to 3.7.0-0.  This keeps the chart defaults in sync with the operator (#7997) as part of the Kubernetes v1.37 bump.  **Which issue(s) this PR fixes**:  Part of #7975  **Special notes for your reviewer**:  - Chart-only change. karmadactl init is covered by #8011. - etcd tag is `3.7.0-0` (no leading `v`) to match `registry.k8s.io/etcd` and `EtcdDefaultVersion` in the operator. - Verified with `helm template`; rendered images:   - `registry.k8s.io/kube-apiserver:v1.37.1`   - `registry.k8s.io/kube-controller-manager:v1.37.1`   - `registry.k8s.io/etcd:3.7.0-0` - `make verify` and `make test` passed.  **Does this PR introduce a user-facing change?**:  ```release-note `Helm chart`: Updated the default `kube-apiserver` and `kube-controller-manager` images from v1.36.2 to v1.37.1, and the default etcd image from 3.6.8-0 to 3.7.0-0.
 
-- **Issue #8018** (2026-11-02): **build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images**
-  *Symptoms*: Bumps alpine from 3.24.2 to 3.24.3.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.2&new-version=3.24.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8018#pullrequestreview-5731267786" title="Approved">RainbowMango</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS)~~ [RainbowMango]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+- **Issue #8020** (2026-11-04): **CI: split up the release workflow**
+  *Symptoms*: **What type of PR is this?** /kind cleanup <!-- Add one of the following kinds: /kind bug /kind feature /kind documentation /kind cleanup  Optionally add one or more of the following kinds if applicable: /kind api-change /kind deprecation /kind failing-test /kind flake /kind regression  -->  **What this PR does / why we need it**: While investigating a failed release workflow, I noticed that combining many independent release tasks in a single workflow makes retries difficult. Rerunning only the failed jobs may not address the underlying failure, while rerunning all jobs can introduce failures in unrelated tasks.  Take https://github.com/karmada-io/karmada/actions/runs/41184494637/job/124488815779 as an example:  1. `crds-provenance / final` failed, but the underlying error occurred in `crds-provenance / generator`. The generator job was reported as successful because its failing steps used `continue-on-error`. <img width="1696" height="571" alt="image" src="https://github.com/user-attachments/assets/232c2fe8-1530-4b5f-b5ef-789c7b5f1ea7" />  2. Consequently, **Re-run failed jobs** only reran the final status check, reusing the failed outputs without retrying the signing operation. 3. **Re-run all jobs** will reran unrelated tasks such as **Update Krew Index**, which could fail independently.  This PR splits the release workflow into smaller, independent workflows so that each release task can be rerun in full without rerunning unrelated tasks.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1007,130 +1005,89 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c75cf38` (2026-11-02)
-**Commit Message**: Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl
+### Incident Patch 1: `d218233a` (2026-11-04)
+**Commit Message**: Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37
 
-docs: fix broken commands in customresourceinterpreter example
+chore(chart): bump default Kubernetes and etcd versions
 
-**File**: `examples/customresourceinterpreter/README.md` (modified, +3/-3)
+**File**: `charts/karmada/values.yaml` (modified, +3/-3)
 ```diff
-@@ -305,7 +305,7 @@ kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver appl
- You can get `ResourceBinding` to check if the `replicas` field is interpreted successfully.
- 
- ```bash
--kubectl get rb nginx-workload -o yaml
-+kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
- ```
- 
- #### ReviseReplica
-@@ -335,8 +335,8 @@ There is no `Workload` controller deployed on member clusters, so in order to si
- we will manually update `status.readyReplicas` of `Workload` object in member1 cluster to 1. 
- 
- ```bash
--kubectl proxy --port=8001 &
--curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
-+kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
-+curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
- ```
- 
- Then you can get `ResourceBinding` to check if the `status.aggregatedStatus[x].status` field is interpreted successfully.
+@@ -422,7 +422,7 @@ apiServer:
+   image:
+     registry: registry.k8s.io
+     repository: kube-apiserver
+-    tag: "v1.36.2"
++    tag: "v1.37.1"
+     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+     pullPolicy: IfNotPresent
+     ## Optionally specify an array of imagePullSecrets.
+@@ -674,7 +674,7 @@ kubeControllerManager:
+   image:
+     registry: registry.k8s.io
+     repository: kube-controller-manager
+-    tag: "v1.36.2"
++    tag: "v1.37.1"
+     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+     pullPolicy: IfNotPresent
+     ## Optionally specify an array of imagePullSecrets.
+@@ -774,7 +774,7 @@ etcd:
+     image:
+       registry: registry.k8s.io
+       repository: etcd
+-      tag: "3.6.8-0"
++      tag: "3.7.0-0"
+       ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+       pullPolicy: IfNotPresent
+     ## @param etcd.internal.storageType storage type for etcd data
 ```
 
 ---
 
-### Incident Patch 2: `512212ad` (2026-11-01)
-**Commit Message**: docs: fix broken commands in customresourceinterpreter example
+### Incident Patch 2: `fc38850e` (2026-11-04)
+**Commit Message**: chore(chart): bump default Kubernetes and etcd versions
 
-The curl command in the InterpretStatus step was missing the closing
-quote on its Content-Type header, so pasting it left the shell waiting
-for more input.
+Part of #7975
 
-The kubectl proxy in the same step and the ResourceBinding check in the
-InterpretReplica step did not name a kubeconfig or context, unlike the
-surrounding commands in these steps. Point the proxy at member1, which
-the text says is being patched, and the get at karmada-apiserver, using
-the kubeconfig paths and context names set up by
-hack/local-up-karmada.sh.
+Signed-off-by: Aarohi Sharma <[REDACTED_EMAIL]>
 
-Signed-off-by: hd <[REDACTED_EMAIL]>
-
-**File**: `examples/customresourceinterpreter/README.md` (modified, +3/-3)
+**File**: `charts/karmada/values.yaml` (modified, +3/-3)
 ```diff
-@@ -305,7 +305,7 @@ kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver appl
- You can get `ResourceBinding` to check if the `replicas` field is interpreted successfully.
- 
- ```bash
--kubectl get rb nginx-workload -o yaml
-+kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
- ```
- 
- #### ReviseReplica
-@@ -335,8 +335,8 @@ There is no `Workload` controller deployed on member clusters, so in order to si
- we will manually update `status.readyReplicas` of `Workload` object in member1 cluster to 1. 
- 
- ```bash
--kubectl proxy --port=8001 &
--curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
-+kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
-+curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
- ```
- 
- Then you can get `ResourceBinding` to check if the `status.aggregatedStatus[x].status` field is interpreted successfully.
-```
-
----
-
-### Incident Patch 3: `ca8a1dad` (2026-11-03)
-**Commit Message**: Merge pull request #8014 from AarohiSharma5/fix/helm-chart-fhpa-validating-webhooks
-
-fix(chart): register FederatedHPA and CronFederatedHPA validating web…
-
-**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +28/-0)
-```diff
-@@ -243,6 +243,34 @@ webhooks:
-     sideEffects: None
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: federatedhpa.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["autoscaling.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["federatedhpas"]
-+        scope: "Namespaced"
-+    clientConfig:
-+      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-federatedhpa
-+      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: [ "v1" ]
-+    timeoutSeconds: 3
-+  - name: cronfederatedhpa.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["autoscaling.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["cronfederatedhpas"]
-+        scope: "Namespaced"
-+    clientConfig:
-+      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-cronfederatedhpa
-+      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: [ "v1" ]
-+    timeoutSeconds: 3
-   - name: multiclusterservice.karmada.io
-     rules:
-       - operations: ["CREATE", "UPDATE"]
+@@ -422,7 +422,7 @@ apiServer:
+   image:
+     registry: registry.k8s.io
+     repository: kube-apiserver
+-    tag: "v1.36.2"
++    tag: "v1.37.1"
+     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+     pullPolicy: IfNotPresent
+     ## Optionally specify an array of imagePullSecrets.
+@@ -674,7 +674,7 @@ kubeControllerManager:
+   image:
+     registry: registry.k8s.io
+     repository: kube-controller-manager
+-    tag: "v1.36.2"
++    tag: "v1.37.1"
+     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+     pullPolicy: IfNotPresent
+     ## Optionally specify an array of imagePullSecrets.
+@@ -774,7 +774,7 @@ etcd:
+     image:
+       registry: registry.k8s.io
+       repository: etcd
+-      tag: "3.6.8-0"
++      tag: "3.7.0-0"
+       ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
+       pullPolicy: IfNotPresent
+     ## @param etcd.internal.storageType storage type for etcd data
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8025** (2026-11-04): chore(chart): bump default Kubernetes and etcd versions (@AarohiSharma5)
+- **PR #8020** (closed): CI: split up the release workflow (@zhzhuang-zju)
 - **PR #8019** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
 - **PR #8018** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
 - **PR #8017** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
 - **PR #8016** (2026-11-02): build(deps): bump alpine from 3.24.2 to 3.24.3 in /cluster/images (@dependabot[bot])
-- **PR #8015** (2026-11-02): docs: fix broken commands in customresourceinterpreter example (@hnrydvd)
-- **PR #8014** (2026-11-03): fix(chart): register FederatedHPA and CronFederatedHPA validating web… (@AarohiSharma5)
 
 ---
 
@@ -1150,32 +1107,32 @@ fix(chart): register FederatedHPA and CronFederatedHPA validating web…
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl
+## X. Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37
 
 **RULE**:
-When implementing operations in `examples/customresourceinterpreter/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/karmada/values.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c75cf38`: Merge pull request #8015 from hnrydvd/docs/fix-interpreter-example-curl. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d218233a`: Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/customresourceinterpreter/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/values.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-kubectl --kubeconfig $HOME/.kube/karmada.config --context karmada-apiserver get rb nginx-workload -o yaml
-kubectl --kubeconfig $HOME/.kube/members.config --context member1 proxy --port=8001 &
-curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json"
+    tag: "v1.37.1"
+    tag: "v1.37.1"
+      tag: "3.7.0-0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-kubectl get rb nginx-workload -o yaml
-kubectl proxy --port=8001 &
-curl  http://127.0.0.1:8001/apis/workload.example.io/v1alpha1/namespaces/default/workloads/nginx/status  -XPATCH -d'{"status":{"readyReplicas": 1}}' -H "Content-Type: application/merge-patch+json
+    tag: "v1.36.2"
+    tag: "v1.36.2"
+      tag: "3.6.8-0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c75cf38` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d218233a` are properly handled with clean fallback behavior.

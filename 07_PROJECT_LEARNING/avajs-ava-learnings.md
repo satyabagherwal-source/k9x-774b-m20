@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source**: github ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
-> **Source Version**: `8640039a`  
+> **Source Version**: `8bd11143`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:19:26.223Z  
+> **Timestamp**: 2026-11-04T07:33:19.406Z  
 > **Learning ID**: `learn-github-avajs-ava`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:19:25.077Z  
+> **Harvest Timestamp**: 2026-11-04T07:33:18.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Node.js test runner that lets you develop with confidence 🚀
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 20826 stars
+- **Stars / Engagement**: 20828 stars
 
 ---
 
@@ -1249,16 +1249,15 @@ export function set(newOptions) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3491** (2026-10-31): **`test-` replacement in test title prefix is too broad**
+  *Symptoms*: The replacement regex is too broad in this line:  https://github.com/avajs/ava/blob/bbfd946322fdeca2b547a691d947fb4e18c0c67f/lib/reporters/prefix-title.js#L19  A file named `normalize-test-case.js` will be appear as `normalize-case` in the test title prefix.  AVA 8.0.1 No additional configurations used. 
+  **Post-Mortem & Fix Analysis**:
+  > Good catch, PR welcome.
+
 - **Issue #3373** (2025-04-15): **Timeout does not function if test is writing to the console**
   *Symptoms*: Please provide details about:  * What you're trying to do I have a test which is writing debug logs to the console but not making any asserts. The timeout on that test is triggering that the test failed, but not actually stopping the test run so ava never exits.  > Timeouts can also be set individually for each test. These timeouts are reset each time an assertion is made. The test fails if it takes more than ms for an assertion to be made or the test to complete.  * What happened ``` $ npm test will-not-stop.js  > test > ava will-not-stop.js   0s 1s 2s 3s 4s   ✘ [fail]: will not stop stop after 5s 5s 6s 7s ... 62s ^C     ✘ Exiting due to SIGINT    Failed to exit when running will-not-stop.js    ─    will not stop    Error: stop after 5s    Error: stop after 5s       at Timeout.<anonymous> (file:///Users/matthew/spikes/repro-ava-timeout/node_modules/ava/lib/test.js:439:24)       at listOnTimeout (node:internal/timers:594:17)       at process.processTimers (node:internal/timers:529:7)    ─    1 test failed ```  * What you expected to happen I expected the test to exit after it was marked as having failed, as in this example:  ``` $ npm test will-stop.js  > test > ava will-stop.js     ✘ [fail]: will stop stop after 5s      ✘ Timed out while running tests    Failed to exit when running will-stop.js    ─    will stop    Error: stop after 5s    Error: stop after 5s       at Timeout.<anonymous> (file:///Users/matthew/spikes/repro-ava-timeout/node_modules/ava/lib/test.js:439:24)    
   **Post-Mortem & Fix Analysis**:
   > For future readers, the issue here is that AVA believes the test worker is still active, but only because it's writing to stdout. It therefore doesn't exit. The lack of exiting is because the timeout itself is keeping the worker alive, but AVA should have detected the worker not exiting.  More in #3374.
-
-- **Issue #3295** (2024-01-28): **Spurious "previous failures in test files that were not rerun" in watch mode**
-  *Symptoms*: ### Actual  When AVA v6.1.0 runs in watch mode, it prints something like `4 previous failures in test files that were not rerun` on every rerun, counting all previously-failed tests from all previous runs, even after re-running all tests with 100% passing results.  ### Expected  When AVA runs in watch mode, it should not report previous test failures. When all tests are passing, it should report that all tests are passing, full stop.  ### Reproduction  Minimal reproduction steps below, with annotations about observed behavior:  ``` $ mkdir /tmp/ava-repro && cd /tmp/ava-repro && npm install --dev ava $ npx ava --version 6.1.0 $ echo "require('ava')('repro', t => t.fail());" > test.js $ npx ava -w    ✘ [fail]: test › repro Test failed via `t.fail()`   ─    test › repro    test.js:1     1: require('ava')('repro', t => t.fail());    2:                                            Test failed via `t.fail()`    › test.js:1:32    ─    1 test failed [16:17:04] ```  Touch `test.js` to let AVA re-run the test:  ```  ✘ [fail]: test › repro Test failed via `t.fail()`   ─    test › repro    test.js:1     1: require('ava')('repro', t => t.fail());    2:                                            Test failed via `t.fail()`    › test.js:1:32   ─    1 test failed [16:39:56]   1 previous failure in test files that were not rerun ```  Change `t.fail()` to `t.pass()` and save:  ```  ✔ test › repro   ─    1 test passed [16:19:00]  
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the great bug report @mildmojo!  See #3297, the counters were never cleared correctly, so on every run they would increase.  Previous reports were likely closed because the watch mode was rewritten, and that should have resolved any remaining issues, but for a path inconsistency.
-  > Thanks for the fast fix! :raised_hands: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1275,401 +1274,275 @@ export function set(newOptions) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8293ce3d` (2026-10-27)
-**Commit Message**: Report timeouts without crashing the TAP reporter
+### Incident Patch 1: `e45dfa08` (2026-10-31)
+**Commit Message**: Make `timeout` work for synchronous tests (#3495)
 
-**File**: `lib/reporters/tap.js` (modified, +3/-1)
+* Timeout for synchronous tests
+
+Fail a (synchronous) test when its runtime exceeds the configured
+timeout value. This prevents tests with long runtimes but no
+asynchronicity from succeeding.
+
+The added test fixture demonstrates this. Before this change such a test
+would pass but with this change it will fail because it exceeds the
+configured timeout.
+
+* Refresh synchronous timeout
+
+Extend the synchronous timeout behavior to, like the asynchronous
+timeout behavior, reset the timer, through `refreshTimeout`, on (e.g.)
+assertions.
+
+* Keep test duration including teardown duration
+
+Don't reuse the `now` value to determine if the test timeout/deadline
+was met to compute the (overall) test duration. This is in line with
+async tests, which only fail if the test itself, excluding teardown,
+exceeded the configured timeout (verified manually).
+
+To catch regression like this in the future I (tried) added a tests that
+assert the output of AVA includes the test duration for long running
+tests AND long running teardowns in its output.
+
+**File**: `lib/test.js` (modified, +30/-1)
 ```diff
-@@ -6,6 +6,8 @@ import indentString from 'indent-string';
- import plur from 'plur';
- import * as supertap from 'supertap';
- 
-+import serializeError from '../serialize-error.js';
-+
- import prefixTitle from './prefix-title.js';
- 
- function dumpError({
-@@ -153,7 +155,7 @@ export default class TapReporter {
- 
- 		for (const [testFile, tests] of evt.pendingTests) {
- 			for (const title of tests) {
--				this.writeTest({testFile, title, err: error}, {passed: false, todo: false, skip: false});
-+				this.writeTest({testFile, title, err: serializeError(error)}, {passed: false, todo: false, skip: false});
- 			}
- 		}
+@@ -297,6 +297,7 @@ export default class Test {
+ 		this.assertError = null;
+ 		this.attemptCount = 0;
+ 		this.calledEnd = false;
++		this.deadline = null;
+ 		this.duration = null;
+ 		this.finishDueToInactivity = null;
+ 		this.finishDueToAttributedError = null;
+@@ -310,12 +311,19 @@ export default class Test {
+ 		this.planAssertionStack = null;
+ 		this.startedAt = 0;
+ 		this.testFailure = null;
++		this.timeoutDuration = null;
++		this.timeoutMessage = null;
+ 		this.timeoutTimer = null;
  	}
+ 
+ 	async #doFinish() {
+ 		this.finishing = true;
+ 
++		const now = nowAndTimers.now();
++		if (this.deadline !== null && now > this.deadline) {
++			this.saveFirstError(new Error(this.timeoutMessage));
++		}
++
+ 		this.clearTimeout();
+ 		this.verifyPlan();
+ 		this.verifyAssertions();
+@@ -489,23 +497,44 @@ export default class Test {
+ 		}
+ 
+ 		this.clearTimeout();
++		this.timeoutDuration = ms;
++		this.timeoutMessage = message ?? 'Test timeout exceeded';
+ 		this.timeoutTimer = nowAndTimers.setCappedTimeout(() => {
+-			this.saveFirstError(new Error(message ?? 'Test timeout exceeded'));
++			this.saveFirstError(new Error(this.timeoutMessage));
+ 
+ 			if (this.finishDueToTimeout) {
+ 				this.finishDueToTimeout();
+ 			}
+ 		}, ms);
+ 
++		this.deadline = nowAndTimers.now() + this.timeoutDuration;
++
+ 		this.notifyTimeoutUpdate(ms);
+ 	}
+ 
+ 	refreshTimeout() {
++		if (this.deadline !== null) {
++			const now = nowAndTimers.now();
++			if (now > this.deadline) {
++				this.saveFirstError(new Error(this.timeoutMessage));
++
++				if (this.finishDueToTimeout) {
++					this.finishDueToTimeout();
++					return;
++				}
++			}
++
++			this.deadline = now + this.timeoutDuration;
++		}
++
+ 		this.timeoutTimer?.refresh();
+ 	}
+ 
+ 	clearTimeout() {
+ 		nowAndTimers.clearTimeout(this.timeoutTimer);
++		this.deadline = null;
++		this.timeoutDuration = null;
++		this.timeoutMessage = null;
+ 		this.timeoutTimer = null;
+ 	}
+ 
 ```
 
-**File**: `test-tap/reporters/tap.js` (modified, +1/-0)
+**File**: `test/test-duration/fixtures/package.json` (added, +8/-0)
 ```diff
-@@ -51,4 +51,5 @@ test(async t => {
- 	t.test('tap reporter - second failFast run', run('failFast2'));
- 	t.test('tap reporter - only run', run('only'));
- 	t.test('tap reporter - edge cases', run('edgeCases'));
-+	t.test('tap reporter - timeout', run('timeoutInSingleFile'));
+@@ -0,0 +1,8 @@
++{
++	"type": "module",
++	"ava": {
++		"files": [
++			"*.js"
++		]
++	}
++}
+```
+
+**File**: `test/test-duration/fixtures/teardown.js` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import {setTimeout as delay} from 'node:timers/promises';
++
++import test from 'ava';
++
++test('async teardown', t => {
++	t.teardown(() => delay(105));
++	t.pass();
++});
++
++test('sync teardown', t => {
++	t.teardown(() => {
++		const start = Date.now();
++		while (Date.now() < start + 105) {
++			// Busy-wait to block the event loop
++		}
++	});
++	t.pass();
++});
+```
+
+**File**: `test/test-duration/fixtures/test.js` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++import {setTimeout as delay} from 'node:timers/promises';
++
++import test from 'ava';
++
++test('async test', async t => {
++	await delay(105);
++	t.pass();
++});
++
++test('sync test', t => {
++	const start = Date.now();
++	while (Date.now() < start + 105) {
++		// Busy-wait to block the event loop
++	}
++
++	t.pass();
++});
+```
+
+**File**: `test/test-duration/test.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++import test from '@ava/test';
++
++import {fixture} from '../helpers/exec.js';
++
++test('test duration of a long-running test', async t => {
++	const result = await fixture(['test.js']);
++	t.regex(result.stdout, /async test \(\d{3}ms\)/);
++	t.regex(result.stdout, /sync test \(\d{3}ms\)/);
++});
++
++test('test duration of a long-running teardown', async t => {
++	const result = await fixture(['teardown.js']);
++	t.regex(result.stdout, /async teardown \(\d{3}ms\)/);
++	t.regex(result.stdout, /sync teardown \(\d{3}ms\)/);
++});
+```
+
+**File**: `test/test-timeouts/fixtures/synchronous.js` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++import test from 'ava';
++
++test('timeout with a synchronous test', t => {
++	t.timeout(10);
++	const start = Date.now();
++	while (Date.now() < start + 15) {
++		// Busy-wait to block the event loop
++	}
++
++	t.pass();
++});
+```
+
+**File**: `test/test-timeouts/snapshots/test.js.md` (modified, +6/-0)
+```diff
+@@ -18,3 +18,9 @@ Generated by [AVA](https://avajs.dev).
+         label: 'Called with:',
+       },
+     ]
++
++## timeout for a synchronous test
++
++> error message
++
++    'Test timeout exceeded'
+```
+
+**File**: `test/test-timeouts/test.js` (modified, +6/-0)
+```diff
+@@ -14,3 +14,9 @@ test('timeout messages must be strings', async t => {
+ 	t.snapshot(error.message, 'error message');
+ 	t.snapshot(error.formattedDetails, 'formatted details');
  });
-```
-
-**File**: `test-tap/reporters/tap.timeoutinsinglefile.v22.log` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+TAP version 13
-+---tty-stream-chunk-separator
-+ok 1 - passes
-+---tty-stream-chunk-separator
-+ok 2 - passes two
-+---tty-stream-chunk-separator
-+not ok 3 - slow
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
-+not ok 4 - slow two
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
 +
-+1..4
-+# tests 4
-+# pass 2
-+# fail 2
-+
-+---tty-stream-chunk-separator
-```
-
-**File**: `test-tap/reporters/tap.timeoutinsinglefile.v24.log` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+TAP version 13
-+---tty-stream-chunk-separator
-+ok 1 - passes
-+---tty-stream-chunk-separator
-+ok 2 - passes two
-+---tty-stream-chunk-separator
-+not ok 3 - slow
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
-+not ok 4 - slow two
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
-+
-+1..4
-+# tests 4
-+# pass 2
-+# fail 2
-+
-+---tty-stream-chunk-separator
-```
-
-**File**: `test-tap/reporters/tap.timeoutinsinglefile.v26.log` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+TAP version 13
-+---tty-stream-chunk-separator
-+ok 1 - passes
-+---tty-stream-chunk-separator
-+ok 2 - passes two
-+---tty-stream-chunk-separator
-+not ok 3 - slow
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
-+not ok 4 - slow two
-+  ---
-+    name: Error
-+    message: Exited because no new tests completed within the last 2500ms of inactivity
-+    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
-+  ...
-+---tty-stream-chunk-separator
-+
-+1..4
-+# tests 4
-+# pass 2
-+# fail 2
-+
-+---tty-stream-chunk-separator
++test('timeout for a synchronous test', async t => {
++	const result = await t.throwsAsync(fixture(['synchronous.js']));
++	const error = result.stats.getError(result.stats.failed[0]);
++	t.snapshot(error.message, 'error message');
++});
 ```
 
 ---
 
-### Incident Patch 2: `9d3cd5d6` (2026-10-27)
-**Commit Message**: Fix TAP reporter assertion locations (#3485)
+### Incident Patch 2: `a8122ebd` (2026-10-31)
+**Commit Message**: Only strip a leading `test-` from file names in test title prefixes (#3494)
 
-**File**: `lib/reporters/tap.js` (modified, +8/-1)
+A file named `normalize-test-case.js` was shown as `normalize-case`,
+because the first `test-` anywhere in the name was removed. Only remove it
+when the file name starts with it, matching the `test-*.js` pattern.
+
+Fixes #3491
+
+**File**: `lib/reporters/prefix-title.js` (modified, +1/-1)
 ```diff
-@@ -17,6 +17,7 @@ function dumpError({
- 	name,
- 	originalError, // A structured clone, so some details are missing.
- 	stack,
-+	source,
- 	type,
- }, sanitizeStackOutput) {
- 	if (type === 'unknown') {
-@@ -47,7 +48,13 @@ function dumpError({
- 		}
- 	}
+@@ -16,7 +16,7 @@ export default function prefixTitle(extensions, base, file, title) {
+ 	const filename = parts.pop()
+ 		.replace(/\.spec\./, '.')
+ 		.replace(/\.test\./, '.')
+-		.replace(/test-/, '')
++		.replace(/^test-/, '')
+ 		.replace(new RegExp(`.(${extensions.join('|')})$`), '');
  
--	originalError.stack = sanitizeStackOutput?.(stack || originalError.stack) ?? (stack || originalError.stack);
-+	const errorStack = stack || originalError.stack;
-+	// Supertap uses only the first frame. Prefer the test source found during
-+	// serialization for AVA assertions; retain the stack for other errors.
-+	const tapStack = type === 'ava' && source
-+		? `${errorStack.split('\n', 1)[0]}\n    at ${source.file}:${source.line}`
-+		: errorStack;
-+	originalError.stack = sanitizeStackOutput?.(tapStack) ?? tapStack;
- 
- 	return originalError;
- }
+ 	return [...parts, filename, title].join(SEPARATOR);
 ```
 
-**File**: `test-tap/reporters/tap.failfast.v22.log` (modified, +1/-1)
+**File**: `test-tap/reporters/prefix-title.js` (modified, +6/-0)
 ```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast/a.js:3'
-   ...
- ---tty-stream-chunk-separator
+@@ -60,6 +60,12 @@ test('removes test- from file', t => {
+ 	t.end();
+ });
  
-```
-
-**File**: `test-tap/reporters/tap.failfast.v24.log` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast/a.js:3'
-   ...
- ---tty-stream-chunk-separator
- 
-```
-
-**File**: `test-tap/reporters/tap.failfast.v26.log` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast/a.js:3'
-   ...
- ---tty-stream-chunk-separator
- 
-```
-
-**File**: `test-tap/reporters/tap.failfast2.v22.log` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast2/a.js:3'
-   ...
- ---tty-stream-chunk-separator
- 
-```
-
-**File**: `test-tap/reporters/tap.failfast2.v24.log` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast2/a.js:3'
-   ...
- ---tty-stream-chunk-separator
- 
-```
-
-**File**: `test-tap/reporters/tap.failfast2.v26.log` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ not ok 1 - a › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/failfast2/a.js:3'
-   ...
- ---tty-stream-chunk-separator
- 
-```
-
-**File**: `test-tap/reporters/tap.regular.v22.log` (modified, +11/-13)
-```diff
-@@ -30,7 +30,7 @@ not ok 3 - nested-objects › format with max depth 4
-         +   },
-           }
-     message: ''
--    at: 'ExecutionContext.deepEqual (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/nested-objects.js:29'
-   ...
- ---tty-stream-chunk-separator
- not ok 4 - nested-objects › format like with max depth 4
-@@ -48,7 +48,7 @@ not ok 4 - nested-objects › format like with max depth 4
-             },
-           }
-     message: ''
--    at: 'ExecutionContext.like (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/nested-objects.js:55'
-   ...
- ---tty-stream-chunk-separator
- # output-in-hook › before hook
-@@ -72,7 +72,7 @@ not ok 6 - output-in-hook › failing test
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/output-in-hook.js:34'
-   ...
- ---tty-stream-chunk-separator
- # output-in-hook › afterEach hook for passing test
-@@ -102,7 +102,7 @@ not ok 10 - test › fails
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/test.js:9'
-   ...
- ---tty-stream-chunk-separator
- ok 11 - test › known failure
-@@ -123,7 +123,7 @@ not ok 13 - test › logs
-     name: AssertionError
-     assertion: t.fail()
-     message: Test failed via `t.fail()`
--    at: 'ExecutionContext.fail (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/test.js:18'
-   ...
- ---tty-stream-chunk-separator
- not ok 14 - test › formatted
-@@ -135,7 +135,7 @@ not ok 14 - test › formatted
-         - 'foo'
-         + 'bar'
-     message: ''
--    at: 'ExecutionContext.deepEqual (/lib/assert.js)'
-+    at: '/test-tap/fixture/report/regular/test.js:22'
-   ...
- ---tty-stream-chunk-separator
- not ok 15 - test › implementation throws non-error
-@@ -158,7 +158,7 @@ not ok 16 - traces-in-t-throws › throws
-         }
-       'Expected instance of:': 'Function TypeError {}'
-     message: ''
--    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
-+    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:12'
-   ...
- ---tty-stream-chunk-separator
- not ok 17 - traces-in-t-throws › notThrows
-@@ -171,7 +171,7 @@ not ok 17 - traces-in-t-throws › notThrows
-           message: 'uh-oh',
-         }
-     message: ''
--    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
-+    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:16'
-   ...
- ---tty-stream-chunk-separator
- not ok 18 - traces-in-t-throws › notThrowsAsync
-@@ -184,7 +184,7 @@ not ok 18 - traces-in-t-throws › notThrowsAsync
-           message: 'uh-oh',
-         }
-     message: ''
--    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
-+    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:20'
-   ...
- ---tty-stream-chunk-separator
- not ok 19 - traces-in-t-throws › throwsAsync
-@@ -197,7 +197,7 @@ not ok 19 - traces-in-t-throws › throwsAsync
-           message: 'uh-oh',
-         }
-     message: ''
--    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
-+    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:24'
-   ...
- ---tty-stream-chunk-separator
- not ok 20 - traces-in-t-throws › throwsAsync different error
-@@ -211,9 +211,7 @@ not ok 20 - traces-in-t-throws › throwsAsync different error
-         }
-       'Expected instance of:': 'Function TypeError {}'
-     message: ''
--    at: >-
--      returnRejectedPromise
--      (/test-tap/fixture/report/regular/traces-in-t-throws.js:8:24)
-+    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:28'
-   ...
- ---tty-stream-chunk-separator
- ok 21 - uncaught-exception › passes
-```
-
----
-
-### Incident Patch 3: `a967e2fd` (2026-10-27)
-**Commit Message**: Fix typos in source code and comments (#3465)
-
-- Fix `asssertion` → `assertion` in lib/assert.js (triple 's' meant the AssertionError constructor received the wrong property key, leaving `.assertion` undefined on snapshot comparison errors)
-- Fix `isues` → `issues` in test/watch-mode/helpers/watch.js comment
-- Fix `Mimick` → `Mimic` in test-tap/helper/report.js comment
-
-Co-authored-by: maxtaran2010 <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-**File**: `lib/assert.js` (modified, +1/-1)
-```diff
-@@ -702,7 +702,7 @@ export class Assertions {
- 				}
- 
- 				throw fail(new AssertionError(message ?? 'Could not compare snapshot', {
--					asssertion: 't.snapshot()',
-+					assertion: 't.snapshot()',
- 					improperUsage,
- 				}));
- 			}
-```
-
-**File**: `test-tap/helper/report.js` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ const run = async (type, reporter, {match = [], filter} = {}) => {
- 		});
- 	}
- 
--	// Mimick watch mode
-+	// Mimic watch mode
- 	return api.run({files, filter, runtimeOptions: {countPreviousFailures: () => 0, firstRun: true}}).then(() => {
- 		reporter.endRun();
- 		return api.run({files, filter, runtimeOptions: {countPreviousFailures: () => 2, firstRun: false}});
-```
-
-**File**: `test/watch-mode/helpers/watch.js` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@ export const withFixture = fixture => async (t, task) => {
- 						// Sending the `abort-watcher` message should suffice, but on Linux
- 						// the recursive watch handle does not close properly. See
- 						// <https://github.com/nodejs/node/issues/48437> but there seem to be
--						// other isues.
-+						// other issues.
- 						setTimeout(() => {
- 							process?.nodeChildProcess.kill('SIGKILL');
- 						}, 1000).unref();
++test('retains test- elsewhere in file', t => {
++	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend/normalize-test-case.js'), 'title'), `backend${sep}normalize-test-case${sep}title`);
++	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend/test-normalize-test-case.js'), 'title'), `backend${sep}normalize-test-case${sep}title`);
++	t.end();
++});
++
+ test('retains test- elsewhere in path', t => {
+ 	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend-test/run-status.js'), 'title'), `backend-test${sep}run-status${sep}title`);
+ 	t.end();
 ```
 
 #### Recent Merged Pull Requests:
@@ -1677,8 +1550,8 @@ Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
 - **PR #3500** (2026-10-22): Update dependencies (@novemberborn)
 - **PR #3497** (2026-10-18): Update release process docs to account for staged publishing (@novemberborn)
 - **PR #3496** (2026-10-15): Update tooling, dependencies, formatting and CI workflows (@novemberborn)
-- **PR #3493** (closed): fix: upgrade tar to 7.5.19 (CVE-2026-59873) (@anupamme)
-- **PR #3487** (closed): fix: use path.relative for robust cross-platform path normalization (#3484) (@PINYOPATTANAWASANPORN)
+- **PR #3495** (2026-10-31): Make `timeout` work for synchronous tests (@ericcornelissen)
+- **PR #3494** (2026-10-31): Fix incorrect removal of `test-` from test title prefixes (@ozenyunus35)
 
 ---
 
@@ -1698,30 +1571,57 @@ Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Report timeouts without crashing the TAP reporter
+## X. Make `timeout` work for synchronous tests (#3495)
 
 **RULE**:
-When implementing operations in `lib/reporters/tap.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8293ce3d`: Report timeouts without crashing the TAP reporter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e45dfa08`: Make `timeout` work for synchronous tests (#3495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/reporters/tap.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import serializeError from '../serialize-error.js';
+		this.deadline = null;
+		this.timeoutDuration = null;
+		this.timeoutMessage = null;
+		const now = nowAndTimers.now();
+		if (this.deadline !== null && now > this.deadline) {
+			this.saveFirstError(new Error(this.timeoutMessage));
+		}
 
-				this.writeTest({testFile, title, err: serializeError(error)}, {passed: false, todo: false, skip: false});
+		this.timeoutDuration = ms;
+		this.timeoutMessage = message ?? 'Test timeout exceeded';
+			this.saveFirstError(new Error(this.timeoutMessage));
+		this.deadline = nowAndTimers.now() + this.timeoutDuration;
+
+		if (this.deadline !== null) {
+			const now = nowAndTimers.now();
+			if (now > this.deadline) {
+				this.saveFirstError(new Error(this.timeoutMessage));
+
+				if (this.finishDueToTimeout) {
+					this.finishDueToTimeout();
+					return;
+				}
+			}
+
+			this.deadline = now + this.timeoutDuration;
+		}
+
+		this.deadline = null;
+		this.timeoutDuration = null;
+		this.timeoutMessage = null;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-				this.writeTest({testFile, title, err: error}, {passed: false, todo: false, skip: false});
+			this.saveFirstError(new Error(message ?? 'Test timeout exceeded'));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8293ce3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e45dfa08` are properly handled with clean fallback behavior.

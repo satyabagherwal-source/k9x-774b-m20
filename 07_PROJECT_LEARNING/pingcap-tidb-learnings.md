@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `644e2d55`  
+> **Source Version**: `d85afde3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:50:41.736Z  
+> **Timestamp**: 2026-11-04T10:57:36.334Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:50:40.675Z  
+> **Harvest Timestamp**: 2026-11-04T10:57:35.772Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40706 stars
+- **Stars / Engagement**: 40707 stars
 
 ---
 
@@ -1940,429 +1940,496 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dd4c55c` (2026-11-03)
-**Commit Message**: fix(deps): retain etcd compatibility with otelgrpc
+### Incident Patch 1: `d85afde3` (2026-11-04)
+**Commit Message**: executor: use TiFlash joined rows for MPP join RU (#72597)
 
-Pin only the otelgrpc instrumentation module to v0.59.0 while etcd 3.5 still requires the legacy interceptors removed in v0.60.0. Keep OpenTelemetry core, SDK and exporters at v1.45.0 and gRPC at v1.83.2, preserving both security fixes.
-
-Add an embedded-etcd unary/streaming RPC regression test, verified to fail with the previous dependency graph and pass with the compatibility pin. Regenerate Bazel dependencies and include the transitive tooling graph changes required by go mod tidy.
-
-Validated make lint, module integrity, owner and streamhelper tests with failpoints enabled, classic and NextGen Go/Bazel test compilation, tidb-server build, and gRPC transport regression tests.
-
-**File**: `DEPS.bzl` (modified, +11/-10)
-```diff
-@@ -715,8 +715,8 @@ def go_deps():
-         name = "com_github_bazelbuild_rules_go",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/bazelbuild/rules_go",
--        sum = "h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=",
--        version = "v0.42.1-0.20231101215950-df20c987afcb",
-+        sum = "h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=",
-+        version = "v0.49.0",
-     )
-     go_repository(
-         name = "com_github_bboreham_go_loser",
-@@ -2053,8 +2053,8 @@ def go_deps():
-         name = "com_github_golang_mock",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/golang/mock",
--        sum = "h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=",
--        version = "v1.6.0",
-+        sum = "h1:YojYx61/OLFsiv6Rw1Z96LpldJIy31o+UHmwAUMJ6/U=",
-+        version = "v1.7.0-rc.1",
-     )
-     go_repository(
-         name = "com_github_golang_protobuf",
-@@ -3217,8 +3217,8 @@ def go_deps():
-         name = "com_github_lyft_protoc_gen_star_v2",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/lyft/protoc-gen-star/v2",
--        sum = "h1:/3+/2sWyXeMLzKd1bX+ixWKgEMsULrIivpDsuaF441o=",
--        version = "v2.0.3",
-+        sum = "h1:sIXJOMrYnQZJu7OB7ANSF4MYri2fTEGIsRLz6LwI4xE=",
-+        version = "v2.0.4-0.20230330145011-496ad1ac90a4",
-     )
-     go_repository(
-         name = "com_github_macabu_inamedparam",
-@@ -6190,8 +6190,9 @@ def go_deps():
-         name = "io_opentelemetry_go_contrib_instrumentation_google_golang_org_grpc_otelgrpc",
-         build_file_proto_mode = "disable_global",
-         importpath = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
--        sum = "h1:q4XOmH/0opmeuJtPsbFNivyl7bCt7yRBbeEm2sC/XtQ=",
--        version = "v0.61.0",
-+        replace = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
-+        sum = "h1:rgMkmiGfix9vFJDcDi1PK8WEQP4FLQwLDfhp5ZLpFeE=",
-+        version = "v0.59.0",
-     )
-     go_repository(
-         name = "io_opentelemetry_go_contrib_instrumentation_net_http_otelhttp",
-@@ -6400,8 +6401,8 @@ def go_deps():
-         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
-         build_file_proto_mode = "disable_global",
-         importpath = "google.golang.org/grpc/cmd/protoc-gen-go-grpc",
--        sum = "h1:M1YKkFIboKNieVO5DLUEVzQfGwJD30Nv2jfUgzb5UcE=",
--        version = "v1.1.0",
-+        sum = "h1:rNBFJjBCOgVr9pWD7rs/knKL4FRTKgpZmsRfV214zcA=",
-+        version = "v1.3.0",
-     )
-     go_repository(
-         name = "org_golang_google_grpc_examples",
-```
-
-**File**: `go.mod` (modified, +4/-1)
-```diff
-@@ -30,7 +30,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.0
- 	github.com/aws/smithy-go v1.24.2
- 	github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb
--	github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb
-+	github.com/bazelbuild/rules_go v0.49.0
- 	github.com/bits-and-blooms/bitset v1.14.3
- 	github.com/blacktear23/go-proxyprotocol v1.0.8
- 	github.com/butuzov/mirror v1.3.3
-@@ -365,6 +365,9 @@ replace (
- 	cloud.google.com/go/storage => cloud.google.com/go/storage v1.39.1
- 	github.com/go-ldap/ldap/v3 => github.com/YangKeao/ldap/v3 v3.4.5-0.20230421065457-369a3bab1117
- 	github.com/pingcap/tidb/pkg/parser => ./pkg/parser
-+	// etcd 3.5 uses the interceptors removed in otelgrpc v0.60.0.
-+	// Remove this compatibility pin when etcd is upgraded to v3.6.1 or later.
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc => go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.59.0
- 	// TODO: `sourcegraph.com/sourcegraph/appdash` has been archived, and the original host has been removed.
- 	// Please remove these dependencies.
- 	sourcegraph.com/sourcegraph/appdash => github.com/sourcegraph/appdash v0.0.0-20190731080439-ebfcffb1b5c0
-```
-
-**File**: `go.sum` (modified, +110/-7)
-```diff
-@@ -1,3 +1,6 @@
-+cel.dev/expr v0.15.0/go.mod h1:TRSuuV7DlVCE/uwv5QbAiW/v8l5O8C4eEPHeu7gf7Sg=
-+cel.dev/expr v0.16.0/go.mod h1:TRSuuV7DlVCE/uwv5QbAiW/v8l5O8C4eEPHeu7gf7Sg=
-+cel.dev/expr v0.16.2/go.mod h1:gXngZQMkWJoSbE8mOzehJlXQyubn/Vg0vR9/F3W7iw8=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
-@@ -341,10 +344,14 @@ cloud.google.com/go/compute v1.23.2/go.mod h1:JJ0atRC0J/oWYiiVBmsSsrRnh92DhZPG4h
- cloud.google.com/go/compute v1.23.3/go.mod h1:VCgBUoMnIVIR0CscqQiPJLAG25E3ZRZMzcFZeQ+h8CI=
- cloud.google.com/go/compute v1.23.4/go.mod h1:/EJMj55asU6kAFnuZET8zqgwgJ9FvXWXOkkfQZa4ioI=
- cloud.google.com/go/compute v1.24.0/go.mod h1:kw1/T+h/+tK2LJK0wiPPx1intgdAM3j/g3hFDlscY40=
-+cloud.google.com/go/compute v1.25.1/go.mod h1:oopOIR53ly6viBYxaDhBfJwzUAxf1zE//uf3IB011ls=
- cloud.google.com/go/compute/metadata v0.1.0/go.mod h1:Z1VN+bulIf6bt4P/C37K4DyZYZEXYonfTBHHFPO/4UU=
- cloud.google.com/go/compute/metadata v0.2.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
- cloud.google.com/go/compute/metadata v0.2.1/go.mod h1:jgHgmJd2RKBGzXqF5LR2EZMGxBkeanZ9wwa75XHJgOM=
- cloud.google.com/go/compute/metadata v0.2.3/go.mod h1:VAV5nSsACxMJvgaAuX6Pk2AawlZn8kiOGuCv6gTkwuA=
-+cloud.google.com/go/compute/metadata v0.3.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
-+cloud.google.com/go/compute/metadata v0.5.0/go.mod h1:aHnloV2TPI38yx4s9+wAZhHykWvVCfu7hQbF+9CWoiY=
-+cloud.google.com/go/compute/metadata v0.5.2/go.mod h1:C66sj2AluDcIqakBq/M8lw8/ybHgOZqin2obFxa/E5k=
- cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
- cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
- cloud.google.com/go/contactcenterinsights v1.3.0/go.mod h1:Eu2oemoePuEFc/xKFPjbTuPSj0fYJcPls9TFlPNnHHY=
-@@ -1337,6 +1344,7 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
- github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
- github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
- github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.24.2/go.mod h1:itPGVDKf9cC/ov4MdvJ2QZ0khw4bfoo9jzwTJlaxy2k=
- github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=
- github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXYg9BVp4O+o5f6V/ehm6Oo=
- github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c/go.mod h1:X0CRv0ky0k6m906ixxpzmDRLvX58TFUKS2eePweuyxk=
-@@ -1497,8 +1505,8 @@ github.com/aws/smithy-go v1.24.2 h1:FzA3bu/nt/vDvmnkg+R8Xl46gmzEDam6mZ1hzmwXFng=
- github.com/aws/smithy-go v1.24.2/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
- github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb h1:4k69c5E7Sa7jmNtv9itBHYA4Z5pfurInuRrtgohxZeA=
- github.com/bazelbuild/buildtools v0.0.0-20230926111657-7d855c59baeb/go.mod h1:689QdV3hBP7Vo9dJMmzhoYIyo/9iMhEmHkJcnaPRCbo=
--github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=
--github.com/bazelbuild/rules_go v0.42.1-0.20231101215950-df20c987afcb/go.mod h1:TFLfii8e49kTgn329knh1lsJFKdxyp/hKlWObY66xwY=
-+github.com/bazelbuild/rules_go v0.49.0 h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=
-+github.com/bazelbuild/rules_go v0.49.0/go.mod h1:Dhcz716Kqg1RHNWos+N6MlXNkjNP2EwZQ0LukRKJfMs=
- github.com/bboreham/go-loser v0.0.0-20230920113527-fcc2c21820a3 h1:6df1vn4bBlDDo4tARvBm7l6KA9iVMnE3NWizDeWSrps=
- github.com/bboreham/go-loser v0.0.0-20230920113527-fcc2c21820a3/go.mod h1:CIWtjkly68+yqLPbvwwR/fjNJA/idrtULjZWh2v1ys0=
- github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
-@@ -1571,6 +1579,10 @@ github.com/cncf/xds/go v0.0.0-20230428030218-4003588d1b74/go.mod h1:eXthEFrGJvWH
- github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
- github.com/cncf/xds/go v0.0.0-20231109132714-523115ebc101/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
- github.com/cncf/xds/go v0.0.0-20231128003011-0fa0005c9caa/go.mod h1:x/1Gn8zydmfq8dk6e9PdstVsDgu9RuyIIJqAaF//0IM=
-+github.com/cncf/xds/go v0.0.0-20240318125728-8a4994d93e50/go.mod h1:5e1+Vvlzido69INQaVO6d87Qn543Xr6nooe9Kz7oBFM=
-+github.com/cncf/xds/go v0.0.0-20240423153145-555b57ec207b/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
-+github.com/cncf/xds/go v0.0.0-20240723142845-024c85f92f20/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
-+github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
- github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 h1:aBangftG7EVZoUb69Os8IaYg++6uMOdKK83QtkkvJik=
- github.com/cnc
-```
-
-**File**: `pkg/util/etcd/etcd_test.go` (modified, +25/-0)
-```diff
-@@ -17,6 +17,7 @@ package etcd
- import (
- 	"context"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
- 	clientv3 "go.etcd.io/etcd/client/v3"
-@@ -28,6 +29,30 @@ func testSetupOriginal(t *testing.T) (context.Context, *clientv3.Client, *integr
- 	return context.Background(), cluster.RandClient(), cluster
- }
- 
-+// TestEtcdOpenTelemetryCompatibility ensures embedded etcd still builds and
-+// serves RPCs after upgrading OpenTelemetry dependencies.
-+func TestEtcdOpenTelemetryCompatibility(t *testing.T) {
-+	integration.BeforeTest(t)
-+	ctx, cli, cluster := testSetupOriginal(t)
-+	t.Cleanup(func() { cluster.Terminate(t) })
-+
-+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-+	defer cancel()
-+	putResp, err := cli.Put(ctx, "otel-compatibility", "value")
-+	require.NoError(t, err)
-+
-+	// Exercise both unary and streaming RPCs.
-+	watch := cli.Watch(ctx, "otel-compatibility", clientv3.WithRev(putResp.Header.Revision))
-+	select {
-+	case resp := <-watch:
-+		require.NoError(t, resp.Err())
-+		require.Len(t, resp.Events, 1)
-+		require.Equal(t, "value", string(resp.Events[0].Kv.Value))
-+	case <-ctx.Done():
-+		t.Fatal(ctx.Err())
-+	}
-+}
-+
- func TestSetEtcdCliByNamespace(t *testing.T) {
- 	integration.BeforeTest(t)
- 	ctx, origEtcdCli, etcdMockCluster := testSetupOriginal(t)
-```
-
----
-
-### Incident Patch 2: `df74ff3d` (2026-11-02)
-**Commit Message**: fix(deps): upgrade grpc to v1.83.2 for security fixes
-
-Upgrade google.golang.org/grpc from v1.83.0 to v1.83.2 to address GHSA-vp52-pcj8-j9qc (CVE-2026-84304), matching tikv/pd#11456. Regenerate DEPS.bzl with make bazel_prepare and synchronize go.sum.
-
-Validated module integrity, gRPC receive-buffer regression tests, the external workload gRPC client round trip, and the tidb-server build. The existing etcd/otelgrpc test compilation incompatibility is unchanged and remains outside this patch.
+ref pingcap/tidb#70444
 
 **File**: `DEPS.bzl` (modified, +2/-2)
 ```diff
-@@ -6393,8 +6393,8 @@ def go_deps():
-         name = "org_golang_google_grpc",
+@@ -3840,8 +3840,8 @@ def go_deps():
+         name = "com_github_pingcap_tipb",
          build_file_proto_mode = "disable_global",
-         importpath = "google.golang.org/grpc",
--        sum = "h1:JeNZEKJFbQxArAMl+hiytHauacDNqJUllNfmIMmpqnQ=",
--        version = "v1.83.0",
-+        sum = "h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=",
-+        version = "v1.83.2",
+         importpath = "github.com/pingcap/tipb",
+-        sum = "h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=",
+-        version = "v0.0.0-20261006155659-59b678398b17",
++        sum = "h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=",
++        version = "v0.0.0-20261015020031-7adb3bb014c4",
      )
      go_repository(
-         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
+         name = "com_github_pkg_browser",
 ```
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -158,7 +158,7 @@ require (
- 	golang.org/x/time v0.14.0
- 	golang.org/x/tools v0.52.0
- 	google.golang.org/api v0.264.0
--	google.golang.org/grpc v1.83.0
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v2 v2.4.0
- 	gorm.io/driver/mysql v1.5.7
+@@ -107,7 +107,7 @@ require (
+ 	github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf
+ 	github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5
+ 	github.com/pingcap/tidb/pkg/parser v0.0.0-20211011031125-9b13dc409c5e
+-	github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17
++	github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.23.0
+ 	github.com/prometheus/client_model v0.6.2
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -3372,8 +3372,8 @@ google.golang.org/grpc v1.60.1/go.mod h1:OlCHIeLYqSSsLi6i49B5QGdzaMZK9+M7LXN2FKz
- google.golang.org/grpc v1.61.0/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
- google.golang.org/grpc v1.61.1/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
- google.golang.org/grpc v1.62.0/go.mod h1:IWTG0VlJLCh1SkC58F7np9ka9mx/WNkjl4PGJaiq+QE=
--google.golang.org/grpc v1.83.0 h1:JeNZEKJFbQxArAMl+hiytHauacDNqJUllNfmIMmpqnQ=
--google.golang.org/grpc v1.83.0/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0/go.mod h1:6Kw0yEErY5E/yWrBtf03jp27GLLJujG4z/JK95pnjjw=
- google.golang.org/grpc/examples v0.0.0-20250407062114-b368379ef8f6 h1:ExN12ndbJ608cboPYflpTny6mXSzPrDLh0iTaVrRrds=
- google.golang.org/grpc/examples v0.0.0-20250407062114-b368379ef8f6/go.mod h1:6ytKWczdvnpnO+m+JiG9NjEDzR1FJfsnmJdG7B8QVZ8=
+@@ -2208,8 +2208,8 @@ github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf h1:8gzQg9J2EN
+ github.com/pingcap/metering_sdk v0.0.0-20260814062708-9e3b68cd9adf/go.mod h1:IP3HAzDbY5sdoLTQSkF5HjZukuO2koKzbX2FglVSaIA=
+ github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5 h1:T4pXRhBflzDeAhmOQHNPRRogMYxP13V7BkYw3ZsoSfE=
+ github.com/pingcap/sysutil v1.0.1-0.20240311050922-ae81ee01f3a5/go.mod h1:rlimy0GcTvjiJqvD5mXTRr8O2eNZPBrcUgiWVYp9530=
+-github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17 h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=
+-github.com/pingcap/tipb v0.0.0-20261006155659-59b678398b17/go.mod h1:RM8iRcMalzOthG2XJxnNBniM4xFGb/lDwHUwqkaVzt4=
++github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4 h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=
++github.com/pingcap/tipb v0.0.0-20261015020031-7adb3bb014c4/go.mod h1:RM8iRcMalzOthG2XJxnNBniM4xFGb/lDwHUwqkaVzt4=
+ github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c h1:+mdjkGKdHQG3305AYmdv1U2eRNDiU2ErMBj1gwrq8eQ=
+ github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c/go.mod h1:7rwL4CYBLnjLxUqIJNnCWiEdr3bn6IUYi15bNlnbCCU=
+ github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
 ```
 
----
-
-### Incident Patch 3: `25fe66f9` (2026-11-03)
-**Commit Message**: server: fix COM_QUERY fallback warnings and LOAD DATA LOCAL retry safety (#72608)
-
-close pingcap/tidb#72590
-
-**File**: `pkg/server/BUILD.bazel` (modified, +1/-0)
+**File**: `pkg/executor/statement_ru_mpp_test.go` (modified, +57/-6)
 ```diff
-@@ -180,6 +180,7 @@ go_test(
-         "//pkg/config/kerneltype",
-         "//pkg/domain",
-         "//pkg/domain/infosync",
-+        "//pkg/executor",
-         "//pkg/expression",
-         "//pkg/extension",
-         "//pkg/keyspace",
-```
-
-**File**: `pkg/server/conn.go` (modified, +6/-2)
-```diff
-@@ -1886,7 +1886,8 @@ func (cc *clientConn) handleQuery(ctx context.Context, sql string) (err error) {
+@@ -171,33 +171,34 @@ func TestStatementRUMPPPublication(t *testing.T) {
+ 		rows := []uint64{5, 7, 7, 14, 9, 9}[i]
+ 		read := []uint64{100, 200, 0, 0, 0, 0}[i]
+ 		cross := []uint64{0, 0, 10, 10, 0, 20}[i]
+-		same, hash := uint64(0), uint64(8)
++		same, hash, joined := uint64(0), uint64(8), uint64(20)
+ 		id := fmt.Sprintf("%s_%d", plan.TP(), plan.ID())
+ 		summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, NumProducedRows: &rows,
+ 			DetailInfo:            &tipb.ExecutorExecutionSummary_TiflashScanContext{TiflashScanContext: &tipb.TiFlashScanContext{UserReadBytes: &read}},
+ 			TiflashNetworkSummary: &tipb.TiFlashNetWorkSummary{InnerZoneSendBytes: &same, InterZoneSendBytes: &cross}}
+ 		if plan == join {
++			summary.TiflashJoinStats = &tipb.TiFlashJoinStats{JoinedRows: &joined}
+ 			summary.TiflashHashTableStats = &tipb.TiFlashHashTableStats{Size_: &hash, SizeKind: tipb.TiFlashHashTableSizeKind_TIFLASH_HASH_TABLE_SIZE_KIND_BUILD_ROW_COUNT.Enum()}
+ 		}
+ 		sc.RuntimeStatsColl.RecordTiFlashExecutionSummaries(ids, []*tipb.ExecutorExecutionSummary{summary})
  	}
- 
- 	warns := sc.GetWarnings()
--	parserWarns := warns[len(prevWarns):]
-+	// Execution retries can reset and reuse this statement context's warning buffer.
-+	parserWarns := append([]contextutil.SQLWarn(nil), warns[len(prevWarns):]...)
- 
- 	var pointPlans []base.Plan
- 	sessVars.InMultiStmts = len(stmts) > 1
-@@ -2234,6 +2235,7 @@ func (cc *clientConn) handleStmt(
- 	ctx = execdetails.ContextWithInitializedExecDetails(ctx)
- 	reg := trace.StartRegion(ctx, "ExecuteStmt")
- 	cc.audit(context.Background(), plugin.Starting)
-+	retrySafety := stmtRetrySafe
- 
- 	// if stmt is load data stmt, store the channel that reads from the conn
- 	// into the ctx for executor to use
-@@ -2244,6 +2246,8 @@ func (cc *clientConn) handleStmt(
- 			if err != nil {
- 				return stmtRetryUnsafe, err
- 			}
-+			// ExecuteStmt can request a one-shot client file stream, even if it fails.
-+			retrySafety = stmtRetryUnsafe
+ 	finalized, operators, ok := calculateStatementRUWithOperators(flat, sc.RuntimeStatsColl, ctx.GetSessionVars().RUV2Metrics, statementRUWriteSnapshot{}, fixture.owner.calculationSetup, true)
+ 	require.True(t, ok)
+ 	require.Equal(t, float64(19), finalized.units.CPUWork)
+-	// Without candidate-pair evidence, MPP retains input-based residual work.
++	// Residual work uses candidate pairs before filtering, not input or output rows.
+ 	join.OtherConditions = make(expression.CNFExprs, 2)
+ 	withResidual, ok := calculateStatementRU(flat, sc.RuntimeStatsColl, ctx.GetSessionVars().RUV2Metrics, statementRUWriteSnapshot{}, fixture.owner.calculationSetup, true)
+ 	require.True(t, ok)
+-	require.Equal(t, float64(19*3), withResidual.units.CPUWork)
+-	require.Equal(t, float64(9), withResidual.units.JoinOutputRows)
++	require.Equal(t, float64(19+20*2), withResidual.units.CPUWork)
++	require.Equal(t, float64(20), withResidual.units.JoinOutputRows)
+ 	join.OtherConditions = nil
+ 	require.Equal(t, float64(300), finalized.units.ScanBytes)
+ 	require.Equal(t, float64(50), finalized.units.NetBytes)
+ 	require.Equal(t, float64(30), finalized.units.CrossAZNetBytes)
+-	require.Equal(t, float64(9), finalized.units.JoinOutputRows)
++	require.Equal(t, float64(20), finalized.units.JoinOutputRows)
+ 	require.Equal(t, float64(8), finalized.units.HashStateRows)
+ 	require.Equal(t, float64(40), finalized.engineRU.TiKV)
+-	require.Equal(t, float64(4020), finalized.engineRU.TiFlash) // (19+300+60+9+8+6)*10
++	require.Equal(t, float64(4130), finalized.engineRU.TiFlash) // (19+300+60+20+8+6)*10
+ 	requireStatementRUReportConservation(t, finalized)
+ 	require.InDelta(t, finalized.result.TotalRU, operators.TotalRU, 1e-9)
+ 	require.InDelta(t, finalized.result.TotalRU, operators.Main[0].CumRU, 1e-9)
+@@ -227,3 +228,53 @@ func TestStatementRUMPPPublication(t *testing.T) {
+ 		require.InDelta(t, want, testutil.ToFloat64(metrics.RUV2ByEngine.WithLabelValues(statementRUEngineNames[i]))-before[i], 1e-9)
+ 	}
+ }
++
++func TestStatementRUMPPJoinRows(t *testing.T) {
++	zero, pairs := uint64(0), uint64(20)
++	for _, cross := range []bool{false, true} {
++		for _, tc := range []struct {
++			name    string
++			reports []*uint64
++			want    float64
++		}{
++			{"no summaries", nil, 0},
++			{"legacy or interrupted", []*uint64{nil}, 0},
++			{"zero", []*uint64{&zero}, 0},
++			{"multiple tasks", []*uint64{&pairs, &pairs}, 40},
++			{"partial", []*uint64{nil, &pairs, nil}, 20},
++		} {
++			t.Run(fmt.Sprintf("cross=%v/%s", cross, tc.name), func(t *testing.T) {
++				ctx := mock.NewContext()
++				join := physicalop.PhysicalHashJoin{BasePhysicalJoin: physicalop.BasePhysicalJoin{
++					JoinType: base.InnerJoin, OtherConditions: make(expression.CNFExprs, 2),
++				}}.Init(ctx, &property.StatsInfo{}, 0)
++				var inputWork, hashWork float64
++				if !cross {
++					join.EqualConditions = []*expression.ScalarFunction{{}}
++					inputWork = 19
++					hashWork = float64(len(tc.reports) * 8)
++				}
++				op := &plannercore.FlatOperator{Origin: join, StoreType: kv.TiFlash, ReqType: physicalop.MPP}
++				stats := execdetails.NewRuntimeStatsColl(nil)
++				id, output, hash := fmt.Sprintf("HashJoin_%d", join.ID()), uint64(9), uint64(8)
++				for _, rows := range tc.reports {
++					summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, NumProducedRows: &output}
++					if rows != nil {
++						summary.TiflashJoinStats = &tipb.TiFlashJoinStats{JoinedRows: rows}
++					}
++					if !cross {
++						summary.TiflashHashTableStats = &tipb.TiFlashHashTableStats{Size_: &hash}
++					}
++					stats.RecordTiFlashExecutionSummaries([]int{join.ID()}, []*tipb.ExecutorExecutionSummary{summary})
++				}
++				children := []statementRUOperatorResult{{outputRows: 5}, {outputRows: 14}}
++				calculator := &statementRUCalculator{}
++				require.Equal(t, statementRUOperatorComplete, collectStatementRUJoinUnits(op, children, stats, calculator))
++				require.Equal(t, ruv2.StmtUnits{CPUWork: inpu
+```
+
+**File**: `pkg/executor/statement_ru_plan_walk.go` (modified, +21/-21)
+```diff
+@@ -947,7 +947,7 @@ func calculateStatementRUPlanChildFirst(
+ 		*physicalop.PhysicalIndexJoin, *physicalop.PhysicalIndexHashJoin,
+ 		*physicalop.PhysicalIndexMergeJoin:
+ 		state := collectStatementRUJoinUnits(
+-			operator, children, outputRows, runtimeStatsColl, calculator,
++			operator, children, runtimeStatsColl, calculator,
+ 		)
+ 		if state != statementRUOperatorComplete {
+ 			return statementRUOperatorResult{state: state}
+@@ -1054,21 +1054,20 @@ func calculateStatementRUPlanChildFirst(
+ // collectStatementRUJoinUnits charges one supported root Join or MPP HashJoin using
+ // these formulas:
+ //
+-//	CPUWork = (left child rows + right child rows) * input expression count + joined rows * other condition count (root)
+-//	JoinOutputRows = candidate pairs processed before other conditions (root)
++//	CPUWork = (left child rows + right child rows) * input expression count + joined rows * other condition count
++//	JoinOutputRows = candidate pairs processed before other conditions
+ //	HashStateRows = constructed HashJoin lookup-state rows
+ //
+ // statementRUJoinContractForPlan defines the expression count for each Join
+-// subtype. MPP uses both children's merged rows, including ExchangeReceiver rows,
+-// for all expression slots, and the Join's own reported output for JoinOutputRows
+-// until TiFlash supplies candidate-pair evidence. Root joins use worker counters,
+-// excluding null-extension rows and pairs skipped by semi-join short circuit. MPP hash state comes from
+-// TiFlash hash-table stats, not the build child's output or the join result size.
++// subtype. Root joins use worker counters; MPP joins use TiFlash's joined_rows,
++// summed across received summaries. Both exclude null-extension rows and pairs
++// skipped by semi-join short circuit. Missing evidence contributes zero without
++// discarding other reported work. MPP input rows include ExchangeReceiver rows;
++// hash state comes from TiFlash hash-table stats, independently of joined_rows.
+ // TiKV Cop and FullOuter joins remain unsupported.
+ func collectStatementRUJoinUnits(
+ 	operator *plannercore.FlatOperator,
+ 	children []statementRUOperatorResult,
+-	outputRows int64,
+ 	runtimeStatsColl *execdetails.RuntimeStatsColl,
+ 	calculator *statementRUCalculator,
+ ) statementRUOperatorState {
+@@ -1085,22 +1084,23 @@ func collectStatementRUJoinUnits(
+ 	if !ok {
+ 		return statementRUOperatorUnsupported
+ 	}
+-	joinedRows := outputRows
+-	if operator.IsRoot {
+-		joinedRows = 0
+-		if runtimeStatsColl != nil {
+-			joinedRows, _ = runtimeStatsColl.GetRootJoinedRows(operator.Origin.ID())
++	var joinedRows float64
++	if runtimeStatsColl != nil {
++		if operator.IsRoot {
++			rows, _ := runtimeStatsColl.GetRootJoinedRows(operator.Origin.ID())
++			joinedRows = float64(rows)
++		} else {
++			units, _ := runtimeStatsColl.GetTiFlashExecutionUnits(operator.Origin.ID())
++			if units.Invalid {
++				return statementRUOperatorInvalid
++			}
++			joinedRows = float64(units.JoinedRows)
  		}
  	}
- 
-@@ -2272,7 +2276,7 @@ func (cc *clientConn) handleStmt(
- 		if sv := cc.ctx.GetSessionVars(); sv != nil && sv.StmtCtx != nil {
- 			sv.StmtCtx.DetachMemDiskTracker()
- 		}
--		return stmtRetrySafe, err
-+		return retrySafety, err
+ 	inputRows := float64(children[0].outputRows) + float64(children[1].outputRows)
+-	// MPP retains input-based residual work until it reports candidate pairs.
+-	otherConditionRows := inputRows
+-	if operator.IsRoot {
+-		otherConditionRows = float64(joinedRows)
+-	}
+-	cpuWork := inputRows*float64(contract.inputExpressionCount) + otherConditionRows*float64(contract.otherConditionCount)
++	cpuWork := inputRows*float64(contract.inputExpressionCount) + joinedRows*float64(contract.otherConditionCount)
+ 	if !addStatementRUCPUWork(&delta, cpuWork) ||
+-		!addStatementRUJoinOutputRows(&delta, float64(joinedRows)) {
++		!addStatementRUJoinOutputRows(&delta, joinedRows) {
+ 		return statementRUOperatorInvalid
  	}
- 
- 	status := cc.ctx.Status()
+ 	if contract.hashState {
 ```
 
-**File**: `pkg/server/conn_stmt_retry_test.go` (modified, +139/-0)
+**File**: `pkg/resourcegroup/ruv2/model.go` (modified, +4/-3)
 ```diff
-@@ -22,17 +22,21 @@ import (
- 	"testing"
+@@ -49,9 +49,10 @@ type StmtUnits struct {
+ 	// contributions retain their producer's size definition: distinct keys,
+ 	// build rows, or aggregation map entries, summed without normalization.
+ 	HashStateRows float64
+-	// JoinOutputRows counts candidate pairs processed by root joins before other
+-	// conditions, excluding null-extension rows and pairs skipped by short circuit.
+-	// MPP joins retain TiFlash-reported output rows until candidate counts are available.
++	// JoinOutputRows counts candidate pairs processed by root and MPP joins before
++	// other conditions, excluding null-extension rows and pairs skipped by short
++	// circuit. Root joins use executor runtime stats; MPP joins use TiFlash's
++	// joined_rows counter. Missing evidence contributes zero.
+ 	JoinOutputRows float64
+ }
  
- 	"github.com/pingcap/errors"
-+	"github.com/pingcap/tidb/pkg/executor"
- 	"github.com/pingcap/tidb/pkg/kv"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/server/internal/packetio"
-+	"github.com/pingcap/tidb/pkg/server/internal/testutil"
-+	serverutil "github.com/pingcap/tidb/pkg/server/internal/util"
- 	"github.com/pingcap/tidb/pkg/session/sessionapi"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
- 	"github.com/pingcap/tidb/pkg/sessiontxn"
- 	storeerr "github.com/pingcap/tidb/pkg/store/driver/error"
- 	"github.com/pingcap/tidb/pkg/testkit"
- 	"github.com/pingcap/tidb/pkg/util/arena"
- 	"github.com/pingcap/tidb/pkg/util/chunk"
-+	contextutil "github.com/pingcap/tidb/pkg/util/context"
- 	"github.com/pingcap/tidb/pkg/util/sqlexec"
- 	"github.com/stretchr/testify/require"
+```
+
+**File**: `pkg/util/execdetails/tiflash_execution_units.go` (modified, +8/-1)
+```diff
+@@ -30,13 +30,15 @@ const (
+ 	TiFlashUnitHash
+ 	TiFlashUnitScan
+ 	TiFlashUnitNetwork
++	TiFlashUnitJoin
  )
-@@ -294,3 +298,138 @@ func TestStmtRetryWarningHandling(t *testing.T) {
+ 
+ // TiFlashExecutionUnits retains raw MPP evidence separately from EXPLAIN's dummy
+ // summaries. Missing evidence is best-effort zero; present invalid evidence is not.
+ // Streamed summaries may already combine tasks, so Observed never proves coverage.
+ type TiFlashExecutionUnits struct {
+ 	Rows                uint64
++	JoinedRows          uint64
+ 	HashDistinctEntries uint64
+ 	HashBuildRows       uint64
+ 	UserReadBytes       uint64
+@@ -53,6 +55,10 @@ func tiFlashExecutionUnits(summary *tipb.ExecutorExecutionSummary) TiFlashExecut
+ 		units.Rows = summary.GetNumProducedRows()
+ 		units.Observed |= TiFlashUnitRows
+ 	}
++	if stats := summary.GetTiflashJoinStats(); stats != nil && stats.JoinedRows != nil {
++		units.JoinedRows = stats.GetJoinedRows()
++		units.Observed |= TiFlashUnitJoin
++	}
+ 	if stats := summary.GetTiflashHashTableStats(); stats != nil && stats.Size_ != nil {
+ 		switch stats.GetSizeKind() {
+ 		case tipb.TiFlashHashTableSizeKind_TIFLASH_HASH_TABLE_SIZE_KIND_DISTINCT_KEY_COUNT:
+@@ -79,7 +85,7 @@ func tiFlashExecutionUnits(summary *tipb.ExecutorExecutionSummary) TiFlashExecut
+ 			units.Observed |= TiFlashUnitNetwork
+ 		}
+ 	}
+-	units.Missing = (TiFlashUnitRows | TiFlashUnitHash | TiFlashUnitScan | TiFlashUnitNetwork) &^ units.Observed
++	units.Missing = (TiFlashUnitRows | TiFlashUnitHash | TiFlashUnitScan | TiFlashUnitNetwork | TiFlashUnitJoin) &^ units.Observed
+ 	return units
+ }
+ 
+@@ -95,6 +101,7 @@ func (u *TiFlashExecutionUnits) merge(other TiFlashExecutionUnits) {
+ 		*dst += n
+ 	}
+ 	add(&u.Rows, other.Rows)
++	add(&u.JoinedRows, other.JoinedRows)
+ 	add(&u.HashDistinctEntries, other.HashDistinctEntries)
+ 	add(&u.HashBuildRows, other.HashBuildRows)
+ 	add(&u.UserReadBytes, other.UserReadBytes)
+```
+
+**File**: `pkg/util/execdetails/tiflash_execution_units_test.go` (modified, +42/-1)
+```diff
+@@ -24,10 +24,11 @@ import (
+ 
+ func TestTiFlashExecutionUnits(t *testing.T) {
+ 	id := "HashJoin_1"
+-	rows, size, bytes := uint64(8), uint64(1), uint64(20)
++	rows, size, bytes, joined := uint64(8), uint64(1), uint64(20), uint64(12)
+ 	summary := &tipb.ExecutorExecutionSummary{
+ 		ExecutorId: &id, NumProducedRows: &rows,
+ 		TiflashHashTableStats: &tipb.TiFlashHashTableStats{Size_: &size},
++		TiflashJoinStats:      &tipb.TiFlashJoinStats{JoinedRows: &joined},
+ 		DetailInfo:            &tipb.ExecutorExecutionSummary_TiflashScanContext{TiflashScanContext: &tipb.TiFlashScanContext{UserReadBytes: &bytes}},
+ 		TiflashNetworkSummary: &tipb.TiFlashNetWorkSummary{InnerZoneSendBytes: &bytes, InterZoneSendBytes: &size, InnerZoneReceiveBytes: &bytes},
+ 	}
+@@ -40,6 +41,7 @@ func TestTiFlashExecutionUnits(t *testing.T) {
+ 	require.True(t, found)
+ 	require.False(t, units.Invalid)
+ 	require.Equal(t, uint64(16), units.Rows)
++	require.Equal(t, uint64(24), units.JoinedRows)
+ 	require.Equal(t, uint64(1), units.HashDistinctEntries)
+ 	require.Equal(t, uint64(8), units.HashBuildRows)
+ 	require.Equal(t, uint64(40), units.UserReadBytes)
+@@ -142,3 +144,42 @@ func TestTiFlashExecutionUnitsColumnar(t *testing.T) {
  		})
  	}
  }
 +
-+func TestTextFallbackReusesWarningBuffer(t *testing.T) {
++func TestTiFlashExecutionUnitsJoin(t *testing.T) {
++	id := "HashJoin_1"
++	zero, pairs := uint64(0), uint64(12)
++	for _, tc := range []struct {
++		name     string
++		join     *tipb.TiFlashJoinStats
++		want     uint64
++		observed bool
++	}{
++		{"missing message", nil, 0, false},
++		{"missing count", &tipb.TiFlashJoinStats{}, 0, false},
++		{"zero", &tipb.TiFlashJoinStats{JoinedRows: &zero}, 0, true},
++		{"pairs", &tipb.TiFlashJoinStats{JoinedRows: &pairs}, 24, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			stats := NewRuntimeStatsColl(nil)
++			// Join evidence does not depend on output rows or hash-table stats.
++			summary := &tipb.ExecutorExecutionSummary{ExecutorId: &id, TiflashJoinStats: tc.join}
++			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{summary})
++			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{summary})
++			units, found := stats.GetTiFlashExecutionUnits(1)
++			require.True(t, found)
++			require.False(t, units.Invalid)
++			require.Equal(t, tc.want, units.JoinedRows)
++			require.Equal(t, tc.observed, units.Observed&TiFlashUnitJoin != 0)
++			require.Equal(t, !tc.observed, units.Missing&TiFlashUnitJoin != 0)
++			// A legacy or interrupted task cannot erase earlier work or presence.
++			stats.RecordTiFlashExecutionSummaries([]int{1}, []*tipb.ExecutorExecutionSummary{{ExecutorId: &id}})
++			units, _ = stats.GetTiFlashExecutionUnits(1)
++			require.Equal(t, tc.want, units.JoinedRows)
++			require.Equal(t, tc.observed, units.Observed&TiFlashUnitJoin != 0)
++			require.NotZero(t, units.Missing&TiFlashUnitJoin)
++			require.Same(t, stats, NewRuntimeStatsColl(stats))
++			_, found = stats.GetTiFlashExecutionUnits(1)
++			require.False(t, found)
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `95c89143` (2026-11-04)
+**Commit Message**: ddl: migrate separated auto-increment IDs to auto-random (#71094)
+
+close pingcap/tidb#70091
+
+**File**: `pkg/ddl/column.go` (modified, +5/-1)
+```diff
+@@ -1101,7 +1101,11 @@ func applyNewAutoRandomBits(jobCtx *jobContext, dbInfo *model.DBInfo,
+ 		errMsg := fmt.Sprintf(autoid.AutoRandomAllocatorNotFound, dbInfo.Name.O, tblInfo.Name.O)
+ 		return dbterror.ErrInvalidAutoRandom.GenWithStackByArgs(errMsg)
+ 	}
+-	idAcc := jobCtx.metaMut.GetAutoIDAccessors(dbInfo.ID, tblInfo.ID).RowID()
++	idAccessors := jobCtx.metaMut.GetAutoIDAccessors(dbInfo.ID, tblInfo.ID)
++	idAcc := idAccessors.RowID()
++	if tblInfo.SepAutoInc() {
++		idAcc = idAccessors.IncrementID(model.TableInfoVersion5)
++	}
+ 	nextAutoIncID, err := idAcc.Get()
+ 	if err != nil {
+ 		return errors.Trace(err)
+```
+
+**File**: `pkg/ddl/db_integration_test.go` (modified, +129/-0)
+```diff
+@@ -2225,6 +2225,104 @@ func TestAutoIncrementForce(t *testing.T) {
+ 	tk.MustExec("drop table t")
+ }
+ 
++func TestAutoRandomAllocatorMigration(t *testing.T) {
 +	store := testkit.CreateMockStore(t)
-+	for _, parserWarning := range []bool{false, true} {
-+		for _, previousWarnings := range []int{0, 1} {
-+			t.Run(fmt.Sprintf("parser=%t/previous=%d", parserWarning, previousWarnings), func(t *testing.T) {
-+				tk := testkit.NewTestKit(t, store)
-+				// Use a cached statement context with spare warning capacity. The fallback
-+				// will reset and reuse this context after the first execution swaps it out.
-+				tk.MustExec("do 0")
-+				vars := tk.Session().GetSessionVars()
-+				vars.StmtCtx.SetWarnings(make([]contextutil.SQLWarn, 0, 8))
-+				for range previousWarnings {
-+					vars.StmtCtx.AppendWarning(errors.New("previous statement warning"))
-+				}
-+				vars.AllowFallbackToTiKV = map[kv.StoreType]struct{}{kv.TiFlash: {}}
-+				vars.IsolationReadEngines[kv.TiFlash] = struct{}{}
-+				executionWarnings := []error{
-+					errors.New("fallback warning 1"),
-+					errors.New("fallback warning 2"),
-+					errors.New("fallback warning 3"),
-+				}
-+				attempts := 0
-+				se := &stmtAttemptSession{Session: tk.Session(), vars: vars}
-+				se.executeStmt = func(ctx context.Context, stmt ast.StmtNode) (sqlexec.RecordSet, error) {
-+					attempts++
-+					rs, err := tk.Session().ExecuteStmt(ctx, stmt)
-+					require.NoError(t, err)
-+					if attempts == 1 {
-+						require.NoError(t, rs.Close())
-+						return nil, storeerr.ErrTiFlashServerTimeout
++	readIDs := func(t *testing.T, tk *testkit.TestKit) model.AutoIDGroup {
++		t.Helper()
++		tbl := external.GetTableByName(t, tk, "test", "t")
++		db, ok := domain.GetDomain(tk.Session()).InfoSchema().SchemaByName(ast.NewCIStr("test"))
++		require.True(t, ok)
++		txn, err := store.Begin()
++		require.NoError(t, err)
++		ids, err := meta.NewMutator(txn).GetAutoIDAccessors(db.ID, tbl.Meta().ID).Get()
++		require.NoError(t, err)
++		require.NoError(t, txn.Rollback())
++		return ids
++	}
++	const highID = 1 << 20
++	for _, cache := range []int{1, 10} {
++		for _, unsigned := range []bool{false, true} {
++			colType := "bigint"
++			incrementalBits := uint(58) // 63 signed bits minus AUTO_RANDOM(5).
++			if unsigned {
++				colType += " unsigned"
++				incrementalBits++
++			}
++			for _, populated := range []bool{false, true} {
++				t.Run(fmt.Sprintf("cache=%d/unsigned=%t/populated=%t", cache, unsigned, populated), func(t *testing.T) {
++					tk := testkit.NewTestKit(t, store)
++					tk.MustExec("use test")
++					tk.MustExec("set @@tidb_allow_remove_auto_inc = true")
++					tk.MustExec(fmt.Sprintf("create table t (id %s primary key clustered auto_increment, payload int) auto_id_cache=%d auto_increment=%d", colType, cache, highID))
++					t.Cleanup(func() { tk.MustExec("drop table t") })
++					if populated {
++						tk.MustExec(fmt.Sprintf("insert into t values (1,10),(2,20),(%d,30)", highID*2))
++						tk.MustExec(fmt.Sprintf("delete from t where id=%d", highID*2))
 +					}
-+					// Warnings produced before ExecuteStmt returns must not overwrite
-+					// the saved parser warnings or the timeout warning.
-+					for _, warning := range executionWarnings {
-+						vars.StmtCtx.AppendWarning(warning)
++					before := readIDs(t, tk)
++					base := before.RowID
++					if cache == 1 {
++						base = before.IncrementID
 +					}
-+					return rs, nil
-+				}
-+				cc := &clientConn{
-+					alloc:      arena.NewAllocator(1024),
-+					chunkAlloc: chunk.NewAllocator(),
-+					pkt:        packetio.NewForTest(bufio.NewWriter(bytes.NewBuffer(nil))),
-+				}
-+				cc.SetCtx(&TiDBContext{Session: se, stmts: make(map[int]*TiDBStatement)})
-+				sql := "select 1"
-+				if parserWarning {
-+					sql = "select /*+ unknown_hint() */ 1"
-+				}
-+				require.NoError(t, cc.handleQuery(context.Background(), sql))
-+				require.Equal(t, 2, attempts)
-+				warnings := vars.StmtCtx.GetWarnings()
-+				wantCount := len(executionWarnings) + 1
-+				if parserWarning {
-+					wantCount++
-+				}
-+				require.Len(t, warnings, wantCount)
-+				for i, warning := range executionWarnings {
-+					require.Same(t, warning, warnings[i].Err)
-+					require.Equal(t, contextutil.WarnLevelWarning, warnings[i].Level)
-+				}
-+				if parserWarning {
-+					require.ErrorContains(t, warnings[len(executionWarnings)].Err, "hint")
-+				}
-+				require.True(t, errors.ErrorEqual(warnings[len(warnings)-1].Err, storeerr.ErrTiFlashServerTimeout))
-+				require.Equal(t, contextutil.WarnLevelError, warnings[len(warnings)-1].Level)
-+			})
++					require.GreaterOrEqual(t, base, int64(highID-1))
++					if populated {
++						// The durable high-water mark must survive deleting the largest ID.
++						require.GreaterOrEqual(t, base, int64(highID*2))
++					}
++					tk.MustExec(fmt.Sprintf("alter table t modify column id %s auto_random(5)", colType))
++					after := readIDs(t, tk)
++					require.Equal(t, base+1, after.RandomID)
++					if cache == 1 {
++						require.Zero(t, after.IncrementID)
++						require.Equal(t, before.RowID, after.RowID)
++					} else {
++						require.Zero(t, after.RowID)
++						require.Equal(t, before.IncrementID, after.IncrementID)
++					}
++
++					other := testkit.NewTestKit(t, store)
++					other.MustExec("use test")
++					other.MustExec("insert into t(payload) values (30),(40)")
++					tk.MustExec("insert into t(payload) values (50)")
++					mask := (uint64(1) << incrementalBits) - 1
++					tk.MustQuery(fmt.Sprintf("select count(*),count(distinct id),min(id & %d)>%d from t where payload>=30", mask, base)).Check(testkit.Rows("3 3 1"))
++					if populated {
++						tk.MustQuery("select id,payload from t where payload<30 order by id").Check(testkit.Rows("1 10", "2 20"))
++						tk.MustQuery("select count(*) from t").Check(testkit.Rows("5"))
++					} else {
++						tk.MustQuery("select count(*) from t").Check(testkit.Rows("3"))
++					}
++					tk.MustExec("admin check table t")
++				})
++			}
 +		}
++	}
++
++	for _, colType := range []string{"bigint", "bigint unsigned"} {
++		t.Run("overflow/"+colType, func(t *testing.T) {
++			tk := testkit.NewTestKit(t, store)
++			tk.MustExec("use test")
++			tk.MustExec("set @@tidb_allow_remove_auto_inc = true")
++			tk.MustExec(fmt.Sprintf("create table t (id %s primary key clustered auto_increment, payload int) auto_id_cache=1", colType))
++			t.Cleanup(func() { tk.MustExec("drop table t") })
++			const overflowID = 1 << 60
++			tk.MustExec(fmt.Sprintf("insert into t values (%d,10)", overflowID))
++			before := readIDs(t, tk)
++			tk.MustGetErrCode(fmt.Sprintf("alter table t modify column id %s auto_random(5)", colType), errno.ErrInvalidAutoRandom)
++			after := readIDs(t, tk)
++			require.Zero(t, after.RandomID)
++			require.GreaterOrEqual(t, after.IncrementID, before.IncrementID)
++			tbl := external.GetTableByName(t, tk, "test", "t")
++			require.Zero(t, tbl.Meta().AutoRandomBits)
++			require.True(t, mysql.HasAutoIncrementFlag(tbl.Meta().Columns[0].GetFlag()))
++			tk.MustExec("insert into t(payload) values (20)")
++			tk.MustQuery(fmt.Sprintf("select id=%d from t where payload=10", overflowID)).Check(testkit.Rows("1"))
++			tk.MustQuery(fmt.Sprintf("select id>%d from t where payload=20", overflowID)).Check(testkit.Rows("1"))
++			tk.MustExec("admin check table t")
++		})
 +	}
 +}
 +
-+func TestLoadDataLocalRetrySafety(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	for _, tt := range []struct {
-+		name   string
-+		local  bool
-+		err    error
-+		action sessiontxn.StmtErrorAction
-+	}{
-+		{name: "transaction retry", local: true, err: errors.New("execution failed"), action: sessiontxn.StmtActionRetryReady},
-+		{name: "TiFlash fallback", local: true, err: storeerr.ErrTiFlashServerTimeout, action: sessiontxn.StmtActionNoIdea},
-+		{name: "server file", err: errors.New("execution failed"), action: sessiontxn.StmtActionNoIdea},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			tk := testkit.NewTestKit(t, store)
-+			vars := tk.Session().GetSessionVars()
-+			vars.AllowFallbackToTiKV = map[kv.StoreType]struct{}{kv.TiFlash: {}}
-+			vars.TxnManager = &stmtAttemptTxnManager{onError: func(context.Context, sessiontxn.StmtErrorHandlePoint, error) (sessiontxn.StmtErrorAction, error) {
-+				return tt.action, nil
-+			}}
-+			// The client terminates its file response with an empty packet, after
-+			// the server sends the sequence-0 local-infile request.
-+			input := &testutil.BytesConn{Buffer: *bytes.NewBuffer([]byte{0, 0, 0, 1})}
-+			var o
+ func TestAutoIncrementForceAutoIDCache(t *testing.T) {
+ 	store := testkit.CreateMockStore(t)
+ 	tk := testkit.NewTestKit(t, store)
+@@ -2291,6 +2389,37 @@ func TestAutoIncrementForceAutoIDCache(t *testing.T) {
+ 	tk.MustQuery("select (a & 3) from t order by 1;").Check(testkit.Rows("1", "2"))
+ 	tk.MustExec("drop table if exists t;")
+ 
++	// Converting AUTO_INCREMENT to AUTO_RANDOM must migrate the separate
++	// auto-increment allocator used by AUTO_ID_CACHE=1.
++	tk.MustExec("set @@tidb_allow_remove_auto_in
 ```
 
 #### Recent Merged Pull Requests:
@@ -2370,8 +2437,8 @@ close pingcap/tidb#72590
 - **PR #72657** (2026-11-03): *: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (#72640) | tidb-test=release-8.5-20260715-v8.5.7 (@ti-chi-bot)
 - **PR #72651** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
 - **PR #72650** (closed): expression: skip empty digests before statement summary lookups (#72594) (@ti-chi-bot)
+- **PR #72648** (2026-11-03): dumpling: pin MinIO CI downloads to GitHub releases (#71291) (@ti-chi-bot)
 - **PR #72647** (2026-11-03): *: update client-go to latest master (@lcwangchao)
-- **PR #72640** (2026-11-03): *: bump otlptrace and OpenTelemetry modules to v1.45.0 (GHSA-8wmf-6v46-5gfg) (#72534) (@ti-chi-bot)
 
 ---
 
@@ -2391,13 +2458,13 @@ close pingcap/tidb#72590
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): retain etcd compatibility with otelgrpc
+## X. executor: use TiFlash joined rows for MPP join RU (#72597)
 
 **RULE**:
 When implementing operations in `DEPS.bzl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dd4c55c`: deps): retain etcd compatibility with otelgrpc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d85afde3`: executor: use TiFlash joined rows for MPP join RU (#72597). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEPS.bzl`.
@@ -2405,33 +2472,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        sum = "h1:5vCbuvy8Q11g41lseGJDc5vxhDjJtfxr6nM/IC4VmqM=",
-        version = "v0.49.0",
-        sum = "h1:YojYx61/OLFsiv6Rw1Z96LpldJIy31o+UHmwAUMJ6/U=",
-        version = "v1.7.0-rc.1",
-        sum = "h1:sIXJOMrYnQZJu7OB7ANSF4MYri2fTEGIsRLz6LwI4xE=",
-        version = "v2.0.4-0.20230330145011-496ad1ac90a4",
-        replace = "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
-        sum = "h1:rgMkmiGfix9vFJDcDi1PK8WEQP4FLQwLDfhp5ZLpFeE=",
-        version = "v0.59.0",
-        sum = "h1:rNBFJjBCOgVr9pWD7rs/knKL4FRTKgpZmsRfV214zcA=",
-        version = "v1.3.0",
+        sum = "h1:cUXlcHgqq/LfYp/pXVpreJt8994mB9creB/NtPR7xrY=",
+        version = "v0.0.0-20261015020031-7adb3bb014c4",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        sum = "h1:CPn7VHaV3czTgk4LdEO+Od5DyYb6HXLL5CUIPignRLE=",
-        version = "v0.42.1-0.20231101215950-df20c987afcb",
-        sum = "h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=",
-        version = "v1.6.0",
-        sum = "h1:/3+/2sWyXeMLzKd1bX+ixWKgEMsULrIivpDsuaF441o=",
-        version = "v2.0.3",
-        sum = "h1:q4XOmH/0opmeuJtPsbFNivyl7bCt7yRBbeEm2sC/XtQ=",
-        version = "v0.61.0",
-        sum = "h1:M1YKkFIboKNieVO5DLUEVzQfGwJD30Nv2jfUgzb5UcE=",
-        version = "v1.1.0",
+        sum = "h1:GalvMypJTiQvfc6p8fs7OS0z+X9O5ZAN+hTZ67QpTYM=",
+        version = "v0.0.0-20261006155659-59b678398b17",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dd4c55c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d85afde3` are properly handled with clean fallback behavior.

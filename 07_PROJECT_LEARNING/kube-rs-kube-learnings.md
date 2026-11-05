@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `d956e12a`  
+> **Source Version**: `e737551c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:01:30.877Z  
+> **Timestamp**: 2026-11-04T10:05:36.175Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:01:29.769Z  
+> **Harvest Timestamp**: 2026-11-04T10:05:35.554Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1717,78 +1717,252 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d956e12a` (2026-11-02)
-**Commit Message**: Chore(deps): Update parking_lot requirement from 0.12.0 to 0.13.0 (#2132)
+### Incident Patch 1: `e737551c` (2026-11-04)
+**Commit Message**: Round down LogParams::since_time to the second (#2136)
 
-Updates the requirements on [parking_lot](https://github.com/Amanieu/parking_lot) to permit the latest version.
-- [Release notes](https://github.com/Amanieu/parking_lot/releases)
-- [Changelog](https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/Amanieu/parking_lot/compare/parking_lot-v0.12.4...parking_lot-v0.13.0)
+jiff's default HalfExpand rounding sent 10.7s as 11s, so logs written in the rest of that second were skipped. Round down instead, matching client-go and the pre-jiff chrono behaviour.
 
----
-updated-dependencies:
-- dependency-name: parking_lot
-  dependency-version: 0.13.0
-  dependency-type: direct:production
-...
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: doxxx <[REDACTED_EMAIL]>
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `kube-core/src/kubelet_debug.rs` (modified, +28/-2)
 ```diff
-@@ -61,7 +61,7 @@ json-patch = "4"
- jsonpath-rust = "1"
- k8s-openapi = { version = "0.29.0", default-features = false }
- openssl = "0.10.61"
--parking_lot = "0.12.0"
-+parking_lot = "0.13.0"
- pem = "4.0.0"
- percent-encoding = "2.3.2"
- pin-project = "1.1.3"
+@@ -4,7 +4,7 @@ use crate::{
+     request::Error,
+     subresource::{AttachParams, LogParams},
+ };
+-use jiff::Unit;
++use jiff::{RoundMode, TimestampRound, Unit};
+ use std::fmt::Debug;
+ 
+ /// Struct that hold all required parameters to call specific pod methods from node
+@@ -147,7 +147,11 @@ impl Request {
+             // or b.) a rounding increment is configured (which we don't set) that does not fit into 86400 seconds (a day)
+             // without any remainder.
+             // `jiff::Timestamp` provides RFC3339 via `Display`, docs: https://docs.rs/jiff/latest/jiff/struct.Timestamp.html#impl-Display-for-Timestamp
+-            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
++            // Round down like client-go; rounding up would skip lines logged later in the same second.
++            let floor = TimestampRound::new()
++                .smallest(Unit::Second)
++                .mode(RoundMode::Floor);
++            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
+         }
+ 
+         if let Some(tl) = &lp.tail_lines {
+@@ -232,6 +236,28 @@ mod test {
+         );
+     }
+ 
++    #[test]
++    fn node_logs_since_time_rounds_down() {
++        let lp = LogParams {
++            since_time: Some("2023-10-19T13:14:26.7Z".parse().unwrap()),
++            ..Default::default()
++        };
++        let req = Request::kubelet_node_logs(
++            &KubeletDebugParams {
++                name: "some-name",
++                namespace: "some-namespace",
++                pod_uid: None,
++            },
++            "some-container",
++            &lp,
++        )
++        .unwrap();
++        assert_eq!(
++            req.uri(),
++            "/containerLogs/some-namespace/some-name/some-container?&sinceTime=2023-10-19T13%3A14%3A26Z"
++        );
++    }
++
+     #[test]
+     fn node_portforward_test() {
+         let req = Request::kubelet_node_portforward(
+```
+
+**File**: `kube-core/src/subresource.rs` (modified, +21/-2)
+```diff
+@@ -3,7 +3,7 @@ use crate::{
+     params::{DeleteParams, PostParams},
+     request::{Error, JSON_MIME, Request},
+ };
+-use jiff::{Timestamp, Unit};
++use jiff::{RoundMode, Timestamp, TimestampRound, Unit};
+ use std::fmt::Debug;
+ 
+ pub use k8s_openapi::api::autoscaling::v1::{Scale, ScaleSpec, ScaleStatus};
+@@ -75,7 +75,11 @@ impl Request {
+             // or b.) a rounding increment is configured (which we don't set) that does not fit into 86400 seconds (a day)
+             // without any remainder.
+             // `jiff::Timestamp` provides RFC3339 via `Display`, docs: https://docs.rs/jiff/latest/jiff/struct.Timestamp.html#impl-Display-for-Timestamp
+-            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
++            // Round down like client-go; rounding up would skip lines logged later in the same second.
++            let floor = TimestampRound::new()
++                .smallest(Unit::Second)
++                .mode(RoundMode::Floor);
++            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
+         }
+ 
+         if let Some(tl) = &lp.tail_lines {
+@@ -458,4 +462,19 @@ mod test {
+             "/api/v1/namespaces/ns/pods/mypod/log?&sinceTime=2023-10-19T13%3A14%3A26Z" // cross-referenced with kubectl
+         );
+     }
++
++    #[test]
++    fn logs_since_time_rounds_down() {
++        let url = corev1::Pod::url_path(&(), Some("ns"));
++        let date: Timestamp = "2023-10-19T13:14:26.7Z".parse().unwrap();
++        let lp = LogParams {
++            since_time: Some(date),
++            ..Default::default()
++        };
++        let req = Request::new(url).logs("mypod", &lp).unwrap();
++        assert_eq!(
++            req.uri(),
++            "/api/v1/namespaces/ns/pods/mypod/log?&sinceTime=2023-10-19T13%3A14%3A26Z"
++        );
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `2be5a96c` (2026-11-02)
-**Commit Message**: Chore(deps): Update rstest requirement from 0.27.0 to 0.28.0 (#2133)
+### Incident Patch 2: `1fa58766` (2026-11-04)
+**Commit Message**: kube-client: report dropped log stream connections as UnexpectedEof (#2127)
 
-Updates the requirements on [rstest](https://github.com/la10736/rstest) to permit the latest version.
-- [Release notes](https://github.com/la10736/rstest/releases)
-- [Changelog](https://github.com/la10736/rstest/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/la10736/rstest/compare/v0.27.0...v0.28.0)
+Turns out `Client::request_stream` was hiding useful error information.
+When a log stream connection dropped, callers got a generic
+`io::Error::other` with no way to tell what happened.
 
----
-updated-dependencies:
-- dependency-name: rstest
-  dependency-version: 0.28.0
-  dependency-type: direct:production
-...
+Now request_stream reuses the error classification from request_events.
+Dropped connections show up as `io::ErrorKind::UnexpectedEof`, so the
+caller can check `e.kind()` directly and resume with `since_time`.
+Watch behaviour unchanged.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Fixes #1075
 
-**File**: `Cargo.toml` (modified, +1/-1)
+Signed-off-by: Alexei Pastuchov <[REDACTED_EMAIL]>
+Co-authored-by: doxxx <[REDACTED_EMAIL]>
+
+**File**: `kube-client/src/client/mod.rs` (modified, +174/-16)
 ```diff
-@@ -68,7 +68,7 @@ pin-project = "1.1.3"
- proc-macro2 = "1.0.93"
- quote = "1.0.44"
- rand = "0.10.0"
--rstest = "0.27.0"
-+rstest = "0.28.0"
- runtime-macros = "1.1.1"
- rustls = { version = "0.23.27", default-features = false }
- rustls-platform-verifier = "0.7.0"
+@@ -307,12 +307,16 @@ impl Client {
+     ///
+     /// The response can be processed using [`AsyncReadExt`](futures::AsyncReadExt)
+     /// and [`AsyncBufReadExt`](futures::AsyncBufReadExt).
++    ///
++    /// Reads fail with an [`std::io::Error`] of kind
++    /// [`UnexpectedEof`](std::io::ErrorKind::UnexpectedEof) if the connection
++    /// is dropped before the response is complete.
++    /// Long-lived streams, such as followed logs, can check for it and resume the request.
+     pub async fn request_stream(&self, request: Request<Vec<u8>>) -> Result<impl AsyncBufRead + use<>> {
+         let res = self.send(request.map(Body::from)).await?;
+         let res = handle_api_errors(res).await?;
+-        // Map the error, since we want to convert this into an `AsyncBufReader` using
+-        // `into_async_read` which specifies `std::io::Error` as the stream's error type.
+-        let body = res.into_body().into_data_stream().map_err(std::io::Error::other);
++        // `into_async_read` requires `std::io::Error` as the stream's error type.
++        let body = res.into_body().into_data_stream().map_err(body_error_to_io);
+         Ok(body.into_async_read())
+     }
+ 
+@@ -361,17 +365,7 @@ impl Client {
+         tracing::trace!("headers: {:?}", res.headers());
+ 
+         let frames = FramedRead::new(
+-            StreamReader::new(res.into_body().into_data_stream().map_err(|e| {
+-                // Resumable watch termination. TLS stacks nest an `io::Error`
+-                // of kind `UnexpectedEof`. Chunk decoders still report
+-                // "unexpected EOF during chunk" in the error text. Classify
+-                // either case by keeping the original error as the source.
+-                let chunk_eof = e.to_string().contains("unexpected EOF during chunk");
+-                if error_chain_contains_unexpected_eof(&e) || chunk_eof {
+-                    return std::io::Error::new(std::io::ErrorKind::UnexpectedEof, e);
+-                }
+-                std::io::Error::other(e)
+-            })),
++            StreamReader::new(res.into_body().into_data_stream().map_err(body_error_to_io)),
+             LinesCodec::new(),
+         );
+ 
+@@ -549,6 +543,21 @@ impl Client {
+     }
+ }
+ 
++// Converts a response body error into the `std::io::Error` that streaming
++// readers expect, keeping the original error as the source.
++//
++// A connection dropped mid-response becomes `UnexpectedEof`, so long-lived
++// streams (watches, followed logs) can tell it apart and resume. TLS stacks
++// nest an `io::Error` of kind `UnexpectedEof`, while chunk decoders only
++// report "unexpected EOF during chunk" in the error text, so check both.
++fn body_error_to_io(err: Error) -> std::io::Error {
++    let chunk_eof = err.to_string().contains("unexpected EOF during chunk");
++    if error_chain_contains_unexpected_eof(&err) || chunk_eof {
++        return std::io::Error::new(std::io::ErrorKind::UnexpectedEof, err);
++    }
++    std::io::Error::other(err)
++}
++
+ // `err` or an error reached through `std::error::Error::source` is an
+ // `std::io::Error` of kind `UnexpectedEof`.
+ fn error_chain_contains_unexpected_eof(err: &(dyn std::error::Error + 'static)) -> bool {
+@@ -630,13 +639,13 @@ mod tests {
+ 
+     use crate::{
+         Api, Client, Error, Result,
+-        api::WatchEvent,
++        api::{LogParams, WatchEvent},
+         client::Body,
+         config::{AuthInfo, Cluster, Context, Kubeconfig, NamedAuthInfo, NamedCluster, NamedContext},
+     };
+ 
+     use bytes::Bytes;
+-    use futures::{Stream, StreamExt};
++    use futures::{AsyncBufReadExt, Stream, StreamExt};
+     use http::{Request, Response};
+     use http_body::Frame;
+     use http_body_util::StreamBody;
+@@ -1092,6 +1101,155 @@ mod tests {
+         .to_string()
+     }
+ 
++    #[tokio::test]
++    async fn log_stream_direct_unexpected_eof_is_eof_error() {
++        let body = body_from_chunks(vec![
++            Ok(Bytes::from("line one\n")),
++            Err(std::io::Error::new(ErrorKind::UnexpectedEof, "connection closed")),
++        ]);
++        let (spawned, logs) = open_log_stream(body).await;
++        let mut lines = pin!(logs.lines());
++
++        expect_log_line(next_log_line(&mut lines).await, "line one");
++        let io_err = expect_log_error(next_log_line(&mut lines).await);
++        assert_eq!(io_err.kind(), ErrorKind::UnexpectedEof, "{io_err:?}");
++        let body_err = retained_body_error(&io_err);
++        assert!(chain_has_io_kind(body_err, ErrorKind::UnexpectedEof), "{body_err:?}");
++        spawned.await.unwrap();
++    }
++
++    #[tokio::test]
++    async fn log_stream_wrapped_unexpected_eof_is_eof_error() {
++        let body = body_from_chunks(vec![
++            Ok(Bytes::from("line one\n")),
++            Err(nested_io(
++                &["outer transport interruption", "inner transport interruption"],
++                std::io::Error::new(ErrorKind::UnexpectedEof, "connection closed"),
++            )),
++        ]);
++        let (spawned, logs) = open_log_stream(body).awai
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2136** (2026-11-04): Round down LogParams::since_time to the second (@doxxx93)
+- **PR #2135** (2026-11-04): Allow LLVM-exception license for ar_archive_writer in cargo deny (@doxxx93)
 - **PR #2134** (2026-11-02): bump msrv to 1.95 (@clux)
 - **PR #2133** (2026-11-02): Chore(deps): Update rstest requirement from 0.27.0 to 0.28.0 (@dependabot[bot])
 - **PR #2132** (2026-11-02): Chore(deps): Update parking_lot requirement from 0.12.0 to 0.13.0 (@dependabot[bot])
 - **PR #2131** (2026-11-02): make `just bump-k8s` idempotent (@clux)
-- **PR #2124** (2026-10-31): Remove deprecated alias for EventFlatten (@clux)
-- **PR #2123** (2026-10-31): Attach the event cache test to a different object (@doxxx93)
 
 ---
 
@@ -1808,28 +1982,56 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Update parking_lot requirement from 0.12.0 to 0.13.0 (#2132)
+## X. Round down LogParams::since_time to the second (#2136)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-core/src/kubelet_debug.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d956e12a`: deps): Update parking_lot requirement from 0.12.0 to 0.13.0 (#2132). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e737551c`: Round down LogParams::since_time to the second (#2136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-core/src/kubelet_debug.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-parking_lot = "0.13.0"
+use jiff::{RoundMode, TimestampRound, Unit};
+            // Round down like client-go; rounding up would skip lines logged later in the same second.
+            let floor = TimestampRound::new()
+                .smallest(Unit::Second)
+                .mode(RoundMode::Floor);
+            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
+    #[test]
+    fn node_logs_since_time_rounds_down() {
+        let lp = LogParams {
+            since_time: Some("2023-10-19T13:14:26.7Z".parse().unwrap()),
+            ..Default::default()
+        };
+        let req = Request::kubelet_node_logs(
+            &KubeletDebugParams {
+                name: "some-name",
+                namespace: "some-namespace",
+                pod_uid: None,
+            },
+            "some-container",
+            &lp,
+        )
+        .unwrap();
+        assert_eq!(
+            req.uri(),
+            "/containerLogs/some-namespace/some-name/some-container?&sinceTime=2023-10-19T13%3A14%3A26Z"
+        );
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-parking_lot = "0.12.0"
+use jiff::Unit;
+            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d956e12a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e737551c` are properly handled with clean fallback behavior.

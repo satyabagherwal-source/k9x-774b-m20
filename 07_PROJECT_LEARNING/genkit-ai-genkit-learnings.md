@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `d372a646`  
+> **Source Version**: `8ee17216`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:45:55.040Z  
+> **Timestamp**: 2026-11-04T18:06:13.934Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:45:54.242Z  
+> **Harvest Timestamp**: 2026-11-04T18:06:13.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6565 stars
+- **Stars / Engagement**: 6566 stars
 
 ---
 
@@ -2031,1504 +2031,697 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58b421bd` (2026-11-03)
-**Commit Message**: fix(py): log the model or tool exception that generate boxes as internal error (#7032)
+### Incident Patch 1: `5e8663ef` (2026-11-04)
+**Commit Message**: fix(py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990)
 
-**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +50/-1)
+**File**: `py/packages/genkit-mcp/src/genkit_mcp/_tools.py` (modified, +5/-6)
 ```diff
-@@ -107,7 +107,7 @@
- from genkit._core._operation import Operation
- from genkit._core._registry import Registry
- from genkit._core._schema import check_output_schema
--from genkit._core._telemetry._instrumentation import SpanContext, run_in_new_span, set_span_state
-+from genkit._core._telemetry._instrumentation import SpanContext, current_span, run_in_new_span, set_span_state
- from genkit._core._tool import Tool
- from genkit._core._typing import (
-     ConstrainedSupport,
-@@ -1230,6 +1230,47 @@ def boxed_finish_message(*, exc: BaseException, pipe_failed: bool) -> str:
-     return INTERNAL_FINISH_MESSAGE
+@@ -27,7 +27,6 @@
+     CallToolResult,
+     EmbeddedResource,
+     ImageContent,
+-    ResourceLink,
+     TextContent,
+     TextResourceContents,
+     Tool as McpTool,
+@@ -121,9 +120,11 @@ def call_result_to_multipart(result: CallToolResult) -> MultipartToolResponse:
  
+     Text blocks are concatenated into ``output``, parsed as JSON only when the
+     text begins with ``{`` or ``[``. ``structuredContent`` wins over text when
+-    present. Image, audio and blob resource blocks become media parts, and a
+-    resource link becomes a resource part. An error result yields an ``error``
+-    output and drops any media, so the model can read the failure and retry.
++    present. Image, audio, and blob resource blocks become media parts; text
++    resource blocks append to text output; resource links are skipped since
++    Genkit Python does not expose resource actions. An error result yields an
++    ``error`` output and drops any media, so the model can read the failure and
++    retry.
  
-+# Set on an exception once log_dropped_failure has logged it, so the tool site
-+# and the generate-level box never log the same failure twice.
-+_LOGGED_ATTR = '_genkit_failure_logged'
-+
-+
-+def log_dropped_failure(exc: BaseException, *, model: str | None = None, tool: str | None = None) -> None:
-+    """Log a failure whose cause boxing hides behind ``internal error``.
-+
-+    The caller only gets ``finish_reason=failed`` with ``internal error``, so
-+    without this line the cause lives only in an exported trace. Failures that
-+    keep their own message (``PublicError``, a ``GenkitError`` without a
-+    foreign cause) are already on ``response.error`` and are not logged.
-+
-+    Args:
-+        exc: The exception about to be boxed.
-+        model: Model the turn was calling, when known.
-+        tool: Tool that raised, when known. Named over ``model``.
-+    """
-+    if getattr(exc, _LOGGED_ATTR, False):
-+        return
-+    if boxed_finish_message(exc=exc, pipe_failed=False) != INTERNAL_FINISH_MESSAGE:
-+        return
-+    with contextlib.suppress(AttributeError, TypeError):
-+        setattr(exc, _LOGGED_ATTR, True)
-+    fields: dict[str, object] = {}
-+    if model:
-+        fields['model'] = model
-+    if tool:
-+        fields['tool'] = tool
-+    span = current_span.get()
-+    if span is not None and span.trace_id:
-+        fields['trace_id'] = span.trace_id
-+    if tool:
-+        culprit = f'tool {tool!r}'
-+    elif model:
-+        culprit = f'model {model!r}'
-+    else:
-+        culprit = 'generate'
-+    logger.error('%s raised, returning finish_reason=failed', culprit, exc_info=exc, **fields)
-+
-+
- def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
-     # abort_signal is our own stop. A wait_for / task.cancel() has to
-     # surface as CancelledError so the deadline still works.
-@@ -1245,6 +1286,7 @@ def box_from_exc(
-     caller_stopped: bool,
-     reason: ErrorReason | None = None,
-     request: ModelRequest | None = None,
-+    model: str | None = None,
- ) -> ModelResponse:
-     """Box a failure after generate has entered: closed history, unanswered turn dropped."""
-     callback_cause = streaming_callback_cause(exc=exc)
-@@ -1255,6 +1297,8 @@ def box_from_exc(
-         exc = callback_cause
-         reason = ErrorReason.STREAM_CALLBACK_FAILED
-         pipe_failed = True
-+    elif not caller_stopped:
-+        log_dropped_failure(exc, model=model)
-     finish_message = boxed_finish_message(exc=exc, pipe_failed=pipe_failed)
-     if caller_stopped:
-         finish_message = 'Generation aborted.'
-@@ -1475,6 +1519,7 @@ def remember_response(result: object) -> None:
-             exc=exc,
-             caller_stopped=ctx.abort_signal.is_set(),
-             request=failed_request,
-+            model=resolved.model.name,
-         )
-     dropped = (
-         box_if_hook_dropped_ticket(
-@@ -1557,6 +1602,7 @@ async def generate_turn(
-             exc=exc,
-             caller_stopped=ctx.abort_signal.is_set(),
-             request=call.request,
-+            model=resolved.model.name,
-         )
-     dropped = (
-         box_if_hook_dropped_ticket(
-@@ -1840,6 +1886,7 @@ async def run_tools_or_stop(
-             exc=exc,
-             caller_stopped=ctx.abort_signal.is_set(),
-             reason=ErrorReason.TOOL_FAILED,
-+            model=resolved.model.name,
-         )
- 
-     if revised_model_msg:
-@@ -2231,6 +2278,7 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
-             # failures and propagate to ``asyncio.gather``.
-             intr = interrupt_from_exc(e)
-             if intr is None:
-+                log_dropped_failure(e, tool=trp.tool_request.name)
-                 raise
-             logger.debug('tool triggered an interrupt', tool=trp.tool_request.name)
-             return (None, interrupt_request_part(trp, intr))
-@@ -2618,6 +2666,7 @@ async def resolve_resumed_tool(
-             intr = interrupt_from_exc(e)
-             if intr is not None:
-                 return (interrupt_request_part(tool_req_root, intr), None)
-+            log_dropped_failure(e, tool=tool_req.name)
-             raise
-         metadata = dict(tool_req_root.metadata) if tool_req_root.metadata else {}
-         interrupt = metadata.get('interrupt')
+     Args:
+         result: What ``ClientSession.call_tool`` returned.
+@@ -146,8 +147,6 @@ def call_result_to_multipart(result: CallToolResult) -> MultipartToolResponse:
+             text_output += block.text
+         elif isinstance(block, (ImageContent, AudioContent)):
+             content.append(_media_part(block.mimeType, block.data))
+-        elif isinstance(block, ResourceLink):
+-            content.append(Part.model_validate({'resource': {'uri': str(block.uri)}}))
+         elif isinstance(block, EmbeddedResource):
+             resource = block.resource
+             if isinstance(resource, TextResourceContents):
 ```
 
-**File**: `py/packages/genkit/tests/genkit/ai/generate_logging_test.py` (modified, +152/-2)
+**File**: `py/packages/genkit-mcp/tests/mcp_tools_test.py` (modified, +17/-3)
 ```diff
-@@ -9,20 +9,21 @@
- import structlog
+@@ -43,7 +43,7 @@
+ from pydantic import AnyUrl
  from structlog.testing import capture_logs
  
--from genkit import ErrorReason, Genkit, Message, ModelResponse, ModelResponseChunk, Part
-+from genkit import ErrorReason, Genkit, Message, ModelResponse, ModelResponseChunk, Part, PublicError
- from genkit._ai._generate import CallScope, generate_action
- from genkit._ai._model import resolve_model_arg
- from genkit._ai._tools import Interrupt
- from genkit._core._environment import GENKIT_ENV
- from genkit._core._logger import GENKIT_LOG, get_logger
--from genkit._core._model import GenerateActionOptions, Resume
-+from genkit._core._model import GenerateActionOptions, ModelRequest, Resume
- from genkit._core._registry import Registry
- from genkit._core._typing import (
-     FinishReason,
-     GenerateActionOutputConfig,
-     Role,
-     ToolRequest,
- )
-+from genkit.model import ModelContext
- from genkit.testing import define_scripted_model
+-from genkit import Part
++from genkit import MultipartToolResponse, Part
+ from genkit.plugin_api import Action
  
- BLOB = 'A' * 1_000_000
-@@ -516,3 +517,152 @@ def on_chunk(chunk: object) -> None:
-     assert response.error.reason is ErrorReason.STREAM_CALLBACK_FAILED
-     assert response.error.message == response.finish_message
-     assert [message.role for message in response.messages] == [Role.USER, Role.MODEL, Role.TOOL]
-+
-+
-+def _errors(entries: list[dict[str, object]]) -> list[dict[str, object]]:
-+    return [e for e in entries if e['log_level'] == 'error']
-+
-+
-+def _tool_turn(name: str) -> ModelResponse:
-+    return ModelResponse(
-+        message=Message(role=Role.MODEL, content=[Part(tool_request=ToolRequest(name=name, input={}, ref='1'))]),
-+        finish_reason=FinishReason.STOP,
+ 
+@@ -135,7 +135,7 @@ def test_call_result_to_multipart_drops_server_error_flags_from_a_success() -> N
+ 
+ 
+ def test_call_result_to_multipart_maps_multipart_content_and_meta() -> None:
+-    """Media, resource links, and embedded resources use Genkit multipart parts."""
++    """Media and blob resources become media parts, text resources append to output, and resource links are skipped."""
+     result = CallToolResult(
+         content=[
+             text('before'),
+@@ -171,10 +171,24 @@ def test_call_result_to_multipart_maps_multipart_content_and_meta() -> None:
+         Part.from_media(url='data:image/png;base64,image-data', content_type='image/png'),
+         Part.from_media(url='data:audio/mpeg;base64,audio-data', content_type='audio/mpeg'),
+         Part.from_media(url='data:application/pdf;base64,blob-data', content_type='application/pdf'),
+-        Part.model_validate({'resource': {'uri': 'https://example.test/docs'}}),
+     ]
+ 
+ 
++def test_call_result_to_multipart_skips_resource_link() -> None:
++    """Resource links are skipped without emitting dead resource parts or breaking JSON text output."""
++    link = ResourceLink(
++        type='resource_link',
++        name='docs',
++        uri=AnyUrl('https://example.test/docs'),
 +    )
 +
++    standalone = call_result_to_multipart(CallToolResult(content=[link]))
++    assert standalone == MultipartToolResponse(output=None, content=None)
 +
-+@pytest.mark.asyncio
-+async def test_crashing_model_logs_the_hidden_cause_once() -> None:
-+    """A model that raises returns 'internal error'; the cause is logged once at ERROR."""
-+    structlog.reset_defaults()
-+    ai = Genkit()
-+
-+    async def crashing(_request: ModelRequest, _ctx: ModelContext) -> ModelResponse:
-+        raise RuntimeError('model backend exploded')
-+
-+    ai.define_model(name='crash', fn=crashing)
-+
-+    with capture_logs() as entries:
-+        response = await ai.generate(model='crash', prompt='hi')
-+
-+    assert response.finish_reason == FinishReason.FAILED
-+    assert response.error is not None
-+    assert response.error.message == 'internal error'
-+    errors = _errors(entries)
-+    assert len(errors) == 1
-+    assert errors[0]['event'] == "model 'crash' raised, returning finish_reason=failed"
-+    assert errors[0]['model'] == 'crash'
-+    assert isinstance(errors[0]['exc_info'], RuntimeError)
-+    assert str(errors[0]['exc_info']) == 'model backend exploded'
++    with_json = call_result_to_multipart(CallToolResult(content=[text('{"ok": true}'), link]))
++    assert with_json == MultipartToolResponse(output={'ok': True}, content=None)
 +
 +
-+@pytest.mark.asyncio
-+async def test_crashing_tool_is_named_and_logged_once() -> None:
-+    """The tool site names the tool; the generate-level box does not log it again."""
-+    structlog.reset_defaults()
-+    ai = Genkit()
-+    pm, _ = define_scripted_model(ai)
-+
-+    @ai.tool(name='check_allergens')
-+    async def check_allergens(_: dict) -> str:  # noqa: ARG001
-+        raise RuntimeError('allergen db down')
-+
-+    pm.responses = [_tool_turn('check_allergens')]
-+
-+    with capture_logs() as entries:
-+        response = await ai.generate(model='scriptedModel', prompt='hi', tools=['check_allergens'])
-+
-+    assert response.finish_reason == FinishReason.FAILED
-+    assert response.error is not None
-+    assert response.error.message == 'internal error'
-+    errors = _errors(entries)
-+    assert len(errors) == 1
-+    assert errors[0]['tool'] == 'check_allergens'
-+    assert str(errors[0]['exc_info']) == 'allergen db down'
-+
-+
-+@pytest.mark.asyncio
-+async def test_crashing_restarted_tool_is_logged_once() -> None:
-+    """A tool that raises on restart is named once, not again by the outer box."""
-+    structlog.reset_defaults()
-+    ai = Genkit()
-+    pm, _ = define_scripted_model(ai)
-+    calls: list[int] = []
-+
-+    @ai.tool(name='hold')
-+    async def hold(_: dict) -> str:  # noqa: ARG001
-+        calls.append(1)
-+        if len(calls) == 1:
-+            raise Interrupt({'hold': True})
-+        raise RuntimeError('kitchen printer jammed')
-+
-+    pm.responses = [_tool_turn('hold')]
-+    first = await ai.generate(model='scriptedModel', prompt='hi', tools=['hold'])
-+
-+    with capture_logs() as entries:
-+        response = await generate_action(
-+            CallScope(ai),
-+            GenerateActionOptions(
-+                model='scriptedModel',
-+                messages=list(first.messages),
-+                tools=['hold'],
-+                resume=Resume(restart=[first.interrupts[0].restart()]),
-+            ),
-+        )
-+
-+    assert response.finish_reason == FinishReason.FAILED
-+    errors = _errors(entries)
-+    assert len(errors) == 1
-+    assert errors[0]['tool'] == 'hold'
-+    assert str(errors[0]['exc_info']) == 'kitchen printer jammed'
-+
-+
-+@pytest.mark.asyncio
-+async def test_published_tool_error_is_not_logged() -> None:
-+    """A PublicError message is already on response.error, so nothing is logged."""
-+    s
+ def test_call_result_to_multipart_labels_a_blob_without_a_mime_type_as_octet_stream() -> None:
+     result = CallToolResult(
+         content=[EmbeddedResource(type='resource', resource=BlobResourceContents(uri=AnyUrl('file:///x'), blob='YQ=='))]
 ```
 
 ---
 
-### Incident Patch 2: `a0d0c362` (2026-11-03)
-**Commit Message**: feat(py/google-genai)!: GoogleAI and VertexAI take headers, timeout, max_retries and http_client_factory (#6826)
+### Incident Patch 2: `f87aafe3` (2026-11-03)
+**Commit Message**: fix(py): name the action in served-action failure logs (#7034)
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_google.py` (modified, +248/-62)
+**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +8/-7)
 ```diff
-@@ -49,16 +49,16 @@
- from __future__ import annotations
+@@ -37,12 +37,13 @@
+ _JSON_SEPARATORS = (',', ':')
  
- import os
--from collections.abc import Callable
-+from collections.abc import Callable, Mapping
- from typing import Any, NoReturn
  
-+import httpx
- from google import genai
- from google.auth import default as google_auth_default
- from google.auth.credentials import Credentials
- from google.auth.exceptions import DefaultCredentialsError
--from google.genai.client import DebugConfig
- from google.genai.errors import APIError
--from google.genai.types import HttpOptions, HttpOptionsDict, Model as GenaiModel
-+from google.genai.types import HttpOptions, HttpRetryOptions, Model as GenaiModel
- from pydantic import BaseModel
+-def _log_failure(*, error: Exception, where: str) -> None:
+-    """Log a served-flow failure; 5xx includes the traceback."""
++def _log_failure(*, error: Exception, flow: str, where: str) -> None:
++    """Log a served-action failure, naming the action; 5xx includes the traceback."""
++    extra = {'genkit_action': flow}
+     if error_status(error) >= 500:
+-        logger.exception('served flow %s failed', where)
++        logger.exception('served action %r %s failed', flow, where, extra=extra)
+     else:
+-        logger.warning('served flow %s failed: %s', where, error)
++        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
  
- import genkit_google_genai._constants as const
-@@ -139,6 +139,7 @@
-     is_unsupported_image_model_name,
-     strip_ref_prefixes,
- )
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds, timeout_seconds_to_ms
- from genkit_google_genai._models._veo import (
-     KnownGoogleAIVeo,
-     KnownVertexAIVeo,
-@@ -276,7 +277,7 @@ def _new_gemini(plugin: GoogleAI | VertexAI, clean_name: str) -> GeminiModel:
-     return GeminiModel(
-         clean_name,
-         plugin._runtime_client(),
--        client_kwargs=plugin._client_kwargs,
-+        client_kwargs=plugin._loop_client_kwargs(),
-         base_url_pinned=plugin._base_url_pinned,
-         legacy_response_schema=plugin._legacy_response_schema,
-     )
-@@ -349,7 +350,7 @@ def _create_veo_background_model(
-     name: str,
-     client_getter: Callable[[], genai.Client],
-     plugin_name: str,
--    client_kwargs: dict[str, Any] | None = None,
-+    client_kwargs: Callable[[], dict[str, Any]] | None = None,
- ) -> BackgroundModel:
-     """Create the start/check action pair for a Veo video generation model.
  
-@@ -362,20 +363,20 @@ def _create_veo_background_model(
-         name: The model id without the plugin prefix.
-         client_getter: Function returning the loop-local Google GenAI client.
-         plugin_name: The name of the plugin (googleai or vertexai).
--        client_kwargs: Plugin-level client kwargs, cloned when a call
--            overrides the key or endpoint.
-+        client_kwargs: Returns the plugin-level client kwargs for the running
-+            loop, cloned when a call overrides the key or endpoint.
+ def _to_dict(obj: Any) -> Any:  # noqa: ANN401
+@@ -172,7 +173,7 @@ async def handler(request: HttpRequest) -> HttpResponseBase:
+                     # Django's own denial; re-raise so it stays 403/404/400.
+                     raise
+                 except Exception as e:
+-                    _log_failure(error=e, where='context provider')
++                    _log_failure(error=e, flow=flow.name, where='context provider')
+                     return _error_response(e)
  
-     Returns:
-         BackgroundModel pairing the start and check actions.
-     """
-     full_name = f'{plugin_name}/{name}'
+             init = body.get('init')
+@@ -189,7 +190,7 @@ async def event_stream() -> AsyncIterator[str]:
+                         result = await stream_response.response
+                         yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
+                     except Exception as e:
+-                        _log_failure(error=e, where='stream')
++                        _log_failure(error=e, flow=flow.name, where='stream')
+                         yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
  
-     async def _start(request: ModelRequest[VeoConfig], ctx: ModelContext) -> Operation:
--        veo = VeoModel(name, client_getter(), client_kwargs=client_kwargs)
-+        veo = VeoModel(name, client_getter(), client_kwargs=client_kwargs() if client_kwargs else None)
-         return await veo.start(request, ctx)
+                 return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+@@ -198,7 +199,7 @@ async def event_stream() -> AsyncIterator[str]:
+                 response = await flow.run(input=action_input, context=action_context, init=init)
+                 return JsonResponse({'result': _to_dict(response.response)})
+             except Exception as e:
+-                _log_failure(error=e, where='run')
++                _log_failure(error=e, flow=flow.name, where='run')
+                 return _error_response(e)
  
-     async def _check(op: Operation, ctx: ModelContext) -> Operation:
--        veo = VeoModel(name, client_getter(), client_kwargs=client_kwargs)
-+        veo = VeoModel(name, client_getter(), client_kwargs=client_kwargs() if client_kwargs else None)
-         return await veo.check(op, ctx)
- 
-     return BackgroundModel(
-@@ -594,10 +595,12 @@ def __init__(
-         *,
-         api_key: str | None = None,
-         credentials: Credentials | None = None,
--        debug_config: DebugConfig | None = None,
--        http_options: HttpOptions | HttpOptionsDict | None = None,
-         api_version: str | None = None,
-         base_url: str | None = None,
-+        headers: Mapping[str, str] | None = None,
-+        timeout: float | None = None,
-+        max_retries: int | None = None,
-+        http_client_factory: Callable[[], httpx.AsyncClient] | None = None,
-         legacy_response_schema: bool = False,
-     ) -> None:
-         """Initializes the GoogleAI plugin.
-@@ -609,11 +612,60 @@ def __init__(
-             credentials: Google Cloud credentials for authentication.
-                 Defaults to None, in which case the client uses default authentication
-                 mechanisms (e.g., application default credentials or API key).
--            debug_config: Configuration for debugging the client. Defaults to None.
--            http_options: HTTP options for configuring the client's network requests.
--                Can be an instance of HttpOptions or a dictionary. Defaults to None.
-             api_version: The API version to use (e.g., 'v1beta'). Defaults to None.
-             base_url: The base URL for the API. Defaults to None.
-+            headers: Extra HTTP headers sent on every request. Genkit appends
-+                its client attribution to ``x-goog-api-client`` and ``user-agent``.
-+                Interactions models (Deep Research, Antigravity, Lyria) drop a
-+                caller's ``x-goog-api-client`` and send only Genkit's.
-+            timeout: Per-request timeout in **seconds**, as a float. Must be
-+                positive and finite. Defaults to no timeout. A model config's
-+                ``timeout`` overrides it for a single call. A timeout set on
-+                the client from ``http_client_factory`` is n
+         return handler
 ```
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_interactions/_client.py` (modified, +12/-17)
+**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +21/-0)
 ```diff
-@@ -149,27 +149,22 @@ async def request(
-     allow_empty: bool = False,
- ) -> Interaction | None:
-     """Issue one Interactions HTTP call and parse the Interaction body."""
--    # Auth/key headers are per-request; the loop-local client is just the transport.
--    client = _http_client()
-+    # Auth/key headers are per-request; the client is just the transport.
-+    # The timeout always goes on the request so a caller's own client gets the
-+    # same budget as the default one instead of httpx's 5 second default.
-+    http_client_factory = client_options.http_client_factory if client_options else None
-+    client = http_client_factory() if http_client_factory is not None else _http_client()
-     request_headers = headers(api_key=api_key, client_options=client_options)
-     timeout = timeout_seconds(client_options)
+@@ -18,6 +18,7 @@
+ """Tests for the Django plugin."""
  
+ import json
++import logging
+ import sys
+ import types
+ from collections.abc import Iterator
+@@ -503,3 +504,23 @@ async def test_context_provider_reads_raw_django_request(urlconf: None) -> None:
+ 
+     assert response.status_code == 200
+     assert json.loads(response.content) == {'result': 'table T7'}
++
++
++@pytest.mark.asyncio
++async def test_django_failure_logs_name_the_flow(
++    urlconf: None,  # noqa: ARG001
++    caplog: pytest.LogCaptureFixture,
++) -> None:
++    """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
++    client = AsyncClient()
++    with caplog.at_level(logging.DEBUG, logger='genkit_django._handler'):
++        await client.post('/error_flow', data=json.dumps({'data': 'x'}), content_type='application/json')
++        await client.post('/public_flow', data=json.dumps({'data': '99'}), content_type='application/json')
++
++    records = [r for r in caplog.records if r.name == 'genkit_django._handler']
++    assert [r.getMessage() for r in records] == [
++        "served action 'raise_error' run failed",
++        "served action 'raise_public' run failed: NOT_FOUND: no order 99",
++    ]
++    assert records[0].exc_info is not None
++    assert records[1].exc_info is None
+```
+
+**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +11/-9)
+```diff
+@@ -79,12 +79,13 @@ async def _read_json_request_body(*, request: Request) -> object:
+         raise PublicError('INVALID_ARGUMENT', 'request body must be valid JSON') from err
+ 
+ 
+-def _log_failure(*, error: Exception, where: str) -> None:
+-    """Log a served-flow failure; 5xx includes the traceback."""
++def _log_failure(*, error: Exception, flow: str, where: str) -> None:
++    """Log a served-action failure, naming the action; 5xx includes the traceback."""
++    extra = {'genkit_action': flow}
+     if error_status(error) >= 500:
+-        logger.exception('served flow %s failed', where)
++        logger.exception('served action %r %s failed', flow, where, extra=extra)
+     else:
+-        logger.warning('served flow %s failed: %s', where, error)
++        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
+ 
+ 
+ def format_stream_error(error: Exception) -> str:
+@@ -143,7 +144,7 @@ async def _handle_action_request(
      try:
--        if timeout is not None:
--            response = await client.request(
--                method,
--                url,
--                headers=request_headers,
--                json=json_body,
--                timeout=timeout,
--            )
--        else:
--            response = await client.request(
--                method,
--                url,
--                headers=request_headers,
--                json=json_body,
--            )
-+        response = await client.request(
-+            method,
-+            url,
-+            headers=request_headers,
-+            json=json_body,
-+            timeout=timeout if timeout is not None else NO_TIMEOUT,
+         body = await _read_json_request_body(request=request)
+     except PublicError as err:
+-        _log_failure(error=err, where='run')
++        _log_failure(error=err, flow=action.name, where='run')
+         return json_error_response(err)
+     try:
+         if extract_input is not None and isinstance(body, dict):
+@@ -168,7 +169,7 @@ async def event_stream() -> AsyncIterator[str]:
+             try:
+                 stream_handle = action_obj.stream(input=action_input, context=context, init=resolved_init)
+             except Exception as e:
+-                _log_failure(error=e, where='stream')
++                _log_failure(error=e, flow=action_obj.name, where='stream')
+                 yield format_stream_error(e)
+                 return
+             async for line in to_sse(stream_handle):
+@@ -182,7 +183,7 @@ async def event_stream() -> AsyncIterator[str]:
+             return Response(status_code=empty_status)
+         return {'result': to_dict(response.response)}
+     except Exception as e:
+-        _log_failure(error=e, where='run')
++        _log_failure(error=e, flow=action_obj.name, where='run')
+         return json_error_response(e)
+ 
+ 
+@@ -249,7 +250,8 @@ async def handler(request: Request) -> Response | dict[str, Any]:
+                 # The wrapper's own HTTP response (e.g. 503 while the action isn't ready).
+                 raise
+             except Exception as e:
+-                _log_failure(error=e, where='handler')
++                flow_name = getattr(fn, '__name__', '<unknown>')
++                _log_failure(error=e, flow=flow_name, where='handler')
+                 return json_error_response(e)
+ 
+             # This decorator reads context from the request itself. Routes that
+@@ -271,7 +273,7 @@ async def handler(request: Request) -> Response | dict[str, Any]:
+                     # handles it so a 401 from context_provider stays a 401.
+                     raise
+                 except Exception as e:
+-                    _log_failure(error=e, where='context provider')
++                    _log_failure(error=e, flow=action.name, where='context provider')
+                     return json_error_response(e)
+ 
+             return await handle_genkit_request(
+```
+
+**File**: `py/packages/genkit-fastapi/tests/agent_handler_test.py` (modified, +22/-0)
+```diff
+@@ -6,6 +6,7 @@
+ from __future__ import annotations
+ 
+ import json
++import logging
+ import re
+ from typing import Any
+ 
+@@ -280,6 +281,27 @@ def test_serve_agent_init_mismatch_returns_agent_init_error(
+     assert err.reason is reason
+ 
+ 
++def test_serve_agent_stream_failure_log_names_the_agent(caplog: pytest.LogCaptureFixture) -> None:
++    """A streamed agent failure logs the agent's action name via to_sse."""
++    with caplog.at_level(logging.WARNING):
++        response = client(build_agent('orderAgent', server_managed=True)).post(
++            '/api/chat?stream=true',
++            json={
++                'data': {'message': {'role': 'user', 'content': [{'text': 'Hi'}]}},
++                'init': {'state': {'custom': {'table': 4}}},
++            },
 +        )
-     except TRANSPORT_ERRORS as error:
-         raise transport_error(error) from error
- 
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_interactions/_options.py` (modified, +9/-2)
-```diff
-@@ -18,9 +18,11 @@
- 
- from __future__ import annotations
- 
-+from collections.abc import Callable
- from typing import Any, Literal
- 
--from pydantic import BaseModel, ConfigDict
-+import httpx
-+from pydantic import BaseModel, ConfigDict, Field
- from pydantic.alias_generators import to_camel
- from typing_extensions import Self
- 
-@@ -34,14 +36,19 @@ class ClientOptions(BaseModel):
-     them; check/cancel receive the options needed for their own request.
-     """
- 
--    model_config = ConfigDict(alias_generator=to_camel, extra='ignore', populate_by_name=True)
-+    model_config = ConfigDict(
-+        alias_generator=to_camel, extra='ignore', populate_by_name=True, arbitrary_types_allowed=True
++
++    msg = (
++        "Cannot send 'state' to agent 'orderAgent': this agent uses a server-managed store. "
++        "Send 'snapshotId' or 'sessionId' instead."
 +    )
++    assert sse_events(response.text) == [{'error': {'message': msg, 'status': 'FAILED_PRECONDITION'}}]
++    assert [(r.levelname, r.getMessage(), r.exc_info is not None) for r in caplog.records] == [
++        ('WARNING', f"served action 'orderAgent' stream failed: FAILED_PRECONDITION: {msg}", False),
++    ]
++
++
+ _UUID = re.compile(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
  
-     api_key: str | None = None
-     api_version: str | None = None
-     base_url: str | None = None
-     custom_headers: dict[str, str] | None = None
-     # Milliseconds — applied to the HTTP call, not the create body.
-     timeout: float | None = None
-+    # Only the plugin sets this; a request config can't swap the connection.
-+    # A getter, called per request, so each event loop gets its own client.
-+    http_client_factory: Callable[[], httpx.AsyncClient] | None = Field(default=None, exclude=True)
- 
-     def merge(self, overrides: ClientOptions | dict[str, Any] | None) -> Self:
-         """Return a copy with non-null override fields applied."""
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_gemini.py` (modified, +3/-3)
-```diff
-@@ -35,8 +35,8 @@
-     attach_config_extra,
-     attach_leftovers,
-     check_timeout_seconds,
-+    copy_http_options,
-     dump_family_config,
--    keep_client_extra_body,
-     reject_bool_timeout,
-     sdk_config_error,
-     split_sdk_fields,
-@@ -2016,7 +2016,7 @@ async def _resolve_request_client(
-         # plugin's credentials, endpoint, headers, and timeouts.
-         kwargs = dict(self._client_kwargs)
-         plugin_opts = kwargs.get('http_options')
--        opts = plugin_opts.model_copy(deep=True) if plugin_opts is not None else genai_types.HttpOptions()
-+        opts = copy_http_options(plugin_opts) if plugin_opts is not None else genai_types.HttpOptions()
- 
-         if api_version:
-             opts.api_version = api_version
-@@ -2443,7 +2443,7 @@ async def _genkit_to_googleai_cfg(
-                 headers['X-Server-Timeout'] = str(math.ceil(ms / 1000))
-                 http_options.headers = headers
-                 cfg.http_options = http_options
--            return keep_client_extra_body(cfg, (self._client_kwargs or {}).get('http_options'))
-+            return cfg
- 
-         return None
  
 ```
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_interactions_utils.py` (modified, +6/-9)
+**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +58/-9)
 ```diff
-@@ -18,7 +18,6 @@
+@@ -19,6 +19,7 @@
  
- from __future__ import annotations
- 
--import math
- import os
- from collections.abc import Mapping
+ import asyncio
+ import datetime
++import functools
+ import json
+ import logging
  from typing import Any, cast
-@@ -30,7 +29,7 @@
- )
- from genkit_google_genai._interactions._options import ClientOptions
- from genkit_google_genai._models._routing import strip_ref_prefixes
--from genkit_google_genai._models._sdk_config import check_timeout_seconds
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds, timeout_seconds_to_ms
- from genkit_google_genai._models._secrets import context_api_key
+@@ -642,6 +643,7 @@ async def ask(_: str) -> str:
  
- from genkit import GenkitError, Message
-@@ -91,11 +90,10 @@ def remove_client_option_overrides(config: dict[str, Any]) -> dict[str, Any]:
- def timeout_ms(seconds: object) -> float | None:
-     """Config seconds to ``ClientOptions.timeout`` milliseconds, rounding up so 0.0001 sends 1 ms.
- 
--    ``ClientOptions`` stays in milliseconds because the plugin-level options
--    (``HttpOptions.timeout`` today) share it; this is the one place a request
--    config's seconds cross into it. A numeric string such as ``'5'`` is read
--    as a number, as ``ClientOptions`` did before; anything else raises
--    ``INVALID_ARGUMENT``.
-+    ``ClientOptions`` stays in milliseconds alongside ``HttpOptions.timeout``;
-+    ``GoogleAI(timeout=...)`` converts at construction and per-request configs
-+    convert here. A numeric string such as ``'5'`` is read as a number, as
-+    ``ClientOptions`` did before; anything else raises ``INVALID_ARGUMENT``.
-     """
-     if isinstance(seconds, str):
-         try:
-@@ -106,8 +104,7 @@ def timeout_ms(seconds: object) -> float | None:
-         checked = check_timeout_seconds(seconds)
-     except ValueError as err:
-         raise GenkitError(status='INVALID_ARGUMENT', message=str(err)) from err
--    # round() first so 2.007 s is 2007 ms, not 2008 from float noise.
--    return float(math.ceil(round(checked * 1000, 6))) if checked is not None else None
-+    return float(timeout_seconds_to_ms(checked)) if checked is not None else None
+     assert response.status_code == 500
+     assert any(record.exc_info for record in caplog.records)
++    assert [r.getMessage() for r in caplog.records if r.exc_info] == ["served action 'ask' run failed"]
  
  
- def client_overrides_from_config(
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_sdk_config.py` (modified, +20/-20)
-```diff
-@@ -26,6 +26,18 @@
- from genkit import GenkitError
+ def test_served_flow_client_error_logs_one_warning_without_traceback(caplog: pytest.LogCaptureFixture) -> None:
+@@ -661,6 +663,7 @@ async def lookup_order(_: str) -> str:
+     assert response.status_code == 404
+     assert [record.levelno for record in records] == [logging.WARNING]
+     assert records[0].exc_info is None
++    assert records[0].getMessage() == "served action 'lookup_order' run failed: NOT_FOUND: order not found"
  
  
-+def copy_http_options(opts: genai_types.HttpOptions) -> genai_types.HttpOptions:
-+    """Copy ``opts`` so per-request edits never reach the plugin's options.
-+
-+    ``headers`` is the only container the plugin sets, so it gets a fresh dict.
-+    The loop's ``httpx_async_client`` stays shared: it holds locks and sockets
-+    that can't be copied, and every request on that loop goes through it.
-+    """
-+    if opts.headers is None:
-+        return opts.model_copy()
-+    return opts.model_copy(update={'headers': dict(opts.headers)})
-+
-+
- def unexpected_config_error(*, action_name: str) -> GenkitError:
-     """Fail when the dump leaf sees a config Action did not produce."""
-     return GenkitError(
-@@ -200,20 +212,6 @@ def attach_config_extra(
-     return config
+ def test_fastapi_stream_provider_401_sends_sse_internal_error(caplog: pytest.LogCaptureFixture) -> None:
+@@ -682,7 +685,7 @@ async def ask(_: str) -> str:
+ 
+     assert sse_error_event(response.text) == {'message': 'Internal Error', 'status': 'INTERNAL'}
+     assert 'API key not valid' not in response.text
+-    assert [(r.levelname, r.getMessage()) for r in caplog.records] == [('ERROR', 'served flow stream failed')]
++    assert [(r.levelname, r.getMessage()) for r in caplog.records] == [('ERROR', "served action 'ask' stream failed")]
  
  
--def keep_client_extra_body(config: Any, client_http_options: object) -> Any:  # noqa: ANN401
--    """Layer a request's extra_body over the plugin's instead of replacing it.
--
--    google-genai swaps in a per-request ``extra_body`` wholesale, so without
--    this a request carrying ``extra`` would drop ``GoogleAI(http_options=
--    HttpOptions(extra_body=...))``. The request's keys win.
--    """
--    request_body = config.http_options.extra_body if config.http_options else None
--    client_body = getattr(client_http_options, 'extra_body', None)
--    if request_body and isinstance(client_body, dict):
--        config.http_options.extra_body = deep_merge(cast(dict[str, Any], client_body), request_body)
--    return config
--
--
- def sdk_config_error(*, action_name: str, error: ValidationError) -> GenkitError:
-     """Name the action and the field the SDK rejected on a known typed field."""
-     loc = ()
-@@ -231,9 +229,10 @@ def sdk_config_error(*, action_name: str, error: ValidationError) -> GenkitError
- def check_timeout_seconds(value: object) -> float | None:
-     """Return ``value`` as float seconds, or raise ``ValueError`` unless it is None or positive and finite.
- 
--    0 would be an instant failure on the Interactions client, and inf, NaN, or a
--    value whose milliseconds overflow can't become a timeout. ``True`` is not
--    a number of seconds, so bool raises too.
-+    0 would mean no timeout on Gemini and an instant failure on the
-+    Interactions client, and inf, NaN, or a value whose milliseconds overflow
-+    can't become a timeout. ``True`` is not a number of seconds, so bool raises
-+    too.
-     """
-     if value is None:
-         return None
-@@ -254,6 +253,7 @@ def reject_bool_timeout(value: object) -> object:
+ def test_fastapi_stream_public_error_with_nested_model_details_sends_error_event() -> None:
+@@ -712,20 +715,32 @@ async def lookup(_: str) -> None:
+     }
  
  
- def timeout_seconds_to_ms(seconds: float) -> int:
--    """Validated seconds to google-genai's ``HttpOptions.timeout`` milliseconds, rounding up so 0.0001 is 1 ms."""
--    # round() first so 2.007 s is 2007 ms, not 2008 from float noise.
--    return math.ceil(round(seconds * 1000, 6))
-+    """Validated seconds to ``HttpOptions.timeout`` milliseconds, rounding up so any positive value is >= 1 ms."""
-+    # round() first so 2.007 s is 2007 ms, not 2008 from float noise; max(1, ...)
-+    # keeps sub-nanosecond positive budgets at 1 ms instead of rounding to 0.
-+    return max(1, math.ceil(round(seconds * 1000, 6)))
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_veo.py` (modified, +3/-4)
-```diff
-@@ -28,8 +28,8 @@
- from genkit_google_genai._models._sdk_config import (
-     VEO_MANAGED_BODY_FIELDS,
-     attach_config_extra,
-+    copy_http_options,
-     dump_family_config,
--    keep_client_extra_body,
-     sdk_config_error,
- )
- from genkit_google_genai._models._secrets import context_api_key, misplaced_key_error
-@@ -315,7 +315,7 @@ def _client_for_context(
- 
-         kwargs = dict(self._client_kwargs or {})
-         plugin_opts = kwargs.get('http_options')
--        opts = plugin_opts.model_copy(deep=True) if plugin_opts is not None else genai_types.HttpOptions()
-+        opts = copy_http_options(plugin_opts) if plugin_opts is not None else genai_types.HttpOptions()
-         if api_key is not None:
-             kwargs['api_key'] = api_key
-             # The SDK rejects api_key with credentials, project, or location.
-@@ -433,8 +433,7 @@ def _get_config(self, request: ModelRequest) -> genai_types.GenerateVideosConfig
-         except ValidationError as e:
-             raise sdk_config_error(action_name=self._name, error=e) from e
- 
--        cfg = attach_config_extra(cfg, extra, action_name=self._name, managed_body_fields=VEO_MANAGED_BODY_FIELDS)
--        return keep_client_extra_body(cfg, (self._client_kwargs or {}).get('http_options'))
-+        return attach_config_extra(cfg, extra, action_name=self._name, managed_body_fields=VEO_MANAGED_BODY_FIELDS)
- 
-     @property
-     def metadata(self) -> dict:
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_virtual_try_on.py` (modified, +3/-6)
-```diff
-@@ -41,8 +41,8 @@
-     VIRTUAL_TRY_ON_MANAGED_BODY_FIELDS,
-     attach_config_extra,
-     attach_leftovers,
-+    copy_http_options,
-     dump_family_config,
--    keep_client_extra_body,
-     sdk_config_error,
-     split_sdk_fields,
- )
-@@ -256,7 +256,6 @@ def _to_sdk_config(
-     dumped: dict[str, Any] | None,
-     *,
-     action_name: str,
--    client_http_options: object,
- ) -> genai_types.RecontextImageConfig | None:
-     """Map the dumped family config onto the typed SDK request config."""
-     if not dumped:
-@@ -276,10 +275,9 @@ def _to_sdk_config(
-     except ValidationError as e:
-         raise sdk_config_error(action_name=action_name, error=e) from e
-     cfg = attach_leftovers(cfg, leftovers, nest='parameters')
--    cfg = attach_config_extra(
-+    return attach_config_extra(
-         cfg, extra, action_name=action_name, managed_body_fields=VIRTUAL_TRY_ON_MANAGED_BODY_FIELDS
-     )
--    return keep_client_extra_body(cfg, client_http_options)
- 
- 
- def _media_part(image: genai_types.Image | None) -> Part | None:
-@@ -397,7 +395,7 @@ def _client_for_context(
-         # The model is Vertex-only; a request-scoped client stays on that backend.
-         kwargs.setdefault('vertexai', True)
-         plugin_opts = kwargs.get('http_options')
--        opts = plugin_opts.model_copy(deep=True) if plugin_opts is not None else genai_types.HttpOptions()
-+        opts = copy_http_options(plugin_opts) if plugin_opts is not None else genai_types.HttpOptions()
-         if api_key is not None:
-             # An express key goes to the global Vertex host: drop the plugin's
-             # credentials, project and host and any location, keeping only a
-@@ -454,7 +452,6 @@ async def generate(self, request: ModelRequest[VirtualTryOnConfig], ctx: ModelCo
-         config = _to_sdk_config(
-             dumped,
-             action_name=self._name,
--            client_http_options=(self._client_kwargs or {}).get('http_options'),
-         )
-         try:
-             response = await client.aio.models.recontext_image(
-```
-
----
-
-### Incident Patch 3: `f3e71c5b` (2026-11-02)
-**Commit Message**: fix(py/google-genai)!: Interactions models take extra; per-request timeout is seconds and comes to Gemini (#6646)
-
-**File**: `py/packages/genkit-google-genai/README.md` (modified, +32/-0)
-```diff
-@@ -173,6 +173,11 @@ Setting any `google_search_*` option turns Google Search on;
- `google_search=False` next to an option raises. A nested key such as
- `thinkingConfig` raises and names the flat fields that replace it.
- 
-+`timeout` sets the HTTP timeout for one request, in seconds:
-+`GeminiConfig(timeout=30)`. 0, negative, inf, NaN and bool raise. On `GoogleAI`,
-+the Gemini API rejects server deadlines under 10 seconds with HTTP 400
-+(`VertexAI` accepts shorter values).
-+
- Function calling mode is controlled by `ai.generate(tool_choice=...)`, not config:
- `'auto'`, `'required'`, or `'none'`. In `'required'` mode, Gemini binds the request's
- function tools as `allowedFunctionNames`.
-@@ -223,6 +228,33 @@ config = GeminiConfig.model_validate({
- `systemInstruction`, `tools`, `toolConfig`, the structured-output fields of
- `generationConfig`, `cachedContent`); those raise `INVALID_ARGUMENT`.
- 
-+Antigravity, Interactions Lyria, and Deep Research also reject unknown keys
-+and take undeclared fields in `extra`, which is merged into the Interactions
-+create body (snake_case names). A nested object merges key by key. Keys match
-+ignoring case and underscores, the same way the Gemini merge aligns them. A
-+`None` value means unset and is skipped. Like Gemini, fields Genkit builds from
-+the request raise in `extra`: the model id (`agent`, or `model` on Lyria),
-+`input`, `tools`, and Lyria's `system_instruction`. Deep Research's tools are
-+its declared settings (`google_search`, `url_context`, `code_execution`,
-+`file_search_store_names`, `mcp_servers`); Lyria takes no tools, and
-+Antigravity tool configuration is not yet supported in this plugin
-+(`generate(tools=...)` raises on both). Blocks with defaults, such as
-+`agent_config` and `environment`, merge key by key.
-+
-+`timeout` on these three configs (and in Deep Research's `check_operation` /
-+`cancel_operation` `config`) is the HTTP timeout in seconds. It used to be
-+milliseconds: `config={'timeout': 30000}` becomes `config={'timeout': 30}`.
-+
-+```python
-+op = await ai.generate_operation(
-+    model='googleai/deep-research-preview-04-2026',
-+    prompt='Summarize recent advances in quantum error correction.',
-+    config={'thinking_summaries': 'auto', 'extra': {'agent_config': {'visualization': 'auto'}}},
-+)
-+# create body: {..., "agent_config": {"type": "deep-research",
-+#                                     "thinking_summaries": "auto", "visualization": "auto"}}
-+```
-+
- ### Structured output
- 
- Set the output schema on the request; the plugin sends it to Gemini as
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_antigravity.py` (modified, +46/-5)
-```diff
-@@ -25,16 +25,24 @@
- from genkit_google_genai._interactions._options import ClientOptions
- from genkit_google_genai._models._interactions_registry import antigravity_model_info
- from genkit_google_genai._models._interactions_utils import (
-+    EXTRA_DESCRIPTION,
-+    INPUT_HINT,
-+    MODEL_ID_HINT,
-+    TIMEOUT_DESCRIPTION,
-     api_key_for_context,
-     client_overrides_from_config,
-     extract_version,
-     lowercase_choice_list,
-     partition_keys,
-+    pop_extra,
-+    reject_function_tools,
-+    reject_managed_extra,
-     remove_client_option_overrides,
-     steps_with_folded_system_instruction,
- )
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds, deep_merge, reject_bool_timeout
- from genkit_google_genai._models._secrets import reject_request_config_api_key
--from pydantic import field_validator
-+from pydantic import Field, field_validator
- 
- from genkit import ModelResponse
- from genkit.model import Model, ModelContext, ModelRequest
-@@ -51,17 +59,35 @@
- 
- 
- class AntigravityConfig(GenkitConfig):
--    """Antigravity model configuration."""
-+    """Antigravity model configuration.
-+
-+    Unknown keys are rejected. An API field this class doesn't declare goes in
-+    ``extra``, which is deep-merged into the create body.
-+
-+    ``timeout`` is the HTTP timeout for this request, in seconds.
-+    """
- 
-     base_url: str | None = None
-     api_version: str | None = None
--    # Milliseconds — applied to the HTTP call, not the create body.
--    timeout: float | None = None
-+    timeout: float | None = Field(default=None, description=TIMEOUT_DESCRIPTION)
-     custom_headers: dict[str, str] | None = None
-     previous_interaction_id: str | None = None
-     store: bool | None = None
-     environment: str | dict[str, Any] | None = None
-     response_modalities: list[Literal['text', 'image']] | None = None
-+    extra: dict[str, Any] | None = Field(default=None, description=EXTRA_DESCRIPTION)
-+
-+    @field_validator('timeout', mode='before')
-+    @classmethod
-+    def no_bool_timeout(cls, value: object) -> object:
-+        """``True`` is not a number of seconds."""
-+        return reject_bool_timeout(value)
-+
-+    @field_validator('timeout')
-+    @classmethod
-+    def check_timeout(cls, value: float | None) -> float | None:
-+        """Reject 0, negative, inf and NaN; ``timeout`` is seconds."""
-+        return check_timeout_seconds(value)
- 
-     @field_validator('response_modalities', mode='before')
-     @classmethod
-@@ -70,6 +96,14 @@ def fold_modalities_case(cls, value: object) -> object:
-         return lowercase_choice_list(value)
- 
- 
-+# Fields Genkit builds from the request (or reserves for tool wiring); extra can't replace them.
-+ANTIGRAVITY_MANAGED_EXTRA = {
-+    'agent': MODEL_ID_HINT,
-+    'input': INPUT_HINT,
-+    'tools': 'Tool configuration on Antigravity is not yet supported in this plugin.',
-+}
-+
-+
- def create_antigravity_action(
-     name: str,
-     *,
-@@ -87,6 +121,13 @@ async def run(request: ModelRequest[AntigravityConfig], ctx: ModelContext) -> Mo
-         merged_options = client_options.merge(client_overrides_from_config(config))
- 
-         dumped = remove_client_option_overrides(config.model_dump(exclude_none=True))
-+        extra = pop_extra(dumped)
-+        reject_function_tools(
-+            name,
-+            request,
-+            message=f'Function tools on {name} are not yet supported in this plugin.',
+-def test_fastapi_malformed_json_body_returns_400_valid_json_message() -> None:
+-    """A FastAPI POST that is not JSON is 400 request body must be valid JSON."""
++def test_fastapi_malformed_json_body_returns_400_valid_json_message(caplog: pytest.LogCaptureFixture) -> None:
++    """A FastAPI POST that is not JSON is 400 request body must be valid JSON and logs the flow name."""
+     client = TestClient(create_app())
+-    response = client.post(
+-        '/chat',
+-        content=b'{bad',
+-        headers={'content-type': 'application/json'},
+-    )
++    with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
++        response = client.post(
++            '/chat',
++            content=b'{bad',
++            headers={'content-type': 'application/json'},
 +        )
-+        reject_managed_extra(name, extra, ANTIGRAVITY_MANAGED_EXTRA)
-         # GenkitConfig rejects undeclared keys, so nothing is left over.
-         create_options, _ = partition_keys(dumped, CREATE_OPTION_KEYS)
-         create_kwargs: dict[str, Any] = {
-@@ -97,7 +138,7 @@ async def run(request: ModelRequest[AntigravityConfig], ctx: ModelContext) -> Mo
-         # Default missing environment to remote; the API rejects unsupported values.
-         create_kwargs.setdefault('environment', DEFAULT_ENVIRONMENT)
  
--        created = await create_interaction(api_key, create_kwargs, merged_options)
-+        created = await create_interaction(api_key, deep_merge(create_kwargs, extra), merged_options)
-         return from_interaction_sync(created)
+     assert response.status_code == 400
+     assert response.json() == {
+         'message': 'request body must be valid JSON',
+         'status': 'INVALID_ARGUMENT',
+     }
++    records = [r for r in caplog.records if r.name == 'genkit_fastapi._handler']
++    assert [
++        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
++    ] == [
++        (
++            logging.WARNING,
++            "served action 'say_hi' run failed: INVALID_ARGUMENT: request body must be valid JSON",
++            False,
++            'say_hi',
++        )
++    ]
  
-     return Model(
+ 
+ def test_fastapi_context_provider_route_malformed_json_returns_400() -> None:
+@@ -800,6 +815,40 @@ async def chat_route():
+     assert response.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
+ 
+ 
++def test_fastapi_handler_wrapper_failure_logs_wrapper_name_or_unknown(caplog: pytest.LogCaptureFixture) -> None:
++    """A failing route wrapper logs its __name__, or '<unknown>' when the callable has none."""
++    ai = Genkit()
++    app = FastAPI()
++
++    @app.post('/named', response_model=None)
++    @genkit_fastapi_handler(ai)
++    async def wrapped_route() -> Any:
++        raise RuntimeError('db pool closed')
++
++    async def load_route(_name: str) -> Any:
++        raise RuntimeError('db pool closed')
++
++    app.post('/partial', response_model=None)(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
++
++    client = TestClient(app)
++    with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
++        named_resp = client.post('/named', json={'data': 'x'})
++        partial_resp = client.post('/partial', json={'data': 'x'})
++
++    assert named_resp.status_code == 500
++    assert partial_resp.status_code == 500
++    assert named_resp.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
++    assert partial_resp.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
++
++    records = [r for r in caplog.records if r.name == 'genkit_fastapi._handler']
++    assert [
++        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
++    ] == [
++        (logging.ERROR, "served action 'wrapped_route' handler failed", True, 'wrapped_route'),
++        (logging.ERROR, "served action '<unknown>' handler failed", True, '<unknown>'),
++    ]
++
++
+ def test_fastapi_context_provider_http_exception_keeps_its_status() -> None:
+     """An HTTPException from context_provider is the app's own response, not a 500."""
+     ai = Genkit()
+@@ -1072,7 +1121,7 @@ def test_to_sse_logs_the_served_failure(caplog: pytest.LogCaptureFixture) -> Non
+         _sse_lines(_Turn(c
 ```
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_deep_research.py` (modified, +50/-7)
+**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +9/-8)
 ```diff
-@@ -31,17 +31,25 @@
- from genkit_google_genai._models._gemini import file_search_fields, flattened_key_error
- from genkit_google_genai._models._interactions_registry import deep_research_model_info
- from genkit_google_genai._models._interactions_utils import (
-+    EXTRA_DESCRIPTION,
-+    INPUT_HINT,
-+    MODEL_ID_HINT,
-+    TIMEOUT_DESCRIPTION,
-     api_key_for_context,
-+    client_overrides_from_call_config,
-     client_overrides_from_config,
-     extract_version,
-     lowercase_choice,
-     lowercase_choice_list,
-     partition_keys,
-+    pop_extra,
-+    reject_managed_extra,
-     remove_client_option_overrides,
-     steps_with_folded_system_instruction,
- )
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds, deep_merge, reject_bool_timeout
- from genkit_google_genai._models._secrets import reject_request_config_api_key
--from pydantic import ConfigDict, WithJsonSchema, field_validator, model_validator, with_config
-+from pydantic import ConfigDict, Field, WithJsonSchema, field_validator, model_validator, with_config
- from pydantic.alias_generators import to_snake
- from typing_extensions import NotRequired, TypedDict
- 
-@@ -100,12 +108,22 @@ class McpServerConfig(TypedDict):
+@@ -37,12 +37,13 @@
+ _JSON_SEPARATORS = (',', ':')
  
  
- class DeepResearchConfig(GenkitConfig):
--    """Deep Research model configuration."""
-+    """Deep Research model configuration.
-+
-+    Unknown keys are rejected. An API field this class doesn't declare goes in
-+    ``extra``, which is deep-merged into the create body. Fields Genkit builds
-+    from the request (``agent``, ``input``, ``tools``) raise there: Deep
-+    Research's tools are the declared settings (``google_search``,
-+    ``url_context``, ``code_execution``, ``file_search_store_names``,
-+    ``mcp_servers``).
-+
-+    ``timeout`` is the HTTP timeout in seconds, here and in
-+    ``check_operation``/``cancel_operation`` ``config``.
-+    """
- 
-     base_url: str | None = None
-     api_version: str | None = None
--    # Milliseconds — applied to the HTTP call, not the create body.
--    timeout: float | None = None
-+    timeout: float | None = Field(default=None, description=TIMEOUT_DESCRIPTION)
-     custom_headers: dict[str, str] | None = None
-     thinking_summaries: Literal['auto', 'none'] | None = None
-     previous_interaction_id: str | None = None
-@@ -120,6 +138,7 @@ class DeepResearchConfig(GenkitConfig):
-     file_search_metadata_filter: str | None = None
-     file_search_top_k: int | None = None
-     mcp_servers: Annotated[list[McpServerConfig] | None, _MCP_SERVERS_SCHEMA] = None
-+    extra: dict[str, Any] | None = Field(default=None, description=EXTRA_DESCRIPTION)
- 
-     @model_validator(mode='before')
-     @classmethod
-@@ -133,6 +152,18 @@ def reject_nested_file_search(cls, data: object) -> object:
-                         raise error
-         return data
- 
-+    @field_validator('timeout', mode='before')
-+    @classmethod
-+    def no_bool_timeout(cls, value: object) -> object:
-+        """``True`` is not a number of seconds."""
-+        return reject_bool_timeout(value)
-+
-+    @field_validator('timeout')
-+    @classmethod
-+    def check_timeout(cls, value: float | None) -> float | None:
-+        """Reject 0, negative, inf and NaN; ``timeout`` is seconds."""
-+        return check_timeout_seconds(value)
-+
-     @field_validator('mcp_servers', mode='before')
-     @classmethod
-     def snake_case_mcp_keys(cls, value: object) -> object:
-@@ -199,6 +230,17 @@ def build_tools(request: ModelRequest[DeepResearchConfig], config: DeepResearchC
-     return tools
+-def _log_failure(*, error: Exception, where: str) -> None:
+-    """Log a served-flow failure; 5xx includes the traceback."""
++def _log_failure(*, error: Exception, flow: str, where: str) -> None:
++    """Log a served-action failure, naming the action; 5xx includes the traceback."""
++    extra = {'genkit_action': flow}
+     if error_status(error) >= 500:
+-        logger.exception('served flow %s failed', where)
++        logger.exception('served action %r %s failed', flow, where, extra=extra)
+     else:
+-        logger.warning('served flow %s failed: %s', where, error)
++        logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
  
  
-+# Fields Genkit builds from the request; extra can't replace them.
-+DEEP_RESEARCH_MANAGED_EXTRA = {
-+    'agent': MODEL_ID_HINT,
-+    'input': INPUT_HINT,
-+    'tools': (
-+        'Use the declared tool settings: google_search, url_context, code_execution, '
-+        'file_search_store_names, mcp_servers.'
-+    ),
-+}
-+
-+
- def create_deep_research_background_model(
-     target: str | ModelRef,
-     *,
-@@ -218,6 +260,7 @@ async def start(request: ModelRequest[DeepResearchConfig], ctx: ModelContext) ->
-         options = client_options.merge(client_overrides_from_config(config))
+ def _error_response(error: Exception, status: int | None = None) -> Response:
+@@ -147,7 +148,7 @@ async def handler() -> FlaskRouteReturn:
+             try:
+                 input_data = _parse_request_json()
+             except PublicError as e:
+-                _log_failure(error=e, where='run')
++                _log_failure(error=e, flow=flow.name, where='run')
+                 return _error_response(e)
+             try:
+                 action_input = read_body(input_data)
+@@ -168,7 +169,7 @@ async def handler() -> FlaskRouteReturn:
+                     # The app's own abort(401) passes through.
+                     raise
+                 except Exception as e:
+-                    _log_failure(error=e, where='context provider')
++                    _log_failure(error=e, flow=flow.name, where='context provider')
+                     return _error_response(e)
  
-         dumped = remove_client_option_overrides(config.model_dump(exclude_none=True))
-+        extra = pop_extra(dumped)
-         # GenkitConfig rejects undeclared keys, so nothing is left over.
-         agent_fields, _tool_fields, create_options, _ = partition_keys(
-             dumped,
-@@ -228,6 +271,7 @@ async def start(request: ModelRequest[DeepResearchConfig], ctx: ModelContext) ->
-         agent_config: dict[str, Any] = {'type': 'deep-research', **agent_fields}
+             init = input_data.get('init')
+@@ -183,7 +184,7 @@ async def async_gen() -> AsyncIterator[str]:
+                         result = await stream_response.response
+                         yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
+                     except Exception as e:
+-                        _log_failure(error=e, where='stream')
++                        _log_failure(error=e, flow=flow.name, where='stream')
+                         yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
  
-         tools = build_tools(request, config)
-+        reject_managed_extra(full_name, extra, DEEP_RESEARCH_MANAGED_EXTRA)
-         create_kwargs: dict[str, Any] = {
-             'agent': version,
-             'input': steps_with_folded_system_instruction(request.messages),
-@@ -238,12 +282,11 @@ async def start(request: ModelRequest[DeepResearchConfig], ctx: ModelContext) ->
-         if tools:
-             
+                 iter = _iter_over_async(async_gen(), loop)
+@@ -193,7 +194,7 @@ async def async_gen() -> AsyncIterator[str]:
+                     response = await flow.run(input=action_input, context=action_context, init=init)
+                     return {'result': _to_dict(response.response)}
+                 except Exception as e:
+-                    _log_failure(error=e, where='run')
++                    _log_failure(error=e, flow=flow.name, where='run')
+                     return _error_response(e)
+ 
+         return handler
 ```
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_gemini.py` (modified, +40/-1)
-```diff
-@@ -34,10 +34,13 @@
-     GEMINI_UNSUPPORTED_GENERATION_FIELDS,
-     attach_config_extra,
-     attach_leftovers,
-+    check_timeout_seconds,
-     dump_family_config,
-     keep_client_extra_body,
-+    reject_bool_timeout,
-     sdk_config_error,
-     split_sdk_fields,
-+    timeout_seconds_to_ms,
- )
- from genkit_google_genai._models._secrets import context_api_key, reject_request_config_api_key
- from genkit_google_genai._provider_errors import TRANSPORT_ERRORS, api_error, transport_error
-@@ -499,6 +502,25 @@ class GeminiConfig(ModelConfig):
-             "multi-regions ('us', 'eu'), or 'global'."
-         ),
-     )
-+    timeout: float | None = Field(
-+        default=None,
-+        description=(
-+            'HTTP timeout for this request, in seconds (positive, finite). Overrides the plugin timeout for this call. '
-+            'The Gemini API rejects deadlines under 10s with HTTP 400; Vertex AI accepts shorter values.'
-+        ),
-+    )
-+
-+    @field_validator('timeout', mode='before')
-+    @classmethod
-+    def _no_bool_timeout(cls, value: object) -> object:
-+        """``True`` is not a number of seconds."""
-+        return reject_bool_timeout(value)
-+
-+    @field_validator('timeout')
-+    @classmethod
-+    def _check_timeout(cls, value: float | None) -> float | None:
-+        """Reject 0, negative, inf and NaN; ``timeout`` is seconds."""
-+        return check_timeout_seconds(value)
- 
-     safety_settings: Annotated[
-         list[SafetySetting] | None,
-@@ -2370,13 +2392,16 @@ async def _genkit_to_googleai_cfg(
- 
-         leftovers: dict[str, Any] = {}
-         extra: dict[str, Any] | None = None
-+        timeout: float | None = None
-         if request.config:
-             # 2. Normalize config into a dict
-             dumped_config = self._normalize_config_to_dict(request.config)
- 
-             if dumped_config is not None:
-                 # config.extra is wire-shaped; it goes on the body as-is in step 5.
-                 extra = dumped_config.pop('extra', None)
-+                # timeout is transport, not body: it rides on this request's http_options.
-+                timeout = dumped_config.pop('timeout', None)
- 
-                 # 3. Extract tool-related fields
-                 self._check_backend_fields(dumped_config)
-@@ -2406,7 +2431,7 @@ async def _genkit_to_googleai_cfg(
- 
-         has_output = bool(request.output_format or request.output_schema or request.output_content_type)
- 
--        if cfg is not None or tools or system_instruction or has_output or leftovers or extra:
-+        if cfg is not None or tools or system_instruction or has_output or leftovers or extra or timeout is not None:
-             if cfg is None:
-                 cfg = genai_types.GenerateContentConfig()
- 
-@@ -2446,6 +2471,20 @@ async def _genkit_to_googleai_cfg(
-                 managed_generation_fields=GEMINI_MANAGED_GENERATION_FIELDS,
-                 unsupported_generation_fields=GEMINI_UNSUPPORTED_GENERATION_FIELDS,
-             )
-+            if timeout is not None:
-+                # google-genai layers a request's http_options over the client's
-+                # field by field, but populate_server_timeout_header caches
-+                # X-Server-Timeout on the shared client and skips it if present,
-+                # so set this call's X-Server-Timeout explicitly too.
-+                ms = timeout_seconds_to_ms(timeout)
-+                http_options = cfg.http_options.model_copy() if cfg.http_options else genai_types.HttpOptions()
-+                http_options.timeout = ms
-+                headers = {
-+                    key: val for key, val in (http_options.headers or {}).items() if key.lower() != 'x-server-timeout'
-+                }
-+                headers['X-Server-Timeout'] = str(math.ceil(ms / 1000))
-+                http_options.headers = headers
-+                cfg.http_options = http_options
-             return keep_client_extra_body(cfg, (self._client_kwargs or {}).get('http_options'))
- 
-         return None
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_interactions_lyria.py` (modified, +44/-5)
-```diff
-@@ -30,16 +30,25 @@
- from genkit_google_genai._interactions._options import ClientOptions, ResponseModality
- from genkit_google_genai._models._interactions_registry import lyria_model_info
- from genkit_google_genai._models._interactions_utils import (
-+    EXTRA_DESCRIPTION,
-+    INPUT_HINT,
-+    MODEL_ID_HINT,
-+    SYSTEM_INSTRUCTION_HINT,
-+    TIMEOUT_DESCRIPTION,
-     api_key_for_context,
-     client_overrides_from_config,
-     extract_version,
-     lowercase_choice_list,
-     partition_keys,
-+    pop_extra,
-+    reject_function_tools,
-+    reject_managed_extra,
-     remove_client_option_overrides,
-     require_interaction_steps,
- )
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds, deep_merge, reject_bool_timeout
- from genkit_google_genai._models._secrets import reject_request_config_api_key
--from pydantic import field_validator
-+from pydantic import Field, field_validator
- 
- from genkit import ModelResponse
- from genkit.model import Model, ModelContext, ModelRequest
-@@ -49,14 +58,32 @@
- 
- 
- class LyriaConfig(GenkitConfig):
--    """Google AI Interactions Lyria model configuration."""
-+    """Google AI Interactions Lyria model configuration.
-+
-+    Unknown keys are rejected. An API field this class doesn't declare goes in
-+    ``extra``, which is deep-merged into the create body.
-+
-+    ``timeout`` is the HTTP timeout for this request, in seconds.
-+    """
- 
-     base_url: str | None = None
-     api_version: str | None = None
--    # Milliseconds — applied to the HTTP call, not the create body.
--    timeout: float | None = None
-+    timeout: float | None = Field(default=None, description=TIMEOUT_DESCRIPTION)
-     custom_headers: dict[str, str] | None = None
-     response_modalities: list[ResponseModality] | None = None
-+    extra: dict[str, Any] | None = Field(default=None, description=EXTRA_DESCRIPTION)
-+
-+    @field_validator('timeout', mode='before')
-+    @classmethod
-+    def no_bool_timeout(cls, value: object) -> object:
-+        """``True`` is not a number of seconds."""
-+        return reject_bool_timeout(value)
-+
-+    @field_validator('timeout')
-+    @classmethod
-+    def check_timeout(cls, value: float | None) -> float | None:
-+        """Reject 0, negative, inf and NaN; ``timeout`` is seconds."""
-+        return check_timeout_seconds(value)
- 
-     @field_validator('response_modalities', mode='before')
-     @classmethod
-@@ -65,6 +92,15 @@ def fold_modalities_case(cls, value: object) -> object:
-         return lowercase_choice_list(value)
- 
- 
-+# Fields Genkit builds from the request; extra can't replace them.
-+LYRIA_MANAGED_EXTRA = {
-+    'model': MODEL_ID_HINT,
-+    'input': INPUT_HINT,
-+    'systeminstruction': SYSTEM_INSTRUCTION_HINT,
-+    'tools': 'Lyria takes no tools.',
-+}
-+
-+
- def create_lyria_action(
-     name: str,
-     *,
-@@ -81,6 +117,9 @@ async def run(request: ModelRequest[LyriaConfig], ctx: ModelContext) -> ModelRes
-         api_key = api_key_for_context(ctx.context, plugin_api_key)
-         merged_options = client_options.merge(client_overrides_from_config(config))
-         dumped = remove_client_option_overrides(config.model_dump(exclude_none=True))
-+        extra = pop_extra(dumped)
-+        reject_function_tools(name, request)
-+        reject_managed_extra(name, extra, LYRIA_MANAGED_EXTRA)
-         # GenkitConfig rejects undeclared keys, so nothing is left over.
-         create_options, _ = partition_keys(dumped, CREATE_OPTION_KEYS)
-         modalities = create_options.get('response_modalities') or ['audio', 'text']
-@@ -98,7 +137,7 @@ async def run(request: ModelRequest[LyriaConfig], ctx: ModelContext) -> ModelRes
-         if not system_instruction:
-             require_interaction_steps(steps)
- 
--        created = await create_interaction(api_key, create_kwargs, merged_options)
-+        created = await create_interaction(api_key, deep_merge(create_kwargs, extra), merged_options)
-         return from_interaction_sync(created)
- 
-     return Model(
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_interactions_utils.py` (modified, +118/-3)
+**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +67/-10)
 ```diff
 @@ -18,8 +18,10 @@
+ """Tests for the Flask plugin."""
  
- from __future__ import annotations
+ import json
++import logging
+ from typing import Any
  
-+import math
- import os
--from typing import Any
-+from collections.abc import Mapping
-+from typing import Any, cast
- 
- from genkit_google_genai._interactions._converters import (
-     ensure_tool_ids,
-@@ -28,9 +30,11 @@
- )
- from genkit_google_genai._interactions._options import ClientOptions
- from genkit_google_genai._models._routing import strip_ref_prefixes
-+from genkit_google_genai._models._sdk_config import check_timeout_seconds
- from genkit_google_genai._models._secrets import context_api_key
- 
- from genkit import GenkitError, Message
-+from genkit.model import ModelRequest
- 
- # Snake_case: callers dump config with by_alias=False before we strip these.
- CLIENT_OPTION_KEYS = frozenset({
-@@ -41,6 +45,19 @@
-     'experimental_debug_traces',
- })
- 
-+EXTRA_DESCRIPTION = (
-+    "Interactions API fields this class doesn't declare, in the API's snake_case wire names. Merged into "
-+    'the top level of the create body after everything else, and nested objects merge key by key, so a key '
-+    'named here wins. Keys match ignoring case and underscores. Fields Genkit builds from the request '
-+    "(the model id, `input`, `tools`, and Lyria's `system_instruction`) raise. A `None` "
-+    'value means unset and is skipped, so it never sends null over a block Genkit built. '
-+    'Not validated, except that a top-level API key raises; do not put API keys here.'
-+)
-+
-+TIMEOUT_DESCRIPTION = (
-+    'HTTP timeout for this request, in seconds (positive, finite). Applies to the HTTP call, not the create body.'
-+)
-+
- 
- def get_api_key_from_env() -> str | None:
-     """Read a Gemini API key from common environment variables."""
-@@ -71,6 +88,28 @@ def remove_client_option_overrides(config: dict[str, Any]) -> dict[str, Any]:
-     return {key: value for key, value in config.items() if key not in CLIENT_OPTION_KEYS}
- 
- 
-+def timeout_ms(seconds: object) -> float | None:
-+    """Config seconds to ``ClientOptions.timeout`` milliseconds, rounding up so 0.0001 sends 1 ms.
-+
-+    ``ClientOptions`` stays in milliseconds because the plugin-level options
-+    (``HttpOptions.timeout`` today) share it; this is the one place a request
-+    config's seconds cross into it. A numeric string such as ``'5'`` is read
-+    as a number, as ``ClientOptions`` did before; anything else raises
-+    ``INVALID_ARGUMENT``.
-+    """
-+    if isinstance(seconds, str):
-+        try:
-+            seconds = float(seconds)
-+        except ValueError:
-+            pass
-+    try:
-+        checked = check_timeout_seconds(seconds)
-+    except ValueError as err:
-+        raise GenkitError(status='INVALID_ARGUMENT', message=str(err)) from err
-+    # round() first so 2.007 s is 2007 ms, not 2008 from float noise.
-+    return float(math.ceil(round(checked * 1000, 6))) if checked is not None else None
-+
-+
- def client_overrides_from_config(
-     config: object = None,
-     *,
-@@ -79,15 +118,91 @@ def client_overrides_from_config(
-     timeout: float | None = None,
-     custom_headers: dict[str, str] | None = None,
- ) -> ClientOptions:
--    """Lift per-request transport knobs out of a model config into ClientOptions."""
-+    """Lift per-request transport knobs out of a model config into ClientOptions.
-+
-+    ``timeout`` (on ``config`` or as the keyword) is seconds; ClientOptions
-+    gets milliseconds.
-+    """
-     return ClientOptions(
-         base_url=getattr(config, 'base_url', base_url),
-         api_version=getattr(config, 'api_version', api_version),
--        timeout=getattr(config, 'timeout', timeout),
-+        timeout=timeout_ms(getattr(config, 'timeout', timeout)),
-         custom_headers=getattr(config, 'custom_headers', custom_headers),
-     )
- 
- 
-+def client_overrides_from_call_config(call_config: object) -> ClientOptions | None:
-+    """ClientOptions from ``check_operation``/``cancel_operation`` ``config``, with ``timeout`` in seconds.
-+
-+    Same keys and units as the model config's transport fields, so a timeout
-+    that works on ``generate_operation`` means the same thing on check and
-+    cancel. Other keys are ignored, as before.
-+    """
-+    if not isinstance(call_config, Mapping):
-+        return None
-+    values = {str(key): value for key, value in cast(Mapping[object, Any], call_config).items()}
-+    seconds = values.pop('timeout', None)
-+    overrides = ClientOptions.model_validate(values)
-+    if seconds is None:
-+        return overrides
-+    return overrides.model_copy(update={'timeout': timeout_ms(seconds)})
-+
-+
-+def _without_none(value: dict[str, Any]) -> dict[str, Any]:
-+    cleaned: dict[str, Any] = {}
-+    for key, item in value.items():
-+        if isinstance(item, dict) and item:
-+            item = _without_none(cast(dict[str, Any], item))
-+            if not item:
-+                # Every key in it was None: unset, not an empty object.
-+                continue
-+        if item is not None:
-+            cleaned[key] = item
-+    return cleaned
-+
-+
-+MODEL_ID_HINT = 'Pick the mod
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_sdk_config.py` (modified, +43/-4)
-```diff
-@@ -16,6 +16,7 @@
- 
- """Dump a family config and translate SDK ValidationErrors into Genkit errors."""
- 
-+import math
- from collections.abc import Mapping
- from typing import Any, cast
- 
-@@ -132,7 +133,14 @@ def _existing_wire_key(target: dict[str, Any], key: str) -> str | None:
-     return None
- 
- 
--def _deep_merge(target: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
-+def deep_merge(target: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
-+    """Nested dicts merge so one key in ``extra`` does not wipe the siblings next to it.
-+
-+    Keys match the way google-genai's ``extra_body`` merge aligns them
-+    (underscores dropped, lowercased), so ``Agent`` overrides ``agent`` and
-+    ``agentConfig`` merges into ``agent_config``. The existing key's spelling
-+    is kept. A non-dict value replaces the whole entry.
-+    """
-     merged = dict(target)
-     for key, value in update.items():
-         existing = _existing_wire_key(merged, key)
-@@ -141,7 +149,7 @@ def _deep_merge(target: dict[str, Any], update: dict[str, Any]) -> dict[str, Any
-             continue
-         current = merged[existing]
-         if isinstance(current, dict) and isinstance(value, dict):
--            merged[existing] = _deep_merge(cast(dict[str, Any], current), cast(dict[str, Any], value))
-+            merged[existing] = deep_merge(cast(dict[str, Any], current), cast(dict[str, Any], value))
-         else:
-             merged[existing] = value
-     return merged
-@@ -187,7 +195,7 @@ def attach_config_extra(
-             ),
-         )
-     http = config.http_options or genai_types.HttpOptions()
--    http.extra_body = _deep_merge(dict(http.extra_body or {}), extra)
-+    http.extra_body = deep_merge(dict(http.extra_body or {}), extra)
-     config.http_options = http
-     return config
- 
-@@ -202,7 +210,7 @@ def keep_client_extra_body(config: Any, client_http_options: object) -> Any:  #
-     request_body = config.http_options.extra_body if config.http_options else None
-     client_body = getattr(client_http_options, 'extra_body', None)
-     if request_body and isinstance(client_body, dict):
--        config.http_options.extra_body = _deep_merge(cast(dict[str, Any], client_body), request_body)
-+        config.http_options.extra_body = deep_merge(cast(dict[str, Any], client_body), request_body)
-     return config
- 
- 
-@@ -218,3 +226,34 @@ def sdk_config_error(*, action_name: str, error: ValidationError) -> GenkitError
-         message=f'{action_name}: invalid config field {key}',
-         cause=error,
-     )
-+
-+
-+def check_timeout_seconds(value: object) -> float | None:
-+    """Return ``value`` as float seconds, or raise ``ValueError`` unless it is None or positive and finite.
-+
-+    0 would be an instant failure on the Interactions client, and inf, NaN, or a
-+    value whose milliseconds overflow can't become a timeout. ``True`` is not
-+    a number of seconds, so bool raises too.
-+    """
-+    if value is None:
-+        return None
-+    if (
-+        isinstance(value, bool)
-+        or not isinstance(value, int | float)
-+        or not (math.isfinite(value) and value > 0 and math.isfinite(value * 1000))
-+    ):
-+        raise ValueError(f'timeout must be a positive, finite number of seconds, got {value!r}')
-+    return float(value)
-+
-+
-+def reject_bool_timeout(value: object) -> object:
-+    """Before-validator: pydantic turns ``True`` into ``1.0`` before an after-validator sees it."""
-+    if isinstance(value, bool):
-+        raise ValueError(f'timeout must be a positive, finite number of seconds, got {value!r}')
-+    return value
-+
-+
-+def timeout_seconds_to_ms(seconds: float) -> int:
-+    """Validated seconds to google-genai's ``HttpOptions.timeout`` milliseconds, rounding up so 0.0001 is 1 ms."""
-+    # round() first so 2.007 s is 2007 ms, not 2008 from float noise.
-+    return math.ceil(round(seconds * 1000, 6))
-```
-
-**File**: `py/packages/genkit-google-genai/tests/gemini_timeout_test.py` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+# Copyright 2026 Google LLC
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+#
-+# SPDX-License-Identifier: Apache-2.0
-+
-+"""GeminiConfig.timeout: per-request seconds, sent as this request's http_options.timeout in ms."""
-+
-+import json
-+from typing import Any
-+from unittest.mock import MagicMock
-+
-+import httpx
 +import pytest
-+from genkit_google_genai import GeminiConfig, GoogleAI
-+from genkit_google_genai._models._gemini import GeminiModel
-+from google.genai import types as genai_types
-+from google.genai._api_client import patch_http_options
-+from pydantic import ValidationError
-+
-+from genkit import Genkit, Message, Part, Role
-+from genkit.model import ModelRequest
-+
-+
-+async def _cfg(config: GeminiConfig, client_kwargs: dict[str, Any] | None = None) -> genai_types.GenerateContentConfig:
-+    model = GeminiModel('gemini-2.5-flash', MagicMock(), client_kwargs=client_kwargs)
-+    request = ModelRequest(messages=[Message(role=Role.USER, content=[Part.from_text('hi')])], config=config)
-+    cfg = await model._genkit_to_googleai_cfg(request=request)
-+    assert cfg is not None
-+    return cfg
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(('seconds', 'ms', 'server_seconds'), [(30, 30000, '30'), (2.007, 2007, '3'), (0.0001, 1, '1')])
-+async def test_timeout_seconds_become_request_http_options_ms(seconds: float, ms: int, server_seconds: str) -> None:
-+    """`timeout=30` builds a config whose http_options.timeout is 30000 ms and X-Server-Timeout is '30'."""
-+    cfg = await _cfg(GeminiConfig(timeout=seconds))
-+
-+    assert cfg.http_options is not None
-+    assert cfg.http_options.timeout == ms
-+    assert cfg.http_options.headers == {'X-Server-Timeout': server_seconds}
-+
-+
-+@pytest.mark.asyncio
-+async def test_timeout_is_not_sent_in_the_body() -> None:
-+    """timeout is transport only: nothing named timeout reaches the generation config or extra_body."""
-+    cfg = await _cfg(GeminiConfig(timeout=30, temperature=0.2))
-+
-+    dumped = cfg.model_dump(exclude_none=True, exclude={'http_options'})
-+    assert 'timeout' not in dumped
-+    assert cfg.http_options is not None
-+    assert cfg.http_options.extra_body is None
-+
-+
-+@pytest.mark.asyncio
-+async def test_timeout_and_extra_share_the_request_http_options() -> None:
-+    """`extra` rides on http_options.extra_body; a timeout on the same request keeps it."""
-+    cfg = await _cfg(GeminiConfig.model_validate({'timeout': 15, 'extra': {'labels': {'team': 'search'}}}))
-+
-+    assert cfg.http_options is not None
-+    assert cfg.http_options.timeout == 15000
-+    assert cfg.http_options.headers == {'X-Server-Timeout': '15'}
-+    assert cfg.http_options.extra_body == {'labels': {'team': 'search'}}
-+
-+
-+@pytest.mark.asyncio
-+async def test_request_timeout_overrides_only_the_plugin_timeout() -> None:
-+    """google-genai layers request http_options over the client's, so base_url and headers stay."""
-+    plugin_http = genai_types.HttpOptions(timeout=60000, base_url='https://proxy.example', headers={'x-team': 'a'})
-+    cfg = await _cfg(GeminiConfig(timeout=15), client_kwargs={'http_options': plugin_http})
-+
-+    assert cfg.http_options is not None
-+    effective = patch_http_options(plugin_http, cfg.http_options)
-+    assert effective.timeout == 15000
-+    assert effective.base_url == 'https://proxy.example'
-+    assert effective.headers is not None
-+    assert effective.headers['x-team'] == 'a'
-+    assert effective.headers['X-Server-Timeout'] == '15'
+ from flask import Flask, abort
+ from genkit_flask import genkit_flask_handler
+ from pydantic import BaseModel
+@@ -301,23 +303,35 @@ async def lookup(_: str) -> None:
+     assert chunks[-1] == b'data: {"error":{"message":"no order 99","status":"NOT_FOUND"}}\n\n'
+ 
+ 
+-def test_flask_malformed_json_body_returns_400_valid_json_message() -> None:
+-    """A Flask POST that is not JSON is 400 request body must be valid JSON."""
+-    response = (
+-        create_app()
+-        .test_client()
+-        .post(
+-            '/chat',
+-            data='{bad',
+-            content_type='application/json',
++def test_flask_malformed_json_body_returns_400_valid_json_message(caplog: pytest.LogCaptureFixture) -> None:
++    """A Flask POST that is not JSON is 400 request body must be valid JSON and logs the flow name."""
++    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
++        response = (
++            create_app()
++            .test_client()
++            .post(
++                '/chat',
++                data='{bad',
++                content_type='application/json',
++            )
+         )
+-    )
+ 
+     assert response.status_code == 400
+     assert json.loads(response.data) == {
+         'message': 'request body must be valid JSON',
+         'status': 'INVALID_ARGUMENT',
+     }
++    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
++    assert [
++        (r.levelno, r.getMessage(), r.exc_info is not None, getattr(r, 'genkit_action', None)) for r in records
++    ] == [
++        (
++            logging.WARNING,
++            "served action 'say_hi' run failed: INVALID_ARGUMENT: request body must be valid JSON",
++            False,
++            'say_hi',
++        )
++    ]
+ 
+ 
+ def test_flask_provider_401_returns_500_internal_error() -> None:
+@@ -442,3 +456,46 @@ async def chat(_: str) -> str:
+     response = app.test_client().post('/chat', json={'data': 'x'})
+ 
+     assert response.status_code == 401
 +
 +
-+@pytest.mark.asyncio
-+async def test_no_timeout_leaves_http_options_alone() -> None:
-+    """Without timeout or extra, the request carries no http_options, so the plugin's apply unchanged."""
-+    cfg = await _cfg(GeminiConfig(temperature=0.2))
++def test_flask_failure_logs_name_the_flow(caplog: pytest.LogCaptureFixture) -> None:
++    """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
++    ai = Genkit()
++    app = Flask(__name__)
++    app.config.update({'TESTING': True})
 +
-+    assert cfg.http_options is None
++    @app.post('/order')
++    @genkit_flask_handler(ai)
++    @ai.flow()
++    async def place_order(_: str) -> None:
++        raise ValueError('kitchen on fire')
++
++    client = app.test_client()
++    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
++        assert client.post('/order', json={'data': 'soup'}).status_code == 500
++
++    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
++    assert [r.getMessage() for r in records] == ["served action 'place_order' run failed"]
++    assert records[0].exc_info is not None
 +
 +
-+@pytest.mark.asyncio
-+async def test_generate_and_stream_apply_per_request_timeout_and_server_deadline(
-+    monkeypatch: pytest.MonkeyPatch,
-+) -> None:
-+    """generate() and generate_stream() override both httpx timeout and X-Server-Timeout above a 10s plugin client."""
-+    captured: list[httpx.Request] = []
-+    candidate = {'candidates': [{'content': {'role': 'model', 'parts': [{'text': 'Smoked Salmon Tartine'}]}}]}
++def test_flask_client_error_log_names_the_flow(caplog: pytest.LogCaptureFixture) -> None:
++    """A 4xx warning names the flow and carries no traceback."""
++    ai = Genkit()
++    app = Flask(__name__)
++    app.config.update({'TESTING': True})
 +
-+    async def send(_client: httpx.AsyncClient, request: httpx.Request, **_: object) -> httpx.Response:
-+        captured.append(request)
-+        if 'streamGenerateContent' in request.url.path:
-+            sse = f'data: {json.dumps(candidate)}\r\n\r\n'
-+            return httpx.Response(200
++    @app.post('/allergens')
++    @genkit_flask_handler(ai)
++    @ai.flow()
++    async def check_allergens(_: str) -> None:
++        raise PublicError('INVALID_ARGUMENT', 'we do not serve peanuts')
++
++    with caplog.at_level(logging.DEBUG, logger='genkit_flask._handler'):
++        assert app.test_client().post('/allergens', json={'data': 'peanuts'}).status_code == 400
++
++    records = [r for r in caplog.records if r.name == 'genkit_flask._handler']
++    assert [r.getMessage() for r in records] == [
++        "served action 'check_allergens' run failed: INVALID_ARGUMENT: we do not serve peanuts"
++    ]
++    assert records[0].exc_info is None
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_action.py` (modified, +4/-1)
+```diff
+@@ -259,6 +259,7 @@ def __init__(
+     ) -> None:
+         self._stream = stream
+         self._response = response
++        self._action_name: str | None = None
+ 
+     @property
+     def stream(self) -> AsyncIterator[ChunkT_co]:
+@@ -1300,7 +1301,9 @@ async def run(send_chunk: Callable[[ChunkT], None]) -> ActionResponse[OutputT]:
+             )
+ 
+         channel, task = start_stream(run)
+-        return StreamResponse(stream=channel, response=mirror_result(task, lambda result: result.response))
++        stream_response = StreamResponse(stream=channel, response=mirror_result(task, lambda result: result.response))
++        stream_response._action_name = self.name
++        return stream_response
+ 
+     def _initialize_io_schemas(
+         self,
+```
+
+---
+
+### Incident Patch 3: `8ee17216` (2026-11-04)
+**Commit Message**: fix(py): name each Flask handler view after its flow so two routes don't collide (#7035)
+
+**File**: `py/packages/genkit-flask/README.md` (modified, +5/-0)
+```diff
+@@ -38,4 +38,9 @@ async def greet_user(name: str) -> str:
+     return res.text
+ ```
+ 
++The endpoint name defaults to the flow's name with dots replaced by underscores
++(e.g., `greet_user`). To override the endpoint name or prevent clashes with an
++existing view, pass `endpoint=` to the route decorator (e.g.,
++`@app.post('/api/greet', endpoint='custom_greet')`).
++
+ Requires Flask 3.1+.
+```
+
+**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +13/-1)
+```diff
+@@ -122,7 +122,12 @@ def genkit_flask_handler(
+     ai: Genkit,
+     context_provider: ContextProvider | None = None,
+ ) -> Callable[[Action], Callable[..., Awaitable[FlaskRouteReturn]]]:
+-    """A decorator for serving Genkit flows via a flask sever.
++    """A decorator for serving Genkit flows via a Flask server.
++
++    The returned view function is named after the flow (dots replaced with
++    underscores) so multiple handlers in one Flask app do not collide on
++    the default endpoint name. Pass ``endpoint=`` to Flask's route decorator
++    (e.g., ``@app.post('/chat', endpoint='custom_chat')``) to override it.
+ 
+     ```python
+     from genkit import FlowContext
+@@ -203,6 +208,13 @@ async def async_gen() -> AsyncIterator[str]:
+                     _log_failure(error=e, flow=flow.name, where='run')
+                     return _error_response(e)
+ 
++        # Flask's default endpoint is the view function's __name__. Name the
++        # view after the flow, as if @app.post had decorated the flow itself,
++        # so two handlers in one app don't both register as 'handler'.
++        # Flask rejects dots in view names.
++        view_name = flow.name.replace('.', '_')
++        handler.__name__ = view_name
++        handler.__qualname__ = view_name
+         return handler
+ 
+     return decorator
+```
+
+**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +31/-0)
+```diff
+@@ -499,3 +499,34 @@ async def check_allergens(_: str) -> None:
+         "served action 'check_allergens' run failed: INVALID_ARGUMENT: we do not serve peanuts"
+     ]
+     assert records[0].exc_info is None
++
++
++def test_two_handlers_in_one_app_get_their_own_endpoints() -> None:
++    """Each route registers under its flow's name, so a second route doesn't collide."""
++    ai = Genkit()
++    app = Flask(__name__)
++    app.config.update({'TESTING': True})
++
++    @app.post('/menu')
++    @genkit_flask_handler(ai)
++    @ai.flow()
++    async def suggest_dish(cuisine: str) -> str:
++        return f'{cuisine} tasting menu'
++
++    @app.post('/allergens')
++    @genkit_flask_handler(ai)
++    @ai.flow()
++    async def check_allergens(dish: str) -> str:
++        return f'{dish}: contains peanuts'
++
++    @app.post('/specials')
++    @genkit_flask_handler(ai)
++    @ai.flow(name='menu.specials')
++    async def specials(_: str) -> str:
++        return 'smoked salmon tartine'
++
++    client = app.test_client()
++    assert client.post('/menu', json={'data': 'thai'}).json == {'result': 'thai tasting menu'}
++    assert client.post('/allergens', json={'data': 'pad thai'}).json == {'result': 'pad thai: contains peanuts'}
++    assert client.post('/specials', json={'data': ''}).json == {'result': 'smoked salmon tartine'}
++    assert {'suggest_dish', 'check_allergens', 'menu_specials'} <= set(app.view_functions)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7035** (2026-11-04): fix(py): name each Flask handler view after its flow so two routes don't collide (@huangjeff5)
+- **PR #7034** (2026-11-03): fix(py): name the action in served-action failure logs (@huangjeff5)
 - **PR #7032** (2026-11-03): fix(py): log the model or tool exception that generate boxes as internal error (@huangjeff5)
-- **PR #7005** (closed): chore(deps): bump zod from 3.25.67 to 4.6.6 in /genkit-tools/cli (@dependabot[bot])
-- **PR #7003** (2026-11-03): feat(py): validate finished fields and fill defaults in streaming chunk.output (@huangjeff5)
-- **PR #7001** (2026-11-02): fix(py): stop nested hop() cancel from hitting RecursionError on 3.10/3.11 (@huangjeff5)
-- **PR #6986** (2026-11-03): fix(py): make FlowContext, ModelContext, and AgentContext subclasses of ActionRunContext (@huangjeff5)
-- **PR #6985** (2026-11-02): fix(py/google-genai): make _inject_attribution_headers idempotent (@huangjeff5)
+- **PR #7029** (2026-11-03): build(py): bound intra-repo genkit version ranges across plugins and extras (@huangjeff5)
+- **PR #7028** (2026-11-03): chore(js/testapps): migrate flow-simple-ai from @google/generative-ai to @google/genai (@MichaelDoyle)
+- **PR #7021** (2026-11-03): chore(js/testapps): update safe minor and in-range dependencies (@MichaelDoyle)
 
 ---
 
@@ -3548,52 +2741,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. py): log the model or tool exception that generate boxes as internal error (#703
+## X. py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990
 
 **RULE**:
-When implementing operations in `py/packages/genkit/src/genkit/_ai/_generate.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py/packages/genkit-mcp/src/genkit_mcp/_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58b421bd`: py): log the model or tool exception that generate boxes as internal error (#7032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e8663ef`: py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit/src/genkit/_ai/_generate.py`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit-mcp/src/genkit_mcp/_tools.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-from genkit._core._telemetry._instrumentation import SpanContext, current_span, run_in_new_span, set_span_state
-# Set on an exception once log_dropped_failure has logged it, so the tool site
-# and the generate-level box never log the same failure twice.
-_LOGGED_ATTR = '_genkit_failure_logged'
-
-
-def log_dropped_failure(exc: BaseException, *, model: str | None = None, tool: str | None = None) -> None:
-    """Log a failure whose cause boxing hides behind ``internal error``.
-
-    The caller only gets ``finish_reason=failed`` with ``internal error``, so
-    without this line the cause lives only in an exported trace. Failures that
-    keep their own message (``PublicError``, a ``GenkitError`` without a
-    foreign cause) are already on ``response.error`` and are not logged.
-
-    Args:
-        exc: The exception about to be boxed.
-        model: Model the turn was calling, when known.
-        tool: Tool that raised, when known. Named over ``model``.
-    """
-    if getattr(exc, _LOGGED_ATTR, False):
-        return
-    if boxed_finish_message(exc=exc, pipe_failed=False) != INTERNAL_FINISH_MESSAGE:
-        return
-    with contextlib.suppress(AttributeError, TypeError):
-        setattr(exc, 
+    present. Image, audio, and blob resource blocks become media parts; text
+    resource blocks append to text output; resource links are skipped since
+    Genkit Python does not expose resource actions. An error result yields an
+    ``error`` output and drops any media, so the model can read the failure and
+    retry.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-from genkit._core._telemetry._instrumentation import SpanContext, run_in_new_span, set_span_state
+    ResourceLink,
+    present. Image, audio and blob resource blocks become media parts, and a
+    resource link becomes a resource part. An error result yields an ``error``
+    output and drops any media, so the model can read the failure and retry.
+        elif isinstance(block, ResourceLink):
+            content.append(Part.model_validate({'resource': {'uri': str(block.uri)}}))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58b421bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e8663ef` are properly handled with clean fallback behavior.

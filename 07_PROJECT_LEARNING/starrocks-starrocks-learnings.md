@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `c65d4db1`  
+> **Source Version**: `0b659694`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T15:46:50.526Z  
+> **Timestamp**: 2026-11-04T10:37:47.359Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T15:46:49.559Z  
+> **Harvest Timestamp**: 2026-11-04T10:37:46.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12228 stars
+- **Stars / Engagement**: 12231 stars
 
 ---
 
@@ -1818,585 +1818,824 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c65d4db1` (2026-11-03)
-**Commit Message**: [BugFix][RB-723] Journal a reshard job's version reservation before releasing its lock (#81922)
+### Incident Patch 1: `84536d8f` (2026-11-04)
+**Commit Message**: [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR_IF_OVERFLOW (#82254)
 
-Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java` (modified, +16/-14)
+**File**: `be/src/exprs/arithmetic_expr.cpp` (modified, +1/-1)
 ```diff
-@@ -215,21 +215,24 @@ protected void runPendingJob() {
-         // 3. Commit transaction (update next version)
-         // NOTE: After updateNextVersions(), the table's next version is advanced.
-         // From this point the job must not abort or throw, because the run() wrapper would attempt to abort.
-+        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
-+        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
-+        // the reserved version would never be published.
-         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.WRITE)) {
-             // Same lock as the version reservation, so the gtid falls between those of commits before and after.
-             // Drawn first, so a failure here leaves no version reserved.
-             gtid = globalStateMgr.getGtidGenerator().nextGtid();
-             updateNextVersions(lockedTable.get());
--        }
- 
--        // 4. Add new tablets to inverted index
--        addTabletsToInvertedIndex();
-+            // 4. Add new tablets to inverted index
-+            addTabletsToInvertedIndex();
- 
--        // 5. Register resharding tablets
--        registerReshardingTablets();
-+            // 5. Register resharding tablets
-+            registerReshardingTablets();
- 
--        // 6. Set job state to PREPARING
--        setJobState(JobState.PREPARING);
-+            // 6. Set job state to PREPARING
-+            setJobState(JobState.PREPARING);
-+        }
-     }
- 
-     /*
-@@ -634,13 +637,12 @@ private void updateNextVersions(OlapTable olapTable) {
-                 reshardingPhysicalPartition.setCommitVersion(commitVersion);
-             }
- 
--            // Never move nextVersion backwards. The commit version is reserved here, in
--            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
--            // few steps later -- so a load transaction that commits in between journals its own
--            // entry first, and a replaying FE applies that entry before this one. By then the
--            // transaction has already carried nextVersion past the version reserved here, and
--            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
--            // version out twice.
-+            // Never move nextVersion backwards. runPendingJob journals the reservation before it
-+            // releases the table lock, but a journal written by an FE without that ordering can
-+            // still carry a load that committed between the reservation and its PREPARING entry.
-+            // A replaying FE applies that load first, so the load has already carried nextVersion
-+            // past the version reserved here, and assigning commitVersion + 1 unconditionally
-+            // would drag it back, handing the same version out twice.
-             if (physicalPartition.getNextVersion() < commitVersion + 1) {
-                 physicalPartition.setNextVersion(commitVersion + 1);
-             }
+@@ -224,7 +224,7 @@ class VectorizedDivArithmeticExpr final : public Expr
+     StatusOr<ColumnPtr> evaluate_checked(ExprContext* context, Chunk* ptr) override {
+         if constexpr (is_intdiv_op<Op> && lt_is_bigint<Type>) {
+ #define EVALUATE_CHECKED_OVERFLOW(Mode)                                                   \
+-    using CastFunction = VectorizedUnaryFunction<DecimalTo<Mode>>;                        \
++    using CastFunction = VectorizedDecimalCastFunction<DecimalTo, Mode>;                  \
+     switch (_children[0]->type().type) {                                                  \
+     case TYPE_DECIMAL32: {                                                                \
+         ASSIGN_OR_RETURN(auto column, evaluate_internal<TYPE_DECIMAL32>(context, ptr));   \
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/reshard/SplitTabletJob.java` (modified, +16/-14)
+**File**: `be/src/exprs/cast_expr_tpl.hpp` (modified, +5/-4)
 ```diff
-@@ -253,21 +253,24 @@ protected void runPendingJob() {
-         // 3. Commit transaction (update next version)
-         // NOTE: After updateNextVersions(), the table's next version is advanced.
-         // From this point the job must not abort or throw, because the run() wrapper would attempt to abort.
-+        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
-+        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
-+        // the reserved version would never be published.
-         try (LockedObject<OlapTable> lockedTable = getLockedTable(LockType.WRITE)) {
-             // Same lock as the version reservation, so the gtid falls between those of commits before and after.
-             // Drawn first, so a failure here leaves no version reserved.
-             gtid = globalStateMgr.getGtidGenerator().nextGtid();
-             updateNextVersions(lockedTable.get());
--        }
- 
--        // 4. Add new tablets to inverted index
--        addTabletsToInvertedIndex();
-+            // 4. Add new tablets to inverted index
-+            addTabletsToInvertedIndex();
- 
--        // 5. Register resharding tablets
--        registerReshardingTablets();
-+            // 5. Register resharding tablets
-+            registerReshardingTablets();
- 
--        // 6. Set job state to PREPARING
--        setJobState(JobState.PREPARING);
-+            // 6. Set job state to PREPARING
-+            setJobState(JobState.PREPARING);
-+        }
-     }
- 
-     /*
-@@ -717,13 +720,12 @@ private void updateNextVersions(OlapTable olapTable) {
-                 reshardingPhysicalPartition.setCommitVersion(commitVersion);
+@@ -1240,24 +1240,25 @@ class VectorizedCastExpr final : public Expr
              }
- 
--            // Never move nextVersion backwards. The commit version is reserved here, in
--            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
--            // few steps later -- so a load transaction that commits in between journals its own
--            // entry first, and a replaying FE applies that entry before this one. By then the
--            // transaction has already carried nextVersion past the version reserved here, and
--            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
--            // version out twice.
-+            // Never move nextVersion backwards. runPendingJob journals the reservation before it
-+            // releases the table lock, but a journal written by an FE without that ordering can
-+            // still carry a load that committed between the reservation and its PREPARING entry.
-+            // A replaying FE applies that load first, so the load has already carried nextVersion
-+            // past the version reserved here, and assigning commitVersion + 1 unconditionally
-+            // would drag it back, handing the same version out twice.
-             if (physicalPartition.getNextVersion() < commitVersion + 1) {
-                 physicalPartition.setNextVersion(commitVersion + 1);
+         } else if constexpr (lt_is_decimal<FromType> && lt_is_decimal<ToType>) {
+             if (context != nullptr && context->error_if_overflow()) {
+-                return VectorizedUnaryFunction<DecimalToDecimal<OverflowMode::REPORT_ERROR>>::evaluate<FromType,
+-                                                                                                       ToType>(
++                return VectorizedDecimalCastFunction<DecimalToDecimal, OverflowMode::REPORT_ERROR>::evaluate<FromType,
++                                                                                                             ToType>(
+                         column, to_type.precision, to_type.scale);
+             } else {
+                 return VectorizedUnaryFunction<DecimalToDecimal<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
+                         column, to_type.precision, to_type.scale);
              }
+         } else if constexpr (lt_is_decimal<FromType>) {
+             if (context != nullptr && context->error_if_overflow()) {
+-                return VectorizedUnaryFunction<DecimalTo<OverflowMode::REPORT_ERROR>>::evaluate<FromType, ToType>(
++                return VectorizedDecimalCastFunction<DecimalTo, OverflowMode::REPORT_ERROR>::evaluate<FromType, ToType>(
+                         column);
+             } else {
+                 return VectorizedUnaryFunction<DecimalTo<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
+                         column);
+             }
+         } else if constexpr (lt_is_decimal<ToType>) {
+             if (context != nullptr && context->error_if_overflow()) {
+-                return VectorizedUnaryFunction<DecimalFrom<OverflowMode::REPORT_ERROR>>::evaluate<FromType, ToType>(
++                return VectorizedDecimalCastFunction<DecimalFrom, OverflowMode::REPORT_ERROR>::evaluate<FromType,
++                                                                                                        ToType>(
+                         column, to_type.precision, to_type.scale);
+             } else {
+                 return VectorizedUnaryFunction<DecimalFrom<OverflowMode::OUTPUT_NULL>>::evaluate<FromType, ToType>(
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/MergeTabletJobTest.java` (modified, +54/-0)
+**File**: `be/src/exprs/decimal_binary_function.h` (modified, +122/-31)
 ```diff
-@@ -45,6 +45,7 @@
- import com.starrocks.metric.LongCounterMetric;
- import com.starrocks.metric.Metric.MetricUnit;
- import com.starrocks.metric.MetricRepo;
-+import com.starrocks.persist.EditLog;
- import com.starrocks.proto.AggregatePublishVersionRequest;
- import com.starrocks.proto.PublishVersionRequest;
- import com.starrocks.proto.PublishVersionResponse;
-@@ -65,6 +66,7 @@
- import com.starrocks.thrift.TStorageMedium;
- import com.starrocks.transaction.GlobalTransactionMgr;
- import com.starrocks.transaction.TransactionState;
-+import com.starrocks.transaction.TransactionStatus;
- import com.starrocks.type.IntegerType;
- import com.starrocks.utframe.MockedBackend.MockLakeService;
- import com.starrocks.utframe.StarRocksAssert;
-@@ -89,6 +91,7 @@
- import java.util.concurrent.Future;
- import java.util.concurrent.ThreadPoolExecutor;
- import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.concurrent.atomic.AtomicLong;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.stream.Collectors;
- 
-@@ -302,6 +305,57 @@ public void createShardsForMerge(Invocation invocation, Map<Long, List<Long>> ne
-                         + " of the load committed below it");
+@@ -48,7 +48,7 @@ struct DecimalBinaryFunction {
+               typename RhsCppType, typename ResultCppType>
+     static inline bool adjust_evaluate(size_t num_rows, const LhsCppType* lhs_data, const RhsCppType* rhs_data,
+                                        ResultCppType* result_data, NullColumn::ValueType* nulls, bool* has_null,
+-                                       int adjust_scale) {
++                                       int adjust_scale, const uint8_t* input_nulls) {
+         [[maybe_unused]] LhsCppType lhs_datum;
+         [[maybe_unused]] RhsCppType rhs_datum;
+         [[maybe_unused]] const auto scale_factor = get_scale_factor<LhsCppType>(adjust_scale);
+@@ -61,7 +61,9 @@ struct DecimalBinaryFunction {
+             if constexpr (adjust_left) {
+                 overflow = DecimalV3Cast::scale_up<LhsCppType, LhsCppType, check_overflow<overflow_mode>>(
+                         lhs_datum, scale_factor, &lhs_datum);
+-                // adjusting operand generates decimal overflow
++                // adjusting operand generates decimal overflow. The constant operand is shared by every row, and
++                // NullAwareReportErrorDecimalBinaryFunction never calls in with every row null, so under
++                // REPORT_ERROR this overflow belongs to a non-null row.
+                 if constexpr (check_overflow<overflow_mode>) {
+                     if (overflow) {
+                         if constexpr (error_if_overflow<overflow_mode>) {
+@@ -100,8 +102,10 @@ struct DecimalBinaryFunction {
+             if constexpr (check_overflow<overflow_mode>) {
+                 if (overflow) {
+                     if constexpr (error_if_overflow<overflow_mode>) {
+-                        throw std::overflow_error(strings::Substitute(
+-                                "The '$0' operation involving decimal values overflows", get_op_name<Op>()));
++                        if (!is_null_input_row(input_nulls, i)) {
++                            throw std::overflow_error(strings::Substitute(
++                                    "The '$0' operation involving decimal values overflows", get_op_name<Op>()));
++                        }
+                     } else {
+                         static_assert(null_if_overflow<overflow_mode>);
+                         *has_null = true;
+@@ -114,7 +118,7 @@ struct DecimalBinaryFunction {
      }
  
-+    /**
-+     * A load that committed after the job reserved its version but before the job journaled the reservation would
-+     * reach the journal first, so a leader change in between would leave the reserved version to no one and the
-+     * partition stuck behind it. Such a load has to wait for the reservation's journal entry, then takes the next
-+     * version.
-+     */
-+    @Test
-+    public void testCommitVersionJournaledBeforeNextLoad() throws Exception {
-+        MergeTabletJob mergeJob = createMergeTabletReshardJob();
-+        PhysicalPartition physicalPartition = table.getAllPhysicalPartitions().iterator().next();
-+        ConcurrentLoad.holdPublishDaemon();
-+        long loadId = ConcurrentLoad.begin(db, table);
-+        AtomicLong nextVersionWhenJournaled = new AtomicLong();
-+        new MockUp<EditLog>() {
-+            @Mock
-+            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob job) {
-+                boolean reservationEntry = job.getJobState() == TabletReshardJob.JobState.PREPARING;
-+                if (reservationEntry) {
-+                    ConcurrentLoad.tryCommit(db, table, loadId, 100);
-+                }
-+                invocation.proceed();
-+                if (reservationEntry) {
-+                    nextVersionWhenJournaled.set(physicalPartition.getNextVersion());
-+                }
-+            }
-+        };
-+        long reservedVersion = physicalPartition.getNextVersion();
+     template <bool lhs_is_const, bool rhs_is_const, LogicalType LhsType, LogicalType RhsType, LogicalType ResultType>
+-    static inline ColumnPtr evaluate(const ColumnPtr& lhs, const ColumnPtr& rhs) {
++    static inline ColumnPtr evaluate(const ColumnPtr& lhs, const ColumnPtr& rhs, const uint8_t* input_nulls = nullptr) {
+         using ResultCppType = RunTimeCppType<ResultType>;
+         using ResultColumnType = RunTimeColumnType<ResultType>;
+ 
+@@ -148,47 +152,47 @@ struct DecimalBinaryFunction {
+             if (adjust_scale == 0) {
+                 // S(lhs)==S(rhs) no need to adjust
+                 all_null = adjust_evaluate<lhs_is_const, rhs_is_const, false, BinaryOperator>(
+-                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale);
++                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
+             } else if (lhs_scale < rhs_scale) {
+                 // S(lhs) < S(rhs), scale lhs up by S(rhs)-S(lhs)
+                 all_null = adjust_evaluate<lhs_is_const, rhs_is_const, true, BinaryOperator>(
+-                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale);
++                        num_rows, lhs_data, rhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
+             } else {
+                 // S(lhs) > S(rhs), scale rhs up by S(lhs)-S(rhs)
+                 if constexpr (is_add_op<Op>) {
+                     // add: just swap two operands
+                     all_null = adjust_evaluate<rhs_is_const, lhs_is_const, true, BinaryOperator>(
+-                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale);
++                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
+                 } else if constexpr (is_sub_op<Op>) {
+                     // sub: just swap two operand and then rhs - lhs
+                     using ReverseSubOperator = ArithmeticBinaryOperator<ReverseSubOp, ResultType>;
+                     all_null = adjust_evaluate<rhs_is_const, lhs_is_const, true, ReverseSubOperator>(
+-                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale);
++                            num_rows, rhs_data, lhs_data, result_data, nulls, &has_null, adjust_scale, input_nulls);
+                 } else if constexpr (is_mod_op<Op>) {
+                     // mod: just swap two operand and then rhs - lhs
+                     using ReverseModOperator = ArithmeticBinaryOperator<ReverseModOp, ResultType>;
+                
+```
+
+**File**: `be/src/exprs/decimal_cast_expr.h` (modified, +62/-17)
+```diff
+@@ -18,7 +18,9 @@
+ 
+ #include "base/decimal_types.h"
+ #include "column/column_builder.h"
++#include "exprs/function_helper.h"
+ #include "exprs/overflow.h"
++#include "exprs/unary_function.h"
+ #include "types/decimalv3.h"
+ #include "types/variant.h"
+ 
+@@ -30,7 +32,8 @@ UNION_VALUE_GUARD(LogicalType, FixedNonDecimalTypeGuard, lt_is_fixed_non_decimal
+ 
+ template <OverflowMode overflow_mode, LogicalType Type, LogicalType ResultType>
+ struct DecimalDecimalCast {
+-    static inline ColumnPtr evaluate(const ColumnPtr& column, int to_precision, int to_scale) {
++    static inline ColumnPtr evaluate(const ColumnPtr& column, int to_precision, int to_scale,
++                                     const uint8_t* input_nulls = nullptr) {
+         using FromCppType = RunTimeCppType<Type>;
+         using FromColumnType = RunTimeColumnType<Type>;
+         using ToCppType = RunTimeCppType<ResultType>;
+@@ -74,7 +77,9 @@ struct DecimalDecimalCast {
+                     if constexpr (check_overflow<overflow_mode>) {
+                         if (overflow) {
+                             if constexpr (error_if_overflow<overflow_mode>) {
+-                                throw std::overflow_error("The type cast from decimal to decimal overflows");
++                                if (!is_null_input_row(input_nulls, i)) {
++                                    throw std::overflow_error("The type cast from decimal to decimal overflows");
++                                }
+                             } else {
+                                 static_assert(null_if_overflow<overflow_mode>);
+                                 has_null = true;
+@@ -93,7 +98,9 @@ struct DecimalDecimalCast {
+                 if constexpr (check_overflow<overflow_mode>) {
+                     if (overflow) {
+                         if constexpr (error_if_overflow<overflow_mode>) {
+-                            throw std::overflow_error("The type cast from decimal to decimal overflows");
++                            if (!is_null_input_row(input_nulls, i)) {
++                                throw std::overflow_error("The type cast from decimal to decimal overflows");
++                            }
+                         } else {
+                             static_assert(null_if_overflow<overflow_mode>);
+                             has_null = true;
+@@ -111,7 +118,9 @@ struct DecimalDecimalCast {
+                 if constexpr (check_overflow<overflow_mode>) {
+                     if (overflow) {
+                         if constexpr (error_if_overflow<overflow_mode>) {
+-                            throw std::overflow_error("The type cast from decimal to decimal overflows");
++                            if (!is_null_input_row(input_nulls, i)) {
++                                throw std::overflow_error("The type cast from decimal to decimal overflows");
++                            }
+                         } else {
+                             static_assert(null_if_overflow<overflow_mode>);
+                             has_null = true;
+@@ -141,16 +150,18 @@ struct DecimalNonDecimalCast<overflow_mode, DecimalType, NonDecimalType, Decimal
+     using NonDecimalCppType = RunTimeCppType<NonDecimalType>;
+     using NonDecimalColumnType = RunTimeColumnType<NonDecimalType>;
+ 
+-    static inline ColumnPtr decimal_from(const ColumnPtr& column, int precision, int scale) {
++    static inline ColumnPtr decimal_from(const ColumnPtr& column, int precision, int scale,
++                                         const uint8_t* input_nulls = nullptr) {
+         if (scale == 0) {
+-            return _decimal_from<true>(column, precision, scale);
++            return _decimal_from<true>(column, precision, scale, input_nulls);
+         } else {
+-            return _decimal_from<false>(column, precision, scale);
++            return _decimal_from<false>(column, precision, scale, input_nulls);
+         }
+     }
+ 
+     template <bool ZeroScale>
+-    static inline ColumnPtr _decimal_from(const ColumnPtr& column, int precision, int scale) {
++    static inline ColumnPtr _decimal_from(const ColumnPtr& column, int precision, int scale,
++                                          const uint8_t* input_nulls) {
+         const auto num_rows = column->size();
+         typename DecimalColumnType::MutablePtr result = DecimalColumnType::create(precision, scale, num_rows);
+         const auto data = &ColumnHelper::cast_to_raw<NonDecimalType>(column.get())->immutable_data().front();
+@@ -227,7 +238,9 @@ struct DecimalNonDecimalCast<overflow_mode, DecimalType, NonDecimalType, Decimal
+             if constexpr (check_overflow<overflow_mode>) {
+                 if (overflow) {
+                     if constexpr (error_if_overflow<overflow_mode>) {
+-                        throw std::overflow_error("The type cast from other types to decimal overflows");
++                        if (!is_null_input_row(input_nulls, i)) {
++                            throw std::overflow_error("The type cast from other types to decimal
+```
+
+**File**: `be/src/exprs/overflow.h` (modified, +10/-0)
+```diff
+@@ -14,6 +14,9 @@
+ 
+ #pragma once
+ 
++#include <cstddef>
++#include <cstdint>
 +
-+        mergeJob.init();
-+        mergeJob.runPendingJob();
+ namespace starrocks {
+ enum OverflowMode {
+     // We don't check overflow in this mode
+@@ -40,4 +43,11 @@ template <OverflowMode mode>
+ inline constexpr bool error_if_overflow = false;
+ template <>
+ inline constexpr bool error_if_overflow<OverflowMode::REPORT_ERROR> = true;
 +
-+        GlobalTransactionMgr txnMgr = GlobalStateMgr.getCurrentState().getGlobalTransactionMgr();
-+        Assertions.assertEquals(TransactionStatus.PREPARE,
-+                txnMgr.getTransactionState(db.getId(), loadId).getTransactionStatus());
-+        Assertions.assertEquals(reservedVersion + 1, nextVersionWhenJournaled.get());
-+        TransactionState load = ConcurrentLoad.commit(db, table, loadId);
-+        Assertions.assertEquals(reservedVersion + 1, ConcurrentLoad.versionIn(load, table, physicalPartition.getId()));
++// Under REPORT_ERROR a decimal kernel can be given the null flags of its input rows (nullptr: no null rows).
++// The data slot of a null row is undefined, e.g. "" after NULLIF or a value left by an upstream expression, so
++// an overflow found in it must not raise an error: the row's result is NULL anyway.
++inline bool is_null_input_row(const uint8_t* input_nulls, size_t row) {
++    return input_nulls != nullptr && input_nulls[row] != 0;
++}
+ } // namespace starrocks
+```
+
+**File**: `be/test/exprs/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -75,6 +75,7 @@ set(EXPR_TEST_FILES
+     decimal_cast_expr_decimalv2_test.cpp
+     decimal_cast_expr_integer_test.cpp
+     decimal_cast_expr_time_test.cpp
++    decimal_null_row_report_error_test.cpp
+     encryption_functions_test.cpp
+     function_call_expr_test.cpp
+     generate_series_core_test.cpp
+```
+
+**File**: `be/test/exprs/decimal_null_row_report_error_test.cpp` (added, +437/-0)
+```diff
+@@ -0,0 +1,437 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+        // The job publishes the version it reserved, then waits in CLEANING for the load above it.
-+        long deadlineMs = System.currentTimeMillis() + 60_000L;
-+        while (mergeJob.getJobState() != TabletReshardJob.JobState.CLEANING) {
-+            Assertions.assertTrue(System.currentTimeMillis() < deadlineMs, "job is still " + mergeJob.getJobState());
-+            mergeJob.run();
-+            Thread.sleep(10);
-+        }
-+        ConcurrentLoad.makeVisible(db, load);
-+        mergeJob.run();
-+        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, mergeJob.getJobState());
++// Under sql_mode=ERROR_IF_OVERFLOW (OverflowMode::REPORT_ERROR) a decimal cast or decimal arithmetic must only
++// report an error for a non-null row. The data slot of a null row is undefined ("" for a string, 0, or a value
++// left by an upstream expression), so it must never raise an error. Every case below builds one column whose
++// null row holds a slot that the op rejects, next to a valid non-null row, so neither the all-null nor the
++// no-null shortcut is taken.
++
++#include <gtest/gtest.h>
++
++#include <stdexcept>
++#include <string>
++#include <vector>
++
++#include "column/binary_column.h"
++#include "column/column_helper.h"
++#include "column/const_column.h"
++#include "column/nullable_column.h"
++#include "column/runtime_type_traits.h"
++#include "exprs/arithmetic_operation.h"
++#include "exprs/decimal_binary_function.h"
++#include "exprs/decimal_cast_expr.h"
++#include "types/date_value.h"
++#include "types/timestamp_value.h"
++
++namespace starrocks {
++
++namespace {
++
++constexpr auto REPORT = OverflowMode::REPORT_ERROR;
++
++template <typename DataColumn>
++ColumnPtr make_nullable(typename DataColumn::MutablePtr data, const std::vector<uint8_t>& is_null) {
++    auto nulls = NullColumn::create();
++    bool any_null = false;
++    for (auto n : is_null) {
++        nulls->get_data().push_back(n);
++        any_null |= (n != 0);
 +    }
-+
-+
-     @Test
-     public void testRunMergeBumpsOptimisticVersion() throws Exception {
-         TabletReshardJob splitJob = createSplitTabletReshardJob();
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +64/-0)
-```diff
-@@ -36,6 +36,7 @@
- import com.starrocks.lake.StarOSAgent;
- import com.starrocks.lake.Utils;
- import com.starrocks.lake.compaction.CompactionMgr;
-+import com.starrocks.persist.EditLog;
- import com.starrocks.proto.AggregatePublishVersionRequest;
- import com.starrocks.proto.PublishVersionRequest;
- import com.starrocks.proto.PublishVersionResponse;
-@@ -53,6 +54,7 @@
- import com.starrocks.thrift.TStatusCode;
- import com.starrocks.transaction.GlobalTransactionMgr;
- import com.starrocks.transaction.TransactionState;
-+import com.starrocks.transaction.TransactionStatus;
- import com.starrocks.type.IntegerType;
- import com.starrocks.utframe.MockedBackend.MockLakeService;
- import com.starrocks.utframe.StarRocksAssert;
-@@ -78,6 +80,7 @@
- import java.util.concurrent.Future;
- import java.util.concurrent.ThreadPoolExecutor;
- import java.util.concurrent.atomic.AtomicInteger;
-+import java.util.concurrent.atomic.AtomicLong;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.BiConsumer;
- import java.util.stream.Collectors;
-@@ -237,6 +240,67 @@ public void createShardsForSplit(Invocation invocation, Map<Long, Long> newToOld
-                         + " of the load committed below it");
-     }
- 
-+    /**
-+     * A load that committed after the job reserved its version but before the job journaled the reservation would
-+     * reach the journal first, so a leader change in between would leave the reserved version to no one and the
-+     * partition stuck behind it. Such a load has to wait for the reservation's journal entry, then takes the next
-+     * version.
-+     */
-+    @Test
-+    public void testCommitVersionJournaledBeforeNextLoad() throws Exception {
-+        installLakeServiceMock(this::addDataDrivenRanges);
-+        starRocksAssert.withTable("create table journal_split_table (key1 int, key2 varchar(10)) order by(key1) "
-+                + "properties('replication_num' = '1')");
-+        OlapTable journalTable = (OlapTable) GlobalStateMgr.getCurrentState().getLocalMetastore()
-+                .getTable(db.getFullName(), "journal_split_table");
-+        PhysicalPartition physicalPartition = journalTable.getAllPhysicalPartitions().iterator().next();
-+        ConcurrentLoad.holdPublishDaemon();
-+        long loadId = ConcurrentLoad.begin(db, journalTable);
-+        AtomicLong nextVersionWhenJournaled = new AtomicLong();
-+        new MockUp<EditLog>() {
-+            @Mock
-+            public void logUpdateTabletReshardJob(Invocation invocation, TabletReshardJob job) {
-+                boolean reservationEntry = job.getJobState() == TabletReshardJob.JobState.PREPARING;
-+                if (reservationEntry) {
-+                    ConcurrentLoad.tryCommit(db, journalTable, loadId, 100);
-+                }
-+                invocation.proceed();
-+                if (reservationEntry) {
-+                    nextVersionWhenJournaled.set(physicalPartition.getNextVersion());
-+                }
-+            }
-+        };
-+        long tabletId = physicalPartition.getLatestBaseIndex().getTablets().get(0).getId();
-+        SplitTabletClause clause = new SplitTabletClause(null, new TabletList(List.of(tabletId)),
-+                Map.of(PropertyAnalyzer.PROPERTIES_TABLET_RESHARD_TARGET_SIZE, "-2"));
-+        clause.setTabletReshardTargetSize(-2);
-+        TabletReshardJob job = new SplitTabletJobFactory(db, journalTable, clause).createTabletReshardJob();
-+        long reservedVersion = physicalPartition.getNextVersion();
-+
-+        job.init();
-+        job.runPendingJob();
-+
-+        GlobalTransactionMgr txnMgr = GlobalStateMgr.getCurrentState().getGlobalTransactionMgr();
-+        Assertions.assertEquals(TransactionStatus.PREPARE,
-+                txnMgr.getTransactionState(db.getId(), loadId).getTransactionStatus());
-+        Assertions.assertEquals(reservedVersion + 1, nextVersionWhenJournaled.get());
-+        TransactionState load = ConcurrentLoad.commit(db, journalTable, loadId);
-+        Assertions.assertEquals(reservedVersion + 1,
-+                ConcurrentLoad.versionIn(load, journalTable, physicalPartition.getId()));
-+
-+        // The job publishes the version it reserved, then waits in CLEANING for the load above it.
-+        long deadlineMs = System.currentTimeMillis() + 60_000L;
-+        while (job.getJobState() != TabletReshardJob.JobState.CLEANING) {
-+            Assertions.assertTrue(System.currentTimeMillis() < deadlineMs, "job is still " + job.getJobState());
-+            job.run();
-+            Thread.sleep(10);
-+        }
-+        ConcurrentLoad.makeVisible(db, load);
-+        job.run();
-+        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, job.getJobState());
-+    }
-+
-+
-     /**
-      * Records the transactions and the version of each reshard publish, and answers it the way a BE splits the
-      * tablets by their data.
-```
-
----
-
-### Incident Patch 2: `a0d0645a` (2026-11-03)
-**Commit Message**: [BugFix] Gtid may not be monotonic after leader failover (#81580)
-
-Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
-
-**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
-```diff
-@@ -1259,6 +1259,15 @@ This topic introduces the following types of FE configurations:
- - Description: The maximum number of low-cardinality dictionary-optimized columns listed in the `dict_col` field of each scan node in `EXPLAIN VERBOSE` output. When a scan node has more applied dictionary columns than this value, the list is truncated and followed by an ellipsis. Values less than or equal to `0` are treated as `0`, which truncates the list entirely. This item affects only the `EXPLAIN VERBOSE` output and does not change how dictionary optimization is applied to queries.
- - Introduced in: v4.2.0
- 
-+### `gtid_batch_window_ms`
-+
-+- Default: 5000
-+- Type: Long
-+- Unit: Milliseconds
-+- Is mutable: Yes
-+- Description: How far ahead the FE reserves a batch of gtids when the next gtid would pass the current batch end. Values below `1` are treated as `1`. The window must also fit in the remaining 42-bit snowflake timestamp; a larger value makes gtid allocation fail instead of wrapping the reserved batch end. A larger valid value writes the metadata journal less often. The side effect is that unused reserved gtids are discarded on leader failover, so the timestamp bits of a gtid can jump forward by at most this window.
-+- Introduced in: -
-+
- ### `hive_meta_cache_refresh_interval_s`
- 
- - Default: 60
-```
-
-**File**: `docs/en/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
-```diff
-@@ -446,6 +446,13 @@ For more information on how to build a monitoring service for your StarRocks clu
- - Labels: `fstype` (`cachefs`)
- - Description: Cumulative number of Data Cache misses when reading the files of cloud-native tables in a shared-data cluster. Each read covers at most one cache block. For the byte-based metrics, see `default_cache_miss_bytes`.
- 
-+## `gtid_timestamp_ahead_of_clock_ms`
-+
-+- Unit: Milliseconds
-+- Type: Instantaneous
-+- Labels: `is_leader`
-+- Description: How far the gtid generator's last timestamp is ahead of the local wall clock on the Leader FE (`max(0, lastTimestamp - now)`). A positive value means the generator is ahead of this FE's clock. After failover this is normally at most `gtid_batch_window_ms` and falls back to `0` as wall-clock time catches up. A value that stays much larger than the window means a previously issued timestamp was far ahead of this FE's clock and has been persisted. Reported only by the Leader FE (`is_leader="true"`). Returns `0` before any gtid has been issued, and when the wall clock has caught up.
-+
- ## `hive_write_bytes`
- 
- - Unit: Bytes
-```
-
-**File**: `docs/ja/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
-```diff
-@@ -1299,6 +1299,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
- - 説明：`EXPLAIN VERBOSE` の出力において、各スキャンノードの `dict_col` フィールドに表示される低カーディナリティ辞書最適化カラムの最大数。スキャンノードに適用された辞書カラムの数がこの値を超える場合、リストは切り詰められ、省略記号が付加されます。`0` 以下の値は `0` として扱われ、リスト全体が切り詰められます。この項目は `EXPLAIN VERBOSE` の出力にのみ影響し、クエリに対する辞書最適化の適用方法は変更しません。
- - 導入時期：v4.2.0
- 
-+### `gtid_batch_window_ms`
-+
-+- デフォルト：5000
-+- タイプ：Long
-+- 単位：ミリ秒
-+- 変更可能：Yes
-+- 説明：次の gtid が現在のバッチ終端を超えるときに、FE が先回りして予約するミリ秒ウィンドウ。`1` 未満の値は `1` として扱います。ウィンドウは snowflake の残り 42 ビットタイムスタンプに収まっている必要があり、それを超えると予約境界をラップせず発番に失敗します。有効な範囲で値を大きくするとメタデータジャーナルの書き込みは減ります。副作用として、リーダーフェイルオーバー時に未使用の予約は破棄され、gtid のタイムスタンプはこのウィンドウ分まで前方に跳ねることがあります。
-+- 導入時期：-
-+
- ### `hive_meta_cache_refresh_interval_s`
- 
- - デフォルト：3600 * 2
-```
-
-**File**: `docs/ja/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
-```diff
-@@ -446,6 +446,13 @@ StarRocksクラスターの監視サービスを構築する方法の詳細に
- - ラベル: `fstype` (`cachefs`)
- - 説明: 共有データクラスタでクラウドネイティブテーブルのファイルを読み取る際の、データキャッシュの累積ミス数。1 回の読み取りは最大で 1 つのキャッシュブロックを対象とします。バイト数ベースのメトリクスについては `default_cache_miss_bytes` を参照してください。
- 
-+## `gtid_timestamp_ahead_of_clock_ms`
-+
-+- 単位: ミリ秒
-+- タイプ: 瞬間
-+- ラベル: `is_leader`
-+- 説明: Leader FE 上の gtid ジェネレーターの直近タイムスタンプがローカル壁時計よりどれだけ進んでいるか（`max(0, lastTimestamp - now)`）。正の値はジェネレーターがこの FE の時計より進んでいることを示します。フェイルオーバー直後は通常 `gtid_batch_window_ms` 以下で、壁時計が追いつくと `0` に戻ります。ウィンドウを大きく上回る値が長く続く場合、過去に発行したタイムスタンプがこの FE の時計より大幅に進んでおり、メタデータに永続化済みです。Leader FE のみが報告します（`is_leader="true"`）。まだ gtid を発行していない場合、および壁時計が追いついた場合は `0` です。
-+
- ## `hive_write_bytes`
- 
- - 単位: バイト
-```
-
-**File**: `docs/zh/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +9/-0)
-```diff
-@@ -1295,6 +1295,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
- - 描述: `EXPLAIN VERBOSE` 输出中每个 Scan 节点的 `dict_col` 字段所列出的低基数字典优化列的最大数量。当某个 Scan 节点应用的字典列数量超过该值时，列表将被截断并以省略号结尾。小于或等于 `0` 的值会被视为 `0`，即完全截断该列表。该参数仅影响 `EXPLAIN VERBOSE` 的输出，不会改变字典优化在查询中的实际应用方式。
- - 引入版本: v4.2.0
- 
-+### `gtid_batch_window_ms`
-+
-+- 默认值: 5000
-+- 类型: Long
-+- 单位: 毫秒
-+- 是否可变: Yes
-+- 描述: 下一条 gtid 将越过当前批次上界时，FE 向前预留的毫秒窗口。小于 `1` 的值按 `1` 处理。窗口还必须落在 snowflake 剩余的 42 位时间戳内；再大则发号失败，而不会把预留上界算溢出。合法范围内值越大，元数据 journal 写入越少。副作用是切主时未用完的预留作废，gtid 的时间戳最多向前跳这整个窗口。
-+- 引入版本: -
-+
- ### `hive_meta_cache_refresh_interval_s`
- 
- - 默认值: 3600 * 2
-```
-
-**File**: `docs/zh/administration/management/monitoring/metric_details/d-h.md` (modified, +7/-0)
-```diff
-@@ -446,6 +446,13 @@ description: "Alphabetical d - h"
- - 标签：`fstype`（`cachefs`）
- - 描述：存算分离集群读取云原生表文件时 Data Cache 的累计未命中次数。每次读取最多涉及一个缓存块。按字节统计的指标参见 `default_cache_miss_bytes`。
- 
-+## `gtid_timestamp_ahead_of_clock_ms`
-+
-+- 单位: 毫秒
-+- 类型: 瞬时
-+- 标签: `is_leader`
-+- 描述: Leader FE 上 gtid 发号器最近一条时间戳相对本机墙上时钟快多少（`max(0, lastTimestamp - now)`）。正值表示发号器快于本机时钟。切主后通常不超过 `gtid_batch_window_ms`，墙上时钟追上后回到 `0`。若长期远大于该窗口，说明曾经发出的时间戳已远快于本机时钟并已写入元数据。仅 Leader FE 上报（`is_leader="true"`）。尚未发过号，或墙上时钟已经追上时，均为 `0`。
-+
- ## `hive_write_bytes`
- 
- - 单位: 字节
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/common/Config.java` (modified, +11/-0)
-```diff
-@@ -1698,6 +1698,17 @@ public class Config extends ConfigBase {
-     @ConfField(mutable = true)
-     public static int max_running_txn_num_per_db = 1000;
- 
-+    /**
-+     * How far ahead, in milliseconds, the gtid generator reserves a batch when the next gtid would
-+     * pass the current batch end. Must be {@code >= 1}; values below 1 are treated as 1. Must also
-+     * fit in the remaining 42-bit snowflake timestamp ({@code GtidGenerator.MAX_TIMESTAMP}); a
-+     * larger value fails {@code nextGtid} rather than wrapping the batch end. A larger valid window
-+     * writes journal less often. The side effect is that unused reservation is discarded on
-+     * leader failover, so the timestamp field can jump forward by up to this window.
-+     */
-+    @ConfField(mutable = true)
-+    public static long gtid_batch_window_ms = 5000;
-+
-     @ConfField(mutable = true, comment = "A comma-separated list of transaction latency metric groups to report. " +
-             "Load job source types (see TransactionState.LoadJobSourceType) are categorized into logical groups " +
-             "for monitoring. When a group is enabled, its name is added as a 'type' label to transaction metrics. " +
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/metric/MetricRepo.java` (modified, +12/-0)
-```diff
-@@ -525,6 +525,7 @@ public static void recordCompactionScoreAtTrigger(long score) {
-     public static GaugeMetricImpl<Double> GAUGE_QUERY_LATENCY_P999;
-     public static LeaderAwareGaugeMetricLong GAUGE_SPM_BASELINE_COUNT;
-     public static LeaderAwareGaugeMetricLong GAUGE_MAX_JOURNAL_REPLAY_LAG;
-+    public static LeaderAwareGaugeMetricLong GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS;
-     public static LeaderAwareGaugeMetric<Long> GAUGE_MAX_TABLET_COMPACTION_SCORE;
-     public static GaugeMetricImpl<Long> GAUGE_STACKED_JOURNAL_NUM;
- 
-@@ -734,6 +735,17 @@ public Long getValueLeader() {
-         };
-         STARROCKS_METRIC_REGISTER.addMetric(GAUGE_MAX_JOURNAL_REPLAY_LAG);
- 
-+        GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS = new LeaderAwareGaugeMetricLong(
-+                "gtid_timestamp_ahead_of_clock_ms", MetricUnit.MILLISECONDS,
-+                "gtid generator lastTimestamp minus the local wall clock, floored at 0; " +
-+                "positive means the generator is ahead") {
-+            @Override
-+            public Long getValueLeader() {
-+                return GlobalStateMgr.getCurrentState().getGtidGenerator().getTimestampAheadOfClockMs();
-+            }
-+        };
-+        STARROCKS_METRIC_REGISTER.addMetric(GAUGE_GTID_TIMESTAMP_AHEAD_OF_CLOCK_MS);
-+
-         GAUGE_SPM_BASELINE_COUNT = new LeaderAwareGaugeMetricLong(
-                 SPM_BASELINE_COUNT_METRIC_NAME,
-                 MetricUnit.NOUNIT,
-```
-
----
-
-### Incident Patch 3: `1e2f91a8` (2026-11-03)
-**Commit Message**: [BugFix] Unload the primary index before a recovery that may fail to remove it (#81265)
-
-Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `be/src/storage/lake/txn_log_applier.cpp` (modified, +9/-4)
-```diff
-@@ -454,6 +454,10 @@ class PrimaryKeyTxnLogApplier : public TxnLogApplier {
-             // then we can retry again.
-             // 1. unload index first
-             _index_entry->value().unload();
-+            // The entry outlives this publish when another holder still references it, so it must not stay
-+            // charged for the memory the unload just freed.
-+            _tablet.primary_key_mgr()->index_cache().update_object_size(_index_entry,
-+                                                                        _index_entry->value().memory_usage());
-             // 2. and then release guard
-             _guard.reset(nullptr);
-             // 3. remove index from cache to save resource
-@@ -647,10 +651,11 @@ class PrimaryKeyTxnLogApplier : public TxnLogApplier {
-     Status recover() {
-         TRACE_COUNTER_SCOPE_LATENCY_US("primary_key_recover");
-         LOG(INFO) << "Primary Key recover begin, tablet_id: " << _tablet.id() << " base_ver: " << _base_version;
--        // release and remove index entry's reference
--        _tablet.primary_key_mgr()->release_primary_index_cache(_index_entry);
--        _guard.reset(nullptr);
--        _index_entry = nullptr;
-+        // Unload the index before letting go of it, as a failed publish does: this publish may already
-+        // have written to it, and recovery cannot remove it from the cache while another holder still
-+        // references it. The retry must then reload the index from the metadata instead of working on
-+        // top of this attempt's writes.
-+        handle_failure();
-         // rebuild delvec and pk index
-         LakePrimaryKeyRecover recover(&_builder, &_tablet, _metadata);
-         RETURN_IF_ERROR(recover.recover());
-```
-
-**File**: `be/test/storage/lake/primary_key_publish_test.cpp` (modified, +50/-0)
-```diff
-@@ -2558,6 +2558,56 @@ TEST_P(LakePrimaryKeyPublishTest, test_recover_with_dels_v2_encoding) {
-     }
- }
- 
-+// A publish that asks for recovery has already written to the cached index: the delete vector check fails
-+// after the upsert of kKey. Recovery cannot remove the index from the cache while another holder still
-+// references the entry, so it fails. Neither that holder nor the retry may then see the failed attempt's upsert.
-+// On top of it, kKey already points at the row this same publish writes, so the retry would delete that row and
-+// keep the old one.
-+TEST_P(LakePrimaryKeyPublishTest, test_retry_reloads_index_when_recover_cannot_remove_it) {
-+    constexpr int32_t kKey = 5;
-+    constexpr int32_t kOldValue = 50;
-+    constexpr int32_t kNewValue = 500;
-+    ConfigResetGuard<bool> recover_guard(&config::enable_primary_key_recover, true);
-+    const auto tablet_id = _tablet_metadata->id();
-+    ASSERT_OK(publish_single_version(tablet_id, 2, write_single_upsert_txn(tablet_id, kKey, kOldValue)).status());
-+    const int64_t txn_id = write_single_upsert_txn(tablet_id, kKey, kNewValue);
-+
-+    bool injected = false;
-+    SyncPoint::GetInstance()->SetCallBack("delvec_inconsistent", [&](void* arg) {
-+        if (!injected) {
-+            *(Status*)arg = Status::InternalError("ut_test");
-+            injected = true;
-+        }
-+    });
-+    SyncPoint::GetInstance()->EnableProcessing();
-+    DeferOp clear_sync_point([]() {
-+        SyncPoint::GetInstance()->ClearCallBack("delvec_inconsistent");
-+        SyncPoint::GetInstance()->DisableProcessing();
-+    });
-+    {
-+        auto* other_holder = _primary_key_mgr->index_cache().get(tablet_id);
-+        ASSERT_NE(nullptr, other_holder);
-+        DeferOp release_other_holder([&]() { _primary_key_mgr->release_primary_index_cache(other_holder); });
-+        ASSERT_FALSE(publish_single_version(tablet_id, 3, txn_id).ok());
-+        ASSERT_TRUE(injected);
-+        // What a reader that probes the index before the retry checks, e.g. the auto-increment probe of a load.
-+        EXPECT_FALSE(other_holder->value().is_load(2));
-+        // Nor may the cache keep charging for the memory the unload freed.
-+        EXPECT_EQ(other_holder->value().memory_usage(), other_holder->size());
-+    }
-+
-+    ASSERT_OK(publish_single_version(tablet_id, 3, txn_id).status());
-+    ASSIGN_OR_ABORT(auto published, _tablet_mgr->get_tablet_metadata(tablet_id, 3));
-+    ASSERT_EQ(2, published->rowsets_size());
-+    const IndexValue new_row(uint64_t{published->rowsets(1).id()} << 32);
-+    auto visible = visible_oracle(tablet_id, 3, kKey);
-+    EXPECT_EQ(1, visible.row_count);
-+    EXPECT_EQ(std::optional<int32_t>(kNewValue), visible.target_value);
-+    EXPECT_EQ(new_row, cached_point_get(tablet_id, kKey));
-+    _primary_key_mgr->unload_and_remove_primary_index(tablet_id);
-+    EXPECT_EQ(new_row, prepare_and_point_get(published, 3, kKey));
++    auto column = NullableColumn::create(std::move(data), std::move(nulls));
++    column->set_has_null(any_null);
++    return column;
 +}
 +
- TEST_P(LakePrimaryKeyPublishTest, test_index_load_failure) {
-     auto [chunk0, indexes] = gen_data_and_index(kChunkSize, 0, true, true);
-     auto version = 1;
++ColumnPtr make_strings(const std::vector<std::string>& values, const std::vector<uint8_t>& is_null) {
++    auto data = BinaryColumn::create();
++    for (const auto& v : values) {
++        data->append(Slice(v));
++    }
++    if (is_null.empty()) {
++        return data;
++    }
++    return make_nullable<BinaryColumn>(std::move(data), is_null);
++}
++
++template <LogicalType Type>
++ColumnPtr make_decimals(int precision, int scale, const std::vector<RunTimeCppType<Type>>& values,
++                        const std::vector<uint8_t>& is_null) {
++    auto data = RunTimeColumnType<Type>::create(precision, scale);
++    for (const auto& v : values) {
++        data->get_data().push_back(v);
++    }
++    if (is_null.empty()) {
++        return data;
++    }
++    return make_nullable<RunTimeColumnType<Type>>(std::move(data), is_null);
++}
++
++template <LogicalType Type>
++ColumnPtr make_values(const std::vector<RunTimeCppType<Type>>& values, const std::vector<uint8_t>& is_null) {
++    auto data = RunTimeColumnType<Type>::create();
++    for (const auto& v : values) {
++        data->get_data().push_back(v);
++    }
++    return make_nullable<RunTimeColumnType<Type>>(std::move(data), is_null);
++}
++
++void expect_nulls(const ColumnPtr& result, const std::vector<bool>& expected) {
++    ASSERT_EQ(result->size(), expected.size());
++    for (size_t i = 0; i < expected.size(); ++i) {
++        EXPECT_EQ(result->is_null(i), expected[i]) << "row " << i;
++    }
++}
++
++template <LogicalType Type>
++RunTimeCppType<Type> value_at(const ColumnPtr& result, size_t row) {
++    const auto* data = ColumnHelper::get_data_column(result.get());
++    return down_cast<const RunTimeColumnType<Type>*>(data)->immutable_data()[row];
++}
++
++template <LogicalType From, LogicalType To, typename... Args>
++ColumnPtr cast_from(const ColumnPtr& column, Args... args) {
++    return VectorizedDecimalCastFunction<DecimalFrom, REPORT>::evaluate<From, To>(column, args...);
++}
++
++template <LogicalType From, LogicalType To>
++ColumnPtr cast_to(const ColumnPtr& column) {
++    return VectorizedDecimalCastFunction<DecimalTo, REPORT>::evaluate<From, To>(column);
++}
++
++template <LogicalType From, LogicalType To>
++ColumnPtr cast_decimal(const ColumnPtr& column, int precision, int scale) {
++    return VectorizedDecimalCastFunction<DecimalToDecimal, REPORT>::evaluate<From, To>(column, precision, scale);
++}
++
++const int128_t kE20 = static_cast<int128_t>(100000000000LL) * 1000000000LL; // 1e20
++const int128_t kE38 = kE20 * 1000000000000000000LL;                         // 1e38
++
++} // namespace
++
++class DecimalNullRowReportErrorTest : public ::testing::Test {
++public:
++    void SetUp() override { date::init_date_cache(); }
++};
++
++// ---------------------------------------------------------------- cast -> DECIMAL (DecimalFrom)
++
++// Issue #82140: NULLIF(x, '') leaves "" in the null row, an
+```
+
+**File**: `test/sql/test_analyze_statistics/R/test_stats_mixed_null_column_error_if_overflow` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++-- name: test_stats_mixed_null_column_error_if_overflow @sequential
++[UC]ori_sql_mode=select @@GLOBAL.sql_mode;
++-- result:
++
++-- !result
++set global sql_mode = 'ERROR_IF_OVERFLOW';
++-- result:
++-- !result
++create database analyze_test_${uuid0};
++-- result:
++-- !result
++use analyze_test_${uuid0};
++-- result:
++-- !result
++CREATE TABLE `mixed_null_decimal` (
++  `k1` int,
++  `c1` decimal(20,8)
++)
++DUPLICATE KEY(`k1`)
++PARTITION BY RANGE(`k1`) (
++  PARTITION p1 VALUES LESS THAN ("10"),
++  PARTITION p2 VALUES LESS THAN ("20")
++)
++DISTRIBUTED BY HASH(`k1`) BUCKETS 1
++PROPERTIES ('replication_num' = '1');
++-- result:
++-- !result
++INSERT INTO mixed_null_decimal VALUES (1, null), (2, null), (11, 1.25), (12, 2.50);
++-- result:
++-- !result
++analyze table mixed_null_decimal;
++-- result:
++[REGEX].*OK.*
++-- !result
++select partition_name, length(`max`) > 0, length(`min`) > 0 from default_catalog._statistics_.column_statistics where table_name='analyze_test_${uuid0}.mixed_null_decimal' and column_name='c1' order by partition_name;
++-- result:
++p1	0	0
++p2	1	1
++-- !result
++LOOP {
++  PROPERTY: {"timeout": 120, "interval": 5, "desc": "wait column stats cache load under ERROR_IF_OVERFLOW"}
++  result=explain costs select c1 from mixed_null_decimal;
++  CHECK: re.search("c1-->\[1.25, 2.5, .*ESTIMATE", ${result}) != None
++} END LOOP
++set global sql_mode = '${ori_sql_mode}';
++-- result:
++-- !result
++drop database analyze_test_${uuid0};
++-- result:
++-- !result
++CLEANUP {
++    set global sql_mode = '${ori_sql_mode}';
++    drop database if exists analyze_test_${uuid0};
++} END CLEANUP
+```
+
+---
+
+### Incident Patch 2: `c3f653d9` (2026-11-04)
+**Commit Message**: [BugFix] Keep the gtid image block at id 40 (#82360)
+
+Signed-off-by: PengFei Li <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/persist/metablock/SRMetaBlockID.java` (modified, +4/-1)
+```diff
+@@ -110,7 +110,10 @@ public int getId() {
+     // AIProviderMgr image block (SQL-managed embedding / rerank providers).
+     public static final SRMetaBlockID AI_PROVIDER_MGR = new SRMetaBlockID(38);
+ 
+-    public static final SRMetaBlockID GTID_GENERATOR = new SRMetaBlockID(39);
++    // Placeholder.
++    public static final SRMetaBlockID PLACEHOLDER = new SRMetaBlockID(39);
++
++    public static final SRMetaBlockID GTID_GENERATOR = new SRMetaBlockID(40);
+ 
+     /**
+      * NOTICE: SRMetaBlockID cannot use a value exceeding 20000, please follow the above sequence number
+```
+
+---
+
+### Incident Patch 3: `dfff47f3` (2026-11-03)
+**Commit Message**: [BugFix][RB-843] Read channel stream load pipes without blocking, with the default buffer (#81872)
+
+Signed-off-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: mervinsr <[REDACTED_EMAIL]>
+Co-authored-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/compute_env/load/stream_context_mgr.cpp` (modified, +13/-1)
+```diff
+@@ -29,6 +29,12 @@
+ 
+ namespace starrocks {
+ 
++// How long a read of a channel stream load pipe waits for data before the pipeline scan yields. A channel can stay
++// idle for seconds between the requests of a transaction. Data and the end of the stream wake the read at once, so
++// a longer wait only means fewer wake-ups of idle channels: with a 500 us wait, the scan task of every idle channel
++// was re-queued thousands of times a second.
++static constexpr int32_t CHANNEL_PIPE_READ_WAIT_US = 20 * 1000;
++
+ StreamContextMgr::StreamContextMgr(LoadStreamMgr* load_stream_mgr) : _load_stream_mgr(load_stream_mgr) {}
+ 
+ StreamContextMgr::~StreamContextMgr() {
+@@ -93,7 +99,13 @@ Status StreamContextMgr::create_channel_context(const std::string& label, int ch
+     if (_load_stream_mgr == nullptr) {
+         return Status::InternalError("load stream manager is not initialized");
+     }
+-    auto pipe = std::make_shared<StreamLoadPipe>(true);
++    // A channel stays open between the requests of a transaction and until it is committed. Its fragment reads
++    // without blocking (the pipeline scan yields on a timed-out read), so an open channel holds a connector scan
++    // thread for at most one read wait instead of until its next request, and requests are buffered like any
++    // stream load's, so an HTTP worker does not wait for the fragment to consume the previous chunk.
++    auto pipe = std::make_shared<StreamLoadPipe>(/*non_blocking_read=*/true, CHANNEL_PIPE_READ_WAIT_US,
++                                                 DEFAULT_STREAM_LOAD_PIPE_BUFFERED_BYTES,
++                                                 DEFAULT_STREAM_LOAD_PIPE_CHUNK_SIZE);
+     RETURN_IF_ERROR(_load_stream_mgr->put(load_id, pipe));
+     ctx = new StreamLoadContext(load_id, _load_stream_mgr);
+     if (ctx == nullptr) {
+```
+
+**File**: `be/src/compute_env/load/stream_load_pipe.h` (modified, +5/-0)
+```diff
+@@ -37,6 +37,7 @@
+ #include <condition_variable>
+ #include <deque>
+ #include <mutex>
++#include <type_traits>
+ #include <utility>
+ 
+ #include "base/bit/bit_util.h"
+@@ -59,6 +60,10 @@ class StreamLoadPipe : public MessageBodySink {
+                    size_t min_chunk_size = DEFAULT_STREAM_LOAD_PIPE_CHUNK_SIZE)
+             : StreamLoadPipe(false, -1, max_buffered_bytes, min_chunk_size) {}
+ 
++    // A lone bool would silently bind to max_buffered_bytes above: a 1-byte buffer with blocking reads.
++    template <typename T, typename = std::enable_if_t<std::is_same_v<T, bool>>>
++    explicit StreamLoadPipe(T non_blocking_read) = delete;
++
+     StreamLoadPipe(bool non_blocking_read, int32_t non_blocking_wait_us, size_t max_buffered_bytes,
+                    size_t min_chunk_size)
+             : _non_blocking_read(non_blocking_read),
+```
+
+**File**: `be/src/connector/file/scanner/csv_scanner.cpp` (modified, +24/-18)
+```diff
+@@ -275,27 +275,33 @@ Status CSVScanner::_init_reader() {
+         }
+ 
+         // only the first range needs to skip header
+-        if (_parse_options.skip_header && range_desc.start_offset == 0) {
+-            for (int64_t i = 0; i < _parse_options.skip_header; i++) {
+-                CSVReader::Record dummy;
+-                auto st = _curr_reader->next_record(&dummy);
+-                if (!st.ok()) {
+-                    if (st.is_end_of_file()) {
+-                        auto err_msg = fmt::format(
+-                                "The parameter 'skip_header' is set to {}, but there are only {} rows in the csv file",
+-                                _parse_options.skip_header, i);
+-
+-                        return Status::EndOfFile(err_msg);
+-                    } else {
+-                        return st;
+-                    }
+-                }
+-            }
+-        }
+-        return Status::OK();
++        _header_rows_to_skip =
++                (_parse_options.skip_header && range_desc.start_offset == 0) ? _parse_options.skip_header : 0;
+     } else if (_curr_reader == nullptr) {
+         return Status::EndOfFile("CSVScanner");
+     }
++    return _skip_header_rows();
++}
++
++Status CSVScanner::_skip_header_rows() {
++    // A read of a stream load pipe that has no data yet times out. The header rows still to skip carry over to the
++    // next call, which goes on with the same reader.
++    while (_header_rows_to_skip > 0) {
++        CSVReader::Record dummy;
++        auto st = _curr_reader->next_record(&dummy);
++        if (!st.ok()) {
++            if (st.is_end_of_file()) {
++                const int64_t skipped = _parse_options.skip_header - _header_rows_to_skip;
++                _header_rows_to_skip = 0;
++                auto err_msg = fmt::format(
++                        "The parameter 'skip_header' is set to {}, but there are only {} rows in the csv file",
++                        _parse_options.skip_header, skipped);
++                return Status::EndOfFile(err_msg);
++            }
++            return st;
++        }
++        --_header_rows_to_skip;
++    }
+     return Status::OK();
+ }
+ 
+```
+
+**File**: `be/src/connector/file/scanner/csv_scanner.h` (modified, +3/-0)
+```diff
+@@ -76,6 +76,7 @@ class CSVScanner final : public FileScanner {
+     ChunkPtr _create_chunk(const std::vector<SlotDescriptor*>& slots);
+ 
+     Status _init_reader();
++    Status _skip_header_rows();
+     Status _parse_csv(Chunk* chunk);
+     Status _parse_csv_v2(Chunk* chunk);
+ 
+@@ -93,6 +94,8 @@ class CSVScanner final : public FileScanner {
+     int _num_fields_in_csv = 0;
+     int _curr_file_index = -1;
+     CSVReaderPtr _curr_reader;
++    // Header rows of the current range still to skip; a timed-out read leaves the rest to the next call.
++    int64_t _header_rows_to_skip = 0;
+     std::vector<ConverterPtr> _converters;
+     bool _use_v2;
+     CSVReader::Fields fields;
+```
+
+**File**: `be/src/formats/csv/csv_reader.cpp` (modified, +23/-10)
+```diff
+@@ -112,16 +112,26 @@ Status CSVReader::buffInit() {
+ }
+ 
+ Status CSVReader::readMore(bool expandBuffer) {
++    // Once a read of this more_rows() call has timed out, the row being parsed cannot be completed in this call.
++    // Every later read fails at once too, also one inside is_row_delimiter() or is_column_delimiter(), which only
++    // returns false: the parser then reaches NEWROW without taking bytes of a delimiter for data, and parses the
++    // row again on the next call.
++    if (UNLIKELY(!_read_timeout.ok())) {
++        return _read_timeout;
++    }
++    Status st;
+     if (_buff.free_space() > 0) {
+-        return _fill_buffer();
++        st = _fill_buffer();
++    } else if (expandBuffer) {
++        RETURN_IF_ERROR(_expand_buffer_loosely());
++        st = _fill_buffer();
+     } else {
+-        if (expandBuffer) {
+-            RETURN_IF_ERROR(_expand_buffer_loosely());
+-            return _fill_buffer();
+-        } else {
+-            return Status::OK();
+-        }
++        return Status::OK();
++    }
++    if (UNLIKELY(st.is_time_out())) {
++        _read_timeout = st;
+     }
++    return st;
+ }
+ 
+ #define DOUBLE_CHECK_AVAILABLE()                \
+@@ -156,6 +166,7 @@ Status CSVReader::more_rows() {
+     if (UNLIKELY(_limit > 0 && _parsed_bytes > _limit)) {
+         return Status::EndOfFile("Reached limit");
+     }
++    _read_timeout = Status::OK();
+     Status status = Status::OK();
+     status = buffInit();
+     if (!status.ok()) {
+@@ -403,10 +414,12 @@ Status CSVReader::more_rows() {
+ 
+         newrow_label:
+         case NEWROW:
+-            if (reachBuffEnd) {
+-                // We dot get the complete row, back the read pointer, continue next time.
++            if (reachBuffEnd || UNLIKELY(status.is_time_out())) {
++                // The row is not complete: move the read pointer back to its start and parse it again next time. A
++                // timed-out read (a stream load pipe that has no data yet) returns its status so that the scanner
++                // yields; the bytes of the row stay in the buffer for the next call.
+                 _buff.set_position_offset(parsed_start);
+-                return Status::OK();
++                return status;
+             }
+             _parsed_bytes += _buff.position_offset() - parsed_start;
+             parsed_end = _buff.position_offset();
+```
+
+**File**: `be/src/formats/csv/csv_reader.h` (modified, +2/-0)
+```diff
+@@ -220,6 +220,8 @@ class CSVReader {
+ 
+     size_t _parsed_bytes = 0;
+     size_t _limit = 0;
++    // Set by the first read of a more_rows() call that times out (a stream load pipe that has no data yet).
++    Status _read_timeout;
+ };
+ 
+ } // namespace starrocks
+```
+
+**File**: `be/test/compute_env/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -76,6 +76,7 @@ add_executable(compute_env_test
+         data_stream_mgr_test.cpp
+         fragment_dict_state_test.cpp
+         load/load_stream_mgr_test.cpp
++        load/stream_context_mgr_test.cpp
+         load/stream_load_context_test.cpp
+         load/stream_load_metrics_test.cpp
+         load/stream_load_pipe_test.cpp
+```
+
+**File**: `be/test/compute_env/load/stream_context_mgr_test.cpp` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++#include "compute_env/load/stream_context_mgr.h"
++
++#include <gtest/gtest.h>
++
++#include <chrono>
++#include <cstdint>
++#include <functional>
++#include <future>
++#include <memory>
++#include <optional>
++#include <string>
++#include <type_traits>
++#include <utility>
++
++#include "base/testutil/assert.h"
++#include "base/uid_util.h"
++#include "base/utility/defer_op.h"
++#include "compute_env/load/load_stream_mgr.h"
++#include "compute_env/load/stream_load_context.h"
++#include "compute_env/load/stream_load_pipe.h"
++#include "gen_cpp/PlanNodes_types.h"
++#include "runtime/byte_buffer.h"
++
++namespace starrocks {
++
++// A lone bool used to bind to StreamLoadPipe(size_t max_buffered_bytes, ...): a 1-byte buffer with blocking reads.
++static_assert(!std::is_constructible_v<StreamLoadPipe, bool>);
++static_assert(std::is_constructible_v<StreamLoadPipe, size_t>);
++
++namespace {
++
++ByteBufferPtr make_buffer(size_t size, char fill) {
++    auto buf = ByteBuffer::allocate_with_tracker(size).value();
++    const std::string data(size, fill);
++    buf->put_bytes(data.data(), data.size());
++    buf->flip_to_read();
++    return buf;
++}
++
++// Runs `fn` on another thread and waits up to 10 s for it. A pipe call that blocks would never return, so on a
++// timeout the pipe is cancelled to release the thread, and nullopt lets the caller fail instead of hanging.
++std::optional<Status> call_with_deadline(StreamLoadPipe* pipe, std::function<Status()> fn) {
++    auto future = std::async(std::launch::async, std::move(fn));
++    if (future.wait_for(std::chrono::seconds(10)) != std::future_status::ready) {
++        pipe->cancel(Status::Cancelled("blocked past the deadline"));
++        future.wait();
++        return std::nullopt;
++    }
++    return future.get();
++}
++
++} // namespace
++
++// A channel stays open between the requests of a transaction and until it is committed. If its pipe blocked a
++// reader that has no data, every open channel would hold a connector scan thread; if the pipe could not buffer a
++// request while the fragment is not reading, the HTTP worker delivering it would wait for the fragment. Together
++// they deadlocked compute nodes with more open channels than connector scan threads until the transactions timed
++// out.
++TEST(StreamContextMgrTest, channel_pipe_reads_without_blocking_and_buffers_requests) {
++    // Declared first: a context removes its pipe from the load stream manager when it is released.
++    LoadStreamMgr load_stream_mgr;
++    StreamContextMgr stream_context_mgr(&load_stream_mgr);
++    const TUniqueId load_id = UniqueId::gen_uid().to_thrift();
++    StreamLoadContext* ctx = nullptr;
++    ASSERT_OK(stream_context_mgr.create_channel_context("label", 0, "db", "tbl", TFileFormatType::FORMAT_CSV_PLAIN, ctx,
++                                                        load_id, 1));
++    DeferOp release_ctx([&] { StreamLoadContext::release(ctx); });
++
++    auto pipe = std::dynamic_pointer_cast<StreamLoadPipe>(ctx->body_sink);
++    ASSERT_NE(nullptr, pipe);
++    ASSERT_EQ(pipe, load_stream_mgr.get(load_id));
++
++    // The fragment starts reading before any request arrives: the read times out instead of blocking.
++    auto read_st = call_with_deadline(pipe.get(), [&pipe] { return pipe->read().status(); });
++    ASSERT_TRUE(read_st.has_value()) << "a read with no data blocked";
++    ASSERT_TRUE(read_st->is_time_out()) << *read_st;
++
++    // The scanners read through StreamLoadPipeInputStream, which uses the byte read.
++    auto byte_read_st = call_with_deadline(pipe.get(), [&pipe] {
++        uint8_t data[16];
++        size_t size = sizeof(data);
++        bool eof = false;
++        return pipe->read(data, &size, &eof);
++    });
++    ASSERT_TRUE(byte_read_st.has_value()) << "a byte read with no data blocked";
++    ASSERT_TRUE(byte_read_st->is_time_out()) << *byte_read_st;
++
++    // Two requests arrive while the fragment is not reading. Both fit in the default buffer, so the second one
++    // does not wait for the fragment to consume the first.
++    const size_t request_bytes = DEFAULT_STREAM_LOAD_PIPE_BUFFERED_BYTES / 2;
++    ASSERT_OK(pipe->append(make_buffer(request_bytes, 'a')));
++    auto second_request = make_buffer(request_bytes, 'b');
++    auto append_st = call_with_deadline(pipe.get(), [&] { return pipe->append(std::move(second_request)); });
++    ASSERT_TRUE(append_st.has_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82319** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
-- **PR #82318** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
-- **PR #82317** (2026-11-03): [BugFix][RB-913] Reuse the shared expression under subfield access instead of evaluating it once per field (backport #82299) (@mergify[bot])
-- **PR #82316** (2026-11-03): [BugFix] Unload the primary index before a recovery that may fail to remove it (backport #81265) (@mergify[bot])
-- **PR #82315** (2026-11-03): [BugFix] Unload the primary index before a recovery that may fail to remove it (backport #81265) (@mergify[bot])
-- **PR #82314** (2026-11-03): [Tool] release-notes skill: start the PR body from a copy of the template (@huailiu1122)
+- **PR #82406** (2026-11-04): [Tool] Retire the stale GEO storage descriptor waivers (backport #82400) (@trueeyu)
+- **PR #82403** (2026-11-04): [UT][RB-428] Stop the background publish in OptimizeJobV2Test (backport #82396) (@mergify[bot])
+- **PR #82401** (2026-11-04): [Enhancement] Keep a bundled tablet's lake publish result for the retry (backport #81774) (@mergify[bot])
+- **PR #82400** (2026-11-04): [Tool] Retire the stale GEO storage descriptor waivers (@trueeyu)
+- **PR #82396** (2026-11-04): [UT][RB-428] Stop the background publish in OptimizeJobV2Test (@starrocks-bot[bot])
+- **PR #82393** (2026-11-04): [Refactor] Use DistinctAggregateStateV2 for the nullable decimal_multi_distinct_sum wrapper (backport #82383) (@mergify[bot])
 
 ---
 
@@ -2416,56 +2655,28 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-723] Journal a reshard job's version reservation before releasing it
+## X. [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/exprs/arithmetic_expr.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c65d4db1`: [BugFix][RB-723] Journal a reshard job's version reservation before releasing its lock (#81922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84536d8f`: [BugFix] Never raise a decimal overflow error from a NULL row's data under ERROR_IF_OVERFLOW (#82254). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/alter/reshard/MergeTabletJob.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/arithmetic_expr.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // Steps 4-6 stay under the same lock, so the reservation is journaled (step 6) before a load can commit
-        // above it. A load journaled first would leave a new leader with the load but not the reservation, and
-        // the reserved version would never be published.
-            // 4. Add new tablets to inverted index
-            addTabletsToInvertedIndex();
-            // 5. Register resharding tablets
-            registerReshardingTablets();
-            // 6. Set job state to PREPARING
-            setJobState(JobState.PREPARING);
-        }
-            // Never move nextVersion backwards. runPendingJob journals the reservation before it
-            // releases the table lock, but a journal written by an FE without that ordering can
-            // still carry a load that committed between the reservation and its PREPARING entry.
-            // A replaying FE applies that load first, so the load has already carried nextVersion
-            // past the version reserved here, and assigning commitVersion + 1 unconditionally
-            // would drag it back, handing the same version out twice.
+    using CastFunction = VectorizedDecimalCastFunction<DecimalTo, Mode>;                  \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        }
-        // 4. Add new tablets to inverted index
-        addTabletsToInvertedIndex();
-        // 5. Register resharding tablets
-        registerReshardingTablets();
-        // 6. Set job state to PREPARING
-        setJobState(JobState.PREPARING);
-            // Never move nextVersion backwards. The commit version is reserved here, in
-            // runPendingJob, but the job does not journal anything until it reaches PREPARING a
-            // few steps later -- so a load transaction that commits in between journals its own
-            // entry first, and a replaying FE applies that entry before this one. By then the
-            // transaction has already carried nextVersion past the version reserved here, and
-            // assigning commitVersion + 1 unconditionally would drag it back, handing the same
-            // version out twice.
+    using CastFunction = VectorizedUnaryFunction<DecimalTo<Mode>>;                        \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c65d4db1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84536d8f` are properly handled with clean fallback behavior.

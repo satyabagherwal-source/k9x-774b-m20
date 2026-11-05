@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `18430ef4`  
+> **Source Version**: `6398cafb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:22:49.967Z  
+> **Timestamp**: 2026-11-04T18:35:43.255Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:22:48.603Z  
+> **Harvest Timestamp**: 2026-11-04T18:35:42.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50735 stars
+- **Stars / Engagement**: 50745 stars
 
 ---
 
@@ -1320,8 +1320,8 @@ private:
 - **Issue #129022** (2026-11-03): **Merges of Wide parts issue a prefetch for every column stream, ignoring `filesystem_prefetches_limit`**
   *Symptoms*: During a merge, `MergeTreeReaderWide::readRows` calls `prefetchForAllColumns`, which calls `prefetch` on every `.bin` stream of every column in every source part. The only check is `remote_filesystem_read_prefetch` (default 1), which merges get from the global context.  `SELECT` queries skip these prefetches when the number of columns exceeds `filesystem_prefetches_limit` (default 200). Merges don't have this limit: `MergeTreeReaderSettings::createForMergeMutation` does not copy `filesystem_prefetches_limit`, so it stays 0 (unlimited).  This happens in horizontal merges too, where `MergeTask` passes `prefetch=false`, because the per-column `prefetch` in `readRows` doesn't depend on that flag.  ### Proposal  Apply `filesystem_prefetches_limit` (or a separate MergeTree setting) to merges and mutations in `createForMergeMutation`, or disable the per-column `prefetch` in `readRows` for merges. The next-column prefetch in vertical merges (`vertical_merge_remote_filesystem_prefetch`) is a separate mechanism and should stay as is.
 
-- **Issue #128635** (2026-11-03): **Avro: an out-of-range union index is not checked: `std::out_of_range` for a Variant (abort on debug), wrong results for a nullable union**
-  *Symptoms*: 🕵️  When an Avro union is read into a `Variant` (the type that schema inference picks for a union of several non-null types), the union index read from the data is looked up with `discriminators_map.at(union_index)` without being checked against the number of branches. An index past the last branch throws `std::out_of_range`:  - release builds: `Code: 1001. DB::Exception: std::out_of_range: map::at:  key not found. (STD_EXCEPTION)` - debug and sanitizer builds: the exception formatter treats the `std::logic_error` as a failed assertion and aborts the process (`abortOnFailedAssertion` from `getCurrentExceptionMessageAndPattern`).  `src/Processors/Formats/Impl/AvroRowInputFormat.cpp`, in the `target.isVariant()` branch of `AvroDeserializer::createDeserializeFn`:  ```cpp const AvroUnionIndex union_index = decoder.decodeUnionIndex(); const auto global_discriminator = discriminators_map.at(union_index); ... deserializers[union_index](variant, decoder); ```  ### Does it reproduce on the most recent release?  Yes, on master (26.11.1.1058, `1df150bae26`), as a release build (`STD_EXCEPTION`) and as a debug build (abort). A 26.8.1.1 debug build also aborts, so it isn't a recent regression: the lookup comes from the Avro union support in #69712.  ### How to reproduce  A valid one-row file with a `["null", "int", "string"]` field, where one byte changes the union index of the row from 2 to 10:  ```python import fastavro, io schema = {"type": "record", "name": "row", "fields": [{"name":
+- **Issue #128872** (2026-11-04): **Refreshable materialized view reading a database-qualified parameterized view into a ReplicatedMergeTree table fails with UNKNOWN_FUNCTION**
+  *Symptoms*: ### Company or project name  Halter https://github.com/halter-corp  ### Describe what's wrong  A refreshable materialized view whose top-level `FROM` is a database-qualified parameterized view call, `db.param_view(...)`, fails on refresh when the target is a `Replicated*MergeTree` table and the view lives in a `Replicated` database:  ``` Code: 730. DB::Exception: Refresh failed (on replica r1): Code: 46. DB::Exception: Unknown table function db.param_view:  or incorrect parameterized view. (UNKNOWN_FUNCTION). (REFRESH_FAILED) ```  The same view into a plain `MergeTree` table works. In an `Atomic` database it works until the server restarts, then fails the same way.  The stored query reads `` FROM `db.param_view`(...) ``: once formatted, the qualified name becomes one quoted identifier. `Context::executeTableFunction`, reached through `JoinedTables::getLeftTableStorage` on the replicated `INSERT ... SELECT` path, then looks for a table literally named `db.param_view`:  ``` 4. DB::TableFunctionFactory::get(...) 5. DB::Context::executeTableFunction(...) 6. DB::JoinedTables::getLeftTableStorage() 7. DB::InterpreterInsertQuery::execute() 8. DB::RefreshTask::executeRefreshUnlocked(...) ```  ### Does it reproduce on the most recent release?  Yes. Reproduced on 25.8.33.6, 25.10.7.6, 26.10.3.7 and `head` (26.11.1.1154).  ### How to reproduce  Single server with embedded Keeper. Copy and run as is:  ```bash cat > keeper.xml <<'XML' <clickhouse>   <keeper_server>     <tcp_port>9181</tcp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,495 +1338,513 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a379d29` (2026-11-03)
-**Commit Message**: Merge pull request #127836 from ClickHouse/revert-124816
+### Incident Patch 1: `6ad305e6` (2026-11-04)
+**Commit Message**: Merge pull request #126817 from Jonathan-Ackerman/execution-timeout
 
-Revert "Avoid building stream names and substreams cache keys for every block in MergeTreeReaderWide"
+Fix `max_estimated_execution_time` behavior inconsistency and update docs
 
-**File**: `src/DataTypes/Serializations/ISerialization.cpp` (modified, +50/-90)
+**File**: `src/Core/Settings.cpp` (modified, +7/-13)
 ```diff
-@@ -5,7 +5,6 @@
- #include <Columns/IColumn.h>
- #include <Compression/CompressionFactory.h>
- #include <Common/Exception.h>
--#include <Common/SipHash.h>
- #include <DataTypes/NestedUtils.h>
- #include <DataTypes/Serializations/ISerialization.h>
- #include <DataTypes/Serializations/SerializationObjectPool.h>
-@@ -300,13 +299,10 @@ namespace
+@@ -4063,18 +4063,6 @@ FORMAT Null;
+     DECLARE(Seconds, max_execution_time, 0, R"(
+ The maximum query execution time in seconds.
  
- using SubstreamIterator = ISerialization::SubstreamPath::const_iterator;
+-The `max_execution_time` parameter can be a bit tricky to understand.
+-It operates based on interpolation relative to the current query execution speed
+-(this behaviour is controlled by [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)).
+-
+-ClickHouse will interrupt a query if the projected execution time exceeds the
+-specified `max_execution_time`. By default, the `timeout_before_checking_execution_speed`
+-is set to 10 seconds. This means that after 10 seconds of query execution, ClickHouse
+-will begin estimating the total execution time. If, for example, `max_execution_time`
+-is set to 3600 seconds (1 hour), ClickHouse will terminate the query if the estimated
+-time exceeds this 3600-second limit. If you set `timeout_before_checking_execution_speed`
+-to 0, ClickHouse will use the clock time as the basis for `max_execution_time`.
+-
+ If query runtime exceeds the specified number of seconds, the behavior will be
+ determined by the 'timeout_overflow_mode', which by default is set to `throw`.
  
--/// Renders the substream path by passing its pieces to `append` in order, so the same rendering can either
--/// be materialized into a string or fed into a hash without building the string.
- /// encode_for_cache_key renders the parts that exist in cache keys only: the sparse elements, the identity element
- /// of a SHARED path of Object and the keyword in front of a path name of Object.
--template <typename Append>
--void appendNameForSubstreamPath(
--    Append && append,
-+String getNameForSubstreamPath(
-+    String stream_name,
-     SubstreamIterator begin,
-     SubstreamIterator end,
-     bool escape_for_file_name,
-@@ -320,150 +316,120 @@ void appendNameForSubstreamPath(
-     for (auto it = begin; it != end; ++it)
-     {
-         if (it->type == Substream::NullMap || it->type == Substream::SparseNullMap || it->type == Substream::NullMapHidden)
--            append(".null");
-+            stream_name += ".null";
-         else if (it->type == Substream::ArraySizes)
--        {
--            append(".size");
--            append(toString(array_level));
--        }
-+            stream_name += ".size" + toString(array_level);
-         else if (it->type == Substream::ArrayElements)
-             ++array_level;
-         else if (it->type == Substream::StringSizes || it->type == Substream::InlinedStringSizes)
--            append(".size");
-+            stream_name += ".size";
-         else if (it->type == Substream::DictionaryKeys)
--            append(".dict");
-+            stream_name += ".dict";
-         else if (it->type == Substream::DictionaryKeysPrefix)
--            append(".dict_prefix");
-+            stream_name += ".dict_prefix";
-         else if (it->type == Substream::SparseElements && encode_for_cache_key)
--            append(".sparse");
-+            stream_name += ".sparse";
-         else if (it->type == Substream::SparseOffsets)
--            append(".sparse.idx");
-+            stream_name += ".sparse.idx";
-         else if (it->type == Substream::ReplicatedElements)
--            append(".repl");
-+            stream_name += ".repl";
-         else if (it->type == Substream::ReplicatedIndexes)
--            append(".repl.idx");
-+            stream_name += ".repl.idx";
-         else if (Substream::named_types.contains(it->type))
-         {
-+            auto substream_name = "." + it->name_of_substream;
+@@ -4158,11 +4146,17 @@ expires. If the execution speed is high, the execution speed will be reduced.
+     DECLARE(Seconds, timeout_before_checking_execution_speed, 10, R"(
+ Checks that execution speed is not too slow (no less than `min_execution_speed`),
+ after the specified time in seconds has expired.
 +
-             /// For compatibility reasons, we use %2E (escaped dot) instead of dot.
-             /// Because nested data may be represented not by Array of Tuple,
-             /// but by separate Array columns with names in a form of a.b,
-             /// and name is encoded as a whole.
-             if (it->type == Substream::TupleElement && escape_for_file_name)
--                append(escapeForFileName("." + it->name_of_substream));
-+                stream_name += escapeForFileName(substream_name);
-             else
--            {
--                append(".");
--                append(it->name_of_substream);
--            }
-+                stream_name += substream_name;
-         }
-         else if (it->type == Substream::VariantDiscriminators)
--            append(".variant_discr");
-+            stream_name += ".variant_discr";
-         else if (it->type == Substream::VariantDiscriminatorsPrefix)
--            append(".variant_discr_prefix");
-+            stream_name += ".variant_discr_prefix";
-         else if (it->type == Substream::VariantOffsets)
--            append(".variant_offsets");
-+            stream_name += ".variant_offsets";
-         else if (it->type == Substream::VariantElement)
-         {
--            append(".");
-             if (escape_for_file_name && escape_variant_substreams)
--                append(escapeForFileName(it->variant_element_name));
-+                stream_name += "." + escapeForFileName(it->variant_element_name);
-             else
--                append(it->variant_element_name);
-+                stream_name += "." + it->variant_element_name;
-         }
-         else if (it->type == Substream::VariantElementNullMap)
-         {
--            append(".");
-             if (escape_for_file_name && escape_variant_substreams)
--                append(escapeForFileName(it->variant_element_name));
-+                stream_name += "." + escapeForFileName(it->variant_element_name) + ".null";
-             else
--                append(it->variant_element_name);
--            append(".null");
-+                stream_name += "." + it->variant_element_name + ".null";
-         }
-         else if (it->type == SubstreamType::DynamicStructure)
--            append(".dynamic_structure");
-+       
++If set to `0`, the execution speed limits are checked from the start of the query,
++but [`max_estimated_execution_time`](/reference/settings/session-settings/max#max_estimated_execution_time)
++is not checked at all.
+ )", 0) \
+     DECLARE(Seconds, max_estimated_execution_time, 0, R"(
+ Maximum query estimate execution time in seconds. Checked on every data block
+ when [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)
+-expires.
++expires. It operates based on extrapolation relative to the current query execution
++speed. If you set `timeout_before_checking_execution_speed` to 0, then this setting
++will not be checked.
+ )", 0, \
+         {"24.1", 0, 0, "Separate max_execution_time and max_estimated_execution_time"}) \
+     \
 ```
 
-**File**: `src/DataTypes/Serializations/ISerialization.h` (modified, +3/-9)
+**File**: `src/QueryPipeline/ExecutionSpeedLimits.cpp` (modified, +5/-2)
 ```diff
-@@ -400,13 +400,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
-         virtual ~ISubstreamsCacheElement() = default;
-     };
- 
--    /// Keys of the substreams caches are hashes of the substream paths, see `getSubstreamsCacheKeyForStream`.
--    struct SubstreamsCacheKeyHash
--    {
--        size_t operator()(const UInt128 & key) const { return static_cast<size_t>(key.items[0]); }
--    };
--
--    using SubstreamsCache = std::unordered_map<UInt128, std::unique_ptr<ISubstreamsCacheElement>, SubstreamsCacheKeyHash>;
-+    using SubstreamsCache = std::unordered_map<String, std::unique_ptr<ISubstreamsCacheElement>>;
- 
-     using StreamCallback = std::function<void(const SubstreamPath &)>;
- 
-@@ -655,7 +649,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
-         SerializeBinaryBulkSettings & /*settings*/,
-         SerializeBinaryBulkStatePtr & /*state*/) const {}
- 
--    using SubstreamsDeserializeStatesCache = std::unordered_map<UInt128, DeserializeBinaryBulkStatePtr, SubstreamsCacheKeyHash>;
-+    using SubstreamsDeserializeStatesCache = std::unordered_map<String, DeserializeBinaryBulkStatePtr>;
- 
-     /// Call before before deserializeBinaryBulkWithMultipleStreams chain to get DeserializeBinaryBulkStatePtr.
-     virtual void deserializeBinaryBulkStatePrefix(
-@@ -808,7 +802,7 @@ class ISerialization : private boost::noncopyable, public std::enable_shared_fro
-     static String getSubcolumnNameForStream(const SubstreamPath & path, bool) = delete;
- 
-     /// Key of a stream in SubstreamsCache and SubstreamsDeserializeStatesCache.
--    static UInt128 getSubstreamsCacheKeyForStream(const SubstreamPath & path);
-+    static String getSubstreamsCacheKeyForStream(const SubstreamPath & path);
- 
-     static void addColumnWithNumReadRowsToSubstreamsCache(SubstreamsCache * cache, const SubstreamPath & path, ColumnPtr column, size_t num_read_rows);
-     static std::optional<std::pair<ColumnPtr, size_t>> getColumnWithNumReadRowsFromSubstreamsCache(SubstreamsCache * cache, const SubstreamPath & path);
-```
-
-**File**: `src/Storages/MergeTree/MergeTreeReaderWide.cpp` (modified, +31/-111)
-```diff
-@@ -12,7 +12,6 @@
- #include <Storages/MergeTree/MergeTreeDataPartWide.h>
- #include <Storages/MergeTree/checkDataPart.h>
- #include <Common/escapeForFileName.h>
--#include <Common/HashTable/Hash.h>
- #include <Common/FailPoint.h>
- #include <Common/ProfileEvents.h>
- #include <Core/UUID.h>
-@@ -366,10 +365,7 @@ size_t MergeTreeReaderWide::readSegmentFromDisk(
-     }
- 
-     streams.clearPrefetched();
--
--    /// Clear the caches but keep the per-column entries, so they are not allocated again on every read.
--    for (auto & [_, cache] : caches)
--        cache.clear();
-+    caches.clear();
- 
-     return read_rows;
- }
-@@ -966,7 +962,7 @@ void MergeTreeReaderWide::addStreams(
-             return;
-         }
- 
--        const auto & stream_name = getStreamName(name_and_type, substream_path);
-+        auto stream_name = IMergeTreeDataPart::getStreamNameForColumn(name_and_type, substream_path, ".bin", data_part_info_for_read->getChecksums(), storage_settings);
- 
-         /** If data file is missing then we will not try to open it.
-           * It is necessary since it allows to add new column to structure of the table without creating new files for old parts.
-@@ -1118,92 +1114,10 @@ MergeTreeReaderStream & MergeTreeReaderWide::getOrAddStream(const ISerialization
-     });
- }
- 
--namespace
--{
--
--UInt64 hashStreamKey(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
--{
--    UInt64 hash = std::hash<std::string_view>{}(name_and_type.name);
--    auto combine = [&](UInt64 value) { hash = intHash64(hash ^ value); };
--    auto combine_string = [&](const String & str)
--    {
--        if (!str.empty())
--            combine(std::hash<std::string_view>{}(str));
--    };
--
--    for (const auto & substream : substream_path)
--    {
--        combine(static_cast<UInt64>(substream.type));
--        combine_string(substream.variant_element_name);
--        combine_string(substream.name_of_substream);
--        combine_string(substream.object_path_name);
--        combine(substream.bucket);
--    }
--    return hash;
--}
--
--}
--
--MergeTreeReaderWide::StreamInfo & MergeTreeReaderWide::getStreamInfo(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
--{
--    /// The checksums and the settings, which the name also depends on, are the same for the whole reader.
--    /// Every field of the substreams is compared, even the ones that don't affect the name: it only costs extra entries.
--    auto matches = [&](const StreamInfoEntry & entry)
--    {
--        if (entry.column_name != name_and_type.name || entry.substream_path.size() != substream_path.size())
--            return false;
--
--        for (size_t i = 0; i < substream_path.size(); ++i)
--        {
--            const auto & key = entry.substream_path[i];
--            const auto & substream = substream_path[i];
--            if (key.type != substream.type || key.bucket != substream.bucket
--                || key.variant_element_name != substream.variant_element_name
--                || key.name_of_substream != substream.name_of_substream
--                || key.object_path_name != substream.object_path_name)
--                return false;
--        }
--        return true;
--    };
--
--    const UInt64 hash = hashStreamKey(name_and_type, substream_path);
--
--    {
--        std::lock_guard lock(streams_info_mutex);
--        for (auto [it, end] = streams_info.equal_range(hash); it != end; ++it)
--            if (matches(it->second))
--                return it->second.info;
--    }
--
--    StreamInfoEntry entry;
--    entry.column_name = name_and_type.name;
--    for (const auto & substream : substream_path)
--        entry.substream_path.push_back({substream.type, substream.variant_element_name, substream.name_of_substream, substream.object_path_name, substream.bucket});
--    entry.info.name = IMergeTreeDataPart::getStreamNameForColumn(
--        name_and_type, substream_path, DATA_FILE_EXTENSION, data_part_info_for_read->getChecksums(), storage_settings);
--
--    std::lock_guard lock(streams_info_mutex);
--    /// Another thread may have added the same entry while the mutex was released.
--    for (auto [it, end] = streams_info.equal_range(hash); it != end; ++it)
--        if (matches(it->second))
--            return it->second.info;
--
--    return streams_info.emplace(hash, std::move(entry))->second.info;
--}
--
--double & MergeTreeReaderWide::getAvgValueSizeHint(StreamInfo & stream_info)
--{
--    chassert(stream_info.name);
--    /// Elements of `std::map` are never moved, and nothing is erased from `avg_value_size_hints`.
--    if (!stream_info.avg_value_size_hint)
--        stream_info.avg_value_size_hint = &avg_value_size_hints[*stream_info.name];
--    return *stream_info.avg_value_size_hint;
--}
--
- ReadBuffer * MergeTreeReaderWide::getStream(
-     bool seek_to_start,
-     const ISerialization::SubstreamPath & substream_path,
--    const std::optional<String> & stream_name,
-+    const MergeTreeDataPartChecksums & checksums,
-     const NameAndTypePa
-```
-
-**File**: `src/Storages/MergeTree/MergeTreeReaderWide.h` (modified, +1/-42)
-```diff
-@@ -95,37 +95,6 @@ class MergeTreeReaderWide : public IMergeTreeReader
- 
-     FileStreams streams;
- 
--    struct StreamInfo
--    {
--        /// The name of the stream, or `std::nullopt` if the part doesn't have it.
--        std::optional<String> name;
--        /// The element of `avg_value_size_hints` for the stream, found on first use.
--        double * avg_value_size_hint = nullptr;
--    };
--
--    /// The fields of a substream that the name of its stream may depend on.
--    struct SubstreamKey
--    {
--        ISerialization::Substream::Type type;
--        String variant_element_name;
--        String name_of_substream;
--        String object_path_name;
--        size_t bucket;
--    };
--
--    struct StreamInfoEntry
--    {
--        String column_name;
--        std::vector<SubstreamKey> substream_path;
--        StreamInfo info;
--    };
--
--    /// Guards `streams_info`: substreams of a single column can be deserialized in parallel.
--    std::mutex streams_info_mutex;
--    /// Keyed by a hash of the column name and the substream path, the entries are compared exactly.
--    /// The elements are never moved or erased, so references to them stay valid.
--    std::unordered_multimap<UInt64, StreamInfoEntry> streams_info;
--
-     /// Which columns a read of the part touches, and whether their streams continue from where the
-     /// previous read left them or seek to the mark. Returns nothing for a column that is not read.
-     using ColumnReadSelector = std::function<std::optional<bool>(size_t pos)>;
-@@ -151,24 +120,14 @@ class MergeTreeReaderWide : public IMergeTreeReader
-     ReadBuffer * getStream(
-         bool seek_to_start,
-         const ISerialization::SubstreamPath & substream_path,
--        const std::optional<String> & stream_name,
-+        const MergeTreeDataPartChecksums & checksums,
-         const NameAndTypePair & name_and_type,
-         size_t from_mark,
-         bool seek_to_mark,
-         ISerialization::SubstreamsCache & cache);
- 
-     MergeTreeReaderStream & getOrAddStream(const ISerialization::SubstreamPath & substream_path, const String & stream_name);
- 
--    /// Returns the information about the stream for the substream of the column.
--    /// Building the name of a stream is expensive (escaping, splitting of nested names, lookups in checksums) and the name is
--    /// requested several times for every substream on every read, so the results are memoized for the lifetime of the reader.
--    StreamInfo & getStreamInfo(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path);
--    const std::optional<String> & getStreamName(const NameAndTypePair & name_and_type, const ISerialization::SubstreamPath & substream_path)
--    {
--        return getStreamInfo(name_and_type, substream_path).name;
--    }
--    double & getAvgValueSizeHint(StreamInfo & stream_info);
--
-     void readData(
-         const NameAndTypePair & name_and_type,
-         const SerializationPtr & serialization,
-```
-
-**File**: `tests/performance/merge_tree_small_blocks.xml` (removed, +0/-24)
-```diff
-@@ -1,24 +0,0 @@
--<test>
--    <!-- The constant overhead of reading a block from a MergeTree table and processing it. -->
--    <!-- A filter would round the blocks up to whole granules, so the queries don't have one. -->
--    <create_query>
--        CREATE TABLE merge_tree_small_blocks (key UInt64, value UInt64, str String, sparse UInt8, arr Array(UInt32))
--        ENGINE = MergeTree ORDER BY key
--        SETTINGS ratio_of_defaults_for_sparse_serialization = 0.9
--    </create_query>
--
--    <fill_query>
--        INSERT INTO merge_tree_small_blocks
--        SELECT number, cityHash64(number), toString(number % 1000), number % 100 = 0, range(number % 3)
--        FROM numbers_mt(1000000)
--    </fill_query>
--    <fill_query>OPTIMIZE TABLE merge_tree_small_blocks FINAL</fill_query>
--
--    <query>SELECT sum(value) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
--    <query>SELECT sum(sparse) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
--    <query>SELECT sum(length(str)) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
--    <query>SELECT sum(length(arr)) FROM merge_tree_small_blocks SETTINGS max_block_size = 16, max_threads = 1</query>
--    <query>SELECT str, count() FROM merge_tree_small_blocks GROUP BY str FORMAT Null SETTINGS max_block_size = 16, max_threads = 1</query>
--
--    <drop_query>DROP TABLE IF EXISTS merge_tree_small_blocks</drop_query>
--</test>
-```
-
----
-
-### Incident Patch 2: `18430ef4` (2026-11-03)
-**Commit Message**: Merge pull request #128901 from ClickHouse/fix/relocation-headroom-upstream-label
-
-Honour the upstream `ci-relocation-headroom-ok` label in private sync PRs
-
-**File**: `ci/jobs/scripts/relocation_headroom.py` (modified, +5/-1)
-```diff
-@@ -125,7 +125,11 @@ def check(build_dir, info):
-         decrease, binary, name = max(decreases)
-         lines.append(f"{binary} ({name}) decreased by {decrease / MIB:.2f} MiB, more than {MAX_DECREASE_MIB} MiB")
-         if info.pr_number > 0:
--            allowed = ALLOW_DECREASE_LABEL in info.pr_labels
-+            # A sync pull request in the private repository carries the labels of the upstream pull request it
-+            # mirrors as `upstream_pr_labels`, not as its own labels.
-+            allowed = ALLOW_DECREASE_LABEL in info.pr_labels or ALLOW_DECREASE_LABEL in (
-+                info.get_kv_data("upstream_pr_labels") or []
-+            )
-             status = Result.Status.OK if allowed else Result.Status.FAIL
-             lines.append(
-                 f"Allowed by the `{ALLOW_DECREASE_LABEL}` label"
-```
-
----
-
-### Incident Patch 3: `e13cf58b` (2026-11-03)
-**Commit Message**: Merge pull request #128871 from groeneai/fix-postgresqlwire-append-non-empty-file
-
-Fix crash when appending `PostgreSQLWire` output to a non-empty file
-
-**File**: `src/Processors/Formats/Impl/PostgreSQLOutputFormat.cpp` (modified, +7/-2)
-```diff
-@@ -34,12 +34,18 @@ PostgreSQLOutputFormat::PostgreSQLOutputFormat(WriteBuffer & out_, SharedHeader
-     // PostgreSQL uses 't' and 'f' for boolean values
-     format_settings.bool_true_representation = "t";
-     format_settings.bool_false_representation = "f";
-+
-+    /// Not in writePrefix: it is skipped when appending to a non-empty file.
-+    const auto & header = getPort(PortKind::Main).getHeader();
-+    data_types = header.getDataTypes();
-+    serializations.reserve(data_types.size());
-+    for (const auto & type : data_types)
-+        serializations.emplace_back(type->getDefaultSerialization());
- }
- 
- void PostgreSQLOutputFormat::writePrefix()
+@@ -48,9 +48,12 @@ void ExecutionSpeedLimits::throttle(
+     size_t total_rows_to_read, UInt64 total_elapsed_microseconds,
+     OverflowMode timeout_overflow_mode) const
  {
-     const auto & header = getPort(PortKind::Main).getHeader();
--    data_types = header.getDataTypes();
- 
-     if (header.columns())
++    const bool check_estimated_time = timeout_overflow_mode == OverflowMode::THROW && max_estimated_execution_time != 0
++        && timeout_before_checking_execution_speed != 0 && total_rows_to_read != 0;
++
+     if ((min_execution_rps != 0 || max_execution_rps != 0
+          || min_execution_bps != 0 || max_execution_bps != 0
+-         || (total_rows_to_read != 0 && timeout_before_checking_execution_speed != 0))
++         || check_estimated_time)
+         && (static_cast<Int64>(total_elapsed_microseconds) > timeout_before_checking_execution_speed.totalMicroseconds()))
      {
-@@ -50,7 +56,6 @@ void PostgreSQLOutputFormat::writePrefix()
-         {
-             const auto & column_name = header.getColumnsWithTypeAndName()[i].name;
-             columns.emplace_back(column_name, data_types[i]);
--            serializations.emplace_back(data_types[i]->getDefaultSerialization());
-         }
-         message_transport.send(PostgreSQLProtocol::Messaging::RowDescription(columns));
+         /// Do not count sleeps in throttlers
+@@ -79,7 +82,7 @@ void ExecutionSpeedLimits::throttle(
+                     min_execution_bps);
+ 
+             /// If the predicted execution time is longer than `max_estimated_execution_time`.
+-            if (timeout_overflow_mode == OverflowMode::THROW && max_estimated_execution_time != 0 && total_rows_to_read && read_rows)
++            if (check_estimated_time && read_rows)
+             {
+                 /// We impose additional constraints to make estimation more reliable.
+                 /// At least 1% of the rows must be read, or at least 1% of the time must be spent.
+```
+
+**File**: `tests/queries/0_stateless/05407_max_estimated_execution_time_independence_from_other_settings.reference` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++0
++0
+```
+
+**File**: `tests/queries/0_stateless/05407_max_estimated_execution_time_independence_from_other_settings.sql` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++-- Reset the speed limits set by the test profile (tests/config/users.d/limits.yaml), so that the first query runs without any.
++SET max_execution_speed = 0, max_execution_speed_bytes = 0;
++
++SELECT sum(sleepEachRow(0.001)) FROM numbers(200) SETTINGS max_block_size=1, max_estimated_execution_time=0.1, timeout_before_checking_execution_speed=0;
++-- The addition of `min_execution_speed=1` should not change whether or not `max_estimated_execution_time` gets checked.
++SELECT sum(sleepEachRow(0.001)) FROM numbers(200) SETTINGS max_block_size=1, max_estimated_execution_time=0.1, timeout_before_checking_execution_speed=0, min_execution_speed=1;
+```
+
+---
+
+### Incident Patch 2: `6398cafb` (2026-11-04)
+**Commit Message**: Merge pull request #128992 from groeneai/fix-parameterized-view-qualified-name-legacy-lookup
+
+Resolve a database-qualified parameterized view call in INSERT SELECT and EXPLAIN SYNTAX the same way as in SELECT
+
+**File**: `src/Analyzer/TableFunctionNode.cpp` (modified, +4/-0)
+```diff
+@@ -1,4 +1,5 @@
+ #include <Analyzer/TableFunctionNode.h>
++#include <Analyzer/Identifier.h>
+ 
+ #include <Common/assert_cast.h>
+ #include <Common/SipHash.h>
+@@ -196,6 +197,9 @@ ASTPtr TableFunctionNode::toASTImpl(const ConvertToASTOptions & options) const
+     auto table_function_ast = make_intrusive<ASTFunction>();
+ 
+     table_function_ast->name = isSentQualified(*this) ? storage_id.getFullNameNotQuoted() : table_function_name;
++    /// The analyzer reads a two-part parameterized view name as `db.view`.
++    if (isParameterizedView() && Identifier{table_function_ast->name}.getPartsSize() == 2)
++        table_function_ast->setIsCompoundName(true);
+ 
+     const auto & arguments = getArguments();
+     table_function_ast->children.push_back(arguments.toAST(options));
+```
+
+**File**: `src/Interpreters/Context.cpp` (modified, +16/-12)
+```diff
+@@ -158,6 +158,7 @@
+ #include <Interpreters/StorageID.h>
+ #include <Interpreters/SystemLog.h>
+ #include <Interpreters/InterpreterSelectQueryAnalyzer.h>
++#include <Analyzer/Utils.h>
+ #include <Interpreters/AsynchronousInsertQueue.h>
+ #include <Interpreters/DatabaseCatalog.h>
+ #include <Interpreters/JIT/CompiledExpressionCache.h>
+@@ -3532,22 +3533,25 @@ static bool findIdentifier(const ASTFunction * function)
+ StoragePtr Context::executeTableFunction(const ASTPtr & table_expression, const ASTSelectQuery * select_query_hint)
+ {
+     ASTFunction * function = assert_cast<ASTFunction *>(table_expression.get());
+-    String database_name = getCurrentDatabase();
+-    String table_name = function->name;
++    /// Same split as the analyzer: a stored `` `db.view`(...) `` has no compound-name flag.
++    auto [database_name, table_name] = extractDatabaseAndTableNameForParameterizedView(function->name, shared_from_this());
+ 
+-    if (function->isCompoundName())
++    auto is_parameterized_view = [](const StoragePtr & storage)
+     {
+-        std::vector<std::string> parts;
+-        splitInto<'.'>(parts, function->name);
++        const auto * view = storage ? storage->as<StorageView>() : nullptr;
++        return view && view->isParameterizedView();
++    };
+ 
+-        if (parts.size() == 2)
+-        {
+-            database_name = std::move(parts[0]);
+-            table_name = std::move(parts[1]);
+-        }
++    StoragePtr table;
++    if (!table_name.empty())
++        table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
++    /// A view whose own name has a dot: `` `v.x`(...) ``.
++    if (!is_parameterized_view(table) && !function->isCompoundName() && table_name != function->name)
++    {
++        database_name = getCurrentDatabase();
++        table_name = function->name;
++        table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
      }
+-
+-    StoragePtr table = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, getQueryContext());
+     if (table)
+     {
+         if (table.get()->isView() && table->as<StorageView>() && table->as<StorageView>()->isParameterizedView())
 ```
 
-**File**: `tests/queries/0_stateless/05493_postgresqlwire_append_to_non_empty_file.reference` (added, +4/-0)
+**File**: `src/Interpreters/InterpreterExplainQuery.cpp` (modified, +16/-16)
 ```diff
-@@ -0,0 +1,4 @@
-+-- INTO OUTFILE APPEND
-+equal
-+-- INSERT INTO FUNCTION file
+@@ -2,6 +2,7 @@
+ #include <Interpreters/InterpreterFactory.h>
+ #include <Interpreters/InterpreterExplainQuery.h>
+ 
++#include <Analyzer/Utils.h>
+ #include <DataTypes/DataTypesNumber.h>
+ #include <QueryPipeline/BlockIO.h>
+ #include <QueryPipeline/QueryPipelineBuilder.h>
+@@ -180,24 +181,23 @@ namespace
+             if (TableFunctionFactory::instance().isTableFunctionName(func->name))
+                 return;
+ 
+-            String database_name = query_context->getCurrentDatabase();
+-            String table_name = func->name;
+-            if (func->isCompoundName())
++            auto is_parameterized_view = [](const StoragePtr & candidate)
+             {
+-                std::vector<std::string> parts;
+-                splitInto<'.'>(parts, func->name);
+-                if (parts.size() != 2)
+-                    return;
+-                database_name = parts[0];
+-                table_name = parts[1];
++                const auto * view = candidate ? candidate->as<StorageView>() : nullptr;
++                return view && view->isParameterizedView();
++            };
++
++            auto [database_name, table_name] = extractDatabaseAndTableNameForParameterizedView(func->name, query_context);
++            StoragePtr storage;
++            if (!table_name.empty())
++                storage = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, query_context);
++            /// A view whose own name has a dot: `` `v.x`(...) ``.
++            if (!is_parameterized_view(storage) && !func->isCompoundName() && table_name != func->name)
++            {
++                table_name = func->name;
++                storage = DatabaseCatalog::instance().tryGetTable({query_context->getCurrentDatabase(), table_name}, query_context);
+             }
+-
+-            auto storage = DatabaseCatalog::instance().tryGetTable({database_name, table_name}, query_context);
+-            if (!storage)
+-                return;
+-
+-            const auto * storage_view = storage->as<StorageView>();
+-            if (!storage_view || !storage_view->isParameterizedView())
++            if (!is_parameterized_view(storage))
+                 return;
+ 
+             auto metadata = storage->getInMemoryMetadataPtr(query_context, false);
+```
+
+**File**: `src/Parsers/ASTFunction.cpp` (modified, +29/-2)
+```diff
+@@ -24,7 +24,9 @@
+ #include <Parsers/ASTSubquery.h>
+ #include <Parsers/ASTSetQuery.h>
+ #include <Parsers/ASTWindowDefinition.h>
++#include <Parsers/CommonParsers.h>
+ #include <Parsers/FunctionSecretArgumentsFinderAST.h>
++#include <Poco/String.h>
+ 
+ 
+ using namespace std::literals;
+@@ -540,6 +542,31 @@ static bool functionNameNeedsQuoting(const String & name, const ASTPtr & argumen
+             && arguments->children[0]->as<ASTSubquery>());
+ }
+ 
++/// A compound name (`db.view(...)`) is written part by part: one quoted `db.view` token parses back as a one-part name.
++/// A keyword part is quoted: `1 IN partition.pv(1)` does not parse.
++static void writeFunctionName(
++    WriteBuffer & ostr, const IAST::FormatSettings & settings, const String & name, bool is_compound_name, const ASTPtr & arguments)
++{
++    if (!is_compound_name)
++    {
++        ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
++        return;
++    }
++
++    const auto & keywords = getKeyWordSet();
++    std::string_view rest = name;
++    while (true)
++    {
++        const size_t dot = rest.find('.');
++        const String part(rest.substr(0, dot));
++        settings.writeIdentifier(ostr, part, /*ambiguous=*/keywords.contains(Poco::toUpper(part)));
++        if (dot == std::string_view::npos)
++            break;
++        ostr << '.';
++        rest.remove_prefix(dot + 1);
++    }
++}
++
+ void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSettings & settings, FormatState & state, FormatStateStacked frame) const
+ {
+     frame.expression_list_prepend_whitespace = false;
+@@ -562,7 +589,7 @@ void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSetting
+         std::string nl_or_nothing = settings.one_line ? "" : "\n";
+         std::string indent_str = settings.one_line ? "" : std::string(4u * frame.indent, ' ');
+         if (!name.empty())
+-            ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
++            writeFunctionName(ostr, settings, name, isCompoundName(), arguments);
+         ostr << "(";
+         ostr << nl_or_nothing;
+         FormatStateStacked frame_nested = frame;
+@@ -1075,7 +1102,7 @@ void ASTFunction::formatImplWithoutAlias(WriteBuffer & ostr, const FormatSetting
+     if (is_plain_not_call)
+         ostr << name;
+     else if (!name.empty())
+-        ostr << (functionNameNeedsQuoting(name, arguments) ? backQuote(name) : backQuoteIfNeed(name));
++        writeFunctionName(ostr, settings, name, isCompoundName(), arguments);
+ 
+     SecretArgumentsResult secret_arguments;
+     if (arguments && !settings.show_secrets)
+```
+
+**File**: `tests/queries/0_stateless/05493_parameterized_view_qualified_name_insert_select.reference` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++into ReplicatedMergeTree
++3
++into Distributed
++3
++refreshable view reloaded from metadata, feeding a materialized view
++3	1
++3	1
++refreshable view in a Replicated database
++3
++EXPLAIN SYNTAX inlines the view
 +1
++the formatted query keeps the two parts of the name
++SELECT * FROM db.pv(p = 1)
++SELECT * FROM `my-db`.pv(p = 1)
++SELECT * FROM `db.pv`(p = 1)
++a keyword part stays quoted and parses back
++SELECT * FROM `null`.pv(p = 1)	1
++SELECT 1 IN `null`.pv(1)	1
++SELECT * FROM `not`.pv(p = 1)	1
++SELECT 1 IN `not`.pv(1)	1
++SELECT 1 IN `partition`.pv(1)	1
++the analyzer writes the stored spelling as two parts
++1
++a view whose own name has a dot
++1
++a view whose own name has a dot, when the split names a table that is not a parameterized view
++1
++an unquoted v.x(...) is the view x of database v, not the view v.x
++0
 ```
 
-**File**: `tests/queries/0_stateless/05493_postgresqlwire_append_to_non_empty_file.sh` (added, +27/-0)
+**File**: `tests/queries/0_stateless/05493_parameterized_view_qualified_name_insert_select.sh` (added, +109/-0)
 ```diff
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,109 @@
 +#!/usr/bin/env bash
++# Tags: zookeeper, no-replicated-database
++# no-replicated-database: the test creates a Replicated database itself.
 +
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# Older versions stored a call `db.view(...)` of a parameterized view as `` `db.view`(...) ``.
++# INSERT ... SELECT into a replicated or distributed table, a refreshable materialized view
++# reloaded from such metadata or defined in a Replicated database, and EXPLAIN SYNTAX must
++# resolve that spelling to the view `view` of database `db`, as SELECT does.
++
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 +# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
++. "$CURDIR"/../shell_config.sh
 +
-+# Appending to a non-empty file skips the RowDescription prefix: the file must equal one export of all rows.
++a="${CLICKHOUSE_DATABASE}_a"
++r="${CLICKHOUSE_DATABASE}_r"
 +
-+WORK_DIR="${CLICKHOUSE_TMP:?}/pgwire_append_${CLICKHOUSE_DATABASE:?}"
-+rm -rf "${WORK_DIR}"
-+mkdir -p "${WORK_DIR}"
++${CLICKHOUSE_CLIENT} -q "
++    CREATE DATABASE ${a} ENGINE = Atomic;
++    CREATE TABLE ${a}.src (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
++    INSERT INTO ${a}.src SELECT toDateTime(number), 1 + (number >= 3) FROM numbers(5);
++    CREATE VIEW ${a}.pv AS SELECT d, x FROM ${a}.src WHERE x = {p:UInt8};
++"
 +
-+echo '-- INTO OUTFILE APPEND'
-+${CLICKHOUSE_CLIENT} -q "SELECT number AS x, range(number) AS a FROM numbers(3) INTO OUTFILE '${WORK_DIR}/appended.bin' FORMAT PostgreSQLWire"
-+${CLICKHOUSE_CLIENT} -q "SELECT number + 3 AS x, range(number + 3) AS a FROM numbers(3) INTO OUTFILE '${WORK_DIR}/appended.bin' APPEND FORMAT PostgreSQLWire"
-+${CLICKHOUSE_CLIENT} -q "SELECT number AS x, range(number) AS a FROM numbers(6) INTO OUTFILE '${WORK_DIR}/single.bin' FORMAT PostgreSQLWire"
-+cmp -s "${WORK_DIR}/appended.bin" "${WORK_DIR}/single.bin" && echo 'equal'
++# Only a non-zero parallel_distributed_insert_select sends the INSERT through the checks that failed.
++# Parallel replicas are off: every replica of the test cluster would read the whole view, so the count would be wrong.
++echo 'into ReplicatedMergeTree'
++${CLICKHOUSE_CLIENT} -q "
++    CREATE TABLE ${a}.t_repl (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_repl', '1') ORDER BY d;
++    INSERT INTO ${a}.t_repl SELECT * FROM \`${a}.pv\`(p = 1) SETTINGS parallel_distributed_insert_select = 2, enable_parallel_replicas = 0;
++    SELECT count() FROM ${a}.t_repl;
++"
 +
-+echo '-- INSERT INTO FUNCTION file'
-+FILE_DIR="${CLICKHOUSE_TEST_UNIQUE_NAME:?}"
-+STRUCTURE='x UInt64, a Array(UInt8)'
-+${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/appended.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number, range(number) FROM numbers(3) SETTINGS engine_file_truncate_on_insert = 1"
-+${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/appended.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number + 3, range(number + 3) FROM numbers(3)"
-+${CLICKHOUSE_CLIENT} -q "INSERT INTO FUNCTION file('${FILE_DIR}/single.bin', 'PostgreSQLWire', '${STRUCTURE}') SELECT number, range(number) FROM numbers(6) SETTINGS engine_file_truncate_on_insert = 1"
-+${CLICKHOUSE_CLIENT} -q "SELECT (SELECT raw_blob FROM file('${FILE_DIR}/appended.bin', 'RawBLOB')) = (SELECT raw_blob FROM file('${FILE_DIR}/single.bin', 'RawBLOB'))"
++echo 'into Distributed'
++${CLICKHOUSE_CLIENT} -q "
++    CREATE TABLE ${a}.t_local (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
++    CREATE TABLE ${a}.dist AS ${a}.t_local ENGINE = Distributed(test_shard_localhost, ${a}, t_local);
++    INSERT INTO ${a}.dist SELECT * FROM \`${a}.pv\`(p = 1) SETTINGS parallel_distributed_insert_select = 2, enable_parallel_replicas = 0, distributed_foreground_insert = 1;
++    SELECT count() FROM ${a}.t_local;
++"
 +
-+rm -rf "${WORK_DIR}" "${CLICKHOUSE_USER_FILES_UNIQUE:?}"
++# DETACH/ATTACH reads the view's definition back from its metadata file, as a server restart does.
++# The view may refresh on ATTACH as well, so the checks do not depend on the number of refreshes.
++echo 'refreshable view reloaded from metadata, feeding a materialized view'
++${CLICKHOUSE_CLIENT} -q "
++    CREATE TABLE ${a}.t_rmv (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_rmv', '1') ORDER BY d;
++    CREATE TABLE ${a}.sink (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
++    CREATE MATERIALIZED VIEW ${a}.mv_sink TO ${a}.sink AS SELECT d, x FROM ${a}.t_rmv;
++    CREATE MATERIALIZED VIEW ${a}.rmv REFRESH EVERY 1 YEAR APPEND TO ${a}.t_rmv EMPTY AS SELECT * FROM \`${a}.pv\`(p = 1);
++    DETACH TABLE ${a}.rmv;
++    ATTACH TABLE ${a}.rmv;
++    SYSTEM REFRESH VIEW ${a}.rmv;
++    SYSTEM WAIT VIEW ${a}.rmv;
++    SELECT uniqExact(d), count() > 0 FROM ${a}.t_rmv;
++    SELECT uniqExact(d), count() = (SELECT count() FROM ${a}.t_rmv) FROM ${a}.sink;
++"
++
++echo 'refreshable view in a Replicated database'
++${CLICKHOUSE_CLIENT} --distributed_ddl_output_mode=none -q "
++    CREATE DATABASE ${r} ENGINE = Replicated('/test/{database}/parameterized_view_qualified_name', 's1', 'r1');
++    CREATE TABLE ${r}.src (d DateTime, x UInt8) ENGINE = MergeTree ORDER BY d;
++    INSERT INTO ${r}.src SELECT toDateTime(number), 1 + (number >= 3) FROM numbers(5);
++    CREATE VIEW ${r}.pv AS SELECT d, x FROM ${r}.src WHERE x = {p:UInt8};
++    CREATE TABLE ${r}.t_repl (d DateTime, x UInt8) ENGINE = ReplicatedMergeTree ORDER BY d;
++    CREATE MATERIALIZED VIEW ${r}.rmv REFRESH EVERY 1 YEAR APPEND TO ${r}.t_repl EMPTY AS SELECT * FROM \`${r}.pv\`(p = 1);
++    SYSTEM REFRESH VIEW ${r}.rmv;
++    SYSTEM WAIT VIEW ${r}.rmv;
++    SELECT count() FROM ${r}.t_repl;
++"
++
++echo 'EXPLAIN SYNTAX inlines the view'
++${CLICKHOUSE_CLIENT} -q "SELECT countIf(explain LIKE '%FROM ${a}.src%') > 0 FROM (EXPLAIN SYNTAX SELECT * FROM \`${a}.pv\`(p = 1))"
++
++echo 'the formatted query keeps the two parts of the name'
++${CLICKHOUSE_CLIENT} -q "
++    SELECT formatQuerySingleLine('SELECT * FROM db.pv(p = 1)');
++    SELECT formatQuerySingleLine('SELECT * FROM \`my-db\`.pv(p = 1)');
++    SELECT formatQuerySingleLine('SELECT * FROM \`db.pv\`(p = 1)');
++"
++
++echo 'a keyword part stays quoted and parses back'
++${CLICKHOUSE_CLIENT} -q "
++    SELECT formatQuerySingleLine(q) AS f, formatQuerySingleLine(f) = f
++    FROM (SELECT arrayJoin([
++        'SELECT * FROM \`null\`.pv(p = 1)', 'SELECT 1 IN \`null\`.pv(1)',
++        'SELECT * FROM \`not\`.pv(p = 1)', 'SELECT 1 IN \`not\`.pv(1)',
++        'SELECT 1 IN \`partition\`.pv(1)']) AS q);
++"
++
++# This is the query the analyzer sends to other servers, for example for a subquery in IN.
++echo 'the analyzer writes the stored spelling as two parts'
++${CLICKHOUSE_CLIENT} -q "SELECT countIf(explain LIKE '%FROM ${a}.pv(p = 1)%') FROM (EXPLAIN QUERY TREE
+```
+
+---
+
+### Incident Patch 3: `cb8ea0ea` (2026-11-04)
+**Commit Message**: Merge pull request #128788 from hsusul/fix/round-to-exp2-nan
+
+Return NaN from roundToExp2 for NaN
+
+**File**: `src/Functions/roundToExp2.cpp` (modified, +6/-0)
+```diff
+@@ -1,3 +1,4 @@
++#include <cmath>
+ #include <type_traits>
+ #include <base/bit_cast.h>
+ #include <Functions/FunctionFactory.h>
+@@ -31,13 +32,17 @@ template <typename T>
+ requires std::is_same_v<T, Float32>
+ inline T roundDownToPowerOfTwo(T x)
+ {
++    if (std::isnan(x))
++        return x;
+     return bit_cast<T>(bit_cast<UInt32>(x) & ~((1ULL << 23) - 1));
+ }
+ 
+ template <typename T>
+ requires std::is_same_v<T, Float64>
+ inline T roundDownToPowerOfTwo(T x)
+ {
++    if (std::isnan(x))
++        return x;
+     return bit_cast<T>(bit_cast<UInt64>(x) & ~((1ULL << 52) - 1));
+ }
+ 
+@@ -57,6 +62,7 @@ inline T roundDownToPowerOfTwo(T)
+   * - negative powers are also used (example: roundToExp2(0.7) = 0.5);
+   * - if number is zero, return zero;
+   * - if number is less than zero, the result is symmetrical: roundToExp2(x) = -roundToExp2(-x). (example: roundToExp2(-0.3) = -0.25);
++  * - if number is NaN, return it unchanged (zeroing the mantissa would turn it into infinity).
+   */
+ 
+ template <typename T>
+```
+
+**File**: `tests/queries/0_stateless/05494_round_to_exp2_nan.reference` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++1
++1
++1
++1
++1
++1
++1
++1
++1
++1
++inf	-inf	0.25	4	-0.25
++inf	-inf	0.25	4	-0.25
++inf	-inf	0.25	4	-0.25
+```
+
+**File**: `tests/queries/0_stateless/05494_round_to_exp2_nan.sql` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++-- `roundToExp2` of NaN must return NaN, not infinity.
++
++SELECT isNaN(roundToExp2(nan));
++SELECT isNaN(roundToExp2(toFloat32(nan)));
++SELECT isNaN(roundToExp2(materialize(nan)));
++SELECT isNaN(roundToExp2(materialize(toFloat32(nan))));
++
++-- NaN with the sign bit set.
++SELECT isNaN(roundToExp2(reinterpretAsFloat64(toUInt64(0xFFF8000000000000))));
++SELECT isNaN(roundToExp2(reinterpretAsFloat32(toUInt32(0xFFC00000))));
++SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat64(toUInt64(0xFFF8000000000000)))));
++SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat32(toUInt32(0xFFC00000)))));
++
++-- NaN with the smallest mantissa.
++SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat64(toUInt64(0x7FF0000000000001)))));
++SELECT isNaN(roundToExp2(materialize(reinterpretAsFloat32(toUInt32(0x7F800001)))));
++
++SELECT roundToExp2(inf), roundToExp2(-inf), roundToExp2(0.3), roundToExp2(5.5), roundToExp2(-0.3);
++SELECT roundToExp2(toFloat32(inf)), roundToExp2(toFloat32(-inf)), roundToExp2(toFloat32(0.3)), roundToExp2(toFloat32(5.5)), roundToExp2(toFloat32(-0.3));
++SELECT roundToExp2(materialize(inf)), roundToExp2(materialize(-inf)), roundToExp2(materialize(0.3)), roundToExp2(materialize(5.5)), roundToExp2(materialize(-0.3));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129035** (2026-11-03): Backport #127836 to 26.10: Revert "Avoid building stream names and substreams cache keys for every block in MergeTreeReaderWide" (@robot-clickhouse-ci-2)
-- **PR #128994** (2026-11-03): Backport #128525 to 26.10: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
-- **PR #128993** (2026-11-03): Backport #128525 to 26.9: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
-- **PR #128991** (2026-11-03): Backport #128525 to 26.8: Fix Iceberg `ADD COLUMN` reusing a nested field id when `last-column-id` is too small (@robot-clickhouse-ci-2)
-- **PR #128988** (2026-11-03): Backport #123651 to 26.10: Hide Azure credentials that were logged in clear in `system.query_log` (@robot-ch-test-poll4)
-- **PR #128987** (2026-11-03): Cherry pick #123651 to 26.9: Hide Azure credentials that were logged in clear in `system.query_log` (@robot-ch-test-poll4)
+- **PR #129322** (closed): JIT: compile comparisons of dates of the same type (@scanhex12)
+- **PR #129319** (2026-11-04): Backport #128607 to 26.8: Initialize parquet reader a bit earlier (@robot-ch-test-poll4)
+- **PR #129312** (2026-11-04): Docs: add Managed Postgres GA pricing and deactivation (@deeox)
+- **PR #129310** (2026-11-04): Revert "Mark a query as cancelled in the process list when its TCP client cancels it" (@alexey-milovidov)
+- **PR #129306** (2026-11-04): Backport #128955 to 26.10: Hide secrets in `system.s3_queue_settings` and `system.azure_queue_settings` (@robot-ch-test-poll)
+- **PR #129301** (closed): Cherry pick #127690 to 26.10: Replace the apache/orc library with a native ORC reader and writer (@robot-ch-test-poll4)
 
 ---
 
@@ -1846,81 +1864,46 @@ Fix crash when appending `PostgreSQLWire` output to a non-empty file
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #127836 from ClickHouse/revert-124816
+## X. Merge pull request #126817 from Jonathan-Ackerman/execution-timeout
 
 **RULE**:
-When implementing operations in `src/DataTypes/Serializations/ISerialization.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Core/Settings.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a379d29`: Merge pull request #127836 from ClickHouse/revert-124816. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ad305e6`: Merge pull request #126817 from Jonathan-Ackerman/execution-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/DataTypes/Serializations/ISerialization.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Core/Settings.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-String getNameForSubstreamPath(
-    String stream_name,
-            stream_name += ".null";
-            stream_name += ".size" + toString(array_level);
-            stream_name += ".size";
-            stream_name += ".dict";
-            stream_name += ".dict_prefix";
-            stream_name += ".sparse";
-            stream_name += ".sparse.idx";
-            stream_name += ".repl";
-            stream_name += ".repl.idx";
-            auto substream_name = "." + it->name_of_substream;
 
-                stream_name += escapeForFileName(substream_name);
-                stream_name += substream_name;
-            stream_name += ".variant_discr";
-            stream_name += ".variant_discr_prefix";
-            stream_name += ".variant_offsets";
-                stream_name += "." + escapeForFileName(it->variant_element_name);
-                stream_name += "." + it->variant_element_name;
-                stream_name += "." + escapeForFileName(it->variant_element_name) + ".null";
-                stream_name += "." + it->variant_element_name + ".null";
-       
+If set to `0`, the execution speed limits are checked from the start of the query,
+but [`max_estimated_execution_time`](/reference/settings/session-settings/max#max_estimated_execution_time)
+is not checked at all.
+expires. It operates based on extrapolation relative to the current query execution
+speed. If you set `timeout_before_checking_execution_speed` to 0, then this setting
+will not be checked.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-#include <Common/SipHash.h>
-/// Renders the substream path by passing its pieces to `append` in order, so the same rendering can either
-/// be materialized into a string or fed into a hash without building the string.
-template <typename Append>
-void appendNameForSubstreamPath(
-    Append && append,
-            append(".null");
-        {
-            append(".size");
-            append(toString(array_level));
-        }
-            append(".size");
-            append(".dict");
-            append(".dict_prefix");
-            append(".sparse");
-            append(".sparse.idx");
-            append(".repl");
-            append(".repl.idx");
-                append(escapeForFileName("." + it->name_of_substream));
-            {
-                append(".");
-                append(it->name_of_substream);
-            }
-            append(".variant_discr");
-            append(".variant_discr_prefix");
-            append(".variant_offsets");
-            append(".");
-                append(escapeForFileName(it->variant_element_name));
-                append(it->variant_element_name);
-            append(".");
-                append(escapeForFileName(it->variant_element_name));
-                appe
+The `max_execution_time` parameter can be a bit tricky to understand.
+It operates based on interpolation relative to the current query execution speed
+(this behaviour is controlled by [`timeout_before_checking_execution_speed`](/reference/settings/session-settings/other#timeout_before_checking_execution_speed)).
+
+ClickHouse will interrupt a query if the projected execution time exceeds the
+specified `max_execution_time`. By default, the `timeout_before_checking_execution_speed`
+is set to 10 seconds. This means that after 10 seconds of query execution, ClickHouse
+will begin estimating the total execution time. If, for example, `max_execution_time`
+is set to 3600 seconds (1 hour), ClickHouse will terminate the query if the estimated
+time exceeds this 3600-second limit. If you set `timeout_before_checking_execution_speed`
+to 0, ClickHouse will use the clock time as the basis for `max_execution_time`.
+
+expires.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a379d29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ad305e6` are properly handled with clean fallback behavior.

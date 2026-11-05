@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `4edefad7`  
+> **Source Version**: `da11df74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:59:18.522Z  
+> **Timestamp**: 2026-11-05T04:00:43.266Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:59:18.355Z  
+> **Harvest Timestamp**: 2026-11-05T04:00:43.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29171 stars
+- **Stars / Engagement**: 29181 stars
 
 ---
 
@@ -82,6 +82,18 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   // OpenSSL's libcrypto.so, and therefore shouldn't be loaded yet.
   if (dlsym(RTLD_DEFAULT, "OPENSSL_version_major") != NULL) {
     bssl_compat_error("libcrypto.so is already linked in\n");
+    exit(ELIBACC);
+  }
+
+  // Another sanity check to confirm that the dynamic loader cannot resolve the
+  // BoringSSL API symbols that we have implemented in the compatibility layer,
+  // such as SSL_read(). If such symbols are visible in the dynamic symbol
+  // table, then the OpenSSL code will get linked against them, when we load it,
+  // which is not what we want! Since there are many ways of achieving this with
+  // various different compile & link options, and such options can easily get
+  // modified or deleted over time, this check acts as a runtime safety net.
+  if (dlsym(RTLD_DEFAULT, "SSL_read") != NULL) {
+    bssl_compat_error("SSL_read() is visible prior to loading OpenSSL\n");
     exit(ELIBACC);
   }
 
@@ -142,7 +154,7 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   }
 
   // Load libcrypto.so first, because libssl.so depends on it.
-  if ((libcrypto = dlopen(libcrypto_path, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND)) == NULL) {
+  if ((libcrypto = dlopen(libcrypto_path, RTLD_NOW | RTLD_LOCAL)) == NULL) {
     bssl_compat_error("dlopen(%s) : %s\n", libcrypto_path, dlerror());
     exit(ELIBACC);
   }
@@ -172,10 +184,9 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   }
 
   // Tell OpenSSL to use the tcmalloc malloc/realloc/free functions from the
-  // main executable. Without this, RTLD_DEEPBIND causes OpenSSL's allocations
-  // to resolve to glibc's malloc/realloc/free instead, resulting in OpenSSL
-  // using a completely separate heap. This defeats tcmalloc's performance
-  // benefits on the TLS hot path, and also makes all OpenSSL allocations
+  // main executable. OpenSSL uses its own allocator wrappers internally, so
+  // without this, OpenSSL allocations bypass tcmalloc, defeating its
+  // performance benefits on the TLS hot path and making OpenSSL allocations
   // invisible to tcmalloc's heap dumps.
   typedef int (*CRYPTO_set_mem_functions_fn)(
       void *(*malloc_fn)(size_t, const char *, int),
@@ -195,7 +206,7 @@ void ossl_dlopen(int expected_major, int expected_minor) {
 
   // Load libssl.so *after* calling CRYPTO_set_mem_functions() just in case
   // libssl.so has any library constructors that call OPENSSL_malloc().
-  if ((libssl = dlopen(libssl_path, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND)) == NULL) {
+  if ((libssl = dlopen(libssl_path, RTLD_NOW | RTLD_LOCAL)) == NULL) {
     bssl_compat_error("dlopen(%s) : %s\n", libssl_path, dlerror());
     exit(ELIBACC);
   }
@@ -1065,303 +1076,588 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4edefad7` (2026-11-03)
-**Commit Message**: router: fix crash in addDownstreamSetCookie when no downstream connection (#45984)
+### Incident Patch 1: `f54520db` (2026-11-04)
+**Commit Message**: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611)
 
-**Commit Message:**
-router: fix crash in addDownstreamSetCookie when no downstream
-connection
+Commit Message: composite: fix use-after-free when an ECDS update
+replaces the filter while a stream is paused
 
-`Filter::addDownstreamSetCookie()` unconditionally dereferences
-`downstreamConnection()` to compose the per-connection seed for the
-generated cookie value. When the router is invoked without a downstream
-connection (e.g. `Http::AsyncClient`-driven paths such as `ext_authz` or
-ratelimit side calls, mirror/shadow, and health checks) the connection
-pointer is null and the worker process crashes whenever a cookie hash
-policy is configured.
+When `envoy.filters.http.composite` is delivered through ECDS
+(`config_discovery`), the dynamic filter config provider owns the only
+copies of the composite filter factory callback. The filter manager
+calls the provider's current callback when it creates a stream's filter
+chain, but it does not keep a copy. If an earlier filter pauses the
+stream, an ECDS update can destroy the callback before
+`Composite::Filter::decodeHeaders()` runs.
 
-Skip the connection-derived seed and return an empty cookie value for
-those callers. The resulting cookie hashes identically across all async
-invocations, which preserves hash-stability for the cookie hash policy
-on
-this path.
+* `Filter` stored a `FilterStats&` that pointed into the stats owned by
+the callback, so `handleAction()` incremented
+`filter_delegation_success` / `filter_delegation_error` through a
+dangling reference when the paused stream resumed. Filters now share
+ownership of the stats (`FilterStatsSharedPtr`).
+* Once the callback was gone, the filter could drop the last reference
+to the match tree and named filter chains on a worker thread. That
+destroyed the delegated filter factories there, including
+`dynamic_config` providers and their TLS slot
 
-**Additional Description:**
-
-Supersedes #45134, which was auto-closed as stale; this PR carries the
-same
-one-line router fix plus the regression test requested in review there
-(GitHub does not permit reopening #45134 once its head branch advanced).
-The TODO in `router.h` had already flagged the risk ("Need to check for
-null conn if this is ever used 
-
-**File**: `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst` (added, +9/-0)
+**File**: `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst` (added, +7/-0)
 ```diff
-@@ -0,0 +1,9 @@
-+Fixed a crash in ``Filter::addDownstreamSetCookie()`` when the router is invoked
-+without a downstream connection (e.g. ``Http::AsyncClient``-driven paths such as
-+``ext_authz`` or ratelimit side calls, mirror/shadow, and health checks) and a
-+cookie hash policy is configured. Previously the function would unconditionally
-+dereference ``downstreamConnection()`` to compose the per-connection seed for
-+the generated cookie value. When the connection pointer was null the worker
-+would crash. The function now skips the connection-derived seed and returns an
-+empty cookie value in that path, preserving hash-stability for those async
-+invocations.
+@@ -0,0 +1,7 @@
++Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
++filter when it is configured through
++:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
++and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
++filter instances created from the previous configuration now share ownership of the filter stats,
++and the match tree and named filter chains they hold are released on the main thread, so that the
++delegated filter configurations are not destroyed on a worker thread.
 ```
 
-**File**: `source/common/router/router.h` (modified, +10/-1)
+**File**: `source/extensions/filters/http/composite/BUILD` (modified, +1/-0)
 ```diff
-@@ -502,7 +502,16 @@ class Filter : Logger::Loggable<Logger::Id::router>,
-     // connections can receive different cookies if they race on requests.
-     std::string value;
-     const Network::Connection* conn = downstreamConnection();
--    // Need to check for null conn if this is ever used by Http::AsyncClient in the future.
-+    // Async-client-driven router invocations (ext_authz, ratelimit side calls,
-+    // mirror/shadow) have a null downstream connection. Previously this path
-+    // would unconditionally dereference `conn` to compose the per-connection
-+    // seed, which crashed the worker. Skip the connection-derived seed and degrade
-+    // to a stable empty seed for those callers; the resulting cookie value is
-+    // hashed identically across all such async invocations, which preserves
-+    // hash-stability requirements for the cookie hash policy.
-+    if (conn == nullptr) {
-+      return std::string();
-+    }
-     value = conn->connectionInfoProvider().remoteAddress()->asString() +
-             conn->connectionInfoProvider().localAddress()->asString();
- 
+@@ -50,6 +50,7 @@ envoy_cc_extension(
+     srcs = ["config.cc"],
+     hdrs = ["config.h"],
+     deps = [
++        "//envoy/event:dispatcher_interface",
+         "//envoy/registry",
+         "//envoy/server:filter_config_interface",
+         "//source/extensions/filters/http/common:factory_base_lib",
 ```
 
-**File**: `test/common/router/router_test.cc` (modified, +54/-0)
+**File**: `source/extensions/filters/http/composite/config.cc` (modified, +33/-5)
 ```diff
-@@ -738,6 +738,60 @@ TEST_F(RouterTest, AddMultipleCookies) {
-   router_->onDestroy();
- }
+@@ -1,6 +1,7 @@
+ #include "source/extensions/filters/http/composite/config.h"
  
-+// Regression test for the crash in addDownstreamSetCookie() on the
-+// Http::AsyncClient-driven router path (ext_authz / ratelimit side calls,
-+// mirror/shadow), where there is no downstream connection. Previously the cookie
-+// seed unconditionally dereferenced the null downstream connection and crashed
-+// the worker whenever a cookie hash policy was configured. The call must now
-+// degrade to a stable empty seed and not crash.
-+TEST_F(RouterTest, AddCookieNullDownstreamConnection) {
-+  router_->downstream_connection_is_null_ = true;
+ #include "envoy/common/exception.h"
++#include "envoy/event/dispatcher.h"
+ #include "envoy/registry/registry.h"
+ #include "envoy/server/filter_config.h"
+ 
+@@ -12,6 +13,30 @@ namespace Extensions {
+ namespace HttpFilters {
+ namespace Composite {
+ 
++namespace {
 +
-+  ON_CALL(callbacks_.route_->route_entry_, hashPolicy())
-+      .WillByDefault(Return(&callbacks_.route_->route_entry_.hash_policy_));
-+  NiceMock<Http::MockRequestEncoder> encoder;
-+  Http::ResponseDecoder* response_decoder = nullptr;
-+  expectNewStreamWithImmediateEncoder(encoder, &response_decoder, Http::Protocol::Http10);
-+
-+  EXPECT_CALL(cm_.thread_local_cluster_, httpConnPool(_, _, _, _))
-+      .WillOnce(Invoke([&](Upstream::HostConstSharedPtr, Upstream::ResourcePriority,
-+                           std::optional<Http::Protocol>, Upstream::LoadBalancerContext* context) {
-+        EXPECT_EQ(10UL, context->computeHashKey().value());
-+        return Upstream::HttpPoolData([]() {}, &cm_.thread_local_cluster_.conn_pool_);
-+      }));
-+
-+  std::string cookie_value = "not-empty";
-+  EXPECT_CALL(callbacks_.route_->route_entry_.hash_policy_, generateHash(_, _, _))
-+      .WillOnce(
-+          Invoke([&](OptRef<const Http::RequestHeaderMap>, OptRef<const StreamInfo::StreamInfo>,
-+                     Http::HashPolicy::AddCookieCallback add_cookie) {
-+            // Pre-fix this dereferenced the null downstream connection and crashed
-+            // the worker; it must now return a stable empty seed.
-+            cookie_value = add_cookie("foo", "", std::chrono::seconds(1337), {});
-+            return std::optional<uint64_t>(10);
-+          }));
-+
-+  // With no downstream connection the cookie is not generated, so no Set-Cookie
-+  // header is emitted downstream.
-+  EXPECT_CALL(callbacks_, encodeHeaders_(_, _))
-+      .WillOnce(Invoke([&](const Http::HeaderMap& headers, const bool) -> void {
-+        EXPECT_TRUE(headers.get(Http::Headers::get().SetCookie).empty());
-+      }));
-+  expectResponseTimerCreate();
-+
-+  Http::TestRequestHeaderMapImpl headers;
-+  HttpTestUtility::addDefaultHeaders(headers);
-+  router_->decodeHeaders(headers, true);
-+
-+  Http::ResponseHeaderMapPtr response_headers(
-+      new Http::TestResponseHeaderMapImpl{{":status", "200"}});
-+  response_decoder->decodeHeaders(std::move(response_headers), true);
-+
-+  // The worker did not crash and the async path produced a stable empty cookie.
-+  EXPECT_EQ(cookie_value, "");
-+  router_->onDestroy();
++// Returns a pointer that shares ownership of `ptr` and releases it on the main thread once the
++// last reference is dropped. The filter factory callback owns the match tree and the named filter
++// chains, but the filters it creates hold references to them too. When the callback is destroyed
++// first, e.g. by an ECDS update, the last reference is dropped by a filter on a worker thread,
++// whereas the delegated filter factories they own must be destroyed on the main thread.
++template <class T>
++std::shared_ptr<T> releaseOnMainThread(std::shared_ptr<T> ptr, Event::Dispatcher& main_dispatcher) {
++  if (ptr == nullptr) {
++    return nullptr;
++  }
++  T* raw = ptr.get();
++  return {raw, [owned = std::move(ptr), &main_dispatcher](T*) mutable {
++            if (main_dispatcher.isThreadSafe()) {
++              owned.reset();
++              return;
++            }
++            main_dispatcher.post([owned = std::move(owned)]() mutable { owned.reset(); });
++          }};
 +}
 +
- TEST_F(RouterTest, MetadataNoOp) { EXPECT_EQ(nullptr, router_->metadataMatchCriteria()); }
++} // namespace
++
+ class MatchTreeValidationVisitor
+     : public Matcher::MatchTreeValidationVisitor<Envoy::Http::HttpMatchingData> {
+ public:
+@@ -89,7 +114,9 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
+   // Compile named filter chains with FactoryContext access.
+   auto named_chains_or_error = compileNamedFilterChains(proto_config, stats_prefix, context);
+   RETURN_IF_NOT_OK(named_chains_or_error.status());
+-  auto named_chains = std::move(named_chains_or_error.value());
++  Event::Dispatcher& main_dispatcher = context.serverFactoryContext().mainThreadDispatcher();
++  auto named_chains =
++      releaseOnMainThread(std::move(named_chains_or_error.value()), main_dispatcher);
  
- TEST_F(RouterTest, MetadataMatchCriteria) {
+   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr;
+   if (proto_config.has_matcher()) {
+@@ -101,15 +128,15 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
+         .server_factory_context_ = context.serverFactoryContext()};
+     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
+     RETURN_IF_NOT_OK(match_tree_or_error.status());
+-    match_tree = std::move(match_tree_or_error.value());
++    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()), main_dispatcher);
+   }
+ 
+   const auto& prefix = stats_prefix + "composite.";
+   auto stats = std::make_shared<FilterStats>(
+       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
+ 
+   return [stats, named_chains, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+-    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), false /* is_upstream */,
++    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), false /* is_upstream */,
+                                            match_tree, named_chains);
+     callbacks.addStreamFilter(filter);
+     callbacks.addAccessLogHandler(filter);
+@@ -134,7 +161,8 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
+ 
+     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
+     RETURN_IF_NOT_OK(match_tree_or_error.status());
+-    match_tree = std::move(match_tree_or_error.value());
++    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()),
++                                     context.serverFactoryContext().mainThreadDispatcher());
+   }
+ 
+   // This method is called for upstream filters.
+@@ -144,7 +172,7 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
+       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
+ 
+   return [stats, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+-    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), true /* is_upstream */,
++    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), true /* is_upstream */,
+                                            match_tree, nullptr);
+     callbacks.addStreamFilter(filter);
+     callbacks.addAccessLogHandler(filter);
 ```
 
-**File**: `test/common/router/router_test_base.h` (modified, +6/-0)
+**File**: `source/extensions/filters/http/composite/filter.cc` (modified, +4/-4)
 ```diff
-@@ -52,13 +52,19 @@ class RouterTestFilter : public Filter {
-   }
+@@ -165,7 +165,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+     }
  
-   const Network::Connection* downstreamConnection() const override {
-+    // Simulate the Http::AsyncClient-driven router path (ext_authz / ratelimit
-+    // side calls, mirror/shadow), which has no downstream connection.
-+    if (downstream_connection_is_null_) {
-+      return nullptr;
-+    }
-     return &downstream_connection_;
-   }
+     if (!wrapper.filters_to_inject_.empty()) {
+-      stats_.filter_delegation_success_.inc();
++      stats_->filter_delegation_success_.inc();
+       delegated_filter_ =
+           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
+       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
+@@ -184,7 +184,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+   composite_action.createFilters(wrapper);
  
-   NiceMock<Network::MockConnection> downstream_connection_;
-   MockRetryState* retry_state_{};
-   bool reject_all_hosts_ = false;
-   bool retry_425_response_ = false;
-+  bool downstream_connection_is_null_ = false;
+   if (!wrapper.errors_.empty()) {
+-    stats_.filter_delegation_error_.inc();
++    stats_->filter_delegation_error_.inc();
+     ENVOY_LOG(debug, "failed to create delegated filter {}",
+               accumulateToString<absl::Status>(
+                   wrapper.errors_, [](const auto& status) { return status.ToString(); }));
+@@ -196,7 +196,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+   // Handle filter chain mode.
+   if (is_filter_chain) {
+     if (!wrapper.filters_to_inject_.empty()) {
+-      stats_.filter_delegation_success_.inc();
++      stats_->filter_delegation_success_.inc();
+       delegated_filter_ =
+           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
+       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
+@@ -211,7 +211,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+ 
+   // Handle single filter mode.
+   if (wrapper.filter_to_inject_.has_value()) {
+-    stats_.filter_delegation_success_.inc();
++    stats_->filter_delegation_success_.inc();
+ 
+     auto createDelegatedFilterFn = Overloaded{
+         [this, action_name](Http::StreamDecoderFilterSharedPtr filter) {
+```
+
+**File**: `source/extensions/filters/http/composite/filter.h` (modified, +5/-3)
+```diff
+@@ -46,6 +46,7 @@ struct FactoryCallbacksWrapper;
+ struct FilterStats {
+   ALL_COMPOSITE_FILTER_STATS(GENERATE_COUNTER_STRUCT)
  };
++using FilterStatsSharedPtr = std::shared_ptr<FilterStats>;
  
- class RouterTestBase : public testing::Test {
+ class MatchedActionInfo : public StreamInfo::FilterState::Object {
+ public:
+@@ -108,10 +109,10 @@ class Filter : public Http::StreamFilter,
+                public AccessLog::Instance,
+                Logger::Loggable<Logger::Id::filter> {
+ public:
+-  Filter(FilterStats& stats, Event::Dispatcher& dispatcher, bool is_upstream,
++  Filter(FilterStatsSharedPtr stats, Event::Dispatcher& dispatcher, bool is_upstream,
+          Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr,
+          NamedFilterChainFactoryMapSharedPtr named_filter_chains = nullptr)
+-      : dispatcher_(dispatcher), stats_(stats), is_upstream_(is_upstream),
++      : dispatcher_(dispatcher), stats_(std::move(stats)), is_upstream_(is_upstream),
+         match_tree_(std::move(match_tree)), named_filter_chains_(std::move(named_filter_chains)) {}
+ 
+   // Http::StreamDecoderFilter
+@@ -218,7 +219,8 @@ class Filter : public Http::StreamFilter,
+   Http::StreamFilterSharedPtr delegated_filter_;
+   Http::StreamEncoderFilterCallbacks* encoder_callbacks_{};
+   Http::StreamDecoderFilterCallbacks* decoder_callbacks_{};
+-  FilterStats& stats_;
++  // Shared with the filter factory callback, which an ECDS update may destroy before this filter.
++  const FilterStatsSharedPtr stats_;
+   // Filter in the upstream filter chain.
+   bool is_upstream_{false};
+   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree_;
+```
+
+**File**: `test/extensions/filters/http/composite/BUILD` (modified, +3/-0)
+```diff
+@@ -17,6 +17,7 @@ envoy_extension_cc_test(
+     extension_names = ["envoy.filters.http.composite"],
+     rbe_pool = "linux_x64_small",
+     deps = [
++        "//source/common/common:cleanup_lib",
+         "//source/common/http:header_map_lib",
+         "//source/common/http/matching:data_impl_lib",
+         "//source/common/matcher:matcher_lib",
+@@ -56,7 +57,9 @@ envoy_extension_cc_test(
+         "//test/integration/filters:server_factory_context_filter_lib",
+         "//test/integration/filters:set_response_code_filter_config_proto_cc_proto",
+         "//test/integration/filters:set_response_code_filter_lib",
++        "//test/integration/filters:stop_in_headers_continue_in_data_filter_lib",
+         "//test/proto:helloworld_proto_cc_proto",
++        "@envoy_api//envoy/config/core/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/common/matching/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/filters/http/composite/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/filters/network/http_connection_manager/v3:pkg_cc_proto",
+```
+
+**File**: `test/extensions/filters/http/composite/composite_filter_integration_test.cc` (modified, +177/-0)
+```diff
+@@ -1,6 +1,8 @@
+ #include <optional>
+ #include <string>
++#include <tuple>
+ 
++#include "envoy/config/core/v3/extension.pb.h"
+ #include "envoy/extensions/common/matching/v3/extension_matcher.pb.validate.h"
+ #include "envoy/extensions/filters/http/composite/v3/composite.pb.h"
+ #include "envoy/extensions/filters/network/http_connection_manager/v3/http_connection_manager.pb.h"
+@@ -1337,5 +1339,180 @@ TEST_P(NamedFilterChainIntegrationTest, TestMultipleNamedFilterChains) {
+   }
+ }
+ 
++// Delivers the composite filter itself through ECDS, behind a filter that pauses decoding until the
++// request body arrives. This allows replacing the composite filter configuration while a stream
++// that was created from the previous configuration is paused before the composite filter runs.
++class CompositeFilterEcdsIntegrationTest
++    : public testing::TestWithParam<Network::Address::IpVersion>,
++      public HttpIntegrationTest {
++public:
++  CompositeFilterEcdsIntegrationTest() : HttpIntegrationTest(Http::CodecType::HTTP1, GetParam()) {}
++
++  void TearDown() override { cleanUpXdsConnection(); }
++
++  void createUpstreams() override {
++    HttpIntegrationTest::createUpstreams();
++    // The ECDS upstream.
++    addFakeUpstream(Http::CodecType::HTTP2);
++  }
++
++  void initialize() override {
++    // The initial configuration delegates to a filter that is itself discovered dynamically, whose
++    // configuration provider must be destroyed on the main thread.
++    TestEnvironment::writeStringToFileForTest("set_response_code.yaml", R"EOF(
++resources:
++  - "@type": type.googleapis.com/envoy.config.core.v3.TypedExtensionConfig
++    name: set-response-code
++    typed_config:
++      "@type": type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
++      code: 403)EOF",
++                                              false);
++    const auto initial_config = compositeConfig(TestEnvironment::substitute(R"EOF(
++                    dynamic_config:
++                      name: set-response-code
++                      config_discovery:
++                        config_source:
++                          path_config_source:
++                            path: "{{ test_tmpdir }}/set_response_code.yaml"
++                        type_urls:
++                        - type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
++)EOF"));
++
++    config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
++      auto* ecds_cluster = bootstrap.mutable_static_resources()->add_clusters();
++      ecds_cluster->MergeFrom(bootstrap.static_resources().clusters()[0]);
++      ecds_cluster->set_name("ecds_cluster");
++      ecds_cluster->mutable_load_assignment()->set_cluster_name("ecds_cluster");
++      ConfigHelper::setHttp2(*ecds_cluster);
++    });
++    config_helper_.addConfigModifier([initial_config](ConfigHelper::HttpConnectionManager& hcm) {
++      auto* filter = hcm.add_http_filters();
++      filter->set_name("composite");
++      auto* discovery = filter->mutable_config_discovery();
++      discovery->add_type_urls(
++          "type.googleapis.com/envoy.extensions.filters.http.composite.v3.Composite");
++      // Serve the initial configuration as the default configuration, so that the listener
++      // does not have to wait for ECDS.
++      std::ignore = discovery->mutable_default_config()->PackFrom(initial_config);
++      discovery->set_apply_default_config_without_warming(true);
++      auto* config_source = discovery->mutable_config_source();
++      config_source->set_resource_api_version(envoy::config::core::v3::ApiVersion::V3);
++      auto* api_config_source = config_source->mutable_api_config_source();
++      api_config_source->set_api_type(envoy::config::core::v3::ApiConfigSource::GRPC);
++      api_config_source->set_transport_api_version(envoy::config::core::v3::ApiVersion::V3);
++      api_config_source->add_grpc_services()->mutable_envoy_grpc()->set_cluster_name(
++          "ecds_cluster");
++      // Keep the router last.
++      const int size = hcm.http_filters_size();
++      hcm.mutable_http_filters()->SwapElements(size - 2, size - 1);
++    });
++    // This is applied right away, ahead of the config modifiers, so it lands before the composite
++    // filter.
++    config_helper_.prependFilter(R"EOF(
++      name: stop-in-headers-continue-in-body-filter
++      typed_config:
++        "@type": type.googleapis.com/test.integration.filters.StopInHeadersContinueInBodyFilterConfig
++    )EOF");
++    HttpIntegrationTest::initialize();
++
++    AssertionResult result =
++        fake_upstreams_[1]->waitForHttpConnection(*dispatcher_, xds_connection_);
++    RELEASE_ASSERT(result, result.message());
++    result = xds_connection_->waitForNewStream(*dispatcher_, xds_stream_);
++    RELEASE_ASSERT(result, result.message());
++    xds_stream_->startGrpcStream();
++  }
++
++  // Returns a composite filter configuration that runs the given action for requests carrying the
++  // match header.
++  static envoy::extensions
+```
+
+**File**: `test/extensions/filters/http/composite/filter_test.cc` (modified, +179/-3)
+```diff
+@@ -4,6 +4,7 @@
+ #include "envoy/registry/registry.h"
+ #include "envoy/server/filter_config.h"
+ 
++#include "source/common/common/cleanup.h"
+ #include "source/common/http/matching/data_impl.h"
+ #include "source/common/matcher/matcher.h"
+ #include "source/extensions/filters/http/common/factory_base.h"
+@@ -103,7 +104,8 @@ class CompositeFilterTest : public ::testing::Test {
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks_;
+   Stats::MockCounter error_counter_;
+   Stats::MockCounter success_counter_;
+-  FilterStats stats_{error_counter_, success_counter_};
++  FilterStatsSharedPtr stats_{
++      std::make_shared<FilterStats>(FilterStats{error_counter_, success_counter_})};
+   Filter filter_;
+ 
+   Http::TestRequestHeaderMapImpl default_request_headers_{
+@@ -1761,7 +1763,7 @@ TEST(ConfigTest, CompileNamedFilterChainsFailsOnFactoryError) {
+ TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispatcher) {
+   Stats::MockCounter error_counter;
+   Stats::MockCounter success_counter;
+-  FilterStats stats{error_counter, success_counter};
++  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
+   testing::NiceMock<Event::MockDispatcher> dispatcher;
+   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
+@@ -1792,7 +1794,7 @@ TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispa
+ TEST(FilterCallbacksWrapperTest, ChainModeAcceptsMultipleFilters) {
+   Stats::MockCounter error_counter;
+   Stats::MockCounter success_counter;
+-  FilterStats stats{error_counter, success_counter};
++  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
+   testing::NiceMock<Event::MockDispatcher> dispatcher;
+   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
+@@ -2222,6 +2224,180 @@ TEST(CompositePerRouteConfigTest, ReleasedOnMainThreadIsDestroyedInPlace) {
+   config.reset();
+ }
+ 
++// A filter factory used to observe how a composite filter configuration uses, and releases, the
++// delegated filter factories it owns. Every callback it creates adds `filter_count` (default 1)
++// pass-through filters, and `live_callbacks_` counts the callbacks that are still alive.
++class TrackingFilterFactory : public Server::Configuration::NamedHttpFilterConfigFactory {
++public:
++  std::string name() const override { return "envoy.filters.http.test.tracking"; }
++  ProtobufTypes::MessagePtr createEmptyConfigProto() override {
++    return std::make_unique<Protobuf::Struct>();
++  }
++  bool isUnifiedFilter() override { return true; }
++  absl::StatusOr<Http::FilterFactoryCb>
++  createHttpFilterFactoryFromProto(const Protobuf::Message& config,
++                                   Server::Configuration::ServerFactoryContext&,
++                                   Server::Configuration::ExtraFactoryContext&) override {
++    const auto& fields = dynamic_cast<const Protobuf::Struct&>(config).fields();
++    const auto it = fields.find("filter_count");
++    const int filter_count = it == fields.end() ? 1 : static_cast<int>(it->second.number_value());
++    ++live_callbacks_;
++    auto cleanup = std::make_shared<Cleanup>([this]() { --live_callbacks_; });
++    return [cleanup, filter_count](Http::FilterChainFactoryCallbacks& callbacks) {
++      for (int i = 0; i < filter_count; ++i) {
++        callbacks.addStreamFilter(std::make_shared<Http::PassThroughFilter>());
++      }
++    };
++  }
++
++  int live_callbacks_{};
++};
++
++// When the composite filter is delivered through ECDS, its factory callback is owned by the
++// dynamic filter config provider only. The filter manager creates the composite filter together
++// with the rest of the stream's filter chain, but the composite filter evaluates its match tree
++// only once decodeHeaders() runs. An ECDS update can destroy the factory callback in between, for
++// instance while an earlier filter has paused the stream, so the filter must not depend on state
++// that the callback owns.
++class CompositeFilterFactoryLifetimeTest : public ::testing::Test {
++public:
++  CompositeFilterFactoryLifetimeTest() {
++    ON_CALL(filter_chain_callbacks_, dispatcher())
++        .WillByDefault(testing::ReturnRef(worker_dispatcher_));
++  }
++
++  // Creates a composite filter factory callback whose inline matcher always delegates to
++  // `filter_count` tracking filters, and which also has a named filter chain of a tracking filter.
++  Http::FilterFactoryCb createFactoryCallback(int filter_count) {
++    const std::string yaml = fmt::format(R"EOF(
++      named_filter_chains:
++        tracking-chain:
++          typed_config:
++          - name: envoy.filters.http.test.tracking
++            typed_config:
++              "@type": type.googleapis.com/google.protobuf.Struct
++      matcher:
++        on_no_match:
 ```
 
 ---
 
-### Incident Patch 2: `8edf1e54` (2026-11-02)
-**Commit Message**: build(deps): bump sphinxcontrib-googleanalytics from 0.5 to 0.6 in /docs/tools/python (#48710)
+### Incident Patch 2: `035297c4` (2026-11-05)
+**Commit Message**: quic: Fix `envoy.restart_features.defer_worker_routing_init` in validate mode (#48982)
 
-Bumps
-[sphinxcontrib-googleanalytics](https://github.com/sphinx-contrib/googleanalytics)
-from 0.5 to 0.6.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/sphinx-contrib/googleanalytics/releases">sphinxcontrib-googleanalytics's
-releases</a>.</em></p>
-<blockquote>
-<h2>v0.6</h2>
-<ul>
-<li>Stop using the deprecated pkg_resources module. (Dmitry Shachnev, <a
-href="https://redirect.github.com/sphinx-contrib/googleanalytics/issues/22">#22</a>)</li>
-<li>Fix lint errors reported by newer ruff versions.</li>
-</ul>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/sphinx-contrib/googleanalytics/commit/a6490e61da9b455aa085883da5e5bb98f939f0e9"><code>a6490e6</code></a>
-Release 0.6</li>
-<li><a
-href="https://github.com/sphinx-contrib/googleanalytics/commit/a0bc979aa6ec33e63780c3b105463ce6ce98225a"><code>a0bc979</code></a>
-Fix lint errors reported by newer ruff</li>
-<li><a
-href="https://github.com/sphinx-contrib/googleanalytics/commit/4ae0adf4e9b8a0fd0f97dc90ffdf2e7e49c4c13e"><code>4ae0adf</code></a>
-Merge pull re
-
-**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +2/-2)
-```diff
-@@ -6273,8 +6273,8 @@
-             "https://files.pythonhosted.org/packages/f6/d2/5beee64d3e4e747f316bae86b55943f51e82bb86ecd325883ef65741e7da/sphinxcontrib_devhelp-2.0.0.tar.gz": "sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad"
-           },
-           "sphinxcontrib-googleanalytics": {
--            "https://files.pythonhosted.org/packages/6b/c7/e68a33ba7b8a4a697c8ad278a37d7bc8521c4175b0f9248fec80ae6fed4f/sphinxcontrib_googleanalytics-0.5-py3-none-any.whl": "sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a",
--            "https://files.pythonhosted.org/packages/b5/78/ad9a210c24499ccfd97f0eccc902576b587af82ae2dc27021e0662929940/sphinxcontrib_googleanalytics-0.5.tar.gz": "sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561"
-+            "https://files.pythonhosted.org/packages/84/24/bdd9ae42b7017fcea870fe24ee1815793289219644010a015253b9b21ce6/sphinxcontrib_googleanalytics-0.6.tar.gz": "sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7",
-+            "https://files.pythonhosted.org/packages/ca/4a/516e8cfabfe1760ac1ea5e310779e2a0986174c2f7ba95499f9d5bf46e1c/sphinxcontrib_googleanalytics-0.6-py3-none-any.whl": "sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4"
-           },
-           "sphinxcontrib-htmlhelp": {
-             "https://files.pythonhosted.org/packages/0a/7b/18a8c0bcec9182c05a0b3ec2a776bba4ead82750a55ff798e8d406dae604/sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl": "sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8",
-```
-
-**File**: `docs/MODULE.bazel.lock` (modified, +2/-2)
-```diff
-@@ -6271,8 +6271,8 @@
-             "https://files.pythonhosted.org/packages/f6/d2/5beee64d3e4e747f316bae86b55943f51e82bb86ecd325883ef65741e7da/sphinxcontrib_devhelp-2.0.0.tar.gz": "sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad"
-           },
-           "sphinxcontrib-googleanalytics": {
--            "https://files.pythonhosted.org/packages/6b/c7/e68a33ba7b8a4a697c8ad278a37d7bc8521c4175b0f9248fec80ae6fed4f/sphinxcontrib_googleanalytics-0.5-py3-none-any.whl": "sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a",
--            "https://files.pythonhosted.org/packages/b5/78/ad9a210c24499ccfd97f0eccc902576b587af82ae2dc27021e0662929940/sphinxcontrib_googleanalytics-0.5.tar.gz": "sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561"
-+            "https://files.pythonhosted.org/packages/84/24/bdd9ae42b7017fcea870fe24ee1815793289219644010a015253b9b21ce6/sphinxcontrib_googleanalytics-0.6.tar.gz": "sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7",
-+            "https://files.pythonhosted.org/packages/ca/4a/516e8cfabfe1760ac1ea5e310779e2a0986174c2f7ba95499f9d5bf46e1c/sphinxcontrib_googleanalytics-0.6-py3-none-any.whl": "sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4"
-           },
-           "sphinxcontrib-htmlhelp": {
-             "https://files.pythonhosted.org/packages/0a/7b/18a8c0bcec9182c05a0b3ec2a776bba4ead82750a55ff798e8d406dae604/sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl": "sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8",
-```
-
-**File**: `docs/tools/python/requirements.txt` (modified, +3/-3)
-```diff
-@@ -1454,9 +1454,9 @@ sphinxcontrib-devhelp==2.0.0 \
-     #   -r requirements.in
-     #   envoy-docs-sphinx-runner
-     #   sphinx
--sphinxcontrib-googleanalytics==0.5 \
--    --hash=sha256:437e529c33c441bcccceabe3ead1585115e6ba83fe90e23bd42e42521333cc0a \
--    --hash=sha256:a2ac6df9d16b9c124febf6b44e714c1fd9725e692b73ee84ec6b52b377ff5561
-+sphinxcontrib-googleanalytics==0.6 \
-+    --hash=sha256:9264640a9a0449a088cadaca6794946e60059345752221dae2c6ad986723d3d4 \
-+    --hash=sha256:dc8740342331ff523b5eda8f5d1ea6176acfa86bbd195e8d67f642db8f2b22c7
-     # via -r requirements.in
- sphinxcontrib-htmlhelp==2.1.0 \
-     --hash=sha256:166759820b47002d22914d64a075ce08f4c46818e17cfc9470a9786b759b19f8 \
-```
-
----
-
-### Incident Patch 3: `a42f23cd` (2026-11-02)
-**Commit Message**: http2: deflake RstStreamOverflowOnPendingFlushTimeout (#48791)
-
-Commit Message: http2: deflake RstStreamOverflowOnPendingFlushTimeout
-
-The test set `stream_idle_timeout` to 400ms only to get a 400ms pending
-flush timer, since `stream_flush_timeout` defaults to it. The idle timer
-also covers the pre-fill stream, so that stream's upstream response had
-to start within 400ms of the request. On a slow runner the idle timeout
-fired first and left its local reply's two frames queued. The test then
-timed out waiting for 998 queued frames with "current value 2".
-
-This sets `stream_flush_timeout` to 400ms instead and leaves the idle
-timeout at its default. The flush timeout, RST_STREAM and overflow path
-the test is about doesn't change.
-
+Commit Message: quic: Fix
+`envoy.restart_features.defer_worker_routing_init` in config validation
+mode
 Additional Description:
-It failed on 9 changes between 10-05 and 10-22 under tsan, always on
-oghttp2 with "current value 2". #45189 reported the same symptom back in
-May. Delaying the autonomous upstream's response by 500ms reproduces it
-on both codecs, so the oghttp2 skew in CI is just that codec being
-slower.
 
-AI Disclaimer: code change created with AI assistance, fully reviewed by
-me prior to opening.
+`envoy.restart_features.defer_worker_routing_init` moves creation and
+application of quic worker routing sockopt to
+`ActiveQuicListenerFactory::initializeWorkerRouting`, which also runs in
+`--mode validate`, where listeners have no sockets. Debug builds assert,
+opt builds dereference a null socket at concurrency > 1. Return before
+touching sockets in validation mode.
 
-Risk Level: Low (test only)
-Testing:
-- 500ms delayed-
+Risk Level: Low
+Testing: Added unit test
+Docs Changes: N/A
+Release Notes: N/A
+Platform Specific Features: N/A
+Fixes commit #45504
 
-**File**: `test/integration/http2_flood_integration_test.cc` (modified, +4/-3)
+Signed-off-by: Filip Cacky <[REDACTED_EMAIL]>
+
+**File**: `source/common/quic/active_quic_listener.cc` (modified, +5/-0)
 ```diff
-@@ -650,12 +650,13 @@ TEST_P(Http2FloodMitigationTest, RST_STREAM) {
+@@ -413,6 +413,11 @@ absl::Status ActiveQuicListenerFactory::initializeWorkerRouting(
  
- // Verify detection of flood by the RST_STREAM frame sent on pending flush timeout
- TEST_P(Http2FloodMitigationTest, RstStreamOverflowOnPendingFlushTimeout) {
-+  // Shorten only the pending flush timer. A short stream_idle_timeout would also apply to the
-+  // pre-fill stream and fire if its upstream response is slow to start.
-   config_helper_.addConfigModifier(
-       [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
-              hcm) {
--        hcm.mutable_stream_idle_timeout()->set_seconds(0);
--        constexpr uint64_t IdleTimeoutMs = 400;
--        hcm.mutable_stream_idle_timeout()->set_nanos(IdleTimeoutMs * 1000 * 1000);
-+        constexpr uint64_t FlushTimeoutMs = 400;
-+        hcm.mutable_stream_flush_timeout()->set_nanos(FlushTimeoutMs * 1000 * 1000);
-       });
+   RETURN_IF_NOT_OK(initializeCidGeneratorAndWorkerRouting());
  
-   // Pending flush timer is started when upstream response has completed but there is no window to
++  // Server validation creates no sockets.
++  if (context_.serverFactoryContext().options().mode() == Server::Mode::Validate) {
++    return absl::OkStatus();
++  }
++
+   for (const auto& factory : socket_factories) {
+     for (uint32_t i = 0; i < concurrency_; i++) {
+       auto socket = factory->getListenSocket(i);
+```
+
+**File**: `test/common/quic/active_quic_listener_test.cc` (modified, +12/-0)
+```diff
+@@ -948,6 +948,18 @@ TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, PostsSocketOptionsF
+                           sockets.back()->connectionInfoProvider().localAddress()->asString())));
+ }
+ 
++TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, ValidateModeSkipsSockets) {
++  ON_CALL(listener_context_.server_factory_context_.options_, mode())
++      .WillByDefault(Return(Server::Mode::Validate));
++
++  const auto mock_option = std::make_shared<StrictMock<Network::MockSocketOption>>();
++  makeCidGeneratorFactory(mock_option);
++  std::ignore = makeListenSocketFactory({});
++
++  EXPECT_OK(factory_->initializeWorkerRouting(socket_factories_));
++  EXPECT_EQ(ActiveQuicListenerFactoryPeer::cidGeneratorFactory(*factory_), cid_generator_factory_);
++}
++
+ TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, InitInCtorWhenFlagOff) {
+   TestScopedRuntime scoped_runtime;
+   scoped_runtime.mergeValues({{"envoy.restart_features.defer_worker_routing_init", "false"}});
+```
+
+---
+
+### Incident Patch 3: `1dc66470` (2026-11-04)
+**Commit Message**: [quic] Reduce false ENVOY_BUG reports (#48785)
+
+Commit Message: [quic] Reduce false ENVOY_BUG reports
+Additional Description: Rarely but significantly, we get ENVOY_BUG in
+logs and metrics like
+```
+encodeData is called on write-closed stream. QUIC stream state: local_end_stream_ false, rst_received false, rst_sent true, fin_received true, fin_sent false, fin_buffered false, fin_outstanding false, stream_error QUIC_STREAM_CONNECTION_ERROR, connection_error QUIC_PACKET_WRITE_ERROR, connection connected: false.
+```
+It appears this is not actually a bug, just a race that is ~fine to play
+out this way.
+Risk Level: Negligible, only changes a path that was previously
+ENVOY_BUG, to no longer report.
+Testing: Covered.
+Docs Changes: n/a
+Release Notes: n/a
+Platform Specific Features: n/a
+
+---------
+
+Signed-off-by: Raven Black <[REDACTED_EMAIL]>
+
+**File**: `source/common/quic/envoy_quic_stream.cc` (modified, +7/-0)
+```diff
+@@ -17,6 +17,13 @@ void EnvoyQuicStream::encodeData(Buffer::Instance& data, bool end_stream) {
+     return;
+   }
+   if (quic_stream_.write_side_closed()) {
++    if (quic_stream_.rst_sent() || quic_stream_.rst_received() ||
++        !quic_session_.connection()->connected()) {
++      // A callback can already be in flight when a reset or connection close tears down
++      // the stream. Drop the data in that case; it can no longer be delivered to the peer.
++      data.drain(data.length());
++      return;
++    }
+     IS_ENVOY_BUG(fmt::format("encodeData is called on write-closed stream. {}", quicStreamState()));
+     return;
+   }
+```
+
+**File**: `test/common/quic/envoy_quic_client_stream_test.cc` (modified, +2/-2)
+```diff
+@@ -752,8 +752,8 @@ TEST_F(EnvoyQuicClientStreamTest, EncodeDataOnClosedStream) {
+   // messed up.
+   std::string body2(1024, 'a');
+   Buffer::OwnedImpl buffer2(body2);
+-  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
+-                   "encodeData is called on write-closed stream");
++  quic_stream_->encodeData(buffer2, true);
++  EXPECT_EQ(0u, buffer2.length());
+   EXPECT_EQ(0u, quic_session_.bytesToSend());
+ }
+ 
+```
+
+**File**: `test/common/quic/envoy_quic_server_stream_test.cc` (modified, +2/-2)
+```diff
+@@ -376,8 +376,8 @@ TEST_F(EnvoyQuicServerStreamTest, EncodeDataOnClosedStream) {
+   // messed up.
+   std::string response2(1024, 'a');
+   Buffer::OwnedImpl buffer2(response2);
+-  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
+-                   "encodeData is called on write-closed stream");
++  quic_stream_->encodeData(buffer2, true);
++  EXPECT_EQ(0u, buffer2.length());
+   EXPECT_EQ(0u, quic_session_.bytesToSend());
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48945** (2026-11-02): Skip //test/common/upstream:health_check_fuzz_lib on Windows (@yanavlasov)
-- **PR #48942** (2026-11-02): grpc_stats: mark robust_to_untrusted_downstream (@ggreenway)
-- **PR #48937** (2026-11-02): Exclude admin interface from threat model (@yanavlasov)
-- **PR #48936** (2026-11-02): Change sni_cluster security posture to robust (@yanavlasov)
-- **PR #48931** (2026-11-02): Enable UNREFERENCED_PARAMETER on Windows (@yanavlasov)
-- **PR #48925** (2026-11-02): Disable corpus generation on Windows (@yanavlasov)
+- **PR #49013** (2026-11-05): dynamic_modules: add a bootstrap cluster writer and run_on_all_worker (@agrawroh)
+- **PR #49004** (2026-11-04): deps: Bump `bazel-compdb` -> 0.0.0-20220906-4086479.envoy.1 (@dependency-envoy[bot])
+- **PR #49001** (closed): network/udp_proxy: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #49000** (closed): dubbo/thrift/sip: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #48998** (2026-11-04): deps: Bump `bazel-registry` -> b21ef77 (@dependency-envoy[bot])
+- **PR #48995** (2026-11-04): codeowners: add wbpcode as adaptive_concurrency owner (@wbpcode)
 
 ---
 
@@ -1381,29 +1677,27 @@ Testing:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router: fix crash in addDownstreamSetCookie when no downstream connection (#4598
+## X. composite: fix use-after-free when an ECDS update replaces the filter while a st
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4edefad7`: router: fix crash in addDownstreamSetCookie when no downstream connection (#45984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f54520db`: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/router__fixed-crash-in-adddownstreamsetcookie-when-connection-null.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Fixed a crash in ``Filter::addDownstreamSetCookie()`` when the router is invoked
-without a downstream connection (e.g. ``Http::AsyncClient``-driven paths such as
-``ext_authz`` or ratelimit side calls, mirror/shadow, and health checks) and a
-cookie hash policy is configured. Previously the function would unconditionally
-dereference ``downstreamConnection()`` to compose the per-connection seed for
-the generated cookie value. When the connection pointer was null the worker
-would crash. The function now skips the connection-derived seed and returns an
-empty cookie value in that path, preserving hash-stability for those async
-invocations.
+Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
+filter when it is configured through
+:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
+and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
+filter instances created from the previous configuration now share ownership of the filter stats,
+and the match tree and named filter chains they hold are released on the main thread, so that the
+delegated filter configurations are not destroyed on a worker thread.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1413,4 +1707,4 @@ invocations.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4edefad7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f54520db` are properly handled with clean fallback behavior.

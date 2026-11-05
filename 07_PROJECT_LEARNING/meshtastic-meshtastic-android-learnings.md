@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source**: github ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
-> **Source Version**: `1709a9ce`  
+> **Source Version**: `9ea8d718`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T18:01:38.936Z  
+> **Timestamp**: 2026-11-05T01:07:57.307Z  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T18:01:38.715Z  
+> **Harvest Timestamp**: 2026-11-05T01:07:57.300Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1901 stars
+- **Stars / Engagement**: 1911 stars
 
 ---
 
@@ -418,6 +418,7 @@ import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.plugin.module.dsl.startKoin
 import org.meshtastic.app.di.AndroidKoinApp
 import org.meshtastic.core.common.ContextServices
+import org.meshtastic.core.common.log.RoomPoolTimeoutLog
 import org.meshtastic.core.database.DatabaseManager
 import org.meshtastic.core.repository.MeshPrefs
 import org.meshtastic.core.repository.PlatformAnalytics
@@ -472,6 +473,7 @@ open class MeshUtilApplication :
 
     override fun onCreate() {
         super.onCreate()
+        RoomPoolTimeoutLog.install()
         if (BuildConfig.DEBUG) enableDebugVmPolicy()
         ContextServices.app = this
         configureFlavorApplication(BuildConfig.APPLICATION_ID)
@@ -581,9 +583,7 @@ open class MeshUtilApplication :
     }
 
     override fun onTerminate() {
-        // cancel() not cancelAndJoin(): joining under runBlocking on the main thread can deadlock.
-        cancelBackgroundInit()
-        if (!isSup
+        // cancel() not cancelAndJoin(): joining under 
 ```
 
 ### Core Architecture Module: `core/barcode/src/fdroid/kotlin/org/meshtastic/core/barcode/BarcodeAnalyzerFactory.kt`
@@ -1177,7 +1177,7 @@ class AndroidBluetoothRepository(
 
     @Suppress("TooGenericExceptionThrown", "TooGenericExceptionCaught", "SwallowedException")
     @SuppressLint("MissingPermission")
-    override suspend fun bond(device: BleDevice) {
+    override suspend fun bond(device: BleDevice, pin: String?) {
         val macAddress = device.address
         bondEvents.watch(macAddress)
         val remoteDevice =
@@ -1200,11 +1200,16 @@ class AndroidBluetoothRepository(
                     // protected broadcast, so exporting admits no other sender.
                     ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_EXPORTED)
 
+                    var pinReceiver: android.content.BroadcastReceiver? = null
                     try {
+                        // Registered before createBond() so the pairing request it triggers cannot slip past, and
+                        // inside the try so the PIN never outlives this bond attempt.
+                        pinReceiver = pin?.let { registerPairingPinReceiver(macAddress, it) }
                         val start = startOrObserveBond(remoteDevice, result)
                         awaitBondResult(remoteDevice, result, start)
                     } finally {
                         unregisterBondReceiver(receiver)
+                        pinReceiver?.let(::unregisterBondReceiver)
                     }
                     // Reaching here means the suspended bond wait completed before BOND_TIMEOUT.
                     true
@@ -1295,14 +1300,7 @@ class AndroidBluetoothRepository(
                         // Once polling observes BOND_BONDING, a later BOND_NONE is terminal. Keep this
                         // defensive for any path that observes in-flight bonding outside the start state.
                         bondingWasInFlight = true
-                        createdBondNoneGraceRemaining = Duration.ZERO
-                    }
-
-                    android.bluetooth.BluetoothDevice.BOND_NONE -> {
-                        // Invariant: if start.createdBond is false, startOrObserveBond either completed
-                        // result or observed BOND_BONDING, which is represented by bondingWasInFlight.
-                        val pollFailureDetails =
-                            "bond poll failed: bondingWasInFlight=$bonding
+                        createdBondNon
 ```
 
 
@@ -1311,11 +1309,11 @@ class AndroidBluetoothRepository(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7819** (2026-10-30): **[Bug]: While firmware can handle traces with 8 hops, APP doesn't show SNRs**
-  *Symptoms*: ### Contact Details  domusonline  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  2.8.3  ### Affected Android version  Android 16  ### Affected phone model  Samsung A34  ### Affected node model  Heltec WSL V3  ### Affected node firmware version  2.8.1  ### Steps to reproduce the bug  I've noticed that if a traceroute has 8 hops, although the packet contains the data (SNRs) the application shows the hops, but shows "? dB" for the SNRs  ### Actual behavior  I can show the screenshot on the APP:  <img width="303" height="662" alt="Image" src="https://github.com/user-attachments/assets/13666625-c958-44ab-bd22-bc76e341d021" />  and because the return path used MQTT we can see the packet in the local "Malla" system: https://malha.meshtastic.pt/packet/6414948  Because the packet will eventually disappear f
+- **Issue #7890** (2026-11-04): **[Bug]: Widget needs now too much blank space to display the same data info**
+  *Symptoms*: ### Contact Details  _No response_  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  2.8.4 (lateste github)  ### Affected Android version  Android 16  ### Affected phone model  Samsung   ### Affected node model  All  ### Affected node firmware version  2.8.2  ### Steps to reproduce the bug  about the widget, i saw the fix to 2x2, https://github.com/meshtastic/Meshtastic-Android/pull/7862 but for bigger area the widget needs more more space to display all data info.   ### Actual behavior  The widget needs a lot more space to display all data info, and add a lot of blank space at bottom  <img width="959" height="532" alt="Image" src="https://github.com/user-attachments/assets/29b38237-88ba-4874-b9ce-e6f67481da40" />  <img width="959" height="797" alt="Image" src="https://github.com/user-attachments/ass
 
-- **Issue #7778** (2026-10-27): **[Bug]: Weather radar is drawn in 1 km squares when zoomed in**
-  *Symptoms*: ### Steps to reproduce the bug  1. Open the map, turn on the Weather Radar overlay somewhere in the lower 48 with rain on it. 2. Zoom in past about zoom 8.  ### Actual behavior  Rain is drawn as a grid of squares about 1 km across, with stepped edges.  ### Expected behavior  Showers read as rounded shapes with clean edges, keeping NOAA's color scale.  ### Additional information  The radar's data is a grid of roughly 1 km cells (0.01° of longitude). The overlay asks NCEP's WMS for every tile at 256 by 256, and once a tile pixel is finer than a cell the server scales the cells up by copying them, so the squares come from the server: https://github.com/meshtastic/Meshtastic-Android/blob/d0a924d67cb1ab3f532a9e50bc3131e0c81538be/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/tiles/MapTileCatalogue.kt#L146-L162  The colors are a continuous scale (about a hundred shades), not bands, so contouring them the way the coverage bands were cleaned up in #7767 would change the look. What worked on iOS:  - When a tile pixel is finer than a cell, ask the server for one pixel per cell instead (cells across = tile width in Mercator meters / 1113.2; cells down uses a cell height of 1113.2 / cos(latitude)), with the bounding box padded by one cell on every side so neighboring tiles meet without a seam. - Premultiply, blur by about half a cell (Gaussian, sigma 0.5 cells), scale up to the tile with a cubic B-spline, then crop the padding off. - Draw the edge where the rain is half the
+- **Issue #7855** (2026-11-01): **[Bug]: Node Tracker widget wastes a lot of space**
+  *Symptoms*: ### Contact Details  _No response_  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  v2.8.4-open1  ### Affected Android version  Android 17  ### Affected phone model  Google Pixel 10 Pro XL  ### Affected node model  N/A  ### Affected node firmware version  N/A  ### Steps to reproduce the bug  Add a node tracker widget to the your home screen, observe its size and amount of empty space  ### Actual behavior  The widget works, it's just way too big at the minimum size for what it is showing  ### Expected behavior  I would expect either more info to be shown or the size allowed to be smaller. If you make the widget wider than 2x2, more data is shown but this data would easily fit on the 2x2 size  ### Screenshots/Screen recordings  <img width="1344" height="2992" alt="Image" src="https://github.com/user-a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1332,504 +1330,468 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b39f80ac` (2026-10-31)
-**Commit Message**: fix(admin): accept admin responses only for requests the app sent (#7847)
+### Incident Patch 1: `df139ecd` (2026-11-04)
+**Commit Message**: fix(debug): run the log search off the main thread (#7891)
 
-**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt` (modified, +10/-1)
+**File**: `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/debugging/DebugViewModel.kt` (modified, +11/-8)
 ```diff
-@@ -19,6 +19,7 @@ package org.meshtastic.core.data.manager
- import co.touchlab.kermit.Logger
- import org.koin.core.annotation.Single
- import org.meshtastic.core.repository.AdminPacketHandler
-+import org.meshtastic.core.repository.AdminRequestRegistry
- import org.meshtastic.core.repository.MeshConfigFlowManager
- import org.meshtastic.core.repository.MeshConfigHandler
- import org.meshtastic.core.repository.NodeManager
-@@ -37,12 +38,20 @@ class AdminPacketHandlerImpl(
-     private val configHandler: Lazy<MeshConfigHandler>,
-     private val configFlowManager: Lazy<MeshConfigFlowManager>,
-     private val sessionManager: SessionManager,
-+    private val adminRequestRegistry: AdminRequestRegistry,
- ) : AdminPacketHandler {
+@@ -92,8 +92,12 @@ class LogSearchManager {
+     val searchState = _searchState.asStateFlow()
  
-     override fun handleAdminMessage(packet: MeshPacket, myNodeNum: Int, session: RadioSessionContext) {
--        val payload = packet.decoded?.payload ?: return
-+        val data = packet.decoded ?: return
-+        val payload = data.payload
-         val u = AdminMessage.ADAPTER.decode(payload)
-         Logger.d { "Admin message from=${packet.from} fields=${u.summarize()}" }
-+        // The firmware forwards every decoded ADMIN_APP packet addressed to it, so a response is authoritative
-+        // only when it answers a request we sent.
-+        if (!adminRequestRegistry.consume(data.request_id)) {
-+            Logger.w { "Ignoring admin message from=${packet.from} with no outstanding request id=${data.request_id}" }
-+            return
-+        }
-         // Firmware embeds the session_passkey in every admin response. A missing (default-empty)
-         // field must not reset stored state, so only record refreshes when bytes arrived.
-         val incomingPasskey = u.session_passkey
-```
-
-**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminRequestRegistryImpl.kt` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.core.data.manager
-+
-+import kotlinx.atomicfu.atomic
-+import kotlinx.atomicfu.update
-+import org.koin.core.annotation.Single
-+import org.meshtastic.core.repository.AdminRequestRegistry
-+
-+@Single
-+class AdminRequestRegistryImpl : AdminRequestRegistry {
-+    // Oldest first. Bounded so a request the radio never answers cannot grow the set forever.
-+    private val outstanding = atomic<List<Int>>(emptyList())
-+
-+    override fun register(requestId: Int) {
-+        if (requestId == 0) return
-+        outstanding.update { ids -> (ids - requestId + requestId).takeLast(MAX_OUTSTANDING) }
-+    }
-+
-+    override fun consume(requestId: Int): Boolean {
-+        if (requestId == 0) return false
-+        var found = false
-+        outstanding.update { ids ->
-+            found = requestId in ids
-+            if (found) ids - requestId else ids
-+        }
-+        return found
-+    }
-+
-+    override fun clearAll() {
-+        outstanding.value = emptyList()
-+    }
-+
-+    private companion object {
-+        const val MAX_OUTSTANDING = 128
-+    }
-+}
-```
-
-**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/CommandSenderImpl.kt` (modified, +3/-0)
-```diff
-@@ -33,6 +33,7 @@ import org.meshtastic.core.model.Position
- import org.meshtastic.core.model.TelemetryType
- import org.meshtastic.core.model.util.TimeConstants
- import org.meshtastic.core.model.util.isWithinSizeLimit
-+import org.meshtastic.core.repository.AdminRequestRegistry
- import org.meshtastic.core.repository.AwaitedSendResult
- import org.meshtastic.core.repository.CommandSender
- import org.meshtastic.core.repository.LocalNodeUnavailableException
-@@ -77,6 +78,7 @@ class CommandSenderImpl(
-     private val tracerouteHandler: TracerouteHandler,
-     private val neighborInfoHandler: NeighborInfoHandler,
-     private val sessionManager: SessionManager,
-+    private val adminRequestRegistry: AdminRequestRegistry,
-     private val scope: ServiceScope,
- ) : CommandSender {
-     private val currentPacketId = atomic(Random(nowMillis).nextLong().absoluteValue)
-@@ -629,6 +631,7 @@ class CommandSenderImpl(
+     fun setSearchText(text: String) {
++        // An unchanged query never re-emits through the StateFlow, so clearing here would hide its matches for good.
++        if (text == _searchText.value) return
+         _searchText.value = text
+         _currentMatchIndex.value = -1
++        // The field reads its text from here; matches follow once the off-main search finishes.
++        _searchState.value = SearchState(searchText = text)
+     }
+ 
+     fun goToNextMatch() {
+@@ -118,8 +122,8 @@ class LogSearchManager {
+         setSearchText("")
+     }
+ 
+-    fun updateMatches(searchText: String, filteredLogs: List<DebugViewModel.UiMeshLog>) {
+-        val matches = findSearchMatches(searchText, filteredLogs)
++    fun applyMatches(searchText: String, matches: List<SearchMatch>) {
++        if (searchText != _searchText.value) return
+         val hasMatches = matches.isNotEmpty()
+         _searchState.value =
+             _searchState.value.copy(
+@@ -269,7 +273,6 @@ class DebugViewModel(
+ 
+     fun updateFilteredLogs(logs: List<UiMeshLog>) {
+         filterManager.updateFilteredLogs(logs)
+-        searchManager.updateMatches(searchManager.searchText.value, logs)
+     }
+ 
+     fun setRetentionDays(days: Int) {
+@@ -291,12 +294,12 @@ class DebugViewModel(
+     init {
+         Logger.d { "DebugViewModel created" }
+         safeLaunch(tag = "searchMatchUpdater") {
+-            combine(searchManager.searchText, filterManager.filteredLogs) { searchText, logs ->
+-                searchManager.findSearchMatches(searchText, logs)
+-            }
+-                .collect {
+-                    searchManager.updateMatches(searchManager.searchText.value, filterManager.filteredLogs.value)
++            // Regex over up to DEFAULT_MAX_LOGS rows per keystroke; on main it ANRs.
++            combine(searchManager.searchText, filterManager.filteredLogs, ::Pair)
++                .mapLatest { (searchText, logs) ->
++                    searchText to withContext(dispatchers.default) { searchManager.findSearchMatches(searchText, logs) }
                  }
-                 .build(),
-         )
-+            .also { adminRequestRegistry.register(it.id) }
- 
-     companion object {
-         private const val PACKET_ID_MASK = 0xffffffffL
-```
-
-**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/MeshConnectionManagerImpl.kt` (modified, +3/-0)
-```diff
-@@ -41,6 +41,7 @@ import org.meshtastic.core.model.ConnectionState
- import org.meshtastic.core.model.DeviceType
- import org.meshtastic.core.model.InterfaceId
- import org.meshtastic.core.model.TelemetryType
-+import org.meshtastic.core.repository.AdminRequestRegistry
- import org.meshtastic.core.repository.AppWidgetUpdater
- import org.meshtastic.core.repository.CommandSender
- import org.meshtastic.core.repository.DataPair
-@@ -93,6 +94,7 @@ class MeshConnectionManagerImpl(
-     private val radioConfigRepository: RadioConfigRepository,
-     private val commandSender: CommandSender,
-     private val sessionManager: SessionManager,
-+    private val adminRequestRegistry: AdminRequestRegistry,
-     private val nodeManager: NodeManager,
-     private val analytics: PlatformAnalytics,
-     private val packetRepository: PacketRepository,
-@@ -510,6 +512,7 @@ class MeshConnectionManagerImpl(
-         postHandshakeRequestsJob = null
-         packetHandler.stopPacketQueue()
-         sessionManager.clearAll() // Prevent stale per-node passkeys on reconnect.
-+        adminRequestRegistry.clearAll()
-         locationManager.stop()
-         mqttManager.stop()
-     }
-```
-
-**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImplTest.kt` (modified, +67/-1)
-```diff
-@@ -20,6 +20,7 @@ import dev.mokkery.MockMode
- import dev.mokkery.matcher.any
- import dev.mokkery.mock
- import dev.mokkery.verify
-+import dev.mokkery.verify.VerifyMode
- import okio.ByteString
- import okio.ByteString.Companion.toByteString
- import org.meshtastic.core.repository.MeshConfigFlowManager
-@@ -45,6 +46,7 @@ class AdminPacketHandlerImplTest {
-     private val configHandler = mock<MeshConfigHandler>(MockMode.autofill)
-     private val configFlowManager = mock<MeshConfigFlowManager>(MockMode.autofill)
-     private val sessionManager = mock<SessionManager>(MockMode.autofill)
-+    private val adminRequestRegistry = AdminRequestRegistryImpl()
- 
-     private lateinit var handler: AdminPacketHandlerImpl
- 
-@@ -59,10 +61,13 @@ class AdminPacketHandlerImplTest {
-                 configHandler = lazy { configHandler },
-                 configFlowManager = lazy { configFlowManager },
-                 sessionManager = sessionManager,
-+                adminRequestRegistry = adminRequestRegistry,
-             )
++                .collect { (searchText, matches) -> searchManager.applyMatches(searchText, matches) }
+         }
      }
  
--    private fun makePacket(from: Int, adminMessage: AdminMessage): MeshPacket {
-+    /** Builds a response to a request this app sent unless [requestId] names one it did not. */
-+    private fun makePacket(from: Int, adminMessage: AdminMessage, requestId: Int = SENT_REQUEST_ID): MeshPacket {
-+        if (requestId == SENT_REQUEST_ID) adminRequestRegistry.register(requestId)
-         val payload = adminMessage.encode().toByteString()
-         return MeshPacket.Builder()
-             .also { wb ->
-@@ -72,6 +77,7 @@ class AdminPacketHandlerImplTest {
-                         .also { wb ->
-                             wb.portnum = PortNum.ADMIN_APP
-                             wb.payload = payload
-+                            wb.request_id = requestId
-                         }
-                         .build()
-             }
-@@ -80,6 +86,61 @@ class AdminPacketHandlerImplTest {
+```
+
+**File**: `feature/settings/src/commonTest/kotlin/org/meshtastic/feature/settings/debugging/DebugViewModelTest.kt` (modified, +72/-14)
+```diff
+@@ -27,6 +27,7 @@ import kotlinx.coroutines.CompletableDeferred
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.ExperimentalCoroutinesApi
+ import kotlinx.coroutines.cancel
++import kotlinx.coroutines.test.StandardTestDispatcher
+ import kotlinx.coroutines.test.UnconfinedTestDispatcher
+ import kotlinx.coroutines.test.resetMain
+ import kotlinx.coroutines.test.runCurrent
+@@ -71,22 +72,23 @@ class DebugViewModelTest {
+         meshLogPrefs.setRetentionDays(7)
+         meshLogPrefs.setLoggingEnabled(true)
  
-     private fun handle(packet: MeshPacket) = handler.handleAdminMessage(packet, myNodeNum, session)
+-        viewModel =
+-            DebugViewModel(
+-                meshLogRepository = meshLogRepository,
+-                nodeRepository = nodeRepository,
+-                meshLogPrefs = meshLogPrefs,
+-                setMeshLogSettingsUseCase =
+-                SetMeshLogSettingsUseCase(
+-                    meshLogRepository,
+-                    meshLogPrefs,
+-                    FakeApplicationCoroutineScope(testDispatcher),
+-                ),
+-                alertManager = alertManager,
+-                dispatchers = dispatchers,
+-            )
++        viewModel = newViewModel(dispatchers)
+     }
  
-+    // ---------- Request correlation ----------
++    private fun newViewModel(dispatchers: CoroutineDispatchers) = DebugViewModel(
++        meshLogRepository = meshLogRepository,
++        nodeRepository = nodeRepository,
++        meshLogPrefs = meshLogPrefs,
++        setMeshLogSettingsUseCase =
++        SetMeshLogSettingsUseCase(
++            meshLogRepository,
++            meshLogPrefs,
++            FakeApplicationCoroutineScope(testDispatcher),
++        ),
++        alertManager = alertManager,
++        dispatchers = dispatchers,
++    )
 +
-+    @Test
-+    fun `config response claiming own node without an outstanding request is ignored`() {
-+        val config = Config.Builder().also { wb -> wb.security = Config.SecurityConfig.Builder().build() }.build()
-+        val adminMsg =
-+            AdminMessage.Builder()
-+                .also { wb ->
-+                    wb.get_config_response = config
-+                    wb.session_passkey = ByteString.of(9, 9, 9, 9)
-+                }
-+                .build()
-+        val packet = makePacket(myNodeNum, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
-+
-+        handle(packet)
-+
-+        verify(VerifyMode.not) { configHandler.handleDeviceConfig(any(), any()) }
-+        verify(VerifyMode.not) { sessionManager.recordSession(any(), any()) }
-+    }
-+
-+    @Test
-+    fun `channel response claiming own node without an outstanding request is ignored`() {
-+        val channel = Channel.Builder().also { wb -> wb.index = 0 }.build()
-+        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_channel_response = channel }.build()
-+        val packet = makePacket(myNodeNum, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
-+
-+        handle(packet)
-+
-+        verify(VerifyMode.not) { configHandler.handleChannel(any(), any()) }
-+    }
-+
-+    @Test
-+    fun `metadata from a remote node without an outstanding request is ignored`() {
-+        val metadata = DeviceMetadata.Builder().also { wb -> wb.firmware_version = "9.9.9" }.build()
-+        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_device_metadata_response = metadata }.build()
-+        val packet = makePacket(99999, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
-+
-+        handle(packet)
-+
-+        verify(VerifyMode.not) { nodeManager.insertMetadata(any(), any(), any()) }
-+    }
-+
-+    @Test
-+    fun `a request id answers once`() {
-+        val config = Config.Builder().also { wb -> wb.device = Config.DeviceConfig.Builder().build() }.build()
-+        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_config_response = config }.build()
-+
-+        val packet = makePacket(myNodeNum, adminMsg)
-+
-+        handle(packet)
-+        handle(packet)
-+
-+        verify(VerifyMode.exactly(1)) { configHandler.handleDeviceConfig(config, session) }
-+    }
-+
-     // ---------- Session passkey ----------
+     @AfterTest
+     fun tearDown() {
+         Dispatchers.resetMain()
+@@ -187,6 +189,62 @@ class DebugViewModelTest {
+         viewModel.searchState.value.hasMatches shouldBe false
+     }
  
++    @Test
++    fun `typing a search query runs the match on the default dispatcher`() = runTest {
++        val defaultDispatcher = StandardTestDispatcher(testScheduler)
++        val vm = newViewModel(CoroutineDispatchers(testDispatcher, testDispatcher, defaultDispatcher))
++        vm.updateFilteredLogs(listOf(DebugViewModel.UiMeshLog("1", "TypeA", "Date1", "Apple")))
++
++        vm.searchManager.setSearchText("Apple")
++
++        vm.searchState.value.searchText shouldBe "Apple"
++        vm.searchState.value.hasMatches shouldBe false
++
++        runCurrent()
++
++        vm.searchState.value.allMatches.size shouldBe 1
++        vm.viewModelScope.cancel()
++    }
++
++    @Test
++    fun `a search result for text that has since changed is dropped`() {
++        val manager = LogSearchManager()
++        manager.setSearchText("App")
++        manager.setSearchText("Apple")
++
++        manager.applyMatches("App", listOf(LogSearchManager.SearchMatch(0, 0, 2, "message")))
++
++        manager.searchState.value.searchText shouldBe "Apple"
++        manager.searchState.value.hasMatches shouldBe false
++    }
++
++    @Test
++    fun `a new query clears the previous matches until its own search finishes`() {
++        val manager = LogSearchManager()
++        manager.setSearchText("App")
++        manager.applyMatches("App", listOf(LogSearchManager.SearchMatch(0, 0, 2, "message")))
++        manager.goToNextMatch()
++
++        manager.setSearchText("Apple")
++
++        manager.searchState.value.searchText shouldBe "Apple"
++        manager.searchState.value.hasMatches shouldBe false
++        manager.searchState.value.allMatches shouldBe emptyList()
++        manager.searchState.value.currentMatchIndex shouldBe -1
++    }
++
++    @Test
++    fun `setting the same query again keeps its matches`() {
++        val manager = LogSearchManager()
++        manager.setSearchText("App")
++        manager.applyMatches("App", listOf(LogSearchManager.SearchMatch(0, 0, 2, "message")))
++
++        manager.setSearchText("App")
++
++        manager.searchState.value.hasMatches shouldBe true
++        manager.searchState.value.allMatches.size shouldBe 1
++    }
++
      @Test
-@@ -290,4 +351,9 @@ class AdminPacketHandlerImplTest {
-         verify { sessionManager.recordSession(myNodeNum, passkey) }
-         verify { configHandler.handleDeviceConfig(config, session) }
+     fun `filterManager filters logs correctly with AND and OR modes`() {
+         val logs =
+```
+
+---
+
+### Incident Patch 2: `927b3854` (2026-11-04)
+**Commit Message**: fix(widget): pick the layout by breakpoint and the line budget by the reported cell (#7912)
+
+**File**: `core/resources/src/commonMain/composeResources/values/strings.xml` (modified, +4/-4)
+```diff
+@@ -2243,10 +2243,10 @@
+     <string name="widget_node_tracker_choose">Choose a node to track</string>
+     <string name="widget_node_tracker_not_found">Node not found. Tap to choose a node.</string>
+     <string name="widget_node_tracker_title">Node Tracker</string>
+-    <string name="widget_packets_bad">Bad packets</string>
+-    <string name="widget_packets_dropped">Dropped packets</string>
+-    <string name="widget_packets_received">Packets received</string>
+-    <string name="widget_packets_sent">Packets sent</string>
++    <string name="widget_packets_bad">Bad</string>
++    <string name="widget_packets_dropped">Dropped</string>
++    <string name="widget_packets_received">Received</string>
++    <string name="widget_packets_sent">Sent</string>
+     <string name="widget_relays">Relayed</string>
+     <string name="widget_relays_canceled">Relays canceled</string>
+     <!-- WIFI -->
+```
+
+**File**: `docs/en/user/widget.md` (modified, +3/-3)
+```diff
+@@ -29,12 +29,12 @@ The **Meshtastic** widget displays the **connected node's** current local stats:
+ - **AirUtil** — the percentage of airtime this node used transmitting in the last hour
+ - **Nodes** — how many nodes are online, out of the total known
+ - **Uptime** — how long the node has been running since its last reboot
+-- **Packets sent** and **Packets received** — the node's traffic counters
++- **Sent** and **Received** — the node's packet counters
+ - **Noise floor** — the background noise level in dBm
+ - **Free memory** — memory the node has left
+ - **Relayed** — packets the node relayed for others
+-- **Bad packets** — corrupt packets received
+-- **Dropped packets** — packets the node discarded
++- **Bad** — corrupt packets received
++- **Dropped** — packets the node discarded
+ - **Relays canceled** — relays the node started and then canceled
+ - **Updated** — the time the stats last refreshed, along the foot of a three-row widget
+ 
+```
+
+**File**: `feature/widget/README.md` (modified, +3/-3)
+```diff
+@@ -63,9 +63,9 @@ The widget shows the following information when connected:
+ | Node identity | Short name chip with node colors, battery as the hero value |
+ | Channel utilization | Percentage + progress bar |
+ | Air utilization | Percentage + progress bar |
+-| Readings | Nodes online / total, uptime to the minute, packets sent, packets received, noise floor, free memory, relayed, bad packets, dropped packets, relays canceled, in that order; the last-updated time at any three-row size |
++| Readings | Nodes online / total, uptime to the minute, sent, received, noise floor, free memory, relayed, bad, dropped, relays canceled, in that order; the last-updated time at any three-row size |
+ 
+-The readings fill a grid: one column up to three cells wide, two columns from four (the width counted in font-scaled dp, so a large font keeps one column), with as many lines as the cell's real height holds once the header, identity row and bars (stacked at two cells wide) are taken out (`WidgetSizes.lines`, which scales the text rows and the lines by the font scale so a large font drops a line instead of clipping one). A cell whose lines hold every reading in one column uses one, whatever its width. Nodes online moves into the identity row from three cells wide. Whatever height is left, under a line, sits under the readings. One row shows the mark, chip, battery and channel utilization, plus nodes online when wide. The refresh button sits in the header only at two rows and two-plus cells wide, where the title leaves room for it; elsewhere tapping the widget opens the app.
++The readings fill a grid: one column up to three cells wide, two columns from four (the width counted in font-scaled dp, so a large font keeps one column), with as many lines as the cell's real height holds once the header, identity row and bars (stacked at two cells wide) are taken out (`WidgetSizes.lines`, which scales the text rows and the lines by the font scale so a large font drops a line instead of clipping one). A cell whose lines hold every reading in one column uses one, whatever its width. Nodes online moves into the identity row from three cells wide. When the readings run out before the lines do, the lines spread across the leftover height; otherwise what is left, under a line, sits under them. One row shows the mark, chip, battery and channel utilization, plus nodes online when wide. The refresh button sits in the header only at two rows and two-plus cells wide, where the title leaves room for it; elsewhere tapping the widget opens the app.
+ 
+ Both widgets share one design: a header with the theme-tinted Meshtastic mark and the widget's name (one-row sizes lead their row with the mark instead), the node chip with battery beside it, and the same stat rows and type scale (`WidgetSizes.Type`). A stale tracked node keeps its chip colors and greys its values.
+ 
+@@ -128,7 +128,7 @@ class LocalStatsWidget : GlanceAppWidget(), KoinComponent {
+ 
+ ### `WidgetSizes`
+ 
+-Both widgets compose under `SizeMode.Exact`, so `LocalSize` is the cell's real bounds: the width and height thresholds in `WidgetSizes` pick the layout (one row under 90 dp, compact under 180 dp, wide from 200 dp, two columns from 300 dp, the footnote from 260 dp), and the tall layouts count their reading lines from the height itself. Each threshold sits just under the smallest cell span it catches. On a Pixel 6a a 2x2 widget measures 179x202 dp in portrait and 394x107 dp in landscape; on the API 36 emulator's Pixel launcher 2x2 is 172x234 dp and a row is 117 dp. The picker previews cannot take `Exact`, so `previewSizeMode` is a `Responsive` set of the tiers' corners. Both providers set `targetCellWidth`/`targetCellHeight` to 2x2 and `minResizeHeight` to one row.
++Both widgets compose under `SizeMode.Responsive`: the launcher picks the breakpoint that fits the cell (three widths, 130, 200 and 320 dp, at five heights, 48, 90, 180, 260 and 350 dp, every combination, since a missing one would route a 4x3 cell to a two-row tier), and `WidgetSizes.cell` reads the cell's real bounds from the widget options as `AppWidgetManager` holds them now (Glance's own copy refreshes only on the launcher's options broadcast, which a resize does not always send) (min width by max height is the portrait cell, max width by min height the landscape one), taking the current orientation's cell when the breakpoint fits in it and the other's when it fits there, so the tall layouts count their reading lines from the height they really have. `SizeMode.Exact` would hand the real bounds over directly, but it composes only for the sizes the launcher reports, and a Pixel launcher that reported stale sizes after a resize showed the compact layout in a four-row cell. A stale option under `Responsive` costs slack, never the wrong layout, and the cell is capped at the next breakpoint in each direction, so the layout the launcher shows between a resize and the recomposition it triggers was counted for a cell of its own tier
+```
+
+**File**: `feature/widget/src/main/kotlin/org/meshtastic/feature/widget/LocalStatsLayouts.kt` (modified, +7/-3)
+```diff
+@@ -80,7 +80,7 @@ internal fun StatsSquare(state: LocalStatsWidgetUiState, wide: Boolean) {
+ 
+ /**
+  * Under a header [headerHeight] tall: identity, utilization, then as many readings as the height holds, in [columns],
+- * most glanced-at first. Height left over, under a line, sits under the readings.
++ * most glanced-at first. Height left over spreads the lines when the readings run out, and sits under them otherwise.
+  */
+ @Composable
+ internal fun StatsTall(state: LocalStatsWidgetUiState, wide: Boolean, columns: Int, extra: Boolean, headerHeight: Dp) {
+@@ -103,8 +103,12 @@ internal fun StatsTall(state: LocalStatsWidgetUiState, wide: Boolean, columns: I
+             AirUtilBar(state)
+         }
+         Spacer(GlanceModifier.height(4.dp))
+-        StatGrid(readings(state, nodesInGrid = !wide).take(lines * columns), columns, lines)
+-        Spacer(GlanceModifier.defaultWeight())
++        StatGrid(
++            readings(state, nodesInGrid = !wide).take(lines * columns),
++            columns,
++            lines,
++            GlanceModifier.defaultWeight(),
++        )
+         if (extra) Footnote(updatedText(state))
      }
-+
-+    private companion object {
-+        const val SENT_REQUEST_ID = 4242
-+        const val UNSOLICITED_REQUEST_ID = 777
-+    }
  }
 ```
 
-**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/AdminRequestRegistryImplTest.kt` (added, +66/-0)
+**File**: `feature/widget/src/main/kotlin/org/meshtastic/feature/widget/LocalStatsWidget.kt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,66 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.core.data.manager
-+
-+import kotlin.test.Test
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
-+
-+class AdminRequestRegistryImplTest {
-+
-+    private val registry = AdminRequestRegistryImpl()
-+
-+    @Test
-+    fun `a registered id is consumed once`() {
-+        registry.register(42)
-+
-+        assertTrue(registry.consume(42))
-+        assertFalse(registry.consume(42))
-+    }
-+
-+    @Test
-+    fun `an unknown id is not consumed`() {
-+        assertFalse(registry.consume(7))
-+    }
-+
-+    @Test
-+    fun `id zero is never outstanding`() {
-+        registry.register(0)
-+
-+        assertFalse(registry.consume(0))
-+    }
-+
-+    @Test
-+    fun `clearAll forgets every outstanding id`() {
-+        registry.register(1)
-+        registry.register(2)
-+
-+        registry.clearAll()
-+
-+        assertFalse(registry.consume(1))
-+        assertFalse(registry.consume(2))
-+    }
-+
-+    @Test
-+    fun `the oldest id is dropped past the bound`() {
-+        (1..129).forEach(registry::register)
-+
-+        assertFalse(registry.consume(1))
-+        assertTrue(registry.consume(2))
-+        assertTrue(registry.consume(129))
-+    }
-+}
+@@ -154,7 +154,7 @@ class LocalStatsWidget :
+                                     StatsTall(
+                                         state,
+                                         wide,
+-                                        columns = WidgetSizes.columns(size),
++                                        columns = WidgetSizes.columns(),
+                                         extra = WidgetSizes.isExtraTall(size),
+                                         headerHeight =
+                                         if (refresh) {
 ```
 
-**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/CommandSenderImplTest.kt` (modified, +29/-0)
+**File**: `feature/widget/src/main/kotlin/org/meshtastic/feature/widget/NodeTrackerLayouts.kt` (modified, +4/-4)
 ```diff
-@@ -73,6 +73,7 @@ class CommandSenderImplTest {
-     private val tracerouteHandler = mock<TracerouteHandler>(MockMode.autofill)
-     private val neighborInfoHandler = mock<NeighborInfoHandler>(MockMode.autofill)
-     private val sessionManager = mock<SessionManager>(MockMode.autofill)
-+    private val adminRequestRegistry = AdminRequestRegistryImpl()
- 
-     private lateinit var commandSender: CommandSenderImpl
- 
-@@ -92,6 +93,7 @@ class CommandSenderImplTest {
-                 tracerouteHandler = tracerouteHandler,
-                 neighborInfoHandler = neighborInfoHandler,
-                 sessionManager = sessionManager,
-+                adminRequestRegistry = adminRequestRegistry,
-                 scope = TestScope().asServiceScope(),
-             )
+@@ -48,7 +48,7 @@ internal fun TrackerContent(state: NodeTrackerWidgetState.Tracking) {
+         when {
+             WidgetSizes.isOneRow(size) -> TrackerRow(state, wide)
+             WidgetSizes.isCompact(size) -> TrackerSquare(state, wide)
+-            else -> TrackerTall(state, columns = WidgetSizes.columns(size))
++            else -> TrackerTall(state, columns = WidgetSizes.columns())
+         }
      }
-@@ -141,6 +143,7 @@ class CommandSenderImplTest {
-                 tracerouteHandler = tracerouteHandler,
-                 neighborInfoHandler = neighborInfoHandler,
-                 sessionManager = sessionManager,
-+                adminRequestRegistry = adminRequestRegistry,
-                 scope = TestScope().asServiceScope(),
-             )
-         assertEquals(0, commandSender.resolveNodeNum(NodeAddress.Local))
-@@ -242,6 +245,31 @@ class CommandSenderImplTest {
-         assertNotEquals(0, packets.single().id)
-     }
+ }
+@@ -85,8 +85,8 @@ private fun TrackerSquare(state: NodeTrackerWidgetState.Tracking, wide: Boolean)
+ }
  
-+    @Test
-+    fun sendAdmin_registersTheSentPacketIdAsOutstanding() = runTest {
-+        val packets = mutableListOf<MeshPacket>()
-+        everySuspend { packetHandler.sendToRadio(capture(packets)) } returns true
-+
-+        commandSender.sendAdmin(DEST_NODE, requestId = 0, wantResponse = true) {
-+            AdminMessage.Builder().also { wb -> wb.get_owner_request = true }.build()
-+        }
-+
-+        assertTrue(adminRequestRegistry.consume(packets.single().id))
-+        assertFalse(adminRequestRegistry.consume(packets.single().id))
-+    }
-+
-+    @Test
-+    fun sendAdminImmediate_registersTheSentPacketIdAsOutstanding() {
-+        val packets = mutableListOf<ToRadio>()
-+        every { packetHandler.sendToRadio(capture(packets)) } returns Unit
-+
-+        commandSender.sendAdminImmediate(DEST_NODE) {
-+            AdminMessage.Builder().also { wb -> wb.get_owner_request = true }.build()
-+        }
-+
-+        assertTrue(adminRequestRegistry.consume(requireNotNull(packets.single().packet).id))
-+    }
-+
-     @Test
-     fun sendAdminSurfacesQueueRejection() = runTest {
-         everySuspend { packetHandler.sendToRadio(any<MeshPacket>()) } returns false
-@@ -642,6 +670,7 @@ class CommandSenderImplTest {
-                 tracerouteHandler = tracerouteHandler,
-                 neighborInfoHandler = neighborInfoHandler,
-                 sessionManager = sessionManager,
-+                adminRequestRegistry = adminRequestRegistry,
-                 scope = testScope.asServiceScope(),
-             )
-         testScope.testScheduler.advanceUntilIdle()
+ /**
+- * Identity, the name, then the readings that fit in [columns]. Height left over sits under the readings: under a line
+- * when the node has readings to fill it, more when it has few.
++ * Identity, the name, then the readings that fit in [columns]. Height left over spreads the lines when the node has
++ * fewer readings than lines, and sits under them otherwise.
+  */
+ @Composable
+ private fun TrackerTall(state: NodeTrackerWidgetState.Tracking, columns: Int) {
+@@ -103,7 +103,7 @@ private fun TrackerTall(state: NodeTrackerWidgetState.Tracking, columns: Int) {
+         Spacer(GlanceModifier.height(2.dp))
+         LongName(state, maxLines = if (linesUsed < lines) 2 else 1)
+         Spacer(GlanceModifier.height(4.dp))
+-        StatGrid(readings, columns, lines, state.isStale)
++        StatGrid(readings, columns, lines, GlanceModifier.defaultWeight(), state.isStale)
+     }
+ }
+ 
 ```
 
-**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/MeshConnectionManagerImplTest.kt` (modified, +5/-0)
+**File**: `feature/widget/src/main/kotlin/org/meshtastic/feature/widget/WidgetComponents.kt` (modified, +17/-5)
 ```diff
-@@ -43,6 +43,7 @@ import org.meshtastic.core.model.ConnectionState
- import org.meshtastic.core.model.DataPacket
- import org.meshtastic.core.model.Node
- import org.meshtastic.core.model.TelemetryType
-+import org.meshtastic.core.repository.AdminRequestRegistry
- import org.meshtastic.core.repository.AppWidgetUpdater
- import org.meshtastic.core.repository.CommandSender
- import org.meshtastic.core.repository.ConnectionStateHolder
-@@ -93,6 +94,7 @@ class MeshConnectionManagerImplTest {
-     private lateinit var radioConfigRepository: RadioConfigRepository
-     private lateinit var commandSender: CommandSender
-     private lateinit var sessionManager: SessionManager
-+    private lateinit var adminRequestRegistry: AdminRequestRegistry
-     private lateinit var nodeManager: NodeManager
-     private lateinit var analytics: PlatformAnalytics
-     private lateinit var packetRepository: PacketRepository
-@@ -125,6 +127,7 @@ class MeshConnectionManagerImplTest {
-         radioConfigRepository = mock(MockMode.autofill)
-         commandSender = mock(MockMode.autofill)
-         sessionManager = mock(MockMode.autofill)
-+        adminRequestRegistry = mock(MockMode.autofill)
-         nodeManager = mock(MockMode.autofill)
-         analytics = mock(MockMode.autofill)
-         packetRepository = mock(MockMode.autofill)
-@@ -170,6 +173,7 @@ class MeshConnectionManagerImplTest {
-         radioConfigRepository,
-         commandSender,
-         sessionManager,
-+        adminRequestRegistry,
-         nodeManager,
-         analytics,
-         packetRepository,
-@@ -282,6 +286,7 @@ class MeshConnectionManagerImplTest {
-         verify { packetHandler.stopPacketQueue() }
-         verify { locationManager.stop() }
-         verify { mqttManager.stop() }
-+        verify { adminRequestRegistry.clearAll() }
-         assertEquals(true, lockdownCoordinator.disconnectCalled)
-     }
+@@ -161,14 +161,26 @@ internal fun StatRow(
+ /**
+  * [readings] as [StatRow]s, up to [columns] to a line, in reading order across then down. A short last line keeps its
+  * cells the width of the others. Readings that all fit in one column of [lines] take one, so a tall cell fills with
+- * lines rather than with gaps between sections.
++ * lines rather than with gaps between sections, and when they still leave lines over, the lines spread across the
++ * height [modifier] gives the grid rather than leaving a block under them.
+  */
+ @Composable
+-internal fun StatGrid(readings: List<Reading>, columns: Int, lines: Int, isStale: Boolean = false) {
++internal fun StatGrid(
++    readings: List<Reading>,
++    columns: Int,
++    lines: Int,
++    modifier: GlanceModifier = GlanceModifier,
++    isStale: Boolean = false,
++) {
+     val perLine = if (readings.size <= lines) 1 else columns
+-    Column(modifier = GlanceModifier.fillMaxWidth()) {
+-        readings.chunked(perLine).forEach { line ->
+-            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
++    val chunks = readings.chunked(perLine)
++    val spread = chunks.size < lines
++    Column(modifier = modifier.fillMaxWidth()) {
++        chunks.forEach { line ->
++            Row(
++                modifier = if (spread) GlanceModifier.fillMaxWidth().defaultWeight() else GlanceModifier.fillMaxWidth(),
++                verticalAlignment = Alignment.CenterVertically,
++            ) {
+                 repeat(perLine) { index ->
+                     if (index > 0) Spacer(GlanceModifier.width(GRID_GUTTER))
+                     val reading = line.getOrNull(index)
+```
+
+**File**: `feature/widget/src/main/kotlin/org/meshtastic/feature/widget/WidgetSizes.kt` (modified, +100/-18)
+```diff
+@@ -16,32 +16,46 @@
+  */
+ package org.meshtastic.feature.widget
  
++import android.appwidget.AppWidgetManager
++import android.content.Context
++import android.content.res.Configuration
++import android.os.Bundle
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.ReadOnlyComposable
+ import androidx.compose.ui.unit.Dp
+ import androidx.compose.ui.unit.DpSize
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+ import androidx.glance.LocalContext
++import androidx.glance.LocalGlanceId
+ import androidx.glance.LocalSize
++import androidx.glance.appwidget.GlanceAppWidgetManager
++import androidx.glance.appwidget.LocalAppWidgetOptions
+ import androidx.glance.appwidget.PreviewSizeMode
+ import androidx.glance.appwidget.SizeMode
+ 
+ /**
+- * How both widgets read their size. They compose under [SizeMode.Exact], so `LocalSize` is the cell's real bounds and
+- * each layout counts the reading lines its height holds instead of fitting a breakpoint and leaving the difference
+- * blank. The thresholds sit just under the smallest cell span they catch: one row is 51dp tall in landscape and about
+- * 95dp in portrait, two cells 130dp wide in portrait, four cells 340dp on a 4-column launcher. The named sizes are the
+- * tiers' corners, for tests and the picker previews, which cannot take [SizeMode.Exact].
++ * How both widgets read their size. They compose under [SizeMode.Responsive], so the launcher picks the layout by the
++ * breakpoint that fits the cell, which every launcher does reliably; [cell] then reads the cell's real bounds from the
++ * widget options so the layout can fill the height it has, instead of leaving the difference between breakpoint and
++ * cell blank. [SizeMode.Exact] would hand over the real bounds directly, but composes only for the sizes the launcher
++ * reports, and a launcher that reports stale ones after a resize then shows a layout meant for another cell. The
++ * thresholds sit just under the smallest cell span they catch: one row is 51dp tall in landscape and about 95dp in
++ * portrait, two cells 130dp wide in portrait, four cells 340dp on a 4-column launcher.
+  */
+ internal object WidgetSizes {
+     private val NARROW_WIDTH = 130.dp
+     private val WIDE_WIDTH = 200.dp
+-    private val TWO_COLUMN_WIDTH = 300.dp
++    private val TWO_COLUMN_WIDTH = 320.dp
+     private val ONE_ROW_HEIGHT = 48.dp
+     private val COMPACT_HEIGHT = 90.dp
+     private val TWO_ROWS_HEIGHT = 180.dp
+     private val THREE_ROWS_HEIGHT = 260.dp
++    private val FOUR_ROWS_HEIGHT = 350.dp
++
++    // Ascending, so each breakpoint knows the next: a composition for one is only ever shown under the next.
++    private val WIDTHS = listOf(NARROW_WIDTH, WIDE_WIDTH, TWO_COLUMN_WIDTH)
++    private val HEIGHTS = listOf(ONE_ROW_HEIGHT, COMPACT_HEIGHT, TWO_ROWS_HEIGHT, THREE_ROWS_HEIGHT, FOUR_ROWS_HEIGHT)
+ 
+     val ROW = DpSize(NARROW_WIDTH, ONE_ROW_HEIGHT)
+     val WIDE_ROW = DpSize(WIDE_WIDTH, ONE_ROW_HEIGHT)
+@@ -58,7 +72,11 @@ internal object WidgetSizes {
+     private val PIXEL_2X2 = DpSize(179.dp, 202.dp)
+     private val EMULATOR_2X2 = DpSize(172.dp, 234.dp)
+ 
+-    val sizeMode: SizeMode = SizeMode.Exact
++    /** Every width at every height: a missing combination would route a cell to a tier that wastes one dimension. */
++    val sizeMode: SizeMode =
++        SizeMode.Responsive(buildSet { for (width in WIDTHS) for (height in HEIGHTS) add(DpSize(width, height)) })
++
++    /** The picker preview has no cell to read, so it gets the breakpoints plus two measured 2x2 cells. */
+     val previewSizeMode: PreviewSizeMode =
+         SizeMode.Responsive(setOf(ROW, SQUARE, TALL, PIXEL_2X2, EMULATOR_2X2, BIG, TWO_COLUMNS))
+ 
+@@ -72,30 +90,76 @@ internal object WidgetSizes {
+     fun isExtraTall(size: DpSize): Boolean = size.height >= THREE_ROWS_HEIGHT
+ 
+     /**
+-     * How many reading columns a width holds: two from four cells up, where a label and value pair fits in each. The
+-     * width counts in font-scaled dp, since the labels grow with the font and a column too narrow for them clips.
++     * The real bounds this composition is shown at: the cell the launcher reports for the current orientation when the
++     * current breakpoint fits in it (the launcher only shows a breakpoint where it fits), else the other orientation's
++     * when it fits there, else the breakpoint itself, so a stale or missing option costs slack, never a layout meant
++     * for another cell. Capped at the next breakpoint in each direction, from which the launcher shows that one
++     * instead: between a resize and the recomposition it triggers, the launcher shows the old composition's layout for
++     * the new size, and the cap keeps that layout counted for a cell of its own tier.
+      */
+     @Composable
+     @ReadOnlyComposable
+-    fun columns(size: DpSize): Int {
+-        val fontScale = LocalContext.current.resources.configuration.fontScale
+-        return if (size.width / fontScale >= TWO_COLUMN_WIDTH) 2 else 1
++    fu
 ```
 
 ---
 
-### Incident Patch 2: `3a5c892d` (2026-10-31)
-**Commit Message**: fix(usb): add remaining firmware USB IDs to device filter (#7841)
+### Incident Patch 3: `7c48c8ec` (2026-11-04)
+**Commit Message**: chore(deps): update androidx.test.uiautomator:uiautomator to v2.4.1 (#7909)
 
-**File**: `androidApp/src/main/res/xml/device_filter.xml` (modified, +9/-0)
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -102,5 +102,14 @@
-     <usb-device
-         vendor-id="9114"
-         product-id="33035" /> <!-- 0x239A / 0x810B: Seeed XIAO nRF52840 Kit -->
-+    <usb-device
-+        vendor-id="9114"
-+        product-id="179" /> <!-- 0x239A / 0x00B3: Adafruit (Pro Micro nRF52840, Meshlink) -->
-+    <usb-device
-+        vendor-id="9114"
-+        product-id="51966" /> <!-- 0x239A / 0xCAFE: Adafruit (muzi BASE) -->
-+    <usb-device
-+        vendor-id="12346"
-+        product-id="4097" /> <!-- 0x303A / 0x1001: Espressif ESP32-S3 USB-Serial/JTAG -->
-     <usb-device vendor-id="11914" /> <!-- 0x2E8A / ……: Raspberry Pi -->
- </resources>
-```
-
----
-
-### Incident Patch 3: `3ea178e5` (2026-10-30)
-**Commit Message**: fix(usb): add Seeed XIAO nRF52840 Kit (239a:810b) to device filter (#7838)
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `androidApp/src/main/res/xml/device_filter.xml` (modified, +3/-0)
-```diff
-@@ -99,5 +99,8 @@
-     <usb-device
-         vendor-id="9114"
-         product-id="17413" /> <!-- 0x239A / 0x4405: Adafruit (T-Echo) -->
-+    <usb-device
-+        vendor-id="9114"
-+        product-id="33035" /> <!-- 0x239A / 0x810B: Seeed XIAO nRF52840 Kit -->
-     <usb-device vendor-id="11914" /> <!-- 0x2E8A / ……: Raspberry Pi -->
- </resources>
+@@ -47,7 +47,7 @@ compose-screenshot = "0.0.1-alpha16"
+ # Gradle plugin (same coordinates/version). The stable 1.4.x line predates AGP 9 support.
+ benchmark = "1.6.0-alpha01"
+ profileinstaller = "1.4.1"
+-androidx-uiautomator = "2.4.0"
++androidx-uiautomator = "2.4.1"
+ 
+ # Compose Multiplatform
+ compose-multiplatform = "1.12.2"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7852** (2026-10-31): docs: update CHANGELOG.md (@jamesarich)
-- **PR #7851** (2026-10-31): docs: update CHANGELOG.md (@jamesarich)
-- **PR #7850** (2026-10-31): chore(deps): update ruby/setup-ruby action to v1.336.0 (@renovate[bot])
-- **PR #7849** (2026-10-31): chore(renovate): rebase only when conflicted (@jamesarich)
-- **PR #7848** (2026-10-31): chore(deps): update org.meshtastic:takpacket-sdk to v0.10.0 (@renovate[bot])
-- **PR #7847** (2026-10-31): fix(admin): accept admin responses only for requests the app sent (@jamesarich)
+- **PR #7916** (2026-11-05): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #7915** (2026-11-04): docs: update CHANGELOG.md (@jamesarich)
+- **PR #7914** (2026-11-04): docs: update CHANGELOG.md (@jamesarich)
+- **PR #7913** (2026-11-04): chore(deps): update sceneview to v4.66.0 (@renovate[bot])
+- **PR #7912** (2026-11-04): fix(widget): pick the layout by breakpoint and the line budget by the reported cell (@jamesarich)
+- **PR #7911** (2026-11-04): docs: update CHANGELOG.md (@jamesarich)
 
 ---
 
@@ -1849,37 +1811,45 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. admin): accept admin responses only for requests the app sent (#7847)
+## X. debug): run the log search off the main thread (#7891)
 
 **RULE**:
-When implementing operations in `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/debugging/DebugViewModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b39f80ac`: admin): accept admin responses only for requests the app sent (#7847). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df139ecd`: debug): run the log search off the main thread (#7891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/settings/src/commonMain/kotlin/org/meshtastic/feature/settings/debugging/DebugViewModel.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import org.meshtastic.core.repository.AdminRequestRegistry
-    private val adminRequestRegistry: AdminRequestRegistry,
-        val data = packet.decoded ?: return
-        val payload = data.payload
-        // The firmware forwards every decoded ADMIN_APP packet addressed to it, so a response is authoritative
-        // only when it answers a request we sent.
-        if (!adminRequestRegistry.consume(data.request_id)) {
-            Logger.w { "Ignoring admin message from=${packet.from} with no outstanding request id=${data.request_id}" }
-            return
-        }
+        // An unchanged query never re-emits through the StateFlow, so clearing here would hide its matches for good.
+        if (text == _searchText.value) return
+        // The field reads its text from here; matches follow once the off-main search finishes.
+        _searchState.value = SearchState(searchText = text)
+    fun applyMatches(searchText: String, matches: List<SearchMatch>) {
+        if (searchText != _searchText.value) return
+            // Regex over up to DEFAULT_MAX_LOGS rows per keystroke; on main it ANRs.
+            combine(searchManager.searchText, filterManager.filteredLogs, ::Pair)
+                .mapLatest { (searchText, logs) ->
+                    searchText to withContext(dispatchers.default) { searchManager.findSearchMatches(searchText, logs) }
+                .collect { (searchText, matches) -> searchManager.applyMatches(searchText, matches) }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        val payload = packet.decoded?.payload ?: return
+    fun updateMatches(searchText: String, filteredLogs: List<DebugViewModel.UiMeshLog>) {
+        val matches = findSearchMatches(searchText, filteredLogs)
+        searchManager.updateMatches(searchManager.searchText.value, logs)
+            combine(searchManager.searchText, filterManager.filteredLogs) { searchText, logs ->
+                searchManager.findSearchMatches(searchText, logs)
+            }
+                .collect {
+                    searchManager.updateMatches(searchManager.searchText.value, filterManager.filteredLogs.value)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b39f80ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df139ecd` are properly handled with clean fallback behavior.

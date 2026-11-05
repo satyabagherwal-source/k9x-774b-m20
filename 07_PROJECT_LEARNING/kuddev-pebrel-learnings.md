@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `937b7ae6`  
+> **Source Version**: `97d3bfe5`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:24:19.808Z  
+> **Timestamp**: 2026-11-05T02:55:10.187Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:24:18.328Z  
+> **Harvest Timestamp**: 2026-11-05T02:55:09.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3704 stars
+- **Stars / Engagement**: 3711 stars
 
 ---
 
@@ -1479,256 +1479,789 @@ export function register(on) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33deff48` (2026-11-02)
-**Commit Message**: Show AI task names without duplicate spinner prefixes (#863)
+### Incident Patch 1: `97d3bfe5` (2026-11-04)
+**Commit Message**: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
 
-* Show native AI task titles in terminal tabs
+Bring the published v2.4.0 release branch back to main in reviewable
+segments; this part adds the release commits up to b4552072.
 
-* Hide Braille spinner prefixes in AI task titles
-
----------
-
-Co-authored-by: Kuddev <[REDACTED_EMAIL]>
-
-**File**: `nebula_app/src/gpui_shell/terminal/view/runtime.rs` (modified, +5/-0)
+**File**: `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md` (added, +60/-0)
 ```diff
-@@ -140,6 +140,11 @@ impl TerminalView {
-         self.answers.close();
-         let program_changed = self.running_program.take().is_some();
-         let title_changed = self.ai_session.take().is_some() || program_changed;
-+        if title_changed {
-+            // A later agent must not inherit the preceding task before its
-+            // first native title arrives.
-+            self.title = "shell".to_owned();
-+        }
-         if !self.recovery.preparing() {
-             self.invalidate_ai_session_probe();
-         }
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/view/startup_tests.rs` (modified, +43/-8)
-```diff
-@@ -905,18 +905,53 @@ fn ssh_tab_name_and_hover_preserve_host_identity_across_remote_titles(cx: &mut T
- }
- 
- #[gpui::test]
--fn ai_tab_hover_shows_full_directory_and_reported_task_but_not_stale_task(cx: &mut TestAppContext) {
-+fn ai_tab_name_shows_reported_task_and_restores_directory_on_exit(cx: &mut TestAppContext) {
-     let (view, window, _) = open(cx);
-     view.update(window, |view, cx| {
-         view.process_event(Event::CwdReport("/home/test/很长的项目目录".into()), cx);
--        view.running_program = Some("codex".into());
--        view.process_event(Event::Title("修复 SSH 标签名称".into()), cx);
--        assert_eq!(view.tab_label(), "很长的项目目录");
--        let hover = view.tab_tooltip(&view.tab_label());
--        assert!(hover.contains("/home/test/很长的项目目录"));
--        assert!(hover.contains("修复 SSH 标签名称"));
-+        for program in ["codex", "claude", "pi", "opencode", "qoder"] {
-+            view.running_program = Some(program.into());
-+            assert_eq!(
-+                view.tab_label(),
-+                "很长的项目目录",
-+                "a new task must not inherit an old title"
-+            );
-+            view.process_event(Event::Title("修复 SSH 标签名称".into()), cx);
-+            assert_eq!(view.tab_label(), "修复 SSH 标签名称", "{program}");
-+            let hover = view.tab_tooltip(&view.tab_label());
-+            assert!(hover.contains("/home/test/很长的项目目录"));
-+            assert!(hover.contains("修复 SSH 标签名称"));
-+            view.process_event(Event::CommandDone { exit_code: Some(0) }, cx);
-+            assert_eq!(view.tab_label(), "很长的项目目录");
-+            assert!(!view.tab_tooltip(&view.tab_label()).contains("修复 SSH 标签名称"));
-+        }
-+    });
-+}
+@@ -0,0 +1,60 @@
++# SFTP selection and batch transfer ownership
 +
-+#[gpui::test]
-+fn ai_task_name_preserves_remote_identity_in_hover_and_shell_fallback(cx: &mut TestAppContext) {
-+    let (view, window, _) = open(cx);
-+    view.update(window, |view, cx| {
-+        view.ssh_destination = Some("root@192.0.2.10:2222".into());
-+        view.ssh_label = Some("SG-1 新加坡".into());
-+        view.cwd = "/srv/project".into();
-+        view.running_program = Some("claude".into());
-+        for title in ["", "shell", "claude", "Claude Code", "/srv/project", "root@192.0.2.10:2222"]
-+        {
-+            view.process_event(Event::Title(title.into()), cx);
-+            assert_eq!(view.tab_label(), "SG-1 新加坡", "{title}");
-+        }
-+        view.process_event(Event::Title("修复登录失败".into()), cx);
-+        assert_eq!(view.tab_label(), "修复登录失败");
-+        assert_eq!(
-+            view.tab_tooltip(&view.tab_label()),
-+            "修复登录失败\nSG-1 新加坡\nroot@192.0.2.10:2222\n/srv/project\nclaude · 修复登录失败"
-+        );
-         view.process_event(Event::CommandDone { exit_code: Some(0) }, cx);
--        assert!(!view.tab_tooltip(&view.tab_label()).contains("修复 SSH 标签名称"));
-+        assert_eq!(view.tab_label(), "SG-1 新加坡");
-+        view.running_program = Some("htop".into());
-+        view.process_event(Event::Title("ordinary application title".into()), cx);
-+        assert_eq!(view.tab_label(), "SG-1 新加坡");
-     });
- }
- 
++## Status
++
++Proposed with the SFTP sidebar interaction update.
++
++## Context
++
++The remote sidebar previously retained one selected path. Adding Ctrl/Shift
++selection also requires downloads, remote copies and native file drags to carry
++the complete selection through their existing asynchronous handoffs.
++
++## Evidence
++
++`SftpController::start_job` advances the controller generation and retires the
++previous job. Calling the single-entry transfer once per selected row would
++therefore cancel earlier entries. Native export likewise owns one download plan
++and one temporary-directory lease for the lifetime of the drag.
++
++## Decision
++
++The browser retains path-based selections, anchors and focused rows in its
++existing per-pane snapshots. Display order supplies range selection. A refresh
++retains surviving paths; changing directories clears the selection. Mouse-down
++on an already selected row defers collapsing the group until a click is confirmed.
++
++Actions capture the ordered entries and existing pane/destination/generation
++target before opening a picker or confirming conflicts. One controller job plans
++the complete download or copy batch, using the existing concurrency and entry
++limits. Native export receives the same batch. Duplicate download names reserve
++the other incoming roots before choosing a replacement name.
++
++Keyboard commands belong to the remote list's focus context. Hover actions stop
++their gestures from reaching the row's selection and double-click navigation.
++
++## Rejected alternatives
++
++- Starting a controller job per selected row cancels earlier jobs.
++- Storing row indices selects different files when a listing is replaced.
++- Changing the local tree's selection model expands this remote-only change.
++
++## Consequences
++
++No persisted format, authentication policy or worker model changes. The existing
++transfer target validation still rejects results from stale pickers and dialogs.
++Selection stays independent of the batch already being transferred.
++
++## Validation
++
++The supplied HTML was inspected in Chromium, including hover and range selection.
++Formatting and architecture checks cover the source change. Native compilation,
++application visual acceptance and regression tests were not run at the user's request.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++The browser supports selection across directories or concurrent transfer jobs.
 ```
 
-**File**: `nebula_app/src/gpui_shell/terminal/view/tab_identity.rs` (modified, +37/-14)
+**File**: `nebula_app/i18n/en-US.json` (modified, +7/-2)
 ```diff
-@@ -54,9 +54,12 @@ impl TerminalView {
-             ssh_label(self.ssh_destination.as_deref(), &crate::display::nebula_data_dir());
-     }
+@@ -1110,7 +1110,9 @@
+     "choose_files": "Choose files to upload",
+     "choose_upload_directory": "Choose a folder to upload",
+     "choose_download_directory": "Choose the download folder",
+-    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download."
++    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download.",
++    "completed": "Transfer completed",
++    "copied_items": "Copied {count} remote items"
+   },
+   "hosts": {
+     "copied": "Created host copy: {name}",
+@@ -1651,7 +1653,10 @@
+     "reading": "Reading the remote directory…",
+     "empty": "This directory is empty.",
+     "error_retry": "{error} (click Reload in the top-right to retry)",
+-    "busy_other": "Another host is transferring: {destination}"
++    "busy_other": "Another host is transferring: {destination}",
++    "items": "{count} items",
++    "selected_items": "{count} items selected",
++    "clear_selection": "Clear selection (Esc)"
+   },
+   "backup_flow": {
+     "password_notice": "Pebrel keeps this password in memory only for the current run and never writes it to disk. You will be asked again for the first backup after restarting. If you forget it, existing backups cannot be unlocked.",
+```
+
+**File**: `nebula_app/i18n/zh-CN.json` (modified, +7/-2)
+```diff
+@@ -1110,7 +1110,9 @@
+     "choose_files": "选择要上传的文件",
+     "choose_upload_directory": "选择要上传的文件夹",
+     "choose_download_directory": "选择下载位置",
+-    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。"
++    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。",
++    "completed": "传输完成",
++    "copied_items": "已复制 {count} 个远端项目"
+   },
+   "hosts": {
+     "copied": "已创建主机副本：{name}",
+@@ -1651,7 +1653,10 @@
+     "reading": "正在读取远端目录…",
+     "empty": "此目录为空。",
+     "error_retry": "{error}（点右上角重新读取）",
+-    "busy_other": "另一主机正在传输：{destination}"
++    "busy_other": "另一主机正在传输：{destination}",
++    "items": "{count} 项",
++    "selected_items": "已选 {count} 项",
++    "clear_selection": "清空选择（Esc）"
+   },
+   "backup_flow": {
+     "password_notice": "Pebrel 不把这个密码写到磁盘，只在本次运行期间留在内存里，下次启动后第一次备份时再问。忘了它，已有的备份就解不开了。",
+```
+
+**File**: `nebula_app/i18n/zh-TW.json` (modified, +7/-2)
+```diff
+@@ -615,7 +615,9 @@
+     "choose_files": "選擇要上傳的檔案",
+     "choose_upload_directory": "選擇要上傳的資料夾",
+     "choose_download_directory": "選擇下載位置",
+-    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。"
++    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。",
++    "completed": "傳輸完成",
++    "copied_items": "已複製 {count} 個遠端項目"
+   },
+   "hosts": {
+     "search": "搜尋名稱、位址、群組、標籤或備註",
+@@ -1030,7 +1032,10 @@
+     "reading": "正在讀取遠端目錄…",
+     "empty": "此目錄為空。",
+     "error_retry": "{error}（點選右上角重新讀取）",
+-    "busy_other": "另一主機正在傳輸：{destination}"
++    "busy_other": "另一主機正在傳輸：{destination}",
++    "items": "{count} 個項目",
++    "selected_items": "已選取 {count} 個項目",
++    "clear_selection": "清除選取（Esc）"
+   },
+   "terminal.ssh_disconnected": "連線已中斷，按 R 重新連線。",
+   "terminal.ssh_reconnect": "重新連線 (R)",
+```
+
+**File**: `nebula_app/src/gpui_shell/widgets/switch.rs` (modified, +14/-7)
+```diff
+@@ -22,12 +22,18 @@ pub struct NebulaSwitch {
+     key: SharedString,
+     checked: bool,
+     disabled: bool,
++    small: bool,
+     on_click: Option<Rc<dyn Fn(&bool, &mut Window, &mut App)>>,
+ }
  
--    /// A remote directory or OSC title must never replace a saved host name.
--    /// Local tabs continue to use their working directory, not program titles.
-+    /// Native AI task titles name the focused pane; ordinary shells retain their
-+    /// directory or saved SSH host name. Workspace manual names take precedence.
-     pub fn tab_label(&self) -> String {
-+        if let Some(task) = self.reported_ai_task() {
-+            return task.to_owned();
-+        }
-         if let Some(destination) = &self.ssh_destination {
-             return self.ssh_label.as_ref().unwrap_or(destination).clone();
-         }
-@@ -69,6 +72,35 @@ impl TerminalView {
-             .unwrap_or_else(|| ".".to_owned())
-     }
- 
-+    fn reported_ai_task(&self) -> Option<&str> {
-+        if self.exited.is_some()
-+            || matches!(self.ssh_stage, Some(crate::ssh_session::SshStage::Failed(_)))
-+        {
-+            return None;
-+        }
-+        let program = self
-+            .running_program
-+            .as_deref()
-+            .or_else(|| self.ai_session.as_ref().map(|session| session.source.as_str()))?;
-+        let agent = crate::ai_agents::AgentKind::parse(program)?;
-+        // Native Braille spinners duplicate the tab's own activity indicator.
-+        let title = self
-+            .title
-+            .trim_start_matches(|ch: char| {
-+                ch.is_whitespace() || matches!(ch, '\u{2800}'..='\u{28ff}')
-+            })
-+            .trim_end();
-+        (!title.is_empty()
-+            && title != "shell"
-+            && title != program
-+            && title != agent.label()
-+            && title != agent.display_name()
-+            && title != self.cwd
-+            && Some(title) != self.ssh_destination.as_deref()
-+            && !title.starts_with("NEBULA|"))
-+        .then_some(title)
+ impl NebulaSwitch {
+     pub fn new(key: impl Into<SharedString>) -> Self {
+-        Self { key: key.into(), checked: false, disabled: false, on_click: None }
++        Self { key: key.into(), checked: false, disabled: false, small: false, on_click: None }
 +    }
 +
-     /// Hover uses only already observed state: no filesystem scans, SSH calls,
-     /// or process enumeration on the render path.
-     pub(crate) fn tab_tooltip(&self, tab_name: &str) -> String {
-@@ -94,18 +126,9 @@ impl TerminalView {
-                 .as_deref()
-                 .or_else(|| self.ai_session.as_ref().map(|session| session.source.as_str()));
-             if let Some(program) = program {
--                let agent = crate::ai_agents::AgentKind::parse(program);
--                let name = agent.map_or(program, |agent| agent.label());
--                let title = self.title.trim();
--                let task = (!title.is_empty()
--                    && title != "shell"
--                    && title != program
--                    && title != name
--                    && title != self.cwd
--                    && Some(title) != self.ssh_destination.as_deref()
--                    && !title.starts_with("NEBULA|"))
--                .then_some(title);
--                let detail = match task.filter(|_| agent.is_some()) {
-+                let name = crate::ai_agents::AgentKind::parse(program)
-+                    .map_or(program, |agent| agent.label());
-+                let detail = match self.reported_ai_task() {
-                     Some(task) => format!("{name} · {task}"),
-                     None => name.to_owned(),
-                 };
++    pub fn small(mut self) -> Self {
++        self.small = true;
++        self
+     }
+ 
+     pub fn checked(mut self, checked: bool) -> Self {
+@@ -80,10 +86,11 @@ impl RenderOnce for NebulaSwitch {
+         let muted = cx.theme().muted_foreground;
+         let white = gpui::hsla(0.0, 0.0, 1.0, 1.0);
+         let checked = self.checked;
++        let small = self.small;
+         let group = SharedString::from(format!("switch-hit-{}", self.key));
+         let track = div()
+-            .w(px(40.0))
+-            .h(px(22.0))
++            .w(px(if small { 28.0 } else { 40.0 }))
++            .h(px(if small { 16.0 } else { 22.0 }))
+             .relative()
+             .flex_shrink_0()
+             .rounded(px(11.0))
+@@ -97,9 +104,9 @@ impl RenderOnce for NebulaSwitch {
+             track.bg(primary.opacity(t)).border_color(border.blend(primary.opacity(t))).child(
+                 div()
+                     .absolute()
+-                    .left(px(4.0 + 16.0 * t))
+-                    .top(px(4.0 - 2.0 * t))
+-                    .size(px(12.0 + 4.0 * t))
++                    .left(px(if small { 3.0 + 12.0 * t } else { 4.0 + 16.0 * t }))
++                    .top(px(if small { 3.0 } else { 4.0 - 2.0 * t }))
++                    .size(px(if small { 10.0 } else { 12.0 + 4.0 * t }))
+                     .rounded_full()
+                     .bg(muted.blend(white.opacity(t))),
+             )
+@@ -127,7 +134,7 @@ impl RenderOnce for NebulaSwitch {
+             .toggled(checked)
+             .disabled(self.disabled)
+             .custom(ButtonCustomVariant::new(cx))
+-            .w(px(44.0))
++            .w(px(if small { 32.0 } else { 44.0 }))
+             .h(px(32.0))
+             .px_0()
+             .rounded(px(6.0))
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/rename/tests.rs` (modified, +38/-0)
+**File**: `nebula_app/src/gpui_shell/workspace/details_panel.rs` (modified, +5/-1)
 ```diff
-@@ -161,6 +161,44 @@ fn redo(cx: &mut VisualTestContext) {
-     });
+@@ -365,7 +365,11 @@ impl NebulaWorkspace {
+             .relative()
+             .w(px(width))
+             .h_full()
+-            .pb(px(crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom))
++            .pb(px(if remote && matches!(self.side_panel.view, PanelView::Files) {
++                0.0
++            } else {
++                crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom
++            }))
+             .child(self.render_details_header(width, window, cx))
+             .child(div().flex_1().min_h_0().w_full().child(panel).with_animation(
+                 ("details-content", self.details_panel.transition),
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/keyboard_bindings.rs` (modified, +17/-0)
+```diff
+@@ -66,6 +66,23 @@ pub(super) fn gpui_binding_combo(combo: &str) -> String {
+ /// 注册工作区快捷键；在 `gpui_component::init` 之后调用一次。
+ pub(super) fn init(cx: &mut App) {
+     cx.bind_keys(default_workspace_bindings());
++    let modifier = if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
++        "cmd"
++    } else {
++        "ctrl"
++    };
++    cx.bind_keys([
++        KeyBinding::new(
++            &format!("{modifier}-shift-u"),
++            remote_files::UploadFiles,
++            Some(remote_files::KEY_CONTEXT),
++        ),
++        KeyBinding::new(
++            &format!("{modifier}-shift-d"),
++            remote_files::DownloadSelection,
++            Some(remote_files::KEY_CONTEXT),
++        ),
++    ]);
+     // 平台判定复用已有入口；共享表不意味着给其他平台注册 ⌘ 快捷键。
+     if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
+         bind_macos_command_keys(cx);
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/remote_files.rs` (modified, +540/-257)
+```diff
+@@ -23,8 +23,11 @@
+ mod drag;
+ #[cfg(all(test, feature = "gpui-test-support"))]
+ mod follow_tests;
++mod interaction;
++mod selection;
+ mod target;
+ mod transfers;
++use selection::Selection;
+ use target::RemoteTransferTarget;
+ 
+ use gpui::AppContext as _;
+@@ -45,19 +48,19 @@ use crate::ssh_sftp::{
+     SftpSnapshot, SftpTransferOptions,
+ };
+ 
+-use super::file_tree::{DRAWER_TEXT_INSET, ROW_PITCH, ROW_WASH_H, ROW_WASH_INSET};
+ use super::{NebulaWorkspace, workspace_ui_language};
+ 
+-/// 工具栏与说明文字沿用本地树的抽屉内边距。
+-const TEXT_INSET: f32 = DRAWER_TEXT_INSET;
++const TEXT_INSET: f32 = 12.0;
++pub(super) const KEY_CONTEXT: &str = "RemoteFiles";
++gpui::actions!(remote_files, [UploadFiles, DownloadSelection]);
+ 
+ #[derive(Clone)]
+ struct RemoteDirectorySnapshot {
+     destination: String,
+     path: String,
+     entries: Vec<SftpEntry>,
+     error: Option<String>,
+-    selected: Option<String>,
++    selection: Selection,
+     shell_cwd: Option<String>,
+     retry_path: Option<String>,
+ }
+@@ -99,7 +102,8 @@ pub(super) struct RemoteBrowser {
+     error: Option<String>,
+     /// 导航世代号。晚发早到的响应靠它被丢弃。
+     generation: u64,
+-    selected: Option<String>,
++    selection: Selection,
++    focus_handle: Option<gpui::FocusHandle>,
+     /// 当前唯一的传输控制器。任务可以跨 pane 切换继续跑，但只有目的地与当前
+     /// pane 一致时才把完成结果写回列表，避免 A 主机的结果覆盖 B 主机。
+     transfer: Option<SftpController>,
+@@ -116,13 +120,13 @@ pub(super) struct RemoteBrowser {
+ #[derive(Clone)]
+ struct RemoteClipboard {
+     source_destination: String,
+-    entry: SftpEntry,
++    entries: Vec<SftpEntry>,
  }
  
-+#[gpui::test]
-+fn automatic_task_titles_follow_clicked_panes_and_preserve_manual_tab_names(
-+    cx: &mut TestAppContext,
-+) {
-+    use nebula_terminal::event::Event;
-+
-+    let (fixture, mut cx) = RenameFixture::open(cx);
-+    fixture.workspace.update(&mut cx, |workspace, cx| {
-+        let WorkspaceTab::Terminal { panes, .. } = &workspace.tabs[0] else { panic!() };
-+        for (pane, task) in panes.iter().zip(["修复前端登录", "验证后端接口"]) {
-+            pane.view.update(cx, |view, cx| {
-+                let _receiver = view.install_completion_test_session();
-+                for event in
-+                    [Event::Title("NEBULA|/srv/project||codex".into()), Event::Title(task.into())]
-+                {
-+                    view.remote_files_test_event(event, cx);
-+                }
-+            });
-+        }
-+        assert_eq!(workspace.tab_title(0, cx), "group-title");
-+        apply_commit_rename(&mut workspace.tab_meta[0], "");
-+        assert_eq!(workspace.tab_title(0, cx), "修复前端登录");
-+        assert_eq!(workspace.tab_presentation(0, cx, true).title, "修复前端登录");
-+        cx.notify();
-+    });
-+    settle(&mut cx);
-+    let target = cx.debug_bounds(fixture.headers[1]).unwrap().center();
-+    cx.simulate_click(target, Modifiers::default());
-+    settle(&mut cx);
-+    fixture.workspace.update(&mut cx, |workspace, cx| {
-+        assert_eq!(workspace.tab_title(0, cx), "验证后端接口");
-+        assert_eq!(workspace.tab_presentation(0, cx, false).title, "验证后端接口");
-+        apply_commit_rename(&mut workspace.tab_meta[0], "我的工作区");
-+        assert_eq!(workspace.tab_title(0, cx), "我的工作区");
-+        assert_eq!(workspace.tab_presentation(0, cx, true).title, "我的工作区");
-+    });
-+}
-+
- #[gpui::test]
- fn saved_names_undo_redo_then_typing_uses_native_history(cx: &mut TestAppContext) {
-     let (fixture, mut cx) = RenameFixture::open(cx);
+ #[derive(Clone)]
+ enum PendingRemoteTransfer {
+     Upload(Vec<PathBuf>),
+-    Download { entry: SftpEntry, local_directory: PathBuf },
++    Download { entries: Vec<SftpEntry>, local_directory: PathBuf },
+     Copy(RemoteClipboard),
+ }
+ 
+@@ -152,7 +156,7 @@ impl RemoteBrowser {
+                 path: self.path.clone(),
+                 entries: self.entries.clone(),
+                 error: self.error.clone(),
+-                selected: self.selected.clone(),
++                selection: self.selection.clone(),
+                 // A switch cancels unfinished navigation. Reobserve the pane
+                 // cwd when it returns rather than treating its old listing as
+                 // already synchronized with the cancelled target.
+@@ -195,7 +199,7 @@ impl RemoteBrowser {
+             self.path = snapshot.path;
+             self.entries = snapshot.entries;
+             self.error = snapshot.error;
+-            self.selected = snapshot.selected;
++            self.selection = snapshot.selection;
+             self.shell_cwd = snapshot.shell_cwd;
+             self.retry_path = snapshot.retry_path;
+             return true;
+@@ -206,7 +210,7 @@ impl RemoteBrowser {
+         self.path.clear();
+         self.entries.clear();
+         self.error = None;
+-        self.selected = None;
++        self.selection.clear();
+         self.shell_cwd = None;
+         self.retry_path = None;
+         false
+@@ -227,7 +231,7 @@ impl RemoteBrowser {
+             self.entries.clear();
+             self.error = None;
+             self.loading = false;
+-            self.selected = None;
++            self.selection.clear();
+             self.shell_cwd = None;
+             self.retry_path = None;
+             self.pending_path = None;
+@@ -247,7 +251,7 @@ impl RemoteBrowser {
+         self.entries.clear();
+         self.error = None;
+         self.loading = false;
+-        self.selected = None;
++        self.selection.clear();
+         self.shell_cwd = None;
+         self.retry_path = None;
+         self.pending_path = None;
+@@ -429,10 +433,20 @@ impl NebulaWorkspace {
+                 workspace.remote_browser.following_cwd = false;
+                 match listed {
+                     Some(Ok(entries)) => {
++                        let same_directory = workspace.remote_browser.path == path;
+                         workspace.remote_browser.entries = entries;
+                         workspace.remote_browser.path = path.clone();
+                         workspace.remote_browser.error = None;
+-                        workspace.remote_browser.selected = None;
++                        if same_directory {
++                            let rows = workspace.remote_rows();
++                            let paths: Vec<_> = rows.iter().map(|row| row.path.as_str()).collect();
++                            workspace.remote_browser.selection.retain(&paths);
++                        } else {
++                            workspace.remote_browser.selection.clear();
++                            workspace
++                                .remote_files_scroll
++                                .scroll_to_item(0, gpui::ScrollStrategy::Top);
++                        }
+                         workspace.remote_browser.retry_path = None;
+                     },
+                     Some(Err(message)) => {
+@@ -469,9 +483,13 @@ impl NebulaWorkspace {
+         self.navigate_remote(path, cx);
+     }
+ 
+-    fn selected_remote_entry(&self) -> Option<SftpE
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/tab_presentation.rs` (modified, +3/-3)
+---
+
+### Incident Patch 2: `888e9f2b` (2026-11-04)
+**Commit Message**: Merge 2.4.0 release part 1/7: PowerShell pointer editing and provider navigation
+
+Bring the published v2.4.0 release branch back to main in reviewable
+segments; this part adds the release commits up to 42167bff.
+
+**File**: `architecture/notes/nebula_terminal/tty/2026-11-01-legacy-powershell-pointer.md` (added, +65/-0)
 ```diff
-@@ -10,7 +10,7 @@ use super::*;
- #[derive(Clone, Debug, Default)]
- pub(super) struct TabMeta {
-     pub(super) runtime_id: crate::runtime_api::tabs::TabId,
--    /// 用户重命名过的标签名；`None` = 跟着 cwd/文件名自动走。
-+    /// 用户重命名过的标签名；`None` = 跟着任务、目录或文件名自动走。
-     pub(super) custom_name: Option<String>,
-     /// 色标（右键菜单的标签颜色）；`None` = 不画色条。
-     pub(super) color: Option<Rgb>,
-@@ -61,8 +61,8 @@ impl NebulaWorkspace {
-             WorkspaceTab::Document { view, .. } => view.read(cx).tab_title().into(),
-             WorkspaceTab::Code { view, .. } => view.read(cx).tab_title(cx).into(),
-             tab @ WorkspaceTab::Terminal { .. } => {
--                // 标签 = 聚焦 pane 的 cwd 末级目录名（旧壳 chrome_tab_label
--                // 规则）。分屏计数**不拼在这里**：这份字符串还要喂给 runtime
-+                // 标签跟随聚焦 pane 的原生 AI 任务名，普通 shell 回退到目录或主机。
-+                // 分屏计数**不拼在这里**：这份字符串还要喂给 runtime
-                 // API 的 tab label、跨窗拖拽标题和重命名预填，掺进 "⊞2" 会
-                 // 一路泄漏，而且长标题下会被 truncate_tab_label 截掉、被
-                 // custom_name 整条顶掉。计数改由 TabPresentation::pane_count
+@@ -0,0 +1,65 @@
++# Legacy PSReadLine pointer eligibility
++
++## Status
++
++Implemented; real PSReadLine 2.0 and 2.4.5 Unix PTY checks passed. Windows
++ConPTY and desktop acceptance of this change remain unverified.
++
++## Context
++
++The Windows default shell is Windows PowerShell. Its in-box PSReadLine can be
++older than 2.1. The initial pointer adapter excluded the entire editor because
++older PSReadLine can lose surrogate pairs after native editing. Consequently
++even clicking inside an ASCII command such as `ls` did nothing.
++
++## Evidence
++
++The public `GetBufferState`, `SetCursorPosition` and undoable `Delete` APIs exist
++in [PSReadLine 1.2](https://github.com/PowerShell/PSReadLine/blob/v1.2/PSReadLine/PublicAPI.cs)
++and [2.0](https://github.com/PowerShell/PSReadLine/blob/v2.0.0/PSReadLine/PublicAPI.cs).
++The existing adapter already checks owned key chords without depending on the
++newer `Get-PSReadLineKeyHandler -Chord` parameter.
++
++Loading the actual 2.0 module into a real Unix PTY verifies native ASCII/CJK
++cursor movement, insertion, range deletion and undo in Windows and Emacs modes.
++A buffer containing a surrogate pair can be queried and rejected without
++mutating it. These are Unix editor checks, not proof of Windows input transport.
++
++## Decision
++
++Allow the owned bridge on PSReadLine 1.2 or newer. For versions before 2.1,
++reject pointer snapshots containing any surrogate code unit. Preserve the
++strict UTF-8, binding ownership, native snapshot, nonce and stale-buffer checks.
++The native editor remains the only input buffer and edit authority.
++
++## Rejected alternatives
++
++- Requiring users to install a new shell or module for ASCII clicks.
++- Removing the Unicode boundary and risking silent loss of existing emoji.
++- Sending approximate arrow counts or replacing the editor buffer from a mirror.
++
++## Consequences
++
++Legacy editors can advertise pointer support for BMP input. Emoji-containing
++buffers retain normal terminal selection without native pointer mutation.
++Modern editors retain their existing Unicode behavior. No network access,
++module installation, persistence format or per-keystroke I/O is added.
++
++## Validation
++
++`scripts.tests.test_powershell_pointer` runs the actual 2.0 module when
++`NEBULA_TEST_PSREADLINE_LEGACY` names its manifest; an absent module is an explicit
++skip. It also checks the modern editor, races, ownership, redraw and re-source.
++`nebula_terminal/tests/native_pointer.rs` checks the in-box Windows module's
++actual bindings. That Windows test has not been executed on this Linux host.
++
++## Supersedes
++
++Only the blanket 2.1 minimum in
++[the original pointer decision](2026-10-31-powershell-native-pointer.md).
++Its transport and lifecycle contracts remain unchanged.
++
++## Revisit when
++
++Native Windows acceptance finds an additional legacy limitation, or the
++supported Windows baseline guarantees a newer PSReadLine.
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane.rs` (modified, +1/-0)
+```diff
+@@ -1571,6 +1571,7 @@ impl SettingsPane {
+             nav = nav.child(
+                 div()
+                     .id(("settings-nav", ix))
++                    .debug_selector(move || format!("settings-nav-{ix}"))
+                     .px(px(10.0))
+                     .ml_1()
+                     .mr_1()
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/navigation.rs` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ pub(super) fn section_label(index: usize, language: crate::display::UiLanguage)
+ }
+ 
+ pub(super) fn is_nav_section_visible(index: usize) -> bool {
+-    index < SECTION_IDS.len()
++    index < SECTION_IDS.len() && index != 3
+ }
+ 
+ pub(super) fn visible_nav_sections() -> impl Iterator<Item = usize> {
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/search_header.rs` (modified, +3/-0)
+```diff
+@@ -132,7 +132,10 @@ pub(super) fn matching_sections(query: &str, language: crate::display::UiLanguag
+     }
+ 
+     let tokens = query.split_whitespace().collect::<Vec<_>>();
++    // Keep prediction/model configuration reachable by deliberate search while
++    // hiding the provider entry from the default sidebar. Route IDs stay stable.
+     let mut matches = visible_nav_sections()
++        .chain(std::iter::once(3))
+         .filter_map(|index| {
+             let message = SECTION_SEARCH_TERMS[index];
+             let haystack = format!(
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/tests.rs` (modified, +45/-5)
+```diff
+@@ -466,9 +466,12 @@ fn ctrl_wheel_font_zoom_setting_is_searchable_and_has_a_visible_switch(
+ }
+ 
+ #[test]
+-fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
++fn settings_nav_hides_providers_without_changing_stable_routes() {
+     let visibility: Vec<_> = (0..SECTION_IDS.len()).map(is_nav_section_visible).collect();
+-    assert_eq!(visibility, vec![true; SECTION_IDS.len()]);
++    assert_eq!(
++        visibility,
++        vec![true, true, true, false, true, true, true, true, true, true, true, true]
++    );
+     assert!(!is_nav_section_visible(SECTION_IDS.len()));
+     assert!(!is_nav_section_visible(usize::MAX));
+     assert_eq!(
+@@ -490,10 +493,49 @@ fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
+     );
+ }
+ 
++#[cfg(feature = "gpui-test-support")]
++#[gpui::test]
++fn hidden_provider_navigation_keeps_prediction_search_reachable(cx: &mut gpui::TestAppContext) {
++    cx.update(|cx| {
++        gpui_component::init(cx);
++        cx.set_global(crate::gpui_shell::config::Settings::load(ThemeName::Nord));
++    });
++    let mut pane = None;
++    let (_, cx) = cx.add_window_view(|window, cx| {
++        let view = cx.new(|cx| SettingsPane::new(window, cx));
++        pane = Some(view.clone());
++        gpui_component::Root::new(view, window, cx)
++    });
++    let pane = pane.unwrap();
++    cx.simulate_resize(gpui::size(px(1200.0), px(900.0)));
++    cx.update(|window, cx| {
++        let _ = window.draw(cx);
++    });
++    assert!(cx.debug_bounds("settings-nav-3").is_none());
++    let origin = pane.read_with(cx, |pane, _| pane.active_section);
++    for (query, visible) in [("prediction", true), ("", false)] {
++        cx.update(|window, cx| {
++            pane.update(cx, |pane, cx| {
++                pane.settings_search_input
++                    .update(cx, |input, cx| input.replace_all(query, window, cx));
++            });
++        });
++        cx.run_until_parked();
++        cx.update(|window, cx| {
++            let _ = window.draw(cx);
++        });
++        assert_eq!(cx.debug_bounds("settings-nav-3").is_some(), visible);
++        assert_eq!(
++            pane.read_with(cx, |pane, _| pane.active_section),
++            if visible { 3 } else { origin }
++        );
++    }
++}
++
+ #[test]
+ fn settings_nav_starts_with_application_then_frequent_options() {
+     let visible: Vec<_> = visible_nav_sections().collect();
+-    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 3, 4, 5, 11, 8, 9]);
++    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 4, 5, 11, 8, 9]);
+     let zh_labels: Vec<_> = visible
+         .iter()
+         .map(|index| section_label(*index, crate::display::UiLanguage::ZhCn))
+@@ -507,7 +549,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
+             "Agents",
+             "交互",
+             "按键映射",
+-            "API 供应商",
+             "SSH",
+             "网络",
+             "手机远程",
+@@ -528,7 +569,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
+             "Agents",
+             "Interaction",
+             "Key Bindings",
+-            "API Providers",
+             "SSH",
+             "Network",
+             "Phone Remote",
+```
+
+**File**: `nebula_terminal/src/tty/pointer.ps1` (modified, +9/-1)
+```diff
+@@ -2,9 +2,12 @@
+ function global:Test-PebrelPointerBinding {
+     try {
+         if (-not $global:PebrelCompletionInputReady -or
+-            (Get-Module PSReadLine).Version -lt [Version]'2.1.0' -or
++            (Get-Module PSReadLine).Version -lt [Version]'1.2.0' -or
+             (Get-PSReadLineOption).EditMode -eq 'Vi') { return $false }
+         $bindings = @(Get-PSReadLineKeyHandler -ErrorAction Stop)
++        # The editor can retain child chords after a user replaces their prefix.
++        # Such children are no longer reachable through the native dispatcher.
++        if ($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F10','Shift+Ctrl+F10' }) { return $false }
+         $query = @($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F12','Shift+Ctrl+F12' })
+         if ($query.Count -ne 1 -or $query[0].Function -ne $global:PebrelEditorHandlerName) { return $false }
+         foreach ($digit in 0..9) {
+@@ -56,6 +59,11 @@ function global:Invoke-PebrelPointerAction {
+         try {
+             $utf8 = New-Object Text.UTF8Encoding($false, $true)
+             if (-not (Test-PebrelPointerBinding) -or $utf8.GetByteCount($line) -gt 4096) { throw 'Unsupported editor' }
++            # In-box PSReadLine has native cursor/delete APIs too. Its old
++            # renderer can lose surrogate pairs after an edit, so reject only
++            # affected buffers rather than disabling all ASCII/CJK pointer edits.
++            if ((Get-Module PSReadLine).Version -lt [Version]'2.1.0' -and
++                $line -match '[\uD800-\uDFFF]') { throw 'Unsupported Unicode buffer' }
+             $bytes = $utf8.GetByteCount($line.Substring(0, $cursor))
+             $global:PebrelPointerSnapshot = @{ Line=$line; Cursor=$cursor; Token=$global:PebrelShellToken; Anchor=$null }
+             Send-PebrelPointerValue 'pebrel_pointer' "$owner`n$unit`n$bytes`n$line"
+```
+
+**File**: `nebula_terminal/tests/native_pointer.rs` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++//! Check the actual in-box PSReadLine key maps, including the legacy API.
++#![cfg(windows)]
++
++#[test]
++fn in_box_powershell_advertises_owned_pointer_bindings() {
++    let editor = include_str!("../src/tty/completion.ps1");
++    let pointer = include_str!("../src/tty/pointer.ps1");
++    let command = format!(
++        r#"
++$ErrorActionPreference = 'Stop'
++Import-Module PSReadLine
++$global:PebrelShellToken = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))
++$editorSetup = {{
++{editor}
++}}
++$pointerSetup = {{
++{pointer}
++}}
++foreach ($mode in 'Windows','Emacs') {{
++    Set-PSReadLineOption -EditMode $mode
++    & $editorSetup
++    & $pointerSetup
++    if (-not (Test-PebrelPointerBinding)) {{ throw "Native pointer unavailable in $mode" }}
++    & $editorSetup
++    & $pointerSetup
++    if (-not (Test-PebrelPointerBinding)) {{ throw 'Reload revoked native pointer' }}
++    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -Function BeginningOfLine
++    if (Test-PebrelPointerBinding) {{ throw 'Changed user key was claimed' }}
++    & $pointerSetup
++    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user key' }}
++    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -BriefDescription $global:PebrelPointerHandlerName -ScriptBlock {{ }}
++    if (-not (Test-PebrelPointerBinding)) {{ throw 'Restored child chord unavailable' }}
++    Set-PSReadLineKeyHandler -Chord Ctrl+Shift+F10 -Function BeginningOfLine
++    if (Test-PebrelPointerBinding) {{ throw 'Changed prefix was claimed' }}
++    & $pointerSetup
++    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user prefix' }}
++}}
++Set-PSReadLineOption -EditMode Vi
++if (Test-PebrelPointerBinding) {{ throw 'Unsupported Vi map was advertised' }}
++[Console]::Write('NATIVE_POINTER_BINDINGS_OK')
++"#
++    );
++    let program =
++        std::env::var_os("PEBREL_TEST_POWERSHELL").unwrap_or_else(|| "powershell.exe".into());
++    let output = std::process::Command::new(program)
++        .args(["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", &command])
++        .env("POWERSHELL_TELEMETRY_OPTOUT", "1")
++        .output()
++        .expect("start in-box PowerShell with its native PSReadLine");
++    assert!(
++        output.status.success(),
++        "PSReadLine pointer checks failed: {} {}",
++        String::from_utf8_lossy(&output.stdout),
++        String::from_utf8_lossy(&output.stderr),
++    );
++    assert!(String::from_utf8_lossy(&output.stdout).contains("NATIVE_POINTER_BINDINGS_OK"));
++}
+```
+
+**File**: `scripts/tests/test_powershell_pointer.py` (modified, +52/-7)
+```diff
+@@ -45,10 +45,16 @@ def wait(self, marker: bytes) -> bytes:
+ 
+ @unittest.skipUnless(os.name == "posix", "requires Unix PTYs")
+ class PowerShellPointerTests(unittest.TestCase):
+-    def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
++    def start(self, mode: str = "Emacs", before: str = "", *, legacy: bool = False) -> PowerShellSession:
+         program = os.environ.get("NEBULA_TEST_PWSH") or shutil.which("pwsh")
+         if not program:
+             self.skipTest("pwsh is not installed")
++        module = os.environ.get("NEBULA_TEST_PSREADLINE_LEGACY") if legacy else None
++        if legacy and not module:
++            self.skipTest("NEBULA_TEST_PSREADLINE_LEGACY is not configured")
++        import_module = "Import-Module " + ("'" + module.replace("'", "''") + "'" if module else "PSReadLine")
++        if legacy:
++            import_module += "\nif ((Get-Module PSReadLine).Version -ge [Version]'2.1.0') { throw 'Fixture requires a legacy editor' }"
+         temporary = tempfile.TemporaryDirectory(prefix="pebrel-pwsh-pointer-")
+         self.addCleanup(temporary.cleanup)
+         home = Path(temporary.name)
+@@ -61,8 +67,9 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
+         bootstrap = home / "bootstrap.ps1"
+         bootstrap.write_text((root.parents[2] / "nebula_app/res/shell/powershell.ps1").read_text(encoding="utf-8"), encoding="utf-8")
+         script.write_text(
+-            "Import-Module PSReadLine\n"
+-            "Set-PSReadLineOption -HistorySaveStyle SaveNothing -PredictionSource None\n"
++            import_module + "\n"
++            "Set-PSReadLineOption -HistorySaveStyle SaveNothing\n"
++            "if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionSource')) { Set-PSReadLineOption -PredictionSource None }\n"
+             f"Set-PSReadLineOption -EditMode {mode}\n"
+             "$global:PebrelShellToken=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))\n"
+             "function prompt { 'PS> ' }\n" + before + "\n" +
+@@ -71,16 +78,22 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
+             "function global:PSConsoleHostReadLine {\n"
+             "  [Console]::Write(\"$([char]27)]1337;SetUserVar=qa_ready=eA==$([char]7)\")\n"
+             "  & $global:QaOriginalReadLine\n"
+-            "}\n", encoding="utf-8",
++            "}\n" + (
++                # Bypass ConsoleHost's preloaded editor and run the imported
++                # legacy module's real ReadLine on this PTY instead.
++                "while ($true) { [Console]::Write((prompt)); $null = PSConsoleHostReadLine }\n"
++                if legacy else ""
++            ), encoding="utf-8",
+         )
+         # .NET's named mutexes (including PSReadLine history initialization)
+         # require a real temporary directory on macOS even with SaveNothing.
+         # Keep it inside this fixture instead of inheriting the runner's home.
+         runtime_temp = home / "tmp"
+         runtime_temp.mkdir()
++        environment = {"TMPDIR": str(runtime_temp) + os.sep}
+         session = PowerShellSession(
+-            program, home, ["-NoLogo", "-NoProfile", "-NoExit", "-File", str(script)],
+-            {"TMPDIR": str(runtime_temp) + os.sep},
++            program, home, ["-NoLogo", "-NoProfile", "-NonInteractive" if legacy else "-NoExit", "-File", str(script)],
++            environment,
+         )
+         self.addCleanup(session.close)
+         import fcntl
+@@ -137,6 +150,38 @@ def test_native_unicode_moves_range_delete_and_one_undo(self) -> None:
+                 os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
+                 self.assertEqual(self.snapshot(session)[1], changed)
+ 
++    def test_legacy_editor_moves_ascii_and_cjk_and_preserves_undo(self) -> None:
++        for mode in ("Emacs", "Windows"):
++            with self.subTest(mode=mode):
++                session = self.start(mode, legacy=True)
++                self.assertIn(b"SetUserVar=pebrel_pointer_ready=", session.output)
++                os.write(session.master, "ls 中文".encode())
++                self.assertEqual(self.query(session)[3], "ls 中文")
++                self.action(session, 1 + 1)
++                self.assertEqual(self.snapshot(session), (1, "ls 中文"))
++                os.write(session.master, b"X")
++                self.assertEqual(self.snapshot(session), (2, "lXs 中文"))
++                self.query(session)
++                self.action(session, 4098 + 4)
++                self.action(session, 8195 + 6)
++                self.assertEqual(self.snapshot(session), (4, "lXs "))
++                os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
++                self.assertEqual(self.snapshot(session)[1], "lXs 中文")
++
++    def test_legacy_editor_rejects_surrogates_without_moving_or_deleting(self) -> None:
++        session = self.start("Windows", before=(
++            "Set-PSReadLineKeyHandler -Chord Ctrl+o -Scrip
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #867** (2026-11-04): docs: show the 1molchuan wordmark in acknowledgements (@Kuddev)
-- **PR #866** (2026-11-03): docs: thank 1molchuan in the README acknowledgements (@Kuddev)
-- **PR #865** (closed): 上游 pull (@ventupx)
-- **PR #863** (2026-11-02): Show AI task names without duplicate spinner prefixes (@Kuddev)
-- **PR #851** (2026-10-31): fix: complete 2.3.2 issue sweep and prepare Windows candidate (@Kuddev)
-- **PR #850** (2026-10-31): fix: preserve protocol names and real process fixtures in naming checks (@Kuddev)
+- **PR #881** (closed): Merge 2.4.0 release (7/7): scoped release workflow and final 2.4.0 notes (@Kuddev)
+- **PR #880** (closed): Merge 2.4.0 release (6/7): SFTP previews, settings polish and 2.4.0 metadata (@Kuddev)
+- **PR #879** (closed): Merge 2.4.0 release (5/7): explicit client states and tab activity icons (@Kuddev)
+- **PR #878** (closed): Merge 2.4.0 release (4/7): GLSL effects and SSH agent hooks (@Kuddev)
+- **PR #876** (closed): Merge 2.4.0 release (2/7): SFTP sidebar layout and batch file interactions (@Kuddev)
+- **PR #875** (2026-11-04): Merge 2.4.0 release (1/7): PowerShell pointer editing and provider navigation (@Kuddev)
 
 ---
 
@@ -1748,25 +2281,49 @@ Co-authored-by: Kuddev <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show AI task names without duplicate spinner prefixes (#863)
+## X. Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
 
 **RULE**:
-When implementing operations in `nebula_app/src/gpui_shell/terminal/view/runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33deff48`: Show AI task names without duplicate spinner prefixes (#863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97d3bfe5`: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_app/src/gpui_shell/terminal/view/runtime.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if title_changed {
-            // A later agent must not inherit the preceding task before its
-            // first native title arrives.
-            self.title = "shell".to_owned();
-        }
+# SFTP selection and batch transfer ownership
+
+## Status
+
+Proposed with the SFTP sidebar interaction update.
+
+## Context
+
+The remote sidebar previously retained one selected path. Adding Ctrl/Shift
+selection also requires downloads, remote copies and native file drags to carry
+the complete selection through their existing asynchronous handoffs.
+
+## Evidence
+
+`SftpController::start_job` advances the controller generation and retires the
+previous job. Calling the single-entry transfer once per selected row would
+therefore cancel earlier entries. Native export likewise owns one download plan
+and one temporary-directory lease for the lifetime of the drag.
+
+## Decision
+
+The browser retains path-based selections, anchors and focused rows in its
+existing per-pane snapshots. Display order supplies range selection. A refresh
+retains surviving paths; changing directories clears the selection. Mouse-down
+on an already selected row defers collapsing the group until a click is confirmed.
+
+Actions capture the ordered entries and existing pane/destination/generation
+target before opening a picker or confirming conflicts. One controller job plans
+the complete download or copy batch, using the exis
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1776,4 +2333,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33deff48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97d3bfe5` are properly handled with clean fallback behavior.

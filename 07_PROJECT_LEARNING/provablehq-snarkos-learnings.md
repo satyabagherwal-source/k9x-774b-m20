@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `ecab5ce6`  
+> **Source Version**: `66955b13`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:00:59.666Z  
+> **Timestamp**: 2026-11-04T23:06:27.084Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:00:58.650Z  
+> **Harvest Timestamp**: 2026-11-04T23:06:27.076Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1966,13 +1966,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
+  *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
+
 - **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
   *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
-
-- **Issue #4466** (2026-09-29): **[Bug] Spurious ERROR log: Attempted to decrease GC round from 36 to 34**
-  *Symptoms*: ## 🐛 Bug Report  Link to testrun: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4270/workflows/6fe7a02c-9a65-48f9-86f1-b2438b7f6616/jobs/90558?utm_campaign=vcs-integration-link&utm_medium=referral&utm_source=github-checks-link  [ci-runner] 2026-09-17T17:42:01Z ❌ Test failed! Validator #1 logs contain errors. 2026-09-17T17:41:13.258841Z ERROR Block synchronization failed — Failed to garbage collect certificates — Attempted to decrease GC round from 36 to 34 
-  **Post-Mortem & Fix Analysis**:
-  > Likely already solved by 67810a9.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1989,105 +1987,264 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecab5ce6` (2026-11-03)
-**Commit Message**: Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets
+### Incident Patch 1: `66955b13` (2026-11-04)
+**Commit Message**: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
 
-Read stress test settings from environment secrets
+Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959
 
-**File**: `.github/workflows/stress-test.yml` (modified, +21/-15)
+**File**: `Cargo.lock` (modified, +155/-170)
 ```diff
-@@ -1,8 +1,8 @@
- # Copy to aleo-labs-protocol/snarkOS as .github/workflows/stress-test.yml.
- #
--# Runs snarkOS stress tests on the Gauntlet host (aleo-labs-protocol/
--# aws-dev-infra/gauntlet) and reports them as the "stress-test" check on the
--# commit, so anyone looking at the commit or its PR sees the result.
-+# Runs snarkOS stress tests on the Gauntlet host and reports them as the
-+# "stress-test" check on the commit, so anyone looking at the commit or its PR
-+# sees the result.
- #
- #   start   "Run workflow" (or a release whose CI passed): approval in the
- #           stress-test environment, then queue the run on the Gauntlet host.
-@@ -11,13 +11,15 @@
- #           dispatch of this workflow, which follows the same run without
- #           asking for approval again.
- #
--# Setup lives in aws-dev-infra (setup-gauntlet-ci.sh): the IAM role that only this
--# file on staging can assume, the Instance Connect Endpoint, and these variables:
--#   STRESS_ROLE_ARN              the role
--#   STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
--#   STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
--#   STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
--# and, optionally, the secret ANTHROPIC_API_KEY for the comparison summary.
-+# It needs an IAM role that only this file on staging can assume, an Instance
-+# Connect Endpoint, and these settings. Actions logs are public, so anything
-+# naming the cloud account is a secret, held in the stress-test and
-+# stress-test-status environments so that only this job on staging can read it:
-+#   environment secret  STRESS_ROLE_ARN              the role
-+#   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-+#   secret              ANTHROPIC_API_KEY            optional: the comparison summary
-+#   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-+#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
- name: Stress test
+@@ -521,11 +521,11 @@ dependencies = [
  
- on:
-@@ -72,8 +74,8 @@ jobs:
-     env:
-       AWS_REGION: us-west-2
-       GH_TOKEN: ${{ github.token }}
--      MANAGER: ${{ vars.STRESS_MANAGER_INSTANCE_ID }}
--      ROLE_ARN: ${{ vars.STRESS_ROLE_ARN }}
-+      MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-+      ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-       HOST_KEY: ${{ vars.STRESS_MANAGER_HOST_KEY }}
-       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-     steps:
-@@ -124,9 +126,13 @@ jobs:
+ [[package]]
+ name = "bit-set"
+-version = "0.8.0"
++version = "0.11.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
++checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
+ dependencies = [
+- "bit-vec 0.8.0",
++ "bit-vec 0.10.1",
+ ]
  
-       - name: Connect to the Gauntlet host
-         run: |
--          # The Gauntlet host's gha-gauntlet user can only run the gate (aws-dev-infra/gauntlet/
--          # host/gate.sh): enqueue, status and cancel. Each connection pushes a key
--          # that lives 60 seconds, through the Instance Connect Endpoint.
-+          : "${MANAGER:?STRESS_MANAGER_INSTANCE_ID must be configured}"
-+          : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-+          # AWS errors quote ARNs that differ from the secret, so mask the account too.
-+          echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
-+          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
-+          # and cancel. Each connection pushes a key that lives 60 seconds, through the
-+          # Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-           : "${HOST_KEY:?STRESS_MANAGER_HOST_KEY must be configured}"
+ [[package]]
+@@ -536,9 +536,13 @@ checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
+ 
+ [[package]]
+ name = "bit-vec"
+-version = "0.8.0"
++version = "0.10.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
++checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
++dependencies = [
++ "borsh",
++ "serde",
++]
+ 
+ [[package]]
+ name = "bitflags"
+@@ -608,10 +612,24 @@ version = "1.8.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a88b7ea17d208c4193f2c1e6de3c35fe71f98c96982d5ced308bdcc749ff6e1f"
+ dependencies = [
++ "borsh-derive",
+  "bytes",
+  "cfg_aliases",
+ ]
+ 
++[[package]]
++name = "borsh-derive"
++version = "1.8.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
++dependencies = [
++ "once_cell",
++ "proc-macro-crate",
++ "proc-macro2",
++ "quote 1.0.47",
++ "syn 3.0.3",
++]
++
+ [[package]]
+ name = "bs58"
+ version = "0.5.1"
+@@ -1106,6 +1124,12 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+ 
++[[package]]
++name = "core_detect"
++version = "1.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
++
+ [[package]]
+ name = "cpubits"
+ version = "0.1.1"
+@@ -1487,7 +1511,7 @@ checksum = "bba95f299f6b9cd47f68a847eca2ae9060a2713af532dc35c342065544845407"
+ dependencies = [
+  "proc-macro2",
+  "quote 1.0.47",
+- "structmeta 0.3.0",
++ "structmeta",
+  "syn 2.0.119",
+ ]
+ 
+@@ -2489,7 +2513,7 @@ dependencies = [
+  "libc",
+  "percent-encoding",
+  "pin-project-lite",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "system-configuration",
+  "tokio",
+  "tower-service",
+@@ -3365,9 +3389,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "num-bigint"
+-version = "0.4.8"
++version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
++checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
+ dependencies = [
+  "num-integer",
+  "num-traits",
+@@ -3981,6 +4005,15 @@ dependencies = [
+  "wnaf",
+ ]
+ 
++[[package]]
++name = "proc-macro-crate"
++version = "3.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
++dependencies = [
++ "toml_edit",
++]
++
+ [[package]]
+ name = "proc-macro2"
+ version = "1.0.107"
+@@ -3992,18 +4025,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "proptest"
+-version = "1.6.0"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
++checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
+ dependencies = [
+- "bit-set 0.8.0",
+- "bit-vec 0.8.0",
++ "bit-set 0.11.1",
++ "bit-vec 0.10.1",
+  "bitflags 2.13.1",
+- "lazy_static",
++ "chacha20 0.10.2",
++ "core_detect",
+  "num-traits",
+- "rand 0.8.7",
+- "rand_chacha 0.3.1",
+- "rand_xorshift 0.3.0",
++ "rand 0.10.3",
++ "rand_xorshift",
+  "regex-syntax",
+  "rusty-fork",
+  "tempfile",
+@@ -4096,7 +4129,7 @@ dependencies = [
+  "quinn-udp",
+  "rustc-hash",
+  "rustls",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "thiserror 2.0.20",
+  "tokio",
+  "tracing",
+@@ -4135,7 +4168,7 @@ dependencies = [
+  "cfg_aliases",
+  "libc",
+  "once_cell",
+- "socket2 0.6.5",
++ "socket2 0.5.10",
+  "tracing",
+  "windows-sys 0.61.2",
+ ]
+@@ -4173,8 +4206,6 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "22f6172bdec972074665ed81ed53b71da00bfc44b65a753cfde883ec4c702a1a"
+ dependencies = [
+- "libc",
+- "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+ ]
+ 
+@@ -4199,16 +4230,6 @@ dependencies = [
+  "rand_core 0.10.1",
+ ]
+ 
+-[[package]]
+-name = "rand_chacha"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
+-dependencies = [
+- "ppv-lite86",
+- "rand_core 0.6.4",
+-]
+-
+ [[package]]
+ name = "rand_chacha"
+ version = "0.9.0"
+@@ -4272,15 +4293,6 @@ dependencies = [
+  "rand_core 0.10.1",
+ ]
+ 
+-[[package]]
+-name = "rand_xorshift"
+-version = "0.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
+-dependencies =
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "9796eb19dee4fd2c671be9b3a1322eda62586991" #staging
++rev = "a62f989591d78bcf10877accd5df1877c3e662da" #staging
+ #version = "=4.12.0"
+ default-features = false
+ 
+```
+
+**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
+```diff
+@@ -2066,7 +2066,7 @@ pub mod prop_tests {
+         type Strategy = BoxedStrategy<CryptoTestRng>;
+ 
+         fn arbitrary_with(_: Self::Parameters) -> Self::Strategy {
+-            use proptest::prelude::RngCore as ProptestRngCore;
++            use proptest::prelude::Rng as ProptestRng;
+             Just(0).prop_perturb(|_, mut rng| CryptoTestRng(ChaChaRng::seed_from_u64(rng.next_u64()))).boxed()
+         }
+     }
 ```
 
 ---
 
-### Incident Patch 2: `d2c5051f` (2026-11-03)
-**Commit Message**: Merge pull request #4611 from aleo-labs-protocol/ci/release-download-url
+### Incident Patch 2: `e23a7374` (2026-11-04)
+**Commit Message**: Merge pull request #4626 from aleo-labs-protocol/ci/bump-snarkvm-twice-weekly
 
-ci: download the latest snarkOS release from aleo-labs-protocol
+Run the snarkVM bump workflow on Mondays and Thursdays
 
-**File**: `.ci/utils.sh` (modified, +1/-1)
+**File**: `.github/workflows/bump-snarkvm.yml` (modified, +1/-1)
 ```diff
-@@ -860,7 +860,7 @@ function download_and_build_latest_snarkos() {
+@@ -1,7 +1,7 @@
+ name: Bump snarkVM
+ on:
+   schedule:
+-    - cron: '0 6 * * 1'
++    - cron: '0 6 * * 1,4'
+   workflow_dispatch:
  
-   mkdir -p "${SNARKOS_RELEASE_DIR}"
- 
--  local repo="ProvableHQ/snarkOS"
-+  local repo="aleo-labs-protocol/snarkOS"
-   local latest_url latest_tag tar_url
-   local tmpdir srcdir
-   local existing_tag=""
+ concurrency:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4617** (2026-11-03): Read stress test settings from environment secrets (@cbeck88)
-- **PR #4616** (closed): Read stress test settings from environment secrets (@cbeck88)
-- **PR #4614** (2026-11-03): Add Gauntlet stress test workflow (@snarkworld)
-- **PR #4613** (2026-11-02): chore(deps): bump sha2 from 0.10.9 to 0.11.0 (@dependabot[bot])
-- **PR #4611** (2026-11-03): ci: download the latest snarkOS release from aleo-labs-protocol (@snarkworld)
-- **PR #4610** (2026-11-02): Fetch snarkVM from aleo-labs-protocol instead of ProvableHQ (@snarkworld)
+- **PR #4626** (2026-11-04): Run the snarkVM bump workflow on Mondays and Thursdays (@cbeck88)
+- **PR #4624** (2026-11-04): Bump snarkVM to aleo-labs-protocol/snarkVM@a62f98959 (@aleo-labs-merge-bot[bot])
+- **PR #4623** (2026-11-04): Open snarkVM bump PRs with the merge-bot app (@cbeck88)
+- **PR #4621** (2026-11-04): Report a request the stress test host rejects (@cbeck88)
+- **PR #4620** (2026-11-04): Update the stress test's params example (@cbeck88)
+- **PR #4619** (2026-11-04): Choose the stress test's network size by validator count (@cbeck88)
 
 ---
 
@@ -2107,59 +2264,107 @@ ci: download the latest snarkOS release from aleo-labs-protocol
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets
+## X. Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm
 
 **RULE**:
-When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecab5ce6`: Merge pull request #4617 from aleo-labs-protocol/ci/stress-test-env-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66955b13`: Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Runs snarkOS stress tests on the Gauntlet host and reports them as the
-# "stress-test" check on the commit, so anyone looking at the commit or its PR
-# sees the result.
-# It needs an IAM role that only this file on staging can assume, an Instance
-# Connect Endpoint, and these settings. Actions logs are public, so anything
-# naming the cloud account is a secret, held in the stress-test and
-# stress-test-status environments so that only this job on staging can read it:
-#   environment secret  STRESS_ROLE_ARN              the role
-#   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-#   secret              ANTHROPIC_API_KEY            optional: the comparison summary
-#   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
-      MANAGER: ${{ secrets.STRESS_MANAGER_INSTANCE_ID }}
-      ROLE_ARN: ${{ secrets.STRESS_ROLE_ARN }}
-          : "${MANAGER:?STRESS_MANAGER_INSTANCE_ID must be configured}"
-          : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-          # AWS errors quote ARNs that differ from the secret, so mask the account too.
- 
+version = "0.11.1"
+checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
+ "bit-vec 0.10.1",
+version = "0.10.1"
+checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
+dependencies = [
+ "borsh",
+ "serde",
+]
+ "borsh-derive",
+[[package]]
+name = "borsh-derive"
+version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
+dependencies = [
+ "once_cell",
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote 1.0.47",
+ "syn 3.0.3",
+]
+
+[[package]]
+name = "core_detect"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
+
+ "structmeta",
+ "socket2 0.5.10",
+version = "0.5.1"
+checksum = "93e7820bc0a80a0238e650327316f929ba18d5be054b647490a3a6a339f3e7c0"
+[[package]]
+name = "proc-macro-crate"
+version = "3.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
+dependencies = [
+ "toml_edit",
+]
+
+version = "1.12.0"
+checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Runs snarkOS stress tests on the Gauntlet host (aleo-labs-protocol/
-# aws-dev-infra/gauntlet) and reports them as the "stress-test" check on the
-# commit, so anyone looking at the commit or its PR sees the result.
-# Setup lives in aws-dev-infra (setup-gauntlet-ci.sh): the IAM role that only this
-# file on staging can assume, the Instance Connect Endpoint, and these variables:
-#   STRESS_ROLE_ARN              the role
-#   STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
-#   STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
-#   STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
-# and, optionally, the secret ANTHROPIC_API_KEY for the comparison summary.
-      MANAGER: ${{ vars.STRESS_MANAGER_INSTANCE_ID }}
-      ROLE_ARN: ${{ vars.STRESS_ROLE_ARN }}
-          # The Gauntlet host's gha-gauntlet user can only run the gate (aws-dev-infra/gauntlet/
-          # host/gate.sh): enqueue, status and cancel. Each connection pushes a key
-          # that lives 60 seconds, through the Instance Connect Endpoint.
+version = "0.8.0"
+checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
+ "bit-vec 0.8.0",
+version = "0.8.0"
+checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
+ "structmeta 0.3.0",
+ "socket2 0.6.5",
+version = "0.4.8"
+checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
+version = "1.6.0"
+checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
+ "bit-set 0.8.0",
+ "bit-vec 0.8.0",
+ "lazy_static",
+ "rand 0.8.7",
+ "rand_chacha 0.3.1",
+ "rand_xorshift 0.3.0",
+ "socket2 0.6.5",
+ "socket2 0.6.5",
+ "libc",
+ "rand_chacha 0.3.1",
+[[package]]
+name = "rand_chacha"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.6.4",
+]
+
+[[package]]
+name = "rand_xorshift"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
+dependencies =
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecab5ce6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66955b13` are properly handled with clean fallback behavior.

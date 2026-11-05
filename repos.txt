@@ -4822,3 +4822,37 @@ https://github.com/agentlas-ai/Agentlas-OS
 # --- Automatically Discovered by AI Scout Engine [2026-11-04T02:04:28.378Z] ---
 # [HUGGINGFACE-AI-MODELS] microsoft/Mage-VL-Cowork (3101 score) - Verified Hugging Face Model: microsoft/Mage-VL-Cowork (156 likes, 1541 downloads
 https://huggingface.co/microsoft/Mage-VL-Cowork
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T07:25:40.342Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-Embedding-0.6B (15240 score) - Verified Hugging Face Model: Qwen/Qwen3-Embedding-0.6B (1324 likes, 8958817 down
+https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T09:17:43.655Z] ---
+# [AI-AGENTS] feder-cr/Jobs_Applier_AI_Agent_AIHawk (17870 score) - Open-source, self-hosted alternative to OpenAI Dots, Grok Bot. Built to be undet
+https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T16:34:08.944Z] ---
+# [HUGGINGFACE-AI-MODELS] moonshotai/Kimi-K3.1-Pro (2377 score) - Verified Hugging Face Model: moonshotai/Kimi-K3.1-Pro (158 likes, 797 downloads)
+https://huggingface.co/moonshotai/Kimi-K3.1-Pro
+# [HUGGINGFACE-AI-MODELS] nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 (3670 score) - Verified Hugging Face Model: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 (167 likes, 3
+https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T19:08:36.949Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF (3560 score) - Verified Hugging Face Model: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-
+https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-04T19:55:10.662Z] ---
+# [HIGH-PERF-SYSTEMS] matthart1983/netwatch (2089 score) - Real-time network diagnostics in your terminal. One command, zero config, instan
+https://github.com/matthart1983/netwatch
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T02:32:51.766Z] ---
+# [HUGGINGFACE-AI-MODELS] PrunaAI/P-H3-Image-Comfy (3520 score) - Verified Hugging Face Model: PrunaAI/P-H3-Image-Comfy (152 likes, 45623 download
+https://huggingface.co/PrunaAI/P-H3-Image-Comfy
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T03:39:39.646Z] ---
+# [MOBILE-CROSS-PLATFORM] Jarvis322/macos-sysdata (1220 score) - See what is really inside macOS System Data and delete it item by item. A free m
+https://github.com/Jarvis322/macos-sysdata
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T03:46:12.860Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-NemotronLabs-RE-USE (3810 score) - Verified Hugging Face Model: nvidia/NVIDIA-NemotronLabs-RE-USE (181 likes, 32309
+https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE

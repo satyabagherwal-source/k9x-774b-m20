@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `53d5d706`  
+> **Source Version**: `422ad407`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T02:22:45.338Z  
+> **Timestamp**: 2026-11-04T08:04:22.860Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T02:22:45.332Z  
+> **Harvest Timestamp**: 2026-11-04T08:02:47.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12516 stars
+- **Stars / Engagement**: 12524 stars
 
 ---
 
@@ -1662,26 +1662,46 @@ pub(crate) mod base64 {
 //! and writes the ADS stream concurrently. Network waits and watcher processing
 //! do not block the worker from registering watchers or replaying cached resources.
 
+use std::collections::HashMap;
+use std::collections::HashSet;
 use std::collections::hash_map::Entry;
-use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::{Duration, SystemTime};
+use std::sync::atomic::AtomicU64;
+use std::sync::atomic::Ordering;
+use std::time::Duration;
+use std::time::SystemTime;
 
 use bytes::Bytes;
-use tokio::sync::{mpsc, oneshot};
+use tokio::sync::mpsc;
+use tokio::sync::oneshot;
 
-use crate::client::config::{ClientConfig, ServerConfig};
-use crate::client::retry::{Backoff, RetryPolicy};
-use crate::client::snapshot::{AcceptedResource, RejectedUpdate, ResourceSnapshot, ResourceStatus};
-use crate::client::watch::{ProcessingDone, ResourceEvent};
+use crate::client::config::ClientConfig;
+use crate::client::config::ServerConfig;
+use crate::client::retry::Backoff;
+use crate::client::retry::RetryPolicy;
+use crate::client::snapshot::AcceptedResource;
+use crate::client::snapshot::RejectedUpdate;
+use crate::client::snapshot::ResourceSnapshot;
+use crate::client::snapshot::ResourceStatus;
+use crate::client::watch::ProcessingDone;
+use crate::client::watch::ResourceEvent;
 use crate::codec::XdsCodec;
-use crate::error::{Error, Result};
-use crate::message::{DiscoveryRequest, DiscoveryResponse, ErrorDetail, Node};
-use crate::metrics::{self, KeyValue, MetricsRecorder};
-use crate::resource::{DecodedResource, DecoderFn};
+use crate::error::Error;
+use crate::error::Result;
+use crate::message::DiscoveryRequest;
+use crate::message::DiscoveryResponse;
+use crate::message::ErrorDetail;
+use crate::message::Node;
+use crate::metrics::KeyValue;
+use crate::metrics::MetricsRecorder;
+use crate::metrics::{self};
+use crate::resource::DecodedResource;
+use crate::resource::DecoderFn;
 use crate::runtime::Runtime;
-use crate::transport::{Transport, TransportBuilder, TransportReceiver, TransportSender};
+use crate::transport::Transport;
+use crate::transport::TransportBuilder;
+use crate::transport::TransportReceiver;
+use crate::transport::TransportSender;
 
 /// Per-client A78 metric attributes (`grpc.target` + `grpc.xds.server`).
 ///
@@ -1880,17 +1900,7 @@ impl Default for WatcherId {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum SubscriptionMode {
     /// Wildcard subscription - receive all resources of this type.
-    /// In xDS protocol, this is represented by an empty resource_names list.
-    Wildcard,
-    /// Named subscription - receive only specific resources.
-    /// Contains the set of resource names to subscribe to.
-    Named(HashSet<String>),
-}
-
-impl SubscriptionMode {
-    /// Get resource names for DiscoveryRequest.
-    /// Returns empty vec for wildcard (xDS spec: empty = all resources).
-    fn resource_names_for_request(&se
+    /
 ```
 
 
@@ -1899,11 +1909,11 @@ impl SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2982** (2026-10-29): **protoc-gen-grpc-rust: downgrade abseil**
-  *Symptoms*: The current version of abseil has a bug that includes bmi2intrin.h directly, which is not allowed and errors on the newest version of our runners (ubuntu 26):  https://github.com/grpc/grpc-rust/actions/runs/40946149760/job/123701909400?pr=2981#step:6:508 >     25 | # error "Never use <bmi2intrin.h> directly; include <x86gprintrin.h> instead."  ~This updates us to the current latest abseil release.~  \*ahem\*  Apparently the newest version also has a bug with windows builds.  It is fixed on master, but no release contains it.  So we need to downgrade instead. This makes us match protobuf's version from 2025-05-12. 
+- **Issue #2997** (2026-11-03): **xds-client: drop stale `.await` on now-synchronous `watch` in retry test**
+  *Symptoms*: ## Motivation  CI is blocked because #2995's added tests is still using `.await` on the  now-sync `watch` API after #2945   ## Solution  Removing the `.await`.   
 
-- **Issue #2980** (2026-10-29): **fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies**
-  *Symptoms*: ## Motivation  Since the hyper 1.0 upgrade, the server's connection builder only gets a timer on its HTTP/2 side (added in #1726 for keepalive). hyper's HTTP/1 `header_read_timeout` defaults to 30s, but hyper silently disables it when no timer is set.  As a result, a server built with `accept_http1(true)`, which `tonic-web` requires, never times out a client that doesn't finish sending its request headers. A slowloris client can hold connections open indefinitely and exhaust the server's file descriptors. Users can't fix this from outside, since the connection builder is internal and `Server` exposes no HTTP/1 options.  ## Solution  Set `TokioTimer` on the HTTP/1 builder too. This only turns on hyper's existing 30s default header read timeout. It adds no new API and changes nothing for HTTP/2-only servers.  Adds `http1_header_read_timeout_is_enforced`, which sends a partial HTTP/1 request head, advances the clock past 30s, and checks that the server closed the connection. It fails without the fix and passes with it. 
+- **Issue #2996** (2026-11-04): **fix(transport): start graceful shutdown at max_connection_age when a grace is set**
+  *Symptoms*: Fixes #2905  ## Motivation  `max_connection_age_grace` is documented as a second phase: when a connection reaches `max_connection_age`, the server begins a graceful shutdown, and only if the connection is still open after the grace does it forcefully terminate it. That matches gRPC's `MAX_CONNECTION_AGE` / `MAX_CONNECTION_AGE_GRACE`.  With a grace set, `connection_timeout_future` instead slept for `age + grace` and returned only `TimeoutAction::ForcefulShutdown`, so the graceful phase never ran:  - no GOAWAY was sent at `max_connection_age`, so clients kept opening new streams on the connection; - at `age + grace` the connection was closed with every in-flight stream on it, which clients see as `UNAVAILABLE` / `RST_STREAM`.  #2905 has a reproduction against 0.14.6 and `master`.  ## Solution  - Split the single connection timeout into an age timer and a grace timer. - The age timer starts the graceful shutdown (GOAWAY) at `max_connection_age`. The grace timer is armed only then, and forcefully closes the connection when it fires. - Behaviour without a grace, or without a max age, is unchanged. - Adapted the unit tests for the old combined timer to the age future. The #2522 regression test (#2780) is kept as `test_connection_age_polled_after_completion`: the fused age future must not complete again after it fires. - Added `tests/integration_tests/tests/max_connection_age.rs`:   - `graceful_shutdown_starts_at_max_connection_age_when_grace_is_set`: a raw h2 client holds a stream 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1920,166 +1930,301 @@ impl SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53d5d706` (2026-10-30)
-**Commit Message**: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
+### Incident Patch 1: `6e7619ea` (2026-11-03)
+**Commit Message**: xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (#2995)
 
-## Motivation
+Previously, setting `RetryPolicy::with_max_attempts(Some(n))` made the
+ADS lifecycle task give up after `n` consecutive failed connection
+attempts. This shut down the whole `AdsWorker` and every
+`ResourceWatcher` yielded `None` with no error, and new `watch()` calls
+produced watchers that closed immediately. The client could not recover;
+a new `XdsClient` had to be built.
 
-As a leaf node of other LBs, pick_first might be told to exit_idle even
-when it is not in the idle state. This will cause unnecessary churn.
+Other gRPC implementations never give up on the ADS stream. C++, Go and
+Java all reconnect with exponential backoff for the lifetime of the
+client and expose no attempt limit. This matches the gRPC connection
+backoff spec and gRFC A57, which keep cached resources through
+control-plane outages.
 
-## Solution
+This PR removes the attempt limit so the ADS stream is retried until the
+worker shuts down (all client handles and watchers dropped).
 
-Add a guard to only start a new connection pass if pick first is already
-in idle.
+### Bug fix: backoff overflow panic
 
-## Notes
+`RetryPolicy::backoff_duration` computed `initial_backoff *
+multiplier^attempt` with `Duration::mul_f64` before capping at
+`max_backoff`. After about 64 consecutive failures with the defaults
+(about 30 minutes into an outage), the product overflowed `Duration` and
+panic
 
-This will also be fixed in the pick first revamp (#2784), but putting
-this guard in now allows us to move forward on other LBs with
-confidence. (e.g. #2931).
-
-**File**: `grpc/src/client/load_balancing/pick_first.rs` (modified, +37/-1)
+**File**: `xds-client/src/client/retry.rs` (modified, +40/-55)
 ```diff
-@@ -625,7 +625,13 @@ impl LbPolicy for PickFirstPolicy {
-     }
+@@ -28,7 +28,8 @@ use std::time::Duration;
  
-     fn exit_idle(&mut self, channel_controller: &mut dyn ChannelController) {
--        self.start_connection_pass(channel_controller);
-+        // Only start a connection pass when in Idle and have already
-+        // received a non-empty resolver update (`subchannels` is non-empty).
-+        // Before the first resolver update, `connectivity_state` is Idle while
-+        // `subchannels` is empty.
-+        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
-+            self.start_connection_pass(channel_controller);
-+        }
-     }
- }
+ use rand::RngExt;
  
-@@ -1604,4 +1610,34 @@ mod test {
-         let state = env.expect_picker_update();
-         assert_eq!(state.connectivity_state, ConnectivityState::Connecting);
-     }
-+
-+    // Tests that exit_idle is a no-op before the first resolver update or
-+    // while Connecting or Ready.
-+    #[tokio::test]
-+    async fn test_pick_first_exit_idle() {
-+        let mut env = new_env();
-+
-+        // Before any resolver update (Idle, but subchannels is empty),
-+        // exit_idle should be a no-op.
-+        env.policy.exit_idle(&mut env.tcc);
-+        env.expect_no_events();
-+
-+        // While Connecting, exit_idle should be a no-op.
-+        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
-+            .unwrap();
-+        let sc1 = env.expect_new_subchannel_for("addr1");
-+        env.expect_connect();
-+        env.expect_queuing_picker();
-+
-+        env.policy.exit_idle(&mut env.tcc);
-+        env.expect_no_events();
-+
-+        // While Ready, exit_idle should be a no-op and keep the selected
-+        // subchannel active.
-+        env.send_subchannel_update(&sc1, &SubchannelState::ready());
-+        env.expect_ready_picker(&sc1);
-+
-+        env.policy.exit_idle(&mut env.tcc);
-+        env.expect_no_events();
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `6e481c4e` (2026-10-30)
-**Commit Message**: grpc-xds/load_balancing: move call-once for registration into register() (#2974)
-
-## Motivation
-
-The pattern for registering into the global registery will be to have a
-single call to `register()` that gates all LB registrations behind a
-run-once guard.
-
-## Solution
-
-Move to using this policy in the grpc-xds crate by lifting the guard
-into `register()`.
-
-## Notes
-
-Originally this was #2931, but we are moving that LB into the grpc
-crate. However, since we do want that pattern I've split of this change
-into its own PR. See [this
-comment](https://github.com/grpc/grpc-rust/pull/2931#discussion_r4293203172).
-
-**File**: `grpc-xds/src/load_balancing/cluster_manager.rs` (modified, +1/-5)
-```diff
-@@ -39,7 +39,6 @@
+-use crate::error::{Error, Result};
++use crate::error::Error;
++use crate::error::Result;
  
- use std::collections::HashMap;
- use std::sync::Arc;
--use std::sync::Once;
- 
- use grpc::__unstable::client::load_balancing::ChannelController;
- use grpc::__unstable::client::load_balancing::LbConfigJson;
-@@ -61,7 +60,6 @@ use grpc::StatusError;
- use serde::Deserialize;
- 
- static POLICY_NAME: &str = "xds_cluster_manager_experimental";
--static START: Once = Once::new();
- 
- // Target cluster option for an RPC, keyed by its `TypeId` in `CallOptions`.
- #[derive(Debug, Clone)]
-@@ -216,9 +214,7 @@ impl Picker for ClusterPicker {
- 
- /// Register cluster manager as a LbPolicy.
- pub(crate) fn reg() {
--    START.call_once(|| {
--        GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
--    });
-+    GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
- }
- 
- #[cfg(test)]
-```
-
-**File**: `grpc-xds/src/load_balancing/mod.rs` (modified, +7/-1)
-```diff
-@@ -24,8 +24,12 @@
- 
- //! xDS-specific load balancing policies.
- 
-+use std::sync::Once;
-+
- pub(crate) mod cluster_manager;
- 
-+static START: Once = Once::new();
-+
- /// Registers the xDS load balancing policies into the gRPC global LB registry.
+ /// Retry policy for xDS client connection attempts.
  ///
- /// The `grpc` crate's registry is populated eagerly for its built-in policies,
-@@ -34,5 +38,7 @@ pub(crate) mod cluster_manager;
- /// Only the first call has an effect, any additional ones are ignored.
- #[allow(dead_code, reason = "no caller until there is an xDS resolver.")]
- pub(crate) fn register() {
--    cluster_manager::reg()
-+    START.call_once(|| {
-+        cluster_manager::reg();
-+    });
+@@ -69,13 +70,6 @@ pub struct RetryPolicy {
+     /// Default: 2.0 (exponential backoff).
+     backoff_multiplier: f64,
+ 
+-    /// Maximum number of retry attempts.
+-    ///
+-    /// If `None`, retries indefinitely. If `Some(n)`, stops after `n` attempts.
+-    ///
+-    /// Default: None (infinite retries).
+-    max_attempts: Option<usize>,
+-
+     /// The factor with which backoffs are randomized.
+     jitter: f64,
  }
+@@ -203,17 +197,10 @@ impl RetryPolicy {
+         Ok(self)
+     }
+ 
+-    /// Set the maximum number of retry attempts.
+-    ///
+-    /// If set to `None`, retries indefinitely.
+-    pub fn with_max_attempts(mut self, max_attempts: Option<usize>) -> Self {
+-        self.max_attempts = max_attempts;
+-        self
+-    }
+-
+     /// Calculate the backoff duration for a given attempt number.
+     ///
+-    /// Returns `None` if `max_attempts` is set and the attempt exceeds it.
++    /// There is no attempt limit: the stream is retried for the lifetime of
++    /// the client.
+     ///
+     /// # Arguments
+     ///
+@@ -226,25 +213,19 @@ impl RetryPolicy {
+     /// use std::time::Duration;
+     ///
+     /// let policy = RetryPolicy::default();
+-    /// assert_eq!(policy.backoff_duration(0), Some(Duration::from_secs(1)));
+-    /// assert_eq!(policy.backoff_duration(1), Some(Duration::from_secs(2)));
+-    /// assert_eq!(policy.backoff_duration(2), Some(Duration::from_secs(4)));
++    /// assert_eq!(policy.backoff_duration(0), Duration::from_secs(1));
++    /// assert_eq!(policy.backoff_duration(1), Duration::from_secs(2));
++    /// assert_eq!(policy.backoff_duration(2), Duration::from_secs(4));
+     /// ```
+-    pub fn backoff_duration(&self, attempt: usize) -> Option<Duration> {
+-        // Check if we've exceeded max attempts
+-        if let Some(max) = self.max_attempts
+-            && attempt >= max
+-        {
+-            return None;
+-        }
+-
++    pub fn backoff_duration(&self, attempt: usize) -> Duration {
+         // Calculate exponential backoff (saturate to i32::MAX to avoid overflow in powi)
+         let exponent = i32::try_from(attempt).unwrap_or(i32::MAX);
+         let multiplier = self.backoff_multiplier.powi(exponent);
+-        let backoff = self.initial_backoff.mul_f64(multiplier);
+ 
+-        // Cap at max_backoff
+-        Some(backoff.min(self.max_backoff))
++        // Cap at max_backoff. Compare in f64 first: after enough attempts the
++        // product exceeds `Duration` (or reaches infinity), which would panic.
++        Duration::try_from_secs_f64(self.initial_backoff.as_secs_f64() * multiplier)
++            .map_or(self.max_backoff, |backoff| backoff.min(self.max_backoff))
+     }
+ }
+ 
+@@ -255,14 +236,12 @@ impl Default for RetryPolicy {
+     /// - `initial_backoff`: 1 second
+     /// - `max_backoff`: 30 seconds
+     /// - `backoff_multiplier`: 2.0
+-    /// - `max_attempts`: None (infinite retries)
+     /// - `jitter`: 0.2
+     fn default() -> Self {
+         Self {
+             initial_backoff: Duration::from_secs(1),
+             max_backoff: Duration::from_secs(30),
+             backoff_multiplier: 2.0,
+-            max_attempts: None,
+             jitter: 0.2,
+         }
+     }
+@@ -283,16 +262,16 @@ impl Default for RetryPolicy {
+ ///
+ /// // Each backoff is the exponential base (1s, 2s, ...) randomized by ±20%
+ /// // jitter, so it lands within [0.8x, 1.2x) of the base.
+-/// let first = backoff.next_backoff().unwrap();
++/// let first = backoff.next_backoff();
+ /// assert!(first >= Duration::from_millis(800) && first < Duration::from_millis(1200));
+ ///
+ /// // Second failure: the base doubles to 2s (again jittered ±20%).
+-/// let second = backoff.next_backoff().unwrap();
++/// let second = backoff.next_backoff();
+ /// assert!(second >= Duration::from_millis(1600) && second < Duration::from_millis(2400));
+ ///
+ /// // Success: reset for the next failure sequence (base returns to 1s).
+ /// backoff.reset();
+-/// let after_reset = backoff.next_backoff().unwrap();
++/// let after_reset = backoff.next_backoff();
+ /// assert!(after_reset >= Duration::from_millis(800) && after_reset < Duration::from_millis(1200));
+ /// ```
+ #[derive(Debug, Clone)]
+@@ -308,13 +287,12 @@ impl Backoff {
+     }
+ 
+     /// Get the next backoff duration and advance the attempt counter.
+-    ///
+-    /// Returns `None` if `max_attempts` is set and has been exceeded.
+-    pub fn next_backoff(&mut self) -> Option<Duration> {
+-        let base = self.policy.backoff_duration(self.attempt)?;
+-        self.attempt += 1;
++    pub fn next_backoff(&mut self) -> Duration {
++        let base = self.policy.backoff_duration(self.attempt);
++        self.attempt = self.attempt.saturating_add(1);
+         let factor = 1.0 + self.policy.jitter * rand::rng().random_range(-1.0..1.0);
+-        Some(base.mul_f64(factor))
+
+```
+
+**File**: `xds-client/src/client/worker.rs` (modified, +94/-38)
+```diff
+@@ -32,26 +32,46 @@
+ //! and writes the ADS stream concurrently. Network waits and watcher processing
+ //! do not block the worker from registering watchers or replaying cached resources.
+ 
++use std::collections::HashMap;
++use std::collections::HashSet;
+ use std::collections::hash_map::Entry;
+-use std::collections::{HashMap, HashSet};
+ use std::sync::Arc;
+-use std::sync::atomic::{AtomicU64, Ordering};
+-use std::time::{Duration, SystemTime};
++use std::sync::atomic::AtomicU64;
++use std::sync::atomic::Ordering;
++use std::time::Duration;
++use std::time::SystemTime;
+ 
+ use bytes::Bytes;
+-use tokio::sync::{mpsc, oneshot};
+-
+-use crate::client::config::{ClientConfig, ServerConfig};
+-use crate::client::retry::{Backoff, RetryPolicy};
+-use crate::client::snapshot::{AcceptedResource, RejectedUpdate, ResourceSnapshot, ResourceStatus};
+-use crate::client::watch::{ProcessingDone, ResourceEvent};
++use tokio::sync::mpsc;
++use tokio::sync::oneshot;
++
++use crate::client::config::ClientConfig;
++use crate::client::config::ServerConfig;
++use crate::client::retry::Backoff;
++use crate::client::retry::RetryPolicy;
++use crate::client::snapshot::AcceptedResource;
++use crate::client::snapshot::RejectedUpdate;
++use crate::client::snapshot::ResourceSnapshot;
++use crate::client::snapshot::ResourceStatus;
++use crate::client::watch::ProcessingDone;
++use crate::client::watch::ResourceEvent;
+ use crate::codec::XdsCodec;
+-use crate::error::{Error, Result};
+-use crate::message::{DiscoveryRequest, DiscoveryResponse, ErrorDetail, Node};
+-use crate::metrics::{self, KeyValue, MetricsRecorder};
+-use crate::resource::{DecodedResource, DecoderFn};
++use crate::error::Error;
++use crate::error::Result;
++use crate::message::DiscoveryRequest;
++use crate::message::DiscoveryResponse;
++use crate::message::ErrorDetail;
++use crate::message::Node;
++use crate::metrics::KeyValue;
++use crate::metrics::MetricsRecorder;
++use crate::metrics::{self};
++use crate::resource::DecodedResource;
++use crate::resource::DecoderFn;
+ use crate::runtime::Runtime;
+-use crate::transport::{Transport, TransportBuilder, TransportReceiver, TransportSender};
++use crate::transport::Transport;
++use crate::transport::TransportBuilder;
++use crate::transport::TransportReceiver;
++use crate::transport::TransportSender;
+ 
+ /// Per-client A78 metric attributes (`grpc.target` + `grpc.xds.server`).
+ ///
+@@ -1499,10 +1519,7 @@ impl<R: Runtime, TB: TransportBuilder> TransportContext<R, TB> {
+             if saw_response {
+                 backoff.reset();
+             }
+-            let Some(delay) = backoff.next_backoff() else {
+-                return;
+-            };
+-            self.runtime.sleep(delay).await;
++            self.runtime.sleep(backoff.next_backoff()).await;
+         }
+     }
+ 
+@@ -1619,16 +1636,25 @@ mod tests {
+     use bytes::Bytes;
+ 
+     use super::*;
+-    use crate::client::config::{ClientConfig, ServerConfig};
+-    use crate::client::watch::{ResourceEvent, ResourceWatcher};
++    use crate::Error;
++    use crate::XdsClient;
++    use crate::client::config::ClientConfig;
++    use crate::client::config::ServerConfig;
++    use crate::client::watch::ResourceEvent;
++    use crate::client::watch::ResourceWatcher;
+     use crate::codec::XdsCodec;
+     use crate::error::Result;
+-    use crate::message::{DiscoveryRequest, DiscoveryResponse, Node, ResourceAny};
+-    use crate::resource::{Resource, TypeUrl};
++    use crate::message::DiscoveryRequest;
++    use crate::message::DiscoveryResponse;
++    use crate::message::Node;
++    use crate::message::ResourceAny;
++    use crate::resource::Resource;
++    use crate::resource::TypeUrl;
+     use crate::runtime::tokio::TokioRuntime;
+     use crate::transport::TransportBuilder;
+-    use crate::transport::mock::{MockServer, MockTransport, mock_transport};
+-    use crate::{Error, XdsClient};
++    use crate::transport::mock::MockServer;
++    use crate::transport::mock::MockTransport;
++    use crate::transport::mock::mock_transport;
+ 
+     /// Captures every measurement so tests can assert on the call sequence.
+     #[derive(Default)]
+@@ -2120,7 +2146,8 @@ mod tests {
+     async fn cached_eds_during_reconnect(phase: ReconnectPhase) {
+         use envoy_types::pb::envoy::config::core::v3 as core;
+         use envoy_types::pb::envoy::service::discovery::v3 as discovery;
+-        use envoy_types::pb::google::protobuf::{Any, UInt32Value};
++        use envoy_types::pb::google::protobuf::Any;
++        use envoy_types::pb::google::protobuf::UInt32Value;
+         use prost::Message;
+ 
+         let (inner, mut servers) = mock_transport();
+@@ -2754,23 +2781,26 @@ mod tests {
+         );
+     }
+ 
++    /// Backoff resets only after a stream delivers a decoded response, so an
++    /// undecodable response keeps growing the delay (100ms -> 200ms) while a
++    /// decoded one restarts it at the initial backoff (100ms).
+     #[tokio::test(start_paused = true)]
+-    async fn transport_resets_retry_limit_only_after_a_decoded_response() {
++    async fn transport_rese
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2997** (2026-11-03): xds-client: drop stale `.await` on now-synchronous `watch` in retry test (@YutaoMa)
+- **PR #2996** (closed): fix(transport): start graceful shutdown at max_connection_age when a grace is set (@lukekim)
+- **PR #2995** (2026-11-03): xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (@arjan-bal)
+- **PR #2990** (2026-11-04): grpc: Expose unstable functions in __unstable (@ejona86)
+- **PR #2989** (2026-11-02): protoc-gen-grpc-rust: include absl version in CMAKE_BINDARY_DIR (@dfawley)
 - **PR #2982** (2026-10-29): protoc-gen-grpc-rust: downgrade abseil (@dfawley)
-- **PR #2980** (2026-10-29): fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (@LucioFranco)
-- **PR #2979** (2026-10-29): chore: release v0.14.9 (@github-actions[bot])
-- **PR #2977** (2026-10-30): grpc/load_balancing: Add idle check in pick_first exit_idle() (@nathanielford)
-- **PR #2975** (2026-10-30): grpc/load_balancing: add send_resolver_update_with_config to TestEnv (@nathanielford)
-- **PR #2974** (2026-10-30): grpc-xds/load_balancing: move call-once for registration into register() (@nathanielford)
 
 ---
 
@@ -2099,57 +2244,76 @@ comment](https://github.com/grpc/grpc-rust/pull/2931#discussion_r4293203172).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
+## X. xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (#2
 
 **RULE**:
-When implementing operations in `grpc/src/client/load_balancing/pick_first.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `xds-client/src/client/retry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53d5d706`: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e7619ea`: xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (#2995). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/load_balancing/pick_first.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `xds-client/src/client/retry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Only start a connection pass when in Idle and have already
-        // received a non-empty resolver update (`subchannels` is non-empty).
-        // Before the first resolver update, `connectivity_state` is Idle while
-        // `subchannels` is empty.
-        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
-            self.start_connection_pass(channel_controller);
-        }
-
-    // Tests that exit_idle is a no-op before the first resolver update or
-    // while Connecting or Ready.
-    #[tokio::test]
-    async fn test_pick_first_exit_idle() {
-        let mut env = new_env();
-
-        // Before any resolver update (Idle, but subchannels is empty),
-        // exit_idle should be a no-op.
-        env.policy.exit_idle(&mut env.tcc);
-        env.expect_no_events();
-
-        // While Connecting, exit_idle should be a no-op.
-        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
-            .unwrap();
-        let sc1 = env.expect_new_subchannel_for("addr1");
-        env.expect_connect();
-        env.expect_queuing_picker();
-
-        env.policy.exit_idle(&mut env.tcc);
-        env.expect_no_events();
-
-        // While Rea
+use crate::error::Error;
+use crate::error::Result;
+    /// There is no attempt limit: the stream is retried for the lifetime of
+    /// the client.
+    /// assert_eq!(policy.backoff_duration(0), Duration::from_secs(1));
+    /// assert_eq!(policy.backoff_duration(1), Duration::from_secs(2));
+    /// assert_eq!(policy.backoff_duration(2), Duration::from_secs(4));
+    pub fn backoff_duration(&self, attempt: usize) -> Duration {
+        // Cap at max_backoff. Compare in f64 first: after enough attempts the
+        // product exceeds `Duration` (or reaches infinity), which would panic.
+        Duration::try_from_secs_f64(self.initial_backoff.as_secs_f64() * multiplier)
+            .map_or(self.max_backoff, |backoff| backoff.min(self.max_backoff))
+/// let first = backoff.next_backoff();
+/// let second = backoff.next_backoff();
+/// let after_reset = backoff.next_backoff();
+    pub fn next_backoff(&mut self) -> Duration {
+        let base = self.policy.backoff_duration(self.attempt);
+        self.attempt = self.attempt.saturating_add(1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        self.start_connection_pass(channel_controller);
+use crate::error::{Error, Result};
+    /// Maximum number of retry attempts.
+    ///
+    /// If `None`, retries indefinitely. If `Some(n)`, stops after `n` attempts.
+    ///
+    /// Default: None (infinite retries).
+    max_attempts: Option<usize>,
+
+    /// Set the maximum number of retry attempts.
+    ///
+    /// If set to `None`, retries indefinitely.
+    pub fn with_max_attempts(mut self, max_attempts: Option<usize>) -> Self {
+        self.max_attempts = max_attempts;
+        self
+    }
+
+    /// Returns `None` if `max_attempts` is set and the attempt exceeds it.
+    /// assert_eq!(policy.backoff_duration(0), Some(Duration::from_secs(1)));
+    /// assert_eq!(policy.backoff_duration(1), Some(Duration::from_secs(2)));
+    /// assert_eq!(policy.backoff_duration(2), Some(Duration::from_secs(4)));
+    pub fn backoff_duration(&self, attempt: usize) -> Option<Duration> {
+        // Check if we've exceeded max attempts
+        if let Some(max) = self.max_attempts
+            && attempt >= max
+        {
+            return None;
+        }
+
+        let backoff = self.initial_backoff.mul_f64(multiplier);
+        // Cap at max_backoff
+        Some(backoff.min(self.max_backoff))
+    /// - `max
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53d5d706` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e7619ea` are properly handled with clean fallback behavior.

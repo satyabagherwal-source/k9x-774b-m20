@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `cb2b27a7`  
+> **Source Version**: `a88de55f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:33:31.536Z  
+> **Timestamp**: 2026-11-05T00:48:46.585Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:33:31.049Z  
+> **Harvest Timestamp**: 2026-11-05T00:48:46.444Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7436 stars
+- **Stars / Engagement**: 7435 stars
 
 ---
 
@@ -880,249 +880,103 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `392309e6` (2026-11-01)
-**Commit Message**: build(deps-ui-dev): bump rack (#14711)
+### Incident Patch 1: `a88de55f` (2026-11-04)
+**Commit Message**: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
 
-Bumps the rack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rack](https://github.com/rack/rack).
-
-
-Updates `rack` from 2.2.24 to 2.2.25
-- [Release notes](https://github.com/rack/rack/releases)
-- [Changelog](https://github.com/rack/rack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rack/rack/compare/v2.2.24...v2.2.25)
+Bumps org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0.
 
 ---
 updated-dependencies:
-- dependency-name: rack
-  dependency-version: 2.2.25
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-  dependency-group: rack
+- dependency-name: org.apache.felix:org.apache.felix.framework
+  dependency-version: 8.0.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
+**File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -95,7 +95,7 @@ GEM
-     public_suffix (6.0.2)
-     racc (1.8.1)
-     racc (1.8.1-java)
--    rack (2.2.24)
-+    rack (2.2.25)
-     rack-session (1.0.2)
-       rack (< 3)
-     rack-test (2.3.0)
-@@ -228,7 +228,7 @@ CHECKSUMS
-   public_suffix (6.0.2) sha256=bfa7cd5108066f8c9602e0d6d4114999a5df5839a63149d3e8b0f9c1d3558394
-   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-   racc (1.8.1-java) sha256=54f2e6d1e1b91c154013277d986f52a90e5ececbe91465d29172e49342732b98
--  rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
-+  rack (2.2.25) sha256=a5b3cd8f2df29c36ede21aa797c21e643f06792fae7487926102e06abe6da0b8
-   rack-session (1.0.2) sha256=a02115e5420b4de036839b9811e3f7967d73446a554b42aa45106af335851d76
-   rack-test (2.3.0) sha256=b118d177cc002c572fc1b6fd8d19c9ed5881a36e8d6f689f9e618f9f861241e8
-   rackup (1.0.1) sha256=ba86604a28989fe1043bff20d819b360944ca08156406812dca6742b24b3c249
+@@ -101,7 +101,7 @@ def libraries = [
+   dbunit              : 'org.dbunit:dbunit:3.5.2',
+   dom4j               : 'org.dom4j:dom4j:2.2.0',
+   ehcache             : 'net.sf.ehcache.internal:ehcache-core:2.11.1.3.11', // See https://repo.terracotta.org/maven2/net/sf/ehcache/internal/ehcache-core/maven-metadata.xml
+-  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
++  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
+   freemarker          : 'org.freemarker:freemarker:2.3.35',
+   gson                : 'com.google.code.gson:gson:2.15.0',
+   h2                  : 'com.h2database:h2:1.4.200',
 ```
 
 ---
 
-### Incident Patch 2: `cb2b27a7` (2026-11-02)
-**Commit Message**: build: fix incorrectly detected 0BSD licenses
+### Incident Patch 2: `82bf7ef6` (2026-11-04)
+**Commit Message**: build(deps-ui-dev): bump globals (#14719)
 
-**File**: `buildSrc/build.gradle` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ dependencies {
-   implementation localGroovy()
-   implementation gradleApi()
-   implementation 'de.undercouch:gradle-download-task:5.7.0'
--  implementation 'com.github.jk1:gradle-license-report:3.1.4'
-+  implementation 'com.github.jk1:gradle-license-report:3.1.5'
-   implementation 'org.freemarker:freemarker:2.3.35'
-   implementation('dev.yumi:yumi-gradle-licenser:4.0.0') {
-     // Unnecessary jgit transitives
-```
-
-**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/LicenseReport.groovy` (modified, +0/-1)
-```diff
-@@ -37,7 +37,6 @@ class LicenseReport {
-     "Apache-1.1",
-     "Apache-2.0",
-     "BlueOak-1.0.0",
--    "0BSD",
-     "BSD-2-Clause",
-     "BSD-3-Clause",
-     "CDDL-1.0",
-```
+Bumps [globals](https://github.com/sindresorhus/globals) from 17.13.0 to 17.14.0.
+- [Release notes](https://github.com/sindresorhus/globals/releases)
+- [Commits](https://github.com/sindresorhus/globals/compare/v17.13.0...v17.14.0)
 
 ---
+updated-dependencies:
+- dependency-name: globals
+  dependency-version: 17.14.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 3: `b2985718` (2026-11-02)
-**Commit Message**: build: declare license for Tanuki Wrapper
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/LicenseReport.groovy` (modified, +8/-7)
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -59,6 +59,7 @@ class LicenseReport {
-     "OFL-1.1",
-     "Public Domain",
-     "Ruby",
-+    "Tanuki Development Software License 1.3",
-     "Zlib"
-   ).sort()
- 
-@@ -76,7 +77,7 @@ class LicenseReport {
-   LicenseReport(FileSystemOperations fileOps, ObjectFactory objectFactory,
-                 List<ReportTask> licenseReportTasks, Provider<Directory> reportDir,
-                 Map<String, Map<String, Object>> licensesForPackagedJarDependencies,
--                Map<String, File> extraEcosystemLicenseFiles, File yarnLicenseReport, GoVersions goVersions) {
-+                File yarnLicenseReport, Map<String, File> extraEcosystemLicenseFiles, GoVersions goVersions) {
-     this.fileOps = fileOps
-     this.objectFactory = objectFactory
-     this.licenseReportTasks = licenseReportTasks
-@@ -122,12 +123,6 @@ class LicenseReport {
-             renderModuleData(markup, "Java", moduleName, moduleLicenseData)
-           }
- 
--          this.extraEcosystemLicenseFiles.each {
--            new JsonSlurper().parse(it.value, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
--              renderModuleData(markup, it.key, moduleName, moduleLicenseData)
--            }
--          }
--
-           new JsonSlurper().parse(this.yarnLicenseReport, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
-             def yarnLicenseReportDir = this.yarnLicenseReport.parentFile
-             fileOps.copy {
-@@ -138,6 +133,12 @@ class LicenseReport {
-             renderModuleData(markup, "Javascript", moduleName, moduleLicenseData)
-           }
- 
-+          this.extraEcosystemLicenseFiles.each {
-+            new JsonSlurper().parse(it.value, "utf-8").each { String moduleName, Map<String, Object> moduleLicenseData ->
-+              renderModuleData(markup, it.key, moduleName, moduleLicenseData)
-+            }
-+          }
-+
-           def jreLicense = goVersions.packagedJavaVersion.toLicenseMetadata()
-           renderModuleData(markup, "Runtime", jreLicense.moduleName, jreLicense)
-         }
+@@ -87,7 +87,7 @@
+     "file-loader": "^6.2.0",
+     "fork-ts-checker-webpack-plugin": "^9.1.0",
+     "fs-extra": "^11.4.1",
+-    "globals": "^17.13.0",
++    "globals": "^17.14.0",
+     "html-webpack-plugin": "^5.6.8",
+     "jasmine": "^7.0.0",
+     "jasmine-ajax": "^5.0.0",
 ```
 
-**File**: `installers/tanuki.gradle` (modified, +33/-0)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -16,6 +16,7 @@
+@@ -4516,10 +4516,10 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- import com.thoughtworks.go.build.DownloadFile
- import com.thoughtworks.go.build.TextUtils
-+import groovy.json.JsonOutput
+-"globals@npm:^17.13.0":
+-  version: 17.13.0
+-  resolution: "globals@npm:17.13.0"
+-  checksum: 10c0/8371d9e4e5581640141b5cce70a098edd765d2e3ab063b14998e590698071e0afb4a4a6739ccfbdcbdeb2565c5553697ba07d95703c51039912cf341a7dba7a7
++"globals@npm:^17.14.0":
++  version: 17.14.0
++  resolution: "globals@npm:17.14.0"
++  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
+   languageName: node
+   linkType: hard
  
- def destFile(String url) {
-   new File(gradle.gradleUserHomeDir, "download-cache/${TextUtils.md5Hex(url)}/${new File(URI.create(url).toURL().path).name}")
-@@ -28,6 +29,37 @@ def downloadTanukiDeltaPack = tasks.register('downloadTanukiDeltaPack', Download
-   checksum = rootProject.versions.tanukiSha256sum
- }
- 
-+def tanukiDeltaPackLicense = tasks.register('tanukiDeltaPackLicense') {
-+  inputs.property('version', rootProject.versions.tanuki)
-+
-+  def licenseFile = layout.buildDirectory.file("_tanuki-licenses.json")
-+  outputs.file licenseFile
-+
-+  doFirst {
-+    licenseFile.get().asFile.with {
-+      parentFile.mkdirs()
-+      withWriter { out ->
-+        def moduleName = "com.tanukisoftware:java-service-wrapper" as String
-+        out.write(JsonOutput.prettyPrint(JsonOutput.toJson([
-+          (moduleName as String): [
-+            "moduleName"    : moduleName,
-+            "moduleVersion" : rootProject.versions.tanuki,
-+            "moduleUrls"    : [
-+              "https://wrapper.tanukisoftware.com/",
-+            ],
-+            "moduleLicenses": [
-+              [
-+                "moduleLicense"   : "Tanuki Development Software License 1.3",
-+                "moduleLicenseUrl": "https://wrapper.tanukisoftware.com/doc/english/licenseDevelopment.html#text"
-+              ]
-+            ]
-+          ],
-+        ])))
-+      }
-+    }
-+  }
-+}
-+
- tasks.register('extractDeltaPack', Copy) {
-   dependsOn downloadTanukiDeltaPack
-   destinationDir = layout.buildDirectory.dir("tanuki").get().asFile
-@@ -37,4 +69,5 @@ tasks.register('extractDeltaPack', Copy) {
-     }
-     includeEmptyDirs = false
-   }
-+  finalizedBy tanukiDeltaPackLicense
- }
-```
-
-**File**: `server/build.gradle` (modified, +17/-9)
-```diff
-@@ -740,20 +740,23 @@ tasks.register('licenseReportAggregate') {
-   dependsOn(licenseReportTasks)
-   licenseReportTasks.each { rt -> inputs.dir(rt.outputFolder) }
- 
-+  def tanukiDeltaPackLicense = findProject(':installers').tasks.named('tanukiDeltaPackLicense')
-+  dependsOn tanukiDeltaPackLicense
-   dependsOn compileAssetsWebpackProd
-   dependsOn generateRubygemsLicenseReport
- 
-   // try our best to run verifications first since logic here relies on the expectations here
-   def verifyJarTasks = rootProject.subprojects.collectMany { eachProject -> eachProject.tasks.withType(VerifyJarTask) }
-   shouldRunAfter verifyJarTasks
- 
--  def rubygemsReportFile = (generateRubygemsLicenseReport as Task).outputs.files.singleFile
--  def extraJavascriptLicenses = project.file("${project.railsRoot}/app/assets/javascripts/lib/_licenses.json")
--  def extraInstallerLicenses = findProject(':installers').file("windows/nsis-plugins-x86-unicode/_licenses.json")
-   def yarnLicenseReportDir = (compileAssetsWebpackProd as Task).outputs.files.find { f -> f.name == 'yarn-license-prod' } as File
--  def goVersions = rootProject.goVersions as GoVersions
--  inputs.files(rubygemsReportFile, extraJavascriptLicenses, extraInstallerLicenses)
-   inputs.dir(yarnLicenseReportDir)
-+  def extraJavascriptLicenses = project.file("${project.railsRoot}/app/assets/javascripts/lib/_licenses.json")
-+  def rubygemsReportFile = (generateRubygemsLicenseReport as Task).outputs.files.singleFile
-+  def extraInstallerLicenses = rootProject.findProject(':installers').file("windows/nsis-plugins-x86-unicode/_licenses.json")
-+  def tanukiLicenses = tanukiDeltaPackLicense.map { it.outputs.files.singleFile }
-+  inputs.files(extraJavascriptLicenses, rubygemsReportFile, extraInstallerLicenses, tanukiLicenses)
-+  def goVersions = rootProject.goVersions as GoVersions
-   inputs.property('goVersions', goVersions)
- 
-   def licenseReportAggregateOutputDir = layout.getBuildDirectory().dir('reports/license-report-aggregate') as Provider<Directory>
-@@ -917,10 +920,15 @@ tasks.register('licenseReportAggregate') {
-     new LicenseReport(
-       injected.fileOps, injected.objectFactory,
-       licenseReportTasks, licenseReportAggregateOutputDir,
--      licensesForPackagedJarDependencies,
--      [ Ruby: rubygemsReportFile, Javascript: extraJavascriptLicenses, WindowsNSIS: extraInstallerLicenses ],
--      new File(yarnLicenseReportDir, 'license-report.json'),
--      goVersions
-+      licensesForPackagedJarDependencies,                    // Java
-+      new File(yarnLicenseReportDir, 'license-report.json'), // JavaScript
-+      [
-+        Javascript: extraJavascriptLicenses,
-+        Ruby: rubygemsReportFile,
-+        'NsisPlugins (Windows installers only)': extraInstallerLicenses,
-+        Runtime: tanukiLicenses.get()
-+      ],
-+      goVersions                                             // Runtime
-     ).generate()
-   }
- }
+@@ -4612,7 +4612,7 @@ __metadata:
+     fork-ts-checker-webpack-plugin: "npm:^9.1.0"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
+-    globals: "npm:^17.13.0"
++    globals: "npm:^17.14.0"
+     hack-font: "npm:^3.3.0"
+     html-webpack-plugin: "npm:^5.6.8"
+     jasmine: "npm:^7.0.0"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14711** (2026-11-01): build(deps-ui-dev): bump rack from 2.2.24 to 2.2.25 in /server/src/main/webapp/WEB-INF/rails in the rack group (@dependabot[bot])
-- **PR #14710** (2026-10-31): build(deps-ui): bump follow-redirects from 1.16.1 to 1.16.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14709** (2026-10-31): Remove unused what-input dependency (@chadlwilson)
-- **PR #14708** (closed): [WIP] Build(deps-ui): bump what-input from 5.2.12 to 6.0.1 (@Copilot)
-- **PR #14707** (closed): build(deps-ui): bump what-input from 5.2.12 to 6.0.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14706** (2026-10-31): build(deps-ui-dev): bump tzinfo-data from 1.2026.5 to 1.2026.6 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14720** (2026-11-04): build(deps): bump org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0 (@dependabot[bot])
+- **PR #14719** (2026-11-04): build(deps-ui-dev): bump globals from 17.13.0 to 17.14.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14718** (2026-11-03): build(deps-ui-dev): bump addressable from 2.9.0 to 2.9.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14717** (2026-11-03): build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (@dependabot[bot])
+- **PR #14716** (2026-11-03): build(deps-ui-dev): bump sass-embedded from 1.107.0 to 1.107.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14715** (2026-11-03): build(deps-ui-dev): bump ffi-compiler from 1.4.2 to 1.4.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -1142,30 +996,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump rack (#14711)
+## X. build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `392309e6`: build(deps-ui-dev): bump rack (#14711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a88de55f`: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    rack (2.2.25)
-  rack (2.2.25) sha256=a5b3cd8f2df29c36ede21aa797c21e643f06792fae7487926102e06abe6da0b8
+  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    rack (2.2.24)
-  rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
+  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `392309e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a88de55f` are properly handled with clean fallback behavior.

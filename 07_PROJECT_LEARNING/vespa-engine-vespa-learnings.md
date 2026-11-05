@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `60fc36fb`  
+> **Source Version**: `37ffa51d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:30:22.281Z  
+> **Timestamp**: 2026-11-04T17:52:33.836Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:30:21.604Z  
+> **Harvest Timestamp**: 2026-11-04T17:52:32.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7159 stars
+- **Stars / Engagement**: 7160 stars
 
 ---
 
@@ -1065,478 +1065,485 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb5f8a1` (2026-11-03)
-**Commit Message**: Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-names-more-gracefully
+### Incident Patch 1: `70530021` (2026-11-04)
+**Commit Message**: Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids-through-search-protocol
 
-handle duplicate parameter names more gracefully
+Propagate trace and span ids through search protocol.
 
-**File**: `eval/src/tests/eval/function/function_test.cpp` (modified, +11/-0)
+**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java` (modified, +83/-6)
 ```diff
-@@ -794,6 +794,17 @@ TEST(FunctionTest, require_that_tensor_reduce_with_unknown_aggregator_fails) {
-     verify_error("reduce(x,bogus)", "[reduce(x,bogus]...[unknown aggregator: 'bogus']...[)]");
- }
+@@ -4,6 +4,7 @@
+ import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol;
+ import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol.StringProperty;
+ import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol.TensorProperty;
++import ai.vespa.telemetry.api.Telemetry;
+ import com.google.protobuf.ByteString;
+ import com.google.protobuf.InvalidProtocolBufferException;
+ import com.yahoo.data.access.helpers.MatchFeatureData;
+@@ -33,6 +34,9 @@
+ import com.yahoo.searchlib.aggregation.Grouping;
+ import com.yahoo.slime.BinaryFormat;
+ import com.yahoo.vespa.objects.BufferSerializer;
++import io.opentelemetry.api.trace.Span;
++import io.opentelemetry.context.Context;
++import io.opentelemetry.context.propagation.TextMapSetter;
  
-+TEST(FunctionTest, require_that_explicit_parameter_names_cannot_contain_duplicates) {
-+    auto function = Function::parse({"x", "y", "x"}, "x+y");
-+    EXPECT_TRUE(function->has_error());
-+    EXPECT_EQ("[]...[duplicate parameter names]...[x+y]", function->get_error());
-+}
-+
-+TEST(FunctionTest, require_that_lambda_parameter_names_cannot_contain_duplicates) {
-+    verify_error("map(x,f(a,a)(a))", "[map(x,f(a,a)]...[duplicate identifiers]...[(a))]");
-+    verify_error("join(x,y,f(a,a)(a+a))", "[join(x,y,f(a,a)]...[duplicate identifiers]...[(a+a))]");
-+}
-+
- TEST(FunctionTest, require_that_tensor_reduce_with_duplicate_dimensions_fails) {
-     verify_error("reduce(x,sum,a,a)", "[reduce(x,sum,a,a]...[duplicate identifiers]...[)]");
- }
-```
-
-**File**: `eval/src/vespa/eval/eval/function.cpp` (modified, +9/-1)
-```diff
-@@ -43,6 +43,8 @@ class Params {
-     std::map<std::string, size_t> _params;
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -51,7 +55,11 @@ public class ProtobufSerialization {
+     private static final ThreadLocal<GrowableByteBuffer> threadLocalBuffer = ThreadLocal.withInitial(() -> new GrowableByteBuffer(4096));
  
- protected:
-+    bool _has_duplicates = false;
+     static byte[] serializeSearchRequest(Query query, int hits, String nodeId, double contentShare, double requestTimeout) {
+-        return convertFromQuery(query, hits, nodeId, contentShare, requestTimeout).toByteArray();
++        return serializeSearchRequest(createSearchRequestBuilder(query, hits, nodeId, contentShare, requestTimeout));
++    }
 +
-     size_t lookup(const std::string& token) const {
-         auto result = _params.find(token);
-         return (result == _params.end()) ? UNDEF : result->second;
-@@ -58,6 +60,7 @@ class Params {
++    static byte[] serializeSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
++        return createSearchRequest(builder).toByteArray();
+     }
  
- public:
-     static const size_t UNDEF = -1;
-+    bool has_duplicates() const { return _has_duplicates; }
-     virtual bool implicit() const = 0;
-     virtual size_t resolve(const std::string& token) const = 0;
-     std::vector<std::string> extract() const {
-@@ -74,7 +77,9 @@ class Params {
- struct ExplicitParams : Params {
-     explicit ExplicitParams(const std::vector<std::string>& params_in) {
-         for (const auto& param : params_in) {
--            CHECK(lookup(param) == UNDEF);
-+            if (lookup(param) != UNDEF) {
-+                _has_duplicates = true;
-+            }
-             lookup_add(param);
+     private static void convertSearchReplyErrors(Result target, List<SearchProtocol.Error> errors, boolean softTimeout, boolean annTimeout) {
+@@ -62,8 +70,14 @@ private static void convertSearchReplyErrors(Result target, List<SearchProtocol.
          }
      }
-@@ -1039,6 +1044,9 @@ void parse_expression(ParseContext& ctx) {
  
- auto parse_function(const Params& params, std::string_view expression, const SymbolExtractor* symbol_extractor) {
-     ParseContext ctx(params, expression.data(), expression.size(), symbol_extractor);
-+    if (params.has_duplicates()) {
-+        ctx.fail("duplicate parameter names");
+-    static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, String nodeId, double contentShare,
+-                                                         double requestTimeout) {
++    static SearchProtocol.SearchRequest createSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
++        mergeToSearchRequestFromTracing(builder);
++        return builder.build();
 +    }
-     parse_expression(ctx);
-     if (ctx.failed() && params.implicit()) {
-         return Function::create(ctx.get_result(), std::vector<std::string>());
++
++    static SearchProtocol.SearchRequest.Builder createSearchRequestBuilder(Query query, int hits, String nodeId, double contentShare,
++                                                                           double requestTimeout) {
++
+         var builder = SearchProtocol.SearchRequest.newBuilder().setHits(hits).setOffset(query.getOffset())
+                 .setTimeout((int) (requestTimeout * 1000));
+         var documentDb = query.getModel().getDocumentDb();
+@@ -105,7 +119,7 @@ static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, Stri
+ 
+         mergeToSearchRequestFromRanking(query.getRanking(), context, scratchPad, builder);
+ 
+-        return builder.build();
++        return builder;
+     }
+ 
+     public static int getTraceLevelForBackend(Query query) {
+@@ -167,6 +181,36 @@ private static void mergeToSearchRequestFromProfiling(Profiling prof, SearchProt
+         }
+     }
+ 
++    private static void mergeToSearchRequestFromTracing(SearchProtocol.SearchRequest.Builder builder) {
++        var metadataBuilder = createTelemetryMetadataBuilderIfRecording();
++        if (metadataBuilder != null) {
++            builder.setTelemetryMetadata(metadataBuilder);
++        } else {
++            builder.clearTelemetryMetadata();
++        }
++    }
++
++    private static SearchProtocol.TelemetryMetadata.Builder createTelemetryMetadataBuilderIfRecording() {
++        var context = Context.current();
++        var span = Span.fromContext(context);
++        if (!span.isRecording()) {
++            return null;
++        }
++        var telemetry = Telemetry.from(context);
++        var metadataBuilder = SearchProtocol.TelemetryMetadata.newBuilder();
++
++        var propagator = telemetry.textMapPropagator();
++        propagator.inject(context, metadataBuilder, traceContextSetter);
++        return metadataBuilder;
++    }
++
++    private static final TextMapSetter<SearchProtocol.TelemetryMetadata.Builder> traceContextSetter =
++        (builder, key, value) -> {
++            if (builder != null) {
++                builder.putTraceContext(key, value);
++            }
++        };
++
+     static SearchProtocol.DocsumRequest.Builder createDocsumRequestBuilder(Query query,
+                                                                            String serverId,
+                                                                            String summaryClass,
+@@ -210,12 +254,26 @@ static SearchProtocol.DocsumRequest.Builder createDocsumRequestBuilder(Query que
+         return builder;
+     }
+ 
+-    static byte[] serializeDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
++    static SearchProtocol.DocsumRequest createDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
+         builder.clearGlobalIds();
+         for (va
+```
+
+**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcPing.java` (modified, +1/-1)
+```diff
+@@ -66,7 +66,7 @@ private Pong toPong(ResponseOrError<ProtobufResponse> responseOrError) {
+ 
+     private void sendPing() {
+         var connection = connectionPool.getConnection(node.key());
+-        var ping = SearchProtocol.MonitorRequest.newBuilder().build().toByteArray();
++        var ping = ProtobufSerialization.serializeMonitorRequest();
+         double timeoutSeconds = ((double) clusterMonitor.getConfiguration().getRequestTimeout()) / 1000.0;
+         Compressor.Compression compressionResult = compressor.compress(PING_COMPRESSION, ping);
+         connection.request(RPC_METHOD, compressionResult.type(), ping.length, compressionResult.data(), this, timeoutSeconds);
+```
+
+**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcProtobufFillInvoker.java` (modified, +16/-9)
+```diff
+@@ -31,6 +31,7 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Objects;
+ import java.util.Set;
+ import java.util.concurrent.BlockingQueue;
+ import java.util.concurrent.LinkedBlockingQueue;
+@@ -134,8 +135,7 @@ void sendFillRequestByNode(Result result, String summaryClass, ListMap<Integer,
+         var builder = ProtobufSerialization.createDocsumRequestBuilder(
+                 result.getQuery(), serverId, askForSummary, onlyFields, summaryNeedsQuery, timeout.request());
+         hitsByNode.forEach((nodeId, hits) -> {
+-            var payload = ProtobufSerialization.serializeDocsumRequest(builder, hits);
+-            sendDocsumsRequest(nodeId, hits, payload, result, timeout.client());
++            sendDocsumsRequest(nodeId, hits, builder, result, timeout.client());
+         });
+     }
+ 
+@@ -191,7 +191,7 @@ private final ListMap<Integer, FastHit> hitsByNode(Result result) {
+     }
+ 
+     /** Send a docsums request to a node. Responses will be added to the given receiver. */
+-    private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload, Result result,
++    private void sendDocsumsRequest(int nodeId, List<FastHit> hits, SearchProtocol.DocsumRequest.Builder builder, Result result,
+                                     double clientTimeout) {
+         Client.NodeConnection node = resourcePool.getConnection(nodeId);
+         if (node == null) {
+@@ -204,7 +204,6 @@ private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload,
+             return;
+         }
+         Query query = result.getQuery();
+-        Compressor.Compression compressionResult = compressor.compress(query, payload);
+ 
+         Span span = OtelTracing.startSpan(Context.current(), "node.fill", SpanKind.CLIENT);
+         // Every value is a parameter or a constant, so no isRecording() guard is warranted. There is no
+@@ -216,11 +215,19 @@ private void sendDocsumsRequest(int nodeId, List<FastHit> hits, byte[] payload,
+             .setAttribute(TraceAttributes.FILL_HITS_REQUESTED, hits.size())
+             .setAttribute(TraceAttributes.FILL_RETRY,          hits.get(0).getDistributionKey() != nodeId);
+ 
+-        // End BEFORE enqueueing, as RpcSearchInvoker.receive does, so the same statement holds on both paths:
+-        // the caller thread can never observe a response whose span is still recording. It also keeps the span
+-        // ending even if receive() throws - responses is a BOUNDED queue and uses add(), which throws when full.
+-        node.request(RPC_METHOD, compressionResult.type(), payload.length, compressionResult.data(),
+-                roe -> { endSpan(span, roe); receive(roe, hits); }, clientTimeout);
++        try (var scope = span.makeCurrent()) {
++            Objects.requireNonNull(scope);
++            var payload = ProtobufSerialization.serializeDocsumRequest(builder, hits);
++            Compressor.Compression compressionResult = compressor.compress(query, payload);
++            // End BEFORE enqueueing, as RpcSearchInvoker.receive does, so the same statement holds on both paths:
++            // the caller thread can never observe a response whose span is still recording. It also keeps the span
++            // ending even if receive() throws - responses is a BOUNDED queue and uses add(), which throws when full.
++            node.request(RPC_METHOD, compressionResult.type(), payload.length, compressionResult.data(),
++                roe -> {
++                    endSpan(span, roe);
++                    receive(roe, hits);
++                }, clientTimeout);
++        }
+     }
+ 
+     /**
+```
+
+**File**: `container-search/src/main/java/com/yahoo/search/dispatch/rpc/RpcSearchInvoker.java` (modified, +13/-3)
+```diff
+@@ -15,9 +15,11 @@
+ import io.opentelemetry.api.trace.SpanKind;
+ import io.opentelemetry.api.trace.StatusCode;
+ import io.opentelemetry.context.Context;
++import io.opentelemetry.context.Scope;
+ 
+ 
+ import java.io.IOException;
++import java.util.Objects;
+ import java.util.Optional;
+ import java.util.concurrent.BlockingQueue;
+ import java.util.concurrent.LinkedBlockingQueue;
+@@ -84,7 +86,15 @@ protected Object sendSearchRequest(Query query, double contentShare, Object inco
+             responseAvailable();
+             return incomingContext;
+         }
+-        SerializedQuery serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request());
++        SerializedQuery serializedQuery;
++        if (span.isRecording()) {
++            try (var scope = span.makeCurrent()) {
++                Objects.requireNonNull(scope);
++                serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request(), true);
++            }
++        } else {
++            serializedQuery = getSerializedQuery(incomingContext, contentShare, timeout.request(), false);
++        }
+         nodeConnection.request(RPC_METHOD,
+                                serializedQuery.compressedPayload.type(),
+                                serializedQuery.compressedPayload.uncompressedSize(),
+@@ -163,9 +173,9 @@ private String getName() {
+         return searcher.getName();
+     }
+ 
+-    private SerializedQuery getSerializedQuery(Object incomingContext, double contentShare, double requestTimeout) {
++    private SerializedQuery getSerializedQuery(Object incomingContext, double contentShare, double requestTimeout, boolean tracing) {
+         if (incomingContext instanceof SerializedQuery serializedQuery
+-            && newSerializationWillBeSimilar(contentShare, serializedQuery))
++            && newSerializationWillBeSimilar(contentShare, serializedQuery) && !tracing)
+             return serializedQuery;
+         return new SerializedQuery(compressor, query, contentShare,
+                                    ProtobufSerialization.serializeSearchRequest(query,
+```
+
+**File**: `container-search/src/test/java/com/yahoo/search/dispatch/rpc/ProtobufSerializationTest.java` (modified, +31/-10)
+```diff
+@@ -4,6 +4,7 @@
+ 
+ import ai.vespa.searchlib.searchprotocol.protobuf.SearchProtocol;
+ import com.google.protobuf.ByteString;
++import com.google.protobuf.InvalidProtocolBufferException;
+ import com.yahoo.document.GlobalId;
+ import com.yahoo.document.idstring.IdString;
+ import com.yahoo.prelude.fastsearch.FastHit;
+@@ -14,11 +15,13 @@
+ import com.yahoo.search.query.profile.QueryProfile;
+ import com.yahoo.search.query.profile.compiled.CompiledQueryProfileRegistry;
+ import com.yahoo.search.query.profile.config.QueryProfileXMLReader;
++import com.yahoo.search.test.SpanRecorder;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.util.List;
+ import java.util.OptionalInt;
+ import java.util.Set;
++import java.util.concurrent.atomic.AtomicReference;
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
+@@ -39,7 +42,7 @@ void testQuerySerialization() {
+                 .setRequest("?query=test&ranking.features.query(tensor_1)=[1.200]")
+                 .build();
+ 
+-        SearchProtocol.SearchRequest request1 = ProtobufSerialization.convertFromQuery(query, 9, "serverId", 1.0, 0.5);
++        SearchProtocol.SearchRequest request1 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5).build();
+         assertEquals(9, request1.getHits());
+         assertEquals(0, request1.getRankPropertiesCount());
+         assertEquals(0, request1.getTensorRankPropertiesCount());
+@@ -50,9 +53,10 @@ void testQuerySerialization() {
+         assertEquals("\"\\006\\001\\001\\001x\\001?\\231\\231\\232\"",
+                 contentsOf(request1.getTensorFeatureOverrides(1).getValue()));
+         assertFalse(request1.hasProfiling());
++        assertTrue(request1.getTelemetryMetadata().getTraceContextMap().isEmpty());
+ 
+         query.prepare(); // calling prepare() moves "overrides" to "features" - content stays the same
+-        SearchProtocol.SearchRequest request2 = ProtobufSerialization.convertFromQuery(query, 9, "serverId", 1.0, 0.5);
++        SearchProtocol.SearchRequest request2 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5).build();
+         assertEquals(9, request2.getHits());
+         assertEquals(0, request2.getRankPropertiesCount());
+         assertEquals(2, request2.getTensorRankPropertiesCount());
+@@ -62,6 +66,14 @@ void testQuerySerialization() {
+                 contentsOf(request2.getTensorRankProperties(1).getValue()));
+         assertEquals(0, request2.getFeatureOverridesCount());
+         assertEquals(0, request2.getTensorFeatureOverridesCount());
++        assertTrue(request2.getTelemetryMetadata().getTraceContextMap().isEmpty());
++
++        var builder3 = ProtobufSerialization.createSearchRequestBuilder(query, 9, "serverId", 1.0, 0.5);
++        SpanRecorder recorder = SpanRecorder.underParentSpan("search");
++        AtomicReference<SearchProtocol.SearchRequest> request3Holder = new AtomicReference<>();
++        recorder.record(() -> request3Holder.set(ProtobufSerialization.createSearchRequest(builder3)));
++        var request3 = request3Holder.get();
++        assertFalse(request3.getTelemetryMetadata().getTraceContextMap().isEmpty());
+     }
+ 
+     @Test
+@@ -73,6 +85,15 @@ void testDocsumSerialization() {
+         var bytes = ProtobufSerialization.serializeDocsumRequest(builder, List.of(hit));
+ 
+         assertEquals(63, bytes.length);
++
++        var request = ProtobufSerialization.createDocsumRequest(builder, List.of(hit));
++        assertTrue(request.getTelemetryMetadata().getTraceContextMap().isEmpty());
++
++        SpanRecorder recorder = SpanRecorder.underParentSpan("docsum");
++        AtomicReference<SearchProtocol.DocsumRequest> request2Holder = new AtomicReference<>();
++        recorder.record(() -> request2Holder.set(ProtobufSerialization.createDocsumRequest(builder, List.of(hit))));
++        var request2 = request2Holder.get();
++        assertFalse(request2.getTelemetryMetadata().getTraceContextMap().isEmpty());
+     }
+ 
+     private String contentsOf(ByteString property) {
+@@ -154,7 +175,7 @@ void profiling_parameters_are_serialized_in_search_request() {
+                 "trace.profiling.firstPhaseRanking.depth=5&" +
+                 "trace.profiling.secondPhaseRanking.depth=-7&" +
+                 "trace.profiling.sortFeatures.depth=-4");
+-        var req = ProtobufSerialization.convertFromQuery(q, 1, "serverId", 1.0, 0.5);
++        var req = ProtobufSerialization.createSearchRequestBuilder(q, 1, "serverId", 1.0, 0.5).build();
+         assertEquals(3, req.getProfiling().getMatch().getDepth());
+         assertEquals(5, req.getProfiling().getFirstPhase().getDepth());
+         assertEquals(-7, req.getProfiling().getSecondPhase().getDepth());
+@@ -165,7 +186,7 @@ void profiling_parameters_are_serialized_in_search_request() {
+     void only_set_profiling_parameters_are_serialized_in_search_request() {
+         var q = new Query("?query=test&trace.level=1&" +
+                 "trace.profili
+```
+
+**File**: `container-search/src/test/java/com/yahoo/search/test/SpanRecorder.java` (modified, +2/-1)
+```diff
+@@ -7,6 +7,7 @@
+ import ai.vespa.telemetry.api.trace.OtelTracing;
+ import io.opentelemetry.api.trace.Span;
+ import io.opentelemetry.api.trace.SpanKind;
++import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+ import io.opentelemetry.context.Context;
+ import io.opentelemetry.context.Scope;
+ import io.opentelemetry.context.propagation.TextMapPropagator;
+@@ -65,7 +66,7 @@ private SpanRecorder(String parentSpanName) {
+                 .build();
+         telemetry = new Telemetry() {
+             @Override public ScopedTracer tracer(String scope) { return new ScopedTracer(tracerProvider.get(scope)); }
+-            @Override public TextMapPropagator textMapPropagator() { return NoopTelemetry.INSTANCE.textMapPropagator(); }
++            @Override public TextMapPropagator textMapPropagator() { return W3CTraceContextPropagator.getInstance(); }
+         };
+         parent = telemetry.tracer(OtelTracing.DEFAULT_SCOPE).startSpan(parentSpanName, SpanKind.INTERNAL, Context.root());
+         context = Telemetry.store(Context.root().with(parent), telemetry);
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ vespa_add_library(vespa_opentelemetry
+     SOURCES
+     opentelemetry_tracer_providers.cpp
++    proto_telemetry_server_carrier.cpp
++    rpc_server_tools.cpp
+     INSTALL lib64
+     DEPENDS
+     opentelemetry-cpp::api
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +4/-0)
+```diff
+@@ -7,12 +7,14 @@
+ #include <vespa/vespalib/component/vtag.h>
+ #include <vespa/vespalib/net/tls/transport_security_options_reading.h>
+ 
++#include <opentelemetry/context/propagation/global_propagator.h>
+ #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
+ #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
+ #include <opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h>
+ #include <opentelemetry/sdk/trace/batch_span_processor_factory.h>
+ #include <opentelemetry/sdk/trace/simple_processor_factory.h>
+ #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
++#include <opentelemetry/trace/propagation/http_trace_context.h>
+ #include <opentelemetry/trace/provider.h>
+ 
+ #include <format>
+@@ -88,6 +90,8 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
+     std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
+         opentelemetry::sdk::trace::TracerProviderFactory::Create(std::move(processor), resource);
+     opentelemetry::trace::Provider::SetTracerProvider(provider);
++    opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
++        std::make_shared<opentelemetry::trace::propagation::HttpTraceContext>());
+ }
+ 
+ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
 ```
 
 ---
 
-### Incident Patch 2: `5114c077` (2026-11-03)
-**Commit Message**: handle duplicate parameter names more gracefully
+### Incident Patch 2: `eec2de65` (2026-11-04)
+**Commit Message**: Fix typo
 
-**File**: `eval/src/tests/eval/function/function_test.cpp` (modified, +11/-0)
+**File**: `searchlib/src/vespa/searchlib/attribute/string_matcher.h` (modified, +1/-1)
 ```diff
-@@ -794,6 +794,17 @@ TEST(FunctionTest, require_that_tensor_reduce_with_unknown_aggregator_fails) {
-     verify_error("reduce(x,bogus)", "[reduce(x,bogus]...[unknown aggregator: 'bogus']...[)]");
- }
+@@ -43,7 +43,7 @@ class StringMatcher {
  
-+TEST(FunctionTest, require_that_explicit_parameter_names_cannot_contain_duplicates) {
-+    auto function = Function::parse({"x", "y", "x"}, "x+y");
-+    EXPECT_TRUE(function->has_error());
-+    EXPECT_EQ("[]...[duplicate parameter names]...[x+y]", function->get_error());
-+}
-+
-+TEST(FunctionTest, require_that_lambda_parameter_names_cannot_contain_duplicates) {
-+    verify_error("map(x,f(a,a)(a))", "[map(x,f(a,a)]...[duplicate identifiers]...[(a))]");
-+    verify_error("join(x,y,f(a,a)(a+a))", "[join(x,y,f(a,a)]...[duplicate identifiers]...[(a+a))]");
-+}
-+
- TEST(FunctionTest, require_that_tensor_reduce_with_duplicate_dimensions_fails) {
-     verify_error("reduce(x,sum,a,a)", "[reduce(x,sum,a,a]...[duplicate identifiers]...[)]");
- }
+     /*
+      * Methods for dictionary lookups. Used by StringPostingSearchContext.
+-     * lookup_in_dictionary is also ued by StringSearchContext with an EnumHintSearchContext.
++     * lookup_in_dictionary is also used by StringSearchContext with an EnumHintSearchContext.
+      */
+     bool lookup_in_dictionary(const EnumStoreT<const char*>& enum_store, IDictionaryLookup& dict) const;
+     bool use_dictionary_entry(const EnumStoreT<const char*>& enum_store, EnumPostingTree::ConstIterator& it) const;
 ```
 
-**File**: `eval/src/vespa/eval/eval/function.cpp` (modified, +9/-1)
+**File**: `searchlib/src/vespa/searchlib/attribute/string_range_matcher.h` (modified, +1/-1)
 ```diff
-@@ -43,6 +43,8 @@ class Params {
-     std::map<std::string, size_t> _params;
+@@ -45,7 +45,7 @@ class StringRangeMatcher {
  
- protected:
-+    bool _has_duplicates = false;
-+
-     size_t lookup(const std::string& token) const {
-         auto result = _params.find(token);
-         return (result == _params.end()) ? UNDEF : result->second;
-@@ -58,6 +60,7 @@ class Params {
+     /*
+      * Methods for dictionary lookups. Used by StringPostingSearchContext.
+-     * lookup_in_dictionary is also ued by StringSearchContext with an EnumHintSearchContext.
++     * lookup_in_dictionary is also used by StringSearchContext with an EnumHintSearchContext.
+      */
+     bool lookup_in_dictionary(const EnumStoreT<const char*>& enum_store, IDictionaryLookup& dict) const;
  
- public:
-     static const size_t UNDEF = -1;
-+    bool has_duplicates() const { return _has_duplicates; }
-     virtual bool implicit() const = 0;
-     virtual size_t resolve(const std::string& token) const = 0;
-     std::vector<std::string> extract() const {
-@@ -74,7 +77,9 @@ class Params {
- struct ExplicitParams : Params {
-     explicit ExplicitParams(const std::vector<std::string>& params_in) {
-         for (const auto& param : params_in) {
--            CHECK(lookup(param) == UNDEF);
-+            if (lookup(param) != UNDEF) {
-+                _has_duplicates = true;
-+            }
-             lookup_add(param);
-         }
-     }
-@@ -1039,6 +1044,9 @@ void parse_expression(ParseContext& ctx) {
- 
- auto parse_function(const Params& params, std::string_view expression, const SymbolExtractor* symbol_extractor) {
-     ParseContext ctx(params, expression.data(), expression.size(), symbol_extractor);
-+    if (params.has_duplicates()) {
-+        ctx.fail("duplicate parameter names");
-+    }
-     parse_expression(ctx);
-     if (ctx.failed() && params.implicit()) {
-         return Function::create(ctx.get_result(), std::vector<std::string>());
 ```
 
 ---
 
-### Incident Patch 3: `cab01ab5` (2026-11-03)
-**Commit Message**: Merge pull request #38409 from vespa-engine/arnej/fix-matched-elements-only
+### Incident Patch 3: `de78d213` (2026-11-04)
+**Commit Message**: Merge pull request #38425 from vespa-engine/johsol/fix-tmgrammar
 
-Report matched elements from struct field indexes under the parent field
+fix tmgrammar
 
-**File**: `searchcore/CMakeLists.txt` (modified, +1/-0)
+**File**: `integration/tmgrammar/grammars/vespa-schema.tmLanguage.json` (modified, +1/-1)
 ```diff
-@@ -71,6 +71,7 @@ vespa_define_module(
-     src/tests/proton/common/operation_rate_tracker
-     src/tests/proton/common/timer
-     src/tests/proton/docsummary
-+    src/tests/proton/docsummary/summary_setup
-     src/tests/proton/document_iterator
-     src/tests/proton/documentdb
-     src/tests/proton/documentdb/feedhandler
-```
-
-**File**: `searchcore/src/tests/proton/docsummary/summary_setup/CMakeLists.txt` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
-+vespa_add_executable(searchcore_summary_setup_test_app TEST
-+    SOURCES
-+    summary_setup_test.cpp
-+    DEPENDS
-+    searchcore_docsummary
-+    searchcore_flushengine
-+    searchlib_test
-+    GTest::gtest
-+)
-+vespa_add_test(NAME searchcore_summary_setup_test_app COMMAND searchcore_summary_setup_test_app)
-```
-
-**File**: `searchcore/src/tests/proton/docsummary/summary_setup/summary_setup_test.cpp` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
-+
-+#include <vespa/config-summary.h>
-+#include <vespa/fastlib/text/normwordfolder.h>
-+#include <vespa/juniper/rpinterface.h>
-+#include <vespa/searchcommon/attribute/config.h>
-+#include <vespa/searchcommon/common/schema.h>
-+#include <vespa/searchcore/proton/docsummary/summarymanager.h>
-+#include <vespa/searchlib/attribute/attributefactory.h>
-+#include <vespa/searchlib/common/matching_elements_fields.h>
-+#include <vespa/searchlib/test/mock_attribute_manager.h>
-+#include <vespa/searchsummary/config/config-juniperrc.h>
-+#include <vespa/searchsummary/docsummary/resultclass.h>
-+#include <vespa/searchsummary/docsummary/resultconfig.h>
-+#include <vespa/vespalib/gtest/gtest.h>
-+
-+using proton::SummaryManager;
-+using search::AttributeFactory;
-+using search::MatchingElementsFields;
-+using search::attribute::BasicType;
-+using search::attribute::Config;
-+using search::attribute::test::MockAttributeManager;
-+using search::index::Schema;
-+using search::index::schema::CollectionType;
-+using search::index::schema::DataType;
-+using vespa::config::search::SummaryConfig;
-+using vespa::config::search::SummaryConfigBuilder;
-+using vespa::config::search::summary::JuniperrcConfig;
-+using SIF = Schema::IndexField;
-+using Select = SummaryConfigBuilder::Classes::Fields::Elements::Select;
-+
-+namespace {
-+
-+SummaryConfig make_summary_config() {
-+    SummaryConfigBuilder builder;
-+    builder.defaultsummaryid = 0;
-+    builder.classes.resize(1);
-+    auto& cls = builder.classes.back();
-+    cls.id = 0;
-+    cls.name = "default";
-+    for (const char* name : {"people", "url"}) {
-+        cls.fields.emplace_back();
-+        cls.fields.back().name = name;
-+        cls.fields.back().elements.select = Select::BY_MATCH;
-+    }
-+    return SummaryConfig(builder);
-+}
-+
-+Schema make_schema() {
-+    Schema s;
-+    s.addUriIndexFields(SIF("url", DataType::STRING));
-+    s.addIndexField(SIF("people.name", DataType::STRING, CollectionType::ARRAY));
-+    s.addIndexField(SIF("people.value.title", DataType::STRING, CollectionType::ARRAY));
-+    return s;
-+}
-+
-+std::shared_ptr<MockAttributeManager> make_attribute_manager() {
-+    auto mgr = std::make_shared<MockAttributeManager>();
-+    mgr->addAttribute(AttributeFactory::createAttribute(
-+        "people.age", Config(BasicType::INT32, search::attribute::CollectionType::ARRAY)));
-+    return mgr;
-+}
-+
-+} // namespace
-+
-+TEST(SummarySetupTest, matched_elements_only_maps_struct_field_attributes_and_indexes_to_enclosing_field) {
-+    SummaryManager::SummarySetup setup(".", make_summary_config(), JuniperrcConfig(), make_attribute_manager(), {},
-+                                       {}, {}, make_schema());
-+    const auto*                  cls = setup.getResultConfig().lookupResultClass("default");
-+    ASSERT_NE(nullptr, cls);
-+    const MatchingElementsFields& fields = *cls->get_matching_elements_fields();
-+    EXPECT_TRUE(fields.has_field("people"));
-+    // struct field attribute
-+    EXPECT_TRUE(fields.has_field("people.age"));
-+    EXPECT_EQ("people", fields.enclosing_field("people.age"));
-+    // struct field indexes from the schema, also nested
-+    EXPECT_TRUE(fields.has_field("people.name"));
-+    EXPECT_EQ("people", fields.enclosing_field("people.name"));
-+    EXPECT_TRUE(fields.has_field("people.value.title"));
-+    EXPECT_EQ("people", fields.enclosing_field("people.value.title"));
-+    // uri parts are not struct fields
-+    EXPECT_TRUE(fields.has_field("url"));
-+    EXPECT_FALSE(fields.has_field("url.host"));
-+}
-+
-+GTEST_MAIN_RUN_ALL_TESTS()
-```
-
-**File**: `searchcore/src/tests/proton/matching/matching_test.cpp` (modified, +211/-4)
-```diff
-@@ -223,6 +223,27 @@ std::string make_index_only_same_element_stack_dump(const std::string& f1_term,
-     return make_same_element_stack_dump("ix", "f1", f1_term, "f2", f2_term);
- }
- 
-+std::string make_equiv_stack_dump(const std::string& field1, const std::string& term1, const std::string& field2,
-+                                  const std::string& term2) {
-+    QueryBuilder<ProtonNodeTypes> builder;
-+    builder.addEquiv(2, 1, Weight(1));
-+    builder.addStringTerm(term1, field1, 2, Weight(1));
-+    builder.addStringTerm(term2, field2, 3, Weight(1));
-+    return StackDumpCreator::create(*builder.build());
-+}
-+
-+// sameElement(ix.f1:f1_term, ix.f2:f2_term) OR ix.f1:single_term
-+std::string make_index_only_same_element_or_term_stack_dump(const std::string& f1_term, const std::string& f2_term,
-+                                                            const std::string& single_term) {
-+    QueryBuilder<ProtonNodeTypes> builder;
-+    builder.addOr(2);
-+    builder.addSameElement(2, "ix", 0, Weight(1));
-+    builder.addStringTerm(f1_term, "f1", 1, Weight(1));
-+    builder.addStringTerm(f2_term, "f2", 2, Weight(1));
-+    builder.addStringTerm(single_term, "ix.f1", 3, Weight(1));
-+    return StackDumpCreator::create(*builder.build());
-+}
-+
- std::string make_two_term_and_stack_dump(const std::string& field, const std::string& term1,
-                                          const std::string& term2) {
-     QueryBuilder<ProtonNodeTypes> builder;
-@@ -326,7 +347,8 @@ SerializedQueryTreeSP make_labeled_in_or_term_query() {
-     return SerializedQueryTree::fromProtobuf(std::make_unique<decltype(proto_query_tree)>(proto_query_tree));
- }
- 
--std::string make_near_stack_dump(bool ordered, const std::string& term1, const std::string& term2) {
-+std::string make_near_stack_dump(bool ordered, const std::string& term1, const std::string& term2,
-+                                 const std::string& field = "f3") {
-     QueryBuilder<ProtonNodeTypes> builder;
-     constexpr int                 child_count = 2;
-     constexpr size_t              distance = 10;
-@@ -337,8 +359,8 @@ std::string make_near_stack_dump(bool ordered, const std::string& term1, const s
-     } else {
-         builder.addNear(child_count, distance, num_negative_children, exclusion_distance);
-     }
--    builder.addStringTerm(term1, "f3", 1, Weight(1));
--    builder.addStringTerm(term2, "f3", 2, Weight(1));
-+    builder.addStringTerm(term1, field, 1, Weight(1));
-+    builder.addStringTerm(term2, field, 2, Weight(1));
-     return StackDumpCreator::create(*builder.build());
- }
- 
-@@ -618,6 +640,69 @@ struct MyWorld {
-         searchContext.idx(0).getFake().addResult("ix.f2", f2_term, f2_result);
-     }
- 
-+    // doc 10: ix.f1 matches elements {1}, ix.f2 matches elements {0, 3}.
-+    // doc 20: ix.f1 matches elements {0, 2}, ix.f2 matches element {2}.
-+    void add_index_only_single_term_results(const std::string& term) {
-+        searchContext.idx(0).getFake().addResult("ix.f1", term, make_elem_result({{10, {1}}, {20, {0, 2}}}));
-+        searchContext.idx(0).getFake().addResult("ix.f2", term, make_elem_result({{10, {0, 3}}, {20, {2}}}));
-+    }
-+
-+    // Map of struct field 'mm' (map<string, struct{name, title}>) with indexes on the key and a nested struct field.
-+    void add_index_only_map_of_struct_fields() {
-+        schema.addIndexField(Schema::IndexField("mm.key", DataType::STRING, schema::CollectionType::ARRAY));
-+        schema.addIndexField(Schema::IndexField("mm.value.name", DataType::STRING, schema::CollectionType::ARRAY));
-+    }
-+
-+    // doc 10: mm.key matches element {0}, mm.value.name matches elements {2}.
-+    // doc 20: mm.key matches no element, mm.value.name matches elements {1, 3}.
-+    void add_index_only_map_of_struct_results(const std::string& term) {
-+        searchContext.idx(0).getFake().addResult("mm.key", term, make_elem_result({{10, {0}}}));
-+        searchContext.idx(0).getFake().addResult("mm.value.name", term, make_elem_result({{10, {2}}, {20, {1, 3}}}));
-+    }
-+
-+    // Fieldset 'ix_all' over the struct field indexes 'ix.f1' and 'ix.f2'.
-+    void add_index_only_fieldset() {
-+        Schema::FieldSet ix_all("ix_all");
-+        ix_all.addField("ix.f1").addField("ix.f2");
-+        schema.addFieldSet(ix_all);
-+    }
-+
-+    // doc 10: A near B in element 1 of 'ix.f1' and in element 3 of 'ix.f2'.
-+    void add_index_only_near_result_in_both_struct_fields() {
-+        auto ix_f1_field = get_field_info("ix.f1")->id();
-+        auto ix_f2_field = get_field_info("ix.f2")->id();
-+        auto docs = FakeIndex()
-+                        .doc(10)
-+                        .field(ix_f1_field)
-+                        .elem(0, "A")
-+                        .elem(1, "AB")
-+                        .elem(2, "B")
-+                        .field(ix_f2_field)
-+                        .elem(0, "A")
-+                        .elem(2, "B")
-+                        .elem(3, "BA");
-+        for (char term : {'A', 'B'}) {
-+            searchContext.idx(
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/docsummary/summarymanager.cpp` (modified, +4/-2)
-```diff
-@@ -46,9 +46,11 @@ namespace proton {
- 
- namespace {
- 
--std::unique_ptr<StructFieldsMapper> make_struct_fields_mapper(const search::attribute::IAttributeContext& ctx) {
-+std::unique_ptr<StructFieldsMapper> make_struct_fields_mapper(const search::attribute::IAttributeContext& ctx,
-+                                                              const search::index::Schema&                schema) {
-     auto mapper = std::make_unique<StructFieldsMapper>();
-     mapper->setup(ctx);
-+    mapper->setup(schema);
-     return mapper;
- }
- 
-@@ -74,7 +76,7 @@ SummaryManager::SummarySetup::SummarySetup(const std::string& baseDir, const Sum
-     std::unique_ptr<IQueryTermFilterFactory> query_term_filter_factory =
-         std::make_unique<QueryTermFilterFactory>(schema);
-     auto docsum_field_writer_factory = std::make_unique<DocsumFieldWriterFactory>(*this, *query_term_filter_factory);
--    auto struct_fields_mapper = make_struct_fields_mapper(*_attributeMgr->createContext());
-+    auto struct_fields_mapper = make_struct_fields_mapper(*_attributeMgr->createContext(), schema);
-     if (!resultConfig->readConfig(summaryCfg, make_string("SummaryManager(%s)", baseDir.c_str()),
-                                   *docsum_field_writer_factory, *struct_fields_mapper))
-     {
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/matching/docsum_matcher.cpp` (modified, +9/-5)
-```diff
-@@ -100,9 +100,13 @@ void find_matching_elements(const std::vector<uint32_t>& docs, SearchIterator& s
-     std::vector<uint32_t> matches;
-     for (uint32_t doc : docs) {
-         if (search.seek(doc)) {
-+            // Note: Gives no element ids when the search iterator has no positions (a BitVectorIterator in the
-+            // disk index), so no matching elements are reported for these.
-             search.get_element_ids(doc, matches);
--            result.add_matching_elements(doc, fieldName, matches);
--            matches.clear();
-+            if (!matches.empty()) {
-+                result.add_matching_elements(doc, fieldName, matches);
-+                matches.clear();
-+            }
-         }
-     }
- }
-@@ -146,7 +150,7 @@ void extract_matching_elements(uint32_t doc, std::span<const MatchSpan> match_sp
-             if (!matching_elements.empty()) {
-                 auto& field_name = id_to_name.lookup(field_id);
-                 if (fields.has_field(field_name)) {
--                    result.add_matching_elements(doc, field_name, matching_elements);
-+                    result.add_matching_elements(doc, fields.enclosing_field(field_name), matching_elements);
-                 }
-                 matching_elements.clear();
+@@ -176,7 +176,7 @@
+           "match": "\\[(\\d+)\\]",
+           "captures": {
+             "1": {
+-              "name": "constant.numeric.vespa"
++              "name": "constant.numeric.integer.vespa"
              }
-@@ -162,7 +166,7 @@ void extract_matching_elements(uint32_t doc, std::span<const MatchSpan> match_sp
-     if (!matching_elements.empty()) {
-         auto& field_name = id_to_name.lookup(field_id);
-         if (fields.has_field(field_name)) {
--            result.add_matching_elements(doc, field_name, matching_elements);
-+            result.add_matching_elements(doc, fields.enclosing_field(field_name), matching_elements);
-         }
-     }
- }
-@@ -251,7 +255,7 @@ void FindMatchingElements::process(const std::vector<uint32_t>& docs, const Blue
-         const std::string& fieldName = idToName.lookup(currentField);
-         if (fields.has_field(fieldName)) {
-             SearchIterator::UP child = bp.createSearch(matchData);
--            find_matching_elements(docs, *child, fieldName, result);
-+            find_matching_elements(docs, *child, fields.enclosing_field(fieldName), result);
-         }
-     }
- }
+           }
+         },
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/matching/indexenvironment.cpp` (modified, +2/-1)
+**File**: `integration/tmgrammar/tools/generate_tmgrammar.py` (modified, +2/-2)
 ```diff
-@@ -36,7 +36,8 @@ StringSet extract_virtual_fields(const std::vector<search::fef::FieldInfo>& fiel
-     // virtual.
-     StringSet result;
-     for (const auto& field : fields) {
--        if (field.hasAttribute() || (field.type() == FieldType::INDEX && !schema.is_uri_part(field.name()))) {
-+        if (field.hasAttribute() || (field.type() == FieldType::INDEX && schema.is_struct_field_index(field.name())))
-+        {
-             consider_field_for_extraction(field.name(), result);
-         }
-     }
+@@ -437,7 +437,7 @@ def _rules_for_scope(source: str, scope: str) -> list[dict]:
+     #   tensor  → keyword.control
+     #   float   → storage.type.tensor (value type: float, double, bfloat16, int8, etc.)
+     #   x       → variable.other.dimension (dimension name)
+-    #   384     → constant.numeric (dimension size)
++    #   384     → constant.numeric.integer (dimension size, as numeric-literal scopes integers)
+     #   {}      → mapped dimension marker
+     #   < > ( ) [ ] , → punctuation
+     repository["tensor-type"] = {
+@@ -471,7 +471,7 @@ def _rules_for_scope(source: str, scope: str) -> list[dict]:
+             {
+                 "match": r"\[(\d+)\]",
+                 "captures": {
+-                    "1": {"name": "constant.numeric.vespa"},
++                    "1": {"name": "constant.numeric.integer.vespa"},
+                 },
+             },
+             # Mapped dimension marker: {}
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/matching/match_tools.h` (modified, +3/-0)
+**File**: `integration/tmgrammar/tools/test_tmgrammar.py` (modified, +2/-0)
 ```diff
-@@ -233,6 +233,9 @@ class MatchToolsFactory {
-     FieldIdToNameMapper getFieldIdToNameMapper() const {
-         return FieldIdToNameMapper(_queryEnv.getIndexEnvironment());
-     }
-+    // Note: The match data is not tagged with the needed handles, so all term field match data is needed. The
-+    // docsum matcher depends on this for element ids: a disk index term with a bitvector gives a BitVectorIterator
-+    // (no element ids) when its term field match data is not needed, see DiskTermBlueprint::createLeafSearch().
-     search::fef::MatchData::UP createMatchData() const { return _mdl.createMatchData(); }
- };
- 
+@@ -391,6 +391,8 @@ def test_scope_spotchecks(grammar: dict) -> tuple[bool, list[str]]:
+         # Tensor keyword → keyword.control (begin capture)
+         ("tensor<float>(x[384])", "tensor", "keyword.control.vespa", "tensor-type"),
+         ("tensor(x[384])", "tensor", "keyword.control.vespa", "tensor-type"),
++        # Dimension size → integer, like a numeric literal (Rouge maps it to Literal.Number.Integer)
++        ("tensor(x[384])", "384", "constant.numeric.integer.vespa", "tensor-type"),
+         # Comment # → punctuation
+         ("# comment", "#", "punctuation.definition.comment.vespa", "comment"),
+         # Variable $ → punctuation
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38429** (2026-11-04): Add vectorized quantized vs. quantized dot product kernel (@vekterli)
+- **PR #38428** (2026-11-04): Support ZooKeeper 3.9.7 (@hmusum)
+- **PR #38426** (2026-11-04): Refactoring: Clean up StringMatcher (@boeker)
+- **PR #38425** (2026-11-04): fix tmgrammar (@johansolbakken)
+- **PR #38424** (2026-11-03): Decide Triton use from the application package before provisioning nodes (@glebashnik)
 - **PR #38423** (2026-11-03): Handle field path updates in attribute updater (@johansolbakken)
-- **PR #38422** (2026-11-03): handle duplicate parameter names more gracefully (@havardpe)
-- **PR #38420** (2026-11-03): Point to doc not developer skills (@bratseth)
-- **PR #38419** (2026-11-03): chore: exclude bots and same-repo PRs from external flow (@esolitos)
-- **PR #38418** (2026-11-03): Test the output plainly (@bratseth)
-- **PR #38416** (closed): chore: exclude bot PRs and add GitHub owner (@esolitos)
 
 ---
 
@@ -1556,38 +1563,54 @@ Report matched elements from struct field indexes under the parent field
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-
+## X. Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids
 
 **RULE**:
-When implementing operations in `eval/src/tests/eval/function/function_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb5f8a1`: Merge pull request #38422 from vespa-engine/havardpe/handle-duplicate-parameter-names-more-gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70530021`: Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids-through-search-protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `eval/src/tests/eval/function/function_test.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-search/src/main/java/com/yahoo/search/dispatch/rpc/ProtobufSerialization.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-TEST(FunctionTest, require_that_explicit_parameter_names_cannot_contain_duplicates) {
-    auto function = Function::parse({"x", "y", "x"}, "x+y");
-    EXPECT_TRUE(function->has_error());
-    EXPECT_EQ("[]...[duplicate parameter names]...[x+y]", function->get_error());
-}
+import ai.vespa.telemetry.api.Telemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.propagation.TextMapSetter;
+        return serializeSearchRequest(createSearchRequestBuilder(query, hits, nodeId, contentShare, requestTimeout));
+    }
 
-TEST(FunctionTest, require_that_lambda_parameter_names_cannot_contain_duplicates) {
-    verify_error("map(x,f(a,a)(a))", "[map(x,f(a,a)]...[duplicate identifiers]...[(a))]");
-    verify_error("join(x,y,f(a,a)(a+a))", "[join(x,y,f(a,a)]...[duplicate identifiers]...[(a+a))]");
-}
+    static byte[] serializeSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
+        return createSearchRequest(builder).toByteArray();
+    static SearchProtocol.SearchRequest createSearchRequest(SearchProtocol.SearchRequest.Builder builder) {
+        mergeToSearchRequestFromTracing(builder);
+        return builder.build();
+    }
 
+    static SearchProtocol.SearchRequest.Builder createSearchRequestBuilder(Query query, int hits, String nodeId, double contentShare,
+                                                                           double requestTimeout) {
+
+        return builder;
+    private static void mergeToSearchRequestFromTracing(SearchProtocol.SearchRequest.Builder builder) {
+        var metadataBuilder = createTelemetryMetadataBuilderIfRecording();
+        if (metadataBuilder != null) {
+            builder.setTelemetryMetadata(metadataBuilder);
+        } els
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        return convertFromQuery(query, hits, nodeId, contentShare, requestTimeout).toByteArray();
+    static SearchProtocol.SearchRequest convertFromQuery(Query query, int hits, String nodeId, double contentShare,
+                                                         double requestTimeout) {
+        return builder.build();
+    static byte[] serializeDocsumRequest(SearchProtocol.DocsumRequest.Builder builder, List<FastHit> documents) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb5f8a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70530021` are properly handled with clean fallback behavior.

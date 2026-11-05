@@ -3,7 +3,7 @@
 > **Source Version**: `hf-akatz-ai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:40:20.077Z  
+> **Timestamp**: 2026-11-05T01:15:06.580Z  
 > **Learning ID**: `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:40:20.026Z  
+> **Harvest Timestamp**: 2026-11-05T01:15:05.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: video-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 130533 downloads | 664 likes
+- **Stars / Engagement**: 140258 downloads | 710 likes
 
 ---
 

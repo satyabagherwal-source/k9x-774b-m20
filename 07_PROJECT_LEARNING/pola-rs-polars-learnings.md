@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `49e6d826`  
+> **Source Version**: `35a2cb73`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T18:22:57.043Z  
+> **Timestamp**: 2026-11-04T22:34:42.943Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T18:22:39.427Z  
+> **Harvest Timestamp**: 2026-11-04T22:34:42.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40256 stars
+- **Stars / Engagement**: 40257 stars
 
 ---
 
@@ -617,7 +617,7 @@ impl<'a> BitmapIter<'a> {
         }
     }
 
-    /// Consume and returns the numbers of `1` / `true` values at the beginning of the iterator.
+    /// Consumes and returns the number of `1` / `true` values at the beginning of the iterator.
     ///
     /// This performs the same operation as `(&mut iter).take_while(|b| b).count()`.
     ///
@@ -657,7 +657,7 @@ impl<'a> BitmapIter<'a> {
         num_leading_ones
     }
 
-    /// Consume and returns the numbers of `0` / `false` values that the start of the iterator.
+    /// Consumes and returns the number of `0` / `false` values at the start of the iterator.
     ///
     /// This performs the same operation as `(&mut iter).take_while(|b| !b).count()`.
     ///
@@ -879,7 +879,7 @@ mod tests {
 
     #[test]
     fn test_collect_into_17579() {
-        let mut bitmap = MutableBitmap::with_c
+        let mut bitmap = MutableBitmap::with_cap
 ```
 
 ### Core Architecture Module: `crates/polars-arrow/src/bitmap/utils/mod.rs`
@@ -1413,7 +1413,7 @@ where
 /// * as an iterator, via `Iterator::next`
 /// * as an enum of two iterators, via `match self`
 ///
-/// The latter allows specializalizing to when there are no nulls
+/// The latter allows specializing to when there are no nulls
 #[derive(Debug, Clone)]
 pub enum ZipValidity<T, I, V>
 where
@@ -1668,11 +1668,13 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30541** (2026-11-03): **Row-oriented DataFrame construction stores integers other than 1 as `false` in a Boolean column**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame([[1], [2], [0], [3]], schema={"b": pl.Boolean}, orient="row", strict=False) print(df["b"].to_list()) # [True, False, False, False]  print(pl.DataFrame({"b": [1, 2, 0, 3]}, schema={"b": pl.Boolean}, strict=False)["b"].to_list()) # [True, True, False, True] print(pl.Series([1, 2, 0, 3]).cast(pl.Boolean).to_list()) # [True, True, False, True] ```  ### Log output  ```shell No error or warning is raised. ```  ### Issue description  When a DataFrame is built from rows (`orient="row"` or a list of dicts), an integer in a Boolean column becomes `true` only if it is 1. Other values from 2 to 255 become `false`, and values outside 0 to 255 raise `ComputeError: could not append value`. The column-oriented constructor and `cast` map every non-zero integer to `true`. With the default `strict=True` the row constructor also returns `[True, False, False, False]` instead of raising; that part is #17375.  Possible cause: the Boolean arm of `AnyValueBuffer::add` extracts a `u8` and appends `v == 1` ([av_buffer.rs#L60-L63](https://github.com/pola-rs/polars/blob/ee5f3e7b6d4e47365094754fe7e3def51bce74d4/crates/polars-core/src/frame/row/av_buffer.rs#L60-L63)).  AI disclosure: the bug was found by a testing pipeline built with Claude Code, 
+- **Issue #30582** (2026-11-04): **`arg_max`/`arg_min` returns the last tied position**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [1, 1, 1], "x": [1, 2, 2]}) sorted_df = df.with_columns(pl.col("x").set_sorted())  expected = df.select(pl.col("x").arg_max()).item() print(f"{expected=}")  # expected=1 print(sorted_df.select(pl.col("x").arg_max()).item())  # 2  expected = df.group_by("g").agg(pl.col("x").arg_max())["x"].item() print(f"{expected=}")  # expected=1 print(sorted_df.group_by("g").agg(pl.col("x").arg_max())["x"].item())  # 2 ```   ### Log output  ```shell total memory: 93.731 GiB (100642918400 bytes) async thread count: 22 blocking thread count: 512 run sink_mem run StackExec run sink_mem run ProjectionExec expected=1 run sink_mem run ProjectionExec 2 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION expected=1 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION 2 ```  ### Issue description  `arg_max`/`arg_min` on a sorted column returns the last tied position    ### Expected behavior  Expected the first occurrence of the maximum. `1` in all cases above. The sorted fast path takes the last non-null value, which is the last of the tied maxima. `arg_min` on a column sorted descending has the same problem.  ### Installed versions  <deta
+  **Post-Mortem & Fix Analysis**:
+  > Not a bug, `arg_min` (intentionally) does not specify which is returned on ties https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr.arg_min.html#polars.Expr.arg_min.
 
-- **Issue #30540** (2026-11-03): **AsOf Join wrong results for categorical `on`**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  # Register the categories in reverse order, so "a" gets the highest code. order = pl.Series(["e", "d", "c", "b", "a"], dtype=pl.Categorical)  left = pl.DataFrame({"key": ["a", "b", "c", "d", "e"]}, schema={"key": pl.Categorical}) right = pl.DataFrame(     {"key": ["b", "d"], "matched": ["b", "d"]},     schema={"key": pl.Categorical, "matched": pl.String}, )  print(pl.__version__) print("left sorted:", left["key"].is_sorted(), "right sorted:", right["key"].is_sorted())  # Backward strategy: each left key takes the last right key <= it. out = left.with_columns(     code=pl.col("key").to_physical(),     expected=pl.Series([None, "b", "b", "d", "d"]), ) for engine in ["in-memory", "streaming"]:     res = left.lazy().join_asof(right.lazy(), on="key").collect(engine=engine)     out = out.with_columns(res["matched"].alias(engine)) print(out)  ```   ### Log output  ``` 2.1.0 left sorted: True right sorted: True shape: (5, 5) ┌─────┬──────┬──────────┬───────────┬───────────┐ │ key ┆ code ┆ expected ┆ in-memory ┆ streaming │ │ --- ┆ ---  ┆ ---      ┆ ---       ┆ ---       │ │ cat ┆ u32  ┆ str      ┆ str       ┆ str       │ ╞═════╪══════╪══════════╪═══════════╪═══════════╡ │ a   ┆ 4    ┆ null     ┆ d         ┆ b         │ │ b   ┆ 3    ┆ b       
+- **Issue #30551** (2026-11-04): **In-group `reverse`/`sort`/`cum_sum` followed by `sort_by(...).head(n)` reads out of bounds**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [1, 1, 2], "o": [2, 1, 3], "v": [10, 20, 30]}) out = df.group_by("g", maintain_order=True).agg(pl.col("v").reverse().sort_by("o").head(1)) print(out["v"].to_list())  # expected [[10], [30]] ```  ### Log output  ```shell thread 'polars-1' panicked at crates/polars-core/src/frame/group_by/aggregations/agg_list.rs:107:58: range end index 3 out of range for slice of length 2 ... pyo3_runtime.PanicException: range end index 3 out of range for slice of length 2 ```  ### Issue description  Inside `group_by().agg()`, an op that reorders or recomputes each group (`reverse`, `sort`, `sort_by`, `shift`, `diff`, `cum_sum`, `rank`) followed by `sort_by(...)` and then `head`/`tail`/`slice` panics, or returns values from other groups or values that are not in the column; the result can change from run to run. Element-wise ops (`fill_null(0)`, `+ 1`) are fine, and so is `reverse().sort_by("o")` without the slice. Both engines, and `over(order_by=...)`. A build with UB checks aborts ("Undefined Behavior check … non-unwinding panic. aborting"), so this reads out of bounds.  ### Expected behavior  `[[10], [30]]`.  ### Installed versions  Reproduces on 2.1.0 and main (0b47007ab6).  Found and generated with Claude Code and Codex 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1689,135 +1691,531 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1889135` (2026-11-03)
-**Commit Message**: fix: Panic in pl.format (#30534)
+### Incident Patch 1: `3bb0c7e9` (2026-11-04)
+**Commit Message**: test: Keep capfd output when an xdist worker crashes (#30532)
 
-**File**: `crates/polars-ops/src/series/ops/strings.rs` (modified, +8/-8)
+**File**: `py-polars/tests/conftest.py` (modified, +68/-34)
 ```diff
-@@ -112,11 +112,11 @@ pub fn str_format(cs: &mut [Column], format: &str, insertions: &[usize]) -> Pola
-             unsafe { builder.push_inline_view_ignore_validity(Default::default()) };
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
  
-             for (iter, arr, elem_idx) in arrays.iter_mut() {
--                *elem_idx += 1;
--                if i + 1 != output_length && *elem_idx == arr.len() {
-+                while *elem_idx == arr.len() {
-                     *arr = iter.next().unwrap();
-                     *elem_idx = 0;
-                 }
-+                *elem_idx += 1;
-             }
+ import io
++import itertools
+ import os
+ import sys
+ import tempfile
+@@ -29,29 +30,60 @@ def pytest_addoption(parser: pytest.Parser) -> None:
+ _xdist_crash_config: pytest.Config | None = None
+ _xdist_crash_log_dir: tempfile.TemporaryDirectory[str] | None = None
  
-             continue;
-@@ -126,16 +126,16 @@ pub fn str_format(cs: &mut [Column], format: &str, insertions: &[usize]) -> Pola
-         s.push_str(&format[..insertions[0]]);
+-# How much of a crashed worker's captured output we echo, in bytes.
++# How much of each captured stream of a crashed worker we echo, in bytes.
+ _XDIST_CRASH_OUTPUT_LIMIT = 64 * 1024
  
-         for (j, (iter, arr, elem_idx)) in arrays.iter_mut().enumerate() {
-+            while *elem_idx == arr.len() {
-+                *arr = iter.next().unwrap();
-+                *elem_idx = 0;
-+            }
-             s.push_str(opt_str_to_string(arr.get(*elem_idx)));
-+            *elem_idx += 1;
-+
-             let start = insertions[j];
-             let end = insertions.get(j + 1).copied().unwrap_or(format.len());
-             s.push_str(&format[start..end]);
+ 
+-def _crash_log_path(log_dir: str | Path, worker_id: str, stream: str) -> Path:
+-    return Path(log_dir) / f"{worker_id}.{stream}"
 -
--            *elem_idx += 1;
--            if i + 1 != output_length && *elem_idx == arr.len() {
--                *arr = iter.next().unwrap();
--                *elem_idx = 0;
--            }
+-
+-def _capture_to_file(capman: Any, stream: str, path: Path) -> None:
+-    """Redirect pytest's fd-level capture of `stream` to a persistent file."""
+-    capture = getattr(capman._global_capturing, stream, None)
+-    tmpfile = getattr(capture, "tmpfile", None)
+-    targetfd = getattr(capture, "targetfd", None)
+-    if tmpfile is None or targetfd is None:
+-        return  # Not capturing this stream at fd level (`-s`, `--capture=sys`).
+-
++def _persist_capture(capture: Any, path: Path) -> None:
++    """Make an fd-level pytest capture write to `path`, deleted when it ends."""
+     # This is rather hacky but the tempfile pytest creates is passed to multiple
+     # places before now, so it would be too late to replace that file object
+     # with something we control. So we instead change the underlying file
+     # descriptors to point at our path of choice.
+     with path.open("wb+", buffering=0) as f:
+-        os.dup2(f.fileno(), tmpfile.fileno())
+-        os.dup2(f.fileno(), targetfd)
++        os.dup2(f.fileno(), capture.tmpfile.fileno())
++        if capture._state == "started":
++            os.dup2(f.fileno(), capture.targetfd)
++    capture._polars_crash_log_path = path
++
++
++def _persist_fd_captures(capman: Any, log_dir: str, worker_id: str) -> None:
++    """Persist the output of all fd-level captures of this xdist worker.
++
++    Files are named `<worker_id>.<n>.<stream>`, where `n` counts up from 0 for
++    the global capture, so a crash report can print them in creation order.
++    """
++    from _pytest.capture import FDCaptureBase
++
++    def path(n: int, targetfd: int) -> Path:
++        stream = "out" if targetfd == 1 else "err"
++        return Path(log_dir) / f"{worker_id}.{n:06}.{stream}"
++
++    # The global capture started before this conftest was loaded.
++    global_capture = getattr(capman, "_global_capturing", None)
++    for stream in ("out", "err"):
++        capture = getattr(global_capture, stream, None)
++        if isinstance(capture, FDCaptureBase):
++            _persist_capture(capture, path(0, capture.targetfd))
++
++    # Captures created later, such as those of `capfd` in each test phase.
++    counter = itertools.count(1)
++    orig_init = FDCaptureBase.__init__
++    orig_done = FDCaptureBase.done
++
++    def init(self: FDCaptureBase[Any], targetfd: int) -> None:
++        orig_init(self, targetfd)
++        if targetfd in (1, 2):
++            _persist_capture(self, path(next(counter), targetfd))
++
++    def done(self: FDCaptureBase[Any]) -> None:
++        orig_done(self)
++        log_path = getattr(self, "_polars_crash_log_path", None)
++        if log_path is not None:
++            log_path.unlink(missing_ok=True)
++
++    FDCaptureBase.__init__ = init  # type: ignore[method-assign]
++    FDCaptureBase.done = done  # type: ignore[method-assign]
+ 
+ 
+ def pytest_configure(config: pytest.Config) -> None:
+@@ -71,13 +103,10 @@ def pytest_configure(config: pytest.Config) -> None:
+         return
+ 
+     try:
+-        for stream in ("out", "err"):
+-            _capture_to_file(
+-                capman, stream, _crash_log_path(log_dir, worker_id, stream)
+-            )
++        _persist_fd_captures(capman, log_dir, worker_id)
+     except Exception as exc:
+         # Never let this break an otherwise fine test run.
+-        print(f"failed to redirect fd capture: {exc!r}", file=sys.stderr)
++        print(f"failed to persist fd captures: {exc!r}", file=sys.stderr)
+ 
+ 
+ @pytest.hookimpl(optionalhook=True)
+@@ -98,17 +127,25 @@ def pytest_unconfigure(config: pytest.Config) -> None:
+         _xdist_crash_log_dir = None
+ 
+ 
+-def _read_crash_output(worker_id: str, stream: str) -> str:
++def _read_crash_output(worker_id: str) -> list[str]:
++    """Return a section per capture that was still active when the worker crashed."""
+     if _xdist_crash_log_dir is None:
+-        return ""
+-    path = _crash_log_path(_xdist_crash_log_dir.name, worker_id, stream)
+-    try:
+-        data = path.read_bytes()
+-    except OSError:
+-        return ""
+-    if len(data) > _XDIST_CRASH_OUTPUT_LIMIT:
+-        data = b"<truncated>\n" + data[-_XDIST_CRASH_OUTPUT_LIMIT:]
+-    return data.decode("utf-8", errors="replace").strip()
++        return []
++    sections = []
++    for path in sorted(Path(_xdist_crash_log_dir.name).glob(f"{worker_id}.*")):
++        try:
++            data = path.read_bytes()
++        except 
+```
+
+---
+
+### Incident Patch 2: `35a2cb73` (2026-11-04)
+**Commit Message**: perf: Avoid rescanning null runs in the streaming merge-join (#30575)
+
+Co-authored-by: Amber Sprenkels <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-ops/src/frame/join/merge_join.rs` (modified, +16/-10)
+```diff
+@@ -2,14 +2,16 @@ use std::borrow::Cow;
+ use std::cmp::Ordering;
+ use std::iter::repeat_n;
+ 
++use bytemuck::TransparentWrapper;
+ use polars_arrow::array::Array;
+ use polars_arrow::array::builder::ShareStrategy;
+ use polars_core::frame::builder::DataFrameBuilder;
+ use polars_core::prelude::*;
+ use polars_core::with_match_physical_numeric_polars_type;
+ use polars_defs::join::{JoinArgs, JoinType};
+ use polars_utils::itertools::Itertools;
+-use polars_utils::total_ord::TotalOrd;
++use polars_utils::sort::reorder_cmp;
++use polars_utils::total_ord::{TotalOrd, TotalOrdWrap};
+ use polars_utils::{IdxSize, format_pl_smallstr};
+ 
+ use crate::series::coalesce_columns;
+@@ -23,6 +25,7 @@ pub fn match_keys(
+     gather_probe_unmatched: Option<&mut Vec<IdxSize>>,
+     build_emit_unmatched: bool,
+     descending: bool,
++    nulls_last: bool,
+     nulls_equal: bool,
+     limit_results: usize,
+     build_row_offset: &mut usize,
+@@ -39,6 +42,7 @@ pub fn match_keys(
+                 gather_probe_unmatched,
+                 build_emit_unmatched,
+                 descending,
++                nulls_last,
+                 nulls_equal,
+                 limit_results,
+                 build_row_offset,
+@@ -94,6 +98,7 @@ fn match_keys_impl<'a, T: PolarsDataType>(
+     mut gather_probe_unmatched: Option<&mut Vec<IdxSize>>,
+     build_emit_unmatched: bool,
+     descending: bool,
++    nulls_last: bool,
+     nulls_equal: bool,
+     limit_results: usize,
+     build_row_offset: &mut usize,
+@@ -114,22 +119,23 @@ fn match_keys_impl<'a, T: PolarsDataType>(
          }
  
-         builder.push_value_ignore_validity(&s);
-```
-
-**File**: `py-polars/tests/unit/functions/as_datatype/test_format.py` (modified, +20/-0)
-```diff
-@@ -6,3 +6,23 @@ def test_format() -> None:
+         let build_keyval = unsafe { build_key.get_unchecked(*build_row_offset) };
+-        let build_keyval = build_keyval.as_ref();
+         let mut build_keyval_matched = false;
  
-     out = df.select([pl.format("foo_{}_bar_{}", pl.col("a"), "b").alias("fmt")])
-     assert out["fmt"].to_list() == ["foo_a_bar_1", "foo_b_bar_2", "foo_c_bar_3"]
-+
-+
-+def test_format_empty_chunks_25525() -> None:
-+    s = pl.concat(
-+        [
-+            pl.Series("a", ["p"]),
-+            pl.Series("a", ["x", "y"]),
-+            pl.Series("a", ["q"]),
-+            pl.Series("a", ["z", None]),
-+        ],
-+        rechunk=False,
-+    )
-+    df = pl.DataFrame([s, pl.Series("k", [0, 1, 1, 0, 1, 1])])
-+    df = df.filter(df["k"] == 1).with_columns(b=pl.Series(["1", "2", "3", "4"]))
-+
-+    out = df.select(pl.format("<{}>", pl.col("a")))
-+    assert out.to_series().to_list() == ["<x>", "<y>", "<z>", None]
-+
-+    out = df.select(pl.format("<{}-{}-{}>", pl.col("b"), pl.lit("s"), pl.col("a")))
-+    assert out.to_series().to_list() == ["<1-s-x>", "<2-s-y>", "<3-s-z>", None]
+         if nulls_equal || build_keyval.is_some() {
+             for probe_idx in *probe_row_offset..probe_key.len() {
+                 let probe_keyval = unsafe { probe_key.get_unchecked(probe_idx) };
+-                let probe_keyval = probe_keyval.as_ref();
+ 
+-                let mut ord: Ordering = match (&build_keyval, &probe_keyval) {
+-                    (None, None) if nulls_equal => Ordering::Equal,
+-                    (Some(l), Some(r)) => TotalOrd::tot_cmp(*l, *r),
+-                    _ => continue,
+-                };
+-                if descending {
+-                    ord = ord.reverse();
++                // Row-encoded keys are null wherever any key column is null, so a null probe
++                // key has no place in the order.
++                if !nulls_equal && probe_keyval.is_none() {
++                    continue;
+                 }
++                let ord = reorder_cmp(
++                    TotalOrdWrap::wrap_ref(&build_keyval),
++                    TotalOrdWrap::wrap_ref(&probe_keyval),
++                    descending,
++                    nulls_last,
++                );
+ 
+                 match ord {
+                     Ordering::Equal => {
 ```
 
----
-
-### Incident Patch 2: `49e6d826` (2026-11-03)
-**Commit Message**: chore: Update `.gitattributes` for Linguist (#30562)
-
-**File**: `.gitattributes` (modified, +8/-0)
+**File**: `crates/polars-stream/src/nodes/joins/merge_join.rs` (modified, +1/-0)
 ```diff
-@@ -1 +1,9 @@
-+# Notebooks are tutorials, not library code
- *.ipynb linguist-documentation
-+
-+# Force Rust: an empty .rs file is currently misdetected as RenderScript
-+*.rs linguist-language=Rust
-+
-+# Linguist only auto-detects docs/ and examples/ at the repo root
-+py-polars/docs/** linguist-documentation
-+pyo3-polars/example/** linguist-documentation
-\ No newline at end of file
+@@ -506,6 +506,7 @@ async fn compute_join_and_send(
+             gather_probe_unmatched,
+             params.build_params().emit_unmatched,
+             params.key_descending,
++            params.key_nulls_last,
+             params.args.nulls_equal,
+             morsel_size,
+             &mut build_row_offset,
 ```
 
----
-
-### Incident Patch 3: `c4c05959` (2026-11-03)
-**Commit Message**: fix: Add `UInt128` to `Product` type mapper (#30555)
-
-**File**: `crates/polars-plan/src/plans/aexpr/function_expr/schema.rs` (modified, +2/-0)
+**File**: `py-polars/tests/unit/streaming/test_streaming_join.py` (modified, +40/-2)
 ```diff
-@@ -187,6 +187,8 @@ impl IRFunctionExpr {
-                     T::UInt64 => T::UInt64,
-                     #[cfg(feature = "dtype-i128")]
-                     T::Int128 => T::Int128,
-+                    #[cfg(feature = "dtype-u128")]
-+                    T::UInt128 => T::UInt128,
-                     #[cfg(feature = "dtype-decimal")]
-                     T::Decimal(_p, s) => T::Decimal(DEC128_MAX_PREC, *s),
-                     _ => T::Int64,
-```
-
-**File**: `py-polars/tests/unit/operations/aggregation/test_aggregations.py` (modified, +0/-1)
-```diff
-@@ -1530,7 +1530,6 @@ def test_agg_with_slice_then_cast_23682(
-     ],
- )
- @pytest.mark.parametrize("grouped", [False, True])
--@pytest.mark.may_fail_lazy_schema  # TODO: uint128
- def test_agg_invalid_same_engines_behavior(
-     op: str, expr: pl.Expr, df: pl.DataFrame, grouped: bool
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import re
++import time
+ from datetime import datetime, timedelta
+ from typing import TYPE_CHECKING, Any, Literal
+ 
+@@ -616,16 +617,19 @@ def test_merge_join_exprs() -> None:
+ @pytest.mark.parametrize("nulls_last", [False, True])
+ @pytest.mark.parametrize("nulls_equal", [False, True])
+ @pytest.mark.parametrize("on", [["key"], ["key", "key_ext"]])
++@pytest.mark.parametrize("chunk_size", [4, None])
+ def test_merge_join_many_partitions(
+     how: JoinStrategy,
+     maintain_order: MaintainOrderJoin,
+     descending: bool,
+     nulls_last: bool,
+     nulls_equal: bool,
+     on: list[str],
++    chunk_size: int | None,
  ) -> None:
+     # Small morsels split each window into many partitions, and the long runs of 0 and
+-    # null are split again on the build side. The left keys go on past the right ones.
++    # null are split again on the build side. With the default morsel size the window is
++    # a single partition. The left keys go on past the right ones.
+     left_keys = (
+         [None] * 20
+         + [0] * 25
+@@ -661,7 +665,7 @@ def sorted_lf(keys: list[int | None], name: str) -> pl.LazyFrame:
+     assert "merge-join" in dot, "merge-join not used in plan"
+ 
+     expected = q.collect(engine="in-memory")
+-    with pl.Config(streaming_chunk_size=4):
++    with pl.Config(streaming_chunk_size=chunk_size):
+         actual = q.collect(engine="streaming")
+         actual_all, actual_head = pl.collect_all([q, q.head(3)], engine="streaming")
+     check_row_order = maintain_order != "none"
+@@ -672,6 +676,40 @@ def sorted_lf(keys: list[int | None], name: str) -> pl.LazyFrame:
+         assert_frame_equal(actual_head, expected.head(3))
+ 
+ 
++@pytest.mark.slow
++@pytest.mark.may_fail_cloud  # reason: timing
++@pytest.mark.parametrize("null_run_side", ["left", "right"])
++@pytest.mark.parametrize("nulls_last", [False, True])
++def test_merge_join_null_run_linear_time(null_run_side: str, nulls_last: bool) -> None:
++    # A run of nulls, shorter than a morsel, next to many other keys must not be scanned
++    # again for every one of those keys. The outliers sit beyond the keys, on the far
++    # side from the nulls.
++    n = 90_000
++    keys = pl.Series(range(n), dtype=pl.Int64)
++    outliers = [-(10**12), -(10**12) + 1] if nulls_last else [10**12, 10**12 + 1]
++    null_run = pl.Series([None] * n + outliers, dtype=pl.Int64)
++    left, right = (null_run, keys) if null_run_side == "left" else (keys, null_run)
++
++    q = (
++        pl.LazyFrame({"key": left})
++        .sort("key", nulls_last=nulls_last)
++        .join(
++            pl.LazyFrame({"key": right}).sort("key", nulls_last=nulls_last),
++            on="key",
++            nulls_equal=True,
++            maintain_order="left_right",
++        )
++    )
++    dot = q.show_graph(engine="streaming", plan_stage="physical", raw_output=True)
++    assert "merge-join" in dot, "merge-join not used in plan"
++
++    t0 = time.time()
++    result = q.collect(engine="streaming")
++    t1 = time.time()
++    assert result.height == 0
++    assert (t1 - t0) < 2
++
++
+ @pytest.mark.parametrize("df_level_hint", [False, True])
+ @pytest.mark.parametrize("left_descending", [False, True])
+ @pytest.mark.parametrize("right_descending", [False, True])
+```
+
+---
+
+### Incident Patch 3: `942a8178` (2026-11-04)
+**Commit Message**: fix: Pyarrow predicate pushdown is_in semantics (#30536)
+
+**File**: `crates/polars-plan/src/plans/python/pyarrow.rs` (modified, +70/-37)
+```diff
+@@ -3,7 +3,7 @@ use std::fmt::Write;
+ use polars_core::datatypes::AnyValue;
+ #[cfg(feature = "dtype-datetime")]
+ use polars_core::prelude::TimeZone;
+-use polars_core::prelude::{DataType, ExplodeOptions, Schema, TimeUnit};
++use polars_core::prelude::{ChunkCompareEq, DataType, ExplodeOptions, NamedFrom, Schema, TimeUnit};
+ use polars_core::series::Series;
+ use polars_utils::pl_str::PlSmallStr;
+ use pyo3::prelude::*;
+@@ -38,43 +38,40 @@ pub(crate) fn needle_isin_haystack(
+         return None;
+     }
+ 
++    // A null haystack gives null for every row, which `isin` can't express.
+     let mut haystack_series = if let LiteralValue::Series(s) = lv
+         && s.dtype().is_list()
+         && s.len() == 1
++        && s.null_count() == 0
+     {
+-        if s.null_count() == 0 {
+-            s.explode(ExplodeOptions {
+-                empty_as_null: false,
+-                keep_nulls: false,
+-            })
+-            .ok()?
+-        } else {
+-            Series::full_null(PlSmallStr::EMPTY, 0, &DataType::Null)
+-        }
++        s.explode(ExplodeOptions {
++            empty_as_null: false,
++            keep_nulls: false,
++        })
++        .ok()?
+     } else if let Some(AnyValue::List(s)) = lv.to_any_value() {
+         s
+-    } else if lv.is_null() {
+-        Series::full_null(PlSmallStr::EMPTY, 0, &DataType::Null)
+     } else {
+         return None;
+     };
+ 
+-    let converted_len = haystack_series.len()
+-        - if nulls_equal {
+-            0
+-        } else {
+-            haystack_series.null_count()
+-        };
++    if !nulls_equal {
++        haystack_series = haystack_series.drop_nulls();
++    }
++    // PyArrow's `isin` distinguishes `-0.0` from `0.0`, Polars does not.
++    if haystack_series.dtype().is_float() && haystack_series.equal(0.0f64).ok()?.any() {
++        let zeros = Series::new(PlSmallStr::EMPTY, [0.0f64, -0.0])
++            .cast(haystack_series.dtype())
++            .ok()?;
++        haystack_series.append(&zeros).ok()?;
++    }
+ 
+-    if list_limit.is_some_and(|limit| converted_len > limit) {
++    if list_limit.is_some_and(|limit| haystack_series.len() > limit) {
+         return None;
+     }
+-    if converted_len == 0 {
++    if haystack_series.is_empty() {
+         return Some(IsInHaystack::Empty);
+     }
+-    if !nulls_equal {
+-        haystack_series = haystack_series.drop_nulls();
+-    }
+     Some(IsInHaystack::Series(haystack_series))
+ }
+ 
+@@ -706,15 +703,29 @@ pub fn aexpr_to_pyarrow<'py>(
+     expr_arena: &Arena<AExpr>,
+     schema: &Schema,
+ ) -> Option<Bound<'py, PyAny>> {
+-    match expr_arena.get(predicate) {
++    aexpr_to_pyarrow_impl(py, pc, predicate, expr_arena, schema, true)
++}
++
++// `null_as_false` is set when a null result filters out the row just like
++// `false` does, so the conversion may give `false` where Polars gives null.
++fn aexpr_to_pyarrow_impl<'py>(
++    py: Python<'py>,
++    pc: &Bound<'py, PyAny>,
++    node: Node,
++    expr_arena: &Arena<AExpr>,
++    schema: &Schema,
++    null_as_false: bool,
++) -> Option<Bound<'py, PyAny>> {
++    let convert = |node: Node| aexpr_to_pyarrow_impl(py, pc, node, expr_arena, schema, false);
++    match expr_arena.get(node) {
+         AExpr::BinaryExpr { left, right, op } => {
+             if matches!(op, Operator::Xor) {
+                 if !(returns_boolean(*left, expr_arena) && returns_boolean(*right, expr_arena)) {
+                     return None;
+                 }
+ 
+-                let l = aexpr_to_pyarrow(py, pc, *left, expr_arena, schema)?;
+-                let r = aexpr_to_pyarrow(py, pc, *right, expr_arena, schema)?;
++                let l = convert(*left)?;
++                let r = convert(*right)?;
+                 let any = l.call_method1("__or__", (&r,)).ok()?;
+                 let both = l
+                     .call_method1("__and__", (&r,))
+@@ -728,8 +739,17 @@ pub fn aexpr_to_pyarrow<'py>(
+             let method = binary_op_method(op)?;
+             reject_inexact_arithmetic(*left, *right, *op, expr_arena, schema)?;
+ 
+-            let l = aexpr_to_pyarrow(py, pc, *left, expr_arena, schema)?;
+-            let r = aexpr_to_pyarrow(py, pc, *right, expr_arena, schema)?;
++            // Under Kleene logic a null operand of `&` or `|` gives the same
++            // filter result as a `false` one.
++            let operand_null_as_false = null_as_false
++                && matches!(
++                    op,
++                    Operator::And | Operator::Or | Operator::LogicalAnd | Operator::LogicalOr
++                );
++            let l =
++                aexpr_to_pyarrow_impl(py, pc, *left, expr_arena, schema, operand_null_as_false)?;
++            let r =
++                aexpr_to_pyarrow_impl(py, pc, *right, expr_arena, schema, operand_null_as_false)?;
+             l.call_method1(method, (r,)).ok()
+         },
+         AExpr::Column(name) => pc.call_method1("field", (name,)).ok(),
+@@ -746,25 +766,38 @@ pub fn aexpr_to_pyarrow<'py>(
+             input,
+             ..
+         } => {
+-            let col = aexpr_to_pya
+```
+
+**File**: `py-polars/tests/unit/io/test_pyarrow_dataset.py` (modified, +41/-4)
+```diff
+@@ -442,8 +442,7 @@ def test_pyarrow_dataset_is_in_predicate_pushdown_nulls_equality(
+     result = q.collect()
+     capture = capfd.readouterr().err
+ 
+-    assert "converted pyarrow predicate: <pyarrow.compute.Expression false>" in capture
+-    assert "residual predicate: None" in capture
++    assert "residual predicate: None" not in capture
+ 
+     assert_frame_equal(q.collect(), expected)
+     assert_frame_equal(df.filter(pred), expected)
+@@ -458,13 +457,51 @@ def test_pyarrow_dataset_is_in_predicate_pushdown_nulls_equality(
+ 
+     plmonkeypatch.setenv("POLARS_VERBOSE_SENSITIVE", "0")
+ 
+-    assert "converted pyarrow predicate: <pyarrow.compute.Expression false>" in capture
+-    assert "residual predicate: None" in capture
++    assert "residual predicate: None" not in capture
+ 
+     assert_frame_equal(q.collect(), expected)
+     assert_frame_equal(df.filter(pred), expected)
+ 
+ 
++def test_pyarrow_dataset_is_in_predicate_pushdown_null_and_zero_30531() -> None:
++    df = pl.DataFrame({"k": [None, 2, 3], "f": [-0.0, 0.0, None]})
++    lf = pl.scan_pyarrow_dataset(
++        ds.dataset(df.to_arrow(compat_level=pl.CompatLevel.oldest()))
++    )
++
++    assert_frame_equal(
++        lf.filter(~pl.col("k").is_in([2, 5])).collect(),
++        pl.DataFrame({"k": [3], "f": [None]}, schema=df.schema),
++    )
++    assert_frame_equal(
++        lf.filter(pl.col("f").is_in([0.0])).collect(),
++        pl.DataFrame({"k": [None, 2], "f": [-0.0, 0.0]}, schema=df.schema),
++    )
++    assert_frame_equal(
++        lf.filter(pl.col("f").is_in([-0.0])).collect(),
++        pl.DataFrame({"k": [None, 2], "f": [-0.0, 0.0]}, schema=df.schema),
++    )
++    assert_frame_equal(
++        lf.filter(~pl.col("k").is_in(pl.Series([], dtype=pl.Int64))).collect(),
++        pl.DataFrame({"k": [2, 3], "f": [0.0, None]}, schema=df.schema),
++    )
++    assert_frame_equal(
++        lf.filter(~pl.col("k").is_in(pl.lit(None, dtype=pl.List(pl.Int64)))).collect(),
++        df.clear(),
++    )
++    assert_frame_equal(
++        lf.filter(pl.col("f").is_in([-0.0, None], nulls_equal=True)).collect(),
++        df,
++    )
++
++    df = pl.DataFrame({"f": [-0.0, 0.0, 1.0]}, schema={"f": pl.Float32})
++    lf = pl.scan_pyarrow_dataset(ds.dataset(df.to_arrow()))
++    assert_frame_equal(
++        lf.filter(pl.col("f").is_in([0.0])).collect(),
++        pl.DataFrame({"f": [-0.0, 0.0]}, schema=df.schema),
++    )
++
++
+ def test_pyarrow_dataset_comm_subplan_elim(tmp_path: Path) -> None:
+     df0 = pl.DataFrame({"a": [1, 2, 3]})
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30562** (2026-11-03): chore: Update `.gitattributes` for Linguist (@Kevin-Patyk)
-- **PR #30561** (2026-11-03): refactor(rust): Expose the breakpoint positions of `bin_quantiles` (@dancsi)
-- **PR #30557** (2026-11-03): perf: Optimise `DataType::eq` comparison (@alexander-beedie)
-- **PR #30555** (2026-11-03): fix: Add `UInt128` to `Product` type mapper (@dsprenkels)
-- **PR #30554** (2026-11-03): fix: Asof join with Categorical key column (@orlp)
-- **PR #30549** (2026-11-03): chore: Disallow trivial first-time contributor fixes (@orlp)
+- **PR #30587** (2026-11-04): refactor(rust): Convert DSL expressions to IR by reference (@orlp)
+- **PR #30584** (2026-11-04): fix: Fix schema errors for `UInt128` cum ops and `Null` truediv (@dsprenkels)
+- **PR #30581** (2026-11-04): docs(python): Update distributed engine support labels (@dsprenkels)
+- **PR #30578** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
+- **PR #30577** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
+- **PR #30576** (closed): feat(python): Support regex separators in read_csv (@Jeanorochka)
 
 ---
 
@@ -1837,42 +2235,81 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Panic in pl.format (#30534)
+## X. test: Keep capfd output when an xdist worker crashes (#30532)
 
 **RULE**:
-When implementing operations in `crates/polars-ops/src/series/ops/strings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py-polars/tests/conftest.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1889135`: Panic in pl.format (#30534). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bb0c7e9`: test: Keep capfd output when an xdist worker crashes (#30532). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ops/src/series/ops/strings.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/tests/conftest.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                while *elem_idx == arr.len() {
-                *elem_idx += 1;
-            while *elem_idx == arr.len() {
-                *arr = iter.next().unwrap();
-                *elem_idx = 0;
-            }
-            *elem_idx += 1;
+import itertools
+# How much of each captured stream of a crashed worker we echo, in bytes.
+def _persist_capture(capture: Any, path: Path) -> None:
+    """Make an fd-level pytest capture write to `path`, deleted when it ends."""
+        os.dup2(f.fileno(), capture.tmpfile.fileno())
+        if capture._state == "started":
+            os.dup2(f.fileno(), capture.targetfd)
+    capture._polars_crash_log_path = path
 
+
+def _persist_fd_captures(capman: Any, log_dir: str, worker_id: str) -> None:
+    """Persist the output of all fd-level captures of this xdist worker.
+
+    Files are named `<worker_id>.<n>.<stream>`, where `n` counts up from 0 for
+    the global capture, so a crash report can print them in creation order.
+    """
+    from _pytest.capture import FDCaptureBase
+
+    def path(n: int, targetfd: int) -> Path:
+        stream = "out" if targetfd == 1 else "err"
+        return Path(log_dir) / f"{worker_id}.{n:06}.{stream}"
+
+    # The global capture started before this conftest was loaded.
+    global_capture = getattr(capman, "_global_capturing", None)
+    for stream in ("out", "err"):
+        capture = getattr(global_capture, stream, None)
+        if isinstance(capture, FDCaptureBase
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                *elem_idx += 1;
-                if i + 1 != output_length && *elem_idx == arr.len() {
+# How much of a crashed worker's captured output we echo, in bytes.
+def _crash_log_path(log_dir: str | Path, worker_id: str, stream: str) -> Path:
+    return Path(log_dir) / f"{worker_id}.{stream}"
 
-            *elem_idx += 1;
-            if i + 1 != output_length && *elem_idx == arr.len() {
-                *arr = iter.next().unwrap();
-                *elem_idx = 0;
-            }
+
+def _capture_to_file(capman: Any, stream: str, path: Path) -> None:
+    """Redirect pytest's fd-level capture of `stream` to a persistent file."""
+    capture = getattr(capman._global_capturing, stream, None)
+    tmpfile = getattr(capture, "tmpfile", None)
+    targetfd = getattr(capture, "targetfd", None)
+    if tmpfile is None or targetfd is None:
+        return  # Not capturing this stream at fd level (`-s`, `--capture=sys`).
+
+        os.dup2(f.fileno(), tmpfile.fileno())
+        os.dup2(f.fileno(), targetfd)
+        for stream in ("out", "err"):
+            _capture_to_file(
+                capman, stream, _crash_log_path(log_dir, worker_id, stream)
+            )
+        print(f"failed to redirect fd capture: {exc!r}", file=sys.stderr)
+def _read_crash_output(worker_id: str, stream: str) -> str:
+        return ""
+    path = _crash_log_path(_xdist_crash_log_dir.name, worker_id, stream)
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return ""
+    if len(data) > _
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1889135` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bb0c7e9` are properly handled with clean fallback behavior.

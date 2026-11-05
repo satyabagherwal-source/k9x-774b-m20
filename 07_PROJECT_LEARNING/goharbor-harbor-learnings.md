@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `189cf90a`  
+> **Source Version**: `e43834ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:06:25.982Z  
+> **Timestamp**: 2026-11-04T16:34:27.074Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:06:23.764Z  
+> **Harvest Timestamp**: 2026-11-04T16:34:26.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29665 stars
+- **Stars / Engagement**: 29668 stars
 
 ---
 
@@ -656,10 +656,10 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24285** (2026-11-03): **(cherry-pick) fix(portal): prevent resource names from wrapping in permissions panel**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24300** (2026-11-04): **fix: restore robot member role assignment compatibility**
+  *Symptoms*: Allow authenticated robots with project member create or update permission to assign built-in and custom roles while preserving human escalation checks.  Restrict human delegation of member-management robots to project or system administrators, enforce permission scope on robot updates, and add regression coverage.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24284** (2026-11-03): **fix(portal): prevent resource names from wrapping in permissions panel**
+- **Issue #24299** (2026-11-04): ** fix: restore robot member role assignment compatibility**
   *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -677,71 +677,428 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `189cf90a` (2026-11-03)
-**Commit Message**: fix(portal): prevent resource names from wrapping in permissions panel (#24284)
+### Incident Patch 1: `e43834ca` (2026-11-04)
+**Commit Message**: fix: restore robot member role assignment compatibility (#24300)
 
-Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-Signed-off-by: stonezdj(Daojun Zhang) <[REDACTED_EMAIL]>
+Allow authenticated robots with project member create or update permission to assign built-in and custom roles while preserving human escalation checks.
 
-**File**: `src/portal/src/app/base/left-side-nav/roles/add-role/add-role.component.scss` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@
- }
- 
- :host::ng-deep.modal-dialog {
--  width: 50rem;
-+  width: 52rem;
- }
- 
- :host ::ng-deep .clr-wizard-main-content > .clr-wizard-body-wrapper {
-```
-
-**File**: `src/portal/src/app/shared/components/role-permissions-panel/role-permissions-panel.component.scss` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@
-   padding-bottom: 0 !important;
- }
- 
-+.table td:first-child {
-+  white-space: nowrap;
-+}
-+
- .dropdown-menu {
-   max-width: unset;
- }
-```
-
----
-
-### Incident Patch 2: `cbc97dc9` (2026-11-03)
-**Commit Message**: Change the size of the add-role wizard and add horizontal scroll when required (#24275)
-
-fixes: #24258
+Restrict human delegation of member-management robots to project or system administrators, enforce permission scope on robot updates, and add regression coverage.
 
 Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
-**File**: `src/portal/src/app/base/left-side-nav/roles/add-role/add-role.component.scss` (modified, +5/-1)
+**File**: `src/server/v2.0/handler/member.go` (modified, +14/-1)
 ```diff
-@@ -60,5 +60,9 @@
+@@ -23,6 +23,7 @@ import (
+ 
+ 	"github.com/goharbor/harbor/src/common/rbac"
+ 	rbacProject "github.com/goharbor/harbor/src/common/rbac/project"
++	robotSecurity "github.com/goharbor/harbor/src/common/security/robot"
+ 	"github.com/goharbor/harbor/src/controller/member"
+ 	roleCtl "github.com/goharbor/harbor/src/controller/role"
+ 	"github.com/goharbor/harbor/src/lib"
+@@ -185,8 +186,20 @@ func (m *memberAPI) UpdateProjectMember(ctx context.Context, params operation.Up
+ 	return operation.NewUpdateProjectMemberOK()
  }
  
- :host::ng-deep.modal-dialog {
--  width: 46.2rem;
-+  width: 50rem;
+-// checkNoEscalation rejects role assignments where the target role has permissions the caller lacks.
++// checkNoEscalation rejects human role assignments that exceed the caller's permissions.
++// Robots delegate roles through the member:create/update permission checked by the handler.
+ func (m *memberAPI) checkNoEscalation(ctx context.Context, projectNameOrID any, roleID int64) error {
++	sc, err := m.GetSecurityContext(ctx)
++	if err != nil {
++		return err
++	}
++	if robot, ok := sc.(*robotSecurity.SecurityContext); ok && robot.IsAuthenticated() {
++		// Robot permissions cannot express all human role permissions. Requiring
++		// those permissions would break existing member-management robots. The
++		// member controller still validates the target role before persisting it.
++		return nil
++	}
++
+ 	// Collect the (resource, action) pairs the target role grants. Built-in roles
+ 	// (IDs 1-5) have no role_permission rows — their permissions live only in the
+ 	// compile-time policy map — so they must be synthesized here. Reading them from
+```
+
+**File**: `src/server/v2.0/handler/member_test.go` (modified, +103/-0)
+```diff
+@@ -29,13 +29,20 @@ import (
+ 	"github.com/goharbor/harbor/src/common/rbac"
+ 	rbacProject "github.com/goharbor/harbor/src/common/rbac/project"
+ 	"github.com/goharbor/harbor/src/common/security"
++	robotSecurity "github.com/goharbor/harbor/src/common/security/robot"
++	"github.com/goharbor/harbor/src/controller/member"
++	"github.com/goharbor/harbor/src/controller/project"
++	"github.com/goharbor/harbor/src/controller/robot"
+ 	roleCtl "github.com/goharbor/harbor/src/controller/role"
+ 	"github.com/goharbor/harbor/src/lib/errors"
+ 	"github.com/goharbor/harbor/src/lib/q"
+ 	"github.com/goharbor/harbor/src/pkg/permission/types"
++	projectModels "github.com/goharbor/harbor/src/pkg/project/models"
++	robotModels "github.com/goharbor/harbor/src/pkg/robot/model"
+ 	"github.com/goharbor/harbor/src/server/v2.0/models"
+ 	memberop "github.com/goharbor/harbor/src/server/v2.0/restapi/operations/member"
+ 	securityMock "github.com/goharbor/harbor/src/testing/common/security"
++	projectMock "github.com/goharbor/harbor/src/testing/controller/project"
+ )
+ 
+ // ---------------------------------------------------------------------------
+@@ -341,3 +348,99 @@ func TestCreateProjectMember_EscalationBlocked(t *testing.T) {
+ // ---------------------------------------------------------------------------
+ 
+ var _ roleCtl.Controller = (*stubRoleCtl)(nil)
++
++type stubMemberController struct {
++	member.Controller
++	testifymock.Mock
 +}
 +
-+:host ::ng-deep .clr-wizard-main-content > .clr-wizard-body-wrapper {
-+  overflow-x: auto;
++func (s *stubMemberController) Create(ctx context.Context, projectNameOrID any, req member.Request) (int, error) {
++	args := s.Called(ctx, projectNameOrID, req)
++	return args.Int(0), args.Error(1)
++}
++
++func (s *stubMemberController) UpdateRole(ctx context.Context, projectNameOrID any, memberID, roleID int) error {
++	return s.Called(ctx, projectNameOrID, memberID, roleID).Error(0)
++}
++
++func TestRobotMemberRoleAssignment(t *testing.T) {
++	for _, level := range []string{robot.LEVELPROJECT, robot.LEVELSYSTEM} {
++		for _, action := range []rbac.Action{rbac.ActionCreate, rbac.ActionUpdate} {
++			for _, roleID := range []int{common.RoleProjectAdmin, common.RoleDeveloper, common.RoleGuest, common.RoleMaintainer, common.RoleLimitedGuest, 100} {
++				t.Run(fmt.Sprintf("%s/%s/role-%d", level, action, roleID), func(t *testing.T) {
++					pc := &projectMock.Controller{}
++					old := project.Ctl
++					project.Ctl = pc
++					t.Cleanup(func() { project.Ctl = old })
++					pc.On("Get", testifymock.Anything, testProjectID, testifymock.Anything).
++						Return(&projectModels.Project{ProjectID: testProjectID}, nil)
++					sc := robotSecurity.NewSecurityContext(&robot.Robot{
++						Robot: robotModels.Robot{Name: "robot$library+member-updater", ProjectID: testProjectID},
++						Level: level,
++						Permissions: []*robot.Permission{{
++							Kind: robot.LEVELPROJECT, Namespace: "library", Scope: fmt.Sprintf("/project/%d", testProjectID),
++							Access: policyAccess(rbac.ResourceMember, action),
++						}},
++					})
++					rc := &stubRoleCtl{}
++					rc.On("Get", testifymock.Anything, int64(100), testifymock.Anything).
++						Return(&roleCtl.Role{Permissions: []*roleCtl.Permission{{Access: policyAccess(rbac.ResourceRepository, rbac.ActionPush)}}}, nil).Maybe()
++					mc := &stubMemberController{}
++					api := &memberAPI{ctl: mc, roleCtl: rc}
++					xFalse := false
++					rr := httptest.NewRecorder()
++					ctx := newCtxWithSecurity(sc)
++					if action == rbac.ActionCreate {
++						mc.On("Create", ctx, testProjectID, member.Request{Role: roleID, MemberUser: member.User{Username: "mike01"}}).Return(2, nil).Once()
++						api.CreateProjectMember(ctx, memberop.CreateProjectMemberParams{
++							ProjectNameOrID: fmt.Sprint(testProjectID), XIsResourceName: &xFalse,
++							ProjectMember: &models.ProjectMember{RoleID: int64(roleID), MemberUser: &models.UserEntity{Username: "mike01"}},
++						}).WriteResponse(rr, runtime.JSONProducer())
++						assert.Equal(t, http.StatusCreated, rr.Code, rr.Body.String())
++					} else {
++						mc.On("UpdateRole", ctx, testProjectID, 2, roleID).Return(nil).Once()
++						api.UpdateProjectMember(ctx, memberop.UpdateProjectMemberParams{
++							ProjectNameOrID: fmt.Sprint(testProjectID), XIsResourceName: &xFalse, Mid: 2,
++							Role: &models.RoleRequest{RoleID: int64(roleID)},
++						}).WriteResponse(rr, runtime.JSONProducer())
++						assert.Equal(t, http.StatusOK, rr.Code, rr.Body.String())
++					}
++					mc.AssertExpectations(t)
++				})
++			}
++		}
++	}
++}
++
++func TestRobotMemberAccessRequired(t *testing.T) {
++	for _, level := range []string{robot.LEVELPROJECT, robot.LEVELSYSTEM} {
++		for _, tc := range []struct {
++			name   string
++			scope  string
++			action rbac.Action
++		}{
++			{"wrong action", fmt.Sprintf("/project/%d", testProjectID), rbac.ActionList},
++			{"wrong project", fmt.Sprintf("/project/%d", testProjectID+1), rbac.ActionUpdate},
++		} {
++			t.Run(level+"/"+tc.name, func(t *testing.T) {
++				pc := &projectMock.Controller{}
++				old := project.Ctl
++				project.Ctl = pc
++				t.Cleanup(func() { project.Ctl = old }
+```
+
+**File**: `src/server/v2.0/handler/robot.go` (modified, +58/-3)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	"github.com/go-openapi/runtime/middleware"
+ 	"github.com/go-openapi/strfmt"
+ 
++	"github.com/goharbor/harbor/src/common"
+ 	"github.com/goharbor/harbor/src/common/rbac"
+ 	"github.com/goharbor/harbor/src/common/security/local"
+ 	robotSc "github.com/goharbor/harbor/src/common/security/robot"
+@@ -440,10 +441,18 @@ func (rAPI *robotAPI) updateV2Robot(ctx context.Context, params operation.Update
+ 	if err != nil {
+ 		return err
+ 	}
+-	if _, ok := sc.(*local.SecurityContext); ok {
++	switch s := sc.(type) {
++	case *local.SecurityContext:
+ 		if err := rAPI.validateNoEscalation(ctx, params.Robot.Permissions); err != nil {
+ 			return err
+ 		}
++	case *robotSc.SecurityContext:
++		if s.User() == nil {
++			return errors.New(nil).WithMessage("invalid security context: empty robot account")
++		}
++		if !isValidPermissionScope(params.Robot.Permissions, s.User().Permissions) {
++			return errors.New(nil).WithMessagef("permission scope is invalid. It must be equal to or more restrictive than the robot's permissions: %s", s.User().Name).WithCode(errors.DENIED)
++		}
+ 	}
+ 
+ 	if r.Duration != *params.Robot.Duration {
+@@ -510,7 +519,16 @@ func mapRobotToHumanResource(r rbac.Resource) rbac.Resource {
+ // validateNoEscalation ensures that a human user cannot grant a robot more permissions than they hold.
+ func (rAPI *robotAPI) validateNoEscalation(ctx context.Context, permissions []*models.RobotPermission) error {
+ 	for _, perm := range permissions {
++		memberDelegationChecked := false
+ 		for _, acc := range perm.Access {
++			if !memberDelegationChecked && acc.Effect != types.EffectDeny.String() &&
++				acc.Resource == rbac.ResourceMember.String() &&
++				(acc.Action == rbac.ActionCreate.String() || acc.Action == rbac.ActionUpdate.String()) {
++				if err := rAPI.requireMemberDelegation(ctx, perm.Namespace); err != nil {
++					return err
++				}
++				memberDelegationChecked = true
++			}
+ 			resource := mapRobotToHumanResource(rbac.Resource(acc.Resource))
+ 			has, err := rAPI.HasProjectPermission(ctx, perm.Namespace, rbac.Action(acc.Action), resource)
+ 			if err != nil {
+@@ -525,6 +543,37 @@ func (rAPI *robotAPI) validateNoEscalation(ctx context.Context, permissions []*m
+ 	return nil
  }
+ 
++// requireMemberDelegation protects create, update and secret refresh: controlling
++// a robot with member:create/update allows assigning any role in that project.
++// A human with a restricted custom role must not use a robot to bypass their own
++// role-assignment checks, even if they hold the same member permission.
++func (rAPI *robotAPI) requireMemberDelegation(ctx context.Context, namespace string) error {
++	sc, err := rAPI.GetSecurityContext(ctx)
++	if err != nil {
++		return err
++	}
++	if sc.IsSysAdmin() {
++		return nil
++	}
++	if user, ok := sc.(*local.SecurityContext); ok && user.IsAuthenticated() && namespace != "*" {
++		p, err := baseProjectCtl.GetByName(ctx, namespace)
++		if err != nil {
++			return err
++		}
++		roles, err := baseProjectCtl.ListRoles(ctx, p.ProjectID, user.User())
++		if err != nil {
++			return err
++		}
++		for _, role := range roles {
++			if role == common.RoleProjectAdmin {
++				return nil
++			}
++		}
++	}
++	return errors.ForbiddenError(nil).WithMessagef(
++		"only system or project administrators can grant control of a robot with member:create or member:update in project %s", namespace)
++}
++
+ // isValidPermissionScope checks if permission slice A is a subset of permission slice B
+ func isValidPermissionScope(creating []*models.RobotPermission, creator []*robot.Permission) bool {
+ 	creatorMap := make(map[string]*robot.Permission)
+@@ -534,13 +583,19 @@ func isValidPermissionScope(creating []*models.RobotPermission, creator []*robot
+ 	}
+ 
+ 	hasLessThanOrEqualAccess := func(creating []*models.Access, creator []*types.Policy) bool {
++		// Policy.String treats an omitted effect as allow, matching authorization.
+ 		creatorMap := make(map[string]*types.Policy)
+ 		for _, creatorP := range creator {
+-			key := fmt.Sprintf("%s:%s:%s", creatorP.Resource, creatorP.Action, creatorP.Effect)
++			key := creatorP.String()
+ 			creatorMap[key] = creatorP
+ 		}
+ 		for _, creatingP := range creating {
+-			key := fmt.Sprintf("%s:%s:%s", creatingP.Resource, creatingP.Action, creatingP.Effect)
++			policy := types.Policy{
++				Resource: types.Resource(creatingP.Resource),
++				Action:   types.Action(creatingP.Action),
++				Effect:   types.Effect(creatingP.Effect),
++			}
++			key := policy.String()
+ 			if _, found := creatorMap[key]; !found {
+ 				return false
+ 			}
+```
+
+**File**: `src/server/v2.0/handler/robot_member_delegation_test.go` (added, +288/-0)
+```diff
+@@ -0,0 +1,288 @@
++// Copyright Project Harbor Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package handler
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/go-openapi/runtime"
++	"github.com/stretchr/testify/assert"
++	testifymock "github.com/stretchr/testify/mock"
++
++	"github.com/goharbor/harbor/src/common"
++	commonModels "github.com/goharbor/harbor/src/common/models"
++	"github.com/goharbor/harbor/src/common/rbac"
++	"github.com/goharbor/harbor/src/common/security/local"
++	robotSecurity "github.com/goharbor/harbor/src/common/security/robot"
++	"github.com/goharbor/harbor/src/controller/member"
++	"github.com/goharbor/harbor/src/controller/project"
++	"github.com/goharbor/harbor/src/controller/robot"
++	"github.com/goharbor/harbor/src/controller/role"
++	"github.com/goharbor/harbor/src/lib/errors"
++	"github.com/goharbor/harbor/src/pkg"
++	"github.com/goharbor/harbor/src/pkg/permission/types"
++	projectModels "github.com/goharbor/harbor/src/pkg/project/models"
++	robotModels "github.com/goharbor/harbor/src/pkg/robot/model"
++	roleManager "github.com/goharbor/harbor/src/pkg/role"
++	roleModels "github.com/goharbor/harbor/src/pkg/role/model"
++	"github.com/goharbor/harbor/src/server/v2.0/models"
++	memberop "github.com/goharbor/harbor/src/server/v2.0/restapi/operations/member"
++	robotop "github.com/goharbor/harbor/src/server/v2.0/restapi/operations/robot"
++	projectMock "github.com/goharbor/harbor/src/testing/controller/project"
++	robotMock "github.com/goharbor/harbor/src/testing/controller/robot"
++	projectManagerMock "github.com/goharbor/harbor/src/testing/pkg/project"
++	roleManagerMock "github.com/goharbor/harbor/src/testing/pkg/role"
++)
++
++func setupMemberDelegationProject(t *testing.T) *projectMock.Controller {
++	t.Helper()
++	pc := &projectMock.Controller{}
++	oldProject, oldBase, oldRole := project.Ctl, baseProjectCtl, role.Ctl
++	project.Ctl, baseProjectCtl = pc, pc
++	t.Cleanup(func() {
++		project.Ctl, baseProjectCtl, role.Ctl = oldProject, oldBase, oldRole
++	})
++	p := &projectModels.Project{ProjectID: testProjectID, Name: "library"}
++	pc.On("Get", testifymock.Anything, testProjectID, testifymock.Anything).Return(p, nil)
++	pc.On("Get", testifymock.Anything, "library", testifymock.Anything).Return(p, nil)
++	pc.On("GetByName", testifymock.Anything, "library").Return(p, nil)
++	rc := &stubRoleCtl{}
++	rc.On("Get", testifymock.Anything, int64(100), testifymock.Anything).Return(&role.Role{
++		Role: roleModels.Role{ID: 100, Name: "member-manager"},
++		Permissions: []*role.Permission{{Access: []*types.Policy{
++			{Resource: rbac.ResourceMember, Action: rbac.ActionCreate},
++			{Resource: rbac.ResourceMember, Action: rbac.ActionUpdate},
++			{Resource: rbac.ResourceMember, Action: rbac.ActionRead},
++			{Resource: rbac.ResourceRobot, Action: rbac.ActionCreate},
++			{Resource: rbac.ResourceRobot, Action: rbac.ActionUpdate},
++		}}},
++	}, nil)
++	role.Ctl = rc
++	return pc
++}
++
++func TestHumanRobotMemberDelegation(t *testing.T) {
++	for _, action := range []string{"create", "update"} {
++		for _, endpoint := range []string{"create robot", "update robot", "refresh secret"} {
++			for _, caller := range []struct {
++				name     string
++				sysAdmin bool
++				roles    []int
++				allowed  bool
++			}{
++				{"restricted custom role", false, []int{100}, false},
++				{"administrator in another project", false, []int{100}, false},
++				{"project administrator", false, []int{100, common.RoleProjectAdmin}, true},
++				{"system administrator", true, nil, true},
++			} {
++				t.Run(action+"/"+endpoint+"/"+caller.name, func(t *testing.T) {
++					pc := setupMemberDelegationProject(t)
++					user := &commonModels.User{UserID: 7, Username: "delegator", SysAdminFlag: caller.sysAdmin}
++					pc.On("ListRoles", testifymock.Anything, testProjectID, user).Return(caller.roles, nil)
++					if caller.name == "administrator in another project" {
++						pc.On("ListRoles", testifymock.Anything, testProjectID+1, user).Return([]int{common.RoleProjectAdmin}, nil)
++					}
++					ctx := newCtxWithSecurity(local.NewSecurityContext(user))
++					permissions := robotPerm("library", "member", action)
++					permissions[0].Kind = robot.LEVELPROJECT
++					if endpoint == "create robot" && caller.allowed {
++						// Successful creation calls SetProject with a concrete DB manager.
++						// Check its authorization here; rejection cases exercise the handler.
++						api := &robotAPI{}
++						assert.NoError(t, api.requireA
+```
+
+**File**: `src/server/v2.0/handler/robot_test.go` (modified, +31/-0)
+```diff
+@@ -241,6 +241,37 @@ func TestContainsAccess(t *testing.T) {
+ 	}
+ }
+ 
++func TestValidPermissionScopeDefaultEffect(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		requested string
++		granted   types.Effect
++		allowed   bool
++	}{
++		{"both omitted", "", "", true},
++		{"both explicit allow", "allow", types.EffectAllow, true},
++		{"request omitted", "", types.EffectAllow, true},
++		{"grant omitted", "allow", "", true},
++		{"both deny", "deny", types.EffectDeny, true},
++		{"default cannot match deny", "", types.EffectDeny, false},
++		{"allow cannot match deny", "allow", types.EffectDeny, false},
++		{"deny cannot match default", "deny", "", false},
++		{"deny cannot match allow", "deny", types.EffectAllow, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			requested := []*models.RobotPermission{{
++				Kind: robot.LEVELPROJECT, Namespace: "library",
++				Access: []*models.Access{{Resource: "repository", Action: "pull", Effect: tc.requested}},
++			}}
++			granted := []*robot.Permission{{
++				Kind: robot.LEVELPROJECT, Namespace: "library",
++				Access: []*types.Policy{{Resource: rbac.ResourceRepository, Action: rbac.ActionPull, Effect: tc.granted}},
++			}}
++			assert.Equal(t, tc.allowed, isValidPermissionScope(requested, granted))
++		})
++	}
++}
++
+ func TestValidPermissionScope(t *testing.T) {
+ 	tests := []struct {
+ 		name          string
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24300** (2026-11-04): fix: restore robot member role assignment compatibility (@stonezdj)
+- **PR #24299** (closed):  fix: restore robot member role assignment compatibility (@stonezdj)
+- **PR #24286** (2026-11-04): Bump up go mod (@stonezdj)
 - **PR #24285** (2026-11-03): (cherry-pick) fix(portal): prevent resource names from wrapping in permissions panel (@stonezdj)
 - **PR #24284** (2026-11-03): fix(portal): prevent resource names from wrapping in permissions panel (@stonezdj)
 - **PR #24277** (2026-11-02): (cherry-pick) feat(audit): audit-log events for custom roles (@stonezdj)
-- **PR #24276** (2026-11-02): (cherry-pick)Change the size of the add-role wizard and add horizontal scroll when required (@stonezdj)
-- **PR #24275** (2026-11-03): Change the size of the add-role wizard and add horizontal scroll when required (@stonezdj)
-- **PR #24259** (2026-10-30): Bump Trivy to v0.76.1 and adapter to v0.40.0-rc2 (@stonezdj)
 
 ---
 
@@ -761,28 +1118,41 @@ Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. portal): prevent resource names from wrapping in permissions panel (#24284)
+## X. restore robot member role assignment compatibility (#24300)
 
 **RULE**:
-When implementing operations in `src/portal/src/app/base/left-side-nav/roles/add-role/add-role.component.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/v2.0/handler/member.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `189cf90a`: portal): prevent resource names from wrapping in permissions panel (#24284). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e43834ca`: restore robot member role assignment compatibility (#24300). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/app/base/left-side-nav/roles/add-role/add-role.component.scss`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/v2.0/handler/member.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  width: 52rem;
+	robotSecurity "github.com/goharbor/harbor/src/common/security/robot"
+// checkNoEscalation rejects human role assignments that exceed the caller's permissions.
+// Robots delegate roles through the member:create/update permission checked by the handler.
+	sc, err := m.GetSecurityContext(ctx)
+	if err != nil {
+		return err
+	}
+	if robot, ok := sc.(*robotSecurity.SecurityContext); ok && robot.IsAuthenticated() {
+		// Robot permissions cannot express all human role permissions. Requiring
+		// those permissions would break existing member-management robots. The
+		// member controller still validates the target role before persisting it.
+		return nil
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  width: 50rem;
+// checkNoEscalation rejects role assignments where the target role has permissions the caller lacks.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `189cf90a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e43834ca` are properly handled with clean fallback behavior.

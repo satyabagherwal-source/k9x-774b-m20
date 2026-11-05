@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `b4628bc8`  
+> **Source Version**: `c0299477`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:25:22.908Z  
+> **Timestamp**: 2026-11-04T20:46:39.101Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:25:18.822Z  
+> **Harvest Timestamp**: 2026-11-04T20:46:38.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -37,6 +37,128 @@
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
+### Core Architecture Module: `crates/executor/src/acceleration/concurrency.rs`
+```
+//! Job-level `concurrency:` groups, enforced within one run.
+
+use super::current;
+use std::sync::Arc;
+use tokio::sync::Semaphore;
+use wrkflw_parser::workflow::Job;
+
+/// A job's `concurrency:`: a group name, or a mapping with `group` and
+/// `cancel-in-progress`.
+struct Concurrency {
+    group: String,
+    /// Asked for, though nothing here can honour it.
+    cancel_in_progress: bool,
+}
+
+fn concurrency_group(job: &Job) -> Option<Concurrency> {
+    match job.concurrency.as_ref()? {
+        serde_yaml::Value::String(group) => Some(Concurrency {
+            group: group.clone(),
+            cancel_in_progress: false,
+        }),
+        serde_yaml::Value::Mapping(map) => Some(Concurrency {
+            group: map.get("group")?.as_str()?.to_string(),
+            cancel_in_progress: map
+                .get("cancel-in-progress")
+                .is_some_and(|v| v.as_bool() != Some(false)),
+        }),
+        _ => None,
+    }
+}
+
+/// Wait until no other job in this run holds `job`'s concurrency group.
+///
+/// Groups compare as written, so expressions aren't evaluated. Equal text
+/// serializes, which is the safe direction. `cancel-in-progress` doesn't
+/// apply: a local run has no earlier run of the same group to cancel.
+pub(crate) async fn acquire_concurrency(
+    job_name: &str,
+    job: &Job,
+) -> Option<tokio::sync::OwnedSemaphorePermit> {
+    let Concurrency {
+        group,
+        cancel_in_progress,
+    } = concurrency_group(job)?;
+    let run = current()?;
+    if cancel_in_progress {
+        wrkflw_logging::warning(&format!(
+            "Job '{}': cancel-in-progress has no effect locally, so it waits its turn in '{}'",
+            job_name, group
+        ));
+    }
+    let semaphore = {
+        let mut groups = run.groups.lock().ok()?;
+        groups
+            .entry(group)
+            .or_insert_with(|| Arc::new(Semaphore::new(1)))
+            .clone()
+    };
+    semaphore.acquire_owned().await.ok()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::acceleration::{with_run_state, Acceleration, RunState};
+    use std::path::PathBuf;
+
+    fn job(yaml: &str) -> Job {
+        serde_yaml::from_str(yaml).unwrap()
+    }
+
+    /// The most jobs inside their critical section at once.
+    async fn peak_overlap(first: &str, second: &str) -> usize {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let active = AtomicUsize::new(0);
+        let peak = AtomicUsize::new(0);
+        let definitions = [job(first), job(second)];
+        let state = RunState::new(Acceleration::default(), false, PathBuf::from(".")).unwrap();
+        with_run_state(Arc::new(state), async {
+            futures::future::join_all(definitions.iter().map(|definition| async {
+                let _permit = acquire_concurrency("j", definition).await;
+                let now = active.fetch_add(1, Ordering::SeqCst) + 1;
+                peak.fetch_max(now, Ordering::SeqCst);
+                tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+                active.fetch_sub(1, Ordering::SeqCst);
+            }))
+            .await;
+        })
+        .await;
+        peak.load(Ordering::SeqCst)
+    }
+
+    #[tokio::test]
+    async fn a_group_serializes_its_jobs_and_other_jobs_overlap() {
+        let lock = "concurrency: lock\nsteps: []\n";
+        let other = "concurrency: other\nsteps: []\n";
+        let free = "steps: []\n";
+        assert_eq!(peak_overlap(lock, lock).await, 1);
+        assert_eq!(peak_overlap(lock, other).await, 2);
+        assert_eq!(peak_overlap(free, free).await, 2);
+    }
+
+    #[test]
+    fn concurrency_groups_come_from_a_string_or_a_mapping() {
+        let group =
+            |yaml: &str| concurrency_group(&job(yaml)).map(|c| (c.group, c.cancel_in_progress));
+        assert_eq!(
+            group("concurrency: db\nsteps: []\n"),
+            Some(("db".to_string(), false))
+        );
+        assert_eq!(
+            group("concurrency:\n  group: db\n  cancel-in-progress: true\nsteps: []\n"),
+            Some(("db".to_string(), true))
+        );
+        assert_eq!(group("steps: []\n"), None);
+    }
+}
+
+```
+
 ### Core Architecture Module: `crates/executor/src/engine.rs`
 ```
 #[allow(unused_imports)]
@@ -53,11 +175,13 @@ use thiserror::Error;
 
 use ignore::{gitignore::GitignoreBuilder, Match};
 
+use crate::acceleration;
 use crate::action_resolver;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
 use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
+use crate::job_session;
 use crate::kubernetes::{self, KubernetesConfig};
 use crate::podman;
 use wrkflw_logging;
@@ -84,10 +208,26 @@ pub async fn execute_workflow(
     let is_gitlab = is_gitlab_pipeline(workflow_path);
 
     if is_gitlab {
-        execute_gitlab_pipeline(workflow_path, config.clone()).await
-    } else {
-        execute_github_workflow(workflow_path, config.clone()).await
+        return acceleration::without_run_state(execute_gitlab_pipeline(
+            workflow_path,
+            config.clone(),
+        ))
+        .await;
     }
+    let root = std::env::current_dir().map_err(|e| {
+        ExecutionError::Execution(format!("Failed to get current directory: {}", e))
+    })?;
+    let state = acceleration::RunState::new(
+        config.acceleration.clone(),
+        config.preserve_containers_on_failure,
+        root,
+    )
+    .map_err(ExecutionError::Execution)?;
+    acceleration::with_run_state(
+        std::sync::Arc::new(state),
+        execute_github_workflow(workflow_path, config.clone()),
+    )
+    .await
 }
 
 /// Determine if a file is a GitLab CI/CD pipeline
@@ -292,19 +432,7 @@ fn record_job_results(
         // Dependents treat an allowed failure as success, so they still run.
         // GitHub documents that the run passes, but not what
         // `needs.<job>.result` reads. `success` is the reported behaviour:
-        // https://www.kenmuse.com/blog/how-to-handle-step-and-job-errors-in-github-actions/
-        let status = if job_result.failure_allowed {
-            &JobStatus::Success
-        } else {
-            &job_result.status
-        };
-        if all_job_outputs.contains_key(&job_result.canonical_name)
-            && job_result.name != job_result.canonical_name
-        {
-            wrkflw_logging::warning(&format!(
-                "Matrix job '{}' overwrites outputs for '{}' — \
-                 needs.{}.outputs will reflect the last combination only",
-                job_result.name, job_result.canonical_name, job_result.
+        // https://www.kenmuse.com/blog/how-to-handle-step-and-job-errors-in-github-actions
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -377,15 +505,19 @@ pub struct App {
     pub current_execution: Option<usize>,
     logs: Vec<String>, // Overall execution logs — private so every mutation routes through `add_log`
     pub log_scroll: usize, // Scrolling position for logs
-    pub job_list_state: ListState, // For viewing job details
-    pub detailed_view: bool, // Whether we're in detailed view mode
-    pub step_list_state: ListState, // For selecting steps in detailed view
-    pub step_table_state: TableState, // For the steps table in detailed view
-    pub last_tick: Instant, // For UI animations and updates
-    pub tick_rate: Duration, // How often to update the UI
-    pub spinner_frame: usize, // Current spinner animation frame
+    /// Keep the newest log line selected as lines arrive.
+    pub log_follow: bool,
+    /// First visible log row, kept across frames so scrolling is smooth.
+    pub log_offset: usize,
+    pub job_list_state: ListState,            // For viewing job details
+    pub detailed_view: bool,                  // Whether we're in detailed view mode
+    pub step_list_state: ListState,           // For selecting steps in detailed view
+    pub step_table_state: TableState,         // For the steps table in detailed view
+    pub last_tick: Instant,                   // For UI animations and updates
+    pub tick_rate: Duration,                  // How often to update the UI
+    pub spinner_frame: usize,                 // Current spinner animation frame
     pub tx: mpsc::Sender<ExecutionResultMsg>, // Channel for async communication
-    pub status_message: Option<String>, // Temporary status message to display
+    pub status_message: Option<String>,       // Temporary status message to display
     pub status_message_severity: StatusSeverity, // Severity of the current status message
     pub status_message_time: Option<Instant>, // When the message was set
 
@@ -454,6 +586,22 @@ pub struct App {
     /// Active sub-tab inside the Step Inspector (job-detail) view.
     /// 0 Output, 1 Env, 2 Files, 3 Matrix, 4 Timeline.
     pub step_inspector_tab: usize,
+    /// Lines scrolled back from the end of the inspected step's output;
+    /// 0 follows the tail.
+    pub step_output_scroll: usize,
+    /// Stage scrolled to in the DAG graph view.
+    pub dag_scroll: usize,
+    /// Bumped whenever a workflow's results are replaced, so caches
+    /// keyed by workflow/job/step index can tell a rerun apart.
+    pub run_generation: u64,
+    /// Parsed output of the step the inspector last showed.
+    pub step_output_cache: Option<crate::views::StepOutputCache>,
+    /// Matrix run counts for the DAG cards, computed once per parsed
+    /// workflow rather than expanding every matrix on every frame.
+    pub dag_matrix_labels: Option<(
+        Arc<wrkflw_parser::workflow::WorkflowDefinition>,
+        HashMap<String, String>,
+    )>,
 
     // ── DAG tab ───────────────────────────────────────────────────
     /// When true, the DAG tab renders the topological-stage list view;
@@ -490,28 +638,7 @@ pub struct App {
     pub trigger_input_on_value: bool,
     /// Shared in-flight flag so a double-`Enter` can't fire two
     /// dispatches before the spawned task returns. Cleared by the
-    /// dispatch task on completion (success *or* error).
-    pub trigger_in_flight: Arc<AtomicBool>,
-    /// Cached resolution of the remote target (owner/repo, default
-    /// branch). Populated lazily by `trigger_tab_target()` so we don't
-    /// shell out to `git remote` every frame; invalidated on platform
-    /// toggle.
-    pub trigger_target_cache: Option<TriggerTarget>,
-    /// Sender for dispatch outcomes. Cloned into the spawned tokio
-    /// task so the task can report success/failure back to the main
-    /// event loop without touching `&mut App` directly.
-    pub trigger_outcome_tx: mpsc::Sender<DispatchOutcome>,
-    /// Receiver for dispatch outcomes. Drained every tick by
-    /// [`App::drain_trigger_outcomes`] — the result updates the status
-    /// bar so the user gets confirmation on the Trigger tab itself,
-    /// not buried in the Logs tab.
-    pub trigger_outcome_rx: mpsc::Receiver<DispatchOutcome>,
-
-    // ── Secrets tab ───────────────────────────────────────────────
-    /// Selected row in the secrets list.
-    pub secrets_list_state: ListState,
-
-    //
+    /// dispatch task on compl
 ```
 
 ### Core Architecture Module: `crates/ui/src/utils/mod.rs`
@@ -1373,1009 +1500,692 @@ jobs:
                 "m
 ```
 
-### Core Architecture Module: `crates/executor/src/action_resolver.rs`
+### Core Architecture Module: `crates/executor/src/acceleration.rs`
 ```
-use once_cell::sync::Lazy;
-use std::collections::{HashMap, VecDeque};
-use tokio::sync::RwLock;
+//! Doing less work on a rerun: job result reuse, `--affected` skipping,
+//! dependency cache mounts, and per-run `concurrency:` groups.
+//!
+//! Everything here is opt-in except concurrency groups, and everything fails
+//! towards running the job: an unreadable tree, a cache miss or a bad entry
+//! means the job runs as it would have without this module.
+//!
+//! The state lives in a task-local rather than in the step and job context
+//! structs, the same way `events::HOOKS` does. A `tokio::spawn` inside the
+//! executor would lose it, so job execution has to stay on the run's task.
 
-/// Maximum number of entries in the action resolution cache.
-const MAX_CACHE_ENTRIES: usize = 256;
+mod concurrency;
+mod sidecar;
+mod store;
+mod tree;
 
-/// Represents the type of a GitHub Action as declared in its action.yml `runs.using` field.
-#[derive(Debug, Clone)]
-pub enum ActionType {
-    Node {
-        version: u32,
-    },
-    /// A Docker action that references a registry image (e.g., `rust:latest`).
-    Docker {
-        image: String,
-    },
-    /// A Docker action that bundles its own Dockerfile and needs to be built.
-    DockerBuild,
-    Composite,
-}
+pub(crate) use concurrency::acquire_concurrency;
+use serde_json::Value;
+use sha2::{Digest, Sha256};
+pub use sidecar::{JobHints, Sidecar};
+use std::collections::{BTreeMap, HashMap, HashSet};
+use std::future::Future;
+use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex, OnceLock};
+use store::ResultStore;
+pub(crate) use store::StoredJob;
+use tokio::sync::{OnceCell, Semaphore};
+pub(crate) use tree::hash_tree;
+use tree::Tree;
+#[cfg(test)]
+use tree::TreeHashes;
+use wrkflw_parser::workflow::{Job, WorkflowDefinition};
 
-/// Result of resolving a remote action's action.yml.
-#[derive(Debug, Clone)]
-pub struct ResolvedAction {
-    pub action_type: ActionType,
-    /// The raw parsed action.yml, available for composite action execution.
-    pub definition: Option<serde_yaml::Value>,
-}
+/// The sidecar that holds what a workflow file can't: GitHub rejects unknown
+/// keys in workflow YAML, so job hints can't live next to the job.
+pub const SIDECAR_PATH: &str = ".wrkflw/affected.yml";
 
-/// Bounded FIFO cache for successfully resolved actions keyed by "owner/repo@version".
-/// Only successful resolutions are cached — transient failures are not persisted
-/// so that retries can succeed if network conditions improve.
-/// Eviction is insertion-order (FIFO), not access-order, which is sufficient here
-/// because actions are typically resolved once per workflow run.
-struct BoundedCache {
-    map: HashMap<String, ResolvedAction>,
-    /// Insertion order for FIFO eviction (oldest at front).
-    order: VecDeque<String>,
-}
+/// Bump when the fingerprint's inputs change, so old entries stop matching.
+const KEY_VERSION: u32 = 3;
 
-impl BoundedCache {
-    fn new() -> Self {
-        Self {
-            map: HashMap::new(),
-            order: VecDeque::new(),
-        }
-    }
+/// Host directories mounted into containers under `--dep-cache`.
+const DEP_CACHE_DIRS: &[(&str, &str)] = &[
+    ("cargo-registry", "/root/.cargo/registry"),
+    ("cargo-git", "/root/.cargo/git"),
+    ("npm", "/root/.npm"),
+    ("pip", "/root/.cache/pip"),
+    ("go-mod", "/root/go/pkg/mod"),
+];
 
-    fn get(&self, key: &str) -> Option<&ResolvedAction> {
-        self.map.get(key)
-    }
+/// Files that always count as input, because steps load them without naming
+/// them. Path hints would otherwise let a composite action change go unseen.
+const ALWAYS_INPUT: &[&str] = &[".github/actions/**", ".gitea/actions/**", SIDECAR_PATH];
 
-    #[allow(clippy::map_entry)]
-    fn insert(&mut self, key: String, value: ResolvedAction) {
-        if self.map.contains_key(&key) {
-            // Already cached — update value, don't change insertion order
-            self.map.insert(key, value);
-            return;
-        }
-        // Evict oldest entries if at capacity
-        while self.map.len() >= MAX_CACHE_ENTRIES {
-            if let Some(oldest) = self.order.pop_front() {
-                self.map.remove(&oldest);
-            }
-        }
-        self.order.push_back(key.clone());
-        self.map.insert(key, value);
-    }
-}
+/// Covered by the job definition in the key. Hashing them too would make any
+/// edit to a workflow invalidate every job in the repository.
+const NEVER_INPUT: &[&str] = &[".github/workflows/**", ".gitea/workflows/**"];
 
-static ACTION_CACHE: Lazy<RwLock<BoundedCache>> = Lazy::new(|| RwLock::new(BoundedCache::new()));
+/// Text that reads a credential. Plain "secrets" won't do: every serialized
+/// job has a `secrets` key, so that would rule out every job.
+const SECRET_REFERENCES: &[&str] = &[
+    "secrets.",
+    "secrets[",
+    "secrets)",
+    "secrets }",
+    "secrets}",
+    "github.token",
+    "github_token",
+    "github-token",
+];
 
-/// Shared HTTP client to avoid repeated TLS initialization.
-/// Timeout is kept low (5s) since resolution is best-effort with a fallback.
-static HTTP_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
-    reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(5))
-        .user_agent("wrkflw")
-        .build()
-        .expect("Failed to create HTTP client")
-});
+/// Actions that change something on GitHub or a registry, and take
+/// `github.token` by default, so a job that uses them reads a credential
+/// without its YAML saying so. Matched as a prefix of `uses:`, lowercased.
+const MUTATING_ACTIONS: &[&str] = &[
+    "actions/github-script",
+    "actions/create-release",
+    "actions/upload-release-asset",
+    "actions/labeler",
+    "actions/stale",
+    "actions/first-interaction",
+    "actions/deploy-pages",
+    "actions/attest",
+    "softprops/action-gh-release",
+    "ncipollo/release-action",
+    "peter-evans/create-pull-request",
+    "peter-evans/create-or-update-comment",
+    "peter-evans/repository-dispatch",
+    "marocchino/sticky-pull-request-comment",
+    "thollander/actions-comment-pull-request",
+    "stefanzweifel/git-auto-commit-action",
+    "ad-m/github-push-action",
+    "googleapis/release-please-action",
+    "changesets/action",
+    "docker/login-action",
+    "docker/build-push-action",
+    "pypa/gh-action-pypi-publish",
+    "js-devtools/npm-publish",
+    "jamesives/github-pages-deploy-action",
+    "peaceiris/actions-gh-pages",
+];
 
-/// Shared no-redirect HTTP client for authenticated requests.
-/// Prevents leaking the GITHUB_TOKEN to redirect targets (e.g., CDN hosts).
-/// Reused across requests to avoid per-request TLS initialization.
-static NO_REDIRECT_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
-    reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(5))
-        .user_agent("wrkflw")
-        .redirect(reqwest::redirect::Policy::none())
-        .build()
-        .expect("Failed to create no-redirect HTTP client")
-});
+/// Actions that hand files to another job. A reused job hands over nothing,
+/// so the job that needs them would fail.
+const ARTIFACT_ACTIONS: &[&str] = &[
+    "actions/upload-artifact",
+    "actions/download-artifact",
+    "actions/upload-pages-artifact",
+];
 
-const GITHUB_RAW_BASE_URL: &str = "https://raw.githubusercontent.com";
-
-/// Fetch and parse `action.yml` (or `action.yaml`) from a remote GitHub repository.
-///
-/// `sub_path` is the optional path within the repo (e.g., for `owner/repo/path@ref`,
-/// `sub_path` is `Some("path")`). When present, the action metadata is fetched from
-/// `{repo}/{version}/{sub_path}/action.yml` instead of `{repo}/{version}/action.yml`.
-///
-/// Returns `Ok(ResolvedAction)` on success, or `Err` if the action metadata cannot be
-/// fetched or parsed. Callers should fall back to hardcoded image mappings on error.
-pub async fn resolve_remote_action(
-    repo: &str,
-    version: &str,
-    sub_path: Option<&str>,
-) -> Result<ResolvedAction, String> {
-    let cache_key = match sub_path {
-        Some(p) => format!("{}/{}@{}", repo, p, version),
-        None => format!("{}@{}", repo, version),
-    };
-
-    // Check cache first (read lock — allows concurrent reads)
-    {
-        let cache = ACTION_CACHE.read().await;
-        if let Some(cached) = cache.get(&cache_key) {
-            return Ok(cached.clone());
-        }
-    }
-
-    let token = std::env::var("GITHUB_TOKEN").ok();
-
-    // Try action.yml first, then action.yaml
-    let result = match fetch_and_parse(
-        GITHUB_RAW_BASE_URL,
-        repo,
-        version,
-        sub_path,
-        "action.yml",
-        token.as_deref(),
-    )
-    .await
-    {
-        Ok(resolved) => Ok(resolved),
-        Err(yml_err) => fetch_and_parse(
-            GITHUB_RAW_BASE_URL,
-            repo,
-            version,
-            sub_path,
-            "action.yaml",
-            token.as_deref(),
-        )
-        .await
-        .map_err(|yaml_err| {
-            format!(
-                "Neither action.yml ({}) nor action.yaml ({}) could be resolved",
-                yml_err, yaml_err
-            )
-        }),
-    };
-
-    // Only cache successful resolutions — transient failures should be retryable
-    if let Ok(ref resolved) = result {
-        let mut cache = ACTION_CACHE.write().await;
-        cache.insert(cache_key, resolved.clone());
-    }
-
-    result
-}
-
-async fn fetch_and_parse(
-    base_url: &str,
-    repo: &str,
-    version: &str,
-    sub_path: Option<&str>,
-    filename: &str,
-    token: Option<&str>,
-) -> Result<ResolvedAction, String> {
-    let url = match sub_path {
-        Some(p) => format!("{}/{}/{}/{}/{}", base_url, repo, version, p, filename),
-        None => format!("{}/{}/{}/{}", base_url, repo, version, filename),
-    };
-
-    // Try unauthenticated first; only send GITHUB_TOKEN on 404 (private repos).
-    let response = HTTP_CLIENT
-        .get(&url)
-        .send()
-        .await
-        .map_err(|e| format!("Failed to fetch {}: {}", url, e))?;
-
-    let response =
-        if response.status() == reqwest::StatusCode::NOT_FOUND {
-            // Retry with auth if token is available — the repo may be private.
-            // NO_REDIRECT_CLIENT prevents leaking the token to a non-GitHub host.
-            if let Some(token) = token {
-                let auth_response = NO_REDIRECT_CLIENT
-                    .get(&url)
-                    .header("Authorization", format!("token {}", token))
-                    .send()
-                    .await
-                    .map_err(|e| format!("Failed to fetch {}: {}", url, e))?;
-
-                // The no-redirect policy prevents token leakage, but the server may
-                // legitimately redirect (CDN routing). If we get a 3xx, follow it
-                // without the auth header to avoid leaking the token.
-                if auth_response.status().is_redirection() {
-                    if let Some(location) = auth_response.headers().get(reqwest::header::LOCATION) {
-                        let redirect_url = location
-                            .to_str()
-                            .map_err(|_| "Invalid redirect URL encoding".to_string())?;
-                        HTTP_CLIENT.get(redirect_url).send().await.map_err(|e| {
-                            format!("Failed to follow redirect {}: {}", redirect_url, e)
-                        })?
-                    } else {
-                        return Err(format!(
-                            "HTTP {} (redirect with no Location header) fetching {}",
-                            auth_response.status(),
-                            url
-                        ));
-                    }
-                } else {
-                    auth_response
-                }
-            } else {
-                response
-            }
-        } else {
-            response
-        };
-
-    if !response.status().is_success() {
-        return Err(format!("HTTP {} fetching {}", response.status(), url));
-    }
-
-    let body = response
-        .text()
-        .await
-        .map_err(|e| format!("Failed to read response body: {}", e))?;
-
-    parse_action_definition(&body)
-}
-
-/// Parse an action.yml body and extract the action type from the `runs` section.
-fn parse_action_definition(content: &str) -> Result<ResolvedAction, String> {
-    let def: serde_yaml::Value =
-        serde_yaml::from_str(content).map_err(|e| format!("Invalid action YAML: {}", e))?;
-
-    let runs = def
-        .get("runs")
-        .ok_or_else(|| "action.yml missing 'runs' section".to_string())?;
-
-    let using = runs
-        .get("using")
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| "action.yml missing 'runs.using' field".to_string())?;
-
-    let action_type = parse_using(using, runs)?;
-
-    Ok(ResolvedAction {
-        action_type,
-        definition: Some(def),
+/// The `uses:` of the first step in `job` that runs one of `actions`, at any
+/// version or subpath. Lowercased, as GitHub matches action names.
+fn uses_one_of<'a>(job: &'a Job, actions: &[&str]) -> Option<&'a str> {
+    job.steps.iter().find_map(|step| {
+        let uses = step.uses.as_deref()?;
+        let lower = uses.to_ascii_lowercase();
+        actions
+            .iter()
+            .any(|action| {
+                lower
+                    .strip_prefix(action)
+                    .is_some_and(|rest| rest.is_empty() || rest.starts_with(['@', '/']))
+            })
+            .then_some(uses)
     })
 }
 
-/// Map the `runs.using` value to an `ActionType`.
-fn parse_using(using: &str, runs: &serde_yaml::Value) -> Result<ActionType, String> {
-    match using {
-        "composite" => Ok(ActionType::Composite),
+/// A credential that must not reach logs through `Debug`.
+#[derive(Clone, Default, PartialEq)]
+pub struct Secret(pub String);
 
-        "docker" => {
-            let image = runs
-                .get("image")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| "Docker action missing 'runs.image' field".to_string())?;
+impl std::fmt::Debug for Secret {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Secret([REDACTED])")
+    }
+}
 
-            // Strip "docker://" prefix if present (some actions use it, some don't)
-            let image = image.trim_start_matches("docker://");
+/// What a run may do to avoid work. The default does nothing.
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct Acceleration {
+    /// Return the stored result of a job whose fingerprint already passed.
+    pub reuse_results: bool,
+    /// Files changed since the base. `Some` turns on `--affected`.
+    pub changed_files: Option<Vec<String>>,
+    /// Run a job's `run:` steps in one container instead of one per step.
+    pub job_container: bool,
+    /// Mount package manager caches from the host.
+    pub dep_cache: bool,
+    /// Directory, `file://` or `https://` base for shared results.
+    pub remote_cache: Option<String>,
+    /// Upload this run's results to `remote_cache`.
+    pub push_results: bool,
+    /// Signs and verifies remote entries. Required with `remote_cache`.
+    pub signing_key: Option<Secret>,
+    /// Bearer token for an `https://` remote.
+    pub remote_token: Option<Secret>,
+    /// This run is `wrkflw gate`'s: jobs the sidecar marks `gate: false` are
+    /// skipped and left to CI.
+    pub gate: bool,
+}
 
-            // If the image is "Dockerfile" or a relative path, it means the action
-            // bundles its own Dockerfile that needs to be built — not pulled from a registry.
-            if image == "Dockerfile"
-                || image.starts_with("./")
-                || image.starts_with("../")
-                || image.ends_with("/Dockerfile")
-            {
-                Ok(ActionType::DockerBuild)
-            } else {
-                Ok(ActionType::Docker {
-                    image: image.to_string(),
-                })
-            }
+/// Why a remote cache setting can't be used.
+pub fn validate_remote(accel: &Acceleration) -> Result<(), String> {
+    let Some(remote) = &accel.remote_cache else {
+        if accel.push_results {
+            return Err("--cache-push needs --remote-cache".to_string());
         }
-
-        s if s.starts_with("node") => {
-            let version_str = s.trim_start
-```
-
-### Core Architecture Module: `crates/executor/src/artifacts.rs`
-```
-//! Local artifact storage for GitHub Actions `actions/upload-artifact` and
-//! `actions/download-artifact` emulation.
-//!
-//! Artifacts are stored as plain files under a per-workflow-run temporary
-//! directory, laid out relative to where the `path:` search started, as
-//! `actions/upload-artifact` does.
-
-use std::borrow::Cow;
-use std::collections::hash_map::Entry;
-use std::collections::{BTreeSet, HashMap};
-use std::ffi::OsStr;
-use std::path::{Component, Path, PathBuf};
-use std::sync::Arc;
-use tokio::sync::RwLock;
-
-/// Sanitize an artifact name to prevent path traversal.
-///
-/// Rejects names containing path separators or `..` components and strips
-/// null bytes. Returns an error if the name is invalid.
-fn sanitize_artifact_name(name: &str) -> Result<String, String> {
-    if name.is_empty() {
-        return Err("Artifact name cannot be empty".to_string());
-    }
-    // Reject names containing null bytes outright rather than silently stripping
-    // (stripping could create collisions, e.g. "foo\0bar" → "foobar").
-    if name.contains('\0') {
-        return Err(format!(
-            "Invalid artifact name '{}': contains null bytes",
-            name
-        ));
-    }
-    if name.contains('/') || name.contains('\\') || name.contains("..") || name.starts_with('.') {
-        return Err(format!(
-            "Invalid artifact name '{}': must not contain path separators, '..', or start with '.'",
-            name
-        ));
-    }
-    Ok(name.to_string())
-}
-
-/// Resolve `.` and `..` lexically, so that paths from the same `path:` line
-/// compare equal however they were spelled.
-fn normalize(path: &Path) -> PathBuf {
-    let mut normalized = PathBuf::new();
-    for component in path.components() {
-        match component {
-            Component::CurDir => {}
-            Component::ParentDir => match normalized.components().next_back() {
-                Some(Component::Normal(_)) => {
-                    normalized.pop();
-                }
-                Some(Component::ParentDir) | None => normalized.push(".."),
-                _ => {}
-            },
-            other => normalized.push(other),
-        }
-    }
-    normalized
-}
-
-/// One glob or path from a `path:` input, resolved against the workspace.
-struct PathLine<'a> {
-    /// The line without trailing slashes, unless it is only slashes. An absolute
-    /// line inside the canonical workspace is made relative to it, so that every
-    /// path compared later shares one spelling of the workspace.
-    text: Cow<'a, str>,
-    /// The line joined to the workspace. Absolute lines stay as written.
-    path: PathBuf,
-    /// Whether the line names an existing directory.
-    is_dir: bool,
-}
-
-impl<'a> PathLine<'a> {
-    fn parse(workspace: &Path, canonical_workspace: &Path, line: &'a str) -> Self {
-        let trimmed = line.trim_end_matches('/');
-        let text = if trimmed.is_empty() { line } else { trimmed };
-        let text = match normalize(Path::new(text)).strip_prefix(canonical_workspace) {
-            Ok(rest) if rest.as_os_str().is_empty() => Cow::Borrowed("."),
-            Ok(rest) => Cow::Owned(rest.to_string_lossy().into_owned()),
-            Err(_) => Cow::Borrowed(text),
-        };
-        let path = workspace.join(text.as_ref());
-        let is_dir = path.is_dir();
-        Self { text, path, is_dir }
-    }
-
-    /// The components before the first wildcard, and the rest as a pattern.
-    /// Only the line itself is searched, as the workspace path may contain
-    /// wildcard characters.
-    fn split_at_wildcard(&self) -> (PathBuf, Option<String>) {
-        let components: Vec<_> = Path::new(self.text.as_ref()).components().collect();
-        let wildcard = components
-            .iter()
-            .position(|c| c.as_os_str().to_string_lossy().contains(['*', '?', '[']));
-        match wildcard {
-            Some(index) if !self.is_dir => {
-                let pattern: Vec<_> = components[index..]
-                    .iter()
-                    .map(|c| c.as_os_str().to_string_lossy())
-                    .collect();
-                (
-                    components[..index].iter().collect(),
-                    Some(pattern.join("/")),
-                )
-            }
-            _ => (components.iter().collect(), None),
-        }
-    }
-}
-
-/// Whether a file or directory is hidden, by the rule of upload-artifact.
-fn is_hidden(name: &OsStr) -> bool {
-    name.to_string_lossy().starts_with('.')
-}
-
-/// The directory a `path:` line starts from: the directory it names, its part
-/// before the first wildcard, or the parent of a single file.
-fn search_root(workspace: &Path, line: &PathLine<'_>) -> PathBuf {
-    let root = match line.split_at_wildcard() {
-        (base, Some(_)) => workspace.join(base),
-        (_, None) if line.is_dir => line.path.clone(),
-        (_, None) => line
-            .path
-            .parent()
-            .map_or_else(|| line.path.clone(), Path::to_path_buf),
+        return Ok(());
     };
-    normalize(&root)
-}
-
-/// A recursive search below one directory. Symlinked directories are followed
-/// as upload-artifact follows them, unless they leave the workspace or lead
-/// back to a directory the search is already inside.
-///
-/// A directory matching the pattern selects everything below it, as
-/// upload-artifact searches with implicit descendants: `out/*` includes
-/// `out/sub/a.txt`, and `!**/node_modules` excludes what is inside.
-#[derive(Clone, Copy)]
-struct Search<'a> {
-    pattern: Option<&'a glob::Pattern>,
-    /// How deep the pattern can match. `None` when it holds a `**`.
-    max_depth: Option<usize>,
-    include_hidden: bool,
-    canonical_workspace: &'a Path,
-}
-
-impl Search<'_> {
-    fn visit(&self, dir: &Path, relative: &Path, chain: &mut Vec<PathBuf>, out: &mut Vec<PathBuf>) {
-        let Ok(entries) = std::fs::read_dir(dir) else {
-            return;
-        };
-        for entry in entries.flatten() {
-            let name = entry.file_name();
-            if !self.include_hidden && is_hidden(&name) {
-                continue;
-            }
-            let Ok(kind) = entry.file_type() else {
-                continue;
-            };
-            let path = dir.join(&name);
-            let relative = relative.join(&name);
-            // Only a symlink needs another stat. Symlinked files are not uploaded.
-            if kind.is_dir() || (kind.is_symlink() && path.is_dir()) {
-                if self.matches(&relative) {
-                    self.everything().descend(&path, &relative, chain, out);
-                } else {
-                    self.descend(&path, &relative, chain, out);
-                }
-            } else if kind.is_file() && self.matches(&relative) {
-                out.push(path);
-            }
-        }
-    }
-
-    fn descend(
-        &self,
-        dir: &Path,
-        relative: &Path,
-        chain: &mut Vec<PathBuf>,
-        out: &mut Vec<PathBuf>,
-    ) {
-        if self
-            .max_depth
-            .is_some_and(|depth| relative.components().count() >= depth)
-        {
-            return;
-        }
-        let Ok(canonical) = dir.canonicalize() else {
-            return;
-        };
-        if !canonical.starts_with(self.canonical_workspace) || chain.contains(&canonical) {
-            return;
-        }
-        chain.push(canonical);
-        self.visit(dir, relative, chain, out);
-        chain.pop();
-    }
-
-    /// This search without its pattern, for what is below a matched directory.
-    fn everything(&self) -> Self {
-        Self {
-            pattern: None,
-            max_depth: None,
-            ..*self
-        }
-    }
-
-    fn matches(&self, relative: &Path) -> bool {
-        let options = glob::MatchOptions {
-            require_literal_separator: true,
-            ..glob::MatchOptions::new()
-        };
-        self.pattern
-            .is_none_or(|pattern| pattern.matches_path_with(relative, options))
-    }
-}
-
-/// Files within the workspace matching a path line, under the normalized path
-/// that names them in the artifact. A file reached through a symlinked directory
-/// keeps the path it was found at.
-///
-/// Unless `include_hidden` is set, hidden files and directories are skipped,
-/// including the line's own file or search directory. Only names that are
-/// visited count, as in upload-artifact: `.config/*` selects nothing, while
-/// `.config/sub/*` searches from `sub` and selects its files. The workspace
-/// itself is exempt, as its name is not the user's choice: temporary directories
-/// start with a dot.
-fn matching_files(
-    workspace: &Path,
-    canonical_workspace: &Path,
-    line: &PathLine<'_>,
-    include_hidden: bool,
-) -> Result<Vec<PathBuf>, String> {
-    let hidden = |path: &Path| !include_hidden && path.file_name().is_some_and(is_hidden);
-    let (_, wildcards) = line.split_at_wildcard();
-    if !line.is_dir && wildcards.is_none() {
-        let file = normalize(&line.path);
-        let selected = !hidden(&file)
-            && file.is_file()
-            && !file.is_symlink()
-            && file
-                .canonicalize()
-                .is_ok_and(|c| c.starts_with(canonical_workspace));
-        return Ok(selected.then_some(file).into_iter().collect());
-    }
-
-    let pattern = wildcards
-        .as_deref()
-        .map(glob::Pattern::new)
-        .transpose()
-        .map_err(|e| format!("Invalid glob pattern '{}': {}", line.text, e))?;
-
-    let root = search_root(workspace, line);
-    let normalized_workspace = normalize(workspace);
-    if !root.starts_with(&normalized_workspace) || (root != normalized_workspace && hidden(&root)) {
-        return Ok(Vec::new());
-    }
-    let canonical_root = match root.canonicalize() {
-        Ok(canonical) if canonical.starts_with(canonical_workspace) => canonical,
-        _ => return Ok(Vec::new()),
-    };
-    let max_depth = wildcards
-        .as_deref()
-        .filter(|wildcards| !wildcards.contains("**"))
-        .map(|wildcards| wildcards.split('/').count());
-
-    let search = Search {
-        pattern: pattern.as_ref(),
-        max_depth,
-        include_hidd
-```
-
-### Core Architecture Module: `crates/executor/src/cache.rs`
-```
-//! Local cache storage for GitHub Actions `actions/cache` emulation.
-//!
-//! Caches are stored under the platform cache directory (persistent across
-//! runs), e.g. `$XDG_CACHE_HOME/wrkflw/cache/` on Linux,
-//! and keyed by a SHA-256 hash of the cache key string.
-
-use sha2::{Digest, Sha256};
-use std::path::{Path, PathBuf};
-
-/// Default maximum cache size: 1 GiB. When the cache exceeds this limit,
-/// the oldest entries (by last modification time) are evicted until the
-/// total size is back under the limit.
-const DEFAULT_MAX_CACHE_SIZE_BYTES: u64 = 1024 * 1024 * 1024;
-
-/// Internal metadata file name used by `CacheStore` to store the cache key.
-///
-/// Used in `save_inner` (to write) and `find_by_prefix` / `copy_dir_contents`
-/// (to read / skip). Keep all references consistent via this constant.
-const CACHE_KEY_METADATA_FILE: &str = ".cache_key";
-
-/// Manages a persistent local cache for workflow runs.
-///
-/// All public I/O methods (`restore`, `save`) run filesystem work on a
-/// blocking thread via `tokio::task::spawn_blocking` to avoid stalling the
-/// async executor — matching the pattern used by `ArtifactStore`.
-#[derive(Clone)]
-pub struct CacheStore {
-    root: PathBuf,
-    max_size: u64,
-}
-
-impl CacheStore {
-    /// Create a new cache store. Uses `<cache dir>/wrkflw/cache/` by default,
-    /// where `<cache dir>` is `$XDG_CACHE_HOME` (or `~/.cache`) on Linux.
-    pub fn new() -> Result<Self, String> {
-        let root = dirs::cache_dir()
-            .ok_or_else(|| "Could not determine cache directory (HOME is not set).".to_string())?
-            .join("wrkflw")
-            .join("cache");
-        std::fs::create_dir_all(&root).map_err(|e| {
-            format!(
-                "Failed to create cache directory '{}': {}",
-                root.display(),
-                e
-            )
-        })?;
-        Ok(Self {
-            root,
-            max_size: DEFAULT_MAX_CACHE_SIZE_BYTES,
-        })
-    }
-
-    /// Create a cache store at a custom root (useful for testing or custom locations).
-    #[allow(dead_code)]
-    pub fn with_root(root: PathBuf) -> std::io::Result<Self> {
-        std::fs::create_dir_all(&root)?;
-        Ok(Self {
-            root,
-            max_size: DEFAULT_MAX_CACHE_SIZE_BYTES,
-        })
-    }
-
-    /// Set the maximum cache size in bytes. When exceeded, the oldest entries
-    /// are evicted after each `save`.
-    #[allow(dead_code)]
-    pub fn set_max_size(&mut self, max_size: u64) {
-        self.max_size = max_size;
-    }
-
-    /// Attempt to restore a cache. Tries `key` first, then each of `restore_keys`
-    /// as a prefix match.
-    ///
-    /// `path` is the directory to restore into (relative to `workspace`).
-    /// Returns the matched key on hit, or `None` on miss.
-    ///
-    /// Filesystem I/O is offloaded to a blocking thread.
-    pub async fn restore(
-        &self,
-        key: &str,
-        restore_keys: &[String],
-        path: &str,
-        workspace: &Path,
-    ) -> Option<String> {
-        let this = self.clone();
-        let key = key.to_string();
-        let restore_keys = restore_keys.to_vec();
-        let path = path.to_string();
-        let workspace = workspace.to_path_buf();
-
-        match tokio::task::spawn_blocking(move || {
-            this.restore_inner(&key, &restore_keys, &path, &workspace)
-        })
-        .await
-        {
-            Ok(result) => result,
-            Err(e) => {
-                wrkflw_logging::warning(&format!("Cache restore task panicked: {}", e));
-                None
-            }
-        }
-    }
-
-    /// Save the contents of `path` (relative to `workspace`) under `key`.
-    ///
-    /// Filesystem I/O is offloaded to a blocking thread.
-    pub async fn save(&self, key: &str, path: &str, workspace: &Path) -> Result<(), String> {
-        let this = self.clone();
-        let key = key.to_string();
-        let path = path.to_string();
-        let workspace = workspace.to_path_buf();
-
-        tokio::task::spawn_blocking(move || this.save_inner(&key, &path, &workspace))
-            .await
-            .map_err(|e| format!("Cache task panicked: {}", e))?
-    }
-
-    fn restore_inner(
-        &self,
-        key: &str,
-        restore_keys: &[String],
-        path: &str,
-        workspace: &Path,
-    ) -> Option<String> {
-        // Validate that the resolved target stays within the workspace
-        if !validate_cache_path(path, workspace) {
-            return None;
-        }
-
-        // Try exact match first (composite key+path hash, then legacy key-only hash)
-        for cache_dir in [self.cache_path_for(key, path), self.cache_path(key)] {
-            if cache_dir.exists() {
-                let target = workspace.join(path);
-                if copy_dir_contents(&cache_dir, &target).is_ok() {
-                    return Some(key.to_string());
-                }
-            }
-        }
-
-        // Try restore-keys as prefix matches
-        for prefix in restore_keys {
-            if let Some(matched) = self.find_by_prefix(prefix, path) {
-                let cache_dir = self.cache_path_for(&matched, path);
-                let target = workspace.join(path);
-                if copy_dir_contents(&cache_dir, &target).is_ok() {
-                    return Some(matched);
-                }
-                // Also try the legacy key-only hash for backwards compat
-                let legacy_dir = self.cache_path(&matched);
-                if legacy_dir.exists() {
-                    let target = workspace.join(path);
-                    if copy_dir_contents(&legacy_dir, &target).is_ok() {
-                        return Some(matched);
-                    }
-                }
-            }
-        }
-
-        None
-    }
-
-    fn save_inner(&self, key: &str, path: &str, workspace: &Path) -> Result<(), String> {
-        // Validate that the resolved source stays within the workspace
-        if !validate_cache_path(path, workspace) {
-            return Err(format!("Cache path '{}' escapes workspace directory", path));
-        }
-
-        let source = workspace.join(path);
-        if !source.exists() {
-            return Err(format!("Cache path '{}' does not exist", source.display()));
-        }
-
-        let cache_dir = self.cache_path_for(key, path);
-        // Write to a temporary directory first, then atomically rename over the
-        // old entry. This prevents data loss if the process is killed mid-copy.
-        let tmp_dir = cache_dir.with_extension(".tmp");
-        if tmp_dir.exists() {
-            std::fs::remove_dir_all(&tmp_dir)
-                .map_err(|e| format!("Failed to clean tmp cache dir: {}", e))?;
-        }
-
-        if source.is_dir() {
-            copy_dir_contents(&source, &tmp_dir)?;
-        } else {
-            let file_name = source
-                .file_name()
-                .ok_or_else(|| format!("Cache path '{}' has no file name component", path))?;
-            std::fs::create_dir_all(&tmp_dir)
-                .map_err(|e| format!("Failed to create cache dir: {}", e))?;
-            let dest = tmp_dir.join(file_name);
-            std::fs::copy(&source, &dest).map_err(|e| format!("Failed to copy file: {}", e))?;
-        }
-
-        // Write key metadata for prefix matching
-        let meta_path = tmp_dir.join(CACHE_KEY_METADATA_FILE);
-        std::fs::write(&meta_path, key)
-            .map_err(|e| format!("Failed to write cache metadata: {}", e))?;
-
-        // Replace old entry: rename old to `.old`, rename `.tmp` into place,
-        // then remove `.old`. This is not fully atomic (no single-syscall
-        // directory swap on POSIX), but minimises the window where the entry
-        // is missing if the process is killed mid-operation.
-        let old_dir = cache_dir.with_extension(".old");
-        if old_dir.exists() {
-            let _ = std::fs::remove_dir_all(&old_dir);
-        }
-        if cache_dir.exists() {
-            std::fs::rename(&cache_dir, &old_dir)
-                .map_err(|e| format!("Failed to move old cache aside: {}", e))?;
-        }
-        std::fs::rename(&tmp_dir, &cache_dir)
-            .map_err(|e| format!("Failed to finalize cache entry: {}", e))?;
-        // Best-effort cleanup of old entry
-        if old_dir.exists() {
-            let _ = std::fs::remove_dir_all(&old_dir);
-        }
-
-        // Evict oldest entries if cache exceeds size limit
-        self.evict_if_needed();
-
-        Ok(())
-    }
-
-    /// Compute the on-disk directory for a `(key, path)` pair.
-    ///
-    /// When `path` is provided, the hash incorporates both key and path so that
-    /// multiple paths under the same cache key get separate storage directories
-    /// (matching `actions/cache`'s multi-path `path:` input).
-    fn cache_path_for(&self, key: &str, path: &str) -> PathBuf {
-        let input = format!("{}\0{}", key, path);
-        let hash = format!("{:x}", Sha256::digest(input.as_bytes()));
-        self.root.join(hash)
-    }
-
-    /// Compute the on-disk directory for a key (single-path legacy form).
-    fn cache_path(&self, key: &str) -> PathBuf {
-        let hash = format!("{:x}", Sha256::digest(key.as_bytes()));
-        self.root.join(hash)
-    }
-
-    /// Find the most recently modified cached key that starts with the given prefix.
-    ///
-    /// When `cache_path` is provided, the fast-path exact check also tries the
-    /// composite `(prefix, cache_path)` hash, supporting multi-path cache entries.
-    ///
-    /// When multiple entries match, the one with the newest modification time wins,
-    /// matching GitHub Actions' behavior of preferring the most recently created key.
-    fn find_by_prefix(&self, prefix: &str, cache_path: &str) -> Option<String> {
-        // Fast path: try composite (prefix, path) hash first, then legacy key-only hash
-        for exact_path in [
-            self.cache_path_for(prefix, cache_path),
-            self.cache_path(prefix),
-        ] {
-            if let Ok(stored) = std::fs::read_to_string(exact_path.join(CACHE_KEY_METADATA_FILE)) {
-                if stored == prefix {
-               
-```
-
-### Core Architecture Module: `crates/executor/src/container_guard.rs`
-```
-use std::process::{Command, Stdio};
-
-/// Cleans up a container when dropped while still armed.
-///
-/// A timed-out step drops the future driving its container, which would
-/// otherwise leave the container running after wrkflw has moved on or exited.
-/// Dropping can't await, so this goes through the CLI, and the cleanup carries
-/// on by itself if wrkflw exits straight afterwards. Docker therefore needs the
-/// `docker` CLI on `PATH`, even though it otherwise talks to the daemon through
-/// bollard. Kubernetes has the equivalent `PodGuard`.
-pub(crate) struct ContainerGuard {
-    cli: &'static str,
-    id: String,
-    armed: bool,
-    /// Kill the container but keep it for debugging, rather than removing it.
-    preserve: bool,
-    /// Drops the container from its runtime's exit sweep.
-    untrack: fn(&str),
-}
-
-impl ContainerGuard {
-    pub(crate) fn new(cli: &'static str, id: &str, preserve: bool, untrack: fn(&str)) -> Self {
-        Self {
-            cli,
-            id: id.to_string(),
-            armed: true,
-            preserve,
-            untrack,
-        }
-    }
-
-    /// The run finished normally, so its usual cleanup applies.
-    pub(crate) fn disarm(&mut self) {
-        self.armed = false;
-    }
-}
-
-impl Drop for ContainerGuard {
-    fn drop(&mut self) {
-        if !self.armed {
-            return;
-        }
-        (self.untrack)(&self.id);
-        let args: &[&str] = if self.preserve {
-            wrkflw_logging::info(&format!(
-                "Step cancelled, killing container {} and keeping it for debugging. \
-                 Use '{} logs {}' to inspect it.",
-                self.id, self.cli, self.id
+    if let Some((scheme, _)) = remote.split_once("://") {
+        if !matches!(scheme, "file" | "http" | "https") {
+            return Err(format!(
+                "--remote-cache doesn't support {}://. Use a directory, a file:// path \
+                 or an https:// URL",
+                scheme
             ));
-            &["kill"]
-        } else {
-            wrkflw_logging::debug(&format!("Removing abandoned container {}", self.id));
-            &["rm", "-f"]
-        };
-        let spawned = Command::new(self.cli)
-            .args(args)
-            .arg(&self.id)
-            .stdin(Stdio::null())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn();
-        match spawned {
-            // Only reaps it. If wrkflw exits first, the cleanup still finishes.
-            Ok(mut child) => {
-                std::thread::spawn(move || {
-                    let _ = child.wait();
-                });
+        }
+    }
+    if accel.signing_key.as_ref().is_none_or(|k| k.0.is_empty()) {
+        return Err(
+            "--remote-cache needs WRKFLW_CACHE_SIGNING_KEY: an unsigned result would let \
+             anyone who can write to the cache mark a job as passed"
+                .to_string(),
+        );
+    }
+    if remote.starts_with("http://") && !is_loopback_url(remote) {
+        return Err("--remote-cache must use https unless the host is local".to_string());
+    }
+    Ok(())
+}
+
+/// Whether `url` names this machine, by name or by a loopback address.
+fn is_loopback_url(url: &str) -> bool {
+    let Ok(url) = reqwest::Url::parse(url) else {
+        return false;
+    };
+    let Some(host) = url.host_str() else {
+        return false;
+    };
+    let bare = host.trim_start_matches('[').trim_end_matches(']');
+    match bare.parse::<std::net::IpAddr>() {
+        Ok(ip) => ip.is_loopback(),
+        Err(_) => host.eq_ignore_ascii_case("localhost"),
+    }
+}
+
+fn compile_globs(patterns: &[&str]) -> Vec<glob::Pattern> {
+    patterns
+        .iter()
+        .filter_map(|p| glob::Pattern::new(p).ok())
+        .collect()
+}
+
+fn glob_options() -> glob::MatchOptions {
+    glob::MatchOptions {
+        case_sensitive: true,
+        require_literal_separator: true,
+        require_literal_leading_dot: false,
+    }
+}
+
+fn matches_any(path: &str, patterns: &[glob::Pattern]) -> bool {
+    patterns
+        .iter()
+        .any(|p| p.matches_with(path, glob_options()))
+}
+
+/// `hints.paths` plus the files that always count, or `None` for every file.
+///
+/// The files that always count include every local action `job` uses, as a
+/// step loads `uses: ./tools/x` without the job's paths naming it.
+fn input_patterns(
+    job: &Job,
+    hints: Option<&JobHints>,
+) -> Result<Option<Vec<glob::Pattern>>, String> {
+    let Some(paths) = hints.and_then(|h| h.paths.as_ref()) else {
+        return Ok(None);
+    };
+    let mut patterns = compile_globs(ALWAYS_INPUT);
+    patterns.extend(local_action_patterns(job));
+    for path in paths {
+        patterns.push(
+            glob::Pattern::new(path)
+                .map_err(|e| format!("bad path '{}' in {}: {}", path, SIDECAR_PATH, e))?,
+        );
+    }
+    Ok(Some(patterns))
+}
+
+/// A pattern for the directory of each `uses: ./<dir>` step in `job`.
+fn local_action_patterns(job: &Job) -> Vec<glob::Pattern> {
+    job.steps
+        .iter()
+        .filter_map(|step| step.uses.as_deref()?.strip_prefix("./"))
+        .filter_map(|dir| {
+            let dir = dir.trim_end_matches('/');
+            if dir.is_empty() {
+                // An action at the repository root can read any file.
+                return glob::Pattern::new("**").ok();
             }
-            Err(e) => {
-                wrkflw_logging::warning(&format!("Failed to clean up container {}: {}", self.id, e))
-            }
+            glob::Pattern::new(&format!("{}/**", glob::Pattern::escape(dir))).ok()
+        })
+        .collect()
+}
+
+/// Whether `permissions:`, at the job or workflow level, grants any write.
+/// `write-all` is the one string form that does.
+fn grants_write(permissions: &serde_yaml::Value) -> bool {
+    match permissions {
+        serde_yaml::Value::String(all) => all == "write-all",
+        serde_yaml::Value::Mapping(scopes) => scopes
+            .values()
+            .any(|access| access.as_str() == Some("write")),
+        _ => false,
+    }
+}
+
+/// Why a job's result must not be reused, or `None` if it may be.
+///
+/// wrkflw can't see what a step does, so this rules out what it can detect:
+/// a job that touches credentials probably chan
+```
+
+### Core Architecture Module: `crates/executor/src/acceleration/sidecar.rs`
+```
+//! `.wrkflw/affected.yml`: per-job hints a workflow file can't hold, as GitHub
+//! rejects unknown keys there.
+
+use super::SIDECAR_PATH;
+use serde::Deserialize;
+use std::collections::HashMap;
+use std::path::Path;
+
+/// One job's entry in `.wrkflw/affected.yml`.
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct JobHints {
+    /// Globs of the files this job reads, relative to the repository root.
+    #[serde(default)]
+    pub paths: Option<Vec<String>>,
+    /// False means this job always runs: never reused from a stored result
+    /// and never skipped as unaffected. For a job with effects wrkflw can't
+    /// see.
+    #[serde(default = "default_true")]
+    pub cache: bool,
+    /// False leaves this job to CI: `wrkflw gate` skips it, as it would a
+    /// job whose `if:` is false. For a deploy, a release, or anything else
+    /// that must not run from a developer's machine on every push.
+    #[serde(default = "default_true")]
+    pub gate: bool,
+}
+
+impl Default for JobHints {
+    fn default() -> Self {
+        Self {
+            paths: None,
+            cache: true,
+            gate: true,
         }
     }
 }
 
-#[cfg(all(test, unix))]
+fn default_true() -> bool {
+    true
+}
+
+#[derive(Debug, Clone, Default, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Sidecar {
+    #[serde(default)]
+    pub jobs: HashMap<String, JobHints>,
+}
+
+impl Sidecar {
+    /// A missing file means no hints. A broken one is an error: silently
+    /// ignoring `cache: false` would reuse a job the author ruled out.
+    pub fn load(root: &Path) -> Result<Self, String> {
+        let path = root.join(SIDECAR_PATH);
+        match std::fs::read_to_string(&path) {
+            Ok(text) if text.trim().is_empty() => Ok(Self::default()),
+            Ok(text) => {
+                let sidecar: Self = serde_yaml::from_str(&text)
+                    .map_err(|e| format!("invalid {}: {}", SIDECAR_PATH, e))?;
+                for (job, path) in sidecar.root_only_paths() {
+                    wrkflw_logging::warning(&format!(
+                        "{}: '{}' for job '{}' only matches at the repository root, \
+                         as '*' doesn't cross '/'. Use '**/{}' for any directory",
+                        SIDECAR_PATH, path, job, path
+                    ));
+                }
+                Ok(sidecar)
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Self::default()),
+            Err(e) => Err(format!("cannot read {}: {}", SIDECAR_PATH, e)),
+        }
+    }
+
+    /// `(job, path)` for each path with a wildcard but no `/`. `*` never
+    /// crosses a separator, so `*.rs` misses `src/a.rs`, and a missed input
+    /// is a job skipped that should have run.
+    pub(super) fn root_only_paths(&self) -> Vec<(&str, &str)> {
+        let mut found: Vec<(&str, &str)> = self
+            .jobs
+            .iter()
+            .flat_map(|(job, hints)| {
+                hints
+                    .paths
+                    .iter()
+                    .flatten()
+                    .map(move |path| (job.as_str(), path.as_str()))
+            })
+            .filter(|(_, path)| !path.contains('/') && path.contains(['*', '?', '[']))
+            .collect();
+        found.sort();
+        found
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
-    use std::os::unix::fs::PermissionsExt;
-    use std::sync::Mutex;
-
-    static UNTRACKED: Mutex<Vec<String>> = Mutex::new(Vec::new());
-
-    fn record_untrack(id: &str) {
-        UNTRACKED.lock().unwrap().push(id.to_string());
-    }
-
-    fn was_untracked(id: &str) -> bool {
-        UNTRACKED.lock().unwrap().iter().any(|u| u == id)
-    }
-
-    /// A fake CLI that records its arguments, so nothing real is removed.
-    fn fake_cli(dir: &std::path::Path) -> (&'static str, std::path::PathBuf) {
-        let log = dir.join("calls");
-        let cli = dir.join("fake-cli");
-        fs::write(
-            &cli,
-            format!(
-                "#!/bin/sh\n[ \"$1\" = probe ] && exit 0\necho \"$@\" >> {}\n",
-                log.display()
-            ),
-        )
-        .unwrap();
-        fs::set_permissions(&cli, fs::Permissions::from_mode(0o755)).unwrap();
-        // A fork on another test thread can briefly inherit the write handle,
-        // and exec then fails with ETXTBSY. The guard only spawns once, so
-        // wait here until the script can be executed.
-        for _ in 0..200 {
-            match Command::new(&cli).arg("probe").status() {
-                Err(e) if e.raw_os_error() == Some(ETXTBSY) => {
-                    std::thread::sleep(std::time::Duration::from_millis(5));
-                }
-                _ => break,
-            }
-        }
-        (Box::leak(cli.display().to_string().into_boxed_str()), log)
-    }
-
-    /// The same number on every Unix wrkflw builds for.
-    const ETXTBSY: i32 = 26;
-
-    fn wait_for(path: &std::path::Path) -> Option<String> {
-        for _ in 0..100 {
-            // The shell creates the file before it writes to it.
-            match fs::read_to_string(path) {
-                Ok(calls) if !calls.is_empty() => return Some(calls),
-                _ => {}
-            }
-            std::thread::sleep(std::time::Duration::from_millis(10));
-        }
-        None
-    }
 
     #[test]
-    fn an_armed_guard_removes_the_container_when_dropped() {
-        let dir = tempfile::tempdir().unwrap();
-        let (cli, log) = fake_cli(dir.path());
-        drop(ContainerGuard::new(cli, "removed", false, record_untrack));
-        assert_eq!(wait_for(&log).as_deref(), Some("rm -f removed\n"));
-        assert!(was_untracked("removed"));
-    }
-
-    #[test]
-    fn a_preserving_guard_kills_the_container_without_removing_it() {
-        let dir = tempfile::tempdir().unwrap();
-        let (cli, log) = fake_cli(dir.path());
-        drop(ContainerGuard::new(cli, "preserved", true, record_untrack));
-        assert_eq!(wait_for(&log).as_deref(), Some("kill preserved\n"));
-        assert!(was_untracked("preserved"));
-    }
-
-    #[test]
-    fn a_disarmed_guard_leaves_the_container_alone() {
-        let dir = tempfile::tempdir().unwrap();
-        let (cli, log) = fake_cli(dir.path());
-        let mut guard = ContainerGuard::new(cli, "disarmed", false, record_untrack);
-        guard.disarm();
-        drop(guard);
-        std::thread::sleep(std::time::Duration::from_millis(100));
-        assert!(!log.exists());
-        assert!(!was_untracked("disarmed"));
-    }
-
-    #[test]
-    fn a_missing_cli_still_untracks_the_container() {
-        let missing = "/nonexistent/wrkflw-fake-cli";
-        drop(ContainerGuard::new(
-            missing,
-            "no-cli",
-            false,
-            record_untrack,
-        ));
-        assert!(was_untracked("no-cli"));
+    fn a_job_is_cached_and_gated_unless_the_sidecar_says_otherwise() {
+        let sidecar: Sidecar =
+            serde_yaml::from_str("jobs:\n  a: {}\n  deploy: {gate: false}\n").unwrap();
+        assert_eq!(sidecar.jobs["a"], JobHints::default());
+        assert!(sidecar.jobs["deploy"].cache);
+        assert!(!sidecar.jobs["deploy"].gate);
     }
 }
 
+```
+
+### Core Architecture Module: `crates/executor/src/acceleration/store.rs`
+```
+//! Stored job results: on this machine, and optionally in a shared location
+//! whose entries are HMAC-signed.
+
+use super::{hex, Acceleration, Secret};
+use hmac::{Hmac, Mac};
+use serde::{Deserialize, Serialize};
+use sha2::Sha256;
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicBool, Ordering};
+
+const ENTRY_SCHEMA: u32 = 1;
+/// Images and floating action tags aren't in the key, so a hit must not live
+/// forever. A week bounds that drift.
+const DEFAULT_TTL_SECS: i64 = 7 * 24 * 60 * 60;
+const REMOTE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
+
+/// One job or matrix leg of a stored result.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub(crate) struct StoredJob {
+    pub name: String,
+    pub canonical_name: String,
+    pub outputs: HashMap<String, String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub(crate) struct Entry {
+    pub schema: u32,
+    /// Repeated from the file name, so a renamed file can't answer another key.
+    pub key: String,
+    pub created_at: i64,
+    pub jobs: Vec<StoredJob>,
+}
+
+impl Entry {
+    fn is_usable(&self, key: &str, now: i64) -> bool {
+        self.schema == ENTRY_SCHEMA
+            && self.key == key
+            && now.saturating_sub(self.created_at) <= ttl_secs()
+    }
+}
+
+fn ttl_secs() -> i64 {
+    parse_ttl(std::env::var("WRKFLW_RESULT_TTL_SECS").ok().as_deref())
+}
+
+/// `WRKFLW_RESULT_TTL_SECS` as seconds. Unset, unparsable or negative means
+/// the default, saying so for the last two so a typo doesn't go unseen.
+fn parse_ttl(value: Option<&str>) -> i64 {
+    let Some(value) = value else {
+        return DEFAULT_TTL_SECS;
+    };
+    match value.trim().parse::<i64>() {
+        Ok(secs) if secs >= 0 => secs,
+        _ => {
+            wrkflw_logging::warning(&format!(
+                "Ignoring WRKFLW_RESULT_TTL_SECS={}: not a whole number of seconds",
+                value
+            ));
+            DEFAULT_TTL_SECS
+        }
+    }
+}
+
+/// The wire form of an entry. The signature covers the exact bytes of `body`.
+#[derive(Serialize, Deserialize)]
+struct SignedEntry {
+    body: String,
+    signature: String,
+}
+
+type HmacSha256 = Hmac<Sha256>;
+
+fn sign(key: &Secret, body: &str) -> Option<String> {
+    let mut mac = HmacSha256::new_from_slice(key.0.as_bytes()).ok()?;
+    mac.update(body.as_bytes());
+    Some(hex(&mac.finalize().into_bytes()))
+}
+
+fn unhex(text: &str) -> Option<Vec<u8>> {
+    if !text.len().is_multiple_of(2) || !text.is_ascii() {
+        return None;
+    }
+    (0..text.len())
+        .step_by(2)
+        .map(|i| u8::from_str_radix(&text[i..i + 2], 16).ok())
+        .collect()
+}
+
+/// The entry in `signed`, if `key` made it.
+fn verify(key: &Secret, signed: &SignedEntry) -> Option<Entry> {
+    let mut mac = HmacSha256::new_from_slice(key.0.as_bytes()).ok()?;
+    mac.update(signed.body.as_bytes());
+    // `verify_slice` compares in constant time.
+    mac.verify_slice(&unhex(&signed.signature)?).ok()?;
+    serde_json::from_str(&signed.body).ok()
+}
+
+/// Results on this machine, and optionally a shared location.
+pub(crate) struct ResultStore {
+    root: PathBuf,
+    remote: Option<Remote>,
+    push: bool,
+    key: Option<Secret>,
+    /// Set after the remote fails once, so later jobs don't each wait out
+    /// its timeout. A run reads it again next time.
+    remote_down: AtomicBool,
+    /// Set once this run has swept expired entries from `root`.
+    pruned: AtomicBool,
+}
+
+enum Remote {
+    Dir(PathBuf),
+    Http {
+        base: String,
+        client: reqwest::Client,
+        token: Option<Secret>,
+    },
+}
+
+impl Remote {
+    fn parse(location: &str, token: Option<Secret>) -> Option<Self> {
+        if location.starts_with("http://") || location.starts_with("https://") {
+            let client = reqwest::Client::builder()
+                .timeout(REMOTE_TIMEOUT)
+                .build()
+                .ok()?;
+            return Some(Remote::Http {
+                base: location.trim_end_matches('/').to_string(),
+                client,
+                token,
+            });
+        }
+        // `validate_remote` refuses other schemes. Never read one as a path.
+        if location.contains("://") && !location.starts_with("file://") {
+            return None;
+        }
+        let path = location.strip_prefix("file://").unwrap_or(location);
+        Some(Remote::Dir(PathBuf::from(path)))
+    }
+
+    /// The entry text for `key`. `Ok(None)` is a miss, `Err` means the
+    /// remote itself is failing.
+    async fn get(&self, key: &str) -> Result<Option<String>, String> {
+        match self {
+            Remote::Dir(dir) => Ok(tokio::fs::read_to_string(dir.join(entry_file(key)))
+                .await
+                .ok()),
+            Remote::Http {
+                base,
+                client,
+                token,
+            } => {
+                let mut request = client.get(format!("{}/{}", base, entry_file(key)));
+                if let Some(token) = token {
+                    request = request.bearer_auth(&token.0);
+                }
+                let response = request.send().await.map_err(|e| e.to_string())?;
+                let status = response.status();
+                // Only "not there" is a miss. Anything else, a refused token
+                // above all, would otherwise make every job ask and run cold
+                // without a word.
+                if status == reqwest::StatusCode::NOT_FOUND {
+                    return Ok(None);
+                }
+                if !status.is_success() {
+                    return Err(format!("HTTP {}", status));
+                }
+                response.text().await.map(Some).map_err(|e| e.to_string())
+            }
+        }
+    }
+
+    async fn put(&self, key: &str, body: String) -> Result<(), String> {
+        match self {
+            Remote::Dir(dir) => write_atomically(&dir.join(entry_file(key)), &body),
+            Remote::Http {
+                base,
+                client,
+                token,
+            } => {
+                let mut request = client
+                    .put(format!("{}/{}", base, entry_file(key)))
+                    .body(body);
+                if let Some(token) = token {
+                    request = request.bearer_auth(&token.0);
+                }
+                let response = request.send().await.map_err(|e| e.to_string())?;
+                if response.status().is_success() {
+                    Ok(())
+                } else {
+                    Err(format!("HTTP {}", response.status()))
+                }
+            }
+        }
+    }
+}
+
+fn entry_file(key: &str) -> String {
+    format!("{}.json", key)
+}
+
+/// A reader never sees half an entry, even with parallel jobs or a crash.
+fn write_atomically(path: &Path, body: &str) -> Result<(), String> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| format!("no parent directory for {}", path.display()))?;
+    std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    let temp = parent.join(format!(".{}.tmp", uuid::Uuid::new_v4()));
+    std::fs::write(&temp, body).map_err(|e| e.to_string())?;
+    std::fs::rename(&temp, path).map_err(|e| {
+        let _ = std::fs::remove_file(&temp);
+        e.to_string()
+    })
+}
+
+impl ResultStore {
+    pub(crate) fn new(root: PathBuf, accel: &Acceleration) -> Self {
+        Self {
+            root,
+            remote: accel
+                .remote_cache
+                .as_deref()
+                .and_then(|r| Remote::parse(r, accel.remote_token.clone())),
+            push: accel.push_results,
+            key: accel.signing_key.clone(),
+            remote_down: AtomicBool::new(false),
+            pruned: AtomicBool::new(false),
+        }
+    }
+
+    /// Remove local entries, and temporary files a crash left, older than the
+    /// TTL. Reads already ignore them, so this only bounds the directory,
+    /// which would otherwise grow with every run. Once per run, and by
+    /// modification time, so no entry is opened.
+    fn prune_expired(&self) {
+        if self.pruned.swap(true, Ordering::Relaxed) {
+            return;
+        }
+        let Ok(entries) = std::fs::read_dir(&self.root) else {
+            return;
+        };
+        let max_age = std::time::Duration::from_secs(ttl_secs() as u64);
+        let now = std::time::SystemTime::now();
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let ours = path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.ends_with(".json") || name.ends_with(".tmp"));
+            let expired = entry
+                .metadata()
+                .and_then(|meta| meta.modified())
+                .ok()
+                .and_then(|modified| now.duration_since(modified).ok())
+                .is_some_and(|age| age > max_age);
+            if ours && expired {
+                let _ = std::fs::remove_file(&path);
+            }
+        }
+    }
+
+    /// The remote, unless it has already failed in this run.
+    fn live_remote(&self) -> Option<&Remote> {
+        self.remote
+            .as_ref()
+            .filter(|_| !self.remote_down.load(Ordering::Relaxed))
+    }
+
+    /// Stop using the remote for this run, saying so once.
+    fn remote_failed(&self, error: &str) {
+        if !self.remote_down.swap(true, Ordering::Relaxed) {
+            wrkflw_logging::warning(&format!(
+                "Remote cache failed ({}): not using it for the rest of this run",
+                error
+            ));
+        }
+    }
+
+    /// A usable entry for `key`, trying this machine before the remote.
+    pub(crate) async fn load(&self, key: &str) -> Option<Entry> {
+        let now = chrono::Utc::now().timestamp();
+        let local = tokio::fs::read_to_string(self.root.join(entry_file(key)))
+            .await
+            .ok()
+            .and_then(|text| serde_json::from_str::<Entry>(&text).ok())
+            .filter(|entry| entry.is_usable(key, now));
+        if local.is_some() {
 ```
 
 
@@ -2384,11 +2194,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #155** (2026-11-02): **feat(tui): select text with the mouse and copy it on release**
-  *Symptoms*: ## What  Drag with the mouse in the TUI to highlight text, and it is copied to the clipboard on release, with a status bar confirmation. This supersedes #154, which left selection to the terminal: that selection ran across panes and borders, and copying was a manual step.  - **Selection** works on the rendered frame, so every tab gets it. A drag stays inside the bordered pane it started in, and what is highlighted is what gets copied. - **Clipboard**: text goes out through OSC 52 and through `pbcopy`, `wl-copy`, `xclip` or `xsel`. Native tools are skipped over SSH, where they would fill the remote clipboard. - **Status message**: says "Copied" only when a native tool confirmed it. OSC 52 gives no acknowledgement, so that case says the text was sent to the terminal. - **Wheel**: mapped to Up/Down, because capturing the mouse stops the terminal from doing that translation. - **Clearing**: a click or any key clears the selection. Esc clears it without quitting. - **Native selection**: still available with the terminal's bypass modifier (usually Shift, or Option in iTerm2).  ## Testing  - `cargo fmt --check`, CI's clippy, check and test commands, plus new unit tests in `crates/ui/src/selection.rs`. - Drove the real binary under tmux with raw SGR mouse events, using a stub `pbcopy`:   - Text arrived through the stub and through OSC 52 (tmux buffer).   - Highlight during and after the drag, cleared by a click.   - Esc didn't quit, wheel moved in both directions, mouse mode was off 
+- **Issue #162** (2026-11-04): **feat(ui): upgrade to ratatui 0.30 and redesign the TUI**
+  *Symptoms*: ## Summary  Upgrades ratatui to 0.30.2 and crossterm to 0.29. Every TUI screen was then stress-tested and reworked. The UI now stays usable from a 1×1 terminal to 300×100, including with CJK, emoji, combining marks, tabs and ANSI escape codes in names and output.  ### Bug fixes - **Failed runs showed PASSED.** A run now fails when any job fails, unless `continue-on-error` allows that job's failure. After a run, the first failed job and step are selected. A regression test is included. - **The Trigger tab trapped you.** Tab moved focus into the Branch field. There, digits and `q` were typed as text, and Tab only cycled fields, so Esc was the only way out. Now Tab/Shift+Tab switch tabs as they do elsewhere, and cycle fields only while a field is being edited. - The terminal is restored on panic, and Ctrl+C quits. - Key-release events are ignored, so on terminals that report them, each key acts once instead of twice. - Log scrolling is bounded, and a new log line no longer snaps the view back to the first search match. - Text is now truncated by display width instead of byte length. Before, CJK and emoji text overflowed or wrapped into neighbouring panes, and tabs and control characters broke the layout.  ### Redesign - A shared look: rounded panels with padding, an accent on the focused panel, badges in the title, scrollbars and empty states. - Responsive layouts: side panes collapse, columns drop by priority, and tab labels shrink to a compact form or to the active tab only. -
 
-- **Issue #154** (2026-11-02): **fix(tui): stop capturing the mouse so text selection and copy work**
-  *Symptoms*: Dragging the mouse over the TUI did nothing useful: the text could not be selected, so there was no way to copy a log line or a path out of it without quitting. This PR makes mouse selection and copy work the way they do in Claude Code and most other TUIs.  ## Cause  `run_wrkflw_tui` enabled crossterm's `EnableMouseCapture` at startup, which asks the terminal to send every click and drag to the application instead of handling it itself. The event loop only ever matched `Event::Key`, so those mouse events were read and dropped. The only observable effect of the capture was that the terminal's native drag-to-select and copy stopped working.  ## Fix  - Leave mouse capture off. The terminal keeps handling selection, so dragging highlights text and the usual copy shortcut (Cmd+C, Ctrl+Shift+C, …) copies it. - Drop the matching `DisableMouseCapture` on teardown. - README notes that the TUI does not capture the mouse.  No in-app selection or clipboard code is needed for this: the terminal does the work, which is also how Claude Code behaves.  ## Testing  - `cargo fmt --check`, `cargo clippy -p wrkflw-ui --all-features -- -D warnings` and `cargo check -p wrkflw-ui --no-default-features` are clean. - `cargo test -p wrkflw-ui --all-features`: 75 passed, 0 failed. - Drove the old and new binaries in a pseudo-terminal and compared the bytes they write at startup. The old binary emits the mouse-tracking enables (`?1000h`, `?1002h`, `?1003h`, `?1006h`); the new one emits none of them and s
+- **Issue #161** (2026-11-04): **docs: bring the docs up to date with everything since v0.8.0**
+  *Symptoms*: The 42 commits since v0.8.0 mostly updated the root README and AGENTS.md as they went. The per-crate READMEs fell behind, and the worst was `crates/wrkflw/README.md`, the page crates.io shows. This PR brings them up to date before the next release.  ## Changes  - **crates.io README:** adds `gate`, `plan`, `runs` and `mcp`. Says `auto` is the default runtime, not Docker, and adds Kubernetes and `.gitea`. Lists the CI-saving, history, Kubernetes and global flags, the environment variables, and exit code `2`. - **Examples that didn't compile:**   - The library is named `wrkflw_lib`, so `use wrkflw::executor` never compiled. This predates the recent work.   - `run_wrkflw_tui` and `validate_jobs` have new signatures. - **executor, runtime, matrix, ui and utils READMEs, and the crate index:** add result reuse and the remote cache, affected-job skipping, the job container, dependency caches, `services:`, job-level `continue-on-error` and `concurrency`, expression matrices, Kubernetes and GitLab execution. The UI README gets the Runs tab, `1`–`8` tab keys, mouse copy, themes and the current runtime cycle order. - **Root README:** adds the Runs tab and `1`–`8`. GitLab support also covers running pipelines, not only validating and triggering them. Adds `wrkflw-runs` to the crate table. - **New `crates/runs/README.md`:** it was the only crate without one. - **BREAKING_CHANGES.md:** adds a missing entry for #158. An explicit `--runtime docker` or `podman` no longer falls back to the host
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2405,1243 +2215,1624 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bf6a27c` (2026-11-01)
-**Commit Message**: fix(gitlab): honor image, rules, when and stage failures (#150)
+### Incident Patch 1: `c0299477` (2026-11-04)
+**Commit Message**: feat(ui): upgrade to ratatui 0.30 and redesign the TUI (#162)
 
-* fix(gitlab): honor image, rules, when and stage failures
+* feat(ui): upgrade to ratatui 0.30 and redesign the TUI
 
-Pipelines ran every job in the default image: rules, when: manual and
-when: never were ignored, a failed stage didn't stop later ones, and
-default: before_script and after_script weren't applied.
+Upgrade ratatui to 0.30 and crossterm to 0.29, then rework every screen
+so it stays readable from 1x1 to 300x100 and with non-ASCII, emoji, tab
+and ANSI-coloured content.
 
-* fix(gitlab): stop guessing when deciding which jobs run
+- Add display-width-aware text helpers and an ANSI SGR renderer for
+  step output
+- Add rounded panels, scrollbars, empty states and responsive layouts
+  on every tab
+- Fix a failed run being shown as PASSED unless the failure was allowed
+  by continue-on-error
+- Make logs follow the tail, page with PgUp/PgDn/Home/End and keep their
+  scroll offset
+- Make the help overlay modal and draw it over the current screen
+- Restore the terminal on panic and quit on Ctrl+C
+- Leave the Trigger tab with Tab/Shift+Tab: Tab only cycles fields while
+  a field is being edited
+- Remove the placeholder Env, Files and Timeline inspector tabs and the
+  timing chart
+- Add a stress test that renders every screen at hostile sizes
 
-The first pass at job selection fixed the headline problem and then
-guessed in all the places that matter. A guarded deploy is exactly
-what this code exists to protect, so a guess that runs it is a bug.
+* fix(ui): parse colon-form SGR colours without mangling the channels
 
-It turns out a detached HEAD reported itself as main, because the
-branch came from a helper whose fallback was only ever meant for a
-display value. So a tag checkout happily passed a main-only guard.
-Meanwhile CI_DEFAULT_BRANCH was never set, so the most common rule
-in all of GitLab quietly dropped its job. Report the branch as
-absent when there isn't one, and take the default from origin/HEAD.
+Step output now keeps the tool's own colours, which means we parse
+SGR escapes from whatever cargo, npm or kitty-aware
 
-The rules:if evaluator was string splitting, which fell over on
-operators inside quotes and on parentheses, and answered "match"
-whenever it got confused. Replace it with a small tokenizer and
-recursive descent, with
-
-**File**: `README.md` (modified, +3/-0)
+**File**: `Cargo.lock` (modified, +842/-109)
 ```diff
-@@ -128,6 +128,9 @@ wrkflw run --runtime secure-emulation .github/workflows/ci.yml
- # Run a specific job
- wrkflw run --job build .github/workflows/ci.yml
+@@ -158,6 +158,24 @@ version = "1.0.99"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b0674a1ddeecb70197781e945de4b3b8ffb61fa939a5597bcf48503737663100"
  
-+# Set GitLab pipeline variables, which rules and scripts both see
-+wrkflw run --variable CI_COMMIT_TAG=v1.0.0 .gitlab-ci.yml
++[[package]]
++name = "approx"
++version = "0.5.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cab112f0a86d568ea0e627cc1d6be74a1e9cd55214684db5561995f6dad897c6"
++dependencies = [
++ "num-traits",
++]
 +
- # List jobs in a workflow
- wrkflw run --jobs .github/workflows/ci.yml
++[[package]]
++name = "ar_archive_writer"
++version = "0.5.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "73cd58deff2140a0a8eae87e417bd01db68a33e148aa93d1e8cd837e55e312b6"
++dependencies = [
++ "object 0.39.1",
++]
++
+ [[package]]
+ name = "assert-json-diff"
+ version = "2.0.2"
+@@ -212,6 +230,15 @@ dependencies = [
+  "syn 3.0.9",
+ ]
  
++[[package]]
++name = "atomic"
++version = "0.6.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
++dependencies = [
++ "bytemuck",
++]
++
+ [[package]]
+ name = "autocfg"
+ version = "1.5.0"
+@@ -228,7 +255,7 @@ dependencies = [
+  "cfg-if",
+  "libc",
+  "miniz_oxide",
+- "object",
++ "object 0.36.7",
+  "rustc-demangle",
+  "windows-targets 0.52.6",
+ ]
+@@ -245,6 +272,12 @@ version = "0.21.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
+ 
++[[package]]
++name = "base64"
++version = "0.22.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
++
+ [[package]]
+ name = "bit-set"
+ version = "0.5.3"
+@@ -268,9 +301,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+ 
+ [[package]]
+ name = "bitflags"
+-version = "2.9.2"
++version = "2.13.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a65b545ab31d687cff52899d4890855fec459eb6afe0da6417b8a18da87aa29"
++checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+ 
+ [[package]]
+ name = "block-buffer"
+@@ -303,7 +336,7 @@ dependencies = [
+  "serde_json",
+  "serde_repr",
+  "serde_urlencoded",
+- "thiserror",
++ "thiserror 1.0.69",
+  "tokio",
+  "tokio-util",
+  "url",
+@@ -336,23 +369,29 @@ version = "3.19.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
+ 
++[[package]]
++name = "by_address"
++version = "1.2.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "64fa3c856b712db6612c019f14756e64e4bcea13337a6b33b696333a9eaa2d06"
++
+ [[package]]
+ name = "bytecount"
+ version = "0.6.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "175812e0be2bccb6abe50bb8d566126198344f707e304f45c648fd8f2cc0365e"
+ 
+ [[package]]
+-name = "bytes"
+-version = "1.10.1"
++name = "bytemuck"
++version = "1.25.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
++checksum = "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797"
+ 
+ [[package]]
+-name = "cassowary"
+-version = "0.3.0"
++name = "bytes"
++version = "1.10.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "df8670b8c7b9dae1793364eafadf7239c40d669904660c5960d74cfd80b46a53"
++checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
+ 
+ [[package]]
+ name = "cast"
+@@ -384,6 +423,12 @@ version = "1.0.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2fd1289c04a9ea8cb22300a459a72a385d7c73d3259e2ed7dcb2af674838cfa9"
+ 
++[[package]]
++name = "cfg_aliases"
++version = "0.2.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
++
+ [[package]]
+ name = "chrono"
+ version = "0.4.41"
+@@ -494,9 +539,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "compact_str"
+-version = "0.8.1"
++version = "0.9.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3b79c4069c6cad78e2e0cdfcbd26275770669fb39fd308a752dc110e83b9af32"
++checksum = "9dfdd1c2274d9aa354115b09dc9a901d6c5576818cdf70d14cae2bdb47df00ab"
+ dependencies = [
+  "castaway",
+  "cfg-if",
+@@ -515,6 +560,15 @@ dependencies = [
+  "crossbeam-utils",
+ ]
+ 
++[[package]]
++name = "convert_case"
++version = "0.10.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "633458d4ef8c78b72454de2d54fd6ab2e60f9e02be22f3c6104cdc8a4e0fceb9"
++dependencies = [
++ "unicode-segmentation",
++]
++
+ [[package]]
+ name = "core-foundation"
+ version = "0.9.4"
+@@ -576,6 +630,12 @@ dependencies = [
+  "itertools 0.10.5",
+ ]
+ 
++[[package]]
++name = "critical-section"
++version = "1.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
++
+ [[package]]
+ name = "crossbeam-deque"
+ ver
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +568/-9)
+**File**: `Cargo.toml` (modified, +4/-2)
 ```diff
-@@ -292,13 +292,28 @@ async fn execute_gitlab_pipeline(
-     wrkflw_logging::info("Executing GitLab CI/CD pipeline");
- 
-     // 1. Parse the GitLab pipeline file
--    let pipeline = parse_pipeline(pipeline_path)
-+    let mut pipeline = parse_pipeline(pipeline_path)
-         .map_err(|e| ExecutionError::Parse(format!("Failed to parse GitLab pipeline: {}", e)))?;
-+    // From here on `pipeline.variables` holds what every job sees.
-+    seed_gitlab_predefined_variables(
-+        &mut pipeline,
-+        &gitlab_predefined_variables(pipeline_path, &config.variables),
-+    );
-+    apply_gitlab_variable_overrides(&mut pipeline, &config.variables);
- 
-     // 2. Convert the GitLab pipeline to a format compatible with the workflow executor
--    let workflow = gitlab::convert_to_workflow_format(&pipeline);
-+    let mut workflow = gitlab::convert_to_workflow_format(&pipeline);
- 
-     // 3. Resolve job dependencies based on stages
-+    let job_decisions = gitlab_job_decisions(&pipeline);
-+    apply_rule_allow_failure(&mut workflow, &job_decisions);
-+    let mut job_conditions: HashMap<String, gitlab::JobWhen> = job_decisions
-+        .into_iter()
-+        .map(|(name, decision)| (name, decision.when))
-+        .collect();
-+    if let Some(target_job) = &config.target_job {
-+        force_target_job(&mut job_conditions, target_job);
-+    }
-     let execution_plan = resolve_gitlab_dependencies(&pipeline, &workflow)?;
- 
-     // Filter to target job and its stage-based dependencies if specified.
-@@ -315,6 +330,35 @@ async fn execute_gitlab_pipeline(
-         execution_plan
-     };
- 
-+    // A pipeline `workflow:rules` wouldn't create has nothing to run, unless
-+    // a job was asked for by name.
-+    let pipeline_variables = pipeline.variables.clone().unwrap_or_default();
-+    if let Some(reason) = gitlab::pipeline_exclusion(&pipeline, &pipeline_variables) {
-+        let reason = gitlab::JobWhen::Skip(reason)
-+            .skip_reason(false)
-+            .unwrap_or_default();
-+        if config.target_job.is_some() {
-+            wrkflw_logging::warning(&format!(
-+                "Running --job and the stages before it although workflow:rules excludes this \
-+                 pipeline: {}",
-+                reason
-+            ));
-+        } else {
-+            wrkflw_logging::info(&format!("Pipeline skipped by workflow:rules: {}", reason));
-+            return Ok(ExecutionResult {
-+                jobs: execution_plan
-+                    .into_iter()
-+                    .flatten()
-+                    .map(|job_name| {
-+                        let logs = format!("Skipped: workflow:rules: {}", reason);
-+                        JobResult::skipped(job_name.clone(), job_name, logs)
-+                    })
-+                    .collect(),
-+                failure_details: None,
-+            });
-+        }
-+    }
-+
-     // 4. Initialize appropriate runtime
-     let (runtime, effective_runtime) = initialize_runtime(
-         config.runtime_type.clone(),
-@@ -373,8 +417,38 @@ async fn execute_gitlab_pipeline(
-     let mut results = Vec::new();
-     let mut has_failures = false;
-     let mut failure_details = String::new();
-+    let mut blocked = false;
- 
-     for job_batch in execution_plan {
-+        // Naming a job is how to get past a gate, so it doesn't wait for one.
-+        // After a failure a manual job is skipped instead of waiting.
-+        let stage_blocks = config.target_job.is_none()
-+            && !has_failures
-+            && job_batch.iter().any(|job_name| {
-+                job_conditions
-+                    .get(job_name)
-+                    .is_some_and(|when| when.blocks_later_stages())
-+            });
-+        let (job_batch, skipped) =
-+            select_stage_jobs(job_batch, &job_conditions, has_failures, blocked);
-+        blocked |= stage_blocks;
-+        for (job_name, reason) in skipped {
-+            wrkflw_logging::info(&format!(
-+                "  {} Skipping job '{}': {}",
-+                wrkflw_logging::symbols::SKIPPED,
-+                job_name,
-+                reason
-+            ));
-+            results.push(JobResult::skipped(
-+                job_name.clone(),
-+                job_name,
-+                format!("Skipped: {}", reason),
-+            ));
-+        }
-+        if job_batch.is_empty() {
-+            continue;
-+        }
-+
-         // Execute jobs in parallel if they don't depend on each other.
-         // GitLab CI uses artifacts/variables for inter-job communication, not `needs.*`
-         // context, so we pass empty maps here.
-@@ -439,14 +513,183 @@ async fn execute_gitlab_pipeline(
-     })
- }
- 
-+/// Make `--variable` values win over the pipeline's and the job's own, as
-+/// variables given for a run do on GitLab. Rules, images and scripts all read
-+/// the pipeline, so this reaches every one of them.
-+fn apply_gitlab_variable_overrides(pipeline: &mut Pipeline, overrides: &HashMap<String, String>) {
-+    if overrides.is_empty() {
-+        return;
-+    }
-+    pipeline
-+  
-```
-
-**File**: `crates/executor/src/environment.rs` (modified, +37/-12)
-```diff
-@@ -340,20 +340,45 @@ fn get_current_sha() -> String {
-     "0000000000000000000000000000000000000000".to_string()
- }
- 
--fn get_current_ref() -> String {
--    if let Ok(output) = std::process::Command::new("git")
--        .args(["symbolic-ref", "--short", "HEAD"])
-+/// Run a git query in `directory`, or `None` if it fails.
-+fn git_output(directory: &Path, args: &[&str]) -> Option<String> {
-+    let output = std::process::Command::new("git")
-+        .args(args)
-+        .current_dir(directory)
-         .output()
--    {
--        if output.status.success() {
--            return format!(
--                "refs/heads/{}",
--                String::from_utf8_lossy(&output.stdout).trim()
--            );
--        }
--    }
-+        .ok()?;
-+    output
-+        .status
-+        .success()
-+        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
-+}
-+
-+/// The branch checked out in `directory`, or `None` on a detached HEAD or
-+/// outside a repository.
-+pub(crate) fn current_branch(directory: &Path) -> Option<String> {
-+    git_output(directory, &["symbolic-ref", "--short", "HEAD"])
-+}
- 
--    "refs/heads/main".to_string()
-+/// The tag exactly at HEAD in `directory`, if there is one.
-+pub(crate) fn exact_tag(directory: &Path) -> Option<String> {
-+    git_output(directory, &["describe", "--tags", "--exact-match", "HEAD"])
-+}
-+
-+/// The branch `origin/HEAD` points at, falling back to `main`.
-+pub(crate) fn default_branch(directory: &Path) -> String {
-+    git_output(
-+        directory,
-+        &["symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
-+    )
-+    .and_then(|name| name.strip_prefix("origin/").map(str::to_string))
-+    .unwrap_or_else(|| "main".to_string())
-+}
-+
-+fn get_current_ref() -> String {
-+    format!(
-+        "refs/heads/{}",
-+        current_branch(Path::new(".")).unwrap_or_else(|| "main".to_string())
-+    )
- }
- 
- fn get_runner_os() -> String {
-```
-
-**File**: `crates/models/src/lib.rs` (modified, +9/-0)
-```diff
-@@ -376,6 +376,15 @@ pub mod gitlab {
-         /// Variables to set if condition is true
-         #[serde(skip_serializing_if = "Option::is_none")]
-         pub variables: Option<HashMap<String, String>>,
-+        /// Overrides the job's `allow_failure` when this rule matches
-+        #[serde(skip_serializing_if = "Option::is_none")]
-+        pub allow_failure: Option<AllowFailure>,
-+        /// Files whose changes the rule depends on. Not evaluated.
-+        #[serde(skip_serializing_if = "Option::is_none")]
-+        pub changes: Option<serde_yaml::Value>,
-+        /// Files whose presence the rule depends on. Not evaluated.
-+        #[serde(skip_serializing_if = "Option::is_none")]
-+        pub exists: Option<serde_yaml::Value>,
-     }
- 
-     /// Only/except configuration
-```
-
-**File**: `crates/parser/src/gitlab.rs` (modified, +1259/-11)
-```diff
-@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
- use std::path::Path;
- use thiserror::Error;
- use wrkflw_matrix::MatrixConfig;
--use wrkflw_models::gitlab::{Parallel, Pipeline};
-+use wrkflw_models::gitlab::{AllowFailure, Except, Image, Job, Only, Parallel, Pipeline, Rule};
- use wrkflw_models::ValidationResult;
- 
- #[derive(Error, Debug)]
-@@ -121,6 +121,725 @@ pub fn validate_pipeline_structure(pipeline: &Pipeline) -> ValidationResult {
-     result
- }
- 
-+/// Runs a job's scripts in bash when its image has it and in `sh` otherwise,
-+/// as GitLab does. An internal value for `defaults.run.shell`: `execute_step`
-+/// must match it before its custom-shell fallback, and it never reaches the
-+/// GitHub workflow schema, whose shell enum doesn't list it.
-+pub const SHELL_BASH_OR_SH: &str = "wrkflw-bash-or-sh";
-+
-+/// When a job runs relative to the outcome of the stages before it.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum JobWhen {
-+    OnSuccess,
-+    OnFailure,
-+    Always,
-+    /// Excluded from the pipeline whatever the earlier stages did.
-+    Skip(SkipReason),
-+}
-+
-+/// Why a job is excluded from the pipeline.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum SkipReason {
-+    /// `when: never`.
-+    Never,
-+    /// `when: manual`: nobody can press play on a local run.
-+    Manual,
-+    /// A manual job that later stages wait for, which here never happens.
-+    BlockingManual,
-+    /// The job has `rules:` and none of them matched.
-+    NoRuleMatched,
-+    /// `only:` doesn't select this run, or `except:` excludes it.
-+    RefFilter,
-+    /// A `rules:if` or `only:`/`except:` condition couldn't be evaluated.
-+    InvalidCondition,
-+    /// A condition reads a `parallel:matrix` variable. Conditions are decided
-+    /// once per job, so no single answer holds for every instance.
-+    MatrixCondition,
-+    /// A `when:` value that isn't one of GitLab's.
-+    UnknownWhen,
-+}
-+
-+/// What a job's rules decided for this run.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub struct JobDecision {
-+    pub when: JobWhen,
-+    /// The matched rule's `allow_failure`, which overrides the job's own.
-+    pub allow_failure: Option<bool>,
-+}
-+
-+impl JobWhen {
-+    fn parse(when: Option<&str>) -> Self {
-+        match when {
-+            None | Some("on_success") | Some("delayed") => JobWhen::OnSuccess,
-+            Some("on_failure") => JobWhen::OnFailure,
-+            Some("always") => JobWhen::Always,
-+            Some("never") => JobWhen::Skip(SkipReason::Never),
-+            Some("manual") => JobWhen::Skip(SkipReason::Manual),
-+            Some(_) => JobWhen::Skip(SkipReason::UnknownWhen),
-+        }
-+    }
-+
-+    /// Whether later stages wait for this job, as they do for a manual job
-+    /// that isn't allowed to fail.
-+    pub fn blocks_later_stages(self) -> bool {
-+        self == JobWhen::Skip(SkipReason::BlockingManual)
-+    }
-+
-+    /// Why this job doesn't run given the outcome of the earlier stages, or
-+    /// `None` if it does.
-+    pub fn skip_reason(self, earlier_failure: bool) -> Option<&'static str> {
-+        match self {
-+            JobWhen::Always => None,
-+            JobWhen::OnSuccess if earlier_failure => Some("an earlier stage failed"),
-+            JobWhen::OnSuccess => None,
-+            JobWhen::OnFailure if earlier_failure => None,
-+            JobWhen::OnFailure => Some("when: on_failure and no earlier stage failed"),
-+            JobWhen::Skip(SkipReason::Never) => Some("when: never"),
-+            JobWhen::Skip(SkipReason::Manual) => {
-+                Some("when: manual jobs can't be started on a local run")
-+            }
-+            JobWhen::Skip(SkipReason::BlockingManual) => {
-+                Some("when: manual jobs can't be started on a local run, so later stages wait")
-+            }
-+            JobWhen::Skip(SkipReason::MatrixCondition) => {
-+                Some("a condition reads a parallel:matrix variable, which isn't evaluated")
-+            }
-+            JobWhen::Skip(SkipReason::NoRuleMatched) => Some("no rule matched"),
-+            JobWhen::Skip(SkipReason::RefFilter) => Some("only/except excludes this run"),
-+            JobWhen::Skip(SkipReason::InvalidCondition) => {
-+                Some("a condition couldn't be evaluated")
-+            }
-+            JobWhen::Skip(SkipReason::UnknownWhen) => Some("unknown when value"),
-+        }
-+    }
-+}
-+
-+/// Decide when a job runs. The first matching rule wins and a job whose rules
-+/// all miss is excluded, as in GitLab. A job without `rules:` goes through its
-+/// `only:`/`except:`. A condition that can't be evaluated excludes the job,
-+/// because guessing could run a guarded deploy. `variables` are the job's CI
-+/// variables.
-+pub fn job_decision(job_name: &str, job: &Job, variables: &HashMap<String, String>) -> JobDecision {
-+    let excluded = |reason| JobDecision {
-+        when: JobWhen::Skip(reason),
-+        allow_failure: None,
-+    };
-+    let owner = format!("Job '{}'", job_name);
-+   
-```
-
-**File**: `crates/runtime/src/container.rs` (modified, +6/-0)
-```diff
-@@ -55,6 +55,12 @@ pub trait ContainerRuntime {
-     fn mounts_are_copies(&self) -> bool {
-         false
-     }
-+
-+    /// True when `run_container` joins `cmd` into one string for a shell, so
-+    /// an argument holding a multi-line script doesn't survive as one argument.
-+    fn flattens_commands(&self) -> bool {
-+        false
-+    }
- }
- 
- #[derive(Debug)]
-```
-
-**File**: `crates/runtime/src/secure_emulation.rs` (modified, +4/-0)
-```diff
-@@ -48,6 +48,10 @@ impl SecureEmulationRuntime {
- 
- #[async_trait]
- impl ContainerRuntime for SecureEmulationRuntime {
-+    fn flattens_commands(&self) -> bool {
-+        true
-+    }
-+
-     async fn run_container(
-         &self,
-         image: &str,
-```
-
-**File**: `crates/ui/src/handlers/workflow.rs` (modified, +2/-0)
-```diff
-@@ -218,6 +218,7 @@ pub async fn execute_workflow_cli(
-         target_job: None,
-         platform_overrides,
-         kubernetes,
-+        variables: Default::default(),
-     };
- 
-     match wrkflw_executor::execute_workflow(path, config).await {
-@@ -653,6 +654,7 @@ pub fn start_next_workflow_execution(
-                         target_job,
-                         platform_overrides,
-                         kubernetes,
-+                        variables: Default::default(),
-                     };
- 
-                     let execution_result = wrkflw_utils::fd::with_stderr_to_null(|| {
-```
-
----
-
-### Incident Patch 2: `380291eb` (2026-11-01)
-**Commit Message**: fix(artifacts): match upload-artifact path handling (#148)
-
-* fix(artifacts): match upload-artifact path handling
-
-Directory paths and multi-line path inputs found no files, so the step
-failed. Add directories, multiple lines and ! exclusions, make artifact
-paths relative to the search root, and honor if-no-files-found, which
-defaults to warn.
-
-* fix(artifacts): lay out uploads lexically and handle dir/**
-
-The new upload-artifact layout took the relative path from canonical
-paths. It turns out that falls over on any symlinked directory that
-points elsewhere in the workspace: the file passes the containment
-check, its canonical path isn't under the search root, and the whole
-step dies claiming the file is outside the workspace. It isn't.
-
-Canonical paths are for deciding what may be uploaded, not for naming
-things. Name files by the normalized path they were found at, like
-upload-artifact does, and keep the canonical path for the containment
-check alone. Dedup and exclusions use the same key, so excluding a
-link no longer takes the real file down with it.
-
-The other thing is that `dist/**` matched nothing, because the glob
-crate's trailing `**` only yields directories. With `warn` a
-
-**File**: `BREAKING_CHANGES.md` (modified, +26/-0)
-```diff
-@@ -1,5 +1,31 @@
- # Breaking Changes
- 
-+## `actions/upload-artifact` follows GitHub's layout and rules (unreleased)
-+
-+Artifact paths are now relative to where the `path:` search started, as on
-+GitHub. After uploading `out/*` or `out/f.txt` and downloading into `got/`, the
-+file is at `got/f.txt`, not `got/out/f.txt`. Update steps that read the old path.
-+
-+A step that matches no files now passes with a warning. Set
-+`if-no-files-found: error` to keep failing, or `ignore` to silence the warning.
-+A missing artifact otherwise shows up at download, or not at all.
-+
-+`!` lines apply in order, so a later line can re-include a file. A `path:` line
-+outside the workspace now fails the step instead of being skipped.
-+
-+Hidden files are skipped unless `include-hidden-files: true` is set, as in
-+upload-artifact v4. A file or directory is hidden if its name starts with a dot,
-+so `path: .` no longer uploads `.git`, and `path: .config/` matches nothing.
-+
-+Uploading to an existing artifact name now fails the step, as on GitHub. Files
-+used to be merged into the earlier upload. Give each matrix job its own name, or
-+set `overwrite: true` to replace the artifact. With `overwrite: true`, parallel
-+jobs sharing a name keep exactly one job's files, and which one is not defined.
-+
-+A wildcard line that matches a directory now selects everything below it, as on
-+GitHub. `packages/*/dist` uploads the contents of each `dist`, `!**/node_modules`
-+excludes the contents, and `out/*` includes files in subdirectories of `out`.
-+
- ## `ExecutionConfig` gained a `platform_overrides` field (unreleased)
- 
- Code that builds `wrkflw_executor::ExecutionConfig` as a struct literal must set
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ futures-util = "0.3"
- futures = "0.3"
- chrono = "0.4"
- uuid = { version = "1.3", features = ["v4"] }
--tempfile = "3.6"
-+tempfile = "3.20"
- tar = "0.4"
- dirs = "5.0"
+@@ -52,8 +52,10 @@ dirs = "5.0"
  thiserror = "1.0"
+ log = "0.4"
+ which = "4.4"
+-crossterm = "0.28"
+-ratatui = { version = "0.28", features = ["crossterm"] }
++crossterm = "0.29"
++# Pinned exactly: `unstable-rendered-line-info` (Paragraph::line_count,
++# used to scroll wrapped step output) may change in any patch release.
++ratatui = { version = "=0.30.2", features = ["crossterm", "unstable-rendered-line-info"] }
+ terminal-colorsaurus = "1.0"
+ once_cell = "1.19.0"
+ itertools = "0.11.0"
 ```
 
-**File**: `crates/executor/src/artifacts.rs` (modified, +1194/-74)
+**File**: `INDEX.md` (modified, +336/-169)
 ```diff
-@@ -2,10 +2,14 @@
- //! `actions/download-artifact` emulation.
- //!
- //! Artifacts are stored as plain files under a per-workflow-run temporary
--//! directory, preserving directory structure relative to the workspace.
-+//! directory, laid out relative to where the `path:` search started, as
-+//! `actions/upload-artifact` does.
+@@ -1,7 +1,7 @@
+ # Codebase Index: wrkflw
  
--use std::collections::HashMap;
--use std::path::{Path, PathBuf};
-+use std::borrow::Cow;
-+use std::collections::hash_map::Entry;
-+use std::collections::{BTreeSet, HashMap};
-+use std::ffi::OsStr;
-+use std::path::{Component, Path, PathBuf};
- use std::sync::Arc;
- use tokio::sync::RwLock;
+-> Generated: 2026-11-04 15:38:55 UTC | Files: 242 | Lines: 106831
+-> Languages: JSON (4), Markdown (26), Rust (150), Shell (5), TOML (19), YAML (38)
++> Generated: 2026-11-04 18:23:15 UTC | Files: 244 | Lines: 108476
++> Languages: JSON (4), Markdown (27), Rust (151), Shell (5), TOML (19), YAML (38)
  
-@@ -34,6 +38,347 @@ fn sanitize_artifact_name(name: &str) -> Result<String, String> {
-     Ok(name.to_string())
- }
+ ## Directory Structure
  
-+/// Resolve `.` and `..` lexically, so that paths from the same `path:` line
-+/// compare equal however they were spelled.
-+fn normalize(path: &Path) -> PathBuf {
-+    let mut normalized = PathBuf::new();
-+    for component in path.components() {
-+        match component {
-+            Component::CurDir => {}
-+            Component::ParentDir => match normalized.components().next_back() {
-+                Some(Component::Normal(_)) => {
-+                    normalized.pop();
-+                }
-+                Some(Component::ParentDir) | None => normalized.push(".."),
-+                _ => {}
-+            },
-+            other => normalized.push(other),
-+        }
-+    }
-+    normalized
-+}
+@@ -92,6 +92,7 @@ wrkflw/
+         workflow.rs
+     runs/
+       Cargo.toml
++      README.md
+       src/
+         digest.rs
+         env.rs
+@@ -158,7 +159,6 @@ wrkflw/
+           mod.rs
+           progress_bar.rs
+           progress_dots.rs
+-          timing.rs
+         handlers/
+           mod.rs
+           workflow.rs
+@@ -167,6 +167,8 @@ wrkflw/
+         models/
+           mod.rs
+         selection.rs
++        stress_tests.rs
++        text.rs
+         theme.rs
+         utils/
+           mod.rs
+@@ -352,7 +354,7 @@ wrkflw/
+ - `# Run in sandboxed secure emulation`
+ - `# Run a specific job`
+ - `# Set GitLab pipeline variables, which rules and scripts both see`
+-- `# List jobs in a workflow`
++- `# List workflows and their jobs`
+ - `# Preserve failed containers for debugging`
+ - `# Repeat the flag or separate entries with commas`
+ - `# Set it once for every command, including the TUI and watch mode`
+@@ -773,6 +775,9 @@ wrkflw/
+ - `[target.'cfg(unix)'.dependencies]`
+ - `[target.'cfg(windows)'.dependencies]`
+ 
++**crates/runs/README.md**
++- `## wrkflw-runs`
 +
-+/// One glob or path from a `path:` input, resolved against the workspace.
-+struct PathLine<'a> {
-+    /// The line without trailing slashes, unless it is only slashes. An absolute
-+    /// line inside the canonical workspace is made relative to it, so that every
-+    /// path compared later shares one spelling of the workspace.
-+    text: Cow<'a, str>,
-+    /// The line joined to the workspace. Absolute lines stay as written.
-+    path: PathBuf,
-+    /// Whether the line names an existing directory.
-+    is_dir: bool,
-+}
+ **crates/runs/src/digest.rs**
+ - `pub const DEFAULT_TAIL_LINES: usize = 40`
+ - `pub struct FailureDigest`
+@@ -1070,14 +1075,13 @@ wrkflw/
+ - `pub struct Checkbox`
+ 
+ **crates/ui/src/components/dag.rs**
+-- `pub enum NodeState`
+ - `pub fn topo_levels(def: &WorkflowDefinition) -> Vec<Vec<String>>`
+-- `pub fn render<F: Fn(&str) -> NodeState>( frame: &mut Frame<'_>, area: Rect, def: Option<&WorkflowDefinition>, state_of: F, spinner_frame: usize, )`
++- `pub fn render(frame: &mut Frame<'_>, area: Rect, workflow: &Workflow, spinner_frame: usize)`
++- `pub fn matrix_size_label(matrix: &wrkflw_matrix::MatrixConfig) -> Option<String>`
+ 
+ **crates/ui/src/components/mod.rs**
+ - `pub mod dag`
+ - `pub mod progress_dots`
+-- `pub mod timing`
+ 
+ **crates/ui/src/components/progress_bar.rs**
+ - `pub struct ProgressBar`
+@@ -1087,10 +1091,6 @@ wrkflw/
+ - `pub fn render(frame: &mut Frame<'_>, area: Rect, dots: &[DotState], done: usize, total: usize)`
+ - `pub fn synthesise( completed: &[StepStatus], total: usize, workflow_status: &WorkflowStatus, ) -> Vec<DotState>`
+ 
+-**crates/ui/src/components/timing.rs**
+-- `pub struct TimingRow<'a>`
+-- `pub fn render(frame: &mut Frame<'_>, area: Rect, rows: &[TimingRow])`
+-
+ **crates/ui/src/handlers/mod.rs**
+ - `pub mod workflow`
+ 
+@@ -1108,6 +1108,7 @@ wrkflw/
+ - `pub mod log_processor`
+ - `pub mod models`
+ - `pub mod selection`
++- `pub mod text`
+ - `pub mod theme`
+ - `pub mod utils`
+ - `pub mod views`
+@@ -1122,6 +1123,7 @@ wrkflw/
+ - `pub type ExecutionResultMsg = (usize, Result<(Vec<wrkflw_executor::JobResult>, ()), String>)`
+ - `pub enum TriggerMatchStatus`
+ - `pub struct Workflow`
++- `pub enum JobState`
+ - `pub struct QueuedExecution`
+ - `pub enum WorkflowStatus`
+ - `pub struct WorkflowExecution`
+@@ -1138,6 +1140,16 @@ wrkflw/
+ - `pub enum CopyMethod`
+ - `pub fn copy_to_clipboard(text: &str) -> io::Result<CopyMethod>`
+ 
++**crates/ui/src/text.rs**
++- `pub fn width(s: &str) -> usize`
++- `pub fn sanitize(s: &str) -> Cow<'_, str>`
++- `pub fn truncate(s: &str, max: usize) -> Cow<'_, str>`
++- `pub fn truncate_left(s: &str, max: usize) -> Cow<'_, str>`
++- `pub fn fit(s: &str, cells: usize) -> String`
++- `pub fn pad_left(s: &str, cells: usize) -> String`
++- `pub fn spans_width(spans: &[Span<'_>]) -> usize`
++- `pub fn ansi_line(raw: &str, base: Style) -> Line<'static>`
 +
-+impl<'a> PathLine<'a> {
-+    fn parse(workspace: &Path, canonical_workspace: &Path, line: &'a str) -> Self {
-+        let trimmed = line.trim_end_matches('/');
-+        let text = if trimmed.is_empty() { line } else { trimmed };
-+        let text = match normalize(Path::new(text)).strip_prefix(canonical_workspace) {
-+            Ok(rest) if rest.as_os_str().is_empty() => Cow::Borrowed("."),
-+            Ok(rest) => Cow::Owned(rest.to_string_lossy().into_owned()),
-+            Err(_) => Cow::Borrowed(text),
-+        };
-+        let path = workspace.join(text.as_ref());
-+        let is_dir = path.is_dir();
-+        Self { text, path, is_dir }
-+    }
-+
-+    /// The components before the first wildcard, and the rest as a pattern.
-+    /// Only the line itself is searched, as the workspace path may contain
-+    /// wildcard characters.
-+    fn split_at_wildcard(&self) -> (PathBuf, Option<String>) {
-+        let components: Vec<_> = Path::new(self.text.as_ref()).components().collect();
-+        let wildcard = components
-+            .iter()
-+            .position(|c| c.as_os_str().to_string_lossy().contains(['*', '?', '[']));
-+        match wildcard {
-+            Some(index) if !self.is_dir => {
-+                let pattern: Vec<_> = components[index..]
-+                    .iter()
-+                    .map(|c| c.as_os_str().to_string_lossy())
-+                    .collect();
-+                (
-+                    components[..index].iter().collect(),
-+                    Some(pattern.join("/")),
-+                )
-+            }
-+            _ => (components.iter().collect(), None),
-+        }
-+    }
-+}
-+
-+/// Whether a file or directory is hidden, by the rule of upload-artifact.
-+fn is_hidden(name: &OsStr) -> bool {
-+    name.to_string_lossy().starts_with('.')
-+}
-+
-+/// The directory a `path:` line starts from: the directory it names, its part
-+/// before the first wildcard, or the parent of a single file.
-+fn search_root(workspace: &Path, line: &PathLine<'_>) -> PathBuf {
-+    let root = match line.split_at_wildcard() {
-+        (base, Some(_)) => workspace.join(base),
-+        (_, None) if line.is_dir => line.path.clone(),
-+        (_, None) => line
-+            .path
-+            .parent()
-+            .map_or_else(|| line.path.clone(), Path::to_path_buf),
-+    };
-+    normalize(&root)
-+}
-+
-+/// A recursive search below one directory. Symlinked directories are followed
-+/// as upload-artifact follows them, unless they leave the workspace or lead
-+/// back to a directory the search is already inside.
-+///
-+/// A directory matching the pattern selects everything below it, as
-+/// upload-artifact searches with implicit descendants: `out/*` includes
-+/// `out/sub/a.txt`, and `!**/node_modules` excludes what is inside.
-+#[derive(Clone, Copy)]
-+struct Search<'a> {
-+    pattern: Option<&'a glob::Pattern>,
-+    /// How deep the pattern can match. `None` when it holds a `**`.
-+    max_depth: Option<usize>,
-+    include_hidden: bool,
-+    canonical_workspace: &'a Path,
-+}
-+
-+impl Searc
+ **crates/ui/src/theme.rs**
+ - `pub fn set_accent_override(color: Option<Color>)`
+ - `pub fn current_accent() -> Color`
+@@ -1150,6 +1162,7 @@ wrkflw/
+ - `pub static COLORS: ActiveColors = ActiveColors`
+ - `pub fn title_style() -> Style`
+ - `pub fn selected_style() -> Style`
++- `pub const SELECTED_MARK: &str = "▌ "`
+ - `pub fn header_style() -> Style`
+ - `pub fn search_highlight() -> Style`
+ - `pub fn dim_style() -> Style`
+@@ -1160,10 +1173,17 @@ wrkflw/
+ - `pub fn workflow_status(status: &WorkflowStatus) -> (&'static str, Style)`
+ - `pub fn spinner(frame: usize) -> &'static str`
+ - `pub fn workflow_status_animated( status: &WorkflowStatus, spinner_frame: usize, ) -> (&'static str, Style)`
++- `pub fn job_state(state: crate::models::JobState, spinner_frame: usize) -> (&'static str, Style)`
+ - `pub fn job_status(status: &JobStatus) -> (&'static str, Style)`
+ - `pub fn step_status(status: &StepStatus) -> (&'static str, Style)`
+ - `pub fn block<'a>(title: &'a str) -> Block<'a>`
+ - `pub fn block_focused<'a>(title: &'a str) -> Block<'a>`
++- `pub fn panel<'a>(title: &'a str, focused: bool) -> Block<'a>`
++- `pub fn with_badge<'a>(block: Block<'a>, badge: impl Into<String>) -> Block<'a>`
++- `pub fn section<'a>(title: impl Into<
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +235/-10)
+**File**: `README.md` (modified, +5/-2)
 ```diff
-@@ -3376,6 +3376,34 @@ fn preprocess_with_value(value: &str, ctx: &StepExecutionContext<'_>) -> String
-         .unwrap_or_default()
- }
+@@ -302,9 +302,12 @@ The TUI follows your terminal's background and uses a light or dark palette to m
+ | `t` | Trigger remote workflow |
+ | `,` | Open Tweaks overlay |
+ | `?` | Toggle help overlay |
+-| `q` / `Esc` | Quit / back |
++| `q` / `Ctrl+C` | Quit |
++| `Esc` | Back (quits from the top level) |
  
-+/// The `if-no-files-found` input of `actions/upload-artifact`.
-+#[derive(Clone, Copy)]
-+enum IfNoFilesFound {
-+    Warn,
-+    Error,
-+    Ignore,
-+}
+-Logs tab adds `s` (search), `f` (filter), `c` (clear), `n` (next match). Trigger tab adds `p` (github↔gitlab), `b` (edit branch), `+` (add input), `c` (copy curl preview).
++Execution tab: `Enter` inspects a job's steps, `Tab` switches between Output and Matrix, `PgUp`/`PgDn` scroll a step's output and `End` returns to its tail. DAG tab adds `g` (graph↔list), `←`/`→` (scroll stages), `↑`/`↓` (previous/next workflow), `Enter` (open the run). Logs tab adds `s` (search), `f` (filter), `c` (clear), `n` (next match), `PgUp`/`PgDn` (page) and `Home`/`End` (first line / follow new lines). Trigger tab adds `p` (github↔gitlab), `b` (edit branch), `i` (edit inputs), `+` (add input), `c` (copy curl preview); while a field is being edited, `Tab` moves between fields and `Enter` or `Esc` stops editing.
 +
-+impl IfNoFilesFound {
-+    fn parse(value: &str) -> Option<Self> {
-+        match value {
-+            "warn" => Some(Self::Warn),
-+            "error" => Some(Self::Error),
-+            "ignore" => Some(Self::Ignore),
-+            _ => None,
-+        }
-+    }
-+}
-+
-+/// A boolean action input, accepting the spellings of `core.getBooleanInput`.
-+fn parse_boolean_input(value: &str) -> Option<bool> {
-+    match value {
-+        "true" | "True" | "TRUE" => Some(true),
-+        "false" | "False" | "FALSE" => Some(false),
-+        _ => None,
-+    }
-+}
-+
- /// Handle `actions/upload-artifact` emulation.
- async fn handle_upload_artifact(
-     step_name: &str,
-@@ -3399,12 +3427,67 @@ async fn handle_upload_artifact(
-         ));
++The layout adapts to the terminal size: side panes drop out and tabs collapse to numbers on narrow terminals, and step output keeps the tool's own colours.
+ 
+ Drag with the mouse to select text; it is copied to the clipboard when you release. A selection stays inside the pane it started in, a click or any key clears it, and the wheel scrolls. Hold your terminal's bypass modifier (usually Shift, or Option in iTerm2) to use its native selection instead. Over SSH, copying relies on your terminal supporting OSC 52.
+ 
+```
+
+**File**: `crates/ui/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ base64 = { version = "0.21", optional = true }
+ crossterm = { workspace = true, optional = true }
+ ratatui = { workspace = true, optional = true }
+ terminal-colorsaurus = { workspace = true, optional = true }
+-unicode-width = { version = "0.1", optional = true }
++unicode-width = { version = "0.2", optional = true }
+ serde.workspace = true
+ serde_yaml.workspace = true
+ tokio.workspace = true
+```
+
+**File**: `crates/ui/README.md` (modified, +3/-1)
+```diff
+@@ -8,7 +8,9 @@ Terminal user interface for browsing workflows, running them, and viewing logs.
+ - Diff-aware trigger filter (`d` / `D`) and Tweaks overlay (`,`)
+ - Log search (`s`), filter (`f`), and match navigation (`n`)
+ - Runtime cycling across Docker / Podman / Kubernetes / Secure Emulation / Emulation (`e`)
+-- Hotkeys: `1`–`8` for tab jumps, `Tab`/`Shift+Tab`, `w/x/l/h` shortcuts, `Enter`, `r`, `Shift+R`, `Shift+J`, `t`, `v`, `?`, `q`, etc.
++- Hotkeys: `1`–`8` for tab jumps, `Tab`/`Shift+Tab`, `w/x/l/h` shortcuts, `Enter`, `r`, `Shift+R`, `Shift+J`, `t`, `v`, `?`, `q`/`Ctrl+C`, etc.
++- Step inspector: Output (with ANSI colours, following the tail; `PgUp`/`PgDn` to scroll) and Matrix with per-combination status
++- Responsive layout from small terminals up, built on ratatui 0.30
+ - Mouse selection: drag to select text, copied to the clipboard on release (OSC 52)
+ - Light and dark themes, following the terminal background unless `--theme` or `WRKFLW_THEME` says otherwise
+ - Optional: enabled via the `tui` cargo feature flag
+```
+
+**File**: `crates/ui/src/app/mod.rs` (modified, +144/-21)
+```diff
+@@ -11,7 +11,8 @@ use crate::views::{
+ };
+ use crossterm::{
+     event::{
+-        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEvent, KeyModifiers,
++        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEvent, KeyEventKind,
++        KeyModifiers,
+     },
+     execute,
+     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+@@ -20,11 +21,13 @@ use ratatui::{backend::CrosstermBackend, Terminal};
+ use std::collections::HashMap;
+ use std::io::{self, stdout};
+ use std::path::PathBuf;
+-use std::sync::mpsc;
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::{mpsc, Mutex};
+ use std::time::{Duration, Instant};
+ use wrkflw_executor::RuntimeType;
+ 
+ use crate::theme::ThemePreference;
++use crate::views::INSPECTOR_TABS;
+ 
+ pub use state::{Accent, App, TriggerPlatform};
+ 
+@@ -46,6 +49,7 @@ pub async fn run_wrkflw_tui(
+ 
+     // Terminal setup. Mouse capture hands drags to us so selection can
+     // stay inside one pane and copy on release; see `crate::selection`.
++    install_panic_hook();
+     enable_raw_mode()?;
+     let mut stdout = stdout();
+     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+@@ -147,6 +151,7 @@ pub async fn run_wrkflw_tui(
+     let result = run_tui_event_loop(&mut terminal, &mut app, &tx_clone, &rx, verbose);
+ 
+     // Clean up terminal
++    TUI_ACTIVE.store(false, Ordering::SeqCst);
+     wrkflw_logging::set_quiet_mode(false);
+     disable_raw_mode()?;
+     execute!(
+@@ -188,6 +193,63 @@ pub async fn run_wrkflw_tui(
      }
+ }
  
-+    // `core.getInput` trims what it returns.
-+    let input = |key: &str, default: &str| {
-+        with.and_then(|w| w.get(key))
-+            .map(|s| preprocess_with_value(s, ctx).trim().to_string())
-+            .unwrap_or_else(|| default.to_string())
-+    };
++/// True while the TUI owns the terminal; the panic hook only steps in
++/// then.
++static TUI_ACTIVE: AtomicBool = AtomicBool::new(false);
 +
-+    let if_no_files_input = input("if-no-files-found", "warn");
-+    let Some(if_no_files) = IfNoFilesFound::parse(&if_no_files_input) else {
-+        return Ok(StepResult::new(
-+            step_name.to_string(),
-+            StepStatus::Failure,
-+            format!(
-+                "Unrecognized if-no-files-found input. Provided: {}. Available options: warn, error, ignore",
-+                if_no_files_input
-+            ),
-+        ));
-+    };
++/// Panics from threads other than the UI thread, waiting to be shown in
++/// the Logs tab.
++static BACKGROUND_PANICS: Mutex<Vec<String>> = Mutex::new(Vec::new());
 +
-+    let boolean = |key: &str| {
-+        let value = input(key, "false");
-+        parse_boolean_input(&value).ok_or_else(|| {
-+            StepResult::new(
-+                step_name.to_string(),
-+                StepStatus::Failure,
-+                format!(
-+                    "Unrecognized {} input. Provided: {}. Available options: true, false",
-+                    key, value
-+                ),
-+            )
-+        })
-+    };
-+    let options = crate::artifacts::UploadOptions {
-+        include_hidden: match boolean("include-hidden-files") {
-+            Ok(value) => value,
-+            Err(result) => return Ok(result),
-+        },
-+        overwrite: match boolean("overwrite") {
-+            Ok(value) => value,
-+            Err(result) => return Ok(result),
-+        },
-+    };
-+
-     match ctx
-         .services
-         .artifact_store
--        .upload(&name, &path_pattern, ctx.working_dir)
-+        .upload(&name, &path_pattern, ctx.working_dir, options)
-         .await
-     {
-+        Ok(0) => {
-+            let message = format!("No files were found with the path: {}", path_pattern);
-+            let status = match if_no_files {
-+                IfNoFilesFound::Error => StepStatus::Failure,
-+                IfNoFilesFound::Ignore => StepStatus::Success,
-+                IfNoFilesFound::Warn => {
-+                    wrkflw_logging::warning(&message);
-+                    StepStatus::Success
-+                }
-+            };
-+            Ok(StepResult::new(step_name.to_string(), status, message))
-+        }
-         Ok(count) => {
-             wrkflw_logging::info(&format!(
-                 "  Uploaded artifact '{}': {} file(s)",
-@@ -10657,6 +10740,152 @@ runs:
- 
-     // ---- Integration tests for artifact, cache, and needs.* wiring ----
- 
-+    /// Run an upload-artifact step in an empty workspace.
-+    async fn upload_matching_nothing(if_no_files_found: Option<&str>) -> (StepResult, Vec<String>) {
-+        let mut with = HashMap::new();
-+        if let Some(value) = if_no_files_found {
-+            with.insert("if-no-files-found".to_string(), value.to_string());
-+        }
-+        upload_step(with, "nothing/here", &[]).await
-+    }
-+
-+    /// Run an upload-artifact step over a workspace holding `files`.
-+    async fn upload_step(
-+        mut with: HashMap<String, String>,
-+        path: &str,
-+        files: &[&str],
-+    ) -> (StepResult, Vec<String>) {
-+        let runtime = MockContainerRuntime::default();
-+        let workflow = minimal_workflow();
-+        let working_dir = tempfile::tempdir().unwrap();
-+        let artifact_dir = tempfile::tempdir().unwrap();
-+        let artifact_store = crate::artifacts::ArtifactStore::new(artifact_dir.path()).unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let cache_store =
-+            crate::cache::CacheStore::with_root(cache_dir.path().to_path_buf()).unwrap();
-+        let pending = std::sync::Mutex::new(Vec::<PendingCacheSave>::new());
-+
-+        for file in files {
-+            std::fs::write(working_dir.path().join(file), "x").unwrap();
-+        }
-+
-+        with.insert("name".to_string(), "missing".to_string());
-+        with.insert("path".to_string(), path.to_string());
-+        let step = make_
-```
-
----
-
-### Incident Patch 3: `87e74053` (2026-11-01)
-**Commit Message**: fix(runtime): stop capping steps and leaking timed-out containers (#151)
-
-* fix(runtime): stop capping steps and leaking timed-out containers
-
-Docker stopped waiting on a step after 5 minutes and Podman after 6,
-whatever timeout-minutes said, so long builds failed. The caps guarded
-against hangs, but job and step timeouts already cover that, except that
-a timed-out step left its container running after wrkflw exited.
-
-Remove the caps, and force-remove a container whose run is abandoned.
-
-* fix(docker): report the real exit code of a failed step
-
-Every Docker step that failed reported an exit code of -1, no
-matter what it actually exited with. A step doing "exit 42" gets -1.
-This is not great.
-
-It turns out that bollard hands a non-zero exit back as an *error*,
-DockerContainerWaitError, with the code tucked inside it. We only
-looked at the Ok case and threw everything else into a catch-all.
-That same catch-all also ate real failures, like the daemon going
-away, without saying a word.
-
-Pull the code out of the error, so Docker agrees with Podman. Only
-a wait that really failed yields -1 now, and that gets logged.
-
-* fix(runtime): finish the job when a timed-out container is cleaned u
-
-**File**: `crates/executor/src/container_guard.rs` (added, +159/-0)
-```diff
-@@ -0,0 +1,159 @@
-+use std::process::{Command, Stdio};
-+
-+/// Cleans up a container when dropped while still armed.
++/// Puts the terminal back before a panic on the UI thread prints, so a
++/// crash leaves a usable shell and a readable error instead of raw mode
++/// on the alternate screen.
 +///
-+/// A timed-out step drops the future driving its container, which would
-+/// otherwise leave the container running after wrkflw has moved on or exited.
-+/// Dropping can't await, so this goes through the CLI, and the cleanup carries
-+/// on by itself if wrkflw exits straight afterwards. Docker therefore needs the
-+/// `docker` CLI on `PATH`, even though it otherwise talks to the daemon through
-+/// bollard. Kubernetes has the equivalent `PodGuard`.
-+pub(crate) struct ContainerGuard {
-+    cli: &'static str,
-+    id: String,
-+    armed: bool,
-+    /// Kill the container but keep it for debugging, rather than removing it.
-+    preserve: bool,
-+    /// Drops the container from its runtime's exit sweep.
-+    untrack: fn(&str),
-+}
-+
-+impl ContainerGuard {
-+    pub(crate) fn new(cli: &'static str, id: &str, preserve: bool, untrack: fn(&str)) -> Self {
-+        Self {
-+            cli,
-+            id: id.to_string(),
-+            armed: true,
-+            preserve,
-+            untrack,
-+        }
-+    }
-+
-+    /// The run finished normally, so its usual cleanup applies.
-+    pub(crate) fn disarm(&mut self) {
-+        self.armed = false;
-+    }
-+}
-+
-+impl Drop for ContainerGuard {
-+    fn drop(&mut self) {
-+        if !self.armed {
++/// Other threads (the log processor, probes, spawned tasks such as a
++/// Trigger dispatch) are left alone: the TUI survived their panics
++/// before and still does. Printing their message to stderr would
++/// scribble over the alternate screen, so it is queued for the event
++/// loop to log instead. `try_lock` keeps the hook from deadlocking if
++/// the panic hit while that lock was held.
++fn install_panic_hook() {
++    let ui_thread = std::thread::current().id();
++    let previous = std::panic::take_hook();
++    std::panic::set_hook(Box::new(move |info| {
++        if !TUI_ACTIVE.load(Ordering::SeqCst) {
++            previous(info);
 +            return;
 +        }
-+        (self.untrack)(&self.id);
-+        let args: &[&str] = if self.preserve {
-+            wrkflw_logging::info(&format!(
-+                "Step cancelled, killing container {} and keeping it for debugging. \
-+                 Use '{} logs {}' to inspect it.",
-+                self.id, self.cli, self.id
-+            ));
-+            &["kill"]
-+        } else {
-+            wrkflw_logging::debug(&format!("Removing abandoned container {}", self.id));
-+            &["rm", "-f"]
-+        };
-+        let spawned = Command::new(self.cli)
-+            .args(args)
-+            .arg(&self.id)
-+            .stdin(Stdio::null())
-+            .stdout(Stdio::null())
-+            .stderr(Stdio::null())
-+            .spawn();
-+        match spawned {
-+            // Only reaps it. If wrkflw exits first, the cleanup still finishes.
-+            Ok(mut child) => {
-+                std::thread::spawn(move || {
-+                    let _ = child.wait();
-+                });
-+            }
-+            Err(e) => {
-+                wrkflw_logging::warning(&format!("Failed to clean up container {}: {}", self.id, e))
-+            }
++        let current = std::thread::current();
++        if current.id() == ui_thread {
++            let _ = disable_raw_mode();
++            let _ = execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture);
++            previous(info);
++            return;
 +        }
++        if let Ok(mut queue) = BACKGROUND_PANICS.try_lock() {
++            queue.push(format!(
++                "thread '{}' panicked: {info}",
++                current.name().unwrap_or("<unnamed>")
++            ));
++        }
++    }));
++    TUI_ACTIVE.store(true, Ordering::SeqCst);
++}
++
++/// Moves queued background-thread panics into the log and status bar.
++fn report_background_panics(app: &mut App) {
++    let drained: Vec<String> = match BACKGROUND_PANICS.lock() {
++        Ok(mut queue) if !queue.is_empty() => std::mem::take(&mut *queue),
++        _ => return,
++    };
++    for msg in &drained {
++        wrkflw_logging::error(msg);
++    }
++    if let Some(last) = drained.last() {
++        app.set_error_message(last.clone());
 +    }
 +}
 +
-+#[cfg(all(test, unix))]
-+mod tests {
-+    use super::*;
-+    use std::fs;
-+    use std::os::unix::fs::PermissionsExt;
-+    use std::sync::Mutex;
+ // Helper function to run the main event loop
+ #[allow(clippy::collapsible_match)]
+ fn run_tui_event_loop(
+@@ -247,6 +309,7 @@ fn run_tui_event_loop(
+         // so the user sees the outcome where they fired it, rather than
+         // having to switch tabs to Logs.
+         app.drain_trigger_outcomes();
++        report_background_panics(app);
+ 
+         // Start execution if we have a queued workflow and nothing is currently running
+         if app.running && app.current_execution.is_none() && !app.execution_queue.is_empty() {
+@@ -268,6 +331,17 @@ fn run_tui_event_loop(
+                 other => other,
+             };
+             if let Event::Key(key) = event {
++                // Windows (and terminals using the kitty keyboard
++                // protocol) report key releases too; acting on them would
++                // fire every binding twice. Repeats are kept so a held
++                // arrow key keeps scrolling.
++                if key.kind == KeyEventKind::Release {
++                    continue;
++                }
++                if key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL) {
++                    break Ok(());
++                }
 +
-+    static UNTRACKED: Mutex<Vec<String>> = Mutex::new(Vec::new());
+                 // Any key dismis
+```
+
+**File**: `crates/ui/src/app/state.rs` (modified, +375/-48)
+```diff
+@@ -66,15 +66,19 @@ pub struct App {
+     pub current_execution: Option<usize>,
+     logs: Vec<String>, // Overall execution logs — private so every mutation routes through `add_log`
+     pub log_scroll: usize, // Scrolling position for logs
+-    pub job_list_state: ListState, // For viewing job details
+-    pub detailed_view: bool, // Whether we're in detailed view mode
+-    pub step_list_state: ListState, // For selecting steps in detailed view
+-    pub step_table_state: TableState, // For the steps table in detailed view
+-    pub last_tick: Instant, // For UI animations and updates
+-    pub tick_rate: Duration, // How often to update the UI
+-    pub spinner_frame: usize, // Current spinner animation frame
++    /// Keep the newest log line selected as lines arrive.
++    pub log_follow: bool,
++    /// First visible log row, kept across frames so scrolling is smooth.
++    pub log_offset: usize,
++    pub job_list_state: ListState,            // For viewing job details
++    pub detailed_view: bool,                  // Whether we're in detailed view mode
++    pub step_list_state: ListState,           // For selecting steps in detailed view
++    pub step_table_state: TableState,         // For the steps table in detailed view
++    pub last_tick: Instant,                   // For UI animations and updates
++    pub tick_rate: Duration,                  // How often to update the UI
++    pub spinner_frame: usize,                 // Current spinner animation frame
+     pub tx: mpsc::Sender<ExecutionResultMsg>, // Channel for async communication
+-    pub status_message: Option<String>, // Temporary status message to display
++    pub status_message: Option<String>,       // Temporary status message to display
+     pub status_message_severity: StatusSeverity, // Severity of the current status message
+     pub status_message_time: Option<Instant>, // When the message was set
+ 
+@@ -143,6 +147,22 @@ pub struct App {
+     /// Active sub-tab inside the Step Inspector (job-detail) view.
+     /// 0 Output, 1 Env, 2 Files, 3 Matrix, 4 Timeline.
+     pub step_inspector_tab: usize,
++    /// Lines scrolled back from the end of the inspected step's output;
++    /// 0 follows the tail.
++    pub step_output_scroll: usize,
++    /// Stage scrolled to in the DAG graph view.
++    pub dag_scroll: usize,
++    /// Bumped whenever a workflow's results are replaced, so caches
++    /// keyed by workflow/job/step index can tell a rerun apart.
++    pub run_generation: u64,
++    /// Parsed output of the step the inspector last showed.
++    pub step_output_cache: Option<crate::views::StepOutputCache>,
++    /// Matrix run counts for the DAG cards, computed once per parsed
++    /// workflow rather than expanding every matrix on every frame.
++    pub dag_matrix_labels: Option<(
++        Arc<wrkflw_parser::workflow::WorkflowDefinition>,
++        HashMap<String, String>,
++    )>,
+ 
+     // ── DAG tab ───────────────────────────────────────────────────
+     /// When true, the DAG tab renders the topological-stage list view;
+@@ -470,6 +490,8 @@ impl App {
+             current_execution: None,
+             logs: Vec::new(),
+             log_scroll: 0,
++            log_follow: true,
++            log_offset: 0,
+             job_list_state,
+             detailed_view: false,
+             step_list_state,
+@@ -516,6 +538,11 @@ impl App {
+             diff_filter_task: None,
+             diff_filter_aborted: false,
+             step_inspector_tab: 0,
++            step_output_scroll: 0,
++            dag_scroll: 0,
++            run_generation: 0,
++            step_output_cache: None,
++            dag_matrix_labels: None,
+ 
+             dag_list_view: false,
+ 
+@@ -1018,6 +1045,8 @@ impl App {
+ 
+                 // Reset step selection when changing jobs
+                 self.step_list_state.select(Some(0));
++                self.step_table_state.select(Some(0));
++                self.step_output_scroll = 0;
+             }
+         }
+     }
+@@ -1049,6 +1078,8 @@ impl App {
+ 
+                 // Reset step selection when changing jobs
+                 self.step_list_state.select(Some(0));
++                self.step_table_state.select(Some(0));
++                self.step_output_scroll = 0;
+             }
+         }
+     }
+@@ -1082,6 +1113,7 @@ impl App {
+                         self.step_list_state.select(Some(i));
+                         // Update the table state to match
+                         self.step_table_state.select(Some(i));
++                        self.step_output_scroll = 0;
+                     }
+                 }
+             }
+@@ -1117,6 +1149,7 @@ impl App {
+                         self.step_list_state.select(Some(i));
+                         // Update the table state to match
+                         self.step_table_state.select(Some(i));
++                        self.step_output_scroll = 0;
+                     }
+                 }
+             }
+@@ -1191,6 +1224,11 @@ impl App {
+             return;
+         }
+ 
++        // Once no run is 
+```
+
+---
+
+### Incident Patch 2: `fb7532cb` (2026-11-04)
+**Commit Message**: fix: run complex workflows faithfully in containers and stop per-step pulls (#158)
+
+* fix: run complex workflows faithfully in containers and stop per-step pulls
+
+- Pull each Docker image once per run instead of before every step
+  (an 8-step job drops from about 14s to 3.4s in the default mode)
+- Never fall back to running on the host for an explicit --runtime
+  docker or podman, and give the availability probe a realistic wait
+- Put $GITHUB_PATH entries in front of the container's own PATH, not
+  the host's
+- Copy a composite action's directory into the job container so its
+  steps run there and their changes persist
+- Make hashFiles('dir/**') hash the files under the directory
+- Fix the Rust setup image on images with their own CARGO_HOME, and
+  install requested components and targets in the built-in fallback
+- Merge matrix job outputs per key, report Docker build errors in
+  full, and use python3 for shell: python in emulation when needed
+
+* fix(docker): count failed pulls and forget pulled images per run
+
+The pulled-image set only recorded *successful* pulls. On a machine
+that's offline, or behind a registry that isn't answering, every
+step went back to the registry, waited f
+
+**File**: `README.md` (modified, +2/-0)
+```diff
+@@ -356,6 +356,8 @@ The TUI's Runs tab shows the same history, including which agent started each ru
+ | **Emulation** | Runs directly on host, no containers needed | Quick local testing |
+ | **Secure Emulation** | Sandboxed host processes with filesystem/network restrictions | Running untrusted workflows without a container runtime |
+ 
++Only **Auto** falls back. If you pass `--runtime docker` or `--runtime podman` and it doesn't answer, the run fails rather than running your steps on this machine.
 +
-+    fn record_untrack(id: &str) {
-+        UNTRACKED.lock().unwrap().push(id.to_string());
+ ### Kubernetes runtime
+ 
+ `--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
+```
+
+**File**: `crates/executor/src/action_resolver.rs` (modified, +8/-3)
+```diff
+@@ -71,11 +71,16 @@ impl BoundedCache {
+ 
+ static ACTION_CACHE: Lazy<RwLock<BoundedCache>> = Lazy::new(|| RwLock::new(BoundedCache::new()));
+ 
++/// How long to wait for an action's metadata. Results are cached, so this is
++/// paid once per action. The fallback ignores the action's inputs, so a slow
++/// network is better waited for than given up on: some take 7s or more just
++/// to connect to GitHub.
++const FETCH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(20);
++
+ /// Shared HTTP client to avoid repeated TLS initialization.
+-/// Timeout is kept low (5s) since resolution is best-effort with a fallback.
+ static HTTP_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
+     reqwest::Client::builder()
+-        .timeout(std::time::Duration::from_secs(5))
++        .timeout(FETCH_TIMEOUT)
+         .user_agent("wrkflw")
+         .build()
+         .expect("Failed to create HTTP client")
+@@ -86,7 +91,7 @@ static HTTP_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
+ /// Reused across requests to avoid per-request TLS initialization.
+ static NO_REDIRECT_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
+     reqwest::Client::builder()
+-        .timeout(std::time::Duration::from_secs(5))
++        .timeout(FETCH_TIMEOUT)
+         .user_agent("wrkflw")
+         .redirect(reqwest::redirect::Policy::none())
+         .build()
+```
+
+**File**: `crates/executor/src/docker.rs` (modified, +107/-26)
+```diff
+@@ -13,7 +13,8 @@ use std::path::Path;
+ use std::sync::Mutex;
+ use wrkflw_logging;
+ use wrkflw_runtime::container::{
+-    ContainerError, ContainerOutput, ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
++    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
++    ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
+ };
+ use wrkflw_utils;
+ use wrkflw_utils::fd;
+@@ -25,6 +26,35 @@ static CREATED_NETWORKS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec:
+ static CUSTOMIZED_IMAGES: Lazy<Mutex<HashMap<String, String>>> =
+     Lazy::new(|| Mutex::new(HashMap::new()));
+ 
++/// Images this run has pulled or tried to pull, so later steps don't ask the
++/// registry again. A failed pull counts too: an offline machine or an
++/// unreachable registry would otherwise cost every step another try and
++/// another warning.
++static PULLED_IMAGES: Lazy<Mutex<std::collections::HashSet<String>>> =
++    Lazy::new(|| Mutex::new(std::collections::HashSet::new()));
++
++fn already_pulled(image: &str) -> bool {
++    PULLED_IMAGES
++        .lock()
++        .map(|pulled| pulled.contains(image))
++        .unwrap_or(false)
++}
++
++fn mark_pulled(image: &str) {
++    if let Ok(mut pulled) = PULLED_IMAGES.lock() {
++        pulled.insert(image.to_string());
 +    }
++}
 +
-+    fn was_untracked(id: &str) -> bool {
-+        UNTRACKED.lock().unwrap().iter().any(|u| u == id)
++/// Forget which images were pulled, so the next run asks the registry about
++/// each again, as a run on GitHub would. Called when a run sets up Docker, so
++/// a long TUI session still refreshes a floating tag between runs.
++pub fn forget_pulled_images() {
++    if let Ok(mut pulled) = PULLED_IMAGES.lock() {
++        pulled.clear();
 +    }
++}
 +
-+    /// A fake CLI that records its arguments, so nothing real is removed.
-+    fn fake_cli(dir: &std::path::Path) -> (&'static str, std::path::PathBuf) {
-+        let log = dir.join("calls");
-+        let cli = dir.join("fake-cli");
-+        fs::write(
-+            &cli,
-+            format!("#!/bin/sh\necho \"$@\" >> {}\n", log.display()),
-+        )
-+        .unwrap();
-+        fs::set_permissions(&cli, fs::Permissions::from_mode(0o755)).unwrap();
-+        (Box::leak(cli.display().to_string().into_boxed_str()), log)
-+    }
+ pub struct DockerRuntime {
+     docker: Docker,
+     preserve_containers_on_failure: bool,
+@@ -279,9 +309,19 @@ impl DockerRuntime {
+     }
+ }
+ 
++/// How long the availability probe waits for the CLI to answer.
++const PROBE_CLI_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(8);
++/// How long the availability probe waits for the daemon to answer a ping.
++const PROBE_DAEMON_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
++/// How long the whole availability probe may take.
++const PROBE_OVERALL_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
 +
-+    fn wait_for(path: &std::path::Path) -> Option<String> {
-+        for _ in 0..100 {
-+            // The shell creates the file before it writes to it.
-+            match fs::read_to_string(path) {
-+                Ok(calls) if !calls.is_empty() => return Some(calls),
-+                _ => {}
+ pub fn is_available() -> bool {
+-    // Use a very short timeout for the entire availability check
+-    let overall_timeout = std::time::Duration::from_secs(3);
++    // A stopped daemon or a missing CLI fails at once, so these limits only
++    // matter for one that is slow to answer, as Docker Desktop is while it
++    // wakes from Resource Saver. Giving up too early there would run the
++    // workflow somewhere other than the container the user asked for.
++    let overall_timeout = PROBE_OVERALL_TIMEOUT;
+ 
+     // Spawn a thread with the timeout to prevent blocking the main thread
+     let handle = std::thread::spawn(move || {
+@@ -302,8 +342,8 @@ pub fn is_available() -> bool {
+                     Ok(mut child) => {
+                         // Set a very short timeout for the process
+                         let status = std::thread::scope(|_| {
+-                            // Try to wait for a short time
+-                            for _ in 0..10 {
++                            let deadline = std::time::Instant::now() + PROBE_CLI_TIMEOUT;
++                            while std::time::Instant::now() < deadline {
+                                 match child.try_wait() {
+                                     Ok(Some(status)) => return status.success(),
+                                     Ok(None) => {
+@@ -344,16 +384,11 @@ pub fn is_available() -> bool {
+             };
+ 
+             runtime.block_on(async {
+-                match tokio::time::timeout(std::time::Duration::from_secs(2), async {
++                match tokio::time::timeout(PROBE_DAEMON_TIMEOUT, async {
+                     match Docker::connect_with_local_defaults() {
+                         Ok(docker) => {
+                             // Try to ping the Docker daemon with a short timeout
+-                            match tokio::time::timeout(
+-                                std::time::Duration::from_secs(1),
+-                                docker.ping(),
+-                            )
+-                            .await
+-                            {
++                            match tokio::time::timeout(PROBE_DAEMON_TIMEOUT, docker.ping()).await {
+                                 Ok(Ok(_)) => true,
+                                 Ok(Err(e)) => {
+                                     wrkflw_logging::debug(&format!(
+@@ -363,9 +398,7 @@ pub fn is_available() -> bool {
+                                     false
+                                 }
+                                 Err(_) => {
+-                                    wrkflw_logging::debug(
+-                                        "Docker daemon ping timed out after 1 second",
+-                                    );
++                                    wrkflw_
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +269/-45)
+```diff
+@@ -275,19 +275,24 @@ fn record_job_results(
+         } else {
+             &job_result.status
+         };
+-        if all_job_outputs.contains_key(&job_result.canonical_name)
+-            && job_result.name != job_result.canonical_name
+-        {
+-            wrkflw_logging::warning(&format!(
+-                "Matrix job '{}' overwrites outputs for '{}' — \
+-                 needs.{}.outputs will reflect the last combination only",
+-                job_result.name, job_result.canonical_name, job_result.canonical_name,
+-            ));
++        let outputs = all_job_outputs
++            .entry(job_result.canonical_name.clone())
++            .or_default();
++        for (key, value) in &job_result.outputs {
++            if let Some(previous) = outputs.insert(key.clone(), value.clone()) {
++                if previous != *value && job_result.name != job_result.canonical_name {
++                    wrkflw_logging::warning(&format!(
++                        "Matrix job '{}' overwrites output '{}' of '{}' — \
++                         needs.{}.outputs.{} will reflect the last combination to set it",
++                        job_result.name,
++                        key,
++                        job_result.canonical_name,
++                        job_result.canonical_name,
++                        key,
++                    ));
++                }
 +            }
-+            std::thread::sleep(std::time::Duration::from_millis(10));
+         }
+-        all_job_outputs.insert(
+-            job_result.canonical_name.clone(),
+-            job_result.outputs.clone(),
+-        );
+         aggregate
+             .entry(job_result.canonical_name.as_str())
+             .and_modify(|existing| {
+@@ -939,9 +944,10 @@ fn emulation_runtime() -> (Box<dyn ContainerRuntime>, RuntimeType) {
+     )
+ }
+ 
+-/// Determine if Docker/Podman is available or fall back to emulation. Returns
+-/// the runtime with its type, which is `Emulation` after a fallback whatever
+-/// was requested.
++/// Set up the runtime to run on. `Auto` falls back to emulation when no
++/// container runtime answers. An explicit Docker or Podman request never
++/// does: emulation runs steps on this machine, which is not what someone who
++/// asked for a container agreed to, so it is an error instead.
+ fn initialize_runtime(
+     runtime_type: RuntimeType,
+     preserve_containers_on_failure: bool,
+@@ -954,34 +960,36 @@ fn initialize_runtime(
+             kubernetes,
+         ),
+         RuntimeType::Docker => {
+-            if docker::is_available() {
+-                match docker::DockerRuntime::new_with_config(preserve_containers_on_failure) {
+-                    Ok(docker_runtime) => Ok((Box::new(docker_runtime), RuntimeType::Docker)),
+-                    Err(e) => {
+-                        wrkflw_logging::error(&format!(
+-                            "Failed to initialize Docker runtime: {}, falling back to emulation mode",
+-                            e
+-                        ));
+-                        Ok(emulation_runtime())
+-                    }
+-                }
+-            } else {
+-                wrkflw_logging::error("Docker not available, falling back to emulation mode");
+-                Ok(emulation_runtime())
++            if !docker::is_available() {
++                return Err(ExecutionError::Runtime(
++                    "Docker is not available: the daemon did not answer. Start Docker, \
++                     or pass --runtime auto to fall back to another runtime"
++                        .to_string(),
++                ));
++            }
++            docker::forget_pulled_images();
++            match docker::DockerRuntime::new_with_config(preserve_containers_on_failure) {
++                Ok(docker_runtime) => Ok((Box::new(docker_runtime), RuntimeType::Docker)),
++                Err(e) => Err(ExecutionError::Runtime(format!(
++                    "Failed to initialize Docker runtime: {}",
++                    e
++                ))),
+             }
+         }
+         RuntimeType::Podman => {
+-            if podman::is_available() {
+-                Ok((
+-                    Box::new(podman::PodmanRuntime::new_unchecked(
+-                        preserve_containers_on_failure,
+-                    )),
+-                    RuntimeType::Podman,
+-                ))
+-            } else {
+-                wrkflw_logging::error("Podman not available, falling back to emulation mode");
+-                Ok(emulation_runtime())
++            if !podman::is_available() {
++                return Err(ExecutionError::Runtime(
++                    "Podman is not available: it did not answer. Start the Podman machine, \
++                     or pass --runtime auto to fall back to another runtime"
++                        .to_string(),
++                ));
+             }
++            Ok((
++                Box::new(podman::PodmanRuntime::new_unchecked(
++                    preserve_containers_on_failure,
++                )),
++                RuntimeType::Podman,
++            ))
+         }
+         // Kubernetes is never auto-detecte
+```
+
+**File**: `crates/executor/src/github_env_files.rs` (modified, +14/-1)
+```diff
+@@ -1,6 +1,7 @@
+ use std::collections::HashMap;
+ use std::fs;
+ use std::path::Path;
++use wrkflw_runtime::container::PATH_ADDITIONS_ENV;
+ 
+ /// Parsed results from all 4 GitHub Actions environment files after a step runs.
+ #[derive(Default)]
+@@ -174,11 +175,21 @@ pub fn apply_step_environment_updates(
+             .unwrap_or_default();
+         let new_entries = updates.path_entries.join(":");
+         let new_path = if current_path.is_empty() {
+-            new_entries
++            new_entries.clone()
+         } else {
+             format!("{}:{}", new_entries, current_path)
+         };
+         job_env.insert("PATH".to_string(), new_path);
++
++        // `PATH` above is built on this machine's PATH, which is right for
++        // emulation but not inside a container, whose image has its own.
++        // Container runtimes put these entries in front of the image's PATH
++        // instead, as GitHub's runner does for container jobs.
++        let additions = match job_env.get(PATH_ADDITIONS_ENV) {
++            Some(older) if !older.is_empty() => format!("{}:{}", new_entries, older),
++            _ => new_entries,
++        };
++        job_env.insert(PATH_ADDITIONS_ENV.to_string(), additions);
+     }
+ 
+     // Clear files so the next step doesn't re-process these entries
+@@ -444,6 +455,8 @@ mod tests {
+         assert_eq!(job_user_env.get("CC").unwrap(), "gcc");
+         // Path prepended
+         assert_eq!(job_env.get("PATH").unwrap(), "/opt/gcc/bin:/usr/bin");
++        // and recorded on its own, for a container to put in front of its PATH
++        assert_eq!(job_env.get(PATH_ADDITIONS_ENV).unwrap(), "/opt/gcc/bin");
+         // PATH updates from $GITHUB_PATH must NOT appear in user_env
+         assert!(
+             !job_user_env.contains_key("PATH"),
+```
+
+**File**: `crates/executor/src/job_session.rs` (modified, +112/-1)
+```diff
+@@ -22,7 +22,9 @@ use std::sync::Arc;
+ use std::time::Duration;
+ use tokio::process::Command;
+ use wrkflw_parser::workflow::{Job, Service};
+-use wrkflw_runtime::container::{ContainerError, ContainerOutput, ContainerRuntime};
++use wrkflw_runtime::container::{
++    ContainerError, ContainerOutput, ContainerRuntime, PATH_ADDITIONS_ENV,
++};
+ 
+ const SERVICE_READY_TIMEOUT: Duration = Duration::from_secs(180);
+ const SERVICE_POLL: Duration = Duration::from_millis(500);
+@@ -52,10 +54,16 @@ impl ServiceSpec {
+     }
+ }
+ 
++/// Where a composite action's own directory appears in a step's container,
++/// as `GITHUB_ACTION_PATH`.
++pub(crate) const CONTAINER_ACTION_DIR: &str = "/github/action";
++
+ struct Live {
+     image: String,
+     volumes: Vec<(PathBuf, PathBuf)>,
+     id: String,
++    /// The action directory last copied to [`CONTAINER_ACTION_DIR`].
++    action_dir: Option<PathBuf>,
+     /// Removes the containers when the session ends, however it ends.
+     _cleanup: Containers,
+ }
+@@ -225,9 +233,23 @@ fn bad_env_name(name: &str) -> Option<&'static str> {
+ }
+ 
+ /// The script `ENV_LOADER` reads, which puts `env` ahead of the command.
++///
++/// Directories steps added through `$GITHUB_PATH` go in front of the
++/// container's own PATH, which `exec` started this shell with, instead of the
++/// job's `PATH`, which was built on the host's.
+ fn env_script<'a>(env: impl Iterator<Item = (&'a str, &'a str)>) -> Result<String, String> {
++    let env: Vec<(&str, &str)> = env.collect();
++    let additions = env
++        .iter()
++        .rev()
++        .find(|(name, _)| *name == PATH_ADDITIONS_ENV)
++        .map(|(_, value)| *value)
++        .filter(|value| !value.is_empty());
+     let mut script = String::from("set --");
+     for (name, value) in env {
++        if name == PATH_ADDITIONS_ENV || (additions.is_some() && name == "PATH") {
++            continue;
 +        }
+         if let Some(reason) = bad_env_name(name) {
+             return Err(format!("can't pass variable '{}': {}", name, reason));
+         }
+@@ -240,6 +262,14 @@ fn env_script<'a>(env: impl Iterator<Item = (&'a str, &'a str)>) -> Result<Strin
+         script.push(' ');
+         script.push_str(&shell_quote(&format!("{}={}", name, value)));
+     }
++    if let Some(additions) = additions {
++        if additions.contains('\0') {
++            return Err("can't pass PATH: it holds a NUL byte".to_string());
++        }
++        script.push(' ');
++        script.push_str(&shell_quote(&format!("PATH={}:", additions)));
++        script.push_str("\"$PATH\"");
++    }
+     script.push_str(" \"$@\"\n");
+     Ok(script)
+ }
+@@ -691,10 +721,32 @@ impl JobSession {
+             image: image.to_string(),
+             volumes: volumes.to_vec(),
+             id,
++            action_dir: None,
+             _cleanup: containers,
+         })
+     }
+ 
++    /// Replace [`CONTAINER_ACTION_DIR`] in container `id` with a copy of `dir`.
++    async fn copy_action_dir(&self, id: &str, dir: &Path) -> Result<(), String> {
++        let clear: Vec<String> = ["exec", id, "rm", "-rf", CONTAINER_ACTION_DIR]
++            .map(str::to_string)
++            .to_vec();
++        let copy = vec![
++            "cp".to_string(),
++            dir.display().to_string(),
++            format!("{}:{}", id, CONTAINER_ACTION_DIR),
++        ];
++        for args in [clear, copy] {
++            let output = cli_output(self.cli, &args, None)
++                .await
++                .map_err(|e| e.to_string())?;
++            if output.exit_code != 0 {
++                return Err(output.stderr.trim().to_string());
++            }
++        }
++        Ok(())
++    }
++
+     /// Run a step in the session.
+     ///
+     /// `Ok(None)` means the caller should run the step the ordinary way: the
+@@ -711,8 +763,21 @@ impl JobSession {
+         volumes: &[(&Path, &Path)],
+         resolve: &dyn Fn(&str) -> String,
+     ) -> Result<Option<ContainerOutput>, String> {
++        // A composite action's steps mount its directory, which a running
++        // container can't gain. They only read it, so it is copied in below
++        // instead, and the step keeps the toolchain and files earlier steps
++        // left, as on GitHub.
++        let mut action_dir: Option<PathBuf> = None;
+         let wanted: Vec<(PathBuf, PathBuf)> = volumes
+             .iter()
++            .filter(|(host, container)| {
++                if *container == Path::new(CONTAINER_ACTION_DIR) && host.is_dir() {
++                    action_dir = Some(host.to_path_buf());
++                    false
++                } else {
++                    true
++                }
++            })
+             .map(|(host, container)| (host.to_path_buf(), container.to_path_buf()))
+             .collect();
+         let mut state = self.state.lock().await;
+@@ -774,6 +839,28 @@ impl JobSession {
+             return Ok(None);
+         }
+         let id = live.id.clone();
++        if let Some(dir) = action_dir {
++            if live.action_dir.as_ref() != Some(&dir) {
++               
+```
+
+**File**: `crates/executor/src/kubernetes/manifest.rs` (modified, +3/-2)
+```diff
+@@ -130,8 +130,9 @@ pub(super) fn build_pod_manifest(config: &KubernetesConfig, input: &PodInput<'_>
+         .collect();
+     volumes.push(json!({ "name": SYNC_VOLUME, "emptyDir": {} }));
+ 
+-    let env: Vec<Value> = input
+-        .env_vars
++    // The image's PATH isn't known here, so `$GITHUB_PATH` additions go in
++    // front of the usual Linux one rather than the host's.
++    let env: Vec<Value> = wrkflw_runtime::container::container_env(input.env_vars, None)
+         .iter()
+         .map(|(k, v)| json!({ "name": k, "value": escape_k8s_expansion(v) }))
+         .collect();
+```
+
+**File**: `crates/executor/src/podman.rs` (modified, +72/-12)
+```diff
+@@ -9,7 +9,8 @@ use tempfile;
+ use tokio::process::Command;
+ use wrkflw_logging;
+ use wrkflw_runtime::container::{
+-    ContainerError, ContainerOutput, ContainerRuntime, LOCAL_IMAGE_PREFIX,
++    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
++    ContainerRuntime, LOCAL_IMAGE_PREFIX,
+ };
+ use wrkflw_utils;
+ use wrkflw_utils::fd;
+@@ -212,9 +213,19 @@ impl PodmanRuntime {
+     }
+ }
+ 
++/// How long the availability probe waits for the CLI to answer.
++const PROBE_CLI_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(8);
++/// How long the availability probe waits for the daemon to answer.
++const PROBE_DAEMON_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
++/// How long the whole availability probe may take.
++const PROBE_OVERALL_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
++
+ pub fn is_available() -> bool {
+-    // Use a very short timeout for the entire availability check
+-    let overall_timeout = std::time::Duration::from_secs(3);
++    // A stopped daemon or a missing CLI fails at once, so these limits only
++    // matter for one that is slow to answer, as Docker Desktop is while it
++    // wakes from Resource Saver. Giving up too early there would run the
++    // workflow somewhere other than the container the user asked for.
++    let overall_timeout = PROBE_OVERALL_TIMEOUT;
+ 
+     // Spawn a thread with the timeout to prevent blocking the main thread
+     let handle = std::thread::spawn(move || {
+@@ -235,8 +246,8 @@ pub fn is_available() -> bool {
+                     Ok(mut child) => {
+                         // Set a very short timeout for the process
+                         let status = std::thread::scope(|_| {
+-                            // Try to wait for a short time
+-                            for _ in 0..10 {
++                            let deadline = std::time::Instant::now() + PROBE_CLI_TIMEOUT;
++                            while std::time::Instant::now() < deadline {
+                                 match child.try_wait() {
+                                     Ok(Some(status)) => return status.success(),
+                                     Ok(None) => {
+@@ -277,14 +288,12 @@ pub fn is_available() -> bool {
+             };
+ 
+             runtime.block_on(async {
+-                match tokio::time::timeout(std::time::Duration::from_secs(2), async {
++                match tokio::time::timeout(PROBE_DAEMON_TIMEOUT, async {
+                     let mut cmd = Command::new("podman");
+                     cmd.args(["info", "--format", "{{.Host.Hostname}}"]);
+                     cmd.stdout(Stdio::null()).stderr(Stdio::null());
+ 
+-                    match tokio::time::timeout(std::time::Duration::from_secs(1), cmd.output())
+-                        .await
+-                    {
++                    match tokio::time::timeout(PROBE_DAEMON_TIMEOUT, cmd.output()).await {
+                         Ok(Ok(output)) => {
+                             if output.status.success() {
+                                 true
+@@ -298,7 +307,7 @@ pub fn is_available() -> bool {
+                             false
+                         }
+                         Err(_) => {
+-                            wrkflw_logging::debug("Podman info command timed out after 1 second");
++                            wrkflw_logging::debug("Podman info command timed out");
+                             false
+                         }
+                     }
+@@ -692,6 +701,50 @@ impl ContainerRuntime for PodmanRuntime {
+     }
+ }
+ 
++/// The PATH `image` sets in its config, pulling the image first if it isn't
++/// local yet. `None` if neither works.
++async fn image_path(image: &str) -> Option<String> {
++    async fn inspect(image: &str) -> Option<String> {
++        let output = Command::new("podman")
++            .args([
++                "image",
++                "inspect",
++                "--format",
++                "{{range .Config.Env}}{{println .}}{{end}}",
++                image,
++            ])
++            .stdin(Stdio::null())
++            .stderr(Stdio::null())
++            .output()
++            .await
++            .ok()?;
++        if !output.status.success() {
++            return None;
++        }
++        let text = String::from_utf8_lossy(&output.stdout);
++        path_from_image_env(&text.lines().collect::<Vec<_>>())
++    }
++    if let Some(path) = inspect(image).await {
++        return Some(path);
++    }
++    if image.starts_with(LOCAL_IMAGE_PREFIX) {
++        return None;
++    }
++    let pulled = Command::new("podman")
++        .args(["pull", "--quiet", image])
++        .stdin(Stdio::null())
++        .stdout(Stdio::null())
++        .stderr(Stdio::null())
++        .status()
++        .await
++        .ok()?;
++    if pulled.success() {
++        inspect(image).await
++    } else {
 +        None
 +    }
++}
 +
-+    #[test]
-+    fn an_armed_guard_removes_the_container_when_dropped() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let (cli, log) = fake_cli(dir.path());
-+        drop(ContainerGuard::new(cli, "removed", false, record_untrack));
-+        assert_eq!(wait_for(&log).as_deref(), Some("rm -f removed\n"));
-+        assert!(was_untracked("removed"));
-+    }
-+
-+    #[test]
-+    fn a_preserving_guard_kills_the_container_without_removing_it() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let (cli, log) = fake_cli(dir.path());
-+        drop(ContainerGuard::new(cli, "preserved", true, record_untrack));
-+        assert_eq!(wait_for(&log).as_deref(), Some("kill preserved\n"));
-+        assert!(was_untracked("preserved"));
-+    }
-+
-+    #[test]
-+    fn a_disarmed_guard_leaves_the_container_alone() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let (cli, log) = fake_cli(dir.path());
-+        let mut guard = ContainerGuard::new(cli, "disarmed", false, record_untrack);
-+        guard.disarm();
-+        drop(guard);
-+    
+ // Implementation of internal methods
+ impl PodmanRuntime {
+     async fn run_container_inner(
+@@ -715,8 +768,15 @@ impl PodmanRuntime
 ```
 
-**File**: `crates/executor/src/docker.rs` (modified, +73/-38)
+---
+
+### Incident Patch 3: `f2ec6bee` (2026-11-04)
+**Commit Message**: fix(executor): close the gaps found reviewing CI acceleration (#157)
+
+* fix(executor): rerun a reused job's dependents under --affected
+
+A job reused from the store was never marked as run, so --affected took
+its outputs to be the diff base's. A pass stored from another tree can
+carry new outputs, and the jobs that need it were skipped as unaffected.
+wrkflw gate would then pass without running them.
+
+Also cover the gate skipping the jobs that need a gate: false job.
+
+* fix(executor): close three gaps in what reuse and its caches trust
+
+- Count actions/upload-pages-artifact as exchanging artifacts, and match
+  artifact actions as publishing actions are matched: case-insensitively,
+  at any version or subpath.
+- Refuse a --remote-cache scheme other than file, http and https. An
+  s3:// location used to become a local directory of that name.
+- Give each repository its own --dep-cache directories, so a job in one
+  repository can't leave packages for another repository's jobs.
+
+Also test that a server error stops the remote for the rest of a run.
+
+* docs(executor): say why services get no host entries of their own
+
+Docker and Podman give a container that joins another's network that
+co
+
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,8 @@
-+use crate::container_guard::ContainerGuard;
- use async_trait::async_trait;
- use bollard::{
-     container::{Config, CreateContainerOptions},
--    models::HostConfig,
-+    models::{ContainerWaitResponse, HostConfig},
-     network::CreateNetworkOptions,
-     Docker,
- };
-@@ -420,6 +421,25 @@ pub fn is_available() -> bool {
-     false
+@@ -210,7 +210,7 @@ wrkflw run .github/workflows/ci.yml --job-container --dep-cache
+ - **`--reuse-results`** skips a job when an identical job already passed on identical inputs. The fingerprint covers the job definition, workflow `env` and `defaults`, `needs` outputs, event, ref, runtime, operating system, CPU architecture, `--platform` overrides and file contents. Stored outputs still reach dependent jobs. Results expire after 7 days, or `WRKFLW_RESULT_TTL_SECS`, because images and floating action tags such as `@v4` aren't in the fingerprint.
+ - **`--affected`** also skips a job when none of its declared paths changed, even with no stored result. It trusts the base you compare against to be green. The pre-push hook compares against the remote tip of the branch you push, which is green only if that push's CI passed. If it may not have, run `wrkflw gate --diff-base origin/main` by hand. It needs `--event`, and only applies to jobs listed in `.wrkflw/affected.yml`. Such a job counts as passed for its dependents and reports one `Not affected` step. A job still runs if it has `outputs` or a matrix, if a job it needs ran or didn't pass, or if a workflow file changed.
+ - **`--job-container`** runs a job's `run:` steps in one container, on Docker and Podman. Files a step leaves outside the workspace are there for the next step, as on GitHub. A step that times out may still be running in that container, so the next step gets a fresh one, and a job's services restart with it. It's ignored with `--preserve-containers-on-failure`.
+-- **`--dep-cache`** mounts host directories over the cargo, npm, pip and Go caches under `/root`, so it helps images that run as root. The host directories live under `WRKFLW_DEP_CACHE_DIR` if set, or the user cache directory. Steps can write to them, so a job you don't trust can leave packages there for later runs. They are wrkflw's own directories, not your `~/.cargo` or `~/.npm`.
++- **`--dep-cache`** mounts host directories over the cargo, npm, pip and Go caches under `/root`, so it helps images that run as root. The host directories live under `WRKFLW_DEP_CACHE_DIR` if set, or the user cache directory, with one set per repository. Steps can write to them, so a job you don't trust can leave packages there for later runs of the same repository, but not for other repositories. They are wrkflw's own directories, not your `~/.cargo` or `~/.npm`.
+ 
+ Reuse is only as safe as its inputs. wrkflw always runs a job that reads secrets or a `github-token` input, has `write` permissions of its own or from the workflow's `permissions:`, exchanges artifacts, uses a known publishing action such as `actions/github-script`, `softprops/action-gh-release` or `docker/build-push-action`, or calls a reusable workflow, because those can have effects it can't see. It also always runs a job with `outputs` that uses `needs` when a job upstream reads secrets, so a passed-along secret doesn't get stored. A job with no `permissions:`, in a workflow with none, counts as read-only, though on GitHub it gets the repository's default token permissions, which are write-all for repositories created before February 2023. For anything else with outside effects, set `cache: false`. That includes a job that gets its credentials from the machine rather than from `secrets`, such as a deploy that uses `~/.aws`, `gh auth` or `~/.npmrc` in emulation: wrkflw can't see those, so it would reuse the result and the deploy would silently not happen.
+ 
+```
+
+**File**: `crates/executor/src/acceleration.rs` (modified, +92/-18)
+```diff
+@@ -100,13 +100,21 @@ const MUTATING_ACTIONS: &[&str] = &[
+     "peaceiris/actions-gh-pages",
+ ];
+ 
+-/// The `uses:` of a step in `job` that is known to change something outside
+-/// the repository.
+-fn mutating_action(job: &Job) -> Option<&str> {
++/// Actions that hand files to another job. A reused job hands over nothing,
++/// so the job that needs them would fail.
++const ARTIFACT_ACTIONS: &[&str] = &[
++    "actions/upload-artifact",
++    "actions/download-artifact",
++    "actions/upload-pages-artifact",
++];
++
++/// The `uses:` of the first step in `job` that runs one of `actions`, at any
++/// version or subpath. Lowercased, as GitHub matches action names.
++fn uses_one_of<'a>(job: &'a Job, actions: &[&str]) -> Option<&'a str> {
+     job.steps.iter().find_map(|step| {
+         let uses = step.uses.as_deref()?;
+         let lower = uses.to_ascii_lowercase();
+-        MUTATING_ACTIONS
++        actions
+             .iter()
+             .any(|action| {
+                 lower
+@@ -159,6 +167,15 @@ pub fn validate_remote(accel: &Acceleration) -> Result<(), String> {
+         }
+         return Ok(());
+     };
++    if let Some((scheme, _)) = remote.split_once("://") {
++        if !matches!(scheme, "file" | "http" | "https") {
++            return Err(format!(
++                "--remote-cache doesn't support {}://. Use a directory, a file:// path \
++                 or an https:// URL",
++                scheme
++            ));
++        }
++    }
+     if accel.signing_key.as_ref().is_none_or(|k| k.0.is_empty()) {
+         return Err(
+             "--remote-cache needs WRKFLW_CACHE_SIGNING_KEY: an unsigned result would let \
+@@ -287,15 +304,10 @@ pub(crate) fn uncacheable_reason(
+     if writes {
+         return Some("it has write permissions");
+     }
+-    if job.steps.iter().any(|step| {
+-        step.uses.as_deref().is_some_and(|uses| {
+-            uses.starts_with("actions/upload-artifact")
+-                || uses.starts_with("actions/download-artifact")
+-        })
+-    }) {
++    if uses_one_of(job, ARTIFACT_ACTIONS).is_some() {
+         return Some("it exchanges artifacts");
+     }
+-    if mutating_action(job).is_some() {
++    if uses_one_of(job, MUTATING_ACTIONS).is_some() {
+         return Some("it uses an action that publishes or writes to GitHub");
+     }
+     const UNREADABLE: &str = "its definition can't be checked for secrets";
+@@ -555,17 +567,34 @@ pub(crate) fn dep_cache_mounts(mounts_are_copies: bool) -> Vec<(PathBuf, PathBuf
+     let Some(run) = current().filter(|run| run.accel.dep_cache && !mounts_are_copies) else {
+         return Vec::new();
+     };
+-    run.dep_mounts.get_or_init(create_dep_cache_dirs).clone()
++    run.dep_mounts
++        .get_or_init(|| create_dep_cache_dirs(&run.root))
++        .clone()
  }
  
-+/// The exit code of a finished container, or -1 if it can't be determined.
-+fn wait_exit_code(
-+    wait_result: Option<&Result<ContainerWaitResponse, bollard::errors::Error>>,
-+) -> i32 {
-+    match wait_result {
-+        Some(Ok(exit)) => exit.status_code as i32,
-+        // bollard reports a non-zero exit as an error
-+        Some(Err(bollard::errors::Error::DockerContainerWaitError { code, .. })) => *code as i32,
-+        Some(Err(e)) => {
-+            wrkflw_logging::warning(&format!("Failed to wait for container: {}", e));
-+            -1
-+        }
-+        None => {
-+            wrkflw_logging::warning("Container wait returned no result");
-+            -1
-+        }
+-/// The host side of the mounts: `WRKFLW_DEP_CACHE_DIR`, or the cache directory.
+-fn create_dep_cache_dirs() -> Vec<(PathBuf, PathBuf)> {
+-    let root = std::env::var_os("WRKFLW_DEP_CACHE_DIR")
++/// The host side of the mounts for the repository at `repo`, under
++/// `WRKFLW_DEP_CACHE_DIR` or the cache directory.
++fn create_dep_cache_dirs(repo: &Path) -> Vec<(PathBuf, PathBuf)> {
++    let base = std::env::var_os("WRKFLW_DEP_CACHE_DIR")
+         .map(PathBuf::from)
+         .or_else(|| dirs::cache_dir().map(|d| d.join("wrkflw").join("deps")));
+-    let Some(root) = root else {
+-        return Vec::new();
+-    };
++    match base {
++        Some(base) => dep_cache_dirs_in(&base, repo),
++        None => Vec::new(),
 +    }
 +}
 +
- // Add container to tracking
- pub fn track_container(id: &str) {
-     if let Ok(mut containers) = RUNNING_CONTAINERS.lock() {
-@@ -643,24 +663,10 @@ impl ContainerRuntime for DockerRuntime {
-         // Print detailed debugging info
-         wrkflw_logging::info(&format!("Docker: Running container with image: {}", image));
- 
--        // Add a global timeout for all Docker operations to prevent freezing
--        let timeout_duration = std::time::Duration::from_secs(360); // Increased outer timeout to 6 minutes
--
--        // Run the entire container operation with a timeout
--        match tokio::time::timeout(
--            timeout_duration,
--            self.run_container_inner(image, cmd, env_vars, working_dir, volumes, entrypoint),
--        )
--        .await
--        {
--            Ok(result) => result,
--            Err(_) => {
--                wrkflw_logging::error("Docker operation timed out after 360 seconds");
--                Err(ContainerError::ContainerExecution(
--                    "Operation timed out".to_string(),
--                ))
--            }
--        }
-+        // A step runs as long as its job or step `timeout-minutes` allows. The
-+        // engine enforces those, and dropping this future stops the container.
-+        self.run_container_inner(image, cmd, env_vars, working_dir, volumes, entrypoint)
-+            .await
++/// A short id for the repository at `repo`.
++fn repo_cache_id(repo: &Path) -> String {
++    let canonical = repo.canonicalize().unwrap_or_else(|_| repo.to_path_buf());
++    hex(&Sha256::digest(canonical.to_string_lossy().as_bytes()))[..16].to_string()
++}
++
++/// Each repository gets caches of its own under `base`. Steps can write to
++/// them, so a job in one repository must not leave packages that another
++/// repository's jobs then install.
++fn dep_cache_dirs_in(base: &Path, repo: &Path) -> Vec<(PathBuf, PathBuf)> {
++    let root = base.join(repo_cache_id(repo));
+     DEP_CACHE_DIRS
+         .iter()
+         .filter_map(|(name, container)| {
+@@ -956,6 +985,18 @@ mod tests {
+                 "steps:\n  - uses: actions/download-artifact@v4\n",
+                 "artifacts",
+             ),
++            (
++                "steps:\n  - uses: actions/upload-pages-artifact@v3\n",
++                "artifacts",
++            ),
++            (
++                "steps:\n  - uses: actions/upload-artifact/merge@v4\n",
++                "artifacts",
++            ),
++            (
++                "steps:\n  - uses: Actions/Upload-Artifact@v4\n",
++                "artifacts",
++            ),
+             ("uses: ./.github/workflows/x.yml\n", "reusable"),
+         ] {
+             let reason = uncacheable_reason(&job(yaml), &wf, None).expect(yaml);
+@@ -1383,6 +1424,9 @@ jobs:
+             "http://localhost.evil.com",
+             "http://localhost@evil.com/",
+             "http://[::2]"
+```
+
+**File**: `crates/executor/src/acceleration/store.rs` (modified, +36/-0)
+```diff
+@@ -131,6 +131,10 @@ impl Remote {
+                 token,
+             });
+         }
++        // `validate_remote` refuses other schemes. Never read one as a path.
++        if location.contains("://") && !location.starts_with("file://") {
++            return None;
++        }
+         let path = location.strip_prefix("file://").unwrap_or(location);
+         Some(Remote::Dir(PathBuf::from(path)))
+     }
+@@ -517,6 +521,38 @@ mod tests {
+         assert_eq!(server.received_requests().await.unwrap().len(), 1);
      }
  
-     async fn pull_image(&self, image: &str) -> Result<(), ContainerError> {
-@@ -1004,6 +1010,12 @@ impl DockerRuntime {
- 
-         // Track the container before starting it to ensure cleanup even if starting fails
-         track_container(&container.id);
-+        let mut guard = ContainerGuard::new(
-+            "docker",
-+            &container.id,
-+            self.preserve_containers_on_failure,
-+            untrack_container,
-+        );
- 
-         // Start container with a timeout
-         let start_result = tokio::time::timeout(
-@@ -1018,37 +1030,27 @@ impl DockerRuntime {
-                 // Clean up the container if start fails
-                 let _ = self.docker.remove_container(&container.id, None).await;
-                 untrack_container(&container.id);
-+                guard.disarm();
-                 return Err(ContainerError::ContainerExecution(e.to_string()));
-             }
-             Err(_) => {
-                 // Clean up the container if starting times out
-                 let _ = self.docker.remove_container(&container.id, None).await;
-                 untrack_container(&container.id);
-+                guard.disarm();
-                 return Err(ContainerError::ContainerExecution(
-                     "Container start timed out".to_string(),
-                 ));
-             }
-         }
- 
--        // Wait for container to finish with a timeout (300 seconds)
--        let wait_result = tokio::time::timeout(
--            std::time::Duration::from_secs(300),
--            self.docker
--                .wait_container::<String>(&container.id, None)
--                .collect::<Vec<_>>(),
--        )
--        .await;
--
--        let exit_code = match wait_result {
--            Ok(results) => match results.first() {
--                Some(Ok(exit)) => exit.status_code as i32,
--                _ => -1,
--            },
--            Err(_) => {
--                wrkflw_logging::warning("Container wait operation timed out, treating as failure");
--                -1
--            }
--        };
-+        // Wait for the container to finish
-+        let wait_result = self
-+            .docker
-+            .wait_container::<String>(&container.id, None)
-+            .collect::<Vec<_>>()
++    #[tokio::test]
++    async fn a_failing_server_stops_the_remote_for_the_run() {
++        use wiremock::matchers::method;
++        use wiremock::{Mock, MockServer, ResponseTemplate};
++
++        let server = MockServer::start().await;
++        Mock::given(method("GET"))
++            .respond_with(ResponseTemplate::new(503))
++            .mount(&server)
 +            .await;
-+        let exit_code = wait_exit_code(wait_result.first());
- 
-         // Get logs with a timeout
-         let log_options = Some(bollard::container::LogsOptions::<String> {
-@@ -1100,6 +1102,7 @@ impl DockerRuntime {
-             // Still untrack it from the automatic cleanup system to prevent it from being cleaned up later
-   
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@
- pub mod action_resolver;
- pub(crate) mod artifacts;
- pub(crate) mod cache;
-+mod container_guard;
- pub mod dependency;
- pub mod docker;
- pub mod engine;
-```
-
-**File**: `crates/executor/src/podman.rs` (modified, +66/-66)
-```diff
-@@ -1,3 +1,4 @@
-+use crate::container_guard::ContainerGuard;
- use async_trait::async_trait;
- use once_cell::sync::Lazy;
- use std::collections::HashMap;
-@@ -148,54 +149,7 @@ impl PodmanRuntime {
-     ) -> Result<ContainerOutput, ContainerError> {
-         let timeout_duration = std::time::Duration::from_secs(360); // 6 minutes timeout
- 
--        let result = tokio::time::timeout(timeout_duration, async {
--            let mut cmd = Command::new("podman");
--            cmd.args(args);
--
--            if input.is_some() {
--                cmd.stdin(Stdio::piped());
--            }
--            cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
--
--            wrkflw_logging::debug(&format!(
--                "Running Podman command: podman {}",
--                args.join(" ")
--            ));
--
--            let mut child = cmd.spawn().map_err(|e| {
--                ContainerError::ContainerStart(format!("Failed to spawn podman command: {}", e))
--            })?;
--
--            // Send input if provided
--            if let Some(input_data) = input {
--                if let Some(stdin) = child.stdin.take() {
--                    use tokio::io::AsyncWriteExt;
--                    let mut stdin = stdin;
--                    stdin.write_all(input_data.as_bytes()).await.map_err(|e| {
--                        ContainerError::ContainerExecution(format!(
--                            "Failed to write to stdin: {}",
--                            e
--                        ))
--                    })?;
--                    stdin.shutdown().await.map_err(|e| {
--                        ContainerError::ContainerExecution(format!("Failed to close stdin: {}", e))
--                    })?;
--                }
--            }
--
--            let output = child.wait_with_output().await.map_err(|e| {
--                ContainerError::ContainerExecution(format!("Podman command failed: {}", e))
--            })?;
--
--            Ok(ContainerOutput {
--                stdout: String::from_utf8_lossy(&output.stdout).to_string(),
--                stderr: String::from_utf8_lossy(&output.stderr).to_string(),
--                exit_code: output.status.code().unwrap_or(-1),
--            })
--        })
--        .await;
--
--        match result {
-+        match tokio::time::timeout(timeout_duration, self.run_podman_command(args, input)).await {
-             Ok(output) => output,
-             Err(_) => {
-                 wrkflw_logging::error("Podman operation timed out after 360 seconds");
-@@ -205,6 +159,57 @@ impl PodmanRuntime {
-             }
-         }
-     }
-+
-+    /// Run podman to completion, however long that takes.
-+    async fn run_podman_command(
-+        &self,
-+        args: &[&str],
-+        input: Option<&str>,
-+    ) -> Result<ContainerOutput, ContainerError> {
-+        let mut cmd = Command::new("podman");
-+        cmd.args(args);
-+        // A cancelled `podman run` may still be pulling, with no container for
-+        // ContainerGuard to remove yet, and would otherwise start one later.
-+        cmd.kill_on_drop(true);
-+
-+        if input.is_some() {
-+            cmd.stdin(Stdio::piped());
-+        }
-+        cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
-+
-+        wrkflw_logging::debug(&format!(
-+            "Running Podman command: podman {}",
-+            args.join(" ")
-+        ));
-+
-+        let mut child = cmd.spawn().map_err(|e| {
-+            ContainerError::ContainerStart(format!("Failed to spawn podman command: {}", e))
-+        })?;
-+
-+        // Send input if provided
-+        if let Some(input_data) = input {
-+            if let Some(stdin) = child.stdin.take() {
-+                use tokio::io::AsyncWriteExt;
-+                let mut stdin = stdin;
-+                stdin.write_all(input_data.as_bytes()).await.map_err(|e| {
-+                    ContainerError::ContainerExecution(format!("Failed to write to stdin: {}", e))
-+                })?;
-+                stdin.shutdown().await.map_err(|e| {
-+                    ContainerError::ContainerExecution(format!("Failed to close stdin: {}", e))
-+                })?;
-+            }
-+        }
-+
-+        let output = child.wait_with_output().await.map_err(|e| {
-+            ContainerError::ContainerExecution(format!("Podman command failed: {}", e))
-+        })?;
-+
-+        Ok(ContainerOutput {
-+            stdout: String::from_utf8_lossy(&output.stdout).to_string(),
-+            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-+            exit_code: output.status.code().unwrap_or(-1),
-+        })
++        let dir = TempDir::new().unwrap();
++        let accel = Acceleration {
++            remote_cache: Some(server.uri()),
++            signing_key: Some(Secret("k".to_string())),
++            ..Default::default()
++        };
++        let store = store_with(dir.path(), &accel);
++        assert!(store.load("aaa").await.is_none());
++        assert!(store.remote_down.load(Ordering::Relaxed));
++        assert!(store.load("bbb").await.is_none());
++        assert_eq!(server.received_requests().await.unwrap().len(), 1);
 +    }
++
++    #[test]
++    fn an_unknown_scheme_is_never_read_as_a_directory() {
++        assert!(Remote::parse("s3://bucket/x", None).is_none());
++        assert!(matches!(
++            Remote::parse("file:///srv/x", None),
++            Some(Remote::Dir(path)) if path == Path::new("/srv/x")
++        ));
++    }
++
+     #[tokio::test]
+     async fn storing_a_result_sweeps_out_expired_ones() {
+         let dir = TempDir::new().unwrap();
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +6/-0)
+```diff
+@@ -2587,6 +2587,12 @@ async fn execute_job_with_matrix(
+     .await;
+     let result_key = match decision {
+         acceleration::Decision::Reuse { jobs, why } => {
++            // A stored pass comes from some earlier tree, not the diff base, so
++            // its outputs may be new to the jobs that need it. It counts as
++            // run, so `--affected` doesn't skip those jobs as unchanged.
++            if matches!(why, acceleration::Reused::Stored { .. }) {
++                acceleration::mark_executed(job_name);
++            }
+             let (note, step) = (why.note(), why.step());
+             return Ok(jobs
+                 .into_iter()
+```
+
+**File**: `crates/executor/src/job_session.rs` (modified, +4/-0)
+```diff
+@@ -422,6 +422,10 @@ fn start_args(
+         args.push("-v".to_string());
+         args.push(format!("{}:{}", host.display(), container.display()));
+     }
++    // Services join this container's network, and Docker and Podman then hand
++    // them this container's /etc/hosts, so these names resolve in every
++    // service too. Both refuse `--add-host` on a container that joins
++    // another's network, so services must not be given entries of their own.
+     for service in service_names {
+         args.push("--add-host".to_string());
+         args.push(format!("{}:127.0.0.1", service));
+```
+
+**File**: `crates/wrkflw/tests/acceleration_test.rs` (modified, +70/-0)
+```diff
+@@ -422,3 +422,73 @@ fn a_step_never_sees_the_cache_credentials() {
+     assert_ok(&output);
+     assert_eq!(repo.take_ran(), ["none none"]);
  }
- 
- pub fn is_available() -> bool {
-@@ -481,23 +486,10 @@ impl ContainerRuntime for PodmanRuntime {
-         // Print detailed debugging info
-         wrkflw_logging::info(&format!("Podman: Running container with image: {}", image));
- 
--        let timeout_duration = std::time::Duration::from_secs(360); // 6 minutes timeout
--
--        // Run the entire container operation with a timeout
--        match tokio::time::timeout(
--            timeout_duration,
--         
++
++#[test]
++fn a_reused_job_with_new_outputs_still_reruns_its_dependents_under_affected() {
++    let workflow = r#"
++name: ci
++on: push
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    outputs:
++      v: ${{ steps.a.outputs.v }}
++    steps:
++      - uses: actions/checkout@v4
++      - id: a
++        run: echo "v=$(cat src/a)" >> "$GITHUB_OUTPUT"
++  test:
++    runs-on: ubuntu-latest
++    needs: build
++    steps:
++      - run: echo "test ${{ needs.build.outputs.v }}" >> LOG
++"#;
++    let hints = "jobs:\n  build: {paths: ['src/**']}\n  test: {paths: ['docs/**']}\n";
++    let repo = Repo::new(workflow, Some(hints));
++    // A change only `build` reads. Running `build` alone stores its pass,
++    // whose output the base's `test` never saw.
++    fs::write(repo.root().join("src/a"), "two").unwrap();
++    assert_ok(&repo.run(&["--reuse-results", "--job", "build"]));
++    repo.take_ran();
++    let output = repo.run(&[
++        "--event",
++        "push",
++        "--affected",
++        "--reuse-results",
++        "--diff-base",
++        "HEAD",
++    ]);
++    assert_ok(&output);
++    assert!(
++        String::from_utf8_lossy(&output.stdout).contains("Reuse result"),
++        "build should come from the store"
++    );
++    assert_eq!(repo.take_ran(), ["test two"]);
++}
++
++#[test]
++fn the_gate_skips_the_jobs_that_need_a_job_left_to_ci() {
++    let workflow = r#"
++name: ci
++on: push
++jobs:
++  check:
++    runs-on: ubuntu-latest
++    steps:
++      - run: echo check >> LOG
++  deploy:
++    runs-on: ubuntu-latest
++    needs: check
++    steps:
++      - run: echo deploy >> LOG
++  announce:
++    runs-on: ubuntu-latest
++    needs: deploy
++    steps:
++      - run: echo announce >> LOG
++"#;
++    let repo = Repo::new(workflow, Some("jobs:\n  deploy: {gate: false}\n"));
++    let output = repo.wrkflw(&["gate", "--runtime", "emulation", "--diff-base", "HEAD"]);
++    assert_ok(&output);
++    assert_eq!(repo.take_ran(), ["check"]);
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #155** (2026-11-02): feat(tui): select text with the mouse and copy it on release (@bahdotsh)
-- **PR #154** (2026-11-02): fix(tui): stop capturing the mouse so text selection and copy work (@bahdotsh)
-- **PR #153** (2026-11-02): fix: close the gaps found testing the agent features (@bahdotsh)
-- **PR #152** (2026-11-02): feat: make wrkflw usable by coding agents (@bahdotsh)
-- **PR #151** (2026-11-01): fix(runtime): stop capping steps and leaking timed-out containers (@bahdotsh)
-- **PR #150** (2026-11-01): fix(gitlab): honor image, rules, when and stage failures (@bahdotsh)
+- **PR #162** (2026-11-04): feat(ui): upgrade to ratatui 0.30 and redesign the TUI (@bahdotsh)
+- **PR #161** (2026-11-04): docs: bring the docs up to date with everything since v0.8.0 (@bahdotsh)
+- **PR #160** (2026-11-04): feat(mcp): register with Copilot CLI, Grok, Kiro, pi and Zed (@bahdotsh)
+- **PR #159** (2026-11-04): feat: register with coding agents and record their sessions (@bahdotsh)
+- **PR #158** (2026-11-04): fix: run complex workflows faithfully in containers and stop per-step pulls (@bahdotsh)
+- **PR #157** (2026-11-04): fix(executor): close the gaps found reviewing CI acceleration (@bahdotsh)
 
 ---
 
@@ -3661,30 +3852,80 @@ a wait that really failed yields -1 now, and that gets logged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gitlab): honor image, rules, when and stage failures (#150)
+## X. ui): upgrade to ratatui 0.30 and redesign the TUI (#162)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bf6a27c`: gitlab): honor image, rules, when and stage failures (#150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0299477`: ui): upgrade to ratatui 0.30 and redesign the TUI (#162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Set GitLab pipeline variables, which rules and scripts both see
-wrkflw run --variable CI_COMMIT_TAG=v1.0.0 .gitlab-ci.yml
+[[package]]
+name = "approx"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cab112f0a86d568ea0e627cc1d6be74a1e9cd55214684db5561995f6dad897c6"
+dependencies = [
+ "num-traits",
+]
 
+[[package]]
+name = "ar_archive_writer"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73cd58deff2140a0a8eae87e417bd01db68a33e148aa93d1e8cd837e55e312b6"
+dependencies = [
+ "object 0.39.1",
+]
+
+[[package]]
+name = "atomic"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
+dependencies = [
+ "bytemuck",
+]
+
+ "object 0.36.7",
+[[package]]
+name = "base64"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+
+version = "2.13.2"
+checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+ "thiserror 1.0.69",
+[[package]]
+name = "by_address"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64fa3c856b712db6612c019f14756e64e4bcea13337a6b33b696333a9eaa2d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "object",
+version = "2.9.2"
+checksum = "6a65b545ab31d687cff52899d4890855fec459eb6afe0da6417b8a18da87aa29"
+ "thiserror",
+name = "bytes"
+version = "1.10.1"
+checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
+name = "cassowary"
+version = "0.3.0"
+checksum = "df8670b8c7b9dae1793364eafadf7239c40d669904660c5960d74cfd80b46a53"
+version = "0.8.1"
+checksum = "3b79c4069c6cad78e2e0cdfcbd26275770669fb39fd308a752dc110e83b9af32"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bf6a27c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0299477` are properly handled with clean fallback behavior.

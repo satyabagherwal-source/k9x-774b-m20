@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `1c3abda1`  
+> **Source Version**: `8f7eca22`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:24:31.763Z  
+> **Timestamp**: 2026-11-04T23:20:53.218Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:24:31.756Z  
+> **Harvest Timestamp**: 2026-11-04T23:20:53.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4758 stars
+- **Stars / Engagement**: 4757 stars
 
 ---
 
@@ -1349,597 +1349,206 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c81b068` (2026-11-02)
-**Commit Message**: fix(storage): make block map access thread-safe and look up block metas by block id (#3533)
+### Incident Patch 1: `8f7eca22` (2026-11-04)
+**Commit Message**: fix(cleanup): remove only the dirs of dropped entities (#3539)
 
-**File**: `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp` (modified, +3/-0)
+### Summary
+
+Remove only the dirs of dropped entities
+
+#3537
+
+**File**: `src/storage/io/virtual_store.cppm` (modified, +1/-2)
 ```diff
-@@ -434,6 +434,9 @@ void PhysicalMatchSparseScan::ExecuteInnerT(DistFunc *dist_func,
-         Bitmask bitmask;
- 
-         BlockMeta *block_meta = block_index->GetBlockMeta(segment_id, block_id);
-+        if (block_meta == nullptr) [[unlikely]] {
-+            UnrecoverableError(fmt::format("MatchSparseScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
-+        }
-         LOG_DEBUG(fmt::format("MatchSparseScan: segment_id: {}, block_id: {}", segment_id, block_id));
- 
-         std::tie(row_cnt, status) = block_meta->GetRowCnt1();
+@@ -58,9 +58,8 @@ public:
+     static Status DeleteFile(const std::string &path);
+     static Status DeleteFileBG(const std::string &path);
+     static Status MakeDirectory(const std::string &path);
+-    static Status RemoveDirectory(const std::string &path);
++    static void RemoveDirectory(const std::string &path);
+     static Status CleanupDirectory(const std::string &path);
+-    static void RecursiveCleanupAllEmptyDir(const std::string &path);
+     static Status Rename(const std::string &old_path, const std::string &new_path);
+     static Status Truncate(const std::string &file_name, size_t new_length);
+     static Status Merge(const std::string &dst_file, const std::string &src_file);
 ```
 
-**File**: `src/executor/operator/physical_scan/physical_match_tensor_scan_impl.cpp` (modified, +4/-1)
+**File**: `src/storage/io/virtual_store_impl.cpp` (modified, +1/-17)
 ```diff
-@@ -1270,7 +1270,10 @@ void GetRerankerScore(std::vector<MatchTensorRerankDoc> &rerank_docs,
-         const BlockID block_id = segment_offset / DEFAULT_BLOCK_CAPACITY;
-         const BlockOffset block_offset = segment_offset % DEFAULT_BLOCK_CAPACITY;
-         ColumnVector column_vec;
--        BlockMeta *block_meta = block_index->new_segment_block_index_.at(segment_id).block_map().at(block_id).get();
-+        BlockMeta *block_meta = block_index->GetBlockMeta(segment_id, block_id);
-+        if (block_meta == nullptr) [[unlikely]] {
-+            UnrecoverableError(fmt::format("MatchTensor rerank: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
-+        }
-         ColumnMeta column_meta(column_id, *block_meta);
-         auto [block_row_cnt, status] = block_meta->GetRowCnt1();
-         if (!status.ok()) {
-```
-
-**File**: `src/executor/operator/physical_scan/physical_table_scan_impl.cpp` (modified, +6/-0)
-```diff
-@@ -135,6 +135,9 @@ void PhysicalTableScan::ExecuteInternal(QueryContext *query_context, TableScanOp
-         BlockMeta *current_block_meta = block_index->GetBlockMeta(segment_id, block_id);
- 
-         std::optional<NewTxnGetVisibleRangeState> &range_state = table_scan_function_data_ptr->get_visible_range_state_;
-+        if (current_block_meta == nullptr) [[unlikely]] {
-+            UnrecoverableError(fmt::format("TableScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
-+        }
-         if (!range_state) {
-             // TODO
-             range_state = NewTxnGetVisibleRangeState();
-@@ -153,6 +156,9 @@ void PhysicalTableScan::ExecuteInternal(QueryContext *query_context, TableScanOp
-                                           block_ids_idx,
-                                           block_ids_count));
-                     ++block_ids_idx;
-+                    // Drop the range state of the skipped block, otherwise the next block would be
-+                    // read with this block's visible ranges (the state is only rebuilt when empty).
-+                    range_state.reset();
-                     continue;
-                 } else {
-                     LOG_TRACE(fmt::format("TableScan: block_ids_idx: {}, block_ids.size(): {}, not skipped after apply FastRoughFilter",
-```
-
-**File**: `src/storage/catalog/meta/segment_meta.cppm` (modified, +0/-1)
-```diff
-@@ -84,7 +84,6 @@ public:
-     Status CommitBlock(BlockID block_id, TxnTimeStamp commit_ts);
- 
-     std::tuple<std::vector<BlockID> *, Status> GetBlockIDs1();
--    std::tuple<std::vector<BlockID> *, Status> GetBlockIDs1(TxnTimeStamp commit_ts);
- 
-     std::tuple<size_t, Status> GetRowCnt1();
- 
-```
-
-**File**: `src/storage/catalog/meta/segment_meta_impl.cpp` (modified, +13/-16)
-```diff
-@@ -189,22 +189,27 @@ Status SegmentMeta::AddBlockWithID(TxnTimeStamp commit_ts, BlockID block_id) {
- }
- 
- std::pair<BlockID, Status> SegmentMeta::AddBlockID1(TxnTimeStamp commit_ts) {
--    Status status;
--
-     BlockID block_id = 0;
-     {
--        std::vector<BlockID> *block_ids_ptr = nullptr;
--        std::tie(block_ids_ptr, status) = GetBlockIDs1(commit_ts);
--        if (!status.ok()) {
--            return {INVALID_BLOCK_ID, status};
-+        // Hold the lock across the whole read-modify-write: otherwise two appends of the same
-+        // segment can both read the same last id and hand out the same one, and push_back can
-+        // grow the vector while another thread is iterating it.
-+        std::lock_guard<std::mutex> lock(mtx_);
-+        if (!block_ids1_) {
-+            block_ids1_ = infinity::GetTableSegmentBlocks(&kv_instance_,
-+                                                          table_meta_.db_id_str(),
-+                                                          table_meta_.table_id_str(),
-+                                                          segment_id_,
-+                                                          begin_ts_,
-+                                                          commit_ts);
-         }
--        block_id = block_ids_ptr->empty() ? 0 : block_ids_ptr->back() + 1;
-+        block_id = block_ids1_->empty() ? 0 : block_ids1_->back() + 1;
-         block_ids1_->push_back(block_id);
-     }
- 
-     std::string block_id_key = KeyEncode::CatalogTableSegmentBlockKey(table_meta_.db_id_str(), table_meta_.table_id_str(), segment_id_, block_id);
-     std::string commit_ts_str = fmt::format("{}", commit_ts);
--    status = kv_instance_.Put(block_id_key, commit_ts_str);
-+    Status status = kv_instance_.Put(block_id_key, commit_ts_str);
-     if (!status.ok()) {
-         return {0, status};
-     }
-@@ -230,14 +235,6 @@ std::tuple<std::vector<BlockID> *, Status> SegmentMeta::GetBlockIDs1() {
-     return {&*block_ids1_, Status::OK()};
- }
- 
--std::tuple<std::vector<BlockID> *, Status> SegmentMeta::GetBlockIDs1(TxnTimeStamp commit_ts) {
--    if (!block_ids1_) {
--        block_ids1_ =
--            infinity::GetTableSegmentBlocks(&kv_instance_, table_meta_.db_id_str(), table_meta_.table_id_str(), segment_id_, begin_ts_, commit_ts);
--    }
--    return {&*block_ids1_, Status::OK()};
--}
--
- std::tuple<size_t, Status> SegmentMeta::GetRowCnt1() {
-     std::lock_guard<std::mutex> lock(mtx_);
-     if (row_cnt_) {
-```
-
-**File**: `src/storage/common/block_index.cppm` (modified, +2/-1)
-```diff
-@@ -35,7 +35,8 @@ public:
-     std::unique_ptr<SegmentMeta> segment_meta_;
- 
- private:
--    mutable std::vector<std::unique_ptr<BlockMeta>> block_map_;
-+    mutable std::mutex block_map_mtx_;
-+    mutable std::vector<std::unique_ptr<BlockMeta>> block_map_; // only used in function block_map()
- };
- 
- export struct BlockIndex {
-```
-
-**File**: `src/storage/common/block_index_impl.cpp` (modified, +10/-4)
-```diff
-@@ -41,6 +41,7 @@ SegmentOffset NewSegmentSnapshot::segment_offset() const {
- }
- 
- const std::vector<std::unique_ptr<BlockMeta>> &NewSegmentSnapshot::block_map() const {
-+    std::lock_guard<std::mutex> lock(block_map_mtx_);
-     if (block_map_.size()) {
-         return block_map_;
-     }
-@@ -68,7 +69,7 @@ void BlockIndex::NewInit(const std::shared_ptr<TableMeta> &table_meta) {
-         RecoverableError(status);
-     }
-     for (SegmentID segment_id : *segment_ids_ptr) {
--        NewSegmentSnapshot &segment_snapshot = new_segment_block_index_.emplace(segment_id, NewSegmentSnapshot()).first->second;
-+        NewSegmentSnapshot &segment_snapshot = new_segment_block_index_[segment_id];
-         segment_snapshot.segment_meta_ = std::make_unique<SegmentMeta>(segment_id, *table_meta_);
-     }
- }
-@@ -105,11 +106,16 @@ BlockMeta *BlockIndex::GetBlockMeta(u32 segment_id, u16 block_id) const {
-     if (seg_it == new_segment_block_index_.end()) {
-         return nullptr;
-     }
--    const auto &blocks_info = seg_it->second;
--    if (blocks_info.block_map().size() <= block_id) {
-+    // block_map() is sorted by id (GetTableSegmentBlocks sorts the ids) but holds only the blocks
-+    // visible to this transaction, so block_id is a key, not a position in the vector.
-+    const std::vector<std::unique_ptr<BlockMeta>> &block_map = seg_it->second.block_map();
-+    auto it = std::lower_bound(block_map.begin(), block_map.end(), block_id, [](const std::unique_ptr<BlockMeta> &block_meta, BlockID id) {
-+        return block_meta->block_id() < id;
-+    });
-+    if (it == block_map.end() || (*it)->block_id() != block_id) {
-         return nullptr;
-     }
--    return blocks_info.block_map()[block_id].get();
-+    return it->get();
- }
- void IndexIndex::Insert(std::string index_name, std::shared_ptr<NewIndexSnapshot> new_index_snapshot) {
-     new_index_snapshots_vec_.push_back(new_index_snapshot.get());
-```
-
----
-
-### Incident Patch 2: `1c3abda1` (2026-11-03)
-**Commit Message**: fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (#3534)
-
-1. Recycle checkpointed wal.log.* files 
-2. Flush and fsync WAL entries
-
-**File**: `src/storage/io/local_file_handle.cppm` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ import global_resource_usage;
- 
- namespace infinity {
- 
--export enum class FileAccessMode { kWrite, kRead, kMmapRead, kInvalid };
-+export enum class FileAccessMode { kWrite, kAppend, kRead, kMmapRead, kInvalid };
- 
- export class LocalFileHandle {
- public:
-```
-
-**File**: `src/storage/io/local_file_handle_impl.cpp` (modified, +6/-4)
-```diff
-@@ -36,7 +36,7 @@ namespace infinity {
- LocalFileHandle::~LocalFileHandle() {
-     Status status = Sync();
-     if (!status.ok()) {
--        return;
-+        UnrecoverableError(fmt::format("Fail to sync file {} before closing it: {}", path_, status.message()));
-     }
- 
-     if (fd_ == -1) {
-@@ -78,7 +78,7 @@ Status LocalFileHandle::Close() {
- }
- 
- Status LocalFileHandle::Append(const void *buffer, u64 nbytes) {
--    if (access_mode_ != FileAccessMode::kWrite) {
-+    if (access_mode_ != FileAccessMode::kWrite && access_mode_ != FileAccessMode::kAppend) {
-         UnrecoverableError(fmt::format("File: {} isn't open.", path_));
-     }
-     i64 written = 0;
-@@ -146,11 +146,13 @@ std::tuple<char *, size_t, Status> LocalFileHandle::MmapRead(const std::string &
- Status LocalFileHandle::Unmmap(const std::string &name) { return Status::OK(); }
- 
- Status LocalFileHandle::Sync() {
--    if (access_mode_ != FileAccessMode::kWrite) {
-+    if (access_mode_ != FileAccessMode::kWrite && access_mode_ != FileAccessMode::kAppend) {
-         return Status::OK();
-     }
- 
--    fsync(fd_);
-+    if (fsync(fd_) == -1) {
-+        return Status::IOError(fmt::format("Can't sync file {}: {}", path_, strerror(errno)));
-+    }
+@@ -229,7 +229,7 @@ Status VirtualStore::MakeDirectory(const std::string &path) {
      return Status::OK();
  }
  
-```
-
-**File**: `src/storage/io/virtual_store_impl.cpp` (modified, +4/-0)
-```diff
-@@ -127,6 +127,10 @@ std::tuple<std::unique_ptr<LocalFileHandle>, Status> VirtualStore::Open(const st
-             fd = open(path.c_str(), O_RDWR | O_CREAT, 0666);
-             break;
-         }
-+        case FileAccessMode::kAppend: {
-+            fd = open(path.c_str(), O_RDWR | O_CREAT | O_APPEND, 0666);
-+            break;
-+        }
-         case FileAccessMode::kMmapRead: {
-             UnrecoverableError("Unsupported now.");
-             break;
-```
-
-**File**: `src/storage/wal/log_file.cppm` (modified, +2/-2)
-```diff
-@@ -47,8 +47,8 @@ public:
- 
-     static std::string TempWalFilename();
- 
--    // max_commit_ts is the largest commit ts before the latest checkpoint
--    // static void RecycleWalFile(TxnTimeStamp max_commit_ts, const std::string &wal_dir);
-+    // Deletes every rotated wal.log.<ts> file whose ts is covered by the checkpoint at ckp_ts.
-+    static void Recycle(TxnTimeStamp ckp_ts, const std::string &wal_dir);
- };
- 
- } // namespace infinity
-```
-
-**File**: `src/storage/wal/log_file_impl.cpp` (modified, +15/-15)
-```diff
-@@ -90,20 +90,20 @@ std::string WalFile::WalFilename(TxnTimeStamp max_commit_ts) { return fmt::forma
- 
- std::string WalFile::TempWalFilename() { return std::string(WAL_FILE_TEMP_FILE); }
- 
--// /**
--//  * @brief Gc the old wal files.
--//  * Only delete the wal.log.* files. the wal.log file is current wal file.
--//  * Check if the wal.log.* files are too old.
--//  * if * is less than the max_commit_ts, we will delete it.
--//  */
--// void WalFile::RecycleWalFile(TxnTimeStamp max_commit_ts, const std::string &wal_dir) {
--//     auto [cur_wal_info, wal_infos] = ParseWalFilenames(wal_dir);
--//     for (const auto &wal_info : wal_infos) {
--//         if (wal_info.max_commit_ts_ <= max_commit_ts) {
--//             LOG_INFO(fmt::format("WalManager::Checkpoint delete wal file: {}", wal_info.path_));
--//             VirtualStore::DeleteFile(wal_info.path_);
--//         }
--//     }
--// }
-+// Deletes the rotated wal.log.<ts> files covered by the checkpoint at ckp_ts. The current wal.log is
-+// not part of the rotated set, so it is never touched.
-+void WalFile::Recycle(TxnTimeStamp ckp_ts, const std::string &wal_dir) {
-+    auto [cur_wal_info, wal_infos] = ParseWalFilenames(wal_dir);
-+    for (const auto &wal_info : wal_infos) {
-+        if (wal_info.max_commit_ts_ < ckp_ts) {
-+            Status status = VirtualStore::DeleteFile(wal_info.path_);
-+            if (status.ok()) {
-+                LOG_INFO(fmt::format("WalManager::Checkpoint delete wal file: {}", wal_info.path_));
-+            } else {
-+                LOG_WARN(fmt::format("Failed to delete checkpointed wal file {}: {}", wal_info.path_, status.message()));
-+            }
-+        }
-+    }
-+}
- 
- } // namespace infinity
-\ No newline at end of file
-```
-
-**File**: `src/storage/wal/wal_manager.cppm` (modified, +8/-2)
-```diff
-@@ -15,6 +15,7 @@
- export module infinity_core:wal_manager;
- 
- import :blocking_queue;
-+import :local_file_handle;
- import :log_file;
- import :options;
- 
-@@ -99,6 +100,8 @@ public:
-     TxnTimeStamp LastCheckpointTS() const;
-     void SetLastCheckpointTS(TxnTimeStamp new_last_ckp_ts);
- 
-+    void RecycleWalFile(TxnTimeStamp ckp_ts);
-+
-     std::vector<std::shared_ptr<std::string>> GetDiffWalEntryString(TxnTimeStamp timestamp) const;
-     void UpdateCommitState(TxnTimeStamp commit_ts, i64 wal_size);
- 
-@@ -132,8 +135,11 @@ private:
-     BlockingQueue<NewTxn *> new_wait_flush_{"WalManager"};
- 
-     // Only Flush thread access following members
--    std::ofstream ofs_{};
--    FlushOptionType flush_option_{FlushOptionType::kOnlyWrite};
-+    // The current wal file
-+    std::unique_ptr<LocalFileHandle> wal_handle_{nullptr};
-+    // Kept only for configuration compatibility. It is never read: NewFlush() supports a single
-+    // behavior and always flushes + fsyncs the WAL, no matter which FlushOptionType is configured.
-+    [[maybe_unused]] FlushOptionType flush_option_{FlushOptionType::kOnlyWrite};
-     std::unique_ptr<BottomExecutor> bottom_executor_{nullptr};
- 
-     // Flush and Checkpoint threads access following members
-```
-
-**File**: `src/storage/wal/wal_manager_impl.cpp` (modified, +43/-27)
-```diff
-@@ -20,6 +20,7 @@ import :new_txn_manager;
- import :new_txn;
- import :storage;
- import :virtual_store;
-+import :local_file_handle;
- import :infinity_context;
- import :data_access_state;
- import :status;
-@@ -79,10 +80,11 @@ void WalManager::Start() {
-         VirtualStore::MakeDirectory(wal_dir_);
+-Status VirtualStore::RemoveDirectory(const std::string &path) {
++void VirtualStore::RemoveDirectory(const std::string &path) {
+     if (!std::filesystem::path(path).is_absolute()) {
+         UnrecoverableError(fmt::format("{} isn't absolute path.", path));
      }
-     // TODO: recovery from wal checkpoint
--    ofs_ = std::ofstream(wal_path_, std::ios::app | std::ios::binary);
--    if (!ofs_.is_open()) {
--        UnrecoverableError(fmt::format("Failed to open wal file: {}", wal_path_));
-+    auto [wal_handle, open_status] = VirtualStore::Open(wal_path_, FileAccessMode::kAppend);
-+    if (!open_status.ok()) {
-+        UnrecoverableError(fmt::format("Failed to open wal file {}: {}", wal_path_, open_status.message()));
+@@ -239,7 +239,6 @@ Status VirtualStore::RemoveDirectory(const std::string &path) {
+     if (error_code.value() != 0) {
+         UnrecoverableError(fmt::format("Delete directory {} exception: {}", path, error_code.message()));
      }
-+    wal_handle_ = std::move(wal_handle);
-     LOG_INFO(fmt::format("Open wal file: {}", wal_path_));
- 
-     wal_size_ = 0;
-@@ -120,7 +122,7 @@ void WalManager::Stop() {
-         UnrecoverableError("WAL manager stop failed: txn manager is nullptr");
-     }
- 
--    ofs_.close();
-+    wal_handle_.reset();
-     LOG_INFO("WAL manager is stopped.");
+-    return Status::OK();
  }
  
-@@ -144,6 +146,13 @@ void WalManager::SetLastCheckpointTS(TxnTimeStamp new_last_ckp_ts) {
-     return;
+ Status VirtualStore::CleanupDirectory(const std::string &path) {
+@@ -263,21 +262,6 @@ Status VirtualStore::CleanupDirectory(const std::string &path) {
+     return Status::OK();
  }
  
-+void WalManager::RecycleWalFile(TxnTimeStamp ckp_ts) {
-+    if (ckp_ts == 0 || ckp_ts == UNCOMMIT_TS) {
-+        UnrecoverableError(fmt::format("Unexpected checkpoint ts to recycle wal files: {}", ckp_ts));
-+    }
-+    WalFile::Recycle(ckp_ts, wal_dir_);
-+}
-+
- std::vector<std::shared_ptr<std::string>> WalManager::GetDiffWalEntryString(TxnTimeStamp start_timestamp) const {
+-void VirtualStore::RecursiveCleanupAllEmptyDir(const std::string &path) {
+-    if (!VirtualStore::Exists(path) || !std::filesystem::is_directory(path)) {
+-        return;
+-    }
+-
+-    for (const auto &entry : std::filesystem::directory_iterator(path)) {
+-        RecursiveCleanupAllEmptyDir(entry.path());
+-    }
+-
+-    if (std::filesystem::is_empty(path)) {
+-        // std::error_code ec;
+-        std::filesystem::remove(path);
+-    }
+-}
+-
+ Status VirtualStore::Rename(const std::string &old_path, const std::string &new_path) {
+     if (!std::filesystem::path(old_path).is_absolute()) {
+         UnrecoverableError(fmt::format("{} isn't absolute path.", old_path));
+```
+
+**File**: `src/storage/new_txn/new_txn_data_impl.cpp` (modified, +1/-4)
+```diff
+@@ -327,10 +327,7 @@ Status NewTxn::Import(const std::string &db_name, const std::string &table_name,
+     }
  
-     std::vector<std::shared_ptr<std::string>> log_strings;
-@@ -260,6 +269,9 @@ void WalManager::NewFlush() {
+     if (VirtualStore::Exists(import_tmp_path)) {
+-        Status remove_status = VirtualStore::RemoveDirectory(import_tmp_path);
+-        if (!remove_status.ok()) {
+-            LOG_WARN(fmt::format("Failed to remove import temp directory: {}", import_tmp_path));
+-        }
++        VirtualStore::RemoveDirectory(import_tmp_path);
+     }
  
-         LOG_TRACE(fmt::format("Attempt to write {} logs", txn_batch.size()));
+     std::vector<WalSegmentInfo> segment_infos;
+```
+
+**File**: `src/storage/new_txn/new_txn_impl.cpp` (modified, +37/-43)
+```diff
+@@ -4707,10 +4707,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+             ImportTxnStore *import_txn_store = static_cast<ImportTxnStore *>(base_txn_store_.get());
  
-+        // Begin ts of the checkpoint written by this batch (0: none), assigned after the swap so that it
-+        // names the file the checkpoint entry was really written to.
-+        TxnTimeStamp last_ckp_begin_ts{0};
-         for (const auto &txn : txn_batch) {
-             if (txn == nullptr) {
-                 // terminate entry
-@@ -291,6 +303,13 @@ void WalManager::NewFlush() {
-                                      txn->CommitTS(),
-                                      txn->TxnID()));
-                 this->SwapWalFile(max_commit_ts_, true);
-+                if (txn->BeginTS() > last_ckp_begin_ts) {
-+                    last_ckp_begin_ts = txn->BeginTS();
-+                } else {
-+                    LOG_WARN(fmt::format("Checkpoint begin ts {} is not newer than the recorded {}, keep the recorded ts",
-+                                         txn->BeginTS(),
-+                                         last_ckp_begin_ts));
-+                }
+             if (VirtualStore::Exists(import_txn_store->import_tmp_path_)) {
+-                Status remove_status = VirtualStore::RemoveDirectory(import_txn_store->import_tmp_path_);
+-                if (!remove_status.ok()) {
+-                    LOG_WARN(fmt::format("Failed to remove import temp directory during rollback: {}", import_txn_store->import_tmp_path_));
+-                }
++                VirtualStore::RemoveDirectory(import_txn_store->import_tmp_path_);
+             } else {
+                 Config *config = InfinityContext::instance().config();
+                 std::string data_dir = config->DataDir();
+@@ -4730,10 +4727,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+                                                               segment_info.segment_id_);
+ 
+                         if (VirtualStore::Exists(segment_dir)) {
+-                            Status remove_status = VirtualStore::RemoveDirectory(segment_dir);
+-                            if (!remove_status.ok()) {
+-                                LOG_WARN(fmt::format("Failed to remove segment directory during rollback: {}", segment_dir));
+-                            }
++                            VirtualStore::RemoveDirectory(segment_dir);
+                         }
+                     }
+                 }
+@@ -4962,10 +4956,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+                                                       segment_info.segment_id_);
+ 
+                 if (VirtualStore::Exists(segment_dir)) {
+-                    Status remove_status = VirtualStore::RemoveDirectory(segment_dir);
+-                    if (!remove_status.ok()) {
+-                        LOG_WARN(fmt::format("Failed to remove segment directory during rollback: {}", segment_dir));
+-                    }
++                    VirtualStore::RemoveDirectory(segment_dir);
+                 }
              }
  
-             for (const std::shared_ptr<WalCmd> &cmd : entry->cmds_) {
-@@ -308,7 +327,7 @@ void WalManager::NewFlush() {
-                                                act_size,
-                                                entry->ToString()));
+@@ -4978,10 +4969,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+                                                     index_cmd.index_id_);
+ 
+                 if (VirtualStore::Exists(index_dir)) {
+-                    Status remove_status = VirtualStore::RemoveDirectory(index_dir);
+-                    if (!remove_status.ok()) {
+-                        LOG_WARN(fmt::format("Failed to remove index directory during rollback: {}", index_dir));
+-                    }
++                    VirtualStore::RemoveDirectory(index_dir);
+                 }
              }
--            ofs_.write(buf->data(), ptr - buf->data());
-+            wal_handle_->Append(buf->data(), ptr - buf->data());
  
-             if (InfinityContext::instance().GetServerRole() == NodeRole::kLeader) {
-                 if (cluster_manager == nullptr) {
-@@ -326,19 +345,11 @@ void WalManager::NewFlush() {
-             break;
+@@ -4990,10 +4978,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+                 fmt::format("{}/db_{}/tbl_{}", data_dir, restore_table_txn_store->db_id_str_, restore_table_txn_store->table_id_str_);
+ 
+             if (VirtualStore::Exists(table_dir)) {
+-                Status remove_status = VirtualStore::RemoveDirectory(table_dir);
+-                if (!remove_status.ok()) {
+-                    LOG_WARN(fmt::format("Failed to remove table directory during rollback: {}", table_dir));
+-                }
++                VirtualStore::RemoveDirectory(table_dir);
+             }
+ 
+             // // Clean up metadata entries that were created
+@@ -5050,10 +5035,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+             std::string db_dir = fmt::format("{}/db_{}", data_dir, restore_database_txn_store->db_id_str_);
+ 
+             if (VirtualStore::Exists(db_dir)) {
+-                Status remove_status = VirtualStore::RemoveDirectory(db_dir);
+-                if (!remove_status.ok()) {
+-                    LOG_WARN(fmt::format("Failed to remove database directory during rollback: {}", db_dir));
+-                }
++                VirtualStore::RemoveDirectory(db_dir);
+             }
+ 
+             // for (const auto &restore_table_txn_store : restore_database_txn_store->restore_table_txn_stores_) {
+@@ -5113,10 +5095,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
+                 std::string db_dir = fmt::format("{}/db_{}", data_dir, restore_database_txn_store->db_id_str_);
+ 
+                 if (VirtualStore::Exists(db_dir)) {
+-                    Status remove_status = VirtualStore::RemoveDirectory(db_dir);
+-                    if (!remove_status.ok()) {
+-                        LOG_WARN(fmt::format("Failed to remove database directory during rollback: {}", db_dir));
+-                    }
++                    VirtualStore::RemoveDirectory(db_dir);
+                 }
+ 
+                 // for (const auto &restore_table_txn_store : restore_database_txn_store->restore_table_txn_stores_) {
+@@ -5256,16 +5235,6 @@ Status NewTxn::Cleanup() {
          }
- 
--        switch (flush_option_) {
--            case FlushOptionType::kFlushAtOnce: {
--                ofs_.flush();
--                break;
--            }
--            case FlushOptionType::kOnlyWrite: {
--                ofs_.flush(); // FIXME: not flush, only write
--                break;
--            }
--            case FlushOptionType::kFlushPerSecond: {
--                ofs_.flush(); // FIXME: not flush, flush per second
--                break;
--            }
-+        // Appends reach the kernel during the loop above, so this fsync makes the whole batch durable.
-+        // It syncs the current file; a mid-batch swap syncs the rotated one before renaming it away.
-+        Status status = wal_handle_->Sync();
-+        if (!status.ok()) {
-+            UnrecoverableError(fmt::format("Fail to sync wal file {}: {}", wal_path_, status.message()));
-         }
- 
-         if (InfinityContext::instance().GetServerRole() == NodeRole::kLeader) {
-@@ -352,6 +363,10 @@ void WalManager::NewFlush() {
-         }
-         txn_batch.clear();
- 
-+        if (last_ckp_begin_ts != 0) {
-+            RecycleWalFile(last_ckp_begin_ts);
-+        }
-+
-         if (!VirtualStore::Exists(wal_path_)) {
-             LOG_ERROR(fmt::format("WAL file: {} does not exist", wal_path_));
-             LOG_ERROR(fmt::format("To list the files in WAL directory: {}", wal_dir_));
-@@ -433,9 +448,8 @@ void WalManager::FlushLogByReplication(const std::vector<std::string> &synced_lo
      }
  
-     for (const std::string &synced_log : synced_logs) {
--        ofs_.write(synced_log.c_str(), synced_log.size());
-+        wal_handle_-
+-    if (metas.empty()) {
+-        LOG_TRACE("Cleanup: No data need to clean. Try to remove all empty directories...");
+-        BufferManager *buffer_mgr = InfinityContext::instance().storage()->buffer_manag
 ```
 
-**File**: `src/unit_test/storage/wal/recycle_log_ut.cpp` (modified, +60/-0)
+**File**: `src/unit_test/base_test_impl.cpp` (modified, +0/-4)
 ```diff
-@@ -34,6 +34,7 @@ import :txn_state;
- import :new_txn;
- import :new_txn_manager;
- import :wal_manager;
-+import :virtual_store;
- 
- import global_resource_usage;
- import compilation_config;
-@@ -117,6 +118,21 @@ TEST_P(RecycleLogTest, recycle_wal_after_delta_checkpoint) {
-             status = new_txn_mgr->CommitTxn(txn);
-             EXPECT_TRUE(status.ok());
+@@ -120,10 +120,6 @@ void BaseTestWithParam<T>::CheckFilePaths(std::vector<std::string> &delete_file_
+                 ADD_FAILURE() << "File path is not absolute: " << file_path;
+             }
+             EXPECT_FALSE(std::filesystem::exists(file_path));
+-
+-            auto path = static_cast<std::filesystem::path>(file_path).parent_path();
+-            EXPECT_TRUE(!std::filesystem::exists(path) || std::filesystem::is_directory(path) && !std::filesystem::is_empty(path) ||
+-                        std::filesystem::is_directory(path) && std::filesystem::is_empty(path) && path == data_dir);
          }
-+        { // every rotated wal file is covered by the checkpoint, so none of them survives it
-+            // The flush thread recycles after releasing the commit threads, so poll instead of asserting once.
-+            const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
-+            while (true) {
-+                auto [temp_wal_info, wal_infos] = WalFile::ParseWalFilenames(wal_dir);
-+                if (wal_infos.empty()) {
-+                    break;
-+                }
-+                if (std::chrono::steady_clock::now() > deadline) {
-+                    ADD_FAILURE() << "Still " << wal_infos.size() << " rotated wal file(s) after the checkpoint";
-+                    break;
-+                }
-+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-+            }
-+        }
-         infinity::InfinityContext::instance().UnInit();
- 
- #ifdef INFINITY_DEBUG
-@@ -151,3 +167,47 @@ TEST_P(RecycleLogTest, recycle_wal_after_delta_checkpoint) {
- #endif
-     }
- }
-+
-+// Reclaiming drops exactly the rotated segments the checkpoint already contains, i.e. those whose max
-+// commit ts is below ckp_ts. A segment at ckp_ts itself is not covered, and the current wal.log is
-+// never part of the rotated set.
-+TEST_P(RecycleLogTest, recycle_deletes_only_covered_segments) {
-+    infinity::InfinityContext::instance().UnInit();
-+    CleanupDbDirs();
-+#ifdef INFINITY_DEBUG
-+    infinity::GlobalResourceUsage::Init();
-+#endif
-+    std::shared_ptr<std::string> config_path = RecycleLogTest::test_ckp_recycle_config();
-+    infinity::InfinityContext::instance().InitPhase1(config_path);
-+    infinity::InfinityContext::instance().InitPhase2();
-+
-+    Storage *storage = infinity::InfinityContext::instance().storage();
-+    WalManager *wal_manager = storage->wal_manager();
-+    const std::string &wal_dir = storage->config()->WALDir();
-+
-+    constexpr TxnTimeStamp ckp_ts = 100;
-+    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts - 2), 0).ok());
-+    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts), 0).ok());
-+    ASSERT_TRUE(VirtualStore::Truncate(wal_dir + "/" + WalFile::WalFilename(ckp_ts + 2), 0).ok());
-+
-+    wal_manager->RecycleWalFile(ckp_ts);
-+
-+    {
-+        auto [temp_wal_info, wal_infos] = WalFile::ParseWalFilenames(wal_dir);
-+        ASSERT_EQ(wal_infos.size(), 2u);
-+        std::vector<TxnTimeStamp> remaining;
-+        for (const auto &wal_info : wal_infos) {
-+            remaining.push_back(wal_info.max_commit_ts_);
-+        }
-+        std::sort(remaining.begin(), remaining.end());
-+        EXPECT_EQ(remaining, (std::vector<TxnTimeStamp>{ckp_ts, ckp_ts + 2}));
-+    }
-+
-+    infinity::InfinityContext::instance().UnInit();
-+
-+#ifdef INFINITY_DEBUG
-+    EXPECT_EQ(infinity::GlobalResourceUsage::GetObjectCount(), 0);
-+    EXPECT_EQ(infinity::GlobalResourceUsage::GetRawMemoryCount(), 0);
-+    infinity::GlobalResourceUsage::UnInit();
-+#endif
-+}
-```
-
----
-
-### Incident Patch 3: `cb2859bc` (2026-11-02)
-**Commit Message**: CI: Fix no tar file in artifacts (#3538)
-
-**File**: `.github/workflows/tests.yml` (modified, +3/-0)
-```diff
-@@ -2652,6 +2652,7 @@ jobs:
-           echo "chown -R ${USER} ${GITHUB_WORKSPACE}" && sudo chown -R ${USER} ${GITHUB_WORKSPACE}
-           ARTIFACTS_DIR=${RUNNER_WORKSPACE_PREFIX}/artifacts/${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}
-           echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> ${GITHUB_ENV}
-+          mkdir -p ${ARTIFACTS_DIR}
-           tar xzf ${ARTIFACTS_DIR}/infinity.tgz && git reset --hard && git clean -ffdx
- 
-       - name: Start builder container
-@@ -2673,6 +2674,7 @@ jobs:
-       - name: Upload artifacts
-         if: ${{ !cancelled() && !failure() && steps.build.outcome == 'success' }}
-         run: |
-+          mkdir -p ${ARTIFACTS_DIR}
-           tar -cf - cmake-build-reldeb/src/infinity cmake-build-reldeb/benchmark/local_infinity/{knn_import_benchmark,knn_query_benchmark} | tar -C ${ARTIFACTS_DIR} -xf -
- 
-       - name: Remove build container
-@@ -2693,6 +2695,7 @@ jobs:
-           echo "chown -R ${USER} ${GITHUB_WORKSPACE}" && sudo chown -R ${USER} ${GITHUB_WORKSPACE}
-           ARTIFACTS_DIR=${RUNNER_WORKSPACE_PREFIX}/artifacts/${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}
-           echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> ${GITHUB_ENV}
-+          mkdir -p ${ARTIFACTS_DIR}
-           tar xzf ${ARTIFACTS_DIR}/infinity.tgz && git reset --hard && git clean -ffdx
-           tar -C ${ARTIFACTS_DIR} -cf - cmake-build-reldeb/benchmark/local_infinity/{knn_import_benchmark,knn_query_benchmark} | tar -xf -
- 
+         for (const auto &file_path : exist_file_paths) {
+             if (!std::filesystem::path(file_path).is_absolute()) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
 - **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
 - **PR #3535** (2026-11-01): feat(search): heap-based block-max WAND as the default top-k early-termination iterator (@yingfeng)
 - **PR #3534** (2026-11-03): fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (@qinling0210)
 - **PR #3533** (2026-11-02): fix(storage): make block map access thread-safe and look up block metas by block id (@qinling0210)
 - **PR #3532** (2026-10-27): fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (@qinling0210)
-- **PR #3530** (2026-10-27): fix(sdk): parse chained arithmetic left to right in the Go SDK (@RaphaelFakhri)
 
 ---
 
@@ -1959,30 +1568,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): make block map access thread-safe and look up block metas by block id 
+## X. cleanup): remove only the dirs of dropped entities (#3539)
 
 **RULE**:
-When implementing operations in `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/storage/io/virtual_store.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c81b068`: storage): make block map access thread-safe and look up block metas by block id (#3533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f7eca22`: cleanup): remove only the dirs of dropped entities (#3539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/executor/operator/physical_scan/physical_match_sparse_scan_impl.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/io/virtual_store.cppm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        if (block_meta == nullptr) [[unlikely]] {
-            UnrecoverableError(fmt::format("MatchSparseScan: block not found. segment_id: {}, block_id: {}", segment_id, block_id));
-        }
+    static void RemoveDirectory(const std::string &path);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    static Status RemoveDirectory(const std::string &path);
+    static void RecursiveCleanupAllEmptyDir(const std::string &path);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c81b068` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f7eca22` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `1cadf448`  
+> **Source Version**: `d02e800f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:09:08.215Z  
+> **Timestamp**: 2026-11-04T20:31:57.260Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:09:06.733Z  
+> **Harvest Timestamp**: 2026-11-04T20:31:56.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4400 stars
+- **Stars / Engagement**: 4440 stars
 
 ---
 
@@ -887,6 +887,27 @@ pub struct Frame<'a> {
     pub repainted: &'a [Rect],
     pub opaque: &'a [OpaqueArea],
     pub ui_over_surfaces: &'a [Rect],
+    pub layer: Option<&'a ScrollLayer>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ScrollLayer {
+    pub area: Rect,
+    pub origin_y: i64,
+    pub under: Vec<Pixels>,
+    pub overlays: Vec<Overlay>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Pixels {
+    pub rect: Rect,
+    pub rgba: Vec<u8>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Overlay {
+    pub pixels: Pixels,
+    pub above: bool,
 }
 
 type GlyphKey = (usize, char, u32);
@@ -973,10 +994,45 @@ fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
 type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
 std::thread_local! {
     static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
+    static SIZES_SEEN: std::cell::RefCell<std::collections::HashSet<(usize, u32)>> = std::cell::RefCell::new(std::collections::HashSet::new());
+    static TO_WARM: std::cell::RefCell<Vec<(usize, f32, char)>> = const { std::cell::RefCell::new(Vec::new()) };
     static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
         std::cell::RefCell::new(std::collections::HashMap::new());
     static LAST_RESAMPLE: std::cell::Cell<Option<(u32, u32, u32, u32)>> =
         const { std::cell::Cell::new(None) };
+}
+
+fn note_size(font: &crate::fonts::Font, px: f32) {
+    if SIZES_SEEN.with_borrow_mut(|seen| seen.insert((font.id(), px.to_bits()))) {
+        TO_WARM.with_borrow_mut(|queue| queue.push((font.id(), px, ' ')));
+    }
+}
+
+pub(crate) fn glyphs_to_warm() -> bool {
+    TO_WARM.with_borrow(|queue| !queue.is_empty())
+}
+
+pub(crate) fn warm_glyphs(fonts: &[crate::fonts::Font], until: std::time::Instant) {
+    while std::time::Instant::now() < until {
+        let Some((id, px, ch)) = TO_WARM.with_borrow(|queue| queue.last().copied()) else { return };
+        let Some(font) = fonts.iter().find(|f| f.id() == id) else {
+            TO_WARM.with_borrow_mut(|queue| queue.pop());
+            continue;
+        };
+        GLYPH_CACHE.with_borrow_mut(|cache| {
+            cache.entry(glyph_key(font, ch, px)).or_insert_with(|| rasterize_glyph(font, ch, px));
+        });
+        TO_WARM.with_borrow_mut(|queue| match char::from_u32(ch as u32 + 1).filter(|next| *next <= '~') {
+            Some(next) => {
+                if let Some(last) = queue.last_mut() {
+                    last.2 = next;
+                }
+            }
+            None => {
+                queue.pop();
+            }
+        });
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -1117,80 +1173,7 @@ pub(crate) fn take_canvas_stats() -> (u64, u64, u64, u64) {
 fn subtract_rect(
     (fx1, fy1, fx2, fy2): (u32, u32, u32, u32),
     (hx1, hy1, hx2, hy2): (u32, u32, u32, u32),
-    out: &mut Vec<(u32, u32, u32, u32)>,
-) {
-    if hx2 <= fx1 || hx1 >= fx2 || hy2 <= fy1 || hy1 >= fy2 {
-        out.push((fx1, fy1, fx2, fy2));
-        return;
-    }
-    if fy1 < hy1 {
-        out.push((fx1, fy1, fx2, hy1));
-    }
-    if hy2 < fy2 {
-        out.push((fx1, hy2, fx2, fy2));
-    }
-    let my1 = fy1.max(hy1);
-    let my2 = fy2.min(hy2);
-    if fx1 < hx1 {
-        out.push((fx1, my1, hx1, my2));
-    }
-    if hx2 < fx2 {
-        out.push((hx2, my1, fx2, my2));
-    }
-}
-
-fn solid_paint(color: [u8; 4]) -> tiny_skia::Paint<'static> {
-    let mut paint = tiny_skia::Paint::default();
-    paint.set_color_rgba8(color[0], color[1], color[2], color[3]);
-    paint.anti_alias = true;
-    paint
-}
-
-fn blend_pixel(dst: &mut [u8], src: &[u8], alpha: u8) {
-    let inv = 255 - u32::from(alpha);
-    for (d, &s) in dst.iter_mut().zip(src) {
-        *d = (u32::from(s) + (u32::from(*d) * inv + 127) / 255).min(255) as u8;
-    }
-}
-
-fn blend_row(dst: &mut [u8], src: &[u8]) {
-    if src.chunks_exact(4).all(|s| s[3] == 255) {
-        dst.copy_from_slice(src);
-        return;
-    }
-    for (dst, s) in dst.chunks_exact_mut(4).zip(src.chunks_exact(4)) {
-        match s[3] {
-            255 => dst.copy_from_slice(s),
-            0 => {}
-            alpha => blend_pixel(dst, s, alpha),
-        }
-    }
-}
-
-pub struct Canvas {
-    pub width: u32,
-    pub height: u32,
-    pub pixels: Vec<u8>,
-    clip_stack: Vec<(u32, u32, u32, u32)>,
-    occluders: Vec<(u32, (f32, f32, f32, f32))>,
-    next_occluder: u32,
-    scratch: Vec<u8>,
-}
-
-impl Canvas {
-    pub fn new(width: u32, height: u32) -> Self {
-        Self {
-            width,
-            height,
-            pixels: vec![0; (width * height * 4) as usize],
-            clip_stack: Vec::new(),
-            occluders: Vec::new(),
-            next_occluder: 0,
-            scratch: Vec::new(),
-        }
-    }
-
-    pub fn from_rgba(pixels: Vec<u8>,
+    out: &mut Vec<
 ```
 
 ### Core Architecture Module: `pixel/engine/crates/pixel-core/src/clipboard_image.rs`
@@ -1397,6 +1380,7 @@ pub struct Desc {
     pub slot: Option<SlotKind>,
     pub content_height: Option<f32>,
     pub scroll_events: bool,
+    pub stick_events: bool,
     pub wheel_events: bool,
     pub children: Vec<Desc>,
 }
@@ -1418,6 +1402,7 @@ impl Desc {
             content_height: self.content_height,
             shape: None,
             scroll_events: self.scroll_events,
+            stick_events: self.stick_events,
             wheel_events: self.wheel_events,
             pointer_events: false,
             hover_events: false,
@@ -1532,215 +1517,722 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cadf448` (2026-11-02)
-**Commit Message**: Retry frame transport when a tmux client attaches (#241)
+### Incident Patch 1: `d02e800f` (2026-11-04)
+**Commit Message**: Native UI scroll improvements (#243)
 
-A browser started in a detached tmux session never hears an answer
-to its frame probe, so it sends inline frames for the rest of its
-life. Those frames are huge, and the page lags once someone attaches.
-
-Probe again when a client shows up. A focus-in retries once, and a
-resize retries at most once a second. Shared memory or file frames
-take over as soon as the terminal answers. Probe replies are taken
-out of the input on their own, so keys typed during a retry still
-arrive.
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/mod.rs` (modified, +1/-0)
+**File**: `pixel/AGENT-DOCS.md` (modified, +11/-2)
 ```diff
-@@ -865,6 +865,7 @@ impl Engine {
-         if window == self.comp.window && cell == self.cell {
+@@ -160,9 +160,11 @@ Text names fonts by family, as in CSS. `FontFace` is `{ family, src, weight?, st
+ | `flexBasis`, `width`, `height`, `minWidth`, `maxWidth`, `maxHeight` | `number \| "${n}%" \| "auto"` |
+ | `padding`, `margin` | `number \| { top, right, bottom, left }` |
+ | `gap` | `number` |
+-| `position` | `"flow" \| "absolute"` |
++| `position` | `"flow" \| "absolute" \| "sticky"` (sticky: `inset.top` is how close to the top of the scroll area it stops; it stays inside its parent and paints over the parent's other children) |
+ | `inset` | `{ top, right, bottom, left }`, numbers or percents |
+ | `overflow` | `"visible" \| "hidden" \| "scroll"` |
++| `layout` | `"flex" \| "list"`, see Long lists |
++| `scrollAnchor` | `"auto" \| "end"` (`"end"`: a scroll box at its end stays at its end as its content grows) |
+ | `justifyContent` | `"start" \| "center" \| "end" \| "space-between"` |
+ | `alignItems` | `"start" \| "center" \| "end" \| "stretch"` |
+ | `background` | `Color \| { from: [x, y], to: [x, y], stops: [{ at, color }] }` |
+@@ -182,13 +184,20 @@ Text names fonts by family, as in CSS. `FontFace` is `{ family, src, weight?, st
+ 
+ The engine sets the mouse cursor from whatever is under it. The nearest `pointerShape` on the node or an ancestor wins. Without one, an `Input` or selectable text shows `"text"` (text inside a clickable does not), and everything else shows `"default"`. Anything drawn on top decides, so an overlay above an `Input` needs `pointerShape: "text"`.
+ 
++<!-- fixme: placeholder copy -->
++### Long lists
++
++A scroll box with `layout: "list"` lays its children out one at a time as rows at its own width, stacked with `gap` inside `padding`, instead of as one flexbox; the box gets its size from its parent like any scroll box. Changing, adding or removing a row only lays out that row, and scrolling only places and draws the rows on screen, so a list of thousands of rows scrolls and streams as fast as a short one. Rows far from the viewport are laid out in idle time; until then they keep their last height (or the average row height). When rows above the viewport change height, the first visible row keeps its place, so what you are reading never jumps. Use `scrollAnchor: "end"` to keep following new rows at the end, and `position: "sticky"` with `onStick` for headers that stay at the top while their section scrolls by.
++
++Mounting thousands of rows in one commit still costs seconds of React and engine work before anything shows. To open a long list instantly, mount only the rows that fill the screen, then mount older ones a slice at a time with `requestIdle(callback)` (exported from `@zenbu-labs/pixel`, like the browser's `requestIdleCallback`): it calls back once the engine has applied every change made so far and has nothing left to draw, with `applyMs`, how long the engine spent applying changes since the previous idle callback. Size each slice so `applyMs` stays a couple of milliseconds and frames never wait on it. Rows mounted above the viewport don't move what is on screen. It returns a function that cancels the callback.
++
+ ## Components
+ 
+ Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/pixel/src/react/components.ts`. Every component takes `ref` → `NodeHandle` (`components.ts:23`): `focus()`, `blur()`, `scrollTo(offset, smooth?)`, `scrollIntoView(smooth?)`, `splice(start, end, text)`, `selectAll()`, `addMark(mark, offset?)`, `removeMark(mark)`.
+ 
+ | component | props (file:line) |
+ | --- | --- |
+-| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
++| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+ | `Text` | `TextProps` `:128`. children must be strings or numbers. `spans: { start, end, color, background?, bold?, italic?, underline?, strikethrough? }[]`, `onClick`, `onMouseEnter`, `onMouseLeave` |
+ | `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus` (only inputs take focus on click; clicking or selecting other content leaves focus where it is, so call `blur()` from `onClickOutside` to drop it), `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; bloc
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/canvas.rs` (modified, +90/-3)
+```diff
+@@ -10,6 +10,27 @@ pub struct Frame<'a> {
+     pub repainted: &'a [Rect],
+     pub opaque: &'a [OpaqueArea],
+     pub ui_over_surfaces: &'a [Rect],
++    pub layer: Option<&'a ScrollLayer>,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct ScrollLayer {
++    pub area: Rect,
++    pub origin_y: i64,
++    pub under: Vec<Pixels>,
++    pub overlays: Vec<Overlay>,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct Pixels {
++    pub rect: Rect,
++    pub rgba: Vec<u8>,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct Overlay {
++    pub pixels: Pixels,
++    pub above: bool,
+ }
+ 
+ type GlyphKey = (usize, char, u32);
+@@ -96,12 +117,47 @@ fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
+ type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
+ std::thread_local! {
+     static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
++    static SIZES_SEEN: std::cell::RefCell<std::collections::HashSet<(usize, u32)>> = std::cell::RefCell::new(std::collections::HashSet::new());
++    static TO_WARM: std::cell::RefCell<Vec<(usize, f32, char)>> = const { std::cell::RefCell::new(Vec::new()) };
+     static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
+         std::cell::RefCell::new(std::collections::HashMap::new());
+     static LAST_RESAMPLE: std::cell::Cell<Option<(u32, u32, u32, u32)>> =
+         const { std::cell::Cell::new(None) };
+ }
+ 
++fn note_size(font: &crate::fonts::Font, px: f32) {
++    if SIZES_SEEN.with_borrow_mut(|seen| seen.insert((font.id(), px.to_bits()))) {
++        TO_WARM.with_borrow_mut(|queue| queue.push((font.id(), px, ' ')));
++    }
++}
++
++pub(crate) fn glyphs_to_warm() -> bool {
++    TO_WARM.with_borrow(|queue| !queue.is_empty())
++}
++
++pub(crate) fn warm_glyphs(fonts: &[crate::fonts::Font], until: std::time::Instant) {
++    while std::time::Instant::now() < until {
++        let Some((id, px, ch)) = TO_WARM.with_borrow(|queue| queue.last().copied()) else { return };
++        let Some(font) = fonts.iter().find(|f| f.id() == id) else {
++            TO_WARM.with_borrow_mut(|queue| queue.pop());
++            continue;
++        };
++        GLYPH_CACHE.with_borrow_mut(|cache| {
++            cache.entry(glyph_key(font, ch, px)).or_insert_with(|| rasterize_glyph(font, ch, px));
++        });
++        TO_WARM.with_borrow_mut(|queue| match char::from_u32(ch as u32 + 1).filter(|next| *next <= '~') {
++            Some(next) => {
++                if let Some(last) = queue.last_mut() {
++                    last.2 = next;
++                }
++            }
++            None => {
++                queue.pop();
++            }
++        });
++    }
++}
++
+ #[derive(Clone, Copy)]
+ struct RoundedBlit {
+     radius: [f32; 4],
+@@ -373,6 +429,36 @@ impl Canvas {
+     }
+ 
+     // weird impl, but its a fast way to fill an array to a given color without allocating memory beforehand
++    pub(crate) fn raw_copy(&self, rect: Rect) -> Pixels {
++        let stride = self.width as usize * 4;
++        let row_len = rect.w as usize * 4;
++        let mut rgba = Vec::with_capacity(row_len * rect.h as usize);
++        for row in rect.y..rect.y + rect.h {
++            let start = row as usize * stride + rect.x as usize * 4;
++            rgba.extend_from_slice(&self.pixels[start..start + row_len]);
++        }
++        Pixels { rect, rgba }
++    }
++
++    pub(crate) fn straight_copy(&self, rect: Rect) -> Pixels {
++        let stride = self.width as usize * 4;
++        let row_len = rect.w as usize * 4;
++        let mut rgba = Vec::with_capacity(row_len * rect.h as usize);
++        for row in rect.y..rect.y + rect.h {
++            let start = row as usize * stride + rect.x as usize * 4;
++            rgba.extend_from_slice(&self.pixels[start..start + row_len]);
++        }
++        for px in rgba.chunks_exact_mut(4) {
++            let a = u32::from(px[3]);
++            if a != 0 && a != 255 {
++                for c in &mut px[..3] {
++                    *c = ((u32::from(*c) * 255 + a / 2) / a).min(255) as u8;
++                }
++            }
++        }
++        Pixels { rect, rgba }
++    }
++
+     pub fn fill(&mut self, color: [u8; 4]) {
+         if self.pixels.is_empty() {
+             return;
+@@ -537,9 +623,10 @@ impl Canvas {
+                     pen_x += mark_advance_at(marks, range.start + i);
+                     continue;
+                 }
+-                let glyph = cache
+-                    .entry(glyph_key(font, ch, px))
+-                    .or_insert_with(|| rasterize_glyph(font, ch, px));
++                let glyph = cache.entry(glyph_key(font, ch, px)).or_insert_with(|| {
++                    note_size(font, px);
++                    rasterize_glyph(font, ch, px)
++                });
+                 let metrics = glyph.metrics;
+                 let glyph_x = pen_x.round() as i32 + metrics.xmin;
+                 // ymin is the bottom edge's offset from the baseline (positive = up),
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/desc.rs` (modified, +2/-0)
+```diff
+@@ -13,6 +13,7 @@ pub struct Desc {
+     pub slot: Option<SlotKind>,
+     pub content_height: Option<f32>,
+     pub scroll_events: bool,
++    pub stick_events: bool,
+     pub wheel_events: bool,
+     pub children: Vec<Desc>,
+ }
+@@ -34,6 +35,7 @@ impl Desc {
+             content_height: self.content_height,
+             shape: None,
+             scroll_events: self.scroll_events,
++            stick_events: self.stick_events,
+             wheel_events: self.wheel_events,
+             pointer_events: false,
+             hover_events: false,
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/compositor.rs` (modified, +12/-0)
+```diff
+@@ -20,6 +20,8 @@ pub struct View {
+     pub damage_parts: Vec<Rect>,
+     pub opaque: Vec<crate::surfaces::OpaqueArea>,
+     pub ui_over_surfaces: Vec<Rect>,
++    pub layer: Option<crate::canvas::ScrollLayer>,
++    pub layer_canvases: Option<crate::paint::LayerCanvases>,
+ }
+ 
+ impl View {
+@@ -33,6 +35,8 @@ impl View {
+             damage_parts: Vec::new(),
+             opaque: Vec::new(),
+             ui_over_surfaces: Vec::new(),
++            layer: None,
++            layer_canvases: None,
+         }
+     }
+ 
+@@ -55,6 +59,7 @@ pub struct Compositor {
+     pub relayout: bool,
+     pub opaque: Vec<crate::surfaces::OpaqueArea>,
+     pub ui_over_surfaces: Vec<Rect>,
++    layer: Option<crate::canvas::ScrollLayer>,
+     changed: Vec<Rect>,
+     repainted: Vec<Rect>,
+     direct: Option<usize>,
+@@ -75,6 +80,7 @@ impl Compositor {
+             relayout: true,
+             opaque: Vec::new(),
+             ui_over_surfaces: Vec::new(),
++            layer: None,
+             changed: Vec::new(),
+             repainted: Vec::new(),
+             direct: None,
+@@ -257,12 +263,18 @@ impl Compositor {
+             repainted: &self.repainted,
+             opaque: &self.opaque,
+             ui_over_surfaces: &self.ui_over_surfaces,
++            layer: self.layer.as_ref(),
+         }
+     }
+ 
+     fn collect_opaque(&mut self) {
+         self.opaque.clear();
+         self.ui_over_surfaces.clear();
++        let active = self.active_views();
++        self.layer = match active[..] {
++            [only] if self.direct == Some(only) => self.views[only].layer.clone(),
++            _ => None,
++        };
+         for view in self.active_views() {
+             let origin = self.views[view].origin_x;
+             for area in &self.views[view].opaque {
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/frame.rs` (modified, +87/-5)
+```diff
+@@ -9,6 +9,13 @@ use crate::paint::paint;
+ use crate::surfaces::Rect;
+ 
+ const INLINE_FRAME_BUDGET_MB_PER_SEC: f32 = 3.0;
++const PAINT_INTERVAL_WITH_INPUT_PENDING: Duration = Duration::from_millis(16);
++const UNCAPPED_ANIMATION_STEP: Duration = Duration::from_millis(6);
++pub(super) const PRESENT_AFTER_MAX: Duration = Duration::from_micros(7300);
++const PRESENT_AFTER_MIN: Duration = Duration::from_micros(2500);
++const PRESENT_MARGIN: Duration = Duration::from_millis(1);
++const PRESENT_RELAX_PER_FRAME: Duration = Duration::from_micros(50);
++const RECENT_FRAMES: usize = 120;
+ pub(super) const DEFAULT_MAX_FPS: f32 = 0.0;
+ 
+ impl Engine {
+@@ -30,21 +37,54 @@ impl Engine {
+         self.term.note(text);
+     }
+ 
+-    pub(super) fn frame_debt(&self) -> Duration {
+-        let interval = if self.max_fps > 0.0 {
++    pub(super) fn frame_interval(&self) -> Duration {
++        if self.max_fps > 0.0 {
+             Duration::from_secs_f32(1.0 / self.max_fps)
+         } else {
+             Duration::ZERO
+-        };
++        }
++    }
++
++    pub(super) fn paint_interval_with_input_pending(&self) -> Duration {
++        let interval = self.frame_interval();
++        if interval.is_zero() {
++            PAINT_INTERVAL_WITH_INPUT_PENDING
++        } else {
++            interval.min(PAINT_INTERVAL_WITH_INPUT_PENDING)
++        }
++    }
++
++    pub(super) fn until_next_animation_frame(&self) -> Duration {
++        let interval = self.frame_interval();
++        if interval.is_zero() {
++            return UNCAPPED_ANIMATION_STEP;
++        }
++        (self.frame_slot + interval)
++            .checked_duration_since(Instant::now())
++            .filter(|wait| !wait.is_zero())
++            .unwrap_or(interval)
++    }
++
++    pub(super) fn frame_debt(&self) -> Duration {
++        let interval = self.frame_interval();
+         if !self.term.frames_are_inline() {
+             return interval;
+         }
+         let budget = INLINE_FRAME_BUDGET_MB_PER_SEC * 1_000_000.0;
+         interval.max(Duration::from_secs_f32((self.last_frame_bytes as f32 / budget).min(0.2)))
+     }
+ 
++    pub fn since_input(&self) -> Duration {
++        self.last_input.elapsed()
++    }
++
++    pub fn idle(&self) -> bool {
++        !self.frame_deferred && !self.draws_something()
++    }
++
+     pub(super) fn draws_something(&self) -> bool {
+         self.comp.dirty
++            || self.term.holds_a_frame()
+             || self.comp.active_views().iter().any(|&i| {
+                 let view = &self.comp.views[i];
+                 view.tree.dirty()
+@@ -54,12 +94,14 @@ impl Engine {
+     }
+ 
+     pub(super) fn frame(&mut self) -> io::Result<()> {
++        self.apply_scroll_requests();
+         let debt = self.frame_debt();
+         let now = Instant::now();
+-        if !debt.is_zero() && now.duration_since(self.last_frame) < debt {
++        if !debt.is_zero() && now.duration_since(self.frame_slot) < debt {
+             self.frame_deferred = self.draws_something();
+             if self.frame_deferred {
+-                self.frame_due = Some(self.last_frame + debt);
++                self.frame_due = Some(self.frame_slot + debt);
++                self.note_frame_wanted();
+                 return Ok(());
+             }
+         } else {
+@@ -85,13 +127,21 @@ impl Engine {
+                 }
+             })
+             .collect();
++        if self.term.holds_a_frame() {
++            self.comp.dirty = true;
++        }
+         if work.is_empty() && !self.comp.dirty {
              return Ok(());
          }
-+        self.term.retry_frame_transport(false)?;
-         let estimate = ws.cell_size();
+         let cpu = crate::profiler::cpu_us();
+         crate::profiler::span("frame", || -> io::Result<()> {
+             let start = Instant::now();
++            let interval = self.frame_interval();
++            let next_slot = self.frame_slot + interval;
++            let slot = if !interval.is_zero() && start >= next_slot && start < next_slot + interval { next_slot } else { start };
++            self.term.present_at((!interval.is_zero()).then(|| slot + self.present_after));
+             let mut painted: Vec<Painted> = Vec::new();
++            let draws_layers = self.term.draws_layers();
+             for (i, whole) in work {
+                 let size = self.comp.views[i].size;
+                 if size.0 == 0 || size.1 == 0 {
+@@ -142,6 +192,15 @@ impl Engine {
+                 let opaque = crate::paint::opaque_areas(&view.tree);
+                 view.opaque = opaque.areas;
+                 view.ui_over_surfaces = opaque.ui_over_surfaces;
++                view.layer = draws_layers.then(|| crate::paint::scroll_layer(&view.tree)).flatten().map(|plan| {
++                    crate::profiler::span("paint.layer", || {
++                        let canvases = view.layer_canvases.get_or_insert_with(|| crate::paint::LayerCanvases::new(size.0, size.1));
++                        if canvases.size() != size {
++                            *canvases = crate::paint::LayerCanvases::new(size.0, size.1);
++                        }
++                        crate::paint::render_layer(&view.tree, &pl
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/mod.rs` (modified, +60/-15)
+```diff
+@@ -55,7 +55,6 @@ fn window_from(ws: &crate::terminal::WindowSize, cell: (u32, u32), cell_is_exact
+     (width, height)
+ }
+ 
+-const PAINT_INTERVAL_WITH_INPUT_PENDING: Duration = Duration::from_millis(16);
+ const CELL_REPLY_WAIT: Duration = Duration::from_millis(150);
+ 
+ static DEFAULT_PROFILE: Smooth = Smooth {
+@@ -166,6 +165,12 @@ pub enum EngineEvent {
+         offset: f32,
+         max: f32,
+     },
++    Stick {
++        view: usize,
++        node: NodeId,
++        key: Option<String>,
++        stuck: bool,
++    },
+     Resize {
+         view: usize,
+         width: u32,
+@@ -298,14 +303,10 @@ pub struct Engine {
+     term_focused: bool,
+     pub native: Option<NativeScroll>,
+     pub use_native: bool,
+-    pixel_mouse: bool,
+     last_native_scroll: Option<Instant>,
+     pairing: NativePairing,
+     hover_oracle: HoverOracle,
+     pub profile: &'static dyn ScrollProfile,
+-    pub(super) last_wheel_tick:
+-        Option<(Instant, crate::terminal::MouseKind, u32, u32, crate::terminal::Mods)>,
+-    pub(super) wheel_echo_consumed: bool,
+     default_menu: bool,
+     menu: MenuController,
+     inspect_mode: bool,
+@@ -347,16 +348,26 @@ pub struct Engine {
+     last_color_request: Option<Instant>,
+     last_step: Instant,
+     last_frame: Instant,
++    last_input: Instant,
++    frame_slot: Instant,
++    present_after: Duration,
++    ready_times: std::collections::VecDeque<Duration>,
+     last_frame_bytes: usize,
+     frame_deferred: bool,
+     max_fps: f32,
+     frame_due: Option<Instant>,
++    scroll_requests: Vec<(usize, scroll::ScrollRequest, bool)>,
+     pub stats: FrameStats,
+ }
+ 
+ const COLOR_SETTLE_DELAY: Duration = Duration::from_millis(50);
+ const COLOR_REQUEST_INTERVAL: Duration = Duration::from_secs(1);
+ const RELAYED_RESIZE_POLL: Duration = Duration::from_millis(500);
++const PRECISE_WAIT_TAIL: Duration = Duration::from_micros(1500);
++const PRECISE_WAIT_STEP: Duration = Duration::from_micros(250);
++const ROW_CATCH_UP_POLL: Duration = Duration::from_millis(8);
++const ROW_CATCH_UP_BUDGET: Duration = Duration::from_millis(4);
++const ROW_CATCH_UP_MARGIN: Duration = Duration::from_millis(3);
+ 
+ impl Engine {
+     pub fn new(config: EngineConfig) -> io::Result<Self> {
+@@ -386,7 +397,6 @@ impl Engine {
+             NativeScroll::spawn(term.waker().ok())
+         };
+         let use_native = native.is_some();
+-        let pixel_mouse = term.reports_pixel_mouse();
          logging::info(
              "engine",
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/terminal.rs` (modified, +261/-29)
-```diff
-@@ -286,6 +286,7 @@ pub struct Terminal {
-     pending: Vec<u8>,
-     lone_escape_since: Option<Instant>,
-     transport: FrameTransport,
-+    transport_retry: TransportRetry,
-     herdr: Option<crate::herdr::Herdr>,
-     herdr_target: Option<crate::herdr::HerdrTarget>,
-     herdr_retry: Option<(Instant, Duration)>,
-@@ -556,6 +557,7 @@ impl Terminal {
-             pending: Vec::new(),
-             lone_escape_since: None,
-             transport: FrameTransport::Inline,
-+            transport_retry: TransportRetry::Settled,
-             herdr: None,
-             herdr_target,
-             herdr_retry: None,
-@@ -629,13 +631,12 @@ impl Terminal {
-             crate::logging::info("terminal", format!("frame transport forced to {forced:?}"));
-             return Ok(forced);
+             format!(
+@@ -420,13 +430,10 @@ impl Engine {
+             term_focused: true,
+             native,
+             use_native,
+-            pixel_mouse,
+             last_native_scroll: None,
+             pairing: NativePairing::new(),
+             hover_oracle: HoverOracle::new(),
+             profile: &DEFAULT_PROFILE,
+-            last_wheel_tick: None,
+-            wheel_echo_consumed: false,
+             default_menu: false,
+             menu: MenuController::default(),
+             inspect_mode: false,
+@@ -462,10 +469,15 @@ impl Engine {
+             last_color_request: None,
+             last_step: Instant::now(),
+             last_frame: Instant::now(),
++            last_input: Instant::now(),
++            frame_slot: Instant::now(),
++            present_after: frame::PRESENT_AFTER_MAX,
++            ready_times: std::collections::VecDeque::new(),
+             last_frame_bytes: 0,
+             frame_deferred: false,
+             max_fps,
+             frame_due: None,
++            scroll_requests: Vec::new(),
+             stats: FrameStats::default(),
+         };
+         Ok(engine)
+@@ -644,7 +656,7 @@ impl Engine {
+         let mut first_wait = if self.frame_deferred && let Some(due) = self.frame_due {
+             Some(due.saturating_duration_since(Instant::now()).max(Duration::from_millis(1)))
+         } else if self.animating() || self.frame_deferred {
+-            Some(Duration::from_millis(6))
++            Some(self.until_next_animation_frame())
+         } else if !out_empty {
+             Some(Duration::ZERO)
+         } else {
+@@ -665,13 +677,38 @@ impl Engine {
+         if self.term.relayed() {
+             first_wait = Some(first_wait.map_or(RELAYED_RESIZE_POLL, |w| w.min(RELAYED_RESIZE_POLL)));
          }
--        if self.probe_shared_memory()? {
--            crate::logging::info("terminal", "frames go through shared memory");
--            return Ok(FrameTransport::Shared);
-+        let probe = self.probe_frames()?;
-+        if probe == FrameProbe::Unanswered && self.wrapper.relayed() && !present::over_ssh(env) {
-+            self.transport_retry = TransportRetry::Ready;
-         }
--        if self.probe_frame_file()? {
--            crate::logging::info("terminal", "frames go through a file the terminal re-reads");
--            return Ok(FrameTransport::File);
-+        if let FrameProbe::Accepted(transport) = probe {
-+            return Ok(transport);
-         }
-         // bad
-         crate::logging::warn(
-@@ -650,10 +651,49 @@ impl Terminal {
-         Ok(FrameTransport::Inline)
-     }
- 
--    fn probe_frame_file(&mut self) -> io::Result<bool> {
-+    fn probe_frames(&mut self) -> io::Result<FrameProbe> {
-+        let shared = self.probe_shared_memory()?;
-+        if shared == Some(true) {
-+            crate::logging::info("terminal", "frames go through shared memory");
-+            return Ok(FrameProbe::Accepted(FrameTransport::Shared));
+-        self.term.poll_event(first_wait)
++        if self.rows_pending() {
++            first_wait = Some(first_wait.map_or(ROW_CATCH_UP_POLL, |w| w.min(ROW_CATCH_UP_POLL)));
 +        }
-+        let file = self.probe_frame_file()?;
-+        if file == Some(true) {
-+            crate::logging::info("terminal", "frames go through a file the terminal re-reads");
-+            return Ok(FrameProbe::Accepted(FrameTransport::File));
++        match first_wait {
++            Some(wait) => self.wait_precisely(wait),
++            None => self.term.poll_event(None),
 +        }
-+        if shared.is_none() && file.is_none() {
-+            return Ok(FrameProbe::Unanswered);
-+        }
-+        Ok(FrameProbe::Refused)
 +    }
 +
-+    pub(crate) fn retry_frame_transport(&mut self, client_present: bool) -> io::Result<()> {
-+        let due = match self.transport_retry {
-+            TransportRetry::Settled => false,
-+            TransportRetry::Ready => true,
-+            TransportRetry::NotBefore(at) => client_present || Instant::now() >= at,
++    fn wait_precisely(&mut self, wait: Duration) -> io::Result<Option<crate::terminal::Event>> {
++        let deadline = Instant::now() + wait;
++        let coarse_end = deadline - wait.min(PRECISE_WAIT_TAIL);
++        if let Some(event) = self.term.poll_event(Some(coarse_end.saturating_duration_since(Instant::now())))? {
++            return Ok(Some(event));
++        }
++        if Instant::now() + PRECISE_WAIT_STEP < coarse_end {
++            r
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/pointer.rs` (modified, +3/-28)
+```diff
+@@ -6,8 +6,6 @@ use crate::menu::MenuClick;
+ use crate::terminal::{Mods, Mouse, MouseButton, MouseKind};
+ use crate::tree::{HitTarget, NodeId};
+ 
+-const WHEEL_ECHO_WINDOW: std::time::Duration = std::time::Duration::from_millis(2);
+-
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(super) enum DragTarget {
+     Input(NodeId),
+@@ -36,29 +34,9 @@ impl Engine {
+                 | MouseKind::ScrollLeft
+                 | MouseKind::ScrollRight
+         );
+-        // this is a weird case that I observed where inside kitty 2 scroll events
+-        // were being emitted per scroll tick. This is very suspicious and makes me
+-        // suspicious that something else was the casue of this, but this is a temporary
+-        // work around for now
+-        if scrolling {
+-            let echo = !self.wheel_echo_consumed
+-                && self.last_wheel_tick.is_some_and(|(at, kind, x, y, mods)| {
+-                    kind == mouse.kind
+-                        && x == mouse.x
+-                        && y == mouse.y
+-                        && mods == mouse.mods
+-                        && now.duration_since(at) < WHEEL_ECHO_WINDOW
+-                });
+-            if echo {
+-                self.wheel_echo_consumed = true;
+-                return Ok(());
+-            }
+-            self.wheel_echo_consumed = false;
+-            self.last_wheel_tick = Some((now, mouse.kind, mouse.x, mouse.y, mouse.mods));
+-        }
+         if self.use_native && self.native.is_some() {
+             self.ingest_native();
+-            let located = self.pixel_mouse.then_some(point);
++            let located = self.term.reports_pixel_mouse().then_some(point);
+             if scrolling && mouse.mods == Mods::default() {
+                 if self
+                     .pairing
+@@ -125,11 +103,8 @@ impl Engine {
+                     .hit_drag(local.0, local.1)
+                     .filter(|&id| {
+                         let tree = &self.comp.views[view].tree;
+-                        let drag_order = tree.paint_order_of(id).unwrap_or(0);
+                         let covered = match tree.hit_target(local.0, local.1) {
+-                            Some(HitTarget::Input(t)) | Some(HitTarget::Click(t)) => {
+-                                tree.paint_order_of(t).unwrap_or(0) > drag_order
+-                            }
++                            Some(HitTarget::Input(t)) | Some(HitTarget::Click(t)) => tree.drawn_after(t, id),
+                             _ => false,
+                         };
+                         !covered
+@@ -438,7 +413,7 @@ impl Engine {
+             precise,
+             mods,
+         });
+-        true
++        tree.scroll_area(node).is_none()
+     }
+ 
+     fn mark_pointer(&mut self, name: &'static str, point: (f32, f32)) {
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/scroll.rs` (modified, +145/-55)
+```diff
+@@ -17,7 +17,17 @@ impl Engine {
+                 .iter()
+                 .any(|&id| tree.scroll_state(id).is_some_and(|s| !s.settled()))
+         });
+-        scrolling || self.bars_animating() || self.term.highlight_active()
++        scrolling || self.bars_animating() || self.term.highlight_active() || self.term.holds_a_frame()
++    }
++
++    pub(super) fn moving(&self) -> bool {
++        self.comp.active_views().into_iter().any(|view| {
++            let tree = &self.comp.views[view].tree;
++            tree.scroll_nodes().iter().any(|&id| {
++                let fading = tree.bar_opacity(id) > 0.0 && tree.bar_opacity(id) < 1.0;
++                fading || tree.scroll_state(id).is_some_and(|s| !s.settled())
++            })
++        }) || self.term.highlight_active()
+     }
+ 
+     pub(super) fn bar_at(&self, view: usize, point: (f32, f32)) -> Option<NodeId> {
+@@ -92,7 +102,46 @@ impl Engine {
+         })
+     }
+ 
++    pub(super) fn rows_pending(&self) -> bool {
++        self.comp.active_views().into_iter().any(|view| self.comp.views[view].tree.rows_pending())
++    }
++
++    pub(super) fn catch_up_rows(&mut self, busy: bool) {
++        let until = if busy {
++            self.frame_slot + self.frame_interval().saturating_sub(super::ROW_CATCH_UP_MARGIN)
++        } else {
++            Instant::now() + super::ROW_CATCH_UP_BUDGET
 +        };
-+        if !due {
-+            return Ok(());
++        if until <= Instant::now() {
++            return;
 +        }
-+        self.transport_retry = match self.probe_frames()? {
-+            FrameProbe::Accepted(transport) => {
-+                self.transport = transport;
-+                TransportRetry::Settled
++        for view in self.comp.active_views() {
++            let tree = &mut self.comp.views[view].tree;
++            if tree.rows_pending() {
++                tree.catch_up_rows(&self.fonts, until);
 +            }
-+            FrameProbe::Unanswered if !client_present => {
-+                TransportRetry::NotBefore(Instant::now() + TRANSPORT_RETRY_GAP)
-+            }
-+            FrameProbe::Unanswered | FrameProbe::Refused => TransportRetry::Settled,
++        }
++    }
++
++    pub(super) fn warm_glyphs(&mut self, busy: bool) {
++        let until = if busy {
++            self.frame_slot + self.frame_interval().saturating_sub(super::ROW_CATCH_UP_MARGIN)
++        } else {
++            Instant::now() + super::ROW_CATCH_UP_BUDGET
 +        };
-+        Ok(())
++        if until > Instant::now() {
++            crate::canvas::warm_glyphs(&self.fonts, until);
++        }
 +    }
 +
-+    fn probe_frame_file(&mut self) -> io::Result<Option<bool>> {
-         let path = self.frame_path(FRAME_SLOTS, 0);
-         if std::fs::write(&path, [0u8, 0, 0, 255]).is_err() {
--            return Ok(false);
-+            return Ok(Some(false));
-         }
-         let name = path.to_string_lossy().into_owned();
-         self.io.out().write_all(&crate::kitty::kitty_query_medium(
-@@ -665,17 +705,17 @@ impl Terminal {
-             self.wrapper,
-         ))?;
-         self.io.out().flush()?;
--        let reply = self.read_report(FRAME_PROBE_TIMEOUT_MS, |buf| {
-+        let reply = self.read_report_keeping_input(FRAME_PROBE_TIMEOUT_MS, |buf| {
-             parse_probe_reply(buf, b"Gi=300;")
-         })?;
-         let _ = std::fs::remove_file(&path);
--        Ok(reply.unwrap_or(false))
-+        Ok(reply)
+     pub(super) fn emit_scroll_events(&mut self, out: &mut Vec<EngineEvent>) {
++        for view in self.comp.active_views() {
++            let tree = &mut self.comp.views[view].tree;
++            for (node, stuck) in tree.take_stick_changes() {
++                let key = tree.key_of(node).map(str::to_string);
++                out.push(EngineEvent::Stick { view, node, key, stuck });
++            }
++        }
+         for view in self.comp.active_views() {
+             for id in self.comp.views[view].tree.scroll_nodes() {
+                 let tree = &mut self.comp.views[view].tree;
+@@ -111,51 +160,30 @@ impl Engine {
      }
  
--    fn probe_shared_memory(&mut self) -> io::Result<bool> {
--        let name = format!("/px-{}-q", std::process::id());
-+    fn probe_shared_memory(&mut self) -> io::Result<Option<bool>> {
-+        let name = self.shm_probe_name();
-         if write_shm(&name, &[0, 0, 0, 255]).is_err() {
--            return Ok(false);
-+            return Ok(Some(false));
-         }
-         self.io.out().write_all(&crate::kitty::kitty_query_medium(
-             SHM_PROBE_ID,
-@@ -686,11 +726,11 @@ impl Terminal {
-             self.wrapper,
-         ))?;
-         self.io.out().flush()?;
--        let reply = self.read_report(FRAME_PROBE_TIMEOUT_MS, |buf| {
-+        let reply = self.read_report_keeping_input(FRAME_PROBE_TIMEOUT_MS, |buf| {
-             parse_probe_reply(buf, b"Gi=299;")
-         })?;
-         let _ = rustix::shm::unlink(&name);
--        Ok(reply.unwrap_or(false))
-+        Ok(reply)
+     pub fn scroll_into_view(&mut self, view: usize, id: NodeId, smooth: bool) {
+-        if view >= self.comp.views.len() {
+-            return;
+-        }
+-        let fonts = &mut self.fonts;
+-        let base_px = self.base_px;
+-        self.comp.views[view].tree.flush_layout(fonts, base_px);
+-        let tree = &self.comp.views[view].tree;
+-        let Some(child) = tree.rect(id) else {
+-            return;
+-        };
+-        let mut current = tree.parent(id);
+-        while let Some(ancestor) = current {
+-            current = tree.parent(ancestor);
+-            let (Some(rect), Some(scroll)) = (tree.rect(ancestor), tree.scroll_state(ancestor))
+-            else {
+-                continue;
+-            };
+-            if tree.scroll_max(ancestor) <= 0.0 {
+-                continue;
+-            }
+-            let offset = scroll.position + child.y - rect.y - base_px * 0.5;
+-            self.scroll_to(view, ancestor, offset, smooth);
+-            return;
+-        }
++        self.scroll_requests.push((view, ScrollRequest::IntoView(id), smooth));
      }
  
- 
-@@ -953,6 +993,9 @@ impl Term
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/terminal/payload.rs` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ impl Terminal {
-         format!("/px-{}-{}-{seq}", std::process::id(), self.terminal_id)
-     }
- 
-+    pub(super) fn shm_probe_name(&self) -> String {
-+        format!("/px-{}-{}-probe", std::process::id(), self.terminal_id)
+     pub fn scroll_to(&mut self, view: usize, id: NodeId, offset: f32, smooth: bool) {
+-        if view >= self.comp.views.len() {
+-            return;
+-        }
+-        let fonts = &mut self.fonts;
+-        let base_px = self.base_px;
+-        let tree = &mut self.comp.views[view].tree;
+-        tree.flush_layout(fonts, base_px);
+-        let max = tree.scroll_max(id);
+-        let offset = offset.clamp(0.0, max);
+-        if let Some(state) = tree.scroll_state_mut(id) {
+-            if smooth {
+-                state.set_target(offset);
+-            } else {
+-                state.position = offset;
+-                state.set_target(offset);
+-                tree.mark_place();
++        self.scroll_requests.push((view, ScrollRequest::To(id, offset), smooth));
 +    }
 +
-     fn temp_payload_path(&self, seq: u64) -> std::path::PathBuf {
-         std::env::temp_dir().join(format!(
-             "tty-graphics-protocol-px-{}-{}-{seq}.rgba",
-```
-
----
-
-### Incident Patch 2: `ecc462fd` (2026-10-31)
-**Commit Message**: Move pixel's darwin-arm64 build off retiring macos-14 (#231)
-
-**File**: `.github/workflows/pixel-release.yml` (modified, +6/-1)
-```diff
-@@ -85,8 +85,9 @@ jobs:
-       fail-fast: false
-       matrix:
-         include:
--          - os: macos-14
-+          - os: macos-15
-             platform: darwin-arm64
-+            macos-target: "11.0"
-           - os: macos-15-intel
-             platform: darwin-x64
-           - os: ubuntu-latest
-@@ -109,8 +110,12 @@ jobs:
-       - uses: Swatinem/rust-cache@v2
-         with:
-           workspaces: pixel/engine
-+      - if: matrix.macos-target
-+        run: echo "MACOSX_DEPLOYMENT_TARGET=${{ matrix.macos-target }}" >> "$GITHUB_ENV"
-       - run: node scripts/build-native.mjs --release
-         working-directory: pixel/packages/pixel
-+      - if: matrix.macos-target
-+        run: vtool -show-build pixel/packages/native/${{ matrix.platform }}/pixel.node | grep -qE "minos ${{ matrix.macos-target }}$"
-       - if: matrix.container
-         run: objdump -T pixel/packages/native/${{ matrix.platform }}/pixel.node | grep -oE 'GLIBC_[0-9.]+' | sort -Vu | tail -1 | grep -qx GLIBC_2.28
-       - uses: actions/upload-artifact@v4
++    pub(super) fn apply_scroll_requests(&mut self) {
++        for (view, request, smooth) in std::mem::take(&mut self.scroll_requests) {
++            if view >= self.comp.views.len() {
++                continue;
++            }
++            let fonts = &mut self.fonts;
++            let base_px = self.base_px;
++            let tree = &mut self.comp.views[view].tree;
++            tree.flush_layout(fonts, base_px);
++            match request {
++             
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #243** (2026-11-04): Native UI scroll improvements (@RobPruzan)
 - **PR #241** (2026-11-02): Retry frame transport when a tmux client attaches (@YoanWai)
 - **PR #240** (2026-11-01): Add graphical shell example (@RobPruzan)
 - **PR #239** (2026-11-01): add rex as terminal backend (@RobPruzan)
 - **PR #238** (2026-11-01): detect rex and use patches as default (@RobPruzan)
 - **PR #236** (closed): Install extensions from the Chrome Web Store and the CLI (@RobPruzan)
-- **PR #235** (closed): Add Chrome extension support (@RobPruzan)
 
 ---
 
@@ -1760,28 +2252,35 @@ arrive.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Retry frame transport when a tmux client attaches (#241)
+## X. Native UI scroll improvements (#243)
 
 **RULE**:
-When implementing operations in `pixel/engine/crates/pixel-core/src/engine/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cadf448`: Retry frame transport when a tmux client attaches (#241). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d02e800f`: Native UI scroll improvements (#243). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/engine/mod.rs`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        self.term.retry_frame_transport(false)?;
+| `position` | `"flow" \| "absolute" \| "sticky"` (sticky: `inset.top` is how close to the top of the scroll area it stops; it stays inside its parent and paints over the parent's other children) |
+| `layout` | `"flex" \| "list"`, see Long lists |
+| `scrollAnchor` | `"auto" \| "end"` (`"end"`: a scroll box at its end stays at its end as its content grows) |
+<!-- fixme: placeholder copy -->
+### Long lists
+
+A scroll box with `layout: "list"` lays its children out one at a time as rows at its own width, stacked with `gap` inside `padding`, instead of as one flexbox; the box gets its size from its parent like any scroll box. Changing, adding or removing a row only lays out that row, and scrolling only places and draws the rows on screen, so a list of thousands of rows scrolls and streams as fast as a short one. Rows far from the viewport are laid out in idle time; until then they keep their last height (or the average row height). When rows above the viewport change height, the first visible row keeps its place, so what you are reading never jumps. Use `scrollAnchor: "end"` to keep following new rows at the end, and `position: "sticky"` with `onStick` for headers that stay at the top w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| `position` | `"flow" \| "absolute"` |
+| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cadf448` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d02e800f` are properly handled with clean fallback behavior.

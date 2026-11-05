@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `8a47b351`  
+> **Source Version**: `c7bea343`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T17:38:16.742Z  
+> **Timestamp**: 2026-11-04T21:57:15.415Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T17:38:14.572Z  
+> **Harvest Timestamp**: 2026-11-04T21:57:14.586Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92627 stars
+- **Stars / Engagement**: 92691 stars
 
 ---
 
@@ -2334,617 +2334,736 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b41a8b60` (2026-11-02)
-**Commit Message**: Fix Windows shell detection for uppercase executable names (#66387)
+### Incident Patch 1: `e21ff1b3` (2026-11-04)
+**Commit Message**: Fix opening `path:line` in a running Zed on Windows (#66501)
 
 ## Summary
 
-Zed was detecting `CMD.EXE` as PowerShell because the filename check was
-case-sensitive. This fixes shell detection on Windows while keeping Unix
-behavior unchanged.
+On Windows, `Zed.exe path:line` and `Zed.exe path:line:column` now open
+the file at that position when Zed is already running. Before this
+change, the argument was dropped and nothing opened. Closes #66498.
 
-## Testing
+**Before:** with Zed 1.26.2 (stable) running, `Zed.exe
+"E:\zed-demo\demo.py:2"` does nothing. `Zed.log` shows:
 
-- Built and ran Zed on Windows. A task using `"shell": {"program":
-"CMD.EXE"}` and `"command": "echo zed-shell-case-probe"` printed
-`zed-shell-case-probe`.
-- Added regression tests covering 22 Windows and Unix cases.
-- `cargo fmt --all -- --check` and `./script/clippy.ps1 -p util
---locked` passed.
-- `cargo test -p util --locked`: 128 unit tests and 2 doctests passed; 1
-doctest ignored.
-- Workspace doctests: 150 passed, 22 ignored.
-- Full Windows workspace suite: 10,809 tests run, 26 skipped. Initially
-10,798 passed, 3 failed, and 8 timed out. Nine setup-related cases
-passed on retry after preparing the extension fixture, fetching the
-remaining locked dependencies, and setting `CRITERION_HOME` to avoid
-Criterion's runtime Cargo metadata lookup.
+```
+ERROR [zed::zed::windows_only_instance] error parsing path argument: The system cannot find the file specified. (os error 2)
+```
 
-Two failures remain in unchanged tests, so the full suite is not
-entirely green locally:
+<img width="760" alt="Zed 1.26.2: Zed.exe demo.py:2 followed by the
+ERROR line from Zed.log"
+src="https://github.com/user-attachments/assets/bde230fd-d231-4415-993c-44dba9e840ba"
+/>
 
--
-`extensions_ui::extension_suggestions::tests::test_suggestion_returns_after_failed_install`:
+**After:** with a build of this branch running, `zed.exe
+"E:\zed-demo\greet.py:2"` opens `greet.py` in the existing window, with
+the cursor at 2:1.
 
+<img width="760" alt="This branch: greet.py open in the running window,
+cursor at 2:1"
+src="https://github.com/user-attachments/assets/b040a366-84d9-42e8-b444-e060239ab2f0"
+/>
 
-**File**: `crates/util/src/shell.rs` (modified, +43/-0)
+A relative path also works. Running `zed.exe "demo.py:5:7"` from
+`E:\zed-demo` opens `E:\zed-demo\demo.py` at 5:7.
+
+<img width="760" alt="This branch: demo.py open
+
+**File**: `crates/cli/src/main.rs` (modified, +1/-48)
 ```diff
-@@ -208,6 +208,11 @@ impl ShellKind {
-             .file_stem()
-             .unwrap_or_else(|| program.as_os_str())
-             .to_string_lossy();
-+        let program = if is_windows {
-+            Cow::Owned(program.to_ascii_lowercase())
+@@ -26,7 +26,7 @@ use std::{
+     thread::{self, JoinHandle},
+ };
+ use tempfile::{NamedTempFile, TempDir};
+-use util::paths::PathWithPosition;
++use util::paths::{PathWithPosition, parse_path_with_position};
+ use walkdir::WalkDir;
+ 
+ use std::io::IsTerminal;
+@@ -155,53 +155,6 @@ struct Args {
+     askpass: Option<String>,
+ }
+ 
+-/// Parses a path containing a position (e.g. `path:line:column`)
+-/// and returns its canonicalized string representation.
+-///
+-/// If a part of path doesn't exist, it will canonicalize the
+-/// existing part and append the non-existing part.
+-///
+-/// This method must return an absolute path, as many zed
+-/// crates assume absolute paths.
+-fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
+-    match Path::new(argument_str).canonicalize() {
+-        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
+-        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
+-            let curdir = env::current_dir().context("retrieving current directory")?;
+-            let mut children = Vec::new();
+-            let root;
+-            loop {
+-                // canonicalize handles './', and '/'.
+-                if let Ok(canonicalized) = fs::canonicalize(&path) {
+-                    root = canonicalized;
+-                    break;
+-                }
+-                // The comparison to `curdir` is just a shortcut
+-                // since we know it is canonical. The other one
+-                // is if `argument_str` is a string that starts
+-                // with a name (e.g. "foo/bar").
+-                if path == curdir || path == Path::new("") {
+-                    root = curdir;
+-                    break;
+-                }
+-                children.push(
+-                    path.file_name()
+-                        .with_context(|| format!("parsing as path with position {argument_str}"))?
+-                        .to_owned(),
+-                );
+-                if !path.pop() {
+-                    unreachable!("parsing as path with position {argument_str}");
+-                }
+-            }
+-            Ok(children.iter().rev().fold(root, |mut path, child| {
+-                path.push(child);
+-                path
+-            }))
+-        }),
+-    }
+-    .map(|path_with_pos| path_with_pos.to_string(&|path| path.to_string_lossy().into_owned()))
+-}
+-
+ /// Returns whether a `--diff` argument refers to an existing path, allowing a
+ /// trailing `:line:column` suffix (parsed later by the Zed side, matching how
+ /// regular `zed path:line:column` arguments are handled).
+```
+
+**File**: `crates/util/src/paths.rs` (modified, +49/-0)
+```diff
+@@ -751,6 +751,55 @@ impl PathWithPosition {
+     }
+ }
+ 
++/// Parses a path containing a position (e.g. `path:line:column`)
++/// and returns its canonicalized string representation.
++///
++/// If a part of path doesn't exist, it will canonicalize the
++/// existing part and append the non-existing part.
++///
++/// This method must return an absolute path, as many zed
++/// crates assume absolute paths.
++pub fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
++    use anyhow::Context as _;
++
++    match Path::new(argument_str).canonicalize() {
++        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
++        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
++            let curdir = std::env::current_dir().context("retrieving current directory")?;
++            let mut children = Vec::new();
++            let root;
++            loop {
++                // canonicalize handles './', and '/'.
++                if let Ok(canonicalized) = std::fs::canonicalize(&path) {
++                    root = canonicalized;
++                    break;
++                }
++                // The comparison to `curdir` is just a shortcut
++                // since we know it is canonical. The other one
++                // is if `argument_str` is a string that starts
++                // with a name (e.g. "foo/bar").
++                if path == curdir || path == Path::new("") {
++                    root = curdir;
++                    break;
++                }
++                children.push(
++                    path.file_name()
++                        .with_context(|| format!("parsing as path with position {argument_str}"))?
++                        .to_owned(),
++                );
++                if !path.pop() {
++                    unreachable!("parsing as path with position {argument_str}");
++                }
++            }
++            Ok(children.iter().rev().fold(root, |mut path, child| {
++                path.push(child);
++                path
++            }))
++        }),
++    }
++    .map(|path_with_pos| path_with_pos.to_string(&|path| path.to_string_lossy().into_owned()))
++}
++
+ #[derive(Clone)]
+ pub struct PathMatcher {
+     sources: Vec<(String, RelPathBuf, /*trailing separator*/ bool)>,
+```
+
+**File**: `crates/zed/src/zed/windows_only_instance.rs` (modified, +40/-21)
+```diff
+@@ -4,7 +4,7 @@ use anyhow::Context;
+ use cli::{CliRequest, CliResponse, IpcHandshake, ipc::IpcOneShotServer};
+ use parking_lot::Mutex;
+ use release_channel::app_identifier;
+-use util::ResultExt;
++use util::{ResultExt, paths::parse_path_with_position};
+ use windows::{
+     Win32::{
+         Foundation::{CloseHandle, ERROR_ALREADY_EXISTS, GENERIC_WRITE, GetLastError, HANDLE},
+@@ -107,6 +107,27 @@ fn retrieve_message_from_pipe_inner(pipe: HANDLE) -> anyhow::Result<String> {
+     Ok(message.to_string_lossy().into_owned())
+ }
+ 
++fn split_paths_and_urls(paths_or_urls: &[String]) -> (Vec<String>, Vec<String>) {
++    let mut paths = vec![];
++    let mut urls = vec![];
++    for path in paths_or_urls {
++        if path.starts_with("zed://")
++            || path.starts_with("http://")
++            || path.starts_with("https://")
++            || path.starts_with("file://")
++            || path.starts_with("ssh://")
++        {
++            urls.push(path.clone());
 +        } else {
-+            program
-+        };
- 
-         match &*program {
-             "powershell" => ShellKind::PowerShell,
-@@ -778,6 +783,44 @@ mod tests {
-     #[cfg(unix)]
-     use crate::shell_builder::ShellBuilder;
- 
-+    #[test]
-+    fn test_shell_kind_windows_case_insensitive() {
-+        for (program, expected) in [
-+            ("CMD.EXE", ShellKind::Cmd),
-+            ("PowerShell.exe", ShellKind::PowerShell),
-+            ("PwSh.ExE", ShellKind::Pwsh),
-+            ("NU.EXE", ShellKind::Nushell),
-+            ("FISH.EXE", ShellKind::Fish),
-+            ("CSH.EXE", ShellKind::Csh),
-+            ("TCSH.EXE", ShellKind::Tcsh),
-+            ("RC.EXE", ShellKind::Rc),
-+            ("XONSH.EXE", ShellKind::Xonsh),
-+            ("ELVISH.EXE", ShellKind::Elvish),
-+            ("SH.EXE", ShellKind::Posix),
-+            ("BASH.EXE", ShellKind::Posix),
-+            ("ZSH.EXE", ShellKind::Posix),
-+            ("C:/Windows/System32/CMD.EXE", ShellKind::Cmd),
-+            ("C:/Program Files/PowerShell/7/PWSH.EXE", ShellKind::Pwsh),
-+            ("unknown.exe", ShellKind::PowerShell),
-+        ] {
-+            assert_eq!(ShellKind::new(program, true), expected, "{program}");
++            match parse_path_with_position(path) {
++                Ok(path) => paths.push(path),
++                Err(error) => log::error!("error parsing path argument: {}", error),
++            }
 +        }
 +    }
++    (paths, urls)
++}
++
+ // This part of code is mostly from crates/cli/src/main.rs
+ fn send_args_to_instance(args: &Args) -> anyhow::Result<()> {
+     if let Some(dock_menu_action_idx) = args.dock_action {
+@@ -119,27 +140,8 @@ fn send_args_to_instance(args: &Args) -> anyhow::Result<()> {
+     let url = format!("zed-cli://{server_name}");
+ 
+     let request = {
+-        let mut paths = vec![];
+-        let mut urls = vec![];
++        let (paths, urls) = split_paths_and_urls(&args.paths_or_urls);
+         let mut diff_paths = vec![];
+-        for path in args.paths_or_urls.iter() {
+-            match std::fs::canonicalize(&path) {
+-                Ok(path) => paths.push(path.to_string_lossy().into_owned()),
+-                Err(error) => {
+-                    if path.starts_with("zed://")
+-                        || path.starts_with("http://")
+-                        || path.starts_with("https://")
+-                        || path.starts_with("file://")
+-                        || path.starts_with("ssh://")
+-                    {
+-                        urls.push(path.clone());
+-                    } else {
+-                        log::error!("error parsing path argument: {}", error);
+-                    }
+-                }
+-            }
+-        }
+-
+         for path in args.diff.chunks(2) {
+             let old = std::fs::canonicalize(&path[0]).log_err();
+             let new = std::fs::canonicalize(&path[1]).log_err();
+@@ -222,3 +224,20 @@ fn write_message_to_instance_pipe(message: &[u8]) -> anyhow::Result<()> {
+     }
+     Ok(())
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::split_paths_and_urls;
 +
 +    #[test]
-+    fn test_shell_kind_unix_case_sensitive() {
-+        for (program, expected) in [
-+            ("/bin/nu", ShellKind::Nushell),
-+            ("/bin/NU", ShellKind::Posix),
-+            ("/bin/pwsh", ShellKind::Pwsh),
-+            ("/bin/PWSH", ShellKind::Posix),
-+            ("/bin/bash", ShellKind::Posix),
-+            ("/bin/unknown", ShellKind::Posix),
-+        ] {
-+            assert_eq!(ShellKind::new(program, false), expected, "{program}");
-+        }
-+    }
++    fn test_split_paths_and_urls() {
++        let file = concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.toml");
++        let canonical = std::fs::canonicalize(file).unwrap();
++        let url = "zed://file/C:/project/main.rs:3";
 +
-     // Examples
-     // WSL
-     // wsl.exe --distribution NixOS --cd /home/user -- /usr/bin/zsh -c "echo hello"
++        let (paths, urls) = split_paths_and_urls(&[format!("{file}:2:5"), url.to_string()]);
++
++        assert_eq!(paths, [format!("{}:2:5", canonical.display())]);
++        assert_eq!(urls, [url]);
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `0967dd02` (2026-11-02)
-**Commit Message**: Fix C++ lambda specifier highlighting (#66406)
+### Incident Patch 2: `c7bea343` (2026-11-04)
+**Commit Message**: gpui: Fix cursor reverting when a drag starts (#66540)
 
 ## Summary
-Closes #66169
 
-Fixed missing syntax highlighting for C++ lambda specifiers and the
-defined preprocessor operator.
+Dragging an element with a cursor style, such as a narrow resize handle,
+could briefly show the wrong cursor as the drag began.
 
-- Added lambda_specifier to the C++ keyword captures so mutable and
-static lambda specifiers are highlighted correctly
-- Highlighted defined as a preprocessor keyword
-- Highlighted the identifier inside defined(...) as a macro constant
-- Add a regression test to verify that all four tokens receive the
-expected captures.
+**The problem.** GPUI starts a drag once the pointer moves more than 2
+px from the press. On a narrow handle, that same move can take the
+pointer off the handle. `dispatch_mouse_event` then:
 
-## Testing
+1. Re-ran the hit test, saw the pointer had left the handle, and picked
+the cursor from the last painted frame, which gave whatever was
+underneath.
+2. Ran the mouse listeners, where `on_drag` started the drag and
+requested a repaint.
+3. Only applied the drag's cursor at the end of the next draw.
 
-- cargo test -p languages: 109 passed, 0 failed
-- cargo test -p languages
-test_cpp_highlights_query_captures_lambda_and_defined_keywords: passed
-- cargo fmt --all -- --check: passed.
+So the drag was running under the wrong cursor until that paint. A
+native X11 trace measured this at about 51 ms. On macOS, 3 of 4 drags
+sampled at drag start read `Arrow` in a real app on an older GPUI
+revision.
 
-Manually tested on Windows using a locally built Zed instance:
-<img width="512" height="471" alt="zed_test"
-src="https://github.com/user-attachments/assets/f4ae3b5b-5e3e-4eb9-9d96-caf8923a37a0"
-/>
+**The fix.**
 
-## Self-review
+- `dispatch_mouse_event` updates the cursor after the listeners run, so
+a drag started by the current event takes effect in that event.
+- `reset_cursor_style` checks the active drag's cursor before the
+painted frame, because that frame predates the drag.
 
-- [X] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [X] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [X] Tests cover the new or changed behavior.
+**Behavior to review.**
 
-Release Notes:
+- An
 
-- Fixed missing syntax highlighting for C++ lambda specifier
-
-**File**: `crates/grammars/src/cpp/highlights.scm` (modified, +7/-0)
+**File**: `crates/gpui/src/platform/test/platform.rs` (modified, +5/-0)
 ```diff
-@@ -161,6 +161,7 @@ type: (primitive_type) @type.builtin
-   "virtual"
-   (storage_class_specifier)
-   (type_qualifier)
-+  (lambda_specifier)
- ] @keyword
+@@ -126,6 +126,11 @@ pub(crate) struct TestPrompts {
+ }
  
- [
-@@ -198,6 +199,12 @@ type: (primitive_type) @type.builtin
-   (preproc_directive)
- ] @keyword.preproc @preproc
- 
-+(preproc_defined
-+  "defined" @keyword.preproc)
+ impl TestPlatform {
++    #[cfg(test)]
++    pub(crate) fn cursor_style(&self) -> CursorStyle {
++        *self.active_cursor.lock()
++    }
 +
-+(preproc_defined
-+  (identifier) @constant.macro)
-+
- (comment) @comment
- 
- [
+     #[cfg(any(test, feature = "test-support"))]
+     pub fn new(executor: BackgroundExecutor, foreground_executor: ForegroundExecutor) -> Rc<Self> {
+         Self::with_platform(
 ```
 
-**File**: `crates/languages/src/cpp.rs` (modified, +42/-0)
+**File**: `crates/gpui/src/window.rs` (modified, +99/-15)
 ```diff
-@@ -14,6 +14,7 @@ mod tests {
-     use language::{AutoindentMode, Buffer};
-     use settings::SettingsStore;
-     use std::num::NonZeroU32;
-+    use tree_sitter::StreamingIterator;
-     use unindent::Unindent;
+@@ -5810,9 +5810,10 @@ impl Window {
+     fn reset_cursor_style(&self, cx: &mut App) {
+         // Set the cursor only if we're the active window.
+         if self.is_window_hovered() {
+-            let style = self
+-                .rendered_frame
+-                .cursor_style(self)
++            // A drag can start before the next paint records its cursor in the frame.
++            let style = cx
++                .active_drag_cursor_style()
++                .or_else(|| self.rendered_frame.cursor_style(self))
+                 .unwrap_or(CursorStyle::Arrow);
+             cx.platform.set_cursor_style(style);
+         }
+@@ -6210,14 +6211,11 @@ impl Window {
+     }
+ 
+     fn dispatch_mouse_event(&mut self, event: &dyn Any, cx: &mut App) {
+-        let hit_test = self.rendered_frame.hit_test(self.mouse_position());
+-        if hit_test != self.mouse_hit_test {
+-            self.mouse_hit_test = hit_test;
+-            self.reset_cursor_style(cx);
+-        }
++        self.mouse_hit_test = self.rendered_frame.hit_test(self.mouse_position());
+ 
+         #[cfg(any(feature = "inspector", debug_assertions))]
+         if self.is_inspector_picking(cx) {
++            self.reset_cursor_style(cx);
+             self.handle_inspector_mouse_event(event, cx);
+             // When inspector is picking, all other mouse handling is skipped.
+             return;
+@@ -6265,6 +6263,10 @@ impl Window {
+         if event.is::<MouseUpEvent>() && self.captured_hitbox.is_some() {
+             self.captured_hitbox = None;
+         }
++
++        // Runs after the listeners so that a drag they start takes effect in this event. Resolving
++        // the cursor any earlier would briefly select whatever is under the pointer instead.
++        self.reset_cursor_style(cx);
+     }
+ 
+     // If modifiers are not excessive (e.g. AltGr), and the input handler is accepting text input,
+@@ -8172,13 +8174,14 @@ mod tests {
+ 
+     use crate::{
+         AnyWindowHandle, AppContext as _, BackGestureEvent, BackGesturePhase, Bounds, ContentMask,
+-        Context, DispatchPhase, DragMoveEvent, Empty, ExternalDragPayload, ExternalPaths,
+-        FileDragPaths, FileDropEvent, FocusHandle, InputEvent as _, InteractiveElement as _,
+-        IntoElement, KeyDownEvent, Keystroke, LongPressEvent, MouseButton, MouseDownEvent,
+-        MouseMoveEvent, ParentElement, Pixels, PlatformInput, Point, Render, RequestFrameOptions,
+-        ScaledPixels, StatefulInteractiveElement as _, Styled, TestAppContext, ThermalState,
+-        TouchDragEvent, TouchEvent, TouchId, TouchPhase, Underline, UnderlineStyle, Window,
+-        WindowAppearance, WindowOptions, canvas, div, hsla, point, px, size,
++        Context, CursorStyle, DispatchPhase, DragMoveEvent, Empty, ExternalDragPayload,
++        ExternalPaths, FileDragPaths, FileDropEvent, FocusHandle, InputEvent as _,
++        InteractiveElement as _, IntoElement, KeyDownEvent, Keystroke, LongPressEvent, MouseButton,
++        MouseDownEvent, MouseMoveEvent, MouseUpEvent, ParentElement, Pixels, PlatformInput, Point,
++        Render, RequestFrameOptions, ScaledPixels, StatefulInteractiveElement as _, Styled,
++        TestAppContext, ThermalState, TouchDragEvent, TouchEvent, TouchId, TouchPhase, Underline,
++        UnderlineStyle, Window, WindowAppearance, WindowOptions, canvas, div, hsla, point, px,
++        size,
+     };
  
      #[gpui::test]
-@@ -649,4 +650,45 @@ mod tests {
-             buffer
-         });
+@@ -10431,6 +10434,87 @@ mod tests {
+         let widen = |root: &mut Root, _: &mut Window, _: &mut Context<Root>| root.width = px(300.);
+         assert_eq!(update_and_draw(window, &child, cx, widen).0, 1.);
      }
 +
-+    #[test]
-+    fn test_cpp_highlights_query_captures_lambda_and_defined_keywords() {
-+        let language: tree_sitter::Language = tree_sitter_cpp::LANGUAGE.into();
-+        let query_source = include_str!("../../grammars/src/cpp/highlights.scm");
++    #[gpui::test]
++    fn test_drag_cursor_applies_before_next_paint(cx: &mut TestAppContext) {
++        struct ResizeHandle;
 +
-+        let query = tree_sitter::Query::new(&language, query_source)
-+            .expect("C++ highlights query should compile");
-+
-+        let source = r#"
-+            auto mutable_lambda = []() mutable {};
-+            auto static_lambda = []() static {};
-+
-+            #if defined(MY_MACRO)
-+            #endif
-+        "#;
-+
-+        let mut parser = tree_sitter::Parser::new();
-+        parser.set_language(&language).unwrap();
-+
-+        let tree = parser.parse(source, None).expect("C++ source should parse");
-+
-+        let mut cursor = tree_sitter::QueryCursor::new();
-+        let mut matches = cursor.matches(&query, tree.root_node(), source.as_bytes());
-+
-+        let mut captures = Vec::new();
-+
-+        while let Some(query_match) = matches.next() {
-+            for capture in query_match.captures() {
-+                let capture_name = query.capture_names()[capture.index as usize];
-+                let captured_text = &source[capture.node.byte_range()];
-+
-+                captures.push((captured_text.to_owned(), capture_name.to_owned()));
++        impl Render for ResizeHandle {
++            fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
++                div().size_full().cursor_text().child(
++                    div()
++                        .id("resize-handle")
++                        .w(px(4.))
++                        .h_full()
++                        .cursor_col_resize()
++                        .on_drag((), |_, _, _, cx| cx.new(|_| Empty)),
++                )
 +            }
 +        }
 +
-+        assert!(captures.contains(&("mutable".into(), "keyword".into())));
-+        assert!(captures.contains(&("static".into(), "keyword".into())));
-+        assert!(captures.contains(&("defined".into(), "keyword.preproc".into())));
-+        assert!(captures.contains(&("MY_MACRO".into(), "constant.macro".into())));
-+    }
- }
++        let window = cx.add_window(|_, _| ResizeHandle);
++        let handle_position = point(px(1.), px(10.));
++        let drag_position = point(px(20.), px(10.));
++        let cursor_observer = cx.clone();
++
++        let update_result = cx.update_window(window.into(), |_, window, cx| {
++            window.hovered.set(true);
++            window.active.set(true);
++            window.draw(cx).clear(cx);
++            window.dispatch_event(
++                MouseMoveEvent {
++                    position: handle_position,
++                    ..Default::default()
++                }
++                .to_platform_input(),
++                cx,
++            );
++            window.dispatch_event(
++                MouseDownEvent {
++                    position: handle_position
 ```
 
 ---
 
-### Incident Patch 3: `1d76f828` (2026-11-02)
-**Commit Message**: Fix SVG images in remote Markdown previews (#66404)
+### Incident Patch 3: `d71ff734` (2026-11-04)
+**Commit Message**: tasks_ui: Fix tasks with file variables missing for single-file worktrees (#66195)
 
 ## Summary
 
-<img width="3024" height="1898" alt="zed-svg-ssh-after"
-src="https://github.com/user-attachments/assets/d35454cc-9d27-4165-900a-00990f483e4e"
-/>
+When a single file is opened without a folder (e.g. via `ctrl-o`), it
+gets a worktree whose root is the file itself. `task_contexts` only
+built the editor context for items from worktrees rooted at a directory,
+so variables like `ZED_FILE` were never set. Tasks referencing them,
+including global tasks from `~/.config/zed/tasks.json`, failed to
+resolve and were silently dropped from `task: spawn`. Tasks without
+variables were still listed, which made the bug look inconsistent.
 
-Closes #64517
+This PR:
 
-Fixes SVG images failing to display in remote Markdown previews by
-adding content-based SVG support to ImageStore and using the existing
-GPUI renderer.
+- builds the editor context for any active item with a project path,
+while keeping the worktree context limited to directory worktrees (as
+introduced in #25605);
+- makes `BasicContextProvider` set `ZED_WORKTREE_ROOT`, the relative
+path variables and the default cwd only for visible directory worktrees,
+so they don't point at the file itself or at an unrelated directory such
+as the Zed config directory;
+- moves the task picker's source-aware context selection into
+`TaskContexts` and uses it when spawning tasks by name or tag, so
+worktree tasks are resolved against their own worktree even when an
+external f
 
-## Testing
-
-- Integration tests and Clippy passed.
-- Manually verified with a macOS client connected to a Linux SSH
-project.
-- To verify: open a remote Markdown file containing `![](image.svg)` and
-confirm the SVG displays in the preview.
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Fixed SVG images failing to render in Markdown previews for remote
-projects.
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +3/-0)
 ```diff
-@@ -13911,6 +13911,7 @@ dependencies = [
-  "tracing",
-  "unindent",
-  "url",
-+ "usvg",
-  "util",
-  "watch",
-  "wax",
+@@ -17876,10 +17876,13 @@ dependencies = [
+  "gpui",
+  "itertools 0.14.0",
+  "language",
++ "languages",
+  "menu",
++ "node_runtime",
+  "picker",
+  "project",
+  "serde_json",
++ "settings",
+  "task",
+  "tree-sitter",
+  "tree-sitter-json",
 ```
 
-**File**: `crates/image_viewer/src/image_info.rs` (modified, +13/-10)
+**File**: `crates/project/src/task_inventory.rs` (modified, +57/-82)
 ```diff
-@@ -1,5 +1,5 @@
- use gpui::{App, Context, Entity, IntoElement, ParentElement, Render, Subscription, div};
--use project::image_store::{ImageFormat, ImageMetadata};
-+use project::image_store::{ImageFormat, ImageMetadata, RasterImageFormat};
- use settings::Settings;
- use ui::prelude::*;
- use util::size::format_file_size;
-@@ -64,15 +64,18 @@ impl Render for ImageInfo {
- 
-         components.push(
-             match metadata.format {
--                ImageFormat::Png => "PNG",
--                ImageFormat::Jpeg => "JPEG",
--                ImageFormat::Gif => "GIF",
--                ImageFormat::WebP => "WebP",
--                ImageFormat::Tiff => "TIFF",
--                ImageFormat::Bmp => "BMP",
--                ImageFormat::Ico => "ICO",
--                ImageFormat::Avif => "Avif",
--                _ => "Unknown",
-+                ImageFormat::Svg => "SVG",
-+                ImageFormat::Raster(format) => match format {
-+                    RasterImageFormat::Png => "PNG",
-+                    RasterImageFormat::Jpeg => "JPEG",
-+                    RasterImageFormat::Gif => "GIF",
-+                    RasterImageFormat::WebP => "WebP",
-+                    RasterImageFormat::Tiff => "TIFF",
-+                    RasterImageFormat::Bmp => "BMP",
-+                    RasterImageFormat::Ico => "ICO",
-+                    RasterImageFormat::Avif => "Avif",
-+                    _ => "Unknown",
-+                },
-             }
-             .to_string(),
-         );
-```
-
-**File**: `crates/project/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -99,6 +99,7 @@ text.workspace = true
- toml.workspace = true
- tracing.workspace = true
- url.workspace = true
-+usvg.workspace = true
- util.workspace = true
- watch.workspace = true
- wax.workspace = true
-```
-
-**File**: `crates/project/src/image_store.rs` (modified, +32/-4)
-```diff
-@@ -9,7 +9,7 @@ use gpui::{
-     App, Asset, AssetLogger, AsyncApp, Context, Entity, EventEmitter, ImageCacheError, ImageSource,
-     Img, RenderImage, Subscription, Task, WeakEntity, prelude::*,
- };
--pub use image::ImageFormat;
-+pub use image::ImageFormat as RasterImageFormat;
- use image::{ExtendedColorType, GenericImageView, ImageReader};
- use language::{DiskState, File};
- use rpc::{AnyProtoClient, ErrorExt as _, TypedEnvelope, proto};
-@@ -57,6 +57,12 @@ pub enum ImageStoreEvent {
- 
- impl EventEmitter<ImageStoreEvent> for ImageStore {}
- 
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum ImageFormat {
-+    Raster(RasterImageFormat),
-+    Svg,
-+}
-+
- #[derive(Debug, Clone, Copy)]
- pub struct ImageMetadata {
-     pub width: u32,
-@@ -150,7 +156,20 @@ pub fn project_image_source(project: WeakEntity<Project>, path: ProjectPath) ->
- 
- impl ImageItem {
-     pub fn compute_metadata_from_bytes(image_bytes: &[u8]) -> Result<ImageMetadata> {
--        let image_format = image::guess_format(image_bytes)?;
-+        let image_format = match image::guess_format(image_bytes) {
-+            Ok(format) => format,
-+            Err(_) => {
-+                let svg = usvg::Tree::from_data(image_bytes, &usvg::Options::default())?;
-+                let size = svg.size().to_int_size();
-+                return Ok(ImageMetadata {
-+                    width: size.width(),
-+                    height: size.height(),
-+                    file_size: image_bytes.len() as u64,
-+                    format: ImageFormat::Svg,
-+                    colors: None,
-+                });
-+            }
-+        };
- 
-         let mut image_reader = ImageReader::new(std::io::Cursor::new(image_bytes));
-         image_reader.set_format(image_format);
-@@ -162,7 +181,7 @@ impl ImageItem {
-             width,
-             height,
-             file_size: image_bytes.len() as u64,
--            format: image_format,
-+            format: ImageFormat::Raster(image_format),
-             colors: ImageColorInfo::from_color_type(image.color()),
-         })
+@@ -194,6 +194,54 @@ impl TaskContexts {
+             })
      }
-@@ -932,7 +951,16 @@ impl LocalImageStore {
- }
  
- fn create_gpui_image(content: Vec<u8>) -> anyhow::Result<Arc<gpui::Image>> {
--    let format = image::guess_format(&content)?;
-+    let format = match image::guess_format(&content) {
-+        Ok(format) => format,
-+        Err(_) => {
-+            usvg::Tree::from_data(&content, &usvg::Options::default())?;
-+            return Ok(Arc::new(gpui::Image::from_bytes(
-+                gpui::ImageFormat::Svg,
-+                content,
-+            )));
-+        }
-+    };
- 
-     Ok(Arc::new(gpui::Image::from_bytes(
-         match format {
-```
-
-**File**: `crates/project/tests/integration/image_store.rs` (modified, +94/-1)
-```diff
-@@ -73,6 +73,99 @@ fn test_compute_metadata_from_bytes() {
-     assert_eq!(metadata.width, 1);
-     assert_eq!(metadata.height, 1);
-     assert_eq!(metadata.file_size, png_bytes.len() as u64);
--    assert_eq!(metadata.format, image::ImageFormat::Png);
-+    assert_eq!(
-+        metadata.format,
-+        ImageFormat::Raster(image::ImageFormat::Png)
-+    );
-     assert!(metadata.colors.is_some());
- }
-+
-+#[test]
-+fn test_svg_metadata_from_contents() {
-+    for prefix in [
-+        "",
-+        "<?xml version=\"1.0\"?>\n",
-+        "\u{feff}",
-+        "<!-- image -->\n",
-+    ] {
-+        let content = format!(
-+            "{prefix}<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 100\"><rect width=\"200\" height=\"100\" fill=\"red\"/></svg>"
-+        );
-+        let metadata = ImageItem::compute_metadata_from_bytes(content.as_bytes())
-+            .expect("SVG metadata should load regardless of the XML prefix");
-+        assert_eq!(metadata.format, ImageFormat::Svg);
-+        assert_eq!((metadata.width, metadata.height), (200, 100));
-+        assert_eq!(metadata.file_size, content.len() as u64);
-+        assert!(metadata.colors.is_none());
++    /// Returns the first context, in the task picker's order of preference, in which the task resolves.
++    pub fn context_for_task(
++        &self,
++        kind: &TaskSourceKind,
++        template: &TaskTemplate,
++    ) -> Option<&TaskContext> {
++        let id_base = kind.to_id_base();
++        self.contexts_for_source(kind)
++            .find(|&context| template.resolve_task(&id_base, context).is_some())
 +    }
-+}
 +
-+#[test]
-+fn test_invalid_svg_metadata() {
-+    for content in [
-+        "",
-+        "not an image",
-+        "<svg",
-+        "<html><body>SVG</body></html>",
-+        "<!-- <svg xmlns=\"http://www.w3.org/2000/svg\"/> -->",
-+    ] {
-+        assert!(ImageItem::compute_metadata_from_bytes(content.as_bytes()).is_err());
++    pub fn resolve_task(
++        &self,
++        kind: &TaskSourceKind,
++        template: &TaskTemplate,
++    ) -> Option<ResolvedTask> {
++        let id_base = kind.to_id_base();
++        self.contexts_for_source(kind)
++            .find_map(|context| template.resolve_task(&id_base, context))
++            .or_else(|| template.resolve_task(&id_base, &TaskContext::default()))
 +    }
-+}
 +
-+#[gpui::test]
-+async fn test_open_svg_image_by_contents(cx: &mut TestAppContext) {
-+    init_test(cx);
-+    let fs = FakeFs::new(cx.executor());
-+    fs.insert_tree(
-+        "/root",
-+        json!({
-+            "image.bin": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"10\"/>",
-+            "broken.svg": "<svg",
-+            "html.svg": "<html><body>not an SVG</body></html>"
-+        }),
-+    )
-+    .await;
-+    let project = Project::test(fs, ["/root".as_ref()], cx).await;
-+    let worktree_id = project.read_with(cx, |project, cx| {
-+        project
-+            .worktrees(cx)
-+            .next()
-+            .expect("worktree")
-+            .read(cx)
-+            .id()
-+    });
-+    let image = project
-+        .update(cx, |project, cx| {
-+            project.open_image(
-+                ProjectPath {
-+                    worktree_id,
-+                    path: rel_path("image.bin").into(),
-+                },
-+                cx,
-+            )
-+        })
-+        .await
-+        .expect("ImageStore should identify SVG by contents");
-+    image.read_with(cx, |image, _| {
-+        assert_eq!(image.image.format(), gpui::ImageFormat::Svg);
-+        let metadata = image.image_metadata.expect("SVG should have metadata");
-+        assert_eq!(metadata.format, ImageFormat::Svg);
-+        assert_eq!((metadata.width, metadata.height), (20, 10));
-+    });
-+
-+    for image_path in ["broken.svg", "html.svg"] {
-+        let result = project
-+            .update(cx, |project, cx| {
-+                project.open_image(
-+                    ProjectPath {
-+                        worktree_id,
-+                        path: rel_path(image_path).into(),
-+                    },
-+                    cx,
-+                )
-+            })
-+            .await;
-+        assert!(result.is_err(), "{image_path}");
-+    }
-+}
-```
-
-**File**: `crates/remote_server/src/remote_editing_tests.rs` (modified, +43/-40)
-```diff
-@@ -674,7 +674,11 @@ async fn test_remote_project_image_source(cx: &mut TestAppContext, server_cx: &m
-         json!({
-             "project": {
-                 "docs": {
--                    "image.ppm": "P3\n1 1\n255\n255 0 0\n"
-+                    "image.ppm": "P3\n1 1\n255\n255 0 0\n",
-+                    "image.svg": r#"<?xml version="1.0"?>
-+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">
-+                            <rect width="1" height="1" fill="red"/>
-+                        </svg>"#
-                 }
-             }
-         }),
-@@ -689,48 +693,47 @@ async fn test_remote_project_image_source(cx: &mut TestAppContext, server_cx: &m
-         .await
-         .expect("remote worktree should open");
-     let worktree_id = worktree.read_with(cx, |worktree, _cx| worktree.id());
--    let source = image_store::project_image_source(
--        project.downgrade(),
--        ProjectPath {
--            worktree_id,
--            path: rel_path("docs/image.ppm").into(),
--        },
--    );
--    let ImageSource::Custom(load_image) = source else {
--        panic!("expected a project-backed image source");
--    };
--    let loaded_bytes = Arc::new(std::sync::Mutex::new(None));
--    let observed_source = ImageSource::from({
--        let loaded_bytes = loaded_bytes.clone();
--        move |window: &mut gpui::Window, cx: &mut gpui::App| {
--            let result = load_image(window, cx);
--            if let Some(Ok(image)) = &result {
--                *loaded_bytes.lock().expect("loaded image mutex poisoned") =
--                    image.as_bytes(0).map(ToOwned::to_owned);
-+    for image_path in ["docs/image.ppm", "docs/image.svg"] {
-+        let source = image_store::project_image_source(
-+            project.downgrade(),
-+            ProjectPath {
-+                worktree_id,
-+                path: rel_path(image_path).into(),
-+            },
-+        );
-+        let ImageSource::Custom(load_image) = source else {
-+            panic!("expected a project-backed image source");
++    /// Worktree tasks are only resolved with contexts of their own worktree, so that an active item
++    /// from an unrelated (e.g. invisible or single-file) worktree does not affect their variables.
++    fn contexts_for_source(&self, kind: &TaskSourceKind) -> impl Iterator<Item = &TaskContext> {
++        let source_worktree = match kind {
++            TaskSourceKind::Worktree { id, .. } => Some(*id),
++            _ => None,
 +        };
-+        let loaded_bytes = Arc::new(std::sync::Mutex::new(None));
-+        let observed_source = ImageSource::from({
-+            let loaded_bytes = loaded_bytes.clone();
-+            move |window: &mut gpui::Window, cx: &mut gpui::App| {
-+                let result = load_image(window, cx);
-+                if let Some(Ok(image)) = &result {
-+                    *loaded_bytes.lock().expect("loaded image mutex poisoned") =
-+                        image.as_bytes(0).map(ToOwned::to_owned);
-+                }
-+                result
-             }
--            result
--        }
--    });
-+        });
- 
--    let (view, cx) = cx.add_window_view(|_window, _cx| RemoteImageTestView {
--        source: observed_source,
--    });
--    cx.draw(Default::default(), size(px(10.), px(10.)), {
--        let view = view.clone();
--        move |_, _| view.into_any_element()
--    });
--    cx.run_until_parked();
--    cx.draw(Default::default(), size(px(10.), px(10.)), move |_, _| {
--        view.into_any_element()
--    });
-+        let (view, cx) = cx.add_window_view(|_window, _cx| RemoteImageTestView {
-+            source: observed_source,
-+        });
-+        cx.draw(Default::default(), size(px(10.), px(10.)), {
-+            let view = view.clone();
-+            move |_, _| view.into_any_element()
-+        });
-+        cx.run_until_parked();
-+        cx.draw(Default::default(), size(px(10.), px(10.)), move |_, _| {
-+            view.into_any_element()
-+        });
- 
--    assert_eq!(
--        loaded_bytes
--            .lock()
--            .expect("loaded image mutex poisoned")
--            .as_deref(),
--        Some([0, 0, 255, 255].as_slice())
--    );
-+        let loaded_bytes = loaded_bytes.lock().expect("loaded image mutex poisoned");
-+        let bytes = loaded_bytes.as_ref().expect("remote image should render");
-+        let pixel_count = if image_path.ends_with(".ppm") { 1 } else { 4 };
-+        assert_eq!(bytes, &[0, 0, 255, 255].repeat(pixel_count), "{image_path}");
++
++        let item_context = self
++            .active_item_context
++            .as_ref()
++            .filter(|(worktree_id, _, _)| {
++                source_worktree.is_none() || *worktree_id == source_worktree
++            })
++            .map(|(_, _, context)| context);
++
++        let worktree_context = match source_worktree {
++            Some(worktree_id) => self.task_context_for_worktree_id(worktree_id),
++            None => self
++                .active_worktree_context
++                .as_ref()
++                .map(|(_, context)| context),
++        };
++        item_context.into_iter().chain(worktree_context)
 +    }
++
+     pub fn location(&self) -> Option<&Location> {
+         self.active_item_context
+             .as_ref()
+@@ -230,44 +278,9 @@ impl TaskContexts {
+     /// Re-resolves a previously resolved task against the current contexts, so that
+     /// any context-dependent variables (e.g. the active file or selection) reflect the
+     /// editor's current state rather than the state from when the task was first run.
+-    ///
+-    /// For worktree tasks the search is scoped to the task's own worktree; other tasks
+-    /// fall back through the active item, active worktree, and finally an empty context.
+     /// If none of the contexts resolve, the original `resolved_task` is returned unchanged.
+     fn reresolve_task(&self, kind: &TaskSourceKind, resolved_task: &ResolvedTask) -> ResolvedTask {
+-        let id_base = kind.to_id_base();
+-        let task = resolved_task.original_task();
+-
+-        let candidate_contexts: Vec<Option<&TaskContext>> = match kind {
+-            TaskSourceKind::Worktree { id, .. } => vec![
+-                self.active_item_context
+-                    .as_ref()
+-                    .filter(|(worktree_id, _, _)| worktree_id.as_ref() == Some(id))
+-                    .map(|(_, _, context)| context),
+-                self.active_worktree_context
+-                    .as_ref()
+-                    .filter(|(worktree_id, _)| worktree_id == id)
+-                    .map(|(_, context)| context),
+-                self.other_worktree_contexts
+-                    .iter()
+-                    .find(|(worktree_id, _)| worktree_id == id)
+-                    .map(|(_, context)| context),
+-            ],
+-            _ => vec![
+-                self.active_item_context
+-                    .as_ref()
+-                    .map(|(_, _, context)| context),
+-                self.active_worktree_context
+-                    .as_ref()
+-                    .map(|(_, context)| context),
+-            ],
+-        };
+-
+-        candidate_contexts
+-            .into_iter()
+-            .flatten()
+-            .find_map(|context| task.resolve_task(&id_base, context))
+-            .or_else(|| task.resolve_task(&id_base, &TaskContext::default()))
++        self.resolve_task(kind, resolved_task.original_task())
+             .unwrap_or_else(|| resolved_task.clone())
+     }
+ }
+@@ -592,50 +605,10 @@ impl Inventory {
+                 .chain(global_tasks);
+ 
+             let new_resolved_tasks = worktree_tasks
+-                .flat_map(|(kind, task)| {
+-                    let id_base = kind.to_id_base();
+-
+-                    if let TaskSourceKind::Worktree { id, .. } = &kind {
+-                        None.or_else(|| {
+-                            let (_, _, item_context) =
+-                                task_contexts.active_item_context.as_ref().filter(
+-                                    |(worktree_id, _, _)| Some(id) == worktree_id.as_ref(),
+-                                )?;
+-                            task.resolve_task(&id_base, item_context)
+-                        })
+-               
+```
+
+**File**: `crates/task/src/task.rs` (modified, +4/-0)
+```diff
+@@ -303,6 +303,10 @@ impl TaskVariables {
+     pub fn get(&self, key: &VariableName) -> Option<&str> {
+         self.0.get(key).map(|s| s.as_str())
+     }
++    /// Removes the variable from the container, returning its value if it was present.
++    pub fn remove(&mut self, key: &VariableName) -> Option<String> {
++        self.0.remove(key)
++    }
+     /// Clear out variables obtained from tree-sitter queries, which are prefixed with '_' character
+     pub fn sweep(&mut self) {
+         self.0.retain(|name, _| {
+```
+
+**File**: `crates/tasks_ui/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -36,8 +36,11 @@ zed_actions.workspace = true
+ editor = { workspace = true, features = ["test-support"] }
+ gpui = { workspace = true, features = ["test-support"] }
+ language = { workspace = true, features = ["test-support"] }
++languages = { workspace = true, features = ["test-support"] }
++node_runtime.workspace = true
+ project = { workspace = true, features = ["test-support"] }
+ serde_json.workspace = true
++settings = { workspace = true, features = ["test-support"] }
+ tree-sitter-rust.workspace = true
+ tree-sitter-typescript.workspace = true
+ workspace = { workspace = true, features = ["test-support"] }
+```
+
+**File**: `crates/tasks_ui/src/tasks_ui.rs` (modified, +665/-18)
+```diff
+@@ -134,20 +134,21 @@ pub fn init(cx: &mut App) {
+                                 let default_context = TaskContext::default();
+                                 workspace
+                                     .update_in(cx, |workspace, window, cx| {
++                                        let task_context = task_contexts
++                                            .context_for_task(&task_source_kind, &original_task)
++                                            .unwrap_or(&default_context);
+                                         workspace.schedule_task(
+                                             task_source_kind,
+                                             &original_task,
+-                                            task_contexts
+-                                                .active_context()
+-                                                .unwrap_or(&default_context),
++                                            task_context,
+                                             false,
+                                             window,
+                                             cx,
+-                                        )
++                                        );
+                                     })
+                                     .ok()
+                             })
+-                            .detach()
++                            .detach();
+                         } else {
+                             let resolved = &mut last_scheduled_task.resolved;
+ 
+@@ -310,7 +311,6 @@ where
+         let did_spawn = workspace
+             .update_in(cx, |workspace, window, cx| {
+                 let default_context = TaskContext::default();
+-                let active_context = task_contexts.active_context().unwrap_or(&default_context);
+ 
+                 tasks.retain_mut(|(task_source_kind, target_task)| {
+                     if predicate((task_source_kind, target_task)) {
+@@ -319,10 +319,14 @@ where
+                         {
+                             target_task.reveal_target = target_override;
+                         }
++                        let task_context = task_contexts
++                            .context_for_task(task_source_kind, target_task)
++                            .unwrap_or(&default_context);
++
+                         workspace.schedule_task(
+                             task_source_kind.clone(),
+                             target_task,
+-                            active_context,
++                            task_context,
+                             false,
+                             window,
+                             cx,
+@@ -361,9 +365,9 @@ pub fn task_contexts(
+     cx: &mut App,
+ ) -> Task<TaskContexts> {
+     let active_item = workspace.active_item(cx);
+-    let active_item_worktree = active_item
++    let active_item_project_path = active_item.as_ref().and_then(|item| item.project_path(cx));
++    let active_item_worktree = active_item_project_path
+         .as_ref()
+-        .and_then(|item| item.project_path(cx))
+         .map(|project_path| project_path.worktree_id)
+         .filter(|worktree_id| {
+             workspace
+@@ -375,12 +379,14 @@ pub fn task_contexts(
+     let active_worktree = active_item_worktree.or_else(|| {
+         workspace
+             .visible_worktrees(cx)
+-            .next()
++            .find(|worktree| is_visible_directory(worktree, cx))
+             .map(|tree| tree.read(cx).id())
+     });
+ 
+     let active_editor = active_item.and_then(|item| item.act_as::<Editor>(cx));
+-    let active_project_editor = active_item_worktree
++    // Files from single-file worktrees provide no worktree context, but their editors
++    // must still provide file variables such as `ZED_FILE`.
++    let active_project_editor = active_item_project_path
+         .is_some()
+         .then(|| active_editor.clone())
+         .flatten();
+@@ -435,8 +441,14 @@ pub fn task_contexts(
+         task_contexts.latest_selection = latest_selection;
+ 
+         if let Some(editor_context_task) = editor_context_task
+-            && let Some(editor_context) = editor_context_task.await
++            && let Some(mut editor_context) = editor_context_task.await
+         {
++            if active_item_worktree.is_none()
++                && let Some(project_root) =
++                    active_worktree.and_then(|worktree_id| worktree_abs_paths.get(&worktree_id))
++            {
++                use_project_root_for_external_item(&mut editor_context, project_root);
++            }
+             task_contexts.active_item_context =
+                 Some((active_item_worktree, location, editor_context));
+         }
+@@ -462,6 +474,41 @@ pub fn task_contexts(
+     })
  }
  
- #[gpui::test]
++/// Items outside of visible directory worktrees (e.g. the global `tasks.json` opened via
++/// `zed: open tasks`) keep their file variables, but use the visible project's root and cwd.
++/// Everything else is dropped, as it is derived from their own worktree: relative paths, its git
++/// repository and language-specific var
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66481** (2026-11-03): Do not panic on wrong grammar results (#66474) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #66480** (2026-11-03): Do not panic on wrong grammar results (#66474) (cherry-pick to preview) (@zed-zippy[bot])
-- **PR #66474** (2026-11-03): Do not panic on wrong grammar results (@SomeoneToIgnore)
-- **PR #66468** (2026-11-03): gpui_windows: Preserve native tab advances (@Veykril)
-- **PR #66461** (2026-11-03): ui: Support embedded views in context menu submenus (@smitbarmase)
-- **PR #66455** (closed): gpui_windows: give tab characters a width (@leafyoung)
+- **PR #66540** (2026-11-04): gpui: Fix cursor reverting when a drag starts (@probably-neb)
+- **PR #66532** (2026-11-04): Bump Zed to v1.29.0 (@zed-zippy[bot])
+- **PR #66531** (2026-11-04): ui: Allow for custom submenu triggers (@danilo-leal)
+- **PR #66527** (2026-11-04): openai_subscribed: Preserve cached prefix during compaction (@smitbarmase)
+- **PR #66517** (2026-11-04): Revert "Reduce waits for navigation, suggestions, and file comparisons (#66487)" (@osiewicz)
+- **PR #66515** (2026-11-04): vim: Support `\+` and `\{n\}` in substitute patterns (@akramcodez)
 
 ---
 
@@ -2964,60 +3083,52 @@ projects.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows shell detection for uppercase executable names (#66387)
+## X. opening `path:line` in a running Zed on Windows (#66501)
 
 **RULE**:
-When implementing operations in `crates/util/src/shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cli/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b41a8b60`: Windows shell detection for uppercase executable names (#66387). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e21ff1b3`: opening `path:line` in a running Zed on Windows (#66501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/util/src/shell.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/src/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let program = if is_windows {
-            Cow::Owned(program.to_ascii_lowercase())
-        } else {
-            program
-        };
-    #[test]
-    fn test_shell_kind_windows_case_insensitive() {
-        for (program, expected) in [
-            ("CMD.EXE", ShellKind::Cmd),
-            ("PowerShell.exe", ShellKind::PowerShell),
-            ("PwSh.ExE", ShellKind::Pwsh),
-            ("NU.EXE", ShellKind::Nushell),
-            ("FISH.EXE", ShellKind::Fish),
-            ("CSH.EXE", ShellKind::Csh),
-            ("TCSH.EXE", ShellKind::Tcsh),
-            ("RC.EXE", ShellKind::Rc),
-            ("XONSH.EXE", ShellKind::Xonsh),
-            ("ELVISH.EXE", ShellKind::Elvish),
-            ("SH.EXE", ShellKind::Posix),
-            ("BASH.EXE", ShellKind::Posix),
-            ("ZSH.EXE", ShellKind::Posix),
-            ("C:/Windows/System32/CMD.EXE", ShellKind::Cmd),
-            ("C:/Program Files/PowerShell/7/PWSH.EXE", ShellKind::Pwsh),
-            ("unknown.exe", ShellKind::PowerShell),
-        ] {
-            assert_eq!(ShellKind::new(program, true), expected, "{program}");
-        }
-    }
-
-    #[test]
-    fn test_shell_kind_unix_case_sensitive() {
-        for (program, expected) in [
- 
+use util::paths::{PathWithPosition, parse_path_with_position};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+use util::paths::PathWithPosition;
+/// Parses a path containing a position (e.g. `path:line:column`)
+/// and returns its canonicalized string representation.
+///
+/// If a part of path doesn't exist, it will canonicalize the
+/// existing part and append the non-existing part.
+///
+/// This method must return an absolute path, as many zed
+/// crates assume absolute paths.
+fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
+    match Path::new(argument_str).canonicalize() {
+        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
+        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
+            let curdir = env::current_dir().context("retrieving current directory")?;
+            let mut children = Vec::new();
+            let root;
+            loop {
+                // canonicalize handles './', and '/'.
+                if let Ok(canonicalized) = fs::canonicalize(&path) {
+                    root = canonicalized;
+                    break;
+                }
+                // The comparison to `curdir` is just a shortcut
+                // since we know it is canonical. The other one
+                // is if `argume
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b41a8b60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e21ff1b3` are properly handled with clean fallback behavior.

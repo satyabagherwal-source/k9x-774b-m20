@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `1549ae4f`  
+> **Source Version**: `9f21216f`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:39:06.662Z  
+> **Timestamp**: 2026-11-05T03:46:29.838Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:39:05.421Z  
+> **Harvest Timestamp**: 2026-11-05T03:46:29.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -26,15 +26,15 @@
 - **Repository / Resource**: `opentofu/opentofu`
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30708 stars
+- **Discovered Manifests / Configurations**: go.mod, README.md
+- **Stars / Engagement**: 30723 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
+- Entry configurations inspected via direct stream: go.mod, README.md.
 - Evaluated system abstractions and modular contracts.
 
 ### Core Architecture Module: `internal/backend/local/hook_state.go`
@@ -1419,319 +1419,656 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1549ae4f` (2026-11-03)
-**Commit Message**: 4713 uiinput context cancellation v02 (#4755)
+### Incident Patch 1: `9f21216f` (2026-11-03)
+**Commit Message**: Refactor release and nightly workflows
 
-Signed-off-by: Ron Green <[REDACTED_EMAIL]>
+Summary:
+* Upgraded some dependencies, goreleaser being the big one
+* Split process between build and release
+  - 40 minutes to 4 minutes
+  - don't need large runners
+* Split release channels where possible
+  - snap is unstable these days and re-running independently is good
+  - snap no longer blocks / messes up the rest of the release builds
+* Added guide for running from your own github account / org
 
-**File**: `internal/command/apply.go` (modified, +4/-0)
+Disadvantages:
+* Duplicated more logic between nightly.yml and release.yml
+
+Next steps:
+* Upgrade all release tools/dependencies
+
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/release-cache/action.yml` (added, +18/-0)
 ```diff
-@@ -70,6 +70,10 @@ type ApplyCommand struct {
- func (c ApplyCommand) Execute(args *arguments.Apply, view views.Apply) int {
- 	var diags tfdiags.Diagnostics
- 	ctx := c.CommandContext()
-+	// This is safe to be done since the execution engine contexts are created by ignoring the cancellation from the parent context.
-+	// internal/backend/local/backend.go
-+	ctx, cancel := c.InterruptibleContext(ctx)
-+	defer cancel()
- 	ctx = tfdiags.ContextWithLintFilterHints(ctx, args.View.LintInclude, args.View.LintExclude)
- 	diags = diags.Append(tfdiags.ExperimentalLintWarn(ctx))
- 
+@@ -0,0 +1,18 @@
++name: 'Release Cache'
++inputs:
++  goos:
++    required: true
++  goarch:
++    required: true
++  tag:
++    required: true
++
++runs:
++  using: 'composite'
++  steps:
++      - id: cache
++        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
++        with:
++          path: dist/${{ inputs.goos }}_${{ inputs.goarch }}/
++          key: ${{ inputs.goos }}-${{ inputs.goarch }}-${{ inputs.tag }}
++          enableCrossOsArchive: ${{ inputs.goos == 'windows' }}
 ```
 
-**File**: `internal/command/apply_test.go` (modified, +1/-1)
+**File**: `.github/scripts/compare-release-version.sh` (removed, +0/-29)
 ```diff
-@@ -313,7 +313,7 @@ func TestApply_parallelism(t *testing.T) {
- 	// calls until we reach the desired concurrency. The cancel func "begin" is
- 	// called once we reach the desired concurrency, allowing all apply calls
- 	// to proceed in unison.
--	beginCtx, begin := context.WithCancel(context.Background())
-+	beginCtx, begin := context.WithCancel(t.Context())
- 	// Ensure cancel is fired regardless of test
- 	defer begin()
- 
+@@ -1,29 +0,0 @@
+-#!/usr/bin/env bash
+-# SPDX-License-Identifier: MPL-2.0
+-
+-# Compare the semver tag against the current release in the VERSION file
+-
+-set -uo pipefail
+-
+-# Bail if VERSION cannot be found
+-if [[ ! -f version/VERSION ]]; then
+-    echo "The VERSION file could not be found. Please create a VERSION file in the version/ directory. The contents of version should match the tag without the v prefix."
+-    exit 1
+-fi
+-
+-if [ -z "$TARGET_VERSION" ]; then
+-    echo "The TARGET_VERSION environment variable is not set."
+-    exit 1
+-fi
+-
+-# Create a clean semver tag without the v prefix
+-CLEAN_TAG=$(echo "$TARGET_VERSION" | sed 's/^v//')
+-
+-VERSION=$(cat version/VERSION)
+-if [[ "$VERSION" != "$CLEAN_TAG" ]]; then
+-    echo "The VERSION file does not match the tag. Please update the version/VERSION file to match the tag without the v prefix."
+-    echo "The VERSION file contains: $VERSION but the tag is: $CLEAN_TAG."
+-    exit 1
+-fi
+-
+-echo "The VERSION file matches the tag. Proceeding with the release of $VERSION."
 ```
 
-**File**: `internal/command/clistate/state_test.go` (modified, +1/-1)
+**File**: `.github/workflows/build.yml` (modified, +9/-9)
 ```diff
-@@ -37,7 +37,7 @@ func TestUnlockWithCancelledContext(t *testing.T) {
- 	view := views.NewView(streams)
+@@ -17,15 +17,15 @@ jobs:
+     strategy:
+       matrix:
+         include:
+-          - {goos: "freebsd", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "linux", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "linux", goarch: "arm64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "openbsd", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "solaris", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "windows", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "windows", goarch: "arm64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "darwin", goarch: "amd64", runson: "macos-latest", cgo-enabled: "1"}
+-          - {goos: "darwin", goarch: "arm64", runson: "macos-latest", cgo-enabled: "1"}
++          - {goos: "freebsd", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "linux", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "linux", goarch: "arm64", runson: "ubuntu-latest"}
++          - {goos: "openbsd", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "solaris", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "windows", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "windows", goarch: "arm64", runson: "ubuntu-latest"}
++          - {goos: "darwin", goarch: "amd64", runson: "macos-latest"}
++          - {goos: "darwin", goarch: "arm64", runson: "macos-latest"}
+       fail-fast: false
  
- 	// Create a context that is already cancelled (simulates Ctrl+C)
--	ctx, cancel := context.WithCancel(context.Background())
-+	ctx, cancel := context.WithCancel(t.Context())
- 	cancel()
- 
- 	backendView := views.NewBackendHuman(view)
+     name: Build for ${{ matrix.goos }}_${{ matrix.goarch }}
 ```
 
-**File**: `internal/command/login.go` (modified, +16/-0)
+**File**: `.github/workflows/nightly.yml` (modified, +95/-27)
 ```diff
-@@ -74,8 +74,10 @@ func (c LoginCommand) Execute(args *arguments.Login, view views.Login) int {
- 	var diags tfdiags.Diagnostics
+@@ -6,52 +6,118 @@ on:
+   workflow_dispatch:
  
- 	ctx := c.CommandContext()
-+	ctx, cancel := c.InterruptibleContext(ctx)
- 	ctx, span := tracing.Tracer().Start(ctx, "Login")
- 	defer span.End()
-+	defer cancel()
+ jobs:
+-  nightly:
+-    runs-on: larger-runners
+-    permissions:
+-      contents: read
+-      id-token: write
+-      packages: write
++  build:
++    strategy:
++      fail-fast: false
++      matrix:
++        include: # NOTE: Ensure this list EXACTLY matches the cache steps below and the release action 
++          - {goos: "linux",   goarch: "amd64"}
++          - {goos: "linux",   goarch: "arm64"}
++          - {goos: "freebsd", goarch: "amd64"}
++          - {goos: "openbsd", goarch: "amd64"}
++          - {goos: "solaris", goarch: "amd64"}
++          - {goos: "darwin",  goarch: "amd64"}
++          - {goos: "darwin",  goarch: "arm64"}
++          - {goos: "windows", goarch: "amd64"}
++          - {goos: "windows", goarch: "arm64"}
++    
++    name: Build for ${{ matrix.goos }}_${{ matrix.goarch }}
++    runs-on: ubuntu-latest
++    environment: gpg
++    env:
++      GOOS: ${{ matrix.goos }}
++      GOARCH: ${{ matrix.goarch }}
++
+     steps:
+-      - name: Checkout
++      - name: "Fetch source code"
+         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         with:
+-          ref: main
+           fetch-depth: 0
++          ref: main 
  
- 	if !c.input {
- 		diags = diags.Append(tfdiags.Sourceless(
-@@ -501,6 +503,20 @@ func (c *LoginCommand) interactiveGetTokenByCode(ctx context.Context, hostname s
- 		wg.Wait()
- 		close(codeCh)
- 		return nil, diags
-+	case <-ctx.Done():
-+		diags = diags.Append(
-+			tfdiags.Sourceless(
-+				tfdiags.Error,
-+				"Action aborted",
-+				"Current command was aborted",
-+			),
-+		)
-+		if err := server.Shutdown(ctx); err != nil {
-+			log.Printf("[WARN] login: callback server shutdown failed: %s", err)
-+		}
-+		wg.Wait()
-+		close(codeCh)
-+		return nil, diags
- 	case code = <-codeCh:
- 	}
+       - name: "Configure Go toolchain"
+         uses: ./.github/actions/go-toolchain
  
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "${{ matrix.goos }}", goarch: "${{ matrix.goarch }}", tag: "${{ github.sha }}" }
++
+       # Prepare the nightly version to be able to have it returned correctly when running `tofu --version`.
+       - name: Prepare version file
+         run: |
+           commit_created_at=`git show --no-patch --format=%cd --date=format:%Y%m%d%H%M%S ${GITHUB_SHA}`
+           short_commit=`git rev-parse --short=12 ${GITHUB_SHA}`
+           sed -i "s/-dev/-nightly${commit_created_at}-${short_commit}/" version/VERSION
+ 
+-      - name: Run GoReleaser
+-        uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
++
++      - name: Run GoReleaser (Build)
++        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+         with:
+-          version: v1.21.2
++          version: v2.19.0
+           distribution: goreleaser-pro
+-          args: release --nightly --clean --timeout=60m --skip=sign,docker
++          # Without single-target, only GOOS is used as a filter, not GOARCH
++          args: release --nightly --skip=docker,sign --split --clean --single-target --timeout=60m --config=release/.goreleaser.yaml
+         env:
+-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+-          RELEASE_FLAG_LATEST: "false"
+-          RELEASE_FLAG_PRERELEASE: "true"
++          RELEASE_FLAG_LATEST: "false" 
++          RELEASE_FLAG_PRERELEASE: "true" 
++
++  release:
++    needs: [build]
++    runs-on: "ubuntu-latest"
++    name: "Nightly Release"
++    environment: gpg
+ 
+-      # The step before goreleaser one updated version/VERSION to have it stored in the binary, but we want to bring the
+-      # repo to a clean state now.
+-      - name: Restore version
+-        run: git restore version/VERSION
++    steps:
++      - name: Checkout
++        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
++        with:
++          fetch-depth: 0
++          ref: main 
++
++      - name: Fetch tags
++        run: git fetch --force --tags
++
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "linux", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "linux", goarch: "arm64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "freebsd", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "openbsd", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "solaris", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "darwin", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "darwin", goarch: "arm64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "windows", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "windows", goarch: "arm64", tag: "${{ github.sha }}"}
+ 
+-      - name: Upload artifacts
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++      - name: Run GoReleaser
++        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+     
 ```
 
-**File**: `internal/command/login_test.go` (modified, +48/-0)
+**File**: `.github/workflows/release.yml` (modified, +241/-86)
 ```diff
-@@ -7,9 +7,12 @@ package command
+@@ -3,101 +3,110 @@ name: release
+ on:
+   workflow_dispatch:
+     inputs:
+-      tag:
+-        description: "Git tag (leave empty for dry run)"
+-        required: false
+       latest:
+         description: "Release as latest?"
+         required: true
+         type: boolean
+-      prerelease:
+-        description: "Release as prerelease?"
+-        required: true
+-        type: boolean
++      tag:
++        description: "Override tag? (vM.N.P)"
++        required: false
  
- import (
- 	"context"
-+	"io"
- 	"net/http/httptest"
-+	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
+ jobs:
+-  release:
+-    name: Release
+-    runs-on: larger-runners
+-    environment: gpg
+-    permissions:
+-      contents: write
+-      id-token: write
+-      packages: write
++  info:
++    name: Information
++    runs-on: ubuntu-latest
  
-@@ -364,6 +367,51 @@ func TestLogin(t *testing.T) {
- 			t.Fatalf("missing expected error message\nwant: %s\nfull output:\n%s", want, got)
- 		}
- 	}, false))
-+
-+	t.Run("cancel input during login confirmation", loginTestCase(func(t *testing.T, m *Meta, closeView func(*testing.T) *terminal.TestOutput) {
-+		// Create a cancelled context to see if it is passed (next I will ask the input to be a pipe so it works)
-+		ctx, cancel := context.WithCancel(t.Context())
-+		defer cancel()
-+
-+		// make suer that the actual call will use the cancellable context
-+		prefCtx := m.CallerContext
-+		m.CallerContext = ctx
-+		defer func() { m.CallerContext = prefCtx }()
-+		// defer func() { abortCh <- struct{}{} }()
-+
-+		// create a pipe that is idle
-+		rx, tx := io.Pipe()
-+
-+		// cancel the context right before you start reading
-+		var once sync.Once
-+		rWrapped := notifyReader{
-+			cancel: cancel,
-+			once:   &once,
-+			Reader: rx,
-+		}
-+
-+		// and force the code to use it so it hangs on input for address
-+		defaultInputReader = &rWrapped
-+
-+		// reset all things I set when done to not hog resources
-+		defer func() {
-+			defaultInputReader = os.Stdin
-+			rx.Close()
-+			tx.Close()
-+		}()
-+
-+		out := RunCommander(t, LoginCommander(), *m, []string{"example.com"})
-+		loginOutput := closeView(t).All()
-+
-+		if out != 1 {
-+			t.Fatalf("error code and stdout dont match expected test: %d %s", out, loginOutput)
-+
-+		}
-+		if !strings.Contains(loginOutput, "interrupted: context canceled") {
-+			t.Fatalf("an error occured but not the one I expected %s", loginOutput)
-+		}
-+	}, false))
-+
- }
+     steps:
+-      - name: Set up QEMU cross build support
+-        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a # v3.3.0
+-      - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 # v3.8.0
+-
+-      - name: Login to Github Container Registry
+-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+-        if: startsWith(inputs.tag, 'v')
+-        with:
+-          registry: ghcr.io
+-          username: ${{ github.repository_owner }}
+-          password: ${{ secrets.GITHUB_TOKEN }}
+-
+       - name: Checkout
+         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         with:
+           fetch-depth: 0
+-          ref: ${{ inputs.tag }}
  
- // TestLoginOAuthCallbackRace verifies that no panic, deadlock, or data race
+-      - name: Fetch tags
+-        run: git fetch --force --tags
++      - name: "Determine tag"
++        id: tag
++        run: echo "value=${{ inputs.tag == '' && 'v$(cat version/VERSION)' || inputs.tag }}" | tee -a "${GITHUB_OUTPUT}"
+ 
+-      - name: Compare versions
+-        if: startsWith(inputs.tag, 'v')
+-        run: ./.github/scripts/compare-release-version.sh
+-        env:
+-          TARGET_VERSION: ${{inputs.tag}}
++      # NOTE: Historically, we have not been great about running the beta workflow on the main branch.
++      # This has implications on how we run cosign.
++      # Practically, this means that certain tools like tenv and tofudl don't install betas correctly.
++      # We should pick one (main vs branch) and stick to it here.
++      - name: "Determine Prerelease Status"
++        id: prerelease
++        run: echo "value=$(echo "${{ steps.tag.outputs.value }}" | grep -c "-")" | tee -a "${GITHUB_OUTPUT}"
+ 
+-      - name: Check if tag is on main branch or version branch
+-        id: validate_tag
+-        env:
+-          INPUT_TAG: ${{ inputs.tag }}
+-        run: |
+-          IS_TAG_ON_MAIN=$(git branch -a --contains "$INPUT_TAG" | grep -q "main" && echo true || echo false)
+-          IS_TAG_ON_VERSION=$(git branch -a --contains "$INPUT_TAG" | grep -E "^v[0-9]+\.[0-9]+" && echo true || echo false)
+-          echo "IS_TAG_ON_MAIN=${IS_TAG_ON_MAIN}" >> $GITHUB_OUTPUT
+-          echo "IS_TAG_ON_VERSION=${IS_TAG_ON_VERSION}" >> $GITHUB_OUTPUT
++      - name: "Ensure tag matches branch"
++        if: ${{ !startsWith(steps.tag.outputs.value, github.ref_name) }}
++        run: echo "Version tag ${{ steps.tag.outputs.value }} does not match branch ${{ github.ref_name }}!" && exit 1
+ 
+-      - name: Check if release is allowed or not
+-        id: validate_release
+-        env:
+-          IS_PRERELEASE: ${{ inputs.prerelease }}
+-          IS_TAG_ON_MAIN: ${{ steps.validate_tag.outputs.IS_TAG_ON_MAIN }}
++      - name: "Ensure prerelease is not latest"
++        if: ${{ inputs.latest && steps.prerelease.outputs.value == 1 }}
++        run: echo "Latest and Prerelease conflict" && exit 1
++
++      - name: "Summary"
+         run: |
+-          if [[ "$IS_PRERELEASE" == "false" && "$IS_TAG_ON_MAIN" == "true" ]]; then
+-            echo "ERROR: Creating stable release from a tag on main is not allowed."
+-            exit 1
+-          fi
++          echo "Branch: ${{ github.ref_name }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Tag: ${{ steps.tag.outputs.value }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Latest: ${{ inputs.latest }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Prerelease: ${{ steps.prerelease.outputs.value }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++    outputs:
++      branch: ${{ github.ref_name }}
++      tag: ${{ steps.tag.outputs.value }}
++      latest: ${{ inputs.latest }}
++      prerelease: ${{ steps.prerelease.outputs.value == 1 && 'true' || 'false' }}
++
++  build:
++    needs: [info]
++    strategy:
++      fail-fast: false
++      matrix:
++        include: # NOTE: Ensure this list EXACTLY matches the cache steps below and the nightly action 
++          - {goos: "linux",   goarch: "amd64"}
++          - {goos: "linux",   goarch: "arm64"}
++          - {goos: "freebsd", goarch: "amd64"}
++          - {goos: "openbsd", goarch: "amd64"}
++          - {goos: "solaris", goarch: "amd64"}
++          - {goos: "darwin",  goarch: "amd64"}
++          - {goos: "darwin",  goarch: "arm64"}
++          - {goos: "windows", goarch: "am
 ```
 
-**File**: `internal/command/meta.go` (modified, +2/-2)
+**File**: `.goreleaser.yaml` (removed, +0/-273)
 ```diff
-@@ -427,13 +427,13 @@ func (m *Meta) contextOpts(ctx context.Context) (*tofu.ContextOpts, error) {
- }
- 
- // confirm asks a yes/no confirmation.
--func (m *Meta) confirm(opts *tofu.InputOpts) (bool, error) {
-+func (m *Meta) confirm(ctx context.Context, opts *tofu.InputOpts) (bool, error) {
- 	if !m.Input() {
- 		return false, errors.New("input is disabled")
- 	}
- 
- 	for range 2 {
--		v, err := m.UIInput().Input(context.Background(), opts)
-+		v, err := m.UIInput().Input(ctx, opts)
- 		if err != nil {
- 			return false, fmt.Errorf(
- 				"Error asking for confirmation: %w", err)
+@@ -1,273 +0,0 @@
+-# Copyright (c) The OpenTofu Authors
+-# SPDX-License-Identifier: MPL-2.0
+-# Copyright (c) 2023 HashiCorp, Inc.
+-# SPDX-License-Identifier: MPL-2.0
+-
+-project_name: tofu
+-
+-before:
+-  hooks:
+-    - go mod tidy
+-    - go generate ./...
+-    - make protobuf
+-
+-builds:
+-  - env:
+-      - CGO_ENABLED=0
+-
+-    main: ./cmd/tofu
+-
+-    flags:
+-      - "-mod=readonly"
+-      - "-trimpath"
+-
+-    ldflags:
+-      - "-s -w"
+-      - "-X 'github.com/opentofu/opentofu/version.dev=no'"
+-      # BUILD_OPENTOFU_OFFICIAL is set by the OpenTofu project's main release
+-      # process. It should typically _not_ be set for builds produced by
+-      # third-parties such as Linux distribution maintainers, because in that
+-      # case the resulting executable might generate irrelevant warnings that
+-      # are intended only for users of the official release builds.
+-      - "-X 'github.com/opentofu/opentofu/version.officialBuild={{if index .Env \"BUILD_OPENTOFU_OFFICIAL\" }}{{ .Env.BUILD_OPENTOFU_OFFICIAL }}{{end}}'"
+-
+-    goos:
+-      - linux
+-      - windows
+-      - darwin
+-      - freebsd
+-      - openbsd
+-      - solaris
+-
+-    goarch:
+-      - amd64
+-      - arm64
+-
+-    ignore:
+-      - goos: freebsd
+-        goarch: arm64
+-      - goos: openbsd
+-        goarch: arm64
+-      - goos: solaris
+-        goarch: arm64
+-
+-archives:
+-  - format: tar.gz
+-    id: targz
+-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
+-  
+-  - format: zip
+-    id: zip 
+-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
+-
+-dockers:
+-  - use: buildx
+-    goarch: amd64
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/amd64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-amd64"
+-
+-  - use: buildx
+-    goarch: amd64
+-    dockerfile: Dockerfile.minimal
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/amd64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-minimal-amd64"
+-
+-  - use: buildx
+-    goarch: arm64
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/arm64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-arm64"
+-
+-  - use: buildx
+-    goarch: arm64
+-    dockerfile: Dockerfile.minimal
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/arm64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.
 ```
 
-**File**: `internal/command/meta_backend.go` (modified, +3/-3)
+**File**: `.tfdev` (removed, +0/-7)
 ```diff
-@@ -243,7 +243,7 @@ func (m *Meta) selectWorkspace(ctx context.Context, b backend.Backend) error {
- 			// len is always 1 if using Name; 0 means we're using Tags and there
- 			// aren't any matching workspaces. Which might be normal and fine, so
- 			// let's just ask:
--			name, err := m.UIInput().Input(context.Background(), &tofu.InputOpts{
-+			name, err := m.UIInput().Input(ctx, &tofu.InputOpts{
- 				Id:          "create-workspace",
- 				Query:       "\n[reset][bold][yellow]No workspaces found.[reset]",
- 				Description: fmt.Sprintf(inputCloudInitCreateWorkspace, strings.Join(c.WorkspaceMapping.Tags, ", ")),
-@@ -290,7 +290,7 @@ func (m *Meta) selectWorkspace(ctx context.Context, b backend.Backend) error {
- 	}
- 
- 	// Otherwise, ask the user to select a workspace from the list of existing workspaces.
--	v, err := m.UIInput().Input(context.Background(), &tofu.InputOpts{
-+	v, err := m.UIInput().Input(ctx, &tofu.InputOpts{
- 		Id: "select-workspace",
- 		Query: fmt.Sprintf(
- 			"\n[reset][bold][yellow]The currently selected workspace (%s) does not exist.[reset]",
-@@ -1422,7 +1422,7 @@ func (m *Meta) backendInitFromConfig(ctx context.Context, c *configs.Backend, en
- 	// TODO: test
- 	if m.Input() {
- 		var err error
--		configVal, err = m.inputForSchema(configVal, schema, view)
-+		configVal, err = m.inputForSchema(ctx, configVal, schema, view)
- 		if err != nil {
- 			diags = diags.Append(fmt.Errorf("Error asking for input to configure backend %q: %w", canonType, err))
- 		}
+@@ -1,7 +0,0 @@
+-version_info {
+-  version_var =    "github.com/opentofu/opentofu/version.Version"
+-  prerelease_var = "github.com/opentofu/opentofu/version.Prerelease"
+-}
+-
+-version_exec = false
+-disable_provider_requirements = true
 ```
 
-**File**: `internal/command/meta_backend_migrate.go` (modified, +27/-26)
+**File**: `release/.goreleaser.yaml` (added, +161/-0)
 ```diff
-@@ -175,7 +175,7 @@ func (m *Meta) backendMigrateState_S_S(ctx context.Context, opts *backendMigrate
- 	if !migrate {
- 		var err error
- 		// Ask the user if they want to migrate their existing remote state
--		migrate, err = m.confirm(&tofu.InputOpts{
-+		migrate, err = m.confirm(ctx, &tofu.InputOpts{
- 			Id: "backend-migrate-multistate-to-multistate",
- 			Query: fmt.Sprintf(
- 				"Do you want to migrate all workspaces to %q?",
-@@ -235,7 +235,7 @@ func (m *Meta) backendMigrateState_S_s(ctx context.Context, opts *backendMigrate
- 	if !migrate {
- 		var err error
- 		// Ask the user if they want to migrate their existing remote state
--		migrate, err = m.confirm(&tofu.InputOpts{
-+		migrate, err = m.confirm(ctx, &tofu.InputOpts{
- 			Id: "backend-migrate-multistate-to-single",
- 			Query: fmt.Sprintf(
- 				"Destination state %q doesn't support workspaces.\n"+
-@@ -292,7 +292,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 		// for a new name and migrate the default state to the given named state.
- 		destinationState, err = func() (statemgr.Full, error) {
- 			log.Print("[TRACE] backendMigrateState: destination doesn't support a default workspace, so we must prompt for a new name")
--			name, err := m.promptNewWorkspaceName(opts.DestinationType)
-+			name, err := m.promptNewWorkspaceName(ctx, opts.DestinationType)
- 			if err != nil {
- 				return nil, err
- 			}
-@@ -384,7 +384,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 		destination = destinationState.State()
- 	}
- 
--	var confirmFunc func(statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error)
-+	var confirmFunc func(context.Context, statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error)
- 	switch {
- 	// No migration necessary
- 	case source.Empty() && destination.Empty():
-@@ -404,7 +404,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 			// whether to migrate state in the cloud case, so we'll skip
- 			// this later prompt for Cloud, even though we do still need it
- 			// for state backends.
--			confirmFunc = func(statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error) {
-+			confirmFunc = func(context.Context, statemgr.Full, statemgr.Full, *backendMigrateOpts) (bool, error) {
- 				return true, nil // the answer is implied to be "yes" if we reached this point
- 			}
- 		} else {
-@@ -431,7 +431,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 		}
- 
- 		// Confirm with the user whether we want to copy state over
--		confirm, err := confirmFunc(sourceState, destinationState, opts)
-+		confirm, err := confirmFunc(ctx, sourceState, destinationState, opts)
- 		if err != nil {
- 			log.Print("[TRACE] backendMigrateState: error reading input, so aborting migration")
- 			return err
-@@ -463,7 +463,7 @@ func (m *Meta) backendMigrateState_s_s(ctx context.Context, opts *backendMigrate
- 	return nil
- }
- 
--func (m *Meta) backendMigrateEmptyConfirm(source, destination statemgr.Full, opts *backendMigrateOpts) (bool, error) {
-+func (m *Meta) backendMigrateEmptyConfirm(ctx context.Context, source, destination statemgr.Full, opts *backendMigrateOpts) (bool, error) {
- 	var inputOpts *tofu.InputOpts
- 	if opts.DestinationType == "cloud" {
- 		inputOpts = &tofu.InputOpts{
-@@ -481,11 +481,11 @@ func (m *Meta) backendMigrateEmptyConfirm(source, destination statemgr.Full, opt
- 		}
- 	}
- 
--	return m.confirm(inputOpts)
-+	return m.confirm(ctx, inputOpts)
- }
- 
- func (m *Meta) backendMigrateNonEmptyConfirm(
--	sourceState, destinationState statemgr.Full, opts *backendMigrateOpts) (bool, error) {
-+	ctx context.Context, sourceState, destinationState statemgr.Full, opts *backendMigrateOpts) (bool, error) {
- 	// We need to grab both states so we can write them to a file
- 	source := sourceState.State()
- 	destination := destinationState.State()
-@@ -533,7 +533,7 @@ func (m *Meta) backendMigrateNonEmptyConfirm(
- 	}
- 
- 	// Confirm with the user that the copy should occur
--	return m.confirm(inputOpts)
-+	return m.confirm(ctx, inputOpts)
- }
- 
- func retrieveWorkspaces(ctx context.Context, back backend.Backend, sourceType string) ([]string, bool, error) {
-@@ -617,7 +617,7 @@ func (m *Meta) backendMigrateTFC(ctx context.Context, opts *backendMigrateOpts)
- 		// We do prompt first though, because state migration is mandatory
- 		// for moving to Cloud and the user should get an opportunity to
- 		// confirm that first.
--		if migrate, err := m.promptSingleToCloudSingleStateMigration(opts); err != nil {
-+		if migrate, err := m.promptSingleToCloudSingleStateMigration(ctx, opts); err != nil {
- 			return err
- 		} else if !migrate {
- 			return nil // skip migrating but return successfully
-@@ -638,7 +638,7 @@ func (m *Meta) backendMigrateTFC(ctx context.Context, opts *backendMigrateOpts)
- 
- 		opts.sourceWorkspace = currentWorkspace
- 		opts.destinationWorkspace = cloudBackendDestination.WorkspaceMapping.Name
--		if err := m.promptMultiToSingleCloudMigration(opts); er
+@@ -0,0 +1,161 @@
++# Copyright (c) The OpenTofu Authors
++# SPDX-License-Identifier: MPL-2.0
++# Copyright (c) 2023 HashiCorp, Inc.
++# SPDX-License-Identifier: MPL-2.0
++
++project_name: tofu
++version: 2
++builds:
++  - env:
++      - CGO_ENABLED=0
++
++    main: ./cmd/tofu
++
++    flags:
++      - "-mod=readonly"
++      - "-trimpath"
++
++    ldflags:
++      - "-s -w"
++      - "-X 'github.com/opentofu/opentofu/version.dev=no'"
++      # BUILD_OPENTOFU_OFFICIAL is set by the OpenTofu project's main release
++      # process. It should typically _not_ be set for builds produced by
++      # third-parties such as Linux distribution maintainers, because in that
++      # case the resulting executable might generate irrelevant warnings that
++      # are intended only for users of the official release builds.
++      - "-X 'github.com/opentofu/opentofu/version.officialBuild={{if index .Env \"BUILD_OPENTOFU_OFFICIAL\" }}{{ .Env.BUILD_OPENTOFU_OFFICIAL }}{{end}}'"
++
++archives:
++  - formats: ["zip", "tar.gz"]
++    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
++
++dockers_v2:
++  - images:
++      - "ghcr.io/opentofu/opentofu"
++    id: tofu-minimal
++    dockerfile: "release/Dockerfile.minimal"
++    platforms:
++      - linux/amd64
++      - linux/arm64
++    tags:
++      - "{{ .Version }}-minimal"
++      - '{{ if eq .Env.RELEASE_FLAG_PRERELEASE "false" }}{{ .Major }}.{{ .Minor }}-minimal{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}{{ .Major }}-minimal{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}minimal{{ end }}'
++    annotations:
++      "org.opencontainers.image.title": "{{ .ProjectName }}"
++      "org.opencontainers.image.vendor": "OpenTofu"
++      "org.opencontainers.image.description": "OpenTofu {{ .Version }}"
++      "org.opencontainers.image.url": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.documentation": "https://github.com/opentofu/opentofu/blob/main/README.md"
++      "org.opencontainers.image.source": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.licenses": "MPL-2.0"
++      "org.opencontainers.image.version": "{{ .Version }}"
++      "org.opencontainers.image.revision": "{{ .FullCommit }}"
++      "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
++
++  - images:
++      - "ghcr.io/opentofu/opentofu"
++    id: tofu
++    dockerfile: "release/Dockerfile"
++    platforms:
++      - linux/amd64
++      - linux/arm64
++    tags:
++      - "{{ .Version }}"
++      - '{{ if eq .Env.RELEASE_FLAG_PRERELEASE "false" }}{{ .Major }}.{{ .Minor }}{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}{{ .Major }}{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}latest{{ end }}'
++    annotations:
++      "org.opencontainers.image.title": "{{ .ProjectName }}"
++      "org.opencontainers.image.vendor": "OpenTofu"
++      "org.opencontainers.image.description": "OpenTofu {{ .Version }}"
++      "org.opencontainers.image.url": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.documentation": "https://github.com/opentofu/opentofu/blob/main/README.md"
++      "org.opencontainers.image.source": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.licenses": "MPL-2.0"
++      "org.opencontainers.image.version": "{{ .Version }}"
++      "org.opencontainers.image.revision": "{{ .FullCommit }}"
++      "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
++
++nfpms:
++  - file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'
++    maintainer: 'https://github.com/orgs/opentofu/teams/opentofu-core-team'
++    homepage: https://opentofu.org
++    description: >-
++      OpenTofu lets you declaratively manage your cloud infrastructure.
++    license: "MPL-2.0"
++    formats:
++      - deb
++      - rpm
++      - apk
++    bindir: /usr/bin
++    section: default
++    contents:
++      - src: ./LICENSE
++        dst: /usr/share/doc/opentofu/copyright
++        file_info:
++          mode: 0444
++    rpm:
++      signature:
++        key_file: "{{ if index .Env \"GPG_KEY_FILE\"  }}{{.Env.GPG_KEY_FILE}}{{ end }}"
++    deb:
++      signature:
++        key_file: "{{ if index .Env \"GPG_KEY_FILE\"  }}{{.Env.GPG_KEY_FILE}}{{ end }}"
++
++snapcrafts:
++  - name: opentofu
++    publish: false 
++    summary: OpenTofu lets you declaratively manage your cloud infrastructure.
++    description: |
++      OpenTofu is an OSS tool for building, changing, and versioning infrastructure
++      safely and efficiently. OpenTofu can manage existing and popular service
++      providers as well as custom in-house solutions.
++    disable: '{{ if eq .Env.RELEASE_FLAG_LATEST "false" }}true{{ else }}false{{ end }}'
++    channel_templates:
++      - 'latest/stable'
++    grade: 'stable'
++    confinement: classic
++    license: MPL-2.0
++    base: core22
++    apps:
++      tofu:
++        command: tofu
++        aliases: [tofu]
++
++checksum:
++  name_template: "{{ .ProjectName }}_{{ .Version }}_SH
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4808** (2026-11-04): [backport] .github/workflows: Use preinstalled Go from worker tool cache (@cam72cam)
+- **PR #4807** (2026-11-04): Prepare 1.13.6 release (@lbordowitz)
+- **PR #4805** (2026-11-04): [v1.13] Refactor release and nightly workflows (@lbordowitz)
+- **PR #4803** (2026-11-04): Refactor release and nightly workflows (@cam72cam)
 - **PR #4800** (2026-11-02): Fully qualify the docs/diagnostics.md (@yottta)
 - **PR #4794** (2026-10-29): Prepare 1.13.5 release (@lbordowitz)
-- **PR #4793** (2026-10-29): [v1.12] Update cosign (@lbordowitz)
-- **PR #4792** (2026-10-29): [v1.13] Update cosign (@lbordowitz)
-- **PR #4791** (2026-10-29): Update cosign (@lbordowitz)
-- **PR #4789** (2026-10-29): Prepare 1.13.4 release (@lbordowitz)
 
 ---
 
@@ -1751,24 +2088,38 @@ Signed-off-by: Ron Green <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 4713 uiinput context cancellation v02 (#4755)
+## X. release and nightly workflows
 
 **RULE**:
-When implementing operations in `internal/command/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/release-cache/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1549ae4f`: 4713 uiinput context cancellation v02 (#4755). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f21216f`: release and nightly workflows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/apply.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/release-cache/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// This is safe to be done since the execution engine contexts are created by ignoring the cancellation from the parent context.
-	// internal/backend/local/backend.go
-	ctx, cancel := c.InterruptibleContext(ctx)
-	defer cancel()
+name: 'Release Cache'
+inputs:
+  goos:
+    required: true
+  goarch:
+    required: true
+  tag:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+      - id: cache
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
+        with:
+          path: dist/${{ inputs.goos }}_${{ inputs.goarch }}/
+          key: ${{ inputs.goos }}-${{ inputs.goarch }}-${{ inputs.tag }}
+          enableCrossOsArchive: ${{ inputs.goos == 'windows' }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1778,4 +2129,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1549ae4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f21216f` are properly handled with clean fallback behavior.

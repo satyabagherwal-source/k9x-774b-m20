@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `31be4133`  
+> **Source Version**: `658388c9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:27:38.158Z  
+> **Timestamp**: 2026-11-04T03:09:16.090Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:27:36.622Z  
+> **Harvest Timestamp**: 2026-11-04T03:09:15.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,84 +2203,103 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31be4133` (2026-11-03)
-**Commit Message**: bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997)
+### Incident Patch 1: `658388c9` (2026-11-04)
+**Commit Message**: deps: Bump toml to 1.2.0 and update dependencies
 
-* bench: pin exact row counts in the joinp benchmarks' --verify checks
+Raise the toml requirement in Cargo.toml from 1.1 to 1.2.0+spec-1.1.0.
 
-joinp, joinp_streaming and joinp_left only checked that the join produced
-at least one row, and joinp_left_anti had no check. A partial result (e.g.
-NULL or mismatched-dtype keys silently dropped) still passed and would be
-published as a speedup.
+Cargo.lock also picks up cached 4.1.1, toml_edit 0.25.18 and toml_writer 1.2.0.
 
-Each joinp benchmark now checks its exact row count on the fixed benchmark
-data: inner and --streaming 883,470; --left = the data's rowcount
-($QSVBM_ROWCOUNT; community_board is unique in communityboards.csv);
---left-anti 116,530. The counts are cross-checked with `qsv join` and
-DuckDB, and inner + left-anti = 1,000,000. bm_version 10.1.1.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: CHANGELOG entry for the joinp benchmark row-count checks (#4997)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +11/-11)
 ```diff
-@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
+@@ -1231,9 +1231,9 @@ dependencies = [
  
- ### Changed
-+- **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
- - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
-   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
-   - **`POSITION`/`STRPOS` of a NULL string is NULL**, not `0` ([#30493](https://github.com/pola-rs/polars/pull/30493)). String length, position and date-part functions also return Int64.
+ [[package]]
+ name = "cached"
+-version = "4.1.0"
++version = "4.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6f886e989b5b6e7991606f2550e45a99e130024465ba8d67f9f9b256eb7044bf"
++checksum = "48ba6df8863aa2bfacfae483d8dfefa52403115f559a46c4d84897bec8753d6a"
+ dependencies = [
+  "ahash",
+  "blocking",
+@@ -3588,7 +3588,7 @@ dependencies = [
+  "serde",
+  "serde_derive",
+  "sysinfo 0.38.4",
+- "toml 1.1.8+spec-1.1.0",
++ "toml 1.2.0+spec-1.1.0",
+  "uuid",
+ ]
+ 
+@@ -6872,7 +6872,7 @@ version = "3.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
+ dependencies = [
+- "toml_edit 0.25.17+spec-1.1.0",
++ "toml_edit 0.25.18+spec-1.1.0",
+ ]
+ 
+ [[package]]
+@@ -7139,7 +7139,7 @@ dependencies = [
+  "time",
+  "titlecase",
+  "tokio",
+- "toml 1.1.8+spec-1.1.0",
++ "toml 1.2.0+spec-1.1.0",
+  "toon-format",
+  "unicode-width",
+  "url",
+@@ -9557,9 +9557,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml"
+-version = "1.1.8+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
++checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+ dependencies = [
+  "indexmap 2.14.2",
+  "serde_core",
+@@ -9604,9 +9604,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_edit"
+-version = "0.25.17+spec-1.1.0"
++version = "0.25.18+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
++checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
+ dependencies = [
+  "indexmap 2.14.2",
+  "toml_datetime 1.1.2+spec-1.1.0",
+@@ -9631,9 +9631,9 @@ checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.3+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "toon-format"
 ```
 
-**File**: `scripts/benchmarks.sh` (modified, +15/-8)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -44,7 +44,7 @@
- arg_pat="$1"
- 
- # the version of this script
--bm_version=10.1.0
-+bm_version=10.1.1
- 
- # runs of a benchmark whose means are within this percentage of each other tie in the rank
- # column (see the delta & rank comments near the end)
-@@ -1588,14 +1588,21 @@ run json "$qsv_bin" json benchmark_data.json
- run json_jaq "$qsv_bin" json "--jaq 'map(select(.Borough == \"BROOKLYN\"))'" benchmark_data.json
- run join "$qsv_bin" join \'Community Board\' "$data" community_board communityboards.csv
- run join_casei "$qsv_bin" join \'Community Board\' "$data" community_board --ignore-case communityboards.csv
--# --verify: the join must produce rows. A schema/dtype problem can leave joinp with an empty
--# result while still exiting 0, which times as a big speedup.
-+# --verify: each join must produce exactly the expected number of rows. A schema/dtype problem can
-+# leave joinp with an empty or partial result while still exiting 0, which times as a big speedup.
-+# The counts are for the fixed benchmark data and communityboards.csv, cross-checked with `qsv
-+# join` and DuckDB. community_board is unique in communityboards.csv, so a left join keeps every
-+# row, and inner + left-anti = rowcount.
- # shellcheck disable=SC2016 # expanded later, by the bash -c that runs the check
--verify_has_rows='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" -gt 0'
--run --verify "$verify_has_rows" joinp "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv
--run --verify "$verify_has_rows" joinp_streaming "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --streaming
--run --verify "$verify_has_rows" joinp_left "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left
--run joinp_left_anti "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left-anti
-+verify_joinp_inner='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = 883470'
-+# shellcheck disable=SC2016
-+verify_joinp_left='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = "$QSVBM_ROWCOUNT"'
-+# shellcheck disable=SC2016
-+verify_joinp_left_anti='test "$("$QSVBM_QSV" count "$QSVBM_STDOUT")" = 116530'
-+run --verify "$verify_joinp_inner" joinp "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv
-+run --verify "$verify_joinp_inner" joinp_streaming "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --streaming
-+run --verify "$verify_joinp_left" joinp_left "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left
-+run --verify "$verify_joinp_left_anti" joinp_left_anti "$qsv_bin" joinp \'Community Board\' "$data" community_board communityboards.csv --left-anti
- run jsonl "$qsv_bin" jsonl benchmark_data.jsonl
- run jsonl_batchall "$qsv_bin" jsonl benchmark_data.jsonl --batch 0
- run jsonl_j1 "$qsv_bin" jsonl -j 1 benchmark_data.jsonl
+@@ -480,7 +480,7 @@ serde_urlencoded = { version = "0.7", optional = true }
+ sha2 = { version = "0.11", optional = true }
+ simdutf8 = "0.1"
+ spreadsheet-ods = { version = "1", optional = true }
+-toml = "1.1"
++toml = "1.2.0+spec-1.1.0"
+ toon-format = { version = "0.7", default-features = false }
+ smallvec = "1"
+ snap = "1"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2309,28 +2328,48 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997)
+## X. deps: Bump toml to 1.2.0 and update dependencies
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31be4133`: bench: pin exact row counts in the joinp benchmarks' --verify checks (#4997). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `658388c9`: deps: Bump toml to 1.2.0 and update dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+version = "4.1.1"
+checksum = "48ba6df8863aa2bfacfae483d8dfefa52403115f559a46c4d84897bec8753d6a"
+ "toml 1.2.0+spec-1.1.0",
+ "toml_edit 0.25.18+spec-1.1.0",
+ "toml 1.2.0+spec-1.1.0",
+version = "1.2.0+spec-1.1.0"
+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+version = "0.25.18+spec-1.1.0"
+checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
+version = "1.2.0+spec-1.1.0"
+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "4.1.0"
+checksum = "6f886e989b5b6e7991606f2550e45a99e130024465ba8d67f9f9b256eb7044bf"
+ "toml 1.1.8+spec-1.1.0",
+ "toml_edit 0.25.17+spec-1.1.0",
+ "toml 1.1.8+spec-1.1.0",
+version = "1.1.8+spec-1.1.0"
+checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
+version = "0.25.17+spec-1.1.0"
+checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
+version = "1.1.3+spec-1.1.0"
+checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31be4133` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `658388c9` are properly handled with clean fallback behavior.

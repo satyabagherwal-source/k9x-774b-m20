@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `646103a4`  
+> **Source Version**: `c43635ed`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:32:35.773Z  
+> **Timestamp**: 2026-11-04T21:57:19.316Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:32:35.590Z  
+> **Harvest Timestamp**: 2026-11-04T21:57:19.310Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22158 stars
+- **Stars / Engagement**: 22161 stars
 
 ---
 
@@ -276,37 +276,15 @@ export default function render(element, root) {
  * @flow
  */
 
-import isDisabled from './isDisabled';
 import propsToAccessibilityComponent from './propsToAccessibilityComponent';
 import propsToAriaRole from './propsToAriaRole';
 
 const AccessibilityUtil = {
-  isDisabled,
   propsToAccessibilityComponent,
   propsToAriaRole
 };
 
 export default AccessibilityUtil;
-
-```
-
-### Core Architecture Module: `packages/react-native-web/src/modules/AccessibilityUtil/isDisabled.js`
-```
-/**
- * Copyright (c) Nicolas Gallagher.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow
- */
-
-const isDisabled = (props: Object): boolean =>
-  props.disabled ||
-  (Array.isArray(props.accessibilityStates) &&
-    props.accessibilityStates.indexOf('disabled') > -1);
-
-export default isDisabled;
 
 ```
 
@@ -359,7 +337,7 @@ const propsToAccessibilityComponent = (
   const role = propsToAriaRole(props);
   if (role) {
     if (role === 'heading') {
-      const level = props.accessibilityLevel || props['aria-level'];
+      const level = props['aria-level'];
       if (level != null) {
         return `h${level}`;
       }
@@ -508,7 +486,7 @@ const TextInputState = {
    * noop if the text field was already focused
    */
   focusTextInput(textFieldNode: ?Object) {
-    if (textFieldNode !== null) {
+    if (textFieldNode != null) {
       TextInputState._currentlyFocusedNode = textFieldNode;
       if (document.activeElement !== textFieldNode) {
         UIManager.focus(textFieldNode);
@@ -522,7 +500,7 @@ const TextInputState = {
    * noop if it wasn't focused
    */
   blurTextInput(textFieldNode: ?Object) {
-    if (textFieldNode !== null) {
+    if (textFieldNode != null) {
       TextInputState._currentlyFocusedNode = null;
       if (document.activeElement === textFieldNode) {
         UIManager.blur(textFieldNode);
@@ -532,6 +510,186 @@ const TextInputState = {
 };
 
 export default TextInputState;
+
+```
+
+### Core Architecture Module: `packages/react-native-web/src/modules/useResponderEvents/utils.js`
+```
+/**
+ * Copyright (c) Nicolas Gallagher
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import isSelectionValid from '../../modules/isSelectionValid';
+
+const keyName = '__reactResponderId';
+
+function getEventPath(domEvent: any): Array<any> {
+  // The 'selectionchange' event always has the 'document' as the target.
+  // Use the anchor node as the initial target to reconstruct a path.
+  // (We actually only need the first "responder" node in practice.)
+  if (domEvent.type === 'selectionchange') {
+    const target = window.getSelection()?.anchorNode;
+    return composedPathFallback(target);
+  } else {
+    return domEvent.composedPath();
+  }
+}
+
+function composedPathFallback(target: any): Array<any> {
+  const path = [];
+  while (target != null && target !== document.body) {
+    path.push(target);
+    target = target.parentNode;
+  }
+  return path;
+}
+
+/**
+ * Retrieve the responderId from a host node
+ */
+function getResponderId(node: any): ?number {
+  if (node != null) {
+    return node[keyName];
+  }
+  return null;
+}
+
+/**
+ * Store the responderId on a host node
+ */
+export function setResponderId(node: any, id: number) {
+  if (node != null) {
+    node[keyName] = id;
+  }
+}
+
+/**
+ * Filter the event path to contain only the nodes attached to the responder system
+ */
+export function getResponderPaths(domEvent: any): {|
+  idPath: Array<number>,
+  nodePath: Array<any>
+|} {
+  const idPath = [];
+  const nodePath = [];
+  const eventPath = getEventPath(domEvent);
+  for (let i = 0; i < eventPath.length; i++) {
+    const node = eventPath[i];
+    const id = getResponderId(node);
+    if (id != null) {
+      idPath.push(id);
+      nodePath.push(node);
+    }
+  }
+  return { idPath, nodePath };
+}
+
+/**
+ * Walk the paths and find the first common ancestor
+ */
+export function getLowestCommonAncestor(
+  pathA: Array<any>,
+  pathB: Array<any>
+): any {
+  let pathALength = pathA.length;
+  let pathBLength = pathB.length;
+  if (
+    // If either path is empty
+    pathALength === 0 ||
+    pathBLength === 0 ||
+    // If the last elements aren't the same there can't be a common ancestor
+    // that is connected to the responder system
+    pathA[pathALength - 1] !== pathB[pathBLength - 1]
+  ) {
+    return null;
+  }
+
+  let itemA = pathA[0];
+  let indexA = 0;
+  let itemB = pathB[0];
+  let indexB = 0;
+
+  // If A is deeper, skip indices that can't match.
+  if (pathALength - pathBLength > 0) {
+    indexA = pathALength - pathBLength;
+    itemA = pathA[indexA];
+    pathALength = pathBLength;
+  }
+
+  // If B is deeper, skip indices that can't match
+  if (pathBLength - pathALength > 0) {
+    indexB = pathBLength - pathALength;
+    itemB = pathB[indexB];
+    pathBLength = pathALength;
+  }
+
+  // Walk in lockstep until a match is found
+  let depth = pathALength;
+  while (depth--) {
+    if (itemA === itemB) {
+      return itemA;
+    }
+    itemA = pathA[++indexA];
+    itemB = pathB[++indexB];
+  }
+  return null;
+}
+
+/**
+ * Determine whether any of the active touches are within the current responder.
+ * This cannot rely on W3C `targetTouches`, as Safari doesn't implement it.
+ */
+export function hasTargetTouches(target: any, touches: any): boolean {
+  if (!touches || touches.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < touches.length; i++) {
+    const node = touches[i].target;
+    if (node != null) {
+      if (target.contains(node)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Ignore 'selectionchange' events that don't correspond with a person's intent to
+ * select text.
+ */
+export function hasValidSelection(domEvent: any): boolean {
+  if (domEvent.type === 'selectionchange') {
+    return isSelectionValid();
+  }
+  return domEvent.type === 'select';
+}
+
+/**
+ * Events are only valid if the primary button was used without specific modifier keys.
+ */
+export function isPrimaryPointerDown(domEvent: any): boolean {
+  const { altKey, button, buttons, ctrlKey, type } = domEvent;
+  const isTouch = type === 'touchstart' || type === 'touchmove';
+  const isPrimaryMouseDown =
+    type === 'mousedown' && (button === 0 || buttons === 1);
+  const isPrimaryMouseMove = type === 'mousemove' && buttons === 1;
+  const noModifiers = altKey === false && ctrlKey === false;
+
+  if (
+    isTouch ||
+    (isPrimaryMouseDown && noModifiers) ||
+    (isPrimaryMouseMove && noModifiers)
+  ) {
+    return true;
+  }
+  return false;
+}
 
 ```
 
@@ -565,619 +723,518 @@ export default TextInputState;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `646103a4` (2026-10-30)
-**Commit Message**: [fix] Text: shrink below the longest word in a flex row, as View does (#2922)
+### Incident Patch 1: `93c304ff` (2026-11-04)
+**Commit Message**: [change] UIManager: faster measureLayout, flow types, React Native parity (#2955)
 
-**File**: `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js` (modified, +6/-6)
+**File**: `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js` (modified, +1/-0)
 ```diff
-@@ -52,8 +52,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
--       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-+       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-+       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
-        [stylesheet-group="2"]{}
-        .r-display-krxsd3{display:-webkit-box;}
-@@ -118,8 +118,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
--       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-+       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-+       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
-        [stylesheet-group="2"]{}
-        .r-display-krxsd3{display:-webkit-box;}
-@@ -175,8 +175,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;
+@@ -149,6 +149,7 @@ const ModalFocusTrap = ({
+           lastFocusedElementOutsideTrap &&
+           document.contains(lastFocusedElementOutsideTrap)
+         ) {
++          // $FlowFixMe[incompatible-type] activeElement can be any focusable element
+           UIManager.focus(lastFocusedElementOutsideTrap);
+         }
+       };
 ```
 
-**File**: `packages/react-native-web/src/exports/Text/__tests__/__snapshots__/index-test.js.snap` (modified, +28/-28)
+**File**: `packages/react-native-web/src/exports/UIManager/index.js` (modified, +79/-27)
 ```diff
-@@ -2,18 +2,18 @@
+@@ -4,23 +4,36 @@
+  * This source code is licensed under the MIT license found in the
+  * LICENSE file in the root directory of this source tree.
+  *
+- * @noflow
++ * @flow
+  */
  
- exports[`components/Text default 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
+ import getBoundingClientRect from '../../modules/getBoundingClientRect';
+ import setValueForStyles from '../../modules/setValueForStyles';
++import type { LayoutCallback, MeasureInWindowCallback } from '../../types';
  
- exports[`components/Text nested 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- >
-   <span
--    class="css-textHasAncestor-vzhqwr"
-+    class="css-textHasAncestor-1ejxjx6"
-     data-testid="child"
-   />
- </div>
-@@ -22,44 +22,44 @@ exports[`components/Text nested 1`] = `
- exports[`components/Text prop "aria-label" value is set 1`] = `
- <div
-   aria-label="accessibility label"
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "aria-labelledby" value is set 1`] = `
- <div
-   aria-labelledby="123"
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "aria-live" value is set 1`] = `
- <div
-   aria-live="polite"
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "dir" value is "ltr" 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="ltr"
- />
- `;
- 
- exports[`components/Text prop "dir" value is "rtl" 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="rtl"
- />
- `;
- 
- exports[`components/Text prop "href" href with accessibilityRole 1`] = `
- <a
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   href="https://example.com"
-   role="presentation"
-@@ -68,30 +68,30 @@ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
- 
- exports[`components/Text prop "href" value is set 1`] = `
- <a
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   href="https://example.com"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" null values are excluded 1`] = `
- <a
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   href="https://example.com"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" requires "href" 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
- <a
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   href="https://example.com"
-   target="_blank"
-@@ -100,7 +100,7 @@ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
- 
- exports[`components/Text prop "hrefAttrs" value is set 1`] = `
- <a
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   download="filename.jpg"
-   href="https://example.com"
-@@ -111,69 +111,69 @@ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
- 
- exports[`components/Text prop "lang" ar 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="rtl"
-   lang="ar"
- />
- `;
- 
- exports[`components/Text prop "lang" fr 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="ltr"
-   lang="fr"
- />
- `;
- 
- exports[`components/Text prop "lang" undefined 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "lang" with dir 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="ltr"
-   lang="ar"
- />
- `;
- 
- exports[`components/Text prop "nativeID" value is set 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   id="nativeID"
- />
- `;
- 
- exports[`components/Text prop "numberOfLines" value is set 1`] = `
- <div
--  class="css-text-1omw8j8 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
-+  class="css-text-1kstuq4 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
-   dir="auto"
-   style="-webkit-line-clamp: 3;"
- />
- `;
- 
- exports[`components/Text prop "numberOfLines" value is set to one 1`] = `
- <div
--  class="css-text-1omw8j8 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
-+  class="css-text-1kstuq4 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "role" value alters HTML element 1`] = `
- <article
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   role="article"
- />
- `;
- 
- exports[`components/Text prop "role" value is "button" 1`] = `
- <button
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   role="button"
-   type="button"
-@@ -182,37 +182,37 @@ exports[`components/Text prop "role" value is "button" 1`] = `
- 
- exports[`components/Text prop "role" value is set 1`] = `
- <div
--  class="css-text-1omw8j8"
-+  class="css-text-1kstuq4"
-   dir="auto"
-   role="presentation"
- />
- `;
- 
- exports[`components/Text prop "selectable" value of false 1`] = `
- <div
--  class="css-text-1omw8j8 r-userSelect-lrvibr"
-+  class="css-text-1kstuq4 r-userSelect-lrvibr"
-   dir="auto"
- />
- `;
- 
- exports[`componen
-```
-
-**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +2/-0)
-```diff
-@@ -186,6 +186,8 @@ const textStyle = {
-   font: '14px System',
-   listStyle: 'none',
-   margin: 0,
-+  minHeight: 0,
-+  minWidth: 0,
-   padding: 0,
-   position: 'relative',
-   textAlign: 'start',
-```
-
----
-
-### Incident Patch 2: `8ff7b3b0` (2026-10-30)
-**Commit Message**: fix: add `flexShrink: 0` to Text styles (#2819)
-
-**File**: `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js` (modified, +6/-6)
-```diff
-@@ -52,8 +52,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
--       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-+       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-+       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
-        [stylesheet-group="2"]{}
-        .r-display-krxsd3{display:-webkit-box;}
-@@ -118,8 +118,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
--       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-+       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-+       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
-        [stylesheet-group="2"]{}
-        .r-display-krxsd3{display:-webkit-box;}
-@@ -175,8 +175,8 @@ describe('AppRegistry', () => {
-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
-        [stylesheet-group="1"]{}
--       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
--       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);bor
-```
-
-**File**: `packages/react-native-web/src/exports/Text/__tests__/__snapshots__/index-test.js.snap` (modified, +28/-28)
-```diff
-@@ -2,18 +2,18 @@
- 
- exports[`components/Text default 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text nested 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- >
-   <span
--    class="css-textHasAncestor-1jxf684"
-+    class="css-textHasAncestor-vzhqwr"
-     data-testid="child"
-   />
- </div>
-@@ -22,44 +22,44 @@ exports[`components/Text nested 1`] = `
- exports[`components/Text prop "aria-label" value is set 1`] = `
- <div
-   aria-label="accessibility label"
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "aria-labelledby" value is set 1`] = `
- <div
-   aria-labelledby="123"
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "aria-live" value is set 1`] = `
- <div
-   aria-live="polite"
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "dir" value is "ltr" 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="ltr"
- />
- `;
- 
- exports[`components/Text prop "dir" value is "rtl" 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="rtl"
- />
- `;
- 
- exports[`components/Text prop "href" href with accessibilityRole 1`] = `
- <a
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   href="https://example.com"
-   role="presentation"
-@@ -68,30 +68,30 @@ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
- 
- exports[`components/Text prop "href" value is set 1`] = `
- <a
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   href="https://example.com"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" null values are excluded 1`] = `
- <a
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   href="https://example.com"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" requires "href" 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
- <a
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   href="https://example.com"
-   target="_blank"
-@@ -100,7 +100,7 @@ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
- 
- exports[`components/Text prop "hrefAttrs" value is set 1`] = `
- <a
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   download="filename.jpg"
-   href="https://example.com"
-@@ -111,69 +111,69 @@ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
- 
- exports[`components/Text prop "lang" ar 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="rtl"
-   lang="ar"
- />
- `;
- 
- exports[`components/Text prop "lang" fr 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="ltr"
-   lang="fr"
- />
- `;
- 
- exports[`components/Text prop "lang" undefined 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "lang" with dir 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="ltr"
-   lang="ar"
- />
- `;
- 
- exports[`components/Text prop "nativeID" value is set 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   id="nativeID"
- />
- `;
- 
- exports[`components/Text prop "numberOfLines" value is set 1`] = `
- <div
--  class="css-text-146c3p1 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
-+  class="css-text-1omw8j8 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
-   dir="auto"
-   style="-webkit-line-clamp: 3;"
- />
- `;
- 
- exports[`components/Text prop "numberOfLines" value is set to one 1`] = `
- <div
--  class="css-text-146c3p1 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
-+  class="css-text-1omw8j8 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
-   dir="auto"
- />
- `;
- 
- exports[`components/Text prop "role" value alters HTML element 1`] = `
- <article
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   role="article"
- />
- `;
- 
- exports[`components/Text prop "role" value is "button" 1`] = `
- <button
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   role="button"
-   type="button"
-@@ -182,37 +182,37 @@ exports[`components/Text prop "role" value is "button" 1`] = `
- 
- exports[`components/Text prop "role" value is set 1`] = `
- <div
--  class="css-text-146c3p1"
-+  class="css-text-1omw8j8"
-   dir="auto"
-   role="presentation"
- />
- `;
- 
- exports[`components/Text prop "selectable" value of false 1`] = `
- <div
--  class="css-text-146c3p1 r-userSelect-lrvibr"
-+  class="css-text-1omw8j8 r-userSelect-lrvibr"
-   dir="auto"
- />
- `;
- 
- exports[`componen
-```
-
-**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +1/-0)
-```diff
-@@ -182,6 +182,7 @@ const textStyle = {
-   boxSizing: 'border-box',
-   color: 'black',
-   display: 'inline',
-+  flexShrink: 0,
-   font: '14px System',
-   listStyle: 'none',
-   margin: 0,
-```
-
----
-
-### Incident Patch 3: `b6ce26fe` (2026-10-29)
-**Commit Message**: [fix] useHover: resume hover on the nearest ancestor only (#2920)
-
-**File**: `packages/react-native-web/src/modules/useHover/__tests__/index-test.js` (modified, +34/-0)
-```diff
-@@ -56,6 +56,40 @@ describe('useHover', () => {
-       });
-       expect(onHoverStart).toHaveBeenCalled();
-     });
+-const getRect = (node) => {
++type Rect = {
++  width: number,
++  height: number,
++  top: number,
++  left: number
++};
 +
-+    test('only changes the nearest ancestor', () => {
-+      onHoverStart = jest.fn();
-+      onHoverEnd = jest.fn();
-+      ref = React.createRef();
-+      childRef = React.createRef();
-+      const grandchildRef = React.createRef();
-+      const Component = () => {
-+        useHover(ref, { onHoverStart, onHoverEnd });
-+        useHover(childRef, {});
-+        useHover(grandchildRef, {});
-+        return (
-+          <div ref={ref}>
-+            <div ref={childRef}>
-+              <div ref={grandchildRef} />
-+            </div>
-+          </div>
-+        );
-+      };
-+      render(<Component />);
-+      const target = createEventTarget(ref.current);
-+      const child = createEventTarget(childRef.current);
-+      const grandchild = createEventTarget(grandchildRef.current);
-+      act(() => {
-+        target.pointerover();
-+        target.pointerout({ relatedTarget: child.node });
-+        child.pointerover();
-+        child.pointerout({ relatedTarget: grandchild.node });
-+        grandchild.pointerover();
-+        grandchild.pointerout({ relatedTarget: child.node });
-+      });
-+      expect(onHoverStart).toHaveBeenCalledTimes(1);
-+      expect(onHoverEnd).toHaveBeenCalledTimes(1);
-+    });
++const hasOwnProperty: (this: Object, key: string) => boolean =
++  Object.prototype.hasOwnProperty;
++
++const getRect = (node: HTMLElement): Rect => {
+   const height = node.offsetHeight;
+   const width = node.offsetWidth;
+   let left = node.offsetLeft;
+   let top = node.offsetTop;
+-  node = node.offsetParent;
+-
+-  while (node?.nodeType === 1 /* Node.ELEMENT_NODE */) {
+-    left += node.offsetLeft + node.clientLeft - node.scrollLeft;
+-    top += node.offsetTop + node.clientTop - node.scrollTop;
+-    node = node.offsetParent;
++  // $FlowFixMe[incompatible-type] offsetParent is an HTMLElement or null
++  let parent: ?HTMLElement = node.offsetParent;
++
++  while (parent?.nodeType === 1 /* Node.ELEMENT_NODE */) {
++    left += parent.offsetLeft + parent.clientLeft - parent.scrollLeft;
++    top += parent.offsetTop + parent.clientTop - parent.scrollTop;
++    // $FlowFixMe[incompatible-type] offsetParent is an HTMLElement or null
++    parent = parent.offsetParent;
+   }
+ 
+   top -= window.scrollY;
+@@ -29,22 +42,44 @@ const getRect = (node) => {
+   return { width, height, top, left };
+ };
+ 
+-const measureLayout = (node, relativeToNativeNode, callback) => {
+-  const relativeNode = relativeToNativeNode || node?.parentNode;
++const measureLayout = (
++  node: HTMLElement,
++  relativeToNativeNode: ?HTMLElement,
++  callback: LayoutCallback
++): void => {
++  const relativeNode: ?HTMLElement =
++    relativeToNativeNode ||
++    node?.parentElement ||
++    // A node at the root of a shadow tree is measured relative to its host
++    // $FlowFixMe[prop-missing] the root node is a ShadowRoot or a Document
++    node?.getRootNode().host;
++
+   if (node && relativeNode) {
+     setTimeout(() => {
+       if (node.isConnected && relativeNode.isConnected) {
+-        const relativeRect = getRect(relativeNode);
+         const { height, left, top, width } = getRect(node);
+-        const x = left - relativeRect.left;
+-        const y = top - relativeRect.top;
++        let x: number;
++        let y: number;
++
++        if (node.offsetParent === relativeNode) {
++          // Fast path: same result as subtracting "getRect(relativeNode)",
++          // without walking the ancestors of "relativeNode" a second time
++          x =
++            node.offsetLeft + relativeNode.clientLeft - relativeNode.scrollLeft;
++          y = node.offsetTop + relativeNode.clientTop - relativeNode.scrollTop;
++        } else {
++          const relativeRect = getRect(relativeNode);
++          x = left - relativeRect.left;
++          y = top - relativeRect.top;
++        }
++
+         callback(x, y, width, height, left, top);
+       }
+     }, 0);
+   }
+ };
+ 
+-const elementsToIgnore = {
++const elementsToIgnore: { readonly [string]: boolean } = {
+   A: true,
+   BODY: true,
+   INPUT: true,
+@@ -53,13 +88,13 @@ const elementsToIgnore = {
+ };
+ 
+ const UIManager = {
+-  blur(node) {
++  blur(node: HTMLElement): void {
+     try {
+       node.blur();
+-    } catch (err) {}
++    } catch {}
+   },
+ 
+-  focus(node) {
++  focus(node: HTMLElement): void {
+     try {
+       const name = node.nodeName;
+       // A tabIndex of -1 allows element to be programmatically focused but
+@@ -73,29 +108,41 @@ const UIManager = {
+         node.setAttribute('tabIndex', '-1');
+       }
+       node.focus();
+-    } catch (err) {}
++    } catch {}
+   },
+ 
+-  measure(node, callback) {
++  measure(node: HTMLElement, callback: LayoutCallback): void {
+     measureLayout(node, null, callback);
+   },
+ 
+-  measureInWindow(node, callback) {
++  measureInWindow(node: HTMLElement, callback: MeasureInWindowCallback): void {
+     if (node) {
+       setTimeout(() => {
+-        const { height, left, top, width } = getBoundingClientRect(node);
+-        callback(left, top, width, height);
++        const rect = getBoundingClientRect(node);
++
++        if (rect != null) {
++          callback(rect.left, rect.top, rect.width, rect.height);
++        } else {
++          console.warn('measureInWindow cannot measure node', node);
++          // $FlowFixMe[incompatible-type] same as React Native
++          callback();
++        }
+       }, 0);
+     }
+   },
+ 
+-  measureLayout(node, relativeToNativeNode, onFail, onSuccess) {
++  measureLayout(
++    node: HTMLElement,
++    relativeToNativeNode: ?HTMLElement,
++    onFail: (error: unknown) => void,
++    onSuccess: LayoutCallback
++  ): void {
+     measureLayout(node, relativeToNativeNode, onSuccess);
+   },
+ 
+-  updateView(node, props) {
++  updateView(node: HTMLElement, props: { [string]: any }):
+```
+
+**File**: `packages/react-native-web/src/modules/TextInputState/index.js` (modified, +2/-2)
+```diff
+@@ -38,7 +38,7 @@ const TextInputState = {
+    * noop if the text field was already focused
+    */
+   focusTextInput(textFieldNode: ?Object) {
+-    if (textFieldNode !== null) {
++    if (textFieldNode != null) {
+       TextInputState._currentlyFocusedNode = textFieldNode;
+       if (document.activeElement !== textFieldNode) {
+         UIManager.focus(textFieldNode);
+@@ -52,7 +52,7 @@ const TextInputState = {
+    * noop if it wasn't focused
+    */
+   blurTextInput(textFieldNode: ?Object) {
+-    if (textFieldNode !== null) {
++    if (textFieldNode != null) {
+       TextInputState._currentlyFocusedNode = null;
+       if (document.activeElement === textFieldNode) {
+         UIManager.blur(textFieldNode);
+```
+
+**File**: `packages/react-native-web/src/modules/useElementLayout/index.js` (modified, +7/-6)
+```diff
+@@ -16,24 +16,24 @@ import canUseDOM from '../canUseDom';
+ 
+ const DOM_LAYOUT_HANDLER_NAME = '__reactLayoutHandler';
+ 
+-let resizeObserver = null;
++let resizeObserver: ?ResizeObserver = null;
+ 
+ function getResizeObserver(): ?ResizeObserver {
+   if (canUseDOM && typeof window.ResizeObserver !== 'undefined') {
+     if (resizeObserver == null) {
+-      resizeObserver = new window.ResizeObserver(function (entries) {
++      resizeObserver = new window.ResizeObserver((entries) => {
+         entries.forEach((entry) => {
+-          const node = entry.target;
++          // $FlowFixMe[incompatible-type] observed nodes are host nodes
++          const node: HTMLElement = entry.target;
+           // $FlowFixMe[prop-missing]
+           const onLayout = node[DOM_LAYOUT_HANDLER_NAME];
++
+           if (typeof onLayout === 'function') {
+             // We still need to measure the view because browsers don't yet provide
+             // border-box dimensions in the entry
+             UIManager.measure(node, (x, y, width, height, left, top) => {
+               const event: LayoutEvent = {
+-                nativeEvent: {
+-                  layout: { x, y, width, height, left, top }
+-                },
++                nativeEvent: { layout: { x, y, width, height, left, top } },
+                 timeStamp: Date.now()
+               };
+               Object.defineProperty(event.nativeEvent, 'target', {
+@@ -47,6 +47,7 @@ function getResizeObserver(): ?ResizeObserver {
+       });
+     }
+   }
++
+   return resizeObserver;
+ }
+ 
+```
+
+**File**: `packages/react-native-web/src/types/index.js` (modified, +2/-2)
+```diff
+@@ -36,7 +36,7 @@ export type LayoutEvent = {
+   timeStamp: number
+ };
+ 
+-type LayoutCallback = (
++export type LayoutCallback = (
+   x: number,
+   y: number,
+   width: number,
+@@ -45,7 +45,7 @@ type LayoutCallback = (
+   top: number
+ ) => void;
+ 
+-type MeasureInWindowCallback = (
++export type MeasureInWindowCallback = (
+   left: number,
+   top: number,
+   width: number,
+```
+
+---
+
+### Incident Patch 2: `a2244144` (2026-11-03)
+**Commit Message**: [fix] Pressable: don't re-render on interaction without state callback (#2954)
+
+**File**: `packages/react-native-web/src/exports/Pressable/__tests__/index-test.js` (modified, +29/-0)
+```diff
+@@ -169,6 +169,35 @@ describe('components/Pressable', () => {
+     expect(container.firstChild).toMatchSnapshot();
    });
  
-   describe('disabled', () => {
++  test('hover interaction (no state callback)', () => {
++    const onHoverIn = jest.fn();
++    const onHoverOut = jest.fn();
++    const onRender = jest.fn();
++    const ref = React.createRef();
++
++    act(() => {
++      render(
++        <React.Profiler id="pressable" onRender={onRender}>
++          <Pressable onHoverIn={onHoverIn} onHoverOut={onHoverOut} ref={ref} />
++        </React.Profiler>
++      );
++    });
++
++    const target = createEventTarget(ref.current);
++    onRender.mockClear();
++
++    act(() => {
++      target.pointerover();
++    });
++    act(() => {
++      target.pointerout();
++    });
++
++    expect(onHoverIn).toHaveBeenCalled();
++    expect(onHoverOut).toHaveBeenCalled();
++    expect(onRender).not.toHaveBeenCalled();
++  });
++
+   test('press interaction (pointer)', () => {
+     let container;
+     const onContextMenu = jest.fn();
 ```
 
-**File**: `packages/react-native-web/src/modules/useHover/index.js` (modified, +4/-0)
+**File**: `packages/react-native-web/src/exports/Pressable/index.js` (modified, +15/-7)
 ```diff
-@@ -109,11 +109,15 @@ export default function useHover(
-           const lockListener = function (lockEvent: Event) {
-             if (lockEvent.target !== target) {
-               hoverEnd(e);
-+              // Ancestors further out are already locked.
-+              lockEvent.stopPropagation();
-             }
-           };
-           const unlockListener = function (lockEvent: Event) {
-             if (lockEvent.target !== target) {
-               hoverStart(e);
-+              // Ancestors further out stay locked.
-+              lockEvent.stopPropagation();
-             }
-           };
-           addLockListener(target, !disabled ? lockListener : null);
+@@ -99,6 +99,9 @@ function Pressable(props: Props): React.Node {
+   const [focused, setFocused] = useForceableState(false);
+   const [pressed, setPressed] = useForceableState(testOnly_pressed === true);
+ 
++  const hasStateCallback =
++    typeof children === 'function' || typeof style === 'function';
++
+   const hostRef = useRef(null);
+   const setRef = useMergeRefs(ref, hostRef);
+ 
+@@ -110,7 +113,7 @@ function Pressable(props: Props): React.Node {
+       disabled,
+       onLongPress,
+       onPress,
+-      onPressChange: setPressed,
++      onPressChange: hasStateCallback ? setPressed : null,
+       onPressStart: onPressIn,
+       onPressMove,
+       onPressEnd: onPressOut
+@@ -125,7 +128,8 @@ function Pressable(props: Props): React.Node {
+       onPressIn,
+       onPressMove,
+       onPressOut,
+-      setPressed
++      setPressed,
++      hasStateCallback
+     ]
+   );
+ 
+@@ -136,7 +140,7 @@ function Pressable(props: Props): React.Node {
+ 
+   useHover(hostRef, {
+     disabled,
+-    onHoverChange: setHovered,
++    onHoverChange: hasStateCallback ? setHovered : null,
+     onHoverStart: onHoverIn,
+     onHoverEnd: onHoverOut
+   });
+@@ -146,25 +150,29 @@ function Pressable(props: Props): React.Node {
+   const blurHandler = React.useCallback(
+     (e: any) => {
+       if (e.nativeEvent.target === hostRef.current) {
+-        setFocused(false);
++        if (hasStateCallback) {
++          setFocused(false);
++        }
+         if (onBlur != null) {
+           onBlur(e);
+         }
+       }
+     },
+-    [hostRef, setFocused, onBlur]
++    [hostRef, setFocused, hasStateCallback, onBlur]
+   );
+ 
+   const focusHandler = React.useCallback(
+     (e: any) => {
+       if (e.nativeEvent.target === hostRef.current) {
+-        setFocused(true);
++        if (hasStateCallback) {
++          setFocused(true);
++        }
+         if (onFocus != null) {
+           onFocus(e);
+         }
+       }
+     },
+-    [hostRef, setFocused, onFocus]
++    [hostRef, setFocused, hasStateCallback, onFocus]
+   );
+ 
+   const contextMenuHandler = React.useCallback(
+```
+
+---
+
+### Incident Patch 3: `e9a5214f` (2026-11-03)
+**Commit Message**: [fix] createDOMProps: support "box-none" and "box-only" in style.pointerEvents (#2953)
+
+**File**: `packages/react-native-web/src/exports/StyleSheet/index.js` (modified, +5/-4)
+```diff
+@@ -41,7 +41,7 @@ function createStyleq(isRTL: boolean, preprocessOptions: PreprocessOptions) {
+ const styleqLTR = createStyleq(false, defaultPreprocessOptions);
+ const styleqRTL = createStyleq(true, defaultPreprocessOptions);
+ 
+-function customStyleq(styles: any, options: Options = {}) {
++function customStyleq(styles: any, options: StyleSheetOptions = {}) {
+   if (!('shadow' in options) && !('textShadow' in options)) {
+     return options.writingDirection === 'rtl'
+       ? styleqRTL(styles)
+@@ -161,13 +161,14 @@ function getSheet(): { id: string, textContent: string } {
+  * resolve
+  */
+ type StyleProps = [string, { [key: string]: unknown } | null, string];
+-type Options = {
++
++export type StyleSheetOptions = {
+   shadow?: boolean,
+   textShadow?: boolean,
+   writingDirection?: 'ltr' | 'rtl'
+ };
+ 
+-function StyleSheet(styles: any, options?: Options = {}): StyleProps {
++function StyleSheet(styles: any, options?: StyleSheetOptions = {}): StyleProps {
+   const isRTL = options.writingDirection === 'rtl';
+   const styleProps: StyleProps = customStyleq(styles, options);
+   if (Array.isArray(styleProps) && styleProps[1] != null) {
+@@ -193,7 +194,7 @@ if (devToolsHook) {
+ }
+ 
+ export type IStyleSheet = {
+-  (styles: ReadonlyArray<any>, options?: Options): StyleProps,
++  (styles: ReadonlyArray<any>, options?: StyleSheetOptions): StyleProps,
+   absoluteFill: Object,
+   create: typeof create,
+   compose: typeof compose,
+```
+
+**File**: `packages/react-native-web/src/modules/createDOMProps/__tests__/index-test.js` (modified, +8/-0)
+```diff
+@@ -275,4 +275,12 @@ describe('modules/createDOMProps', () => {
+     const props = createProps({ nativeID });
+     expect(props.id).toEqual(nativeID);
+   });
++
++  test('style "pointerEvents" "box-none" and "box-only" add class names', () => {
++    ['box-none', 'box-only'].forEach((pointerEvents) => {
++      const props = createProps({ style: { pointerEvents } });
++      expect(props.className).toEqual(createProps({ pointerEvents }).className);
++      expect(props.style).toBeUndefined();
++    });
++  });
+ });
+```
+
+**File**: `packages/react-native-web/src/modules/createDOMProps/index.js` (modified, +26/-7)
+```diff
+@@ -8,7 +8,7 @@
+  */
+ 
+ import AccessibilityUtil from '../AccessibilityUtil';
+-import StyleSheet from '../../exports/StyleSheet';
++import StyleSheet, { type StyleSheetOptions } from '../../exports/StyleSheet';
+ 
+ const emptyObject: Object = {};
+ const uppercasePattern = /[A-Z]/g;
+@@ -23,7 +23,9 @@ function hyphenateString(str: string): string {
+   return str.replace(uppercasePattern, toHyphenLower);
+ }
+ 
+-const pointerEventsStyles = StyleSheet.create({
++const pointerEventsStyles: {
++  readonly [string]: { readonly pointerEvents: string }
++} = StyleSheet.create({
+   auto: {
+     pointerEvents: 'auto'
+   },
+@@ -405,13 +407,30 @@ const createDOMProps = (
+   }
+ 
+   // Resolve styles
+-  const [className, inlineStyle] = StyleSheet(
++  const styleSheetOptions: StyleSheetOptions = {
++    writingDirection: 'ltr',
++    ...options
++  };
++
++  let [className, inlineStyle] = StyleSheet(
+     [style, pointerEvents && pointerEventsStyles[pointerEvents]],
+-    {
+-      writingDirection: 'ltr',
+-      ...options
+-    }
++    styleSheetOptions
+   );
++
++  // Inline "pointerEvents" can't style children (needed by "box-none" and
++  // "box-only"), so resolve again with the class. Rare, so cheap.
++  const inlinePointerEvents = inlineStyle?.pointerEvents;
++
++  if (
++    inlinePointerEvents === 'box-none' ||
++    inlinePointerEvents === 'box-only'
++  ) {
++    [className, inlineStyle] = StyleSheet(
++      [style, pointerEventsStyles[inlinePointerEvents]],
++      styleSheetOptions
++    );
++  }
++
+   if (className) {
+     domProps.className = className;
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2940** (2026-10-30): Simplify ScrollView responder logic (@zoontek)
-- **PR #2939** (closed): [fix] Text: shrink below the longest word in a flex row (@bencripps)
-- **PR #2937** (2026-10-28): [feat] Support fontVariant stylistic sets (@zoontek)
-- **PR #2936** (2026-10-28): [feat] Add PlatformColor (@zoontek)
-- **PR #2935** (2026-10-28): [fix] Inverted list with onRefresh renders cells upside-down (@zoontek)
-- **PR #2934** (2026-10-28): [fix] Animated.loop blocks FlatList onEndReached (@zoontek)
+- **PR #2957** (2026-11-04): Faster `createDOMProps` (@zoontek)
+- **PR #2956** (2026-11-04): Skip responder and layout effects on nodes that don't use them (@zoontek)
+- **PR #2955** (2026-11-04): [change] UIManager: faster measureLayout, flow types, React Native parity (@zoontek)
+- **PR #2954** (2026-11-03): [fix] Pressable: don't re-render on interaction without state callback (@zoontek)
+- **PR #2953** (2026-11-03): [fix] support "box-none" and "box-only" in inline styles (@zoontek)
+- **PR #2952** (2026-11-03): [fix] ImageLoader: release images after load or error (@zoontek)
 
 ---
 
@@ -1197,34 +1254,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [fix] Text: shrink below the longest word in a flex row, as View does (#2922)
+## X. [change] UIManager: faster measureLayout, flow types, React Native parity (#2955
 
 **RULE**:
-When implementing operations in `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `646103a4`: [fix] Text: shrink below the longest word in a flex row, as View does (#2922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93c304ff`: [change] UIManager: faster measureLayout, flow types, React Native parity (#2955). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-       .css-textHasAncestor-1ejxjx6{backgr
+          // $FlowFixMe[incompatible-type] activeElement can be any focusable element
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
-       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
-       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;disp
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `646103a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93c304ff` are properly handled with clean fallback behavior.

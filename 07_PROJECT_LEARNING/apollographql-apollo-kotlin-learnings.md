@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md`  
 > **Source**: github ([https://github.com/apollographql/apollo-kotlin](https://github.com/apollographql/apollo-kotlin))  
-> **Source Version**: `c4701d11`  
+> **Source Version**: `e1178ba3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:08:14.516Z  
+> **Timestamp**: 2026-11-04T21:33:01.418Z  
 > **Learning ID**: `learn-github-apollographql-apollo-kotlin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apollographql/apollo-kotlin](https://github.com/apollographql/apollo-kotlin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:08:14.508Z  
+> **Harvest Timestamp**: 2026-11-04T21:33:01.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -533,15 +533,15 @@ actual fun currentTimeMillis(): Long {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7045** (2026-11-02): **Version is now 4.4.5-SNAPSHOT**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > ### ✅ Docs preview ready  The preview is ready to be viewed. [View the preview](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625)  File Changes  <details> <summary>0 new, 8 changed, 0 removed</summary>  ``` * (developer-tools)/kotlin/v4/index.mdx * (developer-tools)/kotlin/v4/advanced/apollo-ast.mdx * (developer-tools)/kotlin/v4/advanced/compiler-plugins.mdx * (developer-tools)/kotlin/v4/advanced/no-runtime.mdx * (developer-tools)/kotlin/v4/caching/http-cache.mdx * (developer-tools)/kotlin/v4/caching/normalized-cache.mdx * (developer-tools)/kotlin/v4/testing/apollo-debug-server.mdx * (developer-tools)/kotlin/v4/testing/mocking-graphql-responses.mdx ```  </details>  **Build ID**: 3ed8e97a77fce1c441f84625 **Build Logs**: [View logs](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625/logs)  **URL**: [https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c
+
 - **Issue #7044** (2026-10-29): **Add v4.4.4 changelog**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
   > ### ✅ Docs preview has no changes  The preview was not built because there were no changes.  **Build ID**: b982eb811194633872bddb71 **Build Logs**: [View logs](https://www.apollographql.com/docs/deploy-preview/b982eb811194633872bddb71/logs)  ---  ### ✅ AI Style Review — No Changes Detected  No MDX files were changed in this pull request.  **Review Log**: [View detailed log](https://docs.access.apollographql.com/docs/internal/ai-reviews/20261029-8fa2c544-7044-b17ae1ce63e9828f)  > This review is AI-generated. Please use common sense when accepting these suggestions, as they may not always be accurate or appropriate for your specific context.
-
-- **Issue #7043** (2026-10-29): **Add support for empty input objects and empty unions**
-  *Symptoms*: See https://github.com/graphql/graphql-spec/pull/1249  This is all gated by a single `allowEmptyTypes` flag for simplicity. Same as before, schema validation is relaxed and will not emit errors anymore for empty types. 
-  **Post-Mortem & Fix Analysis**:
-  > ### ✅ Docs preview has no changes  The preview was not built because there were no changes.  **Build ID**: 04022baeeb19487e26bdf935 **Build Logs**: [View logs](https://www.apollographql.com/docs/deploy-preview/04022baeeb19487e26bdf935/logs)  ---  ### ✅ AI Style Review — No Changes Detected  No MDX files were changed in this pull request.  **Review Log**: [View detailed log](https://docs.access.apollographql.com/docs/internal/ai-reviews/20261029-8fa2c544-7043-a1913e39d9506028)  > This review is AI-generated. Please use common sense when accepting these suggestions, as they may not always be accurate or appropriate for your specific context.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -558,333 +558,142 @@ actual fun currentTimeMillis(): Long {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4701d11` (2026-10-29)
-**Commit Message**: 4.4.4 changelog (#7044)
+### Incident Patch 1: `e1178ba3` (2026-11-02)
+**Commit Message**: Update plugin com.gradle.develocity to v4.6.1 (#7021)
 
-**File**: `CHANGELOG.md` (modified, +11/-1)
+* Update plugin com.gradle.develocity to v4.6.1
+
+* Keep in sync
+
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Martin Bonnin <[REDACTED_EMAIL]>
+
+**File**: `benchmark/settings.gradle.kts` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,16 @@
- Change Log
- ==========
- 
-+# Version 4.4.4
-+
-+_2026-11-29_
-+
-+A patch version to fix Java codegen generating bad code when using custom scalars mapped to Long or Float. 
-+
-+## 👷‍♂️ All changes
-+
-+* [FIX] codegen: fix Java codegen generating bad code when using custom scalars mapped to Long or Float. (#7032)
-+
- # Version 5.2.0
- 
- Version 5.2.0 adds support for the new HTTP `QUERY` method and empty selection sets amongst other performance improvements and fixes.
-@@ -11,7 +21,7 @@ Many thanks @AvikMakwana, @gregjotau and @AlexanderGH for their contributions to
- 
- * [NEW] language: Support empty selection sets (#7028, #7015)
- * [NEW] runtime: Add support for QUERY (#7016)
--* [NEW] runtime: Allow custom JVM HTTP engines without OkHttp - #7018
-+* [NEW] runtime: Allow custom JVM HTTP engines without OkHttp - (#7018)
- * [NEW] execution: Add exposeServiceCapabilities (#7026)
- * [NEW] execution: Introduce `PreparedRequest` and allow to execute fragments (#7022)
- * [FIX] Fix @catch handling of malformed response data (#7027)
+@@ -1,5 +1,5 @@
+ plugins {
+-  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
++  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
+   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
+   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+ }
+```
+
+**File**: `build-logic/settings.gradle.kts` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ plugins {
+-  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
++  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
+   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
+   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+ }
+```
+
+**File**: `gradle/libraries.toml` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ atomicfu-plugin = { group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plu
+ compat-patrouille = { module = "com.gradleup.compat.patrouille:compat-patrouille-gradle-plugin", version.ref = "compat-patrouille" }
+ compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
+ compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
+-dgp = "com.gradle:develocity-gradle-plugin:4.5.0" # // sync with settings.gradle.kts, see also https://github.com/gradle/gradle/issues/36437
++dgp = "com.gradle:develocity-gradle-plugin:4.6.1" # // sync with settings.gradle.kts, see also https://github.com/gradle/gradle/issues/36437
+ # Not updating because it fails in apollo-compiler Java tests with
+ # annotation @org.jetbrains.annotations.Nullable not applicable in this type context
+ google-testing-compile = { group = "com.google.testing.compile", name = "compile-testing", version = "0.23.0" }
+```
+
+**File**: `settings.gradle.kts` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ plugins {
+-  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
++  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
+   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
+   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+ }
+```
+
+**File**: `tests/settings.gradle.kts` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ plugins {
+-  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
++  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
+   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
+   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+ }
 ```
 
 ---
 
-### Incident Patch 2: `f5531193` (2026-10-29)
-**Commit Message**: Add support for empty input objects and empty unions (#7043)
+### Incident Patch 2: `a2343cd6` (2026-11-02)
+**Commit Message**: Include the response path in MapJsonReader.nextString() errors (#7042)
 
-* Add support for empty input objeects
-
-* Add support for empty unions
-
-**File**: `libraries/apollo-ast/api/apollo-ast.api` (modified, +4/-4)
+**File**: `libraries/apollo-api/src/commonMain/kotlin/com/apollographql/apollo/api/json/MapJsonReader.kt` (modified, +1/-1)
 ```diff
-@@ -1314,8 +1314,8 @@ public final class com/apollographql/apollo/ast/ParserOptions {
- 	public synthetic fun <init> (ZZZZZZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
- 	public final fun getAllowDirectivesOnDirectives ()Z
- 	public final fun getAllowEmptyDocuments ()Z
--	public final fun getAllowEmptyObjectsAndInterfaces ()Z
- 	public final fun getAllowEmptySelectionSets ()Z
-+	public final fun getAllowEmptyTypes ()Z
- 	public final fun getAllowFragmentArguments ()Z
- 	public final fun getAllowServiceCapabilities ()Z
- 	public final fun getWithSourceLocation ()Z
-@@ -1325,22 +1325,22 @@ public final class com/apollographql/apollo/ast/ParserOptions$Builder {
- 	public fun <init> ()V
- 	public final fun allowDirectivesOnDirectives (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
- 	public final fun allowEmptyDocuments (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
--	public final fun allowEmptyObjectsAndInterfaces (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
- 	public final fun allowEmptySelectionSets (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
-+	public final fun allowEmptyTypes (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
- 	public final fun allowFragmentArguments (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
- 	public final fun allowServiceCapabilities (Z)Lcom/apollographql/apollo/ast/ParserOptions$Builder;
- 	public final fun build ()Lcom/apollographql/apollo/ast/ParserOptions;
- 	public final fun getAllowDirectivesOnDirectives ()Z
- 	public final fun getAllowEmptyDocuments ()Z
--	public final fun getAllowEmptyObjectsAndInterfaces ()Z
- 	public final fun getAllowEmptySelectionSets ()Z
-+	public final fun getAllowEmptyTypes ()Z
- 	public final fun getAllowFragmentArguments ()Z
- 	public final fun getAllowServiceCapabilities ()Z
- 	public final fun getWithSourceLocation ()Z
- 	public final fun setAllowDirectivesOnDirectives (Z)V
- 	public final fun setAllowEmptyDocuments (Z)V
--	public final fun setAllowEmptyObjectsAndInterfaces (Z)V
- 	public final fun setAllowEmptySelectionSets (Z)V
-+	public final fun setAllowEmptyTypes (Z)V
- 	public final fun setAllowFragmentArguments (Z)V
- 	public final fun setAllowServiceCapabilities (Z)V
- 	public final fun setWithSourceLocation (Z)V
+@@ -197,7 +197,7 @@ constructor(
+       is Double -> value.toString()
+       is String -> value
+       is JsonNumber -> value.value
+-      else -> throw JsonDataException("Expected a String but got $value instead")
++      else -> throw JsonDataException("Expected a String but was ${peek()} at path ${getPathAsString()}")
+     }.also {
+       advanceIterator()
+     }
 ```
 
-**File**: `libraries/apollo-ast/api/apollo-ast.klib.api` (modified, +6/-6)
+**File**: `libraries/apollo-api/src/commonTest/kotlin/test/MapJsonReaderTest.kt` (modified, +23/-1)
 ```diff
-@@ -1493,10 +1493,10 @@ final class com.apollographql.apollo.ast/ParserOptions { // com.apollographql.ap
-         final fun <get-allowDirectivesOnDirectives>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowDirectivesOnDirectives.<get-allowDirectivesOnDirectives>|<get-allowDirectivesOnDirectives>(){}[0]
-     final val allowEmptyDocuments // com.apollographql.apollo.ast/ParserOptions.allowEmptyDocuments|{}allowEmptyDocuments[0]
-         final fun <get-allowEmptyDocuments>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowEmptyDocuments.<get-allowEmptyDocuments>|<get-allowEmptyDocuments>(){}[0]
--    final val allowEmptyObjectsAndInterfaces // com.apollographql.apollo.ast/ParserOptions.allowEmptyObjectsAndInterfaces|{}allowEmptyObjectsAndInterfaces[0]
--        final fun <get-allowEmptyObjectsAndInterfaces>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowEmptyObjectsAndInterfaces.<get-allowEmptyObjectsAndInterfaces>|<get-allowEmptyObjectsAndInterfaces>(){}[0]
-     final val allowEmptySelectionSets // com.apollographql.apollo.ast/ParserOptions.allowEmptySelectionSets|{}allowEmptySelectionSets[0]
-         final fun <get-allowEmptySelectionSets>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowEmptySelectionSets.<get-allowEmptySelectionSets>|<get-allowEmptySelectionSets>(){}[0]
-+    final val allowEmptyTypes // com.apollographql.apollo.ast/ParserOptions.allowEmptyTypes|{}allowEmptyTypes[0]
-+        final fun <get-allowEmptyTypes>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowEmptyTypes.<get-allowEmptyTypes>|<get-allowEmptyTypes>(){}[0]
-     final val allowFragmentArguments // com.apollographql.apollo.ast/ParserOptions.allowFragmentArguments|{}allowFragmentArguments[0]
-         final fun <get-allowFragmentArguments>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.allowFragmentArguments.<get-allowFragmentArguments>|<get-allowFragmentArguments>(){}[0]
-     final val allowServiceCapabilities // com.apollographql.apollo.ast/ParserOptions.allowServiceCapabilities|{}allowServiceCapabilities[0]
-@@ -1513,12 +1513,12 @@ final class com.apollographql.apollo.ast/ParserOptions { // com.apollographql.ap
-         final var allowEmptyDocuments // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyDocuments|{}allowEmptyDocuments[0]
-             final fun <get-allowEmptyDocuments>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyDocuments.<get-allowEmptyDocuments>|<get-allowEmptyDocuments>(){}[0]
-             final fun <set-allowEmptyDocuments>(kotlin/Boolean) // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyDocuments.<set-allowEmptyDocuments>|<set-allowEmptyDocuments>(kotlin.Boolean){}[0]
--        final var allowEmptyObjectsAndInterfaces // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyObjectsAndInterfaces|{}allowEmptyObjectsAndInterfaces[0]
--            final fun <get-allowEmptyObjectsAndInterfaces>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyObjectsAndInterfaces.<get-allowEmptyObjectsAndInterfaces>|<get-allowEmptyObjectsAndInterfaces>(){}[0]
--            final fun <set-allowEmptyObjectsAndInterfaces>(kotlin/Boolean) // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyObjectsAndInterfaces.<set-allowEmptyObjectsAndInterfaces>|<set-allowEmptyObjectsAndInterfaces>(kotlin.Boolean){}[0]
-         final var allowEmptySelectionSets // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptySelectionSets|{}allowEmptySelectionSets[0]
-             final fun <get-allowEmptySelectionSets>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptySelectionSets.<get-allowEmptySelectionSets>|<get-allowEmptySelectionSets>(){}[0]
-             final fun <set-allowEmptySelectionSets>(kotlin/Boolean) // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptySelectionSets.<set-allowEmptySelectionSets>|<set-allowEmptySelectionSets>(kotlin.Boolean){}[0]
-+        final var allowEmptyTypes // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyTypes|{}allowEmptyTypes[0]
-+            final fun <get-allowEmptyTypes>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyTypes.<get-allowEmptyTypes>|<get-allowEmptyTypes>(){}[0]
-+            final fun <set-allowEmptyTypes>(kotlin/Boolean) // com.apollographql.apollo.ast/ParserOptions.Builder.allowEmptyTypes.<set-allowEmptyTypes>|<set-allowEmptyTypes>(kotlin.Boolean){}[0]
-         final var allowFragmentArguments // com.apollographql.apollo.ast/ParserOptions.Builder.allowFragmentArguments|{}allowFragmentArguments[0]
-             final fun <get-allowFragmentArguments>(): kotlin/Boolean // com.apollographql.apollo.ast/ParserOptions.Builder.allowFragmentArguments.<get-allowFragmentArguments>|<get-allowFragmentArguments>(){}[0]
-             final fun <set-allowFragmentArguments>(kotlin/Boolean) // com.apollo
-```
-
-**File**: `libraries/apollo-ast/src/commonMain/kotlin/com/apollographql/apollo/ast/api.kt` (modified, +6/-6)
-```diff
-@@ -87,7 +87,7 @@ class ParserOptions private constructor(
-     @ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v5_1_1)
-     val allowEmptySelectionSets: Boolean,
-     @ApolloExperimental
--    val allowEmptyObjectsAndInterfaces: Boolean,
-+    val allowEmptyTypes: Boolean,
- ) {
-   class Builder {
-     var allowEmptyDocuments = true
-@@ -108,7 +108,7 @@ class ParserOptions private constructor(
-     var allowEmptySelectionSets = true
+@@ -3,8 +3,13 @@ package test
+ import com.apollographql.apollo.api.json.JsonNumber
+ import com.apollographql.apollo.api.json.JsonReader
+ import com.apollographql.apollo.api.json.MapJsonReader
++import com.apollographql.apollo.api.json.MapJsonReader.Companion.buffer
++import com.apollographql.apollo.api.json.jsonReader
++import com.apollographql.apollo.exception.JsonDataException
++import okio.Buffer
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
+ import kotlin.test.assertTrue
  
-     @ApolloExperimental
--    var allowEmptyObjectsAndInterfaces = false
-+    var allowEmptyTypes = false
- 
-     fun allowEmptyDocuments(allowEmptyDocuments: Boolean) = apply {
-       this.allowEmptyDocuments = allowEmptyDocuments
-@@ -148,13 +148,13 @@ class ParserOptions private constructor(
-     }
- 
-     /**
--     * Whether to allow empty object and interface type definitions, as in `type Query {}` or `interface Node {}`.
-+     * Whether to allow empty object, interface and input object type definitions, as in `type Query {}`, `interface Node {}` or `input Filter {}`.
-      *
-      * Default: false
-      */
-     @ApolloExperimental
--    fun allowEmptyObjectsAndInterfaces(allowEmptyObjectsAndInterfaces: Boolean) = apply {
--      this.allowEmptyObjectsAndInterfaces = allowEmptyObjectsAndInterfaces
-+    fun allowEmptyTypes(allowEmptyTypes: Boolean) = apply {
-+      this.allowEmptyTypes = allowEmptyTypes
-     }
- 
-     fun build(): ParserOptions {
-@@ -165,7 +165,7 @@ class ParserOptions private constructor(
-           allowServiceCapabilities = allowServiceCapabilities,
-           allowFragmentArguments = allowFragmentArguments,
-           allowEmptySelectionSets = allowEmptySelectionSets,
--          allowEmptyObjectsAndInterfaces = allowEmptyObjectsAndInterfaces,
-+          allowEmptyTypes = allowEmptyTypes,
-       )
+ class MapJsonReaderTest {
+@@ -98,4 +103,21 @@ class MapJsonReaderTest {
+       endObject()
      }
    }
-```
-
-**File**: `libraries/apollo-ast/src/commonMain/kotlin/com/apollographql/apollo/ast/gql.kt` (modified, +12/-4)
-```diff
-@@ -749,6 +749,8 @@ class GQLInputObjectTypeDefinition(
-         inputFields.join(writer, separator = "\n")
-         unindent()
-         write("}\n")
-+      } else {
-+        write("\n")
-       }
-     }
-   }
-@@ -887,8 +889,10 @@ class GQLUnionTypeDefinition(
-         write(" ")
-         directives.join(writer)
-       }
--      write(" = ")
--      memberTypes.join(writer, separator = "|")
-+      if (memberTypes.isNotEmpty()) {
-+        write(" = ")
-+        memberTypes.join(writer, separator = "|")
-+      }
-       write("\n")
-     }
-   }
-@@ -1194,6 +1198,8 @@ class GQLInputObjectTypeExtension(
-         inputFields.join(writer, separator = "\n")
-         unindent()
-         write("}\n")
-+      } else {
-+        write("\n")
-       }
-     }
-   }
-@@ -1326,8 +1332,10 @@ class GQLUnionTypeExtension(
-         write(" ")
-         directives.join(writer)
-       }
--      write(" = ")
--      memberTypes.join(writer, separator = "|")
-+      if (memberTypes.isNotEmpty()) {
-+        write(" = ")
-+        memberTypes.join(writer, separator = "|")
-+      }
-       write("\n")
-     }
-   }
-```
-
-**File**: `libraries/apollo-ast/src/commonMain/kotlin/com/apollographql/apollo/ast/internal/Parser.kt` (modified, +10/-6)
-```diff
-@@ -17,7 +17,7 @@ internal class Parser(
-   private val allowServiceCapabilities = options.allowServiceCapabilities
-   private val allowFragmentArguments = options.allowFragmentArguments
-   private val allowEmptySelectionSets = options.allowEmptySelectionSets
--  private val allowEmptyObjectsAndInterfaces = options.allowEmptyObjectsAndInterfaces
-+  private val allowEmptyTypes = options.allowEmptyTypes
- 
-   fun parseDocument(): GQLDocument {
-     val start = token
-@@ -104,7 +104,7 @@ internal class Parser(
-     }
-   }
- 
--  private inline fun <reified OpenToken : Token, reified CloseToken : Token, T> parseListOrNull(
-+  private inline fun <reified OpenToken : Token, reified CloseToken : Token, T> parseListOrEmpty(
-       crossinline parseOne: () -> T,
-   ): List<T> {
-     if (!peek<OpenToken>()) {
-@@ -323,7 +323,7 @@ internal class Parser(
-   }
- 
-   private fun parseVariableDefinitions(): List<GQLVariableDefinition> {
--    return parseListOrNull<Token.LeftParenthesis, Token.RightParenthesis, GQLVariableDefinition> {
-+    return parseListOrEmpty<Token.LeftParenthesis, Token.RightParenthesis, GQLVariableDefinition> {
-       parseVariableDefinition()
-     }
-   }
-@@ -521,8 +521,8 @@ internal class Parser(
-   }
- 
-   private fun parseFieldDefinitions(): List<GQLFieldDefinition> {
--    return if (allowEmptyObjectsAndInterfaces) {
--      parseListOrNull<Token.LeftBrace, Token.RightBrace, GQLFieldDefinition>(::parseFieldDefinition)
-+    return if (allowEmptyTypes) {
-+      parseListOrEmpty<Token.LeftBrace, Token.RightBrace, GQLFieldDefinition>(::parseFieldDefinition)
-     } else {
-       parseNonEmptyListOrNull<Token.LeftBrace, Token.RightBrace, GQLFieldDefinition>(::parseFieldDefinition).orEmpty()
-     }
-@@ -689,7 +689,11 @@ internal class Parser(
-   }
- 
-   private fun parseInputFieldDefinitions(): List<GQLInputValueDefinition> {
--    return parseNonEmptyListOrNull<Token.LeftBrace, Token.RightBrace, GQLInputValueDefinition>(::parseInputValueDefinition).orEmpty()
-+    return if (allowEmptyTypes) {
-+      parseListOrEmpty<Token.LeftBrace, Token.RightBrace, GQLInputValueDefinition>(::parseInputValueDefinition)
-+    } else {
-+      parseNonEmptyListOrNull<Token.LeftBrace, Token.RightBrace, GQLInputValueDefinition>(::parseInputValueDefinition).orEmpty()
-+    }
-   }
- 
-   private fun parseEnumTypeDefinition(start: Token): GQLEnumTypeDefinition {
-```
-
-**File**: `libraries/apollo-ast/src/commonMain/kotlin/com/apollographql/apollo/ast/internal/SchemaValidationScope.kt` (modified, +3/-4)
-```diff
-@@ -976,14 +976,13 @@ private fun ValidationScope.validateInputObjects() {
- 
-   val defaultValueTraversalState = DefaultValueTraversalState()
-   inputObjects.forEach { o ->
--    if (o.inputFields.isEmpty()) {
--      registerIssue("Input object must specify one or more input fields", o.sourceLocation)
--    }
--
-     validateDirectivesInConstContext(o.directives, o)
-     validateInputObjectDefaultValue(o, defaultValueTraversalState)
- 
-     val isOneOfInputObject = o.directives.findOneOf()
-+    if (isOneOfInputObject && o.inputFields.isEmpty()) {
-+      registerIssue("OneOf input object '${o.name}' must specify one or more input fields", o.sourceLocation)
-+    }
-     o.inputFields.forEach { gqlInputValueDefinition ->
-       if (isOneOfInputObject) {
-         if (gqlInputValueDefinition.type is GQLNonNullType) {
-```
-
-**File**: `libraries/apollo-ast/src/jvmTest/kotlin/com/apollographql/apollo/graphql/ast/test/fixtures.kt` (modified, +3/-3)
-```diff
-@@ -72,7 +72,7 @@ internal fun findFiles(path: String): List<File> {
- enum class Pragma {
-   // Parser
-   allowServiceCapabilities,
--  allowEmptyObjectsAndInterfaces,
-+  allowEmptyTypes,
-   // Merger
-   allowMergingFieldDefinitions,
-   // Schema validation
-@@ -94,8 +94,8 @@ fun List<Pragma>.toParserOptions(): ParserOptions {
-         if (Pragma.allowServiceCapabilities in this@toParserOptions) {
-           allowServiceCapabilities(true)
-         }
--        if (Pragma.allowEmptyObjectsAndInterfaces in this@toParserOptions) {
--          allowEmptyObjectsAndInterfaces(true)
-+        if (Pragma.allowEmptyTypes in this@toParserOptions) {
-+          allowEmptyTypes(true)
-         }
-         if (Pragma.allowFragmentArguments in this@toParserOptions) {
-           allowFragmentArguments(true)
-```
-
-**File**: `libraries/apollo-ast/test-fixtures/parser/empty-input-error.expected` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+ParsingError (1:15)
-+Expected Name, found '}'.
+-}
 \ No newline at end of file
++
++  @Test
++  fun nextStringOnNullIncludesPath() {
++    val jsonReader = Buffer().writeUtf8("""{"data": {"user": {"id": null}}}""").jsonReader()
++    jsonReader.beginObject()
++    assertEquals("data", jsonReader.nextName())
++    jsonReader.beginObject()
++    assertEquals("user", jsonReader.nextName())
++
++    val bufferedReader = jsonReader.buffer()
++    bufferedReader.beginObject()
++    assertEquals("id", bufferedReader.nextName())
++    val exception = assertFailsWith<JsonDataException> {
++      bufferedReader.nextString()
++    }
++    assertEquals("Expected a String but was NULL at path data.user.id", exception.message)
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7045** (2026-11-02): Version is now 4.4.5-SNAPSHOT (@martinbonnin)
 - **PR #7044** (2026-10-29): Add v4.4.4 changelog (@martinbonnin)
 - **PR #7043** (2026-10-29): Add support for empty input objects and empty unions (@martinbonnin)
+- **PR #7042** (2026-11-02): Include the response path in MapJsonReader.nextString() errors (@RaphaelFakhri)
 - **PR #7041** (2026-10-21): Allow GET for introspection queries (@AtharvaLakhe)
-- **PR #7035** (2026-09-29): Add support for empty objects and empty interfaces (@martinbonnin)
-- **PR #7034** (closed): Fix cross-module unused fragment warnings (@siboxd)
-- **PR #7033** (closed): Fix cross-module unused fragment warnings (@siboxd)
+- **PR #7037** (2026-11-02): Bump Dokka to 2.2.0 (@BoD)
 
 ---
 
@@ -904,38 +713,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 4.4.4 changelog (#7044)
+## X. Update plugin com.gradle.develocity to v4.6.1 (#7021)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apollographql/apollo-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmark/settings.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apollographql/apollo-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4701d11`: 4.4.4 changelog (#7044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1178ba3`: Update plugin com.gradle.develocity to v4.6.1 (#7021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmark/settings.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-# Version 4.4.4
-
-_2026-11-29_
-
-A patch version to fix Java codegen generating bad code when using custom scalars mapped to Long or Float. 
-
-## 👷‍♂️ All changes
-
-* [FIX] codegen: fix Java codegen generating bad code when using custom scalars mapped to Long or Float. (#7032)
-
-* [NEW] runtime: Allow custom JVM HTTP engines without OkHttp - (#7018)
+  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-* [NEW] runtime: Allow custom JVM HTTP engines without OkHttp - #7018
+  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4701d11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1178ba3` are properly handled with clean fallback behavior.

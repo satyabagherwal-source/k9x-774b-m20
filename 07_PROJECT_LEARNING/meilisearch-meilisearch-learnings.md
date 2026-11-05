@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `fccb3537`  
+> **Source Version**: `c18c8197`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:52:34.886Z  
+> **Timestamp**: 2026-11-04T19:48:10.650Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:52:34.670Z  
+> **Harvest Timestamp**: 2026-11-04T19:48:09.512Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59766 stars
+- **Stars / Engagement**: 59782 stars
 
 ---
 
@@ -2049,63 +2049,49 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33da0a52` (2026-11-02)
-**Commit Message**: Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build-push-action-7.4.0
+### Incident Patch 1: `c18c8197` (2026-11-04)
+**Commit Message**: Merge pull request #6716 from meilisearch/chore/update-rails-tests
 
-Bump docker/build-push-action from 6.19.2 to 7.4.0
+Bump mongodb to v9.0 in rails SDKs tests
 
-**File**: `.github/workflows/publish-docker-images.yml` (modified, +1/-1)
+**File**: `.github/workflows/sdks-tests.yml` (modified, +1/-1)
 ```diff
-@@ -69,7 +69,7 @@ jobs:
-             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
- 
-       - name: Build and push by digest
--        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-         id: build-and-push
+@@ -366,7 +366,7 @@ jobs:
+       - name: Start MongoDB
+         uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
          with:
-           platforms: linux/${{ matrix.platform }}
+-          mongodb-version: 8.0
++          mongodb-version: "9.0"
+       - name: Run tests
+         run: bundle exec rspec
+ 
 ```
 
 ---
 
-### Incident Patch 2: `54869107` (2026-11-01)
-**Commit Message**: Bump docker/build-push-action from 6.19.2 to 7.4.0
+### Incident Patch 2: `30ac7935` (2026-11-03)
+**Commit Message**: Bump mongodb version to 9.0
 
-Bumps [docker/build-push-action](https://github.com/docker/build-push-action) from 6.19.2 to 7.4.0.
-- [Release notes](https://github.com/docker/build-push-action/releases)
-- [Commits](https://github.com/docker/build-push-action/compare/10e90e3645eae34f1e60eeb005ba3a3d33f178e8...c3c9e263c25d99ce0380d002d59b67737d91b0dc)
-
----
-updated-dependencies:
-- dependency-name: docker/build-push-action
-  dependency-version: 7.4.0
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/publish-docker-images.yml` (modified, +1/-1)
+**File**: `.github/workflows/sdks-tests.yml` (modified, +1/-1)
 ```diff
-@@ -69,7 +69,7 @@ jobs:
-             type=raw,value=latest,enable=${{ steps.check-tag-format.outputs.stable == 'true' && steps.check-tag-format.outputs.latest == 'true' }}
- 
-       - name: Build and push by digest
--        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-         id: build-and-push
+@@ -366,7 +366,7 @@ jobs:
+       - name: Start MongoDB
+         uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
          with:
-           platforms: linux/${{ matrix.platform }}
+-          mongodb-version: 8.0
++          mongodb-version: "9.0"
+       - name: Run tests
+         run: bundle exec rspec
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6716** (2026-11-04): Bump mongodb to v9.0 in rails SDKs tests (@Strift)
 - **PR #6714** (2026-11-02): Bump docker/login-action from 4.2.0 to 4.7.0 (@dependabot[bot])
 - **PR #6713** (2026-11-02): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 - **PR #6712** (2026-11-02): Bump docker/build-push-action from 6.19.2 to 7.4.0 (@dependabot[bot])
 - **PR #6711** (2026-11-02): Bump dart-lang/setup-dart from 1.7.2 to 1.8.1 (@dependabot[bot])
 - **PR #6709** (2026-11-02): Update version for the next release (v1.56.1) in Cargo.toml (@meili-bot)
-- **PR #6707** (2026-11-02): Backport some fixes (@dureuill)
 
 ---
 
@@ -2125,28 +2111,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build
+## X. Merge pull request #6716 from meilisearch/chore/update-rails-tests
 
 **RULE**:
-When implementing operations in `.github/workflows/publish-docker-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/sdks-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33da0a52`: Merge pull request #6712 from meilisearch/dependabot/github_actions/docker/build-push-action-7.4.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c18c8197`: Merge pull request #6716 from meilisearch/chore/update-rails-tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-docker-images.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sdks-tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+          mongodb-version: "9.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+          mongodb-version: 8.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33da0a52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c18c8197` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `9f1dcebf`  
+> **Source Version**: `a3ca96f3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T02:51:09.622Z  
+> **Timestamp**: 2026-11-04T03:00:16.284Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T02:51:09.105Z  
+> **Harvest Timestamp**: 2026-11-04T03:00:15.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13082 stars
+- **Stars / Engagement**: 13093 stars
 
 ---
 
@@ -1076,293 +1076,355 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d10fa567` (2026-10-29)
-**Commit Message**: fix(chalice): changed MCP auth
+### Incident Patch 1: `f25a3f80` (2026-11-02)
+**Commit Message**: fix(api): don't panic on malformed assist live-sessions filters (#5113)
 
-**File**: `api/chalicelib/core/authorizers.py` (modified, +1/-1)
+**File**: `backend/pkg/assist/proxy.go` (modified, +11/-7)
 ```diff
-@@ -12,7 +12,7 @@
- 
- 
- def get_supported_audience():
--    return [users.AUDIENCE, spot.AUDIENCE]
-+    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
- 
- 
- def is_spot_token(token: str) -> bool:
+@@ -229,14 +229,18 @@ func (r *GetLiveSessionsRequest) parse() *getAssistSessionsPayload {
+ 		Sort:       map[string]string{"key": r.Sort, "order": r.Order},
+ 	}
+ 	for _, filter := range r.Filters {
+-		switch f := filter.(type) {
+-		case map[string]interface{}:
+-			filterType := f["name"].(string) // it was 'type'
+-			if strings.HasPrefix(filterType, "metadata_") {
+-				filterType = f["source"].(string) // temp hack with a frontend support
+-			}
+-			res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
++		f, ok := filter.(map[string]interface{})
++		if !ok {
++			continue
+ 		}
++		filterType, _ := f["name"].(string) // it was 'type'
++		if strings.HasPrefix(filterType, "metadata_") {
++			filterType, _ = f["source"].(string) // temp hack with a frontend support
++		}
++		if filterType == "" {
++			continue
++		}
++		res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
+ 	}
+ 	return res
+ }
+```
+
+**File**: `backend/pkg/assist/proxy_test.go` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++package assist
++
++import (
++	"reflect"
++	"testing"
++)
++
++func TestGetLiveSessionsRequestParse(t *testing.T) {
++	tests := []struct {
++		name    string
++		filters []interface{}
++		want    map[string]interface{}
++	}{
++		{
++			name: "frontend filter",
++			filters: []interface{}{
++				map[string]interface{}{"name": "userId", "operator": "is", "value": []interface{}{"u1"}},
++			},
++			want: map[string]interface{}{
++				"userId": map[string]interface{}{"values": []interface{}{"u1"}, "operator": "is"},
++			},
++		},
++		{
++			name: "metadata filter uses source",
++			filters: []interface{}{
++				map[string]interface{}{"name": "metadata_1", "source": "plan", "operator": "is", "value": []interface{}{"pro"}},
++			},
++			want: map[string]interface{}{
++				"plan": map[string]interface{}{"values": []interface{}{"pro"}, "operator": "is"},
++			},
++		},
++		{
++			name: "filter without name is skipped",
++			filters: []interface{}{
++				map[string]interface{}{"type": "userId", "operator": "is", "value": []interface{}{"u1"}},
++			},
++			want: map[string]interface{}{},
++		},
++		{
++			name: "non-string name is skipped",
++			filters: []interface{}{
++				map[string]interface{}{"name": 42, "value": []interface{}{"u1"}},
++			},
++			want: map[string]interface{}{},
++		},
++		{
++			name: "metadata filter without source is skipped",
++			filters: []interface{}{
++				map[string]interface{}{"name": "metadata_1", "value": []interface{}{"pro"}},
++			},
++			want: map[string]interface{}{},
++		},
++		{
++			name:    "non-object filter is skipped",
++			filters: []interface{}{"userId", nil},
++			want:    map[string]interface{}{},
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			req := &GetLiveSessionsRequest{Filters: tt.filters, Limit: 10, Page: 1, Sort: "timestamp", Order: "desc"}
++			got := req.parse()
++			if !reflect.DeepEqual(got.Filter, tt.want) {
++				t.Errorf("parse().Filter = %v, want %v", got.Filter, tt.want)
++			}
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `6f96ebf1` (2026-10-29)
-**Commit Message**: fix(chalice): changed MCP auth
+### Incident Patch 2: `1ef0d932` (2026-11-02)
+**Commit Message**: fix(assets): log sessionID and retry attempts
 
-**File**: `api/chalicelib/core/authorizers.py` (modified, +21/-2)
+Most services put the session id into ctx as a uint64, but the
+logger only accepted strings, so the field was silently dropped.
+Failed asset caching (e.g. DNS errors) therefore logged no
+sessionID. Accept both types in one place so every caller benefits.
+
+Non-final asset fetch failures were retried without any log, so a
+failing URL stayed invisible until the terminal error ~30s later.
+Log each scheduled retry at Debug so DEBUG=true shows every attempt
+while default Info output stays quiet.
+
+**File**: `backend/internal/assets/cacher/cacher.go` (modified, +1/-0)
 ```diff
-@@ -27,16 +27,35 @@ def is_spot_token(token: str) -> bool:
+@@ -369,6 +369,7 @@ func (c *cacher) retry(ctx context.Context, t *Task, explicitDelay time.Duration
+ 	}
+ 	if c.scheduler.schedule(t, time.Now().Add(delay)) {
+ 		c.metrics.IncreaseRetries(reason)
++		c.log.Debug(ctx, "retrying asset (attempt=%d/%d, reason=%s, in=%s): %s", t.attempt, c.maxAttempts, reason, delay, errors.Wrap(cause, t.urlContext))
+ 	} else {
+ 		// retry heap is full: shed load (the entry stays deduped for now)
+ 		c.metrics.IncreaseTerminalFailures("retry_queue_full")
+```
+
+**File**: `backend/internal/assets/cacher/retry_log_test.go` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++package cacher
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"strings"
++	"testing"
++
++	config "openreplay/backend/internal/config/assets"
++	"openreplay/backend/pkg/metrics/assets"
++	"openreplay/backend/pkg/objectstorage"
++)
++
++type recLog struct{ debug []string }
++
++func (l *recLog) Debug(_ context.Context, m string, a ...interface{}) {
++	l.debug = append(l.debug, fmt.Sprintf(m, a...))
++}
++func (l *recLog) Info(context.Context, string, ...interface{})  {}
++func (l *recLog) Warn(context.Context, string, ...interface{})  {}
++func (l *recLog) Error(context.Context, string, ...interface{}) {}
++func (l *recLog) Fatal(context.Context, string, ...interface{}) {}
++
++type nopStore struct{ objectstorage.ObjectStorage }
++
++// Non-final failures are retried silently at Info level; with DEBUG=true each attempt must be visible.
++func TestRetryLogsEachAttemptAtDebug(t *testing.T) {
++	l := &recLog{}
++	cfg := &config.Config{
++		AssetsOrigin: "https://cdn.example", AssetsRetries: 5, AssetsRetryBaseMs: 10, AssetsRetryMaxMs: 10,
++		AssetsRetryHeapLimit: 10, AssetsWorkerCount: 1, AssetsQueueSize: 1, AssetsPerHostLimit: 1,
++	}
++	cfg.KeyScheme = "daily"
++	c, err := NewCacher(l, cfg, nopStore{}, assets.New("t"), nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer c.Stop()
++
++	task := &Task{requestURL: "https://probe.invalid/a.css", urlContext: "https://probe.invalid/a.css", sessionID: 42}
++	c.retry(context.Background(), task, 0, "network", errors.New("no such host"))
++
++	if len(l.debug) != 1 {
++		t.Fatalf("want 1 debug line, got %d: %v", len(l.debug), l.debug)
++	}
++	for _, want := range []string{"attempt=1/5", "reason=network", "https://probe.invalid/a.css", "no such host"} {
++		if !strings.Contains(l.debug[0], want) {
++			t.Errorf("debug line %q missing %q", l.debug[0], want)
++		}
++	}
++}
+```
+
+**File**: `backend/pkg/logger/extra.go` (modified, +1/-1)
+```diff
+@@ -104,7 +104,7 @@ func sendLog(es *elasticsearch.Client, logMessage LogMessage) {
+ }
+ 
+ func (el *extraLogger) Log(ctx context.Context, msg string) {
+-	if sID, ok := ctx.Value("sessionID").(string); ok {
++	if sID, ok := sessionID(ctx); ok {
+ 		msg = fmt.Sprintf("%s openReplaySession.id=%s", msg, sID)
+ 	}
+ 	if el.hasSentry {
+```
+
+**File**: `backend/pkg/logger/logger.go` (modified, +12/-1)
+```diff
+@@ -49,8 +49,19 @@ func New() Logger {
+ 	return customLogger
+ }
+ 
++// sessionID accepts both string and uint64, since callers set either.
++func sessionID(ctx context.Context) (string, bool) {
++	switch v := ctx.Value("sessionID").(type) {
++	case string:
++		return v, true
++	case uint64:
++		return fmt.Sprint(v), true
++	}
++	return "", false
++}
++
+ func (l *loggerImpl) prepare(ctx context.Context, logger *zap.Logger) *zap.Logger {
+-	if sID, ok := ctx.Value("sessionID").(string); ok {
++	if sID, ok := sessionID(ctx); ok {
+ 		logger = logger.With(zap.String("sessionID", sID))
+ 	}
+ 	if pID, ok := ctx.Value("projectID").(string); ok {
+```
+
+**File**: `backend/pkg/logger/logger_test.go` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++package logger
++
++import (
++	"context"
++	"testing"
++
++	"go.uber.org/zap"
++	"go.uber.org/zap/zaptest/observer"
++)
++
++// Callers put sessionID into ctx as string or uint64; both must reach the log.
++func TestPrepareSessionIDTypes(t *testing.T) {
++	for name, val := range map[string]interface{}{"string": "42", "uint64": uint64(42)} {
++		core, logs := observer.New(zap.InfoLevel)
++		l := &loggerImpl{l: zap.New(core)}
++		l.Error(context.WithValue(context.Background(), "sessionID", val), "boom")
++		if got := logs.All()[0].ContextMap()["sessionID"]; got != "42" {
++			t.Errorf("%s: sessionID = %v, want \"42\"", name, got)
++		}
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `fab894fb` (2026-11-03)
+**Commit Message**: fix(chalice): fixed MCP login
+
+**File**: `api/chalicelib/core/mcp/authorizers.py` (modified, +3/-2)
+```diff
+@@ -27,7 +27,7 @@ def is_mcp_token(token: str) -> bool:
+         audience = decoded_token.get("aud")
+         return audience == AUDIENCE
+     except jwt.InvalidTokenError:
+-        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
++        logger.error(f"Invalid token for is_mcp_token: {sanitize(token, max_length=16)}...")
          raise
  
  
-+def is_mcp_token(token: str) -> bool:
-+    try:
-+        if len(token) < 5 or "." not in token:
-+            return False
-+        decoded_token = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
-+        audience = decoded_token.get("aud")
-+        return audience == "mcp:OpenReplay"
-+    except jwt.InvalidTokenError:
-+        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
-+        raise
-+
-+
- def jwt_authorizer(scheme: str, token: str, leeway=0) -> dict | None:
-     if scheme.lower() != "bearer" or len(token) < 5 or "." not in token:
-         return None
-     if not token or token.count(".") != 2:
-         logger.debug("! JWT Malformed token")
-         return None
-+    key = config("JWT_SECRET")
-+    algorithm = config("JWT_ALGORITHM")
-+    if is_spot_token(token):
-+        key = config("JWT_SPOT_SECRET")
-+    elif is_mcp_token(token):
-+        key = config("JWT_MCP_SECRET")
-+        algorithm = config("JWT_MCP_ALGORITHM")
-     try:
-         payload = jwt.decode(jwt=token,
--                             key=config("JWT_SECRET") if not is_spot_token(token) else config("JWT_SPOT_SECRET"),
--                             algorithms=config("JWT_ALGORITHM"),
-+                             key=key,
-+                             algorithms=algorithm,
-                              audience=get_supported_audience(),
-                              leeway=leeway)
-     except jwt.ExpiredSignatureError:
-```
-
----
-
-### Incident Patch 3: `ada14b94` (2026-10-28)
-**Commit Message**: fix(tracker): flush pending messages in forceFlushBatch, add flushInterval (#5082)
-
-Data the worker has buffered but not yet uploaded is lost when a page is
-fully unloaded (same-URL navigation, reload, or any page that does not
-enter the bfcache): the dedicated worker is terminated before its
-`closing` upload completes. With the 30 s auto-send interval that can be
-up to 30 s of clicks, DOM changes and custom events.
-
-- forceFlushBatch() now hands messages still waiting for the next commit
-  to the worker before flushing, so `event(); forceFlushBatch()` includes
-  the event. Previously the flush ran before the event reached the worker.
-- New `flushInterval` option (ms) for the worker's auto-send interval.
-  Defaults to the current 30 s; invalid values fall back to it.
-
-**File**: `tracker/tracker/src/common/interaction.ts` (modified, +3/-0)
-```diff
-@@ -5,6 +5,9 @@ export type DataType = 'player' | 'assets' | 'devtools' | 'analytics' | 'visual'
- export interface Options {
-   connAttemptCount?: number
-   connAttemptGap?: number
-+  /** How often (ms) the worker uploads what it has buffered. Defaults to 30 000. Anything
-+   *  still buffered is lost if the page is unloaded without entering the bfcache. */
-+  flushInterval?: number
- }
+@@ -101,7 +101,8 @@ def get_token_by_state(client_id, state):
  
- type Start = {
-```
-
-**File**: `tracker/tracker/src/main/app/index.ts` (modified, +14/-0)
-```diff
-@@ -1817,6 +1817,7 @@ export default class App {
-       url: document.URL,
-       connAttemptCount: this.options.connAttemptCount,
-       connAttemptGap: this.options.connAttemptGap,
-+      flushInterval: this.options.flushInterval,
-       tabId: this.session.getTabId(),
-       localDebug: this.options.__local_debug,
-     })
-@@ -1929,6 +1930,7 @@ export default class App {
-       url: document.URL,
-       connAttemptCount: this.options.connAttemptCount,
-       connAttemptGap: this.options.connAttemptGap,
-+      flushInterval: this.options.flushInterval,
-       tabId: this.session.getTabId(),
-       localDebug: this.options.__local_debug,
-     })
-@@ -2251,6 +2253,18 @@ export default class App {
-   }
+     if row is None:
+         raise HTTPException(status_code=404, detail="State not found or token already generated")
+-    if MCP_LOGIN_TIMEOUT_S > 0 and (row["iat"] + MCP_LOGIN_TIMEOUT_S) >= TimeUTC.now():
++    # row["iat"] is in epoch seconds, TimeUTC.now() is in epoch milliseconds
++    if MCP_LOGIN_TIMEOUT_S > 0 and TimeUTC.now() > (row["iat"] + MCP_LOGIN_TIMEOUT_S) * 1000:
+         raise HTTPException(status_code=408, detail="Login timed out")
  
-   forceFlushBatch() {
-+    // Hand over messages still waiting for the next commit first, so that
-+    // event(); forceFlushBatch() includes the event.
-+    if (
-+      this.activityState === ActivityState.Active &&
-+      !this.socketMode &&
-+      !this.insideIframe &&
-+      this.messages.length
-+    ) {
-+      this.messages.unshift(Timestamp(this.timestamp()), TabData(this.session.getTabId()))
-+      this.postToWorker(this.messages)
-+      this.messages.length = 0
-+    }
-     this.worker?.postMessage('forceFlushBatch')
-   }
+     return generate_jwt(user_id=row["user_id"], tenant_id=row["tenant_id"], iat=row["iat"], client_id=client_id, jti=row["jti"])
+```
+
+**File**: `api/env.default` (modified, +2/-1)
+```diff
+@@ -84,4 +84,5 @@ CH_QUERY_RETRIES=1
+ CH_WAIT_FOR_CNX_POOL_S=10
+ JWT_MCP_EXPIRATION=604800
+ JWT_MCP_SECRET="SET A RANDOM STRING HERE"
+-JWT_MCP_ALGORITHM=HS512
+\ No newline at end of file
++JWT_MCP_ALGORITHM=HS512
++MCP_LOGIN_TIMEOUT_S=300
+```
+
+**File**: `api/schemas/schemas_mcp.py` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@
  
+ 
+ class AuthorizeSchema(BaseModel):
+-    state: str = Field(...)
++    # state is the only secret protecting the public /v1/mcp/auth-status endpoint, so it must not be short
++    state: str = Field(..., min_length=32)
+     # client_id is to identify the running MCP app for a client
+     client_id: str = Field(...)
 ```
 
-**File**: `tracker/tracker/src/tests/flush.test.ts` (added, +127/-0)
+**File**: `ee/api/chalicelib/core/mcp/authorizers.py` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,127 @@
-+// @ts-nocheck
-+import { describe, expect, test, jest, beforeAll, afterAll, beforeEach } from '@jest/globals'
-+import Tracker, { Options } from '../main/index.js'
-+import { Type as MType } from '../common/messages.gen.js'
-+
-+jest.mock('@openreplay/network-proxy', () => ({
-+  default: jest.fn(() => 'mocked network-proxy content'),
-+}))
-+// src/common may also hold the compiled ESM build, which the worker test can't require.
-+jest.mock('../common/messages.gen', () => jest.requireActual('../common/messages.gen.ts'))
-+
-+// App's ActivityState enum is not exported.
-+const ACTIVE = 2
-+const COLD_START = 3
-+
-+const options = {
-+  projectKey: 'test-project-key',
-+  ingestPoint: 'test-ingest-point',
-+  respectDoNotTrack: false,
-+  network: {},
-+  mouse: {},
-+  __DISABLE_SECURE_MODE: true,
-+}
-+
-+describe('forceFlushBatch', () => {
-+  let app: any
-+
-+  beforeAll(() => {
-+    Object.defineProperty(window, 'performance', {
-+      value: { timing: {}, now: jest.fn(() => 1000) },
-+      configurable: true,
-+    })
-+    Object.defineProperty(window, 'Worker', {
-+      value: jest.fn(() => 'mocked worker content'),
-+      configurable: true,
-+    })
-+    globalThis.IntersectionObserver = jest.fn(() => ({
-+      observe: jest.fn(),
-+      unobserve: jest.fn(),
-+      disconnect: jest.fn(),
-+    }))
-+    app = new Tracker(options as unknown as Options).app
-+  })
-+
-+  afterAll(() => {
-+    delete window.performance
-+    delete window.Worker
-+    delete globalThis.IntersectionObserver
-+  })
-+
-+  // The app clears its message array after posting, so keep a copy of what was sent.
-+  let posted: any[]
-+
-+  beforeEach(() => {
-+    posted = []
-+    app.worker = {
-+      postMessage: jest.fn((data) => posted.push(Array.isArray(data) ? [...data] : data)),
-+    }
-+    app.activityState = ACTIVE
-+    app.messages.length = 0
-+  })
-+
-+  test('hands pending messages to the worker before flushing', () => {
-+    app.send([MType.CustomEvent, 'checkout_submitted', '{}'])
-+    app.forceFlushBatch()
-+
-+    expect(posted).toHaveLength(2)
-+    expect(posted[0].map((message) => message[0])).toEqual([
-+      MType.Timestamp,
-+      MType.TabData,
-+      MType.CustomEvent,
-+    ])
-+    expect(posted[1]).toBe('forceFlushBatch')
-+    expect(app.messages).toHaveLength(0)
-+  })
-+
-+  test('only flushes when nothing is pending', () => {
-+    app.forceFlushBatch()
-+    expect(posted).toEqual(['forceFlushBatch'])
-+  })
-+
-+  test('does not hand over messages before the tracker is active', () => {
-+    app.activityState = COLD_START
-+    app.messages.push([MType.CustomEvent, 'early', '{}'])
-+    app.forceFlushBatch()
-+    expect(posted).toEqual(['forceFlushBatch'])
-+    expect(app.messages).toHaveLength(1)
-+  })
-+})
-+
-+describe('worker flushInterval', () => {
-+  const start = (extra = {}) => ({
-+    type: 'start',
-+    ingestPoint: 'test-ingest-point',
-+    pageNo: 0,
-+    timestamp: 0,
-+    url: 'https://example.com/',
-+    tabId: 'tab',
-+    ...extra,
-+  })
-+
-+  const intervalFor = (extra) => {
-+    // The worker keeps its interval in module state, so load a fresh copy each time.
-+    jest.isolateModules(() => {
-+      require('../webworker/index')
-+    })
-+    const setIntervalSpy = jest.spyOn(globalThis, 'setInterval')
-+    self.onmessage({ data: start(extra) })
-+    const delay = setIntervalSpy.mock.calls[0]?.[1]
-+    clearInterval(setIntervalSpy.mock.results[0]?.value)
-+    setIntervalSpy.mockRestore()
-+    return delay
-+  }
-+
-+  test('defaults to 30 seconds', () => {
-+    expect(intervalFor({})).toBe(30 * 1000)
-+  })
-+
-+  test('uses the configured interval', () => {
-+    expect(intervalFor({ flushInterval: 1000 })).toBe(1000)
-+  })
-+
-+  test('ignores invalid intervals', () => {
-+    expect(intervalFor({ flushInterval: 0 })).toBe(30 * 1000)
-+    expect(intervalFor({ flushInterval: -5 })).toBe(30 * 1000)
-+  })
-+})
+@@ -27,7 +27,7 @@ def is_mcp_token(token: str) -> bool:
+         audience = decoded_token.get("aud")
+         return audience == AUDIENCE
+     except jwt.InvalidTokenError:
+-        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
++        logger.error(f"Invalid token for is_mcp_token: {sanitize(token, max_length=16)}...")
+         raise
+ 
+ 
+@@ -104,7 +104,8 @@ def get_token_by_state(client_id, state):
+ 
+     if row is None:
+         raise HTTPException(status_code=404, detail="State not found or token already generated")
+-    if MCP_LOGIN_TIMEOUT_S > 0 and (row["iat"] + MCP_LOGIN_TIMEOUT_S) >= TimeUTC.now():
++    # row["iat"] is in epoch seconds, TimeUTC.now() is in epoch milliseconds
++    if MCP_LOGIN_TIMEOUT_S > 0 and TimeUTC.now() > (row["iat"] + MCP_LOGIN_TIMEOUT_S) * 1000:
+         raise HTTPException(status_code=408, detail="Login timed out")
+ 
+     return generate_jwt(user_id=row["user_id"], tenant_id=row["tenant_id"], iat=row["iat"], client_id=client_id, jti=row["jti"])
 ```
 
-**File**: `tracker/tracker/src/webworker/index.ts` (modified, +3/-1)
+**File**: `ee/api/env.default` (modified, +2/-1)
 ```diff
-@@ -189,7 +189,9 @@ self.onmessage = ({ data }: { data: ToWorkerData }): any => {
-     detectors = new Detectors((msg) => writer?.writeMessage(msg), data.localDebug ?? false)
-     detectorsTimestamp = 0
-     if (sendIntervalID === null) {
--      sendIntervalID = setInterval(finalize, AUTO_SEND_INTERVAL)
-+      const flushInterval =
-+        data.flushInterval && data.flushInterval > 0 ? data.flushInterval : AUTO_SEND_INTERVAL
-+      sendIntervalID = setInterval(finalize, flushInterval)
-     }
-     return (workerStatus = WorkerStatus.Active)
-   }
+@@ -94,4 +94,5 @@ SCIM_AUTH_CODE_EXPIRE_SECONDS=600
+ SCIM_ALLOWED_REDIRECT_HOSTS=.okta.com,.oktapreview.com,.okta-emea.com
+ JWT_MCP_EXPIRATION=604800
+ JWT_MCP_SECRET="SET A RANDOM STRING HERE"
+-JWT_MCP_ALGORITHM=HS512
+\ No newline at end of file
++JWT_MCP_ALGORITHM=HS512
++MCP_LOGIN_TIMEOUT_S=300
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5104** (2026-10-30): or 3943 security fat image for anthropic oss scanner (@rjshrjndrn)
-- **PR #5102** (2026-10-30): fix(backend): escape @ in PG password before parsing connection URL (@zavorotynskiy)
-- **PR #5101** (2026-10-30): fix(tracker): mask attributes and selected text of masked content (@josh08h)
-- **PR #5100** (closed): fix(tracker): mask attributes and selected text of masked content (@josh08h)
-- **PR #5098** (2026-10-30): Updated patch build from main 7aad334aa8536f14e81e24888ec83eb376d4a80e (@estradino)
-- **PR #5097** (2026-10-30): keep Network cell renderers hook-free (@i-chirkov)
+- **PR #5122** (2026-11-03): Updated patch build from main a823917a421201b31c23ed751dd6bcd19fd60e64 (@estradino)
+- **PR #5121** (2026-11-03): refactor(chalice): ignore internalId (@tahayk)
+- **PR #5120** (2026-11-03): Updated patch build from main fab894fbb64166c1802bc702dfa583fc2b33c5aa (@estradino)
+- **PR #5118** (2026-11-03): Patch api v1.28.0 (@tahayk)
+- **PR #5117** (2026-11-03): Update dependency esbuild to v0.28.1 [SECURITY] (@renovate[bot])
+- **PR #5116** (2026-11-03): Updated patch build from main 76b1231e0d8645efff5df4da9c74f281a33b634b (@estradino)
 
 ---
 
@@ -1382,28 +1444,44 @@ up to 30 s of clicks, DOM changes and custom events.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chalice): changed MCP auth
+## X. api): don't panic on malformed assist live-sessions filters (#5113)
 
 **RULE**:
-When implementing operations in `api/chalicelib/core/authorizers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backend/pkg/assist/proxy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d10fa567`: chalice): changed MCP auth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f25a3f80`: api): don't panic on malformed assist live-sessions filters (#5113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/chalicelib/core/authorizers.py`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/pkg/assist/proxy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
+		f, ok := filter.(map[string]interface{})
+		if !ok {
+			continue
+		filterType, _ := f["name"].(string) // it was 'type'
+		if strings.HasPrefix(filterType, "metadata_") {
+			filterType, _ = f["source"].(string) // temp hack with a frontend support
+		}
+		if filterType == "" {
+			continue
+		}
+		res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    return [users.AUDIENCE, spot.AUDIENCE]
+		switch f := filter.(type) {
+		case map[string]interface{}:
+			filterType := f["name"].(string) // it was 'type'
+			if strings.HasPrefix(filterType, "metadata_") {
+				filterType = f["source"].(string) // temp hack with a frontend support
+			}
+			res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d10fa567` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f25a3f80` are properly handled with clean fallback behavior.

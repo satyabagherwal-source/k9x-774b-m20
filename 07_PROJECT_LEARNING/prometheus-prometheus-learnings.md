@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `caebd2cf`  
+> **Source Version**: `3ba92575`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:13:35.059Z  
+> **Timestamp**: 2026-11-05T04:14:37.199Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:13:34.268Z  
+> **Harvest Timestamp**: 2026-11-05T04:14:37.191Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66920 stars
+- **Stars / Engagement**: 66958 stars
 
 ---
 
@@ -1781,11 +1781,11 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20278** (2026-11-03): **build: create manifests with buildx imagetools (#20229)**
-  *Symptoms*: cherrypick of https://github.com/prometheus/prometheus/pull/20229  Signed-off-by: Owen Williams <owen.williams@grafana.com> ```release-notes NONE ``` 
+- **Issue #20317** (2026-11-05): **tsdb/agent: implement storage.GetRef on appenders**
+  *Symptoms*: `tsdb.Head` appenders implement `storage.GetRef` so callers can look up existing in-memory series references and reuse their canonical `labels.Labels`, but `tsdb/agent` appenders did not implement `storage.GetRef`. After an agent WAL replay (`loadWAL`), `agent.DB` already holds every replayed `memSeries` and its `lset`, yet callers had no way to query or reuse them via `storage.GetRef`.  This change implements `storage.GetRef` on `tsdb/agent`'s `appenderBase` (covering both `Appender` and `AppenderV2`) with compile-time interface checks and unit tests across WAL replay and series GC.  ```release-notes NONE ```  cc @prymitive @MichaHoffmann 
 
-- **Issue #20271** (2026-11-02): **chore: update release shepherds for 3.17 and 3.18**
-  *Symptoms*: Assign @bwplotka as release shepherd for v3.17 and move @krajorama to v3.18. Also fixes the v3.18 pre-release year typo from `2026-01-13` to `2027-01-13` and adds the `v3.19` volunteer slot.  ```release-notes NONE ```
+- **Issue #20309** (2026-11-04): **promql: align duration min_of and max_of NaN handling**
+  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1802,562 +1802,236 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a12aec2` (2026-11-01)
-**Commit Message**: rules: fix flaky TestUpdateWhenStopped panic
+### Incident Patch 1: `f23796d5` (2026-11-04)
+**Commit Message**: tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301)
 
-TestUpdateWhenStopped starts a rule manager without a QueryFunc or
-AppendableV2, loads a group with a recording rule on a 10s interval and
-stops the manager right after. If the group's evaluation slot, derived
-from a hash of the group, falls between Update and Stop, the group is
-evaluated and RecordingRule.Eval calls the nil QueryFunc, panicking the
-whole rules test binary. Give the manager a no-op QueryFunc and a test
-storage, as other manager tests do.
+Signed-off-by: Kyle Eckhart <[REDACTED_EMAIL]>
 
-Signed-off-by: Aditya Agrawal <[REDACTED_EMAIL]>
-
-**File**: `rules/manager_test.go` (modified, +6/-2)
+**File**: `tsdb/agent/db.go` (modified, +4/-3)
 ```diff
-@@ -2679,9 +2679,13 @@ func TestBoundedRuleEvalConcurrency(t *testing.T) {
+@@ -925,12 +925,13 @@ func (db *DB) Appender(context.Context) storage.Appender {
  
- func TestUpdateWhenStopped(t *testing.T) {
- 	files := []string{"fixtures/rules.yaml"}
-+	// The group is evaluated if its evaluation slot falls between Update and Stop,
-+	// so the manager needs a working QueryFunc and AppendableV2.
- 	ruleManager := NewManager(&ManagerOptions{
--		Context: context.Background(),
--		Logger:  promslog.NewNopLogger(),
-+		Context:      context.Background(),
-+		Logger:       promslog.NewNopLogger(),
-+		AppendableV2: teststorage.New(t),
-+		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
- 	})
- 	ruleManager.start()
- 	err := ruleManager.Update(10*time.Second, files, labels.EmptyLabels(), "", nil)
+ // Close implements the Storage interface.
+ func (db *DB) Close() error {
+-	db.mtx.Lock()
+-	defer db.mtx.Unlock()
+-
++	// Stop the truncate loop before taking db.mtx, since truncate needs it.
+ 	close(db.stopc)
+ 	<-db.donec
+ 
++	db.mtx.Lock()
++	defer db.mtx.Unlock()
++
+ 	db.metrics.Unregister()
+ 
+ 	return errors.Join(db.locker.Release(), db.wal.Close())
 ```
 
----
-
-### Incident Patch 2: `ef78ff64` (2026-10-31)
-**Commit Message**: fix(scrape): update metadata and family association across metric_relabel_configs (#20103)
-
-* scrape: update metadata and family association across metric_relabel_configs
-
-In scrapeLoopAppenderV2, associate parsed family metadata using the pre-relabel metric name so renamed metrics retain their metadata in AppenderV2 and ST synthesis, and update scrapeCache metadata only for surviving post-relabel series under their post-relabel metric family name (fixing #14013).
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: preserve post-relabel name when pre-relabel name equals family name
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: preserve droppedSeries cache hit when metric_relabel_configs is set
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-* Address review comment: replace cached series entry when post-relabel lset changes
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `scrape/scrape.go` (modified, +70/-1)
+**File**: `tsdb/agent/db_test.go` (modified, +52/-0)
 ```diff
-@@ -926,6 +926,16 @@ type cacheEntry struct {
- 	st *stCache
- }
- 
-+// seriesMetaEntry caches a series' post-relabel metadata and metric family name (meta, mfName)
-+// alongside the pre-relabel parser state (origMeta, origMFName) that produced them.
-+// When metric_relabel_configs is configured, the fast path checks origMeta and origMFName
-+// before parsing labels or running relabeling so unchanged series can reuse
-+// meta and mfName directly.
-+type seriesMetaEntry struct {
-+	origMeta, meta     metadata.Metadata
-+	origMFName, mfName string
-+}
-+
- type scrapeLoop struct {
- 	// ctx represents a local context that is cancellable via s.cancel.
- 	// It's meant to synchronize run() with stop().
-@@ -1020,6 +1030,9 @@ type scrapeCache struct {
- 	seriesCur  map[storage.SeriesRef]*cacheEntry
- 	seriesPrev map[storage.SeriesRef]*cacheEntry
- 
-+	// Per-series post-relabel metadata cache, lazily allocated only when metric_relabel_configs is non-empty.
-+	seriesMeta map[*cacheEntry]seriesMetaEntry
-+
- 	// TODO(bwplotka): Consider moving metadata caching to head. See
- 	// https://github.com/prometheus/prometheus/issues/17619.
- 	metaMtx  sync.Mutex            // Mutex is needed due to api touching it when metadata is queried.
-@@ -1080,6 +1093,9 @@ func (c *scrapeCache) iterDone(flushCache bool) {
- 		for s, e := range c.series {
- 			if c.iter != e.lastIter {
- 				delete(c.series, s)
-+				if c.seriesMeta != nil {
-+					delete(c.seriesMeta, e)
-+				}
- 			}
- 		}
- 		for s, iter := range c.droppedSeries {
-@@ -1121,6 +1137,36 @@ func (c *scrapeCache) addRef(met []byte, ref storage.SeriesRef, lset labels.Labe
- 	return ce
- }
- 
-+func (c *scrapeCache) setSeriesMeta(ce *cacheEntry, origMeta, meta metadata.Metadata, origMFName, mfName string) {
-+	if c.seriesMeta == nil {
-+		c.seriesMeta = make(map[*cacheEntry]seriesMetaEntry)
-+	}
-+	// origMFName comes from yoloString(lastMFName) backed by a reusable buffer, so we must
-+	// not retain its backing array. Reuse existing immutable strings when possible to avoid
-+	// allocating on the heap.
-+	switch {
-+	case origMFName == mfName:
-+		origMFName = mfName
-+	case strings.HasPrefix(ce.lset.Get(model.MetricNameLabel), origMFName):
-+		origMFName = ce.lset.Get(model.MetricNameLabel)[:len(origMFName)]
-+	default:
-+		origMFName = strings.Clone(origMFName)
-+	}
-+	c.seriesMeta[ce] = seriesMetaEntry{
-+		origMeta:   origMeta,
-+		meta:       meta,
-+		origMFName: origMFName,
-+		mfName:     mfName,
-+	}
-+}
-+
-+func (c *scrapeCache) deleteSeries(met []byte, ce *cacheEntry) {
-+	delete(c.series, string(met))
-+	if c.seriesMeta != nil {
-+		delete(c.seriesMeta, ce)
-+	}
-+}
-+
- func (c *scrapeCache) addDropped(met []byte) {
- 	iter := c.iter
- 	c.droppedSeries[string(met)] = &iter
-@@ -1241,6 +1287,26 @@ func (c *scrapeCache) setUnit(mfName, unit []byte) ([]byte, *metaEntry) {
- 	return mfName, e
- }
- 
-+func (c *scrapeCache) setMetadata(mfName string, m metadata.Metadata) {
-+	c.metaMtx.Lock()
-+	defer c.metaMtx.Unlock()
-+
-+	e, ok := c.metadata[mfName]
-+	var oldSize int
-+	if !ok {
-+		e = &metaEntry{Metadata: metadata.Metadata{Type: model.MetricTypeUnknown}}
-+		c.metadata[mfName] = e
-+	} else {
-+		oldSize = e.size()
-+	}
-+	if !e.Equals(m) {
-+		e.Metadata = m
-+		e.lastIterChange = c.iter
-+	}
-+	e.lastIter = c.iter
-+	c.metadataSize += e.size() - oldSize
-+}
-+
- // GetMetadata returns metadata given the metric family name.
- func (c *scrapeCache) GetMetadata(mfName string) (MetricMetadata, bool) {
- 	c.metaMtx.Lock()
-@@ -2087,7 +2153,10 @@ loop:
- 
- // TODO(https://github.com/prometheus/prometheus/issues/17900): Move this to text and OM parser.
- func isSeriesPartOfFamily(mName string, mfName []byte, typ model.MetricType) bool {
--	mfNameStr := yoloString(mfName)
-+	return isSeriesPartOfFamilyStr(mName, yoloString(mfName), typ)
-+}
-+
-+func isSeriesPartOfFamilyStr(mName, mfNameStr string, typ model.MetricType) bool {
- 	if !strings.HasPrefix(mName, mfNameStr) { // Fast path.
- 		return false
- 	}
-```
-
-**File**: `scrape/scrape_append_v2.go` (modified, +270/-51)
-```diff
-@@ -14,6 +14,7 @@
- package scrape
+@@ -14,9 +14,11 @@
+ package agent
  
  import (
 +	"bytes"
- 	"errors"
+ 	"context"
  	"fmt"
  	"io"
-@@ -27,6 +28,7 @@ import (
- 	"github.com/prometheus/prometheus/model/exemplar"
- 	"github.com/prometheus/prometheus/model/histogram"
- 	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
- 	"github.com/prometheus/prometheus/model/textparse"
- 	"github.com/prometheus/prometheus/model/timestamp"
- 	"github.com/prometheus/prometheus/model/value"
-@@ -132,6 +134,11 @@ func (sl *scrapeLoopAppenderV2) append(b []byte, contentType string, ts time.Tim
- 		e              exemplar.Exemplar // Escapes to heap so hoisted out of loop.
- 		lastMeta       *metaEntry
- 		lastMFName     []byte
-+		parsedMeta     metaEntry
-+		parsedMFName   []byte
-+		lastSetMFName  string
-+		lastSetMeta    metadata.Metadata
-+		hasMRC         = len(sl.mrc) > 0
- 	)
- 
- 	exemplars := make([]exemplar.Exemplar, 0, 1)
-@@ -173,13 +180,28 @@ loop:
- 		case textparse.EntryType:
- 			// TODO(bwplotka): Build meta entry directly instead of locking and updating the map. This will
- 			// allow to properly update metadata when e.g unit was added, then removed;
--			lastMFName, lastMeta = sl.cache.setType(p.Type())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setType(p.Type())
-+				continue
-+			}
-+			mfName, typ := p.Type()
-+			lastMFName, lastMeta = sl.setParsedType(mfName, typ, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryHelp:
--			lastMFName, lastMeta = sl.cache.setHelp(p.Help())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setHelp(p.Help())
-+				continue
-+			}
-+			mfName, help := p.Help()
-+			lastMFName, lastMeta = sl.setParsedHelp(mfName, help, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryUnit:
--			lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
-+			if !hasMRC {
-+				lastMFName, lastMeta = sl.cache.setUnit(p.Unit())
-+				continue
-+			}
-+			mfName, unit := p.Unit()
-+			lastMFName, lastMeta = sl.setParsedUnit(mfName, unit, &parsedMFName, &parsedMeta)
- 			continue
- 		case textparse.EntryComment:
- 			continue
-@@ -202,40 +224,124 @@ loop:
- 			t = *parsedTimestamp
- 		}
- 
--		if sl.cache.getDropped(met) {
--			continue
--		}
--		ce, seriesCached, seriesAlreadyScraped := sl.cache.get(met)
--		var ref storage.SeriesRef
-+		var (
-+			ce                   *cacheEntry
-+			seriesCached         bool
-+			seriesAlreadyScraped bool
-+			ref                  storage.SeriesRef
-+			sampleMeta           metadata.Metadata
-+			origMeta             metadata.Metadata
-+			origMFName           string
-+			sampleMFName         string
-+		)
- 
--		if seriesCached {
--			ref = ce.ref
--			lset = ce.lset
--		} else {
--			p.Labels(&lset)
-+		if !hasMRC {
-+			if sl.cache.getDropped(met) {
-+				continue
-+			}
-+			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
-+			if seriesCached {
-+				ref = ce.ref
-+				lset = ce.lset
-+			} else {
-+				p.Labels(&lset)
-+
-+				// Add target labels and apply relabeling before storing the final label set.
-+				lset = sl.sampleMutator(lset)
-+
-+				// The label set may be set to empty to indicate dropping.
-+				if lset.IsEmpty() {
-+					sl.cache.addDropped(met)
-+					continue
-+				}
- 
--			// Add target labels and apply relabeling before storing the final label set.
--			lset = sl.sampleMutator(lset)
-+				if !lset.Has(model.MetricNameLabel) {
-+					err = errNameLabelMandatory
-+					break loop
-+				}
-+				if !lset.IsValid(sl.validationScheme) {
-+					err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
-+					break loop
-+				}
- 
--			// The label set may be set to empty to indicate dropping.
--			if lset.IsEmpty() {
--				sl.cache.addDropped(met)
-+				// If any label limits is exceeded the scrape should fail.
-+				if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
-+					sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
-+					break loop
-+				}
-+			}
-+		} else {
-+			if sl.cache.getDropped(met) {
- 				continue
- 			}
--
--			if !lset.Has(model.MetricNameLabel) {
--				err = errNameLabelMandatory
--				break loop
-+			ce, seriesCached, seriesAlreadyScraped = sl.cache.get(met)
-+			if lastMeta != nil {
-+				origMeta = lastMeta.Metadata
-+				origMFName = yoloString(lastMFName)
- 			}
--			if !lset.IsValid(sl.validationScheme) {
--				err = fmt.Errorf("invalid metric name or label names: %s", lset.String())
--				break loop
-+			var (
-+				sm            seriesMetaEntry
-+				hasCachedMeta bool
-+			)
-+			if seriesCached && sl.cache.seriesMeta != nil {
-+				sm, hasCachedMeta = sl.cache.seriesMeta[ce]
- 			}
- 
--			// If any label limits is exceeded the scrape should fail.
--			if err = verifyLabelLimits(lset, sl.labelLimits); err != nil {
--				sl.metrics.targetScrapePoolExceededLabelLimits.Inc()
--				break loop
-+			if seriesCached && hasCachedMeta && sm.origMFName == origMFName && sm.origMeta.Equals(origMeta) {
-+				ref = ce.ref
-+				lset = ce.lset
-+				sampleMeta = sm.meta
-+				sampleMFName = sm.mfName
-+				if sampleMFName != "" && (sampleMFName != lastSetMFName || !sampleMeta.Equals
-```
-
-**File**: `scrape/scrape_test.go` (modified, +222/-0)
-```diff
-@@ -1472,6 +1472,228 @@ test_metric_total 1
- 	require.Empty(t, md.Unit)
++	"log/slog"
+ 	"math"
+ 	"path/filepath"
+ 	"strconv"
+@@ -890,6 +892,56 @@ func TestWALTruncationTime(t *testing.T) {
+ 	}
  }
  
-+func TestScrapeLoopMetricRelabelMetadata(t *testing.T) {
-+	appTest := teststorage.NewAppendable()
-+	target := NewTarget(
-+		labels.FromStrings("instance", "localhost:9090", "job", "test"),
-+		&config.ScrapeConfig{},
-+		nil,
-+		nil,
-+	)
-+	rc := []*relabel.Config{
-+		// Drop dropped_metric_total completely; its metadata should not enter scrapeCache.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("dropped_metric_total"),
-+			Replacement:          "$1",
-+			Action:               relabel.Drop,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_http_requests_total -> http_requests_total.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_(http_requests_total)"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "$1",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_latency_* -> latency_* for histogram family.
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_(latency.*)"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "$1",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
-+		// Rename old_summary -> summary_count (no component suffix on pre-relabel name).
-+		{
-+			SourceLabels:         model.LabelNames{"__name__"},
-+			Separator:            ";",
-+			Regex:                relabel.MustNewRegexp("old_summary"),
-+			TargetLabel:          "__name__",
-+			Replacement:          "summary_count",
-+			Action:               relabel.Replace,
-+			NameValidationScheme: model.UTF8Validation,
-+		},
++// blockingWriter blocks writes containing msg until release is closed.
++type blockingWriter struct {
++	msg     []byte
++	once    sync.Once
++	reached chan struct{}
++	release chan struct{}
++}
++
++func (w *blockingWriter) Write(p []byte) (int, error) {
++	if bytes.Contains(p, w.msg) {
++		w.once.Do(func() { close(w.reached) })
++		<-w.release
++	}
++	return len(p), nil
++}
++
++func TestCloseDuringTruncate(t *testing.T) {
++	// Pause the truncate loop on the log line just before truncate takes db.mtx.
++	w := &blockingWriter{
++		msg:     []byte("series GC started"),
++		reached: make(chan struct{}),
++		release: make(chan struct{}),
 +	}
 +
-+	var mutatorCalls int
-+	sl, _ := newTestScrapeLoop(t, withAppendable(appTest, true), func(sl *scrapeLoop) {
-+		sl.mrc = rc
-+		sl.sampleMutator = func(l labels.Labels) labels.Labels {
-+			mutatorCalls++
-+			return mutateSampleLabels(l, target, false, rc)
-+		}
++	dbDir := t.TempDir()
++	rs := remote.NewStorage(promslog.NewNopLogger(), nil, startTime, dbDir, time.Second*30, nil, false, false, false)
++	t.Cleanup(func() {
++		require.NoError(t, rs.Close())
 +	})
 +
-+	now := time.Now()
-+	scrapeText := []byte(`# TYPE dropped_metric counter
-+# HELP dropped_metric should not be cached
-+dropped_metric_total 10
-+# TYPE old_http_requests counter
-+# HELP old_http_requests Total HTTP requests
-+# UNIT old_http_requests requests
-+old_http_requests_total 42
-+# TYPE old_latency histogram
-+# HELP old_latency Request latency
-+old_latency_bucket{le="+Inf"} 1
-+old_latency_sum 0.5
-+old_latency_count 1
-+# TYPE old_summary summary
-+# HELP old_summary Summary renamed to end with _count
-+old_summary{quantile="0.5"} 0.25
-+# TYPE foo gauge
-+foo 1
-+bar 1
-+# EOF`)
-+
-+	app := sl.appender()
-+	total, added, seriesAdded, err := app.append(scrapeText, "application/openmetrics-text", now)
++	opts := DefaultOptions()
++	opts.TruncateFrequency = time.Millisecond
++	db, err := Open(slog.New(slog.NewTextHandler(w, nil)), nil, rs, dbDir, opts)
 +	require.NoError(t, err)
-+	require.NoError(t, app.Commit())
-+	require.Equal(t, 8, total)
-+	require.Equal(t, 7, added)
-+	require.Equal(t, 7, seriesAdded)
-+	require.Equal(t, 8, mutatorCalls)
 +
-+	// Dropped metric metadata must not be stored in scrapeCache (#14013).
-+	_, ok := sl.cache.GetMetadata("dropped_metric")
-+	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("dropped_metric_total")
-+	require.False(t, ok, "expected dropped metric metadata to be absent from scrapeCache")
++	<-w.reached
++	closed := make(chan error)
++	go func() { closed <- db.Close() }()
++	// Close has started stopping the loop. Let truncate continue.
++	<-db.stopc
++	close(w.release)
 +
-+	// Pre-rename metric families must not be stored under the old names.
-+	_, ok = sl.cache.GetMetadata("old_http_requests")
-+	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("old_http_requests_total")
-+	require.False(t, ok, "expected pre-rename metric family to be absent from scrapeCache")
-+	_, ok = sl.cache.GetMetadata("old_latency")
-+	require.False(t, ok, "expected pre-rename histogram family to be absent from scrapeCache")
++	select {
++	case err := <-closed:
++		require.NoError(t, err)
++	case <-time.After(10 * time.Second):
++		t.Fatal("Close deadlocked against truncate")
++	}
++}
 +
-+	// Renamed counter family must have its metadata stored under post-relabel family name.
-+	md, ok := sl.cache.GetMetadata("http_requests")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeCounter, md.Type)
-+	require.Equal(t, "requests", md.Unit)
-+	require.Equal(t, "Total HTTP requests", md.Help)
-+
-+	// Renamed histogram family must have its metadata stored under post-relabel family name ("latency").
-+	md, ok = sl.cache.GetMetadata("latency")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeHistogram, md.Type)
-+	require.Equal(t, "Request latency", md.Help)
-+
-+	// When pre-relabel series name equals its family name ("old_summary"), no suffix is stripped from the renamed name ("summary_count").
-+	md, ok = sl.cache.GetMetadata("summary_count")
-+	require.True(t, ok)
-+	require.Equal(t, model.MetricTypeSummary, md.Type)
-+	require.Equal(t, "Summary renamed to end with _count", md.Help)
-+
-+	// bar had no metadata on the first scrape and must not inherit foo's metadata.
-+	_, ok = sl.cache.GetMetadata("bar")
-+	require.Fal
+ func TestLockfile(t *testing.T) {
+ 	tsdbutil.TestDirLockerUsage(t, func(t *testing.T, data string, createLock bool) (*tsdbutil.DirLocker, testutil.Closer) {
+ 		logger := promslog.NewNopLogger()
 ```
 
 ---
 
-### Incident Patch 3: `b0c3a30a` (2026-11-02)
-**Commit Message**: build: create manifests with buildx imagetools (#20229)
+### Incident Patch 2: `e7bb99b9` (2026-11-04)
+**Commit Message**: Merge pull request #20299 from locker95/fix/om-exemplar-label-unescape
 
-* Makefile.common: create manifests with buildx imagetools
+textparse: unescape OpenMetrics exemplar label names and values
 
-docker build now attaches provenance attestations, so each per-arch image
-is pushed as an OCI index. docker manifest create refuses indexes as
-sources, so no multi-arch tags get published.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-* Makefile.common: fail docker targets on the first error
-
-The docker recipes run in a single shell loop, so only the exit status of
-the last command was reported. Failed manifest pushes went unnoticed while
-the publish job stayed green.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-* Revert "Makefile.common: fail docker targets on the first error"
-
-This reverts commit d4ff4e8bbe3a35b17148a904277e44ec12d63214.
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
-
-**File**: `Makefile.common` (modified, +4/-8)
+**File**: `model/textparse/openmetricsparse.go` (modified, +1/-1)
 ```diff
-@@ -352,8 +352,7 @@ common-docker-manifest:
- 				echo "Skipping manifest for $$variant_name variant (no supported architectures)"; \
- 				continue; \
- 			fi; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name"; \
-+			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)-$$variant_name" $$refs; \
- 		fi; \
- 		if [ "$$dockerfile" = "Dockerfile" ]; then \
- 			echo "Creating default variant ($$variant_name) manifest"; \
-@@ -365,8 +364,7 @@ common-docker-manifest:
- 				echo "Skipping default variant manifest (no supported architectures)"; \
- 				continue; \
- 			fi; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
--			DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)"; \
-+			docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(SANITIZED_DOCKER_IMAGE_TAG)" $$refs; \
- 		fi; \
- 		if [ "$(DOCKER_IMAGE_TAG)" = "latest" ]; then \
- 			if [ "$$dockerfile" != "Dockerfile" ] || [ "$$variant_name" != "default" ]; then \
-@@ -379,8 +377,7 @@ common-docker-manifest:
- 					echo "Skipping version-tag manifest for $$variant_name variant (no supported architectures)"; \
- 					continue; \
- 				fi; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name"; \
-+				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)-$$variant_name" $$refs; \
- 			fi; \
- 			if [ "$$dockerfile" = "Dockerfile" ]; then \
- 				echo "Creating default variant version tag manifest"; \
-@@ -392,8 +389,7 @@ common-docker-manifest:
- 					echo "Skipping default variant version-tag manifest (no supported architectures)"; \
- 					continue; \
- 				fi; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create -a "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
--				DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)"; \
-+				docker buildx imagetools create -t "$(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):v$(DOCKER_MAJOR_VERSION_TAG)" $$refs; \
- 			fi; \
- 		fi; \
- 	done
+@@ -274,7 +274,7 @@ func (p *OpenMetricsParser) Exemplar(e *exemplar.Exemplar) bool {
+ 		c := p.eOffsets[i+2] - p.start
+ 		d := p.eOffsets[i+3] - p.start
+ 
+-		p.builder.Add(s[a:b], s[c:d])
++		p.builder.Add(unreplace(s[a:b]), unreplace(s[c:d]))
+ 	}
+ 
+ 	p.builder.Sort()
+```
+
+**File**: `model/textparse/openmetricsparse_test.go` (modified, +8/-0)
+```diff
+@@ -710,6 +710,7 @@ func TestOpenMetricsParse_UTF8(t *testing.T) {
+ {"Heizölrückstoßabdämpfung 10€ metric with \"interesting\" {character\nchoices}","strange©™\n'quoted' \"name\""="6"} 10.0
+ quotedexemplar_count 1 # {"id.thing"="histogram-count-test"} 4
+ quotedexemplar2_count 1 # {"id.thing"="histogram-count-test",other="hello"} 4
++escapedexemplar_count 1 # {"id\"thing"="a\nb\"c\\d"} 4
+ `
+ 
+ 	input += "# EOF\n"
+@@ -773,6 +774,13 @@ choices}`, "strange©™\n'quoted' \"name\"", "6"),
+ 			es: []exemplar.Exemplar{
+ 				{Labels: labels.FromStrings("id.thing", "histogram-count-test", "other", "hello"), Value: 4},
+ 			},
++		}, {
++			m:    `escapedexemplar_count`,
++			v:    1,
++			lset: labels.FromStrings("__name__", "escapedexemplar_count"),
++			es: []exemplar.Exemplar{
++				{Labels: labels.FromStrings("id\"thing", "a\nb\"c\\d"), Value: 4},
++			},
+ 		},
+ 	}
+ 
+```
+
+---
+
+### Incident Patch 3: `c41561f4` (2026-11-04)
+**Commit Message**: Merge pull request #20309 from roidelapluie/roidelapluie/duration-min-max-nan
+
+promql: align duration min_of and max_of NaN handling
+
+**File**: `docs/querying/basics.md` (modified, +4/-0)
+```diff
+@@ -224,6 +224,10 @@ The following functions can be used inside duration expressions:
+ For example, `max_of(step(), 5s)` ensures the duration is never shorter than
+ `5s`, while `min_of(range(), 1h)` caps the duration at `1h`.
+ 
++Like the scalar functions, `min_of` and `max_of` ignore a `NaN` argument if the
++other argument is not `NaN`. If both arguments are `NaN`, the result is `NaN`.
++A duration expression whose final result is `NaN` or infinite is rejected.
++
+ **Note**: Duration expressions are not supported in the [`@` modifier](#modifier).
+ 
+ Examples of equivalent durations:
+```
+
+**File**: `promql/durations.go` (modified, +10/-2)
+```diff
+@@ -136,9 +136,17 @@ func (v *durationVisitor) evaluateDurationExpr(expr parser.Expr) (float64, error
+ 		case parser.RANGE:
+ 			return float64(v.queryRange.Seconds()), nil
+ 		case parser.MIN_OF:
+-			return math.Min(lhs, rhs), nil
++			// Match the min aggregator: NaN is only returned if both values are NaN.
++			if lhs > rhs || math.IsNaN(lhs) {
++				lhs = rhs
++			}
++			return lhs, nil
+ 		case parser.MAX_OF:
+-			return math.Max(lhs, rhs), nil
++			// Match the max aggregator: NaN is only returned if both values are NaN.
++			if lhs < rhs || math.IsNaN(lhs) {
++				lhs = rhs
++			}
++			return lhs, nil
+ 		case parser.ADD:
+ 			if n.LHS == nil {
+ 				// Unary positive duration expression.
+```
+
+**File**: `promql/promqltest/testdata/duration_expression.test` (modified, +24/-0)
+```diff
+@@ -249,3 +249,27 @@ load 1s
+ # For an instant query (start == end), range() = 0s, offset 0s.
+ eval instant at 50s metric1_total offset range()
+ 	metric1_total{} 50
++
++clear
++
++load 1s
++  duration_metric 0+1x10
++
++# Duration min_of and max_of ignore a single NaN, in either argument position.
++eval instant at 10s count_over_time(duration_metric[min_of((-1)^0.5, 5s)])
++  {} 5
++
++eval instant at 10s count_over_time(duration_metric[min_of(5s, (-1)^0.5)])
++  {} 5
++
++# Two NaNs still produce an invalid duration.
++eval_fail instant at 10s count_over_time(duration_metric[min_of((-1)^0.5, (-1)^0.5)])
++
++eval instant at 10s count_over_time(duration_metric[max_of((-1)^0.5, 5s)])
++  {} 5
++
++eval instant at 10s count_over_time(duration_metric[max_of(5s, (-1)^0.5)])
++  {} 5
++
++# Two NaNs still produce an invalid duration.
++eval_fail instant at 10s count_over_time(duration_metric[max_of((-1)^0.5, (-1)^0.5)])
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20278** (2026-11-03): build: create manifests with buildx imagetools (#20229) (@ywwg)
-- **PR #20271** (2026-11-02): chore: update release shepherds for 3.17 and 3.18 (@bwplotka)
-- **PR #20263** (2026-11-02): chore: add contributor-trust skill and rank pr-triage-board by author trust (@bwplotka)
-- **PR #20258** (2026-11-03): rules: fix flaky TestUpdateWhenStopped panic (@adityacosmos24)
-- **PR #20251** (2026-11-03): promtool: return sample iterator errors from tsdb dump (@adityacosmos24)
-- **PR #20250** (2026-11-03): rulefmt: do not report a syntax error as a multi-document rule file (@adityacosmos24)
+- **PR #20317** (2026-11-05): tsdb/agent: implement storage.GetRef on appenders (@bwplotka)
+- **PR #20309** (2026-11-04): promql: align duration min_of and max_of NaN handling (@roidelapluie)
+- **PR #20301** (2026-11-04): tsdb/agent: stop the truncate loop before Close takes the DB lock (@kgeckhart)
+- **PR #20299** (2026-11-04): textparse: unescape OpenMetrics exemplar label names and values (@locker95)
+- **PR #20296** (2026-11-03): release-3.16: properly bump changelog version (@ywwg)
+- **PR #20295** (2026-11-03): config: update yaml/v2 to v2.4.5 (@roidelapluie)
 
 ---
 
@@ -2377,34 +2051,33 @@ Signed-off-by: Solomon Jacobs <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rules: fix flaky TestUpdateWhenStopped panic
+## X. tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301)
 
 **RULE**:
-When implementing operations in `rules/manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsdb/agent/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a12aec2`: rules: fix flaky TestUpdateWhenStopped panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f23796d5`: tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rules/manager_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/agent/db.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The group is evaluated if its evaluation slot falls between Update and Stop,
-	// so the manager needs a working QueryFunc and AppendableV2.
-		Context:      context.Background(),
-		Logger:       promslog.NewNopLogger(),
-		AppendableV2: teststorage.New(t),
-		QueryFunc:    func(context.Context, string, time.Time) (promql.Vector, error) { return nil, nil },
+	// Stop the truncate loop before taking db.mtx, since truncate needs it.
+	db.mtx.Lock()
+	defer db.mtx.Unlock()
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Context: context.Background(),
-		Logger:  promslog.NewNopLogger(),
+	db.mtx.Lock()
+	defer db.mtx.Unlock()
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a12aec2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f23796d5` are properly handled with clean fallback behavior.

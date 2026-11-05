@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `2ff9bb64`  
+> **Source Version**: `c5d0e262`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:01:33.639Z  
+> **Timestamp**: 2026-11-04T10:57:42.753Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:01:33.421Z  
+> **Harvest Timestamp**: 2026-11-04T10:57:42.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10650 stars
+- **Stars / Engagement**: 10649 stars
 
 ---
 
@@ -1125,6 +1125,7 @@ import json
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 import google.auth
+import google.auth.transport.requests
 from six.moves import http_client
 
 from ybops.common.exceptions import YBOpsRuntimeError
@@ -1150,6 +1151,7 @@ STARTUP_SCRIPT_META_KEY = "startup-script"
 SERVER_TYPE_META_KEY = "server_type"
 SSH_KEYS_META_KEY = "ssh-keys"
 BLOCK_PROJECT_SSH_KEY = "block-project-ssh-keys"
+OS_LOGIN_META_KEY = "enable-oslogin"
 
 META_KEYS = [STARTUP_SCRIPT_META_KEY, SERVER_TYPE_META_KEY, SSH_KEYS_META_KEY]
 
@@ -1363,9 +1365,7 @@ class NetworkManager():
                 region, {}).get("subnetId")
 
         if output_region_to_subnet_map:
-            return self.network_info_as_json(network_name, output_region_to_subnet_map)
-
-        networks = self.get_networks(ne
+            return self.network_info_as_json(network_
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/cloud/oci/utils.py`
@@ -2248,16 +2248,13 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36742** (2026-11-03): **[#36718] Docs: Fix Connection Manager "Enabled by default" in 2026.1.1.0 release notes**
-  *Symptoms*: ## Summary  The v2026.1.1.0 release notes list Native connection pooling (YSQL Connection Manager) as GA with "To use: Enabled by default". `enable_ysql_conn_mgr` defaults to `false` on 2026.1, so Connection Manager has to be turned on explicitly. The row now says how to enable it, matching the other "Disabled by default" rows, and links to Set up YSQL Connection Manager.  This PR was created by Claude Code (Claude Opus 5.5).  🤖 Generated with [Claude Code](https://claude.com/claude-code)  ## Test plan  - [x] Docs-only. Verified `enable_ysql_conn_mgr` defaults to `false` on origin/2026.1 and origin/2026.1.1 (`src/yb/tserver/tablet_server.cc`). 
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36742) <!-- Reviewable:end --> 
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *infallible-bardeen-164bc9* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | b2685e0da3a000b0c00fe4c5fafc7964ab5171cf | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/infallible-bardeen-164bc9/deploys/6ae9fbf5855c029219f28e2e | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-36742--infallible-bardeen-164bc9.netlify.app](https://deploy-preview-36742--infallible-bardeen-164bc9.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTM2NzQyLS1pbmZhbGxpYmxlLWJhcmRlZW4tMTY0YmM5L
+- **Issue #36810** (2026-11-04): **[pg19] test: Fix yb.orig.extensions for upstream pg_stat_statements and error-message changes**
+  *Symptoms*: ## Summary  `TestPgRegressExtension` fails on pg19 in `yb.orig.extensions`, which still expects PostgreSQL 15 output. Four upstream changes cause it; YB master, still on PG 15, has none of them.  - **`pg_stat_statements_reset()`** returns the time of the reset since PG 17 ([dc9f8a79830](https://github.com/postgres/postgres/commit/dc9f8a798307244d791b71f666f50de319799e7c)), so its output differs on every run. Call it as `pg_stat_statements_reset() is not null as t`, the form upstream's own tests switched to in that commit. - **`blk_read_time`** was renamed `shared_blk_read_time` in PG 17 ([13d00729d42](https://github.com/postgres/postgres/commit/13d00729d422c84b1764c24251abcc785ea4adb1)), so the three `pg_stat_statements` queries fail with `column "blk_read_time" does not exist`. Use the new name. - **Function lookup errors** print a more specific DETAIL instead of the generic HINT since [83a56419457](https://github.com/postgres/postgres/commit/83a56419457ec0eff2eddfed8eb3aba86bede9cc) (PG 19). Rebless. - **`queryid`:** the check added by [365c75be320](https://github.com/yugabyte/yugabyte-db/commit/365c75be320083de965542989beba9d403622dc3) pins one EXPLAIN query's ID to catch YB node types inserted mid-list. pg19 numbers node types differently from master, so the ID changed. Rebless to pg19's value.  ## Test Plan  `./yb_build.sh release --java-test 'org.yb.pgsql.TestPgRegressExtension#testPgRegressExtension'` 
 
-- **Issue #36716** (2026-11-03): **[BACKPORT 2026.1][#36033] DocDB: Load EC (ECDSA) client private keys in yb-client (#36034)**
-  *Symptoms*: AsyncYBClient.getPrivateKey hard-coded the RSA KeyFactory, so EC (ECDSA) PKCS#8 client keys, e.g. from cert-manager, failed to load. Pick the KeyFactory algorithm from the PKCS#8 AlgorithmIdentifier OID (RSA or EC). Bumps yb-client to 0.8.125-SNAPSHOT.  Original commit: 7b34052386f0fa5e39699ddc8d971ae935b3c550 / #36034  ## Merge conflicts  - `java/**/pom.xml` (14 files) — version-only conflicts. On 2026.1 the bump is `0.8.115.2-SNAPSHOT` → `0.8.115.3-SNAPSHOT` (branch version scheme), not `0.8.125-SNAPSHOT` as the original message says. - `managed/build.sbt` — stays on `0.8.115.2-SNAPSHOT`: `0.8.115.3-SNAPSHOT` is published only after this PR merges, so YBA can't resolve it yet. YBA moves to `0.8.115.3-SNAPSHOT` in a follow-up backport, as 2026.1 did for `0.8.115.1-SNAPSHOT` (c7b8f598a2f).  ## Test plan  - `mvn -pl yb-client -am -Dtest=TestAsyncYBClientPrivateKey test`: 3 tests pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
+- **Issue #36801** (2026-11-03): **[DEVOPS-4012] build: add csi link for pending DB workflows**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36716) <!-- Reviewable:end --> 
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36801) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2274,22 +2271,61 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3641b20c` (2026-11-03)
-**Commit Message**: [#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializableInserts (#36568)
+### Incident Patch 1: `578e49d6` (2026-11-03)
+**Commit Message**: [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693)
 
 ## Summary
 
-When `skip_prefix_locks` is on, a serializable transaction conflicts
-with every concurrent write to the table, as designed. The serializable
-thread commits a new insert every few milliseconds, so the snapshot
-thread's `INSERT` sometimes used up all 60 query-layer retries
-(`yb_max_query_layer_retries`) and failed with `could not serialize
-access`. That thread then stopped and the per-isolation-level row counts
-came out short. `InsertWithIsolationLevel` now rolls back and retries
-each transaction at the application level, but only for `could not
-serialize access` errors and at most `kMaxAttemptsPerKey` (`100`) times
-per key; it also logs each thread's total retry count, and the exact
-row-count checks are unchanged.
+The test starts each of its ten threads right after opening that
+thread's connection, and each thread takes a reference to its element
+of the conns vector. The main thread then keeps calling emplace_back
+for the following connections. Each time the vector grows, it moves
+its PGConns to a new buffer and frees the old one, so any thread that
+has not yet called FetchRow is left with a reference into freed
+memory. A moved-from PGConn holds a null PGconn, which libpq rejects
+quietly, so most of the time this went unnoticed. When the freed
+memory had already been reused, PQexec read a garbage PGconn and the
+test binary crashed with SIGSEGV in appendPQExpBufferStr, which is
+the failure in the issue.
+
+The bug has been in the test since it was written. It is hit only when
+the main thread's next Connect() and the reallocation it triggers
+complete between a thread's start and its call to FetchRow, so the
+faster a connection starts, the more often that happens. The failure
+rate rose on 2026.1 right after the backport of "[#34309] YSQL: Keep a
+prefetch recorded when the database's slot arrives la
+
+**File**: `src/yb/yql/pgwrapper/pg_txn-test.cc` (modified, +3/-0)
+```diff
+@@ -515,6 +515,9 @@ TEST_F_EX(PgTxnTest, SelectForUpdateExclusiveRead, PgTxnTestFailOnConflict) {
+ 
+   bool read_succeeded[kNumThreads] {};
+   std::vector<PGConn> conns;
++  // Each thread holds a reference to its element of conns, so conns must not reallocate while the
++  // later connections are added.
++  conns.reserve(kNumThreads);
+ 
+   for (int thread_idx = 0; thread_idx < kNumThreads; ++thread_idx) {
+     conns.emplace_back(ASSERT_RESULT(Connect()));
+```
+
+---
+
+### Incident Patch 2: `a036dae4` (2026-11-04)
+**Commit Message**: [#36393] DocDB: Fix yb-master startup race crashing CppCassandraDriverTest.TestJsonBType (#36394)
+
+## Summary
+
+At master startup, `ObjectLockInfoManager::Impl::Start()` can run while
+`Clear()` runs from sys catalog load; `Clear()` could start the new
+`TSLocalLockManager` before `waiting_txn_registry_` was set, and
+`Start()` then started that same manager again outside `mutex_`.
+Starting its `Poller` twice creates a second scheduling chain that
+`Shutdown()` doesn't wait for, so yb-master crashes in `Poller::Poll`
+with a use-after-free. `Start()` now sets `waiting_txn_registry_` and
+starts the current lock manager while holding `mutex_`. `Clear()` now
+starts the new manager only if `waiting_txn_registry_` is already set,
+so each lock manager is started exactly once.
 
 ---
 _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
@@ -2297,330 +2333,153 @@ the failure logs, wrote the change, and verified it locally._
 
 ## Test plan
 
-./yb_build.sh release --clang21 --cxx-test
-skip_prefix_locks_enable_disable_test --gtest-filter
-ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializableInserts
--n 100 --stop-at-failure -- -p 6
-Ran the ab
+./yb_build.sh release --clang21 --cxx-test cassandra_cpp_driver-test
+--gtest-filter CppCassandraDriverTest.TestJsonBType -n 180
+--stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p /
+env 
 
-**File**: `src/yb/integration-tests/skip_prefix_locks_enable_disable_test.cc` (modified, +28/-9)
+**File**: `src/yb/master/object_lock_info_manager.cc` (modified, +18/-13)
 ```diff
-@@ -14,6 +14,7 @@
- #include "yb/integration-tests/external_mini_cluster-itest-base.h"
- #include "yb/util/test_thread_holder.h"
- #include "yb/util/atomic.h"
-+#include "yb/util/monotime.h"
- #include "yb/yql/pgwrapper/libpq_utils.h"
- 
- namespace yb {
-@@ -50,24 +51,42 @@ class ConcurrentIsolationLevelsTest : public ExternalMiniClusterITestBase {
-   }
- 
-   void InsertWithIsolationLevel(IsolationLevel isolation_level, int thread_id, int num_inserts) {
-+    constexpr int kMaxAttemptsPerKey = 100;
-     auto conn = ASSERT_RESULT(cluster_->ConnectToDB());
-+    int total_retries = 0;
- 
-     for (int i = 0; i < num_inserts; ++i) {
-       // Use a combination of thread_id and counter to ensure unique keys
-       int32_t key = thread_id * num_inserts + i;
-       std::string isolation_str = IsolationLevel_Name(isolation_level);
--      ASSERT_OK(conn.StartTransaction(isolation_level));
--
--      // Insert the row
--      ASSERT_OK(conn.ExecuteFormat(
--          "INSERT INTO test_table (key, value, thread_id, isolation_level) VALUES "
--            "($0, $1, $2, '$3')",
--          key, i, thread_id, isolation_str));
--      ASSERT_OK(conn.CommitTransaction());
-+      // A serializable txn in skip_prefix_locks mode conflicts with every concurrent write to the
-+      // table, so back-to-back serializable inserts can exhaust the query layer retries of a
-+      // snapshot insert. Retry such serialization failures at the application level.
-+      for (int attempt = 1;; ++attempt) {
-+        ASSERT_OK(conn.StartTransaction(isolation_level));
-+        auto status = conn.ExecuteFormat(
-+            "INSERT INTO test_table (key, value, thread_id, isolation_level) VALUES "
-+              "($0, $1, $2, '$3')",
-+            key, i, thread_id, isolation_str);
-+        if (status.ok()) {
-+          status = conn.CommitTransaction();
-+        }
-+        if (status.ok()) {
-+          break;
-+        }
-+        ASSERT_STR_CONTAINS(status.ToString(), "could not serialize access");
-+        ASSERT_LT(attempt, kMaxAttemptsPerKey) << "Insert of key " << key << " failed: " << status;
-+        ++total_retries;
-+        LOG(INFO) << "Retrying insert of key " << key << ": " << status;
-+        ASSERT_OK(conn.RollbackTransaction());
-+        // Give the conflicting serializable txn a chance to commit before retrying.
-+        SleepFor(MonoDelta::FromMilliseconds(5));
-+      }
+@@ -212,22 +212,20 @@ class ObjectLockInfoManager::Impl {
+     poller_.Start(
+         &catalog_manager_.Scheduler(),
+         MonoDelta::FromMilliseconds(FLAGS_object_lock_cleanup_interval_ms));
+-    waiting_txn_registry_ = std::make_unique<docdb::LocalWaitingTxnRegistry>(
++    auto waiting_txn_registry = std::make_unique<docdb::LocalWaitingTxnRegistry>(
+         master_.client_future(), clock_, master_.permanent_uuid(), lock_manager_thread_pool_.get());
+     waiting_txn_registry_poller_ = std::make_unique<rpc::Poller>(
+         master_.permanent_uuid(), std::bind(&docdb::LocalWaitingTxnRegistry::SendWaitForGraph,
+-        waiting_txn_registry_.get()));
+-    tserver::TSLocalLockManagerPtr lock_manager = nullptr;
++        waiting_txn_registry.get()));
+     {
++      // Races with Clear() during sys catalog load; each lock manager must be started exactly once.
+       LockGuard lock(mutex_);
++      waiting_txn_registry_ = std::move(waiting_txn_registry);
+       object_lock_infos_map_.clear();
+       if (local_lock_manager_) {
+-        lock_manager = local_lock_manager_;
++        local_lock_manager_->Start(waiting_txn_registry_.get());
+       }
      }
- 
-     LOG(INFO) << "Thread " << thread_id << " completed " << num_inserts
--              << " inserts with isolation level " << IsolationLevel_Name(isolation_level);
-+              << " inserts with isolation level " << IsolationLevel_Name(isolation_level)
-+              << " and " << total_retries << " serialization failure retries";
+-    if (lock_manager) {
+-      lock_manager->Start(waiting_txn_registry_.get());
+-    }
+     waiting_txn_registry_poller_->Start(
+         &master_.messenger()->scheduler(), FLAGS_send_wait_for_report_interval_ms * 1ms);
+   }
+@@ -249,10 +247,14 @@ class ObjectLockInfoManager::Impl {
+       waiting_txn_registry_poller_->Shutdown();
+       waiting_txn_registry_poller_.reset();
+     }
+-    if (waiting_txn_registry_) {
+-      waiting_txn_registry_->StartShutdown();
+-      waiting_txn_registry_->CompleteShutdown();
+-      waiting_txn_registry_.reset();
++    std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry;
++    {
++      LockGuard lock(mutex_);
++      waiting_txn_registry = std::move(waiting_txn_registry_);
++    }
++    if (waiting_txn_registry) {
++      waiting_txn_registry->StartShutdown();
++      waiting_txn_registry->CompleteShutdown();
+     }
    }
  
-   void VerifyInserts(int expected_snapshot_inserts, int expected_serializable_inserts) {
-```
-
----
-
-### Incident Patch 2: `ec0dc788` (2026-11-02)
-**Commit Message**: [#36420] YSQL: Fix master deadlock in YbAdminSnapshotScheduleTest.ListRestorationsTestMigration (#36421)
-
-## Summary
-
-After a PITR sys catalog reload,
-`MasterSnapshotCoordinator::SysCatalogLoaded` holds the coordinator
-`mutex_` while it calls `VerifyRestoration`. That calls
-`VerifyRestoredObjects`, which goes through
-`CollectEntriesFromActiveSysCatalog` to `CheckIsLeaderAndReady()`, and
-that call takes the raft state lock in `ConsensusState()`. Meanwhile, a
-sys catalog apply can hold the raft state lock inside `CreateReplicated`
-while it waits for `mutex_`. Each thread waits on the other, and the
-master leader hangs for good.
-
-The fix removes `CheckIsLeaderAndReady()` from
-`CollectEntriesFromActiveSysCatalog` and `CollectEntriesAsOfTime`. The
-check was redundant on every path that reaches it:
-- The RPC callers run under `MASTER_SERVICE_IMPL_ON_LEADER_WITH_LOCK`.
-- The background `Poll()` path runs under `SCOPED_LEADER_SHARED_LOCK`,
-which does the same leader and ready-term check.
-- The load-path callers (`SysCatalogLoaded` and
-`MarkTabletAsHiddenPostReload`) run only after `LoadSysCatalogDataTask`
-has confirmed leadership for the term and finished loading the catalog.
-
-Verification
-
-**File**: `src/yb/master/catalog_manager_ext.cc` (modified, +0/-2)
-```diff
-@@ -379,7 +379,6 @@ Status CatalogManager::AddTableAndTabletEntriesToPB(
- Result<SysRowEntries> CatalogManager::CollectEntriesFromActiveSysCatalog(
-     const google::protobuf::RepeatedPtrField<TableIdentifierPB>& table_identifiers,
-     CollectFlags flags) {
--  RETURN_NOT_OK(CheckIsLeaderAndReady());
-   std::unordered_set<NamespaceId> namespaces;
-   auto tables = VERIFY_RESULT(CollectTables(table_identifiers, flags, &namespaces));
-   return CollectEntriesInternal(flags, tables, &namespaces);
-@@ -388,7 +387,6 @@ Result<SysRowEntries> CatalogManager::CollectEntriesFromActiveSysCatalog(
- Result<SysRowEntries> CatalogManager::CollectEntriesAsOfTime(
-     const NamespaceId& namespace_id, CollectFlags flags, HybridTime read_time,
-     CoarseTimePoint deadline) {
--  RETURN_NOT_OK(CheckIsLeaderAndReady());
-   std::unordered_set<NamespaceId> namespaces;
+@@ -439,7 +441,7 @@ class ObjectLockInfoManager::Impl {
+   // threads, and poll_running_ both serializes them and orders their accesses to this map.
+   std::unordered_map<TabletServerId, std::shared_ptr<CountDownLatch>>
+       expired_lease_epoch_cleanup_tasks_;
+-  std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry_;
++  std::unique_ptr<docdb::LocalWaitingTxnRegistry> waiting_txn_registry_ GUARDED_BY(mutex_);
+   std::unique_ptr<rpc::Poller> waiting_txn_registry_poller_;
  
-   // CollectTables (used in CollectEntriesFromActiveSysCatalog) gets the set of tables from the
-```
-
----
-
-### Incident Patch 3: `08068000` (2026-11-03)
-**Commit Message**: [#35386] YSQL: Fix lost notifications after the only listener on a node re-LISTENs (#35400)
-
-## Summary
-When the only listener on a node UNLISTENs and the same backend LISTENs
-again, the notifications of the next transaction are lost.
-
-Each listening backend keeps `ybListenerQueueScanCurrentXactState` to
-skip queue entries that the notifications poller writes twice when it
-replays an unacknowledged transaction. A BEGIN marker with the same xid
-as the previous one is treated as a replay. These xids come from the
-notifications slot's virtual WAL, so they are only unique within one
-slot and cannot be compared across slots: numbering restarts every time
-the slot is created, which happens when a node gets its first listener
-after the last one left. The state was never reset, so the first
-transaction on a new slot could match the last transaction the backend
-saw on the old slot (in the issue's repro both are xid 2), and its
-notifications were skipped as duplicates.
-
-The fix ties the state to the slot its xids came from, identified by the
-existing `poller_id`: it changes exactly when the slot is recreated and
-is kept across a poller's crash restarts.
-
-- The scan state records the `poller_
-
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgListenNotify.java` (modified, +125/-0)
-```diff
-@@ -1209,6 +1209,131 @@ public void testListenNotifyNoDuplicateAfterPollerCrashBeforeAck() throws Except
-     verifyListenNotifyWorks();
-   }
- 
-+  /**
-+   * When the node's only listener UNLISTENs, the poller and its replication slot are dropped, and
-+   * the next LISTEN creates a new slot whose virtual WAL numbers transactions from the start again.
-+   * The re-listening backend must not mistake the first transaction on the new slot for a replay
-+   * of the last transaction it saw on the old slot (same xid) and skip its notifications.
-+   */
-+  @Test
-+  public void testNotifyAfterSoloListenerRelistens() throws Exception {
-+    final String channel = "relisten";
-+
-+    try (Connection listenerConn = getConnectionBuilder().withTServer(0).connect();
-+         Statement listenerStmt = listenerConn.createStatement();
-+         Connection notifierConn = getConnectionBuilder().withTServer(0).connect();
-+         Statement notifierStmt = notifierConn.createStatement()) {
-+      listenerStmt.execute("LISTEN " + channel);
-+      notifyInTransaction(notifierStmt, channel, "n1a", "n1b");
-+      assertEquals(Arrays.asList("n1a", "n1b"),
-+          payloadsOf(waitForNotification(listenerConn, channel, "n1b")));
-+
-+      listenerStmt.execute("UNLISTEN " + channel);
-+      waitForPollerAndSlotCleanup(listenerConn);
-+
-+      // Same backend, so it still remembers the last transaction it saw before UNLISTEN.
-+      listenerStmt.execute("LISTEN " + channel);
-+      notifyInTransaction(notifierStmt, channel, "n2a", "n2b");
-+      // An autocommit NOTIFY after the transaction marks the end of what must be delivered.
-+      notifierStmt.execute("NOTIFY " + channel + ", 'n3'");
-+      assertEquals("Notifications delivered after re-LISTEN",
-+          Arrays.asList("n2a", "n2b", "n3"),
-+          payloadsOf(waitForNotification(listenerConn, channel, "n3")));
-+    }
+   // Set while a Poll is queued or running, so that a slow Poll is skipped rather than overlapped.
+@@ -1742,7 +1744,10 @@ void ObjectLockInfoManager::Impl::Clear() {
+   local_lock_manager_.reset(new tserver::TSLocalLockManager(
+       clock_, master_.tablet_server(), master_, lock_manager_thread_pool_.get(),
+       master_.metric_entity()));
+-  local_lock_manager_->Start(waiting_txn_registry_.get());
++  // Otherwise Start() has not run yet and will start it.
++  if (waiting_txn_registry_) {
++    local_lock_manager_->Start(waiting_txn_registry_.get());
 +  }
-+
-+  /**
-+   * Like testNotifyAfterSoloListenerRelistens, but another backend becomes the node's first
-+   * listener and recreates the slot, so the re-listening backend registers as a non-first
-+   * listener and must still reset its stale duplicate-detection state.
-+   */
-+  @Test
-+  public void testNotifyAfterRelistenOnSlotRecreatedByAnotherListener() throws Exception {
-+    final String channel = "relisten_other";
-+
-+    try (Connection aConn = getConnectionBuilder().withTServer(0).connect();
-+         Statement aStmt = aConn.createStatement();
-+         Connection bConn = getConnectionBuilder().withTServer(0).connect();
-+         Statement bStmt = bConn.createStatement();
-+         Connection notifierConn = getConnectionBuilder().withTServer(0).connect();
-+         Statement notifierStmt = notifierConn.createStatement()) {
-+      aStmt.execute("LISTEN " + channel);
-+      notifyInTransaction(notifierStmt, channel, "n1a", "n1b");
-+      assertEquals(Arrays.asList("n1a", "n1b"),
-+          payloadsOf(waitForNotification(aConn, channel, "n1b")));
-+
-+      aStmt.execute("UNLISTEN " + channel);
-+      waitForPollerAndSlotCleanup(aConn);
-+
-+      // B is now the node's first listener and recreates the slot; A joins it.
-+      bStmt.execute("LISTEN " + channel);
-+      aStmt.execute("LISTEN " + channel);
-+      notifyInTransaction(notifierStmt, channel, "n2a", "n2b");
-+      notifierStmt.execute("NOTIFY " + channel + ", 'n3'");
-+      List<String> expected = Arrays.asList("n2a", "n2b", "n3");
-+      assertEquals("Re-listening backend", expected,
-+          payloadsOf(waitForNotification(aConn, channel, "n3")));
-+      assertEquals("Backend that recreated the slot", expected,
-+          payloadsOf(waitForNotification(bConn, channel, "n3")));
-+    }
-+  }
-+
-+  /**
-+   * A backend that re-LISTENs while another backend keeps the node's poller alive must keep
-+   * suppressing that poller's replays of a transaction it received before UNLISTEN.
-+   */
-+  @Test
-+  public void testNoDuplicateAfterRelistenWithSamePoller() throws Exception {
-+    final String channel = "relisten_replay";
-+
-+    try {
-+      // The poller now crashes after every queue write, before the CDC ack, so it keeps
-+      // replaying the same transaction.
-+      setFatalAfterNotifsQueueWriteFlag(true);
-+      Thread.sleep(2000);
-+
-+      try (Connection aConn = getConnectionBuilder().withTServer(0).connect();
-+           Statement aStmt = aConn.createStatement();
-+           Connection bConn = getConnectionBuilder().withTServer(0).connect();
-+           Statement bStmt = bConn.createStatement();
-+           Connection notifierConn = getConnectionBuilder().withTServer(0).connect();
-+           Statement notifierStmt = notifierConn.createStatement()) {
-+        aStmt.execute("LISTEN " + channel);
-+        bStmt.execute("LISTEN " + channel);
-+        notifierStmt.execute("NOTIFY " + channel + ", 'x'");
-+        assertEquals(Arrays.asList("x"),
-+            payloadsOf(waitForNotification(aConn, channel, "x")));
-+
-+        // B keeps the same poller and slot, so A must still recognize the replays of 'x'.
-
-```
-
-**File**: `src/postgres/src/backend/commands/async.c` (modified, +25/-1)
-```diff
-@@ -616,19 +616,27 @@ static TimestampTz ybNotifsPollerId = 0;
-  * Invalid, we skip all non-BEGIN entries because the listener started scanning
-  * mid-transaction and must not deliver a partial transaction (doing so would
-  * also break duplicate detection if the poller crashes and replays).
-+ *
-+ * The xids come from the replication slot's virtual WAL and are only unique
-+ * within one incarnation of the slot.  Each incarnation has its own poller
-+ * (YbNotifsPollerShmemData.poller_id), and a backend only scans entries from
-+ * the poller it registered under, so this state is reset when the backend
-+ * registers under a different poller (see Exec_ListenPreCommit).
-  */
- typedef struct YbListenerQueueScanCurrentXactState
- {
- 	TransactionId begin_xid;
- 	int			scanned_notifs;
- 	int			notifs_to_skip;
-+	TimestampTz poller_id;		/* poller whose entries this state describes */
- } YbListenerQueueScanCurrentXactState;
- 
- static YbListenerQueueScanCurrentXactState ybListenerQueueScanCurrentXactState =
- {
- 	.begin_xid = InvalidTransactionId,
- 	.scanned_notifs = 0,
--	.notifs_to_skip = 0
-+	.notifs_to_skip = 0,
-+	.poller_id = 0
- };
- 
- /*
-@@ -1456,9 +1464,24 @@ Exec_ListenPreCommit(void)
- 	 * YB note: In YB, the queue only contains the committed notifications.
- 	 * These notifications were committed before this LISTEN, so we can safely
- 	 * set max to head.
-+	 *
-+	 * The duplicate-txn scan state is reset here too if the poller changed;
-+	 * see YbListenerQueueScanCurrentXactState.
- 	 */
- 	if (IsYugaByteEnabled())
-+	{
-+		bool		found;
-+		TimestampTz poller_id = ybShmemNotifsPollerData(&found)->poller_id;
-+
- 		max = head;
-+		if (ybListenerQueueScanCurrentXactState.poller_id != poller_id)
-+		{
-+			ybListenerQueueScanCurrentXactState.begin_xid = InvalidTransactionId;
-+			ybListenerQueueScanCurrentXactState.scanned_notifs = 0;
-+			ybListenerQueueScanCurrentXactState.notifs_to_skip = 0;
-+			ybListenerQueueScanCurrentXactState.poller_id = poller_id;
-+		}
-+	}
- 
- 	QUEUE_BACKEND_POS(MyBackendId) = max;
- 	QUEUE_BACKEND_PID(MyBackendId) = MyProcPid;
-@@ -3574,6 +3597,7 @@ ybAsyncQueueHandleBeginEntry(const AsyncQueueEntry *qe)
- 
- 	ybListenerQueueScanCurrentXactState.begin_xid = qe->xid;
- 	ybListenerQueueScanCurrentXactState.scanned_notifs = 0;
-+	ybListenerQueueScanCurrentXactState.notifs_to_skip = 0;
  }
  
- /*
+ std::optional<uint64_t> ObjectLockInfoManager::Impl::GetLeaseEpoch(const std::string& ts_uuid) {
+```
+
+---
+
+### Incident Patch 3: `aa934ad4` (2026-11-04)
+**Commit Message**: [#36555] DocDB: Fix XClusterGuardedLeaseLeadershipTest.LeaselessTServerGivesUpLeadershipToLaggingFollowers hang (#36556)
+
+## Summary
+
+The test makes followers hold each Raft update for `45s *
+kTimeMultiplier` (135s under TSAN) through `TEST_DelayUpdate`, and that
+hold was a single `std::this_thread::sleep_for` taken while
+`update_mutex_` is held, so resetting the delay to zero did not end a
+hold already in progress. While they kept sleeping, the followers
+refused every vote ("already servicing an update"), and the old leader
+refused too because its log is longer, so no new leader was elected
+within the test's 90s wait. `RaftConsensus::Update` now sleeps in `10ms`
+steps and stops as soon as the hold expires or `TEST_delay_update_` is
+reset to `MonoDelta::kZero`.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh tsan --clang21 --cxx-test xcluster_guarded_lease-test
+--gtest-filter
+XClusterGuardedLeaseLeadershipTest.LeaselessTServerGivesUpLeadershipToLaggingFollowers
+-n 100 --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test repro
+
+**File**: `src/yb/consensus/raft_consensus.cc` (modified, +6/-1)
+```diff
+@@ -1757,7 +1757,12 @@ Status RaftConsensus::Update(
+ 
+     auto delay = TEST_delay_update_.load(std::memory_order_acquire);
+     if (delay != MonoDelta::kZero) {
+-      std::this_thread::sleep_for(delay.ToSteadyDuration());
++      // Resetting the delay to zero ends a hold that is already in progress.
++      const auto hold_end = CoarseMonoClock::now() + delay.ToSteadyDuration();
++      while (CoarseMonoClock::now() < hold_end &&
++             TEST_delay_update_.load(std::memory_order_acquire) != MonoDelta::kZero) {
++        std::this_thread::sleep_for(10ms);
++      }
+     } else if (FLAGS_TEST_delay_update_consensus_requests_ms != 0) {
+       std::this_thread::sleep_for(1ms * FLAGS_TEST_delay_update_consensus_requests_ms);
+     }
+```
+
+**File**: `src/yb/consensus/raft_consensus.h` (modified, +1/-0)
+```diff
+@@ -303,6 +303,7 @@ class RaftConsensus : public std::enable_shared_from_this<RaftConsensus>,
+     reject_mode_.store(value, std::memory_order_release);
+   }
+ 
++  // Delays each Update by duration. Setting it to zero also releases any hold in progress.
+   void TEST_DelayUpdate(MonoDelta duration) {
+     TEST_delay_update_.store(duration, std::memory_order_release);
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36742** (2026-11-03): [#36718] Docs: Fix Connection Manager "Enabled by default" in 2026.1.1.0 release notes (@arpit-saxena)
-- **PR #36716** (2026-11-03): [BACKPORT 2026.1][#36033] DocDB: Load EC (ECDSA) client private keys in yb-client (#36034) (@kv83821-yb)
-- **PR #36714** (closed): [BACKPORT 2025.2][#35283,#36387] DocDB: Read rows with intents at their current version in vector index search (@spolitov)
-- **PR #36713** (2026-11-03): [BACKPORT 2026.1][#35283,#36387] DocDB: Read rows with intents at their current version in vector index search (@spolitov)
-- **PR #36698** (2026-11-03): [PLAT-23360] YBA: Present client certs to YBC and require them on client-cert universes (@kv83821-yb)
-- **PR #36664** (2026-11-02): [doc][ybm] Changes for Nov 2 2026 (@ddhodge)
+- **PR #36810** (2026-11-04): [pg19] test: Fix yb.orig.extensions for upstream pg_stat_statements and error-message changes (@teyenc)
+- **PR #36801** (closed): [DEVOPS-4012] build: add csi link for pending DB workflows (@svarnau)
+- **PR #36800** (2026-11-03): [pg19] test: Update TestPgRegressPlanner expected output for upstream PG 16 changes (@teyenc)
+- **PR #36788** (2026-11-03): [pg19] test: Re-enable yb.orig.hypo_hints in hypopg's schedules (@teyenc)
+- **PR #36779** (2026-11-03): [BACKPORT 2026.1][#28675] DocDB: Add lag column to list_all_master yb-admin (@khosrow)
+- **PR #36776** (2026-11-03): [BACKPORT 2026.1][#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693) (@myang2021)
 
 ---
 
@@ -2640,59 +2499,30 @@ is kept across a poller's crash restarts.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializa
+## X. [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#
 
 **RULE**:
-When implementing operations in `src/yb/integration-tests/skip_prefix_locks_enable_disable_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/yql/pgwrapper/pg_txn-test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3641b20c`: [#36567] DocDB: Fix ConcurrentIsolationLevelsTest.ConcurrentSnapshotAndSerializableInserts (#36568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `578e49d6`: [#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#36693). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/integration-tests/skip_prefix_locks_enable_disable_test.cc`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/yql/pgwrapper/pg_txn-test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#include "yb/util/monotime.h"
-    constexpr int kMaxAttemptsPerKey = 100;
-    int total_retries = 0;
-      // A serializable txn in skip_prefix_locks mode conflicts with every concurrent write to the
-      // table, so back-to-back serializable inserts can exhaust the query layer retries of a
-      // snapshot insert. Retry such serialization failures at the application level.
-      for (int attempt = 1;; ++attempt) {
-        ASSERT_OK(conn.StartTransaction(isolation_level));
-        auto status = conn.ExecuteFormat(
-            "INSERT INTO test_table (key, value, thread_id, isolation_level) VALUES "
-              "($0, $1, $2, '$3')",
-            key, i, thread_id, isolation_str);
-        if (status.ok()) {
-          status = conn.CommitTransaction();
-        }
-        if (status.ok()) {
-          break;
-        }
-        ASSERT_STR_CONTAINS(status.ToString(), "could not serialize access");
-        ASSERT_LT(attempt, kMaxAttemptsPerKey) << "Insert of key " << key << " failed: " << status;
-        ++total_retries;
-        LOG(INFO) << "Retrying insert of key " << key << ": " << status;
-        ASSERT_OK(conn.RollbackTransaction());
-        // Give the conflicting serializable txn 
+  // Each thread holds a reference to its element of conns, so conns must not reallocate while the
+  // later connections are added.
+  conns.reserve(kNumThreads);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-      ASSERT_OK(conn.StartTransaction(isolation_level));
-
-      // Insert the row
-      ASSERT_OK(conn.ExecuteFormat(
-          "INSERT INTO test_table (key, value, thread_id, isolation_level) VALUES "
-            "($0, $1, $2, '$3')",
-          key, i, thread_id, isolation_str));
-      ASSERT_OK(conn.CommitTransaction());
-              << " inserts with isolation level " << IsolationLevel_Name(isolation_level);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3641b20c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `578e49d6` are properly handled with clean fallback behavior.
