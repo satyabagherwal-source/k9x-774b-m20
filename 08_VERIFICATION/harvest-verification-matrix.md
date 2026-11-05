@@ -7672,3 +7672,5 @@
 | `CYCLE-20261105-Y0X2` | `2026-11-05T13:27:03.206Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7233` | Yes (`0a2d652b...`) |
 | `CYCLE-20261105-Y5YW` | `2026-11-05T13:27:09.752Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7234` | Yes (`7ad1a6f3...`) |
 | `CYCLE-20261105-Y706` | `2026-11-05T13:27:11.094Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7235, Rule 7236` | Yes (`0a82d404...`) |
+| `CYCLE-20261105-6GZG` | `2026-11-05T13:33:37.276Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`716a55d1...`) |
+| `CYCLE-20261105-6PA4` | `2026-11-05T13:33:48.028Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7237` | Yes (`366b72e2...`) |

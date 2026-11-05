@@ -7681,3 +7681,5 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `9886a813` | Multi-dimensional audit evidence | 2026-11-05T13:27:03.209Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `72e7d838` | Multi-dimensional audit evidence | 2026-11-05T13:27:09.755Z |
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-05T13:27:11.097Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-05T13:33:37.279Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `fe09a7ba` | Multi-dimensional audit evidence | 2026-11-05T13:33:48.042Z |
