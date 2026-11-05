@@ -7613,3 +7613,6 @@
 | `CYCLE-20261105-4HPY` | `2026-11-05T10:16:07.606Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7188` | Yes (`0c99b35d...`) |
 | `CYCLE-20261105-4JFK` | `2026-11-05T10:16:09.824Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7189` | Yes (`54555d51...`) |
 | `CYCLE-20261105-4LHY` | `2026-11-05T10:16:12.502Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7190` | Yes (`fea3cef9...`) |
+| `CYCLE-20261105-DIBA` | `2026-11-05T10:23:08.278Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7191` | Yes (`60d4e780...`) |
+| `CYCLE-20261105-DQKW` | `2026-11-05T10:23:18.992Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7192` | Yes (`6af55c3f...`) |
+| `CYCLE-20261105-HPMI` | `2026-11-05T10:26:24.379Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 3160` | Yes (`8fd07dfa...`) |

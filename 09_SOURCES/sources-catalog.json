@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "14b043207ded98d3eed29d1c67148cc5e0f94e3d96f0a6d02a2fd69aff39d6ee",
-    "lastHarvestedAt": "2026-10-31T19:34:03.949Z",
+    "contentHash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
+    "lastHarvestedAt": "2026-11-05T10:26:24.382Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "eda0eb5e",
+    "sourceVersion": "cbaf3357",
     "license": "MIT",
-    "contentHash": "af306c9b43b89f0286d74d9721c15629841a9e904c54120331f3ee42bb9781ff",
-    "lastHarvestedAt": "2026-11-04T19:41:34.564Z",
+    "contentHash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
+    "lastHarvestedAt": "2026-11-05T10:23:18.995Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "6660fbac",
+    "sourceVersion": "b43ac4f6",
     "license": "Apache-2.0",
-    "contentHash": "f3680f1684637c15590bd0fd44d02ebcc38a0b83a6aeaff7abf41fa28b53dab0",
-    "lastHarvestedAt": "2026-11-04T10:29:50.407Z",
+    "contentHash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
+    "lastHarvestedAt": "2026-11-05T10:23:08.282Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

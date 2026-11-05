@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-WJMG",
-    "timestamp": "2026-11-04T01:58:23.320Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-WLNT",
-    "timestamp": "2026-11-04T01:58:25.961Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "cbbd1e35d65f1cd82389abab265a59619ab1d1b4779d8d332a5fabd056e47139",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-4OHE",
-    "timestamp": "2026-11-04T02:04:42.866Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-4Q4R",
     "timestamp": "2026-11-04T02:04:45.003Z",
     "repository": "microsoft/Mage-VL-Cowork",
@@ -7492,6 +7447,51 @@
     "contentHash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DIBA",
+    "timestamp": "2026-11-05T10:23:08.278Z",
+    "repository": "vercel-labs/agent-desktop",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DQKW",
+    "timestamp": "2026-11-05T10:23:18.992Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-HPMI",
+    "timestamp": "2026-11-05T10:26:24.379Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

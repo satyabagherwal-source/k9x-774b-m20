@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T10:16:12.511Z",
-  "total_cycles_completed": 7590,
-  "total_learnings_persisted": 7590,
-  "total_rules_promoted": 7251,
+  "last_updated": "2026-11-05T10:26:24.387Z",
+  "total_cycles_completed": 7593,
+  "total_learnings_persisted": 7593,
+  "total_rules_promoted": 7255,
   "history": [
-    {
-      "timestamp": "2026-11-05T00:14:52.477Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:14:57.719Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:14:59.325Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T00:15:03.712Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1382,27 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:23:08.286Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:23:19.000Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:26:24.387Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

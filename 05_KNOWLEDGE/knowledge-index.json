@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:16:12.430Z",
+  "last_updated": "2026-11-05T10:26:24.276Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30654,7 +30654,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "14b043207ded98d3eed29d1c67148cc5e0f94e3d96f0a6d02a2fd69aff39d6ee",
+      "content_hash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -30691,7 +30691,7 @@
         {
           "number": 3160,
           "title": "Tokenizer-Model Dimensional Consistency Guard",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 5086,
@@ -30730,7 +30730,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-31T19:34:03.847Z",
+      "verified_at": "2026-11-05T10:26:24.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42139,8 +42139,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "eda0eb5e",
-      "content_hash": "af306c9b43b89f0286d74d9721c15629841a9e904c54120331f3ee42bb9781ff",
+      "source_version": "cbaf3357",
+      "content_hash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -42213,6 +42213,11 @@
           "number": 6935,
           "title": "replace agent session complete notice with an explicit exit notice (#6966)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7192,
+          "title": "honour the workspace chat mode in the mobile stream-chat command (#6983)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42220,7 +42225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:41:34.435Z",
+      "verified_at": "2026-11-05T10:23:18.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119175,7 +119180,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T12:18:32.595Z"
+      "verified_at": "2026-11-05T10:26:24.256Z"
     },
     "rule-3161": {
       "learning_id": "rule-3161",
@@ -166293,8 +166298,8 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "6660fbac",
-      "content_hash": "f3680f1684637c15590bd0fd44d02ebcc38a0b83a6aeaff7abf41fa28b53dab0",
+      "source_version": "b43ac4f6",
+      "content_hash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
@@ -166312,6 +166317,11 @@
           "number": 6811,
           "title": "macos): reach the Dock, menu bar status items and system panels (#480)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7191,
+          "title": "start the macos cursor overlay outside the caller's directory (#381)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -166319,7 +166329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:29:50.294Z",
+      "verified_at": "2026-11-05T10:23:08.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181747,6 +181757,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:16:12.411Z"
+    },
+    "rule-7191": {
+      "learning_id": "rule-7191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7191,
+      "title": "start the macos cursor overlay outside the caller's directory (#381)",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "b43ac4f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:23:08.185Z"
+    },
+    "rule-7192": {
+      "learning_id": "rule-7192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7192,
+      "title": "honour the workspace chat mode in the mobile stream-chat command (#6983)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "cbaf3357",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:23:18.900Z"
     }
   },
   "aliases": {

@@ -7622,3 +7622,6 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `36823919` | Multi-dimensional audit evidence | 2026-11-05T10:16:07.609Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b94bef03` | Multi-dimensional audit evidence | 2026-11-05T10:16:09.828Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `739e17f9` | Multi-dimensional audit evidence | 2026-11-05T10:16:12.506Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `b43ac4f6` | Multi-dimensional audit evidence | 2026-11-05T10:23:08.282Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `cbaf3357` | Multi-dimensional audit evidence | 2026-11-05T10:23:18.995Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T10:26:24.382Z |
