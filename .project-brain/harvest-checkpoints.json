@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T18:00:52.162Z",
+  "last_updated": "2026-11-05T18:07:56.916Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
-      "verified_at": "2026-11-04T22:52:26.113Z",
+      "content_hash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
+      "verified_at": "2026-11-05T18:07:56.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:52:26.113Z"
+      "last_updated": "2026-11-05T18:07:56.915Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",
@@ -17601,14 +17601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "content_hash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
-      "verified_at": "2026-11-02T14:31:53.917Z",
+      "content_hash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
+      "verified_at": "2026-11-05T18:07:50.433Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T14:31:53.917Z"
+      "last_updated": "2026-11-05T18:07:50.433Z"
     },
     "burner22/numbat": {
       "repository": "burner22/numbat",

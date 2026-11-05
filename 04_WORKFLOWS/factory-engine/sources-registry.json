@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T18:00:54.695Z",
-    "lastVerified": "2026-11-05T18:00:54.695Z",
+    "lastChecked": "2026-11-05T18:08:01.900Z",
+    "lastVerified": "2026-11-05T18:08:01.900Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -446,12 +446,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T17:29:11.103Z",
-    "lastVerified": "2026-11-05T17:29:11.103Z",
+    "lastChecked": "2026-11-05T18:08:01.891Z",
+    "lastVerified": "2026-11-05T18:08:01.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -460,7 +460,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "36aa86f4"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1357,8 +1358,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:47:48.829Z",
-    "lastVerified": "2026-11-05T13:47:48.829Z",
+    "lastChecked": "2026-11-05T18:07:56.994Z",
+    "lastVerified": "2026-11-05T18:07:56.994Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -4227,8 +4228,8 @@
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T02:40:25.692Z",
-    "lastVerified": "2026-11-05T02:40:25.692Z",
+    "lastChecked": "2026-11-05T18:07:59.482Z",
+    "lastVerified": "2026-11-05T18:07:59.482Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -7090,9 +7091,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-05T03:27:41.513Z",
+    "lastChecked": "2026-11-05T18:07:54.459Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-05T03:27:41.513Z"
+    "lastVerified": "2026-11-05T18:07:54.459Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -8732,14 +8733,14 @@
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-04T22:52:25.411Z",
-    "lastVerified": "2026-11-04T22:52:25.411Z",
+    "lastChecked": "2026-11-05T18:07:55.691Z",
+    "lastVerified": "2026-11-05T18:07:55.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
-    "contentHash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
+    "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 10,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11586,9 +11587,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-11-03T17:38:13.285Z",
+    "lastChecked": "2026-11-05T18:07:51.905Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-11-03T17:38:13.285Z"
+    "lastVerified": "2026-11-05T18:07:51.905Z"
   },
   "miso-belica-justext": {
     "name": "justext",
@@ -13281,12 +13282,12 @@
     "officialUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-02T14:31:53.610Z",
-    "lastVerified": "2026-11-02T14:31:53.610Z",
+    "lastChecked": "2026-11-05T18:07:49.445Z",
+    "lastVerified": "2026-11-05T18:07:49.445Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
+    "contentHash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

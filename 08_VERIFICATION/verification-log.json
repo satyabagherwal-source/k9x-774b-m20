@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-4KE3",
-    "timestamp": "2026-11-04T17:00:25.275Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-GN6T",
-    "timestamp": "2026-11-04T17:09:48.773Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "f04de4b5058f5be7fb378bdbf4bf82e8276013edbf3e401ddaea1c967bdd8692",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-GWZD",
     "timestamp": "2026-11-04T17:10:01.465Z",
     "repository": "loft-sh/vcluster",
@@ -7492,6 +7462,36 @@
     "contentHash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Z4BA",
+    "timestamp": "2026-11-05T18:07:50.422Z",
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Z9BD",
+    "timestamp": "2026-11-05T18:07:56.905Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

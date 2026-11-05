@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `ee8130ad`  
+> **Source Version**: `4661544e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:52:25.417Z  
+> **Timestamp**: 2026-11-05T18:07:55.698Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:52:25.411Z  
+> **Harvest Timestamp**: 2026-11-05T18:07:55.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2364,290 +2364,482 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a2a2eb7` (2026-11-04)
-**Commit Message**: hazptr: add benchmark probes for holder/array acquire-release
+### Incident Patch 1: `fd678ec4` (2026-11-05)
+**Commit Message**: Build folly::Future and folly::Promise on wasi
 
 Summary:
-Fleetwide profiling attributes significant cost to `folly::hazptr_array::~hazptr_array` and `folly::hazptr_holder::~hazptr_holder`. These are the bookkeeping paths that move hazard pointer records between a holder and the thread cache; the fallback paths through the domain's avail list are, by contrast, nearly free fleetwide.
+`folly/futures:core` did not build on wasi. It pulls in fibers, which switch stacks with boost.context, which has no wasm implementation; folly's global executors, whose wait-node pool relies on a lazily committed mmap, which wasi lacks; and `EventBase` (libevent and `pipe()`), for `ThreadWheelTimekeeper`. `folly:singleton`, which futures needs for the default timekeeper, also included `<signal.h>` and called `dlsym`, neither of which a statically linked wasi program has.
 
-`HazptrBench.cpp` already carries `check_folly_hazptr_*` `FOLLY_KEEP` probes so that the generated code for the hot paths can be inspected directly. Add probes for the paths that have none - holder destruction, `hazptr_array` construction, destruction and move assignment, and construction of a hazard pointer without naming a domain - plus the benchmarks that go with them: `hazptr_move_assign_array_default`, a `3_uzic` parameter for `hazptr_make_array_default`, and `hazptr_make_default_implicit` and `hazptr_make_protect_default_implicit`.
+On wasi:
+- Futures wait on a `folly::Baton` rather than a `fibers::Baton`, and `runInMainContext` is a direct call, since there is no fiber context to leave.
+- `wait(fibers::Baton)`, `detachOnGlobalCPUExecutor` and `maybeDetachOnGlobalExecutorAfter` are not declared, and `ThreadWheelTimekeeper.h` and `WTCallback.h` declare nothing, so a caller fails to compile rather than linking something broken. The default timekeeper is always `HeapTimekeeper`.
+- `:core` drops `fibers:core`, `executors:global_executor` and `io/async:async_base` through a `select()` on `ovr_config//os:wasi`.
+- `SingletonVault` takes the existing no-`dlsym` path (`Type::Relaxed`), as on Ap
 
-`hazptr_move_assign_array_default` does exactly as much hazard pointer release work per iteration as `hazptr_make_array_default`, so the difference between the two is the cost of `hazptr_array::operator=` over `~hazptr_array`.
-
-The two `_implicit` benchm
-
-**File**: `folly/synchronization/test/HazptrBench.cpp` (modified, +71/-10)
+**File**: `folly/BUCK` (modified, +5/-1)
 ```diff
-@@ -17,6 +17,7 @@
- #include <folly/synchronization/Hazptr.h>
- 
- #include <atomic>
-+#include <new>
- #include <numeric>
- #include <random>
- #include <vector>
-@@ -113,6 +114,33 @@ extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default(
-   return ptr ? *ptr : 0;
- }
- 
-+extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default_implicit(
-+    std::atomic<hazptr_obj_of<long>*>& channel) {
-+  auto holder = folly::make_hazard_pointer();
-+  auto ptr = holder.protect(channel);
-+  return ptr ? *ptr : 0;
-+}
-+
-+extern "C" FOLLY_KEEP void check_folly_hazptr_holder_destroy(
-+    folly::hazptr_holder<std::atomic>* holder) {
-+  holder->~hazptr_holder();
-+}
-+
-+extern "C" FOLLY_KEEP void check_folly_hazptr_make_array_default(
-+    folly::hazptr_array<3>* out) {
-+  ::new (out) folly::hazptr_array<3>(folly::make_hazard_pointer_array<3>());
-+}
-+
-+extern "C" FOLLY_KEEP void check_folly_hazptr_array_destroy_default(
-+    folly::hazptr_array<3>* array) {
-+  array->~hazptr_array();
-+}
-+
-+extern "C" FOLLY_KEEP void check_folly_hazptr_array_move_assign_default(
-+    folly::hazptr_array<3>* dst, folly::hazptr_array<3>* src) {
-+  *dst = std::move(*src);
-+}
-+
- extern "C" FOLLY_KEEP void check_folly_hazptr_obj_retire(
-     folly::hazptr_obj<std::atomic>& object,
-     folly::hazptr_domain<std::atomic>& domain) {
-@@ -360,26 +388,32 @@ BENCHMARK_DRAW_LINE();
- 
- /// benchmark creating a hazard pointer (aka a hazptr-holder) without using it,
- /// including ctor and dtor
--template <template <typename> class Atom>
-+template <typename... Args>
- static void do_hazptr_make(
--    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
-+    BenchmarkSuspender& braces, size_t iters, Args&... args) {
-   braces.dismissing([&] {
-     while (iters--) {
--      make_hazard_pointer(domain);
-+      make_hazard_pointer(args...);
-     }
-   });
- }
- 
- BENCHMARK(hazptr_make, iters) {
-   BenchmarkSuspender braces;
-   auto&& domain = hazptr_domain();
--  do_hazptr_make(braces, domain, iters);
-+  do_hazptr_make(braces, iters, domain);
- }
- 
- BENCHMARK(hazptr_make_default, iters) {
-   BenchmarkSuspender braces;
-   auto&& domain = default_hazptr_domain();
--  do_hazptr_make(braces, domain, iters);
-+  do_hazptr_make(braces, iters, domain);
-+}
-+
-+/// same, but without naming the domain, which is how most callers spell it
-+BENCHMARK(hazptr_make_default_implicit, iters) {
-+  BenchmarkSuspender braces;
-+  do_hazptr_make(braces, iters);
- }
- 
- BENCHMARK_DRAW_LINE();
-@@ -445,24 +479,45 @@ void hazptr_make_array_default(size_t iters, folly::index_constant<ArraySize>) {
- 
- BENCHMARK_PARAM(hazptr_make_array_default, 1_uzic)
- BENCHMARK_PARAM(hazptr_make_array_default, 2_uzic)
-+BENCHMARK_PARAM(hazptr_make_array_default, 3_uzic)
- BENCHMARK_PARAM(hazptr_make_array_default, 4_uzic)
- BENCHMARK_PARAM(hazptr_make_array_default, 8_uzic)
- 
- BENCHMARK_DRAW_LINE();
- 
-+/// benchmark move-assigning a hazard pointer array over another one; the same
-+/// amount of hazard pointer release work as hazptr_make_array_default, so the
-+/// difference between the two is the cost of move assignment over destruction
-+template <size_t ArraySize>
-+void hazptr_move_assign_array_default(
-+    size_t iters, folly::index_constant<ArraySize>) {
-+  auto dst = make_hazard_pointer_array<ArraySize>();
-+  while (iters--) {
-+    dst = make_hazard_pointer_array<ArraySize>();
-+  }
-+}
-+
-+BENCHMARK_PARAM(hazptr_move_assign_array_default, 1_uzic)
-+BENCHMARK_PARAM(hazptr_move_assign_array_default, 2_uzic)
-+BENCHMARK_PARAM(hazptr_move_assign_array_default, 3_uzic)
-+BENCHMARK_PARAM(hazptr_move_assign_array_default, 4_uzic)
-+BENCHMARK_PARAM(hazptr_move_assign_array_default, 8_uzic)
-+
-+BENCHMARK_DRAW_LINE();
-+
- /// benchmark creating a hazard pointer and using it to protect a pointer,
- /// including hazard pointer ctor/dtor and protection/unprotection
--template <template <typename> class Atom>
-+template <typename... Args>
- static void do_hazptr_make_protect(
--    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
-+    BenchmarkSuspender& braces, size_t iters, Args&... args) {
-   auto own = std::make_unique<TestObj>(42);
-   std::atomic<TestObj*> ptr{own.get()};
-   folly::compiler_must_not_predict(ptr);
- 
-   int sum = 0;
-   braces.dismissing([&] {
-     while (iters--) {
--      auto h = make_hazard_pointer(domain);
-+      auto h = make_hazard_pointer(args...);
-       auto* obj = h.protect(ptr);
-       folly::compiler_must_not_predict(obj->value);
-       sum += obj->value;
-@@ -474,13 +529,19 @@ static void do_hazptr_make_protect(
- BENCHMARK(hazptr_make_protect, iters) {
-   BenchmarkSuspender braces;
-   auto&& domain = hazptr_domain();
--  do_hazptr_make_protect(braces, domain, iters);
-+  do_hazptr_make_protect(braces, iters, domain);
- }
- 
- BENCHMARK(hazptr_make_protect_default, iters) {
-   BenchmarkSuspender braces;
-   auto&& domain = default_hazptr_domain();
--  do_hazptr_make_protect(braces, domain, iters);
-+  do_hazptr_make_protect(braces, iters, domain);
-+}
-+
-+/// same, but w
+@@ -2747,12 +2747,16 @@ fb_dirsync_cpp_library(
+         "DEFAULT": [],
+         "ovr_config//os:linux": ["//folly/debugging/symbolizer:symbolizer"],
+     })
++    + select({
++        "DEFAULT": [":file_util"],
++        # @fb-only[end= ]: "ovr_config//os:wasi": [],
++        "ovr_config//runtime:fbcode": [],
++    })
+     + select({
+         "DEFAULT": [
+             ":c_portability",
+             ":conv",
+             ":fbstring",
+-            ":file_util",
+             ":optional",
+             ":range",
+             ":small_vector",
 ```
 
----
-
-### Incident Patch 2: `2b0f4778` (2026-11-04)
-**Commit Message**: wrap ThreadSanitizer acquire and release hooks
-
-Summary: `SanitizeThread` wraps dynamic annotations but does not expose the compiler-rt acquire and release hooks. Add faithfully named `tsan_acquire` and `tsan_release` wrappers using the existing extern-accessor pattern, compiling to no-ops outside TSAN.
-
-Reviewed By: dmm-fb
-
-Differential Revision: D124562046
-
-fbshipit-source-id: e95c90a64bfd4e48899c10eee0db86af297c3ecb
-
-**File**: `folly/synchronization/SanitizeThread.cpp` (modified, +14/-0)
+**File**: `folly/Singleton.cpp` (modified, +5/-1)
 ```diff
-@@ -22,6 +22,10 @@
- // long, so it is helpful to keep these declarations out of widely-included
- // header files.
+@@ -18,7 +18,9 @@
  
-+extern "C" void __tsan_acquire(void* addr);
-+
-+extern "C" void __tsan_release(void* addr);
-+
- extern "C" void AnnotateRWLockCreate(
-     char const* f, int l, const volatile void* addr);
+ #ifndef _WIN32
+ #include <dlfcn.h>
++#ifndef __wasi__ // wasi has no signals; the shutdown timer needs librt.
+ #include <signal.h>
++#endif
+ #include <time.h>
+ #endif
  
-@@ -58,6 +62,10 @@ extern "C" void AnnotateIgnoreSyncEnd(char const* f, int l);
+@@ -44,7 +46,9 @@
+ // before that.
+ #include <glog/raw_logging.h>
  
- namespace {
+-#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
++// A statically linked wasi program has no dlsym.
++#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__) && \
++    !defined(__wasi__)
+ #define FOLLY_SINGLETON_HAVE_DLSYM 1
+ #else
+ #define FOLLY_SINGLETON_HAVE_DLSYM 0
+```
+
+**File**: `folly/futures/BUCK` (modified, +11/-4)
+```diff
+@@ -84,17 +84,24 @@ fb_dirsync_cpp_library(
+         "//folly/detail:async_trace",
+         "//folly/executors:drivable_executor",
+         "//folly/executors:executor_with_priority",
+-        "//folly/executors:global_executor",
+         "//folly/executors:inline_executor",
+         "//folly/executors:queued_immediate_executor",
+         "//folly/executors:timed_drivable_executor",
+-        "//folly/fibers:core",
+         "//folly/functional:invoke",
+         "//folly/futures/detail:core",
+-        "//folly/io/async:async_base",
+         "//folly/lang:exception",
+         "//folly/lang:pretty",
+-    ],
++    ] + select({
++        "DEFAULT": [
++            "//folly/executors:global_executor",
++            "//folly/fibers:core",
++            "//folly/io/async:async_base",
++        ],
++        # @fb-only[end= ]: # On wasi: no fibers (boost.context has no wasm port), no global
++        # @fb-only[end= ]: # executors (lazily committed mmap), no EventBase (libevent,
++        # @fb-only[end= ]: # pipe()). Futures wait on a folly::Baton instead.
++        # @fb-only[end= ]: "ovr_config//os:wasi": ["//folly/synchronization:baton"],
++    }),
+ )
  
-+FOLLY_CREATE_EXTERN_ACCESSOR(tsan_acquire_access_v, __tsan_acquire);
-+
-+FOLLY_CREATE_EXTERN_ACCESSOR(tsan_release_access_v, __tsan_release);
-+
- FOLLY_CREATE_EXTERN_ACCESSOR(
-     annotate_rwlock_create_access_v, AnnotateRWLockCreate);
+ fb_dirsync_cpp_library(
+```
+
+**File**: `folly/futures/Future-inl.h` (modified, +20/-2)
+```diff
+@@ -30,19 +30,35 @@
+ #include <folly/container/Foreach.h>
+ #include <folly/detail/AsyncTrace.h>
+ #include <folly/executors/ExecutorWithPriority.h>
++#if !defined(__wasi__)
+ #include <folly/executors/GlobalExecutor.h>
++#endif
+ #include <folly/executors/InlineExecutor.h>
+ #include <folly/executors/QueuedImmediateExecutor.h>
+ #include <folly/futures/detail/Core.h>
+ #include <folly/lang/Pretty.h>
++#if defined(__wasi__)
++#include <folly/synchronization/Baton.h>
++#endif
  
-@@ -101,6 +109,12 @@ static constexpr auto const E = folly::kIsSanitizeThread;
  namespace folly {
+ 
+ class Timekeeper;
+ 
+ namespace futures {
  namespace detail {
++#if defined(__wasi__)
++// boost.context has no wasm port, so wasi has no fibers and a wait blocks
++// the thread.
++typedef folly::Baton<> FutureBatonType;
++template <typename F>
++decltype(auto) runInMainContext(F&& func) {
++  return static_cast<F&&>(func)();
++}
++#else
+ typedef folly::fibers::Baton FutureBatonType;
++using folly::fibers::runInMainContext;
++#endif
+ } // namespace detail
+ } // namespace futures
  
-+FOLLY_STORAGE_CONSTEXPR tsan_acquire_t* const tsan_acquire_v =
-+    tsan_acquire_access_v<E>;
-+
-+FOLLY_STORAGE_CONSTEXPR tsan_release_t* const tsan_release_v =
-+    tsan_release_access_v<E>;
-+
- FOLLY_STORAGE_CONSTEXPR annotate_rwlock_cd_t* const annotate_rwlock_create_v =
-     annotate_rwlock_create_access_v<E>;
+@@ -487,7 +503,7 @@ class WaitExecutor final : public folly::Executor {
+   void drive() {
+     baton_.wait();
  
+-    fibers::runInMainContext([&]() {
++    runInMainContext([&]() {
+       baton_.reset();
+       auto funcs = std::move(queue_.wlock()->funcs);
+       for (auto& func : funcs) {
+@@ -502,7 +518,7 @@ class WaitExecutor final : public folly::Executor {
+     if (!baton_.try_wait_until(deadline)) {
+       return false;
+     }
+-    return fibers::runInMainContext([&]() {
++    return runInMainContext([&]() {
+       baton_.reset();
+       auto funcs = std::move(queue_.wlock()->funcs);
+       for (auto& func : funcs) {
+@@ -2686,6 +2702,7 @@ void detachOn(folly::Executor::KeepAlive<> exec, folly::SemiFuture<T>&& fut) {
+   std::move(fut).via(exec).detach();
+ }
+ 
++#if !defined(__wasi__)
+ template <class T>
+ void detachOnGlobalCPUExecutor(folly::SemiFuture<T>&& fut) {
+   detachOn(folly::getGlobalCPUExecutor(), std::move(fut));
+@@ -2701,6 +2718,7 @@ void maybeDetachOnGlobalExecutorAfter(
+         }
+       });
+ }
++#endif
+ 
+ template <class T>
+ void detachWithoutExecutor(folly::SemiFuture<T>&& fut) {
 ```
 
-**File**: `folly/synchronization/SanitizeThread.h` (modified, +26/-0)
+**File**: `folly/futures/Future.cpp` (modified, +9/-2)
 ```diff
-@@ -27,12 +27,16 @@ enum class annotate_rwlock_level : long {
+@@ -19,13 +19,17 @@
+ #include <folly/Likely.h>
+ #include <folly/Singleton.h>
+ #include <folly/futures/HeapTimekeeper.h>
++// ThreadWheelTimekeeper runs an EventBase, which needs libevent and pipe(),
++// which wasi lacks.
++#if !defined(__wasi__)
+ #include <folly/futures/ThreadWheelTimekeeper.h>
+ #include <folly/portability/GFlags.h>
  
- namespace detail {
+ FOLLY_GFLAGS_DEFINE_bool(
+     folly_futures_use_thread_wheel_timekeeper,
+     false,
+     "Use ThreadWheelTimekeeper for the default Future timekeeper singleton");
++#endif
  
-+using tsan_acquire_t = void(void*);
-+using tsan_release_t = void(void*);
- using annotate_rwlock_cd_t = void(char const*, int, void const volatile*);
- using annotate_rwlock_ar_t = void(char const*, int, void const volatile*, long);
- using annotate_benign_race_sized_t =
-     void(char const*, int, void const volatile*, long, char const*);
- using annotate_ignore_t = void(char const*, int);
+ namespace folly {
+ namespace futures {
+@@ -78,6 +82,7 @@ Future<Unit> sleepUnsafe(HighResDuration dur, Timekeeper* tk) {
+   return sleep(dur, tk).toUnsafeFuture();
+ }
  
-+extern tsan_acquire_t* const tsan_acquire_v;
-+extern tsan_release_t* const tsan_release_v;
- extern annotate_rwlock_cd_t* const annotate_rwlock_create_v;
- extern annotate_rwlock_cd_t* const annotate_rwlock_create_static_v;
- extern annotate_rwlock_cd_t* const annotate_rwlock_destroy_v;
-@@ -48,6 +52,28 @@ extern annotate_ignore_t* const annotate_ignore_sync_end_v;
++#if !defined(__wasi__)
+ namespace {
+ template <typename Ptr>
+ class FutureWaiter : public fibers::Baton::Waiter {
+@@ -112,6 +117,7 @@ SemiFuture<Unit> wait(std::shared_ptr<fibers::Baton> baton) {
+       std::move(promise), std::move(baton));
+   return sf;
+ }
++#endif
  
- } // namespace detail
+ } // namespace futures
  
-+//  tsan_acquire
-+//
-+//  Establishes a happens-before relation with a preceding tsan_release on the
-+//  same address.
-+//
-+//  mimic: __tsan_acquire, llvm compiler-rt
-+FOLLY_ALWAYS_INLINE static void tsan_acquire(void* const addr) {
-+  auto fun = detail::tsan_acquire_v;
-+  return kIsSanitizeThread && fun ? fun(addr) : void();
-+}
+@@ -123,11 +129,12 @@ FOLLY_EXPORT FOLLY_ALWAYS_INLINE
+   using TimekeeperSingleton =
+       folly::Singleton<Timekeeper, TimekeeperSingletonTag>;
+   static TimekeeperSingleton sTimekeeperSingleton([]() -> Timekeeper* {
++#if !defined(__wasi__)
+     if (FLAGS_folly_futures_use_thread_wheel_timekeeper) {
+       return new ThreadWheelTimekeeper;
+-    } else {
+-      return new HeapTimekeeper;
+     }
++#endif
++    return new HeapTimekeeper;
+   });
+   return sTimekeeperSingleton;
+ }
+```
+
+**File**: `folly/futures/Future.h` (modified, +9/-0)
+```diff
+@@ -33,7 +33,9 @@
+ #include <folly/coro/Traits.h>
+ #include <folly/executors/DrivableExecutor.h>
+ #include <folly/executors/TimedDrivableExecutor.h>
++#if !defined(__wasi__)
+ #include <folly/fibers/Baton.h>
++#endif
+ #include <folly/functional/Invoke.h>
+ #include <folly/futures/Portability.h>
+ #include <folly/futures/Promise.h>
+@@ -468,6 +470,9 @@ futures::detail::DeferredWrapper stealDeferredExecutor(SemiFuture<T>& future);
+ template <class T>
+ void detachOn(folly::Executor::KeepAlive<> exec, folly::SemiFuture<T>&& fut);
+ 
++// folly's global executors are thread pools that do not build on wasi, so
++// these two are not declared there.
++#if !defined(__wasi__)
+ // Detach the SemiFuture by detaching work onto the global CPU executor.
+ template <class T>
+ void detachOnGlobalCPUExecutor(folly::SemiFuture<T>&& fut);
+@@ -478,6 +483,7 @@ void detachOnGlobalCPUExecutor(folly::SemiFuture<T>&& fut);
+ template <class T>
+ void maybeDetachOnGlobalExecutorAfter(
+     HighResDuration dur, folly::SemiFuture<T>&& fut);
++#endif
+ 
+ // Detach the SemiFuture with no executor.
+ // NOTE: If there is deferred work of any sort on this SemiFuture
+@@ -2140,8 +2146,11 @@ auto mapTry(Executor& exec, Collection&& c, F&& func)
+ template <class F>
+ auto when(bool p, F&& thunk) -> decltype(static_cast<F&&>(thunk)().unit());
+ 
++// boost.context has no wasm port, so wasi has no fibers.
++#if !defined(__wasi__)
+ SemiFuture<Unit> wait(std::unique_ptr<fibers::Baton> baton);
+ SemiFuture<Unit> wait(std::shared_ptr<fibers::Baton> baton);
++#endif
+ 
+ /**
+  * Returns a lazy SemiFuture constructed by f, which also ensures that ensure is
+```
+
+**File**: `folly/futures/ThreadWheelTimekeeper.cpp` (modified, +5/-0)
+```diff
+@@ -14,6 +14,9 @@
+  * limitations under the License.
+  */
+ 
++// No EventBase on wasi; see ThreadWheelTimekeeper.h.
++#if !defined(__wasi__)
 +
-+//  tsan_release
-+//
-+//  Establishes a happens-before relation with a subsequent tsan_acquire on the
-+//  same address.
-+//
-+//  mimic: __tsan_release, llvm compiler-rt
-+FOLLY_ALWAYS_INLINE static void tsan_release(void* const addr) {
-+  auto fun = detail::tsan_release_v;
-+  return kIsSanitizeThread && fun ? fun(addr) : void();
-+}
+ #include <folly/futures/ThreadWheelTimekeeper.h>
+ 
+ #include <future>
+@@ -65,3 +68,5 @@ SemiFuture<Unit> EventBaseThreadTimekeeper::after(HighResDuration dur) {
+ }
+ 
+ } // namespace folly
 +
- FOLLY_ALWAYS_INLINE static void annotate_rwlock_create(
-     void const volatile* const addr, char const* const f, int const l) {
-   auto fun = detail::annotate_rwlock_create_v;
++#endif // !defined(__wasi__)
+```
+
+**File**: `folly/futures/ThreadWheelTimekeeper.h` (modified, +6/-0)
+```diff
+@@ -16,6 +16,10 @@
+ 
+ #pragma once
+ 
++// EventBase needs libevent and pipe(), which wasi lacks, so on wasi nothing is
++// declared here.
++#if !defined(__wasi__)
++
+ #include <thread>
+ 
+ #include <folly/futures/Future.h>
+@@ -54,3 +58,5 @@ class ThreadWheelTimekeeper : public EventBaseThreadTimekeeper {
+ };
+ 
+ } // namespace folly
++
++#endif // !defined(__wasi__)
 ```
 
 ---
 
-### Incident Patch 3: `6da87cf6` (2026-11-04)
-**Commit Message**: Statically link small_sigaltstack_crash so binding check holds in dev-nosan
+### Incident Patch 2: `4661544e` (2026-11-05)
+**Commit Message**: Fix libevent leaking onto the link line of folly users that don't use EventBase
 
-Reviewed By: yfeldblum
+Summary:
+libevent reaches every folly target through `folly_deps`, including ones that never touch `EventBase`, such as `Folly::folly_conv`.
 
-Differential Revision: D129428332
+Fix it by linking libevent from `folly_portability_event`, the one library that includes it, as `folly_ext_event`. EventBase's headers call `event_set()`, so, as for libsodium, `MONOLITH_PUBLIC` keeps the monolithic `folly` passing libevent on to its users.
 
-fbshipit-source-id: b569ee4ba96273f6d6bbf53fd7692f10b85242ac
+When folly fetches libevent, its targets carry the include directories, and `folly_deps` linked them for the sake of those. A shared build compiles folly's sources without following `folly_ext_event`, so `folly_deps` keeps the targets' include directories, as build-only ones, without linking them.
 
-**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +1/-0)
+`folly_deps` now carries only Threads, gflags, glog, fmt, OpenSSL, libdwarf and dl, plus libatomic, libc++abi or stdc++fs where the toolchain needs them, and the include directories. OpenSSL stays there to keep clear of D128713886, and libdwarf goes with D128636102.
+
+Follow-up: mcrouter includes `<lz4.h>` and calls LZ4 directly, but its CMake build relies on folly to link LZ4; against a shared folly it needs to fin
+
+**File**: `CMake/folly-deps.cmake` (modified, +16/-1)
 ```diff
-@@ -68,6 +68,7 @@ fb_dirsync_cpp_binary(
-         ],
-     },
-     labels = fbcode_ci_default_labels(),
-+    overridden_link_style = "static",
-     target_compatible_with = ["ovr_config//runtime:fbcode"],
-     deps = [
-         "//folly:portability",
+@@ -280,6 +280,16 @@ if (NOT LibEvent_FOUND)
+   # The targets carry the include directories; clear the failed find_path()
+   # result.
+   set(LIBEVENT_INCLUDE_DIR "")
++  # folly_deps doesn't link the targets, but folly's sources still need their
++  # include directories: a shared build compiles them without following
++  # folly_ext_event.
++  foreach (folly_libevent_target IN LISTS LIBEVENT_LIB)
++    list(
++      APPEND
++      FOLLY_BUILD_INCLUDE_DIRECTORIES
++      "$<TARGET_PROPERTY:${folly_libevent_target},INTERFACE_INCLUDE_DIRECTORIES>"
++    )
++  endforeach ()
+   # As for glog, a project built alongside folly gets FindLibEvent's variables
+   # from here, or it reads the NOTFOUND results cached above.
+   file(WRITE "${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/libevent-extra.cmake"
+@@ -288,7 +298,8 @@ set(LIBEVENT_INCLUDE_DIR \"\")
+ ")
+   set_property(GLOBAL APPEND PROPERTY FOLLY_BUILD_LOCAL_TARGETS ${LIBEVENT_LIB})
+ endif ()
+-list(APPEND FOLLY_LINK_LIBRARIES ${LIBEVENT_LIB})
++# EventBase's headers call into libevent.
++folly_add_external_library(event MONOLITH_PUBLIC LIBRARIES ${LIBEVENT_LIB})
+ list(APPEND FOLLY_INCLUDE_DIRECTORIES ${LIBEVENT_INCLUDE_DIR})
+ 
+ find_package(ZLIB MODULE)
+@@ -742,6 +753,10 @@ foreach (_dir IN LISTS FOLLY_INCLUDE_DIRECTORIES)
+     target_include_directories(folly_deps INTERFACE ${_dir})
+   endif ()
+ endforeach ()
++# Include directories of build-local targets that folly_deps doesn't link.
++foreach (_dir IN LISTS FOLLY_BUILD_INCLUDE_DIRECTORIES)
++  target_include_directories(folly_deps INTERFACE "$<BUILD_INTERFACE:${_dir}>")
++endforeach ()
+ folly_localize_deps(folly_deps_link ${FOLLY_LINK_LIBRARIES}
+                     ${FOLLY_SHINY_DEPENDENCIES} ${FOLLY_ASAN_FLAGS})
+ target_link_libraries(folly_deps INTERFACE ${folly_deps_link})
+```
+
+**File**: `folly/portability/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -51,6 +51,7 @@ folly_add_library(
+   NAME event
+   HEADERS Event.h
+   EXPORTED_DEPS
++    folly_ext_event
+     folly_net_detail_socket_file_descriptor_map
+     folly_portability_fcntl
+     folly_portability_windows
+```
+
+---
+
+### Incident Patch 3: `d7a4152c` (2026-11-05)
+**Commit Message**: hazptr: remove redundant memory operations from ~hazptr_array
+
+Summary:
+`~hazptr_array` returns its `M` hazard pointer records to the thread cache. The loop interleaved a store through `hprec_` (`reset_protection`) with a read of the thread cache entry array, and finished each iteration with `set_hprec(nullptr)`.
+
+Two problems, both visible in the generated code:
+
+- Clang's TBAA treats all pointer types as mutually aliasing, so the null store through `hazptr_rec::hazptr_` is assumed to alias both the thread cache's `Entry` buffer and the array's own `hazptr_rec` pointers. The compiler therefore reloaded `vec_.data()` and reloaded `h[i].hprec()` on every iteration.
+- `set_hprec(nullptr)` is dead - the storage is ending its lifetime - but the compiler cannot prove it, because a `hazptr_array` is typically a member of a `ConcurrentHashMap::ConstIterator` returned by value.
+
+Hoist the entry base out of the loop and hold each record pointer in a local, and drop the dead store. Per element this goes from 3 loads and 2 stores to 1 load and 2 stores.
+
+Factor the body into a private `release_all()`, which the next diff also uses from `hazptr_array::operator=`.
+
+The two branches of `release_
+
+**File**: `folly/synchronization/HazptrHolder.h` (modified, +34/-20)
+```diff
+@@ -252,6 +252,39 @@ class hazptr_array {
+   /** Private constructor used by make_hazard_pointer_array */
+   FOLLY_ALWAYS_INLINE explicit hazptr_array(std::nullptr_t) noexcept {}
+ 
++  /** Releases the owned hazard pointers. Precondition: nonempty. The holders
++      remain alive but their owned hazptr_rec pointers are left unspecified;
++      the caller must either overwrite them or end the lifetime of *this. */
++  FOLLY_ALWAYS_INLINE void release_all() noexcept {
++    DCHECK(!empty_);
++    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
++#if FOLLY_HAZPTR_THR_LOCAL
++    auto& tc = hazptr_tc_tls<Atom>();
++    auto count = tc.count();
++    auto cap = hazptr_tc<Atom>::min_capacity();
++    if (FOLLY_UNLIKELY((M + count) > cap)) {
++      tc.evict((M + count) - cap);
++      count = cap - M;
++    }
++    /* The stores through the hazptr_rec pointers may, as far as the compiler
++       can tell, alias both the thread cache entries and the owned hazptr_rec
++       pointers, so without hoisting the entry base and holding each hazptr_rec
++       pointer in a local they are reloaded on every iteration. */
++    auto* entries = &tc[count];
++    for (uint8_t i = 0; i < M; ++i) {
++      auto* rec = h[i].hprec();
++      DCHECK(rec);
++      rec->reset_hazptr();
++      entries[i].fill(rec);
++    }
++    tc.set_count(count + M);
++#else
++    for (uint8_t i = 0; i < M; ++i) {
++      h[i] = hazptr_holder<Atom>();
++    }
++#endif
++  }
++
+  public:
+   /** Default empty constructor */
+   FOLLY_ALWAYS_INLINE hazptr_array() noexcept {
+@@ -282,26 +315,7 @@ class hazptr_array {
+     if (empty_) {
+       return;
+     }
+-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+-#if FOLLY_HAZPTR_THR_LOCAL
+-    auto& tc = hazptr_tc_tls<Atom>();
+-    auto count = tc.count();
+-    auto cap = hazptr_tc<Atom>::min_capacity();
+-    if (FOLLY_UNLIKELY((M + count) > cap)) {
+-      tc.evict((M + count) - cap);
+-      count = cap - M;
+-    }
+-    for (uint8_t i = 0; i < M; ++i) {
+-      h[i].reset_protection();
+-      tc[count + i].fill(h[i].hprec());
+-      h[i].set_hprec(nullptr);
+-    }
+-    tc.set_count(count + M);
+-#else
+-    for (uint8_t i = 0; i < M; ++i) {
+-      h[i].~hazptr_holder();
+-    }
+-#endif
++    release_all();
+   }
+ 
+   /** Move operator */
+```
+
+**File**: `folly/synchronization/HazptrRec.h` (modified, +2/-0)
+```diff
+@@ -37,6 +37,8 @@ class alignas(hardware_destructive_interference_size) hazptr_rec {
+   friend class hazptr_domain<Atom>;
+   friend class hazptr_holder<Atom>;
+   friend class hazptr_tc<Atom>;
++  template <uint8_t, template <typename> class>
++  friend class hazptr_array;
+   friend hazptr_holder<Atom> make_hazard_pointer<Atom>(hazptr_domain<Atom>&);
+   template <uint8_t M, template <typename> class A>
+   friend hazptr_array<M, A> make_hazard_pointer_array();
 ```
 
 #### Recent Merged Pull Requests:
@@ -2676,73 +2868,32 @@ fbshipit-source-id: b569ee4ba96273f6d6bbf53fd7692f10b85242ac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hazptr: add benchmark probes for holder/array acquire-release
+## X. Build folly::Future and folly::Promise on wasi
 
 **RULE**:
-When implementing operations in `folly/synchronization/test/HazptrBench.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a2a2eb7`: hazptr: add benchmark probes for holder/array acquire-release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd678ec4`: Build folly::Future and folly::Promise on wasi. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/synchronization/test/HazptrBench.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/BUCK`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <new>
-extern "C" FOLLY_KEEP long check_folly_hazptr_make_protect_default_implicit(
-    std::atomic<hazptr_obj_of<long>*>& channel) {
-  auto holder = folly::make_hazard_pointer();
-  auto ptr = holder.protect(channel);
-  return ptr ? *ptr : 0;
-}
-
-extern "C" FOLLY_KEEP void check_folly_hazptr_holder_destroy(
-    folly::hazptr_holder<std::atomic>* holder) {
-  holder->~hazptr_holder();
-}
-
-extern "C" FOLLY_KEEP void check_folly_hazptr_make_array_default(
-    folly::hazptr_array<3>* out) {
-  ::new (out) folly::hazptr_array<3>(folly::make_hazard_pointer_array<3>());
-}
-
-extern "C" FOLLY_KEEP void check_folly_hazptr_array_destroy_default(
-    folly::hazptr_array<3>* array) {
-  array->~hazptr_array();
-}
-
-extern "C" FOLLY_KEEP void check_folly_hazptr_array_move_assign_default(
-    folly::hazptr_array<3>* dst, folly::hazptr_array<3>* src) {
-  *dst = std::move(*src);
-}
-
-template <typename... Args>
-    BenchmarkSuspender& braces, size_t iters, Args&... args) {
-      make_hazard_pointer(args...);
-  do_hazptr_make(braces, iters, domain);
-  do_hazptr_make(braces, iters, domain);
-}
-
-/// same, but without naming the domain, which is how most callers spell it
-BENCHMARK(hazptr_make_default_impl
+    + select({
+        "DEFAULT": [":file_util"],
+        # @fb-only[end= ]: "ovr_config//os:wasi": [],
+        "ovr_config//runtime:fbcode": [],
+    })
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-template <template <typename> class Atom>
-    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
-      make_hazard_pointer(domain);
-  do_hazptr_make(braces, domain, iters);
-  do_hazptr_make(braces, domain, iters);
-template <template <typename> class Atom>
-    BenchmarkSuspender& braces, hazptr_domain<Atom>& domain, size_t iters) {
-      auto h = make_hazard_pointer(domain);
-  do_hazptr_make_protect(braces, domain, iters);
-  do_hazptr_make_protect(braces, domain, iters);
+            ":file_util",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a2a2eb7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd678ec4` are properly handled with clean fallback behavior.

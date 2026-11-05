@@ -3,7 +3,7 @@
 > **Source Version**: `hf-obliterat`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:31:53.616Z  
+> **Timestamp**: 2026-11-05T18:07:50.160Z  
 > **Learning ID**: `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated](https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:31:53.610Z  
+> **Harvest Timestamp**: 2026-11-05T18:07:49.445Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1095 downloads | 205 likes
+- **Stars / Engagement**: 2296 downloads | 258 likes
 
 ---
 

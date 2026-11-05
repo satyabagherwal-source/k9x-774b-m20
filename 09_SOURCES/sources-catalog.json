@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "ee8130ad",
+    "sourceVersion": "4661544e",
     "license": "Apache-2.0",
-    "contentHash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
-    "lastHarvestedAt": "2026-11-04T22:52:26.099Z",
+    "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
+    "lastHarvestedAt": "2026-11-05T18:07:56.908Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -11695,8 +11695,8 @@
     "sourceUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceVersion": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
     "license": "Open-Source",
-    "contentHash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
-    "lastHarvestedAt": "2026-11-02T14:31:53.907Z",
+    "contentHash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
+    "lastHarvestedAt": "2026-11-05T18:07:50.425Z",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated"
   },
   "hf-burner22-numbat": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:00:52.157Z",
-  "total_cycles_completed": 7717,
-  "total_learnings_persisted": 7717,
-  "total_rules_promoted": 7361,
+  "last_updated": "2026-11-05T18:07:56.913Z",
+  "total_cycles_completed": 7719,
+  "total_learnings_persisted": 7719,
+  "total_rules_promoted": 7362,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:15:08.105Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:15:11.664Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:21:35.359Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1403,6 +1389,20 @@
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
       "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:07:50.430Z",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:07:56.913Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

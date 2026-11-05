@@ -7740,3 +7740,5 @@
 | `CYCLE-20261105-LU6M` | `2026-11-05T17:57:30.766Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7a05a61...`) |
 | `CYCLE-20261105-LVWP` | `2026-11-05T17:57:33.002Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4b78f68a...`) |
 | `CYCLE-20261105-Q5KJ` | `2026-11-05T18:00:52.147Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | Yes (`5501fbcb...`) |
+| `CYCLE-20261105-Z4BA` | `2026-11-05T18:07:50.422Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`0abf0361...`) |
+| `CYCLE-20261105-Z9BD` | `2026-11-05T18:07:56.905Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4b3e04e7...`) |

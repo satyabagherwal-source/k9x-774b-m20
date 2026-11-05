@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:00:52.041Z",
+  "last_updated": "2026-11-05T18:07:56.824Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -155755,11 +155755,16 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "ee8130ad",
-      "content_hash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
+      "source_version": "4661544e",
+      "content_hash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Build folly::Future and folly::Promise on wasi",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5437,
           "title": "distributed_mutex_interference_size_test build with GCC < 12",
@@ -155786,7 +155791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:52:25.999Z",
+      "verified_at": "2026-11-05T18:07:56.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170393,7 +170398,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
       "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
-      "content_hash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
+      "content_hash": "0abf036165c6f550fc267bddd2b9683089b4c722b0491fe1f6dfc1575cd39cca",
       "dossier_path": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
       "promoted_rules": [],
@@ -170402,7 +170407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:31:53.777Z",
+      "verified_at": "2026-11-05T18:07:50.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

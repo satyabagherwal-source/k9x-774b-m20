@@ -7749,3 +7749,5 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `3ad9af7b` | Multi-dimensional audit evidence | 2026-11-05T17:57:30.771Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `24d872db` | Multi-dimensional audit evidence | 2026-11-05T17:57:33.005Z |
 | `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-05T18:00:52.151Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-05T18:07:50.425Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `4661544e` | Multi-dimensional audit evidence | 2026-11-05T18:07:56.908Z |
