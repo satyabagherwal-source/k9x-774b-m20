@@ -7678,3 +7678,6 @@ Every entry in this ledger must capture:
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `9a5a72ec` | Multi-dimensional audit evidence | 2026-11-05T13:13:43.003Z |
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-05T13:20:17.648Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `5def2611` | Multi-dimensional audit evidence | 2026-11-05T13:20:32.619Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `9886a813` | Multi-dimensional audit evidence | 2026-11-05T13:27:03.209Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `72e7d838` | Multi-dimensional audit evidence | 2026-11-05T13:27:09.755Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-05T13:27:11.097Z |

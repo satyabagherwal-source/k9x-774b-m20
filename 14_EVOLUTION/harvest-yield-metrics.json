@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T13:20:32.623Z",
-  "total_cycles_completed": 7646,
-  "total_learnings_persisted": 7646,
-  "total_rules_promoted": 7296,
+  "last_updated": "2026-11-05T13:27:11.101Z",
+  "total_cycles_completed": 7649,
+  "total_learnings_persisted": 7649,
+  "total_rules_promoted": 7300,
   "history": [
-    {
-      "timestamp": "2026-11-05T02:55:17.688Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:55:59.075Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-cloudflare-clef-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:02:48.316Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T03:02:49.759Z",
       "repository": "zeronsh/zeron",
@@ -1403,6 +1382,27 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:27:03.213Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:27:09.759Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:27:11.101Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

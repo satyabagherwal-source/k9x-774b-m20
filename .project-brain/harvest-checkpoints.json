@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T13:20:32.634Z",
+  "last_updated": "2026-11-05T13:27:11.104Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
-      "verified_at": "2026-10-31T23:02:09.823Z",
+      "content_hash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
+      "verified_at": "2026-11-05T13:27:11.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:02:09.823Z"
+      "last_updated": "2026-11-05T13:27:11.103Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
-      "verified_at": "2026-11-04T23:27:34.370Z",
+      "content_hash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
+      "verified_at": "2026-11-05T13:27:09.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:27:34.370Z"
+      "last_updated": "2026-11-05T13:27:09.768Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
-      "verified_at": "2026-11-04T19:15:26.564Z",
+      "content_hash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
+      "verified_at": "2026-11-05T13:27:03.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:15:26.564Z"
+      "last_updated": "2026-11-05T13:27:03.222Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

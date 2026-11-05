@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:20:32.554Z",
+  "last_updated": "2026-11-05T13:27:11.042Z",
   "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2996,8 +2996,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "e8a68c1b",
-      "content_hash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
+      "source_version": "72e7d838",
+      "content_hash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -3070,6 +3070,11 @@
           "number": 7021,
           "title": "docs(crypto): clarify cryptographic asset scanning limitations (#11378)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7234,
+          "title": "rocky): add Rocky Linux 10 EOL date (#11531)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3077,7 +3082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:27:34.283Z",
+      "verified_at": "2026-11-05T13:27:09.685Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24769,7 +24774,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
+      "content_hash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -24826,6 +24831,16 @@
           "number": 6356,
           "title": "Joint Modality Temporal Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7235,
+          "title": "Dynamic Sparse Attention Memory Safety & Fallback Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7236,
+          "title": "Joint Modality Token Interleaving & Positional Encoding Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24842,7 +24857,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-31T23:02:09.724Z",
+      "verified_at": "2026-11-05T13:27:11.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51281,8 +51296,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "b074c52f",
-      "content_hash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
+      "source_version": "9886a813",
+      "content_hash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -51355,6 +51370,11 @@
           "number": 6918,
           "title": "Service protocol v8 (#5520)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7233,
+          "title": "[release] Document the hotfix release process",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51362,7 +51382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:15:26.485Z",
+      "verified_at": "2026-11-05T13:27:03.139Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182601,6 +182621,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:20:32.539Z"
+    },
+    "rule-7233": {
+      "learning_id": "rule-7233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7233,
+      "title": "[release] Document the hotfix release process",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "9886a813",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:27:03.139Z"
+    },
+    "rule-7234": {
+      "learning_id": "rule-7234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7234,
+      "title": "rocky): add Rocky Linux 10 EOL date (#11531)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "72e7d838",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:27:09.685Z"
+    },
+    "rule-7235": {
+      "learning_id": "rule-7235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7235,
+      "title": "Dynamic Sparse Attention Memory Safety & Fallback Invariant",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:27:11.028Z"
+    },
+    "rule-7236": {
+      "learning_id": "rule-7236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7236,
+      "title": "Joint Modality Token Interleaving & Positional Encoding Alignment",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:27:11.028Z"
     }
   },
   "aliases": {

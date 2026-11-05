@@ -7669,3 +7669,6 @@
 | `CYCLE-20261105-GVH4` | `2026-11-05T13:13:43.000Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7231` | Yes (`695f2c26...`) |
 | `CYCLE-20261105-PBZH` | `2026-11-05T13:20:17.645Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`51f7c872...`) |
 | `CYCLE-20261105-PNJC` | `2026-11-05T13:20:32.616Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7232` | Yes (`b0deb395...`) |
+| `CYCLE-20261105-Y0X2` | `2026-11-05T13:27:03.206Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7233` | Yes (`0a2d652b...`) |
+| `CYCLE-20261105-Y5YW` | `2026-11-05T13:27:09.752Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7234` | Yes (`7ad1a6f3...`) |
+| `CYCLE-20261105-Y706` | `2026-11-05T13:27:11.094Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7235, Rule 7236` | Yes (`0a82d404...`) |

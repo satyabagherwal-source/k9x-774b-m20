@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "5a184b29f69ef90f8c270d720bf272f3cdf428b535e8207a67bd6dba4f83ed91",
-    "lastHarvestedAt": "2026-10-31T23:02:09.815Z",
+    "contentHash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
+    "lastHarvestedAt": "2026-11-05T13:27:11.097Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "e8a68c1b",
+    "sourceVersion": "72e7d838",
     "license": "Apache-2.0",
-    "contentHash": "5cec5bda721b13122d3e02ff431c4bb383b813a136020255866fbba803517011",
-    "lastHarvestedAt": "2026-11-04T23:27:34.356Z",
+    "contentHash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
+    "lastHarvestedAt": "2026-11-05T13:27:09.755Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "b074c52f",
+    "sourceVersion": "9886a813",
     "license": "NOASSERTION",
-    "contentHash": "e389ed16055de52f7bada15e409e04855ada05a5e8974409aa81a1d409ea0de3",
-    "lastHarvestedAt": "2026-11-04T19:15:26.556Z",
+    "contentHash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
+    "lastHarvestedAt": "2026-11-05T13:27:03.209Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

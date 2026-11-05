@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-XW9D",
-    "timestamp": "2026-11-04T08:03:21.361Z",
-    "repository": "margelo/react-native-vision-camera",
-    "learningId": "learn-github-margelo-react-native-vision-camera",
-    "contentHash": "c4952a70ee4fe514a8323154718efc0e6fded96a002c0453842e61de976f8003",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-Z8BQ",
-    "timestamp": "2026-11-04T08:04:23.654Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "a784eaa96e213ca954ae0e6692018cdbd75679f68b70f462e9a31aa3124b4573",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-1FCT",
-    "timestamp": "2026-11-04T08:06:06.077Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-BROA",
     "timestamp": "2026-11-04T08:14:08.602Z",
     "repository": "embassy-rs/embassy",
@@ -7492,6 +7447,51 @@
     "contentHash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Y0X2",
+    "timestamp": "2026-11-05T13:27:03.206Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Y5YW",
+    "timestamp": "2026-11-05T13:27:09.752Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Y706",
+    "timestamp": "2026-11-05T13:27:11.094Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "0a82d4049276a1709e44f39345675fcbf2459cbc252829e1c690c10f3597bd36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
