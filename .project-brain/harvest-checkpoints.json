@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T05:53:19.430Z",
+  "last_updated": "2026-11-05T06:00:36.560Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1235,14 +1235,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bigscience-bloom",
-      "content_hash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
-      "verified_at": "2026-10-31T15:14:42.225Z",
+      "content_hash": "d72c93dfd26b1c13bdfb627bd5b35e346a7501dab1a4a115092d3f6e616e6ae7",
+      "verified_at": "2026-11-05T06:00:30.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:14:42.225Z"
+      "last_updated": "2026-11-05T06:00:30.950Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
-      "verified_at": "2026-11-05T05:32:34.051Z",
+      "content_hash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
+      "verified_at": "2026-11-05T06:00:36.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:32:34.051Z"
+      "last_updated": "2026-11-05T06:00:36.559Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
-      "verified_at": "2026-11-04T10:05:42.225Z",
+      "content_hash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
+      "verified_at": "2026-11-05T06:00:35.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:05:42.225Z"
+      "last_updated": "2026-11-05T06:00:35.826Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
-      "verified_at": "2026-11-04T10:57:37.095Z",
+      "content_hash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
+      "verified_at": "2026-11-05T06:00:29.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:57:37.095Z"
+      "last_updated": "2026-11-05T06:00:29.280Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

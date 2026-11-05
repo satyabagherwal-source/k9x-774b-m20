@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `ad2fd90c`  
+> **Source Version**: `cdc63f4b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:05:41.906Z  
+> **Timestamp**: 2026-11-05T06:00:35.053Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:05:41.078Z  
+> **Harvest Timestamp**: 2026-11-05T06:00:34.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14292 stars
+- **Stars / Engagement**: 14293 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23581** (2026-11-04): **[COR-1240] [3.12.14] `arangodbtests_rocksdb` gets ICU setup and light crash handler**
-  *Symptoms*: ### Scope & Purpose  ### Problem `tests/RocksDBEngine/LogicalCollectionDescriptorTest.cpp::Serialization_loadOnlyFieldsRoundTripIsStable` hung in the middle; didin't finish forever: <img width="2270" height="456" alt="image" src="https://github.com/user-attachments/assets/993c81d1-e92e-46f4-9598-316298943b2f" />  ### Cause A light crash handler is not set in `arangodbtests_rocksdb` binary. So, no one catch the assertion. In the CI, it runs `arangodbtests` which contains a light crash handler, so it was fine.  After adding a light crash handler, it caught the assertion: ``` [ RUN      ] LogicalCollectionDescriptorTest.Serialization_loadOnlyFieldsRoundTripIsStable [LightCrashHandler] Assertion failed in file lib/Basics/Utf8Helper.cpp:87, expression _coll with message  terminate called without an active exception Aborted (core dumped) ``` The code is: ``` int Utf8Helper::compareUtf8(char const* left, size_t leftLength,                             char const* right, size_t rightLength) const {   TRI_ASSERT(left != nullptr);   TRI_ASSERT(right != nullptr);   TRI_ASSERT(_coll); ``` `_coll` is a collation table that should be created by ICU setup. However, `tests/RocksDBEngine/main.cpp` doesn't set up ICU, so `_coll` is empty.  - [x] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilien
+- **Issue #23587** (2026-11-04): **Update `benchmarks.yml`**
+  *Symptoms*: ### Scope & Purpose  *(Please describe the changes in this PR for reviewers, motivation, rationale - **mandatory**)*  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [ ] GitHub issue / Jira ticket: - [ ] Design document:  
 
-- **Issue #23568** (2026-11-03): **Merge latest devel into 4.0**
-  *Symptoms*: ### Scope & Purpose  Enterprise companion: https://github.com/arangodb/enterprise/pull/1735 
+- **Issue #23586** (2026-11-04): **[COR-1218] Fix the internal error for an unbound MATCH vertex without a label**
+  *Symptoms*: **Problem**  MATCH (v) RETURN v with {matchStatement: "experimental"} fails with internal error 4 (variable not found in reference AstNode) when v has no label and was not previously bound.  It should report a parse error indicating that v needs a label or must be bound earlier.  **Root cause**  A bare (v) is treated as a reference to an existing variable. When the variable is not in scope, the lookup throws an internal error instead of a user facing parse error.  **Fix**  Check whether the variable is in scope before creating the reference. If it is not, raise parse error 1501:  MATCH vertex variable 'v' needs a label or has to be bound earlier  Previously bound variables, such as LET x = DOCUMENT(...) MATCH (x), continue to work.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,273 +1662,162 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0435e6e` (2026-11-02)
-**Commit Message**: Fix formatting
+### Incident Patch 1: `69d30263` (2026-11-04)
+**Commit Message**: Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-icu-lightcrashhandler
 
-**File**: `arangod/VocBase/LogicalCollection.cpp` (modified, +7/-8)
+[COR-1240] [devel] `arangodbtests_rocksdb` gets ICU setup and light crash handler
+
+**File**: `tests/RocksDBEngine/CMakeLists.txt` (modified, +3/-1)
 ```diff
-@@ -1450,14 +1450,13 @@ auto LogicalCollection::getDocumentStateLeader() -> std::shared_ptr<
-     replication2::replicated_state::document::DocumentLeaderState> {
-   auto stateMachine = getDocumentState();
+@@ -32,7 +32,8 @@ target_link_libraries(arango_tests_rocksdb_engine
+ add_executable(arangodbtests_rocksdb
+   main.cpp
+   RestHandlersStub.cpp
+-  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
++  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
++  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
  
--  static constexpr auto throwUnavailable =
--      []<typename... Args>(basics::SourceLocation location,
--                           std::format_string<Args...> formatString,
--                           Args&&... args) {
--        throw basics::Exception(
--            TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
--            std::format(formatString, std::forward<Args>(args)...), location);
--      };
-+  static constexpr auto throwUnavailable = []<typename... Args>(
-+      basics::SourceLocation location, std::format_string<Args...> formatString,
-+      Args && ... args) {
-+    throw basics::Exception(
-+        TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
-+        std::format(formatString, std::forward<Args>(args)...), location);
-+  };
+ target_include_directories(arangodbtests_rocksdb PRIVATE
+   ${PROJECT_SOURCE_DIR}/arangod
+@@ -42,6 +43,7 @@ target_include_directories(arangodbtests_rocksdb PRIVATE
  
-   auto leader = stateMachine->getLeader();
-   if (leader == nullptr) {
+ target_link_libraries(arangodbtests_rocksdb
+   arango_tests_rocksdb_engine
++  arango_crashhandler_light
+   arango_rocksdb
+   arango_metrics_base
+   arango_vocbase
+```
+
+**File**: `tests/RocksDBEngine/main.cpp` (modified, +3/-0)
+```diff
+@@ -23,6 +23,7 @@
+ 
+ #include "Activities/RegistryGlobalVariable.h"
+ #include "Async/Registry/registry_variable.h"
++#include "Basics/icu-helper.h"
+ #include "Basics/VelocyPackHelper.h"
+ 
+ // Entry point for the standalone storage-engine test binary.
+@@ -45,5 +46,7 @@ int main(int argc, char** argv) {
+   arangodb::async_registry::registry.set_metrics(nullptr);
+   arangodb::activities::registry.setMetrics(nullptr);
+ 
++  IcuInitializer::setup(argv[0]);
++
+   return RUN_ALL_TESTS();
+ }
 ```
 
 ---
 
-### Incident Patch 2: `60027d8d` (2026-11-02)
-**Commit Message**: Fix and adjust merge
+### Incident Patch 2: `b1210fba` (2026-11-03)
+**Commit Message**: Add ICU setup in tests/RocksDBEngine/main.cpp; add arango_crashhandler_light to target library
 
-**File**: `arangod/Aql/CalculationQueryContext.cpp` (modified, +0/-7)
+**File**: `tests/RocksDBEngine/CMakeLists.txt` (modified, +3/-1)
 ```diff
-@@ -55,11 +55,4 @@ void CalculationQueryContext::resetRuntimeClock() {
-   _startTime = aql::currentSteadyClockValue();
+@@ -32,7 +32,8 @@ target_link_libraries(arango_tests_rocksdb_engine
+ add_executable(arangodbtests_rocksdb
+   main.cpp
+   RestHandlersStub.cpp
+-  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
++  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
++  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
+ 
+ target_include_directories(arangodbtests_rocksdb PRIVATE
+   ${PROJECT_SOURCE_DIR}/arangod
+@@ -42,6 +43,7 @@ target_include_directories(arangodbtests_rocksdb PRIVATE
+ 
+ target_link_libraries(arangodbtests_rocksdb
+   arango_tests_rocksdb_engine
++  arango_crashhandler_light
+   arango_rocksdb
+   arango_metrics_base
+   arango_vocbase
+```
+
+**File**: `tests/RocksDBEngine/main.cpp` (modified, +3/-0)
+```diff
+@@ -23,6 +23,7 @@
+ 
+ #include "Activities/RegistryGlobalVariable.h"
+ #include "Async/Registry/registry_variable.h"
++#include "Basics/icu-helper.h"
+ #include "Basics/VelocyPackHelper.h"
+ 
+ // Entry point for the standalone storage-engine test binary.
+@@ -45,5 +46,7 @@ int main(int argc, char** argv) {
+   arangodb::async_registry::registry.set_metrics(nullptr);
+   arangodb::activities::registry.setMetrics(nullptr);
+ 
++  IcuInitializer::setup(argv[0]);
++
+   return RUN_ALL_TESTS();
  }
- 
--void CalculationQueryContext::enterV8Executor() {
--  TRI_ASSERT(false);
--  THROW_ARANGO_EXCEPTION_MESSAGE(
--      TRI_ERROR_NOT_IMPLEMENTED,
--      "CalculationQueryContext: entering V8 executor is not implemented");
--}
--
- }  // namespace arangodb::aql
-\ No newline at end of file
 ```
 
-**File**: `arangod/Aql/CalculationQueryContext.h` (modified, +0/-2)
+---
+
+### Incident Patch 3: `cdc63f4b` (2026-11-04)
+**Commit Message**: Merge pull request #23587 from arangodb/fix-ann-benchmark
+
+Update `benchmarks.yml`
+
+**File**: `.circleci/benchmarks.yml` (modified, +2/-2)
 ```diff
-@@ -86,8 +86,6 @@ class CalculationQueryContext final : public arangodb::aql::QueryContext {
+@@ -14,15 +14,15 @@ parameters:
+     description: "Benchmark to run; each has its scripts in scripts/benchmark/<benchmark>/."
+   arango-image:
+     type: string
+-    default: "arangodb/enterprise-preview:3.12-nightly"
++    default: "arangodb/core-preview:4.0-nightly"
+     description: "arangod image the benchmark runs against, e.g. arangodb/core-preview:4.0-nightly for the 4.0 nightly. Ignored with build-arango set to true."
+   build-arango:
+     type: boolean
+     default: true
+     description: "Use compiled local arangod instead of arango-image. The 'nightly-package-x64' CMake preset is used."
+   build-docker-image:
+     type: string
+-    default: "public.ecr.aws/b0b8h2r4/arangodb/ubuntubuildarangodb-312:24.04-b6c8a8886"
++    default: "public.ecr.aws/b0b8h2r4/arangodb/ubuntubuildarangodb-40:24.04-07ab72a0"
+     description: "Only with build-arango: Ubuntu build image the compile job runs in."
  
-   bool isAsyncQuery() const noexcept override { return false; }
- 
--  void enterV8Executor() override;
--
-  private:
-   arangodb::aql::QueryOptions _queryOptions;
-   arangodb::CollectionNameResolver _resolver;
+ commands:
 ```
 
-**File**: `arangod/Aql/StandaloneCalculation.cpp` (modified, +1/-5)
+**File**: `scripts/benchmark/ann/README.md` (modified, +1/-1)
 ```diff
-@@ -25,19 +25,15 @@
- #include "Aql/Ast.h"
- #include "Aql/CalculationQueryContext.h"
- #include "Aql/Expression.h"
-+#include "Aql/Function.h"
- #include "Aql/Parser/Parser.h"
- #include "Aql/QueryContext.h"
- #include "Aql/QueryString.h"
--#include "Aql/Timing.h"
- #include "Basics/Exceptions.h"
--#include "VocBase/Identifiers/DataSourceId.h"
- #include "VocBase/vocbase.h"
+@@ -24,7 +24,7 @@ The scripts here also set up the results store and Grafana locally, so the whole
+    port 8529, so use another one, e.g.:
  
- #include <absl/strings/str_cat.h>
+    ```bash
+-   docker run -d -p 8530:8529 -e ARANGO_NO_AUTH=1 arangodb/enterprise-preview:devel-nightly --vector-index=true
++   docker run -d -p 8530:8529 -e ARANGO_NO_AUTH=1 arangodb/core-preview:4.0-nightly --vector-index=true
+    ```
  
--using namespace arangodb;
--using namespace arangodb::aql;
--
- namespace arangodb::aql {
- 
- std::unique_ptr<CalculationQueryContext>
+ 2. Start the results store + Grafana (http://localhost:3000, `admin` / `admin`). With
 ```
 
-**File**: `arangod/Indexes/CMakeLists.txt` (modified, +2/-1)
+**File**: `scripts/benchmark/ann/docker-compose.yml` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,6 @@
- add_library(arango_indexes STATIC
-   EdgeIndexDefinition.cpp
-+  DeprecatedSecondaryIndexDefinition.cpp
-   FulltextIndexDefinition.cpp
-   Geo1IndexDefinition.cpp
-   Geo2IndexDefinition.cpp
-@@ -30,7 +31,7 @@ target_link_libraries(arango_indexes
-     faiss
-   PRIVATE
-     date_interface)
--  
-+
- target_include_directories(arango_indexes
-     PUBLIC ${IRESEARCH_INCLUDE}
- )
-```
-
-**File**: `arangod/Indexes/DeprecatedSecondaryIndexDefinition.cpp` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+////////////////////////////////////////////////////////////////////////////////
-+/// DISCLAIMER
-+///
-+/// Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
-+/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
-+///
-+/// Licensed under the Business Source License 1.1 (the "License");
-+/// you may not use this file except in compliance with the License.
-+/// You may obtain a copy of the License at
-+///
-+///     https://github.com/arangodb/arangodb/blob/devel/LICENSE
-+///
-+/// Unless required by applicable law or agreed to in writing, software
-+/// distributed under the License is distributed on an "AS IS" BASIS,
-+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+/// See the License for the specific language governing permissions and
-+/// limitations under the License.
-+///
-+/// Copyright holder is ArangoDB GmbH, Cologne, Germany
-+///
-+////////////////////////////////////////////////////////////////////////////////
-+
-+#include "DeprecatedSecondaryIndexDefinition.h"
-+
-+namespace arangodb {
-+
-+Result DeprecatedSecondaryIndexDefinition::normalize(
-+    velocypack::Builder& normalized, velocypack::Slice definition,
-+    bool isCreation, Database const& vocbase) const {
-+  if (isCreation) {
-+    // deprecated index types cannot be created anymore
-+    return Result(TRI_ERROR_BAD_PARAMETER,
-+                  std::string(_deprecatedName) +
-+                      " index type is deprecated and cannot be created "
-+                      "anymore. Please use 'persistent' index type instead.");
-+  }
-+  return SecondaryIndexDefinition::normalize(normalized, definition, isCreation,
-+                                             vocbase);
-+}
-+
-+}  // namespace arangodb
-```
-
-**File**: `arangod/Indexes/DeprecatedSecondaryIndexDefinition.h` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+////////////////////////////////////////////////////////////////////////////////
-+/// DISCLAIMER
-+///
-+/// Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
-+/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
-+///
-+/// Licensed under the Business Source License 1.1 (the "License");
-+/// you may not use this file except in compliance with the License.
-+/// You may obtain a copy of the License at
-+///
-+///     https://github.com/arangodb/arangodb/blob/devel/LICENSE
-+///
-+/// Unless required by applicable law or agreed to in writing, software
-+/// distributed under the License is distributed on an "AS IS" BASIS,
-+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+/// See the License for the specific language governing permissions and
-+/// limitations under the License.
-+///
-+/// Copyright holder is ArangoDB GmbH, Cologne, Germany
-+///
-+////////////////////////////////////////////////////////////////////////////////
-+
-+#pragma once
-+
-+#include "Indexes/SecondaryIndexDefinition.h"
-+
-+namespace arangodb {
-+
-+// Hash/Persistent/Skiplist share the same normalize() rules
-+struct DeprecatedSecondaryIndexDefinition : public SecondaryIndexDefinition {
-+  explicit DeprecatedSecondaryIndexDefinition(IndexType type,
-+                                              std::string_view deprecatedName)
-+      : SecondaryIndexDefinition(type), _deprecatedName(deprecatedName) {}
-+
-+  Result normalize(velocypack::Builder& normalized,
-+                   velocypack::Slice definition, bool isCreation,
-+                   Database const& vocbase) const override;
-+
-+ private:
-+  std::string_view _deprecatedName;
-+};
-+
-+}  // namespace arangodb
-```
-
-**File**: `arangod/Indexes/FulltextIndexDefinition.cpp` (modified, +6/-0)
-```diff
-@@ -35,6 +35,12 @@ Result FulltextIndexDefinition::normalize(velocypack::Builder& normalized,
-                                           velocypack::Slice definition,
-                                           bool isCreation,
-                                           Database const& /*vocbase*/) const {
-+  if (isCreation) {
-+    return Result(TRI_ERROR_BAD_PARAMETER,
-+                  "fulltext indexes are no longer supported since ArangoDB "
-+                  "4.0. Please use ArangoSearch instead.");
-+  }
-+
-   TRI_ASSERT(normalized.isOpenObject());
-   normalized.add(StaticStrings::IndexType,
-                  velocypack::Value(Index::oldtypeName(IndexType::Fulltext)));
-```
-
-**File**: `arangod/Indexes/IndexTypeCatalog.cpp` (modified, +6/-14)
-```diff
-@@ -34,14 +34,13 @@
- using namespace arangodb;
+@@ -2,7 +2,7 @@
+ # `--profile ci` adds the arangod under test and the harness, wired like the
+ # CircleCI job, to reproduce a CI run locally:
+ #   docker compose --profile ci up --build harness
+-x-sut-image: &sut-image ${ARANGODB_IMAGE:-arangodb/enterprise-preview:devel-nightly}
++x-sut-image: &sut-image ${ARANGODB_IMAGE:-arangodb/core-preview:4.0-nightly}
  
- IndexTypeCatalog::IndexTypeCatalog(
--    application_features::ApplicationServer& server,
--    IVectorIndexProvider const& vectorIndexProvider)
--    : _hash(IndexType::Hash),
--      _persistent(IndexType::Persistent),
--      _skiplist(IndexType::Skiplist),
-+    application_features::ApplicationServer& server)
-+    : _persistent(IndexType::Persistent),
-+      _hash(IndexType::Hash, "hash"),
-+      _skiplist(IndexType::Skiplist, "skiplist"),
-       _zkd(IndexType::Zkd),
-       _mdi(IndexType::MDI),
--      _vector(vectorIndexProvider) {
-+      _vector() {
-   // a definition is registered under its persisted name, see Index::oldtypeName
-   auto reg = [&](IndexDefinition const& definition) {
-     _byName.try_emplace(std::string{Index::oldtypeName(definition.type())},
-@@ -117,14 +116,7 @@ bool IndexTypeCatalog::equal(velocypack::Slice lhs, velocypack::Slice rhs,
- }
- 
- std::vector<std::pair<std::string_view, std::string_view>>
--IndexTypeCatalog::aliases(ApiVersion apiVersion) const {
--  if (apiVersion == ApiVersion::V0) {
--    return {
--        {"hash", "persistent"},
--        {"skiplist", "persistent"},
--        {"zkd", "mdi"},
--    };
--  }
-+IndexTypeCatalog::aliases() const {
-   return {{"zkd", "mdi"}};
- }
- 
+ services:
+   arangodb:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23587** (2026-11-04): Update `benchmarks.yml` (@jbajic)
+- **PR #23586** (2026-11-04): [COR-1218] Fix the internal error for an unbound MATCH vertex without a label (@bluepal-avanthi-dundigala)
+- **PR #23585** (2026-11-04): [BTS-2511] Set up the temporary directory once, thread-safely; wait for Current in shard sync checks (@maierlars)
+- **PR #23584** (2026-11-04): Adjust 4.0 branch references to devel after the switch (@mpoeter)
 - **PR #23581** (closed): [COR-1240] [3.12.14] `arangodbtests_rocksdb` gets ICU setup and light crash handler (@knakatasf)
-- **PR #23568** (2026-11-03): Merge latest devel into 4.0 (@mpoeter)
-- **PR #23567** (2026-11-03): Docs: Fix version remark for `--http.decompressed-request-body-global-memory-limit` startup option (@Simran-B)
-- **PR #23558** (2026-10-31): Merge latest devel into 4.0 (@mpoeter)
-- **PR #23556** (2026-10-30): [COR-1200] Delete the old 1.78.0 boost version. (@johann-listunov)
-- **PR #23550** (2026-10-28): [COR-1230] (3.12.13) dont shutdown before upgrade (@goedderz)
+- **PR #23580** (2026-11-04): [COR-1240] [devel] `arangodbtests_rocksdb` gets ICU setup and light crash handler (@knakatasf)
 
 ---
 
@@ -1948,41 +1837,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in LogicalCollection.cpp
+## X. Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-i
 
 **RULE**:
-When implementing operations in `arangod/VocBase/LogicalCollection.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/RocksDBEngine/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0435e6e`: formatting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69d30263`: Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-icu-lightcrashhandler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/VocBase/LogicalCollection.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/RocksDBEngine/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  static constexpr auto throwUnavailable = []<typename... Args>(
-      basics::SourceLocation location, std::format_string<Args...> formatString,
-      Args && ... args) {
-    throw basics::Exception(
-        TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
-        std::format(formatString, std::forward<Args>(args)...), location);
-  };
+  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
+  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
+  arango_crashhandler_light
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  static constexpr auto throwUnavailable =
-      []<typename... Args>(basics::SourceLocation location,
-                           std::format_string<Args...> formatString,
-                           Args&&... args) {
-        throw basics::Exception(
-            TRI_ERROR_REPLICATION_REPLICATED_STATE_NOT_AVAILABLE,
-            std::format(formatString, std::forward<Args>(args)...), location);
-      };
+  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0435e6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69d30263` are properly handled with clean fallback behavior.

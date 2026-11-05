@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
-    "lastHarvestedAt": "2026-10-31T15:14:42.216Z",
+    "contentHash": "d72c93dfd26b1c13bdfb627bd5b35e346a7501dab1a4a115092d3f6e616e6ae7",
+    "lastHarvestedAt": "2026-11-05T06:00:30.933Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a6054657",
+    "sourceVersion": "a1cefa48",
     "license": "Apache-2.0",
-    "contentHash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
-    "lastHarvestedAt": "2026-11-05T05:32:34.041Z",
+    "contentHash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
+    "lastHarvestedAt": "2026-11-05T06:00:36.542Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "ad2fd90c",
+    "sourceVersion": "cdc63f4b",
     "license": "NOASSERTION",
-    "contentHash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
-    "lastHarvestedAt": "2026-11-04T10:05:42.213Z",
+    "contentHash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
+    "lastHarvestedAt": "2026-11-05T06:00:35.805Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "d85afde3",
+    "sourceVersion": "47dc1214",
     "license": "Apache-2.0",
-    "contentHash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
-    "lastHarvestedAt": "2026-11-04T10:57:37.087Z",
+    "contentHash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
+    "lastHarvestedAt": "2026-11-05T06:00:29.262Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

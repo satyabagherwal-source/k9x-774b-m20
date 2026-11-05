@@ -7539,3 +7539,7 @@ Every entry in this ledger must capture:
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `29ffa700` | Multi-dimensional audit evidence | 2026-11-05T05:53:13.497Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `57c1f71e` | Multi-dimensional audit evidence | 2026-11-05T05:53:13.590Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `34019fa3` | Multi-dimensional audit evidence | 2026-11-05T05:53:19.416Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `47dc1214` | Multi-dimensional audit evidence | 2026-11-05T06:00:29.262Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-05T06:00:30.933Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `cdc63f4b` | Multi-dimensional audit evidence | 2026-11-05T06:00:35.805Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a1cefa48` | Multi-dimensional audit evidence | 2026-11-05T06:00:36.542Z |

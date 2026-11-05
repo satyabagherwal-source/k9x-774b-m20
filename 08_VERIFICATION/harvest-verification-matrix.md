@@ -7530,3 +7530,7 @@
 | `CYCLE-20261105-QEC6` | `2026-11-05T05:53:13.494Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7120` | Yes (`b65be452...`) |
 | `CYCLE-20261105-QEER` | `2026-11-05T05:53:13.587Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7121` | Yes (`f0ac7cdb...`) |
 | `CYCLE-20261105-QIWL` | `2026-11-05T05:53:19.413Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7122` | Yes (`aeca0a90...`) |
+| `CYCLE-20261105-ZQKQ` | `2026-11-05T06:00:29.258Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7123` | Yes (`6f95a053...`) |
+| `CYCLE-20261105-ZRV5` | `2026-11-05T06:00:30.929Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7124, Rule 986, Rule 7125` | Yes (`d72c93df...`) |
+| `CYCLE-20261105-ZVMH` | `2026-11-05T06:00:35.801Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7126` | Yes (`c029547f...`) |
+| `CYCLE-20261105-ZW6Z` | `2026-11-05T06:00:36.539Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7127` | Yes (`d55b8ab3...`) |

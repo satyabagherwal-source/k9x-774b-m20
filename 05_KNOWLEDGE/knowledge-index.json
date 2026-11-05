@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T05:53:19.359Z",
+  "last_updated": "2026-11-05T06:00:36.453Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3079,8 +3079,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "ad2fd90c",
-      "content_hash": "3fa6ab2368b407457cdce2ba359d6fa3f8ea8682dc96523f793b5740149cf721",
+      "source_version": "cdc63f4b",
+      "content_hash": "c029547f5a19949f9ae12c1c92347972ef53da3bb17b610e8f673db9a590d20e",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -3133,6 +3133,11 @@
           "number": 5602,
           "title": "Raise version to 3.12.14",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7126,
+          "title": "Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-i",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3140,7 +3145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:05:42.066Z",
+      "verified_at": "2026-11-05T06:00:35.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20563,10 +20568,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "8ad2c1d5e088c3b6c71a8f7f5f9ce0142fee2a0fb65b20c16cba91fa21597d73",
+      "content_hash": "d72c93dfd26b1c13bdfb627bd5b35e346a7501dab1a4a115092d3f6e616e6ae7",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
+        {
+          "number": 986,
+          "title": "Left-Padding Invariant for Batched Causal LM Inference",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1295,
           "title": "Invariant FP32 Softmax Accumulation in Distributed Attention",
@@ -20621,6 +20631,16 @@
           "number": 6230,
           "title": "Numerical Stability in Softmax for High-Dimensional Attention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7124,
+          "title": "Numerical Stability in Attention Mechanisms",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7125,
+          "title": "Pre-LayerNorm Residual Connection Stability",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20640,7 +20660,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-31T15:14:42.114Z",
+      "verified_at": "2026-11-05T06:00:30.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44798,8 +44818,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a6054657",
-      "content_hash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
+      "source_version": "a1cefa48",
+      "content_hash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45052,6 +45072,11 @@
           "number": 6996,
           "title": "Add two-object pairs to ARC genesis datasets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7127,
+          "title": "Add ARC dataset for puzzle 74dd1130",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45059,7 +45084,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:32:33.908Z",
+      "verified_at": "2026-11-05T06:00:36.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48104,8 +48129,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "d85afde3",
-      "content_hash": "fd4e04716be6370d44ed6dfebeab4d3d43845ef233c87d811fe3f2b4627eccf8",
+      "source_version": "47dc1214",
+      "content_hash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -48193,6 +48218,11 @@
           "number": 6823,
           "title": "executor: use TiFlash joined rows for MPP join RU (#72597)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7123,
+          "title": "session, lightning: enable log redaction by default (#72666)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48200,7 +48230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:57:36.976Z",
+      "verified_at": "2026-11-05T06:00:29.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87100,15 +87130,15 @@
       "learning_id": "rule-986",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 986,
-      "title": "Left-Padding Invariant for Batched Causal LM Inference (Harvested from jialinyyzz/humanizer)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Left-Padding Invariant for Batched Causal LM Inference",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-11-05T06:00:30.821Z"
     },
     "rule-987": {
       "learning_id": "rule-987",
@@ -180417,6 +180447,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T05:53:19.344Z"
+    },
+    "rule-7123": {
+      "learning_id": "rule-7123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7123,
+      "title": "session, lightning: enable log redaction by default (#72666)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "47dc1214",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:00:29.149Z"
+    },
+    "rule-7124": {
+      "learning_id": "rule-7124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7124,
+      "title": "Numerical Stability in Attention Mechanisms",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:00:30.821Z"
+    },
+    "rule-7125": {
+      "learning_id": "rule-7125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7125,
+      "title": "Pre-LayerNorm Residual Connection Stability",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:00:30.821Z"
+    },
+    "rule-7126": {
+      "learning_id": "rule-7126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7126,
+      "title": "Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-i",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "cdc63f4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:00:35.694Z"
+    },
+    "rule-7127": {
+      "learning_id": "rule-7127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7127,
+      "title": "Add ARC dataset for puzzle 74dd1130",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "a1cefa48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:00:36.430Z"
     }
   },
   "aliases": {
