@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "2baa819b",
+    "sourceVersion": "641aca38",
     "license": "Apache-2.0",
-    "contentHash": "9a6934b60ac7f3a155d2cb38001dbc94c092898903dcad799b9893c325aa4cf0",
-    "lastHarvestedAt": "2026-11-04T01:58:20.803Z",
+    "contentHash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
+    "lastHarvestedAt": "2026-11-05T04:43:35.775Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "af90d05b",
+    "sourceVersion": "0daf9b82",
     "license": "Apache-2.0",
-    "contentHash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
-    "lastHarvestedAt": "2026-11-04T08:28:39.006Z",
+    "contentHash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
+    "lastHarvestedAt": "2026-11-05T04:43:47.214Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "311c58a2",
+    "sourceVersion": "4d69ce36",
     "license": "Apache-2.0",
-    "contentHash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
-    "lastHarvestedAt": "2026-11-04T09:25:13.780Z",
+    "contentHash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
+    "lastHarvestedAt": "2026-11-05T04:43:41.840Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
-    "lastHarvestedAt": "2026-10-31T14:01:19.852Z",
+    "contentHash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
+    "lastHarvestedAt": "2026-11-05T04:43:32.228Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {

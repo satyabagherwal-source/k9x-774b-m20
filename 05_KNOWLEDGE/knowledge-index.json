@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:36:02.625Z",
+  "last_updated": "2026-11-05T04:43:47.122Z",
   "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15307,8 +15307,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "95194788",
-      "content_hash": "d4df086adba5f5ccb0e24466a92ec462c285e63d0e408ea82a607519f091fd90",
+      "source_version": "641aca38",
+      "content_hash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -15366,6 +15366,11 @@
           "number": 6358,
           "title": "gix-dir): keep all conflict stages tracked (#3134)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7106,
+          "title": "Share generated fixtures across QA test stages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15373,7 +15378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:16:01.615Z",
+      "verified_at": "2026-11-05T04:43:35.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15504,8 +15509,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "af90d05b",
-      "content_hash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
+      "source_version": "0daf9b82",
+      "content_hash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -15518,6 +15523,11 @@
           "number": 6779,
           "title": "Apply table alias column names when copying CTAS schemas (#2060)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7108,
+          "title": "Expand review policies for testing and code structure (#2062)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15525,7 +15535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:28:38.940Z",
+      "verified_at": "2026-11-05T04:43:47.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44072,8 +44082,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "311c58a2",
-      "content_hash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
+      "source_version": "4d69ce36",
+      "content_hash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -44141,6 +44151,11 @@
           "number": 6791,
           "title": "Update github actions (main) (#11306)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7107,
+          "title": "malformed event and status messages for Ingress, VirtualServer, VirtualServerRou",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44148,7 +44163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:25:13.664Z",
+      "verified_at": "2026-11-05T04:43:41.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166706,7 +166721,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
+      "content_hash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -166726,7 +166741,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:01:19.751Z",
+      "verified_at": "2026-11-05T04:43:32.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180067,6 +180082,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:28:56.181Z"
+    },
+    "rule-7106": {
+      "learning_id": "rule-7106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7106,
+      "title": "Share generated fixtures across QA test stages",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "641aca38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:43:35.648Z"
+    },
+    "rule-7107": {
+      "learning_id": "rule-7107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7107,
+      "title": "malformed event and status messages for Ingress, VirtualServer, VirtualServerRou",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "4d69ce36",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:43:41.714Z"
+    },
+    "rule-7108": {
+      "learning_id": "rule-7108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7108,
+      "title": "Expand review policies for testing and code structure (#2062)",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "0daf9b82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:43:47.091Z"
     }
   },
   "aliases": {

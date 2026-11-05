@@ -7514,3 +7514,7 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d14c0804` | Multi-dimensional audit evidence | 2026-11-05T04:28:54.670Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T04:28:56.263Z |
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T04:36:02.731Z |
+| `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T04:43:32.228Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `641aca38` | Multi-dimensional audit evidence | 2026-11-05T04:43:35.775Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `4d69ce36` | Multi-dimensional audit evidence | 2026-11-05T04:43:41.840Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0daf9b82` | Multi-dimensional audit evidence | 2026-11-05T04:43:47.214Z |

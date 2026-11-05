@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `af90d05b`  
+> **Source Version**: `0daf9b82`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:28:38.537Z  
+> **Timestamp**: 2026-11-05T04:43:46.380Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:28:38.195Z  
+> **Harvest Timestamp**: 2026-11-05T04:43:46.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2058,549 +2058,909 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af90d05b` (2026-11-04)
-**Commit Message**: Apply table alias column names when copying CTAS schemas (#2060)
+### Incident Patch 1: `0daf9b82` (2026-11-04)
+**Commit Message**: Expand review policies for testing and code structure (#2062)
 
-CTAS schema copying retained stored column names even when table aliases
-renamed the SELECT output.
+Organize the review policy into dedicated Errors, Testing, and Code
+Structure pages. Update contributor guidance and documentation navigation
+to link the topic policies.
 
-Apply alias column names positionally to copied definitions, preserving
-uncovered column names and all other column properties.
+Define unit tests around each implementation's reachable branches.
+Describe SQL fixtures as executable documentation that also tests
+SQL-reachable executor branches. Require independent expected results
+and visible case-specific inputs and setup.
 
-**File**: `core/src/planner/create_table_columns.rs` (modified, +44/-3)
+Add minimum visibility rules and guidance for minimizing design margin
+and arranging declarations for top-to-bottom reading. Apply the policies
+to new and modified code while keeping unrelated cleanup separate.
+
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -31,9 +31,26 @@ pub fn plan<S: BuildHasher>(
-                         .ok_or_else(|| PlannerError::CtasSourceTableNotFound(table.name.clone()))?;
- 
-                     match &schema.column_defs {
--                        Some(columns) => CreateTableColumnsPlan::Columns(
--                            columns.iter().cloned().map(ColumnDefPlan::from).collect(),
--                        ),
-+                        Some(column_defs) => {
-+                            let aliases = table
-+                                .alias
-+                                .as_ref()
-+                                .map(|alias| alias.columns.as_slice())
-+                                .unwrap_or_default();
-+                            CreateTableColumnsPlan::Columns(
-+                                column_defs
-+                                    .iter()
-+                                    .cloned()
-+                                    .enumerate()
-+                                    .map(|(index, mut column_def)| {
-+                                        if let Some(name) = aliases.get(index) {
-+                                            column_def.name.clone_from(name);
-+                                        }
-+                                        ColumnDefPlan::from(column_def)
-+                                    })
-+                                    .collect(),
-+                            )
-+                        }
-                         None => CreateTableColumnsPlan::Schemaless,
-                     }
-                 }
-@@ -229,6 +246,30 @@ mod tests {
-             "runtime columns keep existing CTAS precedence",
-         );
- 
-+        let actual = "CREATE TABLE Target AS SELECT * FROM Item AS t(renamed_id, renamed_label)";
-+        let expected = create(
-+            Some(query("SELECT * FROM Item AS t(renamed_id, renamed_label)")),
-+            CreateTableColumnsPlan::Columns(columns(&[
-+                "renamed_id INT PRIMARY KEY DEFAULT 1 + 2 COMMENT 'id'",
-+                "renamed_label TEXT",
-+            ])),
-+        );
-+        test(actual, expected, "alias renames every copied column");
-+
-+        let actual = "CREATE TABLE Target AS SELECT * FROM Item AS t(renamed_id)";
-+        let expected = create(
-+            Some(query("SELECT * FROM Item AS t(renamed_id)")),
-+            CreateTableColumnsPlan::Columns(columns(&[
-+                "renamed_id INT PRIMARY KEY DEFAULT 1 + 2 COMMENT 'id'",
-+                "label TEXT",
-+            ])),
-+        );
-+        test(
-+            actual,
-+            expected,
-+            "partial alias keeps uncovered column names",
-+        );
-+
-         let actual = plan_columns(&storage, "CREATE TABLE Target AS SELECT * FROM Missing");
-         let expected = Err(Error::Planner(PlannerError::CtasSourceTableNotFound(
-             "Missing".to_owned(),
+@@ -1,5 +1,5 @@
+ # AGENTS.md
+-- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
++- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
+ - After editing code, run `cargo clippy --all-targets -- -D warnings`.
+ - Then run `cargo fmt --all`.
+ - When importing items, group them under a single `use` statement whenever possible.
 ```
 
-**File**: `test-suite/fixtures/alter/create_table.sql` (modified, +37/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -302,3 +302,40 @@ SELECT * FROM EmptyDefaultCopy;
- CREATE TABLE IF NOT EXISTS DefaultCopy AS SELECT * FROM MissingDefaultSource;
- -- @expect: error Planner.CtasSourceTableNotFound
- -- @json: "MissingDefaultSource"
+@@ -121,7 +121,7 @@ GlueSQL is designed to be adaptable to a wide variety of environments, including
+ 
+ GlueSQL is simpler to contribute to than it may look. Its test suite and continuous integration provide guardrails that catch regressions before changes are merged, so don't hesitate to open an issue or pull request.
+ 
+-Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It defines error naming conventions and how to check the corresponding error paths.
++Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It covers change scope, code structure, error conventions, and test design.
+ 
+ If you're not sure where to start, explore the [test suite](test-suite). The [SQL fixtures](test-suite/fixtures) are a good starting point for getting a sense of GlueSQL's overall capabilities. Try contributing a feature you'd like to use, or browse the [GitHub issues](https://github.com/gluesql/gluesql/issues) for more ideas.
+ 
+```
+
+**File**: `docs/docs/development/review-policy.md` (modified, +10/-132)
+```diff
+@@ -1,138 +1,16 @@
+ # Review Policy
+ 
+-Use this policy when implementing and reviewing changes to GlueSQL.
++Apply this policy to new and modified code and tests in GlueSQL. The linked
++topic documents are part of this policy; read and apply the rules relevant to
++the change. Keep unrelated migrations of existing code in separate changes.
+ 
+-## Error ownership
+-
+-For an error created in a module, search that module and then its parents.
+-Use the first existing error type declared along that path, adding a variant
+-there if needed. A module's own `error.rs` counts as its declaration site;
+-imports and re-exports do not.
+-
+-Choose by declaration location, regardless of feature, SQL statement, or
+-user-facing message. Reapply this rule when moving a check to another module.
+-
+-An error propagated from a call keeps the type chosen where it was created.
+-The caller's location does not change its ownership.
+-
+-Ownership selects the error type. Variants distinguish failures; prefixes
+-classify their conditions.
+-
+-## Error variants
+-
+-Give independent failure conditions distinct variants, even when their messages
+-would be similar. Do not reuse a broad variant across unrelated checks.
+-
+-Represent distinctions within a variant with enum payloads, not string tags or
+-message text. String fields may carry diagnostic data such as table names.
+-
+-For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
+-target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
+-holds the table name; the variants identify the failed checks.
+-
+-An error produced by the same check in a shared function may be propagated
+-unchanged by multiple callers.
+-
+-## Error prefixes
+-
+-The following error-variant prefixes have specific meanings. Choose a prefix by
+-examining the condition that produces the error and how that condition can be
+-reached.
+-
+-| Prefix | Meaning |
++| Topic | Rules |
+ | --- | --- |
+-| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
+-| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
+-| `Unplanned` | Planning required before execution has not been completed. |
+-| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
+-
+-Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
+-invalid values or formats. `Invalid` does not have a special classification
+-meaning and is not reserved for malformed plans.
+-
+-### Unreachable
+-
+-Use `Unreachable` only when the current code makes the error branch impossible.
+-For example:
+-
+-```rust
+-let values = [1, 2, 3];
+-let first = values.get(0);
+-```
+-
+-Here, `first` is always `Some`. A branch handling `None` would be unreachable
+-because both the array length and the index are fixed by the code.
+-
+-The claim must hold for the inputs the code accepts. A branch that can be reached
+-by constructing an AST or plan directly, or by changing storage contents, does
+-not qualify merely because normal SQL execution never reaches it. A planner
+-guarantee alone is insufficient when callers can supply their own plans.
+-
+-During review, identify the code conditions that make the branch impossible. An
+-untested branch is not evidence of unreachability.
+-
+-### Conflict
+-
+-Use `Conflict` when stored state violates an invariant that normal executor
+-operations preserve. For example, a stored row can have fewer values than its
+-schema requires if a caller writes it directly through the storage interface.
+-Reading a missing column during validation can then produce
+-`ConflictOnStorageColumnIndex`.
+-
+-Test this kind of guard by constructing the inconsistent storage state and
+-executing the operation that detects it. Assert the returned error and its
+-details. A normal SQL statement rejected before it changes storage does not
+-exercise that guard.
+-
+-### Unplanned
+-
+-`Unplanned` also names plan states that still need processing by a responsible
+-planner. AST conversion or direct plan construction can produce these states.
+-The planner consumes them and produces the representation needed for execution.
+-
+-For custom function calls, the transition is:
+-
+-```text
+-UnplannedCustom { name, exprs }
+-    -- custom function planner -->
+-Custom { function_id, exprs }
+-```
+-
+-If an unplanned state reaches the executor, return an `Unplanned...` error with
+-the information needed to identify the unfinished work. For example,
+-`UnplannedCustomFunction` retains the function name. The executor must not perform
+-the missing planning step or make the state executable through a fallback.
+-
+-Test the executor guard with an unplanned value that has not passed through its
+-required planner. Also check that the supported planning path consumes that
+-state before execution.
+-
+-### MalformedPlan
+-
+-Use `MalformedPla
+```
+
+**File**: `docs/docs/development/review-policy/code-structure.md` (added, +102/-0)
+```diff
+@@ -0,0 +1,102 @@
++# Code Structure
 +
-+CREATE TABLE AliasSource (id INT, name TEXT);
-+-- @expect: payload Create
++## Minimize margin (guidance)
 +
-+INSERT INTO AliasSource VALUES (1, 'one');
-+-- @expect: payload Insert
-+-- @json: 1
++Margin is the gap between what a design allows or requires and what the code
++actually needs. Keep that gap as small as practical when designing types,
++functions, and modules.
 +
-+-- @name: CTAS copies alias names for every aliased column
-+CREATE TABLE AliasCopyFull AS SELECT * FROM AliasSource AS t(renamed_id, renamed_name);
-+-- @expect: payload Create
++### Represent valid states directly
 +
-+SELECT renamed_id, renamed_name FROM AliasCopyFull ORDER BY renamed_id;
-+-- @expect:
-+-- | renamed_id: I64 | renamed_name: Str |
-+-- | --------------- | ----------------- |
-+-- | 1               | "one"             |
++Suppose a job has three states: pending, running, and finished. Two boolean
++fields can represent them, but also allow a fourth combination:
 +
-+-- @name: CTAS keeps original names for columns the alias does not cover
-+CREATE TABLE AliasCopyPartial AS SELECT * FROM AliasSource AS t(renamed_id);
-+-- @expect: payload Create
++```rust
++struct Job {
++    started: bool,
++    finished: bool,
++}
++```
 +
-+SELECT renamed_id, name FROM AliasCopyPartial ORDER BY renamed_id;
-+-- @expect:
-+-- | renamed_id: I64 | name: Str |
-+-- | --------------- | --------- |
-+-- | 1               | "one"     |
++| `started` | `finished` | Meaning |
++| --- | --- | --- |
++| `false` | `false` | Pending |
++| `true` | `false` | Running |
++| `true` | `true` | Finished |
++| `false` | `true` | Invalid: finished without starting |
 +
-+-- @name: CTAS copies alias names through a qualified wildcard
-+CREATE TABLE AliasCopyQualified AS SELECT t.* FROM AliasSource AS t(renamed_id, renamed_name);
-+-- @expect: payload Create
++Use an enum to represent the three valid states directly:
 +
-+SELECT renamed_id, renamed_name FROM AliasCopyQualified ORDER BY renamed_id;
-+-- @expect:
-+-- | renamed_id: I64 | renamed_name: Str |
-+-- | --------------- | ----------------- |
-+-- | 1               | "one"             |
++```rust
++enum JobState {
++    Pending,
++    Running,
++    Finished,
++}
++
++struct Job {
++    state: JobState,
++}
++```
++
++The invalid combination is no longer representable. Callers do not need to
++preserve a relationship between two independent fields.
++
++### Share common work without forcing operations together
++
++Suppose tags must be trimmed and lowercased, while titles must only be trimmed.
++Combining these operations introduces a flag and a branch:
++
++```rust
++fn normalize(text: &str, for_tag: bool) -> String {
++    let text = text.trim();
++
++    if for_tag {
++        text.to_lowercase()
++    } else {
++        text.to_owned()
++    }
++}
++```
++
++In this example, callers always pass `true` for tags and `false` for titles.
++The flag was added only to combine the two operations. Keep them separate:
++
++```rust
++fn normalize_tag(text: &str) -> String {
++    text.trim().to_lowercase()
++}
++
++fn normalize_title(text: &str) -> String {
++    text.trim().to_owned()
++}
++```
++
++Repeating the small `trim()` call keeps each function's behavior explicit and
++removes the mode flag and branch. Common work can still be shared without
++combining the operations.
++
++Apply the same reasoning to module boundaries. Sharing a helper should not
++require moving unrelated caller-specific types or dependencies into the shared
++module.
++
++These are design guidelines. Some margin may remain when removing it would
++make the overall design more complex.
++
++## Visibility
++
++Use the narrowest visibility needed by callers and the intended API. Apply
++this to functions, types, fields, and re-exports. Sharing code does not
++automatically require `pub(crate)` or `pub`.
++
++Check both module visibility and re-exports to see who can access an item.
++For example, a `pub` function in a private module can be exposed through a
++`pub(super)` re-export.
++
++## Declaration order (guidance)
++
++Prefer an order that lets readers follow the code from top to bottom with
++fewer jumps between declarations.
++
++Use this as a guide for new modules. Leave unrelated code in place when
++editing existing files.
+```
+
+**File**: `docs/docs/development/review-policy/errors.md` (added, +134/-0)
+```diff
+@@ -0,0 +1,134 @@
++# Errors
++
++## Error ownership
++
++For an error created in a module, search that module and then its parents.
++Use the first existing error type declared along that path, adding a variant
++there if needed. A module's own `error.rs` counts as its declaration site;
++imports and re-exports do not.
++
++Choose by declaration location, regardless of feature, SQL statement, or
++user-facing message. Reapply this rule when moving a check to another module.
++
++An error propagated from a call keeps the type chosen where it was created.
++The caller's location does not change its ownership.
++
++Ownership selects the error type. Variants distinguish failures; prefixes
++classify their conditions.
++
++## Error variants
++
++Give independent failure conditions distinct variants, even when their messages
++would be similar. Do not reuse a broad variant across unrelated checks.
++
++Represent distinctions within a variant with enum payloads, not string tags or
++message text. String fields may carry diagnostic data such as table names.
++
++For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
++target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
++holds the table name; the variants identify the failed checks.
++
++An error produced by the same check in a shared function may be propagated
++unchanged by multiple callers.
++
++## Error prefixes
++
++The following error-variant prefixes have specific meanings. Choose a prefix by
++examining the condition that produces the error and how that condition can be
++reached.
++
++| Prefix | Meaning |
++| --- | --- |
++| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
++| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
++| `Unplanned` | Planning required before execution has not been completed. |
++| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
++
++Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
++invalid values or formats. `Invalid` does not have a special classification
++meaning and is not reserved for malformed plans.
++
++### Unreachable
++
++Use `Unreachable` only when the current code makes the error branch impossible.
++For example:
++
++```rust
++let values = [1, 2, 3];
++let first = values.get(0);
++```
++
++Here, `first` is always `Some`. A branch handling `None` would be unreachable
++because both the array length and the index are fixed by the code.
++
++The claim must hold for the inputs the code accepts. A branch that can be reached
++by constructing an AST or plan directly, or by changing storage contents, does
++not qualify merely because normal SQL execution never reaches it. A planner
++guarantee alone is insufficient when callers can supply their own plans.
++
++During review, identify the code conditions that make the branch impossible. An
++untested branch is not evidence of unreachability.
++
++### Conflict
++
++Use `Conflict` when stored state violates an invariant that normal executor
++operations preserve. For example, a stored row can have fewer values than its
++schema requires if a caller writes it directly through the storage interface.
++Reading a missing column during validation can then produce
++`ConflictOnStorageColumnIndex`.
++
++Test this kind of guard by constructing the inconsistent storage state and
++executing the operation that detects it. Assert the returned error and its
++details. A normal SQL statement rejected before it changes storage does not
++exercise that guard.
++
++### Unplanned
++
++`Unplanned` also names plan states that still need processing by a responsible
++planner. AST conversion or direct plan construction can produce these states.
++The planner consumes them and produces the representation needed for execution.
++
++For custom function calls, the transition is:
++
++```text
++UnplannedCustom { name, exprs }
++    -- custom function planner -->
++Custom { function_id, exprs }
++```
++
++If an unplanned state reaches the executor, return an `Unplanned...` error with
++the information needed to identify the unfinished work. For example,
++`UnplannedCustomFunction` retains the function name. The executor must not perform
++the missing planning step or make the state executable through a fallback.
++
++Test the executor guard with an unplanned value that has not passed through its
++required planner. Also check that the supported planning path consumes that
++state before execution.
++
++### MalformedPlan
++
++Use `MalformedPlan` when a plan uses an execution representation but violates its
++structural requirements. For example, a `Custom` call with `function_id: 10`
++cannot refer to a definition when the statement's function list is empty. The
++guard returns `MalformedPlanCustomFunctionIndex(10)`.
++
++This differs from `UnplannedCustom`: the call alrea
+```
+
+**File**: `docs/docs/development/review-policy/testing.md` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++# Testing
++
++## Unit tests
++
++Test every reachable branch of the implementation. Use inputs that reach each
++branch, and assert its result or state change. A test that fails earlier in the
++pipeline does not cover that branch.
++
++Put unit tests in an inline `#[cfg(test)] mod tests` in the module that contains
++the implementation. Do not put them in a separate `tests.rs` file or a module
++that only re-exports the implementation.
++
++Move the tests when you move the implementation. Do not widen production
++visibility just to let tests access private code.
++
++Test the branches of shared code in its own module. Caller tests cover the
++caller's branches, including how it uses results and handles errors from shared
++code.
++
++For a planner pass, prepare the inputs it needs and call the pass directly.
++Use separate test cases to check that the full planner pipeline runs the pass.
++
++Test an execution entry point's own branches in its unit tests.
++
++## SQL fixtures
++
++The SQL fixtures in `test-suite/fixtures` are executable documentation for
++people and tools. Group cases by SQL feature and behavior. Use representative
++examples that show successful usage and expected errors. Give each case a clear
++name, and keep its setup, SQL, and expected results easy to read.
++
++The fixtures also serve a unit-testing role for the execution layer.
++For each behavior covered by a fixture, test every executor branch and error
++path that SQL can reach. Run the cases through the production SQL pipeline and
++assert their results. When a case tests storage behavior, also check the stored
++state. Readable examples and branch coverage are both required.
++
++One scenario can cover several branches. Different SQL behaviors may need
++separate examples even when they use the same branch.
++
++Constructing an AST or plan directly does not prove that SQL can reach the same
++behavior. For guards that require a manually constructed plan or inconsistent
++storage, use the setup and assertions in [Error prefixes](errors.md#error-prefixes).
++
++## Expected results
++
++Assert the expected result:
++
++- For a plan transformation, check the expected plan structure.
++- For an error, check the variant and its relevant fields.
++- For formatting, compare the exact output.
++
++Use success or failure checks alone only when no result value or structure
++needs to be verified.
++
++Write expected values explicitly. Do not copy or modify the actual output to
++create them. Do not calculate them with the code being tested.
++
++A helper may convert an expected value to the type used by the assertion.
++For example, a planner test may parse and translate expected SQL into a plan.
++Do not run the planner being tested to build the expected plan.
++
++## Inputs and helpers
++
++Keep the inputs and expected results visible in each test case. Also show the
++setup that determines the behavior being tested.
++
++Use helpers for repeated parsing, calls, and assertions. Do not hide choices
++that the test checks inside a helper, such as variants, IDs, defaults, or
++traversal rules.
+```
+
+**File**: `docs/zensical.toml` (modified, +6/-1)
+```diff
+@@ -253,7 +253,12 @@ nav = [
+     ]},
+   ]},
+   {"Development" = [
+-    "development/review-policy.md",
++    {"Review Policy" = [
++      {"Overview" = "development/review-policy.md"},
++      "development/review-policy/errors.md",
++      "development/review-policy/testing.md",
++      "development/review-policy/code-structure.md",
++    ]},
+   ]},
+   {"Archive" = [
+     {"Articles" = [
 ```
 
 ---
 
-### Incident Patch 2: `89122b1b` (2026-11-04)
-**Commit Message**: Move CTAS column default planning out of the executor (#2057)
+### Incident Patch 2: `943afa57` (2026-11-04)
+**Commit Message**: Move CREATE INDEX validation into the planner (#2061)
 
-Prepare copied CTAS column definitions and their defaults during planning,
-removing execution-time AST-to-plan conversion for those definitions.
+Collect the target schema and validate CREATE INDEX definitions in a
+dedicated planner step in both the default and Sled pipelines.
 
-Introduce CreateTableColumnsPlan to distinguish unplanned columns, prepared
-columns, schemaless tables, and query-based inference. Reject unplanned
-columns and query-based inference without a source during execution.
-Rename the INSERT columns planner to clarify its responsibility.
+Pass the original index definition directly to storage during execution,
+removing the core executor's last plan_scalar_expr call. Report definition
+errors through PlannerError, with distinct variants for missing tables,
+missing columns, unsupported expressions, and missing column references.
 
-General SELECT and VALUES sources continue to use value-based column
-inference. Copied-column preparation runs before the IF NOT EXISTS execution
-skip, so missing copy sources are reported even when the target exists.
+Document error-variant conventions for independent failure conditions,
+enum payloads, and diagnostic strings.
 
-Correct the foreign-key conflict error message to match its Conflict variant.
-
-**File**: `core/src/executor/alter/error.rs` (modified, +5/-2)
+**File**: `core/src/executor/alter.rs` (modified, +0/-2)
 ```diff
-@@ -22,8 +22,11 @@ pub enum AlterError {
+@@ -1,7 +1,6 @@
+ mod alter_table;
+ mod error;
+ mod function;
+-mod index;
+ mod table;
+ mod validate;
+ 
+@@ -11,6 +10,5 @@ pub use {
+     alter_table::alter_table,
+     error::AlterError,
+     function::{delete_function, insert_function},
+-    index::create_index,
+     table::{CreateTableOptions, Referencing, create_table, drop_table},
+ };
+```
+
+**File**: `core/src/executor/alter/error.rs` (modified, +1/-8)
+```diff
+@@ -18,7 +18,7 @@ pub enum AlterError {
+     #[error("function does not exist: {0}")]
+     FunctionNotFound(String),
+ 
+-    // CREATE INDEX, DROP TABLE
++    // DROP TABLE, ALTER TABLE
      #[error("table does not exist: {0}")]
      TableNotFound(String),
  
--    #[error("CTAS source table does not exist: {0}")]
--    CtasSourceTableNotFound(String),
-+    #[error("unplanned CREATE TABLE columns: {0}")]
-+    UnplannedCreateTableColumns(String),
-+
-+    #[error("malformed plan - CREATE TABLE source query is missing")]
-+    MalformedPlanCreateTableSource,
- 
-     // validate column def
+@@ -32,17 +32,10 @@ pub enum AlterError {
      #[error("column '{0}' of data type '{1:?}' is unsupported for unique constraint")]
+     UnsupportedDataTypeForUniqueColumn(String, DataType),
+ 
+-    // validate index expr
+-    #[error("unsupported index expression")]
+-    UnsupportedIndexExpr,
+-
+     // validate index expr
+     #[error("unsupported unnamed argument")]
+     UnsupportedUnnamedArg,
+ 
+-    #[error("index expression must reference at least one column")]
+-    IndexExprRequiresColumnReference,
+-
+     #[error("duplicate column name: {0}")]
+     DuplicateColumnName(String),
+ 
 ```
 
-**File**: `core/src/executor/alter/table.rs` (modified, +114/-101)
+**File**: `core/src/executor/alter/index.rs` (removed, +0/-57)
 ```diff
-@@ -7,10 +7,7 @@ use {
-             evaluate::evaluate,
-             query::{self, OutputBody},
-         },
--        plan::{
--            ColumnDefPlan, CustomFunctionPlan, FilterInputPlan, ProjectInputPlan, ProjectPlan,
--            ProjectionPlan, QueryPlan, SelectItemPlan, SourcePlan, ValuesPlan,
--        },
-+        plan::{ColumnDefPlan, CreateTableColumnsPlan, CustomFunctionPlan, QueryPlan, ValuesPlan},
-         prelude::{DataType, Value},
-         result::Result,
-         store::{GStore, GStoreMut},
-@@ -21,7 +18,7 @@ use {
- 
- pub struct CreateTableOptions<'a> {
-     pub target_table_name: &'a str,
--    pub column_defs: Option<&'a [ColumnDefPlan]>,
-+    pub columns: &'a CreateTableColumnsPlan,
-     pub if_not_exists: bool,
-     pub source: &'a Option<Box<QueryPlan>>,
-     pub engine: &'a Option<String>,
-@@ -34,47 +31,36 @@ pub fn create_table<T: GStore + GStoreMut>(
-     functions: &[CustomFunctionPlan],
-     CreateTableOptions {
-         target_table_name,
--        column_defs,
-+        columns,
-         if_not_exists,
-         source,
-         engine,
-         foreign_keys,
-         comment,
-     }: CreateTableOptions<'_>,
- ) -> Result<()> {
--    if if_not_exists && source.is_some() && storage.fetch_schema(target_table_name)?.is_some() {
--        return Ok(());
+@@ -1,57 +0,0 @@
+-use {
+-    super::AlterError,
+-    crate::{
+-        ast::{ColumnDef, OrderByExpr},
+-        data::Schema,
+-        plan::{ExprPlan, FunctionPlan, plan_scalar_expr},
+-        result::Result,
+-        store::{GStore, GStoreMut},
+-    },
+-};
+-
+-pub fn create_index<T: GStore + GStoreMut>(
+-    storage: &mut T,
+-    table_name: &str,
+-    index_name: &str,
+-    column: &OrderByExpr,
+-) -> Result<()> {
+-    let expr = plan_scalar_expr(column.expr.clone());
+-    let Schema { column_defs, .. } = storage
+-        .fetch_schema(table_name)?
+-        .ok_or_else(|| AlterError::TableNotFound(table_name.to_owned()))?;
+-    let columns = column_defs
+-        .unwrap_or_default()
+-        .into_iter()
+-        .map(|ColumnDef { name, .. }| name)
+-        .collect::<Vec<_>>();
+-
+-    let (valid, has_ident) = validate_index_expr(&columns, &expr);
+-    if !valid {
+-        return Err(AlterError::UnsupportedIndexExpr.into());
+-    } else if !has_ident {
+-        return Err(AlterError::IndexExprRequiresColumnReference.into());
 -    }
 -
-     let mut selected_source_rows = None;
--    let target_columns_defs = match source.as_deref() {
--        Some(source_query) => match query::output_body(source_query) {
--            OutputBody::Project(project) => match source_for_schema_copy(project) {
--                Some(SourcePlan::Table(table)) => {
--                    let schema = storage.fetch_schema(&table.name)?;
--                    let Schema {
--                        column_defs: source_column_defs,
--                        ..
--                    } = schema
--                        .ok_or_else(|| AlterError::CtasSourceTableNotFound(table.name.clone()))?;
+-    storage.create_index(table_name, index_name, column)
+-}
 -
--                    source_column_defs.map(|column_defs| {
--                        column_defs.into_iter().map(ColumnDefPlan::from).collect()
--                    })
--                }
--                Some(SourcePlan::Series(_)) => {
--                    let column_def = ColumnDefPlan {
--                        name: "N".into(),
--                        data_type: DataType::Int,
--                        nullable: false,
--                        default: None,
--                        unique: None,
--                        comment: None,
--                    };
+-fn validate_index_expr(columns: &[String], expr: &ExprPlan) -> (bool, bool) {
+-    let validate = |expr| validate_index_expr(columns, expr);
 -
--                    Some(vec![column_def])
--                }
--                _ => {
-+    let target_columns_defs = match columns {
-+        CreateTableColumnsPlan::Unplanned { .. } => {
-+            return Err(
-+                AlterError::UnplannedCreateTableColumns(target_table_name.to_owned()).into(),
-+            );
+-    match expr {
+-        ExprPlan::Identifier(ident) => (columns.iter().any(|column| column == ident), true),
+-        ExprPlan::Literal(_) | ExprPlan::TypedString { .. } => (true, false),
+-        ExprPlan::Nested(expr) | ExprPlan::UnaryOp { expr, .. } => validate(expr),
+-        ExprPlan::BinaryOp { left, right, .. } => {
+-            let (valid_l, has_ident_l) = validate(left);
+-            let (valid_r, has_ident_r) = validate(right);
+-
+-            (valid_l && valid_r, has_ident_l || has_ident_r)
+-        }
+-        ExprPlan::Function(func) => match func.as_ref() {
+-            FunctionPlan::Cast { expr, .. } => validate(expr),
+-            _ => (false, false),
+-        },
+-        _ => (false, false),
+-    }
+-}
+```
+
+**File**: `core/src/executor/execute.rs` (modified, +5/-3)
+```diff
+@@ -1,8 +1,8 @@
+ use {
+     super::{
+         alter::{
+-            CreateTableOptions, alter_table, create_index, create_table, delete_function,
+-            drop_table, insert_function,
++            CreateTableOptions, alter_table, create_table, delete_function, drop_table,
++            insert_function,
+         },
+         delete::delete,
+         fetch::fetch,
+@@ -176,7 +176,9 @@ fn execute_inner<T: GStore + GStoreMut>(
+             name,
+             table_name,
+             column,
+-        } => create_index(storage, table_name, name, column).map(|()| Payload::CreateIndex),
++        } => storage
++            .create_index(table_name, name, column)
++            .map(|()| Payload::CreateIndex),
+         StatementPlanKind::DropIndex { name, table_name } => storage
+             .drop_index(table_name, name)
+             .map(|()| Payload::DropIndex),
+```
+
+**File**: `core/src/planner.rs` (modified, +2/-0)
+```diff
+@@ -12,6 +12,7 @@ mod query;
+ mod schema;
+ mod schemaless;
+ mod validate;
++mod validate_create_index;
+ mod visit;
+ mod visit_mut;
+ 
+@@ -27,4 +28,5 @@ pub use {
+     primary_key::plan as plan_primary_key,
+     schema::fetch_schema_map,
+     schemaless::plan as plan_schemaless,
++    validate_create_index::validate as validate_create_index,
+ };
+```
+
+**File**: `core/src/planner/error.rs` (modified, +12/-0)
+```diff
+@@ -2,6 +2,18 @@ use {serde::Serialize, std::fmt::Debug, thiserror::Error as ThisError};
+ 
+ #[derive(ThisError, Serialize, Debug, PartialEq, Eq)]
+ pub enum PlannerError {
++    #[error("CREATE INDEX target table does not exist: {0}")]
++    CreateIndexTableNotFound(String),
++
++    #[error("CREATE INDEX column does not exist: {0}")]
++    CreateIndexColumnNotFound(String),
++
++    #[error("unsupported index expression")]
++    UnsupportedIndexExpr,
++
++    #[error("index expression must reference at least one column")]
++    IndexExprRequiresColumnReference,
++
+     #[error("CTAS source table does not exist: {0}")]
+     CtasSourceTableNotFound(String),
+ 
+```
+
+**File**: `core/src/planner/schema.rs` (modified, +42/-1)
+```diff
+@@ -50,6 +50,15 @@ pub fn fetch_schema_map<T: Store + ?Sized>(
+ 
+             Ok(schema_list)
+         }
++        StatementPlanKind::CreateIndex { table_name, .. } => {
++            let schema_map = storage
++                .fetch_schema(table_name)?
++                .map_or_else(HashMap::new, |schema| {
++                    HashMap::from([(table_name.to_owned(), schema)])
++                });
++
++            Ok(schema_map)
 +        }
-+        _ if if_not_exists
-+            && source.is_some()
-+            && storage.fetch_schema(target_table_name)?.is_some() =>
-+        {
-+            return Ok(());
-+        }
-+        CreateTableColumnsPlan::Columns(columns) => Some(columns.clone()),
-+        CreateTableColumnsPlan::Schemaless => None,
-+        CreateTableColumnsPlan::FromQuery => {
-+            let source_query = source
-+                .as_deref()
-+                .ok_or(AlterError::MalformedPlanCreateTableSource)?;
-+
-+            match query::output_body(source_query) {
-+                OutputBody::Project(_) => {
-                     let (labels, rows) =
-                         query::execute_with_labels(storage, functions, source_query, None)?;
-                     let rows = rows
-@@ -85,49 +71,47 @@ pub fn create_table<T: GStore + GStoreMut>(
- 
-                     Some(column_defs)
-                 }
--            },
--            OutputBody::Values(ValuesPlan(values_list)) => {
--                let first_len = values_list[0].len();
--                let mut column_types = vec![None; first_len];
--
--                for exprs in values_list {
--                    for (i, expr) in exprs.iter().enumerate() {
--                        if column_types[i].is_some() {
--                            continue;
-+                OutputBody::Values(ValuesPlan(values_list)) => {
-+                    let first_len = values_list[0].len();
-+                    let mut column_types = vec![None; first_len];
-+
-+                    for exprs in values_list {
-+                        for (i, expr) in exprs.iter().enumerate() {
-+                            if column_types[i].is_some() {
-+                                continue;
-+                            }
-+
-+                            column_types[i] = evaluate(storage, functions, None, None, expr)
-+                                .and_then(Value::try_from)
-+                                .map(|value| value.get_type())?;
-                         }
- 
--                        column_types[i] = evaluate(storage, functions, None, None, expr)
--                            .and_then(Value::try_from)
--                       
-```
-
-**File**: `core/src/executor/execute.rs` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ fn execute_inner<T: GStore + GStoreMut>(
-         } => {
-             let options = CreateTableOptions {
-                 target_table_name: name,
--                column_defs: columns.as_ref().map(Vec::as_slice),
-+                columns,
-                 if_not_exists: *if_not_exists,
-                 source,
-                 engine,
-```
-
-**File**: `core/src/executor/insert/error.rs` (modified, +1/-1)
-```diff
-@@ -35,6 +35,6 @@ pub enum InsertError {
-         referenced_value: String,
-     },
- 
--    #[error("unreachable referencing column name: {0}")]
-+    #[error("conflict - foreign key referencing column not found in schema or row: {0}")]
-     ConflictReferencingColumnName(String),
- }
-```
-
-**File**: `core/src/plan/statement.rs` (modified, +89/-12)
-```diff
-@@ -6,8 +6,8 @@ mod query;
- 
- pub use {
-     ddl::{
--        AlterTableOperationPlan, ColumnDefPlan, DefaultExpr, OperateFunctionArgPlan,
--        TableColumnsPlan,
-+        AlterTableOperationPlan, ColumnDefPlan, CreateTableColumnsPlan, DefaultExpr,
-+        OperateFunctionArgPlan, TableColumnsPlan,
-     },
-     expr::{
-         AggregateExprPlan, AggregateFunctionPlan, CountArgExprPlan, ExprPlan, plan_scalar_expr,
-@@ -61,7 +61,7 @@ pub enum StatementPlanKind {
-     CreateTable {
-         if_not_exists: bool,
-         name: String,
--        columns: Option<Vec<ColumnDefPlan>>,
-+        columns: CreateTableColumnsPlan,
-         source: Option<Box<QueryPlan>>,
-         engine: Option<String>,
-         foreign_keys: Vec<ForeignKey>,
-@@ -147,15 +147,27 @@ impl From<ast::Statement> for StatementPlanKind {
-                 engine,
-                 foreign_keys,
-                 comment,
--            } => Self::CreateTable {
--                if_not_exists,
--                name,
--                columns: columns.map(|columns| columns.into_iter().map(Into::into).collect()),
--                source: source.map(|query| Box::new((*query).into())),
--                engine,
--                foreign_keys,
--                comment,
--            },
-+            } => {
-+                let columns = columns.map(|columns| columns.into_iter().map(Into::into).collect());
-+                let columns = if source.is_some() {
-+                    CreateTableColumnsPlan::Unplanned { columns }
-+                } else {
-+                    columns.map_or(
-+                        CreateTableColumnsPlan::Schemaless,
-+                        CreateTableColumnsPlan::Columns,
-+                    )
-+                };
-+
-+                Self::CreateTable {
-+                    if_not_exists,
-+                    name,
-+                    columns,
-+                    source: source.map(|query| Box::new((*query).into())),
-+                    engine,
-+                    foreign_keys,
-+                    comment,
-+                }
-+            }
-             ast::Statement::CreateFunction {
-                 or_replace,
-                 name,
-@@ -227,3 +239,68 @@ impl From<ast::Statement> for StatementPlan {
-         StatementPlanKind::from(statement).into()
+         StatementPlanKind::DropTable { names, .. } => {
+             let mut schema_map = HashMap::new();
+             for table_name in names {
+@@ -408,7 +417,7 @@ mod tests {
+         crate::{
+             mock::{MockStorage, run},
+             parse_sql::parse,
+-            result::Result,
++            result::{Error, Result},
+             translate::translate,
+         },
+     };
+@@ -447,6 +456,38 @@ mod tests {
+         test("DELETE FROM Foo;", &["Foo"]);
      }
- }
+ 
++    #[test]
++    fn create_index() {
++        let storage = run("CREATE TABLE Foo (id INTEGER)");
++        let test = |sql: &str, expected: &[&str], name: &str| {
++            let actual = plan(&storage, sql).expect(sql);
++            assert_eq!(actual.as_slice(), expected, "{name}: {sql}");
++        };
++
++        let actual = "CREATE INDEX idx ON Foo (id)";
++        let expected = &["Foo"];
++        test(actual, expected, "index target schema");
++
++        let actual = "CREATE INDEX idx ON Missing (id)";
++        let expected = &[];
++        test(actual, expected, "missing schema is left to validation");
++
++        let actual = "CREATE INDEX idx ON Foo ((SELECT id FROM __Err__))";
++        let expected = &["Foo"];
++        test(
++            actual,
++            expected,
++            "unsupported index subquery is not scanned",
++        );
++
++        let sql = "CREATE INDEX idx ON __Err__ (id)";
++        let actual = plan(&storage, sql);
++        let expected = Err(Error::StorageMsg(
++            "[MockStorage] fetch_schema - user triggered error".to_owned(),
++        ));
++        assert_eq!(actual, expected, "target schema error propagates: {sql}");
++    }
++
+     #[test]
+     fn expr() {
+         let storage = run("
+```
+
+**File**: `core/src/planner/validate_create_index.rs` (added, +273/-0)
+```diff
+@@ -0,0 +1,273 @@
++use {
++    super::PlannerError,
++    crate::{
++        ast::{ColumnDef, Expr, Function},
++        data::Schema,
++        plan::{StatementPlan, StatementPlanKind},
++        result::Result,
++    },
++    std::{collections::HashMap, hash::BuildHasher},
++};
++
++pub fn validate<S: BuildHasher>(
++    schema_map: &HashMap<String, Schema, S>,
++    statement: &StatementPlan,
++) -> Result<()> {
++    if let StatementPlanKind::CreateIndex {
++        table_name, column, ..
++    } = &statement.kind
++    {
++        let schema = schema_map
++            .get(table_name)
++            .ok_or_else(|| PlannerError::CreateIndexTableNotFound(table_name.clone()))?;
++        let columns = schema.column_defs.as_deref().unwrap_or_default();
++
++        let has_ident = validate_index_expr(columns, &column.expr)?;
++        if !has_ident {
++            return Err(PlannerError::IndexExprRequiresColumnReference.into());
++        }
++    }
++
++    Ok(())
++}
++
++fn validate_index_expr(columns: &[ColumnDef], expr: &Expr) -> Result<bool> {
++    let validate = |expr| validate_index_expr(columns, expr);
++
++    match expr {
++        Expr::Identifier(ident) => {
++            if columns.iter().any(|column| column.name == *ident) {
++                Ok(true)
++            } else {
++                Err(PlannerError::CreateIndexColumnNotFound(ident.to_owned()).into())
++            }
++        }
++        Expr::Literal(_) | Expr::TypedString { .. } => Ok(false),
++        Expr::Nested(expr) | Expr::UnaryOp { expr, .. } => validate(expr),
++        Expr::BinaryOp { left, right, .. } => {
++            let has_ident_l = validate(left)?;
++            let has_ident_r = validate(right)?;
++
++            Ok(has_ident_l || has_ident_r)
++        }
++        Expr::Function(func) => match func.as_ref() {
++            Function::Cast { expr, .. } => validate(expr),
++            _ => Err(PlannerError::UnsupportedIndexExpr.into()),
++        },
++        _ => Err(PlannerError::UnsupportedIndexExpr.into()),
++    }
++}
 +
 +#[cfg(test)]
 +mod tests {
 +    use {
-+        super::{CreateTableColumnsPlan, StatementPlanKind},
++        super::{validate, validate_index_expr},
 +        crate::{
-+            ast::{DataType, Literal},
-+            parse_sql::parse,
-+            plan::{ColumnDefPlan, ExprPlan, QueryPlan, ValuesPlan},
-+            translate::translate,
++            ast::{ColumnDef, Expr},
++            data::Value,
++            mock::run,
++            parse_sql::{parse, parse_expr},
++            plan::StatementPlan,
++            planner::{PlannerError, fetch_schema_map},
++            query_builder::ColumnDefNode,
++            result::Error,
++            store::Planner,
++            translate::{NO_PARAMS, translate, translate_expr},
 +        },
 +    };
 +
-+    #[test]
-+    fn create_table_columns() {
-+        let test = |sql: &str, columns, source: Option<QueryPlan>| {
-+            let parsed = parse(sql).expect(sql);
-+            let actual = StatementPlanKind::from(translate(&parsed[0]).expect(sql));
-+            let expected = StatementPlanKind::CreateTable {
-+                if_not_exists: false,
-+                name: "Item".to_owned(),
-+                columns,
-+                source: source.map(Box::new),
-+                engine: None,
-+                foreign_keys: Vec::new(),
-+                comment: None,
-+            };
-+            assert_eq!(actual, expected, "{sql}");
-+        };
-+        let columns = vec![ColumnDefPlan {
-+            name: "id".to_owned(),
-+            data_type: DataType::Int,
-+            nullable: true,
-+            default: None,
-+            unique: None,
-+            comment: None,
-+        }];
-+        let source = QueryPlan::Values(ValuesPlan(vec![vec![ExprPlan::Literal(Literal::Number(
-+            1.into(),
-+        ))]]));
-+
-+        test(
-+            "CREATE TABLE Item",
-+            CreateTableColumnsPlan::Schemaless,
-+            None,
-+        );
-+        test(
-+            "CREATE TABLE Item (id INT)",
-+            CreateTableColumnsPlan::Columns(columns.clone()),
-+            None,
-+        );
-+        test(
-+            "CREATE TABLE Item AS VALUES (1)",
-+            CreateTableColumnsPlan::Unplanned { columns: None },
-+            Some(source.clone()),
-+        );
-+        test(
-+            "CREATE TABLE Item (id INT) AS VALUES (1)",
-+            CreateTableColumnsPlan::Unplanned {
-+                columns: Some(columns),
-+            },
-+            Some(source),
-+        );
++    fn statement(sql: &str) -> StatementPlan {
++        translate(&parse(sql).expect(sql)[0]).expect(sql).into()
 +    }
-+}
-```
-
-**File**: `core/src/plan/statement/ddl.rs` (modified, +12/-0)
-```diff
-@@ -77,6 +77,18 @@ pub enum TableColumnsPlan {
-     Columns(Vec<ColumnDefPlan>),
- }
- 
-+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-+pub enum CreateTableColumnsPlan {
-+    /// Input definitions awaiting CTAS column planning.
-+    Unplanned {
-+        columns: Option<Vec<ColumnDefPlan>>,
-+    },
-+    Columns(Vec<ColumnDefPlan>),
-+    Schemaless,
-+    /// Determine columns from source values during execution.
-+    FromQuery,
-+}
 +
- #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
- pub enum AlterTableOperationPlan {
-     AddColumn {
-```
-
-**File**: `core/src/planner.rs` (modified, +4/-2)
-```diff
-@@ -1,28 +1,30 @@
- mod aggregate;
- mod context;
-+mod create_table_columns;
- mod custom_function;
- mod error;
- mod expr;
- mod hash_join;
- mod index;
-+mod insert_table_columns;
- mod primary_key;
- mod query;
- mod schema;
- mod schemaless;
--mod table_columns;
- mod validate;
- mod visit;
- mod visit_mut;
- 
- pub use {
-     self::validate::validate,
-     aggregate::plan as plan_aggregate,
-+    create_table_columns::plan as plan_create_table_columns,
-     custom_function::{plan_custom_function_calls, validate_create_function},
-     error::*,
-     hash_join::plan as plan_hash_join,
-     index::plan as plan_index,
-+    insert_table_columns::plan as plan_insert_table_columns,
-     primary_key::plan as plan_primary_key,
-     schema::fetch_schema_map,
-     schemaless::plan as plan_schemaless,
--    table_columns::plan as plan_table_columns,
- };
-```
-
-**File**: `core/src/planner/aggregate.rs` (modified, +11/-10)
-```diff
-@@ -331,15 +331,16 @@ mod tests {
-             parse_sql::{parse, parse_query},
-             plan::{
-                 AggregateExprPlan, AggregateFunctionPlan, AggregationInputPlan, AggregationPlan,
--                AssignmentPlan, CountArgExprPlan, DerivedSourcePlan, DictionarySourcePlan,
--                DistinctInputPlan, DistinctPlan, ExprPlan, FilterInputPlan, FilterPlan,
--                FunctionPlan, HashJoinInputPlan, HashJoinPlan, HavingPlan, InnerJoinInputPlan,
--                InnerJoinPlan, JoinConditionInputPlan, JoinConditionPlan, LeftOuterJoinInputPlan,
--                LeftOuterJoinPlan, LimitInputPlan, LimitPlan, NestedLoopJoinInputPlan,
--                NestedLoopJoinPlan, OffsetInputPlan, OffsetPlan, OrderByExprPlan, ProjectInputPlan,
--                ProjectPlan, ProjectionPlan, QueryPlan, SelectItemPlan, SelectOrderByPlan,
--                SeriesSourcePlan, SourcePlan, StatementPlan, StatementPlanKind, TableAccessPlan,
--                TableAliasPlan, TableColumnsPlan, TableSourcePlan, ValuesPlan,
-+                AssignmentPlan, CountArgExprPlan, CreateTableColumnsPlan, DerivedSourcePlan,
-+                DictionarySourcePlan, DistinctInputPlan, DistinctPlan, ExprPlan, FilterInputPlan,
-+                FilterPlan, FunctionPlan, HashJoinInputPlan, HashJoinPlan, HavingPlan,
-+                InnerJoinInputPlan, InnerJoinPlan, JoinConditionInputPlan, JoinConditionPlan,
-+                LeftOuterJoinInputPlan, LeftOuterJoinPlan, LimitInputPlan, LimitPlan,
-+                NestedLoopJoinInputPlan, NestedLoopJoinPlan, OffsetInputPlan, OffsetPlan,
-+                OrderByExprPlan, ProjectInputPlan, ProjectPlan, ProjectionPlan, QueryPlan,
-+                SelectItemPlan, SelectOrderByPlan, SeriesSourcePlan, SourcePlan, StatementPlan,
-+                StatementPlanKind, TableAccessPlan, TableAliasPlan, TableColumnsPlan,
-+                TableSourcePlan, ValuesPlan,
-             },
-             query_builder::{Build, table},
-             translate::{NO_PARAMS, translate, translate_query},
-@@ -567,7 +568,7 @@ mod tests {
-         let expected: StatementPlan = StatementPlanKind::CreateTable {
-             if_not_exists: false,
-             name: "Target".to_owned(),
--            columns: None,
-+            columns: CreateTableColumnsPlan::Unplanned { columns: None },
-             source: Some(Box::new(parse_and_plan_query(
-                 "SELECT COUNT(*) FROM Source",
-             ))),
++    #[test]
++    fn create_index() {
++        let storage = run("
++            CREATE TABLE Item (id INTEGER);
++            CREATE TABLE Documents;
++        ");
++        let test = |sql: &str, expected, name: &str| {
++            let statement = statement(sql);
++            let schema_map = fetch_schema_map(&storage, &statement).expect(sql);
++            let actual = validate(&schema_map, &statement);
++            assert_eq!(actual, expected, "{name}: {sql}");
++        };
++
++        let actual = "CREATE INDEX idx ON Item (id)";
++        let expected = Ok(());
++        test(actual, expected, "valid column reference");
++
++        let actual = "CREATE INDEX idx ON Missing (ABS(id))";
++        let expected = Err(Error::Planner(PlannerError::CreateIndexTableNotFound(
++            "Missing".to_owned(),
++        )));
++        test(
++            actual,
++            expected,
++            "missing table precedes invalid expression",
++        );
++
++        let actual = "CREATE INDEX idx ON Item (missing)";
++        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
++            "missing".to_owned(),
++        )));
++        test(actual, expected, "missing column");
++
++        let actual = "CREATE INDEX idx ON Item (ABS(id))";
++        let expected = Err(Error::Planner(PlannerError::UnsupportedIndexExpr));
++        test(
++            actual,
++            expected,
++            "invalid expression precedes missing reference",
++        );
++
++        let actual = "CREATE INDEX idx ON Item (100)";
++        let expected = Err(Error::Planner(
++            PlannerError::IndexExprRequiresColumnReference,
++        ));
++        test(actual, expected, "constant requires a column reference");
++
++        let actual = "CREATE INDEX idx ON Documents (id)";
++        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
++            "id".to_owned(),
++        )));
++        test(actual, expected, "schemaless table has no declared columns");
++
++        let actual = "CREATE INDEX idx ON Documents (100)";
++        let expected = Err(Error::Planner(
++            PlannerError::IndexExprRequiresColumnReference,
++        ));
++        test(
++            actual,
++            expected,
++            "schemaless constant still requires a reference",
++        );
++
++        let actual = "DROP INDEX Missing.idx";
++        let
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2062** (2026-11-04): Expand review policies for testing and code structure (@panarch)
+- **PR #2061** (2026-11-04): Move CREATE INDEX validation into the planner (@panarch)
 - **PR #2060** (2026-11-04): Apply table alias column names when copying CTAS schemas (@chiliec)
 - **PR #2057** (2026-11-04): Move CTAS column default planning out of the executor (@panarch)
 - **PR #2053** (2026-11-03): Plan custom functions before execution (@panarch)
 - **PR #2048** (2026-11-01): Avoid AST conversion during INSERT uniqueness validation (@panarch)
-- **PR #2045** (2026-09-30): Update JavaScript getting started guide for OPFS entry points (@juhee200)
-- **PR #2044** (2026-09-28): Make IF NOT EXISTS CTAS a no-op for existing tables (@zmrdltl)
 
 ---
 
@@ -2620,52 +2980,28 @@ Correct the foreign-key conflict error message to match its Conflict variant.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Apply table alias column names when copying CTAS schemas (#2060)
+## X. Expand review policies for testing and code structure (#2062)
 
 **RULE**:
-When implementing operations in `core/src/planner/create_table_columns.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af90d05b`: Apply table alias column names when copying CTAS schemas (#2060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0daf9b82`: Expand review policies for testing and code structure (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/planner/create_table_columns.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        Some(column_defs) => {
-                            let aliases = table
-                                .alias
-                                .as_ref()
-                                .map(|alias| alias.columns.as_slice())
-                                .unwrap_or_default();
-                            CreateTableColumnsPlan::Columns(
-                                column_defs
-                                    .iter()
-                                    .cloned()
-                                    .enumerate()
-                                    .map(|(index, mut column_def)| {
-                                        if let Some(name) = aliases.get(index) {
-                                            column_def.name.clone_from(name);
-                                        }
-                                        ColumnDefPlan::from(column_def)
-                                    })
-                                    .collect(),
-                            )
-                        }
-        let actual = "CREATE TABLE Target AS SELECT * FROM Item AS t(renamed_id, renamed_label)";
-        let expected = create(
-            Some(query("SELECT * FROM Ite
+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        Some(columns) => CreateTableColumnsPlan::Columns(
-                            columns.iter().cloned().map(ColumnDefPlan::from).collect(),
-                        ),
+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af90d05b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0daf9b82` are properly handled with clean fallback behavior.

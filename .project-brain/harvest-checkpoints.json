@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:36:02.741Z",
+  "last_updated": "2026-11-05T04:43:47.231Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "9a6934b60ac7f3a155d2cb38001dbc94c092898903dcad799b9893c325aa4cf0",
-      "verified_at": "2026-11-04T01:58:20.816Z",
+      "content_hash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
+      "verified_at": "2026-11-05T04:43:35.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:58:20.816Z"
+      "last_updated": "2026-11-05T04:43:35.791Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
-      "verified_at": "2026-11-04T08:28:39.012Z",
+      "content_hash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
+      "verified_at": "2026-11-05T04:43:47.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:28:39.012Z"
+      "last_updated": "2026-11-05T04:43:47.230Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
-      "verified_at": "2026-11-04T09:25:13.792Z",
+      "content_hash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
+      "verified_at": "2026-11-05T04:43:41.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:25:13.792Z"
+      "last_updated": "2026-11-05T04:43:41.856Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -17541,14 +17541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "content_hash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
-      "verified_at": "2026-10-31T14:01:19.861Z",
+      "content_hash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
+      "verified_at": "2026-11-05T04:43:32.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:01:19.861Z"
+      "last_updated": "2026-11-05T04:43:32.237Z"
     },
     "Edge0/Audio8-TTS-Realistic-0.6b": {
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",

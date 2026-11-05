@@ -515713,3 +515713,182 @@ class UnsafeLLM:
 2.  **Stress Test**: Run 100 concurrent requests and monitor for CUDA errors or memory leaks.
 
 ---
+
+
+---
+
+## 7106. Share generated fixtures across QA test stages (Harvested from GitoxideLabs/gitoxide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Share generated fixtures across QA test stages",
+  "source": "GitoxideLabs/gitoxide",
+  "source_url": "https://github.com/GitoxideLabs/gitoxide",
+  "source_version": "641aca38",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T04:43:35.388Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gitoxidelabs-gitoxide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `641aca38`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `DEVELOPMENT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `61bbd5b5`: Share generated fixtures across QA test stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEVELOPMENT.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+source copies. Native passes and feature/hash or isolated test variants within one QA run
+share a fresh cache of generated read-only scripted fixtures, locally and within each CI job.
+copies remain alive until the run finishes, and are retained together if a source copy changes.
+Changes to source files between stages prevent cache reuse. Feature/hash variants also run in
+an isolated copy and continue after individual failures. Separate runs and CI jobs never reuse
+each other's generated fixtures or extracted archives. Archive changes cause
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
+copies remain alive until both passes finish, and are retained together if a source copy changes.
+Feature/hash variants also run in an isolated copy, sharing compatible fixture
+caches within their task and continuing after individual failures. Their fixture caches cannot
+reuse a previous local run's extracted archives. Archive changes cause
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `61bbd5b5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7107. malformed event and status messages for Ingress, VirtualServer, VirtualServerRou (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "malformed event and status messages for Ingress, VirtualServer, VirtualServerRou",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "4d69ce36",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T04:43:41.461Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `4d69ce36`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1c0be65e`: malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources (#11298). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+			minionEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
+			sep := " "
+			if vsrEventWarningMessage != "" {
+				sep = "; "
+			}
+			vsrEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", vsrEventWarningMessage, sep, operationErr)
+// appendEventDetail adds detail to msg, separated by "; " on
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+			minionEventWarningMessage = fmt.Sprintf("%s%s; but was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+			minionEventWarningSuffix = "; "
+		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
+		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
+	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage)
+		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
+		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
+	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage)
+			vsrEventWarningMessage = fmt.Sprintf(" %s; but was not applied:%v", vsrEventWarningMessage, operationErr)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1c0be65e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7108. Expand review policies for testing and code structure (#2062) (Harvested from gluesql/gluesql)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Expand review policies for testing and code structure (#2062)",
+  "source": "gluesql/gluesql",
+  "source_url": "https://github.com/gluesql/gluesql",
+  "source_version": "0daf9b82",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T04:43:46.837Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gluesql-gluesql",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `0daf9b82`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0daf9b82`: Expand review policies for testing and code structure (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0daf9b82` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `311c58a2`  
+> **Source Version**: `4d69ce36`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:25:12.977Z  
+> **Timestamp**: 2026-11-05T04:43:40.990Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:25:12.566Z  
+> **Harvest Timestamp**: 2026-11-05T04:43:40.980Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1262,16 +1262,11 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11146** (2026-10-14): **sync: security hardening and minor bug fixes for release-2026-lts**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11146?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :x: Patch coverage is `96.33700%` with `10 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 61.23%. Comparing base ([`5c4642c`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/5c4642c73b11c2b7aec28889ee45c076d65967dc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`316ee12`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/316ee12a0aef69b2a5d4c2cea57afa11fa5660a6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)).  | [Files with missing lines](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11146?dropdown=coverage&src=pr&el=tree&utm_medium=referr
-  > ### Package Report <details> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus, 37.0.6-2~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-njs, 37.0+1.0.1-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-otel, 37.0+0.1.2-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-fips-check, 37.0+0.1-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-agent, 3.12.2~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus, 37.0.6-2~trixie, arm64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-
+- **Issue #11298** (2026-11-04): **Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
+  *Symptoms*: ### Proposed changes  Event messages, and VirtualServer/TransportServer `.status.message`, contain stray separators and spaces, visible in `kubectl describe` and through the API.  | Resource | Case | Before | After | |---|---|---|---| | Ingress, VS, TS | error only | `...updated ; but was not applied: err` | `...updated but was not applied: err` | | Ingress, VS | generated warnings only | `...updated ; with warning(s): w` | `...updated with warning(s): w` | | Ingress, VS, TS | no warnings, no error | `...updated ` (trailing space) | `...updated` | | Minion Ingress | warnings + error | `...with warning(s): w1; ; but was not applied: err` | `...with warning(s): w1; but was not applied: err` | | VirtualServerRoute | warnings + error | `...updated  with warning(s): w1; but was not applied:err` | `...updated with warning(s): w1; but was not applied: err` |  - Minion Ingress events use the master Ingress format. - VirtualServerRoute events use `"; "` only when warnings come before the error. - Regular Ingress, VirtualServer and TransportServer use a new `appendEventDetail` helper, so `"; "` appears only   between parts, and the trailing space is trimmed.  **User-visible change:** VirtualServer and TransportServer `.status.message` text changes as above. Tooling that matches the old `" ; "` text needs updating.  Not changed: the delete-path messages already produce well-formed text. Two related problems are tracked separately: DosLogConf events (`appprotect_dos
 
-- **Issue #11145** (2026-10-14): **sync: security hardening and minor bug fixes for release-5.7**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :x: Patch coverage is `96.57534%` with `10 lines` in your changes missing coverage. Please review. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-5.7@c09e7e3`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx#section-missing-base-commit) about missing BASE report.  | [Files with missing lines](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) | Patch % | Lines | |---|---|---| | [internal/configs/parsing\_helpers.go](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?s
+- **Issue #11297** (2026-11-04): **[Bug]: Malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
+  *Symptoms*: ### AI agents and bots  - [ ] I am an AI agent or bot opening this issue  ### Version  edge  ### What Kubernetes platforms are you running on?  Kind  ### Steps to reproduce  1. Run NGINX Ingress Controller with `-enable-snippets`. 2. Make a configuration fail to apply, for example add `nginx.org/server-snippets: "invalid_directive on;"` to an    Ingress, or `server-snippets: "invalid_directive on;"` to a VirtualServer spec. 3. Run `kubectl describe` on the resource, and for a VirtualServer also    `kubectl get virtualserver <name> -o jsonpath='{.status.message}'`.  The same malformed text appears for minion Ingresses (master/minion setup), VirtualServerRoutes and TransportServers, and when a resource only has warnings generated during config generation (for example a VirtualServer upstream with `slow-start` on a load-balancing method that doesn't support it).  ### Expected behaviour  Messages are well-formed, with `"; "` only between parts:  - `Configuration for default/cafe was added or updated` - `Configuration for default/cafe was added or updated with warning(s): <warnings>` - `Configuration for default/cafe was added or updated but was not applied: <error>` - `Configuration for default/cafe was added or updated with warning(s): <warnings>; but was not applied: <error>`  ### Actual behaviour  Events (and VirtualServer/TransportServer `.status.message`) contain stray separators and spaces:  ``` # Ingress, VirtualServer, TransportServer: error with no earlier warnings Confi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1288,153 +1283,366 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `311c58a2` (2026-11-03)
-**Commit Message**: Update github actions (main) (#11306)
+### Incident Patch 1: `1c0be65e` (2026-11-04)
+**Commit Message**: Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources (#11298)
 
-Update github actions
+* Fix malformed event messages for minion Ingresses and VirtualServerRoutes
 
-| datasource  | package                     | from    | to      |
-| ----------- | --------------------------- | ------- | ------- |
-| github-tags | docker/scout-action         | v1.27.0 | v1.29.0 |
-| github-tags | lucacome/draft-release      | v2.2.2  | v2.2.3  |
-| github-tags | reviewdog/action-actionlint | v1.80.6 | v1.81.1 |
+When an update failed to apply, minion Ingress events repeated the "; " separator ("with warning(s): w1; ; but was not applied") or started with " ; " when there were no warnings. VirtualServerRoute events had a double leading space and no space after "applied:".
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Use the master Ingress message format for minions and pick the separator for VirtualServerRoutes based on whether warnings precede the error. Add table tests for the exact event text.
 
-**File**: `.github/workflows/build-oss.yml` (modified, +1/-1)
+* Fix malformed event and status messages for Ingress, VirtualServer and TransportServer
+
+Regular Ingress, VirtualServer and TransportServer events always put
+"; " before generated warnings and "but was not applied", giving
+"was added or updated ; but was not applied: <err>" when nothing came
+before them, and a trailing space when there was nothing to add.
+VirtualServer and TransportServer write the same text to
+.status.message.
+
+Add appendEventDetail to join message parts with "; " only between
+parts, and trim the trailing space. Add table
+
+**File**: `internal/k8s/controller.go` (modified, +20/-9)
 ```diff
-@@ -251,7 +251,7 @@ jobs:
+@@ -2201,8 +2201,7 @@ func (lbc *LoadBalancerController) updateMergeableIngressStatusAndEvents(ingConf
+ 		if operationErr != nil {
+ 			minionEventType = api_v1.EventTypeWarning
+ 			minionEventTitle = nl.EventReasonAddedOrUpdatedWithError
+-			minionEventWarningMessage = fmt.Sprintf("%s%s; but was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+-			minionEventWarningSuffix = "; "
++			minionEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+ 		}
  
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
+ 		minionEventWarningPrefixed := ""
+@@ -2249,16 +2248,16 @@ func (lbc *LoadBalancerController) updateRegularIngressStatusAndEvents(ingConfig
+ 	if messages, ok := warnings[ingConfig.Ingress]; ok {
+ 		eventType = api_v1.EventTypeWarning
+ 		eventTitle = nl.EventReasonAddedOrUpdatedWithWarning
+-		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
++		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+ 	}
+ 
+ 	if operationErr != nil {
+ 		eventType = api_v1.EventTypeWarning
+ 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
+-		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
++		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+ 	}
+ 
+-	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage)
++	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage))
+ 	lbc.recorder.Event(ingConfig.Ingress, eventType, eventTitle, msg)
+ 
+ 	if lbc.reportStatusEnabled() {
+@@ -2304,18 +2303,18 @@ func (lbc *LoadBalancerController) updateVirtualServerOwnStatusAndEvents(vsConfi
+ 	if messages, ok := warnings[vsConfig.VirtualServer]; ok {
+ 		eventType = api_v1.EventTypeWarning
+ 		eventTitle = nl.EventReasonAddedOrUpdatedWithWarning
+-		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
++		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+ 		state = conf_v1.StateWarning
+ 	}
+ 
+ 	if operationErr != nil {
+ 		eventType = api_v1.EventTypeWarning
+ 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
+-		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
++		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+ 		state = conf_v1.StateInvalid
+ 	}
+ 
+-	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage)
++	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
+ 	if statusOnly {
+ 		msg = strings.TrimSpace(fmt.Sprintf("Configuration for %v is unchanged, status updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
+ 	}
+@@ -2357,7 +2356,11 @@ func (lbc *LoadBalancerController) updateAttachedVirtualServerRoutesStatusAndEve
+ 		if operationErr != nil {
+ 			vsrEventType = api_v1.EventTypeWarning
+ 			vsrEventTitle = nl.EventReasonAddedOrUpdatedWithError
+-			vsrEventWarningMessage = fmt.Sprintf(" %s; but was not applied:%v", vsrEventWarningMessage, operationErr)
++			sep := " "
++			if vsrEventWarningMessage != "" {
++				sep = "; "
++			}
++			vsrEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", vsrEventWarningMessage, sep, operationErr)
+ 			vsrState = conf_v1.StateInvalid
+ 		}
+ 
+@@ -5308,6 +5311,14 @@ func formatWarningMessages(w []string) string {
+ 	return strings.Join(w, "; ")
+ }
+ 
++// appendEventDetail adds detail to msg, separated by "; " only when msg already has content.
++func appendEventDetail(msg, detail string) string {
++	if msg == "" {
++		return detail
++	}
++	return msg + "; " + detail
++}
++
+ // IsNginxReady returns ready status of NGINX
+ func (lbc *LoadBalancerController) IsNginxReady() bool {
+ 	return lbc.isNginxReady
 ```
 
-**File**: `.github/workflows/build-plus.yml` (modified, +1/-1)
+**File**: `internal/k8s/status_events_test.go` (added, +234/-0)
 ```diff
-@@ -273,7 +273,7 @@ jobs:
- 
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
+@@ -0,0 +1,234 @@
++package k8s
++
++import (
++	"context"
++	"errors"
++	"testing"
++
++	"github.com/nginx/kubernetes-ingress/internal/configs"
++	nl "github.com/nginx/kubernetes-ingress/internal/logger"
++	conf_v1 "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/v1"
++	networking "k8s.io/api/networking/v1"
++	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/tools/record"
++)
++
++// newEventTestLBC returns a controller that records events but skips status updates.
++func newEventTestLBC() (*LoadBalancerController, *record.FakeRecorder) {
++	recorder := record.NewFakeRecorder(10)
++	return &LoadBalancerController{
++		recorder: recorder,
++		Logger:   nl.LoggerFromContext(context.Background()),
++		// Leader election on with no elector disables status reporting.
++		isLeaderElectionEnabled: true,
++	}, recorder
++}
++
++func TestMinionEventMessages(t *testing.T) {
++	t.Parallel()
++
++	errApply := errors.New("reload failed")
++
++	tests := []struct {
++		name          string
++		childWarnings []string
++		warnings      []string
++		err           error
++		want          string
++	}{
++		{
++			name: "no warnings no error",
++			want: "Normal AddedOrUpdated Configuration for default/minion was added or updated",
++		},
++		{
++			name: "error only",
++			err:  errApply,
++			want: "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated but was not applied: reload failed",
++		},
++		{
++			name:          "child warnings and error",
++			childWarnings: []string{"w1"},
++			err:           errApply,
++			want:          "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated with warning(s): w1; but was not applied: reload failed",
++		},
++		{
++			name:          "child warnings, config warnings and error",
++			childWarnings: []string{"w1"},
++			warnings:      []string{"w2"},
++			err:           errApply,
++			want:          "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated with warning(s): w1; with warning(s): w2; but was not applied: reload failed",
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			lbc, recorder := newEventTestLBC()
++			master := &networking.Ingress{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "master"}}
++			minion := &networking.Ingress{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "minion"}}
++			ingConfig := &IngressConfiguration{
++				Ingress:       master,
++				IsMaster:      true,
++				Minions:       []*MinionConfiguration{{Ingress: minion}},
++				ChildWarnings: map[string][]string{},
++			}
++			if tc.childWarnings != nil {
++				ingConfig.ChildWarnings["default/minion"] = tc.childWarnings
++			}
++			warnings := configs.Warnings{}
++			if tc.warnings != nil {
++				warnings[minion] = tc.warnings
++			}
++
++			lbc.updateMergeableIngressStatusAndEvents(ingConfig, warnings, tc.err)
++
++			<-recorder.Events // master event
++			if got := <-recorder.Events; got != tc.want {
++				t.Errorf("minion event:\n got: %q\nwant: %q", got, tc.want)
++			}
++		})
++	}
++}
++
++func TestVirtualServerRouteEventMessages(t *testing.T) {
++	t.Parallel()
++
++	errApply := errors.New("reload failed")
++
++	tests := []struct {
++		name     string
++		warnings []string
++		err      error
++		want     string
++	}{
++		{
++			name: "no warnings no error",
++			want: "Normal AddedOrUpdated Configuration for default/vsr was added or updated",
++		},
++		{
++			name:     "warnings only",
++			warnings: []string{"w1"},
++			want:     "Warning AddedOrUpdatedWithWarning Configuration for default/vsr was added or updated with warning(s): w1",
++		},
++		{
++			name: "error only",
++			err:  errApply,
++			want: "Warning AddedOrUpdatedWithError Configuration for default/vsr was added or updated but was not applied: reload failed",
++		},
++		{
++			name:     "warnings and error",
++			warnings: []string{"w1"},
++			err:      errApply,
++			want:     "Warning AddedOrUpdatedWithError Configuration for default/vsr was added or updated with warning(s): w1; but was not applied: reload failed",
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			lbc, recorder := newEventTestLBC()
++			vsr := &conf_v1.VirtualServerRoute{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "vsr"}}
++			vsConfig := &VirtualServerConfiguration{
++				VirtualServer:       &conf_v1.VirtualServer{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "vs"}},
++				VirtualServerRoutes: []*conf_v1.VirtualServerRoute{vsr},
++			}
++			warnings := configs.Warnings{}
++			if tc.warnings != nil {
++				warnings[vsr] = tc.warnings
++			}
++
++			lbc.updateAttachedVirtualServerRoutesStatusAndEvents(vsConfig, warnings, tc.err)
++
++			if got := <-recorder.Events; got != tc.want {
++				t.Errorf("VSR event:\n got: %q\nwant: %q", got, tc.want)
++			}
++		})
++	}
++}
++
++// TestResourceEventMessages covers regular Ingress, VirtualServer and TransportServer events, which share one format.
++func TestResourceEventMessag
 ```
 
-**File**: `.github/workflows/image-promotion.yml` (modified, +4/-4)
+**File**: `internal/k8s/transport_server.go` (modified, +3/-2)
 ```diff
-@@ -404,7 +404,7 @@ jobs:
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"reflect"
++	"strings"
  
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
-@@ -504,7 +504,7 @@ jobs:
+ 	"github.com/nginx/kubernetes-ingress/internal/configs"
+ 	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
+@@ -155,11 +156,11 @@ func (lbc *LoadBalancerController) updateTransportServerStatusAndEvents(tsConfig
+ 	if operationErr != nil {
+ 		eventType = api_v1.EventTypeWarning
+ 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
+-		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
++		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+ 		state = conf_v1.StateInvalid
+ 	}
  
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
-@@ -604,7 +604,7 @@ jobs:
- 
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-+        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
-@@ -640,7 +640,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Create/Update Draft
--        uses: lucacome/draft-release@5bc11f2401bad413a67299dcc857b50ff0d80b12 # v2.2.2
-+        uses: lucacome/draft-release@08f1af054ed446630440d177e1015a517500e97c # v2.2.3
-         id: release-notes
-         with:
-           minor-label: "enhancement"
-```
-
-**File**: `.github/workflows/lint-format.yml` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ jobs:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
--      - uses: reviewdog/action-actionlint@48e36f54d8da326b83ab061aee2cc5e01b5ca46f # v1.80.6
-+      - uses: reviewdog/action-actionlint@619a81ec64ff8c0211cd6146eb2b21e8f1d7f440 # v1.81.1
-         with:
-           actionlint_flags: -shellcheck ""
+-	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&tsConfig.TransportServer.ObjectMeta), eventWarningMessage)
++	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&tsConfig.TransportServer.ObjectMeta), eventWarningMessage))
+ 	lbc.recorder.Event(tsConfig.TransportServer, eventType, eventTitle, msg)
+ 	logger := lbc.Logger.With(logNamespaceKey, tsConfig.TransportServer.Namespace, logKindKey, transportServerKind, logNameKey, tsConfig.TransportServer.Name)
  
 ```
 
-**File**: `.github/workflows/update-release-draft.yml` (modified, +1/-1)
+**File**: `tests/suite/test_annotations.py` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,7 @@ jobs:
-           ref: ${{ inputs.branch }}
+@@ -202,7 +202,7 @@ def annotations_grpc_setup(
+     )
+     ic_pod_name = get_first_pod_name(kube_apis.v1, ingress_controller_prerequisites.namespace, IC_SELECTOR)
+     event_text = f"Configuration for {test_namespace}/{ingress_name} was added or updated"
+-    error_text = f"{event_text} ; but was not applied: Error reloading NGINX"
++    error_text = f"{event_text} but was not applied: Error reloading NGINX"
  
-       - name: Create/Update Draft
--        uses: lucacome/draft-release@5bc11f2401bad413a67299dcc857b50ff0d80b12 # v2.2.2
-+        uses: lucacome/draft-release@08f1af054ed446630440d177e1015a517500e97c # v2.2.3
-         id: release-notes
-         with:
-           minor-label: "enhancement"
+     def fin():
+         if request.config.getoption("--skip-fixture-teardown") == "no":
 ```
 
----
-
-### Incident Patch 2: `2ffc49f4` (2026-11-03)
-**Commit Message**: Update container digests (main) (#11311)
-
-Update container digests
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `build/Dockerfile` (modified, +2/-2)
+**File**: `tests/suite/test_ingress_mtls.py` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,7 @@ RUN --mount=type=secret,id=nginx-repo.crt,dst=/etc/apk/cert.pem,mode=0644 \
- 
- 
- ############################################### NGINX OSS - Debian #############################################
--FROM debian:trixie-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS debian
-+FROM debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS debian
- ARG OSS_PACKAGE_REPO
- ARG NGINX_OSS_VERSION
- ARG AGENT_V3_VERSION
-@@ -437,7 +437,7 @@ RUN --mount=type=secret,id=nginx-repo.crt,dst=/etc/apk/cert.pem,mode=0644 \
- # Base:     debian:13-slim
- # Installs: nginx-plus, nginx-plus-module-njs/otel/fips-check, libcap2-bin, libcurl4
- # Extended: debian-plus (Agent v3)  •  debian-plus-nap-base  •  debian-plus-nap-v5-base
--FROM debian:13-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS debian-plus-only
-+FROM debian:13-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS debian-plus-only
- ARG NGINX_PLUS_VERSION
- ARG PLUS_PACKAGE_REPO
- 
+@@ -350,7 +350,7 @@ def test_ingress_mtls_policy_cert(
+                 mtls_secret_crl,
+                 404,
+                 "Not Found",
+-                "added or updated ; with warning(s)",
++                "added or updated with warning(s)",
+                 "Invalid",
+             ),
+         ],
 ```
 
-**File**: `tests/Dockerfile` (modified, +1/-1)
+**File**: `tests/suite/test_virtual_server_configmap_keys.py` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,5 @@
- # syntax=docker/dockerfile:1.28
--FROM python:3.15-trixie@sha256:8268b5058c72832502a7eabc0c719892769c09389ed95fc213f3c308cbedc6dd
-+FROM python:3.15-trixie@sha256:f34e3385a59fd8de7919d46db4a38ab14c0e46928a11b59036a7ee206ac0c129
- ARG ARCH=amd64
+@@ -27,7 +27,7 @@ def assert_update_events_emitted(virtual_server_setup, new_list, previous_list,
  
- ENV PYTHONUNBUFFERED=1
+ def assert_not_applied_events_emitted(virtual_server_setup, new_list, previous_list, expected_amount):
+     item_name = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
+-    text_invalid = f"Configuration for {item_name} was added or updated ; but was not applied"
++    text_invalid = f"Configuration for {item_name} was added or updated but was not applied"
+     new_event = new_list[len(new_list) - 1]
+     assert len(new_list) - len(previous_list) == expected_amount
+     assert text_invalid in new_event.message
+@@ -247,7 +247,7 @@ def test_keys(
+         vs_key = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
+         assert wait_for_event(
+             kube_apis.v1,
+-            f"Configuration for {vs_key} was added or updated ; but was not applied",
++            f"Configuration for {vs_key} was added or updated but was not applied",
+             virtual_server_setup.namespace,
+         ), "VirtualServer did not report the failed reload"
+         step_2_events = get_events(kube_apis.v1, virtual_server_setup.namespace)
+```
+
+**File**: `tests/suite/test_virtual_server_external_name.py` (modified, +1/-1)
+```diff
+@@ -151,7 +151,7 @@ def test_events_flows(
+ 
+         print("Step 2: Remove resolver from ConfigMap to trigger an error")
+         config_map_name = ingress_controller_prerequisites.config_map["metadata"]["name"]
+-        vs_event_warning_text = f"Configuration for {text} was added or updated ; with warning(s):"
++        vs_event_warning_text = f"Configuration for {text} was added or updated with warning(s):"
+         replace_configmap(
+             kube_apis.v1,
+             config_map_name,
+```
+
+**File**: `tests/suite/test_virtual_server_grpc.py` (modified, +1/-1)
+```diff
+@@ -307,7 +307,7 @@ def test_config_error_page_warning(
+         self, kube_apis, ingress_controller_prerequisites, crd_ingress_controller, backend_setup, virtual_server_setup
+     ):
+         text = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
+-        vs_event_warning_text = f"Configuration for {text} was added or updated ; with warning(s): "
++        vs_event_warning_text = f"Configuration for {text} was added or updated with warning(s): "
+         patch_virtual_server_from_yaml(
+             kube_apis.custom_objects,
+             virtual_server_setup.vs_name,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1463,28 +1671,48 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update github actions (main) (#11306)
+## X. malformed event and status messages for Ingress, VirtualServer, VirtualServerRou
 
 **RULE**:
-When implementing operations in `.github/workflows/build-oss.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `311c58a2`: Update github actions (main) (#11306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c0be65e`: malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources (#11298). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-oss.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
+			minionEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
+			sep := " "
+			if vsrEventWarningMessage != "" {
+				sep = "; "
+			}
+			vsrEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", vsrEventWarningMessage, sep, operationErr)
+// appendEventDetail adds detail to msg, separated by "; " on
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
+			minionEventWarningMessage = fmt.Sprintf("%s%s; but was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
+			minionEventWarningSuffix = "; "
+		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
+		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
+	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage)
+		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
+		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
+	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage)
+			vsrEventWarningMessage = fmt.Sprintf(" %s; but was not applied:%v", vsrEventWarningMessage, operationErr)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `311c58a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c0be65e` are properly handled with clean fallback behavior.
