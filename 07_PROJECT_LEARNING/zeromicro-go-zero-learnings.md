@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `f5663037`  
+> **Source Version**: `43637355`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T16:58:56.467Z  
+> **Timestamp**: 2026-11-05T21:54:37.601Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T16:58:48.904Z  
+> **Harvest Timestamp**: 2026-11-05T21:54:36.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33420 stars
+- **Stars / Engagement**: 33423 stars
 
 ---
 
@@ -1305,523 +1305,222 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5663037` (2026-11-01)
-**Commit Message**: fix(security): zrpc Authenticator fails open: unknown app or any Redis error authenticates the caller (#5848)
+### Incident Patch 1: `43637355` (2026-11-05)
+**Commit Message**: chore(deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)
 
-Co-authored-by: OpenClaw BountyBot <[REDACTED_EMAIL]>
-Co-authored-by: kevin <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
+Co-authored-by: kevwan <[REDACTED_EMAIL]>
 
-**File**: `zrpc/config.go` (modified, +6/-5)
+**File**: `core/stores/redis/redis_test.go` (modified, +3/-0)
 ```diff
-@@ -37,11 +37,12 @@ type (
- 	// A RpcServerConf is a rpc server config.
- 	RpcServerConf struct {
- 		service.ServiceConf
--		ListenOn      string
--		Etcd          discov.EtcdConf    `json:",optional,inherit"`
--		Auth          bool               `json:",optional"`
--		Redis         redis.RedisKeyConf `json:",optional"`
--		StrictControl bool               `json:",optional"`
-+		ListenOn string
-+		Etcd     discov.EtcdConf    `json:",optional,inherit"`
-+		Auth     bool               `json:",optional"`
-+		Redis    redis.RedisKeyConf `json:",optional"`
-+		// Deprecated: authentication always fails closed on lookup errors, regardless of this value.
-+		StrictControl bool `json:",optional"`
- 		// setting 0 means no timeout
- 		Timeout      int64 `json:",default=2000"`
- 		CpuThreshold int64 `json:",default=900,range=[0:1000)"`
-```
-
-**File**: `zrpc/internal/auth/auth.go` (modified, +8/-14)
-```diff
-@@ -15,24 +15,22 @@ const defaultExpiration = 5 * time.Minute
- 
- // An Authenticator is used to authenticate the rpc requests.
- type Authenticator struct {
--	store  *redis.Redis
--	key    string
--	cache  *collection.Cache
--	strict bool
-+	store *redis.Redis
-+	key   string
-+	cache *collection.Cache
- }
- 
- // NewAuthenticator returns an Authenticator.
--func NewAuthenticator(store *redis.Redis, key string, strict bool) (*Authenticator, error) {
-+func NewAuthenticator(store *redis.Redis, key string) (*Authenticator, error) {
- 	cache, err := collection.NewCache(defaultExpiration)
- 	if err != nil {
- 		return nil, err
- 	}
- 
- 	return &Authenticator{
--		store:  store,
--		key:    key,
--		cache:  cache,
--		strict: strict,
-+		store: store,
-+		key:   key,
-+		cache: cache,
- 	}, nil
- }
- 
-@@ -61,11 +59,7 @@ func (a *Authenticator) validate(app, token string) error {
- 		return a.store.Hget(a.key, app)
- 	})
- 	if err != nil {
--		if a.strict {
--			return status.Error(codes.Internal, err.Error())
--		}
--
--		return nil
-+		return status.Error(codes.Unauthenticated, accessDenied)
- 	}
- 
- 	if token != expect {
-```
-
-**File**: `zrpc/internal/auth/auth_test.go` (modified, +43/-13)
-```diff
-@@ -4,41 +4,36 @@ import (
- 	"context"
- 	"testing"
- 
-+	"github.com/alicebob/miniredis/v2"
+@@ -13,6 +13,7 @@ import (
+ 	red "github.com/redis/go-redis/v9"
+ 	"github.com/redis/go-redis/v9/maintnotifications"
  	"github.com/stretchr/testify/assert"
-+	"github.com/zeromicro/go-zero/core/stores/redis"
- 	"github.com/zeromicro/go-zero/core/stores/redis/redistest"
-+	"google.golang.org/grpc/codes"
- 	"google.golang.org/grpc/metadata"
-+	"google.golang.org/grpc/status"
++	"github.com/zeromicro/go-zero/core/breaker"
+ 	"github.com/zeromicro/go-zero/core/logx"
+ 	"github.com/zeromicro/go-zero/core/stringx"
+ )
+@@ -155,6 +156,7 @@ func TestGetClientWithProtocolAndIdentity(t *testing.T) {
+ 	r := miniredis.RunT(t)
+ 	defer r.Close()
+ 	c, err := getClient(&Redis{
++		brk:      breaker.NewBreaker(),
+ 		Addr:     r.Addr(),
+ 		Type:     NodeType,
+ 		protocol: 2,
+@@ -200,6 +202,7 @@ func TestGetClientWithMaintNotifications(t *testing.T) {
+ 			r := miniredis.RunT(t)
+ 			defer r.Close()
+ 			c, err := getClient(&Redis{
++				brk:                breaker.NewBreaker(),
+ 				Addr:               r.Addr(),
+ 				Type:               NodeType,
+ 				maintNotifications: test.mode,
+```
+
+**File**: `core/stores/redis/redisclustermanager_test.go` (modified, +4/-0)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	red "github.com/redis/go-redis/v9"
+ 	"github.com/redis/go-redis/v9/maintnotifications"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/zeromicro/go-zero/core/breaker"
  )
  
- func TestAuthenticator(t *testing.T) {
- 	tests := []struct {
- 		name     string
- 		app      string
- 		token    string
--		strict   bool
- 		hasError bool
- 	}{
- 		{
--			name:     "strict=false",
--			strict:   false,
--			hasError: false,
--		},
--		{
--			name:     "strict=true",
--			strict:   true,
-+			name:     "unknown app",
- 			hasError: true,
- 		},
- 		{
--			name:     "strict=true,with token",
-+			name:     "valid token",
- 			app:      "foo",
- 			token:    "bar",
--			strict:   true,
- 			hasError: false,
- 		},
- 		{
--			name:     "strict=true,with error token",
-+			name:     "wrong token",
- 			app:      "foo",
- 			token:    "error",
--			strict:   true,
- 			hasError: true,
- 		},
- 	}
-@@ -52,7 +47,7 @@ func TestAuthenticator(t *testing.T) {
- 				defer store.Hdel("apps", test.app)
- 			}
- 
--			authenticator, err := NewAuthenticator(store, "apps", test.strict)
-+			authenticator, err := NewAuthenticator(store, "apps")
- 			assert.Nil(t, err)
- 			assert.NotNil(t, authenticator.Authenticate(context.Background()))
- 			md := metadata.New(map[string]string{})
-@@ -78,3 +73,38 @@ func TestAuthenticator(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestAuthenticatorFailClosed(t *testing.T) {
-+	for _, scenario := range []string{"unknown", "backend_error", "wrong_type", "valid", "wrong_token", "empty_token"} {
-+		t.Run(scenario, func(t *testing.T) {
-+			mr := miniredis.RunT(t)
-+			if scenario == "backend_error" {
-+				mr.SetError("ERR injected backend failure")
-+			} else if scenario == "wrong_type" {
-+				mr.Set("apps", "not-a-hash")
-+			} else if scenario != "unknown" {
-+				mr.HSet("apps", "foo", "bar")
-+			}
-+			a, err := NewAuthenticator(redis.New(mr.Addr()), "apps")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			token := "bar"
-+			if scenario == "wrong_token" {
-+				token = "wrong"
-+			}
-+			if scenario == "empty_token" {
-+				token = ""
-+			}
-+			ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("app", "foo", "token", token))
-+			err = a.Authenticate(ctx)
-+			want := codes.Unauthenticated
-+			if scenario == "valid" {
-+				want = codes.OK
-+			}
-+			if got := status.Code(err); got != want {
-+				t.Fatalf("got %v, want %v", got, want)
-+			}
-+		})
-+	}
-+}
+ func TestSplitClusterAddrs(t *testing.T) {
+@@ -49,6 +50,7 @@ func TestGetCluster(t *testing.T) {
+ 	r := miniredis.RunT(t)
+ 	defer r.Close()
+ 	c, err := getCluster(&Redis{
++		brk:   breaker.NewBreaker(),
+ 		Addr:  r.Addr(),
+ 		Type:  ClusterType,
+ 		tls:   true,
+@@ -63,6 +65,7 @@ func TestGetClusterWithProtocolAndIdentity(t *testing.T) {
+ 	r := miniredis.RunT(t)
+ 	defer r.Close()
+ 	c, err := getCluster(&Redis{
++		brk:      breaker.NewBreaker(),
+ 		Addr:     r.Addr(),
+ 		Type:     ClusterType,
+ 		protocol: 2,
+@@ -92,6 +95,7 @@ func TestGetClusterWithMaintNotifications(t *testing.T) {
+ 			r := miniredis.RunT(t)
+ 			defer r.Close()
+ 			c, err := getCluster(&Redis{
++				brk:                breaker.NewBreaker(),
+ 				Addr:               r.Addr(),
+ 				Type:               ClusterType,
+ 				maintNotifications: test.mode,
 ```
 
-**File**: `zrpc/internal/serverinterceptors/authinterceptor_test.go` (modified, +68/-49)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -2,45 +2,42 @@ package serverinterceptors
- 
- import (
- 	"context"
-+	"fmt"
- 	"testing"
- 
-+	"github.com/alicebob/miniredis/v2"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"github.com/zeromicro/go-zero/core/stores/redis"
- 	"github.com/zeromicro/go-zero/core/stores/redis/redistest"
- 	"github.com/zeromicro/go-zero/zrpc/internal/auth"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
- 	"google.golang.org/grpc/metadata"
-+	"google.golang.org/grpc/status"
- )
- 
- func TestStreamAuthorizeInterceptor(t *testing.T) {
- 	tests := []struct {
- 		name     string
- 		app      string
- 		token    string
--		strict   bool
- 		hasError bool
- 	}{
- 		{
--			name:     "strict=false",
--			strict:   false,
--			hasError: false,
--		},
--		{
--			name:     "strict=true",
--			strict:   true,
-+			name:     "unknown app",
- 			hasError: true,
- 		},
- 		{
--			name:     "strict=true,with token",
-+			name:     "valid token",
- 			app:      "foo",
- 			token:    "bar",
--			strict:   true,
- 			hasError: false,
- 		},
- 		{
--			name:     "strict=true,with error token",
-+			name:     "wrong token",
- 			app:      "foo",
- 			token:    "error",
--			strict:   true,
- 			hasError: true,
- 		},
- 	}
-@@ -54,7 +51,7 @@ func TestStreamAuthorizeInterceptor(t *testing.T) {
- 				defer store.Hdel("apps", test.app)
- 			}
- 
--			authenticator, err := auth.NewAuthenticator(store, "apps", test.strict)
-+			authenticator, err := auth.NewAuthenticator(store, "apps")
- 			assert.Nil(t, err)
- 			interceptor := StreamAuthorizeInterceptor(authenticator)
- 			md := metadata.New(map[string]string{
-@@ -63,9 +60,12 @@ func TestStreamAuthorizeInterceptor(t *testing.T) {
- 			})
- 			ctx := metadata.NewIncomingContext(context.Background(), md)
- 			stream := mockedStream{ctx: ctx}
-+			called := false
- 			err = interceptor(nil, stream, nil, func(_ any, _ grpc.ServerStream) error {
-+				called = true
- 				return nil
- 			})
-+			assert.Equal(t, !test.hasError, called)
- 			if test.hasError {
- 				assert.NotNil(t, err)
- 			} else {
-@@ -80,31 +80,22 @@ func TestUnaryAuthorizeInterceptor(t *testing.T) {
- 		name     string
- 		app      string
- 		token    string
--		strict   bool
- 		hasError bool
- 	}{
- 		{
--			name:     "strict=false",
--			strict:   false,
--			hasError: false,
--		},
--		{
--			name:     "strict=true",
--			strict:   true,
-+			name:     "unknown app",
- 			hasError: true,
- 		},
- 		{
--			name:     "strict=true,with token",
-+			name:     "valid token",
- 			app:      "foo",
- 			token:    "bar",
--			strict:   true,
- 			hasError: false,
- 		},
- 		{
--			name:     "strict=true,with error token",
-+			name:     "wrong token",
- 			app:      "foo",
- 			token:    "error",
--			strict:   true,
- 			hasError: true,
- 		},
- 	}
-@@ -118,49 +109,50 @@ func TestUnaryAuthorizeInterceptor(t *testing.T) {
- 				defer store.Hdel("apps", test.app)
- 			}
- 
--			authenticator, err := auth.NewAuthenticator(store, "apps", test.strict)
-+			authenticator, err := auth.NewAuthenticator(store, "apps")
- 			assert.Nil(t, err)
- 			interceptor := UnaryAuthorizeInterceptor(authenticator)
- 			md := metadata.New(map[string]string{
- 				"app":   "foo",
- 				"token": "bar",
- 			})
- 			ctx := metadata.NewIncomingContext(context.Background(), md)
-+			called := false
- 			_, err = interceptor(ctx, nil, nil,
- 				func(ctx context.Context, req any) (any, error) {
-+					called = true
- 					return nil, nil
- 				})
-+			assert.Equal(t, !test.hasError, called)
- 			if test.hasError {
- 				assert.NotNil(t, err)
- 			} else {
- 				assert.Nil(t, err)
- 			}
--			if test.strict {
--				_, err = interceptor(context.Background(), nil, nil,
--					func(ctx context.Context, req any) (any, error) {
--						return nil, nil
--					})
--				assert.NotNil(t, err)
-+			_, err = interceptor(context.Background(), nil, nil,
-+				func(ctx context.Context, req any) (any, error) {
-+					return nil, nil
-+				})
-+			assert.NotNil(t, err)
- 
--				var md metadata.MD
--				ctx := metadata.NewIncomingContext(context.Background(), md)
--				_, err = interceptor(ctx, nil, nil,
--					func(ctx context.Context, req any) (any, error) {
--						return nil, nil
--					})
--				assert.NotNil(t, err)
-+			md = nil
-+			ctx = metadata.NewIncomingContext(context.Background(), md)
-+			_, err = interceptor(ctx, nil, nil,
-+				func(ctx context.Context, req any) (any, error) {
-+					return nil, nil
-+				})
-+			assert.NotNil(t, err)
- 
--				md = metadata.New(map[string]string{
--					"app":   "",
--					"token": "",
-+			md = metadata.New(map[string]string{
-+				"app":   "",
-+				"token": "",
-+			})
-+			ctx = metadata.NewIncomingContext(context.Background(), md)
-+			_, err = interceptor(ctx, nil, nil,
-+				func(ctx context.Context, req any) (any, error) {
-+					return nil, nil
- 				})
--				ctx = metadata.NewIncomingContext(context.Background(), md)
--				_, err = interceptor(ctx, nil, nil,
--					func(ctx context.Context, req any) (any, error) {
--						return nil, nil
--					})
--				assert.NotNil(t, err)
--			}
-+			assert.NotNil(t, err)
- 		})
- 	}
- }
-@@ -191,3 +183,30 @@ func
+@@ -12,7 +12,7 @@ require (
+ 	github.com/golang/protobuf v1.5.4
+ 	github.com/google/uuid v1.6.0
+ 	github.com/grafana/pyroscope-go v1.4.3
+-	github.com/jackc/pgx/v5 v5.11.0
++	github.com/jackc/pgx/v5 v5.12.0
+ 	github.com/jhump/protoreflect v1.19.0
+ 	github.com/modelcontextprotocol/go-sdk v1.8.0
+ 	github.com/pelletier/go-toml/v2 v2.4.3
+@@ -90,7 +90,7 @@ require (
+ 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
+ 	github.com/jackc/pgpassfile v1.0.0 // indirect
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+-	github.com/jackc/puddle/v2 v2.2.2 // indirect
++	github.com/jackc/puddle/v2 v2.2.3 // indirect
+ 	github.com/jhump/protoreflect/v2 v2.0.0-beta.2 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/klauspost/compress v1.19.2 // indirect
 ```
 
-**File**: `zrpc/server.go` (modified, +1/-1)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -118,7 +118,7 @@ func setupAuthInterceptors(svr internal.Server, c RpcServerConf) error {
- 		return err
- 	}
- 
--	authenticator, err := auth.NewAuthenticator(rds, c.Redis.Key, c.StrictControl)
-+	authenticator, err := auth.NewAuthenticator(rds, c.Redis.Key)
- 	if err != nil {
- 		return err
- 	}
+@@ -118,10 +118,10 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
+ github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
+ github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
+-github.com/jackc/pgx/v5 v5.11.0 h1:IzBBtyK9AHqf98cctWFifYSci2hgQR/cd56wB4p+ogg=
+-github.com/jackc/pgx/v5 v5.11.0/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
+-github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
+-github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
++github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
++github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
++github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
++github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
+ github.com/jhump/protoreflect v1.19.0 h1:YhKbE78JrjfngcCZfZTIV7rQQGndyqll6fXfaqiOEg4=
+ github.com/jhump/protoreflect v1.19.0/go.mod h1:I2yar2oJEMf0k4EMryPzfV0tvGwN/SejJziYBOpETQo=
+ github.com/jhump/protoreflect/v2 v2.0.0-beta.2 h1:qZU+rEZUOYTz1Bnhi3xbwn+VxdXkLVeEpAeZzVXLY88=
 ```
 
 ---
 
-### Incident Patch 2: `a48115b3` (2026-11-01)
-**Commit Message**: fix(goctl): track lines in block comments (#5826)
+### Incident Patch 2: `8e379d99` (2026-11-05)
+**Commit Message**: test(collection): cover keyLru.remove and Cache.Del with LRU limit (#5854)
 
-**File**: `tools/goctl/pkg/parser/api/scanner/scanner.go` (modified, +4/-1)
-```diff
-@@ -484,9 +484,12 @@ func (s *Scanner) scanLineComment() token.Token {
- 
- func (s *Scanner) scanDocument() (token.Token, error) {
- 	position := s.position
-+	tokenPosition := s.newPosition(position)
- 	var documentMode = initMode
- 	for {
- 		switch s.ch {
-+		case '\n':
-+			s.lines = append(s.lines, s.position)
- 		case '*':
- 			switch documentMode {
- 			case documentHalfOpen:
-@@ -516,7 +519,7 @@ func (s *Scanner) scanDocument() (token.Token, error) {
- 				tok := token.Token{
- 					Type:     token.DOCUMENT,
- 					Text:     string(s.data[position:s.position]),
--					Position: s.newPosition(position),
-+					Position: tokenPosition,
- 				}
- 				return tok, nil
- 			}
-```
+Co-authored-by: Amir Zare <[REDACTED_EMAIL]>
 
-**File**: `tools/goctl/pkg/parser/api/scanner/scanner_test.go` (modified, +17/-1)
+**File**: `core/collection/cache_test.go` (modified, +78/-0)
 ```diff
-@@ -222,7 +222,7 @@ func TestScanner_NextToken_document(t *testing.T) {
- 			Text: "/",
- 			Position: token.Position{
- 				Filename: "foo.api",
--				Line:     5,
-+				Line:     6,
- 				Column:   1,
- 			},
- 		},
-@@ -238,6 +238,22 @@ func TestScanner_NextToken_document(t *testing.T) {
- 	}
+@@ -161,6 +161,84 @@ func TestCacheWithLruEvicted(t *testing.T) {
+ 	assert.Equal(t, "second element", value)
  }
  
-+func TestScanner_NextToken_afterMultilineDocument(t *testing.T) {
-+	s, err := NewScanner("foo.api", "/* first\nsecond */\nservice")
-+	assert.NoError(t, err)
-+
-+	_, err = s.NextToken()
-+	assert.NoError(t, err)
-+
-+	actual, err := s.NextToken()
-+	assert.NoError(t, err)
-+	assert.Equal(t, token.Position{
-+		Filename: "foo.api",
-+		Line:     3,
-+		Column:   1,
-+	}, actual.Position)
-+}
-+
- func TestScanner_NextToken_invalid_document(t *testing.T) {
- 	var testData = []string{
- 		"/*",
-```
-
----
-
-### Incident Patch 3: `9dcf9508` (2026-11-01)
-**Commit Message**: fix(goctl/api/javagen): map int16 to a Java integer type (#5847)
-
-Co-authored-by: kevin <[REDACTED_EMAIL]>
-
-**File**: `tools/goctl/api/javagen/primitive_int16_test.go` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+package javagen
-+
-+import (
-+	"testing"
-+
-+	"github.com/zeromicro/go-zero/tools/goctl/api/spec"
-+)
-+
-+func TestSpecTypeToJavaIntegerWidths(t *testing.T) {
-+	for _, test := range []struct {
-+		name string
-+		want string
++func TestKeyLruRemove(t *testing.T) {
++	tests := []struct {
++		name      string
++		keys      []string
++		removeKey string
++		want      []string
++		wantEvict []string
 +	}{
-+		{name: "int", want: "int"},
-+		{name: "int8", want: "int"},
-+		{name: "int16", want: "int"},
-+		{name: "int32", want: "int"},
-+		{name: "int64", want: "long"},
-+		{name: "uint", want: "int"},
-+		{name: "uint8", want: "int"},
-+		{name: "uint16", want: "int"},
-+		{name: "uint32", want: "int"},
-+		{name: "uint64", want: "long"},
-+	} {
++		{
++			name:      "remove existing key",
++			keys:      []string{"first", "second", "third"},
++			removeKey: "second",
++			want:      []string{"first", "third"},
++			wantEvict: []string{"second"},
++		},
++		{
++			name:      "remove missing key",
++			keys:      []string{"first", "second"},
++			removeKey: "not-exists",
++			want:      []string{"first", "second"},
++		},
++		{
++			name:      "remove the only key",
++			keys:      []string{"only"},
++			removeKey: "only",
++			wantEvict: []string{"only"},
++		},
++	}
++
++	for _, test := range tests {
 +		t.Run(test.name, func(t *testing.T) {
-+			got, err := specTypeToJava(spec.PrimitiveType{RawName: test.name})
-+			if err != nil {
-+				t.Fatal(err)
++			var evicted []string
++			lru := newKeyLru(len(test.keys), func(key string) {
++				evicted = append(evicted, key)
++			})
++
++			for _, key := range test.keys {
++				lru.add(key)
 +			}
-+			if got != test.want {
-+				t.Errorf("specTypeToJava(%q) = %q, want %q", test.name, got, test.want)
++
++			lru.remove(test.removeKey)
++
++			assert.Equal(t, len(test.want), lru.evicts.Len())
++			assert.Equal(t, len(test.want), len(lru.elements))
++			assert.Equal(t, test.wantEvict, evicted)
++			for _, key := range test.want {
++				_, ok := lru.elements[key]
++				assert.True(t, ok, "key %q should still be tracked by lru", key)
 +			}
 +		})
 +	}
 +}
-```
-
-**File**: `tools/goctl/api/javagen/util.go` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@ func primitiveType(tp string) (string, bool) {
- 		return "String", true
- 	case "int64", "uint64":
- 		return "long", true
--	case "int", "int8", "int32", "uint", "uint8", "uint16", "uint32":
-+	case "int", "int8", "int16", "int32", "uint", "uint8", "uint16", "uint32":
- 		return "int", true
- 	case "float", "float32":
- 		return "float", true
++
++func TestCacheWithLruDel(t *testing.T) {
++	cache, err := NewCache(time.Minute, WithLimit(3))
++	assert.Nil(t, err)
++
++	cache.Set("first", "first element")
++	cache.Set("second", "second element")
++	cache.Set("third", "third element")
++
++	cache.Del("second")
++
++	_, ok := cache.Get("second")
++	assert.False(t, ok)
++	_, ok = cache.Get("first")
++	assert.True(t, ok)
++	_, ok = cache.Get("third")
++	assert.True(t, ok)
++
++	klru, ok := cache.lruCache.(*keyLru)
++	assert.True(t, ok)
++	assert.Equal(t, 2, klru.evicts.Len())
++	assert.Equal(t, 2, len(klru.elements))
++	_, ok = klru.elements["second"]
++	assert.False(t, ok)
++}
++
+ func BenchmarkCache(b *testing.B) {
+ 	cache, err := NewCache(time.Second*5, WithLimit(100000))
+ 	if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5875** (2026-11-05): chore(deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
+- **PR #5874** (closed): chore(deps): bump k8s.io/apimachinery from 0.35.9 to 0.37.2 (@dependabot[bot])
+- **PR #5873** (closed): chore(deps): bump k8s.io/client-go from 0.35.9 to 0.37.2 (@dependabot[bot])
+- **PR #5872** (2026-11-05): Prevent invalid stdout descriptors in logx tests (@Copilot)
 - **PR #5867** (2026-11-01): fix(rest): preserve CORS origin policy when adding headers (@kevwan)
 - **PR #5865** (2026-10-31): fix(rest): avoid unbounded gzip body dump on JWT auth failure (@kevwan)
-- **PR #5862** (2026-10-31): fix(deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (@kevwan)
-- **PR #5861** (closed): chore(deps): bump golang.org/x/net from 0.58.0 to 0.62.0 (@dependabot[bot])
-- **PR #5860** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 in /tools/goctl (@dependabot[bot])
-- **PR #5859** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
 
 ---
 
@@ -1841,37 +1540,30 @@ Co-authored-by: kevin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): zrpc Authenticator fails open: unknown app or any Redis error authent
+## X. deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)
 
 **RULE**:
-When implementing operations in `zrpc/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/stores/redis/redis_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5663037`: security): zrpc Authenticator fails open: unknown app or any Redis error authenticates the caller (#5848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `43637355`: deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `zrpc/config.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/stores/redis/redis_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		ListenOn string
-		Etcd     discov.EtcdConf    `json:",optional,inherit"`
-		Auth     bool               `json:",optional"`
-		Redis    redis.RedisKeyConf `json:",optional"`
-		// Deprecated: authentication always fails closed on lookup errors, regardless of this value.
-		StrictControl bool `json:",optional"`
+	"github.com/zeromicro/go-zero/core/breaker"
+		brk:      breaker.NewBreaker(),
+				brk:                breaker.NewBreaker(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		ListenOn      string
-		Etcd          discov.EtcdConf    `json:",optional,inherit"`
-		Auth          bool               `json:",optional"`
-		Redis         redis.RedisKeyConf `json:",optional"`
-		StrictControl bool               `json:",optional"`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5663037` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `43637355` are properly handled with clean fallback behavior.

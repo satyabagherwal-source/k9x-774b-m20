@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "65da6386",
+    "sourceVersion": "cda871cc",
     "license": "Apache-2.0",
-    "contentHash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
-    "lastHarvestedAt": "2026-11-05T05:23:55.423Z",
+    "contentHash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
+    "lastHarvestedAt": "2026-11-05T21:54:43.949Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "f5663037",
+    "sourceVersion": "43637355",
     "license": "MIT",
-    "contentHash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
-    "lastHarvestedAt": "2026-11-03T16:58:57.108Z",
+    "contentHash": "5667b5e37a8ebc90e7f58a45710e4b080e1c3f164e8af50b43bc562f9139b651",
+    "lastHarvestedAt": "2026-11-05T21:54:38.725Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "280986c1",
+    "sourceVersion": "812e5b3a",
     "license": "MIT",
-    "contentHash": "23f543c85fee35943bd6cb366266e802c6e7d10e70d59ab76727affc6fe2c58b",
-    "lastHarvestedAt": "2026-11-03T21:29:05.534Z",
+    "contentHash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
+    "lastHarvestedAt": "2026-11-05T21:54:49.471Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

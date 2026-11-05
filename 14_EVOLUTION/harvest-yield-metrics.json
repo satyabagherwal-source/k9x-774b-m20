@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:47:43.127Z",
-  "total_cycles_completed": 7763,
-  "total_learnings_persisted": 7763,
-  "total_rules_promoted": 7405,
+  "last_updated": "2026-11-05T21:54:49.476Z",
+  "total_cycles_completed": 7766,
+  "total_learnings_persisted": 7766,
+  "total_rules_promoted": 7408,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:50:21.681Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:50:22.798Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:52:11.376Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T09:04:52.885Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:54:38.730Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:54:43.954Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:54:49.476Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -7786,3 +7786,6 @@
 | `CYCLE-20261105-KDE3` | `2026-11-05T21:40:19.275Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`203db3d8...`) |
 | `CYCLE-20261105-TSE1` | `2026-11-05T21:47:38.617Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`be8b9dcb...`) |
 | `CYCLE-20261105-TVUX` | `2026-11-05T21:47:43.113Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`479ccb9b...`) |
+| `CYCLE-20261105-2SJM` | `2026-11-05T21:54:38.722Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5667b5e3...`) |
+| `CYCLE-20261105-2WKQ` | `2026-11-05T21:54:43.946Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`04c705da...`) |
+| `CYCLE-20261105-30U4` | `2026-11-05T21:54:49.468Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e17b1517...`) |

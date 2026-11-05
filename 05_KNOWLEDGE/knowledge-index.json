@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T21:47:43.005Z",
+  "last_updated": "2026-11-05T21:54:49.389Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13193,11 +13193,16 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "65da6386",
-      "content_hash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
+      "source_version": "cda871cc",
+      "content_hash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update changelog to cover the alarmStore race issue",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2004,
           "title": "CHANGELOG(3.7): add processMessages order fix",
@@ -13264,7 +13269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:23:55.311Z",
+      "verified_at": "2026-11-05T21:54:43.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61906,14 +61911,19 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "280986c1",
-      "content_hash": "9f275870034ff0264b47b671dd59c940e8ef645c0f6d39e81391fc2ccf1d5872",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "812e5b3a",
+      "content_hash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs(📚): warn that a sync flush blocks in the background, drop a stale device l",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2002,
           "title": "⬆️): Update to Skia m157 (#4268)",
@@ -61970,7 +61980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:25:13.362Z",
+      "verified_at": "2026-11-05T21:54:49.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64054,11 +64064,16 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "f5663037",
-      "content_hash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
+      "source_version": "43637355",
+      "content_hash": "5667b5e37a8ebc90e7f58a45710e4b080e1c3f164e8af50b43bc562f9139b651",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (#5875)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2355,
           "title": "Guard Against Partial-Read-With-EOF Premature Termination",
@@ -64110,7 +64125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T16:58:57.017Z",
+      "verified_at": "2026-11-05T21:54:38.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

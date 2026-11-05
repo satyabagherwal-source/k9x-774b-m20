@@ -7795,3 +7795,6 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `45300870` | Multi-dimensional audit evidence | 2026-11-05T21:40:19.279Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `49d87f99` | Multi-dimensional audit evidence | 2026-11-05T21:47:38.621Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `491512db` | Multi-dimensional audit evidence | 2026-11-05T21:47:43.117Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `43637355` | Multi-dimensional audit evidence | 2026-11-05T21:54:38.725Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `cda871cc` | Multi-dimensional audit evidence | 2026-11-05T21:54:43.949Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `812e5b3a` | Multi-dimensional audit evidence | 2026-11-05T21:54:49.471Z |

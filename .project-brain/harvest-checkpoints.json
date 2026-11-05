@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T21:47:43.131Z",
+  "last_updated": "2026-11-05T21:54:49.479Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "9f275870034ff0264b47b671dd59c940e8ef645c0f6d39e81391fc2ccf1d5872",
-      "verified_at": "2026-11-04T09:25:13.498Z",
+      "content_hash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
+      "verified_at": "2026-11-05T21:54:49.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:25:13.498Z"
+      "last_updated": "2026-11-05T21:54:49.479Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
-      "verified_at": "2026-11-05T05:23:55.440Z",
+      "content_hash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
+      "verified_at": "2026-11-05T21:54:43.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:23:55.440Z"
+      "last_updated": "2026-11-05T21:54:43.963Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
-      "verified_at": "2026-11-03T16:58:57.116Z",
+      "content_hash": "5667b5e37a8ebc90e7f58a45710e4b080e1c3f164e8af50b43bc562f9139b651",
+      "verified_at": "2026-11-05T21:54:38.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T16:58:57.116Z"
+      "last_updated": "2026-11-05T21:54:38.733Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",
