@@ -7800,3 +7800,5 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `812e5b3a` | Multi-dimensional audit evidence | 2026-11-05T21:54:49.471Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `a0016873` | Multi-dimensional audit evidence | 2026-11-05T22:01:23.101Z |
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-05T22:01:24.802Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `e3e4f4eb` | Multi-dimensional audit evidence | 2026-11-05T22:08:31.796Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `a6dfa0c1` | Multi-dimensional audit evidence | 2026-11-05T22:08:39.379Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:01:24.807Z",
-  "total_cycles_completed": 7768,
-  "total_learnings_persisted": 7768,
-  "total_rules_promoted": 7411,
+  "last_updated": "2026-11-05T22:08:39.384Z",
+  "total_cycles_completed": 7770,
+  "total_learnings_persisted": 7770,
+  "total_rules_promoted": 7413,
   "history": [
-    {
-      "timestamp": "2026-11-05T09:12:17.856Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T09:12:28.875Z",
-      "repository": "openkruise/kruise",
-      "learningId": "learn-github-openkruise-kruise",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T09:12:33.420Z",
       "repository": "duckdb/duckdb",
@@ -1403,6 +1389,20 @@
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
       "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:08:31.801Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:08:39.384Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

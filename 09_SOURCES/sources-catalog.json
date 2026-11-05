@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "a5c8b104",
+    "sourceVersion": "a6dfa0c1",
     "license": "Apache-2.0",
-    "contentHash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
-    "lastHarvestedAt": "2026-11-05T05:39:17.457Z",
+    "contentHash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
+    "lastHarvestedAt": "2026-11-05T22:08:39.379Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "5390e472",
+    "sourceVersion": "e3e4f4eb",
     "license": "MIT",
-    "contentHash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
-    "lastHarvestedAt": "2026-11-03T21:44:50.051Z",
+    "contentHash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
+    "lastHarvestedAt": "2026-11-05T22:08:31.796Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

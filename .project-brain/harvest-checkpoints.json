@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T22:01:24.810Z",
+  "last_updated": "2026-11-05T22:08:39.396Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
-      "verified_at": "2026-11-05T05:39:17.470Z",
+      "content_hash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
+      "verified_at": "2026-11-05T22:08:39.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:39:17.470Z"
+      "last_updated": "2026-11-05T22:08:39.395Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
-      "verified_at": "2026-11-03T21:44:50.062Z",
+      "content_hash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
+      "verified_at": "2026-11-05T22:08:31.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:44:50.062Z"
+      "last_updated": "2026-11-05T22:08:31.804Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",

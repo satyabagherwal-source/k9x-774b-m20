@@ -7791,3 +7791,5 @@
 | `CYCLE-20261105-30U4` | `2026-11-05T21:54:49.468Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e17b1517...`) |
 | `CYCLE-20261105-BGKA` | `2026-11-05T22:01:23.098Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`164f31f3...`) |
 | `CYCLE-20261105-BHVJ` | `2026-11-05T22:01:24.799Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e30c53cb...`) |
+| `CYCLE-20261105-KNCH` | `2026-11-05T22:08:31.793Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7eb8cb7a...`) |
+| `CYCLE-20261105-KT74` | `2026-11-05T22:08:39.376Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0575bb13...`) |

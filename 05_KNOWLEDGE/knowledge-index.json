@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:01:24.734Z",
+  "last_updated": "2026-11-05T22:08:39.300Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2453,11 +2453,16 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "a5c8b104",
-      "content_hash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
+      "source_version": "a6dfa0c1",
+      "content_hash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "SQL error prefix for Firebird SQLDA status vectors (#40443)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2018,
           "title": "firebird batch rls cancel without batch (#40098)",
@@ -2539,7 +2544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:39:17.390Z",
+      "verified_at": "2026-11-05T22:08:39.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55367,11 +55372,16 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "5390e472",
-      "content_hash": "785c85216d9a59463af6ea0c18b00389d305f803c8f7657e44f3ab42272869d1",
+      "source_version": "e3e4f4eb",
+      "content_hash": "7eb8cb7a63b374326f86b11cfe42c27ca01ef81c36436152a9074b2444c3a080",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Android, Tabs): notify every SafeAreaView registered on TabsContainer about inte",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2710,
           "title": "iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i",
@@ -55403,7 +55413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:44:49.933Z",
+      "verified_at": "2026-11-05T22:08:31.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
