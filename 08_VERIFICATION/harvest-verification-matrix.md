@@ -7677,3 +7677,6 @@
 | `CYCLE-20261105-F3AU` | `2026-11-05T13:40:19.446Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7238` | Yes (`f7129c4f...`) |
 | `CYCLE-20261105-F7XE` | `2026-11-05T13:40:25.442Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7239` | Yes (`0f1bb727...`) |
 | `CYCLE-20261105-F83F` | `2026-11-05T13:40:25.659Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`8eb09a74...`) |
+| `CYCLE-20261105-OLO7` | `2026-11-05T13:47:43.159Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`7c4cd035...`) |
+| `CYCLE-20261105-OSVN` | `2026-11-05T13:47:52.499Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7240` | Yes (`40bba363...`) |
+| `CYCLE-20261105-OWAJ` | `2026-11-05T13:47:56.923Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7241` | Yes (`0e740c49...`) |

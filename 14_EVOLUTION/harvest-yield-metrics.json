@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T13:40:25.666Z",
-  "total_cycles_completed": 7654,
-  "total_learnings_persisted": 7654,
-  "total_rules_promoted": 7303,
+  "last_updated": "2026-11-05T13:47:56.937Z",
+  "total_cycles_completed": 7657,
+  "total_learnings_persisted": 7657,
+  "total_rules_promoted": 7305,
   "history": [
-    {
-      "timestamp": "2026-11-05T03:20:43.543Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:20:49.071Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:27:39.853Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T03:27:44.440Z",
       "repository": "TableProApp/TablePro",
@@ -1403,6 +1382,27 @@
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-facebook-sam3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:47:43.170Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:47:52.512Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:47:56.937Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

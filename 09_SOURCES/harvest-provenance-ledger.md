@@ -7686,3 +7686,6 @@ Every entry in this ledger must capture:
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `3fe45f53` | Multi-dimensional audit evidence | 2026-11-05T13:40:19.448Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `75d69a0f` | Multi-dimensional audit evidence | 2026-11-05T13:40:25.445Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-05T13:40:25.662Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T13:47:43.164Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `a6d5147c` | Multi-dimensional audit evidence | 2026-11-05T13:47:52.503Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `f0f9ff86` | Multi-dimensional audit evidence | 2026-11-05T13:47:56.928Z |

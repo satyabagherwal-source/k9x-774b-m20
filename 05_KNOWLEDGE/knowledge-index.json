@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:40:25.574Z",
+  "last_updated": "2026-11-05T13:47:56.801Z",
   "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4425,8 +4425,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "5aaceb19",
-      "content_hash": "2c6365fc1c10c4de05b95412fffe03993de1d89ab1527ce619aca602e05fbffd",
+      "source_version": "a6d5147c",
+      "content_hash": "40bba3632f8f59c3c649d38e4c831a92c16cf3afef5ce60cb38588102fe55021",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4494,6 +4494,11 @@
           "number": 7029,
           "title": "security-guardian): stop flagging scoped intrinsic ARN lists in PassRole guard (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7240,
+          "title": "region-info): me-west-1 (#39431)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4501,7 +4506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:48:28.520Z",
+      "verified_at": "2026-11-05T13:47:52.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19416,7 +19421,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "8b4e7ad744764473d47cecddd6e740be7dbd6cdf85e512f5a00792862698c045",
+      "content_hash": "7c4cd035eb3f3500e1758285e16040a2be37730e7fb8c43315c0735660d39f60",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -19473,7 +19478,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-31T23:24:55.969Z",
+      "verified_at": "2026-11-05T13:47:43.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47905,8 +47910,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "bbeade35",
-      "content_hash": "c1cebb1c17fd1a4a53db237c8a90763cff10e008ea0b3ced7ca82eda7bda6865",
+      "source_version": "f0f9ff86",
+      "content_hash": "0e740c497fc4534a4739c6df98c8067336e262601d4c1c2f38a39de5a46758e8",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -47974,6 +47979,11 @@
           "number": 7012,
           "title": "align Antithesis SDK with proptest fork (#7215)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7241,
+          "title": "enforce planner warning modes consistently (#7050)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47981,7 +47991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:06:28.172Z",
+      "verified_at": "2026-11-05T13:47:56.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182734,6 +182744,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:40:25.338Z"
+    },
+    "rule-7240": {
+      "learning_id": "rule-7240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7240,
+      "title": "region-info): me-west-1 (#39431)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "a6d5147c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:47:52.363Z"
+    },
+    "rule-7241": {
+      "learning_id": "rule-7241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7241,
+      "title": "enforce planner warning modes consistently (#7050)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "f0f9ff86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:47:56.769Z"
     }
   },
   "aliases": {
