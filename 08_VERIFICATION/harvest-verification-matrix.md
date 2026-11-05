@@ -7639,3 +7639,5 @@
 | `CYCLE-20261105-BBMQ` | `2026-11-05T11:45:25.154Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7208` | Yes (`3cf5257e...`) |
 | `CYCLE-20261105-BC67` | `2026-11-05T11:45:25.855Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7207, Rule 7209, Rule 7210` | Yes (`d6a85807...`) |
 | `CYCLE-20261105-BDXD` | `2026-11-05T11:45:28.129Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7211` | Yes (`7f53e127...`) |
+| `CYCLE-20261105-LAR9` | `2026-11-05T11:53:10.581Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`351efccb...`) |
+| `CYCLE-20261105-LFJL` | `2026-11-05T11:53:16.785Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7212` | Yes (`cc573839...`) |

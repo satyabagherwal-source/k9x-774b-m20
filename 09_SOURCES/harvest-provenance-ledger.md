@@ -7648,3 +7648,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2993b5e6` | Multi-dimensional audit evidence | 2026-11-05T11:45:25.158Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-05T11:45:25.859Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `7e97594b` | Multi-dimensional audit evidence | 2026-11-05T11:45:28.133Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T11:53:10.586Z |
+| `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `44bd2980` | Multi-dimensional audit evidence | 2026-11-05T11:53:16.790Z |

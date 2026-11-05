@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:45:28.139Z",
-  "total_cycles_completed": 7616,
-  "total_learnings_persisted": 7616,
-  "total_rules_promoted": 7274,
+  "last_updated": "2026-11-05T11:53:16.796Z",
+  "total_cycles_completed": 7618,
+  "total_learnings_persisted": 7618,
+  "total_rules_promoted": 7275,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:22:15.979Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:22:30.019Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:33:16.078Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T11:45:28.139Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:53:10.593Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:53:16.796Z",
+      "repository": "touchlab/Kermit",
+      "learningId": "learn-github-touchlab-kermit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

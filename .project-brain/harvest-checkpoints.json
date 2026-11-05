@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T11:45:28.152Z",
+  "last_updated": "2026-11-05T11:53:16.809Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "315ee571628b1ba4eb5d193b458442ea3b319fc6ad672c5fa383658949dfd046",
-      "verified_at": "2026-10-31T21:09:31.660Z",
+      "content_hash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
+      "verified_at": "2026-11-05T11:53:10.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T21:09:31.660Z"
+      "last_updated": "2026-11-05T11:53:10.596Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -13416,14 +13416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-touchlab-kermit",
-      "content_hash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
-      "verified_at": "2026-10-19T20:16:52.949Z",
+      "content_hash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
+      "verified_at": "2026-11-05T11:53:16.808Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:16:52.949Z"
+      "last_updated": "2026-11-05T11:53:16.808Z"
     },
     "GateNLP/ultimate-sitemap-parser": {
       "repository": "GateNLP/ultimate-sitemap-parser",

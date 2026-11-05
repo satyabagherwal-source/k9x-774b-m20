@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T11:45:28.038Z",
+  "last_updated": "2026-11-05T11:53:16.693Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31838,7 +31838,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "315ee571628b1ba4eb5d193b458442ea3b319fc6ad672c5fa383658949dfd046",
+      "content_hash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -31931,7 +31931,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-31T21:09:31.549Z",
+      "verified_at": "2026-11-05T11:53:10.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58773,14 +58773,19 @@
       "slug": "touchlab-kermit",
       "platform": "github",
       "source_url": "https://github.com/touchlab/Kermit",
-      "source_version": "3a4042f3",
-      "content_hash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
+      "source_version": "44bd2980",
+      "content_hash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
       "promoted_rules": [
         {
           "number": 2792,
           "title": "fixed issues with rolling file and thread interruption (#483)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7212,
+          "title": "Fixing sample build (#492)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -58789,7 +58794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:16:52.868Z",
+      "verified_at": "2026-11-05T11:53:16.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182146,6 +182151,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T11:45:28.014Z"
+    },
+    "rule-7212": {
+      "learning_id": "rule-7212",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7212,
+      "title": "Fixing sample build (#492)",
+      "source_url": "https://github.com/touchlab/Kermit",
+      "source_version": "44bd2980",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:53:16.668Z"
     }
   },
   "aliases": {
