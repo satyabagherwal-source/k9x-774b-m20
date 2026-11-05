@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T09:36:24.989Z",
-    "lastVerified": "2026-11-05T09:36:24.989Z",
+    "lastChecked": "2026-11-05T09:44:52.480Z",
+    "lastVerified": "2026-11-05T09:44:52.480Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T09:05:00.058Z",
-    "lastVerified": "2026-11-05T09:05:00.058Z",
+    "lastChecked": "2026-11-05T09:44:42.962Z",
+    "lastVerified": "2026-11-05T09:44:42.962Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -918,9 +918,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-05T05:46:46.353Z",
+    "lastChecked": "2026-11-05T09:44:37.959Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-05T05:46:46.353Z"
+    "lastVerified": "2026-11-05T09:44:37.959Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -3280,9 +3280,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-04T19:47:59.865Z",
+    "lastChecked": "2026-11-05T09:44:35.571Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-04T19:47:59.865Z"
+    "lastVerified": "2026-11-05T09:44:35.571Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -5500,14 +5500,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T09:39:57.515Z",
-    "lastVerified": "2026-11-04T09:39:57.515Z",
+    "lastChecked": "2026-11-05T09:44:33.281Z",
+    "lastVerified": "2026-11-05T09:44:33.281Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
+    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6653,13 +6653,13 @@
     "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T18:40:39.580Z",
-    "lastVerified": "2026-10-31T18:40:39.580Z",
+    "lastChecked": "2026-11-05T09:44:30.580Z",
+    "lastVerified": "2026-11-05T09:44:30.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
-    "promotedRulesCount": 2,
+    "contentHash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7675,14 +7675,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T18:57:41.160Z",
-    "lastVerified": "2026-11-04T18:57:41.160Z",
+    "lastChecked": "2026-11-05T09:44:49.149Z",
+    "lastVerified": "2026-11-05T09:44:49.149Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
+    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10200,9 +10200,9 @@
   "hi-manshu-charty": {
     "name": "charty",
     "officialUrl": "https://github.com/hi-manshu/charty",
-    "lastChecked": "2026-11-02T14:46:20.645Z",
+    "lastChecked": "2026-11-05T09:44:32.922Z",
     "revisionIdentifier": "c7ba0b05",
-    "lastVerified": "2026-11-02T14:46:20.645Z"
+    "lastVerified": "2026-11-05T09:44:32.922Z"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",

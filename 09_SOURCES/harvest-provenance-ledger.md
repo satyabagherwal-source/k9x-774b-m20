@@ -7606,3 +7606,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T09:21:00.248Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `39b9f2d5` | Multi-dimensional audit evidence | 2026-11-05T09:25:40.957Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-05T09:36:22.444Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-05T09:44:34.378Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `e706cab3` | Multi-dimensional audit evidence | 2026-11-05T09:44:34.847Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `3b6bbb46` | Multi-dimensional audit evidence | 2026-11-05T09:44:49.927Z |

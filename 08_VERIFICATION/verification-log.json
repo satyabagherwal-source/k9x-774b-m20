@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-K0V0",
-    "timestamp": "2026-11-04T01:20:39.516Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "80a8c55eee0919b4490efcb376e126db486518b80ce20bcad5f0fcad68c4b7e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-K23R",
-    "timestamp": "2026-11-04T01:20:41.127Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "fc564ce3d9f106a05690e0162189dc1258d551eae425b488587ac72c9755fc30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-T41H",
-    "timestamp": "2026-11-04T01:27:43.541Z",
-    "repository": "AndyTheFactory/newspaper4k",
-    "learningId": "learn-github-andythefactory-newspaper4k",
-    "contentHash": "67c9941fc3f9dff2192e2aae48dc8d9e8a3106f41dfcb0725f0380544b93e231",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-T7VN",
     "timestamp": "2026-11-04T01:27:48.515Z",
     "repository": "saltstack/salt",
@@ -7492,6 +7447,51 @@
     "contentHash": "8cf3e1810cea445c0319918ce941390501a6bf5be4bcf2b0968f7c9fe0f30060",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ZWW6",
+    "timestamp": "2026-11-05T09:44:34.374Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ZX98",
+    "timestamp": "2026-11-05T09:44:34.844Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-08W4",
+    "timestamp": "2026-11-05T09:44:49.924Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

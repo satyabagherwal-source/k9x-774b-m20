@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
-    "lastHarvestedAt": "2026-10-31T18:45:47.525Z",
+    "contentHash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
+    "lastHarvestedAt": "2026-11-05T09:44:34.378Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "00f6624c",
+    "sourceVersion": "e706cab3",
     "license": "Apache-2.0",
-    "contentHash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
-    "lastHarvestedAt": "2026-11-04T09:40:21.840Z",
+    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
+    "lastHarvestedAt": "2026-11-05T09:44:34.847Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "43d885ef",
+    "sourceVersion": "3b6bbb46",
     "license": "MIT",
-    "contentHash": "c9168da69b304016b806a740cdc25f7f1d03f52277ea1b98ebb2825fe716c5ba",
-    "lastHarvestedAt": "2026-11-04T18:57:42.237Z",
+    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
+    "lastHarvestedAt": "2026-11-05T09:44:49.927Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

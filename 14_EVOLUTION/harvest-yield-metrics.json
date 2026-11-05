@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T09:36:22.449Z",
-  "total_cycles_completed": 7574,
-  "total_learnings_persisted": 7574,
-  "total_rules_promoted": 7238,
+  "last_updated": "2026-11-05T09:44:49.932Z",
+  "total_cycles_completed": 7577,
+  "total_learnings_persisted": 7577,
+  "total_rules_promoted": 7240,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:27:27.833Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:27:34.097Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:27:34.360Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:34:35.707Z",
       "repository": "sxyazi/yazi",
@@ -1403,6 +1382,27 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:44:34.383Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:44:34.852Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:44:49.932Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

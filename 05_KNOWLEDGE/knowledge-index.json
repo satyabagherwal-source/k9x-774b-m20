@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T09:36:22.332Z",
+  "last_updated": "2026-11-05T09:44:49.822Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19261,7 +19261,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "bcdb342705802c15b7960a78fa984f5310a62e11c71cdafe07535fda4d1dd23d",
+      "content_hash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -19333,7 +19333,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-31T18:45:47.422Z",
+      "verified_at": "2026-11-05T09:44:34.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45326,8 +45326,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "00f6624c",
-      "content_hash": "ee582962336aec9f85a61cc010b79bd1cae30807a43ce3c02fcb087178be9c62",
+      "source_version": "e706cab3",
+      "content_hash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -45405,6 +45405,11 @@
           "number": 6797,
           "title": "mir-importer): lower is_val_statically_known to false (#1359)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7179,
+          "title": "cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45412,7 +45417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:40:21.734Z",
+      "verified_at": "2026-11-05T09:44:34.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59347,13 +59352,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "ff97c223",
-      "content_hash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "3b6bbb46",
+      "content_hash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -59494,6 +59499,11 @@
           "number": 6913,
           "title": "Merge 'postgres: add json_strip_nulls(json)' from Jaeil Lee",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7180,
+          "title": "Merge 'core/time: return NULL instead of panicking when time_date overflows' fro",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59501,7 +59511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:26:22.131Z",
+      "verified_at": "2026-11-05T09:44:49.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181519,6 +181529,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T09:25:40.830Z"
+    },
+    "rule-7179": {
+      "learning_id": "rule-7179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7179,
+      "title": "cuda-host): serialize host-callback-gated GPU tests in shared_launch_lifetimes (",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "e706cab3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:44:34.745Z"
+    },
+    "rule-7180": {
+      "learning_id": "rule-7180",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7180,
+      "title": "Merge 'core/time: return NULL instead of panicking when time_date overflows' fro",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "3b6bbb46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:44:49.792Z"
     }
   },
   "aliases": {

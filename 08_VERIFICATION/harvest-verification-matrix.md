@@ -7597,3 +7597,6 @@
 | `CYCLE-20261105-5LQS` | `2026-11-05T09:21:00.244Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 7176, Rule 7177` | Yes (`ef4890f4...`) |
 | `CYCLE-20261105-BMC9` | `2026-11-05T09:25:40.953Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7178` | Yes (`02fb9217...`) |
 | `CYCLE-20261105-PDBC` | `2026-11-05T09:36:22.440Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`8cf3e181...`) |
+| `CYCLE-20261105-ZWW6` | `2026-11-05T09:44:34.374Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`14b47f9d...`) |
+| `CYCLE-20261105-ZX98` | `2026-11-05T09:44:34.844Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7179` | Yes (`09c5d8e7...`) |
+| `CYCLE-20261105-08W4` | `2026-11-05T09:44:49.924Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`7fcd3ca8...`) |
