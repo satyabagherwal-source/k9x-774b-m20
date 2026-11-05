@@ -4880,3 +4880,7 @@ https://github.com/feder-cr/Jobs_Applier_AI_Agent
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T17:47:35.299Z] ---
 # [AI-AGENTS] HaD0Yun/CozyClay (1097 score) - Open source previs software in the browser: block a scene, pose characters, auth
 https://github.com/HaD0Yun/CozyClay
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T19:37:50.791Z] ---
+# [HUGGINGFACE-AI-MODELS] ccore/Qwen3.5-4B-GLB-3D-Coder (3710 score) - Verified Hugging Face Model: ccore/Qwen3.5-4B-GLB-3D-Coder (171 likes, 12206 dow
+https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder

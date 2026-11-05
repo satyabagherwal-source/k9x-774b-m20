@@ -7768,3 +7768,6 @@
 | `CYCLE-20261105-MZZT` | `2026-11-05T19:22:23.801Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59cb5008...`) |
 | `CYCLE-20261105-W3I7` | `2026-11-05T19:29:28.255Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`8b890944...`) |
 | `CYCLE-20261105-W5HJ` | `2026-11-05T19:29:30.823Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7a6f5ab...`) |
+| `CYCLE-20261105-758W` | `2026-11-05T19:38:03.728Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`61eb1300...`) |
+| `CYCLE-20261105-79UD` | `2026-11-05T19:38:09.685Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4c26ae80...`) |
+| `CYCLE-20261105-7BE7` | `2026-11-05T19:38:11.695Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e8d49f67...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-0Z0W",
-    "timestamp": "2026-11-04T18:21:36.464Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "63b59aad0909936785afd68235fadd7940f58c327bc528153b8696958ae7fcd2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-0ZKM",
-    "timestamp": "2026-11-04T18:21:37.174Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "0962ef1faf302411c0e77e46c88b996ca1d9057d8b673ed510764b2eac97b802",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-117H",
-    "timestamp": "2026-11-04T18:21:39.293Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-14SL",
     "timestamp": "2026-11-04T18:21:43.941Z",
     "repository": "dragonflydb/dragonfly",
@@ -7490,6 +7445,51 @@
     "repository": "Automattic/harper",
     "learningId": "learn-github-automattic-harper",
     "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-758W",
+    "timestamp": "2026-11-05T19:38:03.728Z",
+    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+    "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-79UD",
+    "timestamp": "2026-11-05T19:38:09.685Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-7BE7",
+    "timestamp": "2026-11-05T19:38:11.695Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

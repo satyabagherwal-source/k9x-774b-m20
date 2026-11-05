@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ddfec329",
+    "sourceVersion": "c250f749",
     "license": "Apache-2.0",
-    "contentHash": "455ebac24196ab3de15ecd975ea496b7bf91ecd7eadb2bfb37c3d2eb2d1cd975",
-    "lastHarvestedAt": "2026-11-05T15:30:15.116Z",
+    "contentHash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
+    "lastHarvestedAt": "2026-11-05T19:38:11.698Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "f253de70",
+    "sourceVersion": "47f009ff",
     "license": "Apache-2.0",
-    "contentHash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
-    "lastHarvestedAt": "2026-11-05T04:57:38.129Z",
+    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
+    "lastHarvestedAt": "2026-11-05T19:38:09.689Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -12008,5 +12008,15 @@
     "contentHash": "1a2eb4041670fb199195588d07df5b896a57b5001eada1b79cbf4fa1921933e9",
     "lastHarvestedAt": "2026-11-05T17:49:16.682Z",
     "learningId": "learn-github-had0yun-cozyclay"
+  },
+  "hf-ccore-qwen3.5-4b-glb-3d-coder": {
+    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "sourceVersion": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+    "license": "Open-Source",
+    "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
+    "lastHarvestedAt": "2026-11-05T19:38:03.732Z",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder"
   }
 }

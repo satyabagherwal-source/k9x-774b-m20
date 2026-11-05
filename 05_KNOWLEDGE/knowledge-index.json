@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T19:29:30.724Z",
-  "total_verified_learnings": 1219,
+  "last_updated": "2026-11-05T19:38:11.605Z",
+  "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -46660,11 +46660,16 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "f253de70",
-      "content_hash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+      "source_version": "47f009ff",
+      "content_hash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "bump follow-redirects from 1.16.1 to 1.16.2 in /website (#4908)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2250,
           "title": "scope expansion ingestion controller to audit and webhook operations (#4778)",
@@ -46691,7 +46696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:57:38.032Z",
+      "verified_at": "2026-11-05T19:38:09.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73112,13 +73117,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "c250f749",
-      "content_hash": "fff181b9d9d0e9d11d1b859da55634a07c43d6a26aea80ed9b3694e5d524ddf0",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -73251,7 +73256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:47:59.038Z",
+      "verified_at": "2026-11-05T19:38:11.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183665,6 +183670,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-05T17:49:16.534Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder": {
+      "learning_id": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "slug": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+      "content_hash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "[Uniform Dtype Consistency Across Modalities]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "[Mandatory Cache Activation for Generation]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "[Explicit BOS/EOS Token Definition]",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T19:38:03.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

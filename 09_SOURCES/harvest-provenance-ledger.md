@@ -7777,3 +7777,6 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8aa18b51` | Multi-dimensional audit evidence | 2026-11-05T19:22:23.804Z |
 | `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T19:29:28.259Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `f7683239` | Multi-dimensional audit evidence | 2026-11-05T19:29:30.826Z |
+| `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-05T19:38:03.732Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `47f009ff` | Multi-dimensional audit evidence | 2026-11-05T19:38:09.689Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `c250f749` | Multi-dimensional audit evidence | 2026-11-05T19:38:11.698Z |

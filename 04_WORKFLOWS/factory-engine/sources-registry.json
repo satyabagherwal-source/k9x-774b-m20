@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T19:29:39.142Z",
-    "lastVerified": "2026-11-05T19:29:39.142Z",
+    "lastChecked": "2026-11-05T19:38:14.303Z",
+    "lastVerified": "2026-11-05T19:38:14.303Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -451,8 +451,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:06:55.472Z",
-    "lastVerified": "2026-11-05T19:06:55.472Z",
+    "lastChecked": "2026-11-05T19:38:11.330Z",
+    "lastVerified": "2026-11-05T19:38:11.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -615,14 +615,14 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T04:57:37.273Z",
-    "lastVerified": "2026-11-05T04:57:37.273Z",
+    "lastChecked": "2026-11-05T19:38:07.765Z",
+    "lastVerified": "2026-11-05T19:38:07.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2390,14 +2390,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T15:30:14.320Z",
-    "lastVerified": "2026-11-05T15:30:14.320Z",
+    "lastChecked": "2026-11-05T19:38:09.826Z",
+    "lastVerified": "2026-11-05T19:38:09.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "455ebac24196ab3de15ecd975ea496b7bf91ecd7eadb2bfb37c3d2eb2d1cd975",
+    "contentHash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5037,9 +5037,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-05T04:14:36.830Z",
+    "lastChecked": "2026-11-05T19:38:08.783Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-05T04:14:36.830Z"
+    "lastVerified": "2026-11-05T19:38:08.783Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -9383,9 +9383,9 @@
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
     "officialUrl": "https://github.com/serpapi/google-search-results-nodejs",
-    "lastChecked": "2026-11-02T15:36:32.728Z",
+    "lastChecked": "2026-11-05T19:37:58.760Z",
     "revisionIdentifier": "f6d03fc9",
-    "lastVerified": "2026-11-02T15:36:32.728Z"
+    "lastVerified": "2026-11-05T19:37:58.760Z"
   },
   "apppear-chartview": {
     "name": "ChartView",
@@ -11882,12 +11882,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "keyboardkit-keyboardkit": {
-    "name": "KeyboardKit/KeyboardKit",
+    "name": "KeyboardKit",
     "officialUrl": "https://github.com/KeyboardKit/KeyboardKit",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T19:37:40.803Z",
-    "lastVerified": "2026-11-03T19:37:40.803Z",
+    "lastChecked": "2026-11-05T19:38:01.400Z",
+    "lastVerified": "2026-11-05T19:38:01.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keyboardkit-keyboardkit",
@@ -11896,7 +11896,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9a930787"
   },
   "qwikdev-qwik": {
     "name": "QwikDev/qwik",
@@ -13803,6 +13804,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 23,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ccore-qwen3.5-4b-glb-3d-coder": {
+    "name": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-05T19:37:56.254Z",
+    "lastVerified": "2026-11-05T19:37:56.254Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+    "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }
