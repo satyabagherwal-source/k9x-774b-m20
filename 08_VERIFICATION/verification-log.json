@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-OSZO",
-    "timestamp": "2026-11-03T23:32:24.132Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "145b8cd43fcebe675d626774c6b0e38ca4c84c71f65947d4475dbab85302b887",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-XOLV",
     "timestamp": "2026-11-03T23:39:18.355Z",
     "repository": "fallow-rs/fallow",
@@ -7492,6 +7477,21 @@
     "contentHash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BZLM",
+    "timestamp": "2026-11-05T07:06:00.058Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

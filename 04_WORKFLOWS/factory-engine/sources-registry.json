@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T06:58:34.928Z",
-    "lastVerified": "2026-11-05T06:58:34.928Z",
+    "lastChecked": "2026-11-05T07:06:02.609Z",
+    "lastVerified": "2026-11-05T07:06:02.609Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T06:36:34.635Z",
-    "lastVerified": "2026-11-05T06:36:34.635Z",
+    "lastChecked": "2026-11-05T07:06:00.050Z",
+    "lastVerified": "2026-11-05T07:06:00.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1841,12 +1841,12 @@
     "revisionIdentifier": "13fdf431"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:46:32.101Z",
-    "lastVerified": "2026-11-05T03:46:32.101Z",
+    "lastChecked": "2026-11-05T07:05:55.120Z",
+    "lastVerified": "2026-11-05T07:05:55.120Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1855,7 +1855,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "92514f9f"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -2125,12 +2126,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress-group/higress",
+    "name": "higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T17:37:24.383Z",
-    "lastVerified": "2026-11-04T17:37:24.383Z",
+    "lastChecked": "2026-11-05T07:05:52.601Z",
+    "lastVerified": "2026-11-05T07:05:52.601Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
@@ -2139,7 +2140,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a89b18dc"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -4421,9 +4423,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-04T04:04:38.106Z",
+    "lastChecked": "2026-11-05T07:05:45.025Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-04T04:04:38.106Z"
+    "lastVerified": "2026-11-05T07:05:45.025Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -5643,13 +5645,13 @@
     "officialUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T16:27:08.127Z",
-    "lastVerified": "2026-10-31T16:27:08.127Z",
+    "lastChecked": "2026-11-05T07:05:47.701Z",
+    "lastVerified": "2026-11-05T07:05:47.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
-    "promotedRulesCount": 3,
+    "contentHash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6554,9 +6556,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-04T16:43:10.624Z",
+    "lastChecked": "2026-11-05T07:05:57.522Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-04T16:43:10.624Z"
+    "lastVerified": "2026-11-05T07:05:57.522Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -9863,9 +9865,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-11-01T00:42:34.136Z",
+    "lastChecked": "2026-11-05T07:05:50.002Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-11-01T00:42:34.136Z"
+    "lastVerified": "2026-11-05T07:05:50.002Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",

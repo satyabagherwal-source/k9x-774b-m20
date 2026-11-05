@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T06:58:32.285Z",
+  "last_updated": "2026-11-05T07:05:59.962Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24549,7 +24549,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "93084ea2209b7eb5f8d6302503a7ff2986a0dfd0d3736188004bbb195679d611",
+      "content_hash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [
@@ -24582,6 +24582,16 @@
           "number": 6248,
           "title": "Cross-Platform Audio Preprocessing Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7147,
+          "title": "Quantized Artifact Integrity & Reproducibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7148,
+          "title": "Backend-Agnostic Inference Interface Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24601,7 +24611,7 @@
         "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
         "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
       ],
-      "verified_at": "2026-10-31T16:32:25.091Z",
+      "verified_at": "2026-11-05T07:05:59.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180906,6 +180916,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T06:58:32.249Z"
+    },
+    "rule-7147": {
+      "learning_id": "rule-7147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7147,
+      "title": "Quantized Artifact Integrity & Reproducibility Invariant",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:05:59.929Z"
+    },
+    "rule-7148": {
+      "learning_id": "rule-7148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7148,
+      "title": "Backend-Agnostic Inference Interface Contract",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:05:59.929Z"
     }
   },
   "aliases": {

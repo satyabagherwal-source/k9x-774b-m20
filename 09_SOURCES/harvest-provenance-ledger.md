@@ -7568,3 +7568,4 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `b9d02e6e` | Multi-dimensional audit evidence | 2026-11-05T06:58:25.362Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1dda9d96` | Multi-dimensional audit evidence | 2026-11-05T06:58:31.821Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `72945925` | Multi-dimensional audit evidence | 2026-11-05T06:58:32.376Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-05T07:06:00.063Z |
