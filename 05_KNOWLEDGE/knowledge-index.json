@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T09:05:02.903Z",
+  "last_updated": "2026-11-05T09:12:33.324Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11438,8 +11438,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "80b9c969",
-      "content_hash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
+      "source_version": "e15e8959",
+      "content_hash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -11517,6 +11517,11 @@
           "number": 6898,
           "title": "cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7175,
+          "title": "Keep the NULL rows of segments written by v1.x in filters that accept NULL (#283",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11524,7 +11529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:28:48.916Z",
+      "verified_at": "2026-11-05T09:12:33.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28030,7 +28035,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
+      "content_hash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -28067,7 +28072,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-31T18:15:20.791Z",
+      "verified_at": "2026-11-05T09:12:17.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46626,14 +46631,19 @@
       "slug": "openkruise-kruise",
       "platform": "github",
       "source_url": "https://github.com/openkruise/kruise",
-      "source_version": "4fdf516e",
-      "content_hash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
+      "source_version": "c6d10667",
+      "content_hash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
       "dossier_path": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
       "promoted_rules": [
         {
           "number": 1789,
           "title": "ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7174,
+          "title": "cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -46642,7 +46652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:07:26.805Z",
+      "verified_at": "2026-11-05T09:12:28.753Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181419,6 +181429,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T09:05:02.880Z"
+    },
+    "rule-7174": {
+      "learning_id": "rule-7174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7174,
+      "title": "cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)",
+      "source_url": "https://github.com/openkruise/kruise",
+      "source_version": "c6d10667",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:12:28.753Z"
+    },
+    "rule-7175": {
+      "learning_id": "rule-7175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7175,
+      "title": "Keep the NULL rows of segments written by v1.x in filters that accept NULL (#283",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "e15e8959",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:12:33.301Z"
     }
   },
   "aliases": {

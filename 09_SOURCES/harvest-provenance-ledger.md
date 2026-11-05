@@ -7600,3 +7600,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T08:52:11.371Z |
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T09:04:52.867Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `932cd18b` | Multi-dimensional audit evidence | 2026-11-05T09:05:02.993Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-05T09:12:17.850Z |
+| `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `c6d10667` | Multi-dimensional audit evidence | 2026-11-05T09:12:28.869Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `e15e8959` | Multi-dimensional audit evidence | 2026-11-05T09:12:33.414Z |

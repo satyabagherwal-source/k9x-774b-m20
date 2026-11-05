@@ -1165,8 +1165,8 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
-    "lastHarvestedAt": "2026-10-31T18:15:20.888Z",
+    "contentHash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
+    "lastHarvestedAt": "2026-11-05T09:12:17.850Z",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
@@ -3023,10 +3023,10 @@
     "repository": "openkruise/kruise",
     "platform": "github",
     "sourceUrl": "https://github.com/openkruise/kruise",
-    "sourceVersion": "4fdf516e",
+    "sourceVersion": "c6d10667",
     "license": "NOASSERTION",
-    "contentHash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
-    "lastHarvestedAt": "2026-10-20T14:07:26.897Z",
+    "contentHash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
+    "lastHarvestedAt": "2026-11-05T09:12:28.869Z",
     "learningId": "learn-github-openkruise-kruise"
   },
   "callstack-react-native-paper": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "80b9c969",
+    "sourceVersion": "e15e8959",
     "license": "MIT",
-    "contentHash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
-    "lastHarvestedAt": "2026-11-04T18:28:49.015Z",
+    "contentHash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
+    "lastHarvestedAt": "2026-11-05T09:12:33.414Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {

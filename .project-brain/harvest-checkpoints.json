@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T09:05:03.011Z",
+  "last_updated": "2026-11-05T09:12:33.432Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1550,14 +1550,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "12f2b7b58eda7b00bedbebc8409b960c0a65549b1409c62428e15174c0facbfb",
-      "verified_at": "2026-10-31T18:15:20.897Z",
+      "content_hash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
+      "verified_at": "2026-11-05T09:12:17.860Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:15:20.897Z"
+      "last_updated": "2026-11-05T09:12:17.860Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -4656,14 +4656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openkruise-kruise",
-      "content_hash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
-      "verified_at": "2026-10-20T14:07:26.906Z",
+      "content_hash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
+      "verified_at": "2026-11-05T09:12:28.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:07:26.906Z"
+      "last_updated": "2026-11-05T09:12:28.886Z"
     },
     "callstack/react-native-paper": {
       "repository": "callstack/react-native-paper",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "fbf44d62836252888b4fa48a6ef4550e0c57888b15f5277a13c93fff70731af0",
-      "verified_at": "2026-11-04T18:28:49.022Z",
+      "content_hash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
+      "verified_at": "2026-11-05T09:12:33.432Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:28:49.022Z"
+      "last_updated": "2026-11-05T09:12:33.432Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",

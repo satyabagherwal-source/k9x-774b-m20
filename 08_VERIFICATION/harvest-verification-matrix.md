@@ -7591,3 +7591,6 @@
 | `CYCLE-20261105-4JQF` | `2026-11-05T08:52:11.367Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`f5de1681...`) |
 | `CYCLE-20261105-KVB2` | `2026-11-05T09:04:52.862Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`eade2f2b...`) |
 | `CYCLE-20261105-L34E` | `2026-11-05T09:05:02.990Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7173` | Yes (`9beb91d5...`) |
+| `CYCLE-20261105-UENQ` | `2026-11-05T09:12:17.846Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`2283e5cf...`) |
+| `CYCLE-20261105-UN5T` | `2026-11-05T09:12:28.865Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7174` | Yes (`d951db78...`) |
+| `CYCLE-20261105-UQO2` | `2026-11-05T09:12:33.410Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7175` | Yes (`c5744335...`) |

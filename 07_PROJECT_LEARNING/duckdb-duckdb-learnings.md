@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `80b9c969`  
+> **Source Version**: `e15e8959`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:28:48.325Z  
+> **Timestamp**: 2026-11-05T09:12:32.668Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:28:48.069Z  
+> **Harvest Timestamp**: 2026-11-05T09:12:32.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42810 stars
+- **Stars / Engagement**: 42833 stars
 
 ---
 
@@ -2007,8 +2007,8 @@ struct ModeState {
 - **Issue #28378** (2026-11-04): **Update extension_entries.hpp for sirius**
   *Symptoms*: Fixes the `check-extension-entries` failure seen in https://github.com/duckdb/duckdb/actions/runs/41835675960: adds the `gpu_execution` (function and setting) and `sirius_status` entries provided by the sirius extension.
 
-- **Issue #28347** (2026-11-04): **Fall back to a generic select for BETWEEN over nested types**
-  *Symptoms*: `BETWEEN` over nested values fails with an internal-looking error as soon as it is executed as a filter:  ```sql CREATE TABLE sheet(cell STRUCT(col VARCHAR, "row" INTEGER)); INSERT INTO sheet VALUES ({'col': 'A', 'row': 1}); SELECT count(*) FROM sheet WHERE cell BETWEEN {'col': 'A', 'row': 1} AND {'col': 'B', 'row': 2}; -- Invalid type Error: Invalid Type [STRUCT(col VARCHAR, "row" INTEGER)]: Invalid type for BETWEEN ```  This surfaced while porting the spreadsheet evaluator from the "One WITH RECURSIVE is Worth Many GOTOs" (SIGMOD 2021) workload, which ranges over cell-address structs with `s.cell BETWEEN e.from_cell AND e.to_cell`. The failure is not new, it reproduces on 1.2.1, 1.3.2 and 1.4.3 as well as current main.  The same `BETWEEN` works in a projection and as a conjunction of two comparisons. The binder splits a copyable `BETWEEN` input into `x >= lo AND x <= hi`, so the single-expression form is only executed when the filter combiner folds the comparisons back into one `BoundBetween` (constant bounds) or when the input is not copyable (volatile, parameter, subquery). In those cases the filter runs through the `__between` select callback, and `BetweenLoopTypeSwitch` threw for every physical type without a templated `TernaryExecutor` path. The execute path (`BetweenFunction`) already supports nested types through the `VectorOperations` comparisons.  The fix adds a generic fallback to the select path for types the templated switch does not cover. It evaluates the two 
+- **Issue #28373** (2026-11-04): **Footer statistics for multi-file parquet scans: maximum_files_for_stats**
+  *Symptoms*: Exposes the footer-statistics behavior of duckdb/duckdb-aws-glue#165 through SQL, and exports the pieces an extension needs for it.  `read_parquet(files, maximum_files_for_stats=N)`: when the scan has 2..N files (fully listed), all footers are opened in parallel at bind (schema unchanged, unlike `maximum_sample_files`/`union_by_name`). The scan then reports the exact row count and merged min/max/NULL statistics, so the optimizer can prune and order joins by them. Default 0 (off). An unreadable footer, a column missing from a non-empty file, or a different stored type means no statistics; the query never fails because of it.  Core changes: - `UnionByName::ReadUnionData`: the parallel per-file read `UnionCols` already did, without combining schemas; optionally tolerates unreadable files and picks the scheduler type. - Multi-file stats/cardinality use the opened readers whenever they cover every file, not only with `union_by_name`. - The option is not serialized (only used at bind).  Differences from the Glue PR: reads at bind rather than lazily at planning, and has no hard cap or per-query footer cache.  Follow-ups from duckdb/duckdb-aws-glue#165 review: - The count from the opened files is reported as both estimate and max (exact), so the optimizer can drop a `LIMIT` above it. Applies to multi-file scans (and `union_by_name`); a single file still honors `explicit_cardinality`. - Files known to be empty are skipped when merging column statistics. - The first file's bound reader
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2025,441 +2025,435 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4379c69f` (2026-11-04)
-**Commit Message**: fix(cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27919)
+### Incident Patch 1: `94f8c7a6` (2026-11-04)
+**Commit Message**: Keep the NULL rows of segments written by v1.x in filters that accept NULL (#28355)
 
-The top-level `CMakeLists.txt` unconditionally set
-`CMAKE_MSVC_RUNTIME_LIBRARY` to
-`"MultiThreaded$<$<CONFIG:Debug>:Debug>"`, which overrides values passed
-by users (e.g. `-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL`) or
-injected by toolchain files (Conan, vcpkg). Downstream projects linking
-`duckdb_static` with the dynamic MSVC runtime (`/MD`) fail with
-`LNK2038` runtime mismatch errors.
+DuckDB 2.0 can miss `NULL` rows when reading databases written by 1.5.6
+(#27566). With 1024 ones and 1024 `NULL`s, `SELECT count(*) FROM t WHERE
+x IS NULL OR x > 2` returns 0 instead of 1024; `coalesce(x, 5) > 2` and
+`x IS DISTINCT FROM 1` have the same problem. DuckLake encounters this
+when reading its catalog, returning 1904 instead of 4500 rows
+(duckdb/ducklake#1871).
 
-This PR guards the default setting with `if(NOT DEFINED
-CMAKE_MSVC_RUNTIME_LIBRARY)` so explicit user configurations and
-toolchain defaults are preserved while retaining the static runtime as
-the default when unspecified.
+Before storage version 2.0, `NULL` statistics live only in validity
+segments. `ColumnData::CheckZonemap` checks the data segments, sees
+neither `NULL`s nor values above 2, and prunes vectors containing the
+matching rows. The rows are still there: `count(*) FILTER (x IS NULL)`
+counts all 1024.
 
-Fixes #27643.
+We now mark data segments without `byte_size` as possibly `NULL` in
+`StandardColumnData::InitializeColumn` when a validity pointer in the
+column can hold `NULL`s. This is simpler than franz101's #27632, which
+marks only overlapping segments, but can prune less when a row group
+contains several validity segments. On 20,000,000 rows written by 1.5.6
+with default blocks, both mark the same segments: the filter accepting
+`NULL` takes 9.02 ± 0.07
 
-**File**: `CMakeLists.txt` (modified, +3/-1)
+**File**: `src/storage/table/standard_column_data.cpp` (modified, +15/-0)
 ```diff
-@@ -77,7 +77,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
- set(CMAKE_VERBOSE_MAKEFILE OFF)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- set(CMAKE_MACOSX_RPATH 1)
--set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-+if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
-+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-+endif()
- 
- if(NOT DEFINED CMAKE_C_COMPILER_LAUNCHER)
-   find_program(COMPILER_LAUNCHER NAMES ccache sccache)
-```
-
----
-
-### Incident Patch 2: `f2919b52` (2026-11-04)
-**Commit Message**: Fix `fsum`/`favg` precision and overflow (#28346)
-
-Fixes #28160, #28161, #28162, #28164
-
-| Issue | Query | Before | After |
-| ------ | -------------------------------- | --------------------- |
------ |
-| #28160 | `favg(0.1, 0.3)` | `0.19999999999999998` | `0.2` |
-| #28161 | `fsum(1e16, 1, -1e16)` | `0` | `1` |
-| #28162 | `fsum(3.67e17, 14*37, -3.67e17)` | `512` | `518` |
-| #28164 | `fsum(1e308, 1e308, -1e308)` | `NaN` | `inf` |
-
-All 4 come from the shared Kahan summation helper:
-- **Wrong error estimate:** Kahan only computes the rounding error
-correctly when the running sum is larger than the value being added. It
-now use Neumaier summation, which is exact either way.
-- **Error discarded:** `fsum` ignored the accumulated error when
-producing its result. A new `KahanFinalize` returns `sum - err` and used
-by `fsum` and `favg`.
-- **NaN on overflow:** overflowing sum turned the error into `inf - inf
-= NaN`. The correction is now skipped once the sum is not finite, so the
-result is `+/- inf`, matching `sum()`.
-
-Added `test_kahan_precision.test`, covering the issue cases,
-inf/NaN/NULL inputs, and merged partial sums from window functions,
-parallel aggregation and GROUP BY.
-
-**File**: `extension/core_functions/aggregate/algebraic/avg.cpp` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ struct KahanAvgState {
- 	void Combine(const KahanAvgState &other) {
- 		this->count += other.count;
- 		KahanAddInternal(other.value, this->value, this->err);
--		KahanAddInternal(-other.err, this->value, this->err);
-+		this->err += other.err;
- 	}
- };
- 
-@@ -417,7 +417,7 @@ struct KahanAverageOperation : public BaseSumOperation<AverageSetOperation, Kaha
- 		if (state.count == 0) {
- 			finalize_data.ReturnNull();
- 		} else {
--			target = (state.value / state.count) - (state.err / state.count);
-+			target = KahanFinalize(state.value, state.err) / static_cast<double>(state.count);
- 		}
- 	}
- };
-```
-
-**File**: `extension/core_functions/aggregate/distributive/sum.cpp` (modified, +1/-1)
-```diff
-@@ -218,7 +218,7 @@ struct KahanSumOperation : public BaseSumOperation<KahanSumSetOperation, KahanAd
- 		if (!state.is_set) {
- 			finalize_data.ReturnNull();
- 		} else {
--			target = state.value;
-+			target = KahanFinalize(state.value, state.err);
- 		}
- 	}
- };
-```
-
-**File**: `extension/core_functions/include/core_functions/aggregate/sum_helpers.hpp` (modified, +13/-4)
-```diff
-@@ -12,6 +12,7 @@
- #include "duckdb/common/exception.hpp"
- #include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/operator/multiply.hpp"
-+#include "duckdb/common/types/value.hpp"
- #include "duckdb/function/aggregate_state.hpp"
- #include "duckdb/function/aggregate_state_layout.hpp"
- #include "duckdb/common/operator/cast_operators.hpp"
-@@ -66,13 +67,21 @@ struct RepeatedStateValue {
- 	}
- };
- 
-+//! Neumaier summation: the exact rounding error of each addition (TwoSum) is accumulated in err
-+//! The compensated sum is summed - err
- static inline void KahanAddInternal(double input, double &summed, double &err) {
--	double diff = input - err;
--	double newval = summed + diff;
--	err = (newval - summed) - diff;
-+	double newval = summed + input;
-+	double input_part = newval - summed;
-+	double rounding = (summed - (newval - input_part)) + (input - input_part);
-+	err -= rounding;
- 	summed = newval;
+@@ -325,6 +325,21 @@ PersistentColumnData StandardColumnData::Serialize() {
+ void StandardColumnData::InitializeColumn(PersistentColumnData &column_data, BaseStatistics &target_stats) {
+ 	ColumnData::InitializeColumn(column_data, target_stats);
+ 	validity->InitializeColumn(column_data.child_columns[0], target_stats);
++	// segments without a byte size come from older storage, which may record NULLs only in the validity statistics
++	bool legacy_segments = false;
++	for (auto &pointer : column_data.pointers) {
++		legacy_segments = legacy_segments || !pointer.byte_size;
++	}
++	bool validity_has_null = false;
++	for (auto &pointer : column_data.child_columns[0].pointers) {
++		validity_has_null = validity_has_null || pointer.statistics.CanHaveNull();
++	}
++	if (!legacy_segments || !validity_has_null) {
++		return;
++	}
++	for (auto &node : data.SegmentNodes()) {
++		node.GetNode().GetStatsMutable().SetHasNull();
++	}
  }
  
-+static inline double KahanFinalize(double summed, double err) {
-+	// once the sum overflows the error term is meaningless (inf - inf)
-+	return Value::IsFinite(summed) ? summed - err : summed;
-+}
-+
- template <class T>
- static inline void CombineSumStateValue(T &target, const T &source) {
- 	if constexpr (std::is_same<T, hugeint_t>::value) {
-@@ -101,7 +110,7 @@ struct KahanSumState {
- 	void Combine(const KahanSumState &other) {
- 		this->is_set = other.is_set || this->is_set;
- 		KahanAddInternal(other.value, this->value, this->err);
--		KahanAddInternal(-other.err, this->value, this->err);
-+		this->err += other.err;
- 	}
- };
- 
+ void StandardColumnData::GetColumnSegmentInfo(const QueryContext &context, duckdb::idx_t row_group_index,
 ```
 
-**File**: `test/sql/aggregate/aggregates/test_kahan_precision.test` (added, +97/-0)
+**File**: `test/sql/storage/bc/null_rows_v1_5_or_filter.test` (added, +44/-0)
 ```diff
-@@ -0,0 +1,97 @@
-+# name: test/sql/aggregate/aggregates/test_kahan_precision.test
-+# description: fsum and favg compensate rounding errors regardless of operand magnitude and do not produce NaN on overflow
-+# group: [aggregates]
+@@ -0,0 +1,44 @@
++# name: test/sql/storage/bc/null_rows_v1_5_or_filter.test
++# description: A filter that accepts NULL keeps the NULL rows of segments written by v1.x, which record NULLs only in their validity
++# group: [bc]
 +
-+# small values summed before the large values cancel
-+query II
-+SELECT printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM (VALUES (1e16::DOUBLE), (1.0), (-1e16)) t(v);
-+----
-+1	0.33333333333333331
++# data/storage/null_rows_v1_5.db.gz was written by DuckDB v1.5.6 with
++# CREATE TABLE f(id INTEGER, end_snapshot BIGINT);
++# INSERT INTO f SELECT i, CASE WHEN i % 2048 < 1500 THEN 3 END FROM range(250000) r(i);
++# CHECKPOINT;
++# so every full vector of the three row groups ends with 548 NULL rows
++require exact_vector_size 2048
 +
-+query I
-+SELECT printf('%.17g', fsum(v)) FROM (VALUES (1.0::DOUBLE), (1e100), (1.0), (-1e100)) t(v);
-+----
-+2
++unzip data/storage/null_rows_v1_5.db.gz {TEST_DIR}/null_rows_v1_5.db
 +
-+# small values added to a large value that later cancels
-+query I
-+SELECT printf('%.17g', fsum(v)) FROM (
-+	SELECT 3.6686354453820154e17::DOUBLE AS v
-+	UNION ALL SELECT 37.0::DOUBLE FROM range(14)
-+	UNION ALL SELECT -3.6686354453820154e17::DOUBLE
-+);
-+----
-+518
-+
-+# the input is larger than the running sum
-+query II
-+SELECT printf('%.17g', favg(v)), printf('%.17g', fsum(v)) FROM (VALUES (0.1::DOUBLE), (0.3)) t(v);
-+----
-+0.20000000000000001	0.40000000000000002
-+
-+# an overflowing running sum yields infinity instead of NaN
-+query II
-+SELECT fsum(v), favg(v) FROM (VALUES (1e308::DOUBLE), (1e308), (-1e308)) t(v);
-+----
-+inf	inf
-+
-+query II
-+SELECT fsum(v), favg(v) FROM (VALUES (-1e308::DOUBLE), (-1e308), (1e308)) t(v);
-+----
-+-inf	-inf
-+
-+query II
-+SELECT fsum(v), favg(v) FROM (VALUES (1.0::DOUBLE), ('inf'::DOUBLE), (2.0)) t(v);
-+----
-+inf	inf
-+
-+query II
-+SELECT isnan(fsum(v)), isnan(favg(v)) FROM (VALUES ('inf'::DOUBLE), ('-inf'::DOUBLE)) t(v);
-+----
-+true	true
-+
-+query II
-+SELECT isnan(fsum(v)), isnan(favg(v)) FROM (VALUES (1.0::DOUBLE), ('nan'::DOUBLE)) t(v);
-+----
-+true	true
-+
-+query II
-+SELECT fsum(v), favg(v) FROM (VALUES (NULL::DOUBLE)) t(v);
-+----
-+NULL	NULL
-+
-+# combining states: window segment trees
-+query II
-+SELECT DISTINCT printf('%.17g', fsum(v) OVER w), printf('%.17g', favg(v) OVER w) FROM (
-+	SELECT i, CASE WHEN i = 0 THEN 1e16::DOUBLE WHEN i = 999 THEN -1e16::DOUBLE ELSE 1.0 END AS v
-+	FROM range(1000) r(i)
-+) WINDOW w AS (ORDER BY i ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING);
-+----
-+998	0.998
++load {TEST_DIR}/null_rows_v1_5.db readonly
 +
 +query I
-+SELECT DISTINCT fsum(v) OVER (ORDER BY i ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM (
-+	SELECT i, CASE WHEN i = 999 THEN -1e308::DOUBLE ELSE 1e308::DOUBLE END AS v FROM range(1000) r(i)
-+);
++SELECT count(*) FROM f WHERE end_snapshot IS NULL
 +----
-+inf
++66856
 +
-+# combining states: parallel aggregation over many row groups
-+statement ok
-+SET threads=4;
++query I
++SELECT count(*) FROM f WHERE end_snapshot IS NULL OR end_snapshot > 1000000
++----
++66856
++
++query II
++SELECT min(id), max(id) FROM f WHERE end_snapshot IS NULL OR end_snapshot > 1000000
++----
++1500	249855
++
++query I
++SELECT count(*) FROM f WHERE end_snapshot IS NULL OR end_snapshot = 3
++----
++250000
++
++query I
++SELECT count(*) FROM f WHERE end_snapshot > 1000000 OR end_snapshot IS NULL
++----
++66856
++
++query I
++SELECT count(*) FROM f WHERE end_snapshot IS NOT NULL AND end_snapshot > 1
++----
++183144
+```
+
+**File**: `test/sql/storage/bc/test_null_stats_v1_5.test` (added, +123/-0)
+```diff
+@@ -0,0 +1,123 @@
++# name: test/sql/storage/bc/test_null_stats_v1_5.test
++# description: Filters that accept NULL keep the NULL rows of segments written by v1.5
++# group: [bc]
++
++# data/storage/null_stats_v1_5.db.gz was written by DuckDB v1.5.6 with
++# CREATE TABLE t AS SELECT CASE WHEN i >= 1024 THEN NULL ELSE 1 END::INTEGER AS x FROM range(2048) r(i);
++# CREATE TABLE no_null AS SELECT 1::INTEGER AS x FROM range(2048) r(i);
++# CHECKPOINT;
++require exact_vector_size 2048
++
++unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5.db
 +
 +statement ok
-+CREATE TABLE big AS
-+SELECT i, CASE WHEN i = 0 THEN 1e16::DOUBLE WHEN i = 999999 THEN -1e16::DOUBLE ELSE 1.0 END AS v
-+FROM range(1000000) r(i);
++ATTACH '{TEST_DIR}/null_stats_v1_5.db' AS old
++
++# an appended row joins the old segments
++statement ok
++INSERT INTO old.t VALUES (NULL)
++
++loop i 0 2
++
++query I
++SELECT count(*) FROM old.t WHERE x IS NULL OR x > 2
++----
++1025
++
++query I
++SELECT count(*) FROM old.t WHERE coalesce(x, 5) > 2
++----
++1025
++
++query I
++SELECT count(*) FROM old.t WHERE x IS DISTINCT FROM 1
++----
++1025
 +
 +query II
-+SELECT printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM big;
++SELECT count(*) FILTER (x > 2), count(*) FILTER (x IS NOT NULL) FROM old.t
 +----
-+999998	0.99999800000000005
++0	1024
 +
-+query III
-+SELECT i % 2 AS g, printf('%.17g', fsum(v)), printf('%.17g', favg(v)) FROM big GROUP BY g ORDER BY g;
++query I
++SELECT count(*) FROM old.no_null WHERE x IS NULL OR x > 2
 +----
-+0	10000000000500000	20000000001
-+1	-9999999999500000	-19999999999
++0
++
++# a checkpoint by this version keeps the answers
++statement ok
++UPDATE old.t SET x = 1 WHERE x = 1
++
++statement ok
++CHECKPOINT old
++
++endloop
++
++# the rewritten segments keep the answers after the database is attached again
++statement ok
++DETACH old
++
++statement ok
++ATTACH '{TEST_DIR}/null_stats_v1_5.db' AS old
++
++query I
++SELECT count(*) FROM old.t WHERE x IS NULL OR x > 2
++----
++1025
++
++# a checkpoint keeps the answers after the database is attached again, whether it writes the segment metadata
++# again or reuses it
++loop reuse 0 2
++
++unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5_reuse.db
++
++statement ok
++SET experimental_metadata_reuse = {reuse}::BOOLEAN
++
++statement ok
++ATTACH '{TEST_DIR}/null_stats_v1_5_reuse.db' AS reuse (STORAGE_VERSION 'v2.0.0')
++
++statement ok
++CREATE TABLE reuse.touch (i INTEGER)
++
++statement ok
++CHECKPOINT reuse
++
++statement ok
++DETACH reuse
++
++statement ok
++ATTACH '{TEST_DIR}/null_stats_v1_5_reuse.db' AS reuse
++
++query I
++SELECT count(*) FROM reuse.t WHERE x IS NULL OR x > 2
++----
++1024
++
++statement ok
++DETACH reuse
++
++endloop
++
++# segments rewritten with the 2.0 storage version carry their own statistics
++unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5_rewrite.db
++
++statement ok
++ATTACH '{TEST_DIR}/null_stats_v1_5_rewrite.db' AS rewrite (STORAGE_VERSION 'v2.0.0')
++
++statement ok
++UPDATE rewrite.t SET x = 1 WHERE x = 1
++
++statement ok
++CHECKPOINT rewrite
++
++statement ok
++DETACH rewrite
++
++statement ok
++ATTACH '{TEST_DIR}/null_stats_v1_5_rewrite.db' AS rewrite
++
++query I
++SELECT count(*) FROM rewrite.t WHERE x IS NULL OR x > 2
++----
++1024
 ```
 
 ---
 
-### Incident Patch 3: `485c6387` (2026-11-04)
-**Commit Message**: Some small Parquet reader UB fixes (#28318)
+### Incident Patch 2: `df6fbb78` (2026-11-04)
+**Commit Message**: Let NULL table function arguments match any parameter under legacy_disable_null_type (#28141)
 
-Fix three signed overflows on corrupt Parquet input: decimal decoding,
-page-index row counts, and INT96 nanosecond conversion.
+With `legacy_disable_null_type` enabled, a NULL table function argument
+is bound as INTEGER, so it no longer matches a VARCHAR parameter:
 
-**File**: `extension/parquet/include/parquet_decimal_utils.hpp` (modified, +15/-12)
-```diff
-@@ -9,7 +9,6 @@
- #pragma once
- 
- #include "column_reader.hpp"
--#include "reader/templated_column_reader.hpp"
- 
- namespace duckdb {
- 
-@@ -31,26 +30,30 @@ class ParquetDecimalUtils {
- 			auto byte = *(pointer + (size - i - 1));
- 			res_ptr[i] = positive ? byte : byte ^ 0xFF;
- 		}
-+		bool invalid = false;
- 		// Verify that there are only 0s here
--		if (size > sizeof(PHYSICAL_TYPE)) {
--			for (idx_t i = sizeof(PHYSICAL_TYPE); i < size; i++) {
--				auto byte = *(pointer + (size - i - 1));
--				if (!positive) {
--					byte ^= 0xFF;
--				}
--				if (byte != 0) {
--					throw InvalidInputException("Invalid decimal encoding in Parquet file");
--				}
-+		for (idx_t i = sizeof(PHYSICAL_TYPE); i < size; i++) {
-+			auto byte = *(pointer + (size - i - 1));
-+			if (!positive) {
-+				byte ^= 0xFF;
- 			}
-+			invalid |= byte != 0;
-+		}
-+		invalid |= res < 0;
-+		if (invalid) {
-+			ThrowInvalidDecimalEncoding();
- 		}
- 		if (!positive) {
--			res += 1;
--			return -res;
-+			// Negate before subtracting one to keep the minimum signed value representable.
-+			return -res - 1;
- 		}
- 		return res;
- 	}
- 
- 	static unique_ptr<ColumnReader> CreateReader(const ParquetReader &reader, const ParquetColumnSchema &schema);
-+
-+private:
-+	[[noreturn]] static void ThrowInvalidDecimalEncoding();
- };
- 
- template <>
+```sql
+SET legacy_disable_null_type = true;
+SELECT * FROM query(NULL);
+-- Binder Error: No function matches the given name and argument types 'query(INTEGER)'
 ```
 
-**File**: `extension/parquet/parquet_metadata.cpp` (modified, +7/-1)
-```diff
-@@ -25,6 +25,7 @@
- #include "duckdb/common/multi_file/multi_file_data.hpp"
- #include "duckdb/common/mutex.hpp"
- #include "duckdb/common/open_file_info.hpp"
-+#include "duckdb/common/operator/subtract.hpp"
- #include "duckdb/common/optional_idx.hpp"
- #include "duckdb/common/optional_ptr.hpp"
- #include "duckdb/common/pair.hpp"
-@@ -1164,7 +1165,12 @@ void ParquetPageIndexProcessor::ReadRow(vector<reference<Vector>> &output, idx_t
- 		first_row_index = Value::BIGINT(location.first_row_index);
- 		const auto next_row =
- 		    page_idx + 1 < locations.size() ? locations[page_idx + 1].first_row_index : row_group.num_rows;
--		num_rows = Value::BIGINT(next_row - location.first_row_index);
-+		int64_t page_row_count;
-+		if (!TrySubtractOperator::Operation(next_row, location.first_row_index, page_row_count)) {
-+			throw DataCorruptionException("Failed to read file \"%s\": metadata is corrupt. Page row count overflows",
-+			                              reader.file.path);
-+		}
-+		num_rows = Value::BIGINT(page_row_count);
- 	}
- 	// page_offset
- 	output[5].get().Append(offset);
-```
+Without the setting, the same query raises `Cannot use NULL as function
+argument`.
 
-**File**: `extension/parquet/parquet_timestamp.cpp` (modified, +3/-1)
+Before v2.0, table function arguments used to be folded to constants
+before overload selection, and a NULL constant was matched as SQLNULL.
+So for v1.5.x versions where null type disabling was default, NULL type
+bound to the table function param. Now that overload selection works on
+the bound expressions, the INTEGER cast that the legacy setting adds
+reaches it. This binds table function arguments with NULLs allowed, as
+GROUP BY already does, so a NULL argument keeps the NULL type until the
+overload is chosen. Behavior without the setting is unchanged.
+
+**File**: `src/planner/binder/tableref/bind_table_function.cpp` (modified, +4/-0)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -149,7 +149,11 @@ bool Binder::BindTableFunctionParameters(TableFunctionCatalogEntry &table_functi
+ 		}
  
- #include "duckdb/common/operator/add.hpp"
- #include "duckdb/common/operator/multiply.hpp"
-+#include "duckdb/common/operator/subtract.hpp"
- #include "duckdb/common/types/date.hpp"
- #include "duckdb/common/types/time.hpp"
- #include "duckdb/common/types/timestamp.hpp"
-@@ -44,7 +45,8 @@ static int64_t ImpalaTimestampToNanoseconds(const Int96 &impala_timestamp) {
- 	if (days_since_epoch < 0) {
- 		//	Don't saturate the minimum value by going past it
- 		if (!TryMultiplyOperator::Operation(days_since_epoch + 1, NANOSECONDS_PER_DAY, day_nanoseconds) ||
--		    !TryAddOperator::Operation(day_nanoseconds, nanoseconds - NANOSECONDS_PER_DAY, result)) {
-+		    !TrySubtractOperator::Operation(nanoseconds, NANOSECONDS_PER_DAY, nanoseconds) ||
-+		    !TryAddOperator::Operation(day_nanoseconds, nanoseconds, result)) {
- 			// out of range for TIMESTAMP_NS - saturate to -infinity
- 			return timestamp_ns_t::ninfinity().value;
+ 		TableFunctionBinder binder(*this, context, table_function.name.GetIdentifierName());
++		// a NULL argument keeps the NULL type, so that it can still match any overload
++		auto prev_can_contain_nulls = CanContainNulls();
++		SetCanContainNulls(true);
+ 		auto expr = binder.Bind(child);
++		SetCanContainNulls(prev_can_contain_nulls);
+ 		if (expr->HasParameter()) {
+ 			throw ParameterNotResolvedException();
  		}
 ```
 
-**File**: `extension/parquet/reader/decimal_column_reader.cpp` (modified, +4/-0)
+**File**: `test/sql/binder/legacy_null_type.test` (modified, +11/-0)
 ```diff
-@@ -13,6 +13,10 @@ namespace duckdb {
- class ParquetReader;
- struct hugeint_t;
- 
-+[[noreturn]] void ParquetDecimalUtils::ThrowInvalidDecimalEncoding() {
-+	throw DataCorruptionException("Invalid decimal encoding in Parquet file");
-+}
+@@ -12,3 +12,14 @@ query I
+ SELECT TYPEOF(c) FROM t
+ ----
+ INTEGER
 +
- template <bool FIXED>
- static unique_ptr<ColumnReader> CreateDecimalReaderInternal(const ParquetReader &reader,
-                                                             const ParquetColumnSchema &schema) {
-```
-
-**File**: `test/parquet/corrupt/decimal_stats_signed_overflow.test` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+# name: test/parquet/corrupt/decimal_stats_signed_overflow.test
-+# description: Decode minimum signed decimal statistics without overflowing
-+# group: [corrupt]
-+
-+require parquet
-+
-+# The minimum statistic encodes INT32_MIN, which does not fit in DECIMAL(9,2).
-+query TT
-+SELECT stats_min_value, stats_max_value FROM parquet_metadata('data/parquet-testing/corrupt/decimal_stats_signed_overflow.parquet');
-+----
-+NULL	123.45
-+
-+# Ignore the invalid statistic without pruning valid data.
-+query I
-+SELECT val FROM read_parquet('data/parquet-testing/corrupt/decimal_stats_signed_overflow.parquet') WHERE val > 100;
-+----
-+123.45
-+123.45
-+123.45
-+123.45
-```
-
-**File**: `test/parquet/corrupt/int96_nanosecond_subtraction_overflow.test` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# name: test/parquet/corrupt/int96_nanosecond_subtraction_overflow.test
-+# description: Saturate out-of-range INT96 timestamps without signed subtraction overflow
-+# group: [corrupt]
-+
-+require parquet
-+
-+# INT64_MIN nanoseconds on the day before the epoch is below the TIMESTAMP_NS range.
-+query T
-+SELECT ts::VARCHAR FROM read_parquet('data/parquet-testing/corrupt/int96_nanosecond_subtraction_overflow.parquet', int96_as='timestamp_ns');
-+----
-+-infinity
-```
-
-**File**: `test/parquet/corrupt/page_index_row_count_overflow.test` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# name: test/parquet/corrupt/page_index_row_count_overflow.test
-+# description: Reject overflowing row counts in page index metadata
-+# group: [corrupt]
-+
-+require parquet
-+
-+# The last page starts at INT64_MIN, so subtracting it from the row group size overflows.
++# a NULL table function argument still matches a VARCHAR parameter
 +statement error
-+SELECT * FROM parquet_page_index('data/parquet-testing/corrupt/page_index_row_count_overflow.parquet');
++SELECT * FROM query(NULL);
 +----
-+Page row count overflows
++Binder Error: Cannot use NULL as function argument
++
++statement error
++SELECT * FROM query_table(NULL);
++----
++Binder Error: Cannot use NULL as function argument
+```
+
+---
+
+### Incident Patch 3: `dfc66305` (2026-11-04)
+**Commit Message**: Fix Parquet page bounds and scratch buffer reuse (#28348)
+
+ Fix two buffer handling issues in the Parquet reader:
+
+- Keep the padding byte out of the page length. A corrupt page could
+otherwise use it as part of the definition levels and cause an
+out-of-bounds read.
+- Reset the scratch buffer before reading dictionary offsets. A previous
+delta-binary-packed page could leave the pointer advanced, causing a
+write past the end of the buffer.
+
+**File**: `extension/parquet/column_reader.cpp` (modified, +9/-5)
+```diff
+@@ -603,7 +603,7 @@ void ColumnReader::ResetPage() {
+ void ColumnReader::PreparePageV2(PageHeader &page_hdr) {
+ 	D_ASSERT(page_hdr.type == PageType::DATA_PAGE_V2);
+ 
+-	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size) + 1);
++	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size));
+ 	const auto page_body_size = GetPageBodySize(page_hdr);
+ 	bool uncompressed = false;
+ 	if (page_hdr.data_page_header_v2.__isset.is_compressed && !page_hdr.data_page_header_v2.is_compressed) {
+@@ -702,16 +702,20 @@ uint32_t ColumnReader::GetPageBodySize(const PageHeader &page_hdr) const {
+ 	return page_body_size;
+ }
+ 
+-void ColumnReader::AllocateBlock(idx_t size) {
++void ColumnReader::AllocateBlock(idx_t payload_size) {
++	const auto allocation_size = payload_size + 1;
+ 	if (!block) {
+-		block = make_shared_ptr<ResizeableBuffer>(GetAllocator(), size);
++		block = make_shared_ptr<ResizeableBuffer>(GetAllocator(), allocation_size);
+ 	} else {
+-		block->resize(GetAllocator(), size);
++		block->resize(GetAllocator(), allocation_size);
+ 	}
++	// Keep a zeroed guard byte for decoder lookahead, but exclude it from the payload.
++	block->ptr[payload_size] = 0;
++	block->len = payload_size;
+ }
+ 
+ void ColumnReader::PreparePage(PageHeader &page_hdr) {
+-	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size) + 1);
++	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size));
+ 	const auto compressed_page_size = GetPageBodySize(page_hdr);
+ 
+ 	if (chunk->meta_data.codec == CompressionCodec::UNCOMPRESSED) {
+```
+
+**File**: `extension/parquet/decoder/byte_stream_split_decoder.cpp` (modified, +1/-3)
+```diff
+@@ -36,9 +36,7 @@ static idx_t GetValueWidth(const ParquetColumnSchema &schema) {
+ 
+ void ByteStreamSplitDecoder::InitializePage() {
+ 	auto &block = reader.block;
+-	// Subtract 1 from length as the block is allocated with 1 extra byte,
+-	// but the byte stream split encoder needs to know the correct data size.
+-	bss_decoder = make_uniq<BssDecoder>(block->ptr, block->len - 1, GetValueWidth(reader.Schema()));
++	bss_decoder = make_uniq<BssDecoder>(block->ptr, block->len, GetValueWidth(reader.Schema()));
+ 	block->inc(block->len);
+ }
+ 
+```
+
+**File**: `extension/parquet/decoder/dictionary_decoder.cpp` (modified, +1/-0)
+```diff
+@@ -125,6 +125,7 @@ idx_t DictionaryDecoder::Read(uint8_t *defines, idx_t read_count, Vector &result
+ 		}
+ 	} else if (valid_count > 0) {
+ 		// for the valid entries - decode the offsets
++		offset_buffer.reset();
+ 		offset_buffer.resize(reader.reader.allocator, sizeof(uint32_t) * valid_count);
+ 		dict_decoder->GetBatch<uint32_t>(offset_buffer.ptr, NumericCast<uint32_t>(valid_count));
+ 		ConvertDictToSelVec(reinterpret_cast<uint32_t *>(offset_buffer.ptr), valid_sel, valid_count);
+```
+
+**File**: `extension/parquet/include/column_reader.hpp` (modified, +1/-1)
+```diff
+@@ -386,7 +386,7 @@ class ColumnReader {
+ 	virtual void ResetPage();
+ 
+ private:
+-	void AllocateBlock(idx_t size);
++	void AllocateBlock(idx_t payload_size);
+ 	void PrepareRead(optional_ptr<const TableFilter> filter, optional_ptr<TableFilterState> filter_state,
+ 	                 idx_t rows_to_skip = 0);
+ 	void PreparePage(PageHeader &page_hdr);
+```
+
+**File**: `test/parquet/corrupt/bss_level_slicing_overread.test` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++# name: test/parquet/corrupt/bss_level_slicing_overread.test
++# description: Reject definition levels that consume BSS page padding
++# group: [corrupt]
++
++require parquet
++
++# The definition-level section extends one byte beyond the page payload.
++statement error
++SELECT * FROM read_parquet('data/parquet-testing/corrupt/bss_level_slicing_overread.parquet');
++----
++Out of buffer
+```
+
+**File**: `test/parquet/corrupt/f1_scratch_buffer_stale_ptr.test` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++# name: test/parquet/corrupt/f1_scratch_buffer_stale_ptr.test
++# description: Reuse scratch storage safely across Parquet page encoding transitions
++# group: [corrupt]
++
++require parquet
++
++# The DBP page consumes the scratch buffer before dictionary decoding reuses it.
++# The file contains 2048 values of 42, followed by 1024 NULLs and 1024 dictionary values of 0.
++query IIII
++SELECT count(*), count(x), count(*) FILTER (WHERE x IS NULL), sum(x)
++FROM read_parquet('data/parquet-testing/corrupt/f1_scratch_buffer_stale_ptr.parquet');
++----
++4096	3072	1024	86016
++
++# Dictionary filtering also reads the decoded offsets after the batch.
++query II
++SELECT count(*), sum(x)
++FROM read_parquet('data/parquet-testing/corrupt/f1_scratch_buffer_stale_ptr.parquet')
++WHERE x = 0;
++----
++1024	0
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #28378** (2026-11-04): Update extension_entries.hpp for sirius (@Robinho-MR)
-- **PR #28347** (2026-11-04): Fall back to a generic select for BETWEEN over nested types (@kryonix)
-- **PR #28346** (2026-11-04): Fix `fsum`/`favg` precision and overflow (@alonfaraj)
-- **PR #28340** (2026-11-04): [C-API-V2] Make error_info setters a no-op for a null info handle (@DinosL)
-- **PR #28339** (closed): Add min/max/total list length statistics (@Robinho-MR)
-- **PR #28337** (2026-11-04): Create loggers without taking `LogManager::lock` (@dentiny)
+- **PR #28373** (2026-11-04): Footer statistics for multi-file parquet scans: maximum_files_for_stats (@Robinho-MR)
+- **PR #28360** (2026-11-04): Encode VARIANT number exponents in a single byte when possible (@Robinho-MR)
+- **PR #28356** (2026-11-04): Do not fail on planning when a foldable throws (@EtgarDev)
+- **PR #28355** (2026-11-04): Keep the NULL rows of segments written by v1.x in filters that accept NULL (@PeterVanHolland)
+- **PR #28348** (2026-11-04): Fix Parquet page bounds and scratch buffer reuse (@HendrikLambert)
 
 ---
 
@@ -2479,30 +2473,42 @@ page-index row counts, and INT96 nanosecond conversion.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27
+## X. Keep the NULL rows of segments written by v1.x in filters that accept NULL (#283
 
 **RULE**:
-When implementing operations in `CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/storage/table/standard_column_data.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4379c69f`: cmake): do not override user-configured CMAKE_MSVC_RUNTIME_LIBRARY (#27643) (#27919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94f8c7a6`: Keep the NULL rows of segments written by v1.x in filters that accept NULL (#28355). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CMakeLists.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/table/standard_column_data.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-if(NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
+	// segments without a byte size come from older storage, which may record NULLs only in the validity statistics
+	bool legacy_segments = false;
+	for (auto &pointer : column_data.pointers) {
+		legacy_segments = legacy_segments || !pointer.byte_size;
+	}
+	bool validity_has_null = false;
+	for (auto &pointer : column_data.child_columns[0].pointers) {
+		validity_has_null = validity_has_null || pointer.statistics.CanHaveNull();
+	}
+	if (!legacy_segments || !validity_has_null) {
+		return;
+	}
+	for (auto &node : data.SegmentNodes()) {
+		node.GetNode().GetStatsMutable().SetHasNull();
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4379c69f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94f8c7a6` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-368A",
-    "timestamp": "2026-11-04T01:07:33.322Z",
-    "repository": "digitalbazaar/pyld",
-    "learningId": "learn-github-digitalbazaar-pyld",
-    "contentHash": "ffe51820f636e2f1d17f3b01cb8514084a83dd42ae7b7288803883ab85ebc65f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-3AC8",
-    "timestamp": "2026-11-04T01:07:38.648Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "b638ce4de0650b152dac0e8b9cb779202945ea991017088a3c4ff20315358907",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-BGGU",
-    "timestamp": "2026-11-04T01:13:59.838Z",
-    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-BHY1",
     "timestamp": "2026-11-04T01:14:01.753Z",
     "repository": "Orange-OpenSource/hurl",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "9beb91d565a43649ebd0d6895ac1a5fc492f609ff80e992cb51340cab2859e02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UENQ",
+    "timestamp": "2026-11-05T09:12:17.846Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "2283e5cfb380750f6c0aca9de3d7e2ff0f9e377d60f7c4190167249e52916bdd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UN5T",
+    "timestamp": "2026-11-05T09:12:28.865Z",
+    "repository": "openkruise/kruise",
+    "learningId": "learn-github-openkruise-kruise",
+    "contentHash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UQO2",
+    "timestamp": "2026-11-05T09:12:33.410Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

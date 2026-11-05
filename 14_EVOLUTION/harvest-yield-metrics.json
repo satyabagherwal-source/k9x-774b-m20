@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T09:05:02.999Z",
-  "total_cycles_completed": 7568,
-  "total_learnings_persisted": 7568,
-  "total_rules_promoted": 7232,
+  "last_updated": "2026-11-05T09:12:33.420Z",
+  "total_cycles_completed": 7571,
+  "total_learnings_persisted": 7571,
+  "total_rules_promoted": 7234,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:13:29.013Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:13:29.709Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:20:50.086Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:20:54.015Z",
       "repository": "infiniflow/infinity",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T09:05:02.999Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:12:17.856Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:12:28.875Z",
+      "repository": "openkruise/kruise",
+      "learningId": "learn-github-openkruise-kruise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:12:33.420Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
