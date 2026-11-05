@@ -7724,3 +7724,6 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `885ef69f` | Multi-dimensional audit evidence | 2026-11-05T15:59:21.637Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-05T16:06:02.211Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `7d1939dc` | Multi-dimensional audit evidence | 2026-11-05T16:06:05.787Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `c6ec50b6` | Multi-dimensional audit evidence | 2026-11-05T16:52:37.517Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-05T16:52:45.598Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `74efd351` | Multi-dimensional audit evidence | 2026-11-05T16:52:51.332Z |

@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "9ab25aac1190cace183c6d93be6aadfc266c70749858227f56e21a7666771f1c",
-    "lastHarvestedAt": "2026-11-01T01:47:02.961Z",
+    "contentHash": "974bae64a066e07a932720b161f310ab7bfc6ec94b031ee1da4e91e6a8902793",
+    "lastHarvestedAt": "2026-11-05T16:52:45.598Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "3d54f0c1",
+    "sourceVersion": "74efd351",
     "license": "Apache-2.0",
-    "contentHash": "66061551b49cf6c4a5af999b4a15e1a6a1f4580dde898a4c4fd9decdaf29820b",
-    "lastHarvestedAt": "2026-11-05T01:33:32.046Z",
+    "contentHash": "dbd2089c923e69e09a7a68293b64859b5c3e46a0f1dea19f6b6e2ba0f69c3006",
+    "lastHarvestedAt": "2026-11-05T16:52:51.332Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "3d3a6f46",
+    "sourceVersion": "c6ec50b6",
     "license": "MIT",
-    "contentHash": "976839c77ad778e43fd05cec97e69c0c2365cfaf81a4aaac07ef4bf4c3bacde1",
-    "lastHarvestedAt": "2026-11-04T21:50:01.354Z",
+    "contentHash": "bb22ccc41b45f0b52433c600c2548d987a4bd33e7c53d90a85d090b3ae397099",
+    "lastHarvestedAt": "2026-11-05T16:52:37.517Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

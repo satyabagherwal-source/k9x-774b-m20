@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `3d3a6f46`  
+> **Source Version**: `c6ec50b6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:50:00.612Z  
+> **Timestamp**: 2026-11-05T16:52:36.174Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:50:00.478Z  
+> **Harvest Timestamp**: 2026-11-05T16:52:35.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23321 stars
+- **Stars / Engagement**: 23334 stars
 
 ---
 
@@ -1213,17 +1213,17 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28820** (2026-11-04): **fix(react-compiler): ignore callback-local reassignments**
-  *Symptoms*: Restrict post-render reassignment tracking to bindings declared in the outer component or hook, matching upstream React Compiler. This stops `react/immutability` from flagging callback-local variables reassigned by nested synchronous or async closures.  Add compiler and Oxlint CLI regressions while retaining errors for render-scope bindings.  Fixes #28401 
+- **Issue #28864** (2026-11-05): **fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix**
+  *Symptoms*: The autofix could delete neighboring code on the redundant assertion's line, generate overlapping edits when both assertions shared a line, and leave an empty line with CRLF endings.  Remove the whole line only when the assertion is surrounded by whitespace; otherwise remove just the statement. Handle complete JavaScript line endings and cover nearby code, comments, both matcher orders, and EOF in regression tests.  Fixes #28851 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"69abfff72bacaf8ea8ef8470f60b2955bc262c37","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T15:29:20.020916Z">2026-11-04T15:29:20.020916Z</relative-time> | `69abfff` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks   `⏩ 86` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>codex/fix-react-immutability-callback-locals</code> (69abfff) with <code>main</code> (1e57a4e)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/codex%2Ffix-react-immutability-callback-locals?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 86 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive t
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"7b2600c38b6377ec3ad2c41fce2ba63265281365","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-05T15:26:58.760716Z">2026-11-05T15:26:58.760716Z</relative-time> | `7b2600c` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > ### Merge activity  * **Nov 5, 3:27 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:30 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:39 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
-- **Issue #28819** (2026-11-04): **fix(linter/unicorn/prefer-type-error): report throws in unbraced if branches**
-  *Symptoms*: When an `if` performs a type check, report a lone `throw new Error(...)` in its consequent with or without braces. This matches Unicorn’s branch selection and removes the false positive for a braced `else`. Regression tests cover the reported diagnostic, the `TypeError` autofix, and both forms of `else`.  Fixes #28814 
+- **Issue #28863** (2026-11-05): **style(lexer): reorder imports**
+  *Symptoms*: Pure refactor - style nit.  Reorder module imports so feature-gated `mod` statements are in their own block, after other `mod`s.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"38ee142c209e2454f20295cb30ca90c289ee7d81","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T14:02:11.143188Z">2026-11-04T14:02:11.143188Z</relative-time> | `38ee142` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > ### Merge activity  * **Nov 4, 2:06 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 4, 2:06 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 4, 2:12 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > * **#28863** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-in-stack-comment&prId=28863).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in 
+  > ### Merge activity  * **Nov 5, 3:12 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:19 PM UTC**: `overlookmotel` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:28 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1240,664 +1240,467 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b48483b` (2026-11-04)
-**Commit Message**: fix(minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807)
+### Incident Patch 1: `171ad772` (2026-11-05)
+**Commit Message**: fix(lexer): classify Turbopack magic comments (#28427)
 
-Hi, I found this while checking a tsdown/Rolldown update.
-Folding `replaceAll` with an empty search string currently inserts the
-replacement between Unicode scalar values, but JavaScript inserts it
-between UTF-16 code units.
-For example:
+Closes #28320
 
-```js
-export default () => ((replacement) => "a😀z".replaceAll("", replacement))("-");
-```
+`oxc_lexer` gave Turbopack magic comments such as `/*
+turbopackChunkName: "x" */` `CommentContent::None`, while `oxc_parser`
+classifies them as `CommentContent::Turbopack`.
 
-The original returns `"-a-\ud83d-\ude00-z-"`, while main folds it to
-`"-a-😀-z-"`.
-The IIFE parameter propagation exposes the same problem as a direct
-literal call.
+This adds the missing case to `classify` in
+`pipeline/carve/comments.rs`, following the parser's `parse_annotation`:
+after leading whitespace, the comment starts with `turbopack`, followed
+by an ASCII uppercase letter. Otherwise it falls back to the `@license`
+/ `@preserve` check, like the other cases. The issue's repro is added as
+the `misc/pass/comment-turbopack.js` fixture (block comments with and
+without spaces, plus a line comment), and `classify` gets a unit test.
 
-The fix uses the existing `JSStrBuilder` to append each UTF-16 code unit
-and its replacement.
-The result reserves its exact WTF-8 byte length once, with checked
-capacity arithmetic, and an empty replacement returns the original
-string.
-`replace`, nonempty searches, and the existing side-effect,
-substitution-pattern, and lone-surrogate input guards keep their current
-paths.
+Validation:
 
-The regression test covers supplementary characters, adjacent surrogate
-pairs, a supplementary replacement, empty receiver/replacement, and the
-IIFE case above.
-It fails on main and passes with the fix.
-On macOS arm64 with Rust 1.99.1 and 
+- `cargo test -p oxc_lexer`: all pass (235 unit, 66 integration), on
+both the host (generic) build and the AVX2 build (`--target
+x86_64-unknown-linux-gnu --config .cargo/lexer-avx2.toml`). With the new
+match arm disabled, the new `turbopack` unit test fails (`left: None,
+right: Turbopack`).
+- Lexer conformance on the new fixture: without the fix it reproduces
+the issue's diff for all 3 comments (`None` vs `Turbopack`); with it,
+`lexer_misc` passes 392/392.
+- `CA
 
-**File**: `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs` (modified, +21/-1)
+**File**: `crates/oxc_lexer/src/pipeline/carve/comments.rs` (modified, +28/-0)
 ```diff
-@@ -13,7 +13,7 @@ use smallvec::SmallVec;
- 
- use oxc_allocator::ArenaVec;
- use oxc_ast::ast::*;
--use oxc_str::{JSStr, JSStrBuilder};
-+use oxc_str::{JSChar, JSStr, JSStrBuilder};
- use oxc_syntax::{
-     identifier::is_white_space, line_terminator::is_line_terminator, number::ToJsString,
- };
-@@ -429,6 +429,26 @@ fn try_fold_string_replace<'a>(
-     if replace_value.contains('$') {
-         return None;
-     }
-+    if name == "replaceAll" && search_value.is_empty() {
-+        if replace_value.is_empty() {
-+            return Some(ConstantValue::String(s.value));
-+        }
-+        let capacity = value.encode_utf16().try_fold(replace_value.len(), |capacity, unit| {
-+            capacity
-+                .checked_add(JSChar::from_u32(u32::from(unit))?.len_bytes())?
-+                .checked_add(replace_value.len())
-+        })?;
-+        if capacity > u32::MAX as usize || capacity > isize::MAX as usize {
-+            return None;
-+        }
-+        let mut result = JSStrBuilder::with_capacity_in(capacity, ctx);
-+        result.push_str(replace_value);
-+        for unit in value.encode_utf16() {
-+            result.push_code_unit(unit);
-+            result.push_str(replace_value);
-+        }
-+        return Some(ConstantValue::String(result.into_js_str()));
-+    }
-     let result = match name {
-         "replace" => value.cow_replacen(search_value, replace_value, 1),
-         "replaceAll" => value.cow_replace(search_value, replace_value),
-```
-
-**File**: `crates/oxc_minifier/tests/peephole/replace_known_methods.rs` (modified, +13/-0)
-```diff
-@@ -226,6 +226,19 @@ fn test_fold_string_replace_all() {
-     test_same("'123'.replaceAll('2', '$`')"); // would fold to '113'
- }
- 
-+#[test]
-+fn test_fold_string_replace_all_empty_search_utf16() {
-+    test(r"x = 'a😀z'.replaceAll('', '-')", r"x = '-a-\uD83D-\uDE00-z-'");
-+    test(r"x = '😀😀'.replaceAll('', '-')", r"x = '-\uD83D-\uDE00-\uD83D-\uDE00-'");
-+    test(r"x = '😀'.replaceAll('', '😁')", r"x = '😁\uD83D😁\uDE00😁'");
-+    test("x = '😀'.replaceAll('', '')", "x = '😀'");
-+    test("x = ''.replaceAll('', '-')", "x = '-'");
-+    test(
-+        r"x = (() => ((p) => 'a😀z'.replaceAll('', p))('-'))()",
-+        r"x = ((p) => '-a-\uD83D-\uDE00-z-')('-')",
-+    );
-+}
-+
- #[test]
- fn test_fold_string_substring() {
-     test("x = 'abcde'.substring(0,2)", "x = 'ab'");
-```
-
----
-
-### Incident Patch 2: `28a44b74` (2026-11-04)
-**Commit Message**: fix(transformer/class-properties): preserve private accessor assignment receivers (#28790)
-
-When targeting ES2021 or earlier, a logical assignment to a private accessor can use the wrong receiver if the getter reassigns the variable on the left:
-
-```js
-let receiver;
-
-class Counter {
-  get #value() {
-    receiver = {};
-    return 1;
-  }
-
-  set #value(value) {
-    console.log("set", value);
-  }
-
-  run(rhs) {
-    return (receiver.#value &&= rhs());
-  }
-}
-
-receiver = new Counter();
-console.log(receiver.run(() => {
-  console.log("rhs");
-  return 2;
-}));
-```
-
-Before this change, the getter and setter each read `receiver`. The getter changes it to `{}`, so preparing the setter throws `TypeError` before the RHS runs. Nothing is logged.
-
-The relevant generated code changes as follows:
-
-```js
-// Before
-return _get_value.call(babelHelpers.assertClassBrand(_Counter_brand, receiver)) &&
-  (babelHelpers.toSetter(
-    _set_value.bind(babelHelpers.assertClassBrand(_Counter_brand, receiver))
-  )._ = rhs());
-
-// After
-var _receiver;
-return _get_value.call(babelHelpers.assertClassBrand(_Counter_brand, _receiver = receiver)) &&
-  (babelHelpers.toSetter(
-    _set_value.bind(babelHelpers.assertClassBran
-
-**File**: `crates/oxc_transformer/src/es2022/class_properties/private_field.rs` (modified, +26/-2)
-```diff
-@@ -19,6 +19,7 @@ use crate::{
-     context::TraverseCtx,
-     utils::ast_builder::{
-         create_assignment, create_bind_call, create_call_call, create_member_callee,
-+        wrap_expression_in_arrow_function_iife,
-     },
- };
- 
-@@ -470,6 +471,24 @@ impl<'a> ClassProperties<'a> {
-     ) {
-         let Expression::AssignmentExpression(assign_expr) = expr else { unreachable!() };
-         if matches!(&assign_expr.left, AssignmentTarget::PrivateFieldExpression(_)) {
-+            if !self.private_fields_as_properties
-+                && assign_expr.operator.to_logical_operator().is_some()
-+                && ctx
-+                    .ancestors()
-+                    .take_while(|ancestor| {
-+                        !matches!(
-+                            ancestor,
-+                            Ancestor::FunctionBodyStatements(_)
-+                                | Ancestor::ArrowFunctionExpressionBody(_)
-+                        )
-+                    })
-+                    .any(|ancestor| matches!(ancestor, Ancestor::FormalParameterInitializer(_)))
+@@ -374,6 +374,15 @@ fn classify(bytes: &[u8], is_block: bool, lic: bool, cpu: impl Cpu) -> CommentCo
+             }
+             return if lic { CommentContent::Legal } else { CommentContent::None };
+         }
++        b't' => {
++            if bytes[start..].starts_with(b"turbopack")
++                && start + 9 < bytes.len()
++                && bytes[start + 9].is_ascii_uppercase()
 +            {
-+                // Keep receiver temporaries local to each parameter evaluation, including
-+                // recursive calls from getters. The assignment is transformed in the IIFE.
-+                *expr = wrap_expression_in_arrow_function_iife(expr.take_in(ctx), ctx);
-+                return;
++                return CommentContent::Turbopack;
 +            }
-             self.transform_assignment_expression_impl(expr, ctx);
++            return if lic { CommentContent::Legal } else { CommentContent::None };
++        }
+         b'v' | b'c' | b'n' | b'i' => {
+             let rest = &bytes[start..];
+             if rest.starts_with(b"v8 ignore")
+@@ -520,4 +529,23 @@ mod tests {
+             assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
          }
      }
-@@ -798,8 +817,13 @@ impl<'a> ClassProperties<'a> {
-                 );
-             }
- 
--            // Make 2 copies of `object`
--            let (object1, object2) = self.duplicate_object(object.into_inner_expression(), ctx);
-+            // Logical assignment reads before preparing the setter. A getter can reassign
-+            // the receiver binding, so preserve its original value for the subsequent write.
-+            let (object1, object2) = duplicate_expression(
-+                object.into_inner_expression(),
-+                operator.to_logical_operator().is_some(),
-+                ctx,
-+            );
- 
-             if let Some(operator) = operator.to_binary_operator() {
-                 // `object.#prop += value`
++
++    #[test]
++    fn turbopack() {
++        for (source, is_block) in [
++            (b" turbopackChunkName: \"x\" ".as_slice(), true),
++            (b"turbopackOptional: true".as_slice(), true),
++            (b"\tturbopackIgnore: true\n".as_slice(), true),
++            (b" turbopackIgnore: true".as_slice(), false),
++        ] {
++            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
++        }
++
++        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
++            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
++        }
++
++        // Without a magic comment, @license or @preserve still makes it legal
++        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
++    }
+ }
 ```
 
-**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +1/-1)
+**File**: `tasks/coverage/misc/pass/comment-turbopack.js` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++import(/* turbopackChunkName: "x" */ "./a");
++import(/*turbopackOptional: true*/ "./b");
++import(
++  // turbopackIgnore: true
++  "./c"
++);
+```
+
+**File**: `tasks/coverage/snapshots/codegen_misc.snap` (modified, +2/-2)
+```diff
+@@ -1,3 +1,3 @@
+ codegen_misc Summary:
+-AST Parsed     : 133/133 (100.00%)
+-Positive Passed: 133/133 (100.00%)
++AST Parsed     : 134/134 (100.00%)
++Positive Passed: 134/134 (100.00%)
+```
+
+**File**: `tasks/coverage/snapshots/formatter_misc.snap` (modified, +2/-2)
+```diff
+@@ -1,3 +1,3 @@
+ formatter_misc Summary:
+-AST Parsed     : 133/133 (100.00%)
+-Positive Passed: 133/133 (100.00%)
++AST Parsed     : 134/134 (100.00%)
++Positive Passed: 134/134 (100.00%)
+```
+
+**File**: `tasks/coverage/snapshots/lexer_misc.snap` (modified, +2/-2)
+```diff
+@@ -1,3 +1,3 @@
+ lexer_misc Summary:
+-AST Parsed     : 401/401 (100.00%)
+-Positive Passed: 401/401 (100.00%)
++AST Parsed     : 402/402 (100.00%)
++Positive Passed: 402/402 (100.00%)
+```
+
+**File**: `tasks/coverage/snapshots/parser_misc.snap` (modified, +2/-2)
 ```diff
 @@ -1,6 +1,6 @@
- commit: b835f0c6
+ parser_misc Summary:
+-AST Parsed     : 133/133 (100.00%)
+-Positive Passed: 133/133 (100.00%)
++AST Parsed     : 134/134 (100.00%)
++Positive Passed: 134/134 (100.00%)
+ Negative Passed: 270/270 (100.00%)
  
--Passed: 309/438
-+Passed: 310/439
- 
- # All Passed:
- * babel-plugin-transform-class-static-block
+   × TS(1275): 'accessor' modifier can only appear on a property declaration.
 ```
 
-**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
+**File**: `tasks/coverage/snapshots/semantic_misc.snap` (modified, +2/-2)
 ```diff
-@@ -2,7 +2,7 @@ commit: b835f0c6
- 
- node: v26.12.1
- 
--Passed: 44 of 46 (95.65%)
-+Passed: 45 of 47 (95.74%)
- 
- Failures:
- 
+@@ -1,6 +1,6 @@
+ semantic_misc Summary:
+-AST Parsed     : 133/133 (100.00%)
+-Positive Passed: 127/133 (95.49%)
++AST Parsed     : 134/134 (100.00%)
++Positive Passed: 128/134 (95.52%)
+ semantic Error: tasks/coverage/misc/pass/declare-let-private.ts
+ Bindings mismatch:
+ after transform: ScopeId(0): ["private"]
 ```
 
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/exec.js` (added, +107/-0)
+**File**: `tasks/coverage/snapshots/transformer_misc.snap` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,107 @@
-+let receiver;
-+let replacement;
-+let value;
-+let events = [];
-+
-+class Accessors {
-+  get #value() {
-+    events.push("get");
-+    receiver = replacement;
-+    return value;
-+  }
-+
-+  set #value(next) {
-+    events.push(["set", this, next]);
-+  }
-+
-+  static get #staticValue() {
-+    events.push("get");
-+    receiver = replacement;
-+    return value;
-+  }
-+
-+  static set #staticValue(next) {
-+    events.push(["set", this, next]);
-+  }
-+
-+  run(operator, rhs) {
-+    switch (operator) {
-+      case "&&=": return (receiver.#value &&= rhs());
-+      case "||=": return (receiver.#value ||= rhs());
-+      case "??=": return (receiver.#value ??= rhs());
-+    }
-+  }
-+
-+  static run(operator, rhs) {
-+    switch (operator) {
-+      case "&&=": return (receiver.#staticValue &&= rhs());
-+      case "||=": return (receiver.#staticValue ||= rhs());
-+      case "??=": return (receiver.#staticValue ??= rhs());
-+    }
-+  }
-+}
-+
-+for (const original of [new Accessors(), Accessors]) {
-+  for (const [operator, taken, skipped] of [["&&=", 1, 0], ["||=", 0, 1], ["??=", null, 1]]) {
-+    // Rebinding to a wrong-brand object must not redirect the write or throw.
-+    // Rebinding to a valid instance must still write to the original instance.
-+    for (replacement of [{}, new Accessors()]) {
-+      receiver = original;
-+      value = taken;
-+      events = [];
-+      expect(original.run(operator, () => {
-+        events.push("rhs");
-+        return 2;
-+      })).toBe(2);
-+      expect(events).toEqual(["get", "rhs", ["set", original, 2]]);
-+
-+      receiver = original;
-+      value = skipped;
-+      events = [];
-+      expect(original.run(operator, () => {
-+        throw new Error("RHS must be skipped");
-+      })).toBe(skipped);
-+      expect(events).toEqual(["get"]);
-+    }
-+
-+    receiver = {};
-+    events = [];
-+    expect(() => original.run(operator, () => {
-+      events.push("rhs");
-+    })).toThrow(TypeError);
-+    expect(events).toEqual([]);
-+  }
-+}
-+
-+// The temporary receiver must belong to each invocation, including when the
-+// assignment is nested inside a default parameter and its getter reenters it.
-+class Recursive {
-+  constructor(name) {
-+    this.name = name;
-+  }
-+
-+  get #value() {
-+    events.push("get:" + this.name);
-+    if (this.name === "outer") {
-+      receiver = inner;
-+      expect(inner.run()).toEqual([2]);
-+    }
-+    receiver = {};
-+    return 1;
-+  }
-+
-+  set #value(next) {
-+    events.push("set:" + this.name);
-+  }
-+
-+  run(result = [receiver.#value &&= (events.push("rhs:" + this.name), 2)]) {
-+    return result;
-+  }
-+}
-+
-+const outer = new Recursive("outer");
-+const inner = new Recursive("inner");
-+receiver = outer;
-+events = [];
-+expect(outer.run()).toEqual([2]);
-+expect(events).toEqual(["get:outer", "get:inner", "rhs:inner", "set:inner", "rhs:outer", "set:outer"]);
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/input.js` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+let receiver;
-+
-+class Accessor {
-+  get #value() {
-+    receiver = {};
-+    return 1;
-+  }
-+
-+  set #value(value) {}
-+
-+  run(rhs) {
-+    return (receiver.#value &&= rhs());
-+  }
-+
-+  parameter(result = [receiver.#value &&= rhs()]) {
-+    return result;
-+  }
-+}
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-private-methods/test/fixtures/oxc/private-accessor-logical-assignment-receiver/output.js` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+let receiver;
-+var _Accessor_brand = /* @__PURE__ */ new WeakSet();
-+class Accessor {
-+  constructor() {
-+    babelHelpers.classPrivateMethodInitSpec(this, _Accessor_brand);
-+  }
-+  run(rhs) {
-+    var _receiver;
-+    return _get_value.call(babelHelpers.assertClassBrand(_Accessor_brand, _receiver = receiver)) && (babelHelpers.toSetter(_set_value.bind(babelHelpers.assertClassBrand(_Accessor_brand, _receiver)))._ = rhs());
-+  }
-+  parameter(result = [(() => {
-+    var _receiver2;
-+    return _get_value.call(babelHelpers.assertClassBrand(_Accessor_brand, _receiver2 = receiver)) && (babelHelpers.toSetter(_set_value.bind(babelHelpers.assertClassBrand(_Accessor_brand, _receiver2)))._ = rhs());
-+  })()]) {
-+    return result;
-+  }
-+}
-+function _get_value() {
-+  receiver = {};
-+  return 1;
-+}
-+function _set_value(value) {}
+@@ -1,3 +1,3 @@
+ transformer_misc Summary:
+-AST Parsed     : 133/133 (100.00%)
+-Positive Passed: 133/133 (100.00%)
++AST Parsed     : 134/134 (100.00%)
++Positive Passed: 134/134 (100.00%)
 ```
 
 ---
 
-### Incident Patch 3: `255c5cca` (2026-11-04)
-**Commit Message**: fix(formatter): measure Tailwind class argument after collapsing whitespace (#28745)
+### Incident Patch 2: `838d3393` (2026-11-05)
+**Commit Message**: fix(linter/vitest/prefer-called-exactly-once-with): avoid panic on non-ASCII text (#28850)
 
-## Summary
+Fixes #28849
 
-Follow-up to #28744, same kind of issue in a different place.
+`get_source_code_line_span` sliced the source text at every byte offset
+back to the line start, and at `statement_span.end + 1`. If a multi-byte
+character was in either place, the rule panicked, also without `--fix`.
 
-With `sortTailwindcss` enabled, an assignment whose right side is a
-Tailwind function call can take two runs to reach a stable output,
-because the "short argument" check measures the argument's **source**
-text while the printed text has its whitespace collapsed.
+This PR finds the line start with `rfind('\n')`, and extends the end by
+the `len_utf8()` of the next char. For ASCII text, the span does not
+change.
 
-Input (`{"sortTailwindcss": {"functions": ["cn"]}}`, default
-`printWidth: 100`):
+Added two fail cases and two fix cases. Each case panics without this
+change.
 
-```ts
-const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn("p-4                           flex");
-```
+I used AI assistance (Claude Code) to write this change. I reviewed the
+code and ran the tests.
 
-1st run:
+---------
 
-```ts
-const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn(
-  "flex p-4",
-);
-```
+Co-authored-by: Cameron <[REDACTED_EMAIL]>
 
-2nd run (also what Prettier + prettier-plugin-tailwindcss prints in one
-run):
-
-```ts
-const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa =
-  cn("flex p-4");
-```
-
-The same happens for `a.b = cn(...)`, `{ key: cn(...) }` and
-`cn(...).trim()`.
-
-### Cause
-
-`is_poorly_breakable_member_or_call_chain` uses `is_short_argument`
-(Prettier's `isLoneShortArgument`) to check if the only argument is at
-mo
-
-**File**: `apps/oxfmt/test/api/sort_tailwindcss.test.ts` (modified, +30/-2)
+**File**: `crates/oxc_linter/src/rules/vitest/prefer_called_exactly_once_with.rs` (modified, +19/-6)
 ```diff
-@@ -566,6 +566,23 @@ shadow-lg\` : "font-normal"}\`} />;`;
+@@ -427,14 +427,15 @@ fn is_mock_reset_call_expression(call_expr: &CallExpression<'_>) -> bool {
+  */
+ #[expect(clippy::cast_possible_truncation)]
+ fn get_source_code_line_span(statement_span: Span, ctx: &LintContext<'_>) -> Span {
+-    let line_end = std::cmp::min(statement_span.end + 1, ctx.source_text().len() as u32);
++    let source_text = ctx.source_text();
++    let start = statement_span.start as usize;
++    let end = statement_span.end as usize;
+ 
+-    let column_0_span_index = (0..statement_span.start)
+-        .rev()
+-        .find(|&index| ctx.source_range(Span::new(index, line_end)).starts_with('\n'))
+-        .map_or(statement_span.start, |index| index + 1);
++    let line_end = source_text[end..].chars().next().map_or(end, |c| end + c.len_utf8());
+ 
+-    Span::new(column_0_span_index, line_end)
++    let column_0_span_index = source_text[..start].rfind('\n').map_or(start, |index| index + 1);
++
++    Span::new(column_0_span_index as u32, line_end as u32)
+ }
+ 
+ fn get_callback_body<'a>(callback: &'a Expression<'a>) -> Option<&'a FunctionBody<'a>> {
+@@ -571,6 +572,8 @@ fn test() {
+ 			      expect(x).toHaveBeenCalledWith<[string]>('hoge');
+ 			      ",
+         "expect(x).toHaveBeenCalledOnce();\nexpect(x).toHaveBeenCalledWith('hoge');",
++        r#"expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();"#,
++        "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
+     ];
+ 
+     let fix = vec![
+@@ -742,6 +745,16 @@ fn test() {
+ 			      ",
+             None,
+         ),
++        (
++            "expect(x).toHaveBeenCalledWith(1);\n\u{a0}expect(x).toHaveBeenCalledOnce();",
++            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
++            None,
++        ),
++        (
++            "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
++            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
++            None,
++        ),
+     ];
+     Tester::new(PreferCalledExactlyOnceWith::NAME, PreferCalledExactlyOnceWith::PLUGIN, pass, fail)
+         .with_vitest_plugin(true)
+```
+
+**File**: `crates/oxc_linter/src/snapshots/vitest_prefer_called_exactly_once_with.snap` (modified, +20/-0)
+```diff
+@@ -231,3 +231,23 @@ source: crates/oxc_linter/src/tester.rs
+    ·                    ╰── Remove this expect
+    ╰────
+   help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
++
++  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
++   ╭─[prefer_called_exactly_once_with.tsx:1:1]
++ 1 │ expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();
++   · ──────────────────┬─────────────────  ────────────────┬────────────────
++   ·                   │                                   ╰── Remove this expect
++   ·                   ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
++   ╰────
++  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
++
++  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
++   ╭─[prefer_called_exactly_once_with.tsx:1:1]
++ 1 │ expect(x).toHaveBeenCalledWith(1);
++   · ────────────────┬────────────────
++   ·                 ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
++ 2 │ expect(x).toHaveBeenCalledOnce(); 
++   · ─────────────────┬────────────────
++   ·                  ╰── Remove this expect
++   ╰────
++  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
+```
+
+---
+
+### Incident Patch 3: `ebfd40ad` (2026-11-05)
+**Commit Message**: fix(formatter): sort Tailwind calls printed as member chains (#28800)
+
+Stacked on #28798.
+
+## What was wrong
+
+With `sortTailwindcss` on, a Tailwind call with a member callee was not
+sorted when printed as a `MemberChain`:
+
+```js
+// experimentalTailwindcss: { functions: ["cn", "tw"] }
+
+// Input
+tw.style("p-4  flex");
+cn.a("p-4  flex").b("m-2  block").c();
+
+// Before
+tw.style("p-4  flex");
+cn.a("p-4  flex").b("m-2  block").c();
+
+// After
+tw.style("flex p-4");
+cn.a("flex p-4").b("m-2 block").c();
+```
+
+Cause: only the non-`MemberChain` branch of `CallExpression::write`
+pushed the Tailwind context.
+Inside JSX `className` they were sorted by the attribute's context, so
+the existing tests didn't catch it.
+
+## What changed
+
+- The push moves to the call arguments printer (`impl Format for
+AstNode<ArenaVec<Argument>>`),
+  which both `CallExpression` and `MemberChain` go through
+- The call's own context covers only its arguments, so `cn.foo["a
+b"](...)` keeps `"a b"`, like the plugin
+    (an outer context still covers the callee, as the plugin does)
+- `CallExpression::write` only hides the context for a nested
+non-Tailwind call
+- `AGENTS.md` notes the known limitation below
+
+## Not covered he
+
+**File**: `apps/oxfmt/test/api/sort_tailwindcss.test.ts` (modified, +26/-0)
+```diff
+@@ -229,6 +229,32 @@ const A = (
      expect(result.errors).toStrictEqual([]);
    });
  
-+  it("should measure the argument with whitespace when preserveWhitespace is true", async () => {
-+    const input = `const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn("p-4                           flex");\n`;
++  it("should sort classes in calls printed as member chains", async () => {
++    // Outside JSX, since a `className` context would sort them anyway
++    const input = `const a = tw.style("p-4  flex");
++const b = cn.a("p-4  flex").b("m-2  block").c();
++const c = cn.foo["a  b"]("x  y");
++const d = cn(x.y("a  b"), cn.x("p-4  flex"));
++`;
++    const options = { experimentalTailwindcss: { functions: ["cn", "tw"] } };
 +
-+    const result = await format("test.ts", input, {
-+      experimentalTailwindcss: { functions: ["cn"], preserveWhitespace: true },
-+    });
++    const result = await format("test.ts", input, options);
 +
-+    // Whitespace is kept, so the argument is long and the call is broken.
++    // Like the plugin, only the arguments are sorted, not the computed key `["a  b"]`
 +    expect(result.code).toMatchInlineSnapshot(`
-+      "const vaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa = cn(
-+        "flex                           p-4",
-+      );
++      "const a = tw.style("flex p-4");
++      const b = cn.a("flex p-4").b("m-2 block").c();
++      const c = cn.foo["a  b"]("x y");
++      const d = cn(x.y("a  b"), cn.x("flex p-4"));
 +      "
 +    `);
 +    expect(result.errors).toStrictEqual([]);
++
++    // Formatting the output again should not change it.
++    const second = await format("test.ts", result.code, options);
++    expect(second.code).toBe(result.code);
 +  });
 +
-   it("should not break JSX element for multiline class string that gets collapsed", async () => {
-     const input = `const A = (
-   <div
-@@ -660,7 +677,7 @@ const B = (
-     expect(result.errors).toStrictEqual([]);
-   });
- 
--  it("should decide layouts from the collapsed template literal and object key", async () => {
-+  it("should decide layouts from collapsed Tailwind classes", async () => {
-     const input = `const a = clsx(\`
-   p-4 flex items-center justify-between \${active ? "bg-white" : "bg-black"} text-black hover:bg-gray-100
- \`);
-@@ -671,13 +688,16 @@ const b = () => tw\`
-   p-4 flex items-center justify-between bg-white text-black hover:bg-gray-100
- \`;
- const c = clsx({ "a   b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLongToForceBreakingHereAndMore });
-+const ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd = clsx("p-4                           flex");
-+const eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = clsx(\`p-4                           flex\`);
-+const f = clsx({ kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk: foo(\`p-4                           flex\`) });
- `;
-     const options = { tabWidth: 4, experimentalTailwindcss: { functions: ["clsx", "tw"] } };
- 
-     const result = await format("test.ts", input, options);
- 
-     // The line breaks are collapsed, so the template is not hugged as multiline,
--    // and the collapsed key is short.
-+    // and the collapsed key and call arguments are short.
-     expect(result.code).toMatchInlineSnapshot(`
-       "const a = clsx(
-           \`flex items-center justify-between p-4 \${active ? "bg-white" : "bg-black"} text-black hover:bg-gray-100\`,
-@@ -689,6 +709,14 @@ const c = clsx({ "a   b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLo
-       const c = clsx({
-           "a b": someVeryLongConditionIdentifierNameThatIsReallyQuiteLongToForceBreakingHereAndMore,
-       });
-+      const ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd =
-+          clsx("flex p-4");
-+      const eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee =
-+          clsx(\`flex p-4\`);
-+      const f = clsx({
-+          kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk:
-+              foo(\`flex p-4\`),
-+      });
-       "
-     `);
-     expect(result.errors).toStrictEqual([]);
+   it("should preserve whitespace when preserveWhitespace is true", async () => {
+     // Input with leading/trailing whitespace in class string
+     const input = `const A = <div className="  p-4 flex  ">Hello</div>;`;
 ```
 
-**File**: `crates/oxc_formatter/src/utils/assignment_like.rs` (modified, +30/-5)
+**File**: `crates/oxc_formatter/AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -21,6 +21,10 @@ use crate::{
-         format_node_without_trailing_comments::FormatNodeWithoutTrailingComments,
-         member_chain::is_member_call_chain,
-         object::{format_property_key, write_member_name},
-+        tailwindcss::{
-+            collapsed_class_list_width, tailwind_collapses_template_line_breaks,
-+            tailwind_context_for_callee,
-+        },
-         typecast::is_cast_target,
+@@ -60,6 +60,9 @@ After changing AST shapes or the generators, regenerate with `just ast`, never h
+ - Covered by the Oxfmt API tests (`apps/oxfmt/test/api/sort_tailwindcss.test.ts`), since only the host sorts
+ - Deliberately unlike the plugin, nothing in the arguments of a nested non-Tailwind call is sorted
+   (tailwindlabs/prettier-plugin-tailwindcss#426): `cn(x.includes("a  b"))` keeps `"a  b"`, which the plugin rewrites
++- Known limitation, left since the triggers are rare and a fix would thread Tailwind state through `SimpleArgument`:
++  a multiline template collapsed by sorting is still judged by its source line breaks in some layouts,
++  so a Tailwind call with one inside a member chain can take a second pass to settle
+ 
+ ### Embedded language formatting
+ 
+```
+
+**File**: `crates/oxc_formatter/src/print/call_like_expression/arguments.rs` (modified, +21/-1)
+```diff
+@@ -30,13 +30,33 @@ use crate::{
+     utils::{
+         call_expression::is_test_call_expression,
+         expression::as_call_expression_without_chain_wrappers, is_long_curried_call,
+-        member_chain::simple_argument::SimpleArgument, typecast::is_cast_target,
++        member_chain::simple_argument::SimpleArgument, tailwindcss::tailwind_context_for_callee,
++        typecast::is_cast_target,
      },
      write,
-@@ -1211,7 +1215,7 @@ fn is_poorly_breakable_member_or_call_chain<'a>(
-                 // An embedded template is formatted, so its source length says nothing
-                 Some(first_argument) => first_argument.as_expression().is_none_or(|e| {
-                     embed_hug(e, Some(call_expression), f).is_some()
--                        || !is_short_argument(e, threshold, f)
-+                        || !is_short_argument(e, threshold, &call_expression.callee, f)
-                 }),
-                 None => false,
-             },
-@@ -1238,11 +1242,19 @@ fn is_poorly_breakable_member_or_call_chain<'a>(
- /// We need it to decide if [`CallExpression`] with the argument is breakable or not
- /// If the argument is short the function call isn't breakable
- /// [Prettier applies]: <https://github.com/prettier/prettier/blob/0273e33fc691e28e4ab3f3c8ee86918b65cf823d/src/language-js/utils/index.js#L433-L484>
--fn is_short_argument(argument: &Expression, threshold: u16, f: &JsFormatter) -> bool {
-+///
-+/// A string or template whose whitespace is collapsed by Tailwind sorting under `callee`
-+/// is measured as printed, as Prettier measures the plugin's output.
-+fn is_short_argument(
-+    argument: &Expression,
-+    threshold: u16,
-+    callee: &Expression,
-+    f: &JsFormatter,
-+) -> bool {
-     match argument {
-         Expression::Identifier(identifier) => identifier.name.width() <= threshold as usize,
-         Expression::UnaryExpression(unary_expression) => {
--            is_short_argument(&unary_expression.argument, threshold, f)
-+            is_short_argument(&unary_expression.argument, threshold, callee, f)
-         }
-         Expression::RegExpLiteral(regex) => regex.regex.pattern.text.width() <= threshold as usize,
-         Expression::StringLiteral(literal) => {
-@@ -1251,16 +1263,29 @@ fn is_short_argument(argument: &Expression, threshold: u16, f: &JsFormatter) ->
-                 false,
-                 StringLiteralParentKind::Expression,
-             );
-+            let text = formatter.clean_text(f);
+ };
  
--            formatter.clean_text(f).width() <= threshold as usize
-+            let width = if tailwind_context_for_callee(callee, f)
-+                .is_some_and(|ctx| !ctx.preserve_whitespace)
-+            {
-+                // Opening and closing quotes, and the classes
-+                2 + collapsed_class_list_width(&text[1..text.len() - 1])
-+            } else {
-+                text.width()
-+            };
-+            width <= threshold as usize
-         }
-         Expression::TemplateLiteral(literal) => {
-             // Besides checking length exceed we also need to check that the template doesn't have any expressions.
-             // It means that the elements of the template are empty or have only one `JsTemplateChunkElement` element
-             // Prettier: https://github.com/prettier/prettier/blob/a043ac0d733c4d53f980aa73807a63fc914f23bd/src/language-js/print/assignment.js#L402-L405
-             literal.quasis.len() == 1 && {
-                 let raw = literal.quasis[0].value.raw;
--                raw.width() <= threshold as usize && !raw.contains('\n')
-+                if tailwind_collapses_template_line_breaks(Some(callee), f) {
-+                    collapsed_class_list_width(&raw) <= threshold as usize
-+                } else {
-+                    raw.width() <= threshold as usize && !raw.contains('\n')
-+                }
-             }
-         }
-         Expression::CallExpression(call) => {
-```
-
-**File**: `crates/oxc_formatter/src/utils/tailwindcss.rs` (modified, +22/-10)
-```diff
-@@ -84,16 +84,17 @@ pub fn tailwind_context_for_jsx_attribute(
-         .map(|opts| TailwindContextEntry::new(opts.preserve_whitespace))
- }
- 
--/// Whether a template literal printed at this point (under `tag` when tagged) has its line breaks collapsed.
--/// - Reads what `TemplateElement` reads: the current Tailwind context, or the one a Tailwind `tag` pushes
-+/// Whether a template literal printed at this point has its whitespace, including line breaks, collapsed.
-+/// - `callee` is the tag of a tagged template, or the callee of the call it's an argument of
-+/// - Reads what `TemplateElement` reads: the current Tailwind context, or the one a Tailwind `callee` pushes
- pub fn tailwind_collapses_template_line_breaks(
--    tag: Option<&Expression<'_>>,
-+    callee: Option<&Expression<'_>>,
-     f: &JsFormatter<'_, '_>,
- ) -> bool {
-     f.context()
-         .tailwind_context()
-         .copied()
--        .or_else(|| tag.and_then(|tag| tailwind_context_for_callee(tag, f)))
-+        .or_else(|| callee.and_then(|callee| tailwind_context_for_callee(callee, f)))
-         .is_some_and(|ctx| !ctx.preserve_whitespace)
- }
- 
-@@ -151,6 +152,19 @@ fn is_tailwind_function_call(callee: &Expression<'_>, options: &SortTailwindcssO
-     }
- }
- 
-+/// Printed width of a class list with collapsed whitespace:
-+/// trimmed, then split on ASCII whitespace and joined with single spaces, as the sorter does.
-+/// - Whitespace-only content is printed as a single space
-+/// - An upper bound: the sorter also drops duplicates of known classes
-+pub fn collapsed_class_list_width(content: &str) -> usize {
-+    let trimmed = content.trim();
-+    if trimmed.is_empty() {
-+        return usize::from(!content.is_empty());
+ impl<'a> Format<'a, JsFormatContext<'a>> for AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
+     fn fmt(&self, f: &mut JsFormatter<'_, 'a>) {
++        // Pushed here, so this call's context covers only its arguments, not its callee (e.g. `cn.foo["a  b"](...)`),
++        // for both a call and the calls a `MemberChain` prints
++        // (an outer context still covers the callee, as the plugin does)
++        let tailwind_ctx = match self.parent() {
++            AstNodes::CallExpression(call) => tailwind_context_for_callee(&call.callee, f),
++            _ => None,
++        };
++        if let Some(ctx) = tailwind_ctx {
++            f.context_mut().push_tailwind_context(ctx);
++        }
++        self.write_arguments(f);
++        if tailwind_ctx.is_some() {
++            f.context_mut().pop_tailwind_context();
++        }
 +    }
-+    // Each class plus its separator, minus the last separator
-+    trimmed.split_ascii_whitespace().map(|class| class.width() + 1).sum::<usize>() - 1
 +}
 +
- // ============================================================================
- // Whitespace Collapse Logic
- // ============================================================================
-@@ -323,7 +337,7 @@ pub fn write_tailwind_string_literal<'a>(
++impl<'a> AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
++    fn write_arguments(&self, f: &mut JsFormatter<'_, 'a>) {
+         let l_paren_token = "(";
+         let r_paren_token = ")";
+ 
+```
+
+**File**: `crates/oxc_formatter/src/print/call_like_expression/mod.rs` (modified, +6/-18)
+```diff
+@@ -23,20 +23,19 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
+         let type_arguments = self.type_arguments();
+         let arguments = self.arguments();
+ 
+-        // Check if this is a Tailwind function call (e.g., clsx, cn, tw)
+-        let tailwind_ctx_to_push = tailwind_context_for_callee(&self.callee, f);
+-
+         // For nested non-Tailwind calls inside a Tailwind context, hide the context
+         // to prevent sorting strings and templates inside the nested call's arguments.
+         // (e.g., `classNames("a", x.includes("\n") ? "b" : "c")` - don't sort "\n")
+-        let hides_tailwind_ctx =
+-            tailwind_ctx_to_push.is_none() && f.context().tailwind_context().is_some();
++        // A Tailwind call pushes its own context, around its arguments only
++        let hides_tailwind_ctx = f.context().tailwind_context().is_some()
++            && tailwind_context_for_callee(&self.callee, f).is_none();
+         if hides_tailwind_ctx {
+             f.context_mut().hide_tailwind_context();
          }
-         write!(f, quote);
-         // Quotes, and the single space the content is normalized to
--        return 2 + usize::from(!content.is_empty());
-+        return 2 + collapsed_class_list_width(content);
-     }
  
-     let collapse = can_collapse_whitespace(string_literal.span, string_literal.ancestors(), f);
-@@ -347,12 +361,10 @@ pub fn write_tailwind_string_literal<'a>(
-     }
-     write!(f, quote);
+-        // NOTE: Decided before this call pushes its Tailwind context, and `MemberChain` pushes none,
+-        // so a Tailwind call with a multiline template takes the branch below, which sorts it
++        // NOTE: Read before the arguments push the Tailwind context,
++        // so a Tailwind call with a multiline template it collapses stays out of `MemberChain`,
++        // which would break the chain on the template's line breaks in the source
+         if callee.is_member_expression()
+             && !is_verbatim_multiline_template_sole_arg(arguments.as_slice(), Some(self), f)
+             && !is_simple_module_import(&self.arguments(), f.comments())
+@@ -53,18 +52,7 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
+                         type_arguments
+                     ]
+                 );
+-
+-                // If this IS a Tailwind function call, push the Tailwind context before formatting arguments
+-                if let Some(ctx) = tailwind_ctx_to_push {
+-                    f.context_mut().push_tailwind_context(ctx);
+-                }
+-
+                 write!(f, arguments);
+-
+-                // Pop Tailwind context after formatting
+-                if tailwind_ctx_to_push.is_some() {
+-                    f.context_mut().pop_tailwind_context();
+-                }
+             });
+             if matches!(callee.as_ref(), Expression::CallExpression(_)) {
+                 write!(f, [group(&format_inner)]);
+```
+
+**File**: `crates/oxc_formatter/src/utils/assignment_like.rs` (modified, +0/-1)
+```diff
+@@ -1249,7 +1249,6 @@ fn is_short_argument(
+     f: &JsFormatter,
+ ) -> bool {
+     // Decided by `callee` alone: a Tailwind one pushes its context, a non-Tailwind one hides an outer one
+-    // (except for a call printed as a `MemberChain`, which pushes none)
+     let collapses_tailwind_whitespace =
+         || tailwind_context_for_callee(callee, f).is_some_and(|ctx| !ctx.preserve_whitespace);
  
--    // The sorter joins the classes with single spaces, splitting on ASCII whitespace:
--    // each class plus its separator, minus the last separator (`trimmed` has at least one class)
--    let joined_width =
--        trimmed.split_ascii_whitespace().map(|class| class.width() + 1).sum::<usize>() - 1;
-     // Quotes, the kept boundary spaces, and the classes
--    2 + usize::from(keeps_leading_space) + joined_width + usize::from(keeps_trailing_space)
-+    2 + usize::from(keeps_leading_space)
-+        + collapsed_class_list_width(trimmed)
-+        + usize::from(keeps_trailing_space)
- }
- 
- /// Writes a template element (quasi) with Tailwind class sorting.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28820** (2026-11-04): fix(react-compiler): ignore callback-local reassignments (@camc314)
-- **PR #28819** (2026-11-04): fix(linter/unicorn/prefer-type-error): report throws in unbraced if branches (@camc314)
-- **PR #28817** (2026-11-04): refactor(linter): simplify no-redeclare declaration pairs (@camchenry)
-- **PR #28816** (2026-11-04): feat(linter/eslint/no-redeclare): add `ignoreDeclarationMerge` option (@camchenry)
-- **PR #28812** (2026-11-04): fix(codegen): print infinite numeric literals as `1e400` instead of `Infinity` (@d3lm)
-- **PR #28807** (2026-11-04): fix(minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (@huuyafwww)
+- **PR #28864** (2026-11-05): fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix (@camc314)
+- **PR #28863** (2026-11-05): style(lexer): reorder imports (@overlookmotel)
+- **PR #28857** (closed): fix(linter): preserve unrelated code in Vitest autofix (@sainimal1ba-hue)
+- **PR #28856** (2026-11-05): style(lexer): apply consistent attribute order (@overlookmotel)
+- **PR #28854** (2026-11-05): refactor(lexer): derive `Eq` on `Diagnostic` and `StringSpan` (@overlookmotel)
+- **PR #28853** (2026-11-05): docs(lexer): add README to `oxc_lexer_macros` crate (@overlookmotel)
 
 ---
 
@@ -1917,48 +1720,55 @@ mo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807
+## X. lexer): classify Turbopack magic comments (#28427)
 
 **RULE**:
-When implementing operations in `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_lexer/src/pipeline/carve/comments.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b48483b`: minifier): preserve UTF-16 boundaries in empty-search replaceAll folding (#28807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `171ad772`: lexer): classify Turbopack magic comments (#28427). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_ecmascript/src/constant_evaluation/call_expr.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_lexer/src/pipeline/carve/comments.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use oxc_str::{JSChar, JSStr, JSStrBuilder};
-    if name == "replaceAll" && search_value.is_empty() {
-        if replace_value.is_empty() {
-            return Some(ConstantValue::String(s.value));
+        b't' => {
+            if bytes[start..].starts_with(b"turbopack")
+                && start + 9 < bytes.len()
+                && bytes[start + 9].is_ascii_uppercase()
+            {
+                return CommentContent::Turbopack;
+            }
+            return if lic { CommentContent::Legal } else { CommentContent::None };
         }
-        let capacity = value.encode_utf16().try_fold(replace_value.len(), |capacity, unit| {
-            capacity
-                .checked_add(JSChar::from_u32(u32::from(unit))?.len_bytes())?
-                .checked_add(replace_value.len())
-        })?;
-        if capacity > u32::MAX as usize || capacity > isize::MAX as usize {
-            return None;
+
+    #[test]
+    fn turbopack() {
+        for (source, is_block) in [
+            (b" turbopackChunkName: \"x\" ".as_slice(), true),
+            (b"turbopackOptional: true".as_slice(), true),
+            (b"\tturbopackIgnore: true\n".as_slice(), true),
+            (b" turbopackIgnore: true".as_slice(), false),
+        ] {
+            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
         }
-        let mut result = JSStrBuilder::with_capacity_in(capacity, ctx);
-        result.push_str(replace_value);
-        for unit in value.encode_utf16() {
-            result.push_code_unit(unit);
-            result.push_str(replace_value);
+
+        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
+            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
         }
-        return Some(ConstantValue::String(result.into_js_str()));
+
+        // Without a magic comment, @license or @preserve still makes it legal
+        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
     }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use oxc_str::{JSStr, JSStrBuilder};
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b48483b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `171ad772` are properly handled with clean fallback behavior.

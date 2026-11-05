@@ -7715,3 +7715,6 @@
 | `CYCLE-20261105-DW69` | `2026-11-05T15:59:21.633Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7271` | Yes (`34572659...`) |
 | `CYCLE-20261105-MH9C` | `2026-11-05T16:06:02.208Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`0383aefa...`) |
 | `CYCLE-20261105-MK0O` | `2026-11-05T16:06:05.784Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7272` | Yes (`b892ad48...`) |
+| `CYCLE-20261105-AE4G` | `2026-11-05T16:52:37.504Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bb22ccc4...`) |
+| `CYCLE-20261105-AKD6` | `2026-11-05T16:52:45.594Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`974bae64...`) |
+| `CYCLE-20261105-AOSG` | `2026-11-05T16:52:51.328Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbd2089c...`) |
