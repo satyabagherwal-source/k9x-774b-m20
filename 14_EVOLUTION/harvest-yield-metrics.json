@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:59:21.643Z",
-  "total_cycles_completed": 7690,
-  "total_learnings_persisted": 7690,
-  "total_rules_promoted": 7336,
+  "last_updated": "2026-11-05T16:06:05.791Z",
+  "total_cycles_completed": 7692,
+  "total_learnings_persisted": 7692,
+  "total_rules_promoted": 7337,
   "history": [
-    {
-      "timestamp": "2026-11-05T05:04:27.232Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T05:04:40.039Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T05:16:25.276Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T15:59:21.643Z",
       "repository": "codewhale-hq/Codewhale",
       "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T16:06:02.215Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T16:06:05.791Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

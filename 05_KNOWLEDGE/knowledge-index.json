@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T15:59:21.543Z",
+  "last_updated": "2026-11-05T16:06:05.735Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5084,8 +5084,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "fe9248e5",
-      "content_hash": "c2c2b18b0c2cd52cc32b51308f54c1fdeab46388d366d53021b98836bb9dd0a9",
+      "source_version": "7d1939dc",
+      "content_hash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -5158,6 +5158,11 @@
           "number": 6981,
           "title": "type_inference): remove lowering override for Array type (#12930)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7272,
+          "title": "fix skill in Zed (#12949)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5165,7 +5170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:42:24.648Z",
+      "verified_at": "2026-11-05T16:06:05.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73454,7 +73459,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
+      "content_hash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [
@@ -73479,7 +73484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:40:30.080Z",
+      "verified_at": "2026-11-05T16:06:02.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183375,6 +183380,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T15:59:21.519Z"
+    },
+    "rule-7272": {
+      "learning_id": "rule-7272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7272,
+      "title": "fix skill in Zed (#12949)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "7d1939dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T16:06:05.721Z"
     }
   },
   "aliases": {

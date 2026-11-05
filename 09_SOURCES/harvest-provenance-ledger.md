@@ -7722,3 +7722,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-05T15:52:02.207Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T15:59:19.316Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `885ef69f` | Multi-dimensional audit evidence | 2026-11-05T15:59:21.637Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-05T16:06:02.211Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `7d1939dc` | Multi-dimensional audit evidence | 2026-11-05T16:06:05.787Z |
