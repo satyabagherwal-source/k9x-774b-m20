@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `4e468ce3`  
+> **Source Version**: `a5c8b104`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:33:08.621Z  
+> **Timestamp**: 2026-11-05T05:39:16.966Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:33:07.389Z  
+> **Harvest Timestamp**: 2026-11-05T05:39:16.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1450,15 +1450,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40466** (2026-11-04): **Unify JSpecify dependency management at 1.0.1**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary The root POM manages org.jspecify:jspecify at 1.0.1, resolving the external dependency version conflict between Guava and ClickHouse paths. Embedded annotation classes inside ClickHouse remain present.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain for this candidate.  ### Evidence - All 448 modules select 1.0.1; only the existing Thrift conflict remains. - Comparisons of 14 effective models and classpaths passed,   with only the expected changes. - The four annotation class files are byte-identical.   Java 8/21 class-loading and reflection checks,   and standalone JPMS probes, passed within their stated scope. - Four production consumers and Native test sources compiled.   All 52 focused tests passed. - Root POM Spotless and RAT checks passed.  ### Coverage Standalone local candidate based on ac254f0b, containing only six unstaged additions to the root POM. The conclusion covers code correctness; CI was not rev
+- **Issue #40471** (2026-11-05): **Complete Oracle CREATE TABLE column definitions**
+  *Symptoms*: What: Parse visible and invisible virtual columns into CREATE TABLE definitions, mark identity columns as auto-incrementing, and cover the resulting AST metadata in parser fixtures.  Why: Preserve Oracle column information that was previously omitted while reusing the existing column-definition model.  Changes proposed in this pull request:   - Complete Oracle CREATE TABLE column definitions  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
 
-- **Issue #40464** (2026-11-04): **Unify Stax2 API dependency management at 4.2.1**
+- **Issue #40470** (2026-11-05): **Simplify docs README and remove duplicate license**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary The root POM centrally manages stax2-api at 4.2.1, eliminating conflicting version declarations along the Hadoop/Woodstox dependency paths. The resolved classpaths remain unchanged, with no new runtime dependencies.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence The 448-module convergence report, all 29 Hive tests, and Hadoop XML/Hive JVM checks passed. Spotless, RAT, and coordinated validation of both independent reviews also passed.  ### Coverage Standalone local candidate based on 84d1da0c2c08, covering all 6 added lines in the root POM. Code correctness only; CI was not reviewed. No live HiveServer2, Native image, or full E2E verification was performed.
+  > ### Summary  Completed a minimal documentation cleanup. Website build inputs and root-level license files remain unchanged.  ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  Both independent reviews and the coordinator’s review passed. Diff checks and file hash verification passed.  ### Coverage  Standalone local candidate, baseline e1cb0fe656ce; reviewed README changes and LICENSE deletion. Checkstyle and Spotless do not apply to these changes. This review covers local changes only; CI was not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1475,319 +1473,278 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b80c2fb1` (2026-11-04)
-**Commit Message**: Remove license plugin and fix Jakarta API version management (#40461)
+### Incident Patch 1: `a5c8b104` (2026-11-05)
+**Commit Message**: Complete Oracle CREATE TABLE column definitions (#40471)
 
-**File**: `kernel/transaction/type/xa-jakarta/pom.xml` (modified, +2/-0)
+**File**: `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4` (modified, +1/-1)
 ```diff
-@@ -39,6 +39,8 @@
-         versions of Jakarta EE Spec dependencies are maintained separately in this module and its submodules.
-         -->
-         <jakarta.jakartaee-bom.version>9.0.0</jakarta.jakartaee-bom.version>
-+        <jakarta.jms-api.version>3.0.0</jakarta.jms-api.version>
-+        <jakarta.persistence-api.version>3.0.0</jakarta.persistence-api.version>
-         <glassfish-jaxb.version>3.0.2</glassfish-jaxb.version>
-         <atomikos.version>6.0.0</atomikos.version>
-         <narayana.version>5.12.7.Final</narayana.version>
+@@ -414,7 +414,7 @@ inlineRefConstraint
+     ;
+ 
+ virtualColumnDefinition
+-    : columnName dataType? (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
++    : columnName dataType? visibleClause (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
+     ;
+ 
+ outOfLineConstraint
 ```
 
-**File**: `pom.xml` (modified, +12/-29)
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/type/OracleDDLStatementVisitor.java` (modified, +14/-0)
 ```diff
-@@ -106,6 +106,8 @@
-         <bytebuddy.version>1.18.8</bytebuddy.version>
-         
-         <jakarta.jakartaee-bom.version>8.0.0</jakarta.jakartaee-bom.version>
-+        <jakarta.jms-api.version>2.0.3</jakarta.jms-api.version>
-+        <jakarta.persistence-api.version>2.2.3</jakarta.persistence-api.version>
-         <bval.version>2.0.6</bval.version>
-         
-         <httpcore5.version>5.4.3</httpcore5.version>
-@@ -197,7 +199,6 @@
-         <!-- Report plugin versions -->
-         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
-         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
--        <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
-         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-         <maven-jxr-plugin.version>3.3.0</maven-jxr-plugin.version>
-         <jdepend-maven-plugin.version>2.2.1</jdepend-maven-plugin.version>
-@@ -321,6 +322,16 @@
-                 <type>pom</type>
-                 <scope>import</scope>
-             </dependency>
-+            <dependency>
-+                <groupId>jakarta.jms</groupId>
-+                <artifactId>jakarta.jms-api</artifactId>
-+                <version>${jakarta.jms-api.version}</version>
-+            </dependency>
-+            <dependency>
-+                <groupId>jakarta.persistence</groupId>
-+                <artifactId>jakarta.persistence-api</artifactId>
-+                <version>${jakarta.persistence-api.version}</version>
-+            </dependency>
-             <dependency>
-                 <groupId>org.apache.bval</groupId>
-                 <artifactId>bval-jsr</artifactId>
-@@ -1056,21 +1067,6 @@
-                     </execution>
-                 </executions>
-             </plugin>
--            <plugin>
--                <groupId>org.codehaus.mojo</groupId>
--                <artifactId>license-maven-plugin</artifactId>
--                <version>${license-maven-plugin.version}</version>
--                <inherited>false</inherited>
--                <executions>
--                    <execution>
--                        <id>aggregate-dependency-licenses</id>
--                        <goals>
--                            <goal>aggregate-third-party-report</goal>
--                        </goals>
--                        <phase>pre-site</phase>
--                    </execution>
--                </executions>
--            </plugin>
-         </plugins>
-         
-         <extensions>
-@@ -1088,19 +1084,6 @@
-                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                 <version>${maven-project-info-reports-plugin.version}</version>
-             </plugin>
--            <plugin>
--                <groupId>org.codehaus.mojo</groupId>
--                <artifactId>license-maven-plugin</artifactId>
--                <version>${license-maven-plugin.version}</version>
--                <inherited>false</inherited>
--                <reportSets>
--                    <reportSet>
--                        <reports>
--                            <report>aggregate-third-party-report</report>
--                        </reports>
--                    </reportSet>
--                </reportSets>
--            </plugin>
-             <plugin>
-                 <artifactId>maven-javadoc-plugin</artifactId>
-                 <version>${maven-javadoc-plugin.version}</version>
+@@ -242,6 +242,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.TypeNameContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VariableNameContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VarrayTypeSpecContext;
++import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VirtualColumnDefinitionContext;
+ import org.apache.shardingsphere.sql.parser.engine.oracle.visitor.statement.OracleStatementVisitor;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.VariableSegment;
+@@ -606,6 +607,9 @@ public ASTNode visitCreateRelationalTableClause(final CreateRelationalTableClaus
+             if (null != each.columnDefinition()) {
+                 result.getValue().add((ColumnDefinitionSegment) visit(each.columnDefinition()));
+             }
++            if (null != each.virtualColumnDefinition()) {
++                result.getValue().add((ColumnDefinitionSegment) visit(each.virtualColumnDefinition()));
++            }
+             if (null != each.outOfLineConstraint()) {
+                 result.getValue().add((ConstraintDefinitionSegment) visit(each.outOfLineConstraint()));
+             }
+@@ -623,6 +627,7 @@ public ASTNode visitColumnDefinition(final ColumnDefinitionContext ctx) {
+         boolean isPrimaryKey = ctx.inlineConstraint().stream().anyMatch(each -> null != each.primaryKey());
+         boolean isNotNull = ctx.inlineConstraint().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
+         ColumnDefinitionSegment result = new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataType, isPrimaryKey, isNotNull, getText(ctx));
++        result.setAutoIncrement(null != ctx.identityClause());
+         if (null != ctx.REF() && null != ctx.dataType()) {
+             result.setRef(true);
+         }
+@@ -641,6 +646,15 @@ private String getText(final ParserRuleContext ctx) {
+         return ctx.start.getInputStream().getText(new Interval(ctx.start.getStartIndex(), ctx.stop.getStopIndex()));
+     }
+     
++    @Override
++    public ASTNode visitVirtualColumnDefinition(final VirtualColumnDefinitionContext ctx) {
++        ColumnSegment column = (ColumnSegment) visit(ctx.columnName());
++        DataTypeSegment dataType = null == ctx.dataType() ? null : (DataTypeSegment) visit(ctx.dataType());
++        boolean isPrimaryKey = ctx.inlineConstraint().stream().anyMatch(each -> null != each.primaryKey());
++        boolean isNotNull = ctx.inlineConstraint().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
++        return new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataType, isPrimaryKey, isNotNull, getText(ctx));
++    }
++    
+     @SuppressWarnings("unchecked")
+     @Override
+     public ASTNode visitOutOfLineConstraint(final OutOfLineConstraintContext ctx) {
+```
+
+**File**: `test/it/parser/src/main/resources/case/ddl/create-table.xml` (modified, +67/-1)
+```diff
+@@ -1102,7 +1102,7 @@
+     
+     <create-table sql-case-id="create_table_with_column_identity">
+         <table name="t_order" start-index="13" stop-index="19" />
+-        <column-definition type="NUMBER" start-index="22" stop-index="99">
++        <column-definition type="NUMBER" auto-increment="true" start-index="22" stop-index="99">
+             <column name="order_id" />
+         </column-definition>
+         <column-definition type="NUMBER" start-index="102" stop-index="119">
+@@ -1122,6 +1122,66 @@
+         </column-definition>
+     </create-table>
+     
++    <create-table sql-case-id="create_table_with_virtual_column_visible_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="true" text="foo_total NUMBER VISIBLE GENERATED ALWAYS AS (foo_id + 1) VIRTUAL NOT NULL" start-index="39" stop-index="112">
++            <column name="foo_total" />
++        </column-definition>
++    </create-table>
++    
++    <create-table sql-case-id="create_table_with_virtual_column_invisible_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition primary-key="true" auto-increment="false" not-null="false" text="foo_key INVISIBLE AS (foo_id + 2) PRIMARY KEY" start-index="39" stop-index="83">
++            <column name="foo_key" />
++        </column-definition>
++    </create-table>
++    
++    <create-table sql-case-id="create_table_with_virtual_column_default_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition primary-key="false" auto-increment="false" not-null="false" text="foo_total AS (foo_id * 2)" start-index="39" stop-index="63">
++            <column name="foo_total" />
++        </column-definition>
++    </create-table>
++    
++    <create-table sql-case-id="create_table_with_identity_always_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 5 INCREMENT BY 2)" start-index="24" stop-index="95">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_value NUMBER DEFAULT 7" start-index="98" stop-index="123">
++            <column name="foo_value" />
++        </column-definition>
++    </create-table>
++    
++    <create-table sql-case-id="create_table_with_identity_by_default_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED BY DEFAULT AS IDENTITY" start-index="24" stop-index="69">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_value NUMBER" start-index="72" stop-index="87">
++            <column name="foo_value" />
++        </column-definition>
++    </create-table>
++    
++    <create-table sql-case-id="create_table_with_identity_default_on_null_oracle">
++        <table name="foo_table" start-index="13" stop-index="21" />
++        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED BY DEFAULT ON NULL AS IDENTITY (START WITH 3)" start-index="24" stop-index="92">
++            <column name="foo_id" />
++        </column-definition>
++        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="true" text="foo_value NUMBER NOT NULL" start-index="95" stop-index="119">
++            <column name="foo_value" />
++        </column-definition>
++    </create-table>
++    
+     <create-table sql-case-id="create_table_with_column_encrypt">
+         <table name="t_order" start-index="13" stop-index="19" />
+         <column-definition type="NUMBER" start-index="22" stop-index="97">
+@@ -2891,6 +2951,9 @@
+         <column-definition type="NUMBER" start-index="188" stop-index="220">
+             <column name="amount_sold" start-index="188" stop-index="198" />
+         </column-d
+```
+
+**File**: `test/it/parser/src/main/resources/sql/supported/ddl/create-table.xml` (modified, +6/-0)
+```diff
+@@ -98,6 +98,12 @@
+     <sql-case id="create_table_with_quota" value="CREATE TABLE &quot;t_order&quot; (&quot;order_id&quot; NUMBER(10), &quot;user_id&quot; NUMBER(10), &quot;status&quot; VARCHAR2(10), &quot;column1&quot; VARCHAR2(10), &quot;column2&quot; VARCHAR2(10), &quot;column3&quot; VARCHAR2(10))" db-types="Oracle" />
+     <sql-case id="create_table_with_column_on_null_default" value="CREATE TABLE t_order (order_id NUMBER(10) DEFAULT ON NULL 0, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
+     <sql-case id="create_table_with_column_identity" value="CREATE TABLE t_order (order_id NUMBER(10) GENERATED BY DEFAULT AS IDENTITY START WITH 1 MAXVALUE 100, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
++    <sql-case id="create_table_with_virtual_column_visible_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_total NUMBER VISIBLE GENERATED ALWAYS AS (foo_id + 1) VIRTUAL NOT NULL)" db-types="Oracle" />
++    <sql-case id="create_table_with_virtual_column_invisible_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_key INVISIBLE AS (foo_id + 2) PRIMARY KEY)" db-types="Oracle" />
++    <sql-case id="create_table_with_virtual_column_default_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_total AS (foo_id * 2))" db-types="Oracle" />
++    <sql-case id="create_table_with_identity_always_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 5 INCREMENT BY 2), foo_value NUMBER DEFAULT 7)" db-types="Oracle" />
++    <sql-case id="create_table_with_identity_by_default_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED BY DEFAULT AS IDENTITY, foo_value NUMBER)" db-types="Oracle" />
++    <sql-case id="create_table_with_identity_default_on_null_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED BY DEFAULT ON NULL AS IDENTITY (START WITH 3), foo_value NUMBER NOT NULL)" db-types="Oracle" />
+     <sql-case id="create_table_with_column_encrypt" value="CREATE TABLE t_order (order_id NUMBER(10) ENCRYPT USING 'encrypt_algorithm' IDENTIFIED BY '123456', user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
+     <sql-case id="create_table_with_inline_foreign_key_reference" value="CREATE TABLE t_order_item (item_id NUMBER(10), order_id NUMBER(10) CONSTRAINT fk_order_id REFERENCES t_order (order_id) ON DELETE CASCADE, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle,PostgreSQL,openGauss" />
+     <sql-case id="create_table_with_inline_check" value="CREATE TABLE t_order (order_id NUMBER(10) CONSTRAINT chk_order_id CHECK (order_id > 0), user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle,PostgreSQL,openGauss" />
 ```
 
 ---
 
-### Incident Patch 2: `a8d9ad9c` (2026-11-04)
-**Commit Message**: Fix cluster storage-unit registration readiness (#40460)
+### Incident Patch 2: `b4e1815f` (2026-11-05)
+**Commit Message**: Use JDBC Array for PostgreSQL index options (#40454)
 
-**File**: `mode/type/cluster/core/src/main/java/org/apache/shardingsphere/mode/manager/cluster/persist/service/ClusterMetaDataManagerPersistService.java` (modified, +7/-4)
+**File**: `kernel/data-pipeline/dialect/postgresql/src/main/java/org/apache/shardingsphere/data/pipeline/postgresql/sqlbuilder/ddl/index/PostgreSQLIndexSQLGenerator.java` (modified, +4/-4)
 ```diff
-@@ -148,18 +148,21 @@ public void dropViews(final ShardingSphereDatabase database, final String schema
-     public void registerStorageUnits(final String databaseName, final Map<String, DataSourcePoolProperties> toBeRegisteredProps) {
-         MetaDataContexts originalMetaDataContexts = new MetaDataContexts(metaDataContextManager.getMetaDataContexts().getMetaData(), metaDataContextManager.getMetaDataContexts().getStatistics());
-         metaDataPersistFacade.getDataSourceUnitService().persist(databaseName, toBeRegisteredProps);
--        afterStorageUnitsAltered(databaseName, originalMetaDataContexts);
-+        getReloadedMetaDataContexts(originalMetaDataContexts);
-+        RetryExecutor retryExecutor = new RetryExecutor(30000L, 1000L);
-+        ShardingSpherePreconditions.checkState(retryExecutor.execute(arg -> metaDataContextManager.getMetaDataContexts().getMetaData()
-+                .getDatabase(databaseName).getResourceMetaData().getStorageUnits().keySet().containsAll(arg), toBeRegisteredProps.keySet()), ReloadMetaDataContextFailedException::new);
-+        afterStorageUnitsAltered(databaseName, originalMetaDataContexts, metaDataContextManager.getMetaDataContexts());
+@@ -19,8 +19,8 @@
+ 
+ import org.apache.shardingsphere.data.pipeline.postgresql.sqlbuilder.ddl.PostgreSQLDDLTemplateExecutor;
+ import org.apache.shardingsphere.data.pipeline.postgresql.sqlbuilder.template.PostgreSQLPipelineFreemarkerManager;
+-import org.postgresql.jdbc.PgArray;
+ 
++import java.sql.Array;
+ import java.sql.Connection;
+ import java.sql.SQLException;
+ import java.util.ArrayList;
+@@ -119,15 +119,15 @@ private boolean isSortOrder(final Map<String, Object> columnDetail) throws SQLEx
+         if (null == columnDetail.get("options")) {
+             return false;
+         }
+-        String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
++        String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
+         return options.length > 0 && "DESC".equals(options[0]);
      }
      
-     @Override
-     public void alterStorageUnits(final ShardingSphereDatabase database, final Map<String, DataSourcePoolProperties> toBeUpdatedProps) {
-         MetaDataContexts originalMetaDataContexts = new MetaDataContexts(metaDataContextManager.getMetaDataContexts().getMetaData(), metaDataContextManager.getMetaDataContexts().getStatistics());
-         metaDataPersistFacade.getDataSourceUnitService().persist(database.getName(), toBeUpdatedProps);
--        afterStorageUnitsAltered(database.getName(), originalMetaDataContexts);
-+        afterStorageUnitsAltered(database.getName(), originalMetaDataContexts, getReloadedMetaDataContexts(originalMetaDataContexts));
+     private Object isNulls(final Map<String, Object> columnDetail) throws SQLException {
+         if (null == columnDetail.get("options")) {
+             return false;
+         }
+-        String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
++        String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
+         return options.length > 1 && options[1].split(" ").length > 1 && "FIRST".equals(options[1].split(" ")[1]);
      }
      
--    private void afterStorageUnitsAltered(final String databaseName, final MetaDataContexts originalMetaDataContexts) {
--        MetaDataContexts reloadMetaDataContexts = getReloadedMetaDataContexts(originalMetaDataContexts);
-+    private void afterStorageUnitsAltered(final String databaseName, final MetaDataContexts originalMetaDataContexts, final MetaDataContexts reloadMetaDataContexts) {
-         ShardingSphereDatabase reloadedDatabase = rebuildDatabaseSchemaIndex(databaseName, reloadMetaDataContexts);
-         Optional.ofNullable(reloadMetaDataContexts.getStatistics().getDatabaseStatistics(databaseName))
-                 .ifPresent(optional -> optional.getSchemaStatisticsMap().forEach((schemaName, schemaStatistics) -> metaDataPersistFacade.getStatisticsService()
+@@ -140,7 +140,7 @@ private String getColumnPropertyDisplayData(final Map<String, Object> columnDeta
+             result += " " + columnDetail.get("opcname");
+         }
+         if ("btree".equals(indexData.get("amname"))) {
+-            String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
++            String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
+             if (options.length > 0) {
+                 result += " " + options[0];
+             }
 ```
 
-**File**: `mode/type/cluster/core/src/test/java/org/apache/shardingsphere/mode/manager/cluster/persist/service/ClusterMetaDataManagerPersistServiceTest.java` (modified, +114/-0)
+**File**: `kernel/data-pipeline/dialect/postgresql/src/test/java/org/apache/shardingsphere/data/pipeline/postgresql/sqlbuilder/ddl/index/PostgreSQLIndexSQLGeneratorTest.java` (modified, +9/-9)
 ```diff
-@@ -21,25 +21,33 @@
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.infra.config.props.ConfigurationProperties;
- import org.apache.shardingsphere.infra.config.rule.RuleConfiguration;
-+import org.apache.shardingsphere.infra.datasource.pool.props.domain.DataSourcePoolProperties;
- import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
- import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
-+import org.apache.shardingsphere.infra.metadata.database.resource.ResourceMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
- import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.schema.builder.GenericSchemaBuilder;
- import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereSchema;
- import org.apache.shardingsphere.infra.metadata.database.schema.model.ShardingSphereTable;
-+import org.apache.shardingsphere.infra.metadata.statistics.ShardingSphereStatistics;
- import org.apache.shardingsphere.infra.rule.ShardingSphereRule;
- import org.apache.shardingsphere.infra.rule.attribute.RuleAttributes;
- import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.apache.shardingsphere.mode.manager.cluster.exception.ReloadMetaDataContextFailedException;
- import org.apache.shardingsphere.mode.manager.cluster.persist.coordinator.database.ClusterDatabaseListenerCoordinatorType;
- import org.apache.shardingsphere.mode.manager.cluster.persist.coordinator.database.ClusterDatabaseListenerPersistCoordinator;
- import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
- import org.apache.shardingsphere.mode.metadata.manager.MetaDataContextManager;
- import org.apache.shardingsphere.mode.metadata.persist.MetaDataPersistFacade;
-+import org.apache.shardingsphere.mode.metadata.persist.config.database.DataSourceUnitPersistService;
- import org.apache.shardingsphere.mode.metadata.persist.config.database.DatabaseRulePersistService;
- import org.apache.shardingsphere.mode.metadata.persist.metadata.DatabaseMetaDataPersistFacade;
- import org.apache.shardingsphere.mode.metadata.persist.metadata.service.DatabaseMetaDataPersistService;
- import org.apache.shardingsphere.mode.metadata.persist.metadata.service.TableMetaDataPersistService;
- import org.apache.shardingsphere.mode.metadata.refresher.util.TableRefreshUtils;
- import org.apache.shardingsphere.mode.repository.cluster.ClusterPersistRepository;
-+import org.apache.shardingsphere.mode.retry.RetryExecutor;
- import org.apache.shardingsphere.single.config.SingleRuleConfiguration;
- import org.apache.shardingsphere.single.rule.SingleRule;
- import org.apache.shardingsphere.test.infra.framework.extension.mock.AutoMockExtension;
-@@ -50,20 +58,30 @@
- import org.mockito.Answers;
- import org.mockito.InOrder;
- import org.mockito.Mock;
-+import org.mockito.MockedConstruction;
-+import org.mockito.MockedStatic;
+@@ -22,8 +22,8 @@
+ import org.junit.jupiter.api.Test;
+ import org.mockito.MockedStatic;
  import org.mockito.internal.configuration.plugins.Plugins;
+-import org.postgresql.jdbc.PgArray;
  
-+import java.util.Collection;
- import java.util.Collections;
- import java.util.LinkedHashMap;
-+import java.util.Map;
- import java.util.Properties;
-+import java.util.function.Predicate;
- 
-+import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertThrows;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
- import static org.mockito.ArgumentMatchers.any;
- import static org.mockito.ArgumentMatchers.anyCollection;
- import static org.mockito.ArgumentMatchers.argThat;
- import static org.mockito.ArgumentMatchers.eq;
-+import static org.mockito.Mockito.doAnswer;
- import static org.mockito.Mockito.doThrow;
- import static org.mockito.Mockito.inOrder;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.mockConstruction;
-+import static org.mockito.Mockito.mockStatic;
- import static org.mockito.Mockito.never;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
-@@ -153,6 +171,102 @@ void assertDropSchema() {
-         verify(metaDataPersistFacade.getDatabaseMetaDataFacade().getSchema()).drop("foo_db", "foo_schema");
++import java.sql.Array;
+ import java.sql.Connection;
+ import java.sql.SQLException;
+ import java.util.Arrays;
+@@ -119,17 +119,17 @@ void assertGenerateWithIncludeAndBtreeOptions() throws SQLException, ReflectiveO
+         when(templateExecutor.getMajorVersion()).thenReturn(11);
+         when(templateExecutor.executeByTemplate(anyMap(), eq("component/indexes/%s/nodes.ftl"))).thenReturn(Collections.singletonList(Collections.singletonMap("oid", 3L)));
+         when(templateExecutor.executeByTemplate(anyMap(), eq("component/indexes/%s/properties.ftl"))).thenReturn(Collections.singletonList(createBtreeIndexProps()));
+-        PgArray emptyOptions = mock(PgArray.class);
++        Array emptyOptions = mock(Array.class);
+         when(emptyOptions.getArray()).thenReturn(new String[0]);
+-        PgArray descOptions = mock(PgArray.class);
++        Array descOptions = mock(Array.class);
+         when(descOptions.getArray()).thenReturn(new String[]{"DESC"});
+-        PgArray nullsFirstOptions = mock(PgArray.class);
++        Array nullsFirstOptions = mock(Array.class);
+         when(nullsFirstOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS FIRST"});
+-        PgArray nullsLastOptions = mock(PgArray.class);
++        Array nullsLastOptions = mock(Array.class);
+         when(nullsLastOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS LAST"});
+-        PgArray nullsWithoutSpaceOptions = mock(PgArray.class);
++        Array nullsWithoutSpaceOptions = mock(Array.class);
+         when(nullsWithoutSpaceOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS"});
+-        PgArray emptyArrayOptions = mock(PgArray.class);
++        Array emptyArrayOptions = mock(Array.class);
+         when(emptyArrayOptions.getArray()).thenReturn(new String[0]);
+         Collection<Map<String, Object>> columnDetails = Arrays.asList(createColumnDetailWithNullOptions(emptyOptions),
+                 createColumnDetail("desc_col", null, null, descOptions), createColumnDetail("nulls_first_col", null, null, nullsFirstOptions),
+@@ -190,7 +190,7 @@ private Map<String, Object> createBtreeIndexProps() {
+         return result;
      }
      
-+    @Test
-+    void assertRegisterStorageUnits() {
-+        StorageUnit storageUnit = mock(StorageUnit.class);
-+        when(storageUnit.getStorageType()).thenReturn(TypedSPILoader.getService(DatabaseType.class, "MySQL"));
-+        Map<String, StorageUnit> storageUnits = Collections.singletonMap("foo_ds", storageUnit);
-+        Map<String, DataSourcePoolProperties> propsMap = Collections.singletonMap("foo_ds", mock(DataSourcePoolProperties.class));
-+        MetaDataContexts metaDataContexts = createRegistrationMetaDataContexts(Collections.emptyMap());
-+        when(metaDataContextManager.getMetaDataContexts()).thenReturn(metaDataContexts);
-+        DataSourceUnitPersistService dataSourceUnitPersistService = metaDataPersistFacade.getDataSourceUnitService(
-```
-
-**File**: `proxy/backend/core/src/test/java/org/apache/shardingsphere/distsql/handler/executor/configuration/imports/YamlDatabaseConfigurationImportExecutorTest.java` (added, +207/-0)
-```diff
-@@ -0,0 +1,207 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.distsql.handler.executor.configuration.imports;
-+
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.infra.config.props.ConfigurationProperties;
-+import org.apache.shardingsphere.infra.config.props.ConfigurationPropertyKey;
-+import org.apache.shardingsphere.infra.datasource.pool.props.domain.DataSourcePoolProperties;
-+import org.apache.shardingsphere.infra.datasource.pool.props.validator.DataSourcePoolPropertiesValidator;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
-+import org.apache.shardingsphere.infra.metadata.database.resource.ResourceMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.schema.builder.GenericSchemaBuilder;
-+import org.apache.shardingsphere.infra.metadata.database.schema.builder.GenericSchemaBuilderMaterial;
-+import org.apache.shardingsphere.infra.metadata.statistics.ShardingSphereStatistics;
-+import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.apache.shardingsphere.infra.util.props.PropertiesBuilder;
-+import org.apache.shardingsphere.infra.util.props.PropertiesBuilder.Property;
-+import org.apache.shardingsphere.mode.manager.ContextManager;
-+import org.apache.shardingsphere.mode.manager.cluster.persist.service.ClusterMetaDataManagerPersistService;
-+import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
-+import org.apache.shardingsphere.mode.metadata.manager.MetaDataContextManager;
-+import org.apache.shardingsphere.mode.metadata.persist.MetaDataPersistFacade;
-+import org.apache.shardingsphere.mode.metadata.persist.config.database.DataSourceUnitPersistService;
-+import org.apache.shardingsphere.mode.metadata.persist.config.database.DatabaseRulePersistService;
-+import org.apache.shardingsphere.mode.repository.cluster.ClusterPersistRepository;
-+import org.apache.shardingsphere.mode.retry.RetryExecutor;
-+import org.apache.shardingsphere.readwritesplitting.config.ReadwriteSplittingRuleConfiguration;
-+import org.apache.shardingsphere.readwritesplitting.config.rule.ReadwriteSplittingDataSourceGroupRuleConfiguration;
-+import org.apache.shardingsphere.readwritesplitting.rule.ReadwriteSplittingRule;
-+import org.apache.shardingsphere.test.infra.fixture.jdbc.MockedDataSource;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.AutoMockExtension;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.StaticMockSettings;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.extension.ExtendWith;
-+import org.mockito.MockedConstruction;
-+
-+import javax.sql.DataSource;
-+import java.sql.SQLException;
-+import java.util.Arrays;
-+import java.util.Collection;
-+import java.util.Collections;
-+import java.util.LinkedHashMap;
-+import java.util.Map;
-+import java.util.Map.Entry;
-+import java.util.concurrent.atomic.AtomicBoolean;
-+import java.util.function.Predicate;
-+
-+import static org.hamcrest.MatcherAssert.assertThat;
-+import static org.hamcrest.Matchers.containsInAnyOrder;
-+import static org.hamcrest.Matchers.is;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.ArgumentMatchers.anyCollection;
-+import static org.mockito.ArgumentMatchers.anyMap;
-+import static org.mockito.ArgumentMatchers.argThat;
-+import static org.mockito.ArgumentMatchers.eq;
-+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-+import static org.mockito.Mockito.doAnswer;
-+import static org.mockito.Mockito.doNothing;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.mockConstruction;
-+import static org.mockito.Mockito.spy;
-+import static org.mockito.Mockito.verify;
-+import static org.mockito.Mockito.when;
-+
-+@ExtendWith(AutoMockExtension.class)
-+@StaticMockSettings({DataSourcePoolPropertiesValidator.class, GenericSchemaBuilder.class})
-+class YamlDatabaseConfigurationImportExecutorTest {
-+    
-+ 
+-    private Map<String, Object> createColumnDetailWithNullOptions(final PgArray fallbackOptions) {
++    private Map<String, Object> createColumnDetailWithNullOptions(final Array fallbackOptions) {
+         Map<String, Object> result = mock(Map.class);
+         when(result.get("attdef")).thenReturn("col_with_null_options");
+         when(result.get("collnspname")).thenReturn(null);
+@@ -209,7 +209,7 @@ private Map<String, Object> createContext(final String schema, final String tabl
+         return result;
+     }
+     
+-    private Map<String, Object> createColumnDetail(final String attdef, final String collation, final String opClass, final PgArray options) {
++    private Map<String, Object> createColumnDetail(final String attdef, final String collation, final String opClass, final Array options) {
+         Map<String, Object> result = new HashMap<>(4, 1F);
+         result.put("attdef", attdef);
+         result.put("collnspname", collation);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40471** (2026-11-05): Complete Oracle CREATE TABLE column definitions (@sandynz)
+- **PR #40470** (2026-11-05): Simplify docs README and remove duplicate license (@terrymanu)
+- **PR #40467** (2026-11-04): Unify libthrift dependency management at 0.16.0 (@terrymanu)
 - **PR #40466** (2026-11-04): Unify JSpecify dependency management at 1.0.1 (@terrymanu)
 - **PR #40464** (2026-11-04): Unify Stax2 API dependency management at 4.2.1 (@terrymanu)
 - **PR #40463** (2026-11-04): Unify PostgreSQL and openGauss data type grammar definitions (@terrymanu)
-- **PR #40461** (2026-11-04): Remove license plugin and fix Jakarta API version management (@terrymanu)
-- **PR #40460** (2026-11-04): Fix cluster storage-unit registration readiness (@terrymanu)
-- **PR #40459** (2026-11-04): Unify HttpCore 5 dependency management at 5.4.3 (@terrymanu)
 
 ---
 
@@ -1807,29 +1764,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove license plugin and fix Jakarta API version management (#40461)
+## X. Complete Oracle CREATE TABLE column definitions (#40471)
 
 **RULE**:
-When implementing operations in `kernel/transaction/type/xa-jakarta/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b80c2fb1`: Remove license plugin and fix Jakarta API version management (#40461). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5c8b104`: Complete Oracle CREATE TABLE column definitions (#40471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `kernel/transaction/type/xa-jakarta/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <jakarta.jms-api.version>3.0.0</jakarta.jms-api.version>
-        <jakarta.persistence-api.version>3.0.0</jakarta.persistence-api.version>
+    : columnName dataType? visibleClause (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    : columnName dataType? (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b80c2fb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5c8b104` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T05:32:34.052Z",
+  "last_updated": "2026-11-05T05:39:17.471Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1175,14 +1175,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "e6443a7facfea77fd963d03feb6c4337d83d1a893309c1ed148639215ee2e6a3",
-      "verified_at": "2026-10-31T14:45:46.356Z",
+      "content_hash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
+      "verified_at": "2026-11-05T05:39:02.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:45:46.356Z"
+      "last_updated": "2026-11-05T05:39:02.714Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
-      "verified_at": "2026-11-04T02:46:32.457Z",
+      "content_hash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
+      "verified_at": "2026-11-05T05:39:04.603Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:46:32.457Z"
+      "last_updated": "2026-11-05T05:39:04.603Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
-      "verified_at": "2026-11-04T09:33:09.339Z",
+      "content_hash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
+      "verified_at": "2026-11-05T05:39:17.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:33:09.339Z"
+      "last_updated": "2026-11-05T05:39:17.470Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",

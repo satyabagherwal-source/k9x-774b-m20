@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-BLC2",
-    "timestamp": "2026-11-03T21:58:08.834Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "b4602181e9a6822a8486919d91f878c41f0e17999a22d7ea764e484d3bacc51d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-BNPA",
-    "timestamp": "2026-11-03T21:58:11.902Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "8ff794dda9a02eda46381796fb26b1084a1063bb2358a27a6320f3b020dd6df8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-BOBA",
-    "timestamp": "2026-11-03T21:58:12.694Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "ac3186230c83c76d83a5eb89f053aa9e9b0817591266ed8360078a05cf41f22c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-MH4F",
     "timestamp": "2026-11-03T22:06:36.591Z",
     "repository": "fb55/htmlparser2",
@@ -7492,6 +7447,51 @@
     "contentHash": "72e0c32ba8841347279bab6656eed3022c8dc32d1dae20dac7165f435ce1d93c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-85V0",
+    "timestamp": "2026-11-05T05:39:02.700Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-87BA",
+    "timestamp": "2026-11-05T05:39:04.582Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8H8V",
+    "timestamp": "2026-11-05T05:39:17.455Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -7522,3 +7522,6 @@
 | `CYCLE-20261105-ZF60` | `2026-11-05T05:32:14.856Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`b549ff88...`) |
 | `CYCLE-20261105-ZK7Y` | `2026-11-05T05:32:21.406Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7117` | Yes (`2b8ee8ee...`) |
 | `CYCLE-20261105-ZTYT` | `2026-11-05T05:32:34.037Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`72e0c32b...`) |
+| `CYCLE-20261105-85V0` | `2026-11-05T05:39:02.700Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3343ba0b...`) |
+| `CYCLE-20261105-87BA` | `2026-11-05T05:39:04.582Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7118` | Yes (`c2a767d3...`) |
+| `CYCLE-20261105-8H8V` | `2026-11-05T05:39:17.455Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7119` | Yes (`de983435...`) |

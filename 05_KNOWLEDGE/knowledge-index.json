@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T05:32:33.927Z",
+  "last_updated": "2026-11-05T05:39:17.405Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2428,8 +2428,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "4e468ce3",
-      "content_hash": "29e42f9cb35f3c4c2281eebaee11bb60ac7b9677bf80cea641642a816e002701",
+      "source_version": "a5c8b104",
+      "content_hash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2502,6 +2502,11 @@
           "number": 6794,
           "title": "Remove license plugin and fix Jakarta API version management (#40461)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7119,
+          "title": "Complete Oracle CREATE TABLE column definitions (#40471)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2509,7 +2514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:33:09.223Z",
+      "verified_at": "2026-11-05T05:39:17.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27150,7 +27155,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "e6443a7facfea77fd963d03feb6c4337d83d1a893309c1ed148639215ee2e6a3",
+      "content_hash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -27289,7 +27294,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-31T14:45:46.274Z",
+      "verified_at": "2026-11-05T05:39:02.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40837,8 +40842,8 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "464b32af",
-      "content_hash": "f50d251e338e0dc275b26b25f8be729bcb594c4c8d382cfdd849f0867e6485f0",
+      "source_version": "bb069c2f",
+      "content_hash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
@@ -40861,6 +40866,11 @@
           "number": 6729,
           "title": "Overwrite colors when merging text styles (#841)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7118,
+          "title": "support bg-image in non-first slides (#930)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40868,7 +40878,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:46:32.356Z",
+      "verified_at": "2026-11-05T05:39:04.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180322,6 +180332,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T05:32:21.311Z"
+    },
+    "rule-7118": {
+      "learning_id": "rule-7118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7118,
+      "title": "support bg-image in non-first slides (#930)",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "bb069c2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:39:04.513Z"
+    },
+    "rule-7119": {
+      "learning_id": "rule-7119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7119,
+      "title": "Complete Oracle CREATE TABLE column definitions (#40471)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "a5c8b104",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:39:17.390Z"
     }
   },
   "aliases": {

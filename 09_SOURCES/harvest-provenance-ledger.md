@@ -7531,3 +7531,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T05:32:14.865Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `d38499e8` | Multi-dimensional audit evidence | 2026-11-05T05:32:21.409Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a6054657` | Multi-dimensional audit evidence | 2026-11-05T05:32:34.041Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T05:39:02.708Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `bb069c2f` | Multi-dimensional audit evidence | 2026-11-05T05:39:04.590Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `a5c8b104` | Multi-dimensional audit evidence | 2026-11-05T05:39:17.457Z |

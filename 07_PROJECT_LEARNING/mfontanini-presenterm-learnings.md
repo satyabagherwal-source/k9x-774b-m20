@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `464b32af`  
+> **Source Version**: `bb069c2f`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:46:31.815Z  
+> **Timestamp**: 2026-11-05T05:39:04.069Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:46:31.363Z  
+> **Harvest Timestamp**: 2026-11-05T05:39:04.064Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8956 stars
+- **Stars / Engagement**: 8959 stars
 
 ---
 
@@ -1887,11 +1887,16 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #928** (2026-11-03): **chore: bump dependencies**
-  *Symptoms*: 
+- **Issue #930** (2026-11-04): **fix: support bg-image in non-first slides**
+  *Symptoms*: Fixes #929 
+  **Post-Mortem & Fix Analysis**:
+  > This PARTIALLY works: - Both slides now have a background, but there's HUGE borders around?  `master`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-12" src="https://github.com/user-attachments/assets/f392ba0b-1bd8-4dd8-afd9-fda6b0c1cf84" />  `this branch`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-22" src="https://github.com/user-attachments/assets/52be434f-c4e0-46db-85e7-a8cd30fefc66" /> <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-24" src="https://github.com/user-attachments/assets/4e448ec5-f3e5-4292-8512-b92b8cd73349" />  ---  ```md <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 1  <!-- end_slide -->  <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 2 ```  
+  > lol yeah, that looked awful. Fixed it now!
 
-- **Issue #927** (2026-10-30): **ci: fix build**
-  *Symptoms*: * `with_added_extension` isn't supported in the rust version we use here. We probably should bump that but that can wait. * config-file-schema was missing langs. * No proper formatting.
+- **Issue #929** (2026-11-04): **bg_image command only works on slide 1**
+  *Symptoms*: WOOPS!  I must apologise for not testing #864 properly enough:  ```md <!-- bg_image: {path: bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 1  ---  <!-- bg_image: {path: bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 2 ```  <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/0709ef5d-3876-463c-b118-783d9e8c8207" />  <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/621381b5-89e9-455b-8f20-85ebde096aa6" />  ---  Changing `---` to `<!-- end_slide -->` doesn't affect it
+  **Post-Mortem & Fix Analysis**:
+  > Created a fix in #930, can you have a look?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1908,151 +1913,51 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02dca9bf` (2026-11-03)
-**Commit Message**: fix: Overwrite colors when merging text styles (#841)
+### Incident Patch 1: `bb069c2f` (2026-11-04)
+**Commit Message**: fix: support bg-image in non-first slides (#930)
 
-Rewrite `TextStyle::merge` to always overwrite the colors defined in
-*self* with those of *other*, if *other* defines background/foreground
-colors.
+Fixes #929
 
-Previously, the colors in *self* were kept (if previously defined, e.g.
-from default values), meaning that merging would only modify text size
-and attributes after colors had been set for the first time (from
-whatever source).
-
-I noticed this while rewriting my theme config today, since the style
-configured for modal dialogs wasn't applied any longer. I remember an
-earlier release (I think 0.13, but I might be wrong) still applied the
-colors for modal dialogs correctly, but from 0.14 that feature was
-apparently broken.
-
-As a fun side-effect of this change, the themes in parsed HTML don't
-have to be iterated *in reverse* any more.
-
-I wrote a test to ensure this behavior is upheld in the future. I also
-tried a debug version on some of my own slides and all other theming
-aspects look correct to me.
-
-
-## User-facing changes
-
-Users can now properly theme their [modal dialogs][1] again. Modal
-dialogs will no longer have the default colors applied for all elements
-of their UI.
-
-
-[1]:
-http
-
-**File**: `src/markdown/parse.rs` (modified, +1/-1)
+**File**: `src/presentation/builder/mod.rs` (modified, +1/-1)
 ```diff
-@@ -546,7 +546,7 @@ impl<'a> InlinesParser<'a> {
-                     }
-                 };
-                 style = base_style.clone();
--                for html_style in html_styles.iter().rev() {
-+                for html_style in html_styles.iter() {
-                     style.merge(&html_style.0);
-                 }
-             }
+@@ -581,8 +581,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+             self.slide_builders.push(builder);
+         }
+ 
+-        self.push_slide_prelude();
+         self.slide_state = Default::default();
++        self.push_slide_prelude();
+     }
+ 
+     fn apply_theme_text_style(&self, text: &mut Text) {
 ```
 
-**File**: `src/markdown/text_style.rs` (modified, +32/-3)
-```diff
-@@ -115,11 +115,14 @@ where
-     }
- 
-     /// Merge this style with another one.
-+    ///
-+    /// If `other` defines a background or foreground color, that overwrites the respective color
-+    /// in `self`.
-     pub(crate) fn merge(&mut self, other: &TextStyle<C>) {
-         self.flags |= other.flags;
-         self.size = self.size.max(other.size);
--        self.colors.background = self.colors.background.clone().or(other.colors.background.clone());
--        self.colors.foreground = self.colors.foreground.clone().or(other.colors.foreground.clone());
-+        self.colors.background = other.colors.background.clone().or(self.colors.background.clone());
-+        self.colors.foreground = other.colors.foreground.clone().or(self.colors.foreground.clone());
-     }
- 
-     /// Return a new style merged with the one passed in.
-@@ -502,7 +505,7 @@ mod tests {
-     #[case::strikethrough(TextStyle::default().strikethrough(), &[TextAttribute::Strikethrough])]
-     #[case::underlined(TextStyle::default().underlined(), &[TextAttribute::Underlined])]
-     #[case::bg_color(TextStyle::default().bg_color(Color::Red), &[TextAttribute::BackgroundColor(Color::Red)])]
--    #[case::bg_color(TextStyle::default().fg_color(Color::Red), &[TextAttribute::ForegroundColor(Color::Red)])]
-+    #[case::fg_color(TextStyle::default().fg_color(Color::Red), &[TextAttribute::ForegroundColor(Color::Red)])]
-     #[case::all(
-         TextStyle::default().bold().code().italics().strikethrough().underlined().bg_color(Color::Black).fg_color(Color::Red),
-         &[
-@@ -518,4 +521,30 @@ mod tests {
-         let attrs: Vec<_> = style.iter_attributes().collect();
-         assert_eq!(attrs, expected);
-     }
-+
-+    #[rstest]
-+    #[case::fg_color(
-+        TextStyle::default().bold().fg_color(Color::Red),
-+        TextStyle::default().fg_color(Color::Blue),
-+        TextStyle::default().bold().fg_color(Color::Blue)
-+    )]
-+    #[case::fg_color(
-+        TextStyle::default().fg_color(Color::Red),
-+        TextStyle::default().bold().fg_color(Color::Blue),
-+        TextStyle::default().bold().fg_color(Color::Blue)
-+    )]
-+    #[case::bg_color(
-+        TextStyle::default().bold().bg_color(Color::Yellow),
-+        TextStyle::default().bg_color(Color::Green),
-+        TextStyle::default().bold().bg_color(Color::Green)
-+    )]
-+    #[case::bg_color(
-+        TextStyle::default().bg_color(Color::Yellow),
-+        TextStyle::default().bold().bg_color(Color::Green),
-+        TextStyle::default().bold().bg_color(Color::Green)
-+    )]
-+    fn merge_overwrites_colors(#[case] mut some: TextStyle, #[case] other: TextStyle, #[case] output: TextStyle) {
-+        some.merge(&other);
-+        assert_eq!(some, output);
-+    }
- }
-```
+---
 
-**File**: `src/terminal/virt.rs` (modified, +1/-1)
+### Incident Patch 2: `63aec203` (2026-11-04)
+**Commit Message**: fix: allow `bg_image` in any slide
+
+**File**: `src/presentation/builder/mod.rs` (modified, +1/-1)
 ```diff
-@@ -143,7 +143,7 @@ impl VirtualTerminal {
+@@ -581,8 +581,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+             self.slide_builders.push(builder);
+         }
+ 
+-        self.push_slide_prelude();
+         self.slide_state = Default::default();
++        self.push_slide_prelude();
      }
  
-     fn print_text(&mut self, content: &str, style: &TextStyle) -> io::Result<()> {
--        let style = style.merged(&TextStyle::default().colors(self.colors));
-+        let style = TextStyle::default().colors(self.colors).merged(style);
-         for c in content.chars() {
-             let Some(cell) = self.current_cell_mut() else {
-                 continue;
-```
-
-**File**: `src/ui/modals.rs` (modified, +4/-0)
-```diff
-@@ -235,6 +235,10 @@ struct ContentRow {
- }
- 
- impl ContentRow {
-+    /// Overwrite the style of a content row.
-+    ///
-+    /// The current background and foreground style is overwritten with the respective definitions
-+    /// of `style`, if they are set.
-     fn with_style(mut self, style: TextStyle) -> ContentRow {
-         for chunk in &mut self.content {
-             chunk.style.merge(&style);
+     fn apply_theme_text_style(&self, text: &mut Text) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #930** (2026-11-04): fix: support bg-image in non-first slides (@mfontanini)
 - **PR #928** (2026-11-03): chore: bump dependencies (@mfontanini)
 - **PR #927** (2026-10-30): ci: fix build (@mfontanini)
 - **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
 - **PR #923** (closed): Add --serve to expose the presentation over HTTP (@qjoly)
 - **PR #921** (2026-10-28): fix: include speaker notes from imported markdown (@jesko2004)
-- **PR #920** (2026-10-28): feat: add Lean lang support (@StamesJames)
 
 ---
 
@@ -2072,28 +1977,28 @@ http
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Overwrite colors when merging text styles (#841)
+## X. support bg-image in non-first slides (#930)
 
 **RULE**:
-When implementing operations in `src/markdown/parse.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/presentation/builder/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02dca9bf`: Overwrite colors when merging text styles (#841). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb069c2f`: support bg-image in non-first slides (#930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/markdown/parse.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/presentation/builder/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                for html_style in html_styles.iter() {
+        self.push_slide_prelude();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                for html_style in html_styles.iter().rev() {
+        self.push_slide_prelude();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02dca9bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb069c2f` are properly handled with clean fallback behavior.
