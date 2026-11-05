@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "d2d9510d55699eebfb571a059bdc2820aaad182cf6630b16899829c912611d33",
-    "lastHarvestedAt": "2026-10-31T17:50:09.275Z",
+    "contentHash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
+    "lastHarvestedAt": "2026-11-05T08:41:00.795Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "8ee17216",
+    "sourceVersion": "6aab26ea",
     "license": "Apache-2.0",
-    "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
-    "lastHarvestedAt": "2026-11-04T18:06:14.416Z",
+    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
+    "lastHarvestedAt": "2026-11-05T08:42:43.684Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

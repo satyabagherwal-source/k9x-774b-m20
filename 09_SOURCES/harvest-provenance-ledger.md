@@ -7592,3 +7592,5 @@ Every entry in this ledger must capture:
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `d736617d` | Multi-dimensional audit evidence | 2026-11-05T08:31:50.793Z |
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-05T08:31:51.691Z |
 | `learn-github-easegress-io-easegress` | `https://github.com/easegress-io/easegress` | `b8d95290` | Multi-dimensional audit evidence | 2026-11-05T08:32:48.614Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-05T08:41:00.795Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6aab26ea` | Multi-dimensional audit evidence | 2026-11-05T08:42:43.684Z |

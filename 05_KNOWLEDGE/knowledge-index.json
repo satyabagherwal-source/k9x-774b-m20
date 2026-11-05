@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T08:32:48.522Z",
+  "last_updated": "2026-11-05T08:42:43.626Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15095,8 +15095,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "8ee17216",
-      "content_hash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+      "source_version": "6aab26ea",
+      "content_hash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -15169,6 +15169,11 @@
           "number": 6886,
           "title": "py): skip MCP ResourceLink blocks instead of emitting dead resource parts (#6990",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7170,
+          "title": "py): a failing tool cancels and awaits the other tools in its turn (#6952)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15176,7 +15181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:06:14.340Z",
+      "verified_at": "2026-11-05T08:42:43.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24419,7 +24424,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "d2d9510d55699eebfb571a059bdc2820aaad182cf6630b16899829c912611d33",
+      "content_hash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -24480,7 +24485,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-10-31T17:50:09.198Z",
+      "verified_at": "2026-11-05T08:41:00.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181343,6 +181348,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T08:32:48.499Z"
+    },
+    "rule-7170": {
+      "learning_id": "rule-7170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7170,
+      "title": "py): a failing tool cancels and awaits the other tools in its turn (#6952)",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "6aab26ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:42:43.611Z"
     }
   },
   "aliases": {

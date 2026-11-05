@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-BZWL",
-    "timestamp": "2026-11-04T00:46:25.413Z",
-    "repository": "RDFLib/rdflib",
-    "learningId": "learn-github-rdflib-rdflib",
-    "contentHash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-C812",
-    "timestamp": "2026-11-04T00:46:35.942Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-KU8W",
     "timestamp": "2026-11-04T00:53:17.984Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7460,36 @@
     "repository": "easegress-io/easegress",
     "learningId": "learn-github-easegress-io-easegress",
     "contentHash": "6b485ff75094ce7d3eed0e72e7c0666b4f077a1af3d131114b513e50db5f1502",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Q6BC",
+    "timestamp": "2026-11-05T08:41:00.792Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-SDPD",
+    "timestamp": "2026-11-05T08:42:43.681Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

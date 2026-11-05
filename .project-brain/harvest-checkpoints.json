@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T08:32:48.632Z",
+  "last_updated": "2026-11-05T08:42:43.698Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1505,14 +1505,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
-      "content_hash": "d2d9510d55699eebfb571a059bdc2820aaad182cf6630b16899829c912611d33",
-      "verified_at": "2026-10-31T17:50:09.282Z",
+      "content_hash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
+      "verified_at": "2026-11-05T08:41:00.802Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:50:09.282Z"
+      "last_updated": "2026-11-05T08:41:00.802Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
-      "verified_at": "2026-11-04T18:06:14.422Z",
+      "content_hash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
+      "verified_at": "2026-11-05T08:42:43.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:06:14.422Z"
+      "last_updated": "2026-11-05T08:42:43.697Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",

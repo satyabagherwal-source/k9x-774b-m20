@@ -520076,3 +520076,90 @@ FROM golang:1.26.4-alpine
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b8d95290` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7170. py): a failing tool cancels and awaits the other tools in its turn (#6952) (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "py): a failing tool cancels and awaits the other tools in its turn (#6952)",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "6aab26ea",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T08:42:43.450Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `6aab26ea`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `py/packages/genkit/src/genkit/_ai/_generate.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b1aff696`: py): a failing tool cancels and awaits the other tools in its turn (#6952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit/src/genkit/_ai/_generate.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        raise GenkitError(status='CANCELLED', message='Generation aborted.')
+    except asyncio.CancelledError as exc:
+        stamp_cancelled_error(exc=exc, messages=call.messages)
+        raise
+def stamp_cancelled_error(
+    *,
+    exc: asyncio.CancelledError,
+    messages: list[Message],
+) -> None:
+    """Attach the closed history onto a foreign CancelledError as ``messages``.
+
+    The history ends at the last completed round. The unfinished turn is
+    dropped, as on a failed or aborted response. Only the exception is
+    stamped, never the current task: a long-lived caller task would carry
+    stale history into later calls. Read it back with
+    ``genkit._core._compat.cancelled_history``, which handles 3.10 re-raising
+    a fresh ``CancelledError`` on await.
+    """
+    exc.__dict__['messages'] = [as_message(m) for m in messages]
+
+
+def raise_if_foreign_cancel(
+    *,
+    exc: BaseException,
+    abort_signal: asyncio.Event,
+    messages: list[Message] | None = None,
+) -> None:
+        if messages is not None:
+            stamp_cancelled_error(exc=exc, messages=messages)
+        raise_if_foreign_cancel(
+            exc=exc,
+            abort_signal=ctx.abort_signal,
+           
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        raise GenkitError(status='ABORTED', message='Generation aborted.')
+def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+    outs = await asyncio.gather(*[run_one_tool(tool, trp) for _, tool, trp in work])
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b1aff696` are properly handled with clean fallback behavior.

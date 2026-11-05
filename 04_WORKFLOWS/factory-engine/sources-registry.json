@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T08:32:51.183Z",
-    "lastVerified": "2026-11-05T08:32:51.183Z",
+    "lastChecked": "2026-11-05T08:42:46.241Z",
+    "lastVerified": "2026-11-05T08:42:46.241Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -322,8 +322,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T04:57:35.345Z",
-    "lastVerified": "2026-11-05T04:57:35.345Z",
+    "lastChecked": "2026-11-05T08:40:11.124Z",
+    "lastVerified": "2026-11-05T08:40:11.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T07:52:06.251Z",
+    "lastChecked": "2026-11-05T08:40:16.126Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T07:52:06.251Z"
+    "lastVerified": "2026-11-05T08:40:16.126Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2894,12 +2894,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "karmada-io-karmada": {
-    "name": "karmada-io/karmada",
+    "name": "karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T18:57:34.543Z",
-    "lastVerified": "2026-11-04T18:57:34.543Z",
+    "lastChecked": "2026-11-05T08:40:08.724Z",
+    "lastVerified": "2026-11-05T08:40:08.724Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -2908,7 +2908,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d218233a"
   },
   "giancarloerra-socraticode": {
     "name": "giancarloerra/SocratiCode",
@@ -5091,9 +5092,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-04T08:34:56.143Z",
+    "lastChecked": "2026-11-05T08:40:01.163Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-04T08:34:56.143Z"
+    "lastVerified": "2026-11-05T08:40:01.163Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -6267,12 +6268,12 @@
     "officialUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T17:50:08.336Z",
-    "lastVerified": "2026-10-31T17:50:08.336Z",
+    "lastChecked": "2026-11-05T08:40:04.034Z",
+    "lastVerified": "2026-11-05T08:40:04.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "d2d9510d55699eebfb571a059bdc2820aaad182cf6630b16899829c912611d33",
+    "contentHash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7234,14 +7235,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T18:06:13.203Z",
-    "lastVerified": "2026-11-04T18:06:13.203Z",
+    "lastChecked": "2026-11-05T08:40:20.069Z",
+    "lastVerified": "2026-11-05T08:40:20.069Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "67812688f07e6ac97a2baeb60912a05a2dbf3fe0ac73b60a5757cc7d8695706c",
+    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10091,9 +10092,9 @@
   "zoontek-react-native-permissions": {
     "name": "react-native-permissions",
     "officialUrl": "https://github.com/zoontek/react-native-permissions",
-    "lastChecked": "2026-11-01T02:00:45.172Z",
+    "lastChecked": "2026-11-05T08:40:06.090Z",
     "revisionIdentifier": "4f9f820e",
-    "lastVerified": "2026-11-01T02:00:45.172Z"
+    "lastVerified": "2026-11-05T08:40:06.090Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",
