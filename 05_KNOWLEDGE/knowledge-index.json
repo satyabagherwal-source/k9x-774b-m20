@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:36:37.374Z",
+  "last_updated": "2026-11-05T10:43:47.182Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26325,7 +26325,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "d6d05c4b644b9b9294e7725c93243c2c14e2119e259587945fe4dbe2070c2125",
+      "content_hash": "4774c6f83e0cae5bff5a27a6e1b4d718bde7624ac14e2b8c68173ca33affa09d",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -26438,7 +26438,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-31T19:51:59.697Z",
+      "verified_at": "2026-11-05T10:43:37.879Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48019,8 +48019,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "bbd630ae",
-      "content_hash": "a9112ae1be551a243b679507ce8734b8cc0675c583faf9dde422723063598b48",
+      "source_version": "8a3660f9",
+      "content_hash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -48083,6 +48083,11 @@
           "number": 6962,
           "title": "docs: add tricky-areas.md (#5013)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7193,
+          "title": "classify ClickHouse Avro Date out-of-range as destination modified (#5021)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48090,7 +48095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:39:33.494Z",
+      "verified_at": "2026-11-05T10:43:47.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181785,6 +181790,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:23:18.900Z"
+    },
+    "rule-7193": {
+      "learning_id": "rule-7193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7193,
+      "title": "classify ClickHouse Avro Date out-of-range as destination modified (#5021)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "8a3660f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:43:47.157Z"
     }
   },
   "aliases": {

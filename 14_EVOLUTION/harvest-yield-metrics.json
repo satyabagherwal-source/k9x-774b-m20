@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T10:36:37.463Z",
-  "total_cycles_completed": 7594,
-  "total_learnings_persisted": 7594,
-  "total_rules_promoted": 7255,
+  "last_updated": "2026-11-05T10:43:47.285Z",
+  "total_cycles_completed": 7596,
+  "total_learnings_persisted": 7596,
+  "total_rules_promoted": 7256,
   "history": [
-    {
-      "timestamp": "2026-11-05T00:22:30.320Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:22:31.320Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T00:22:40.603Z",
       "repository": "projectdiscovery/nuclei",
@@ -1403,6 +1389,20 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:43:38.017Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:43:47.285Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
