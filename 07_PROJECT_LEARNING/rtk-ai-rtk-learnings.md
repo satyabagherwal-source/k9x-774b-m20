@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `b47e05b5`  
+> **Source Version**: `8268663f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T23:27:27.258Z  
+> **Timestamp**: 2026-11-05T18:45:35.114Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T23:27:27.253Z  
+> **Harvest Timestamp**: 2026-11-05T18:45:34.959Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 85568 stars
+- **Stars / Engagement**: 85642 stars
 
 ---
 
@@ -1722,17 +1722,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5017** (2026-11-05): **fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl**
+  *Symptoms*: ## Cause  The deb, the rpm and the aarch64 tarballs (`rtk`, `rtk-oss`, `rtk-proxy`) are linked against the glibc of the build runner. `ubuntu-latest` moved to Ubuntu 26.04 on 2026-10-28, so since dev-1.1.1-rc.582 the deb and aarch64 builds need glibc 2.43 (v1.1.0 needed 2.39) and do not start on Ubuntu 24.04, Debian 12/13, RHEL or Raspberry Pi OS. The full rpm, built in `fedora:latest`, has needed 2.43 since v1.0.0.  ## Fix  - Every Linux binary is static musl. aarch64 is built natively on `ubuntu-24.04-arm`, as x86_64 already was. - The deb and rpm, now for amd64 and arm64, are packaged from those static binaries, so they have no glibc requirement. The rpm payload is gzip so CentOS 7 and Amazon Linux 2 can read it. - The `aarch64-unknown-linux-gnu` tarballs are still published for scripts that download them by name, built on 24.04 (glibc 2.39, as in v1.1.0). - The release fails if a Linux musl binary is not static. - `install.sh` installs the static aarch64 build, falls back to gnu for releases that lack it, and fails if the installed binary cannot run. - rtk-proxy uses mimalloc on musl, as rtk does since #4461; musl's own allocator halves its throughput. 
+
 - **Issue #4870** (2026-10-31): **fix(git): point the show truncation hint at the unfiltered commit**
   *Symptoms*: Fixes #4817.  The compacted `git show` output now replaces the generic `[full diff: rtk git diff --no-compact]` hint with `[full commit: rtk proxy git show ...]`, carrying the command's global args and dropping RTK's own `--no-compact`. Following the hint now prints the full commit.  Tests: `cargo test --lib show_recovery_hint`.
   **Post-Mortem & Fix Analysis**:
   > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=4870) <br/>All committers have signed the CLA.
   > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the recovery hint shown in compacted `git show` output so it points to `rtk proxy git show ...` with the original global args and object, rather than the generic `rtk git diff --no-compact` hint. This ensures following the hint actually prints the full commit instead of an unrelated diff command.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  **Linked issues:** #4817  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
-
-- **Issue #4868** (2026-10-31): **fix(pnpm): keep the child's stdout when install fails**
-  *Symptoms*: Fixes #4858.  On a non-zero `pnpm install` exit, print the child's stdout before stderr so policy gates and wrappers that explain the refusal on stdout are visible to the caller. The exit code is unchanged.  Tests: existing pnpm channel tests; failure path is a two-line output change.
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=4868) <br/>All committers have signed the CLA.
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes pnpm install failure handling so the child process's stdout is printed before stderr when the install exits non-zero, ensuring output from policy gates or wrappers that write refusal explanations to stdout is visible. Exit code behavior is unchanged.  ### Review Checklist - [ ] Tests present - [ ] Breaking change - [ ] Docs updated  **Linked issues:** #4858  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1749,654 +1746,350 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50ebcea5` (2026-11-04)
-**Commit Message**: ci(benchmark): stop running the whole test suite in the benchmark job
+### Incident Patch 1: `06466361` (2026-11-05)
+**Commit Message**: perf(proxy): use mimalloc as the global allocator on musl builds
 
-The benchmark is the longest CI job at 9 minutes, and it only reads output
-token counts: nothing in it measures time, and a command's failure is ignored.
+The x86_64 rtk-proxy release asset is a static musl binary, and musl's
+allocator cuts its throughput to 9-11k requests/s against 22-23k for a
+glibc build on the same machine. With mimalloc it serves 27-28k, with
+identical responses. Same change and versions as #4461 did for rtk;
+glibc, macOS and Windows builds do not link mimalloc.
 
-- `cargo test --lib` replaces the four whole-suite runs (237 s). The lib tests
-  are 4,627 of about 5,480 tests and keep about 90% of the raw output.
-- The job measures a debug rtk, named by the new `RTK_BIN`, instead of building
-  with LTO (158 s). A full local run with each profile gave the same rtk totals
-  to within one token. That build moves to a new `release (build)` job, so it no
-  longer lengthens this one.
-- golangci-lint comes as a prebuilt binary instead of compiling from source
-  (67 s).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/CICD.md` (modified, +4/-3)
+**File**: `proxy/Cargo.lock` (modified, +19/-0)
 ```diff
-@@ -22,9 +22,9 @@ Trigger: pull_request to develop or master
-            ▼       ▼              ▼               ▼        ▼
-      ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌─────────┐ ┌──────────┐
-      │ test     │ │ security │ │ semgrep   │ │benchmark│ │ doc      │
--     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ >=80%   │ │ review   │
--     │ windows  │ │ audit    │ │ diff-only │ │ savings │ │ ai agent │
--     │ macos    │ │ patterns │ │           │ │         │ │          │
-+     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ no empty│ │ review   │
-+     │ windows  │ │ audit    │ │ diff-only │ │ or grown│ │ ai agent │
-+     │ macos    │ │ patterns │ │           │ │ output  │ │          │
-      └────┬─────┘ └────┬─────┘ └─────┬─────┘ └────┬────┘ └────┬─────┘
-           │            │             │             │            │
-           └────────────┴─────────┬───┴─────────────┴────────────┘
-@@ -34,6 +34,7 @@ Trigger: pull_request to develop or master
-                       │  to merge          │
-                       └────────────────────┘
+@@ -1132,6 +1132,15 @@ version = "0.2.189"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
  
-+     + release (build, after clippy: must also pass to merge)
-      + DCO check (independent, develop PRs only)
-      + Dependabot (weekly: Cargo deps + GitHub Actions)
- ```
++[[package]]
++name = "libmimalloc-sys"
++version = "0.1.49"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6a45a52f43e1c16f667ccfe4dd8c85b7f7c204fd5e3bf46c5b0db9a5c3c0b8e9"
++dependencies = [
++ "cc",
++]
++
+ [[package]]
+ name = "libredox"
+ version = "0.1.24"
+@@ -1238,6 +1247,15 @@ version = "2.8.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+ 
++[[package]]
++name = "mimalloc"
++version = "0.1.52"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2d4139bb28d14ad1facf21d5eb8825051b326e172d216b39f6d31df53cc97862"
++dependencies = [
++ "libmimalloc-sys",
++]
++
+ [[package]]
+ name = "mime"
+ version = "0.3.17"
+@@ -1751,6 +1769,7 @@ dependencies = [
+  "icm-core",
+  "icm-store",
+  "image",
++ "mimalloc",
+  "once_cell",
+  "regex",
+  "reqwest",
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +23/-3)
+**File**: `proxy/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -300,8 +300,9 @@ jobs:
+@@ -74,6 +74,9 @@ dirs = "5"
+ icm-core = { git = "https://github.com/rtk-ai/icm", rev = "831e915b", default-features = false }
+ icm-store = { git = "https://github.com/rtk-ai/icm", rev = "831e915b", default-features = false, features = ["backend-sqlite"] }
  
-       - uses: Swatinem/rust-cache@v2
++[target.'cfg(target_env = "musl")'.dependencies]
++mimalloc = { version = "0.1", features = ["no_thp"] }
++
+ [dev-dependencies]
+ wiremock = "0.6"
+ tower = { version = "0.5", features = ["util"] }
+```
+
+**File**: `proxy/src/main.rs` (modified, +4/-0)
+```diff
+@@ -12,6 +12,10 @@
+ //! they work no matter how `start` was launched (a terminal, `&`, a login
+ //! service, or spawned by `rtk llm-proxy start`).
  
-+      # Only output tokens are measured, so a release build would only add time.
-       - name: Build rtk
--        run: cargo build --release
-+        run: cargo build
++#[cfg(target_env = "musl")]
++#[global_allocator]
++static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
++
+ use clap::{Args, Parser, Subcommand};
+ use rtk_proxy::config::{Config, StartArgs};
+ use rtk_proxy::settings::keys as setting_keys;
+```
+
+---
+
+### Incident Patch 2: `2b8574bc` (2026-11-05)
+**Commit Message**: fix(install): install the static aarch64 build, fall back to gnu for older releases
+
+install.sh now downloads aarch64-unknown-linux-musl on aarch64 Linux. A
+release that has no musl asset for aarch64 (v1.1.0 and older) falls
+back to the gnu tarball, and the checksum is checked for the file that
+was actually downloaded. The install now fails when the installed
+binary cannot run, instead of reporting success.
+
+**File**: `install.sh` (modified, +15/-8)
+```diff
+@@ -79,11 +79,12 @@ get_latest_version() {
  
-       - name: Install system tools
-         run: sudo apt-get install -y tree ripgrep
-@@ -314,11 +315,30 @@ jobs:
+ # Build target triple
+ get_target() {
++    FALLBACK_TARGET=""
+     case "$OS" in
+         linux)
+             case "$ARCH" in
+                 x86_64)  TARGET="x86_64-unknown-linux-musl";;
+-                aarch64) TARGET="aarch64-unknown-linux-gnu";;
++                aarch64) TARGET="aarch64-unknown-linux-musl"; FALLBACK_TARGET="aarch64-unknown-linux-gnu";;
+             esac
+             ;;
+         darwin)
+@@ -95,26 +96,31 @@ get_target() {
+ # Download and install
+ install() {
+     info "Detected: $OS $ARCH"
+-    info "Target: $TARGET"
+     info "Version: $VERSION"
+ 
+-    DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ASSET_PREFIX}-${TARGET}.tar.gz"
+     CHECKSUMS_URL="https://github.com/${REPO}/releases/download/${VERSION}/checksums.txt"
+     TEMP_DIR=$(mktemp -d)
+     ARCHIVE="${TEMP_DIR}/${BINARY_NAME}.tar.gz"
+     CHECKSUMS="${TEMP_DIR}/checksums.txt"
++
++    info "Downloading checksums..."
++    if ! curl -fsSL "$CHECKSUMS_URL" -o "$CHECKSUMS"; then
++        error "Failed to download checksums.txt — refusing to install unverified binary (set RTK_SKIP_CHECKSUM=1 to bypass at your own risk)"
++    fi
++
++    if [ -n "$FALLBACK_TARGET" ] && ! grep -q "[[:space:]]${ASSET_PREFIX}-${TARGET}.tar.gz\$" "$CHECKSUMS"; then
++        warn "${VERSION} has no ${ASSET_PREFIX}-${TARGET}.tar.gz, falling back to ${FALLBACK_TARGET}"
++        TARGET="$FALLBACK_TARGET"
++    fi
++    info "Target: $TARGET"
+     ASSET_NAME="${ASSET_PREFIX}-${TARGET}.tar.gz"
++    DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ASSET_NAME}"
+ 
+     info "Downloading from: $DOWNLOAD_URL"
+     if ! curl -fsSL "$DOWNLOAD_URL" -o "$ARCHIVE"; then
+         error "Failed to download binary"
+     fi
+ 
+-    info "Downloading checksums..."
+-    if ! curl -fsSL "$CHECKSUMS_URL" -o "$CHECKSUMS"; then
+-        error "Failed to download checksums.txt — refusing to install unverified binary (set RTK_SKIP_CHECKSUM=1 to bypass at your own risk)"
+-    fi
+-
+     if [ "${RTK_SKIP_CHECKSUM:-0}" = "1" ]; then
+         warn "RTK_SKIP_CHECKSUM=1 set — SKIPPING checksum verification (NOT RECOMMENDED)"
+     else
+@@ -162,6 +168,7 @@ install() {
+ verify() {
+     INSTALLED_BIN="${INSTALL_DIR}/${BINARY_NAME}"
+     if [ -x "$INSTALLED_BIN" ]; then
++        "$INSTALLED_BIN" --version >/dev/null || error "${INSTALLED_BIN} was installed but does not run on this system (see the error above)"
+         info "Verification: $("$INSTALLED_BIN" --version)"
+     else
+         error "Binary not found at expected location: $INSTALLED_BIN"
+```
+
+---
+
+### Incident Patch 3: `5fa24dde` (2026-11-05)
+**Commit Message**: fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl
+
+The amd64 deb and the aarch64 rtk, rtk-oss and rtk-proxy tarballs were
+linked against the glibc of the build runner. ubuntu-latest moved to
+26.04 on 2026-10-28, so they now need glibc 2.43 and do not start on
+Ubuntu 24.04, Debian 12 or 13, RHEL 9 or Raspberry Pi OS. The full rpm,
+built in fedora:latest, has needed 2.43 since v1.0.0.
+
+- aarch64 is built natively on ubuntu-24.04-arm for
+  aarch64-unknown-linux-musl, like x86_64 already is.
+- The deb and rpm are packaged from those static binaries for both
+  architectures, so they have no glibc requirement and match the
+  tarballs byte for byte. The rpm payload is gzip so the rpm of
+  CentOS 7 and Amazon Linux 2 can read it.
+- The aarch64-unknown-linux-gnu tarballs are still published for scripts
+  that download them by name, built on ubuntu-24.04-arm (glibc 2.39, as
+  in v1.1.0).
+- A build step fails the release if a Linux musl binary is not static.
+- Stable package names are per architecture (rtk_arm64.deb,
+  rtk.aarch64.rpm); a single glob would have published the arm64 deb as
+  rtk_amd64.deb.
+- The Homebrew formulas point Linux arm at the static tarball.
+
+**File**: `.github/workflows/release.yml` (modified, +64/-128)
+```diff
+@@ -48,10 +48,13 @@ jobs:
+             os: ubuntu-latest
+             archive: tar.gz
+             musl: true
++          - target: aarch64-unknown-linux-musl
++            os: ubuntu-24.04-arm
++            archive: tar.gz
++            musl: true
+           - target: aarch64-unknown-linux-gnu
+-            os: ubuntu-latest
++            os: ubuntu-24.04-arm
+             archive: tar.gz
+-            cross: true
+           # Windows
+           - target: x86_64-pc-windows-msvc
+             os: windows-latest
+@@ -66,25 +69,30 @@ jobs:
          with:
-           go-version: "stable"
+           targets: ${{ matrix.target }}
  
--      - name: Install Go tools
--        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
-+      - name: Install golangci-lint
-+        uses: golangci/golangci-lint-action@v9
+-      - name: Install cross-compilation tools
+-        if: matrix.cross
+-        run: |
+-          sudo apt-get update
+-          sudo apt-get install -y gcc-aarch64-linux-gnu
+-          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+-
+       - name: Install musl tools
+         if: matrix.musl
+         run: |
+           sudo apt-get update
+           sudo apt-get install -y musl-tools
+ 
++      - name: Install packaging tools
++        if: matrix.musl
++        run: |
++          cargo install cargo-deb --version 3.8.0 --locked
++          cargo install cargo-generate-rpm --version 0.21.1 --locked
++
+       - name: Build rtk
+         run: cargo build --release --target ${{ matrix.target }}
+         env:
+           RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
+           RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
+ 
++      - name: Package deb and rpm
++        if: matrix.musl
++        run: |
++          cargo deb --no-build --target ${{ matrix.target }}
++          cargo generate-rpm --target ${{ matrix.target }} --payload-compress gzip
++
+       - name: Package (Unix)
+         if: matrix.os != 'windows-latest'
+         run: |
+@@ -121,6 +129,21 @@ jobs:
+           RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
+           RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
+ 
++      - name: Package deb and rpm (Apache-2.0 edition)
++        if: matrix.musl
++        run: |
++          cargo deb --no-build --target ${{ matrix.target }} --variant oss
++          cargo generate-rpm --target ${{ matrix.target }} --variant oss --payload-compress gzip
++
++      - name: Upload deb and rpm
++        if: matrix.musl
++        uses: actions/upload-artifact@v7
 +        with:
-+          install-only: true
-+          skip-cache: true
- 
-       - name: Run benchmark
-         run: ./scripts/benchmark.sh
-+        env:
-+          RTK_BIN: target/debug/rtk
++          name: packages-${{ matrix.target }}
++          path: |
++            target/${{ matrix.target }}/debian/*.deb
++            target/${{ matrix.target }}/generate-rpm/*.rpm
 +
-+  # The one PR job building the shipped profile: LTO problems only show at this link.
-+  release:
-+    name: release (build)
-+    needs: clippy
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v7
+       - name: Package rtk-oss (Unix)
+         if: matrix.os != 'windows-latest'
+         run: |
+@@ -162,6 +185,7 @@ jobs:
+           --target ${{ matrix.target }}
+         env:
+           CFLAGS_x86_64_unknown_linux_musl: "-Du_int8_t=uint8_t -Du_int16_t=uint16_t -Du_int64_t=uint64_t"
++          CFLAGS_aarch64_unknown_linux_musl: "-Du_int8_t=uint8_t -Du_int16_t=uint16_t -Du_int64_t=uint64_t"
+ 
+       - name: Package rtk-proxy (Unix)
+         if: matrix.os != 'windows-latest'
+@@ -172,6 +196,24 @@ jobs:
+           tar -czvf ../../../rtk-proxy-${{ matrix.target }}.${{ matrix.archive }} rtk-proxy LICENSE LICENSE-ENGINE
+           cd ../../..
+ 
++      - name: Check Linux binaries are static
++        if: matrix.musl
++        run: |
++          for a in rtk rtk-oss rtk-proxy; do
++            d=$(mktemp -d)
++            tar -xzf "$a-${{ matrix.target }}.tar.gz" -C "$d"
++            case "$a" in
++              rtk-proxy) b="$d/rtk-proxy" ;;
++              *) b="$d/rtk" ;;
++            esac
++            readelf -h "$b" > /dev/null
++            if readelf -lW "$b" | grep INTERP || readelf -dW "$b" | grep NEEDED; then
++              echo "::error::$a-${{ matrix.target }}.tar.gz is not statically linked"
++              exit 1
++            fi
++            "$b" --version
++          done
 +
-+      - uses: dtolnay/rust-toolchain@stable
-+
-+      - uses: Swatinem/rust-cache@v2
-+
-+      - run: cargo build --release
+       - name: Package rtk-proxy (Windows)
+         if: matrix.os == 'windows-latest'
+         run: |
+@@ -187,119 +229,9 @@ jobs:
+           name: rtk-proxy-${{ matrix.target }}
+           path: rtk-proxy-${{ matrix.target }}.${{ matrix.archive }}
  
-   # ─── AI Doc Review: develop PRs only ───
- 
-```
-
-**File**: `scripts/benchmark.sh` (modified, +19/-8)
-```diff
-@@ -4,15 +4,26 @@ set -e
- # cargo prints no colour into a pipe, which is how agents read it.
- export CARGO_TERM_COLOR=never
- 
--# Use local release build if available, otherwise fall back to installed rtk
--if [ -f "./target/release/rtk" ]; then
--  RTK="$(cd "$(dirname ./target/release/rtk)" && pwd)/$(basename ./target/release/rtk)"
-+# RTK_BIN names the binary to measure. Otherwise use the local release build if
-+# available, and fall back to the installed rtk.
-+if [ -n "${RTK_BIN:-}" ]; then
-+  if [ ! -f "$RTK_BIN" ] || [ ! -x "$RTK_BIN" ]; then
-+    echo "Error: RTK_BIN=$RTK_BIN is not a path to an executable file."
-+    exit 1
-+  fi
-+  RTK="$RTK_BIN"
-+elif [ -f "./target/release/rtk" ]; then
-+  RTK="./target/release/rtk"
- elif command -v rtk &> /dev/null; then
-   RTK="$(command -v rtk)"
- else
--  echo "Error: rtk not found. Run 'cargo build --release' or install rtk."
-+  echo "Error: rtk not found. Run 'cargo build --release', install rtk, or set RTK_BIN."
-   exit 1
- fi
-+# Absolute, since the benches change directory. `command -v` can name a shell function.
-+if [[ "$RTK" == */* ]]; then
-+  RTK="$(CDPATH= cd -- "$(dirname -- "$RTK")" && pwd)/$(basename -- "$RTK")"
-+fi
- BENCH_DIR="$(pwd)/scripts/benchmark"
- RTK_ROOT="$(pwd)"
- 
-@@ -363,8 +374,8 @@ fi
- # ===================
- section "test"
- if command -v cargo &>/dev/null; then
--  precompile cargo test --no-run
--  bench "test cargo test" "cargo test 2>&1 || true" "$RTK test cargo test 2>&1"
-+  precompile cargo test --lib --no-run
-+  bench "test cargo test" "cargo test --lib 2>&1 || true" "$RTK test cargo test --lib 2>&1"
- else
-   echo "⏭️  test cargo test (cargo not in PATH, skipped)"
- fi
-@@ -414,8 +425,8 @@ section "cargo"
- if command -v cargo &>/dev/null; then
-   precompile cargo build
-   bench "cargo build" "cargo build 2>&1 || true" "$RTK cargo build 2>&1"
--  precompile cargo test --no-run
--  bench "cargo test" "cargo test 2>&1 || true" "$RTK cargo test 2>&1"
-+  precompile cargo test --lib --no-run
-+  bench "cargo test" "cargo test --lib 2>&1 || true" "$RTK cargo test --lib 2>&1"
-   precompile cargo clippy
-   bench "cargo clippy" "cargo clippy 2>&1 || true" "$RTK cargo clippy 2>&1"
-   precompile cargo check
-```
-
----
-
-### Incident Patch 2: `fb616a31` (2026-11-04)
-**Commit Message**: Merge pull request #4965 from KuSh/test/windows-suite-duration
-
-test: cut process spawns in the slowest Windows test suites
-
-**File**: `tests/git_log_cap_notice_test.rs` (modified, +84/-14)
-```diff
-@@ -35,12 +35,34 @@ fn isolate(cmd: &mut Command, home: &Path) {
- }
- 
- fn git_ok(repo: &Path, home: &Path, args: &[&str]) {
-+    git_ok_with_stdin(repo, home, args, "");
-+}
-+
-+/// [`git_ok`] with `input` on git's stdin.
-+fn git_ok_with_stdin(repo: &Path, home: &Path, args: &[&str], input: &str) {
-+    use std::io::Write;
-+    use std::process::Stdio;
-     let mut cmd = Command::new("git");
-     cmd.arg("-C").arg(repo);
-     cmd.args(["-c", "commit.gpgsign=false", "-c", "core.autocrlf=false"]);
-+    // Every commit otherwise spawns `git maintenance run --auto`, a third process per
-+    // commit for histories too small to need it.
-+    cmd.args(["-c", "maintenance.auto=false"]);
-     cmd.args(args);
-     isolate(&mut cmd, home);
--    let out = cmd.output().expect("run git");
-+    let mut child = cmd
-+        .stdin(Stdio::piped())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("spawn git");
-+    // A write error means git exited early; its stderr below says why.
-+    let _ = child
-+        .stdin
-+        .take()
-+        .expect("stdin")
-+        .write_all(input.as_bytes());
-+    let out = child.wait_with_output().expect("wait for git");
-     assert!(
-         out.status.success(),
-         "git {args:?} failed: {}",
-@@ -75,8 +97,10 @@ fn repo_with_messages(commits: usize, message: impl Fn(usize) -> Vec<String>) ->
-     repo_committing(commits, |_| vec!["f.txt".to_string()], message)
- }
- 
--/// A history whose commit `i` writes the files `files(i)` and carries the message paragraphs
--/// `message(i)`, one `-m` each.
-+/// A history whose commit `i` writes `content {i}` to the files `files(i)` and carries the
-+/// message paragraphs `message(i)`, recorded as `git commit -m` records them, then checked
-+/// out. One `git fast-import` writes every commit, since each process costs tens of
-+/// milliseconds on Windows.
- fn repo_committing(
-     commits: usize,
-     files: impl Fn(usize) -> Vec<String>,
-@@ -88,19 +112,43 @@ fn repo_committing(
-     std::fs::create_dir_all(&path).expect("mkdir repo");
-     std::fs::create_dir_all(&home).expect("mkdir home");
-     git_ok(&path, &home, &["init", "-q", "-b", "main"]);
-+
-+    // Stamped now, as `git commit` would: the default format prints relative dates.
-+    let now = std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .expect("clock after 1970")
-+        .as_secs();
-+    let mut stream = String::new();
-     for i in 0..commits {
--        for file in files(i) {
--            let target = path.join(&file);
--            std::fs::create_dir_all(target.parent().expect("parent")).expect("mkdir");
--            std::fs::write(target, format!("content {i}\n")).expect("write");
--        }
--        git_ok(&path, &home, &["add", "-A"]);
--        let paragraphs = message(i);
--        let mut args = vec!["commit", "-q"];
--        for paragraph in &paragraphs {
--            args.extend(["-m", paragraph.as_str()]);
-+        let message = commit_message(&message(i));
-+        assert!(
-+            !message.is_empty(),
-+            "commit {i}: git commit refuses an empty message"
-+        );
-+        stream.push_str(&format!(
-+            "commit refs/heads/main\n\
-+             author t <t@example.com> {now} +0000\n\
-+             committer t <t@example.com> {now} +0000\n\
-+             data {}\n{message}\n",
-+            message.len()
-+        ));
-+        let content = format!("content {i}\n");
-+        let files = files(i);
-+        assert!(
-+            !files.is_empty(),
-+            "commit {i}: git commit refuses an empty change"
-+        );
-+        for file in files {
-+            stream.push_str(&format!(
-+                "M 100644 inline {file}\ndata {}\n{content}\n",
-+                content.len()
-+            ));
-         }
--        git_ok(&path, &home, &args);
-+    }
-+    if commits > 0 {
-+        stream.push_str("done\n");
-+        git_ok_with_stdin(&path, &home, &["fast-import", "--quiet", "--done"], &stream);
-+        git_ok(&path, &home, &["reset", "-q", "--hard"]);
-     }
-     Repo {
-         _dir: dir,
-@@ -109,6 +157,28 @@ fn repo_committing(
-     }
- }
- 
-+/// The message `git commit -m p1 -m p2 …` records: the paragraphs a blank line apart, then
-+/// git's default cleanup for a message it does not edit -- trailing whitespace dropped, runs
-+/// of blank lines collapsed, none at either end.
-+fn commit_message(paragraphs: &[String]) -> String {
-+    let mut message = String::new();
-+    let mut blank_pending = false;
-+    for line in paragraphs.join("\n\n").split('\n') {
-+        let line = line.trim_end_matches([' ', '\t', '\r']);
-+        if line.is_empty() {
-+            blank_pending = !message.is_empty();
-+            continue;
-+        }
-+        if blank_pending {
-+            message.push('\n');
-+            blank_pending = false;
-+        }
-+        message.push_str(line);
-+        message.push('\n');
-+    }
-+    message
-+}
-+
- /// Every output shape that once swallowed th
-```
-
-**File**: `tests/git_show_blob_differential_test.rs` (modified, +43/-23)
-```diff
-@@ -7,7 +7,8 @@
- //!
- //! This test is the standing guarantee that no misroute class is hiding. It builds a
- //! hermetic git repo with objects of every relevant type, then — with a FIXED seed so CI
--//! is deterministic — generates hundreds of `git show <random flags> <arg>` invocations
-+//! is deterministic — generates hundreds of `git show <random flags> <arg>` invocations,
-+//! runs each distinct one once (rtk's answer depends only on its argv in this fixed repo),
- //! and checks rtk's CLASSIFICATION (did it window? pass through? render a commit-diff?)
- //! against ground truth from `git cat-file -t`. It asserts:
- //! - 0 misroutes: rtk never windows anything git does not call a `blob`;
-@@ -21,12 +22,14 @@
- //! It shells out to the real `git` and the built `rtk` binary, matching the repo's other
- //! integration tests (e.g. `diff_byte_accuracy_test.rs`).
- 
-+use std::collections::HashMap;
- use std::path::{Path, PathBuf};
- use std::process::{Command, Output};
- 
- mod common;
- 
--/// Number of fuzz iterations. Seeded, so this is deterministic across runs/CI.
-+/// Number of invocations drawn; the repeats among them are run once. Seeded, so this is
-+/// deterministic across runs/CI.
- const ITERATIONS: usize = 600;
- /// Fixed seed — change only intentionally.
- const SEED: u64 = 0x5DEE_CE66_D3A1_2B4F;
-@@ -185,7 +188,7 @@ fn was_windowed(out: &Output) -> bool {
- }
- 
- /// The object categories the fuzzer draws from, with their expected classification.
--#[derive(Clone, Copy, Debug)]
-+#[derive(Clone, Copy, Debug, PartialEq)]
- enum Kind {
-     /// Large valid-UTF-8 blob → MUST window.
-     LargeUtf8,
-@@ -336,18 +339,6 @@ fn git_show_blob_classification_differential() {
-     let repo = setup_repo();
-     let (path, home) = (repo.path.as_path(), repo.home.as_path());
- 
--    // Sanity-check the fixtures against ground truth before fuzzing.
--    assert_eq!(
--        cat_file_type(path, home, "HEAD:large.txt").as_deref(),
--        Some("blob")
--    );
--    assert_eq!(
--        cat_file_type(path, home, "HEAD:dir").as_deref(),
--        Some("tree")
--    );
--    assert_eq!(cat_file_type(path, home, "HEAD").as_deref(), Some("commit"));
--    assert_eq!(cat_file_type(path, home, "HEAD:does-not-exist.txt"), None);
+-  build-deb:
+-    name: Build DEB package
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v7
 -
-     let kinds = [
-         Kind::LargeUtf8,
-         Kind::Small,
-@@ -362,20 +353,46 @@ fn git_show_blob_classification_differential() {
-         Kind::PathspecLargeUtf8,
-     ];
- 
-+    // The draws repeat (the flag pools are small) and every process costs tens of
-+    // milliseconds on Windows, so each distinct invocation runs once.
-     let mut rng = Rng(SEED);
-+    let mut invocations: Vec<(Kind, Vec<String>)> = Vec::new();
-+    for _ in 0..ITERATIONS {
-+        let kind = *rng.pick(&kinds);
-+        let invocation = (kind, build_invocation(&mut rng, kind));
-+        if !invocations.contains(&invocation) {
-+            invocations.push(invocation);
-+        }
-+    }
-+
-+    // Ground truth per object, from `git cat-file -t`.
-+    let mut truths: HashMap<&str, Option<String>> = HashMap::new();
-+    for &kind in &kinds {
-+        let object = kind_object(kind);
-+        truths
-+            .entry(object)
-+            .or_insert_with(|| cat_file_type(path, home, object));
-+    }
-+
-+    // Sanity-check the fixtures against ground truth before fuzzing.
-+    assert_eq!(truths["HEAD:large.txt"].as_deref(), Some("blob"));
-+    assert_eq!(truths["HEAD:dir"].as_deref(), Some("tree"));
-+    assert_eq!(truths["HEAD"].as_deref(), Some("commit"));
-+    assert_eq!(truths["HEAD:does-not-exist.txt"], None);
-+    let mut plain_shows: HashMap<&str, Vec<u8>> = HashMap::new();
-+
-     // Collect failures instead of panicking mid-loop, so the incidence is measured
-     // across ALL invocations (KuSh: a measured incidence is what proves no class hides).
-     let mut misroutes: Vec<String> = Vec::new();
-     let mut silent_losses: Vec<String> = Vec::new();
-     let mut fidelity_breaks: Vec<String> = Vec::new();
- 
--    for _ in 0..ITERATIONS {
--        let kind = *rng.pick(&kinds);
--        let args = build_invocation(&mut rng, kind);
-+    for (kind, args) in &invocations {
-+        let kind = *kind;
-         let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
- 
-         let object = kind_object(kind);
--        let truth = cat_file_type(path, home, object); // ground truth for the object
-+        let truth = &truths[object];
-         let out = rtk_show(path, home, &arg_refs);
-         let windowed = was_windowed(&out);
- 
-@@ -407,13 +424,15 @@ fn git_show_blob_classification_differential() {
-                     !windowed,
-                     "small/latin1/utf16 blobs must not window: {args:?}"
-                 );
--                let plain = git(path, home, &["show", object]);
--                if out.stdout != plain.stdout {
-+                let plain = plain_shows
-+                    .entry(object)
-+                    .or_insert_with(|| git(path, home, &["show", object]).stdout);
-+                if out.stdout != *p
-```
-
-**File**: `tests/help_passthrough_fuzz_test.rs` (modified, +73/-34)
-```diff
-@@ -275,9 +275,9 @@ const CASES: &[Case] = &[
- 
- #[test]
- fn a_wrapped_tools_own_help_survives_rtk() {
--    let mut checked = 0usize;
-     let mut skipped = Vec::new();
+-      - name: Install Rust
+-        uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable branch, untagged
 -
-+    // The cases of one tool, in `CASES` order, with the tool's resolved path.
-+    let mut by_tool: Vec<(PathBuf, Vec<&Case>)> = Vec::new();
-     for case in CASES {
-         if UNIX_ONLY.contains(&case.tool) {
-             skipped.push(case.tool);
-@@ -287,47 +287,86 @@ fn a_wrapped_tools_own_help_survives_rtk() {
-             skipped.push(case.tool);
-             continue;
-         };
--        let label = format!("rtk {}", case.rtk_args.join(" "));
--        let mine = run_rtk(case.rtk_args);
--        let native = run(&tool, case.native_args);
--        checked += 1;
+-      - name: Install cargo-deb
+-        run: cargo install cargo-deb
 -
--        assert!(
--            !is_rtk_usage(&mine.text),
--            "{label} answered with RTK's own usage:\n{}",
--            &mine.text[..mine.text.len().min(200)]
--        );
--        assert_eq!(
--            mine.code, native.code,
--            "{label} exit code drifted from the tool's"
--        );
--        // Content, not length: a length check passes on a long page from the wrong
--        // subcommand, which is exactly what a bad `git_name` arm would return. Exact bytes
--        // are still not asserted, because `man` renders to the terminal it thinks it has
--        // and a tool may print its own name from argv[0].
--        let anchor = without_exe(first_substantial_line(&native.text));
--        assert!(
--            without_exe(&mine.text).contains(&anchor),
--            "{label} does not contain the tool's own first line {anchor:?}:\n{}",
--            &mine.text[..mine.text.len().min(200)]
--        );
--        assert!(
--            mine.text.len() * 2 >= native.text.len(),
--            "{label} returned {} bytes of the tool's {}",
--            mine.text.len(),
--            native.text.len()
--        );
-+        match by_tool.iter_mut().find(|(path, _)| *path == tool) {
-+            Some((_, cases)) => cases.push(case),
-+            None => by_tool.push((tool, vec![case])),
-+        }
-     }
+-      - name: Build DEB
+-        run: cargo deb
+-        env:
+-          RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
+-          RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
 -
-     assert!(
--        checked > 0,
-+        !by_tool.is_empty(),
-         "no wrapped tool was available to compare against"
-     );
-+
-+    // A toolchain's first launch can take seconds (a Windows runner's cold start, a
-+    // first run in the scratch profile), so the tools run side by side. One tool's
-+    // cases stay in order on one thread, rtk before the tool, so whatever a tool
-+    // prints only on its first run lands on the same side it always has.
-+    std::thread::scope(|scope| {
-+        let threads: Vec<_> = by_tool
-+            .iter()
-+            .map(|(tool, cases)| {
-+                // Named after the tool, so a failure reads `thread 'git' panicked`.
-+                std::thread::Builder::new()
-+                    .name(cases[0].tool.to_string())
-+                    .spawn_scoped(scope, move || {
-+                        for case in cases {
-+                            check(tool, case);
-+                        }
-+                    })
-+                    .expect("spawn a thread per tool")
-+            })
-+            .collect();
-+        // Every thread is joined before the first panic is resumed, so `scope`
-+        // adds no generic panic of its own.
-+        let mut first = None;
-+        for thread in threads {
-+            if let Err(panic) = thread.join() {
-+                first.get_or_insert(panic);
-+            }
-+        }
-+        if let Some(panic) = first {
-+            std::panic::resume_unwind(panic);
-+        }
-+    });
-+
-     if !skipped.is_empty() {
-         eprintln!("skipped (not installed): {}", skipped.join(", "));
-     }
- }
- 
-+/// `rtk <case.rtk_args>` against `<tool> <case.native_args>`.
-+fn check(tool: &Path, case: &Case) {
-+    let label = format!("rtk {}", case.rtk_args.join(" "));
-+    let mine = run_rtk(case.rtk_args);
-+    let native = run(tool, case.native_args);
-+
-+    assert!(
-+        !is_rtk_usage(&mine.text),
-+        "{label} answered with RTK's own usage:\n{}",
-+        &mine.text[..mine.text.len().min(200)]
-+    );
-+    assert_eq!(
-+        mine.code, native.code,
-+        "{label} exit code drifted from the tool's"
-+    );
-+    // Content, not length: a length check passes on a long page from the wrong
-+    // subcommand, which is exactly what a bad `git_name` arm would return. Exact bytes
-+    // are still not asserted, because `man` renders to the terminal it thinks it has
-+    // and a tool may print its own name from argv[0].
-+    let anchor = without_exe(first_substantial_line(&native.text));
-+    assert!(
-+        without_exe(&mine.text).contains(&anchor),
-+        "{label} does not contain the tool's own first line {anchor:?}:\n{}",
-+        &mine.text[..mine.text.len().min(200)]
-+    );
-+    assert!(
-+        mine.text.len() * 2 >= native.text.len(),
-+        "{label} returned {} bytes of the tool's {}",
-+        mine.text.len(),
-+        native.text.len()
-+    );
-+}
-+
- /// The reported bug, en
-```
-
----
-
-### Incident Patch 3: `980ae986` (2026-11-03)
-**Commit Message**: fix(benchmark): stop booking compile output, colour and target/ as savings
-
-Three cases counted output on the raw side that rtk was never shown or an agent
-would never read. All were found while analysing how long the benchmark job
-takes.
-
-- bench runs the raw command first, so on a cold target the compile output
-  landed on that side alone: `err cargo build` reported 77 -> 12 tokens with rtk
-  compiling nothing. `cargo build`, `test`, `clippy` and `check` now build before
-  each pair.
-- CI forces `CARGO_TERM_COLOR=always`, so rtk got credit for stripping colour
-  that cargo does not print into a pipe. The script now turns it off.
-- The raw `find *`, `find *.rs` and `tree` rows listed `target/`, which rtk skips,
-  and the `find` rows also listed `.git/`, so they moved with whatever had been
-  built. They now exclude both, as `find --max 100` already does.
-
-The reported rows and token total drop to what the filters actually do.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `scripts/benchmark.sh` (modified, +18/-3)
-```diff
-@@ -1,6 +1,9 @@
- #!/usr/bin/env bash
- set -e
- 
-+# cargo prints no colour into a pipe, which is how agents read it.
-+export CARGO_TERM_COLOR=never
-+
- # Use local release build if available, otherwise fall back to installed rtk
- if [ -f "./target/release/rtk" ]; then
-   RTK="$(cd "$(dirname ./target/release/rtk)" && pwd)/$(basename ./target/release/rtk)"
-@@ -42,6 +45,12 @@ FAIL_TESTS=0
- WARN_TESTS=0
- NEGATIVE_TESTS=0
- 
-+# bench runs the raw side first, so a first build's compile output would land on
-+# that side alone and read as savings. Building first gives both sides the same target.
-+precompile() {
-+  "$@" > /dev/null 2>&1 || echo "⚠️  precompile failed: $*" >&2
-+}
-+
- bench() {
-   local name="$1"
-   local unix_cmd="$2"
-@@ -176,7 +185,7 @@ bench "ls multi" "ls -la src/ scripts/" "$RTK ls src/ scripts/"
- # ===================
- if command -v tree &>/dev/null; then
-   section "tree"
--  bench "tree" "tree -L 2" "$RTK tree -L 2"
-+  bench "tree" "tree -L 2 -I target" "$RTK tree -L 2"
-   bench "tree src/" "tree src/ -L 2" "$RTK tree src/ -L 2"
- else
-   echo ""
-@@ -197,8 +206,8 @@ bench "read -n" "cat -n src/lib.rs" "$RTK read src/lib.rs -n"
- # find
- # ===================
- section "find"
--bench "find *" "find . -type f" "$RTK find '*'"
--bench "find *.rs" "find . -name '*.rs' -type f" "$RTK find '*.rs'"
-+bench "find *" "find . -not -path './target/*' -not -path './.git/*' -type f" "$RTK find '*'"
-+bench "find *.rs" "find . -not -path './target/*' -not -path './.git/*' -name '*.rs' -type f" "$RTK find '*.rs'"
- # `rtk find --max N` caps how many names are DISPLAYED but still scans and
- # summarizes the whole tree, so the honest baseline is the full `find` a user
- # would otherwise read, not a `head -N`-truncated slice — that measures a
-@@ -343,6 +352,7 @@ bench "env -f PATH" "env | grep PATH" "$RTK env -f PATH"
- # ===================
- section "err"
- if command -v cargo &>/dev/null; then
-+  precompile cargo build
-   bench "err cargo build" "cargo build 2>&1 || true" "$RTK err cargo build 2>&1"
- else
-   echo "⏭️  err cargo build (cargo not in PATH, skipped)"
-@@ -353,6 +363,7 @@ fi
- # ===================
- section "test"
- if command -v cargo &>/dev/null; then
-+  precompile cargo test --no-run
-   bench "test cargo test" "cargo test 2>&1 || true" "$RTK test cargo test 2>&1"
- else
-   echo "⏭️  test cargo test (cargo not in PATH, skipped)"
-@@ -401,9 +412,13 @@ fi
- # ===================
- section "cargo"
- if command -v cargo &>/dev/null; then
-+  precompile cargo build
-   bench "cargo build" "cargo build 2>&1 || true" "$RTK cargo build 2>&1"
-+  precompile cargo test --no-run
-   bench "cargo test" "cargo test 2>&1 || true" "$RTK cargo test 2>&1"
-+  precompile cargo clippy
-   bench "cargo clippy" "cargo clippy 2>&1 || true" "$RTK cargo clippy 2>&1"
-+  precompile cargo check
-   bench "cargo check" "cargo check 2>&1 || true" "$RTK cargo check 2>&1"
- else
-   echo "⏭️  cargo build/test/clippy/check (cargo not in PATH, skipped)"
+-      - name: Upload DEB
+-        uses: actions/upload-artifact@v7
+-        with:
+-          name: rtk-deb
+-          path: target/debian/*.deb
+-
+-  build-deb-oss:
+-    name: Build DEB package (Apache-2.0 edition)
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v7
+-
+-      - name: Install Rust
+-        uses: dtolnay/rust-toolchain@stable
+-
+-      - 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5018** (2026-11-05): ci: Pin `rust-toolchain` action SHA (@TaKO8Ki)
+- **PR #5017** (2026-11-05): fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl (@aeppling)
 - **PR #4988** (2026-11-04): ci(benchmark): cut the job to about 3 minutes and compare like with like (@KuSh)
 - **PR #4965** (2026-11-04): test: cut process spawns in the slowest Windows test suites (@KuSh)
 - **PR #4876** (closed): docs: make the rewrite coverage page verifiable (@alexrain)
 - **PR #4870** (closed): fix(git): point the show truncation hint at the unfiltered commit (@alexrain)
-- **PR #4868** (closed): fix(pnpm): keep the child's stdout when install fails (@alexrain)
-- **PR #4852** (2026-10-30): docs(root): add backlink to pro (@aeppling)
 
 ---
 
@@ -2416,33 +2109,46 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(benchmark): stop running the whole test suite in the benchmark job
+## X. proxy): use mimalloc as the global allocator on musl builds
 
 **RULE**:
-When implementing operations in `.github/workflows/CICD.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `proxy/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50ebcea5`: ci(benchmark): stop running the whole test suite in the benchmark job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06466361`: proxy): use mimalloc as the global allocator on musl builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `proxy/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ no empty│ │ review   │
-     │ windows  │ │ audit    │ │ diff-only │ │ or grown│ │ ai agent │
-     │ macos    │ │ patterns │ │           │ │ output  │ │          │
-     + release (build, after clippy: must also pass to merge)
+[[package]]
+name = "libmimalloc-sys"
+version = "0.1.49"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a45a52f43e1c16f667ccfe4dd8c85b7f7c204fd5e3bf46c5b0db9a5c3c0b8e9"
+dependencies = [
+ "cc",
+]
+
+[[package]]
+name = "mimalloc"
+version = "0.1.52"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d4139bb28d14ad1facf21d5eb8825051b326e172d216b39f6d31df53cc97862"
+dependencies = [
+ "libmimalloc-sys",
+]
+
+ "mimalloc",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-     │ ubuntu   │ │ cargo    │ │ AST-aware │ │ >=80%   │ │ review   │
-     │ windows  │ │ audit    │ │ diff-only │ │ savings │ │ ai agent │
-     │ macos    │ │ patterns │ │           │ │         │ │          │
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50ebcea5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06466361` are properly handled with clean fallback behavior.

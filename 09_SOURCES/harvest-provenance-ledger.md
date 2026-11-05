@@ -7762,3 +7762,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-05T18:38:26.032Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `ce49cf62` | Multi-dimensional audit evidence | 2026-11-05T18:38:36.753Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `15f9a3fa` | Multi-dimensional audit evidence | 2026-11-05T18:38:42.270Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `8268663f` | Multi-dimensional audit evidence | 2026-11-05T18:45:36.245Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-05T18:45:39.868Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `823a3916` | Multi-dimensional audit evidence | 2026-11-05T18:45:45.016Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `48427266` | Multi-dimensional audit evidence | 2026-11-05T18:45:49.323Z |

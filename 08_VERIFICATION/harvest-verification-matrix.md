@@ -7753,3 +7753,7 @@
 | `CYCLE-20261105-2GOD` | `2026-11-05T18:38:26.029Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`7dc2e2fd...`) |
 | `CYCLE-20261105-2OY6` | `2026-11-05T18:38:36.750Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bc2f44e1...`) |
 | `CYCLE-20261105-2T7F` | `2026-11-05T18:38:42.267Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7be60daf...`) |
+| `CYCLE-20261105-BOMQ` | `2026-11-05T18:45:36.242Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`af9b5174...`) |
+| `CYCLE-20261105-BRFD` | `2026-11-05T18:45:39.865Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`7b03da90...`) |
+| `CYCLE-20261105-BVED` | `2026-11-05T18:45:45.013Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`ff2761d1...`) |
+| `CYCLE-20261105-BYPZ` | `2026-11-05T18:45:49.319Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`28df4fb0...`) |

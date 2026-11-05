@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "ea97d611",
+    "sourceVersion": "823a3916",
     "license": "NOASSERTION",
-    "contentHash": "0bbe5fe9fdf837e316b825f34b411d994c8a2841990687be3f64d6608f19e92f",
-    "lastHarvestedAt": "2026-11-05T14:30:13.036Z",
+    "contentHash": "ff2761d1cbdf10de9f3839c6bfce5a98c45c217edcc31b726855a380f79a18cb",
+    "lastHarvestedAt": "2026-11-05T18:45:45.016Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "6ab2eaff",
+    "sourceVersion": "48427266",
     "license": "Apache-2.0",
-    "contentHash": "6abc583ff0a392f31294186fe68c00ed2c1e3d434f6cc4f488663e689ff7aabd",
-    "lastHarvestedAt": "2026-11-05T03:20:49.066Z",
+    "contentHash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
+    "lastHarvestedAt": "2026-11-05T18:45:49.323Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "b47e05b5",
+    "sourceVersion": "8268663f",
     "license": "Apache-2.0",
-    "contentHash": "f0f5642c1bd3310c85b842a15e84ece2589c53eeeddc15f42a89706ba0ce5c9c",
-    "lastHarvestedAt": "2026-11-04T23:27:27.827Z",
+    "contentHash": "af9b51740c1de52e541d224874d0f12c280975b74778ee0aef05cb9ccecc49b5",
+    "lastHarvestedAt": "2026-11-05T18:45:36.245Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -11725,8 +11725,8 @@
     "sourceUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
     "sourceVersion": "hf-xiaomi-research-xiaomi-ocr-0",
     "license": "Open-Source",
-    "contentHash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
-    "lastHarvestedAt": "2026-11-02T14:53:43.970Z",
+    "contentHash": "7b03da9076454fe50f37e5a5f271fb6c82681dea8207c866ac7c48e998a94ae0",
+    "lastHarvestedAt": "2026-11-05T18:45:39.868Z",
     "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0"
   },
   "hf-liquidai-d1-2b": {
