@@ -7537,3 +7537,8 @@
 | `CYCLE-20261105-8XWD` | `2026-11-05T06:07:38.653Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`c3884ebd...`) |
 | `CYCLE-20261105-97UE` | `2026-11-05T06:07:51.542Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`383705f7...`) |
 | `CYCLE-20261105-997M` | `2026-11-05T06:07:53.314Z` | `trinodb/trino` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trinodb-trino-learnings.md` | Yes (`e2b3eb33...`) |
+| `CYCLE-20261105-IBVU` | `2026-11-05T06:14:56.682Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`da061060...`) |
+| `CYCLE-20261105-IHFQ` | `2026-11-05T06:15:03.878Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7129` | Yes (`bd72db1b...`) |
+| `CYCLE-20261105-IJ4F` | `2026-11-05T06:15:06.063Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7130` | Yes (`35e4b92b...`) |
+| `CYCLE-20261105-IKOU` | `2026-11-05T06:15:08.094Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7131` | Yes (`e1184c9f...`) |
+| `CYCLE-20261105-INFQ` | `2026-11-05T06:15:11.654Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7132` | Yes (`7ae8f317...`) |

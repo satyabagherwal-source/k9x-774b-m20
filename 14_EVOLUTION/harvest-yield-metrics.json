@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T06:07:53.328Z",
-  "total_cycles_completed": 7514,
-  "total_learnings_persisted": 7514,
-  "total_rules_promoted": 7186,
+  "last_updated": "2026-11-05T06:15:11.664Z",
+  "total_cycles_completed": 7519,
+  "total_learnings_persisted": 7519,
+  "total_rules_promoted": 7190,
   "history": [
-    {
-      "timestamp": "2026-11-04T21:00:21.668Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:11:15.347Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:11:23.973Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:11:29.331Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:11:34.969Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T21:18:43.288Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1403,6 +1368,41 @@
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:14:56.698Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:15:03.887Z",
+      "repository": "buresdv/Cork",
+      "learningId": "learn-github-buresdv-cork",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:15:06.073Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:15:08.105Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:15:11.664Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

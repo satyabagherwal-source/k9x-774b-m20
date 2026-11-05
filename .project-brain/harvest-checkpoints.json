@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T06:07:53.332Z",
+  "last_updated": "2026-11-05T06:15:11.676Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
-      "verified_at": "2026-10-31T15:36:23.740Z",
+      "content_hash": "da061060bb034e2a1ca6b5ea82178ef5639c84cd10884de1e3b5f0e126f5f0e3",
+      "verified_at": "2026-11-05T06:14:56.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T15:36:23.740Z"
+      "last_updated": "2026-11-05T06:14:56.701Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
-      "verified_at": "2026-11-04T19:48:21.015Z",
+      "content_hash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
+      "verified_at": "2026-11-05T06:15:08.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:48:21.015Z"
+      "last_updated": "2026-11-05T06:15:08.117Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7806,14 +7806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-zookeeper",
-      "content_hash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
-      "verified_at": "2026-11-04T10:20:21.915Z",
+      "content_hash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
+      "verified_at": "2026-11-05T06:15:11.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:20:21.915Z"
+      "last_updated": "2026-11-05T06:15:11.675Z"
     },
     "primer/react": {
       "repository": "primer/react",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "f0aeb9142d43f9fdb29a2038aa6713c91cafd48c1a7010b671ec210673c65ee6",
-      "verified_at": "2026-11-04T16:34:27.838Z",
+      "content_hash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
+      "verified_at": "2026-11-05T06:15:06.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:34:27.838Z"
+      "last_updated": "2026-11-05T06:15:06.084Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -12411,14 +12411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-buresdv-cork",
-      "content_hash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
-      "verified_at": "2026-10-29T22:28:16.664Z",
+      "content_hash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
+      "verified_at": "2026-11-05T06:15:03.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T22:28:16.664Z"
+      "last_updated": "2026-11-05T06:15:03.899Z"
     },
     "productdevbook/port-killer": {
       "repository": "productdevbook/port-killer",

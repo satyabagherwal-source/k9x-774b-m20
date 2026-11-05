@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T06:07:53.222Z",
+  "last_updated": "2026-11-05T06:15:11.567Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2531,8 +2531,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "a9d2ce60",
-      "content_hash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
+      "source_version": "87e85f28",
+      "content_hash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -2565,6 +2565,11 @@
           "number": 6810,
           "title": "ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7132,
+          "title": "ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are re",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2572,7 +2577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:20:21.806Z",
+      "verified_at": "2026-11-05T06:15:11.543Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5879,8 +5884,8 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "01177307",
-      "content_hash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
+      "source_version": "2fb27615",
+      "content_hash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
@@ -5903,6 +5908,11 @@
           "number": 5546,
           "title": "^ FDA doesn't disappear on grant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7129,
+          "title": "~ Just legalities, nothing changes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5910,7 +5920,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:28:16.562Z",
+      "verified_at": "2026-11-05T06:15:03.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14448,8 +14458,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "5aa241a1",
-      "content_hash": "ede37a315931cde4e418a8605c755469e97b93531ae9d6283b4ee9adad43bdd8",
+      "source_version": "27b1b0c4",
+      "content_hash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14652,6 +14662,11 @@
           "number": 6941,
           "title": "build: release 0.2.155 (#6108)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7131,
+          "title": "transport): attribute QUIC fallbacks to session churn (#6110)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14659,7 +14674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:48:20.931Z",
+      "verified_at": "2026-11-05T06:15:07.979Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15913,8 +15928,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "e43834ca",
-      "content_hash": "f0aeb9142d43f9fdb29a2038aa6713c91cafd48c1a7010b671ec210673c65ee6",
+      "source_version": "487b46aa",
+      "content_hash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -15982,6 +15997,11 @@
           "number": 6836,
           "title": "restore robot member role assignment compatibility (#24300)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7130,
+          "title": "registry): redact the upload Location in rejection errors (#24068)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15989,7 +16009,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:34:27.720Z",
+      "verified_at": "2026-11-05T06:15:05.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26397,7 +26417,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "0b7c6ef6501f76cd6ed543976e228478988770b5d14e09f212c003851fbf0767",
+      "content_hash": "da061060bb034e2a1ca6b5ea82178ef5639c84cd10884de1e3b5f0e126f5f0e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -26519,7 +26539,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-31T15:36:23.630Z",
+      "verified_at": "2026-11-05T06:14:56.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180536,6 +180556,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T06:07:51.434Z"
+    },
+    "rule-7129": {
+      "learning_id": "rule-7129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7129,
+      "title": "~ Just legalities, nothing changes",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "2fb27615",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:15:03.766Z"
+    },
+    "rule-7130": {
+      "learning_id": "rule-7130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7130,
+      "title": "registry): redact the upload Location in rejection errors (#24068)",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "487b46aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:15:05.950Z"
+    },
+    "rule-7131": {
+      "learning_id": "rule-7131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7131,
+      "title": "transport): attribute QUIC fallbacks to session churn (#6110)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "27b1b0c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:15:07.979Z"
+    },
+    "rule-7132": {
+      "learning_id": "rule-7132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7132,
+      "title": "ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are re",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "87e85f28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:15:11.543Z"
     }
   },
   "aliases": {

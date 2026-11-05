@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-8CQ8",
-    "timestamp": "2026-11-03T22:23:37.328Z",
-    "repository": "fb55/css-select",
-    "learningId": "learn-github-fb55-css-select",
-    "contentHash": "e70ad226f76dbf0833db59b1b71efbc66817069e9738eb9000de1c98fa5dbdb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-8E0K",
-    "timestamp": "2026-11-03T22:23:38.996Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-8GMT",
-    "timestamp": "2026-11-03T22:23:42.389Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "9e56bdb82e11d6a4bd332e5fa22d7af9b409512138e497142aa0d7c5b8215122",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-J3R1",
-    "timestamp": "2026-11-03T22:31:58.909Z",
-    "repository": "cheeriojs/dom-serializer",
-    "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-J5RP",
-    "timestamp": "2026-11-03T22:32:01.525Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-J7AI",
     "timestamp": "2026-11-03T22:32:03.498Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7492,6 +7417,81 @@
     "contentHash": "e2b3eb334f1c5673458b55aa52f59d8319f94aee67033f96d884b0e62e1c394e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-IBVU",
+    "timestamp": "2026-11-05T06:14:56.682Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "da061060bb034e2a1ca6b5ea82178ef5639c84cd10884de1e3b5f0e126f5f0e3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-IHFQ",
+    "timestamp": "2026-11-05T06:15:03.878Z",
+    "repository": "buresdv/Cork",
+    "learningId": "learn-github-buresdv-cork",
+    "contentHash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-IJ4F",
+    "timestamp": "2026-11-05T06:15:06.063Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-IKOU",
+    "timestamp": "2026-11-05T06:15:08.094Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-INFQ",
+    "timestamp": "2026-11-05T06:15:11.654Z",
+    "repository": "apache/zookeeper",
+    "learningId": "learn-github-apache-zookeeper",
+    "contentHash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

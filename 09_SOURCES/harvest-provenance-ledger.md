@@ -7546,3 +7546,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-05T06:07:38.663Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `acb81361` | Multi-dimensional audit evidence | 2026-11-05T06:07:51.546Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `22d46121` | Multi-dimensional audit evidence | 2026-11-05T06:07:53.322Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T06:14:56.692Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `2fb27615` | Multi-dimensional audit evidence | 2026-11-05T06:15:03.882Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `487b46aa` | Multi-dimensional audit evidence | 2026-11-05T06:15:06.067Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `27b1b0c4` | Multi-dimensional audit evidence | 2026-11-05T06:15:08.098Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `87e85f28` | Multi-dimensional audit evidence | 2026-11-05T06:15:11.658Z |
