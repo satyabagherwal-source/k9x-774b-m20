@@ -7578,3 +7578,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `161e65d6` | Multi-dimensional audit evidence | 2026-11-05T07:27:55.279Z |
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-05T07:34:40.062Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `dc698697` | Multi-dimensional audit evidence | 2026-11-05T07:34:50.063Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-05T07:41:59.801Z |
