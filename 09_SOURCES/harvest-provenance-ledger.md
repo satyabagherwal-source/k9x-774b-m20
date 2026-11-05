@@ -7587,3 +7587,5 @@ Every entry in this ledger must capture:
 | `learn-github-thebaselab-codeapp` | `https://github.com/thebaselab/codeapp` | `ef33ee57` | Multi-dimensional audit evidence | 2026-11-05T08:02:56.122Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `cf9beb71` | Multi-dimensional audit evidence | 2026-11-05T08:03:34.121Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T08:03:43.129Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T08:15:04.591Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `776b9266` | Multi-dimensional audit evidence | 2026-11-05T08:15:33.550Z |

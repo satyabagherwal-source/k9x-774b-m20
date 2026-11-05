@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T08:03:43.012Z",
+  "last_updated": "2026-11-05T08:15:33.457Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20052,7 +20052,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
+      "content_hash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -20089,7 +20089,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-10-31T17:36:58.242Z",
+      "verified_at": "2026-11-05T08:15:04.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60474,8 +60474,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "37ffa51d",
-      "content_hash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
+      "source_version": "776b9266",
+      "content_hash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -60558,6 +60558,11 @@
           "number": 6880,
           "title": "Merge pull request #38413 from vespa-engine/toregge/propagate-trace-and-span-ids",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7164,
+          "title": "Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60565,7 +60570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:52:34.459Z",
+      "verified_at": "2026-11-05T08:15:33.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181229,6 +181234,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T08:03:34.005Z"
+    },
+    "rule-7164": {
+      "learning_id": "rule-7164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7164,
+      "title": "Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "776b9266",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:15:33.434Z"
     }
   },
   "aliases": {

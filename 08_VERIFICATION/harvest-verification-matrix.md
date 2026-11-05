@@ -7578,3 +7578,5 @@
 | `CYCLE-20261105-D7G7` | `2026-11-05T08:02:56.119Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md` | Yes (`c15e583b...`) |
 | `CYCLE-20261105-E0RP` | `2026-11-05T08:03:34.117Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7163` | Yes (`cd02347e...`) |
 | `CYCLE-20261105-E7PX` | `2026-11-05T08:03:43.125Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`a77b1df8...`) |
+| `CYCLE-20261105-STJF` | `2026-11-05T08:15:04.587Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`197559f4...`) |
+| `CYCLE-20261105-TFVU` | `2026-11-05T08:15:33.546Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7164` | Yes (`ac4acbd4...`) |

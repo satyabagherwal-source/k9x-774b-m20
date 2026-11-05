@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T08:03:43.139Z",
+  "last_updated": "2026-11-05T08:15:33.568Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
-      "verified_at": "2026-10-31T17:36:58.367Z",
+      "content_hash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
+      "verified_at": "2026-11-05T08:15:04.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:36:58.367Z"
+      "last_updated": "2026-11-05T08:15:04.599Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
-      "verified_at": "2026-11-04T17:52:34.578Z",
+      "content_hash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
+      "verified_at": "2026-11-05T08:15:33.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:52:34.578Z"
+      "last_updated": "2026-11-05T08:15:33.567Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

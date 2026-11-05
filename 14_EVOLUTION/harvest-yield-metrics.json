@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T08:03:43.135Z",
-  "total_cycles_completed": 7555,
-  "total_learnings_persisted": 7555,
-  "total_rules_promoted": 7222,
+  "last_updated": "2026-11-05T08:15:33.556Z",
+  "total_cycles_completed": 7557,
+  "total_learnings_persisted": 7557,
+  "total_rules_promoted": 7223,
   "history": [
-    {
-      "timestamp": "2026-11-04T22:45:29.256Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:45:33.871Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T22:45:38.968Z",
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -1403,6 +1389,20 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:15:04.596Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:15:33.556Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

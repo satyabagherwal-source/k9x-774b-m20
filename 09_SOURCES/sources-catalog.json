@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "9a337dd9c9edb9d075029808acd34e35bb8bea0bb67177e1be0fb42a5dd109ce",
-    "lastHarvestedAt": "2026-10-31T17:36:58.358Z",
+    "contentHash": "197559f43a30893064ee02a258791a36b9c7db83041cfe043257d95da044fdf0",
+    "lastHarvestedAt": "2026-11-05T08:15:04.591Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "37ffa51d",
+    "sourceVersion": "776b9266",
     "license": "Apache-2.0",
-    "contentHash": "b317ef57ba0f00597f450647255e71bef8554fa5812dac2777c9896d563e8458",
-    "lastHarvestedAt": "2026-11-04T17:52:34.569Z",
+    "contentHash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
+    "lastHarvestedAt": "2026-11-05T08:15:33.550Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
