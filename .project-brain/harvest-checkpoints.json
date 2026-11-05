@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T09:51:12.034Z",
+  "last_updated": "2026-11-05T09:57:47.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
-      "verified_at": "2026-10-31T19:02:22.780Z",
+      "content_hash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
+      "verified_at": "2026-11-05T09:57:47.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:02:22.780Z"
+      "last_updated": "2026-11-05T09:57:47.490Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -8886,14 +8886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudwego-volo",
-      "content_hash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
-      "verified_at": "2026-10-30T09:53:21.482Z",
+      "content_hash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
+      "verified_at": "2026-11-05T09:57:40.859Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T09:53:21.482Z"
+      "last_updated": "2026-11-05T09:57:40.859Z"
     },
     "itinance/react-native-fs": {
       "repository": "itinance/react-native-fs",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
-      "verified_at": "2026-10-25T23:45:52.437Z",
+      "content_hash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
+      "verified_at": "2026-11-05T09:57:46.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:45:52.437Z"
+      "last_updated": "2026-11-05T09:57:46.395Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",

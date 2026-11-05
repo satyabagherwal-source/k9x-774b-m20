@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T09:51:12.031Z",
-  "total_cycles_completed": 7578,
-  "total_learnings_persisted": 7578,
-  "total_rules_promoted": 7240,
+  "last_updated": "2026-11-05T09:57:47.480Z",
+  "total_cycles_completed": 7581,
+  "total_learnings_persisted": 7581,
+  "total_rules_promoted": 7244,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:34:41.455Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:34:43.315Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:34:44.964Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:34:47.272Z",
       "repository": "crate/crate",
@@ -1403,6 +1382,27 @@
       "repository": "Qwen/Qwen3-8B",
       "learningId": "learn-huggingface-qwen-qwen3-8b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:57:40.849Z",
+      "repository": "cloudwego/volo",
+      "learningId": "learn-github-cloudwego-volo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:57:46.386Z",
+      "repository": "SimonSchubert/Kai",
+      "learningId": "learn-github-simonschubert-kai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:57:47.480Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

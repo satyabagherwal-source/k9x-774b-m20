@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T09:51:11.962Z",
+  "last_updated": "2026-11-05T09:57:47.420Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8050,8 +8050,8 @@
       "slug": "cloudwego-volo",
       "platform": "github",
       "source_url": "https://github.com/cloudwego/volo",
-      "source_version": "0bc881c4",
-      "content_hash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
+      "source_version": "35e91302",
+      "content_hash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
       "dossier_path": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "promoted_rules": [
@@ -8074,6 +8074,11 @@
           "number": 5705,
           "title": "Strict Containment Canonicalization for Static Directory Path Resolution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7181,
+          "title": "shmipc v5 (#680)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8081,7 +8086,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T09:53:21.398Z",
+      "verified_at": "2026-11-05T09:57:40.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25283,7 +25288,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
+      "content_hash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -25326,6 +25331,16 @@
           "number": 6290,
           "title": "Preprocessor Normalization Range Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7182,
+          "title": "The Patch-Sequence Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7183,
+          "title": "The CLS Token Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25345,7 +25360,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-31T19:02:22.660Z",
+      "verified_at": "2026-11-05T09:57:47.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54058,8 +54073,8 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "bd774d32",
-      "content_hash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
+      "source_version": "f0c4ee48",
+      "content_hash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
@@ -54079,7 +54094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:45:52.357Z",
+      "verified_at": "2026-11-05T09:57:46.305Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124702,13 +124717,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "bd774d32",
+      "source_version": "f0c4ee48",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T23:45:52.357Z"
+      "verified_at": "2026-11-05T09:57:46.305Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",
@@ -181557,6 +181572,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T09:44:49.792Z"
+    },
+    "rule-7181": {
+      "learning_id": "rule-7181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7181,
+      "title": "shmipc v5 (#680)",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "35e91302",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:57:40.775Z"
+    },
+    "rule-7182": {
+      "learning_id": "rule-7182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7182,
+      "title": "The Patch-Sequence Alignment Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:57:47.405Z"
+    },
+    "rule-7183": {
+      "learning_id": "rule-7183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7183,
+      "title": "The CLS Token Extraction Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:57:47.405Z"
     }
   },
   "aliases": {

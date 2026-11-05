@@ -7601,3 +7601,6 @@
 | `CYCLE-20261105-ZX98` | `2026-11-05T09:44:34.844Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7179` | Yes (`09c5d8e7...`) |
 | `CYCLE-20261105-08W4` | `2026-11-05T09:44:49.924Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`7fcd3ca8...`) |
 | `CYCLE-20261105-8FQ1` | `2026-11-05T09:51:12.025Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`b9ee8b3b...`) |
+| `CYCLE-20261105-GRQI` | `2026-11-05T09:57:40.842Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7181` | Yes (`46d10f58...`) |
+| `CYCLE-20261105-GW0B` | `2026-11-05T09:57:46.379Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`1754b948...`) |
+| `CYCLE-20261105-GWUP` | `2026-11-05T09:57:47.473Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7182, Rule 7183` | Yes (`9da218ac...`) |

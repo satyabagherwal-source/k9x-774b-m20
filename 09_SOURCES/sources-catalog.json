@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
-    "lastHarvestedAt": "2026-10-31T19:02:22.770Z",
+    "contentHash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
+    "lastHarvestedAt": "2026-11-05T09:57:47.476Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -5843,10 +5843,10 @@
     "repository": "cloudwego/volo",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudwego/volo",
-    "sourceVersion": "0bc881c4",
+    "sourceVersion": "35e91302",
     "license": "Apache-2.0",
-    "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
-    "lastHarvestedAt": "2026-10-30T09:53:21.475Z",
+    "contentHash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
+    "lastHarvestedAt": "2026-11-05T09:57:40.845Z",
     "learningId": "learn-github-cloudwego-volo"
   },
   "itinance-react-native-fs": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "bd774d32",
+    "sourceVersion": "f0c4ee48",
     "license": "Apache-2.0",
-    "contentHash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
-    "lastHarvestedAt": "2026-10-25T23:45:52.429Z",
+    "contentHash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
+    "lastHarvestedAt": "2026-11-05T09:57:46.382Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {

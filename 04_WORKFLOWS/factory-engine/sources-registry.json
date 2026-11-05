@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T09:51:23.619Z",
-    "lastVerified": "2026-11-05T09:51:23.619Z",
+    "lastChecked": "2026-11-05T09:57:50.877Z",
+    "lastVerified": "2026-11-05T09:57:50.877Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T09:20:35.601Z",
+    "lastChecked": "2026-11-05T09:57:50.867Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T09:20:35.601Z"
+    "lastVerified": "2026-11-05T09:57:50.867Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1096,9 +1096,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-05T06:00:25.265Z",
+    "lastChecked": "2026-11-05T09:57:45.940Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-05T06:00:25.265Z"
+    "lastVerified": "2026-11-05T09:57:45.940Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3411,9 +3411,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-04T20:02:35.628Z",
+    "lastChecked": "2026-11-05T09:57:43.484Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-04T20:02:35.628Z"
+    "lastVerified": "2026-11-05T09:57:43.484Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -5649,22 +5649,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
-    "name": "volo",
+    "name": "cloudwego/volo",
     "officialUrl": "https://github.com/cloudwego/volo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T10:05:22.201Z",
-    "lastVerified": "2026-11-04T10:05:22.201Z",
+    "lastChecked": "2026-11-05T09:57:40.126Z",
+    "lastVerified": "2026-11-05T09:57:40.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cloudwego-volo",
-    "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0bc881c4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -6796,12 +6795,12 @@
     "officialUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T19:00:31.552Z",
-    "lastVerified": "2026-10-31T19:00:31.552Z",
+    "lastChecked": "2026-11-05T09:57:38.497Z",
+    "lastVerified": "2026-11-05T09:57:38.497Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "7200a29bd5c48294bfce06807a6785d0496349fbf03838c74e199d24f279f993",
+    "contentHash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7779,12 +7778,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T19:15:36.065Z",
-    "lastVerified": "2026-11-04T19:15:36.065Z",
+    "lastChecked": "2026-11-05T09:57:48.415Z",
+    "lastVerified": "2026-11-05T09:57:48.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -7793,7 +7792,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5b05e1f5"
   },
   "str4d-rage": {
     "name": "rage",
@@ -10228,11 +10228,21 @@
     "lastVerified": "2026-11-03T16:32:13.560Z"
   },
   "simonschubert-kai": {
-    "name": "Kai",
+    "name": "SimonSchubert/Kai",
     "officialUrl": "https://github.com/SimonSchubert/Kai",
-    "lastChecked": "2026-11-02T15:08:09.395Z",
-    "revisionIdentifier": "bd774d32",
-    "lastVerified": "2026-11-02T15:08:09.395Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-05T09:57:46.042Z",
+    "lastVerified": "2026-11-05T09:57:46.042Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-simonschubert-kai",
+    "contentHash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "berkaycubuk-kitsune": {
     "name": "kitsune",
