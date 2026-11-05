@@ -7418,3 +7418,5 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `5aaceb19` | Multi-dimensional audit evidence | 2026-11-04T23:48:28.587Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `d56502a3` | Multi-dimensional audit evidence | 2026-11-04T23:48:31.087Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-04T23:53:22.964Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `f10bb41f` | Multi-dimensional audit evidence | 2026-11-05T00:00:12.230Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-05T00:00:13.702Z |

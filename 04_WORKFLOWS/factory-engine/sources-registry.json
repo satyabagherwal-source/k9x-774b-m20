@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-04T23:53:25.523Z",
-    "lastVerified": "2026-11-04T23:53:25.523Z",
+    "lastChecked": "2026-11-05T00:00:16.245Z",
+    "lastVerified": "2026-11-05T00:00:16.245Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T23:27:37.612Z",
-    "lastVerified": "2026-11-04T23:27:37.612Z",
+    "lastChecked": "2026-11-05T00:00:15.491Z",
+    "lastVerified": "2026-11-05T00:00:15.491Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -464,9 +464,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-11-03T20:49:23.477Z",
+    "lastChecked": "2026-11-05T00:00:00.464Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-11-03T20:49:23.477Z"
+    "lastVerified": "2026-11-05T00:00:00.464Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1748,8 +1748,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T20:32:02.215Z",
-    "lastVerified": "2026-11-04T20:32:02.215Z",
+    "lastChecked": "2026-11-05T00:00:10.493Z",
+    "lastVerified": "2026-11-05T00:00:10.493Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -2244,12 +2244,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T09:36:44.493Z",
-    "lastVerified": "2026-10-31T09:36:44.493Z",
+    "lastChecked": "2026-11-05T00:00:02.996Z",
+    "lastVerified": "2026-11-05T00:00:02.996Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
+    "contentHash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2958,9 +2958,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-04T01:00:49.308Z",
+    "lastChecked": "2026-11-05T00:00:12.919Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-04T01:00:49.308Z"
+    "lastVerified": "2026-11-05T00:00:12.919Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -5290,12 +5290,12 @@
     "lastVerified": "2026-11-04T17:30:34.757Z"
   },
   "infracost-infracost": {
-    "name": "infracost/infracost",
+    "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T01:44:28.985Z",
-    "lastVerified": "2026-11-04T01:44:28.985Z",
+    "lastChecked": "2026-11-05T00:00:07.928Z",
+    "lastVerified": "2026-11-05T00:00:07.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -5304,7 +5304,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "93b9a2d9"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -8337,11 +8338,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "msasikanth-twine": {
-    "name": "twine",
+    "name": "msasikanth/twine",
     "officialUrl": "https://github.com/msasikanth/twine",
-    "lastChecked": "2026-10-31T16:57:10.825Z",
-    "revisionIdentifier": "4b3aa942",
-    "lastVerified": "2026-10-31T16:57:10.825Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-05T00:00:11.260Z",
+    "lastVerified": "2026-11-05T00:00:11.260Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zed-industries-zed": {
     "name": "zed-industries/zed",

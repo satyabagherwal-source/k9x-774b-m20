@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-04T23:53:22.968Z",
-  "total_cycles_completed": 7386,
-  "total_learnings_persisted": 7386,
-  "total_rules_promoted": 7080,
+  "last_updated": "2026-11-05T00:00:13.707Z",
+  "total_cycles_completed": 7388,
+  "total_learnings_persisted": 7388,
+  "total_rules_promoted": 7083,
   "history": [
-    {
-      "timestamp": "2026-11-04T10:12:39.056Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:20:13.053Z",
-      "repository": "meta/docusaurus",
-      "learningId": "learn-github-meta-docusaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T10:20:13.909Z",
       "repository": "wix/react-native-ui-lib",
@@ -1403,6 +1389,20 @@
       "repository": "HemmingwayAI/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:00:12.234Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:00:13.707Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

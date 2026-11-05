@@ -7409,3 +7409,5 @@
 | `CYCLE-20261104-PBU1` | `2026-11-04T23:48:28.585Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7029` | Yes (`2c6365fc...`) |
 | `CYCLE-20261104-PDRH` | `2026-11-04T23:48:31.085Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7030` | Yes (`cf27b8c2...`) |
 | `CYCLE-20261104-VMZ6` | `2026-11-04T23:53:22.962Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7031, Rule 7032, Rule 7033` | Yes (`07110e8a...`) |
+| `CYCLE-20261105-4ERM` | `2026-11-05T00:00:12.226Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7034` | Yes (`5ba56753...`) |
+| `CYCLE-20261105-4FWJ` | `2026-11-05T00:00:13.699Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7035, Rule 7036` | Yes (`deba39c6...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-04T23:53:22.977Z",
+  "last_updated": "2026-11-05T00:00:13.717Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
-      "verified_at": "2026-10-31T09:40:12.539Z",
+      "content_hash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
+      "verified_at": "2026-11-05T00:00:13.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:40:12.539Z"
+      "last_updated": "2026-11-05T00:00:13.716Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -11526,14 +11526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-msasikanth-twine",
-      "content_hash": "a5866c2bc88b125fccfa795d4b7131cbc30ca782a10220746d61c6f66a57ba6c",
-      "verified_at": "2026-10-28T02:13:16.756Z",
+      "content_hash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
+      "verified_at": "2026-11-05T00:00:12.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:13:16.756Z"
+      "last_updated": "2026-11-05T00:00:12.237Z"
     },
     "facebook/folly": {
       "repository": "facebook/folly",

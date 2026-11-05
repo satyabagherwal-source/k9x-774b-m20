@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source**: github ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
-> **Source Version**: `4b3aa942`  
+> **Source Version**: `f10bb41f`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:13:16.187Z  
+> **Timestamp**: 2026-11-05T00:00:11.561Z  
 > **Learning ID**: `learn-github-msasikanth-twine`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:13:15.866Z  
+> **Harvest Timestamp**: 2026-11-05T00:00:11.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Twine: A multiplatform RSS reader built using Kotlin and Compose
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2436 stars
+- **Stars / Engagement**: 2440 stars
 
 ---
 
@@ -652,11 +652,11 @@ object PermissionRequestBridge {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1974** (2026-11-01): **Article does not load**
+  *Symptoms*: **Describe the bug** A clear and concise description of what the bug is. White bars scroll across under the article heading when it is opened  **To Reproduce** Steps to reproduce the behavior: I cannot reproduce but it's occurred several times already and I only installed the app yesterday . I have it setup to fetch full article on refresh so I assume it is trying to read/ load something on this article it doesn't understand. If I swipe left or right the articles either side show immediately. Have only found the issue with android Authority feed.  **Screenshots** If applicable, add screenshots to help explain your problem.  <img width="1080" height="2400" alt="Image" src="https://github.com/user-attachments/assets/8a4e4197-1ff9-4bfe-8677-aeb01c7831b0" />  **Feed Information** Links to the feed that are having this issue Android Authority, added from discover feed   **Device Information**  - Device: [e.g. Pixel 7] Motorola edge 50 fusion  - OS: [e.g. Android 13] android 16  - App Version [e.g. 1.0.0] 3.9.0 1839  **Stacktrace** If present, add stacktrace to help debug the issue faster. 
+
 - **Issue #1960** (2026-10-24): **app jumps ahead to next article on open**
   *Symptoms*: **Describe the bug** When I open an article the app frequently skips ahead to the next article immediately. This happens most frequently on a cold start of the app, however it's not 100% reproducible. It even happens occasionally when swiping between articles, not only on first article open.   I have been hitting this problem since the introduction of save on open/auto save of read state. This plus the lack of consistent reproduction leads me to believe this is caused by a race condition on opening an article and marking the article as read.  **To Reproduce** Steps to reproduce the behavior: 1. Fully close the app 2. Open the app 3. Tap on the first unread article 4. Expected: I see the article I tapped on 5. Actual: the app immediately moves to the next article  **Screenshots** https://github.com/user-attachments/assets/af6c2f5a-a215-4a46-aaa8-115e787fa3a3   **Feed Information** All feeds  **Device Information**  - Device: Unihertz JellyMax  - OS: Android 15  - App Version 3.9.0  **Stacktrace** N/a   
-
-- **Issue #1959** (2026-10-24): **Acast RSS feeds for podcasts are not recognised**
-  *Symptoms*: **Describe the bug** Acast RSS feeds for podcasts are not recognised as containing valid RSS/Atom feeds.  **To Reproduce** Steps to reproduce the behavior: 1. Go to Acast and get the RSS feed of a podcast 2. Add the feed in Twine.  <img width="1224" height="2700" alt="Image" src="https://github.com/user-attachments/assets/6c865bc7-3920-4821-9729-ee6db887797f" />  Acast has a support page about a similar issue, I'm not sure if it's the same issue: https://learn.acast.com/en/articles/3505629-why-do-distribution-platforms-sometimes-say-that-my-rss-feed-is-invalid  **Feed Information** - https://feeds.acast.com/public/shows/73fe3ede-5c5c-4850-96a8-30db8dbae8bf - https://feeds.acast.com/public/shows/6b2fc9ba-b9b7-4b7a-b980-e0024facd926   **Device Information**  - Device: Fairphone 5  - OS: Android 15  - App Version: 3.9.0  **Stacktrace** NA 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -673,154 +673,659 @@ object PermissionRequestBridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b3aa942` (2026-10-27)
-**Commit Message**: Improve rendering of Vox Media review scorecards in the reader
+### Incident Patch 1: `563cc519` (2026-11-01)
+**Commit Message**: Improve readability parsing stability and add timeouts
 
-- Merge score digits with their labels (e.g., "Verge Score: 8") to prevent them from appearing as isolated numbers.
-- Remove duplicate text elements, such as prices, that are included twice for different responsive CSS breakpoints.
-- Wrap sibling retailer links in paragraph tags to ensure they remain on separate lines when converted to markdown.
-- Unwrap nested `div` elements within the scorecard to prevent product information from being stripped as boilerplate by Readability.
+- Add a 15-second timeout to the readability pipeline on Android and iOS, falling back to raw content if parsing fails or times out.
+- Refactor `ReadabilityRunner` implementations to isolate parsing logic into `awaitParsedContent` and improve `WebView` resource management and cleanup.
+- Enhance error handling in the JavaScript bridge on Android to capture script or promise failures.
+- Update `ReaderPageViewModel` to provide the original content as a fallback when parsing fails.
+- Only trigger the loading state in `ReaderPageViewModel` if content needs to be fetched or parsed.
 
-**File**: `shared/src/commonMain/composeResources/files/reader/main.es5.js` (modified, +115/-0)
+fixes: #1974
+
+**File**: `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +106/-38)
 ```diff
-@@ -142,6 +142,120 @@ function transformShredditElements(doc) {
+@@ -20,24 +20,34 @@ package dev.sasikanth.rss.reader.reader.readability
+ import android.annotation.SuppressLint
+ import android.content.Context
+ import android.webkit.JavascriptInterface
++import android.webkit.WebResourceError
++import android.webkit.WebResourceRequest
+ import android.webkit.WebView
+ import android.webkit.WebViewClient
++import co.touchlab.kermit.Logger
+ import dev.sasikanth.rss.reader.core.model.local.ReadabilityResult
+ import dev.sasikanth.rss.reader.di.scopes.AppScope
+ import dev.sasikanth.rss.reader.reader.redability.ReadabilityRunner
+ import dev.sasikanth.rss.reader.reader.redability.ReaderHTML
+ import dev.sasikanth.rss.reader.util.DispatchersProvider
+ import dev.sasikanth.rss.reader.utils.asJSString
++import java.util.concurrent.atomic.AtomicBoolean
++import kotlin.coroutines.cancellation.CancellationException
+ import kotlin.coroutines.resumeWithException
++import kotlin.time.Duration.Companion.seconds
++import kotlinx.coroutines.NonCancellable
+ import kotlinx.coroutines.suspendCancellableCoroutine
+ import kotlinx.coroutines.sync.Mutex
+ import kotlinx.coroutines.sync.Semaphore
+ import kotlinx.coroutines.sync.withLock
+ import kotlinx.coroutines.sync.withPermit
+ import kotlinx.coroutines.withContext
++import kotlinx.coroutines.withTimeoutOrNull
+ import kotlinx.serialization.json.Json
+ import me.tatarka.inject.annotations.Inject
+ 
++private val PARSE_TIMEOUT = 15.seconds
++
+ @Inject
+ @AppScope
+ class AndroidReadabilityRunner(
+@@ -65,50 +75,107 @@ class AndroidReadabilityRunner(
+         val webView = getOrCreateWebView()
+ 
+         try {
+-          suspendCancellableCoroutine { continuation ->
+-            val bridge =
+-              object {
+-                @JavascriptInterface
+-                fun onContentParsed(result: String) {
+-                  try {
+-                    val parsed = json.decodeFromString<ReadabilityResult>(result)
+-                    continuation.resume(parsed) { _, _, _ ->
+-                      // no-op
+-                    }
+-                  } catch (e: Exception) {
+-                    continuation.resumeWithException(e)
+-                  }
+-                }
+-              }
+-
+-            webView.addJavascriptInterface(bridge, "ReaderJSInterface")
+-
+-            webView.webViewClient =
+-              object : WebViewClient() {
+-                override fun onPageFinished(view: WebView, url: String) {
+-                  val script =
+-                    """
+-                                parseReaderContent(
+-                                    ${link.asJSString}, 
+-                                    ${image.asJSString}, 
+-                                    ${content.asJSString}
+-                                ).then(res => ReaderJSInterface.onContentParsed(JSON.stringify(res)))
+-                            """
+-                      .trimIndent()
+-                  view.evaluateJavascript(script, null)
+-                }
+-              }
+-
+-            webView.loadDataWithBaseURL(link, htmlShell, "text/html", "UTF-8", null)
+-
+-            continuation.invokeOnCancellation { webView.stopLoading() }
++          withTimeoutOrNull(PARSE_TIMEOUT) {
++            awaitParsedContent(
++              webView = webView,
++              htmlShell = htmlShell,
++              link = link,
++              content = content,
++              image = image,
++            )
+           }
++            ?: run {
++              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
++              ReadabilityResult(content = content)
++            }
++        } catch (e: CancellationException) {
++          throw e
++        } catch (e: Exception) {
++          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
++          ReadabilityResult(content = content)
+         } finally {
+-          returnWebViewToPool(webView)
++          withContext(NonCancellable) { returnWebViewToPool(webView) }
+         }
+       }
+     }
+ 
++  private suspend fun awaitParsedContent(
++    webView: WebView,
++    htmlShell: String,
++    link: String?,
++    content: String,
++    image: String?,
++  ): ReadabilityResult = suspendCancellableCoroutine { continuation ->
++    val isFinished = AtomicBoolean(false)
++
++    val bridge =
++      object {
++        @JavascriptInterface
++        fun onContentParsed(result: String) {
++          if (!isFinished.compareAndSet(false, true)) return
++          try {
++            continuation.resume(json.decodeFromString<ReadabilityResult>(result)) { _, _, _ ->
++              // no-op
++            }
++          } catch (e: Exception) {
++            continuation.resumeWithException(e)
++          }
++        }
++
++        @JavascriptInterface
++        fun onContentParseFailed(error: String) {
++          if (!isFinished.compareAndSet(false, true)) return
++          continuation.resumeWithException(IllegalStateException(error))
++        }
++      }
++
++    webView.addJavascriptInterface(bridge, "ReaderJSInterface")
++
++    webView.webViewClie
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/reader/page/ReaderPageViewModel.kt` (modified, +3/-3)
+```diff
+@@ -141,13 +141,13 @@ class ReaderPageViewModel(
+ 
+   private fun loadFullArticle() {
+     viewModelScope.launch {
+-      _parsingProgress.value = ReaderProcessingProgress.Loading
+-
+       val fullArticle = postContentRepository.postContent(readerPost.id).firstOrNull()
+       if (fullArticle != null && !(fullArticle.articleContent.isNullOrBlank())) {
+         return@launch
+       }
+ 
++      _parsingProgress.value = ReaderProcessingProgress.Loading
++
+       val article = fullArticleFetcher.fetch(readerPost.link, readerPost.remoteId).getOrNull()
+       if (article == null) {
+         _parsingProgress.value = ReaderProcessingProgress.Idle
+@@ -180,7 +180,7 @@ class ReaderPageViewModel(
+             )
+           } catch (e: Exception) {
+             Logger.e(e) { "Failed to parse reader content" }
+-            ReadabilityResult()
++            ReadabilityResult(content = content)
+           }
+ 
+         onParsingComplete(readabilityResult)
+```
+
+**File**: `shared/src/iosMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +66/-39)
+```diff
+@@ -21,28 +21,35 @@
+ 
+ package dev.sasikanth.rss.reader.reader.readability
+ 
++import co.touchlab.kermit.Logger
+ import dev.sasikanth.rss.reader.core.model.local.ReadabilityResult
+ import dev.sasikanth.rss.reader.di.scopes.AppScope
+ import dev.sasikanth.rss.reader.reader.redability.ReadabilityRunner
+ import dev.sasikanth.rss.reader.reader.redability.ReaderHTML
+ import dev.sasikanth.rss.reader.util.DispatchersProvider
+ import kotlin.concurrent.AtomicInt
++import kotlin.coroutines.cancellation.CancellationException
+ import kotlin.coroutines.resume
+ import kotlin.coroutines.resumeWithException
++import kotlin.time.Duration.Companion.seconds
+ import kotlinx.cinterop.ExperimentalForeignApi
+ import kotlinx.cinterop.readValue
++import kotlinx.coroutines.NonCancellable
+ import kotlinx.coroutines.suspendCancellableCoroutine
+ import kotlinx.coroutines.sync.Mutex
+ import kotlinx.coroutines.sync.Semaphore
+ import kotlinx.coroutines.sync.withLock
+ import kotlinx.coroutines.sync.withPermit
+ import kotlinx.coroutines.withContext
++import kotlinx.coroutines.withTimeoutOrNull
+ import kotlinx.serialization.json.Json
+ import me.tatarka.inject.annotations.Inject
+ import platform.Foundation.NSURL
+ import platform.WebKit.*
+ import platform.darwin.NSObject
+ 
++private val PARSE_TIMEOUT = 15.seconds
++
+ @Inject
+ @AppScope
+ class IosReadabilityRunner(private val dispatchersProvider: DispatchersProvider) :
+@@ -96,53 +103,73 @@ class IosReadabilityRunner(private val dispatchersProvider: DispatchersProvider)
+         val webView = getOrCreateWebView()
+ 
+         try {
+-          suspendCancellableCoroutine { continuation ->
+-            val isFinished = AtomicInt(0)
+-
+-            // We create the handler and ensure it is held strongly during this scope
+-            val handler = ReaderJSHandler { result ->
+-              if (result == "READY") {
+-                webView.evaluateJavaScript(executionScript) { _, error ->
+-                  if (error != null && isFinished.compareAndSet(0, 1)) {
+-                    continuation.resumeWithException(
+-                      Exception("JS Execution Error: ${error.localizedDescription}")
+-                    )
+-                  }
+-                }
+-                return@ReaderJSHandler
+-              }
+-
+-              if (isFinished.compareAndSet(0, 1)) {
+-                if (result.startsWith("ERROR:")) {
+-                  continuation.resumeWithException(Exception(result))
+-                } else {
+-                  try {
+-                    continuation.resume(json.decodeFromString<ReadabilityResult>(result))
+-                  } catch (e: Exception) {
+-                    continuation.resumeWithException(e)
+-                  }
+-                }
+-              }
++          withTimeoutOrNull(PARSE_TIMEOUT) {
++            awaitParsedContent(webView, htmlShell, link, executionScript)
++          }
++            ?: run {
++              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
++              ReadabilityResult(content = content)
+             }
++        } catch (e: CancellationException) {
++          throw e
++        } catch (e: Exception) {
++          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
++          ReadabilityResult(content = content)
++        } finally {
++          withContext(NonCancellable) {
++            cleanupWebView(webView)
++            returnWebViewToPool(webView)
++          }
++        }
++      }
++    }
+ 
+-            val userController = webView.configuration.userContentController
+-            userController.addScriptMessageHandler(handler, "readabilityMessageHandler")
+-
+-            webView.loadHTMLString(htmlShell, baseURL = link?.let { NSURL.URLWithString(it) })
++  private suspend fun awaitParsedContent(
++    webView: WKWebView,
++    htmlShell: String,
++    link: String?,
++    executionScript: String,
++  ): ReadabilityResult = suspendCancellableCoroutine { continuation ->
++    val isFinished = AtomicInt(0)
++
++    // We create the handler and ensure it is held strongly during this scope
++    val handler = ReaderJSHandler { result ->
++      if (result == "READY") {
++        webView.evaluateJavaScript(executionScript) { _, error ->
++          if (error != null && isFinished.compareAndSet(0, 1)) {
++            continuation.resumeWithException(
++              Exception("JS Execution Error: ${error.localizedDescription}")
++            )
++          }
++        }
++        return@ReaderJSHandler
++      }
+ 
+-            continuation.invokeOnCancellation {
+-              isFinished.value = 1
+-              webView.stopLoading()
+-              cleanupWebView(webView)
+-            }
++      if (isFinished.compareAndSet(0, 1)) {
++        if (result.startsWith("ERROR:")) {
++          continuation.resumeWithException(Exception(result))
++        } else {
++          try {
++            continuation.resume(json.decodeFromString<ReadabilityResult>(result))
++          } catch (e: Exception) {
++            continuation.r
+```
+
+---
+
+### Incident Patch 2: `601a29b2` (2026-11-02)
+**Commit Message**: Use main looper handler for readability script execution
+
+- Replace `webView.post` with a dedicated
+`Handler(Looper.getMainLooper())` in `ReadabilityRunner` to ensure
+content extraction scripts are consistently executed on the main thread
+when a page is ready.
+
+**File**: `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt` (modified, +4/-1)
+```diff
+@@ -19,6 +19,8 @@ package dev.sasikanth.rss.reader.reader.readability
+ 
+ import android.annotation.SuppressLint
+ import android.content.Context
++import android.os.Handler
++import android.os.Looper
+ import android.webkit.JavascriptInterface
+ import android.webkit.WebResourceError
+ import android.webkit.WebResourceRequest
+@@ -58,6 +60,7 @@ class AndroidReadabilityRunner(
+   private val semaphore = Semaphore(permits = 3)
+   private val pool = ArrayDeque<WebView>()
+   private val poolMutex = Mutex()
++  private val mainHandler = Handler(Looper.getMainLooper())
+   private val json = Json {
+     ignoreUnknownKeys = true
+     isLenient = true
+@@ -117,7 +120,7 @@ class AndroidReadabilityRunner(
+         @JavascriptInterface
+         fun onPageReady() {
+           if (isFinished.get()) return
+-          webView.post {
++          mainHandler.post {
+             if (isFinished.get()) return@post
+             val script =
+               """
+```
+
+---
+
+### Incident Patch 3: `e57be052` (2026-11-01)
+**Commit Message**: Improve source navigation and UI transitions in the home screen
+
+- Add fade and scale animations to `CircularIconButton` when its icon changes.
+- Use `AnimatedVisibility` with slide and fade transitions for the pinned sources and now playing bottom bars.
+- Add support for a back button in `HomeTopAppBar` when a source is active and inline navigation is unavailable, allowing users to return to the home state.
+- Wrap `SourceInfo` in `AnimatedContent` to smoothly animate transitions between different sources in the top app bar.
+- Disable navigation drawer gestures when a source is active to prevent conflicts with back navigation.
+- Update bottom bar visibility logic to only show pinned sources if the active source is among them or if no source is selected.
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/components/Button.kt` (modified, +22/-6)
+```diff
+@@ -23,6 +23,8 @@ import androidx.compose.animation.core.animateFloatAsState
+ import androidx.compose.animation.core.spring
+ import androidx.compose.animation.fadeIn
+ import androidx.compose.animation.fadeOut
++import androidx.compose.animation.scaleIn
++import androidx.compose.animation.scaleOut
+ import androidx.compose.animation.slideInVertically
+ import androidx.compose.animation.slideOutVertically
+ import androidx.compose.animation.togetherWith
+@@ -328,12 +330,26 @@ fun CircularIconButton(
+         .graphicsLayer { alpha = animatedAlpha },
+     contentAlignment = Alignment.Center,
+   ) {
+-    Icon(
+-      modifier = Modifier.requiredSize(20.dp),
+-      imageVector = icon,
+-      contentDescription = null,
+-      tint = contentColor ?: AppTheme.colorScheme.onSurface,
+-    )
++    AnimatedContent(
++      targetState = icon,
++      contentAlignment = Alignment.Center,
++      transitionSpec = {
++        (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
++            scaleIn(animationSpec = spring(stiffness = Spring.StiffnessMedium)))
++          .togetherWith(
++            fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
++              scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium))
++          )
++      },
++      label = "CircularIconButtonIcon",
++    ) { targetIcon ->
++      Icon(
++        modifier = Modifier.requiredSize(20.dp),
++        imageVector = targetIcon,
++        contentDescription = null,
++        tint = contentColor ?: AppTheme.colorScheme.onSurface,
++      )
++    }
    }
  }
  
-+/**
-+ * Vox Media's Duet scorecard (the review box on The Verge and its sister
-+ * sites) is a CSS grid of bare divs: the score sits in an element of its own,
-+ * apart from the "Verge Score" label that explains it; the price is emitted
-+ * twice, once for the narrow layout and once for the wide one, with whichever
-+ * one doesn't apply hidden by CSS; and the retailer links are inline
-+ * siblings. Flattened to markdown as-is, that reads as a stray number, a
-+ * doubled price and a single run of concatenated links, so rebuild the box out
-+ * of plain blocks before extraction. The grid itself can't survive - markdown
-+ * has no two-column layout to put "The Good" and "The Bad" side by side - so
-+ * the columns are left to stack as the lists they already are.
-+ */
-+function transformScorecards(doc) {
-+  var cards = doc.querySelectorAll(".duet--article--scorecard");
-+  for (var i = 0; i < cards.length; i++) {
-+    mergeScorecardScore(cards[i]);
-+    removeScorecardResponsiveDuplicates(cards[i]);
-+    splitScorecardLinkRows(doc, cards[i]);
-+    unwrapScorecardWrappers(cards[i]);
-+  }
-+}
-+
-+function scorecardLeafText(element) {
-+  if (element.children.length > 0) return "";
-+  return element.textContent.replace(/\s+/g, " ").trim();
-+}
-+
-+/**
-+ * Joins the bare score to the label that follows it, so the number arrives as
-+ * "Verge Score: 8" rather than as a line holding nothing but a digit.
-+ */
-+function mergeScorecardScore(card) {
-+  var elements = Array.prototype.slice.call(card.querySelectorAll("*"));
-+  for (var i = 0; i < elements.length; i++) {
-+    var score = elements[i];
-+    if (!/^\d{1,3}(\.\d+)?$/.test(scorecardLeafText(score))) continue;
-+
-+    var label = score.nextElementSibling;
-+    if (!label || !/score/i.test(scorecardLeafText(label))) continue;
-+
-+    label.textContent = scorecardLeafText(label) + ": " + scorecardLeafText(score);
-+    score.remove();
-+    return;
-+  }
-+}
-+
-+/**
-+ * Drops the layout's hidden twin of a text leaf. Scoped to plain text outside
-+ * lists, headings and links, so a price repeated for a second breakpoint goes
-+ * while a retailer link that happens to carry the same price stays.
-+ */
-+function removeScorecardResponsiveDuplicates(card) {
-+  var elements = Array.prototype.slice.call(card.querySelectorAll("*"));
-+  var seen = {};
-+
-+  for (var i = 0; i < elements.length; i++) {
-+    var element = elements[i];
-+    if (!element.parentNode) continue;
-+    if (element.closest("ul, ol, a, h1, h2, h3, h4, h5, h6")) continue;
-+
-+    var text = scorecardLeafText(element);
-+    if (!text) continue;
-+
-+    if (seen[text]) {
-+      element.remove();
-+    } else {
-+      seen[text] = true;
-+    }
-+  }
-+}
-+
-+/**
-+ * Puts each retailer link in a block of its own. Left as inline siblings they
-+ * convert to one unbroken line of "[$180 at Amazon](...)[$180 at Google](...)".
-+ */
-+function splitScorecardLinkRows(doc, card) {
-+  var rows = Array.prototype.slice.call(card.querySelectorAll("*"));
-+  for (var i = 0; i < rows.length; i++) {
-+    var row = rows[i];
-+    var links = [];
-+    for (var j = 0; j < row.children.length; j++) {
-+      if (row.children[j].tagName === "A") links.push(row.children[j]);
-+    }
-+
-+    if (links.length < 2 || links.length !== row.children.length) continue;
-+    if (row.textContent.replace(/\s+/g, "") === "") continue;
-+
-+    for (var k = 0; k < links.length; k++) {
-+      var paragraph = doc.createElement("p");
-+      row.insertBefore(paragraph, links[k]);
-+      paragraph.appendChild(links[k]);
-+    }
-+  }
-+}
-+
-+/**
-+ * Lifts the card's contents out of its grid wrappers. The product name and
-+ * price sit in a wrapper of their own that holds little besides a link, which
-+ * Readability drops as boilerplate along with everything inside it; as direct
-+ * children of the card they are scored with the rest of the review instead.
-+ */
-+function unwrapScorecardWrappers(card) {
-+  var wrappers = Array.prototype.slice.call(card.querySelectorAll("div"));
-+  for (var i = wrappers.length - 1; i >= 0; i--) {
-+    var wrapper = wrappers[i];
-+    if (!wrapper.parentNode) continue;
-+
-+    while (wrapper.firstChild) {
-+      wrapper.parentNode.insertBefore(wrapper.firstChild, wrapper);
-+    }
-+    wrapper.remove();
-+  }
-+}
-+
- /**
-  * Specifically targets Reddit pages (both modern Shreddit and legacy UI) to extract
-  * the main post content, effectively isolating it from sidebars, comments, and
-@@ -771,6 +885,7 @@ function parseReaderContent(link, bannerImage, html) {
-         processNoScriptImages(doc);
-         preserveTableAlignment(doc);
-         transformShredditElements(doc);
-+        transformScorecards(doc);
-         removeFirstImageTagByUrl(doc, bannerImage);
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/HomeScreen.kt` (modified, +36/-20)
+```diff
+@@ -16,7 +16,12 @@
+  */
+ package dev.sasikanth.rss.reader.home.ui
  
-         var junkElements = doc.querySelectorAll(JUNK_SELECTORS);
++import androidx.compose.animation.AnimatedVisibility
+ import androidx.compose.animation.core.animate
++import androidx.compose.animation.fadeIn
++import androidx.compose.animation.fadeOut
++import androidx.compose.animation.slideInVertically
++import androidx.compose.animation.slideOutVertically
+ import androidx.compose.foundation.gestures.detectDragGestures
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+@@ -282,7 +287,13 @@ private fun HomeContent(
+       }
+     }
+ 
+-  val canShowBottomBar = platform !is Platform.Desktop && state.showPinnedSources
++  val rootSizeClass = LocalRootWindowSizeClass.current
++  val hasInlineNavigation =
++    rootSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND)
++  val isActiveSourceInPinnedSources =
++    state.activeSource == null || feedsState.pinnedSources.any { it.id == state.activeSource.id }
++  val canShowBottomBar =
++    platform !is Platform.Desktop && state.showPinnedSources && isActiveSourceInPinnedSources
+   val systemDynamicDarkColors =
+     if (state.themeVariant == ThemeVariant.SystemDynamic) {
+       systemDynamicColorScheme(true)
+@@ -433,19 +444,23 @@ private fun HomeContent(
+   Scaffold(
+     modifier = modifier,
+     bottomBar = {
+-      if (canShowBottomBar) {
+-        val scaffoldBottomPadding =
+-          if (platform == Platform.Desktop) {
+-            16.dp
+-          } else {
+-            0.dp
+-          }
++      val scaffoldBottomPadding =
++        if (platform == Platform.Desktop) {
++          16.dp
++        } else {
++          0.dp
++        }
+ 
+-        val bottomBarModifier =
+-          remember(scaffoldBottomPadding) { Modifier.padding(bottom = scaffoldBottomPadding) }
++      val bottomBarModifier =
++        remember(scaffoldBottomPadding) { Modifier.padding(bottom = scaffoldBottomPadding) }
+ 
+-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+-          AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
++      Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
++        AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
++          AnimatedVisibility(
++            visible = canShowBottomBar,
++            enter = slideInVertically { it } + fadeIn(),
++            exit = slideOutVertically { it } + fadeOut(),
++          ) {
+             PinnedSourcesBottomBar(
+               modifier = bottomBarModifier,
+               pinnedSources = feedsState.pinnedSources,
+@@ -465,14 +480,13 @@ private fun HomeContent(
+               },
+             )
+           }
+-        }
+-      } else if (hasActiveTrack) {
+-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+-          AppTheme(useDarkTheme = true, overriddenColorScheme = overriddenDarkColorScheme) {
+-            NowPlayingBottomBar(
+-              modifier =
+-                Modifier.padding(bottom = if (platform == Platform.Desktop) 16.dp else 0.dp)
+-            ) {
++
++          AnimatedVisibility(
++            visible = !canShowBottomBar && hasActiveTrack,
++            enter = slideInVertically { it } + fadeIn(),
++            exit = slideOutVertically { it } + fadeOut(),
++          ) {
++            NowPlayingBottomBar(modifier = bottomBarModifier) {
+               NowPlayingChip(
+                 playbackState = playbackState,
+                 onPlayPauseClick = onTogglePlayback,
+@@ -514,7 +528,9 @@ private fun HomeContent(
+             listState = postsListState,
+             hasUnreadPosts = latestState.hasUnreadPosts,
+             confirmMarkAllAsRead = latestState.confirmMarkAllAsRead,
++            showBackButton = !hasInlineNavigation && latestState.activeSource != null,
+             onMenuClicked = onMenuClicked,
++            onBackClicked = onHomeSelected,
+             onShowPostsSortFilter = { dispatch(HomeEvent.ShowPostsSortFilter(true)) },
+             onMarkPostsAsRead = { dispatch(HomeEvent.MarkPostsAsRead(it)) },
+           )
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/HomeTopAppBar.kt` (modified, +63/-25)
+```diff
+@@ -19,6 +19,9 @@ package dev.sasikanth.rss.reader.home.ui
+ 
+ import androidx.compose.animation.AnimatedContent
+ import androidx.compose.animation.AnimatedVisibility
++import androidx.compose.animation.SizeTransform
++import androidx.compose.animation.core.Spring
++import androidx.compose.animation.core.spring
+ import androidx.compose.animation.fadeIn
+ import androidx.compose.animation.fadeOut
+ import androidx.compose.animation.scaleIn
+@@ -30,6 +33,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
+ import androidx.compose.foundation.layout.PaddingValues
+ import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.height
+ import androidx.compose.foundation.layout.padding
+ import androidx.compose.foundation.layout.width
+@@ -46,6 +50,7 @@ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
++import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.drawWithCache
+ import androidx.compose.ui.graphics.Color
+@@ -57,6 +62,7 @@ import dev.sasikanth.rss.reader.core.model.local.Feed
+ import dev.sasikanth.rss.reader.core.model.local.FeedGroup
+ import dev.sasikanth.rss.reader.core.model.local.PostsType
+ import dev.sasikanth.rss.reader.core.model.local.Source
++import dev.sasikanth.rss.reader.resources.icons.ArrowBack
+ import dev.sasikanth.rss.reader.resources.icons.ArrowDown
+ import dev.sasikanth.rss.reader.resources.icons.MarkAllAsRead
+ import dev.sasikanth.rss.reader.resources.icons.Menu
+@@ -68,6 +74,7 @@ import twine.shared.generated.resources.Res
+ import twine.shared.generated.resources.appBarAllFeeds
+ import twine.shared.generated.resources.buttonCancel
+ import twine.shared.generated.resources.buttonConfirm
++import twine.shared.generated.resources.buttonGoBack
+ import twine.shared.generated.resources.markAllAsRead
+ import twine.shared.generated.resources.markAllAsReadDialogDesc
+ import twine.shared.generated.resources.markAllAsReadDialogTitle
+@@ -88,7 +95,9 @@ internal fun HomeTopAppBar(
+   hasUnreadPosts: Boolean,
+   confirmMarkAllAsRead: Boolean,
+   modifier: Modifier = Modifier,
++  showBackButton: Boolean = false,
+   onMenuClicked: (() -> Unit)? = null,
++  onBackClicked: () -> Unit = {},
+   onShowPostsSortFilter: () -> Unit,
+   onMarkPostsAsRead: (Source?) -> Unit,
+ ) {
+@@ -127,12 +136,26 @@ internal fun HomeTopAppBar(
+     contentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
+     title = { SourceInfo(source = source) },
+     navigationIcon = {
+-      if (onMenuClicked != null) {
++      if (showBackButton || onMenuClicked != null) {
++        val icon = if (showBackButton) TwineIcons.ArrowBack else TwineIcons.Menu
++        val label =
++          if (showBackButton) {
++            stringResource(Res.string.buttonGoBack)
++          } else {
++            stringResource(Res.string.moreMenuOptions)
++          }
++
+         CircularIconButton(
+           modifier = Modifier.padding(start = 12.dp),
+-          icon = TwineIcons.Menu,
+-          label = stringResource(Res.string.moreMenuOptions),
+-          onClick = onMenuClicked,
++          icon = icon,
++          label = label,
++          onClick = {
++            if (showBackButton) {
++              onBackClicked()
++            } else {
++              onMenuClicked?.invoke()
++            }
++          },
+         )
+       }
+     },
+@@ -219,29 +242,44 @@ internal fun HomeTopAppBar(
+ 
+ @Composable
+ private fun SourceInfo(source: Source?, modifier: Modifier = Modifier) {
+-  Column(modifier = modifier.padding(start = 12.dp)) {
+-    val title = stringResource(Res.string.screenHome)
+-    val subtitle =
+-      when (source) {
+-        is Feed -> source.name
+-        is FeedGroup -> source.name
+-        else -> stringResource(Res.string.appBarAllFeeds)
+-      }
++  AnimatedContent(
++    modifier = modifier.fillMaxWidth().padding(start = 12.dp),
++    targetState = source,
++    contentKey = { it?.id },
++    contentAlignment = Alignment.CenterStart,
++    transitionSpec = {
++      fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMedium))
++        .togetherWith(fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)))
++        .using(SizeTransform(clip = false))
++    },
++    label = "SourceInfo",
++  ) { targetSource ->
++    Column(modifier = Modifier.fillMaxWidth()) {
++      val title =
++        when (targetSource) {
++          is Feed -> targetSource.name
++          is FeedGroup -> targetSource.name
++          else -> stringResource(Res.string.screenHome)
++        }
+ 
+-    Text(
+-      text = title,
+-      style = MaterialTheme.typography.titleMedium,
+-      color = AppTheme.colorScheme.onSurface,
+-      maxLines = 1,
+-    )
++      Text(
++        modifier = Modifier.basicMarquee(),
++        text = title,
++        style = Mater
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/main/ui/MainScreen.kt` (modified, +1/-0)
+```diff
+@@ -340,6 +340,7 @@ internal fun MainScreen(
+       ModalNavigationDrawer(
+         modifier = modifier,
+         drawerState = drawerState,
++        gesturesEnabled = drawerState.isOpen || !hasActiveSource,
+         drawerContent = {
+           ModalDrawerSheet(
+             // Full-width on phones; partial overlay (Gmail-style) on foldables/expanded.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1970** (2026-10-27): [300.114.*] Pre-release merge (@tramline-github[bot])
-- **PR #1969** (2026-10-27): [300.113.*] Pre-release merge (@tramline-github[bot])
-- **PR #1968** (2026-10-26): [300.112.*] Pre-release merge (@tramline-github[bot])
-- **PR #1967** (2026-10-26): [300.111.*] Pre-release merge (@tramline-github[bot])
-- **PR #1966** (2026-10-25): [300.110.*] Pre-release merge (@tramline-github[bot])
-- **PR #1965** (2026-10-25): [300.109.*] Pre-release merge (@tramline-github[bot])
+- **PR #1983** (2026-11-04): [300.120.*] Pre-release merge (@tramline-github[bot])
+- **PR #1982** (2026-11-03): [300.119.*] Pre-release merge (@tramline-github[bot])
+- **PR #1981** (2026-11-02): [300.118.*] Pre-release merge (@tramline-github[bot])
+- **PR #1980** (2026-11-02): [300.117.*] Pre-release merge (@tramline-github[bot])
+- **PR #1978** (2026-11-02): [300.116.*] Pre-release merge (@tramline-github[bot])
+- **PR #1977** (2026-11-02): Use row-value comparisons in post position queries (@sergeich)
 
 ---
 
@@ -840,52 +1345,86 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve rendering of Vox Media review scorecards in the reader
+## X. Improve readability parsing stability and add timeouts
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/composeResources/files/reader/main.es5.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b3aa942`: Improve rendering of Vox Media review scorecards in the reader. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `563cc519`: Improve readability parsing stability and add timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/composeResources/files/reader/main.es5.js`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/reader/readability/ReadabilityRunner.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-/**
- * Vox Media's Duet scorecard (the review box on The Verge and its sister
- * sites) is a CSS grid of bare divs: the score sits in an element of its own,
- * apart from the "Verge Score" label that explains it; the price is emitted
- * twice, once for the narrow layout and once for the wide one, with whichever
- * one doesn't apply hidden by CSS; and the retailer links are inline
- * siblings. Flattened to markdown as-is, that reads as a stray number, a
- * doubled price and a single run of concatenated links, so rebuild the box out
- * of plain blocks before extraction. The grid itself can't survive - markdown
- * has no two-column layout to put "The Good" and "The Bad" side by side - so
- * the columns are left to stack as the lists they already are.
- */
-function transformScorecards(doc) {
-  var cards = doc.querySelectorAll(".duet--article--scorecard");
-  for (var i = 0; i < cards.length; i++) {
-    mergeScorecardScore(cards[i]);
-    removeScorecardResponsiveDuplicates(cards[i]);
-    splitScorecardLinkRows(doc, cards[i]);
-    unwrapScorecardWrappers(cards[i]);
-  }
-}
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import co.touchlab.kermit.Logger
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withTimeoutOrNull
+private val PARSE_TIMEOUT = 15.seconds
 
-function scorecardLeafText(element) {
-  if (element.children.length > 0) return "";
-  return element.textContent.replac
+          withTimeoutOrNull(PARSE_TIMEOUT) {
+            awaitParsedContent(
+              webView = webView,
+              htmlShell = htmlShell,
+              link = link,
+              content = content,
+              image = image,
+            )
+            ?: run {
+              Logger.e { "Timed out running readability pipeline, falling back to raw content" }
+              ReadabilityResult(content = content)
+            }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Exception) {
+          Logger.e(e) { "Failed to run readability pipeline, falling back to raw content" }
+          ReadabilityResult(content = content)
+          withContext(NonCancellable) { returnWebViewToPool(webView) }
+  private suspend fun awaitParsedContent(
+    webView: WebView,
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          suspendCancellableCoroutine { continuation ->
+            val bridge =
+              object {
+                @JavascriptInterface
+                fun onContentParsed(result: String) {
+                  try {
+                    val parsed = json.decodeFromString<ReadabilityResult>(result)
+                    continuation.resume(parsed) { _, _, _ ->
+                      // no-op
+                    }
+                  } catch (e: Exception) {
+                    continuation.resumeWithException(e)
+                  }
+                }
+              }
+
+            webView.addJavascriptInterface(bridge, "ReaderJSInterface")
+
+            webView.webViewClient =
+              object : WebViewClient() {
+                override fun onPageFinished(view: WebView, url: String) {
+                  val script =
+                    """
+                                parseReaderContent(
+                                    ${link.asJSString}, 
+                                    ${image.asJSString}, 
+                                    ${content.asJSString}
+                                ).then(res => ReaderJSInterface.onContentParsed(JSON.stringify(res)))
+                         
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b3aa942` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `563cc519` are properly handled with clean fallback behavior.

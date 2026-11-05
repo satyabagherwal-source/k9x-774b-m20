@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-04T23:53:22.890Z",
+  "last_updated": "2026-11-05T00:00:13.628Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25422,7 +25422,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
+      "content_hash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -25510,6 +25510,16 @@
           "number": 6153,
           "title": "Hugging Face YAML Frontmatter Zero-Byte Offset Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7035,
+          "title": "The Standard Container Invariant for Custom Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7036,
+          "title": "The Sensitivity-Aware Precision Allocation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25530,7 +25540,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-31T09:40:12.430Z",
+      "verified_at": "2026-11-05T00:00:13.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42587,8 +42597,8 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "4b3aa942",
-      "content_hash": "a5866c2bc88b125fccfa795d4b7131cbc30ca782a10220746d61c6f66a57ba6c",
+      "source_version": "f10bb41f",
+      "content_hash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
@@ -42606,6 +42616,11 @@
           "number": 5121,
           "title": "Improve rendering of Vox Media review scorecards in the reader",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7034,
+          "title": "Improve readability parsing stability and add timeouts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42613,7 +42628,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:13:16.648Z",
+      "verified_at": "2026-11-05T00:00:12.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178621,6 +178636,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-04T23:53:22.876Z"
+    },
+    "rule-7034": {
+      "learning_id": "rule-7034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7034,
+      "title": "Improve readability parsing stability and add timeouts",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "f10bb41f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:00:12.112Z"
+    },
+    "rule-7035": {
+      "learning_id": "rule-7035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7035,
+      "title": "The Standard Container Invariant for Custom Quantization",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:00:13.609Z"
+    },
+    "rule-7036": {
+      "learning_id": "rule-7036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7036,
+      "title": "The Sensitivity-Aware Precision Allocation Rule",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:00:13.609Z"
     }
   },
   "aliases": {

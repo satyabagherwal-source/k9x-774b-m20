@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "1776ed5537b76acb16f466cebb2db182bdf65e8fb5fc3e79f0153380caed39e2",
-    "lastHarvestedAt": "2026-10-31T09:40:12.530Z",
+    "contentHash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
+    "lastHarvestedAt": "2026-11-05T00:00:13.702Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "4b3aa942",
+    "sourceVersion": "f10bb41f",
     "license": "GPL-3.0",
-    "contentHash": "a5866c2bc88b125fccfa795d4b7131cbc30ca782a10220746d61c6f66a57ba6c",
-    "lastHarvestedAt": "2026-10-28T02:13:16.747Z",
+    "contentHash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
+    "lastHarvestedAt": "2026-11-05T00:00:12.230Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {

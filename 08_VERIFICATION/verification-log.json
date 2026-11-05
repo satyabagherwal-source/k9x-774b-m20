@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-UQEK",
-    "timestamp": "2026-11-03T12:25:09.932Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "b4582acafe1c4c6611e7034fc7f35bafbf66f63cc13c0a51566d65304666ebee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-US2F",
-    "timestamp": "2026-11-03T12:25:12.087Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "6451b733c0c47e33b67798d039fa166f017c426b5ddbf7d5cf23adb30df2dc78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-3S8X",
     "timestamp": "2026-11-03T12:32:12.225Z",
     "repository": "zvec-ai/zvec-grep",
@@ -7492,6 +7462,36 @@
     "contentHash": "07110e8adba56d4d8428f5d67fa48012b746a8bc71d24a2a5db0cfd5c1f59fbd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-4ERM",
+    "timestamp": "2026-11-05T00:00:12.226Z",
+    "repository": "msasikanth/twine",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "5ba56753b6b13e826e724e06a0ed81e22f86bdf21527af4122416214f29ef086",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-4FWJ",
+    "timestamp": "2026-11-05T00:00:13.699Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
