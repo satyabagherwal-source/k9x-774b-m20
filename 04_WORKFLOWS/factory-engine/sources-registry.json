@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T13:47:59.488Z",
-    "lastVerified": "2026-11-05T13:47:59.488Z",
+    "lastChecked": "2026-11-05T13:55:06.400Z",
+    "lastVerified": "2026-11-05T13:55:06.400Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:27:12.707Z",
-    "lastVerified": "2026-11-05T13:27:12.707Z",
+    "lastChecked": "2026-11-05T13:55:06.393Z",
+    "lastVerified": "2026-11-05T13:55:06.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1450,9 +1450,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-05T10:32:57.436Z",
+    "lastChecked": "2026-11-05T13:55:01.397Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-05T10:32:57.436Z"
+    "lastVerified": "2026-11-05T13:55:01.397Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2567,9 +2567,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-04T23:13:37.203Z",
+    "lastChecked": "2026-11-05T13:55:03.904Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-04T23:13:37.203Z"
+    "lastVerified": "2026-11-05T13:55:03.904Z"
   },
   "zeronsh-zeron": {
     "name": "zeronsh/zeron",
@@ -5348,8 +5348,8 @@
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T00:00:07.928Z",
-    "lastVerified": "2026-11-05T00:00:07.928Z",
+    "lastChecked": "2026-11-05T13:54:58.875Z",
+    "lastVerified": "2026-11-05T13:54:58.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -8475,13 +8475,13 @@
     "officialUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T23:33:15.539Z",
-    "lastVerified": "2026-10-31T23:33:15.539Z",
+    "lastChecked": "2026-11-05T13:54:54.224Z",
+    "lastVerified": "2026-11-05T13:54:54.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
-    "promotedRulesCount": 3,
+    "contentHash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10940,9 +10940,9 @@
   "pointfreeco-isowords": {
     "name": "isowords",
     "officialUrl": "https://github.com/pointfreeco/isowords",
-    "lastChecked": "2026-11-03T11:14:54.835Z",
+    "lastChecked": "2026-11-05T13:54:56.387Z",
     "revisionIdentifier": "c727d3a7",
-    "lastVerified": "2026-11-03T11:14:54.835Z"
+    "lastVerified": "2026-11-05T13:54:56.387Z"
   },
   "inikulin-parse5": {
     "name": "inikulin/parse5",
@@ -13753,6 +13753,23 @@
     "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "feder-cr-jobs_applier_ai_agent": {
+    "name": "feder-cr/Jobs_Applier_AI_Agent",
+    "officialUrl": "https://github.com/feder-cr/Jobs_Applier_AI_Agent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-05T13:54:50.397Z",
+    "lastVerified": "2026-11-05T13:54:50.397Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-feder-cr-jobs_applier_ai_agent",
+    "contentHash": "7d7ce1210426259647a8e15a0f2ddb915b2274096b1d7042b7a8f5682f580e60",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

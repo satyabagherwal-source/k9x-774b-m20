@@ -4872,3 +4872,7 @@ https://github.com/N1nEmAn/sapper-v2
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T13:04:59.164Z] ---
 # [AI-AGENTS] yikart/AiToEarn (15292 score) - Let's use AI to Earn!
 https://github.com/yikart/AiToEarn
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T13:54:45.931Z] ---
+# [AI-AGENTS] feder-cr/Jobs_Applier_AI_Agent (17873 score) - Give it your resume, get the jobs that fit, select them and apply. Runs in your 
+https://github.com/feder-cr/Jobs_Applier_AI_Agent

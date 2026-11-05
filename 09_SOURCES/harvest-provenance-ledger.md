@@ -7689,3 +7689,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T13:47:43.164Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `a6d5147c` | Multi-dimensional audit evidence | 2026-11-05T13:47:52.503Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `f0f9ff86` | Multi-dimensional audit evidence | 2026-11-05T13:47:56.928Z |
+| `learn-github-feder-cr-jobs_applier_ai_agent` | `https://github.com/feder-cr/Jobs_Applier_AI_Agent` | `19465fc0` | Multi-dimensional audit evidence | 2026-11-05T13:54:52.362Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-05T13:54:54.447Z |

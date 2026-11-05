@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T13:47:56.937Z",
-  "total_cycles_completed": 7657,
-  "total_learnings_persisted": 7657,
-  "total_rules_promoted": 7305,
+  "last_updated": "2026-11-05T13:54:54.451Z",
+  "total_cycles_completed": 7659,
+  "total_learnings_persisted": 7659,
+  "total_rules_promoted": 7306,
   "history": [
-    {
-      "timestamp": "2026-11-05T03:27:44.440Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:32:38.610Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T03:39:48.951Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1403,6 +1389,20 @@
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:54:52.366Z",
+      "repository": "feder-cr/Jobs_Applier_AI_Agent",
+      "learningId": "learn-github-feder-cr-jobs_applier_ai_agent",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:54:54.451Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

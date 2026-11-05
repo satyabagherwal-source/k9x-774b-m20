@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
-    "lastHarvestedAt": "2026-10-31T23:35:47.218Z",
+    "contentHash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
+    "lastHarvestedAt": "2026-11-05T13:54:54.447Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -11988,5 +11988,15 @@
     "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
     "lastHarvestedAt": "2026-11-05T13:06:34.625Z",
     "learningId": "learn-github-yikart-aitoearn"
+  },
+  "feder-cr-jobs_applier_ai_agent": {
+    "repository": "feder-cr/Jobs_Applier_AI_Agent",
+    "platform": "github",
+    "sourceUrl": "https://github.com/feder-cr/Jobs_Applier_AI_Agent",
+    "sourceVersion": "19465fc0",
+    "license": "MIT",
+    "contentHash": "7d7ce1210426259647a8e15a0f2ddb915b2274096b1d7042b7a8f5682f580e60",
+    "lastHarvestedAt": "2026-11-05T13:54:52.362Z",
+    "learningId": "learn-github-feder-cr-jobs_applier_ai_agent"
   }
 }

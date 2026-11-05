@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T13:47:56.949Z",
+  "last_updated": "2026-11-05T13:54:54.454Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
-      "verified_at": "2026-10-31T23:35:47.227Z",
+      "content_hash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
+      "verified_at": "2026-11-05T13:54:54.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:35:47.227Z"
+      "last_updated": "2026-11-05T13:54:54.454Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -18044,6 +18044,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T13:06:34.639Z"
+    },
+    "feder-cr/Jobs_Applier_AI_Agent": {
+      "repository": "feder-cr/Jobs_Applier_AI_Agent",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-feder-cr-jobs_applier_ai_agent",
+      "content_hash": "7d7ce1210426259647a8e15a0f2ddb915b2274096b1d7042b7a8f5682f580e60",
+      "verified_at": "2026-11-05T13:54:52.375Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T13:54:52.375Z"
     }
   },
   "repos": {

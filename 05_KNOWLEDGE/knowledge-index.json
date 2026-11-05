@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:47:56.801Z",
-  "total_verified_learnings": 1217,
+  "last_updated": "2026-11-05T13:54:54.379Z",
+  "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30873,7 +30873,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "0bb2c915dbaf22b3db0eac1bbeedeb29a7963682ed3cb31a2c71d3ce0174ec57",
+      "content_hash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -30966,7 +30966,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-31T23:35:47.108Z",
+      "verified_at": "2026-11-05T13:54:54.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182772,6 +182772,53 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:47:56.769Z"
+    },
+    "learn-github-feder-cr-jobs_applier_ai_agent": {
+      "learning_id": "learn-github-feder-cr-jobs_applier_ai_agent",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "feder-cr/Jobs_Applier_AI_Agent",
+      "repository": "feder-cr/Jobs_Applier_AI_Agent",
+      "slug": "feder-cr-jobs_applier_ai_agent",
+      "platform": "github",
+      "source_url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent",
+      "source_version": "19465fc0",
+      "content_hash": "7d7ce1210426259647a8e15a0f2ddb915b2274096b1d7042b7a8f5682f580e60",
+      "dossier_path": "07_PROJECT_LEARNING/feder-cr-jobs_applier_ai_agent-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/feder-cr-jobs_applier_ai_agent-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 7242,
+          "title": "Changelog: the last fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T13:54:52.276Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7242": {
+      "learning_id": "rule-7242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7242,
+      "title": "Changelog: the last fixes",
+      "source_url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent",
+      "source_version": "19465fc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:54:52.276Z"
     }
   },
   "aliases": {

@@ -20395,5 +20395,20 @@
     "qualityScore": 15292,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T13:01:16.055Z"
+  },
+  {
+    "name": "Jobs_Applier_AI_Agent",
+    "fullName": "feder-cr/Jobs_Applier_AI_Agent",
+    "url": "https://github.com/feder-cr/Jobs_Applier_AI_Agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Give it your resume, get the jobs that fit, select them and apply. Runs in your terminal, with a browser you can watch.",
+    "stars": 32390,
+    "forks": 4739,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 17873,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T13:51:11.147Z"
   }
 ]

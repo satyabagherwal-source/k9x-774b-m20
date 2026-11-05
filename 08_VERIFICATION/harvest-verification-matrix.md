@@ -7680,3 +7680,5 @@
 | `CYCLE-20261105-OLO7` | `2026-11-05T13:47:43.159Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`7c4cd035...`) |
 | `CYCLE-20261105-OSVN` | `2026-11-05T13:47:52.499Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7240` | Yes (`40bba363...`) |
 | `CYCLE-20261105-OWAJ` | `2026-11-05T13:47:56.923Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7241` | Yes (`0e740c49...`) |
+| `CYCLE-20261105-XSUF` | `2026-11-05T13:54:52.359Z` | `feder-cr/Jobs_Applier_AI_Agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7242` | Yes (`7d7ce121...`) |
+| `CYCLE-20261105-XUGD` | `2026-11-05T13:54:54.445Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`e352aef7...`) |
