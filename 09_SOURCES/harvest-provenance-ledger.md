@@ -7789,3 +7789,5 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `956522a3` | Multi-dimensional audit evidence | 2026-11-05T20:06:40.250Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ea260c54` | Multi-dimensional audit evidence | 2026-11-05T20:06:49.859Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `edd9f02f` | Multi-dimensional audit evidence | 2026-11-05T21:25:59.071Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `885ef69f` | Multi-dimensional audit evidence | 2026-11-05T21:32:49.469Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T21:32:57.199Z |

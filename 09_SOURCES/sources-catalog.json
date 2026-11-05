@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "cbb7380f",
+    "sourceVersion": "885ef69f",
     "license": "MIT",
-    "contentHash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
-    "lastHarvestedAt": "2026-11-05T01:07:54.277Z",
+    "contentHash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
+    "lastHarvestedAt": "2026-11-05T21:32:49.469Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -11465,8 +11465,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
     "license": "Open-Source",
-    "contentHash": "a1c39e0e870feed7f071d29fcd4768118066922c0ef06804d125d804990a66e3",
-    "lastHarvestedAt": "2026-11-02T16:26:13.719Z",
+    "contentHash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
+    "lastHarvestedAt": "2026-11-05T21:32:57.199Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   },
   "liketrek-trek": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-ROJJ",
-    "timestamp": "2026-11-04T18:42:22.591Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-B2DR",
-    "timestamp": "2026-11-04T18:57:26.991Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-B87D",
     "timestamp": "2026-11-04T18:57:34.537Z",
     "repository": "callstack/agent-device",
@@ -7492,6 +7462,36 @@
     "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-AQBE",
+    "timestamp": "2026-11-05T21:32:49.466Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-AWA4",
+    "timestamp": "2026-11-05T21:32:57.196Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:25:59.075Z",
-  "total_cycles_completed": 7757,
-  "total_learnings_persisted": 7757,
-  "total_rules_promoted": 7402,
+  "last_updated": "2026-11-05T21:32:57.204Z",
+  "total_cycles_completed": 7759,
+  "total_learnings_persisted": 7759,
+  "total_rules_promoted": 7403,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:31:50.799Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:31:51.696Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:32:48.620Z",
       "repository": "easegress-io/easegress",
@@ -1403,6 +1389,20 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:32:49.474Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:32:57.204Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

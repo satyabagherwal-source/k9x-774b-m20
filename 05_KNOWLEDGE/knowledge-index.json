@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T21:25:58.974Z",
+  "last_updated": "2026-11-05T21:32:57.094Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8341,13 +8341,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "885ef69f",
-      "content_hash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8457,7 +8457,7 @@
         {
           "number": 7271,
           "title": "app-server): neutralize repository-defined git filter drivers on status reads (P",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8465,7 +8465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:59:21.519Z",
+      "verified_at": "2026-11-05T21:32:49.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157085,7 +157085,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
-      "content_hash": "a1c39e0e870feed7f071d29fcd4768118066922c0ef06804d125d804990a66e3",
+      "content_hash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "promoted_rules": [
@@ -157115,7 +157115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:26:13.615Z",
+      "verified_at": "2026-11-05T21:32:57.070Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183667,14 +183667,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7271,
       "title": "app-server): neutralize repository-defined git filter drivers on status reads (P",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "885ef69f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T15:59:21.519Z"
+      "verified_at": "2026-11-05T21:32:49.363Z"
     },
     "rule-7272": {
       "learning_id": "rule-7272",

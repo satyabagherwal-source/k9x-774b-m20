@@ -7780,3 +7780,5 @@
 | `CYCLE-20261105-7XPZ` | `2026-11-05T20:06:40.247Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d528c10...`) |
 | `CYCLE-20261105-854X` | `2026-11-05T20:06:49.857Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`21f9bf62...`) |
 | `CYCLE-20261105-1XNF` | `2026-11-05T21:25:59.067Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`715bfd52...`) |
+| `CYCLE-20261105-AQBE` | `2026-11-05T21:32:49.466Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7271` | Yes (`e41776c3...`) |
+| `CYCLE-20261105-AWA4` | `2026-11-05T21:32:57.196Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | Yes (`d238bb55...`) |
