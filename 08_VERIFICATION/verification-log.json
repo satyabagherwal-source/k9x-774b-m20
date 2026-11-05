@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-XOLV",
-    "timestamp": "2026-11-03T23:39:18.355Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "b5ae6b59ab7a1a36f7ef47669e1a660b4c0ab153b5b5b636b62ec549737d7224",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-XP2D",
-    "timestamp": "2026-11-03T23:39:18.949Z",
-    "repository": "nodejs/undici",
-    "learningId": "learn-github-nodejs-undici",
-    "contentHash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-6HH7",
     "timestamp": "2026-11-03T23:46:09.019Z",
     "repository": "axios/axios",
@@ -7492,6 +7462,36 @@
     "contentHash": "12634f3c8866a3a70297137662f298ed4396ae056f698f330e062ec8ca6e39e3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-L5I5",
+    "timestamp": "2026-11-05T07:13:07.613Z",
+    "repository": "exyte/PopupView",
+    "learningId": "learn-github-exyte-popupview",
+    "contentHash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-L9YQ",
+    "timestamp": "2026-11-05T07:13:13.394Z",
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+    "contentHash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

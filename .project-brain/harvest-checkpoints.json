@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T07:06:00.074Z",
+  "last_updated": "2026-11-05T07:13:13.413Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12576,14 +12576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-exyte-popupview",
-      "content_hash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
-      "verified_at": "2026-10-19T16:24:46.444Z",
+      "content_hash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
+      "verified_at": "2026-11-05T07:13:07.631Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:24:46.444Z"
+      "last_updated": "2026-11-05T07:13:07.631Z"
     },
     "sayaka-sh/spmp": {
       "repository": "sayaka-sh/spmp",
@@ -17151,14 +17151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "content_hash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
-      "verified_at": "2026-10-31T16:39:38.599Z",
+      "content_hash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
+      "verified_at": "2026-11-05T07:13:13.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:39:38.599Z"
+      "last_updated": "2026-11-05T07:13:13.412Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",

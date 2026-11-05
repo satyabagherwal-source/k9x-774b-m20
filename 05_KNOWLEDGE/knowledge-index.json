@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:05:59.962Z",
+  "last_updated": "2026-11-05T07:13:13.318Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13324,14 +13324,19 @@
       "slug": "exyte-popupview",
       "platform": "github",
       "source_url": "https://github.com/exyte/PopupView",
-      "source_version": "99695337",
-      "content_hash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
+      "source_version": "38fe3de1",
+      "content_hash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
       "dossier_path": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/exyte-popupview-learnings.md",
       "promoted_rules": [
         {
           "number": 2678,
           "title": "watchOS build: don't use NSEdgeInsets outside macOS",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7149,
+          "title": "premature dismissal while first popup layout is pending",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13340,7 +13345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:24:46.379Z",
+      "verified_at": "2026-11-05T07:13:07.512Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153429,7 +153434,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
       "source_version": "hf-openbmb-minicpm-ocr-1.0",
-      "content_hash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
+      "content_hash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
       "promoted_rules": [
@@ -153457,6 +153462,21 @@
           "number": 6250,
           "title": "Special‑Token Uniqueness Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7150,
+          "title": "**Configuration JSON Must Be Valid JSON, Not a JSON String**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7151,
+          "title": "**Tie‑Word‑Embeddings Only When Dimensions Match**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7152,
+          "title": "**Large Positional Embeddings Must Use Efficient Rotary Positional Encoding**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -153464,7 +153484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:39:38.473Z",
+      "verified_at": "2026-11-05T07:13:13.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180944,6 +180964,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:05:59.929Z"
+    },
+    "rule-7149": {
+      "learning_id": "rule-7149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7149,
+      "title": "premature dismissal while first popup layout is pending",
+      "source_url": "https://github.com/exyte/PopupView",
+      "source_version": "38fe3de1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:13:07.512Z"
+    },
+    "rule-7150": {
+      "learning_id": "rule-7150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7150,
+      "title": "**Configuration JSON Must Be Valid JSON, Not a JSON String**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:13:13.292Z"
+    },
+    "rule-7151": {
+      "learning_id": "rule-7151",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7151,
+      "title": "**Tie‑Word‑Embeddings Only When Dimensions Match**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:13:13.292Z"
+    },
+    "rule-7152": {
+      "learning_id": "rule-7152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7152,
+      "title": "**Large Positional Embeddings Must Use Efficient Rotary Positional Encoding**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:13:13.292Z"
     }
   },
   "aliases": {

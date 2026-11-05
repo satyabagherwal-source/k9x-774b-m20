@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T07:06:02.609Z",
-    "lastVerified": "2026-11-05T07:06:02.609Z",
+    "lastChecked": "2026-11-05T07:13:15.942Z",
+    "lastVerified": "2026-11-05T07:13:15.942Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T06:44:07.927Z",
-    "lastVerified": "2026-11-05T06:44:07.927Z",
+    "lastChecked": "2026-11-05T07:13:11.702Z",
+    "lastVerified": "2026-11-05T07:13:11.702Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1950,8 +1950,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:53:28.408Z",
-    "lastVerified": "2026-11-05T03:53:28.408Z",
+    "lastChecked": "2026-11-05T07:13:06.813Z",
+    "lastVerified": "2026-11-05T07:13:06.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2222,9 +2222,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-04T17:45:07.301Z",
+    "lastChecked": "2026-11-05T07:13:04.164Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-11-04T17:45:07.301Z"
+    "lastVerified": "2026-11-05T07:13:04.164Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -4478,9 +4478,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-04T07:18:38.697Z",
+    "lastChecked": "2026-11-05T07:12:56.590Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-11-04T07:18:38.697Z"
+    "lastVerified": "2026-11-05T07:12:56.590Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -5724,13 +5724,13 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T16:39:32.465Z",
-    "lastVerified": "2026-10-31T16:39:32.465Z",
+    "lastChecked": "2026-11-05T07:12:59.193Z",
+    "lastVerified": "2026-11-05T07:12:59.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-    "contentHash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
-    "promotedRulesCount": 2,
+    "contentHash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6599,12 +6599,12 @@
     "lastVerified": "2026-11-05T02:33:04.848Z"
   },
   "olric-data-olric": {
-    "name": "olric-data/olric",
+    "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T16:50:14.571Z",
-    "lastVerified": "2026-11-04T16:50:14.571Z",
+    "lastChecked": "2026-11-05T07:13:09.152Z",
+    "lastVerified": "2026-11-05T07:13:09.152Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-olric-data-olric",
@@ -6613,7 +6613,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9092df94"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -9877,11 +9878,21 @@
     "lastVerified": "2026-11-03T11:14:52.351Z"
   },
   "exyte-popupview": {
-    "name": "PopupView",
+    "name": "exyte/PopupView",
     "officialUrl": "https://github.com/exyte/PopupView",
-    "lastChecked": "2026-11-01T00:49:28.113Z",
-    "revisionIdentifier": "99695337",
-    "lastVerified": "2026-11-01T00:49:28.113Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-05T07:13:06.676Z",
+    "lastVerified": "2026-11-05T07:13:06.676Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-exyte-popupview",
+    "contentHash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",

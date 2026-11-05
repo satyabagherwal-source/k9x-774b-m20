@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T07:06:00.070Z",
-  "total_cycles_completed": 7537,
-  "total_learnings_persisted": 7537,
-  "total_rules_promoted": 7206,
+  "last_updated": "2026-11-05T07:13:13.402Z",
+  "total_cycles_completed": 7539,
+  "total_learnings_persisted": 7539,
+  "total_rules_promoted": 7210,
   "history": [
-    {
-      "timestamp": "2026-11-04T22:05:10.617Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:05:12.767Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T22:05:19.727Z",
       "repository": "Agent-Field/agentfield",
@@ -1403,6 +1389,20 @@
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:13:07.622Z",
+      "repository": "exyte/PopupView",
+      "learningId": "learn-github-exyte-popupview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:13:13.402Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -8353,10 +8353,10 @@
     "repository": "exyte/PopupView",
     "platform": "github",
     "sourceUrl": "https://github.com/exyte/PopupView",
-    "sourceVersion": "99695337",
+    "sourceVersion": "38fe3de1",
     "license": "MIT",
-    "contentHash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
-    "lastHarvestedAt": "2026-10-19T16:24:46.437Z",
+    "contentHash": "df20eb6da9adfa64517b56c24243018e1ba754e86f0ac413b6f77f803d0e048a",
+    "lastHarvestedAt": "2026-11-05T07:13:07.617Z",
     "learningId": "learn-github-exyte-popupview"
   },
   "sayaka-sh-spmp": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "5e4f3b536abf755bba4d12c62fa4355280cd4bbd6d1a709d664c9af934b62790",
-    "lastHarvestedAt": "2026-10-31T16:39:38.590Z",
+    "contentHash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
+    "lastHarvestedAt": "2026-11-05T07:13:13.397Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {

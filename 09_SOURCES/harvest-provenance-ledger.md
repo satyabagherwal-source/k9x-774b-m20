@@ -7569,3 +7569,5 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1dda9d96` | Multi-dimensional audit evidence | 2026-11-05T06:58:31.821Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `72945925` | Multi-dimensional audit evidence | 2026-11-05T06:58:32.376Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-05T07:06:00.063Z |
+| `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `38fe3de1` | Multi-dimensional audit evidence | 2026-11-05T07:13:07.617Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T07:13:13.397Z |
