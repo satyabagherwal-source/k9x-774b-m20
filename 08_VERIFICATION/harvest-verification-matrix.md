@@ -7682,3 +7682,7 @@
 | `CYCLE-20261105-OWAJ` | `2026-11-05T13:47:56.923Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7241` | Yes (`0e740c49...`) |
 | `CYCLE-20261105-XSUF` | `2026-11-05T13:54:52.359Z` | `feder-cr/Jobs_Applier_AI_Agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7242` | Yes (`7d7ce121...`) |
 | `CYCLE-20261105-XUGD` | `2026-11-05T13:54:54.445Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`e352aef7...`) |
+| `CYCLE-20261105-7R95` | `2026-11-05T14:02:36.857Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7243` | Yes (`5e8298b1...`) |
+| `CYCLE-20261105-7VOE` | `2026-11-05T14:02:42.591Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7244` | Yes (`ecbe9cdc...`) |
+| `CYCLE-20261105-C048` | `2026-11-05T14:05:54.968Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7245` | Yes (`14c13ff8...`) |
+| `CYCLE-20261105-DA3R` | `2026-11-05T14:06:54.567Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`d1520966...`) |

@@ -7691,3 +7691,7 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `f0f9ff86` | Multi-dimensional audit evidence | 2026-11-05T13:47:56.928Z |
 | `learn-github-feder-cr-jobs_applier_ai_agent` | `https://github.com/feder-cr/Jobs_Applier_AI_Agent` | `19465fc0` | Multi-dimensional audit evidence | 2026-11-05T13:54:52.362Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-05T13:54:54.447Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `9e5ec865` | Multi-dimensional audit evidence | 2026-11-05T14:02:36.861Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `2fffa346` | Multi-dimensional audit evidence | 2026-11-05T14:02:42.594Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `407a3851` | Multi-dimensional audit evidence | 2026-11-05T14:05:54.972Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-05T14:06:54.571Z |

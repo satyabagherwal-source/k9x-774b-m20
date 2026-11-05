@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `8f7eca22`  
+> **Source Version**: `2fffa346`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T23:20:53.218Z  
+> **Timestamp**: 2026-11-05T14:02:41.802Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T23:20:53.211Z  
+> **Harvest Timestamp**: 2026-11-05T14:02:41.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4757 stars
+- **Stars / Engagement**: 4758 stars
 
 ---
 
@@ -1349,206 +1349,248 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f7eca22` (2026-11-04)
-**Commit Message**: fix(cleanup): remove only the dirs of dropped entities (#3539)
+### Incident Patch 1: `c25572dc` (2026-11-05)
+**Commit Message**: fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)
 
 ### Summary
 
-Remove only the dirs of dropped entities
+Report concurrent checkpoint/cleanup as skipped instead of failing
 
-#3537
-
-**File**: `src/storage/io/virtual_store.cppm` (modified, +1/-2)
-```diff
-@@ -58,9 +58,8 @@ public:
-     static Status DeleteFile(const std::string &path);
-     static Status DeleteFileBG(const std::string &path);
-     static Status MakeDirectory(const std::string &path);
--    static Status RemoveDirectory(const std::string &path);
-+    static void RemoveDirectory(const std::string &path);
-     static Status CleanupDirectory(const std::string &path);
--    static void RecursiveCleanupAllEmptyDir(const std::string &path);
-     static Status Rename(const std::string &old_path, const std::string &new_path);
-     static Status Truncate(const std::string &file_name, size_t new_length);
-     static Status Merge(const std::string &dst_file, const std::string &src_file);
+e.g.
+```
+=> flush data;
+System is checkpointing, skip this checkpoint.
 ```
 
-**File**: `src/storage/io/virtual_store_impl.cpp` (modified, +1/-17)
+**File**: `src/main/query_context.cppm` (modified, +1/-1)
 ```diff
-@@ -229,7 +229,7 @@ Status VirtualStore::MakeDirectory(const std::string &path) {
-     return Status::OK();
- }
+@@ -89,7 +89,7 @@ public:
  
--Status VirtualStore::RemoveDirectory(const std::string &path) {
-+void VirtualStore::RemoveDirectory(const std::string &path) {
-     if (!std::filesystem::path(path).is_absolute()) {
-         UnrecoverableError(fmt::format("{} isn't absolute path.", path));
-     }
-@@ -239,7 +239,6 @@ Status VirtualStore::RemoveDirectory(const std::string &path) {
-     if (error_code.value() != 0) {
-         UnrecoverableError(fmt::format("Delete directory {} exception: {}", path, error_code.message()));
-     }
--    return Status::OK();
- }
+     inline u64 GetNextNodeID() { return ++current_max_node_id_; }
  
- Status VirtualStore::CleanupDirectory(const std::string &path) {
-@@ -263,21 +262,6 @@ Status VirtualStore::CleanupDirectory(const std::string &path) {
-     return Status::OK();
- }
+-    bool BeginTxn(const BaseStatement *statement);
++    void BeginTxn(const BaseStatement *statement);
  
--void VirtualStore::RecursiveCleanupAllEmptyDir(const std::string &path) {
--    if (!VirtualStore::Exists(path) || !std::filesystem::is_directory(path)) {
--        return;
--    }
--
--    for (const auto &entry : std::filesystem::directory_iterator(path)) {
--        RecursiveCleanupAllEmptyDir(entry.path());
--    }
--
--    if (std::filesystem::is_empty(path)) {
--        // std::error_code ec;
--        std::filesystem::remove(path);
--    }
--}
--
- Status VirtualStore::Rename(const std::string &old_path, const std::string &new_path) {
-     if (!std::filesystem::path(old_path).is_absolute()) {
-         UnrecoverableError(fmt::format("{} isn't absolute path.", old_path));
+     void CommitTxn();
+ 
 ```
 
-**File**: `src/storage/new_txn/new_txn_data_impl.cpp` (modified, +1/-4)
+**File**: `src/main/query_context_impl.cpp` (modified, +39/-51)
 ```diff
-@@ -327,10 +327,7 @@ Status NewTxn::Import(const std::string &db_name, const std::string &table_name,
-     }
+@@ -33,6 +33,8 @@ import :new_txn_manager;
+ import :admin_executor;
+ import :utility;
+ import :explain_logical_plan;
++import :data_table;
++import :logical_node_type;
  
-     if (VirtualStore::Exists(import_tmp_path)) {
--        Status remove_status = VirtualStore::RemoveDirectory(import_tmp_path);
--        if (!remove_status.ok()) {
--            LOG_WARN(fmt::format("Failed to remove import temp directory: {}", import_tmp_path));
+ import std.compat;
+ 
+@@ -182,6 +184,7 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
+     //    BaseProfiler profiler;
+     //    profiler.Begin();
+     try {
++        this->BeginTxn(base_statement);
+ 
+         if (global_config_->RecordRunningQuery()) {
+             bool add_record_flag = false;
+@@ -203,26 +206,6 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
+                                                  base_statement->ToString());
+             }
+         }
+-
+-        this->BeginTxn(base_statement);
+-        // Check if cleanup was skipped (BeginTxn returns false for skipped cleanup)
+-        NewTxn *new_txn = this->GetNewTxn();
+-        if (new_txn == nullptr) {
+-            // Only cleanup statement is allowed to be skipped
+-            bool is_cleanup = false;
+-            if (base_statement->type_ == StatementType::kCommand) {
+-                const CommandStatement *cmd = static_cast<const CommandStatement *>(base_statement);
+-                is_cleanup = (cmd->command_info_->type() == CommandType::kCleanup);
+-            }
+-            if (is_cleanup) {
+-                // Cleanup was skipped because another cleanup is in progress
+-                query_result.result_table_ = nullptr;
+-                query_result.status_ = Status::OK();
+-                return query_result;
+-            }
+-            // Other statements should not have null transaction
+-            UnrecoverableError("Unexpected null transaction after BeginTxn");
 -        }
-+        VirtualStore::RemoveDirectory(import_tmp_path);
-     }
+         // LOG_INFO(fmt::format("created transaction, txn_id: {}, begin_ts: {}, base_statement: {}",
+         //                 session_ptr_->GetNewTxn()->TxnID(),
+         //                 session_ptr_->GetNewTxn()->BeginTS(),
+@@ -284,20 +267,32 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
+         StopProfile(QueryPhase::kCommit);
  
-     std::vector<WalSegmentInfo> segment_infos;
-```
-
-**File**: `src/storage/new_txn/new_txn_impl.cpp` (modified, +37/-43)
-```diff
-@@ -4707,10 +4707,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-             ImportTxnStore *import_txn_store = static_cast<ImportTxnStore *>(base_txn_store_.get());
+     } catch (RecoverableException &e) {
++        if (e.ErrorCode() == ErrorCode::kFailToStartTxn) {
++            // kFailToStartTxn is only raised by BeginTxn for a skipped FLUSH DATA / CLEAN DATA.
++            if (base_statement->type_ != StatementType::kFlush && base_statement->type_ != StatementType::kCommand) {
++                UnrecoverableError(fmt::format("Unexpected kFailToStartTxn for statement: {}", StatementType2Str(base_statement->type_)));
++            }
  
-             if (VirtualStore::Exists(import_txn_store->import_tmp_path_)) {
--                Status remove_status = VirtualStore::RemoveDirectory(import_txn_store->import_tmp_path_);
--                if (!remove_status.ok()) {
--                    LOG_WARN(fmt::format("Failed to remove import temp directory during rollback: {}", import_txn_store->import_tmp_path_));
--                }
-+                VirtualStore::RemoveDirectory(import_txn_store->import_tmp_path_);
-             } else {
-                 Config *config = InfinityContext::instance().config();
-                 std::string data_dir = config->DataDir();
-@@ -4730,10 +4727,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-                                                               segment_info.segment_id_);
- 
-                         if (VirtualStore::Exists(segment_dir)) {
--                            Status remove_status = VirtualStore::RemoveDirectory(segment_dir);
--                            if (!remove_status.ok()) {
--                                LOG_WARN(fmt::format("Failed to remove segment directory during rollback: {}", segment_dir));
--                            }
-+                            VirtualStore::RemoveDirectory(segment_dir);
-                         }
-                     }
-                 }
-@@ -4962,10 +4956,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-                                                       segment_info.segment_id_);
- 
-                 if (VirtualStore::Exists(segment_dir)) {
--                    Status remove_status = VirtualStore::RemoveDirectory(segment_dir);
--                    if (!remove_status.ok()) {
--                        LOG_WARN(fmt::format("Failed to remove segment directory during rollback: {}", segment_dir));
--                    }
-+                    VirtualStore::RemoveDirectory(segment_dir);
-                 }
+-        // If txn has been rollbacked, do not rollback again here.
+-        NewTxn *new_txn = this->GetNewTxn();
+-        if (new_txn != nullptr) {
+-            StopProfile();
+-            StartProfile(QueryPhase::kRollback);
+-            TxnState txn_state = new_txn->GetTxnState();
+-            if (txn_state == TxnState::kRollbacking or txn_state == TxnState::kStarted) {
+-                this->RollbackTxn();
++            // Report the skip as a successful no-op: the in-flight checkpoint / cleanup does the work.
++            query_result.result_table_ = DataTable::MakeEmptyResultTable();
++            query_result.result_table_->SetResultMsg(std::make_unique<std::string>(std::string(GetErrorMsg(e.what()))));
++            query_result.root_operator_type_ = base_statement->type_ == StatementType::kFlush ? LogicalNodeType::kFlush : LogicalNodeType::kCommand;
++            query_result.status_ = Status::OK();
++        } else {
++            // If txn has been rollbacked, do not rollback again here.
++            NewTxn *new_txn = this->GetNewTxn();
++            if (new_txn != nullptr) {
++                StopProfile();
++                StartProfile(QueryPhase::kRollback);
++                TxnState txn_state = new_txn->GetTxnState();
++                if (txn_state == TxnState::kRollbacking or txn_state == TxnState::kStarted) {
++                    this->RollbackTxn();
++                }
++                StopProfile(QueryPhase::kRollback);
              }
+-            StopProfile(QueryPhase::kRollback);
++            query_result.result_table_ = nullptr;
++            query_result.status_.Init(e.ErrorCode(), e.what());
+         }
+-        query_result.result_table_ = nullptr;
+-        query_result.status_.Init(e.ErrorCode(), e.what());
  
-@@ -4978,10 +4969,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-                                                     index_cmd.index_id_);
+     } catch (ParserException &e) {
  
-                 if (VirtualStore::Exists(index_dir)) {
--                    Status remove_status = VirtualStore::RemoveDirectory(index_dir);
--                    if (!remove_status.ok()) {
--                        LOG_WARN(fmt::format("Failed to remove index directory during rollback: {}", index_dir));
--                    }
-+                    VirtualStore::RemoveDirectory(index_dir);
-                 }
-             }
+@@ -379,7 +374,7 @@ void QueryContext::StopProfile() {
  
-@@ -4990,10 +4978,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-                 fmt::format("{}/db_{}/tbl_{}", data_dir, restore_table_txn_store->db_id_str_, restore_table_txn_store->table_id_str_);
+ QueryResult QueryContext::HandleAdminStatement(const AdminStatement *admin_statement) { return AdminExecutor::Execute(this, admin_statement); }
  
-             if (VirtualStore::Exists(table_dir)) {
--                Status remove_status = VirtualStore::RemoveDirectory(table_dir);
--                if (!remove_status.ok()) {
--                    LOG_WARN(fmt::format("Failed to remove table directory during rollback: {}", table_dir));
--                }
-+                VirtualStore::RemoveDirectory(table_dir);
-             }
+-bool QueryContext::BeginTxn(const BaseStatement *base_statement) {
++void QueryContext::BeginTxn(const BaseStatement *base_statement) {
+     auto *txn_manager = storage_->new_txn_manager();
+     auto txn_text = std::make_unique<std::string>(base_statement ? base_statement->ToString() : "");
  
-             // // Clean up metadata entries that were created
-@@ -5050,10 +5035,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-             std::string db_dir = fmt::format("{}/db_{}", data_dir, restore_database_txn_store->db_id_str_);
- 
-             if (VirtualStore::Exists(db_dir)) {
--                Status remove_status = VirtualStore::RemoveDirectory(db_dir);
--                if (!remove_status.ok()) {
--                    LOG_WARN(fmt::format("Failed to remove database directory during rollback: {}", db_dir));
--                }
-+                VirtualStore::RemoveDirectory(db_dir);
-             }
- 
-             // for (const auto &restore_table_txn_store : restore_database_txn_store->restore_table_txn_stores_) {
-@@ -5113,10 +5095,7 @@ Status NewTxn::PostRollback(TxnTimeStamp abort_ts) {
-                 std::string db_dir = fmt::format("{}/db_{}", data_dir, restore_database_txn_store->db_id_str_);
- 
-                 if (VirtualStore::Exists(db_dir)) {
--                    Status remove_status = VirtualStore::RemoveDirectory(db_dir);
--                    if (!remove_status.ok()) {
--                        LOG_WARN(fmt::format("Failed to remove database directory during rollback: {}", db_dir));
--                    }
-+                    VirtualStore::RemoveDirectory(db_dir);
-                 }
- 
-                 // for (const auto &restore_table_txn_store : restore_database_txn_store->restore_table_txn_stores_) {
-@@ -5256,16 +5235,6 @@ Status NewTxn::Cleanup() {
+@@ -598,34 +593,27 @@ bool QueryContext::BeginTxn(const BaseStatement *base_statement) {
          }
      }
  
--    if (metas.empty()) {
--        LOG_TRACE("Cleanup: No data need to clean. Try to remove all empty directories...");
--        BufferManager *buffer_mgr = InfinityContext::instance().storage()->buffer_manag
+-    if (transaction_ty
 ```
 
-**File**: `src/unit_test/base_test_impl.cpp` (modified, +0/-4)
+**File**: `src/network/connection_impl.cpp` (modified, +11/-0)
 ```diff
-@@ -120,10 +120,6 @@ void BaseTestWithParam<T>::CheckFilePaths(std::vector<std::string> &delete_file_
-                 ADD_FAILURE() << "File path is not absolute: " << file_path;
-             }
-             EXPECT_FALSE(std::filesystem::exists(file_path));
--
--            auto path = static_cast<std::filesystem::path>(file_path).parent_path();
--            EXPECT_TRUE(!std::filesystem::exists(path) || std::filesystem::is_directory(path) && !std::filesystem::is_empty(path) ||
--                        std::filesystem::is_directory(path) && std::filesystem::is_empty(path) && path == data_dir);
+@@ -426,6 +426,17 @@ void Connection::SendQueryResponse(const QueryResult &query_result) {
+             message = *query_result.result_table_->result_msg();
+             break;
          }
-         for (const auto &file_path : exist_file_paths) {
-             if (!std::filesystem::path(file_path).is_absolute()) {
++        case LogicalNodeType::kFlush:
++        case LogicalNodeType::kCommand: {
++            // A skipped FLUSH DATA / CLEAN DATA carries the reason in result_msg; a normal statement has none.
++            std::string *result_msg = query_result.result_table_->result_msg();
++            if (result_msg != nullptr) {
++                message = *result_msg;
++            } else {
++                message = fmt::format("SELECT {}", std::to_string(query_result.result_table_->row_count()));
++            }
++            break;
++        }
+ 
+         default: {
+             message = fmt::format("SELECT {}", std::to_string(query_result.result_table_->row_count()));
+```
+
+**File**: `src/network/http_server_impl.cpp` (modified, +5/-0)
+```diff
+@@ -3453,6 +3453,11 @@ class ForceGlobalCheckpointHandler final : public HttpRequestHandler {
+ 
+         if (result.IsOk()) {
+             json_response["error_code"] = 0;
++            std::string *result_msg = result.result_table_->result_msg();
++            if (result_msg != nullptr) {
++                // Successful result message (e.g. FLUSH DATA skipped while another checkpoint is in progress) returned with error_code = 0
++                json_response["error_msg"] = *result_msg;
++            }
+             http_status = HTTPStatus::CODE_200;
+         } else {
+             json_response["error_code"] = result.ErrorCode();
+```
+
+**File**: `src/network/infinity_thrift_service_impl.cpp` (modified, +7/-0)
+```diff
+@@ -33,6 +33,7 @@ import :defer_op;
+ import :data_table;
+ import :column_vector;
+ import :query_result;
++import :logical_node_type;
+ import :utility;
+ import :json_manager;
+ 
+@@ -3645,6 +3646,12 @@ void InfinityThriftService::ProcessQueryResult(infinity_thrift_rpc::CommonRespon
+     if (!result.IsOk()) {
+         response.__set_error_msg(result.ErrorStr());
+         LOG_ERROR(fmt::format("{}: {}", error_header, result.ErrorStr()));
++    } else if (result.root_operator_type_ == LogicalNodeType::kFlush || result.root_operator_type_ == LogicalNodeType::kCommand) {
++        // A skipped FLUSH DATA / CLEAN DATA carries the reason in result_msg; a normal one has none.
++        std::string *result_msg = result.result_table_->result_msg();
++        if (result_msg != nullptr) {
++            response.__set_error_msg(*result_msg);
++        }
+     }
+ }
+ 
+```
+
+**File**: `src/storage/new_txn/new_txn_manager_impl.cpp` (modified, +13/-7)
+```diff
+@@ -112,22 +112,28 @@ std::shared_ptr<NewTxn> NewTxnManager::BeginTxnShared(std::unique_ptr<std::strin
+     // Record the start ts of the txn
+     TxnTimeStamp begin_ts = current_ts_ + 1;
+ 
++    // Checkpoint and cleanup txns are mutually exclusive with themselves: the corresponding member holds the
++    // begin ts of the txn currently in progress, or UNCOMMIT_TS when none is running.
+     if (txn_type == TransactionType::kNewCheckpoint || txn_type == TransactionType::kCleanup) {
+-        auto &begin_ts_ref = (txn_type == TransactionType::kNewCheckpoint) ? ckp_begin_ts_ : cleanup_begin_ts_;
+-        const char *txn_name = (txn_type == TransactionType::kNewCheckpoint) ? "checkpoint" : "cleanup";
++        const bool is_checkpoint = txn_type == TransactionType::kNewCheckpoint;
++        const char *txn_name = is_checkpoint ? "checkpoint" : "cleanup";
++        const TxnTimeStamp running_ts = is_checkpoint ? ckp_begin_ts_ : cleanup_begin_ts_;
+ 
+-        if (begin_ts_ref == UNCOMMIT_TS) {
+-            LOG_DEBUG(fmt::format("{} txn is started in {}", txn_name, begin_ts));
+-            begin_ts_ref = begin_ts;
+-        } else {
++        if (running_ts != UNCOMMIT_TS) {
+             LOG_WARN(fmt::format("Another {} txn is started in {}, new txn: {} {} start at {} will do nothing, not start this txn",
+                                  txn_name,
+-                                 begin_ts_ref,
++                                 running_ts,
+                                  new_txn_id,
+                                  txn_name,
+                                  begin_ts));
+             return nullptr;
+         }
++
++        if (is_checkpoint) {
++            ckp_begin_ts_ = begin_ts;
++        } else {
++            cleanup_begin_ts_ = begin_ts;
++        }
+     }
+ 
+     if (txn_text == nullptr) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3540** (2026-11-05): fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (@qinling0210)
 - **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
 - **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
+- **PR #3536** (2026-11-05): Update version to 0.7.5 (@qinling0210)
 - **PR #3535** (2026-11-01): feat(search): heap-based block-max WAND as the default top-k early-termination iterator (@yingfeng)
 - **PR #3534** (2026-11-03): fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (@qinling0210)
-- **PR #3533** (2026-11-02): fix(storage): make block map access thread-safe and look up block metas by block id (@qinling0210)
-- **PR #3532** (2026-10-27): fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (@qinling0210)
 
 ---
 
@@ -1568,29 +1610,28 @@ Remove only the dirs of dropped entities
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cleanup): remove only the dirs of dropped entities (#3539)
+## X. txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)
 
 **RULE**:
-When implementing operations in `src/storage/io/virtual_store.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/main/query_context.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f7eca22`: cleanup): remove only the dirs of dropped entities (#3539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c25572dc`: txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/io/virtual_store.cppm`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/main/query_context.cppm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    static void RemoveDirectory(const std::string &path);
+    void BeginTxn(const BaseStatement *statement);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    static Status RemoveDirectory(const std::string &path);
-    static void RecursiveCleanupAllEmptyDir(const std::string &path);
+    bool BeginTxn(const BaseStatement *statement);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f7eca22` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c25572dc` are properly handled with clean fallback behavior.

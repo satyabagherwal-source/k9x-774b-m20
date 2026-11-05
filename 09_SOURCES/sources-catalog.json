@@ -1290,13 +1290,13 @@
     "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
-    "lastHarvestedAt": "2026-10-31T23:42:44.964Z",
+    "contentHash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
+    "lastHarvestedAt": "2026-11-05T14:06:54.571Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "3d60e062",
+    "sourceVersion": "407a3851",
     "license": "Apache-2.0",
-    "contentHash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
-    "lastHarvestedAt": "2026-11-04T19:47:58.535Z",
+    "contentHash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
+    "lastHarvestedAt": "2026-11-05T14:05:54.972Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "8f7eca22",
+    "sourceVersion": "2fffa346",
     "license": "Apache-2.0",
-    "contentHash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
-    "lastHarvestedAt": "2026-11-04T23:20:54.010Z",
+    "contentHash": "ecbe9cdc50df1fc87635e02e96a18668c68fe0b755703eae3e25623c54b7750c",
+    "lastHarvestedAt": "2026-11-05T14:02:42.594Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "e2ada45d",
+    "sourceVersion": "9e5ec865",
     "license": "GPL-3.0",
-    "contentHash": "107bdc29e16bc13589686509521f2b0dc9347be9088adb57ab689de587f2198e",
-    "lastHarvestedAt": "2026-11-03T11:22:11.556Z",
+    "contentHash": "5e8298b1474491c60850529633a765376d2a6e162052b8f26dcdbf9c9434ed00",
+    "lastHarvestedAt": "2026-11-05T14:02:36.861Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {

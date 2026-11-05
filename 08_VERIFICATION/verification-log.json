@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-2SJK",
-    "timestamp": "2026-11-04T08:35:09.440Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "57580d88c284a838d0ad1b1fa83fb53f543308f951f77d5519e2a63f4fbb77d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-37QY",
-    "timestamp": "2026-11-04T08:35:29.146Z",
-    "repository": "speridlabs/idol",
-    "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "6d4ba37b9ce02a9f518b07970b75070d8e549606e3eb8a87513c353e65776dad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-IEGP",
-    "timestamp": "2026-11-04T08:47:17.689Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-VLJY",
-    "timestamp": "2026-11-04T08:57:33.406Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-VP00",
     "timestamp": "2026-11-04T08:57:37.872Z",
     "repository": "BuilderIO/builder",
@@ -7490,6 +7430,66 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
     "contentHash": "e352aef78be5f70b818addb4913aa2d9b7d58d038a2508bbbab4c40c553e70f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-7R95",
+    "timestamp": "2026-11-05T14:02:36.857Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "5e8298b1474491c60850529633a765376d2a6e162052b8f26dcdbf9c9434ed00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-7VOE",
+    "timestamp": "2026-11-05T14:02:42.591Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "ecbe9cdc50df1fc87635e02e96a18668c68fe0b755703eae3e25623c54b7750c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-C048",
+    "timestamp": "2026-11-05T14:05:54.968Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DA3R",
+    "timestamp": "2026-11-05T14:06:54.567Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

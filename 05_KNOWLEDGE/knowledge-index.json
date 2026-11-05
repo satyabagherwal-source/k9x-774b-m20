@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:54:54.379Z",
+  "last_updated": "2026-11-05T14:06:54.463Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,8 +34,8 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "e2ada45d",
-      "content_hash": "107bdc29e16bc13589686509521f2b0dc9347be9088adb57ab689de587f2198e",
+      "source_version": "9e5ec865",
+      "content_hash": "5e8298b1474491c60850529633a765376d2a6e162052b8f26dcdbf9c9434ed00",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
@@ -68,6 +68,11 @@
           "number": 6506,
           "title": "popup): let the background time native calls instead of cutting them at 3.5s",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7243,
+          "title": "reload): repair rules only when WebKit rejected them",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -75,7 +80,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:22:11.451Z",
+      "verified_at": "2026-11-05T14:02:36.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34036,8 +34041,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "8f7eca22",
-      "content_hash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
+      "source_version": "2fffa346",
+      "content_hash": "ecbe9cdc50df1fc87635e02e96a18668c68fe0b755703eae3e25623c54b7750c",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -34060,6 +34065,11 @@
           "number": 7015,
           "title": "cleanup): remove only the dirs of dropped entities (#3539)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7244,
+          "title": "txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34067,7 +34077,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:20:53.888Z",
+      "verified_at": "2026-11-05T14:02:42.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64390,8 +64400,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "3d60e062",
-      "content_hash": "16195f840ddf7a5afedeb628d8c922cbfe7dee248ded1c1983abe21c5db447e4",
+      "source_version": "407a3851",
+      "content_hash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -64474,6 +64484,11 @@
           "number": 6936,
           "title": "rust): extract and persist code graphs during indexing (#291)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7245,
+          "title": "search): preserve source boundaries and bounded preview evidence (#361)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64481,7 +64496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:47:58.464Z",
+      "verified_at": "2026-11-05T14:05:54.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72433,13 +72448,13 @@
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "slug": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "0c7bb00634a15b168e87560b0813cce7394f3cca725ecdafe386509a098491fa",
+      "content_hash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [
@@ -72489,7 +72504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:42:44.824Z",
+      "verified_at": "2026-11-05T14:06:54.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182819,6 +182834,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:54:52.276Z"
+    },
+    "rule-7243": {
+      "learning_id": "rule-7243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7243,
+      "title": "reload): repair rules only when WebKit rejected them",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "9e5ec865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:02:36.744Z"
+    },
+    "rule-7244": {
+      "learning_id": "rule-7244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7244,
+      "title": "txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "2fffa346",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:02:42.480Z"
+    },
+    "rule-7245": {
+      "learning_id": "rule-7245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7245,
+      "title": "search): preserve source boundaries and bounded preview evidence (#361)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "407a3851",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:05:54.856Z"
     }
   },
   "aliases": {

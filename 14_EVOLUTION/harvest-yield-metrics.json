@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T13:54:54.451Z",
-  "total_cycles_completed": 7659,
-  "total_learnings_persisted": 7659,
-  "total_rules_promoted": 7306,
+  "last_updated": "2026-11-05T14:06:54.576Z",
+  "total_cycles_completed": 7663,
+  "total_learnings_persisted": 7663,
+  "total_rules_promoted": 7309,
   "history": [
-    {
-      "timestamp": "2026-11-05T03:39:48.951Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:39:51.513Z",
-      "repository": "Jarvis322/macos-sysdata",
-      "learningId": "learn-github-jarvis322-macos-sysdata",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:40:00.907Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T03:46:19.638Z",
-      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T03:46:21.433Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-05T13:54:54.451Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:02:36.867Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:02:42.600Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:05:54.977Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:06:54.576Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
