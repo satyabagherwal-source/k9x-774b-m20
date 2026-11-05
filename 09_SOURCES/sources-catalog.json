@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "d8039f36",
+    "sourceVersion": "469ff28e",
     "license": "MIT",
-    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
-    "lastHarvestedAt": "2026-11-03T19:05:56.185Z",
+    "contentHash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
+    "lastHarvestedAt": "2026-11-05T18:24:35.502Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "9f21216f",
+    "sourceVersion": "588cf353",
     "license": "MPL-2.0",
-    "contentHash": "307cabcc2089c45e4fb6b62205cebbcd3ad85a831d3f796b8742562a56122455",
-    "lastHarvestedAt": "2026-11-05T03:46:30.322Z",
+    "contentHash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
+    "lastHarvestedAt": "2026-11-05T18:23:19.116Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

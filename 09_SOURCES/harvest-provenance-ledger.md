@@ -7754,3 +7754,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `20d58d49` | Multi-dimensional audit evidence | 2026-11-05T18:15:18.224Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `73a365c0` | Multi-dimensional audit evidence | 2026-11-05T18:15:25.065Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `0c03d749` | Multi-dimensional audit evidence | 2026-11-05T18:15:31.621Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `588cf353` | Multi-dimensional audit evidence | 2026-11-05T18:23:19.116Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `469ff28e` | Multi-dimensional audit evidence | 2026-11-05T18:24:35.502Z |

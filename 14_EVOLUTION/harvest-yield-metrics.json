@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:15:31.627Z",
-  "total_cycles_completed": 7722,
-  "total_learnings_persisted": 7722,
-  "total_rules_promoted": 7364,
+  "last_updated": "2026-11-05T18:24:35.508Z",
+  "total_cycles_completed": 7724,
+  "total_learnings_persisted": 7724,
+  "total_rules_promoted": 7366,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:28:58.256Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:28:59.419Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:36:23.294Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T18:15:31.627Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:23:19.122Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:24:35.508Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

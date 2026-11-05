@@ -7745,3 +7745,5 @@
 | `CYCLE-20261105-8PU4` | `2026-11-05T18:15:18.220Z` | `google/tcmalloc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/google-tcmalloc-learnings.md` | Yes (`797fd838...`) |
 | `CYCLE-20261105-8V45` | `2026-11-05T18:15:25.061Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`49bae958...`) |
 | `CYCLE-20261105-9069` | `2026-11-05T18:15:31.617Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16ef2f9d...`) |
+| `CYCLE-20261105-J0W9` | `2026-11-05T18:23:19.113Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`33b2f57d...`) |
+| `CYCLE-20261105-KNU2` | `2026-11-05T18:24:35.498Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c6bf03a8...`) |

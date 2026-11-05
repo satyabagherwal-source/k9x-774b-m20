@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:15:31.500Z",
+  "last_updated": "2026-11-05T18:24:35.409Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47142,11 +47142,16 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "9f21216f",
-      "content_hash": "307cabcc2089c45e4fb6b62205cebbcd3ad85a831d3f796b8742562a56122455",
+      "source_version": "588cf353",
+      "content_hash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "persist local state bug in error path on first run",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2203,
           "title": "Context-based panic handler and stack tracing",
@@ -47218,7 +47223,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:46:30.255Z",
+      "verified_at": "2026-11-05T18:23:19.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71254,11 +71259,16 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "d8039f36",
-      "content_hash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
+      "source_version": "469ff28e",
+      "content_hash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "desktop): recover CLIProxyAPI after crashes and hangs",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 925,
           "title": "macos): NFC-normalize only Claude config directories",
@@ -71320,7 +71330,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:05:56.078Z",
+      "verified_at": "2026-11-05T18:24:35.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

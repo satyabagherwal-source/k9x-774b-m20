@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T18:15:31.631Z",
+  "last_updated": "2026-11-05T18:24:35.512Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
-      "verified_at": "2026-11-03T19:05:56.194Z",
+      "content_hash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
+      "verified_at": "2026-11-05T18:24:35.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:05:56.194Z"
+      "last_updated": "2026-11-05T18:24:35.511Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "307cabcc2089c45e4fb6b62205cebbcd3ad85a831d3f796b8742562a56122455",
-      "verified_at": "2026-11-05T03:46:30.335Z",
+      "content_hash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
+      "verified_at": "2026-11-05T18:23:19.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:46:30.335Z"
+      "last_updated": "2026-11-05T18:23:19.126Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

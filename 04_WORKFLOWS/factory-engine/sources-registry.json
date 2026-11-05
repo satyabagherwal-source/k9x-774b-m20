@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T18:15:34.194Z",
-    "lastVerified": "2026-11-05T18:15:34.194Z",
+    "lastChecked": "2026-11-05T18:24:38.106Z",
+    "lastVerified": "2026-11-05T18:24:38.106Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T17:47:56.174Z",
-    "lastVerified": "2026-11-05T17:47:56.174Z",
+    "lastChecked": "2026-11-05T18:23:21.119Z",
+    "lastVerified": "2026-11-05T18:23:21.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1522,9 +1522,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-05T14:02:35.489Z",
+    "lastChecked": "2026-11-05T18:23:16.072Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-05T14:02:35.489Z"
+    "lastVerified": "2026-11-05T18:23:16.072Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4390,9 +4390,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-05T02:55:18.834Z",
+    "lastChecked": "2026-11-05T18:23:18.537Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-05T02:55:18.834Z"
+    "lastVerified": "2026-11-05T18:23:18.537Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -7243,14 +7243,14 @@
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:46:29.834Z",
-    "lastVerified": "2026-11-05T03:46:29.834Z",
+    "lastChecked": "2026-11-05T18:23:16.744Z",
+    "lastVerified": "2026-11-05T18:23:16.744Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "307cabcc2089c45e4fb6b62205cebbcd3ad85a831d3f796b8742562a56122455",
+    "contentHash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8831,22 +8831,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nguyenphutrong-quotio": {
-    "name": "quotio",
+    "name": "nguyenphutrong/quotio",
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T23:06:09.392Z",
-    "lastVerified": "2026-11-04T23:06:09.392Z",
+    "lastChecked": "2026-11-05T18:23:09.842Z",
+    "lastVerified": "2026-11-05T18:23:09.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
+    "contentHash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d8039f36"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
     "name": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -9276,9 +9275,9 @@
   "istifano-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "lastChecked": "2026-11-02T14:46:18.108Z",
+    "lastChecked": "2026-11-05T18:23:08.555Z",
     "revisionIdentifier": "87ba51e6",
-    "lastVerified": "2026-11-02T14:46:18.108Z"
+    "lastVerified": "2026-11-05T18:23:08.555Z"
   },
   "tableproapp-tablepro": {
     "name": "TableProApp/TablePro",
@@ -11623,12 +11622,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wzh4869-appports": {
-    "name": "wzh4869/AppPorts",
+    "name": "AppPorts",
     "officialUrl": "https://github.com/wzh4869/AppPorts",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T17:53:45.867Z",
-    "lastVerified": "2026-11-03T17:53:45.867Z",
+    "lastChecked": "2026-11-05T18:23:11.108Z",
+    "lastVerified": "2026-11-05T18:23:11.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wzh4869-appports",
@@ -11637,7 +11636,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c6b8a834"
   },
   "google-closure-compiler": {
     "name": "google/closure-compiler",
