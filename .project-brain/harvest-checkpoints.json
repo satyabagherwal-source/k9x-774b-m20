@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T14:22:52.711Z",
+  "last_updated": "2026-11-05T14:30:13.044Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
-      "verified_at": "2026-11-01T00:04:15.783Z",
+      "content_hash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
+      "verified_at": "2026-11-05T14:30:06.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:04:15.783Z"
+      "last_updated": "2026-11-05T14:30:06.888Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "cc6be31d4e266dbc41c96bf832c6a592184f55ce159e572b4ff5c1bc0433f304",
-      "verified_at": "2026-11-05T11:08:37.174Z",
+      "content_hash": "0bbe5fe9fdf837e316b825f34b411d994c8a2841990687be3f64d6608f19e92f",
+      "verified_at": "2026-11-05T14:30:13.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:08:37.174Z"
+      "last_updated": "2026-11-05T14:30:13.044Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",

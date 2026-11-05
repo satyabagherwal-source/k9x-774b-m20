@@ -7701,3 +7701,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T14:22:46.070Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `f5be64bb` | Multi-dimensional audit evidence | 2026-11-05T14:22:48.929Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `31875da1` | Multi-dimensional audit evidence | 2026-11-05T14:22:52.692Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T14:30:06.871Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ea97d611` | Multi-dimensional audit evidence | 2026-11-05T14:30:13.036Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T14:22:52.601Z",
+  "last_updated": "2026-11-05T14:30:12.934Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63395,8 +63395,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "c46b58f7",
-      "content_hash": "cc6be31d4e266dbc41c96bf832c6a592184f55ce159e572b4ff5c1bc0433f304",
+      "source_version": "ea97d611",
+      "content_hash": "0bbe5fe9fdf837e316b825f34b411d994c8a2841990687be3f64d6608f19e92f",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -63496,7 +63496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:08:37.040Z",
+      "verified_at": "2026-11-05T14:30:12.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72018,7 +72018,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
+      "content_hash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -72171,6 +72171,21 @@
           "number": 6375,
           "title": "Early ViT Token Pruning and Stride Continuity Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7255,
+          "title": "**Consistent Token‑ID Space Across Configs**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7256,
+          "title": "**Early‑Compression Patch Size Must Divide Image Size**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7257,
+          "title": "**Model‑Max‑Length Must Match Configured Position Embeddings**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72178,7 +72193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:04:15.675Z",
+      "verified_at": "2026-11-05T14:30:06.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183052,6 +183067,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T14:22:52.577Z"
+    },
+    "rule-7255": {
+      "learning_id": "rule-7255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7255,
+      "title": "**Consistent Token‑ID Space Across Configs**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:30:06.770Z"
+    },
+    "rule-7256": {
+      "learning_id": "rule-7256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7256,
+      "title": "**Early‑Compression Patch Size Must Divide Image Size**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:30:06.770Z"
+    },
+    "rule-7257": {
+      "learning_id": "rule-7257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7257,
+      "title": "**Model‑Max‑Length Must Match Configured Position Embeddings**",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:30:06.770Z"
     }
   },
   "aliases": {

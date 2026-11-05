@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `c46b58f7`  
+> **Source Version**: `ea97d611`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:08:36.374Z  
+> **Timestamp**: 2026-11-05T14:30:12.763Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:08:36.366Z  
+> **Harvest Timestamp**: 2026-11-05T14:30:12.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,470 +1927,434 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c46b58f7` (2026-11-05)
-**Commit Message**: chore(ci): setup tailscale ci to make slab work again (#4141)
+### Incident Patch 1: `ea97d611` (2026-11-05)
+**Commit Message**: chore(gpu): refactor ci to better cover classical pbs (#4127)
 
-* chore(zk): add itertools as dev-dependency
-
-* chore(ci): setup tailscale ci to make slab work again (#4141)
-
----------
-
-Co-authored-by: Theo Souchon <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/aws_tfhe_noise_checks.yml` (modified, +10/-0)
+**File**: `.github/workflows/benchmark_gpu_4090.yml` (removed, +0/-209)
 ```diff
-@@ -31,10 +31,15 @@ jobs:
-       backend: aws
-       # We want an hpc7a more compute, will be faster
-       profile: bench
-+    permissions:
-+      contents: read
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   noise-checks:
-     name: aws_tfhe_noise_checks/noise-checks
-@@ -82,10 +87,15 @@ jobs:
-     with:
-       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-       notification-context: noise-checks
-+    permissions:
-+      contents: read
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+@@ -1,209 +0,0 @@
+-# Run benchmarks on an RTX 4090 machine and return parsed results to Slab CI bot.
+-name: benchmark_gpu_4090
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  RESULTS_FILENAME: parsed_benchmark_results_${{ github.sha }}.json
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  BIT_SIZES_SET: FAST
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-  pull_request:
+-    types: [labeled]
+-  schedule:
+-    # Weekly benchmarks will be triggered each Friday at 9p.m.
+-    - cron: "0 21 * * 5"
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] each job manage its concurrency
+-
+-jobs:
+-  cuda-integer-benchmarks:
+-    name: benchmark_gpu_4090/cuda-integer-benchmarks
+-    if: ${{ github.event_name == 'workflow_dispatch' ||
+-      github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs' ||
+-      contains(github.event.label.name, '4090_bench') }}
+-    concurrency:
+-      group: ${{ github.workflow_ref }}_cuda_integer_bench
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ["self-hosted", "4090-desktop"]
+-    timeout-minutes: 1440 # 24 hours
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+-
+-      - name: Get benchmark details
+-        run: |
+-          COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
+-          {
+-            echo "BENCH_DATE=$(date --iso-8601=seconds)";
+-            echo "COMMIT_DATE=${COMMIT_DATE}";
+-            echo "COMMIT_HASH=$(git describe --tags --dirty)";
+-          } >> "${GITHUB_ENV}"
+-        env:
+-          SHA: ${{ github.sha }}
+-
+-      - name: Install rust
+-        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: nightly
+-
+-      - name: Checkout Slab repo
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          repository: zama-ai/slab
+-          path: slab
+-          ref: a0d3a61d593fc69bcdd13cb834323f8645258246
+-          persist-credentials: "false"
+-          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+-
+-      - name: Run integer benchmarks
+-        run: |
+-          make BENCH_OP_FLAVOR=default bench_integer_multi_bit_gpu
+-
+-      - name: Parse results
+-        run: |
+-          cargo run --release -p tfhe-benchmark-parser -- -i target/criterion -o "${RESULTS_FILENAME}" \
+-          --database tfhe_rs \
+-          --hardware "rtx4090" \
+-          --backend cuda \
+-          --project-version "${COMMIT_HASH}" \
+-          --branch "${REF_NAME}" \
+-          --commit-date "${COMMIT_DATE}" \
+-          --bench-date "${BENCH_DATE}" \
+-          --walk-subdirs
+-        env:
+-          REF_NAME: ${{ github.ref_name }}
+-
+-      - name: Upload parsed results artifact
+-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+-        with:
+-          name: ${{ github.sha }}_integer_multi_bit_gpu_default
+-          path: ${{ env.RESULTS_FILENAME }}
+-
+-      - name: Send data to Slab
+-        shell: bash
+-        run: |
+-          python3 slab/scripts/data_sender.py "${RESULTS_FILENAME}" "${JOB_SECRET}" \
+-          --slab-url "${SLAB_URL}"
+-        env:
+-          JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-          SLAB_URL: ${{ secrets.SLAB_URL }}
+-
+-      - name: Slack Notification
+-        if: ${{ failure() || (cancelled() && github.event_name != 'pull_request') }}
+-        continue-on-error: true
+-        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
+-        env:
+-          SLACK_COLOR: ${{ job.status }}
+-          SLACK_MESSAGE: "Integer RTX 4090 full benchmarks finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
+-
+-  cuda-core-crypto-benchmarks:
+-    name: benchmark_gpu_4090/cuda-core-crypto-benchmarks
+-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.label.name, '4090_bench') }}
+-    needs: cuda-integer-benchmarks
+-    concurrency:
+-      group: ${{ github.workflow_ref }}_cuda_core_crypto_bench
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ["self-hosted", "4090-desktop"]
+-    timeout-minutes: 1440 # 24 hours
+-
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-       
 ```
 
-**File**: `.github/workflows/benchmark_cpu.yml` (modified, +4/-0)
+**File**: `.github/workflows/gpu_fast_tests.yml` (modified, +5/-11)
 ```diff
-@@ -145,6 +145,8 @@ jobs:
-       params_type: ${{ inputs.params_type }}
-       precisions_set: ${{ inputs.precisions_set }}
-       additional_file_to_parse: ${{ needs.parse-inputs.outputs.additional_file_to_parse }}
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -154,3 +156,5 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
-```
-
-**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +12/-0)
-```diff
-@@ -52,6 +52,10 @@ on:
-         required: true
-       SLACK_WEBHOOK:
-         required: true
-+      TS_SLAB_OAUTH_CLIENT_ID:
-+        required: true
-+      TS_SLAB_OAUTH_AUDIENCE:
-+        required: true
+@@ -1,4 +1,8 @@
+-# Compile and test tfhe-cuda-backend on an AWS instance
++# Push-time GPU smoke test: user-doc and high-level-API tests on a single L40
++# Scaleway instance. test_core_crypto_gpu, test_integer_compression_gpu,
++# test_cuda_backend and test_c_api_gpu are intentionally left out: they're
++# already covered by gpu_core_hlapi_h100_2gpu_par on approval, and running
++# them again here would just duplicate that coverage on every push.
+ name: gpu_fast_tests
  
  env:
-   CARGO_TERM_COLOR: always
-@@ -134,10 +138,14 @@ jobs:
-     with:
-       backend: ${{ inputs.backend }}
-       profile: ${{ inputs.profile }}
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+@@ -126,20 +130,10 @@ jobs:
+         run: |
+           nvidia-cuda-mps-control -d
  
-   integer-benchmarks:
-     name: benchmark_cpu_common/integer-benchmarks
-@@ -296,10 +304,14 @@ jobs:
-     with:
-       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-       notification-context: cpu-benchmarks
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+-      - name: Run core crypto and internal CUDA backend tests
+-        run: |
+-          make test_core_crypto_gpu
+-          make test_integer_compression_gpu
+-          make test_cuda_backend
+-
+       - name: Run user docs tests
+         run: |
+           make test_user_doc_gpu
+ 
+-      - name: Test C API
+-        run: |
+-          make test_c_api_gpu
+-
+       - name: Run High Level API Tests
+         run: |
+           make test_high_level_api_gpu_fast
 ```
 
-**File**: `.github/workflows/benchmark_cpu_weekly.yml` (modified, +32/-0)
+**File**: `.github/workflows/gpu_full_multi_gpu_tests.yml` (modified, +8/-6)
 ```diff
-@@ -81,6 +81,8 @@ jobs:
-       command: integer,signed_integer, integer_compression
-       op_flavor: ${{ needs.prepare-inputs.outputs.op_flavor }}
-       precisions_set: ${{ needs.prepare-inputs.outputs.precisions_set }}
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -90,6 +92,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+@@ -22,8 +22,9 @@ env:
+ on:
+   # Allows you to run this workflow manually from the Actions tab as an alternative.
+   workflow_dispatch:
+-  pull_request:
+-    types: [labeled]
++  schedule:
++    # Every Wednesday at midnight Paris time (winter time, 1a.m. in summer time)
++    - cron: "0 23 * * 3"
  
-   run-benchmarks-integer-zk-pke:
-     name: benchmark_cpu_weekly/run-benchmarks-integer-zk-pke
-@@ -99,6 +103,8 @@ jobs:
-     with:
-       command: integer_zk
-       additional_file_to_parse: pke_zk_crs_sizes.csv
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -108,6 +114,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ permissions:
+   contents: read
+@@ -34,6 +35,8 @@ jobs:
+   should-run:
+     name: gpu_full_multi_gpu_tests/should-run
+     runs-on: ubuntu-latest
++    if: github.event_name != 'schedule' ||
++      (github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs')
+     permissions:
+       pull-requests: read # Needed to check for file change
+     outputs:
+@@ -128,14 +131,13 @@ jobs:
+       - name: Enable nvidia multi-process service
+         run: |
+           nvidia-cuda-mps-control -d
+-      - name: Run multi-bit CUDA integer compression tests
++      - name: Run CUDA integer compression tests
+         run: |
+           BIG_TESTS_INSTANCE=TRUE make test_integer_compression_gpu
  
-   run-benchmarks-hlapi-erc7984:
-     name: benchmark_cpu_weekly/run-benchmarks-hlapi-erc7984
-@@ -117,6 +125,8 @@ jobs:
-     with:
-       command: hlapi_erc7984
-       additional_file_to_parse: erc7984_pbs_count.csv
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -126,6 +136,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+-      # No need to test core_crypto and classic PBS in integer since it's already tested on single GPU.
+-      - name: Run multi-bit CUDA integer tests
++      - name: Run classical CUDA integer tests
+         run: |
+-          BIG_TESTS_INSTANCE=TRUE NO_BIG_PARAMS_GPU=TRUE make test_integer_multi_bit_gpu_ci
++          BIG_TESTS_INSTANCE=TRUE NO_BIG_PARAMS_GPU=TRUE make test_integer_gpu_ci
  
-   run-benchmarks-hlapi-dex:
-     name: benchmark_cpu_weekly/run-benchmarks-hlapi-dex
-@@ -135,6 +147,8 @@ jobs:
-     with:
-       command: hlapi_dex
-       additional_file_to_parse: dex_swap_request_update_dex_balance_pbs_count.csv,dex_swap_request_finalize_pbs_count.csv,dex_swap_claim_prepare_pbs_count.csv,dex_swap_claim_update_dex_balance_pbs_count.csv
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -144,6 +158,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-core-crypto:
-     name: benchmark_cpu_weekly/run-benchmarks-core-crypto
-@@ -152,6 +168,8 @@ jobs:
-     uses: ./.github/workflows/benchmark_cpu_common.yml
-     with:
-       command: ks,pbs,pbs128,ks_pbs
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -161,6 +179,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-shortint:
-     name: benchmark_cpu_weekly/run-benchmarks-shortint
-@@ -170,6 +190,8 @@ jobs:
-     with:
-       op_flavor: ${{ needs.prepare-inputs.outputs.op_flavor }}
-       command: shortint
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -179,6 +201,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-boolean:
-     name: benchmark_cpu_weekly/run-benchmarks-boolean
-@@ -189,6 +213,8 @@ jobs:
-       command: boolean
-       additional_recipe: measure_boolean_key_sizes
-       additional_file_to_parse: boolean_key_sizes.csv
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -198,6 +224,8 @@ jobs:
+       - name: Run user docs tests
+         run: |
 ```
 
-**File**: `.github/workflows/benchmark_ct_key_sizes.yml` (modified, +8/-0)
+**File**: `.github/workflows/gpu_h100_long_run_tests.yml` (modified, +0/-1)
 ```diff
-@@ -31,10 +31,14 @@ jobs:
-     with:
-       backend: aws
-       profile: cpu-big
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+@@ -19,7 +19,6 @@ on:
+   schedule:
+     # Weekly tests will be triggered every weekday at 1a.m.
+     - cron: "0 1 * * MON-FRI"
+-  pull_request:
  
-   sizes-benchmarks:
-     name: Execute sizes client benchmarks
-@@ -134,10 +138,14 @@ jobs:
-     with:
-       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-       notification-context: sizes-benchmarks
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+ permissions:
+   contents: read
 ```
 
-**File**: `.github/workflows/benchmark_documentation.yml` (modified, +36/-0)
+**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +7/-1)
 ```diff
-@@ -50,6 +50,8 @@ jobs:
-       op_flavor: fast_default
-       bench_type: both
-       precisions_set: documentation
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -59,6 +61,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-cpu-zk-server:
-     name: benchmark_documentation/run-benchmarks-cpu-zk-server
-@@ -68,6 +72,8 @@ jobs:
-       command: integer_zk
-       op_flavor: default
-       bench_type: both
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -77,13 +83,17 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-cpu-zk-client:
-     name: benchmark_documentation/run-benchmarks-cpu-zk-client
-     uses: ./.github/workflows/benchmark_wasm_client_common.yml
-     if: inputs.run-cpu-benchmarks
-     with:
-       browser: chrome
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -93,6 +103,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-cpu-kvstore:
-     name: benchmark_documentation/run-benchmarks-cpu-kvstore
-@@ -103,6 +115,8 @@ jobs:
-       op_flavor: default
-       bench_type: latency
-       precisions_set: all
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -112,6 +126,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-gpu-integer:
-     name: benchmark_documentation/run-benchmarks-gpu-integer
-@@ -126,6 +142,8 @@ jobs:
-       op_flavor: fast_default
-       bench_type: both
-       precisions_set: documentation
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -135,6 +153,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-gpu-erc7984-multi-group:
-     name: benchmark_documentation/run-benchmarks-gpu-erc7984-multi-group
-@@ -148,6 +168,8 @@ jobs:
-       bench_type: throughput
-       params_type: classical + multi_bit
-       erc7984_filter: "::transfer::(whitepaper|no_cmux|overflow)"
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -157,6 +179,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
- 
-   run-benchmarks-hpu-integer:
-     name: benchmark_documentation/run-benchmarks-hpu-integer
-@@ -188,6 +212,8 @@ jobs:
-       command: pbs, ks_pbs
-       bench_type: latency
-       params_type: classical_documentation + multi_bit_documentation
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -197,6 +223,8 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS
-```
-
-**File**: `.github/workflows/benchmark_gpu.yml` (modified, +4/-0)
-```diff
-@@ -159,6 +159,8 @@ jobs:
-       params_type: ${{ inputs.params_type }}
-       precisions_set: ${{ inputs.precisions_set }}
-       additional_file_to_parse: ${{ needs.parse-inputs.outputs.additional_file_to_parse }}
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-@@ -168,3 +170,5 @@ jobs:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_URL: ${{ secrets.SLAB_URL }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
-```
-
-**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +12/-0)
-```diff
-@@ -53,6 +53,10 @@ on:
-         required: true
-       SLACK_WEBHOOK:
-         required: true
-+      TS_SLAB_OAUTH_CLIENT_ID:
-+        required: true
-+      TS_SLAB_OAUTH_AUDIENCE:
-+        required: true
+@@ -1,4 +1,8 @@
+-# Run signed and unsigned integer GPU classic tests in parallel on a 2xH100 machine
++# Run signed and unsigned integer GPU classic tests in parallel on a 2xH100 machine.
++# Restricted to message_2_carry_2 params (FAST_TESTS=TRUE): the full classical
++# param sweep is already covered on cron by gpu_4090_tests (make test_gpu ->
++# test_integer_gpu --all-but-noise, every 2 days), so there's no need to pay
++# for it again on every approval.
+ name: gpu_integer_classic_tests_h100_2gpu_par
  
  env:
-   CARGO_TERM_COLOR: always
-@@ -135,10 +139,14 @@ jobs:
-     with:
-       backend: ${{ inputs.backend }}
-       profile: ${{ inputs.profile }}
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+@@ -12,6 +16,8 @@ env:
+   SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+   SLACKIFY_MARKDOWN: true
++  FAST_TESTS: TRUE
++  NIGHTLY_TESTS: FALSE
+   IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+   PULL_REQUEST_MD_LINK: ""
+   CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+```
+
+**File**: `.github/workflows/gpu_integer_long_run_tests.yml` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@ on:
+     # Weekly tests will be triggered every Monday at 8p.m.
+     - cron: "0 1 * * MON-FRI"
+   pull_request:
++    types: [labeled]
  
-   install-dependencies:
-     name: benchmark_gpu_common/install-dependencies
-@@ -366,10 +374,14 @@ jobs:
+ permissions:
+   contents: read
+@@ -63,7 +64,8 @@ jobs:
+     needs: [should-run]
+     if: github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs') ||
+-      needs.should-run.outputs.is_needed_in_gpu_ci == 'true'
++      (github.event_name == 'pull_request' && github.event.action == 'labeled' &&
++      github.event.label.name == 'approved' && needs.should-run.outputs.is_needed_in_gpu_ci == 'true')
+     uses: ./.github/workflows/slab_setup.yml
      with:
-       runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-       notification-context: cuda-${{ inputs.profile }}-benchmarks
-+    permissions:
-+      id-token: write # Needed to join the Slab tailnet via OIDC
-     secrets:
-       SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-       SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-       JOB_SECRET: ${{ secrets.JOB_SECRET }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-       BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-+      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-+      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+       backend: terraform
+```
+
+**File**: `.github/workflows/gpu_noise_level_checks.yml` (modified, +3/-1)
+```diff
+@@ -1,8 +1,10 @@
+ # Run signed and unsigned GPU integer tests with the gpu-debug-noise-check
+ # feature so that the CHECK_NOISE_LEVEL assertions in the CUDA backend are
+ # active, without the multi-GPU emulation that requires a multi-GPU host.
++# Classical params only (message_2_carry_2) — multi-bit is excluded from
++# both steps below.
+ # Runs on a single L40S Scaleway instance (Hyperstack fallback), triggered
+-# automatically on every PR that touches GPU code, alongside gpu_fast_tests.
++# once a PR that touches GPU code is labeled 'approved' (see approve_label.yml).
+ name: gpu_noise_level_checks
+ 
+ env:
+```
+
+**File**: `.github/workflows/gpu_signed_integer_tests.yml` (removed, +0/-182)
+```diff
+@@ -1,182 +0,0 @@
+-# Compile and test tfhe-cuda-backend signed integer on an AWS instance
+-name: gpu_signed_integer_tests
+-
+-env:
+-  CARGO_TERM_COLOR: always
+-  ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+-  RUSTFLAGS: "-C target-cpu=native"
+-  RUST_BACKTRACE: "full"
+-  RUST_MIN_STACK: "8388608"
+-  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+-  SLACK_ICON: https://pbs.twimg.com/profile_images/1274014582265298945/OjBKP9kn_400x400.png
+-  SLACK_USERNAME: ${{ secrets.BOT_USERNAME }}
+-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+-  SLACKIFY_MARKDOWN: true
+-  FAST_TESTS: TRUE
+-  NIGHTLY_TESTS: FALSE
+-  IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+-  PULL_REQUEST_MD_LINK: ""
+-  CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
+-  # Secrets will be available only to zama-ai organization members
+-  SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+-
+-on:
+-  # Allows you to run this workflow manually from the Actions tab as an alternative.
+-  workflow_dispatch:
+-  pull_request:
+-
+-permissions:
+-  contents: read
+-
+-# zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
+-
+-jobs:
+-  should-run:
+-    name: gpu_signed_integer_tests/should-run
+-    runs-on: ubuntu-latest
+-    permissions:
+-      pull-requests: read # Needed to check for file change
+-    outputs:
+-      gpu_test: ${{ env.IS_PULL_REQUEST == 'false' || steps.changed-files.outputs.gpu_any_changed }}
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          fetch-depth: 0
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Check for file changes
+-        id: changed-files
+-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+-        with:
+-          files_yaml: |
+-            gpu:
+-              - tfhe/Cargo.toml
+-              - tfhe/build.rs
+-              - backends/tfhe-cuda-backend/**
+-              - tfhe/src/core_crypto/gpu/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_unsigned/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_signed/**
+-              - tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs
+-              - tfhe/src/integer/gpu/**
+-              - tfhe/src/shortint/parameters/**
+-              - tfhe/src/high_level_api/**
+-              - tfhe/src/c_api/**
+-              - '.github/workflows/gpu_signed_integer_tests.yml'
+-              - scripts/integer-tests.sh
+-              - '.github/actions/gpu_setup/action.yml'
+-              - ci/slab.toml
+-
+-  setup-instance:
+-    name: gpu_signed_integer_tests/setup-instance
+-    needs: should-run
+-    if: github.event_name != 'pull_request' ||
+-      needs.should-run.outputs.gpu_test == 'true'
+-    uses: ./.github/workflows/slab_setup.yml
+-    with:
+-      backend: terraform
+-      profile: scaleway-small-gpu
+-      fallback-runner: gpu_ubuntu-22.04
+-    permissions:
+-      contents: read
+-      id-token: write # Needed to join the Slab tailnet via OIDC
+-    secrets:
+-      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
+-      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
+-      JOB_SECRET: ${{ secrets.JOB_SECRET }}
+-      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
+-      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
+-
+-  cuda-signed-integer-tests:
+-    name: gpu_signed_integer_tests/cuda-signed-integer-tests
+-    needs: [should-run, setup-instance]
+-    if: github.event_name != 'pull_request' ||
+-      (github.event_name == 'pull_request' && needs.setup-instance.result != 'skipped')
+-    concurrency:
+-      group: ${{ github.workflow_ref }}
+-      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+-    runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    strategy:
+-      fail-fast: false
+-      # explicit include-based build matrix, of known valid options
+-      matrix:
+-        include:
+-          - os: ubuntu-22.04
+-            cuda: "12.8 12.2"
+-            gcc: 12
+-    steps:
+-      - name: Checkout tfhe-rs
+-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+-        with:
+-          persist-credentials: "false"
+-          token: ${{ env.CHECKOUT_TOKEN }}
+-
+-      - name: Setup cloud GPU machine dependencies
+-        uses: ./.github/actions/gpu_setup
+-        with:
+-          cuda-version: ${{ matrix.cuda }}
+-          gcc-version: ${{ matrix.gcc }}
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+-
+-      - name: Install latest stable
+-        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+-        with:
+-          toolchain: stable
+-      - name: Enable nvidia multi-process service
+-        run: |
+-          nvidia-cud
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4142** (closed): Ns/feat/stream ciphertext list (@nsarlin-zama)
 - **PR #4141** (2026-11-05): chore(ci): setup tailscale ci to make slab work again (@SouchonTheo)
 - **PR #4135** (2026-11-05): chore(zk): add itertools as dev-dependency (@nsarlin-zama)
+- **PR #4127** (2026-11-05): chore(gpu): refactor ci to better cover classical pbs (@agnesLeroy)
 - **PR #4125** (2026-10-30): chore: add some missing dependency tracking in dependabot (@IceTDrinker)
 - **PR #4124** (2026-10-30): chore: upgrade CODEOWNERS to always have reviews (@IceTDrinker)
-- **PR #4122** (2026-10-30): chore(zk): remove unused itertools dep (@nsarlin-zama)
 
 ---
 
@@ -2404,43 +2368,3 @@ Co-authored-by: Theo Souchon <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ci): setup tailscale ci to make slab work again (#4141)
-
-**RULE**:
-When implementing operations in `.github/workflows/aws_tfhe_noise_checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c46b58f7`: ci): setup tailscale ci to make slab work again (#4141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/aws_tfhe_noise_checks.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    permissions:
-      contents: read
-      id-token: write # Needed to join the Slab tailnet via OIDC
-      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
-    permissions:
-      contents: read
-      id-token: write # Needed to join the Slab tailnet via OIDC
-      TS_SLAB_OAUTH_CLIENT_ID: ${{ secrets.TS_SLAB_OAUTH_CLIENT_ID }}
-      TS_SLAB_OAUTH_AUDIENCE: ${{ secrets.TS_SLAB_OAUTH_AUDIENCE }}
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c46b58f7` are properly handled with clean fallback behavior.

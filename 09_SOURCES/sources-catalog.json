@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
-    "lastHarvestedAt": "2026-11-01T00:04:15.776Z",
+    "contentHash": "4db6aab4e042983330f02856e5757d01aa36e2191396cee5ce685c05ff7c085f",
+    "lastHarvestedAt": "2026-11-05T14:30:06.871Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "c46b58f7",
+    "sourceVersion": "ea97d611",
     "license": "NOASSERTION",
-    "contentHash": "cc6be31d4e266dbc41c96bf832c6a592184f55ce159e572b4ff5c1bc0433f304",
-    "lastHarvestedAt": "2026-11-05T11:08:37.156Z",
+    "contentHash": "0bbe5fe9fdf837e316b825f34b411d994c8a2841990687be3f64d6608f19e92f",
+    "lastHarvestedAt": "2026-11-05T14:30:13.036Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {

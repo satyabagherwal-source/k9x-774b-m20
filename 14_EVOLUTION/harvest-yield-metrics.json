@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:22:52.698Z",
-  "total_cycles_completed": 7669,
-  "total_learnings_persisted": 7669,
-  "total_rules_promoted": 7319,
+  "last_updated": "2026-11-05T14:30:13.041Z",
+  "total_cycles_completed": 7671,
+  "total_learnings_persisted": 7671,
+  "total_rules_promoted": 7322,
   "history": [
-    {
-      "timestamp": "2026-11-05T03:53:34.145Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:00:33.474Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:00:35.180Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1403,6 +1389,20 @@
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:30:06.876Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:30:13.041Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
