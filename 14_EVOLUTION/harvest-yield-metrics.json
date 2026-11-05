@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T03:02:56.762Z",
-  "total_cycles_completed": 7451,
-  "total_learnings_persisted": 7451,
-  "total_rules_promoted": 7134,
+  "last_updated": "2026-11-05T03:13:29.836Z",
+  "total_cycles_completed": 7453,
+  "total_learnings_persisted": 7453,
+  "total_rules_promoted": 7135,
   "history": [
-    {
-      "timestamp": "2026-11-04T18:28:49.019Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T18:35:30.059Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T18:35:43.888Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1403,6 +1389,20 @@
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:13:17.795Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:13:29.836Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

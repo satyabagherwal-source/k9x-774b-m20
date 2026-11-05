@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T03:02:59.529Z",
-    "lastVerified": "2026-11-05T03:02:59.529Z",
+    "lastChecked": "2026-11-05T03:13:32.362Z",
+    "lastVerified": "2026-11-05T03:13:32.362Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T02:40:28.109Z",
-    "lastVerified": "2026-11-05T02:40:28.109Z",
+    "lastChecked": "2026-11-05T03:12:53.468Z",
+    "lastVerified": "2026-11-05T03:12:53.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1507,9 +1507,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-04T23:34:41.454Z",
+    "lastChecked": "2026-11-05T03:12:48.479Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-04T23:34:41.454Z"
+    "lastVerified": "2026-11-05T03:12:48.479Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2631,9 +2631,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-04T00:38:21.106Z",
+    "lastChecked": "2026-11-05T03:12:38.451Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-04T00:38:21.106Z"
+    "lastVerified": "2026-11-05T03:12:38.451Z"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -3719,12 +3719,12 @@
     "officialUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T12:39:26.478Z",
-    "lastVerified": "2026-10-31T12:39:26.478Z",
+    "lastChecked": "2026-11-05T03:12:40.995Z",
+    "lastVerified": "2026-11-05T03:12:40.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
+    "contentHash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4441,14 +4441,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T03:51:11.943Z",
-    "lastVerified": "2026-11-04T03:51:11.943Z",
+    "lastChecked": "2026-11-05T03:12:54.899Z",
+    "lastVerified": "2026-11-05T03:12:54.899Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
+    "contentHash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6912,9 +6912,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-04T07:41:10.869Z",
+    "lastChecked": "2026-11-05T03:12:45.987Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-04T07:41:10.869Z"
+    "lastVerified": "2026-11-05T03:12:45.987Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -9191,9 +9191,9 @@
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
     "officialUrl": "https://github.com/siteline/swiftui-introspect",
-    "lastChecked": "2026-10-31T20:31:55.162Z",
+    "lastChecked": "2026-11-05T03:12:43.462Z",
     "revisionIdentifier": "7f32b29d",
-    "lastVerified": "2026-10-31T20:31:55.162Z"
+    "lastVerified": "2026-11-05T03:12:43.462Z"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",

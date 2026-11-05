@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
-    "lastHarvestedAt": "2026-10-31T12:39:27.577Z",
+    "contentHash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
+    "lastHarvestedAt": "2026-11-05T03:13:29.832Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "471d259e",
+    "sourceVersion": "9b376dfd",
     "license": "NOASSERTION",
-    "contentHash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
-    "lastHarvestedAt": "2026-11-04T03:51:14.215Z",
+    "contentHash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
+    "lastHarvestedAt": "2026-11-05T03:13:17.791Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

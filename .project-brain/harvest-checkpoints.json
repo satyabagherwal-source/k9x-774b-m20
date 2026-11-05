@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T03:02:56.773Z",
+  "last_updated": "2026-11-05T03:13:29.839Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
-      "verified_at": "2026-10-31T12:39:27.586Z",
+      "content_hash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
+      "verified_at": "2026-11-05T03:13:29.838Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:39:27.586Z"
+      "last_updated": "2026-11-05T03:13:29.838Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
-      "verified_at": "2026-11-04T03:51:14.222Z",
+      "content_hash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
+      "verified_at": "2026-11-05T03:13:17.802Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:51:14.222Z"
+      "last_updated": "2026-11-05T03:13:17.802Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",

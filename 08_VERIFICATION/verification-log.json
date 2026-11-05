@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-UI70",
-    "timestamp": "2026-11-03T18:56:53.916Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "7e1589ecc81e8a513af164aac8c1233b904a0d64eaad37800be60202aca5ee9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-64LX",
-    "timestamp": "2026-11-03T19:05:56.181Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "adfe83db44ed28079915bf3efd28a7451c3b00f11cbed44d60d06ca3a8709602",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-69RF",
     "timestamp": "2026-11-03T19:06:02.859Z",
     "repository": "nats-io/nats.go",
@@ -7492,6 +7462,36 @@
     "contentHash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-0Q8S",
+    "timestamp": "2026-11-05T03:13:17.788Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-0ZJ7",
+    "timestamp": "2026-11-05T03:13:29.827Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

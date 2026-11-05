@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T03:02:56.665Z",
+  "last_updated": "2026-11-05T03:13:29.752Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24716,7 +24716,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "d40b2089dd223b9db777cf83155ca4781fbd246357fe44e8e37a392ff5cc56f2",
+      "content_hash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -24778,7 +24778,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-31T12:39:27.462Z",
+      "verified_at": "2026-11-05T03:13:29.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39467,8 +39467,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "471d259e",
-      "content_hash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
+      "source_version": "9b376dfd",
+      "content_hash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -39546,6 +39546,11 @@
           "number": 6748,
           "title": "build(deps): bump @vitest/mocker and vitest in /ci/test/docs-widgets (#40437)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7082,
+          "title": "build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39553,7 +39558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:51:14.131Z",
+      "verified_at": "2026-11-05T03:13:17.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179570,6 +179575,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T03:02:56.630Z"
+    },
+    "rule-7082": {
+      "learning_id": "rule-7082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7082,
+      "title": "build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "9b376dfd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:13:17.709Z"
     }
   },
   "aliases": {

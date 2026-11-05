@@ -7483,3 +7483,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T03:02:48.312Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `35561ead` | Multi-dimensional audit evidence | 2026-11-05T03:02:49.754Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `7c69f415` | Multi-dimensional audit evidence | 2026-11-05T03:02:56.757Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `9b376dfd` | Multi-dimensional audit evidence | 2026-11-05T03:13:17.791Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T03:13:29.832Z |
