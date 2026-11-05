@@ -7543,3 +7543,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-05T06:00:30.933Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `cdc63f4b` | Multi-dimensional audit evidence | 2026-11-05T06:00:35.805Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a1cefa48` | Multi-dimensional audit evidence | 2026-11-05T06:00:36.542Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-05T06:07:38.663Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `acb81361` | Multi-dimensional audit evidence | 2026-11-05T06:07:51.546Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `22d46121` | Multi-dimensional audit evidence | 2026-11-05T06:07:53.322Z |

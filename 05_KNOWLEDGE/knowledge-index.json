@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T06:00:36.453Z",
+  "last_updated": "2026-11-05T06:07:53.222Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30699,7 +30699,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "ca0516a271b57d21200d3064454dc01f7789e1a1e9fba51dd366651582240693",
+      "content_hash": "c3884ebd0767ee027d5fed89e7d7ded5ef4120b32577780fef3964eae230860f",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [
@@ -30799,7 +30799,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
       ],
-      "verified_at": "2026-10-31T15:29:40.474Z",
+      "verified_at": "2026-11-05T06:07:38.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58829,8 +58829,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "90f4ba81",
-      "content_hash": "3c130a3170e5873012aa3ba8965d447c226a525352411cee578138bbf8f2e06d",
+      "source_version": "22d46121",
+      "content_hash": "e2b3eb334f1c5673458b55aa52f59d8319f94aee67033f96d884b0e62e1c394e",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -58910,7 +58910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:12:38.989Z",
+      "verified_at": "2026-11-05T06:07:53.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72285,8 +72285,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "66955b13",
-      "content_hash": "33a77c3a033bee8c10f472af88d56c478a487825c78a5983e499171f6830a933",
+      "source_version": "acb81361",
+      "content_hash": "383705f793aa2a820ee88096e9635ec068f0216a535858282c83bec2c40ea1b9",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -72399,6 +72399,11 @@
           "number": 6978,
           "title": "Merge pull request #4624 from aleo-labs-protocol/ci/bump-snarkvm",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7128,
+          "title": "Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72406,7 +72411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:06:27.473Z",
+      "verified_at": "2026-11-05T06:07:51.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180517,6 +180522,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T06:00:36.430Z"
+    },
+    "rule-7128": {
+      "learning_id": "rule-7128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7128,
+      "title": "Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "acb81361",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:07:51.434Z"
     }
   },
   "aliases": {

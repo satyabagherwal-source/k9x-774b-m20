@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T06:00:36.548Z",
-  "total_cycles_completed": 7511,
-  "total_learnings_persisted": 7511,
-  "total_rules_promoted": 7185,
+  "last_updated": "2026-11-05T06:07:53.328Z",
+  "total_cycles_completed": 7514,
+  "total_learnings_persisted": 7514,
+  "total_rules_promoted": 7186,
   "history": [
-    {
-      "timestamp": "2026-11-04T20:53:22.742Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T20:53:29.897Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:00:19.468Z",
-      "repository": "iconoir-icons/iconoir",
-      "learningId": "learn-github-iconoir-icons-iconoir",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T21:00:21.668Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:07:38.669Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:07:51.552Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:07:53.328Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

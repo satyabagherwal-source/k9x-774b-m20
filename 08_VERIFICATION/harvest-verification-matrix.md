@@ -7534,3 +7534,6 @@
 | `CYCLE-20261105-ZRV5` | `2026-11-05T06:00:30.929Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7124, Rule 986, Rule 7125` | Yes (`d72c93df...`) |
 | `CYCLE-20261105-ZVMH` | `2026-11-05T06:00:35.801Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7126` | Yes (`c029547f...`) |
 | `CYCLE-20261105-ZW6Z` | `2026-11-05T06:00:36.539Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7127` | Yes (`d55b8ab3...`) |
+| `CYCLE-20261105-8XWD` | `2026-11-05T06:07:38.653Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`c3884ebd...`) |
+| `CYCLE-20261105-97UE` | `2026-11-05T06:07:51.542Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`383705f7...`) |
+| `CYCLE-20261105-997M` | `2026-11-05T06:07:53.314Z` | `trinodb/trino` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trinodb-trino-learnings.md` | Yes (`e2b3eb33...`) |
