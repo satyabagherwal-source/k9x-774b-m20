@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:14:42.439Z",
-    "lastVerified": "2026-11-05T12:14:42.439Z",
+    "lastChecked": "2026-11-05T12:22:55.204Z",
+    "lastVerified": "2026-11-05T12:22:55.204Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T11:53:21.973Z",
-    "lastVerified": "2026-11-05T11:53:21.973Z",
+    "lastChecked": "2026-11-05T12:21:57.418Z",
+    "lastVerified": "2026-11-05T12:21:57.418Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -218,9 +218,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-05T08:30:21.935Z",
+    "lastChecked": "2026-11-05T12:21:52.390Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-05T08:30:21.935Z"
+    "lastVerified": "2026-11-05T12:21:52.390Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -1457,9 +1457,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-04T21:33:03.799Z",
+    "lastChecked": "2026-11-05T12:21:54.946Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-04T21:33:03.799Z"
+    "lastVerified": "2026-11-05T12:21:54.946Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
@@ -4481,9 +4481,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-04T22:20:06.946Z",
+    "lastChecked": "2026-11-05T12:21:49.907Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-04T22:20:06.946Z"
+    "lastVerified": "2026-11-05T12:21:49.907Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -6859,8 +6859,8 @@
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T18:05:54.324Z",
-    "lastVerified": "2026-11-04T18:05:54.324Z",
+    "lastChecked": "2026-11-05T12:21:42.421Z",
+    "lastVerified": "2026-11-05T12:21:42.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -7961,13 +7961,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T21:46:00.130Z",
-    "lastVerified": "2026-10-31T21:46:00.130Z",
+    "lastChecked": "2026-11-05T12:21:45.016Z",
+    "lastVerified": "2026-11-05T12:21:45.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "3aea0b126967bde1cd848e4a41b47269a6b008c804c690ef82e8cb78f6076b1f",
-    "promotedRulesCount": 3,
+    "contentHash": "387de9c9c6fa66e67ab3052056b10705a1b7e57d2ddd15faf23d1ddbdb4c9b51",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10630,9 +10630,9 @@
   "gonzalezreal-swift-markdown-ui": {
     "name": "swift-markdown-ui",
     "officialUrl": "https://github.com/gonzalezreal/swift-markdown-ui",
-    "lastChecked": "2026-11-02T17:39:05.168Z",
+    "lastChecked": "2026-11-05T12:21:47.383Z",
     "revisionIdentifier": "8371aeb3",
-    "lastVerified": "2026-11-02T17:39:05.168Z"
+    "lastVerified": "2026-11-05T12:21:47.383Z"
   },
   "hf-pika-labs-pika-h3-flex": {
     "name": "Pika-Labs/Pika-H3-Flex",

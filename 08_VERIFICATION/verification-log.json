@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-XO2S",
-    "timestamp": "2026-11-04T03:51:14.212Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "f96ca3975a6fa16d2ad84206ba3ff92728007730361502885e20067ae874b0be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-XOB7",
     "timestamp": "2026-11-04T03:51:14.515Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7477,21 @@
     "contentHash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-NHTB",
+    "timestamp": "2026-11-05T12:22:52.655Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "387de9c9c6fa66e67ab3052056b10705a1b7e57d2ddd15faf23d1ddbdb4c9b51",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

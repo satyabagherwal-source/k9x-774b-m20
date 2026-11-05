@@ -7657,3 +7657,4 @@ Every entry in this ledger must capture:
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `9b9bd5ef` | Multi-dimensional audit evidence | 2026-11-05T12:14:36.693Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `3b6bbb46` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.536Z |
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.889Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-05T12:22:52.659Z |

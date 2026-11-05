@@ -7648,3 +7648,4 @@
 | `CYCLE-20261105-CV4H` | `2026-11-05T12:14:36.689Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7215` | Yes (`f8c5a65e...`) |
 | `CYCLE-20261105-CXBG` | `2026-11-05T12:14:39.532Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`299db654...`) |
 | `CYCLE-20261105-CXL9` | `2026-11-05T12:14:39.885Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7216, Rule 7217, Rule 7218` | Yes (`f9a3a835...`) |
+| `CYCLE-20261105-NHTB` | `2026-11-05T12:22:52.655Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`387de9c9...`) |
