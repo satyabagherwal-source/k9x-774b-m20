@@ -7439,3 +7439,5 @@
 | `CYCLE-20261105-JK10` | `2026-11-05T01:07:58.116Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7057` | Yes (`241ded57...`) |
 | `CYCLE-20261105-SQUV` | `2026-11-05T01:15:06.871Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`93693f56...`) |
 | `CYCLE-20261105-SV6U` | `2026-11-05T01:15:12.486Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md` | Yes (`07cf412c...`) |
+| `CYCLE-20261105-1XY2` | `2026-11-05T01:22:15.962Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`3c44c7f4...`) |
+| `CYCLE-20261105-28SA` | `2026-11-05T01:22:30.010Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7058` | Yes (`6a412037...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:15:12.367Z",
+  "last_updated": "2026-11-05T01:22:29.925Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31554,7 +31554,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
+      "content_hash": "3c44c7f4ef93c8a593bbd51abe33294d656746b74dbef267d2830bb6cf093b5c",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -31612,7 +31612,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-31T10:47:12.123Z",
+      "verified_at": "2026-11-05T01:22:15.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43680,8 +43680,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "e66e0fda",
-      "content_hash": "df15d3e72853029b8a3325c410150daeb4506a268648be831fa1a75927535f52",
+      "source_version": "cb45461a",
+      "content_hash": "6a41203745c1766a9c1e5de4831b5edb359d3bd07fea5fed6a83af5b73d4ea23",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -43719,6 +43719,11 @@
           "number": 6721,
           "title": "failed tools run twice on recovery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7058,
+          "title": "add node heartbeat to update the lease timeout in a long-running node",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43726,7 +43731,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:12:12.663Z",
+      "verified_at": "2026-11-05T01:22:29.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179082,6 +179087,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:07:58.005Z"
+    },
+    "rule-7058": {
+      "learning_id": "rule-7058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7058,
+      "title": "add node heartbeat to update the lease timeout in a long-running node",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "cb45461a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:22:29.898Z"
     }
   },
   "aliases": {

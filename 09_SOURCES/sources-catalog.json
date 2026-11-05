@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "94da086526070c3b9720d4b0624bec848b8dca41963418272493c671906aa620",
-    "lastHarvestedAt": "2026-10-31T10:47:12.240Z",
+    "contentHash": "3c44c7f4ef93c8a593bbd51abe33294d656746b74dbef267d2830bb6cf093b5c",
+    "lastHarvestedAt": "2026-11-05T01:22:15.973Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "e66e0fda",
+    "sourceVersion": "cb45461a",
     "license": "MIT",
-    "contentHash": "df15d3e72853029b8a3325c410150daeb4506a268648be831fa1a75927535f52",
-    "lastHarvestedAt": "2026-11-04T02:12:12.782Z",
+    "contentHash": "6a41203745c1766a9c1e5de4831b5edb359d3bd07fea5fed6a83af5b73d4ea23",
+    "lastHarvestedAt": "2026-11-05T01:22:30.014Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
