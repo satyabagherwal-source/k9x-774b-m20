@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:22:52.547Z",
+  "last_updated": "2026-11-05T12:29:31.011Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19561,7 +19561,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
+      "content_hash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
@@ -19624,7 +19624,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-31T21:55:13.740Z",
+      "verified_at": "2026-11-05T12:29:16.102Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41311,8 +41311,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "a918f763",
-      "content_hash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
+      "source_version": "ade4d5af",
+      "content_hash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -41435,6 +41435,11 @@
           "number": 6893,
           "title": "agent-sre): make the AgentRollout status match its CRD schema (#4483)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7219,
+          "title": "agent-rag-governance): reject a negative max_retrievals_per_minute (#4484)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41442,7 +41447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:21:39.187Z",
+      "verified_at": "2026-11-05T12:29:27.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56654,8 +56659,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "0ac48953",
-      "content_hash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
+      "source_version": "202384a1",
+      "content_hash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -56743,6 +56748,11 @@
           "number": 6982,
           "title": "editor): expand accepted snippets on every rectangular cursor (#14118)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7220,
+          "title": "jdbc): run DDL outside the paged query transaction (#14368)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56750,7 +56760,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:42:37.396Z",
+      "verified_at": "2026-11-05T12:29:30.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182279,6 +182289,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:14:39.766Z"
+    },
+    "rule-7219": {
+      "learning_id": "rule-7219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7219,
+      "title": "agent-rag-governance): reject a negative max_retrievals_per_minute (#4484)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "ade4d5af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:29:27.190Z"
+    },
+    "rule-7220": {
+      "learning_id": "rule-7220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7220,
+      "title": "jdbc): run DDL outside the paged query transaction (#14368)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "202384a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:29:30.995Z"
     }
   },
   "aliases": {

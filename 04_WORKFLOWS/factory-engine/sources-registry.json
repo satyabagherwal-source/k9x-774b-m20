@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:22:55.204Z",
-    "lastVerified": "2026-11-05T12:22:55.204Z",
+    "lastChecked": "2026-11-05T12:29:33.613Z",
+    "lastVerified": "2026-11-05T12:29:33.613Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:00:16.700Z",
-    "lastVerified": "2026-11-05T12:00:16.700Z",
+    "lastChecked": "2026-11-05T12:29:27.811Z",
+    "lastVerified": "2026-11-05T12:29:27.811Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -318,22 +318,21 @@
     "lastVerified": "2026-11-05T04:36:06.312Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T08:40:11.124Z",
-    "lastVerified": "2026-11-05T08:40:11.124Z",
+    "lastChecked": "2026-11-05T12:29:26.733Z",
+    "lastVerified": "2026-11-05T12:29:26.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
+    "contentHash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a918f763"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -1531,14 +1530,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:42:36.962Z",
-    "lastVerified": "2026-11-04T21:42:36.962Z",
+    "lastChecked": "2026-11-05T12:29:30.536Z",
+    "lastVerified": "2026-11-05T12:29:30.536Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
+    "contentHash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
     "promotedRulesCount": 1,
-    "recentFixesCount": 26,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4546,9 +4545,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-04T22:27:31.742Z",
+    "lastChecked": "2026-11-05T12:29:20.186Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-04T22:27:31.742Z"
+    "lastVerified": "2026-11-05T12:29:20.186Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -6934,9 +6933,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-04T18:13:35.785Z",
+    "lastChecked": "2026-11-05T12:29:12.635Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-04T18:13:35.785Z"
+    "lastVerified": "2026-11-05T12:29:12.635Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -8012,13 +8011,13 @@
     "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T21:54:07.992Z",
-    "lastVerified": "2026-10-31T21:54:07.992Z",
+    "lastChecked": "2026-11-05T12:29:15.316Z",
+    "lastVerified": "2026-11-05T12:29:15.316Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
-    "promotedRulesCount": 2,
+    "contentHash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10669,12 +10668,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "yattee-yattee": {
-    "name": "yattee/yattee",
+    "name": "yattee",
     "officialUrl": "https://github.com/yattee/yattee",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-02T17:46:44.445Z",
-    "lastVerified": "2026-11-02T17:46:44.445Z",
+    "lastChecked": "2026-11-05T12:29:17.749Z",
+    "lastVerified": "2026-11-05T12:29:17.749Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yattee-yattee",
@@ -10683,7 +10682,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "10ea2798"
   },
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",

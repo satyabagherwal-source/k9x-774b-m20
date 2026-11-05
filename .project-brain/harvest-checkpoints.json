@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T12:22:52.670Z",
+  "last_updated": "2026-11-05T12:29:31.088Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
-      "verified_at": "2026-10-31T21:55:13.839Z",
+      "content_hash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
+      "verified_at": "2026-11-05T12:29:16.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T21:55:13.839Z"
+      "last_updated": "2026-11-05T12:29:16.193Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
-      "verified_at": "2026-11-04T18:21:39.306Z",
+      "content_hash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
+      "verified_at": "2026-11-05T12:29:27.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:21:39.306Z"
+      "last_updated": "2026-11-05T12:29:27.280Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
-      "verified_at": "2026-11-04T21:42:37.476Z",
+      "content_hash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
+      "verified_at": "2026-11-05T12:29:31.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:42:37.476Z"
+      "last_updated": "2026-11-05T12:29:31.088Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

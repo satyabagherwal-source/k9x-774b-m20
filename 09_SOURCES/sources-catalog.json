@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "e678fc1c528d486f91128ead5eca61f6003843db0630a68ac8d79fadc65593c6",
-    "lastHarvestedAt": "2026-10-31T21:55:13.831Z",
+    "contentHash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
+    "lastHarvestedAt": "2026-11-05T12:29:16.186Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "a918f763",
+    "sourceVersion": "ade4d5af",
     "license": "MIT",
-    "contentHash": "cdd17b4a1286491e5811b6ff14d33819eb7cfeb431b0643640bc1e8f54995f92",
-    "lastHarvestedAt": "2026-11-04T18:21:39.297Z",
+    "contentHash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
+    "lastHarvestedAt": "2026-11-05T12:29:27.263Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "0ac48953",
+    "sourceVersion": "202384a1",
     "license": "Apache-2.0",
-    "contentHash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
-    "lastHarvestedAt": "2026-11-04T21:42:37.464Z",
+    "contentHash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
+    "lastHarvestedAt": "2026-11-05T12:29:31.073Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

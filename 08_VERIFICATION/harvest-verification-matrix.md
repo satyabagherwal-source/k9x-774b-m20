@@ -7649,3 +7649,6 @@
 | `CYCLE-20261105-CXBG` | `2026-11-05T12:14:39.532Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`299db654...`) |
 | `CYCLE-20261105-CXL9` | `2026-11-05T12:14:39.885Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7216, Rule 7217, Rule 7218` | Yes (`f9a3a835...`) |
 | `CYCLE-20261105-NHTB` | `2026-11-05T12:22:52.655Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`387de9c9...`) |
+| `CYCLE-20261105-VPQW` | `2026-11-05T12:29:16.184Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`0a63b3d9...`) |
+| `CYCLE-20261105-VYAK` | `2026-11-05T12:29:27.260Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7219` | Yes (`10c44bc1...`) |
+| `CYCLE-20261105-W18E` | `2026-11-05T12:29:31.070Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7220` | Yes (`6920cba9...`) |

@@ -7658,3 +7658,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `3b6bbb46` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.536Z |
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.889Z |
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-05T12:22:52.659Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T12:29:16.186Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ade4d5af` | Multi-dimensional audit evidence | 2026-11-05T12:29:27.263Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `202384a1` | Multi-dimensional audit evidence | 2026-11-05T12:29:31.073Z |
