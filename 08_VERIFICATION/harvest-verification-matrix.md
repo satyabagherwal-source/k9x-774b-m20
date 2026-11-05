@@ -7482,3 +7482,6 @@
 | `CYCLE-20261105-J7ET` | `2026-11-05T03:27:39.845Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7086` | Yes (`4004b77c...`) |
 | `CYCLE-20261105-JAY8` | `2026-11-05T03:27:44.432Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7087` | Yes (`06141b59...`) |
 | `CYCLE-20261105-PLXH` | `2026-11-05T03:32:38.597Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`d597f841...`) |
+| `CYCLE-20261105-YTZA` | `2026-11-05T03:39:48.934Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`2221b75f...`) |
+| `CYCLE-20261105-YVYN` | `2026-11-05T03:39:51.503Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7088` | Yes (`1da88a08...`) |
+| `CYCLE-20261105-Z37L` | `2026-11-05T03:40:00.897Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7089` | Yes (`8a863012...`) |

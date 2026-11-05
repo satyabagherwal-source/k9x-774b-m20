@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T03:32:41.143Z",
-    "lastVerified": "2026-11-05T03:32:41.143Z",
+    "lastChecked": "2026-11-05T03:40:03.471Z",
+    "lastVerified": "2026-11-05T03:40:03.471Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T03:02:59.519Z",
-    "lastVerified": "2026-11-05T03:02:59.519Z",
+    "lastChecked": "2026-11-05T03:40:00.242Z",
+    "lastVerified": "2026-11-05T03:40:00.242Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1750,8 +1750,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T00:00:10.493Z",
-    "lastVerified": "2026-11-05T00:00:10.493Z",
+    "lastChecked": "2026-11-05T03:39:55.466Z",
+    "lastVerified": "2026-11-05T03:39:55.466Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3907,12 +3907,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T12:59:55.746Z",
-    "lastVerified": "2026-10-31T12:59:55.746Z",
+    "lastChecked": "2026-11-05T03:39:47.866Z",
+    "lastVerified": "2026-11-05T03:39:47.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
+    "contentHash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4646,9 +4646,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-11-04T07:18:51.171Z",
+    "lastChecked": "2026-11-05T03:39:57.666Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-11-04T07:18:51.171Z"
+    "lastVerified": "2026-11-05T03:39:57.666Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -7108,22 +7108,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkerd-linkerd2": {
-    "name": "linkerd2",
+    "name": "linkerd/linkerd2",
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:02:50.317Z",
-    "lastVerified": "2026-11-04T08:02:50.317Z",
+    "lastChecked": "2026-11-05T03:40:00.071Z",
+    "lastVerified": "2026-11-05T03:40:00.071Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
+    "contentHash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8c85d41a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "postgresml-postgresml": {
     "name": "postgresml",
@@ -9245,9 +9244,9 @@
   "twostraws-controlroom": {
     "name": "ControlRoom",
     "officialUrl": "https://github.com/twostraws/ControlRoom",
-    "lastChecked": "2026-10-31T20:53:10.376Z",
+    "lastChecked": "2026-11-05T03:39:50.248Z",
     "revisionIdentifier": "1764564f",
-    "lastVerified": "2026-10-31T20:53:10.376Z"
+    "lastVerified": "2026-11-05T03:39:50.248Z"
   },
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
@@ -13555,6 +13554,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jarvis322-macos-sysdata": {
+    "name": "Jarvis322/macos-sysdata",
+    "officialUrl": "https://github.com/Jarvis322/macos-sysdata",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-05T03:39:50.672Z",
+    "lastVerified": "2026-11-05T03:39:50.672Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jarvis322-macos-sysdata",
+    "contentHash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-TM4P",
-    "timestamp": "2026-11-03T19:24:11.977Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "3a4cc84aa3f73c1f0e6fb70110dc1ebcd124516d40ecaf171cbf8ab463d0edf3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-TOGS",
-    "timestamp": "2026-11-03T19:24:15.004Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-TWS9",
-    "timestamp": "2026-11-03T19:24:25.785Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "c1a9149b82e64fff30bb50f01f2588369244ab9c5a3ba028c4039496a0e97402",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-AY22",
     "timestamp": "2026-11-03T19:37:40.586Z",
     "repository": "scrapy-plugins/scrapy-playwright",
@@ -7492,6 +7447,51 @@
     "contentHash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-YTZA",
+    "timestamp": "2026-11-05T03:39:48.934Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-YVYN",
+    "timestamp": "2026-11-05T03:39:51.503Z",
+    "repository": "Jarvis322/macos-sysdata",
+    "learningId": "learn-github-jarvis322-macos-sysdata",
+    "contentHash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Z37L",
+    "timestamp": "2026-11-05T03:40:00.897Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

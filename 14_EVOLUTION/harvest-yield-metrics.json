@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T03:32:38.610Z",
-  "total_cycles_completed": 7459,
-  "total_learnings_persisted": 7459,
-  "total_rules_promoted": 7142,
+  "last_updated": "2026-11-05T03:40:00.907Z",
+  "total_cycles_completed": 7462,
+  "total_learnings_persisted": 7462,
+  "total_rules_promoted": 7144,
   "history": [
-    {
-      "timestamp": "2026-11-04T18:57:34.549Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T18:57:35.557Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T18:57:37.726Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T18:57:42.243Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:39:48.951Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:39:51.513Z",
+      "repository": "Jarvis322/macos-sysdata",
+      "learningId": "learn-github-jarvis322-macos-sysdata",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:40:00.907Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

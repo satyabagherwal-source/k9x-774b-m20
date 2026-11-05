@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
-    "lastHarvestedAt": "2026-10-31T12:59:56.584Z",
+    "contentHash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
+    "lastHarvestedAt": "2026-11-05T03:39:48.945Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "8c85d41a",
+    "sourceVersion": "59d4d4ca",
     "license": "Apache-2.0",
-    "contentHash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
-    "lastHarvestedAt": "2026-11-03T11:22:13.508Z",
+    "contentHash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
+    "lastHarvestedAt": "2026-11-05T03:40:00.901Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -11928,5 +11928,15 @@
     "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
     "lastHarvestedAt": "2026-11-05T02:32:58.569Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
+  },
+  "jarvis322-macos-sysdata": {
+    "repository": "Jarvis322/macos-sysdata",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Jarvis322/macos-sysdata",
+    "sourceVersion": "ebb7a5f7",
+    "license": "NOASSERTION",
+    "contentHash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+    "lastHarvestedAt": "2026-11-05T03:39:51.507Z",
+    "learningId": "learn-github-jarvis322-macos-sysdata"
   }
 }

@@ -7491,3 +7491,6 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f8a950c3` | Multi-dimensional audit evidence | 2026-11-05T03:27:39.848Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `ea1eb4c2` | Multi-dimensional audit evidence | 2026-11-05T03:27:44.435Z |
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T03:32:38.605Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T03:39:48.945Z |
+| `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `ebb7a5f7` | Multi-dimensional audit evidence | 2026-11-05T03:39:51.507Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `59d4d4ca` | Multi-dimensional audit evidence | 2026-11-05T03:40:00.901Z |

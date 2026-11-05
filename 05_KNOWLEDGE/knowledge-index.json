@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T03:32:38.507Z",
-  "total_verified_learnings": 1211,
+  "last_updated": "2026-11-05T03:40:00.810Z",
+  "total_verified_learnings": 1212,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -29312,7 +29312,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
+      "content_hash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -29375,7 +29375,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-10-31T12:59:56.513Z",
+      "verified_at": "2026-11-05T03:39:48.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38290,8 +38290,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "8c85d41a",
-      "content_hash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
+      "source_version": "59d4d4ca",
+      "content_hash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -38329,6 +38329,11 @@
           "number": 6507,
           "title": "inject): inherit beta native sidecar annotation from namespace (#15734)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7089,
+          "title": "build: keep apko outputs out of the repo root (#15766)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38336,7 +38341,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:22:13.403Z",
+      "verified_at": "2026-11-05T03:40:00.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179665,6 +179670,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T03:27:44.337Z"
+    },
+    "learn-github-jarvis322-macos-sysdata": {
+      "learning_id": "learn-github-jarvis322-macos-sysdata",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Jarvis322/macos-sysdata",
+      "repository": "Jarvis322/macos-sysdata",
+      "slug": "jarvis322-macos-sysdata",
+      "platform": "github",
+      "source_url": "https://github.com/Jarvis322/macos-sysdata",
+      "source_version": "ebb7a5f7",
+      "content_hash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+      "dossier_path": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 7088,
+          "title": "shell): kill programs that ignore the timeout",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T03:39:51.389Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7088": {
+      "learning_id": "rule-7088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7088,
+      "title": "shell): kill programs that ignore the timeout",
+      "source_url": "https://github.com/Jarvis322/macos-sysdata",
+      "source_version": "ebb7a5f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:39:51.389Z"
+    },
+    "rule-7089": {
+      "learning_id": "rule-7089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7089,
+      "title": "build: keep apko outputs out of the repo root (#15766)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "59d4d4ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:40:00.786Z"
     }
   },
   "aliases": {

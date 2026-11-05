@@ -20311,5 +20311,20 @@
     "downloads": 45623,
     "qualityScore": 3520,
     "discoveredAt": "2026-11-05T02:30:43.243Z"
+  },
+  {
+    "name": "macos-sysdata",
+    "fullName": "Jarvis322/macos-sysdata",
+    "url": "https://github.com/Jarvis322/macos-sysdata",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "See what is really inside macOS System Data and delete it item by item. A free menu bar app that explains every category and shows each command before it runs.",
+    "stars": 1897,
+    "forks": 72,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 1220,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T03:37:35.799Z"
   }
 ]

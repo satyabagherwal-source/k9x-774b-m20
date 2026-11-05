@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T03:32:38.614Z",
+  "last_updated": "2026-11-05T03:40:00.920Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "9a24186f4ed260a3bf0f1567918af89ddfde8222721d50166379df87fe37a166",
-      "verified_at": "2026-10-31T12:59:56.590Z",
+      "content_hash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
+      "verified_at": "2026-11-05T03:39:48.955Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:59:56.590Z"
+      "last_updated": "2026-11-05T03:39:48.955Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "e56e1456dcd257fe2677279c8f75757fe079f9fbe5041462da4350c9c7c9bff5",
-      "verified_at": "2026-11-03T11:22:13.517Z",
+      "content_hash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
+      "verified_at": "2026-11-05T03:40:00.919Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:22:13.517Z"
+      "last_updated": "2026-11-05T03:40:00.919Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -17954,6 +17954,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T02:32:58.580Z"
+    },
+    "Jarvis322/macos-sysdata": {
+      "repository": "Jarvis322/macos-sysdata",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jarvis322-macos-sysdata",
+      "content_hash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
+      "verified_at": "2026-11-05T03:39:51.526Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T03:39:51.526Z"
     }
   },
   "repos": {
