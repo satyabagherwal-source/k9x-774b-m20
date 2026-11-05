@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:49:04.072Z",
+  "last_updated": "2026-11-05T23:55:41.460Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45393,11 +45393,16 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "491512db",
-      "content_hash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
+      "source_version": "3592d4bb",
+      "content_hash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "NUC 85 Fixed Cross-Property Class Anchors",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3289,
           "title": "Add Matrix.locate and offset-based pad for ARC",
@@ -45689,7 +45694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:47:42.974Z",
+      "verified_at": "2026-11-05T23:55:41.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

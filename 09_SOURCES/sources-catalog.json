@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "491512db",
+    "sourceVersion": "3592d4bb",
     "license": "Apache-2.0",
-    "contentHash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
-    "lastHarvestedAt": "2026-11-05T21:47:43.117Z",
+    "contentHash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
+    "lastHarvestedAt": "2026-11-05T23:55:41.533Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

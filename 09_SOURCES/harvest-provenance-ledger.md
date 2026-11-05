@@ -7837,3 +7837,4 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `bb2da9bb` | Multi-dimensional audit evidence | 2026-11-05T23:49:01.834Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `93019c44` | Multi-dimensional audit evidence | 2026-11-05T23:49:02.014Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `c26894aa` | Multi-dimensional audit evidence | 2026-11-05T23:49:04.178Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3592d4bb` | Multi-dimensional audit evidence | 2026-11-05T23:55:41.533Z |

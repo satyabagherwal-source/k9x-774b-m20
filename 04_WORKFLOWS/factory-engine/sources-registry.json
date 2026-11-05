@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T23:49:06.773Z",
-    "lastVerified": "2026-11-05T23:49:06.773Z",
+    "lastChecked": "2026-11-05T23:55:44.107Z",
+    "lastVerified": "2026-11-05T23:55:44.107Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,9 +194,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-11-03T23:39:16.632Z",
+    "lastChecked": "2026-11-05T23:55:25.646Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-11-03T23:39:16.632Z"
+    "lastVerified": "2026-11-05T23:55:25.646Z"
   },
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
@@ -446,22 +446,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T23:17:12.064Z",
-    "lastVerified": "2026-11-05T23:17:12.064Z",
+    "lastChecked": "2026-11-05T23:55:39.762Z",
+    "lastVerified": "2026-11-05T23:55:39.762Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "491512db"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -2143,12 +2142,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T19:15:05.629Z",
-    "lastVerified": "2026-11-05T19:15:05.629Z",
+    "lastChecked": "2026-11-05T23:55:30.753Z",
+    "lastVerified": "2026-11-05T23:55:30.753Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2157,7 +2156,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f8221ca5"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2678,8 +2678,8 @@
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T08:00:40.133Z",
-    "lastVerified": "2026-11-05T08:00:40.133Z",
+    "lastChecked": "2026-11-05T23:55:28.204Z",
+    "lastVerified": "2026-11-05T23:55:28.204Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
@@ -2703,8 +2703,8 @@
     "officialUrl": "https://github.com/ratatui/ratatui",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T03:20:29.686Z",
-    "lastVerified": "2026-11-05T03:20:29.686Z",
+    "lastChecked": "2026-11-05T23:55:20.698Z",
+    "lastVerified": "2026-11-05T23:55:20.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ratatui-ratatui",
@@ -6590,9 +6590,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-05T07:05:57.522Z",
+    "lastChecked": "2026-11-05T23:55:33.126Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-05T07:05:57.522Z"
+    "lastVerified": "2026-11-05T23:55:33.126Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -9836,9 +9836,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-11-03T10:36:57.370Z",
+    "lastChecked": "2026-11-05T23:55:23.093Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-11-03T10:36:57.370Z"
+    "lastVerified": "2026-11-05T23:55:23.093Z"
   },
   "emergetools-pow": {
     "name": "Pow",

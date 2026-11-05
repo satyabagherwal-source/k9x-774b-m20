@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-7JTU",
-    "timestamp": "2026-11-04T20:46:41.442Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "dd7dcab5c8ed35d4173ca7da1e574e0ba05a28507e9e22bd701378da592ff0da",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-7KXS",
     "timestamp": "2026-11-04T20:46:42.880Z",
     "repository": "kotest/kotest",
@@ -7490,6 +7475,21 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-EGKA",
+    "timestamp": "2026-11-05T23:55:41.530Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

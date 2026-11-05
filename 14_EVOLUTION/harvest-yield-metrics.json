@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T23:49:04.183Z",
-  "total_cycles_completed": 7805,
-  "total_learnings_persisted": 7805,
-  "total_rules_promoted": 7447,
+  "last_updated": "2026-11-05T23:55:41.538Z",
+  "total_cycles_completed": 7806,
+  "total_learnings_persisted": 7806,
+  "total_rules_promoted": 7448,
   "history": [
-    {
-      "timestamp": "2026-11-05T11:16:51.727Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-jialinyyzz-humanizer",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T11:23:20.037Z",
       "repository": "autotrust/JEV-27B-VL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-05T23:49:04.183Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:55:41.538Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

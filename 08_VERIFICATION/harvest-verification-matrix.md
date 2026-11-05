@@ -7828,3 +7828,4 @@
 | `CYCLE-20261105-5W5I` | `2026-11-05T23:49:01.830Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8112b6f1...`) |
 | `CYCLE-20261105-5WAJ` | `2026-11-05T23:49:02.011Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`664cc181...`) |
 | `CYCLE-20261105-5XYN` | `2026-11-05T23:49:04.175Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0c5410e1...`) |
+| `CYCLE-20261105-EGKA` | `2026-11-05T23:55:41.530Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`888a72a4...`) |
