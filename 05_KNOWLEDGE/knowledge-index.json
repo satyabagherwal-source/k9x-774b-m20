@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T15:52:02.104Z",
+  "last_updated": "2026-11-05T15:59:21.543Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8296,13 +8296,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "cbb7380f",
-      "content_hash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "885ef69f",
+      "content_hash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8408,6 +8408,11 @@
           "number": 6979,
           "title": "app-server): project thread/read onto the pinned ThreadReadResponse",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7271,
+          "title": "app-server): neutralize repository-defined git filter drivers on status reads (P",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8415,7 +8420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:07:54.150Z",
+      "verified_at": "2026-11-05T15:59:21.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73391,7 +73396,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
+      "content_hash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -73431,7 +73436,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:33:36.804Z",
+      "verified_at": "2026-11-05T15:59:19.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183356,6 +183361,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T15:44:54.288Z"
+    },
+    "rule-7271": {
+      "learning_id": "rule-7271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7271,
+      "title": "app-server): neutralize repository-defined git filter drivers on status reads (P",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "885ef69f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:59:21.519Z"
     }
   },
   "aliases": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:52:02.212Z",
-  "total_cycles_completed": 7688,
-  "total_learnings_persisted": 7688,
-  "total_rules_promoted": 7335,
+  "last_updated": "2026-11-05T15:59:21.643Z",
+  "total_cycles_completed": 7690,
+  "total_learnings_persisted": 7690,
+  "total_rules_promoted": 7336,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:57:38.135Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:57:38.821Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T05:04:27.232Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1403,6 +1389,20 @@
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:59:19.322Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:59:21.643Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
-    "lastHarvestedAt": "2026-11-01T01:33:36.922Z",
+    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
+    "lastHarvestedAt": "2026-11-05T15:59:19.316Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "cbb7380f",
+    "sourceVersion": "885ef69f",
     "license": "MIT",
-    "contentHash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
-    "lastHarvestedAt": "2026-11-04T21:33:00.937Z",
+    "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
+    "lastHarvestedAt": "2026-11-05T15:59:21.637Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

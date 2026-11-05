@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-TX3H",
-    "timestamp": "2026-11-04T10:20:13.901Z",
-    "repository": "wix/react-native-ui-lib",
-    "learningId": "learn-github-wix-react-native-ui-lib",
-    "contentHash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-U39S",
-    "timestamp": "2026-11-04T10:20:21.904Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "95ca4587fea1dbd08f1aaac958ca536173d77c834d064e956fcbb833008476e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-69XF",
     "timestamp": "2026-11-04T10:29:50.403Z",
     "repository": "vercel-labs/agent-desktop",
@@ -7492,6 +7462,36 @@
     "contentHash": "36a516abb71a2ecf12006538529ea13b8d1a054f388c95fa603424af6689352f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DUDS",
+    "timestamp": "2026-11-05T15:59:19.312Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-DW69",
+    "timestamp": "2026-11-05T15:59:21.633Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

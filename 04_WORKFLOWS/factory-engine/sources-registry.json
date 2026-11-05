@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T15:52:13.634Z",
-    "lastVerified": "2026-11-05T15:52:13.634Z",
+    "lastChecked": "2026-11-05T15:59:30.684Z",
+    "lastVerified": "2026-11-05T15:59:30.684Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T15:30:16.012Z",
-    "lastVerified": "2026-11-05T15:30:16.012Z",
+    "lastChecked": "2026-11-05T15:59:30.671Z",
+    "lastVerified": "2026-11-05T15:59:30.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -319,12 +319,12 @@
     "lastVerified": "2026-11-05T04:36:06.312Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T12:29:26.733Z",
-    "lastVerified": "2026-11-05T12:29:26.733Z",
+    "lastChecked": "2026-11-05T15:59:25.679Z",
+    "lastVerified": "2026-11-05T15:59:25.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -333,7 +333,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ade4d5af"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -3543,9 +3544,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-05T01:15:15.670Z",
+    "lastChecked": "2026-11-05T15:59:28.119Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-05T01:15:15.670Z"
+    "lastVerified": "2026-11-05T15:59:28.119Z"
   },
   "sigoden-aichat": {
     "name": "aichat",
@@ -6398,9 +6399,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-05T02:01:54.943Z",
+    "lastChecked": "2026-11-05T15:59:23.245Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-05T02:01:54.943Z"
+    "lastVerified": "2026-11-05T15:59:23.245Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -8291,14 +8292,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:32:59.015Z",
-    "lastVerified": "2026-11-04T21:32:59.015Z",
+    "lastChecked": "2026-11-05T15:59:20.829Z",
+    "lastVerified": "2026-11-05T15:59:20.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
+    "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9053,12 +9054,12 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T01:33:35.806Z",
-    "lastVerified": "2026-11-01T01:33:35.806Z",
+    "lastChecked": "2026-11-05T15:59:18.177Z",
+    "lastVerified": "2026-11-05T15:59:18.177Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
+    "contentHash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11314,9 +11315,9 @@
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
     "officialUrl": "https://github.com/SDWebImage/SDWebImageSwiftUI",
-    "lastChecked": "2026-11-03T16:09:06.636Z",
+    "lastChecked": "2026-11-05T15:59:20.671Z",
     "revisionIdentifier": "d1f7b2b4",
-    "lastVerified": "2026-11-03T16:09:06.636Z"
+    "lastVerified": "2026-11-05T15:59:20.671Z"
   },
   "aio-libs-aiohttp": {
     "name": "aio-libs/aiohttp",

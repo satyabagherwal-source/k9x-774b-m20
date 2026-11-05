@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:52:02.216Z",
+  "last_updated": "2026-11-05T15:59:21.656Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
-      "verified_at": "2026-11-01T01:33:36.931Z",
+      "content_hash": "ca8540dc1ab7c09430b2837a06dad2caf9bf7b4261c16132b906322fd397d48b",
+      "verified_at": "2026-11-05T15:59:19.326Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:33:36.931Z"
+      "last_updated": "2026-11-05T15:59:19.326Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
-      "verified_at": "2026-11-05T01:07:54.293Z",
+      "content_hash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
+      "verified_at": "2026-11-05T15:59:21.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:07:54.293Z"
+      "last_updated": "2026-11-05T15:59:21.655Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

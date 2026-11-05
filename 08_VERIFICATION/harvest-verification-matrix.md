@@ -7711,3 +7711,5 @@
 | `CYCLE-20261105-V38O` | `2026-11-05T15:44:44.328Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`f71280bb...`) |
 | `CYCLE-20261105-VAZU` | `2026-11-05T15:44:54.378Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7270` | Yes (`9154310c...`) |
 | `CYCLE-20261105-4H3V` | `2026-11-05T15:52:02.203Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`36a516ab...`) |
+| `CYCLE-20261105-DUDS` | `2026-11-05T15:59:19.312Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`ca8540dc...`) |
+| `CYCLE-20261105-DW69` | `2026-11-05T15:59:21.633Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7271` | Yes (`34572659...`) |

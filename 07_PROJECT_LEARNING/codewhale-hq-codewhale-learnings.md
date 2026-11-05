@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `cbb7380f`  
+> **Source Version**: `885ef69f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:33:00.429Z  
+> **Timestamp**: 2026-11-05T15:59:20.838Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:32:59.015Z  
+> **Harvest Timestamp**: 2026-11-05T15:59:20.829Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1845,636 +1845,474 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81317c5d` (2026-11-04)
-**Commit Message**: fix(app-server): project thread/read onto the pinned ThreadReadResponse
+### Incident Patch 1: `885ef69f` (2026-11-05)
+**Commit Message**: fix(app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2)
 
-thread/read now takes the pinned camelCase params (threadId, includeTurns) and
-returns {thread} with the same wire-only Thread projection as thread/list;
-with includeTurns it also returns Turn[] built from the canonical record
-(user/agent messages, reasoning, context compaction). Queued maps to
-inProgress and canceled to interrupted because the pinned enum has four
-values. The legacy snake_case thread_id is refused as an unknown field. Owner
-checks and alias resolution are untouched.
+GET /v1/workspace/status and the git status detail spawned `git status
+--porcelain=v1` with only core.fsmonitor and core.hooksPath disabled, so a
+repository-configured clean or process filter executed (observed on native-v36:
+filter-clean and filter-process markers written), and a failing process filter
+made git exit nonzero so the route silently reported dirty=false with zero counts
+on a dirty repository. Status reads now go through Git::status_command, which
+enumerates filter drivers with `git config --show-scope` and neutralizes any
+driver with a definition in a non-global/system scope (local, worktree, other),
+including a local redefinition of a global driver; drivers defined only in the
+user's global or system config, such as Git LFS, keep working. If the scoped probe
+fails it falls back to the all-scope neutralizer (fail closed). --ignore-submodules
+=dirty stops a repo-controlled submodule from running its own drivers. Status runs
+once in collect_workspace_status (it ran twice). A git failure no longer reads as
+clean: WorkspaceStatusResponse and GitStatusDetailResponse gain
+status
 
-Verified (local, existing checks, source only): the wave run of 823 selected
-existing checks across app-server, protocol schema+wire, engine, tui-kit and
-tui passed 822; the one failure, tui work_surface
-fleet_row_repaints_resolved_model_and_each_distinct_usage_total, also fails on
-every codewhale-tui test binary built since 2026-11-02 16:25 and is unrelated.
-Not verified: the pinned-schema validator on a native build. Command
-execution, file change and MCP tool-call items cannot be supplied by the
-canonical record and are omitted (turns then report itemsView "summary").
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +83/-0)
+**File**: `crates/app-server/src/runtime_api/git.rs` (modified, +37/-4)
 ```diff
-@@ -167,6 +167,89 @@ pub enum ThreadListSource {
-     Unknown,
+@@ -217,6 +217,22 @@ fn run_git_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
+     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
  }
  
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase", deny_unknown_fields)]
-+pub struct ThreadReadParams {
-+    pub thread_id: String,
-+    #[serde(default)]
-+    pub include_turns: bool,
++fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
++    let output = Git::status_command(workspace)
++        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
++        .args(args)
++        .output()
++        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
++    if !output.status.success() {
++        return Err(ApiError::internal(format!(
++            "git {} failed: {}",
++            args.first().copied().unwrap_or(""),
++            String::from_utf8_lossy(&output.stderr).trim()
++        )));
++    }
++    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 +}
 +
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadReadResponse {
-+    pub thread: ThreadListItem,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadTurn {
-+    pub id: String,
-+    pub items: Vec<ThreadTurnItem>,
-+    pub items_view: ThreadTurnItemsView,
-+    pub status: ThreadTurnStatus,
-+    pub error: Option<ThreadTurnError>,
-+    pub started_at: Option<i64>,
-+    pub completed_at: Option<i64>,
-+    pub duration_ms: Option<i64>,
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub enum ThreadTurnItemsView {
-+    Summary,
-+    Full,
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub enum ThreadTurnStatus {
-+    Completed,
-+    Interrupted,
-+    Failed,
-+    InProgress,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadTurnError {
-+    pub message: String,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(tag = "type", rename_all = "camelCase")]
-+pub enum ThreadTurnItem {
-+    UserMessage {
-+        id: String,
-+        content: Vec<ThreadUserInput>,
-+    },
-+    AgentMessage {
-+        id: String,
-+        text: String,
-+    },
-+    Reasoning {
-+        id: String,
-+        content: Vec<String>,
-+    },
-+    ContextCompaction {
-+        id: String,
-+    },
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(tag = "type", rename_all = "camelCase")]
-+pub enum ThreadUserInput {
-+    Text { text: String },
-+}
-+
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
- #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
- #[serde(rename_all = "camelCase")]
+ // ---------------------------------------------------------------------------
+ // GET /v1/git — status detail
+ // ---------------------------------------------------------------------------
+@@ -252,6 +268,8 @@ pub(super) struct GitStatusDetailResponse {
+     head: Option<String>,
+     /// Full HEAD commit id; null on an unborn branch.
+     head_oid: Option<String>,
++    /// True when `git status` could not be read: the counts are unknown.
++    status_unavailable: bool,
+     /// Opaque token for the whole index (every stage entry, repository-wide).
+     index_token: Option<String>,
+     /// Opaque token for the whole tree: HEAD, the index and every row.
+@@ -289,6 +307,7 @@ fn collect_git_status_detail(workspace: &FsPath) -> Result<GitStatusDetailRespon
+         detached: false,
+         head: status.head,
+         head_oid: None,
++        status_unavailable: status.status_unavailable,
+         index_token: None,
+         revision: None,
+         ahead: status.ahead,
+@@ -388,13 +407,13 @@ fn status_rows(
+     frame: &RepoFrame,
+ ) -> Result<(Vec<GitFileEntry>, bool), ApiError> {
+     let mut complete = true;
+-    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
++    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
+         Ok(porcelain) => parse_porcelain(&porcelain),
+         Err(_) => {
+             // One broken submodule can abort all of Git's porcelain output.
+             // Recover ordinary rows, then inspect gitlinks individually so
+             // only the unreadable submodule is shown as unknown/unguardable.
+-            let porcelain = run_git_sync(
++            let porcelain = status_sync(
+                 workspace,
+                 &["status", "--porcelain=v1", "-z", "--ignore-submodules=all"],
+             )?;
+@@ -407,7 +426,7 @@ fn status_rows(
+                     continue;
+                 }
+                 rows.retain(|row| normalized_row_path(&row.path) != path);
+-                match run_git_sync(
++                match status_sync(
+                     &frame.toplevel,
+                     &[
+                         "--literal-pathspecs",
+@@ -2229,6 +2248,7 @@ pub(super) async fn git_branch(
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
+     use std::fs;
+ 
+     thread_local! {
+@@ -2811,9 +2831,22 @@ mod tests {
+     #[cfg(unix)]
+     #[test]
+     fn status_and_guards_respect_clean_filters() {
++        let _env_lock = lock_test_env();
+         let tmp = repo();
+         let ws = tmp.path();
+-        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
++        let global = tempfile::tempdir().unwrap();
++        let global_config = global.path().join("gitconfig");
++        git(
++            ws,
++            &[
++                "config",
++                "--file",
++                global_config.to_str().unwrap(),
++                "filter.up.clean",
++                "tr a-z A-Z",
++            ],
++        );
++        let _global = EnvVarGuard::set("GIT_CONFIG_GLOBAL", &global_config);
+         fs::write(ws.join(".gitattributes"), "*.txt filter=up\n").unwrap();
+         git(ws, &["add", ".gitattributes"]);
+         // The tracked file is unchanged since the initial commit. Apply the
 ```
 
-**File**: `crates/app-server/src/stdio.rs` (modified, +9/-2)
+**File**: `crates/app-server/src/runtime_api/workspace.rs` (modified, +44/-23)
 ```diff
-@@ -1064,10 +1064,17 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
-             }
-         }
-         "thread/read" => {
--            let request = ThreadRequest::Read(parse_params(params_or_object(params))?);
-+            let params: codewhale_app_server_protocol::rpc::ThreadReadParams =
-+                parse_params(params_or_object(params))?;
-+            let include_turns = params.include_turns;
-+            let request = ThreadRequest::Read(codewhale_protocol::ThreadReadParams {
-+                thread_id: params.thread_id,
-+            });
-             let response = handle_thread_request(state, request).await?;
-+            let wire = thread_control::read_wire(response, include_turns)
-+                .map_err(|err| DispatchError::internal(format!("{err:#}")))?;
-             StdioDispatchResult {
--                result: serde_json::to_value(response)
-+                result: serde_json::to_value(wire)
-                     .map_err(|err| DispatchError::internal(err.to_string()))?,
-                 should_exit: false,
-             }
-```
-
-**File**: `crates/app-server/src/thread_control.rs` (modified, +148/-36)
-```diff
-@@ -379,51 +379,163 @@ pub(super) async fn loaded(state: &AppState) -> Result<ThreadResponse> {
-     Ok(result)
+@@ -131,6 +131,9 @@ pub(super) struct WorkspaceStatusResponse {
+     pub(super) branch: Option<String>,
+     pub(super) head: Option<String>,
+     pub(super) dirty: bool,
++    /// True when `git status` could not be read, so `dirty` and the
++    /// staged/unstaged/untracked counts are unknown rather than zero.
++    pub(super) status_unavailable: bool,
+     pub(super) staged: usize,
+     pub(super) unstaged: usize,
+     pub(super) untracked: usize,
+@@ -148,11 +151,10 @@ pub(super) struct WorkspaceGitMetadata {
  }
  
-+fn wire_thread(thread: Thread) -> codewhale_app_server_protocol::rpc::ThreadListItem {
-+    use codewhale_app_server_protocol::rpc::{ThreadListItem, ThreadListSource, ThreadListStatus};
-+    ThreadListItem {
-+        session_id: thread.id.clone(),
-+        id: thread.id,
-+        preview: thread.preview,
-+        ephemeral: thread.ephemeral,
-+        model_provider: thread.model_provider,
-+        created_at: thread.created_at,
-+        updated_at: thread.updated_at,
-+        status: match thread.status {
-+            ThreadStatus::Running => ThreadListStatus::Active {
-+                active_flags: Vec::new(),
-+            },
-+            ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
-+                ThreadListStatus::Idle
-+            }
-+            ThreadStatus::Archived => ThreadListStatus::NotLoaded,
-+            ThreadStatus::Failed => ThreadListStatus::SystemError,
-+        },
-+        cwd: thread.cwd.to_string_lossy().into_owned(),
-+        cli_version: thread.cli_version,
-+        source: match thread.source {
-+            SessionSource::Interactive => ThreadListSource::Cli,
-+            SessionSource::Api => ThreadListSource::AppServer,
-+            SessionSource::Resume | SessionSource::Fork | SessionSource::Unknown => {
-+                ThreadListSource::Unknown
-+            }
-+        },
-+        project_id: None,
-+        turns: Vec::new(),
-+        name: thread.name,
-+    }
-+}
-+
- pub(super) fn list_wire(
-     response: ThreadResponse,
- ) -> codewhale_app_server_protocol::rpc::ThreadListResponse {
-+    codewhale_app_server_protocol::rpc::ThreadListResponse {
-+        data: response.threads.into_iter().map(wire_thread).collect(),
-+        next_cursor: None,
-+        backwards_cursor: None,
-+    }
-+}
-+
-+#[derive(serde::Deserialize)]
-+struct WireTurnRow {
-+    id: String,
-+    status: String,
-+    started_at: Option<chrono::DateTime<chrono::Utc>>,
-+    ended_at: Option<chrono::DateTime<chrono::Utc>>,
-+    duration_ms: Option<u64>,
-+    error: Option<String>,
-+    #[serde(default)]
-+    item_ids: Vec<String>,
-+}
-+
-+#[derive(serde::Deserialize)]
-+struct WireItemRow {
-+    id: String,
-+    turn_id: String,
-+    kind: String,
-+    summary: String,
-+    detail: Option<String>,
-+}
-+
-+fn wire_turns(data: &Value) -> Result<Vec<codewhale_app_server_protocol::rpc::ThreadTurn>> {
-     use codewhale_app_server_protocol::rpc::{
--        ThreadListItem, ThreadListResponse, ThreadListSource, ThreadListStatus,
-+        ThreadTurn, ThreadTurnError, ThreadTurnItem, ThreadTurnItemsView, ThreadTurnStatus,
-+        ThreadUserInput,
+ /// Status is several blocking `git` spawns, so it runs off the async workers
+-/// (#6149) like every other git read on this surface. It deliberately keeps
+-/// normal Git filters and untracked settings rather than the full review
+-/// command, so its counts match `git status` and the operator writes (see
+-/// `git.rs`), but it never runs a repository-configured helper: fsmonitor and
+-/// hooks are off, as on every read-only review path (see `run_git`).
++/// (#6149) like every other git read on this surface. It keeps normal
++/// untracked settings rather than the full review diff flags, but it never
++/// runs a repository-configured helper: fsmonitor, hooks and clean/process
++/// filters are off, as on every read-only review path (see `run_status`).
+ pub(super) async fn workspace_status(
+     State(state): State<RuntimeApiState>,
+ ) -> Result<Json<WorkspaceStatusResponse>, ApiError> {
+@@ -238,6 +240,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
+         branch: None,
+         head: None,
+         dirty: false,
++        status_unavailable: false,
+         staged: 0,
+         unstaged: 0,
+         untracked: 0,
+@@ -254,12 +257,16 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
      };
--    ThreadListResponse {
--        data: response
--            .threads
--            .into_iter()
--            .map(|thread| ThreadListItem {
--                session_id: thread.id.clone(),
--                id: thread.id,
--                preview: thread.preview,
--                ephemeral: thread.ephemeral,
--                model_provider: thread.model_provider,
--                created_at: thread.created_at,
--                updated_at: thread.updated_at,
--                status: match thread.status {
--                    ThreadStatus::Running => ThreadListStatus::Active {
--                        active_flags: Vec::new(),
--                    },
--                    ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
--                        ThreadListStatus::Idle
--                    }
--                    ThreadStatus::Archived => ThreadListStatus::NotLoaded,
--                    ThreadStatus::Failed => ThreadListStatus::SystemError,
-+    let turns: Vec<WireTurnRow> =
-+        serde_json::from_value(data.get("turns").cloned().unwrap_or(Value::Null))
-+            .context("canonical turn records are malformed")?;
-+    let items: Vec<WireItemRow> =
-+        serde_json::from_value(data.get("items").cloned().unwrap_or(Value::Null))
-+            .context("canonical item records are malformed")?;
-+    anyhow::ensure!(
-+        turns.len() <= MAX_CANONICAL_HISTORY_ENTRIES
-+            && items.len() <= MAX_CANONICAL_HISTORY_ENTRIES,
-+        "canonical turn history exceeds bound"
-+    );
-+    turns
-+        .into_iter()
-+        .map(|turn| {
-+            let mut own: Vec<&WireItemRow> = items
-+                .iter()
-+                .filter(|item| item.turn_id == turn.id)
-+                .collect();
-+            own.sort_by_key(|item| {
-+                turn.item_ids
-+                    .iter()
-+                    .position(|id| *id == item.id)
-+                    .unwrap_or(usize::MAX)
-+            });
-+            let mut complete = true;
-+            let mut mapped = Vec::with_capacity(own.len());
-+            for item in own {
-+                let text = item.detail.clone().unwrap_or_else(|| item.summary.clone());
-+                let id = item.id.clone();
-+                match item.kind.as_str() {
-+          
-```
-
----
-
-### Incident Patch 2: `1b17cad0` (2026-11-04)
-**Commit Message**: fix(app-server): return the pinned thread/list response shape
-
-thread/list returned the internal ThreadResponse, so the pinned `data` array
-was the unused default `{}` and the threads sat under a non-schema key. Adds
-a wire-only projection (ThreadListResponse/Item/Status/Source) with the pinned
-camelCase fields; sessionId is the public thread id, projectId null, turns [],
-cursors null, no invented metadata. The internal Thread type and
-thread/request kind=list are unchanged; strict unknown-parameter refusal stays.
-
-Verified (local, existing checks, source only): 65 passed, 0 failed across
-thread_list, thread_control, stdio, rpc, config_update, thread_message and the
-protocol schema+wire tests. Not verified: the pinned-schema validator harness
-against a native build; thread/start (13 issues) and thread/read (9) remain.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +52/-0)
-```diff
-@@ -115,6 +115,58 @@ pub struct ThreadLoadedListResponse {
-     pub next_cursor: Option<String>,
+ 
+     status.git_repo = true;
+-    let metadata = workspace_git_metadata(workspace, &head);
+-    status.branch = metadata.branch;
+-    status.head = metadata.head;
+-    status.dirty = metadata.dirty;
+-
+-    if let Some(porcelain) = run_git(workspace, &["status", "--porcelain=v1"]) {
++    let (branch, short_head) = branch_and_head(&head);
++    status.branch = branch;
++    status.head = short_head;
++
++    let porcelain = run_status(workspace);
++    status.status_unavailable = porcelain.is_none();
++    status.dirty = porcelain
++        .as_deref()
++        .is_some_and(|porcelain| !porcelain.trim().is_empty());
++    if let Some(porcelain) = porcelain {
+         for line in porcelain.lines() {
+             if line.starts_with("??") {
+                 status.untracked += 1;
+@@ -278,7 +285,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
+     }
+ 
+     if let Some(counts) = run_git(
+-        workspace,
++        Git::review_base(workspace),
+         &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
+     ) {
+         let mut parts = counts.split_whitespace();
+@@ -298,8 +305,8 @@ pub(super) fn collect_workspace_git_metadata(workspace: &FsPath) -> WorkspaceGit
+     }
  }
  
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadListResponse {
-+    pub data: Vec<ThreadListItem>,
-+    pub next_cursor: Option<String>,
-+    pub backwards_cursor: Option<String>,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadListItem {
-+    pub id: String,
-+    pub session_id: String,
-+    pub preview: String,
-+    pub ephemeral: bool,
-+    pub model_provider: String,
-+    pub created_at: i64,
-+    pub updated_at: i64,
-+    pub status: ThreadListStatus,
-+    pub cwd: String,
-+    pub cli_version: String,
-+    pub source: ThreadListSource,
-+    pub project_id: Option<String>,
-+    pub turns: Vec<serde_json::Value>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub name: Option<String>,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(tag = "type", rename_all = "camelCase")]
-+pub enum ThreadListStatus {
-+    NotLoaded,
-+    Idle,
-+    SystemError,
-+    Active {
-+        #[serde(rename = "activeFlags")]
-+        active_flags: Vec<String>,
-+    },
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub enum ThreadListSource {
-+    Cli,
-+    AppServer,
-+    Unknown,
-+}
-+
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
- #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
- #[serde(rename_all = "camelCase")]
-```
-
-**File**: `crates/app-server/src/stdio.rs` (modified, +1/-1)
-```diff
-@@ -1002,7 +1002,7 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
-             let request = ThreadRequest::List(parse_params(params_or_object(params))?);
-             let response = handle_thread_request(state, request).await?;
-             StdioDispatchResult {
--                result: serde_json::to_value(response)
-+                result: serde_json::to_value(thread_control::list_wire(response))
-                     .map_err(|err| DispatchError::internal(err.to_string()))?,
-                 should_exit: false,
-             }
-```
-
-**File**: `crates/app-server/src/thread_control.rs` (modified, +47/-0)
-```diff
-@@ -379,6 +379,53 @@ pub(super) async fn loaded(state: &AppState) -> Result<ThreadResponse> {
-     Ok(result)
- }
- 
-+pub(super) fn list_wire(
-+    response: ThreadResponse,
-+) -> codewhale_app_server_protocol::rpc::ThreadListResponse {
-+    use codewhale_app_server_protocol::rpc::{
-+        ThreadListItem, ThreadListResponse, ThreadListSource, ThreadListStatus,
-+    };
-+    ThreadListResponse {
-+        data: response
-+            .threads
-+            .into_iter()
-+            .map(|thread| ThreadListItem {
-+                session_id: thread.id.clone(),
-+                id: thread.id,
-+                preview: thread.preview,
-+                ephemeral: thread.ephemeral,
-+                model_provider: thread.model_provider,
-+                created_at: thread.created_at,
-+                updated_at: thread.updated_at,
-+                status: match thread.status {
-+                    ThreadStatus::Running => ThreadListStatus::Active {
-+                        active_flags: Vec::new(),
-+                    },
-+                    ThreadStatus::Idle | ThreadStatus::Completed | ThreadStatus::Paused => {
-+                        ThreadListStatus::Idle
-+                    }
-+                    ThreadStatus::Archived => ThreadListStatus::NotLoaded,
-+                    ThreadStatus::Failed => ThreadListStatus::SystemError,
-+                },
-+                cwd: thread.cwd.to_string_lossy().into_owned(),
-+                cli_version: thread.cli_version,
-+                source: match thread.source {
-+                    SessionSource::Interactive => ThreadListSource::Cli,
-+                    SessionSource::Api => ThreadListSource::AppServer,
-+                    SessionSource::Resume | SessionSource::Fork | SessionSource::Unknown => {
-+                        ThreadListSource::Unknown
-+                    }
-+                },
-+                project_id: None,
-+                turns: Vec::new(),
-+                name: thread.name,
-+            })
-+            .collect(),
-+        next_cursor: None,
-+        backwards_cursor: None,
+-fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
+-    let (branch, short_id) = match head.id {
++fn branch_and_head(head: &GitHead) -> (Option<String>, Option<String>) {
++    match head.id {
+         Some(_) => (
+             head.branch.clone().or_else(|| {
+                 head.short_id()
+@@ -308,11 +315,17 @@ fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMet
+             head.short_id().map(str::to_string),
+         ),
+         None => (None, None),
+-    };
 +    }
 +}
 +
- async fn list(
-     state: &AppState,
-     params: codewhale_protocol::ThreadListParams,
-```
-
----
-
-### Incident Patch 3: `cbb7380f` (2026-11-04)
-**Commit Message**: fix(app-server): accept and return the pinned thread/start contract
-
-thread/start now parses the pinned camelCase ThreadStartParams (deny unknown
-fields) and returns the pinned seven-field ThreadStartResponse with the shared
-wire Thread projection. model, modelProvider, cwd, a false/absent ephemeral and
-operationKey are honored; personality and threadSource are accepted and ignored
-(deprecated / analytics-only in the pinned schema). Fields the Engine cannot
-honor (ephemeral true, approvalPolicy, approvalsReviewer, sandbox, config,
-baseInstructions, developerInstructions, serviceName, serviceTier,
-sessionStartSource) are refused together with a typed -32602
-unsupported_thread_start_parameter error instead of being ignored. Pinned
-clients cannot send an operationKey, so one is minted: retry idempotency is
-weaker for them. approvalPolicy/approvalsReviewer/sandbox report never/user/
-readOnly because native turns run tool-free while the full-tool gate is closed.
-The existing goal-methods test now sends operationKey and reads thread.id.
-
-Verified (local, existing checks, source only): 151 passed, 0 failed across
-thread, stdio, rpc, goal, dispatch and the protocol schema+wire tests. Not
-v
-
-**File**: `crates/app-server-protocol/src/rpc.rs` (modified, +42/-0)
-```diff
-@@ -167,6 +167,48 @@ pub enum ThreadListSource {
-     Unknown,
++fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
++    let (branch, head) = branch_and_head(head);
++    let porcelain = run_status(workspace);
+     WorkspaceGitMetadata {
+         branch,
+-        head: short_id,
+-        dirty: run_git(workspace, &["status", "--porcelain=v1"])
++        head,
++        dirty: porcelain
++            .as_deref()
+             .is_some_and(|porcelain| !porcelain.trim().is_empty()),
+     }
+ }
+@@ -329,12 +342,20 @@ fn read_workspace_head(workspace: &FsPath) -> Option<GitHead> {
+     }
  }
  
-+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase", deny_unknown_fields)]
-+pub struct ThreadStartParams {
-+    pub operation_key: Option<String>,
-+    pub model: Option<String>,
-+    pub model_provider: Option<String>,
-+    pub cwd: Option<String>,
-+    pub ephemeral: Option<bool>,
-+    pub approval_policy: Option<Value>,
-+    pub approvals_reviewer: Option<Value>,
-+    pub sandbox: Option<Value>,
-+    pub config: Option<Value>,
-+    pub base_instructions: Option<String>,
-+    pub developer_instructions: Option<String>,
-+    pub service_name: Option<String>,
-+    pub service_tier: Option<String>,
-+    pub session_start_source: Option<Value>,
-+    pub personality: Option<Value>,
-+    pub thread_source: Option<String>,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(rename_all = "camelCase")]
-+pub struct ThreadStartResponse {
-+    pub thread: ThreadListItem,
-+    pub model: String,
-+    pub model_provider: String,
-+    pub cwd: String,
-+    pub approval_policy: String,
-+    pub approvals_reviewer: String,
-+    pub sandbox: ThreadSandboxPolicy,
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-+#[serde(tag = "type", rename_all = "camelCase")]
-+pub enum ThreadSandboxPolicy {
-+    ReadOnly,
-+}
-+
- #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
- #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
- #[serde(rename_all = "camelCase", deny_unknown_fields)]
+-/// Read-only git for status and metadata. `Git::review_base` disables
+-/// `core.fsmonitor`, `core.hooksPath`, lazy fetch and replace objects: a
+-/// status poll must not execute a helper the repository's config names.
+-fn run_git(workspace: &FsPath, args: &[&str]) -> Option<String> {
+-    let mut command = Git::review_base(workspace).ok()?;
+-    let output = command.args(args).output().ok()?;
++/// `git status` through [`Git::status_command`]: besides fsmonitor and hooks
++/// it neutralizes every clean/process filter driver the repository itself
++/// configures (never the user's global or system ones, such as Git LFS),
++/// and submodules are compared without a child status inside them. `None`
++/// means git could not be read, never a clean tree.
++fn run_status(workspace: &FsPath) -> Option<String> {
++    run_git(
++        Git::status_command(wor
 ```
 
-**File**: `crates/app-server/src/stdio.rs` (modified, +6/-2)
+**File**: `crates/dependencies/src/lib.rs` (modified, +46/-4)
 ```diff
-@@ -967,11 +967,15 @@ pub(crate) async fn dispatch_stdio_request_with_writer<W: AsyncWrite + Unpin>(
-             }
+@@ -1161,6 +1161,27 @@ impl Git {
+     /// Configured filters otherwise execute even when those flags are present.
+     pub fn review_command(workspace: &Path) -> anyhow::Result<Command> {
+         let overrides = Self::review_filter_overrides(workspace)?;
++        Self::with_filter_overrides(workspace, overrides)
++    }
++
++    /// Like [`Self::review_command`] for status reads, which must keep the
++    /// user's own filters (Git LFS in global or system config) working so
++    /// files they manage do not look modified. Only filter drivers that
++    /// repository-controlled config (local or worktree scope, including files
++    /// it includes) defines are neutralized. If the scoped probe fails, this
++    /// falls back to neutralizing every driver.
++    pub fn status_command(workspace: &Path) -> anyhow::Result<Command> {
++        let overrides = match Self::filter_overrides(workspace, true) {
++            Ok(overrides) => overrides,
++            Err(_) => Self::review_filter_overrides(workspace)?,
++        };
++        Self::with_filter_overrides(workspace, overrides)
++    }
++
++    fn with_filter_overrides(
++        workspace: &Path,
++        overrides: Vec<(String, &'static str)>,
++    ) -> anyhow::Result<Command> {
+         let mut command = Self::review_base(workspace)?;
+         let mut count = 2;
+         for (key, value) in overrides {
+@@ -1254,12 +1275,22 @@ impl Git {
+     /// apply them through `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n`.
+     pub fn review_filter_overrides(
+         workspace: &Path,
++    ) -> anyhow::Result<Vec<(String, &'static str)>> {
++        Self::filter_overrides(workspace, false)
++    }
++
++    fn filter_overrides(
++        workspace: &Path,
++        repository_only: bool,
+     ) -> anyhow::Result<Vec<(String, &'static str)>> {
+         use anyhow::{Context, bail};
+ 
+         let mut command = Self::review_base(workspace)?;
++        command.arg("config");
++        if repository_only {
++            command.arg("--show-scope");
++        }
+         command.args([
+-            "config",
+             "--null",
+             "--name-only",
+             "--get-regexp",
+@@ -1276,11 +1307,22 @@ impl Git {
+             bail!("Cannot safely inspect Git review configuration");
          }
-         "thread/start" => {
--            let request = ThreadRequest::Start(parse_params(params_or_object(params))?);
-+            let params: codewhale_app_server_protocol::rpc::ThreadStartParams =
-+                parse_params(params_or_object(params))?;
-+            let request = ThreadRequest::Start(thread_control::start_params(params)?);
-             let response = handle_thread_request(state, request).await?;
-             record_stdio_thread_hint(state, &response).await;
-+            let wire = thread_control::start_wire(response)
-+                .map_err(|err| DispatchError::internal(format!("{err:#}")))?;
-             StdioDispatchResult {
--                result: serde_json::to_value(response)
-+                result: serde_json::to_value(wire)
-                     .map_err(|err| DispatchError::internal(err.to_string()))?,
-                 should_exit: false,
-             }
+         let mut filters = std::collections::BTreeSet::new();
+-        for key in output
++        let mut fields = output
+             .stdout
+             .split(|byte| *byte == 0)
+-            .filter(|key| !key.is_empty())
+-        {
++            .filter(|field| !field.is_empty());
++        while let Some(field) = fields.next() {
++            let key = if repository_only {
++                let key = fields
++                    .next()
++                    .context("Git review filter scope has no key")?;
++                if matches!(field, b"global" | b"system") {
++                    continue;
++                }
++                key
++            } else {
++                field
++            };
+             let key =
+                 std::str::from_utf8(key).context("Git review filter name is not valid UTF-8")?;
+             let (driver, _) = key
 ```
 
-**File**: `crates/app-server/src/tests.rs` (modified, +2/-2)
-```diff
-@@ -1785,11 +1785,11 @@ async fn stdio_thread_goal_methods_refuse_execution_and_read_existing_goal() {
-     let started = dispatch_stdio_request(
-         &state,
-         "thread/start",
--        json!({"operation_key":"goal-start"}),
-+        json!({"operationKey":"goal-start"}),
-     )
-     .await
-     .unwrap();
--    let id = started.result["thread_id"].as_str().unwrap();
-+    let id = started.result["thread"]["id"].as_str().unwrap();
-     let set = dispatch_stdio_request(
-         &state,
-         "thread/goal/set",
-```
+---
 
-**File**: `crates/app-server/src/thread_control.rs` (modified, +71/-0)
+### Incident Patch 2: `e9fdd250` (2026-11-05)
+**Commit Message**: fix(engine): session loads observe under the shared read lock and create no storage
+
+Since 20f8244aafd every snapshot/checkpoint load took the exclusive
+write-admission lock to mint an optional write receipt, which creates the
+late-usage sidecar directory and lock leaf, so a pure read wrote to disk and
+could fail on read-only storage. Loads now observe the session/checkpoint pair
+under the shared, non-creating read lock (with_session_observation, which returns
+None for a tombstoned session); an absent lock leaf is read unlocked, and when no
+observation can be taken the existing degrade path returns the transcript without
+a write receipt (the commit message of 20f8244aafd states receipts are optional).
+save/rename/archive/delete/capture_session_write_source/resume_session and the
+admitted branches are unchanged, and publish_session_inner still refuses a value
+with no captured native producer, so a session loaded without a receipt cannot
+publish until a caller captures one under write admission. One behavior
+difference: a read no longer runs ledger sync/retirement on a deletion marker; it
+returns NotFound and the next writer cleans up. A first-ever save racing a read
+before the lock 
+
+**File**: `crates/engine/src/session_manager.rs` (modified, +15/-2)
 ```diff
-@@ -521,6 +521,77 @@ fn wire_turns(data: &Value) -> Result<Vec<codewhale_app_server_protocol::rpc::Th
-         .collect()
- }
+@@ -3112,6 +3112,19 @@ impl SessionManager {
+         write().map(Some)
+     }
  
-+pub(super) fn start_params(
-+    params: codewhale_app_server_protocol::rpc::ThreadStartParams,
-+) -> std::result::Result<codewhale_protocol::ThreadStartParams, DispatchError> {
-+    let refused: Vec<&str> = [
-+        ("ephemeral", params.ephemeral == Some(true)),
-+        ("approvalPolicy", params.approval_policy.is_some()),
-+        ("approvalsReviewer", params.approvals_reviewer.is_some()),
-+        ("sandbox", params.sandbox.is_some()),
-+        ("config", params.config.is_some()),
-+        ("baseInstructions", params.base_instructions.is_some()),
-+        (
-+            "developerInstructions",
-+            params.developer_instructions.is_some(),
-+        ),
-+        ("serviceName", params.service_name.is_some()),
-+        ("serviceTier", params.service_tier.is_some()),
-+        ("sessionStartSource", params.session_start_source.is_some()),
-+    ]
-+    .into_iter()
-+    .filter_map(|(name, set)| set.then_some(name))
-+    .collect();
-+    if !refused.is_empty() {
-+        return Err(DispatchError {
-+            wire: RpcErrorDetails {
-+                code: -32602,
-+                message: format!(
-+                    "thread/start cannot honor {}: threads are durable and tool-free with a fixed read-only sandbox, and these settings are not applied",
-+                    refused.join(", ")
-+                ),
-+                data: Some(json!({
-+                    "error": "unsupported_thread_start_parameter",
-+                    "parameters": refused,
-+                })),
-+            },
-+            transport_error: None,
-+        });
++    fn with_session_observation<T>(
++        &self,
++        session_id: &str,
++        observe: impl FnOnce() -> io::Result<T>,
++    ) -> io::Result<Option<T>> {
++        self.with_session_read_lock(session_id, |path| {
++            if Self::late_usage_is_deleted(path)? {
++                return Ok(None);
++            }
++            observe().map(Some)
++        })
 +    }
-+    Ok(codewhale_protocol::ThreadStartParams {
-+        operation_key: Some(
-+            params
-+                .operation_key
-+                .unwrap_or_else(|| Uuid::new_v4().to_string()),
-+        ),
-+        model: params.model,
-+        model_provider: params.model_provider,
-+        cwd: params.cwd.map(PathBuf::from),
-+        persist_extended_history: false,
-+    })
-+}
 +
-+pub(super) fn start_wire(
-+    response: ThreadResponse,
-+) -> Result<codewhale_app_server_protocol::rpc::ThreadStartResponse> {
-+    let thread = wire_thread(
-+        response
-+            .thread
-+            .context("canonical start returned no thread")?,
+     /// Run an out-of-band rewrite of a session's files (`scrub-secrets`)
+     /// under the same per-session lock every save takes, so it cannot
+     /// interleave with a save, and while holding the session's live lease, so
+@@ -4900,7 +4913,7 @@ impl SessionManager {
+             let observation = if admission_held {
+                 capture()
+             } else {
+-                self.with_session_write_admission(id, capture)
++                self.with_session_observation(id, capture)
+                     .and_then(|observation| {
+                         observation.ok_or_else(Self::retired_session_write_error)
+                     })
+@@ -5453,7 +5466,7 @@ impl SessionManager {
+         let observation = if admission_held {
+             capture()
+         } else {
+-            self.with_session_write_admission(id, capture)
++            self.with_session_observation(id, capture)
+                 .and_then(|observation| observation.ok_or_else(Self::retired_session_write_error))
+         };
+         match observation {
+```
+
+---
+
+### Incident Patch 3: `f11f7c42` (2026-11-05)
+**Commit Message**: test(engine): fix the 201-round backstop, LRU and RLM batch-pin fixtures
+
+productive_tool_results_do_not_hit_no_user_input_backstop, enforce_lru_capacity_does_not_loop_when_all_threads_are_active (its fixed child id was already terminal in the shared temp-dir sub-agent store from an earlier run; it now uses a unique child name) and rlm::bridge llm_batch_dispatch_pins_configured_child_model are repaired as stale fixtures; no product code, caps or accounting semantics changed.
+
+Verified (local, source only): full workspace nextest run after these edits: 19068 run, 19063 passed, 5 failed (67 -> 37 -> 11 -> 8 -> 5 across the series). Still failing and unresolved, stated plainly: child_host child_cancelled_dispatched_open_keeps_unknown_origin (now 2 vs 1 unpriced turns after the fixture fix) and child_step_timeout (usage receipt settle times out), the auto_review guardian missing-coverage receipt check (2 vs 1), event_capacity_cancelled_repl_child (provider source admission fails with the writer's attempted fixture, reverted), and session_manager late_usage_reads_do_not_create_accounting_storage (product decision: reads now create the sidecar directory since 20f8244aafd). The partial ed
+
+**File**: `crates/engine/src/core/engine/tests/test_cases_07.rs` (modified, +10/-6)
+```diff
+@@ -1525,19 +1525,23 @@ async fn productive_tool_results_do_not_hit_no_user_input_backstop() {
+     let usage_owner = format!("productive-backstop:{}", uuid::Uuid::new_v4());
+     crate::cost_status::register_runtime_usage_sink(&usage_owner, std::sync::Arc::new(|_| true));
+     let mut engine_config = deterministic_engine_config(workspace.path());
+-    engine_config.compaction.runtime_cost_owner = Some(usage_owner);
++    engine_config.compaction.runtime_cost_owner = Some(usage_owner.clone());
+     let (engine, handle) = Engine::new_with_model_client(
+         engine_config,
+         &Config::default(),
+         client,
+     );
+     let task = tokio::spawn(engine.run());
++    let mut op = external_user_message_op(
++        "Read every distinct fixture, then report completion.",
++        AppMode::Agent,
++        &Config::default(),
 +    );
-+    Ok(codewhale_app_server_protocol::rpc::ThreadStartResponse {
-+        model: response
-+            .model
-+            .context("canonical start returned no model")?,
-+        model_provider: thread.model_provider.clone(),
-+        cwd: thread.cwd.clone(),
-+        approval_policy: "never".to_owned(),
-+        approvals_reviewer: "user".to_owned(),
-+        sandbox: codewhale_app_server_protocol::rpc::ThreadSandboxPolicy::ReadOnly,
-+        thread,
-+    })
-+}
-+
- pub(super) fn read_wire(
-     response: ThreadResponse,
-     include_turns: bool,
++    if let Op::SendMessage(spec) = &mut op {
++        spec.compaction.runtime_cost_owner = Some(usage_owner);
++    }
+     handle
+-        .send(external_user_message_op(
+-            "Read every distinct fixture, then report completion.",
+-            AppMode::Agent,
+-            &Config::default(),
+-        ))
++        .send(op)
+         .await
+         .expect("send productive tool trajectory");
+ 
+```
+
+**File**: `crates/engine/src/rlm/bridge.rs` (modified, +3/-2)
+```diff
+@@ -984,12 +984,13 @@ mod tests {
+ 
+         match response {
+             RpcResponse::Batch(batch) => {
+-                let texts: Vec<_> = batch
++                let mut texts: Vec<_> = batch
+                     .results
+                     .iter()
+                     .map(|result| result.text.as_str())
+                     .collect();
+-                assert_eq!(texts, ["one", "two", "three"]);
++                texts.sort_unstable();
++                assert_eq!(texts, ["one", "three", "two"]);
+                 assert!(batch.results.iter().all(|result| result.error.is_none()));
+             }
+             other => panic!("expected batch response, got {other:?}"),
+```
+
+**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +1/-1)
+```diff
+@@ -8433,7 +8433,7 @@ fn enforce_lru_capacity_does_not_loop_when_all_threads_are_active() {
+             .with_store_transaction(|workers| {
+                 workers
+                     .insert_test_running_direct_child_in_origin(
+-                        "lru_child",
++                        &format!("lru_child_{}", Uuid::new_v4().simple()),
+                         &std::env::temp_dir(),
+                         &std::env::temp_dir(),
+                         "thr_a",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7219** (closed): fix(workspace): exempt the home state directory from link confinement (@SparkofSpike)
 - **PR #7204** (closed): fix(ci): qualify session ownership and terminal regressions after #7138 (@zhuowp)
 - **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
 - **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
 - **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
 - **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
-- **PR #7198** (2026-11-03): fix(tui): stop math with non-ASCII text from crashing the TUI (@Lstarsky0)
 
 ---
 
@@ -2494,66 +2332,57 @@ v
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. app-server): project thread/read onto the pinned ThreadReadResponse
+## X. app-server): neutralize repository-defined git filter drivers on status reads (P
 
 **RULE**:
-When implementing operations in `crates/app-server-protocol/src/rpc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/app-server/src/runtime_api/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81317c5d`: app-server): project thread/read onto the pinned ThreadReadResponse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `885ef69f`: app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server-protocol/src/rpc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server/src/runtime_api/git.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-pub struct ThreadReadParams {
-    pub thread_id: String,
-    #[serde(default)]
-    pub include_turns: bool,
+fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
+    let output = Git::status_command(workspace)
+        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
+        .args(args)
+        .output()
+        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
+    if !output.status.success() {
+        return Err(ApiError::internal(format!(
+            "git {} failed: {}",
+            args.first().copied().unwrap_or(""),
+            String::from_utf8_lossy(&output.stderr).trim()
+        )));
+    }
+    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-#[serde(rename_all = "camelCase")]
-pub struct ThreadReadResponse {
-    pub thread: ThreadListItem,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-#[serde(rename_all = "camelCase")]
-pub struct ThreadTurn {
-    pub id: String,
-    pub items: Vec<ThreadTurnItem>,
-    pub items_view: ThreadTurnItemsView,
-    pub status: ThreadTurnStatus,
-    pub error: Option<ThreadTurnError>,
-    pub started_at: Option<i64>,
-    pub completed_at: Option<i64>,
-    pub duration_ms: Option<i64>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-#[serde(rename_all = "camelCase")]
-pub enum ThreadTurnItemsView {
-    Summary,
-    Full,
-}
-
-#[deri
+    /// True when `git status` could not be read: the counts are unknown.
+    status_unavailable: bool,
+        status_unavailable: status.status_unavailable,
+    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
+            let porcelain = status_sync(
+                match status_sync(
+    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
+        let _env_lock = lock_test_env();
+        let global = tempfile::tempdir().unwrap();
+        let global_config = global.path().join("gitconfig");
+        git(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
+            let porcelain = run_git_sync(
+                match run_git_sync(
+        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81317c5d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `885ef69f` are properly handled with clean fallback behavior.

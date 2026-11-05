@@ -7720,3 +7720,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-05T15:44:44.332Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `39298343` | Multi-dimensional audit evidence | 2026-11-05T15:44:54.381Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-05T15:52:02.207Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T15:59:19.316Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `885ef69f` | Multi-dimensional audit evidence | 2026-11-05T15:59:21.637Z |
