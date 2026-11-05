@@ -7704,3 +7704,5 @@
 | `CYCLE-20261105-01MT` | `2026-11-05T15:20:35.909Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7263` | Yes (`cb28df1b...`) |
 | `CYCLE-20261105-04PY` | `2026-11-05T15:20:39.910Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7264` | Yes (`1e2f2db1...`) |
 | `CYCLE-20261105-0AD7` | `2026-11-05T15:20:47.227Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7265` | Yes (`b7b56e85...`) |
+| `CYCLE-20261105-C8S3` | `2026-11-05T15:30:05.043Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`e60566fb...`) |
+| `CYCLE-20261105-CGJS` | `2026-11-05T15:30:15.112Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7266` | Yes (`455ebac2...`) |

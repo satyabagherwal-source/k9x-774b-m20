@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T15:20:47.139Z",
+  "last_updated": "2026-11-05T15:30:15.024Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -71455,7 +71455,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "0722cd7c11b63fc599e494767409670144b8bada509c48b976cc2d3aa2326ce9",
+      "content_hash": "e60566fb9b372609dbaccc82400930b399e5671f95a1838896a6fe13615952e5",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -71570,7 +71570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:56:06.727Z",
+      "verified_at": "2026-11-05T15:30:04.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72930,8 +72930,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "acb81361",
-      "content_hash": "5114d0e911705130d9a20575b4158fec162cda82ce15585c4308f3f123ee4fc8",
+      "source_version": "ddfec329",
+      "content_hash": "455ebac24196ab3de15ecd975ea496b7bf91ecd7eadb2bfb37c3d2eb2d1cd975",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -73049,6 +73049,11 @@
           "number": 7128,
           "title": "Merge pull request #4625 from aleo-labs-protocol/fix/simple-node-startup",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 7266,
+          "title": "Merge pull request #4630 from aleo-labs-protocol/ci/telemetry-tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73056,7 +73061,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:52:04.527Z",
+      "verified_at": "2026-11-05T15:30:15.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183261,6 +183266,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T15:20:47.116Z"
+    },
+    "rule-7266": {
+      "learning_id": "rule-7266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7266,
+      "title": "Merge pull request #4630 from aleo-labs-protocol/ci/telemetry-tests",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "ddfec329",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:30:15.001Z"
     }
   },
   "aliases": {
