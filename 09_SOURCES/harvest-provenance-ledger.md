@@ -7830,3 +7830,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T23:09:39.979Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `0a53497f` | Multi-dimensional audit evidence | 2026-11-05T23:17:17.420Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `98b2e086` | Multi-dimensional audit evidence | 2026-11-05T23:32:37.092Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `971a3271` | Multi-dimensional audit evidence | 2026-11-05T23:39:52.018Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `7ec1e4e2` | Multi-dimensional audit evidence | 2026-11-05T23:39:57.956Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `4613dae4` | Multi-dimensional audit evidence | 2026-11-05T23:39:59.400Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `5bcb576b` | Multi-dimensional audit evidence | 2026-11-05T23:40:02.932Z |

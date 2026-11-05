@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T23:32:37.097Z",
-  "total_cycles_completed": 7798,
-  "total_learnings_persisted": 7798,
-  "total_rules_promoted": 7441,
+  "last_updated": "2026-11-05T23:40:02.937Z",
+  "total_cycles_completed": 7802,
+  "total_learnings_persisted": 7802,
+  "total_rules_promoted": 7444,
   "history": [
-    {
-      "timestamp": "2026-11-05T10:57:59.286Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:58:08.603Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:58:15.805Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:08:28.814Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T11:08:37.161Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1403,6 +1375,34 @@
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:39:52.025Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:39:57.961Z",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:39:59.406Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T23:40:02.937Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

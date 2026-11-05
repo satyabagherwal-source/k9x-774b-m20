@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `2cb47360`  
+> **Source Version**: `5bcb576b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:51:09.079Z  
+> **Timestamp**: 2026-11-05T23:40:02.609Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:51:09.073Z  
+> **Harvest Timestamp**: 2026-11-05T23:40:02.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6786 stars
+- **Stars / Engagement**: 6789 stars
 
 ---
 
@@ -1651,14 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10170** (2026-11-05): **test(compat): exercise the bloom-token case only below v1.3.0**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## What's changed and what's your intention?  `Compatibility Test (recent releases)` fails on `fulltext_bloom_tokens` for the v1.3.0 → current upgrade:  ``` expected: | false | 1 |      actual: | true  | 2 | expected: | true  | 1 | ```  The case reads a fulltext bloom SST in the **first** format and asserts its rows stay visible next to a current one. Its `from_range` started at `v1.0.0`, but the released v1.3.0 binary already writes `bloom_version: 2` (the token alignment fix is in it), so setup produces two current-format SSTs and "one old, one new" can never hold. The v1.2.1 run of the same case passes, which is what pointed at the window rather than the index.  Narrow `from_range` to the releases that still write the first format. The runner's constraint language has `>=`, `<=`, `==` and `=` only, and several entries are alternatives rather than a conjunction, so `<=v1.2.99` is the bound that excludes v1.3.0 while keeping v1.2.x and older — including the nightly window that samples extra versions.  Verified locally with the compat runner: - `--from-version v1.2.1 --dry-run` selects the case; - `--from-version v1.3.0 --dry-run` prints `Skipping case 'fulltext_bloom_tokens': from_range ["<=v1.2.99"] does not match version 'v1.3.0'`; - `update-compat-versions.py --check --published-only --check-anchors` passes.  ## PR Checklist - [x] I have written the necessary ru
+- **Issue #10203** (2026-11-05): **Region migration and WAL prune can deadlock on the remote WAL topic lock, leaving procedures stuck in Running**
+  *Symptoms*: ### What type of bug is this?  Locking issue (deadlock), Unexpected error  ### What subsystems are affected?  Metasrv (procedure framework, region migration / failover, remote WAL pruning)  ### What happened?  In a distributed cluster with Kafka remote WAL, a rolling restart of datanodes left several regions stuck in `DOWNGRADING` for hours. The cluster was not queryable for those regions.  - Some `RegionMigration` (failover) procedures and the `WalPrune` procedures for two topics stayed in `Running` indefinitely. - Region migrations never finished or timed out. New migrations for the affected regions were rejected with "Another migration procedure is running for region ...". - WAL pruning for the affected topics stopped. - Restarting metasrv cleared the hung procedures. After that, manual `migrate_region` calls completed normally, so the datanodes, Kafka and object storage were fine.  ### Root cause  It is a deadlock between the upgrade step of region migration and `WalPruneProcedure`. Both use the dynamic lock on the remote WAL topic (`RemoteWalLock`):  - [`UpgradeCandidateRegion::upgrade_region_with_retry`](https://github.com/GreptimeTeam/greptimedb/blob/v1.3.0-beta.2/src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs#L303-L345) acquires a **shared** `RemoteWalLock` for each topic **inside its retry loop**. It pushes each guard into a `Vec` that is not cleared between attempts, so attempt N holds N−1 shared guards and requests another. The `Vec` came i
 
-- **Issue #10166** (2026-11-05): **fix(grpc): propagate cancellation for read query execution**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## What's changed and what's your intention?  Enable cascading cancellation for logical-plan and PromQL queries across the gRPC request and execution-runtime boundary. Previously, dropping a request future detached the spawned execution task, allowing it to keep running. Wrap the task in `AbortOnDropHandle` only for `LogicalPlan` and `PromRangeQuery` requests so cancellation also drops their pending execution futures.  Preserve the existing detached-task behavior for SQL, inserts, deletes, DDL, `InsertIntoPlan`, and unrecognized query payloads. SQL text may contain writes or DDL, and interrupting a state-changing operation between asynchronous steps can leave partially updated state. Retain the explanatory comment and its cancellation-safety reference. The inline path without a separate runtime, runtime selection, and join-error handling remain unchanged. There are no wire-format or storage-format changes.  Regression tests cover both paths:  - Logical-plan and PromQL execution is dropped when the caller is cancelled, with and without a separate runtime. - Spawned SQL, write, delete, DDL, and insert-plan execution can still finish normally after the caller is cancelled. The tests also preserve the existing inline cancellation behavior when no separate runtime is configured.  This change covers cancellation before `do_query` returns an `Output`; subsequent result-str
-  **Post-Mortem & Fix Analysis**:
-  > @codex review
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dcf05262f632a77acd628fde575d43de5579aac9","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-05T02:37:20.026788Z">2026-11-05T02:37:20.026788Z</relative-time> | `dcf0526` | Manual request |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  C
+- **Issue #10194** (2026-11-05): **docs: tighten README facts and move quick start up**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem The README had a dead link (`contributor-guide/overview.html` returns 404), linked a nightly docs page for "support windows" it does not describe, and ranked a March 2025 JSONBench result as current. The quick start sat after six evaluation sections, and the Troubleshooting tip ran `docker logs` on a container started with `--rm`.  ### Change - Move Try GreptimeDB after the cross-signal SQL example; fold Getting Started into it; drop Troubleshooting. - Drop the blockquote under the tagline; drop "We invite you to engage and contribute!". - Fold Commercial Support into Limitations and Edition Boundary. The License section stays separate. - Fix the contributor guide link; point the version link at the stable Semantic Versioning page; point the 2026 roadmap link at #7685, matching the header. - Remove index creation from the list of manual operations in the Apache-2.0 build. - Benchmarks: add the Agent RCA Bench scope (168 investigations per interface across six models) and say "estimated cost"; date the JSONBench result. - What's Supported: add native histograms over Remote Write 2.0 and log pipelines. - Architecture: drop the Frontend protocol list duplicated from What's Supported, drop "Elastic.", and replace "security" in Metasrv with the coordination work i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1675,1073 +1672,1086 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `557843dd` (2026-11-04)
-**Commit Message**: fix(catalog): use advertised peer address as process identity (#10153)
+### Incident Patch 1: `ec1ad1f1` (2026-11-05)
+**Commit Message**: fix(datatypes): escape object keys when rendering jsonb as text (#10112)
 
-* fix(catalog): use advertised peer address as process identity
+* fix(datatypes): escape object keys when rendering jsonb as text
 
-The process manager identified the local frontend by its public gRPC
-address, while metasrv discovers peers by the address advertised in the
-heartbeat (the internal gRPC address when configured). With separate
-public and internal listeners, list_all_processes failed to exclude the
-local node, queried its own management service as a remote frontend, and
-appended the local registry again, so every local query was listed twice.
-The same mismatch broke routing of KILL to other frontends.
+Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
 
-Identify a frontend by the address it advertises to metasrv:
-- add FrontendOptions::peer_addr, shared by the heartbeat and the process
-  manager, and FrontendOptions::create_process_manager to wire it once;
-- use the advertised address as the process identity, for self-exclusion
-  in list_all_processes, and for local/remote routing in kill_process.
+* fix(datatypes): skip unicode normalization for escaped jsonb keys
 
-Process ids now carry the address other frontends use to reach the node.
-When no internal gRPC listener is configured this is the public gRPC
-address, so the previous behavior is unchanged. The internal listener is
-the on
+Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
 
-**File**: `src/catalog/src/process_manager.rs` (modified, +29/-12)
+* refactor(datatypes): serialize jsonb to text directly with serde_json
+
+Serialize the binary jsonb with serde_json::to_string(&RawJsonb) so that
+both object keys and string values are escaped by serde_json. This drops
+fix_unicode_point, its regex and the hand-written key escaping. Errors are
+propagated instead of falling back to lossy raw bytes.
+
+Characters such as U+2028 are now emitted as-is, which is still valid
+JSON, so the affected sqlness result lines are regenerated.
+
+Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
+
+* fix(datatypes): accept JSON text bytes in jsonb_to_string
+
+Some write paths (COPY FROM csv/json/parquet, JSON bound as text via
+MySQL) store JSON text instead of binary jsonb in JSON columns. Re-encode
+such bytes as jsonb before serializing with serde_json, so they still
+render (properly escaped) instead of failing with InvalidJsonb.
+
+Signed-off-by: Yvan Wang <[REDACTED
+
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -41,8 +41,14 @@ pub type ProcessManagerRef = Arc<ProcessManager>;
- 
- /// Query process manager.
- pub struct ProcessManager {
--    /// Local frontend server address,
--    server_addr: String,
-+    /// Address this frontend advertises to the cluster.
-+    ///
-+    /// It is the heartbeat peer address, which is also the only address other
-+    /// frontends use to reach this node's process management service. The same
-+    /// value identifies processes owned by this frontend and routes kill
-+    /// requests, so discovery addresses and process addresses share one
-+    /// namespace.
-+    peer_addr: String,
-     /// Next process id for local queries.
-     next_id: AtomicU32,
-     /// Running process per catalog.
-@@ -79,11 +85,15 @@ impl Display for QueryStatement {
- }
- 
- impl ProcessManager {
--    /// Create a [ProcessManager] instance with server address and kv client.
--    pub fn new(server_addr: String, meta_client: Option<MetaClientRef>) -> Self {
-+    /// Creates a [ProcessManager] for the frontend identified by `peer_addr`.
-+    ///
-+    /// `peer_addr` must be the address the frontend advertises to metasrv, not
-+    /// its public gRPC address: discovered peers are matched by that address to
-+    /// exclude this node from remote listings and to route kill requests.
-+    pub fn new(peer_addr: String, meta_client: Option<MetaClientRef>) -> Self {
-         let frontend_selector = meta_client.map(MetaClientSelector::new);
-         Self {
--            server_addr,
-+            peer_addr,
-             next_id: Default::default(),
-             catalogs: Default::default(),
-             frontend_selector,
-@@ -111,7 +121,7 @@ impl ProcessManager {
-             query,
-             start_timestamp: current_time_millis(),
-             client,
--            frontend: self.server_addr.clone(),
-+            frontend: self.peer_addr.clone(),
-         };
-         let cancellation_handle = Arc::new(CancellationHandle::default());
-         let cancellable_process = CancellableProcess::new(cancellation_handle.clone(), process);
-@@ -168,6 +178,10 @@ impl ProcessManager {
- 
-     /// Lists running processes from every selected frontend and the local registry.
-     ///
-+    /// The local frontend is excluded from the remote selection by its advertised
-+    /// peer address, which is what [`MetaClientSelector`] discovers. Its processes
-+    /// are appended from the local registry exactly once.
-+    ///
-     /// Returns an error if a remote frontend cannot provide its process list.
-     pub async fn list_all_processes(
-         &self,
-@@ -176,7 +190,7 @@ impl ProcessManager {
-         let mut processes = vec![];
-         if let Some(remote_frontend_selector) = self.frontend_selector.as_ref() {
-             let frontends = remote_frontend_selector
--                .select(|peer| peer.addr != self.server_addr)
-+                .select(|peer| peer.addr != self.peer_addr)
-                 .await
-                 .context(error::InvokeFrontendSnafu)?;
-             for mut f in frontends {
-@@ -194,29 +208,32 @@ impl ProcessManager {
-     }
- 
-     /// Kills query with provided catalog and id.
-+    ///
-+    /// `peer_addr` is the frontend address from the process id, which is the
-+    /// advertised peer address of the frontend that owns the process.
-     pub async fn kill_process(
-         &self,
--        server_addr: String,
-+        peer_addr: String,
-         catalog: String,
-         id: ProcessId,
-     ) -> error::Result<bool> {
--        if server_addr == self.server_addr {
-+        if peer_addr == self.peer_addr {
-             self.kill_local_process(catalog, id).await
-         } else {
-             let mut nodes = self
-                 .frontend_selector
-                 .as_ref()
-                 .context(error::MetaClientMissingSnafu)?
--                .select(|peer| peer.addr == server_addr)
-+                .select(|peer| peer.addr == peer_addr)
-                 .await
-                 .context(error::InvokeFrontendSnafu)?;
-             ensure!(
-                 !nodes.is_empty(),
--                error::FrontendNotFoundSnafu { addr: server_addr }
-+                error::FrontendNotFoundSnafu { addr: peer_addr }
-             );
- 
-             let request = KillProcessRequest {
--                server_addr,
-+                server_addr: peer_addr,
-                 catalog,
-                 process_id: id,
-             };
+@@ -4613,7 +4613,6 @@ dependencies = [
+  "parquet-variant-compute",
+  "parquet-variant-json",
+  "paste",
+- "regex",
+  "serde",
+  "serde_json",
+  "snafu 0.8.6",
 ```
 
-**File**: `src/cmd/src/frontend.rs` (modified, +1/-6)
+**File**: `src/datatypes/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -27,7 +27,6 @@ use catalog::kvbackend::{
-     CachedKvBackendBuilder, CatalogManagerConfiguratorRef, KvBackendCatalogManagerBuilder,
-     new_read_only_meta_kv_backend,
- };
--use catalog::process_manager::ProcessManager;
- use clap::Parser;
- use client::client_manager::NodeClients;
- use common_base::Plugins;
-@@ -53,7 +52,6 @@ use plugins::frontend::context::{
-     CatalogManagerConfigureContext, DistributedCatalogManagerConfigureContext,
- };
- use plugins::options::PluginOptionsDeserializerImpl;
--use servers::addrs;
- use servers::grpc::GrpcOptions;
- use servers::tls::{TlsMode, TlsOption, merge_tls_option};
- use snafu::{OptionExt, ResultExt};
-@@ -489,10 +487,7 @@ impl StartCommand {
-         ));
-         plugins.insert::<InformationExtensionRef>(information_extension.clone());
- 
--        let process_manager = Arc::new(ProcessManager::new(
--            addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr)),
--            Some(meta_client.clone()),
--        ));
-+        let process_manager = opts.create_process_manager(Some(meta_client.clone()));
- 
-         let builder = KvBackendCatalogManagerBuilder::new(
-             information_extension,
+@@ -31,7 +31,6 @@ parquet-variant.workspace = true
+ parquet-variant-compute.workspace = true
+ parquet-variant-json.workspace = true
+ paste.workspace = true
+-regex.workspace = true
+ serde.workspace = true
+ serde_json.workspace = true
+ snafu.workspace = true
 ```
 
-**File**: `src/frontend/src/frontend.rs` (modified, +49/-2)
+**File**: `src/datatypes/src/types/json_type.rs` (modified, +112/-107)
 ```diff
-@@ -14,6 +14,7 @@
+@@ -14,12 +14,11 @@
  
- use std::sync::Arc;
+ use std::collections::BTreeMap;
+ use std::fmt::{Debug, Display, Formatter};
+-use std::sync::{Arc, LazyLock};
++use std::sync::Arc;
  
-+use catalog::process_manager::{ProcessManager, ProcessManagerRef};
- use common_base::readable_size::ReadableSize;
- use common_base::secrets::SecretString;
- use common_config::config::Configurable;
-@@ -22,7 +23,7 @@ use common_memory_manager::OnExhaustedPolicy;
- use common_options::datanode::DatanodeClientOptions;
- use common_options::memory::MemoryOptions;
- use common_telemetry::logging::{LoggingOptions, SlowQueryOptions, TracingOptions};
--use meta_client::MetaClientOptions;
-+use meta_client::{MetaClientOptions, MetaClientRef};
- use pipeline::PipelineOptions;
- use query::options::QueryOptions;
+ use arrow::datatypes::DataType as ArrowDataType;
+ use arrow_schema::{Field, Fields};
+ use common_base::bytes::Bytes;
+-use regex::{Captures, Regex};
  use serde::{Deserialize, Serialize};
-@@ -133,6 +134,33 @@ impl Default for FrontendOptions {
-     }
+ 
+ use crate::Error;
+@@ -389,16 +388,35 @@ impl Display for JsonType {
  }
  
-+impl FrontendOptions {
-+    /// Returns the address this frontend advertises to the rest of the cluster.
-+    ///
-+    /// It is used as the heartbeat peer address and as the identity of the
-+    /// frontend in the process list. When a dedicated internal gRPC server is
-+    /// configured, it is that server's address, because the internal server is
-+    /// the one that serves the frontend management service and peers connect to
-+    /// it. Otherwise the public gRPC address is used: the peer address only
-+    /// promises to be reachable by other components.
-+    pub fn peer_addr(&self) -> String {
-+        let grpc = self.internal_grpc.as_ref().unwrap_or(&self.grpc);
-+        servers::addrs::resolve_addr(&grpc.bind_addr, Some(&grpc.server_addr))
-+    }
-+
-+    /// Creates the process manager that tracks this frontend's running queries.
-+    ///
-+    /// The manager identifies this frontend by [`Self::peer_addr`], the same
-+    /// address other frontends discover from metasrv. It must not use the public
-+    /// gRPC address: a frontend with a dedicated internal gRPC server would fail
-+    /// to recognize itself among the discovered peers, list its own queries
-+    /// twice, and send `KILL` requests to an address that does not serve the
-+    /// frontend management service.
-+    pub fn create_process_manager(&self, meta_client: Option<MetaClientRef>) -> ProcessManagerRef {
-+        Arc::new(ProcessManager::new(self.peer_addr(), meta_client))
-+    }
-+}
-+
- impl Configurable for FrontendOptions {
-     fn env_list_keys() -> Option<&'static [&'static str]> {
-         Some(&[
-@@ -217,7 +245,7 @@ mod tests {
-     use meta_client::MetaClientRef;
-     use meta_client::client::MetaClientBuilder;
-     use servers::batcher::BatchingProtocol;
--    use servers::grpc::{FlightCompression, GRPC_SERVER};
-+    use servers::grpc::{FlightCompression, GRPC_SERVER, GrpcOptions};
-     use servers::http::HTTP_SERVER;
-     use servers::http::result::greptime_result_v1::GreptimedbV1Response;
-     use servers::server::Server;
-@@ -287,6 +315,25 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_peer_addr_prefers_internal_grpc_server() {
-+        let mut options = FrontendOptions::default();
-+        options.grpc.bind_addr = "127.0.0.1:4001".to_string();
-+        options.grpc.server_addr = "10.0.0.1:4001".to_string();
-+
-+        assert_eq!("10.0.0.1:4001", options.peer_addr());
-+
-+        options.internal_grpc = Some(GrpcOptions {
-+            bind_addr: "127.0.0.1:4010".to_string(),
-+            server_addr: "10.0.0.1".to_string(),
-+            ..Default::default()
-+        });
-+
-+        // The port falls back to the internal bind address when the advertised
-+        // address does not carry one.
-+        assert_eq!("10.0.0.1:4010", options.peer_addr());
-+    }
-+
-     #[test]
-     fn test_pipeline_host_access_config() {
-         let defaults: FrontendOptions = toml::from_str("").unwrap();
-```
-
-**File**: `src/frontend/src/heartbeat.rs` (modified, +0/-12)
-```diff
-@@ -39,7 +39,6 @@ use common_stat::ResourceStatRef;
- use common_telemetry::{debug, error, info, warn};
- use meta_client::client::heartbeat::HeartbeatConfig;
- use meta_client::client::{HeartbeatSender, HeartbeatStream, MetaClient};
--use servers::addrs;
- use snafu::ResultExt;
- use tokio::sync::mpsc::Receiver;
- use tokio::sync::{Mutex, mpsc};
-@@ -749,14 +748,3 @@ impl HeartbeatTask {
-         self.runner.cancellation.is_cancelled()
-     }
- }
--
--pub(crate) fn frontend_peer_addr(opts: &FrontendOptions) -> String {
--    // if internal grpc is configured, use its address as the peer address
--    // otherwise use the public grpc address, because peer address only promises to be reachable
--    // by other components, it doesn't matter whether it's internal or external
--    if let Some(internal) = &opts.internal_grpc {
--        addrs::resolve_addr(&internal.bind_addr, Some(&internal.server_addr))
--    } else {
--        addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr))
--    }
--}
-```
-
-**File**: `src/frontend/src/instance/builder.rs` (modified, +1/-2)
-```diff
-@@ -58,7 +58,6 @@ use snafu::{OptionExt, ResultExt};
- use crate::error::{self, DataFusionSnafu, ExternalSnafu, Result};
- use crate::events::EventHandlerImpl;
- use crate::frontend::FrontendOptions;
--use crate::heartbeat::frontend_peer_addr;
- use crate::instance::Instance;
- use crate::instance::entity_graph::EntityGraphProviderImpl;
- use crate::instance::otlp::TraceAuxCache;
-@@ -345,7 +344,7 @@ impl FrontendBuilder {
-             kv_catalog.set_entity_graph_provider(provider);
-         }
- 
--        let frontend_peer_addr = frontend_peer_addr(&self.options);
-+        let frontend_peer_addr = self.options.peer_addr();
-         let statement_executor = StatementExecutor::new(
-             self.catalog_manager.clone(),
-             query_engine.clone(),
-```
-
-**File**: `tests-integration/src/cluster.rs` (modified, +1/-2)
-```diff
-@@ -32,7 +32,6 @@ use catalog::information_extension::DistributedInformationExtension;
- use catalog::kvbackend::{
-     CachedKvBackendBuilder, KvBackendCatalogManagerBuilder, new_read_only_meta_kv_backend,
- };
--use catalog::process_manager::ProcessManager;
- use client::Client;
- use client::client_manager::NodeClients;
- use cmd::frontend::create_heartbeat_task;
-@@ -634,7 +633,7 @@ impl GreptimeDbClusterBuilder {
-             catalog_manager,
-             datanode_clients,
-             meta_client.clone(),
--            Arc::new(ProcessManager::new(fe_opts.grpc.server_addr.clone(), None)),
-+            fe_opts.create_process_manager(None),
-         )
-         .with_local_file_access(self.local_file_access.clone())
-         .with_local_cache_invalidator(cache_registry)
-```
-
-**File**: `tests-integration/tests/grpc.rs` (modified, +200/-18)
-```diff
-@@ -58,7 +58,8 @@ use datatypes::arrow::array::{
- use datatypes::arrow::datatypes::{DataType, Field};
- use datatypes::arrow::ipc::writer::StreamWriter;
- use datatypes::arrow::record_batch::RecordBatch as ArrowRecordBatch;
--use meta_client::client::MetaClientBuilder;
-+use frontend::frontend::FrontendOptions;
-+use meta_client::client::{MetaClient, MetaClientBuilder};
- use meta_srv::mocks::{self, MockInfo};
- use otel_arrow_rust::otlp::metrics::MetricType as ArrowMetricType;
- use otel_arrow_rust::proto::opentelemetry::arrow::v1::arrow_metrics_service_client::ArrowMetricsServiceClient;
-@@ -70,7 +71,7 @@ use otel_arrow_rust::schema::consts as arrow_consts;
- use rstest_reuse::apply;
- use servers::grpc::builder::GrpcServerBuilder;
- use servers::grpc::frontend_grpc_handler::FrontendGrpcHandler;
--use servers::grpc::{GrpcServer, GrpcServerConfig};
-+use servers::grpc::{GrpcOptions, GrpcServer, GrpcServerConfig};
- use servers::http::prometheus::{
-     PromData, PromQueryResult, PromSampleValue, PromSeriesMatrix, PromSeriesVector,
-     PrometheusJsonResponse, PrometheusResponse,
-@@ -549,6 +550,17 @@ pub async fn test_grpc_auth(store_type: StorageType) {
- }
- 
- async fn start_process_rpc_server(process_manager: Option<ProcessManagerRef>) -> GrpcServer {
-+    start_process_rpc_server_at(
-+        process_manager,
-+        "127.0.0.1:0".parse::<SocketAddr>().unwrap(),
-+    )
-+    .await
-+}
-+
-+async fn start_process_rpc_server_at(
-+    process_manager: Option<ProcessManagerRef>,
-+    addr: SocketAddr,
-+) -> GrpcServer {
-     let runtime: Runtime = RuntimeBuilder::default()
-         .worker_threads(2)
-         .thread_name("process-rpc-test")
-@@ -559,16 +571,32 @@ async fn start_process_rpc_server(process_manager: Option<ProcessManagerRef>) ->
-         builder = builder.frontend_grpc_handler(FrontendGrpcHandler::new(process_manager));
-     }
-     let mut server = builder.build();
--    server
--        .start("127.0.0.1:0".parse::<SocketAddr>().unwrap())
--        .await
--        .unwrap();
-+    server.start(addr).await.unwrap();
-     server
- }
- 
--async fn register_process_rpc_peer(mock: &MockInfo, addr: String) {
-+/// Reserves a loopback address for a test server.
+ /// Converts a json type value to string
 +///
-+/// A process manager must be created with the address it advertises before its
-+/// gRPC listener starts, so pick a free port first and bind it right after.
-+fn reserve_loopback_addr() -> SocketAddr {
-+    std::net::TcpListener::bind("127.0.0.1:0")
-+        .unwrap()
-+        .local_addr()
-+        .unwrap()
-+}
-+
-+async fn build_meta_client_for_mock(mock: &MockInfo) -> Arc<MetaClient> {
-+    let mut meta_client = MetaClientBuilder::frontend_default_options()
-+        .channel_manager(mock.channel_manager.clone())
-+        .build();
-+    meta_client.start(&[&mock.server_addr]).await.unwrap();
-+    Arc::new(meta_client)
-+}
-+
-+async fn register_process_rpc_peer(mock: &MockInfo, node_id: u64, addr: String) {
-     let node_info = NodeInfo {
--        peer: Peer { id: 1, addr },
-+        peer: Peer { id: node_id, addr },
-         last_activity_ts: util::current_time_millis(),
-         status: NodeStatus::Frontend(FrontendStatus::default()),
-         version: String::new(),
-@@ -588,7 +616,7 @@ async fn register_process_rpc_peer(mock: &MockInfo, addr: String) {
-         .put(PutRequest {
-             key: Vec::from(&NodeInfoKey {
-                 role: Role::Frontend,
--                node_id: 1,
-+                node_id,
-             }),
-             value: node_info.try_into().unwrap(),
-             prev_kv: false,
-@@ -601,15 +629,9 @@ async fn build_process_manager_with_remote_peer(
-     mock: &MockInfo,
-     remote_addr: String,
- ) -> ProcessManagerRef {
--    register_process_rpc_peer(mock, remote_addr).await;
--    let mut meta_client = MetaClientBuilder::frontend_default_options()
--        .channel_manager(mock.channel_manager.clone())
--        .build();
--    meta_client.start(&[&mock.server_addr]).await.unwrap();
--    Arc::new(ProcessManager::new(
--        "local".to_string(),
--        Some(Arc::new(meta_client)),
--    ))
-+    register_process_rpc_peer(mock, 1, remote_addr).await;
-+    let meta_client = build_meta_client_for_mock(mock).await;
-+    Arc::new(ProcessManager::new("local".to_string(), Some(meta_client)))
- }
- 
- #[tokio::test(flavor = "multi_thread")]
-@@ -700,6 +722,166 @@ async fn test_list_all_processes_collects_remote_and_local_catalog() {
-     );
- }
- 
-+/// Regression test for frontends with separate public and internal gRPC
-+/// addresses.
++/// The binary jsonb is serialized directly with `serde_json`, so both object keys and
++/// string values are escaped by `serde_json`. `RawJsonb::to_string()` is deliberately
++/// avoided, since it falls back to the lossy raw bytes when serialization fails.
 +///
-+/// The local process manager must recognize itself by the peer address it
-+/// advertises to metasrv (the internal gRPC address), not by its public gRPC
-+/// address. Otherwise it queries its own management service as if it were a
-+/// remote frontend and then appends the local registry a second time, so every
-+/// local query is listed twice.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_list_all_processes_excludes_local_peer_with_internal_grpc() {
-+    let mock = mocks::mock_with_memstore().await;
-```
-
----
-
-### Incident Patch 2: `b21b1cdb` (2026-11-04)
-**Commit Message**: fix(function): require ADMIN statement privileges to execute admin functions (#10120)
-
-* fix(function): require ADMIN statement privileges to execute admin functions
-
-Read-only accounts could execute the admin UDFs (flush_table,
-compact_table, flush_flow, gc_regions, migrate_region, reconcile_*,
-build_index, ...) through ordinary SELECT statements: SELECT is a
-read-only statement so it passes the statement-level privilege check,
-and the functions were only guarded by the greptime-catalog scope
-check inside the UDF. That let read-only users trigger WAL flushes,
-manifest version bumps, compactions, flow-sink writes and, in
-distributed mode, region GC/migration and SST deletion.
-
-Wrap the privilege check into the admin_fn macro itself, next to the
-existing greptime-catalog check: before executing, every #[admin_fn]
-function now requires the same privileges as its ADMIN statement. The
-check synthesizes the PermissionReq::SqlStatement request an
-ADMIN <fn>(...) statement produces and evaluates it with the same
-PermissionCheckerRef plugin the frontend installs, so query invocation
-(SELECT <fn>(...), EXPLAIN, views, flows) and the ADMIN statement path
-are gated identically — in particular
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -2501,6 +2501,7 @@ dependencies = [
-  "arrow 59.2.0",
-  "arrow-schema 59.2.0",
-  "async-trait",
-+ "auth",
-  "axum 0.8.4",
-  "bincode",
-  "catalog",
-```
-
-**File**: `src/common/function/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -20,6 +20,7 @@ api.workspace = true
- arrow.workspace = true
- arrow-schema.workspace = true
- async-trait.workspace = true
-+auth.workspace = true
- bincode = "=1.3.3"
- catalog.workspace = true
- common-base.workspace = true
-```
-
-**File**: `src/common/function/src/admin/flush_compact_table.rs` (modified, +59/-0)
-```diff
-@@ -768,4 +768,63 @@ mod tests {
-             .is_err()
-         );
++/// Some write paths (e.g. `COPY FROM` csv/json/parquet files, or a JSON parameter bound
++/// as text through the MySQL protocol) currently store the JSON *text* as the column
++/// bytes instead of binary jsonb, and such data may already be persisted. When the bytes
++/// are not valid jsonb but are valid JSON text, they are re-encoded as jsonb and then
++/// serialized the same way, so the output is still escaped by `serde_json`. Anything else
++/// is reported as an error.
+ pub fn jsonb_to_string(val: &[u8]) -> Result<String> {
+     if val.is_empty() {
+         return Ok("".to_string());
      }
-+
-+    #[tokio::test]
-+    async fn test_flush_table_requires_admin_privilege() {
-+        use auth::{
-+            DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
-+            static_user_provider_from_option,
-+        };
-+        use common_base::Plugins;
-+        use common_error::status_code::StatusCode;
-+
-+        async fn user(username: &str, mode: &str) -> auth::UserInfoRef {
-+            let provider = static_user_provider_from_option(&format!(
-+                "static_user_provider:cmd:{username}:{mode}={username}_pwd"
-+            ))
-+            .unwrap();
-+            provider
-+                .authenticate(
-+                    Identity::UserId(username, None),
-+                    Password::PlainText(format!("{username}_pwd").into()),
-+                )
-+                .await
-+                .unwrap()
-+        }
-+
-+        let plugins = Plugins::new();
-+        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
-+
-+        let func_args = || datafusion::logical_expr::ScalarFunctionArgs {
-+            args: vec![ColumnarValue::Array(Arc::new(StringArray::from(vec![
-+                "test",
-+            ])))],
-+            arg_fields: vec![Arc::new(Field::new("arg_0", DataType::Utf8, false))],
-+            return_field: Arc::new(Field::new("result", DataType::UInt64, true)),
-+            number_rows: 1,
-+            config_options: Arc::new(datafusion_common::config::ConfigOptions::default()),
-+        };
-+
-+        let factory: ScalarFunctionFactory = FlushTableFunction::factory().into();
-+
-+        let func_ctx =
-+            crate::permission::test_function_context(plugins.clone(), user("ro_user", "ro").await);
-+        let provider = factory.provide(func_ctx);
-+        let f = provider.as_async().unwrap();
-+        let error = f.invoke_async_with_args(func_args()).await.unwrap_err();
-+        assert_eq!(
-+            StatusCode::PermissionDenied,
-+            common_query::error::datafusion_status_code::<common_query::error::Error>(&error, None)
-+        );
-+
-+        let func_ctx =
-+            crate::permission::test_function_context(plugins, user("rw_user", "rw").await);
-+        let provider = factory.provide(func_ctx);
-+        let f = provider.as_async().unwrap();
-+        let error = f.invoke_async_with_args(func_args()).await.unwrap_err();
-+        assert_ne!(
-+            StatusCode::PermissionDenied,
-+            common_query::error::datafusion_status_code::<common_query::error::Error>(&error, None)
-+        );
-+    }
- }
-```
-
-**File**: `src/common/function/src/lib.rs` (modified, +5/-0)
-```diff
-@@ -15,6 +15,7 @@
- mod admin;
- mod flush_flow;
- mod macros;
-+mod permission;
- mod system;
- mod uddsketch_compat;
- 
-@@ -27,3 +28,7 @@ pub mod helper;
- pub mod scalars;
- pub mod state;
- pub mod utils;
-+
-+// Public for `admin_fn` expansions in downstream crates; the module stays private.
-+#[doc(hidden)]
-+pub use permission::ensure_admin_privilege;
-```
-
-**File**: `src/common/function/src/permission.rs` (added, +130/-0)
-```diff
-@@ -0,0 +1,130 @@
-+// Copyright 2023 Greptime Team
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use auth::{PermissionChecker, PermissionCheckerRef, PermissionReq, PermissionResp};
-+use common_error::ext::BoxedError;
-+use common_query::error::PermissionDeniedSnafu;
-+use datafusion_common::DataFusionError;
-+use sql::ast::{FunctionArguments, Ident, ObjectName};
-+use sql::statements::admin::Admin;
-+use sql::statements::statement::Statement;
-+
-+use crate::function::FunctionContext;
-+
-+/// Checks ADMIN statement privileges for an `admin_fn`-generated UDF.
-+pub fn ensure_admin_privilege(
-+    func_ctx: &FunctionContext,
-+    fn_name: &str,
-+) -> datafusion_common::Result<()> {
-+    let admin_stmt = Statement::Admin(Admin::Func(sql::ast::Function {
-+        name: ObjectName::from(vec![Ident::new(fn_name)]),
-+        uses_odbc_syntax: false,
-+        parameters: FunctionArguments::None,
-+        args: FunctionArguments::None,
-+        filter: None,
-+        null_treatment: None,
-+        over: None,
-+        within_group: vec![],
-+    }));
-+
-+    let checker = func_ctx.state.plugins.get::<PermissionCheckerRef>();
-+    match checker.as_ref().check_permission_with_context(
-+        func_ctx.query_ctx.current_user(),
-+        PermissionReq::SqlStatement(&admin_stmt),
-+        Some(&func_ctx.query_ctx.current_schema()),
-+    ) {
-+        Ok(PermissionResp::Allow) => Ok(()),
-+        Ok(PermissionResp::Reject) | Err(_) => {
-+            let err = PermissionDeniedSnafu {
-+                err_msg: format!(
-+                    "Executing the admin function '{fn_name}' requires the privileges of an ADMIN statement"
-+                ),
-+            }
-+            .build();
-+            Err(DataFusionError::External(Box::new(BoxedError::new(err))))
-+        }
-+    }
-+}
-+
-+#[cfg(test)]
-+pub(crate) fn test_function_context(
-+    plugins: common_base::Plugins,
-+    user: auth::UserInfoRef,
-+) -> FunctionContext {
-+    let query_ctx = session::context::QueryContext::arc();
-+    query_ctx.set_current_user(user);
-+    FunctionContext {
-+        query_ctx,
-+        state: std::sync::Arc::new(crate::state::FunctionState {
-+            plugins,
-+            ..Default::default()
-+        }),
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use auth::{
-+        DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
-+        static_user_provider_from_option,
-+    };
-+    use common_base::Plugins;
-+    use common_error::status_code::StatusCode;
-+
-+    use super::*;
-+
-+    async fn user(username: &str, mode: &str) -> auth::UserInfoRef {
-+        let provider = static_user_provider_from_option(&format!(
-+            "static_user_provider:cmd:{username}:{mode}={username}_pwd"
-+        ))
-+        .unwrap();
-+        provider
-+            .authenticate(
-+                Identity::UserId(username, None),
-+                Password::PlainText(format!("{username}_pwd").into()),
-+            )
-+            .await
-+            .unwrap()
-+    }
-+
-+    fn denied_status(error: &DataFusionError) -> StatusCode {
-+        common_query::error::datafusion_status_code::<common_query::error::Error>(error, None)
-+    }
-+
-+    #[tokio::test]
-+    async fn test_admin_privilege_without_checker_allows() {
-+        let func_ctx = test_function_context(Plugins::default(), user("anyone", "ro").await);
-+        ensure_admin_privilege(&func_ctx, "flush_table").unwrap();
-+    }
-+
-+    #[tokio::test]
-+    async fn test_admin_privilege_readonly_user_denied() {
-+        let plugins = Plugins::new();
-+        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
-+        let func_ctx = test_function_context(plugins, user("ro_user", "ro").await);
-+
-+        let error = ensure_admin_privilege(&func_ctx, "flush_table")
-+            .expect_err("read-only user must be denied");
-+        assert_eq!(StatusCode::PermissionDenied, denied_status(&error));
-+    }
-+
-+    #[tokio::test]
-+    async fn test_admin_privilege_readwrite_user_allowed() {
-+        let plugins = Plugins::new();
-+        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
-+        let func_ctx = test_function_context(plugins, user("rw_user", "rw").await);
-+
-+        ensure_admin_privilege(&func_ctx, "flush_table").unwrap();
-+    }
-+}
-```
-
-**File**: `src/common/function/tests/admin_fn.rs` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+// Copyright 2023 Greptime Team
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use common_function::function::FunctionContext;
-+use common_function::function_factory::ScalarFunctionFactory;
-+use common_function::handlers::ProcedureServiceHandlerRef;
-+use common_macro::admin_fn;
-+use common_query::error::{MissingProcedureServiceHandlerSnafu, Result};
-+use datafusion_expr::{Signature, Volatility};
-+use datatypes::value::{Value, ValueRef};
-+use session::context::QueryContextRef;
-+
-+// Integration tests compile as a separate crate, matching downstream users of
-+// the macro. All generated paths must be accessible through `common_function`.
-+#[admin_fn(
-+    name = ExternalAdminFunction,
-+    display_name = external_admin,
-+    sig_fn = signature,
-+    ret = uint64,
-+    user_path = common_function
-+)]
-+async fn external_admin(
-+    _handler: &ProcedureServiceHandlerRef,
-+    _query_ctx: &QueryContextRef,
-+    _params: &[ValueRef<'_>],
-+) -> Result<Value> {
-+    Ok(Value::from(0u64))
-+}
-+
-+fn signature() -> Signature {
-+    Signature::nullary(Volatility::Volatile)
-+}
-+
-+#[test]
-+fn test_admin_fn_from_external_crate() {
-+    let factory: ScalarFunctionFactory = ExternalAdminFunction::factory().into();
-+    let udf = factory.provide(FunctionContext::default());
-+
-+    assert_eq!(udf.name(), "external_admin");
-+    assert_eq!(udf.signature(), &signature());
-+    assert!(udf.as_async().is_some());
-+}
-```
-
-**File**: `src/common/macro/src/admin_fn.rs` (modified, +5/-0)
-```diff
-@@ -311,6 +311,11 @@ fn build_struct(
-                 // Safety check: Ensure under the `greptime` catalog for security
-                 #user_path::ensure_greptime!(self.func_ctx);
- 
-+                #user_path::ensure_admin_privilege(
-+                    &self.func_ctx,
-+                    #display_name,
-+                )?;
-+
-                 // Zero-argument functions also execute once per input row.
-                 let rows_num = columns.first().map_or(args.number_rows, |column| column.len());
-                 #validate_rows
-```
-
-**File**: `tests-integration/src/instance.rs` (modified, +131/-0)
-```diff
-@@ -291,6 +291,137 @@ mod tests {
-         )
-     }
- 
-+    #[tokio::test(flavor = "multi_thread")]
-+    async fn test_select_admin_function_requires_admin_privilege() {
-+        use auth::{
-+            DefaultPermissionChecker, Identity, Password, PermissionCheckerRef, UserProvider,
-+            static_user_provider_from_option,
-+        };
-+
-+        let plugins = Plugins::new();
-+        plugins.insert::<PermissionCheckerRef>(DefaultPermissionChecker::arc());
-+        let standalone =
-+            GreptimeDbStandaloneBuilder::new("test_select_admin_function_requires_admin_privilege")
-+                .with_plugin(plugins)
+-    match jsonb::from_slice(val) {
+-        Ok(jsonb_value) => {
+-            let serialized = jsonb_value.to_string();
+-            fix_unicode_point(&serialized)
+-        }
+-        Err(e) => InvalidJsonbSnafu { error: e }.fail(),
++    match serde_json::to_string(&jsonb::RawJsonb::new(val)) {
++        Ok(s) => Ok(s),
++        Err(e) => match jsonb::parse_value_standard_mode(val) {
++            Ok(json) => serde_json::to_string(&jsonb::RawJsonb::new(&json.to_vec())).map_err(|e| {
++                InvalidJsonSnafu {
++                    value: e.to_string(),
++                }
 +                .build()
-+                .await;
-+        let instance = standalone.fe_instance();
-+
-+        create_table(
-+            instance,
-+            "CREATE TABLE admin_fn_demo(host STRING, ts TIMESTAMP TIME INDEX)",
-+        )
-+        .await;
-+
-+        async fn user_ctx(username: &str, mode: &str) -> QueryContextRef {
-+            let provider = static_user_provider_from_option(&format!(
-+                "static_user_provider:cmd:{username}:{mode}={username}_pwd"
-+            ))
-+            .unwrap();
-+            let user = provider
-+                .authenticate(
-+                    Identity::UserId(username, None),
-+                    Password::PlainText(format!("{username}_pwd").into()),
-+                )
-+                .await
-+                .unwrap();
-+            let ctx = QueryContext::arc();
-+            ctx.set_current_user(user);
-+            ctx
-+        }
-+
-+        async fn assert_select_admin_denied(instance: &Instance, ctx: &QueryContextRef) {
-+            for sql in [
-+                "SELECT flush_table('admin_fn_demo')",
-+                "SELECT compact_table('admin_fn_demo')",
-+                "SELECT flush_region(0)",
-+                "SELECT compact_region(0)",
-+                "SELECT migrate_region(1, 2, 3)",
-+                "SELECT gc_regions(0)",
-+                "SELECT gc_table('admin_fn_demo')",
-+                "SELECT build_index('admin_fn_demo')",
-+                "SELECT build_series_index('admin_fn_demo')",
-+                "SELECT flush_flow('admin_fn_demo')",
-+                "SELECT reconcile_catalog()",
-+                "SELECT reconcile_database('public')",
-+                "SELECT reconcile_table('admin_fn_demo')",
-+            ] {
-+                let mut results = SqlQueryHandler::do_query(instance, sql, ctx.clone()).await;
-+                let output = results
-+                    .remove(0)
-+                    .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
-+                let OutputData::Stream(stream) = output.data else {
-+                    panic!("{sql} must return a stream, got {:?}", output.data)
-+                };
-+                let err = common_recordbatch::util::collect_batches(stream)
-+                    .await
-+                    .expect_err("read-only user must be denied");
-+                assert_eq!(
-+                    StatusCode::PermissionDenied,
-+                    err.status_code(),
-+                    "unexpected error for {sql}: {err}"
-+                );
++            }),
++            Err(_) => InvalidJsonSnafu {
++                value: e.to_string(),
 +            }
-+        }
-+
-+        let readonly_ctx = user_ctx("ro_user", "ro").await;
-+        let readwrite_ctx = user_ctx("rw_user", "rw").await;
-+
-+        assert_select_admin_denied(instance, &readonly_ctx).await;
-+
-+        let mut results = SqlQueryHandler::do_query(
-+            instance.as_ref(),
-+            "ADMIN FLUSH_TABLE('admin_fn_demo')",
-+            readwrite_ctx.clone(),
-+        )
-+        .await;
-+        assert!(
-+            results.remove(0).is_ok(),
-+            "ADMIN FLUSH_TABLE must keep working for read-write users"
-+        );
-+
-+        for sql in [
-+            "SELECT flush_table('admin_fn_demo')",
-+            "SELECT compact_table('admin_fn_demo')",
-+        ] {
-+            let mut results =
-+                SqlQueryHandler::do_query(instance.as_ref(), sql, readwrite_ctx.clone()).await;
-+            let output = results
-+                .remove(0)
-+                .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
-+            let OutputData::Stream(stream) = output.data else {
-+                panic!("{sql} must return a stream");
-+            };
-+            let batches = common_recordbatch::util::collect_batches(stream)
-+                .await
-+                .unwrap_or_else(|e| panic!("unexpected error for {sql}: {e}"));
-+            assert_eq!(
-+                1,
-+                batches.iter().count(),
-+                "{sql} must return one record batch"
-+            );
-+        }
-+
-+        let mut results = SqlQueryHandler::do_query(
-+            instance.as_ref(),
-+            "ADMIN FLUSH_TABLE('admin_fn_demo')",
-+            readonly_ctx.clone(),
-+        )
-+        .await;
-+        let err = results.remove(0).unwrap_err();
-+        assert_eq!(
-+            StatusCode::PermissionDenied,
-+            err.status_code(),
-+            "unexpected error: {err}"
++            .fail(),
++        },
+     }
+ }
+ 
+@@ -409,59 +427,6 @@ pub fn jsonb_to_serde_json(val: &[u8]) -> Result<serde_json::Value> {
+         .map_err(|error| InvalidJsonbSnafu { error }.build())
+ }
+ 
+-/// Normalizes a JSON string by converting Rust-style Unicode escape sequences to JSON-compatible format.
+-///
+-/// The input is scanned for Rust-style Unicode code
+-/// point escapes of the form `\\u{H...}` (a backslash, `u`, an opening brace,
+-/// followed by 1–6 hexadecimal digits, and a closing brace). Each such escape is
+-/// converted into JSON-compatible UTF‑16 escape sequences:
+-///
+-/// - For code points in the Basic Multilingual Plane (≤ `0xFFFF`), the escape is
+-///   converted to a single JSON `\\uXXXX` sequence with four uppercase hex digits.
+-/// - For code points above `0xFFFF` and less than Unicode max code point `0x10FFFF`,
+-///   the code point is encoded as a UTF‑16 surrogate pair and emitted as two consecutive
+-///   `\\uXXXX` sequences (as JSON format required).
+-///
+-/// After this normalization, the function returns the normalized string
+-fn fix_unicode_point(json: &str) -> Result<String> {
+-    static UNICODE_CODE_POINT_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
+-        // Match literal "\u{...}" sequences, capturing 1–6 (code point range) hex digits
+-        // inside braces.
+-        Regex::new(r"\\u\{([0-9a-fA-F]{1,6})}").unwrap_or_else(|e| panic!("{}", e))
+-    });
+-
+-    let v = UNICODE_CODE_POINT_PATTERN.replace_all(json, |caps: &Captures| {
+-        // Extract the hex payload (without braces) and parse to a code point.
+-        let hex = &caps[1];
+-        let Ok(code) = u32::from_str_radix(hex, 16) else {
+-            // On parse failure, leave the original escape sequence unchanged.
+-            return caps[0].to_string();
+-        };
+-
+-        if code <= 0xFFFF {
+-            // Basic Multilingual Plane: JSON can represent this directly as \uXXXX.
+-            format!("\\u{:04X}", code)
+-        } else if code > 0x10FFFF {
+-            // Beyond max Unicode code point
+-            caps[0].to_string()
+-        } else {
+-            // Supplementary planes: JSON needs UTF-16 surrogate pairs.
+-            // Convert the code point to a 20-bit value.
+-            let code = code - 0x10000;
+-
+-            // High surrogate: top 10 bits, offset by 0xD800.
+-            let high = 0xD800 + ((code >> 10) & 0x3FF);
+-
+-            // Low surrogate: bottom 10 bits, offset by 0xDC00.
+-            let low = 0xDC00 + (code & 0x3FF);
+-
+-            // Emit two \uXXXX escapes in sequence.
+-            format!("\\u{:04X}\\u{:04X}", high, low)
+-        }
+-    });
+-    Ok(v.to_string())
+-}
+-
+ /// Parses a string to a json type value
+ pub fn parse_string_to_jsonb(s: &str) -> Result<Vec<u8>> {
+     jsonb::parse_value_standard_mode(s.as_bytes())
+@@ -488,60 +453,100 @@ mod tests {
+         Ok(())
+     }
+ 
+-    use super::*;
++    #[test]
++    fn test_jsonb_to_string_escapes_ob
+```
 
+**File**: `tests/cases/standalone/common/types/json/json.result` (modified, +2/-2)
+```diff
+@@ -99,7 +99,7 @@ SELECT json_to_string(j), t FROM jsons;
+ | {"a":null,"foo":"bar"}                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:00.009 |
+ | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.010 |
+ | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:00.011 |
+-| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.012 |
++| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:00.012 |
+ | [null]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01     |
+ | [true]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01.001 |
+ | [false]                                                                                                                                                                                                                                                                                                                   | 1970-01-01T00:00:01.002 |
+@@ -113,7 +113,7 @@ SELECT json_to_string(j), t FROM jsons;
+ | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.010 |
+ | [-2147483648]                                                                                                                                                                                                                                                                                                             | 1970-01-01T00:00:01.011 |
+ | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:01.012 |
+-| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.013 |
++| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:01.013 |
+ +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
+ 
+ --Insert invalid json strings--
 ```
 
 ---
 
-### Incident Patch 3: `2cb47360` (2026-11-05)
-**Commit Message**: fix(grpc): propagate cancellation for read query execution (#10166)
+### Incident Patch 2: `4263f5fc` (2026-11-05)
+**Commit Message**: fix(mito): decode cached manifest payloads (#10179)
 
-* x
+* test(mito2): cover compressed manifest cache recovery
 
-* fix(grpc): restrict cascading cancellation to read query variants
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
+* fix(mito2): decode cached manifest object payloads
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(mito2): address manifest cache review feedback
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-**File**: `src/servers/src/grpc/greptime_handler.rs` (modified, +151/-15)
+**File**: `src/mito2/src/cache/manifest_cache.rs` (modified, +2/-2)
 ```diff
-@@ -22,7 +22,8 @@ use std::time::Instant;
+@@ -237,7 +237,7 @@ impl ManifestCache {
+         join_path(MANIFEST_DIR, key)
+     }
  
- use api::helper::request_type;
- use api::v1::greptime_request::Request as QueryRequest;
--use api::v1::{GreptimeRequest, RequestHeader};
-+use api::v1::query_request::Query;
-+use api::v1::{GreptimeRequest, QueryRequest as ApiQueryRequest, RequestHeader};
- use auth::UserProviderRef;
- use common_catalog::consts::{DEFAULT_CATALOG_NAME, DEFAULT_SCHEMA_NAME};
- use common_catalog::parse_catalog_and_schema_from_db_string;
-@@ -42,6 +43,7 @@ use session::hints::{INSERT_SKIP_WAL_HINT, READ_PREFERENCE_HINT, is_reserved_ext
- use snafu::{OptionExt, ResultExt};
- use tokio::sync::mpsc;
- use tokio::sync::mpsc::error::TrySendError;
-+use tokio_util::task::AbortOnDropHandle;
- use tonic::Status;
+-    /// Gets a manifest file from cache.
++    /// Gets the encoded object-store payload from cache.
+     /// Returns the file data if found in cache, None otherwise.
+     pub(crate) async fn get_file(&self, key: &str) -> Option<Vec<u8>> {
+         if self.get(key).await.is_none() {
+@@ -259,7 +259,7 @@ impl ManifestCache {
+         }
+     }
  
- use crate::error::{InvalidQuerySnafu, JoinTaskSnafu, Result, UnknownHintSnafu};
-@@ -108,6 +110,13 @@ impl GreptimeRequestHandler {
-     ) -> impl Future<Output = Result<Output>> + Send + 'static {
-         let handler = self.handler.clone();
-         let runtime = self.runtime.clone();
-+        // SQL can contain writes or DDL; only explicit read-query variants are cancellable.
-+        let cancel_on_drop = matches!(
-+            &query,
-+            QueryRequest::Query(ApiQueryRequest {
-+                query: Some(Query::LogicalPlan(_) | Query::PromRangeQuery(_)),
-+            })
+-    /// Puts a manifest file into cache.
++    /// Caches the object-store payload verbatim, before decompression.
+     pub(crate) async fn put_file(&self, key: String, data: Vec<u8>) {
+         let cache_file_path = self.cache_file_path(&key);
+ 
+```
+
+**File**: `src/mito2/src/engine/open_test.rs` (modified, +63/-0)
+```diff
+@@ -1366,3 +1366,66 @@ async fn test_region_hook_on_open() {
+     assert_eq!(hook.closed_count.load(Ordering::Relaxed), 1);
+     assert_eq!(hook.dropped_count.load(Ordering::Relaxed), 0);
+ }
++
++#[tokio::test]
++async fn test_reopen_region_with_compressed_manifest_cache() {
++    let mut env = TestEnv::new().await;
++    let engine = env
++        .create_engine(MitoConfig {
++            enable_write_cache: true,
++            compress_manifest: true,
++            manifest_checkpoint_distance: 1,
++            ..Default::default()
++        })
++        .await;
++    let region_id = RegionId::new(1, 1);
++    let request = CreateRequestBuilder::new().build();
++    let table_dir = request.table_dir.clone();
++    let schema = rows_schema(&request);
++    engine
++        .handle_request(region_id, RegionRequest::Create(request))
++        .await
++        .unwrap();
++    for i in 0..3 {
++        put_rows(
++            &engine,
++            region_id,
++            Rows {
++                schema: schema.clone(),
++                rows: build_rows(i * 3, (i + 1) * 3),
++            },
++        )
++        .await;
++        flush_region(&engine, region_id, None).await;
++    }
++    let region = engine.get_region(region_id).unwrap();
++    let mut manager = region.manifest_ctx.manifest_manager.write().await;
++    tokio::time::timeout(
++        Duration::from_secs(10),
++        manager.wait_for_pending_checkpoint(),
++    )
++    .await
++    .unwrap();
++    assert!(manager.checkpointer().last_checkpoint_version() > 0);
++    drop(manager);
++    let stream = engine
++        .scan_to_stream(region_id, ScanRequest::default())
++        .await
++        .unwrap();
++    let expected = RecordBatches::try_collect(stream)
++        .await
++        .unwrap()
++        .pretty_print()
++        .unwrap();
++    reopen_region(&engine, region_id, table_dir, true, HashMap::new()).await;
++    let stream = engine
++        .scan_to_stream(region_id, ScanRequest::default())
++        .await
++        .unwrap();
++    let actual = RecordBatches::try_collect(stream)
++        .await
++        .unwrap()
++        .pretty_print()
++        .unwrap();
++    assert_eq!(expected, actual);
++}
+```
+
+**File**: `src/mito2/src/manifest/storage.rs` (modified, +239/-0)
+```diff
+@@ -846,4 +846,243 @@ mod tests {
+             .unwrap();
+         assert!(entries.is_empty());
+     }
++
++    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
++    enum CacheSource {
++        WriteThrough,
++        RemoteFill,
++        LegacyDecoded,
++        Truncated,
++    }
++
++    #[derive(Debug, Clone, Copy)]
++    enum PayloadKind {
++        Delta,
++        Checkpoint { checksum: bool },
++    }
++
++    // Exercise both representations left by older versions, as well as new writes
++    // and remote fills. Truncation only applies to compression envelopes.
++    #[rstest::rstest]
++    #[case::write_through_uncompressed(CacheSource::WriteThrough, CompressionType::Uncompressed)]
++    #[case::write_through_gzip(CacheSource::WriteThrough, CompressionType::Gzip)]
++    #[case::write_through_zstd(CacheSource::WriteThrough, CompressionType::Zstd)]
++    #[case::write_through_xz(CacheSource::WriteThrough, CompressionType::Xz)]
++    #[case::write_through_bzip2(CacheSource::WriteThrough, CompressionType::Bzip2)]
++    #[case::remote_fill_uncompressed(CacheSource::RemoteFill, CompressionType::Uncompressed)]
++    #[case::remote_fill_gzip(CacheSource::RemoteFill, CompressionType::Gzip)]
++    #[case::remote_fill_zstd(CacheSource::RemoteFill, CompressionType::Zstd)]
++    #[case::remote_fill_xz(CacheSource::RemoteFill, CompressionType::Xz)]
++    #[case::remote_fill_bzip2(CacheSource::RemoteFill, CompressionType::Bzip2)]
++    #[case::legacy_decoded_uncompressed(CacheSource::LegacyDecoded, CompressionType::Uncompressed)]
++    #[case::legacy_decoded_gzip(CacheSource::LegacyDecoded, CompressionType::Gzip)]
++    #[case::legacy_decoded_zstd(CacheSource::LegacyDecoded, CompressionType::Zstd)]
++    #[case::legacy_decoded_xz(CacheSource::LegacyDecoded, CompressionType::Xz)]
++    #[case::legacy_decoded_bzip2(CacheSource::LegacyDecoded, CompressionType::Bzip2)]
++    #[case::truncated_gzip(CacheSource::Truncated, CompressionType::Gzip)]
++    #[case::truncated_zstd(CacheSource::Truncated, CompressionType::Zstd)]
++    #[case::truncated_xz(CacheSource::Truncated, CompressionType::Xz)]
++    #[case::truncated_bzip2(CacheSource::Truncated, CompressionType::Bzip2)]
++    #[tokio::test]
++    async fn test_manifest_cache_payload(
++        #[case] source: CacheSource,
++        #[case] compression: CompressionType,
++        #[values(PayloadKind::Delta, PayloadKind::Checkpoint { checksum: false }, PayloadKind::Checkpoint { checksum: true })]
++        payload: PayloadKind,
++    ) {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        use common_base::readable_size::ReadableSize;
++        use object_store::layers::mock::MockLayerBuilder;
++
++        let remote_dir = create_temp_dir("manifest-cache-remote");
++        let cache_dir = create_temp_dir("manifest-cache-local");
++        let remote =
++            ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
++        let local =
++            ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
++        let reads = Arc::new(AtomicUsize::new(0));
++        let observed = reads.clone();
++        let remote = remote.layer(
++            MockLayerBuilder::default()
++                .reader_factory(Arc::new(move |_, _, reader| {
++                    observed.fetch_add(1, Ordering::Relaxed);
++                    reader
++                }))
++                .build()
++                .unwrap(),
 +        );
-         let request_type = request_type(&query).to_string();
-         let db = query_ctx.get_db_string();
-         let timer = RequestTimer::new(db.clone(), request_type);
-@@ -135,20 +144,17 @@ impl GreptimeRequestHandler {
++        let mut cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
++        let mut store = ManifestObjectStore::new(
++            "region/manifest/",
++            remote.clone(),
++            compression,
++            Default::default(),
++            (source != CacheSource::RemoteFill).then(|| cache.clone()),
++        );
++        let data = br#"{"manifest":"persistent cache payload"}"#;
++        let key = gen_path(
++            "region/manifest/",
++            &if matches!(payload, PayloadKind::Checkpoint { .. }) {
++                checkpoint_file(3)
++            } else {
++                delta_file(3)
++            },
++            compression,
++        );
++        if matches!(payload, PayloadKind::Checkpoint { .. }) {
++            store.save_checkpoint(3, data).await.unwrap();
++        } else {
++            store.save(3, data, false).await.unwrap();
++        }
++        let encoded = remote.read(&key).await.unwrap().to_vec();
++        if source == CacheSource::LegacyDecoded {
++            cache.put_file(key.clone(), data.to_vec()).await;
++        } else if source == CacheSource::Truncated {
++            cache
++                .put_file(key.clone(), encoded[..encoded.len() / 2].to_vec())
++                .await;
++        }
++        drop(store);
++        for iteration in 0..2 {
++            drop(cache);
++            cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
++            if source != CacheSource::RemoteFill || iteration > 0 {
++                assert!(
++                   
+```
+
+**File**: `src/mito2/src/manifest/storage/checkpoint.rs` (modified, +26/-21)
+```diff
+@@ -27,7 +27,7 @@ use crate::error::{
+     CompressObjectSnafu, DecompressObjectSnafu, OpenDalSnafu, Result, SerdeJsonSnafu, Utf8Snafu,
+ };
+ use crate::manifest::storage::size_tracker::Tracker;
+-use crate::manifest::storage::utils::{get_from_cache, put_to_cache, write_and_put_cache};
++use crate::manifest::storage::utils::{get_from_cache_decoded, write_and_put_cache};
+ use crate::manifest::storage::{
+     FALL_BACK_COMPRESS_TYPE, LAST_CHECKPOINT_FILE, checkpoint_checksum, checkpoint_file, gen_path,
+     verify_checksum,
+@@ -102,7 +102,9 @@ impl<T: Tracker> CheckpointStorage<T> {
+         let path = self.checkpoint_file_path(version);
  
-             match runtime {
-                 Some(runtime) => {
--                    // Executes requests in another runtime to
--                    // 1. prevent the execution from being cancelled unexpected by Tonic runtime;
--                    //   - Refer to our blog for the rational behind it:
--                    //     https://www.greptime.com/blogs/2023-01-12-hidden-control-flow.html
--                    //   - Obtaining a `JoinHandle` to get the panic message (if there's any).
--                    //     From its docs, `JoinHandle` is cancel safe. The task keeps running even it's handle been dropped.
--                    // 2. avoid the handler blocks the gRPC runtime incidentally.
--                    runtime
--                        .spawn(result_future)
+         // Try to get from cache first
+-        if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), &path).await {
++        if let Some(data) =
++            get_from_cache_decoded(self.manifest_cache.as_ref(), &path, self.compress_type).await
++        {
+             verify_checksum(&data, metadata.checksum)?;
+             self.record_cached_checkpoint_size(version, &path).await;
+             return Ok(Some((version, data)));
+@@ -113,19 +115,21 @@ impl<T: Tracker> CheckpointStorage<T> {
+         let checkpoint_data = match self.object_store.read(&path).await {
+             Ok(checkpoint) => {
+                 let checkpoint_size = checkpoint.len();
+-                let decompress_data =
+-                    self.compress_type
+-                        .decode(checkpoint)
 -                        .await
--                        .context(JoinTaskSnafu)
--                        .inspect_err(|e| {
--                            timer.record(e.status_code());
--                        })?
-+                    let task = runtime.spawn(result_future);
-+                    let result = if cancel_on_drop {
-+                        AbortOnDropHandle::new(task).await
-+                    } else {
-+                        // Writes must outlive the RPC to avoid cancellation between state updates.
-+                        // https://www.greptime.com/blogs/2023-01-12-hidden-control-flow.html
-+                        task.await
-+                    };
-+                    result.context(JoinTaskSnafu).inspect_err(|e| {
-+                        timer.record(e.status_code());
-+                    })?
-                 }
-                 None => result_future.await,
+-                        .with_context(|_| DecompressObjectSnafu {
+-                            compress_type: self.compress_type,
+-                            path: path.clone(),
+-                        })?;
++                let decompress_data = self
++                    .compress_type
++                    .decode(checkpoint.clone())
++                    .await
++                    .with_context(|_| DecompressObjectSnafu {
++                        compress_type: self.compress_type,
++                        path: path.clone(),
++                    })?;
+                 verify_checksum(&decompress_data, metadata.checksum)?;
+                 // set the checkpoint size
+                 self.size_tracker.record(version, checkpoint_size as u64);
+                 // Add to cache
+-                put_to_cache(self.manifest_cache.as_ref(), path, &decompress_data).await;
++                if let Some(cache) = &self.manifest_cache {
++                    cache.put_file(path, checkpoint.to_vec()).await;
++                }
+                 Ok(Some(decompress_data))
              }
-@@ -317,20 +323,150 @@ impl Drop for RequestTimer {
+             Err(e) => {
+@@ -142,8 +146,12 @@ impl<T: Tracker> CheckpointStorage<T> {
+                         );
  
- #[cfg(test)]
- mod tests {
-+    use std::error::Error as StdError;
-+    use std::result::Result as StdResult;
-+    use std::time::Duration;
-+
-+    use async_trait::async_trait;
-     use chrono::FixedOffset;
-     use common_error::ext::BoxedError;
-     use common_error::{GREPTIME_DB_HEADER_ERROR_CODE, GREPTIME_DB_HEADER_ERROR_RETRY_HINT};
-     use common_time::Timezone;
-+    use futures::stream::{self, BoxStream};
-     use query::options::FLOW_SCHEDULED_TIME_MILLIS;
-+    use session::context::QueryContext;
-     use session::hints::{
-         INITIAL_REMOTE_DYN_FILTER_REGISTRATIONS_EXTENSION_KEY, READ_PREFERENCE_EXTENSION_KEY,
-         REMOTE_QUERY_ID_EXTENSION_KEY,
-     };
-     use snafu::ResultExt;
-+    use tokio::sync::Notify;
-+    use tokio::time::timeout;
-     use tonic::Code;
+                         // Try to get fallback from cache first
+-                        if let Some(data) =
+-                            get_from_cache(self.manifest_cache.as_ref(), &fall_back_path).await
++                        if let Some(data) = get_from_cache_decoded(
++                            self.manifest_cache.as_ref(),
++                            &fall_back_path,
++                            FALL_BACK_COMPRESS_TYPE,
++                        )
++                        .await
+                         {
+                             verify_checksum(&data, metadata.checksum)?;
+                             self.record_cached_checkpoint_size(version, &fall_back_path)
+@@ -155,7 +163,7 @@ impl<T: Tracker> CheckpointStorage<T> {
+                             Ok(checkpoint) => {
+                                 let checkpoint_size = checkpoint.len();
+                                 let decompress_data = FALL_BACK_COMPRESS_TYPE
+-                                    .decode(checkpoint)
++                                    .decode(checkpoint.clone())
+                                     .await
+                                     .with_context(|_| DecompressObjectSnafu {
+                                         compress_type: FALL_BACK_COMPRESS_TYPE,
+@@ -164,12 +172,9 @@ impl<T: Tracker> CheckpointStorage<T> {
+                                 verify_checksum(&decompress_data, metadata.checksum)?;
+                                 self.size_tracker.record(version, checkpoint_size as u64);
+                                 // Add fallback to cache
+-                                put_to_cache(
+-                                    self.manifest_cache.as_ref(),
+-                                    fall_back_path,
+-                                    &decompress_data,
+-                                )
+-                                .await;
++                                if let Some(cache) = &self.manifest_cache {
++                                    cache.put_file(fall_back_path, checkpoint.to_vec()).await;
++                                }
+                                 Ok(Some(decompress_data))
+                             }
+                             Err(e) if e.kind() == ErrorKind::NotFound => Ok(None),
+@@ -220,7 +225,7 @@ impl<T: Tracker> CheckpointStorage<T> {
+         Ok(Some(che
+```
+
+**File**: `src/mito2/src/manifest/storage/delta.rs` (modified, +7/-5)
+```diff
+@@ -31,7 +31,7 @@ use crate::error::{
+ };
+ use crate::manifest::storage::size_tracker::Tracker;
+ use crate::manifest::storage::utils::{
+-    get_from_cache, put_to_cache, sort_manifests, write_and_put_cache,
++    get_from_cache_decoded, sort_manifests, write_and_put_cache,
+ };
+ use crate::manifest::storage::{
+     FETCH_MANIFEST_PARALLELISM, delta_file, file_compress_type, file_version, gen_path,
+@@ -206,8 +206,9 @@ impl<T: Tracker> DeltaStorage<T> {
+             let _permit = semaphore.acquire().await.unwrap();
  
-     use super::*;
-     use crate::error::{ExecuteGrpcRequestSnafu, InvalidParameterSnafu};
-+    use crate::query_handler::grpc::GrpcQueryHandler;
-+
-+    struct BlockingQueryHandler {
-+        started: Arc<Notify>,
-+        finished: Arc<Notify>,
-+        resume: Arc<Notify>,
-+        completed: Arc<Notify>,
-+    }
-+
-+    struct QueryFinished(Arc<Notify>);
-+
-+    impl Drop for QueryFinished {
-+        fn drop(&mut self) {
-+            self.0.notify_one();
+             let cache_key = entry.path();
++            let compress_type = file_compress_type(entry.name());
+             // Try to get from cache first
+-            if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), cache_key).await {
++            if let Some(data) = get_from_cache_decoded(self.manifest_cache.as_ref(), cache_key, compress_type).await {
+                 let size = entry.metadata().content_length();
+                 if size > 0 {
+                     self.delta_tracker.record(*v, size);
+@@ -221,7 +222,6 @@ impl<T: Tracker> DeltaStorage<T> {
+             }
+ 
+             // Fetch from remote object store
+-            let compress_type = file_compress_type(entry.name());
+             let bytes = match self.object_store.read(entry.path()).await {
+                 Ok(bytes) => bytes,
+                 Err(error) if error.kind() == ErrorKind::NotFound => {
+@@ -234,15 +234,17 @@ impl<T: Tracker> DeltaStorage<T> {
+             };
+             self.delta_tracker.record(*v, bytes.len() as u64);
+             let data = compress_type
+-                .decode(bytes)
++                .decode(bytes.clone())
+                 .await
+                 .context(DecompressObjectSnafu {
+                     compress_type,
+                     path: entry.path(),
+                 })?;
+ 
+             // Add to cache
+-            put_to_cache(self.manifest_cache.as_ref(), cache_key.to_string(), &data).await;
++            if let Some(cache) = &self.manifest_cache {
++                cache.put_file(cache_key.to_string(), bytes.to_vec()).await;
++            }
+ 
+             Ok((*v, data))
+         });
+```
+
+**File**: `src/mito2/src/manifest/storage/utils.rs` (modified, +29/-21)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use common_datasource::compression::CompressionType;
++use common_telemetry::debug;
+ use object_store::{Entry, ObjectStore};
+ use snafu::ResultExt;
+ use store_api::ManifestVersion;
+@@ -21,19 +23,29 @@ use crate::error::{OpenDalSnafu, Result};
+ 
+ const CHUNK_SIZE: usize = 64 * 1024 * 1024; // 64MB
+ 
+-/// Gets a manifest file from cache.
+-/// Returns the file data if found in cache, None otherwise.
+-pub(crate) async fn get_from_cache(cache: Option<&ManifestCache>, key: &str) -> Option<Vec<u8>> {
++/// Gets and decodes the object payload cached under `key`.
++///
++/// Older remote fills cached decoded content. If decoding fails, discard the
++/// entry and let the caller refill it from object storage. Remote decode and
++/// checksum errors are still returned by the caller.
++pub(crate) async fn get_from_cache_decoded(
++    cache: Option<&ManifestCache>,
++    key: &str,
++    compress_type: CompressionType,
++) -> Option<Vec<u8>> {
+     let cache = cache?;
+-    cache.get_file(key).await
+-}
+-
+-/// Puts a manifest file into cache.
+-pub(crate) async fn put_to_cache(cache: Option<&ManifestCache>, key: String, data: &[u8]) {
+-    let Some(cache) = cache else {
+-        return;
+-    };
+-    cache.put_file(key, data.to_vec()).await
++    let raw = cache.get_file(key).await?;
++    match compress_type.decode(raw.as_slice()).await {
++        Ok(data) => Some(data),
++        Err(error) => {
++            debug!(
++                "Failed to decode cached manifest {}, removing entry: {}",
++                key, error
++            );
++            cache.remove(key).await;
++            None
 +        }
 +    }
+ }
+ 
+ /// Removes a manifest file from cache.
+@@ -44,19 +56,15 @@ pub(crate) async fn remove_from_cache(cache: Option<&ManifestCache>, key: &str)
+     cache.remove(key).await
+ }
+ 
+-/// Writes data to object store and puts it into cache.
++/// Writes data to object store and caches the same encoded payload.
+ pub(crate) async fn write_and_put_cache(
+     object_store: &ObjectStore,
+     cache: Option<&ManifestCache>,
+     path: &str,
+     data: Vec<u8>,
+ ) -> Result<()> {
+-    // Clone data for cache before writing, only if cache is enabled.
+-    let cache_data = if cache.is_some() {
+-        Some(data.clone())
+-    } else {
+-        None
+-    };
++    // Clone only when caching is enabled; retain the owner for the cache write.
++    let cache_data = cache.map(|cache| (cache, data.clone()));
+ 
+     // Write to object store
+     object_store
+@@ -66,8 +74,8 @@ pub(crate) async fn write_and_put_cache(
+         .context(OpenDalSnafu)?;
+ 
+     // Put to cache if we cloned the data
+-    if let Some(data) = cache_data {
+-        put_to_cache(cache, path.to_string(), &data).await;
++    if let Some((cache, data)) = cache_data {
++        cache.put_file(path.to_string(), data).await;
+     }
+ 
+     Ok(())
+```
+
+**File**: `src/mito2/src/manifest/tests/checkpoint.rs` (modified, +69/-0)
+```diff
+@@ -1072,3 +1072,72 @@ impl oio::List for ZeroSizeLister {
+         Ok(Some(oio::Entry::new(&path, builder.build())))
+     }
+ }
 +
-+    #[async_trait]
-+    impl GrpcQueryHandler for BlockingQueryHandler {
-+        async fn do_query(&self, _: QueryRequest, _: QueryContextRef) -> Result<Output> {
-+            let _finished = QueryFinished(self.finished.clone());
-+            self.started.notify_one();
-+            self.resume.notified().await;
-+            self.completed.notify_one();
-+            Ok(Output::new_with_affected_rows(1))
-+        }
++#[rstest::rstest]
++#[case(CompressionType::Uncompressed)]
++#[case(CompressionType::Gzip)]
++#[case(CompressionType::Zstd)]
++#[tokio::test]
++async fn manifest_cache_write_through_survives_reopen(#[case] compression: CompressionType) {
++    use common_base::readable_size::ReadableSize;
++    use common_test_util::temp_dir::create_temp_dir;
++    use object_store::ObjectStore;
++    use object_store::services::Fs;
 +
-+        
++    use crate::cache::manifest_cache::ManifestCache;
++    use crate::manifest::manager::RegionManifestOptions;
++    use crate::sst::FormatType;
++
++    let remote_dir = create_temp_dir("manifest-manager-remote");
++    let cache_dir = create_temp_dir("manifest-manager-cache");
++    let remote = ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
++    let local = ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
++    let cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
++    // Use a relative prefix, matching production keys and the recovered index.
++    let mut options = RegionManifestOptions {
++        manifest_dir: "region/".to_string(),
++        object_store: remote,
++        compress_type: compression,
++        checkpoint_distance: 3,
++        remove_file_options: Default::default(),
++        manifest_cache: Some(cache.clone()),
++    };
++    let mut writer = RegionManifestManager::new(
++        Arc::new(basic_region_metadata()),
++        0,
++        options.clone(),
++        FormatType::PrimaryKey,
++        false,
++        &Default::default(),
++    )
++    .await
++    .unwrap();
++    for _ in 0..7 {
++        writer.update(nop_action(), false).await.unwrap();
++        wait_for_manifest_checkpoint(&writer).await;
++    }
++    let key = gen_path(
++        "region/",
++        &checkpoint_file(writer.checkpointer().last_checkpoint_version()),
++        compression,
++    );
++    assert!(cache.get(&key).await.is_some());
++    let version = writer.manifest().manifest_version;
++    let usage = writer.manifest_usage();
++    drop(writer);
++    drop(cache);
++    // Release the final old cache handle before recovering a new index.
++    drop(options.manifest_cache.take());
++    let cache = ManifestCache::new(local, ReadableSize::mb(32), None, true).await;
++    assert!(
++        cache.get(&key).await.is_some(),
++        "cache recovery missed {key}"
++    );
++    options.manifest_cache = Some(cache);
++    let reopened = RegionManifestManager::open(options, &Default::default())
++        .await
++        .unwrap()
++        .unwrap();
++    assert_eq!(version, reopened.manifest().manifest_version);
++    assert_eq!(usage, reopened.manifest_usage());
++}
+```
+
+---
+
+### Incident Patch 3: `8e4aa4c8` (2026-11-05)
+**Commit Message**: fix(grafana): correct autopilot counters and show baseline reasons (#10160)
+
+* fix(grafana): correct autopilot counters and show baseline reasons
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(grafana): retain baseline totals when details are unavailable
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `grafana/dashboards/metrics/cluster/dashboard.json` (modified, +18/-5)
+```diff
+@@ -13962,7 +13962,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
++              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{result}}",
+@@ -14064,7 +14064,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
++              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{gate}} / {{reason}}",
+@@ -14399,7 +14399,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
++              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{result}}",
+@@ -14415,7 +14415,7 @@
+             "type": "prometheus",
+             "uid": "${metrics}"
+           },
+-          "description": "Auto repartition gate stop count by gate and reason",
++          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+@@ -14501,12 +14501,25 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
++              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{gate}} / {{reason}}",
+               "range": true,
+               "refId": "A"
++            },
++            {
++              "datasource": {
++                "type": "prometheus",
++                "uid": "${metrics}"
++              },
++              "editorMode": "code",
++              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
++              "hide": false,
++              "instant": false,
++              "legendFormat": "baseline / {{reason}}",
++              "range": true,
++              "refId": "B"
+             }
+           ],
+           "title": "Auto Repartition Gate Stops",
+```
+
+**File**: `grafana/dashboards/metrics/cluster/dashboard.md` (modified, +10/-4)
+```diff
+@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
+ | Title | Query | Type | Description | Datasource | Unit | Legend Format |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | Region Balancer Actions | `sum by (result) (
+-  changes(greptime_region_balancer_actions_total[$__rate_interval])
++  increase(greptime_region_balancer_actions_total[$__rate_interval])
+ )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
+-| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
++| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
+ | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
+ | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
+ | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
+-| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
+-| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
++| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
++| Auto Repartition Gate Stops | `sum by (gate, reason) (
++  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
++  or
++  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
++    unless ignoring (gate, reason)
++    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
+ | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
+ | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
+ # Object Store
+```
+
+**File**: `grafana/dashboards/metrics/cluster/dashboard.yaml` (modified, +17/-5)
+```diff
+@@ -1904,7 +1904,7 @@ groups:
+           queries:
+             - expr: |-
+                 sum by (result) (
+-                  changes(greptime_region_balancer_actions_total[$__rate_interval])
++                  increase(greptime_region_balancer_actions_total[$__rate_interval])
+                 )
+               datasource:
+                 type: prometheus
+@@ -1915,7 +1915,7 @@ groups:
+           description: Region balancer gate stop count by gate and reason
+           unit: short
+           queries:
+-            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
++            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+@@ -1955,21 +1955,33 @@ groups:
+           description: Auto repartition action count by result
+           unit: short
+           queries:
+-            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
++            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+               legendFormat: '{{result}}'
+         - title: Auto Repartition Gate Stops
+           type: timeseries
+-          description: Auto repartition gate stop count by gate and reason
++          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
+           unit: short
+           queries:
+-            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
++            - expr: |-
++                sum by (gate, reason) (
++                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
++                  or
++                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
++                    unless ignoring (gate, reason)
++                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++                )
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+               legendFormat: '{{gate}} / {{reason}}'
++            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++              datasource:
++                type: prometheus
++                uid: ${metrics}
++              legendFormat: baseline / {{reason}}
+         - title: Auto Repartition Sampling P99
+           type: timeseries
+           description: Auto repartition sampling elapsed time by stage
+```
+
+**File**: `grafana/dashboards/metrics/standalone/dashboard.json` (modified, +18/-5)
+```diff
+@@ -13962,7 +13962,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
++              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{result}}",
+@@ -14064,7 +14064,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
++              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{gate}} / {{reason}}",
+@@ -14399,7 +14399,7 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
++              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{result}}",
+@@ -14415,7 +14415,7 @@
+             "type": "prometheus",
+             "uid": "${metrics}"
+           },
+-          "description": "Auto repartition gate stop count by gate and reason",
++          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+@@ -14501,12 +14501,25 @@
+                 "uid": "${metrics}"
+               },
+               "editorMode": "code",
+-              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
++              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
+               "hide": false,
+               "instant": false,
+               "legendFormat": "{{gate}} / {{reason}}",
+               "range": true,
+               "refId": "A"
++            },
++            {
++              "datasource": {
++                "type": "prometheus",
++                "uid": "${metrics}"
++              },
++              "editorMode": "code",
++              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
++              "hide": false,
++              "instant": false,
++              "legendFormat": "baseline / {{reason}}",
++              "range": true,
++              "refId": "B"
+             }
+           ],
+           "title": "Auto Repartition Gate Stops",
+```
+
+**File**: `grafana/dashboards/metrics/standalone/dashboard.md` (modified, +10/-4)
+```diff
+@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
+ | Title | Query | Type | Description | Datasource | Unit | Legend Format |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | Region Balancer Actions | `sum by (result) (
+-  changes(greptime_region_balancer_actions_total[$__rate_interval])
++  increase(greptime_region_balancer_actions_total[$__rate_interval])
+ )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
+-| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
++| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
+ | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
+ | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
+ | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
+-| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
+-| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
++| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
++| Auto Repartition Gate Stops | `sum by (gate, reason) (
++  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
++  or
++  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
++    unless ignoring (gate, reason)
++    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
+ | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
+ | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
+ # Object Store
+```
+
+**File**: `grafana/dashboards/metrics/standalone/dashboard.yaml` (modified, +17/-5)
+```diff
+@@ -1904,7 +1904,7 @@ groups:
+           queries:
+             - expr: |-
+                 sum by (result) (
+-                  changes(greptime_region_balancer_actions_total[$__rate_interval])
++                  increase(greptime_region_balancer_actions_total[$__rate_interval])
+                 )
+               datasource:
+                 type: prometheus
+@@ -1915,7 +1915,7 @@ groups:
+           description: Region balancer gate stop count by gate and reason
+           unit: short
+           queries:
+-            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
++            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+@@ -1955,21 +1955,33 @@ groups:
+           description: Auto repartition action count by result
+           unit: short
+           queries:
+-            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
++            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+               legendFormat: '{{result}}'
+         - title: Auto Repartition Gate Stops
+           type: timeseries
+-          description: Auto repartition gate stop count by gate and reason
++          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
+           unit: short
+           queries:
+-            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
++            - expr: |-
++                sum by (gate, reason) (
++                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
++                  or
++                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
++                    unless ignoring (gate, reason)
++                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++                )
+               datasource:
+                 type: prometheus
+                 uid: ${metrics}
+               legendFormat: '{{gate}} / {{reason}}'
++            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
++              datasource:
++                type: prometheus
++                uid: ${metrics}
++              legendFormat: baseline / {{reason}}
+         - title: Auto Repartition Sampling P99
+           type: timeseries
+           description: Auto repartition sampling elapsed time by stage
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10170** (2026-11-05): test(compat): exercise the bloom-token case only below v1.3.0 (@discord9)
-- **PR #10166** (2026-11-05): fix(grpc): propagate cancellation for read query execution (@MichaelScofield)
-- **PR #10161** (closed): feat: expose live compaction tasks in information schema (@WenyXu)
-- **PR #10158** (closed): docs(ci): clarify AWS runner region configuration (@WenyXu)
-- **PR #10156** (2026-11-05): fix(ci): prepare Ubuntu build runners and default EC2 disks to 500 GiB (@WenyXu)
-- **PR #10153** (2026-11-04): fix(catalog): use advertised peer address as process identity (@v0y4g3r)
+- **PR #10194** (2026-11-05): docs: tighten README facts and move quick start up (@killme2008)
+- **PR #10190** (closed): feat: update dashboard to v0.14.4 (@sunchanglong)
+- **PR #10187** (2026-11-05): ci: compare GreptimeDB File and S3 in observability benchmarks (@WenyXu)
+- **PR #10186** (2026-11-05): feat: update dashboard to v0.14.3 (@sunchanglong)
+- **PR #10184** (2026-11-05): docs: add demo link (@sunchanglong)
+- **PR #10182** (closed): fix(common-recordbatch): prune SQL UInt64 predicates in SST manifest scans (@WenyXu)
 
 ---
 
@@ -2755,67 +2765,3 @@ Signed-off-by: luofucong <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. catalog): use advertised peer address as process identity (#10153)
-
-**RULE**:
-When implementing operations in `src/catalog/src/process_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `557843dd`: catalog): use advertised peer address as process identity (#10153). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/catalog/src/process_manager.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    /// Address this frontend advertises to the cluster.
-    ///
-    /// It is the heartbeat peer address, which is also the only address other
-    /// frontends use to reach this node's process management service. The same
-    /// value identifies processes owned by this frontend and routes kill
-    /// requests, so discovery addresses and process addresses share one
-    /// namespace.
-    peer_addr: String,
-    /// Creates a [ProcessManager] for the frontend identified by `peer_addr`.
-    ///
-    /// `peer_addr` must be the address the frontend advertises to metasrv, not
-    /// its public gRPC address: discovered peers are matched by that address to
-    /// exclude this node from remote listings and to route kill requests.
-    pub fn new(peer_addr: String, meta_client: Option<MetaClientRef>) -> Self {
-            peer_addr,
-            frontend: self.peer_addr.clone(),
-    /// The local frontend is excluded from the remote selection by its advertised
-    /// peer address, which is what [`MetaClientSelector`] discovers. Its processes
-    /// are appended from the local registry exactly once.
-    ///
-                .select(|peer| peer.addr != self.peer_addr)
-    ///
-    /// `peer
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    /// Local frontend server address,
-    server_addr: String,
-    /// Create a [ProcessManager] instance with server address and kv client.
-    pub fn new(server_addr: String, meta_client: Option<MetaClientRef>) -> Self {
-            server_addr,
-            frontend: self.server_addr.clone(),
-                .select(|peer| peer.addr != self.server_addr)
-        server_addr: String,
-        if server_addr == self.server_addr {
-                .select(|peer| peer.addr == server_addr)
-                error::FrontendNotFoundSnafu { addr: server_addr }
-                server_addr,
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `557843dd` are properly handled with clean fallback behavior.

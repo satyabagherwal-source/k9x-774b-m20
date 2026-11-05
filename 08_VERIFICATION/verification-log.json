@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-FYGB",
-    "timestamp": "2026-11-04T20:25:14.027Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-OM34",
-    "timestamp": "2026-11-04T20:31:57.904Z",
-    "repository": "zenbu-labs/terminal-browser",
-    "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-OOUV",
-    "timestamp": "2026-11-04T20:32:01.495Z",
-    "repository": "TanStack/router",
-    "learningId": "learn-github-tanstack-router",
-    "contentHash": "371e7545033373f3002c463975bf21c5f1e59e3d6cad9922d583168e23a7b8ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-XWAZ",
-    "timestamp": "2026-11-04T20:39:11.051Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ef10d3f4fe8ce107327704686df5efe0d6c8e4d285a3aae50d0bb05f90d6b5d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-Y2ZM",
     "timestamp": "2026-11-04T20:39:19.714Z",
     "repository": "convaiinnovations/laya",
@@ -7492,6 +7432,66 @@
     "contentHash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-U3WV",
+    "timestamp": "2026-11-05T23:39:52.015Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-U8HR",
+    "timestamp": "2026-11-05T23:39:57.951Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "a58a177a0e64d44660dd13e9eced26f976e38c0653aa708e26e3980d5d21c4fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-U9LW",
+    "timestamp": "2026-11-05T23:39:59.396Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "ef569a41abbc6b68065d7d0b64c6ebcb393089475ba8b79eed10ced2699b3a70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UCC0",
+    "timestamp": "2026-11-05T23:40:02.928Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "e285a283f10c85461b8d5efa1f7774f4ec9c96c186c8fbcd9633e00dae4c6eb9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

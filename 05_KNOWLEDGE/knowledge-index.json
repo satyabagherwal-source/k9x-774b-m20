@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:32:37.011Z",
+  "last_updated": "2026-11-05T23:40:02.809Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4224,11 +4224,16 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "a87308b0",
-      "content_hash": "81044e7e1a7151b5f59521cc33103032c78d3ec2ff0b670b652078b61fd948fb",
+      "source_version": "4613dae4",
+      "content_hash": "ef569a41abbc6b68065d7d0b64c6ebcb393089475ba8b79eed10ced2699b3a70",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "query): bound provider retention and isolate concurrent digest updates",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1737,
           "title": "skip the transaction-overlap touch during bulk delete",
@@ -4275,7 +4280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:32:08.883Z",
+      "verified_at": "2026-11-05T23:39:59.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16976,8 +16981,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "2cb47360",
-      "content_hash": "d31ed1f07fbf484b121a8433ec52486adf715a39013f3ec25ca5e66da1ad8b7f",
+      "source_version": "5bcb576b",
+      "content_hash": "e285a283f10c85461b8d5efa1f7774f4ec9c96c186c8fbcd9633e00dae4c6eb9",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -17062,7 +17067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:51:09.642Z",
+      "verified_at": "2026-11-05T23:40:02.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64237,11 +64242,16 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "35561ead",
-      "content_hash": "cea4515cf2eaadf5e9fe324e576feb0e5fb4ddf7eee67dcef4e64ec170a245ab",
+      "source_version": "971a3271",
+      "content_hash": "e00c5ccf826ac7b7758e3482956ca8fb91cce43d89c86b8349afb2bffb25a4b2",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "iOS: version 1.0.1, since Apple has closed 1.0 (#1240)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1838,
           "title": "Render LaTeX math in messages with zatex (#912)",
@@ -64303,7 +64313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:02:49.647Z",
+      "verified_at": "2026-11-05T23:39:51.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149768,11 +149778,16 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "7bcadd29",
-      "content_hash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
+      "source_version": "7ec1e4e2",
+      "content_hash": "a58a177a0e64d44660dd13e9eced26f976e38c0653aa708e26e3980d5d21c4fa",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "release 1.23.0 (#1745)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 5020,
           "title": "race condition between recycling and resigning first responder (#1678)",
@@ -149794,7 +149809,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:20:18.819Z",
+      "verified_at": "2026-11-05T23:39:57.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
