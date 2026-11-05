@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "c28c4797fe4939bd06010a3e5df0a96966373e2601db1cd1c8c9c6c131746021",
-    "lastHarvestedAt": "2026-11-01T01:06:07.268Z",
+    "contentHash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
+    "lastHarvestedAt": "2026-11-05T15:37:36.316Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "72e964e2",
+    "sourceVersion": "eff29b1f",
     "license": "NOASSERTION",
-    "contentHash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
-    "lastHarvestedAt": "2026-11-05T00:48:52.039Z",
+    "contentHash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
+    "lastHarvestedAt": "2026-11-05T15:37:38.219Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {

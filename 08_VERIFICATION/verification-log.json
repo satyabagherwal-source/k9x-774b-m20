@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-JVI4",
-    "timestamp": "2026-11-04T10:12:25.276Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "22f0dc33312c41a8cef607749eadd7b641631fed95af2cab0f9d9e6c338ca0cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-K1HM",
-    "timestamp": "2026-11-04T10:12:33.034Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-K3XT",
     "timestamp": "2026-11-04T10:12:36.209Z",
     "repository": "bee-san/Ciphey",
@@ -7492,6 +7462,36 @@
     "contentHash": "455ebac24196ab3de15ecd975ea496b7bf91ecd7eadb2bfb37c3d2eb2d1cd975",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LWZD",
+    "timestamp": "2026-11-05T15:37:36.313Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LYG7",
+    "timestamp": "2026-11-05T15:37:38.215Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

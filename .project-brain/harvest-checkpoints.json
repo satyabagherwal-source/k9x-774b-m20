@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:30:15.134Z",
+  "last_updated": "2026-11-05T15:37:38.230Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2406,14 +2406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "c28c4797fe4939bd06010a3e5df0a96966373e2601db1cd1c8c9c6c131746021",
-      "verified_at": "2026-11-01T01:06:07.277Z",
+      "content_hash": "f76c81bcac26bc5fa934ddc464eed405fb4a9b4dda2a6ac34155612f90a9c3fb",
+      "verified_at": "2026-11-05T15:37:36.331Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:06:07.277Z"
+      "last_updated": "2026-11-05T15:37:36.331Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
-      "verified_at": "2026-11-05T00:48:52.051Z",
+      "content_hash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
+      "verified_at": "2026-11-05T15:37:38.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:48:52.051Z"
+      "last_updated": "2026-11-05T15:37:38.229Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",

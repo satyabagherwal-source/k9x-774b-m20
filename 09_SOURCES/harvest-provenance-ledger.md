@@ -7715,3 +7715,5 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `83c9f0d1` | Multi-dimensional audit evidence | 2026-11-05T15:20:47.230Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-05T15:30:05.047Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ddfec329` | Multi-dimensional audit evidence | 2026-11-05T15:30:15.116Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-05T15:37:36.316Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `eff29b1f` | Multi-dimensional audit evidence | 2026-11-05T15:37:38.219Z |

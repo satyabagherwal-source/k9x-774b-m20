@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:20:39.920Z",
+  "last_updated": "2026-11-05T15:37:38.224Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3940,6 +3940,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
+    },
+    {
+      "id": "CD-LYGG",
+      "directive_title": "Empirical Invariant Guard in MagiAgent.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "eff29b1f",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }
