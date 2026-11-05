@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T20:00:16.583Z",
-    "lastVerified": "2026-11-05T20:00:16.583Z",
+    "lastChecked": "2026-11-05T20:06:52.449Z",
+    "lastVerified": "2026-11-05T20:06:52.449Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -318,22 +318,21 @@
     "lastVerified": "2026-11-05T19:14:55.320Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T15:59:25.679Z",
-    "lastVerified": "2026-11-05T15:59:25.679Z",
+    "lastChecked": "2026-11-05T20:06:48.650Z",
+    "lastVerified": "2026-11-05T20:06:48.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
+    "contentHash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ade4d5af"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -450,8 +449,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:38:11.330Z",
-    "lastVerified": "2026-11-05T19:38:11.330Z",
+    "lastChecked": "2026-11-05T20:06:48.365Z",
+    "lastVerified": "2026-11-05T20:06:48.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -985,9 +984,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-05T05:32:18.856Z",
+    "lastChecked": "2026-11-05T20:06:40.935Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-05T05:32:18.856Z"
+    "lastVerified": "2026-11-05T20:06:40.935Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1196,14 +1195,14 @@
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T00:48:39.182Z",
-    "lastVerified": "2026-11-05T00:48:39.182Z",
+    "lastChecked": "2026-11-05T20:06:38.000Z",
+    "lastVerified": "2026-11-05T20:06:38.000Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
+    "contentHash": "5d528c10d869f49dae48a9f457bf33643adc38303eb539cc3f52b0476fa083fd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5296,12 +5295,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
-    "name": "gluesql/gluesql",
+    "name": "gluesql",
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:43:46.372Z",
-    "lastVerified": "2026-11-05T04:43:46.372Z",
+    "lastChecked": "2026-11-05T20:06:45.921Z",
+    "lastVerified": "2026-11-05T20:06:45.921Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
@@ -5310,7 +5309,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0daf9b82"
   },
   "ekzhang-rustpad": {
     "name": "rustpad",
@@ -9465,9 +9465,9 @@
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/bourd-dev/seo-skills",
-    "lastChecked": "2026-11-02T16:11:31.102Z",
+    "lastChecked": "2026-11-05T20:06:35.937Z",
     "revisionIdentifier": "4b0005f6e6",
-    "lastVerified": "2026-11-02T16:11:31.102Z"
+    "lastVerified": "2026-11-05T20:06:35.937Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
@@ -11999,9 +11999,9 @@
   "mijick-popups": {
     "name": "Popups",
     "officialUrl": "https://github.com/Mijick/Popups",
-    "lastChecked": "2026-11-03T20:27:22.175Z",
+    "lastChecked": "2026-11-05T20:06:38.445Z",
     "revisionIdentifier": "3aa55233",
-    "lastVerified": "2026-11-03T20:27:22.175Z"
+    "lastVerified": "2026-11-05T20:06:38.445Z"
   },
   "devexpress-testcafe": {
     "name": "testcafe",

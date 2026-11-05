@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "ade4d5af",
+    "sourceVersion": "ea260c54",
     "license": "MIT",
-    "contentHash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
-    "lastHarvestedAt": "2026-11-05T12:29:27.263Z",
+    "contentHash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
+    "lastHarvestedAt": "2026-11-05T20:06:49.859Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "b47e6865",
+    "sourceVersion": "956522a3",
     "license": "Apache-2.0",
-    "contentHash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
-    "lastHarvestedAt": "2026-11-05T00:51:30.760Z",
+    "contentHash": "5d528c10d869f49dae48a9f457bf33643adc38303eb539cc3f52b0476fa083fd",
+    "lastHarvestedAt": "2026-11-05T20:06:40.250Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-J80L",
-    "timestamp": "2026-11-04T18:35:47.925Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "bc175e06f28b2865a4fc5696e26374d2245d39856315ad31342eaf62bab34796",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-RHMS",
-    "timestamp": "2026-11-04T18:42:13.637Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-RLSJ",
     "timestamp": "2026-11-04T18:42:19.027Z",
     "repository": "Comfy-Org/Fibo-2.0",
@@ -7490,6 +7460,36 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-7XPZ",
+    "timestamp": "2026-11-05T20:06:40.247Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "5d528c10d869f49dae48a9f457bf33643adc38303eb539cc3f52b0476fa083fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-854X",
+    "timestamp": "2026-11-05T20:06:49.857Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

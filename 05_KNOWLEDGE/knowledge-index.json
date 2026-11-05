@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T20:00:13.886Z",
+  "last_updated": "2026-11-05T20:06:49.770Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41516,11 +41516,16 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "ade4d5af",
-      "content_hash": "10c44bc1241d375ba15d21cb03c1aed477cdd6bbd0e8d30b5cf1b073d91d6c2d",
+      "source_version": "ea260c54",
+      "content_hash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "agent-lightning): count only accepted spans in emit_to_store (#4487)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1693,
           "title": "agent-compliance): drop extras and parentheses from parsed requirement names (#4",
@@ -41652,7 +41657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:29:27.190Z",
+      "verified_at": "2026-11-05T20:06:49.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53651,11 +53656,16 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "b47e6865",
-      "content_hash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
+      "source_version": "956522a3",
+      "content_hash": "5d528c10d869f49dae48a9f457bf33643adc38303eb539cc3f52b0476fa083fd",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #4094 from nikarh/cue-lang",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1735,
           "title": "Exit quietly on broken pipe in auxiliary output paths",
@@ -53692,7 +53702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:51:30.665Z",
+      "verified_at": "2026-11-05T20:06:40.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

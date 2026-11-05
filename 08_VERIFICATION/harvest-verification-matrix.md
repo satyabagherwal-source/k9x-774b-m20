@@ -7777,3 +7777,5 @@
 | `CYCLE-20261105-Q7BQ` | `2026-11-05T19:52:52.886Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31e8f199...`) |
 | `CYCLE-20261105-ZM8E` | `2026-11-05T20:00:12.110Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01bab7f1...`) |
 | `CYCLE-20261105-ZNOL` | `2026-11-05T20:00:13.989Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a1af57e...`) |
+| `CYCLE-20261105-7XPZ` | `2026-11-05T20:06:40.247Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5d528c10...`) |
+| `CYCLE-20261105-854X` | `2026-11-05T20:06:49.857Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`21f9bf62...`) |

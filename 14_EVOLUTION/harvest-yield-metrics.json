@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T20:00:14.000Z",
-  "total_cycles_completed": 7754,
-  "total_learnings_persisted": 7754,
-  "total_rules_promoted": 7399,
+  "last_updated": "2026-11-05T20:06:49.863Z",
+  "total_cycles_completed": 7756,
+  "total_learnings_persisted": 7756,
+  "total_rules_promoted": 7401,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:03:43.135Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:15:04.596Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:15:33.556Z",
       "repository": "vespa-engine/vespa",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T20:00:14.000Z",
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T20:06:40.254Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T20:06:49.863Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
