@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T23:17:17.431Z",
+  "last_updated": "2026-11-05T23:32:37.101Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
-      "verified_at": "2026-11-05T06:44:11.276Z",
+      "content_hash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
+      "verified_at": "2026-11-05T23:32:37.100Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:44:11.276Z"
+      "last_updated": "2026-11-05T23:32:37.100Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

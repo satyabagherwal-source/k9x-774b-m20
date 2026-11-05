@@ -7820,3 +7820,4 @@
 | `CYCLE-20261105-R6DC` | `2026-11-05T23:09:35.616Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`926ffb94...`) |
 | `CYCLE-20261105-R9QF` | `2026-11-05T23:09:39.975Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`c90639fe...`) |
 | `CYCLE-20261105-12P4` | `2026-11-05T23:17:17.416Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`efabc6c9...`) |
+| `CYCLE-20261105-KSBL` | `2026-11-05T23:32:37.089Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b40896f2...`) |

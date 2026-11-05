@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-FURY",
-    "timestamp": "2026-11-04T20:25:09.262Z",
-    "repository": "LiquidAI/LFM3-1.7B",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-FYGB",
     "timestamp": "2026-11-04T20:25:14.027Z",
     "repository": "VectifyAI/PageIndex",
@@ -7490,6 +7475,21 @@
     "repository": "apache/pinot",
     "learningId": "learn-github-apache-pinot",
     "contentHash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-KSBL",
+    "timestamp": "2026-11-05T23:32:37.089Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

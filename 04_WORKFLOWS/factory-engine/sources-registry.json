@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T23:17:19.981Z",
-    "lastVerified": "2026-11-05T23:17:19.981Z",
+    "lastChecked": "2026-11-05T23:32:39.667Z",
+    "lastVerified": "2026-11-05T23:32:39.667Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T22:55:01.458Z",
-    "lastVerified": "2026-11-05T22:55:01.458Z",
+    "lastChecked": "2026-11-05T23:32:05.274Z",
+    "lastVerified": "2026-11-05T23:32:05.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1847,8 +1847,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T18:53:40.525Z",
-    "lastVerified": "2026-11-05T18:53:40.525Z",
+    "lastChecked": "2026-11-05T23:32:00.265Z",
+    "lastVerified": "2026-11-05T23:32:00.265Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2469,9 +2469,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-05T07:34:41.614Z",
+    "lastChecked": "2026-11-05T23:31:57.737Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-05T07:34:41.614Z"
+    "lastVerified": "2026-11-05T23:31:57.737Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2491,12 +2491,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kuddev-pebrel": {
-    "name": "Kuddev/pebrel",
+    "name": "pebrel",
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T02:55:09.175Z",
-    "lastVerified": "2026-11-05T02:55:09.175Z",
+    "lastChecked": "2026-11-05T23:31:50.253Z",
+    "lastVerified": "2026-11-05T23:31:50.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
@@ -2505,7 +2505,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "97d3bfe5"
   },
   "hf-comfy-org-qwen-image-2.1": {
     "name": "Comfy-Org/Qwen-Image-2.1",
@@ -6405,12 +6406,12 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-05T06:44:10.385Z",
-    "lastVerified": "2026-11-05T06:44:10.385Z",
+    "lastChecked": "2026-11-05T23:32:08.499Z",
+    "lastVerified": "2026-11-05T23:32:08.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
+    "contentHash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
@@ -9773,9 +9774,9 @@
   "lokoe-mehdi-scouter": {
     "name": "scouter",
     "officialUrl": "https://github.com/lokoe-mehdi/scouter",
-    "lastChecked": "2026-11-02T21:36:25.398Z",
+    "lastChecked": "2026-11-05T23:31:52.796Z",
     "revisionIdentifier": "e8edc3c5",
-    "lastVerified": "2026-11-02T21:36:25.398Z"
+    "lastVerified": "2026-11-05T23:31:52.796Z"
   },
   "buresdv-cork": {
     "name": "buresdv/Cork",
@@ -12472,9 +12473,9 @@
   "xotahal-react-native-material-ui": {
     "name": "react-native-material-ui",
     "officialUrl": "https://github.com/xotahal/react-native-material-ui",
-    "lastChecked": "2026-11-03T23:13:07.147Z",
+    "lastChecked": "2026-11-05T23:31:55.306Z",
     "revisionIdentifier": "254006ae",
-    "lastVerified": "2026-11-03T23:13:07.147Z"
+    "lastVerified": "2026-11-05T23:31:55.306Z"
   },
   "fastify-fastify": {
     "name": "fastify/fastify",

@@ -7829,3 +7829,4 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `9234319d` | Multi-dimensional audit evidence | 2026-11-05T23:09:35.620Z |
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T23:09:39.979Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `0a53497f` | Multi-dimensional audit evidence | 2026-11-05T23:17:17.420Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `98b2e086` | Multi-dimensional audit evidence | 2026-11-05T23:32:37.092Z |

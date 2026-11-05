@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "539f7491",
+    "sourceVersion": "98b2e086",
     "license": "NOASSERTION",
-    "contentHash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
-    "lastHarvestedAt": "2026-11-05T06:44:11.267Z",
+    "contentHash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
+    "lastHarvestedAt": "2026-11-05T23:32:37.092Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

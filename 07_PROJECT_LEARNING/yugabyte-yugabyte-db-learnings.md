@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `539f7491`  
+> **Source Version**: `98b2e086`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:44:10.394Z  
+> **Timestamp**: 2026-11-05T23:32:35.821Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:44:10.385Z  
+> **Harvest Timestamp**: 2026-11-05T23:32:08.499Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10651 stars
+- **Stars / Engagement**: 10654 stars
 
 ---
 
@@ -2248,11 +2248,16 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36967** (2026-11-05): **[#35980] YSQL: Skip the COPY fast path for partitioned colocated tables**
-  *Symptoms*: ## Summary  ### Problem  With `yb_fast_path_for_colocated_copy = on`, COPY into a partitioned table in a colocated database keeps rows that a partition's foreign key or trigger rejects. COPY reports the error, but every row is already stored, including the one that violates the rule.  ```sql CREATE DATABASE fpfk WITH colocation = true; \c fpfk CREATE TABLE cref(id int PRIMARY KEY); INSERT INTO cref VALUES (1); CREATE TABLE cfp(id int PRIMARY KEY, r int) PARTITION BY RANGE (id); CREATE TABLE cfp1 PARTITION OF cfp FOR VALUES FROM (1) TO (1000); ALTER TABLE cfp1 ADD CONSTRAINT cfp1_fk FOREIGN KEY (r) REFERENCES cref(id); SET yb_fast_path_for_colocated_copy = on; COPY cfp FROM STDIN WITH (FORMAT csv); 1,1 2,999 3,1 \. ```  Expected: the COPY fails and loads 0 rows, as it does with the setting off, or into a non-partitioned table with the same foreign key. Actual: `ERROR: insert or update on table "cfp1" violates foreign key constraint "cfp1_fk"`, and all 3 rows are in `cfp`, including `(2, 999)`.  ### Root cause  The check that turns on the fast path reads only the COPY target, while a partition can have foreign keys and triggers its parent doesn't.  - The fast path ([17d55c435ed3](https://github.com/yugabyte/yugabyte-db/commit/17d55c435ed351cd8b35f36e5790ad28545f1282), behind `yb_fast_path_for_colocated_copy` since [0046ce749196](https://github.com/yugabyte/yugabyte-db/commit/0046ce74919682f183804f19dad4c29964dd0965)) writes rows without a distributed transaction, so a foreign k
+- **Issue #37080** (2026-11-05): **[DEVOPS-4033] automation: remove obsolete files**
+  *Symptoms*: Jenkins: skip
+  **Post-Mortem & Fix Analysis**:
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37080) <!-- Reviewable:end --> 
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
-- **Issue #36959** (2026-11-05): **[#34985] YSQL: Mark yb_index_check() parallel unsafe and yb_get_current_transaction_priority() parallel restricted**
-  *Symptoms*: ## Summary  ### Problem  `yb_index_check()` and `yb_get_current_transaction_priority()` are labeled PARALLEL SAFE, so with `force_parallel_mode = on` the planner runs them in a parallel worker (a Gather with Single Copy). There they fail:  | Function | In a parallel worker | Expected | | --- | --- | --- | | `yb_index_check('idx'::regclass)` | ERROR: cannot update SecondarySnapshot during a parallel operation | 0 rows (index is consistent) | | `yb_get_current_transaction_priority()`, after a write in the transaction | 0.000000000 (Normal priority transaction) | the transaction's priority, e.g. Highest priority transaction |  Normal plans don't put these functions under a Gather. The bug shows with `force_parallel_mode`, which test tools and randomized testing (SQLancer) set.  ### Root cause  - `yb_index_check()`: labeled PARALLEL SAFE since it was added in [10de037ad68](https://github.com/yugabyte/yugabyte-db/commit/10de037ad68e8ca068d648de9ad41ac1727d9e29). Its default multi-snapshot mode, added in [7886fda5ef4](https://github.com/yugabyte/yugabyte-db/commit/7886fda5ef4daf9a34ac69cface2e2d238a241e3), takes a new snapshot for each batch (`GetLatestSnapshot()`), which PG refuses in parallel mode, in the leader as well as in workers. - `yb_get_current_transaction_priority()`: it reads the priority YB keeps in the backend process (`PgTxnManager::priority_`). The leader copies only the session id, two serial numbers and the subtransaction id to its workers, so a worker has no prio
+- **Issue #37076** (2026-11-05): **[2024.2][#35730] build: Remove macOS builds**
+  *Symptoms*: The macOS15 clang compiler has some incompatibilities with current code base. As 2024.2 is at end of support life, MacOS binaries are dropped for future support releases of 2024.2.  Jenkins: skip
+  **Post-Mortem & Fix Analysis**:
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37076) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,201 +2274,895 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e477a4d7` (2026-11-05)
-**Commit Message**: [#36676] DocDB: Disable quiescent tablets by default (#36677)
+### Incident Patch 1: `387582a1` (2026-11-05)
+**Commit Message**: [#36606] YSQL: Make ConnMgr connection sticky when a SECURITY DEFINER function sets a SUSET GUC (#36902)
 
 ## Summary
 
-Quiescent tablets (#35782) replace the WAL segments of an idle tablet
-with a quiescent marker. They were enabled by default, but the feature
-is new and needs more bake time before it ships enabled in a stable
-release.
+Today, a SECURITY DEFINER function owned by a superuser can set a
+`PGC_SUSET` GUC for a non-superuser session, and PostgreSQL keeps the
+value for the rest of the session. ConnMgr replays the value as a `SET`
+run as the session user on the next backend it switches to. That replay
+fails with "permission denied to set parameter", and ConnMgr closes the
+client with FATAL 42501 (the statement behind the replay still commits,
+#36604).
 
-- `quiescent_tablet_idle_sec` now defaults to 0, which keeps tablets out
-of the quiescent mode. Set it (e.g. to the old default, 600) to turn the
-feature on.
-- While the flag is 0, the background check skips the queue and runs
-once an hour instead of every 60s. Raising the flag from 0 at runtime is
-picked up within an hour, including for tablets registered while it was
-0. With the flag set, scheduling is unchanged.
-- Lazy WAL segment allocation from #35782 stays on. It is independent of
-the quiescent mode and also speeds up restarts outside it; a tablet
-starts its first segment on its first append after a restart instead of
-at bootstrap.
-- The `enable_quiescent_tablets` AutoFlag is unchanged. It marks that
-every node can handle quiescent tablets, not that the feature is on.
-With the flag at 0, its only effect is that leaders send
-`all_replicated_op_id` in consensus requests.
-- A TODO marks the
+To fix this, ConnMgr makes the connection sticky when a `PGC_SUSET` GUC
+is set from a session (`PGC_S_SESSION`, `GUC_ACTION_SET`) while the
+current user isn't the session user, as inside a SECURITY DEFINER
+function. `SET ROLE` already makes the connection sticky by itself. A
+non-superuser that may set the GUC directly (`GRANT SET ON PARAMETER`,
+or `yb_db_admin` for the variables it can set) doesn't hit this check,
+since replaying the `SET` as the session user succeeds.
 
-**File**: `src/yb/tablet/tablet_peer.cc` (modified, +2/-1)
+NOTE: Revoking that privilege while a session holds the value breaks the
+replay the same way. This is tracked separately in #36900 (`GRANT SET`)
+and #36901 (`yb_db_admin`).
+
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestSusetGucStickiness.java` (added, +100/-0)
 ```diff
-@@ -128,7 +128,8 @@ DEFINE_RUNTIME_uint32(log_retention_diagnostics_min_age_secs, 0,
-     "the first retained segment is at least this old in seconds. 0 disables.");
- TAG_FLAG(log_retention_diagnostics_min_age_secs, advanced);
- 
--DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 600,
-+// TODO: Restore the default to 600 when enabling quiescent tablets by default.
-+DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 0,
-     "A tablet enters the quiescent mode after nothing was appended to its log for this many "
-     "seconds. 0 disables entering the mode.");
- 
-```
-
-**File**: `src/yb/tserver/ts_tablet_manager.cc` (modified, +10/-3)
-```diff
-@@ -512,9 +512,10 @@ std::string SnapshotIdToString(const std::string& snapshot_id) {
-   return uuid.IsNil() ? snapshot_id : uuid.ToString();
- }
- 
--// The longest wait between quiescent checks, so that new tablets and quiescent_tablet_idle_sec
--// raised from 0 are picked up. Other flag changes reach a tablet at its next queued check.
--// A shorter idle period shortens the wait, so a new tablet is checked within two idle periods.
-+// The longest wait between quiescent checks while quiescent_tablet_idle_sec is set, so that new
-+// tablets are picked up. While it is 0, checks run hourly, so a raise from 0 is picked up within
-+// an hour. Other flag changes reach a tablet at its next queued check. A shorter idle period
-+// shortens the wait, so a new tablet is checked within two idle periods.
- constexpr auto kQuiescentTabletsMaxCheckInterval = 60s;
- 
- } // namespace
-@@ -4477,6 +4478,12 @@ void TSTabletManager::EnterQuiescentModeForIdleTablets() {
-     quiescent_tablets_bg_task_->SetInterval(1s);
-     return;
-   }
-+  // Tablets registered while disabled are queued 1s out, so after the flag is raised they are
-+  // due at the next run.
-+  if (FLAGS_quiescent_tablet_idle_sec <= 0) {
-+    quiescent_tablets_bg_task_->SetInterval(1h);
-+    return;
-+  }
-   const auto now = CoarseMonoClock::Now();
-   auto next_run = now + std::min<CoarseDuration>(
-       kQuiescentTabletsMaxCheckInterval, tablet::QuiescentTabletIdleTime());
-```
-
----
-
-### Incident Patch 2: `7acac460` (2026-11-05)
-**Commit Message**: [#36559] DocDB: Fix NotSupportedTabletSplitITest.SplittingWithXClusterReplicationOnConsumer (#36560)
-
-## Summary
-
-`SplitTabletAndCheckForNotSupported` restarts the cluster with
-`cluster_->RestartSync()`. After the restart, the master learns each
-tablet's new leader only when a tserver heartbeat reports it. In
-`SplittingWithXClusterReplicationOnConsumer`, the split after
-`delete_universe_replication` is expected to succeed, but it was issued
-once with no retry. If the master's replica locations still listed only
-followers, the split failed with `No leader found for tablet`. The test
-now wraps that split in `WaitFor` and retries only on `No leader found`
-errors. Any other error still fails the test.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
-
-## Test plan
-
-./yb_build.sh fastdebug --gcc15 --cxx-test xcluster-tablet-split-itest
---gtest-filter
-NotSupportedTabletSplitITest.SplittingWithXClusterReplicationOnConsumer
--n 100 YB_TEST_YB_CONTROLLER=0
-YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
-./yb_build.sh release --clang21 --cxx-test xcluster-tablet-split-itest
---gtest-fi
-
-**File**: `src/yb/integration-tests/xcluster/xcluster-tablet-split-itest.cc` (modified, +11/-1)
-```diff
-@@ -1422,7 +1422,17 @@ TEST_F(NotSupportedTabletSplitITest, SplittingWithXClusterReplicationOnConsumer)
-   // Now delete replication and verify that the tablet can now be split.
-   ASSERT_OK(tools::RunAdminToolCommand(
-       cluster_->GetMasterAddresses(), "delete_universe_replication", kProducerClusterId));
--  ASSERT_OK(SplitTabletAndValidate(split_hash_code, kDefaultNumRows));
-+  // After the restart, the master may not have learned the tablet leader from heartbeats yet.
-+  ASSERT_OK(WaitFor([&]() -> Result<bool> {
-+    auto s = SplitTabletAndValidate(split_hash_code, kDefaultNumRows);
-+    if (s.ok()) {
-+      return true;
-+    }
-+    if (s.status().message().ToBuffer().find("No leader found") != std::string::npos) {
-+      return false;
-+    }
-+    return s.status();
-+  }, 30s * kTimeMultiplier, "Split tablet after deleting xCluster replication"));
- 
-   producer_cluster->Shutdown();
- }
-```
-
----
-
-### Incident Patch 3: `db05da8b` (2026-11-05)
-**Commit Message**: [#36581] DocDB: Fix XClusterFailoverWithDDLTest.MultiDatabaseFailoverWithRetry by waiting for target role drop (#36582)
-
-## Summary
-
-A tserver refuses DMLs when the namespace is in read-only mode, or when
-its xCluster role is `AUTOMATIC_TARGET` or `UNAVAILABLE`. `UNAVAILABLE`
-refuses them because `enforce_xcluster_guarded_lease` is on. During
-failover the master switches the role to `NOT_AUTOMATIC_MODE` in
-`DropDDLReplicationExtensionIfExists`, but tservers receive that in a
-later heartbeat than the one that clears read-only mode.
-`WaitForFailoverCompletion` only waited for read-only mode to clear, so
-the `after_restore` INSERT sometimes reached a tserver that still had
-the `AUTOMATIC_TARGET` role and failed. `WaitForFailoverCompletion` now
-also waits until every consumer tserver reports `NOT_AUTOMATIC_MODE` for
-each of the namespaces.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
-
-## Test plan
-
-./yb_build.sh fastdebug --gcc15 --cxx-test xcluster_failover-test
---gtest-filter
-XClusterFailoverWithDDLTest.MultiDatabaseFailoverWithRetry -n 100
-YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_
-
-**File**: `src/yb/integration-tests/xcluster/xcluster_failover-test.cc` (modified, +14/-0)
-```diff
-@@ -27,6 +27,10 @@
- 
- #include "yb/rpc/rpc_controller.h"
- 
-+#include "yb/tserver/mini_tablet_server.h"
-+#include "yb/tserver/tablet_server.h"
-+#include "yb/tserver/tserver_xcluster_context_if.h"
+@@ -0,0 +1,100 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License. You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied. See the License for the specific language governing permissions and limitations
++// under the License.
++//
 +
- #include "yb/util/backoff_waiter.h"
- #include "yb/util/result.h"
- #include "yb/util/test_macros.h"
-@@ -106,6 +110,16 @@ class XClusterFailoverWithDDLTest : public XClusterDDLReplicationTestBase {
-     for (const auto& ns : namespace_ids) {
-       RETURN_NOT_OK(
-           WaitForReadOnlyModeOnAllTServers(ns, /*is_read_only=*/false, &consumer_cluster_));
-+      // AUTOMATIC_TARGET and UNAVAILABLE roles also refuse DMLs and reach TServers via their own
-+      // heartbeat.
-+      for (auto& tserver : consumer_cluster_.mini_cluster_->mini_tablet_servers()) {
-+        RETURN_NOT_OK(WaitFor(
-+            [&]() -> Result<bool> {
-+              return tserver->server()->GetXClusterContext().GetXClusterRole(ns) ==
-+                     XClusterNamespaceInfoPB_XClusterRole_NOT_AUTOMATIC_MODE;
-+            },
-+            kTimeout, Format("Wait for namespace $0 to drop target role", ns)));
-+      }
++package org.yb.ysqlconnmgr;
++
++import static org.yb.AssertionWrappers.*;
++
++import java.sql.Connection;
++import java.sql.ResultSet;
++import java.sql.Statement;
++import java.util.HashSet;
++import java.util.Set;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.yb.YBTestRunner;
++import org.yb.pgsql.ConnectionEndpoint;
++import org.yb.util.RequiresLinux;
++
++@RequiresLinux
++@RunWith(value = YBTestRunner.class)
++public class TestSusetGucStickiness extends BaseYsqlConnMgr {
++
++  private Connection connectAsSuperuser() throws Exception {
++    return getConnectionBuilder()
++        .withConnectionEndpoint(ConnectionEndpoint.POSTGRES)
++        .connect();
++  }
++
++  private Connection connectViaConnMgr(String user) throws Exception {
++    return getConnectionBuilder()
++        .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
++        .withUser(user)
++        .connect();
++  }
++
++  private void assertValueOnEveryBackend(Statement stmt, String guc, String expected,
++                                         boolean expectedSticky) throws Exception {
++    Set<Integer> pids = new HashSet<>();
++    for (int i = 0; expectedSticky ? i < 10 : (pids.size() < 2 && i < 200); i++) {
++      ResultSet rs = stmt.executeQuery(
++          "SELECT pg_backend_pid(), current_setting('" + guc + "')");
++      assertTrue(rs.next());
++      pids.add(rs.getInt(1));
++      assertEquals(expected, rs.getString(2));
++    }
++    if (expectedSticky)
++      assertEquals(1, pids.size());
++    else
++      assertTrue(pids.size() > 1);
++  }
++
++  @Test
++  public void testSecurityDefinerSetIsSticky() throws Exception {
++    try (Connection suConn = connectAsSuperuser();
++         Statement suStmt = suConn.createStatement()) {
++      suStmt.execute("CREATE ROLE secdef_user LOGIN");
++      suStmt.execute(
++          "CREATE FUNCTION set_log_min_duration() RETURNS void LANGUAGE plpgsql " +
++          "SECURITY DEFINER AS $$ BEGIN SET log_min_duration_statement = 1000; END $$");
++    }
++
++    try (Connection conn = connectViaConnMgr("secdef_user");
++         Statement stmt = conn.createStatement()) {
++      assertConnectionStickyState(stmt, false);
++      stmt.execute("SELECT set_log_min_duration()");
++      assertValueOnEveryBackend(stmt, "log_min_duration_statement", "1s", true);
++    }
++
++    try (Connection conn = connectViaConnMgr("yugabyte");
++         Statement stmt = conn.createStatement()) {
++      stmt.execute("SELECT set_log_min_duration()");
++      assertValueOnEveryBackend(stmt, "log_min_duration_statement", "1s", false);
++    }
++  }
++
++  @Test
++  public void testYbDbAdminSetIsNotSticky() throws Exception {
++    try (Connection suConn = connectAsSuperuser();
++         Statement suStmt = suConn.createStatement()) {
++      suStmt.execute("CREATE ROLE db_admin_user LOGIN");
++      suStmt.execute("GRANT yb_db_admin TO db_admin_user");
++    }
++
++    try (Connection conn = connectViaConnMgr("db_admin_user");
++         Statement stmt = conn.createStatement()) {
++      stmt.execute("SET session_replication_role = replica");
++      assertValueOnEveryBackend(stmt, "session_replication_role", "replica", false);
++    }
++  }
++}
+```
+
+**File**: `src/postgres/src/backend/utils/misc/guc.c` (modified, +18/-0)
+```diff
+@@ -12766,6 +12766,24 @@ set_config_option_ext(const char *name, const char *value,
+ 		YbAddToChangedSessionParametersList(name);
+ 	}
+ 
++	/*
++	 * YB: Make the connection sticky when a PGC_SUSET GUC is set while running
++	 * as a user other than the session user (e.g. a SECURITY DEFINER function).
++	 * Conn Mgr replays the GUC as the session user, which can fail with a
++	 * permission error.
++	 */
++	if (changeVal &&
++		YbIsClientYsqlConnMgr() &&
++		record->context == PGC_SUSET &&
++		source == PGC_S_SESSION &&
++		action == GUC_ACTION_SET &&
++		GetUserId() != GetSessionUserId())
++	{
++		elog(LOG, "Making connection sticky for setting %s as a user other than the session user",
++			 name);
++		yb_ysql_conn_mgr_sticky_guc = true;
++	}
++
+ 	return changeVal ? 1 : -1;
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `055443ea` (2026-11-05)
+**Commit Message**: [PLAT-22933,PLAT-22936,PLAT-22983] YBA: Fix CVEs in pac4j, Prometheus and node-agent Go deps (#36868)
+
+## Summary
+
+Fix High and Critical CVEs in three YBA dependencies.
+
+**PLAT-22933: pac4j 5.7.10 -> 6.5.9** (CVE-2026-82461)
+- play-pac4j 13.0.3-PLAY3.0, pac4j-oidc/oauth 6.5.9, nimbus-jose-jwt
+10.9.1,
+  oauth2-oidc-sdk 11.38.2.
+- pac4j 6 resolves OP metadata through `IOidcOpMetadataResolver`. The
+new
+`YbaOidcOpMetadataResolver` keeps the old choice of `client_secret_post`
+over
+  `client_secret_basic`.
+- The JWKS resource retriever is set before the resolver init, so ID
+token validation keeps
+  the configured timeouts.
+- spring-core and spring-jcl stay at 5.3.39. pac4j 6 pulls 6.2.x, but
+Play forms and
+spring-security use Spring 5.3. pac4j only needs `core.io`, which 5.3
+has.
+- `RefetchOIDCAccessToken` stores the refreshed token with
+`OidcProfile.setAccessToken`.
+pac4j 6 reads that attribute as encoded JSON, so a raw string broke
+`getAccessToken()`.
+
+**PLAT-22936: Prometheus v3.13.1 -> v3.15.1 in yba-installer**
+- v3.15.1 is built with Go 1.27.3, grpc 1.83.2, x/crypto 0.57.0, x/net
+0.60.0 and
+  go-openapi/spec 0.22.9. No flag that yba-installer passes changed.
+- The helm chart needs 
+
+**File**: `managed/build.sbt` (modified, +10/-5)
+```diff
+@@ -244,11 +244,11 @@ libraryDependencies ++= Seq(
+   "io.prometheus" % "prometheus-metrics-exporter-httpserver" % "1.4.3",
+   "org.glassfish.jaxb" % "jaxb-runtime" % "2.3.2",
+   // pac4j and nimbusds libraries need to be upgraded together.
+-  "org.pac4j" %% "play-pac4j" % "11.0.0-PLAY2.8",
+-  "org.pac4j" % "pac4j-oauth" % "5.7.10" exclude("commons-io" , "commons-io"),
+-  "org.pac4j" % "pac4j-oidc" % "5.7.10"  exclude("commons-io" , "commons-io"),
+-  "com.nimbusds" % "nimbus-jose-jwt" % "10.8",
+-  "com.nimbusds" % "oauth2-oidc-sdk" % "11.34",
++  "org.pac4j" %% "play-pac4j" % "13.0.3-PLAY3.0",
++  "org.pac4j" % "pac4j-oauth" % "6.5.9" exclude("commons-io" , "commons-io"),
++  "org.pac4j" % "pac4j-oidc" % "6.5.9"  exclude("commons-io" , "commons-io"),
++  "com.nimbusds" % "nimbus-jose-jwt" % "10.9.1",
++  "com.nimbusds" % "oauth2-oidc-sdk" % "11.38.2",
+   "commons-validator" % "commons-validator" % "1.10.0",
+   "org.apache.velocity" % "velocity-engine-core" % "2.4.1",
+   "com.fasterxml.woodstox" % "woodstox-core" % "6.4.0",
+@@ -1137,6 +1137,11 @@ dependencyOverrides ++= Seq(
+   "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure-spi",
+ ).map(_ % openTelemetryVersion)
+ 
++// pac4j 6 pulls spring-core 6.x, but Play forms and spring-security use Spring 5.3 modules.
++// pac4j only needs the core.io resources, which 5.3 has.
++dependencyOverrides += "org.springframework" % "spring-core" % "5.3.39"
++dependencyOverrides += "org.springframework" % "spring-jcl" % "5.3.39"
++
+ // cron-utils pulls org.glassfish:javax.el 3.0.0 (CVE-2021-28170), which has no fixed release.
+ // The fix shipped as org.glassfish:jakarta.el 3.0.4, which keeps the javax.el package.
+ // Hibernate Validator needs an EL implementation at runtime, so swap the artifact.
+```
+
+**File**: `managed/node-agent/app/task/module/template.go` (modified, +6/-1)
+```diff
+@@ -43,7 +43,12 @@ func init() {
+ 	}
+ 	tests := gonja.DefaultEnvironment.Tests
+ 	for name, fnc := range customTestFunctions {
+-		if err := tests.Register(name, fnc); err != nil {
++		register := tests.Register
++		if tests.Exists(name) {
++			// gonja 2.9+ has truthiness-based "true"/"false" tests; ours must win.
++			register = tests.Replace
++		}
++		if err := register(name, fnc); err != nil {
+ 			util.FileLogger().
+ 				Fatalf(context.TODO(), "Error registering custom test %s: %s", name, err.Error())
+ 		}
+```
+
+**File**: `managed/node-agent/app/task/shell_task.go` (modified, +22/-32)
+```diff
+@@ -19,10 +19,14 @@ import (
+ 	"sync/atomic"
+ 
+ 	"github.com/olekukonko/tablewriter"
++	"github.com/olekukonko/tablewriter/tw"
+ 	funk "github.com/thoas/go-funk"
+ )
+ 
+ const (
++	ansiRed   = 31
++	ansiGreen = 32
++
+ 	mountPointsVolume    = "mount_points_volume"
+ 	mountPointsWritable  = "mount_points_writable"
+ 	masterHTTPPort       = "master_http_port"
+@@ -193,48 +197,34 @@ func HandleUpgradeScript(ctx context.Context, config *util.Config) error {
+ }
+ 
+ func OutputPreflightCheck(responses map[string]model.NodeInstanceValidationResponse) bool {
+-	table := tablewriter.NewWriter(os.Stdout)
+-	table.SetHeader([]string{"Preflight Check", "Value", "Description", "Required", "Result"})
+-	table.SetAlignment(tablewriter.ALIGN_LEFT)
+-	table.SetAutoWrapText(false)
+-	table.SetRowLine(true)
+-	table.SetHeaderColor(
+-		tablewriter.Colors{},
+-		tablewriter.Colors{},
+-		tablewriter.Colors{},
+-		tablewriter.Colors{},
+-		tablewriter.Colors{},
++	table := tablewriter.NewTable(
++		os.Stdout,
++		tablewriter.WithSymbols(tw.NewSymbols(tw.StyleASCII)),
++		tablewriter.WithHeaderAlignment(tw.AlignCenter),
++		tablewriter.WithRowAlignment(tw.AlignLeft),
++		tablewriter.WithRowAutoWrap(tw.WrapNone),
++		tablewriter.WithRendition(tw.Rendition{
++			Settings: tw.Settings{Separators: tw.Separators{BetweenRows: tw.On}},
++		}),
+ 	)
++	table.Header("Preflight Check", "Value", "Description", "Required", "Result")
+ 	keys := funk.Keys(responses).([]string)
+ 	sort.Strings(keys)
+ 	allValid := true
+ 	for _, k := range keys {
+ 		v := responses[k]
+-		if v.Valid {
+-			data := []string{k, v.Value, v.Description, strconv.FormatBool(v.Required), "Passed"}
+-			table.Rich(
+-				data,
+-				[]tablewriter.Colors{
+-					tablewriter.Colors{tablewriter.FgGreenColor},
+-					tablewriter.Colors{tablewriter.FgGreenColor},
+-					tablewriter.Colors{tablewriter.FgGreenColor},
+-					tablewriter.Colors{tablewriter.FgGreenColor},
+-					tablewriter.Colors{tablewriter.FgGreenColor},
+-				},
+-			)
+-		} else {
++		result, color := "Passed", ansiGreen
++		if !v.Valid {
+ 			if v.Required {
+ 				allValid = false
+ 			}
+-			data := []string{k, v.Value, v.Description, strconv.FormatBool(v.Required), "Failed"}
+-			table.Rich(data, []tablewriter.Colors{
+-				tablewriter.Colors{tablewriter.FgRedColor},
+-				tablewriter.Colors{tablewriter.FgRedColor},
+-				tablewriter.Colors{tablewriter.FgRedColor},
+-				tablewriter.Colors{tablewriter.FgRedColor},
+-				tablewriter.Colors{tablewriter.FgRedColor},
+-			})
++			result, color = "Failed", ansiRed
++		}
++		data := []string{k, v.Value, v.Description, strconv.FormatBool(v.Required), result}
++		for i := range data {
++			data[i] = fmt.Sprintf("\033[%dm%s\033[0m", color, data[i])
+ 		}
++		table.Append(data)
+ 	}
+ 	table.Render()
+ 	return allValid
+```
+
+**File**: `managed/node-agent/go.mod` (modified, +49/-46)
+```diff
+@@ -2,64 +2,67 @@ module node-agent
+ 
+ go 1.27.3
+ 
+-replace golang.org/x/crypto => golang.org/x/crypto v0.57.0
+-
+ require (
+ 	github.com/apex/log v1.9.0
+-	github.com/creack/pty v1.1.18
+-	github.com/go-logfmt/logfmt v0.5.1
+-	github.com/golang-jwt/jwt/v5 v5.3.0
++	github.com/creack/pty v1.1.24
++	github.com/go-logfmt/logfmt v0.6.1
++	github.com/golang-jwt/jwt/v5 v5.3.1
+ 	github.com/google/uuid v1.6.0
+-	github.com/gorilla/mux v1.8.0
+-	github.com/nikolalohinski/gonja/v2 v2.4.1
+-	github.com/olekukonko/tablewriter v0.0.5
+-	github.com/prometheus/client_golang v1.15.1
+-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
+-	github.com/spf13/cobra v1.5.0
+-	github.com/spf13/pflag v1.0.5
+-	github.com/spf13/viper v1.12.0
+-	github.com/thoas/go-funk v0.9.2
+-	golang.org/x/crypto v0.57.0
+-	golang.org/x/net v0.60.0
+-	google.golang.org/grpc v1.77.0
+-	google.golang.org/protobuf v1.36.10
+-	gopkg.in/ini.v1 v1.66.4
+-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
++	github.com/gorilla/mux v1.8.1
++	github.com/nikolalohinski/gonja/v2 v2.9.1
++	github.com/olekukonko/tablewriter v1.1.5
++	github.com/prometheus/client_golang v1.25.0
++	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
++	github.com/spf13/cobra v1.10.2
++	github.com/spf13/pflag v1.0.10
++	github.com/spf13/viper v1.21.0
++	github.com/thoas/go-funk v0.9.3
++	golang.org/x/crypto v0.58.0
++	golang.org/x/net v0.62.0
++	google.golang.org/grpc v1.85.0
++	google.golang.org/protobuf v1.36.12
++	gopkg.in/ini.v1 v1.67.3
++	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+ 	gopkg.in/yaml.v2 v2.4.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
+ 
+ require (
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+-	github.com/dustin/go-humanize v1.0.1 // indirect
+-	github.com/fatih/color v1.13.0 // indirect
+-	github.com/fsnotify/fsnotify v1.5.4 // indirect
+-	github.com/golang/protobuf v1.5.4 // indirect
+-	github.com/hashicorp/hcl v1.0.0 // indirect
+-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
++	github.com/clipperhouse/displaywidth v0.11.0 // indirect
++	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
++	github.com/dustin/go-humanize v1.1.0 // indirect
++	github.com/fatih/color v1.19.0 // indirect
++	github.com/fsnotify/fsnotify v1.10.1 // indirect
++	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
++	github.com/goccy/go-json v0.12.0 // indirect
++	github.com/hashicorp/go-uuid v1.0.4 // indirect
++	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/magiconair/properties v1.8.6 // indirect
+-	github.com/mattn/go-colorable v0.1.12 // indirect
+-	github.com/mattn/go-isatty v0.0.14 // indirect
+-	github.com/mattn/go-runewidth v0.0.9 // indirect
+-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+-	github.com/mitchellh/mapstructure v1.5.0 // indirect
++	github.com/mattn/go-colorable v0.1.16 // indirect
++	github.com/mattn/go-isatty v0.0.24 // indirect
++	github.com/mattn/go-runewidth v0.0.31 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.2 // indirect
+-	github.com/pelletier/go-toml v1.9.5 // indirect
+-	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
++	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
++	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
++	github.com/olekukonko/errors v1.3.0 // indirect
++	github.com/olekukonko/ll v0.1.9 // indirect
++	github.com/pandatix/go-abnf v0.5.1 // indirect
++	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
+ 	github.com/pkg/errors v0.9.1 // indirect
+-	github.com/prometheus/client_model v0.3.0 // indirect
+-	github.com/prometheus/common v0.42.0 // indirect
+-	github.com/prometheus/procfs v0.9.0 // indirect
+-	github.com/sirupsen/logrus v1.9.3 // indirect
+-	github.com/spf13/afero v1.8.2 // indirect
+-	github.com/spf13/cast v1.5.0 // indirect
+-	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+-	github.com/subosito/gotenv v1.3.0 // indirect
+-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251022142026-3a174f9686a8 // indirect
++	github.com/prometheus/client_model v0.6.3 // indirect
++	github.com/prometheus/common v0.73.0 // indirect
++	github.com/prometheus/procfs v0.23.0 // indirect
++	github.com/sagikazarmark/locafero v0.12.0 // indirect
++	github.com/sirupsen/logrus v1.10.2 // indirect
++	github.com/spf13/afero v1.15.0 // indirect
++	github.com/spf13/cast v1.10.0 // indirect
++	github.com/subosito/gotenv v1.6.0 // indirect
++	go.yaml.in/yaml/v3 v3.0.5 // indirect
++	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
+ )
+```
+
+**File**: `managed/node-agent/go.sum` (modified, +129/-681)
+```diff
+@@ -1,44 +1,3 @@
+-cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
+-cloud.google.com/go v0.44.1/go.mod h1:iSa0KzasP4Uvy3f1mN/7PiObzGgflwredwwASm/v6AU=
+-cloud.google.com/go v0.44.2/go.mod h1:60680Gw3Yr4ikxnPRS/oxxkBccT6SA1yMk63TGekxKY=
+-cloud.google.com/go v0.44.3/go.mod h1:60680Gw3Yr4ikxnPRS/oxxkBccT6SA1yMk63TGekxKY=
+-cloud.google.com/go v0.45.1/go.mod h1:RpBamKRgapWJb87xiFSdk4g1CME7QZg3uwTez+TSTjc=
+-cloud.google.com/go v0.46.3/go.mod h1:a6bKKbmY7er1mI7TEI4lsAkts/mkhTSZK8w33B4RAg0=
+-cloud.google.com/go v0.50.0/go.mod h1:r9sluTvynVuxRIOHXQEHMFffphuXHOMZMycpNR5e6To=
+-cloud.google.com/go v0.52.0/go.mod h1:pXajvRH/6o3+F9jDHZWQ5PbGhn+o8w9qiu/CffaVdO4=
+-cloud.google.com/go v0.53.0/go.mod h1:fp/UouUEsRkN6ryDKNW/Upv/JBKnv6WDthjR6+vze6M=
+-cloud.google.com/go v0.54.0/go.mod h1:1rq2OEkV3YMf6n/9ZvGWI3GWw0VoqH/1x2nd8Is/bPc=
+-cloud.google.com/go v0.56.0/go.mod h1:jr7tqZxxKOVYizybht9+26Z/gUq7tiRzu+ACVAMbKVk=
+-cloud.google.com/go v0.57.0/go.mod h1:oXiQ6Rzq3RAkkY7N6t3TcE6jE+CIBBbA36lwQ1JyzZs=
+-cloud.google.com/go v0.62.0/go.mod h1:jmCYTdRCQuc1PHIIJ/maLInMho30T/Y0M4hTdTShOYc=
+-cloud.google.com/go v0.65.0/go.mod h1:O5N8zS7uWy9vkA9vayVHs65eM1ubvY4h553ofrNHObY=
+-cloud.google.com/go v0.72.0/go.mod h1:M+5Vjvlc2wnp6tjzE102Dw08nGShTscUx2nZMufOKPI=
+-cloud.google.com/go v0.74.0/go.mod h1:VV1xSbzvo+9QJOxLDaJfTjx5e+MePCpCWwvftOeQmWk=
+-cloud.google.com/go v0.75.0/go.mod h1:VGuuCn7PG0dwsd5XPVm2Mm3wlh3EL55/79EKB6hlPTY=
+-cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
+-cloud.google.com/go/bigquery v1.3.0/go.mod h1:PjpwJnslEMmckchkHFfq+HTD2DmtT67aNFKH1/VBDHE=
+-cloud.google.com/go/bigquery v1.4.0/go.mod h1:S8dzgnTigyfTmLBfrtrhyYhwRxG72rYxvftPBK2Dvzc=
+-cloud.google.com/go/bigquery v1.5.0/go.mod h1:snEHRnqQbz117VIFhE8bmtwIDY80NLUZUMb4Nv6dBIg=
+-cloud.google.com/go/bigquery v1.7.0/go.mod h1://okPTzCYNXSlb24MZs83e2Do+h+VXtc4gLoIoXIAPc=
+-cloud.google.com/go/bigquery v1.8.0/go.mod h1:J5hqkt3O0uAFnINi6JXValWIb1v0goeZM77hZzJN/fQ=
+-cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7TKLgZqpHYE=
+-cloud.google.com/go/datastore v1.1.0/go.mod h1:umbIZjpQpHh4hmRpGhH4tLFup+FVzqBi1b3c64qFpCk=
+-cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
+-cloud.google.com/go/pubsub v1.1.0/go.mod h1:EwwdRX2sKPjnvnqCa270oGRyludottCI76h+R3AArQw=
+-cloud.google.com/go/pubsub v1.2.0/go.mod h1:jhfEVHT8odbXTkndysNHCcx0awwzvfOlguIAii9o8iA=
+-cloud.google.com/go/pubsub v1.3.1/go.mod h1:i+ucay31+CNRpDW4Lu78I4xXG+O1r/MAHgjpRVR+TSU=
+-cloud.google.com/go/storage v1.0.0/go.mod h1:IhtSnM/ZTZV8YYJWCY8RULGVqBDmpoyjwiyrjsg+URw=
+-cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0ZeosJ0Rtdos=
+-cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
+-cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
+-cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
+-cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3fOKtUw0Xmo=
+-dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+-github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
+-github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+-github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
+ github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
+ github.com/apex/log v1.9.0 h1:FHtw/xuaM8AgmvDDTI9fiwoAL25Sq2cxojnZICUU8l0=
+@@ -50,730 +9,229 @@ github.com/aws/aws-sdk-go v1.20.6/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN
+ github.com/aybabtme/rgbterm v0.0.0-20170906152045-cc83f3b3ce59/go.mod h1:q/89r3U2H7sSsE2t6Kca0lfwTK8JdoNGS/yzM/4iH5I=
+ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
+-github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+ github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+-github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
+-github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+-github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+-github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7
+```
+
+**File**: `managed/node-agent/ynp/config/config.go` (modified, +2/-1)
+```diff
+@@ -20,7 +20,8 @@ import (
+ )
+ 
+ const (
+-	DefaultINISection = ini.DefaultSection
++	// Value of ini.DefaultSection, which is a var since ini v1.67.
++	DefaultINISection = "DEFAULT"
+ )
+ 
+ type Args struct {
+```
+
+**File**: `managed/src/main/java/MainModule.java` (modified, +22/-24)
+```diff
+@@ -6,8 +6,8 @@
+ import com.google.inject.AbstractModule;
+ import com.google.inject.Provides;
+ import com.google.inject.name.Names;
++import com.nimbusds.jose.util.DefaultResourceRetriever;
+ import com.nimbusds.oauth2.sdk.ParseException;
+-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+ import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+ import com.typesafe.config.Config;
+@@ -61,6 +61,7 @@
+ import com.yugabyte.yw.common.YBALifeCycle;
+ import com.yugabyte.yw.common.YamlWrapper;
+ import com.yugabyte.yw.common.YbaOidcCallbackUrlResolver;
++import com.yugabyte.yw.common.YbaOidcOpMetadataResolver;
+ import com.yugabyte.yw.common.YcqlQueryExecutor;
+ import com.yugabyte.yw.common.YsqlQueryExecutor;
+ import com.yugabyte.yw.common.alerts.AlertConfigurationWriter;
+@@ -405,22 +406,17 @@ protected OidcClient provideOidcClient(
+               DEFAULT_OIDC_SCOPE);
+         }
+         oidcConfiguration.setScope(scope);
+-        setProviderMetadata(config, oidcConfiguration);
+         oidcConfiguration.setMaxClockSkew(3600);
+         oidcConfiguration.setResponseType("code");
+-        OIDCProviderMetadata metadata = oidcConfiguration.findProviderMetadata();
+-        // Retain existing behaviour.
+-        if (metadata
+-            .getTokenEndpointAuthMethods()
+-            .contains(ClientAuthenticationMethod.CLIENT_SECRET_POST)) {
+-          oidcConfiguration.setClientAuthenticationMethod(
+-              ClientAuthenticationMethod.CLIENT_SECRET_POST);
+-        } else if (metadata
+-            .getTokenEndpointAuthMethods()
+-            .contains(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)) {
+-          oidcConfiguration.setClientAuthenticationMethod(
+-              ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
+-        }
++        YbaOidcOpMetadataResolver metadataResolver =
++            createOpMetadataResolver(config, oidcConfiguration);
++        // init() builds the ID token validator, so its JWKS retriever must exist first.
++        oidcConfiguration.setResourceRetriever(
++            new DefaultResourceRetriever(
++                oidcConfiguration.getConnectTimeout(), oidcConfiguration.getReadTimeout()));
++        // Fetches the metadata now, so a bad OIDC config fails here as before.
++        metadataResolver.init();
++        oidcConfiguration.setOpMetadataResolver(metadataResolver);
+         return new OidcClient(oidcConfiguration);
+       } catch (Exception e) {
+         log.error(
+@@ -434,22 +430,24 @@ protected OidcClient provideOidcClient(
      }
-     RETURN_NOT_OK(WaitForSnapshotCleanup());
-     RETURN_NOT_OK(WaitForFailoverCleanup());
+   }
+ 
+-  private void setProviderMetadata(Config config, OidcConfiguration oidcConfiguration) {
++  private YbaOidcOpMetadataResolver createOpMetadataResolver(
++      Config config, OidcConfiguration oidcConfiguration) throws ParseException {
+     String providerMetadata = config.getString("yb.security.oidcProviderMetadata");
+     if (providerMetadata.isEmpty()) {
+       String discoveryURI = config.getString("yb.security.discoveryURI");
+       if (discoveryURI.isEmpty()) {
+         throw new PlatformServiceException(
+             BAD_REQUEST, "OIDC setup error: Both discoveryURL and provider metadata are empty!");
+-      } else {
+-        oidcConfiguration.setDiscoveryURI(discoveryURI);
+-      }
+-    } else {
+-      try {
+-        oidcConfiguration.setProviderMetadata(OIDCProviderMetadata.parse(providerMetadata));
+-      } catch (ParseException e) {
+-        log.error("Provider metadata invalid", e);
+       }
++      oidcConfiguration.setDiscoveryURI(discoveryURI);
++      return new YbaOidcOpMetadataResolver(oidcConfiguration, null);
++    }
++    try {
++      return new YbaOidcOpMetadataResolver(
++          oidcConfiguration, OIDCProviderMetadata.parse(providerMetadata));
++    } catch (ParseException e) {
++      log.error("Provider metadata invalid", e);
++      throw e;
+     }
+   }
+ 
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/RefetchOIDCAccessToken.java` (modified, +8/-1)
+```diff
+@@ -7,6 +7,7 @@
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.google.inject.Inject;
+ import com.google.inject.Singleton;
++import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+ import com.yugabyte.yw.common.ApiHelper;
+ import com.yugabyte.yw.common.PlatformScheduler;
+ import com.yugabyte.yw.common.PlatformServiceException;
+@@ -28,6 +29,7 @@
+ import org.apache.pekko.actor.Cancellable;
+ import org.pac4j.core.profile.CommonProfile;
+ import org.pac4j.core.profile.ProfileManager;
++import org.pac4j.oidc.profile.OidcProfile;
+ 
+ @Singleton
+ @Slf4j
+@@ -86,7 +88,12 @@ private void scheduleRunner(ProfileManager profileManager, Users user) {
+       if (profile.getAttribute("expiration") != null) {
+         JsonNode data = refetchAccessToken(profile);
+         String refreshedToken = data.get("access_token").asText();
+-        profile.addAttribute("access_token", refreshedToken);
++        if (profile instanceof OidcProfile oidcProfile) {
++          // pac4j 6 stores the access token as encoded JSON, not the raw string.
++          oidcProfile.setAccessToken(new BearerAccessToken(refreshedToken));
++        } else {
++          profile.addAttribute("access_token", refreshedToken);
++        }
+         Date updatedDate = this.computeExpiryTime(data.get("expires_in").asLong());
+         profile.addAttribute("expiration", updatedDate);
+         profileManager.save(true, profile, true);
+```
+
+---
+
+### Incident Patch 3: `98b2e086` (2026-11-05)
+**Commit Message**: [#33275] YSQL: Retry a YSQL migration that fails with a deadlock (#37066)
+
+## Summary
+
+With object locking, a migration that rebuilds system views with `CREATE
+OR REPLACE VIEW` can deadlock with a user transaction that reads those
+views. Three things combine:
+
+- Replacing an existing view takes AccessExclusiveLock on it (view.c),
+  and AccessExclusive is a global lock mode, so it conflicts with
+  readers on every node.
+- A `SELECT` from a view takes AccessShareLock on it. AccessShare
+  conflicts with AccessExclusive, and both are held until the end of
+  their transaction.
+- With transactional DDL, a migration that rebuilds several views in one
+  `BEGIN ... COMMIT` holds the lock on each view it has replaced until
+  its `COMMIT`. V107 rebuilds 17 `<view>_with_server_uuid` views in one
+  transaction, starting with `yb_active_session_history` (A) and ending
+  with `pg_stat_replication_slots` (B).
+
+A user transaction that reads B and then A, the opposite order, can
+deadlock with V107:
+
+```
+    user transaction                   V107 migration
+    ----------------                   --------------
+    BEGIN;
+    SELECT * FROM B;
+      -> holds AccessShare(B)
+                             
+
+**File**: `src/yb/yql/pgwrapper/pg_libpq-test.cc` (modified, +179/-62)
+```diff
+@@ -6495,62 +6495,68 @@ TEST_F(PgLibPqTest, PgStatReplicationWithoutCdcStateTable) {
+   ASSERT_EQ(ASSERT_RESULT(list_slot_entries_calls()), initial_calls + 1);
+ }
+ 
+-// YSQL upgrade re-runs a migration that fails with a serialization failure, which concurrent DDL
+-// can cause (#32301).
+-//
+-// Flow:
+-// 1. Create a database and enable yb_enable_extended_sql_codes on it, as a user could. The upgrade
+-//    connection must override it, or the injected read restart (YB002) would not reach
+-//    ysql_upgrade as 40001 and would not be retried.
+-// 2. Make the database look one migration behind, so the UpgradeYsql RPC re-applies the newest
+-//    migration to it and to no other database.
+-// 3. Inject two failures with TEST_ysql_upgrade_fail_migration_attempts. Each failing attempt runs
+-//    the whole script, whose statements commit, and then a new transaction block raises YB002 and
+-//    is left aborted. So each retry needs a ROLLBACK and an idempotent re-run of a script whose
+-//    changes are already in the catalog. With the default retry budget the upgrade succeeds and
+-//    records the migration once.
+-// 4. Lower ysql_upgrade_migration_max_retries to 1, so the two injected failures exhaust it. The
+-//    upgrade then fails with the injected error and does not record the migration.
+-//
+-// Because the test re-applies whichever migration is newest, a new migration that errors when
+-// re-run also fails here. TestYsqlUpgrade.upgradeIsIdempotent is what checks that a re-run leaves
+-// the catalog, including OIDs, unchanged.
+-TEST_F(PgLibPqTest, YsqlUpgradeRetriesSerializationFailure) {
+-  constexpr auto kDbName = "upgrade_retry_db";
++// Tests that YSQL upgrade re-runs a migration that fails with an error that concurrent user
++// activity can cause: a serialization failure (#32301) or a deadlock (#33275).
++class PgLibPqYsqlUpgradeRetryTest : public PgLibPqTest {
++ protected:
++  static constexpr auto kDbName = "upgrade_retry_db";
+ 
+-  // Step 1: the database setting applies to every new connection to it, including the one
+-  // ysql_upgrade opens.
+-  {
+-    auto conn = ASSERT_RESULT(Connect());
+-    ASSERT_OK(conn.ExecuteFormat("CREATE DATABASE $0", kDbName));
+-    ASSERT_OK(conn.ExecuteFormat(
+-        "ALTER DATABASE $0 SET yb_enable_extended_sql_codes = true", kDbName));
+-  }
+-  auto conn = ASSERT_RESULT(ConnectToDB(kDbName));
+-
+-  // ysql_upgrade takes a database's version from the highest row in its pg_yb_migration. A fresh
+-  // database holds a single row, the newest migration.
+-  const auto [major, minor] = ASSERT_RESULT((conn.FetchRow<int32_t, int32_t>(
+-      "SELECT major, minor FROM pg_yb_migration ORDER BY major DESC, minor DESC LIMIT 1")));
+-
+-  // Step 2 helper: replace the newest version row with the previous version, so the database is
+-  // one migration behind. Deleting the only row instead would leave pg_yb_migration empty, and
+-  // ysql_upgrade would then re-derive the version from catalog state and re-run every migration.
+-  const auto [prev_major, prev_minor] =
+-      minor > 0 ? std::pair(major, minor - 1) : std::pair(major - 1, 0);
+-  const auto forget_latest_migration = [&]() -> Status {
+-    return conn.ExecuteFormat(
++  void UpdateMiniClusterOptions(ExternalMiniClusterOptions* options) override {
++    PgLibPqTest::UpdateMiniClusterOptions(options);
++    // Object locking is on by default only in release builds, and the deadlock test needs it. A
++    // deadlock victim that waits on a global object lock fails only when its wait times out, so
++    // shorten the wait from 30 s.
++    for (auto* flags : {&options->extra_master_flags, &options->extra_tserver_flags}) {
++      flags->insert(flags->end(), {
++          "--enable_object_locking_for_table_locks=true",
++          "--ysql_yb_ddl_transaction_block_enabled=true",
++          "--ysql_enable_concurrent_ddl=true",
++          "--ysql_yb_enable_invalidation_messages=true",
++          "--refresh_waiter_timeout_ms=5000",
++      });
++    }
++  }
++
++  // Creates kDbName with yb_enable_extended_sql_codes enabled, as a user could. The upgrade
++  // connection must override it, or a read restart (YB002) and a row-lock deadlock (YB004) would
++  // not reach ysql_upgrade as 40001 and 40P01 and would not be retried. The database setting
++  // applies to every new connection to it, including the one ysql_upgrade opens.
++  Status SetUpDatabase() {
++    {
++      auto conn = VERIFY_RESULT(Connect());
++      RETURN_NOT_OK(conn.ExecuteFormat("CREATE DATABASE $0", kDbName));
++      RETURN_NOT_OK(conn.ExecuteFormat(
++          "ALTER DATABASE $0 SET yb_enable_extended_sql_codes = true", kDbName));
++    }
++    conn_.emplace(VERIFY_RESULT(ConnectToDB(kDbName)));
++    // ysql_upgrade takes a database's version from the highest row in its pg_yb_migration. A
++    // fresh database holds a single row, the newest migration.
++    std::tie(major_, minor_) = VERIFY_RESULT((conn_->FetchRow<int32_t, int32_t>(
++        "SELECT major, minor FROM pg_yb_migration OR
+```
+
+**File**: `src/yb/yql/pgwrapper/ysql_migrations/README.md` (modified, +6/-5)
+```diff
+@@ -9,11 +9,12 @@ Migrations are run in a special YSQL upgrade mode that changes some expectations
+ executed and allows some new grammar - see the next section for details.
+ 
+ Migration scripts should be designed idempotent - i.e. in such a way so that re-running them
+-multiple times would be okay. `upgrade_ysql` itself re-runs a whole script after a serialization
+-failure (e.g. a read restart caused by concurrent DDL), so any prefix of a script may already have
+-been committed when it runs. In particular, re-running a migration must not change any catalog
+-OIDs: when a migration touches an object that already exists, modify it in place rather than
+-dropping and recreating it (see "Note on modifying an existing catalog object" below).
++multiple times would be okay. `upgrade_ysql` itself re-runs a whole script after an error caused by
++concurrent activity - a serialization failure (e.g. a read restart caused by concurrent DDL) or a
++deadlock - so any prefix of a script may already have been committed when it runs. In particular,
++re-running a migration must not change any catalog OIDs: when a migration touches an object that
++already exists, modify it in place rather than dropping and recreating it (see "Note on modifying
++an existing catalog object" below).
+ 
+ The script will be run in the scope of a single transaction, unless you explicitly start a migration
+ with `BEGIN`. Unfortunately, according to YugabyteDB limitations, DDLs are executed in their own
+```
+
+**File**: `src/yb/yql/pgwrapper/ysql_upgrade.cc` (modified, +43/-19)
+```diff
+@@ -33,13 +33,19 @@
+ using namespace std::literals;
+ 
+ DEFINE_RUNTIME_int32(ysql_upgrade_migration_max_retries, 10,
+-    "Maximum number of times YSQL upgrade re-runs a migration script that failed with a "
+-    "serialization failure (SQLSTATE 40001), such as a read restart or a conflict caused by "
+-    "concurrent DDL. 0 disables retries.");
++    "Maximum number of times YSQL upgrade re-runs a migration script that failed with an error "
++    "caused by concurrent activity: a serialization failure (SQLSTATE 40001) such as a read "
++    "restart or a conflict with concurrent DDL, or a deadlock. 0 disables retries.");
+ 
+ DEFINE_test_flag(int32, ysql_upgrade_fail_migration_attempts, 0,
+     "Make the first N attempts of each migration script fail: after the script's own statements "
+-    "have committed, a new transaction block raises a read restart error and is left aborted.");
++    "have committed, a new transaction block runs TEST_ysql_upgrade_fail_migration_sql, which is "
++    "expected to fail and leave the block aborted.");
++
++DEFINE_test_flag(string, ysql_upgrade_fail_migration_sql,
++    "DO $$ BEGIN RAISE EXCEPTION 'Injected error' USING ERRCODE = 'YB002'; END $$;",
++    "SQL run by TEST_ysql_upgrade_fail_migration_attempts. The default raises YB002, the "
++    "internal read restart code.");
+ 
+ namespace yb {
+ namespace pgwrapper {
+@@ -234,29 +240,46 @@ Result<std::optional<Oid>> GetMaxAllocatedSystemOid(PGConn* pgconn) {
+       "SELECT max(oid) FROM ($0) AS o", boost::algorithm::join(selects, " UNION ALL ")));
+ }
+ 
+-// A migration can lose a read restart or a conflict to concurrent DDL in the same database, and
+-// the query layer can't retry it when the script is a multi-statement query or has already sent
+-// a notice to the client. Notices are flushed immediately and count as data sent; e.g. ALTER
+-// EXTENSION emits "'extension' is a beta feature!" unless ysql_beta_feature_extension is set.
+-// Migrations are required to be idempotent (see ysql_migrations/README.md), so re-run the whole
+-// script.
++// Errors that a migration can hit because of concurrent user activity, and that a re-run of the
++// script can succeed past:
++// - 40001: a read restart or a conflict with concurrent DDL in the same database.
++// - 40P01: a deadlock on row locks.
++// - XX000 with "aborted due to a deadlock": a deadlock on global object locks, e.g. a script that
++//   replaces several system views in one transaction and a user transaction that reads those
++//   views in a different order (#33275). AcquireObjectLocksGlobalRpc::ProcessResponse
++//   (client-internal.cc) appends the deadlock status's message to a TryAgain status but drops its
++//   TransactionError code, so this deadlock doesn't reach the client as 40P01. The text comes from
++//   the deadlock detector (deadlock_detector.cc).
++bool IsRetryableMigrationError(const Status& status) {
++  switch (PgsqlError(status).value()) {
++    case YBPgErrorCode::YB_PG_T_R_SERIALIZATION_FAILURE:
++    case YBPgErrorCode::YB_PG_T_R_DEADLOCK_DETECTED:
++      return true;
++    case YBPgErrorCode::YB_PG_INTERNAL_ERROR:
++      return status.message().ToBuffer().find("aborted due to a deadlock") != std::string::npos;
++    default:
++      return false;
++  }
++}
++
++// The query layer can't retry a failed migration when the script is a multi-statement query or
++// has already sent a notice to the client. Notices are flushed immediately and count as data
++// sent; e.g. ALTER EXTENSION emits "'extension' is a beta feature!" unless
++// ysql_beta_feature_extension is set. Migrations are required to be idempotent (see
++// ysql_migrations/README.md), so re-run the whole script.
+ Status ExecuteMigration(
+     PGConn* pgconn, const std::string& migration_content, const std::string& migration_name) {
+   CoarseBackoffWaiter waiter(CoarseTimePoint::max(), 2s /* max_wait */);
+   for (int attempt = 0;; ++attempt) {
+     auto script = migration_content;
+     if (attempt < FLAGS_TEST_ysql_upgrade_fail_migration_attempts) {
+       // COMMIT ends the script's trailing implicit block; otherwise BEGIN would absorb it and the
+-      // failure would roll it back. YB002 is the internal read restart code, which the client
+-      // sees as 40001 only while yb_enable_extended_sql_codes is off.
+-      script += "\nCOMMIT;\nBEGIN;\n"
+-                "DO $$ BEGIN RAISE EXCEPTION 'Injected read restart' "
+-                "USING ERRCODE = 'YB002'; END $$;\n";
++      // failure would roll it back.
++      script += "\nCOMMIT;\nBEGIN;\n" + FLAGS_TEST_ysql_upgrade_fail_migration_sql + "\n";
+     }
+     auto status = pgconn->Execute(
+         script, /*show_query_in_error=*/false, /*ignore_empty_query=*/true);
+-    if (status.ok() ||
+-        PgsqlError(status) != YBPgErrorCode::YB_PG_T_R_SERIALIZATION_FAILURE ||
++    if (status.ok() || !IsRetryableMigrationError(status) ||
+         attempt >= FLAGS_ysql_upgrade_migration_max_retries) {
+       return status;
+     }
+@@ -295,8 +318,9 @@ class YsqlUpgradeHelper:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36967** (2026-11-05): [#35980] YSQL: Skip the COPY fast path for partitioned colocated tables (@teyenc)
-- **PR #36959** (2026-11-05): [#34985] YSQL: Mark yb_index_check() parallel unsafe and yb_get_current_transaction_priority() parallel restricted (@teyenc)
-- **PR #36938** (2026-11-05): [#36904] YSQL: Wait for the root spans before counting them in TestExtendedQueryProtocolPreparedStatementReuse (@ellabaron-code)
-- **PR #36933** (2026-11-05): [#34036] YSQL: Wait for an ASH sample in TestYbAsh#testPreparedStatements (@hkimura)
-- **PR #36924** (2026-11-04): [#35077] DocDB: Fix build of VectorLSMMetadataModifyChunkFrontiers after #36764 (@druzac)
-- **PR #36911** (2026-11-04): [PLAT-21238] YBA: Stop loading every universe and key history row where few fields are used (@artem-mindrov)
+- **PR #37080** (2026-11-05): [DEVOPS-4033] automation: remove obsolete files (@svarnau)
+- **PR #37076** (2026-11-05): [2024.2][#35730] build: Remove macOS builds (@svarnau)
+- **PR #37066** (2026-11-05): [#33275] YSQL: Retry a YSQL migration that fails with a deadlock (@myang2021)
+- **PR #37060** (2026-11-05): [BACKPORT 2024.2][#34672] DocDB: Tolerate a table id listed twice in a tablet's table_ids on load (#36771) (@druzac)
+- **PR #37059** (2026-11-05): [BACKPORT 2025.2][#34672] DocDB: Tolerate a table id listed twice in a tablet's table_ids on load (#36771) (@druzac)
+- **PR #37058** (2026-11-05): [BACKPORT 2026.1][#34672] DocDB: Tolerate a table id listed twice in a tablet's table_ids on load (#36771) (@druzac)
 
 ---
 
@@ -2483,29 +3182,62 @@ YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#36676] DocDB: Disable quiescent tablets by default (#36677)
+## X. [#36606] YSQL: Make ConnMgr connection sticky when a SECURITY DEFINER function s
 
 **RULE**:
-When implementing operations in `src/yb/tablet/tablet_peer.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestSusetGucStickiness.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e477a4d7`: [#36676] DocDB: Disable quiescent tablets by default (#36677). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `387582a1`: [#36606] YSQL: Make ConnMgr connection sticky when a SECURITY DEFINER function sets a SUSET GUC (#36902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/tablet/tablet_peer.cc`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestSusetGucStickiness.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-// TODO: Restore the default to 600 when enabling quiescent tablets by default.
-DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 0,
+// Copyright (c) YugabyteDB, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License. You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+// or implied. See the License for the specific language governing permissions and limitations
+// under the License.
+//
+
+package org.yb.ysqlconnmgr;
+
+import static org.yb.AssertionWrappers.*;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.yb.YBTestRunner;
+import org.yb.pgsql.ConnectionEndpoint;
+import org.yb.util.RequiresLinux;
+
+@RequiresLinux
+@RunWith(value = YBTestRunner.class)
+public class TestSusetGucStickiness extends BaseYsqlConnMgr {
+
+  private Connection connectAsSuperuser() throws Exception {
+    return getConnectionBuilder()
+        .withConnectionEndpoint(ConnectionE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-DEFINE_RUNTIME_int32(quiescent_tablet_idle_sec, 600,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e477a4d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `387582a1` are properly handled with clean fallback behavior.

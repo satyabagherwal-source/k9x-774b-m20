@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:17:17.269Z",
+  "last_updated": "2026-11-05T23:32:37.011Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63506,11 +63506,16 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "539f7491",
-      "content_hash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
+      "source_version": "98b2e086",
+      "content_hash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[#36606] YSQL: Make ConnMgr connection sticky when a SECURITY DEFINER function s",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2074,
           "title": "[#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps",
@@ -63592,7 +63597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:44:11.101Z",
+      "verified_at": "2026-11-05T23:32:36.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
