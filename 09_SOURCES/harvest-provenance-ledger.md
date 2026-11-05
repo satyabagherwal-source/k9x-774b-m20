@@ -7766,3 +7766,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-05T18:45:39.868Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `823a3916` | Multi-dimensional audit evidence | 2026-11-05T18:45:45.016Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `48427266` | Multi-dimensional audit evidence | 2026-11-05T18:45:49.323Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `6882e1ac` | Multi-dimensional audit evidence | 2026-11-05T18:53:36.557Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `62aca180` | Multi-dimensional audit evidence | 2026-11-05T18:53:43.362Z |

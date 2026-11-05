@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "3ba92575",
+    "sourceVersion": "62aca180",
     "license": "Apache-2.0",
-    "contentHash": "460e853077b6ec17492757ff913bf404dd6d3467c8c3536b1be1d0ef59f7a820",
-    "lastHarvestedAt": "2026-11-05T04:14:38.030Z",
+    "contentHash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
+    "lastHarvestedAt": "2026-11-05T18:53:43.362Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "b4f0d123",
+    "sourceVersion": "6882e1ac",
     "license": "MIT",
-    "contentHash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
-    "lastHarvestedAt": "2026-11-04T23:34:35.702Z",
+    "contentHash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
+    "lastHarvestedAt": "2026-11-05T18:53:36.557Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {

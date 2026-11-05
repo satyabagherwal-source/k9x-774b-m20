@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:45:49.327Z",
-  "total_cycles_completed": 7734,
-  "total_learnings_persisted": 7734,
-  "total_rules_promoted": 7377,
+  "last_updated": "2026-11-05T18:53:43.370Z",
+  "total_cycles_completed": 7736,
+  "total_learnings_persisted": 7736,
+  "total_rules_promoted": 7379,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:58:31.826Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:58:32.382Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T07:06:00.070Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T18:45:49.327Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:53:36.562Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:53:43.370Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

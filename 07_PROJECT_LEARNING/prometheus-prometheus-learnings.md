@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `3ba92575`  
+> **Source Version**: `62aca180`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:14:37.199Z  
+> **Timestamp**: 2026-11-05T18:53:41.986Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:14:37.191Z  
+> **Harvest Timestamp**: 2026-11-05T18:53:41.979Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66958 stars
+- **Stars / Engagement**: 66981 stars
 
 ---
 
@@ -1781,11 +1781,14 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20317** (2026-11-05): **tsdb/agent: implement storage.GetRef on appenders**
-  *Symptoms*: `tsdb.Head` appenders implement `storage.GetRef` so callers can look up existing in-memory series references and reuse their canonical `labels.Labels`, but `tsdb/agent` appenders did not implement `storage.GetRef`. After an agent WAL replay (`loadWAL`), `agent.DB` already holds every replayed `memSeries` and its `lset`, yet callers had no way to query or reuse them via `storage.GetRef`.  This change implements `storage.GetRef` on `tsdb/agent`'s `appenderBase` (covering both `Appender` and `AppenderV2`) with compile-time interface checks and unit tests across WAL replay and series GC.  ```release-notes NONE ```  cc @prymitive @MichaHoffmann 
+- **Issue #20344** (2026-11-05): **merge release-3.16 into main**
+  *Symptoms*: Merging release-3.16 branch into main  ```release-notes NONE ``` 
+  **Post-Mortem & Fix Analysis**:
+  > I am assuming it's ok to have this be a bit of a messy merge.  Or should I squash it down?
+  > I can't fix the conflicts so I'll do that in another branch
 
-- **Issue #20309** (2026-11-04): **promql: align duration min_of and max_of NaN handling**
-  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
+- **Issue #20335** (2026-11-05): **promql: accept unquoted colons in grouping labels again**
+  *Symptoms*: #### Which issue(s) does the PR fix:  Follow-up to #20169. Enabling unquoted UTF-8 names by default made `sum by (a:b) (foo)` and `foo + on (a:b) bar` fail with `invalid label name for grouping: "a:b"`. Both parsed before. UTF-8 validation has been the default since 3.0, so labels like `a:b` can exist, and queries and rules that group by them stop working. While the feature was behind a flag, the parser still accepted these with the flag off (see https://github.com/prometheus/prometheus/pull/19683#discussion_r4357854697).  This drops the quoting check for grouping labels. The printer still quotes them (`sum by ("a:b") (foo)`), because selectors don't accept unquoted colons, so printed queries still parse. The docs now mention the exception.  #20169 isn't in a release yet, so users never see the regression.  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes NONE ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1802,236 +1805,31 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f23796d5` (2026-11-04)
-**Commit Message**: tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301)
+### Incident Patch 1: `4bfb6bb5` (2026-11-05)
+**Commit Message**: docs: require raw benchstat output and commit links in AGENTS.md (#20332)
 
-Signed-off-by: Kyle Eckhart <[REDACTED_EMAIL]>
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
 
-**File**: `tsdb/agent/db.go` (modified, +4/-3)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -925,12 +925,13 @@ func (db *DB) Appender(context.Context) storage.Appender {
+@@ -112,7 +112,7 @@ Maintainers take performance seriously. For any PERF PR:
  
- // Close implements the Storage interface.
- func (db *DB) Close() error {
--	db.mtx.Lock()
--	defer db.mtx.Unlock()
--
-+	// Stop the truncate loop before taking db.mtx, since truncate needs it.
- 	close(db.stopc)
- 	<-db.donec
- 
-+	db.mtx.Lock()
-+	defer db.mtx.Unlock()
-+
- 	db.metrics.Unregister()
- 
- 	return errors.Join(db.locker.Release(), db.wal.Close())
-```
-
-**File**: `tsdb/agent/db_test.go` (modified, +52/-0)
-```diff
-@@ -14,9 +14,11 @@
- package agent
- 
- import (
-+	"bytes"
- 	"context"
- 	"fmt"
- 	"io"
-+	"log/slog"
- 	"math"
- 	"path/filepath"
- 	"strconv"
-@@ -890,6 +892,56 @@ func TestWALTruncationTime(t *testing.T) {
- 	}
- }
- 
-+// blockingWriter blocks writes containing msg until release is closed.
-+type blockingWriter struct {
-+	msg     []byte
-+	once    sync.Once
-+	reached chan struct{}
-+	release chan struct{}
-+}
-+
-+func (w *blockingWriter) Write(p []byte) (int, error) {
-+	if bytes.Contains(p, w.msg) {
-+		w.once.Do(func() { close(w.reached) })
-+		<-w.release
-+	}
-+	return len(p), nil
-+}
-+
-+func TestCloseDuringTruncate(t *testing.T) {
-+	// Pause the truncate loop on the log line just before truncate takes db.mtx.
-+	w := &blockingWriter{
-+		msg:     []byte("series GC started"),
-+		reached: make(chan struct{}),
-+		release: make(chan struct{}),
-+	}
-+
-+	dbDir := t.TempDir()
-+	rs := remote.NewStorage(promslog.NewNopLogger(), nil, startTime, dbDir, time.Second*30, nil, false, false, false)
-+	t.Cleanup(func() {
-+		require.NoError(t, rs.Close())
-+	})
-+
-+	opts := DefaultOptions()
-+	opts.TruncateFrequency = time.Millisecond
-+	db, err := Open(slog.New(slog.NewTextHandler(w, nil)), nil, rs, dbDir, opts)
-+	require.NoError(t, err)
-+
-+	<-w.reached
-+	closed := make(chan error)
-+	go func() { closed <- db.Close() }()
-+	// Close has started stopping the loop. Let truncate continue.
-+	<-db.stopc
-+	close(w.release)
-+
-+	select {
-+	case err := <-closed:
-+		require.NoError(t, err)
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("Close deadlocked against truncate")
-+	}
-+}
-+
- func TestLockfile(t *testing.T) {
- 	tsdbutil.TestDirLockerUsage(t, func(t *testing.T, data string, createLock bool) (*tsdbutil.DirLocker, testutil.Closer) {
- 		logger := promslog.NewNopLogger()
-```
-
----
-
-### Incident Patch 2: `e7bb99b9` (2026-11-04)
-**Commit Message**: Merge pull request #20299 from locker95/fix/om-exemplar-label-unescape
-
-textparse: unescape OpenMetrics exemplar label names and values
-
-**File**: `model/textparse/openmetricsparse.go` (modified, +1/-1)
-```diff
-@@ -274,7 +274,7 @@ func (p *OpenMetricsParser) Exemplar(e *exemplar.Exemplar) bool {
- 		c := p.eOffsets[i+2] - p.start
- 		d := p.eOffsets[i+3] - p.start
- 
--		p.builder.Add(s[a:b], s[c:d])
-+		p.builder.Add(unreplace(s[a:b]), unreplace(s[c:d]))
- 	}
- 
- 	p.builder.Sort()
-```
-
-**File**: `model/textparse/openmetricsparse_test.go` (modified, +8/-0)
-```diff
-@@ -710,6 +710,7 @@ func TestOpenMetricsParse_UTF8(t *testing.T) {
- {"Heizölrückstoßabdämpfung 10€ metric with \"interesting\" {character\nchoices}","strange©™\n'quoted' \"name\""="6"} 10.0
- quotedexemplar_count 1 # {"id.thing"="histogram-count-test"} 4
- quotedexemplar2_count 1 # {"id.thing"="histogram-count-test",other="hello"} 4
-+escapedexemplar_count 1 # {"id\"thing"="a\nb\"c\\d"} 4
- `
- 
- 	input += "# EOF\n"
-@@ -773,6 +774,13 @@ choices}`, "strange©™\n'quoted' \"name\"", "6"),
- 			es: []exemplar.Exemplar{
- 				{Labels: labels.FromStrings("id.thing", "histogram-count-test", "other", "hello"), Value: 4},
- 			},
-+		}, {
-+			m:    `escapedexemplar_count`,
-+			v:    1,
-+			lset: labels.FromStrings("__name__", "escapedexemplar_count"),
-+			es: []exemplar.Exemplar{
-+				{Labels: labels.FromStrings("id\"thing", "a\nb\"c\\d"), Value: 4},
-+			},
- 		},
- 	}
- 
-```
-
----
-
-### Incident Patch 3: `c41561f4` (2026-11-04)
-**Commit Message**: Merge pull request #20309 from roidelapluie/roidelapluie/duration-min-max-nan
-
-promql: align duration min_of and max_of NaN handling
-
-**File**: `docs/querying/basics.md` (modified, +4/-0)
-```diff
-@@ -224,6 +224,10 @@ The following functions can be used inside duration expressions:
- For example, `max_of(step(), 5s)` ensures the duration is never shorter than
- `5s`, while `min_of(range(), 1h)` caps the duration at `1h`.
- 
-+Like the scalar functions, `min_of` and `max_of` ignore a `NaN` argument if the
-+other argument is not `NaN`. If both arguments are `NaN`, the result is `NaN`.
-+A duration expression whose final result is `NaN` or infinite is rejected.
-+
- **Note**: Duration expressions are not supported in the [`@` modifier](#modifier).
- 
- Examples of equivalent durations:
-```
-
-**File**: `promql/durations.go` (modified, +10/-2)
-```diff
-@@ -136,9 +136,17 @@ func (v *durationVisitor) evaluateDurationExpr(expr parser.Expr) (float64, error
- 		case parser.RANGE:
- 			return float64(v.queryRange.Seconds()), nil
- 		case parser.MIN_OF:
--			return math.Min(lhs, rhs), nil
-+			// Match the min aggregator: NaN is only returned if both values are NaN.
-+			if lhs > rhs || math.IsNaN(lhs) {
-+				lhs = rhs
-+			}
-+			return lhs, nil
- 		case parser.MAX_OF:
--			return math.Max(lhs, rhs), nil
-+			// Match the max aggregator: NaN is only returned if both values are NaN.
-+			if lhs < rhs || math.IsNaN(lhs) {
-+				lhs = rhs
-+			}
-+			return lhs, nil
- 		case parser.ADD:
- 			if n.LHS == nil {
- 				// Unary positive duration expression.
-```
-
-**File**: `promql/promqltest/testdata/duration_expression.test` (modified, +24/-0)
-```diff
-@@ -249,3 +249,27 @@ load 1s
- # For an instant query (start == end), range() = 0s, offset 0s.
- eval instant at 50s metric1_total offset range()
- 	metric1_total{} 50
-+
-+clear
-+
-+load 1s
-+  duration_metric 0+1x10
-+
-+# Duration min_of and max_of ignore a single NaN, in either argument position.
-+eval instant at 10s count_over_time(duration_metric[min_of((-1)^0.5, 5s)])
-+  {} 5
-+
-+eval instant at 10s count_over_time(duration_metric[min_of(5s, (-1)^0.5)])
-+  {} 5
-+
-+# Two NaNs still produce an invalid duration.
-+eval_fail instant at 10s count_over_time(duration_metric[min_of((-1)^0.5, (-1)^0.5)])
-+
-+eval instant at 10s count_over_time(duration_metric[max_of((-1)^0.5, 5s)])
-+  {} 5
-+
-+eval instant at 10s count_over_time(duration_metric[max_of(5s, (-1)^0.5)])
-+  {} 5
-+
-+# Two NaNs still produce an invalid duration.
-+eval_fail instant at 10s count_over_time(duration_metric[max_of((-1)^0.5, (-1)^0.5)])
+ - Performance improvements require a benchmark that demonstrates the improvement.
+ - Run benchmarks before and after the change using `go test -count=6 -benchmem -bench <directory changed in PR>`
+-- Provide benchmark numbers in the PR body using `benchstat` output.
++- Always output benchmark results in raw `benchstat` format in the PR body (and review comments), and always include a link to the exact commit(s) (`before` and `after`) that the benchmark refers to. Rerun benchmarks and update the commit link whenever addressing review comments that touch benchmarked code or benchmarks.
+ - If a subset of benchmark results show a regression, address this or explain why the case is not important.
+ - Reuse allocations in hot paths where possible (slices, buffers). 
+ - When reusing buffers passed to interfaces, document that callers must copy
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20344** (closed): merge release-3.16 into main (@ywwg)
+- **PR #20335** (2026-11-05): promql: accept unquoted colons in grouping labels again (@aknuds1)
+- **PR #20332** (2026-11-05): docs: require raw benchstat output and commit links in AGENTS.md (@bwplotka)
+- **PR #20324** (2026-11-05): Release 3.16.0 (@ywwg)
+- **PR #20320** (2026-11-05): tsdb/agent [PERF]: clear pooled appender references and preallocate sampleSeries (@bwplotka)
 - **PR #20317** (2026-11-05): tsdb/agent: implement storage.GetRef on appenders (@bwplotka)
-- **PR #20309** (2026-11-04): promql: align duration min_of and max_of NaN handling (@roidelapluie)
-- **PR #20301** (2026-11-04): tsdb/agent: stop the truncate loop before Close takes the DB lock (@kgeckhart)
-- **PR #20299** (2026-11-04): textparse: unescape OpenMetrics exemplar label names and values (@locker95)
-- **PR #20296** (2026-11-03): release-3.16: properly bump changelog version (@ywwg)
-- **PR #20295** (2026-11-03): config: update yaml/v2 to v2.4.5 (@roidelapluie)
 
 ---
 
@@ -2051,33 +1849,28 @@ promql: align duration min_of and max_of NaN handling
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301)
+## X. docs: require raw benchstat output and commit links in AGENTS.md (#20332)
 
 **RULE**:
-When implementing operations in `tsdb/agent/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f23796d5`: tsdb/agent: stop the truncate loop before Close takes the DB lock (#20301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bfb6bb5`: docs: require raw benchstat output and commit links in AGENTS.md (#20332). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/agent/db.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Stop the truncate loop before taking db.mtx, since truncate needs it.
-	db.mtx.Lock()
-	defer db.mtx.Unlock()
-
+- Always output benchmark results in raw `benchstat` format in the PR body (and review comments), and always include a link to the exact commit(s) (`before` and `after`) that the benchmark refers to. Rerun benchmarks and update the commit link whenever addressing review comments that touch benchmarked code or benchmarks.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	db.mtx.Lock()
-	defer db.mtx.Unlock()
-
+- Provide benchmark numbers in the PR body using `benchstat` output.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f23796d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bfb6bb5` are properly handled with clean fallback behavior.

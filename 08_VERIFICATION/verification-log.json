@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-Q76N",
-    "timestamp": "2026-11-04T17:45:14.207Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-ZG3P",
-    "timestamp": "2026-11-04T17:52:25.669Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-ZIIJ",
     "timestamp": "2026-11-04T17:52:28.795Z",
     "repository": "XHToken/Spark-X2.6-4B",
@@ -7490,6 +7460,36 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LZ8P",
+    "timestamp": "2026-11-05T18:53:36.553Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-M4HQ",
+    "timestamp": "2026-11-05T18:53:43.358Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

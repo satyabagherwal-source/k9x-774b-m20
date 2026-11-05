@@ -7757,3 +7757,5 @@
 | `CYCLE-20261105-BRFD` | `2026-11-05T18:45:39.865Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`7b03da90...`) |
 | `CYCLE-20261105-BVED` | `2026-11-05T18:45:45.013Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`ff2761d1...`) |
 | `CYCLE-20261105-BYPZ` | `2026-11-05T18:45:49.319Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`28df4fb0...`) |
+| `CYCLE-20261105-LZ8P` | `2026-11-05T18:53:36.553Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2533` | Yes (`8e09d479...`) |
+| `CYCLE-20261105-M4HQ` | `2026-11-05T18:53:43.358Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ece7117...`) |

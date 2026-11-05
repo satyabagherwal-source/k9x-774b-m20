@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:45:49.209Z",
+  "last_updated": "2026-11-05T18:53:43.269Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49651,11 +49651,16 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "3ba92575",
-      "content_hash": "460e853077b6ec17492757ff913bf404dd6d3467c8c3536b1be1d0ef59f7a820",
+      "source_version": "62aca180",
+      "content_hash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs: require raw benchstat output and commit links in AGENTS.md (#20332)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2206,
           "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)",
@@ -49742,7 +49747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:14:37.911Z",
+      "verified_at": "2026-11-05T18:53:43.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56745,15 +56750,15 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "b4f0d123",
-      "content_hash": "4e4f067db799fc5fe7df9513dc18c36eb6c4b8742328a51afd38b87ffbe647ac",
+      "source_version": "6882e1ac",
+      "content_hash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
         {
           "number": 2533,
           "title": "make terminal probe timeout earlier to startup (#4432)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3361,
@@ -56796,7 +56801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:34:35.590Z",
+      "verified_at": "2026-11-05T18:53:36.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110078,13 +110083,13 @@
       "rule_number": 2533,
       "title": "make terminal probe timeout earlier to startup (#4432)",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "9561890a",
+      "source_version": "6882e1ac",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T11:21:32.983Z"
+      "verified_at": "2026-11-05T18:53:36.436Z"
     },
     "rule-2534": {
       "learning_id": "rule-2534",
