@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T12:29:31.078Z",
-  "total_cycles_completed": 7629,
-  "total_learnings_persisted": 7629,
-  "total_rules_promoted": 7284,
+  "last_updated": "2026-11-05T12:36:40.836Z",
+  "total_cycles_completed": 7632,
+  "total_learnings_persisted": 7632,
+  "total_rules_promoted": 7286,
   "history": [
-    {
-      "timestamp": "2026-11-05T02:11:36.036Z",
-      "repository": "MochiDiffusion/MochiDiffusion",
-      "learningId": "learn-github-mochidiffusion-mochidiffusion",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:11:38.369Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:18:03.906Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T02:18:06.270Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T12:29:31.078Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:36:26.432Z",
+      "repository": "N1nEmAn/sapper-v2",
+      "learningId": "learn-github-n1neman-sapper-v2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:36:28.952Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:36:40.836Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

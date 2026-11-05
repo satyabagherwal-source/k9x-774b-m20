@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T12:29:31.088Z",
+  "last_updated": "2026-11-05T12:36:40.847Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
-      "verified_at": "2026-10-31T22:05:19.813Z",
+      "content_hash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
+      "verified_at": "2026-11-05T12:36:28.955Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T22:05:19.813Z"
+      "last_updated": "2026-11-05T12:36:28.955Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "f20228f1c0d826c6ac667be5db911e4b3648d0405b0cb92d182fb0dc61f224ac",
-      "verified_at": "2026-11-04T22:34:51.878Z",
+      "content_hash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
+      "verified_at": "2026-11-05T12:36:40.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:34:51.878Z"
+      "last_updated": "2026-11-05T12:36:40.846Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -18014,6 +18014,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T06:43:58.369Z"
+    },
+    "N1nEmAn/sapper-v2": {
+      "repository": "N1nEmAn/sapper-v2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-n1neman-sapper-v2",
+      "content_hash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
+      "verified_at": "2026-11-05T12:36:26.441Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T12:36:26.441Z"
     }
   },
   "repos": {

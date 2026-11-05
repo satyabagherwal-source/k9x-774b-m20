@@ -7652,3 +7652,6 @@
 | `CYCLE-20261105-VPQW` | `2026-11-05T12:29:16.184Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`0a63b3d9...`) |
 | `CYCLE-20261105-VYAK` | `2026-11-05T12:29:27.260Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7219` | Yes (`10c44bc1...`) |
 | `CYCLE-20261105-W18E` | `2026-11-05T12:29:31.070Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7220` | Yes (`6920cba9...`) |
+| `CYCLE-20261105-4XPZ` | `2026-11-05T12:36:26.423Z` | `N1nEmAn/sapper-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7221` | Yes (`924b6a91...`) |
+| `CYCLE-20261105-4ZNY` | `2026-11-05T12:36:28.942Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`37b0b002...`) |
+| `CYCLE-20261105-58U3` | `2026-11-05T12:36:40.827Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7222` | Yes (`631644b5...`) |

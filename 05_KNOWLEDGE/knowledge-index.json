@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:29:31.011Z",
-  "total_verified_learnings": 1215,
+  "last_updated": "2026-11-05T12:36:40.747Z",
+  "total_verified_learnings": 1216,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30045,7 +30045,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
+      "content_hash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -30115,7 +30115,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-31T22:05:19.701Z",
+      "verified_at": "2026-11-05T12:36:28.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63393,8 +63393,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "c7fc4d48",
-      "content_hash": "f20228f1c0d826c6ac667be5db911e4b3648d0405b0cb92d182fb0dc61f224ac",
+      "source_version": "be6d4c52",
+      "content_hash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -63462,6 +63462,11 @@
           "number": 7001,
           "title": "feat!: remove daemon pull through crane (#5568)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7222,
+          "title": "deps): bump the k8s group across 1 directory with 6 updates (#5611)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63469,7 +63474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:34:51.743Z",
+      "verified_at": "2026-11-05T12:36:40.725Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182317,6 +182322,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:29:30.995Z"
+    },
+    "learn-github-n1neman-sapper-v2": {
+      "learning_id": "learn-github-n1neman-sapper-v2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "N1nEmAn/sapper-v2",
+      "repository": "N1nEmAn/sapper-v2",
+      "slug": "n1neman-sapper-v2",
+      "platform": "github",
+      "source_url": "https://github.com/N1nEmAn/sapper-v2",
+      "source_version": "c91881dc",
+      "content_hash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
+      "dossier_path": "07_PROJECT_LEARNING/n1neman-sapper-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/n1neman-sapper-v2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 7221,
+          "title": "sapper-hook.py imports renamed module — hooks now actually execute (#2)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T12:36:26.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7221": {
+      "learning_id": "rule-7221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7221,
+      "title": "sapper-hook.py imports renamed module — hooks now actually execute (#2)",
+      "source_url": "https://github.com/N1nEmAn/sapper-v2",
+      "source_version": "c91881dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:36:26.323Z"
+    },
+    "rule-7222": {
+      "learning_id": "rule-7222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7222,
+      "title": "deps): bump the k8s group across 1 directory with 6 updates (#5611)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "be6d4c52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:36:40.725Z"
     }
   },
   "aliases": {

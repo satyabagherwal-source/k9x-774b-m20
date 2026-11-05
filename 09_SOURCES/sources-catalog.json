@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "e5cbc5aafd1e84cc35d75c4c6ef3ebeb06a037b6cc990bc1cb0858d4a28bd784",
-    "lastHarvestedAt": "2026-10-31T22:05:19.804Z",
+    "contentHash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
+    "lastHarvestedAt": "2026-11-05T12:36:28.946Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "c7fc4d48",
+    "sourceVersion": "be6d4c52",
     "license": "Apache-2.0",
-    "contentHash": "f20228f1c0d826c6ac667be5db911e4b3648d0405b0cb92d182fb0dc61f224ac",
-    "lastHarvestedAt": "2026-11-04T22:34:51.861Z",
+    "contentHash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
+    "lastHarvestedAt": "2026-11-05T12:36:40.831Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -11968,5 +11968,15 @@
     "contentHash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
     "lastHarvestedAt": "2026-11-05T06:43:58.352Z",
     "learningId": "learn-github-apache-pinot"
+  },
+  "n1neman-sapper-v2": {
+    "repository": "N1nEmAn/sapper-v2",
+    "platform": "github",
+    "sourceUrl": "https://github.com/N1nEmAn/sapper-v2",
+    "sourceVersion": "c91881dc",
+    "license": "MIT",
+    "contentHash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
+    "lastHarvestedAt": "2026-11-05T12:36:26.426Z",
+    "learningId": "learn-github-n1neman-sapper-v2"
   }
 }

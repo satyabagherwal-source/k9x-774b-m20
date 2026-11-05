@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `c7fc4d48`  
+> **Source Version**: `be6d4c52`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:34:51.054Z  
+> **Timestamp**: 2026-11-05T12:36:40.110Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:34:51.047Z  
+> **Harvest Timestamp**: 2026-11-05T12:36:40.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2084 stars
+- **Stars / Engagement**: 2085 stars
 
 ---
 
@@ -1459,17 +1459,16 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5611** (2026-11-05): **chore(deps): bump the k8s group across 1 directory with 6 updates**
+  *Symptoms*: Bumps the k8s group with 6 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [k8s.io/api](https://github.com/kubernetes/api) | `0.37.1` | `0.37.2` | | [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.1` | `0.37.2` | | [k8s.io/client-go](https://github.com/kubernetes/client-go) | `0.37.1` | `0.37.2` | | [k8s.io/kubectl](https://github.com/kubernetes/kubectl) | `0.37.1` | `0.37.2` | | [k8s.io/cli-runtime](https://github.com/kubernetes/cli-runtime) | `0.37.1` | `0.37.2` | | [k8s.io/component-helpers](https://github.com/kubernetes/component-helpers) | `0.37.1` | `0.37.2` |   Updates `k8s.io/api` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/api/commit/1bc0c529309723075aed339d50f16d4b311d908d"><code>1bc0c52</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/api/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/apimachinery/commit/97adf147c7378229d45db0fc7511af84d0c3c092"><code>97adf14</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/client-go` from 0.37.1 to 0.37.2 <details> <summary>Commits</
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | c1324a63606ed99506e76582c8b7d65478e23bd4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aebd1cfb32502a76deaa441 |
+
 - **Issue #5607** (2026-11-04): **docs: update custom init package tutorial**
   *Symptoms*: ## Description  Refresh the Custom Init Packages tutorial for current Zarf behavior and structured logging.  The tutorial now uses the current `packages/init/v1alpha1` package definition, documents the supported image and registry override configuration, and removes obsolete package-creation confirmation and pre-v0.26 guidance.  The troubleshooting example is shared with Tutorial 0 through `package_create_error.html` and was updated in the earlier package-creation tutorial PR, so it is unchanged here.  ## Screenshots <img width="867" height="687" alt="create-custom-init" src="https://github.com/user-attachments/assets/a8638996-a81e-4eff-ae1e-78cd3025006f" /> <img width="850" height="189" alt="customize" src="https://github.com/user-attachments/assets/31dfe114-6a88-4b7a-a4c9-a551a9ecdff6" /> <img width="852" height="556" alt="swapping-images-01" src="https://github.com/user-attachments/assets/57ce6763-99df-4e39-8017-b69e0e3cb8e6" /> <img width="829" height="740" alt="swapping-images-02" src="https://github.com/user-attachments/assets/a2503cc8-246f-4d83-99c0-8c7b4f3ed727" /> <img width="831" height="582" alt="swapping-images-03" src="https://github.com/user-attachments/assets/4180d694-4945-4452-a67f-45ea08447841" /> <img width="846" height="122" alt="removing-components" src="https://github.com/user-attachments/assets/b40ac6fa-5a8c-4f2f-8b29-25c8ea418498" />   ## Related Issue  Relates to #4057  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x]
   **Post-Mortem & Fix Analysis**:
   > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 1cb060b5bde4c094d93f5fc5c247785f32b01da8 |
   > Hi @shaversj appreciate the PR, but I actually stood up a PR yesterday to update this https://github.com/zarf-dev/zarf/pull/5598 as it should now reflect v1beta1, so I am closing this out. 
-
-- **Issue #5605** (2026-11-04): **feat!: remove deprecated commands and flags**
-  *Symptoms*: ## Description  This removes all the deprecated commands and flags that have a direct replacement. Doesn't touch tools that are not in Zarf's control.  The only flags that remain are `--signing-key` and `--signing-key-pass` on `zarf package publish` because otherwise skeletons don't have a way to be signed. These can be removed alongside v1alpha1.  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 54a70ec6d6ad7066d8bc6e2edcc21e6aa4dd499a | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aeb509b20494e239ecf19cd |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :x: Patch coverage is `31.42857%` with `24 lines` in your changes missing coverage. Please review.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Patch % | Lines | |---|---|---| | [src/cmd/connect.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?src=pr&el=tree&filepath=src%2Fcmd%2Fconnect.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2NtZC9jb25uZWN0Lmdv) | 10.00% | [9 Missing :warning: ](https://app.codecov.io/gh/zarf-dev/zarf/pull/5605?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1486,657 +1485,346 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7fc4d48` (2026-11-04)
-**Commit Message**: feat!: remove daemon pull through crane (#5568)
+### Incident Patch 1: `be6d4c52` (2026-11-05)
+**Commit Message**: chore(deps): bump the k8s group across 1 directory with 6 updates (#5611)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `src/pkg/feature/feature.go` (modified, +5/-6)
+**File**: `go.mod` (modified, +8/-8)
 ```diff
-@@ -248,12 +248,11 @@ func init() {
- 			Stage:   Beta,
- 		},
- 		{
--			Name: DockerDaemonDirectPull,
--			Description: "Saves images from the local Docker daemon directly via the engine's OCI image export " +
--				"disabling this feature falls back to pulling with Crane.",
--			Enabled: true,
--			Since:   "v0.80.0",
--			Stage:   GA,
-+			Name:        DockerDaemonDirectPull,
-+			Description: "Saves daemon source through direct Docker API interactions. Disabling once enabled Crane daemon pulls, but no longer has any effect",
-+			Enabled:     true,
-+			Since:       "v0.80.0",
-+			Stage:       GA,
- 		},
- 		{
- 			Name:        SBOMViewer,
+@@ -50,11 +50,11 @@ require (
+ 	golang.org/x/crypto v0.57.0
+ 	golang.org/x/sync v0.24.0
+ 	helm.sh/helm/v4 v4.3.0
+-	k8s.io/api v0.37.1
+-	k8s.io/apimachinery v0.37.1
+-	k8s.io/client-go v0.37.1
++	k8s.io/api v0.37.2
++	k8s.io/apimachinery v0.37.2
++	k8s.io/client-go v0.37.2
+ 	k8s.io/klog/v2 v2.140.0
+-	k8s.io/kubectl v0.37.1
++	k8s.io/kubectl v0.37.2
+ 	k8s.io/streaming v0.37.2
+ 	oras.land/oras-go/v2 v2.6.2
+ 	sigs.k8s.io/cli-utils v0.37.2
+@@ -253,7 +253,7 @@ require (
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	helm.sh/helm/v3 v3.21.3 // indirect
+ 	howett.net/plist v1.0.1 // indirect
+-	k8s.io/component-base v0.37.1 // indirect
++	k8s.io/component-base v0.37.2 // indirect
+ 	modernc.org/gc/v3 v3.1.4 // indirect
+ 	modernc.org/strutil v1.2.1 // indirect
+ 	modernc.org/token v1.1.0 // indirect
+@@ -631,10 +631,10 @@ require (
+ 	gorm.io/gorm v1.31.1 // indirect
+ 	k8s.io/apiextensions-apiserver v0.37.0 // indirect
+ 	k8s.io/apiserver v0.37.0 // indirect
+-	k8s.io/cli-runtime v0.37.1
+-	k8s.io/component-helpers v0.37.1
++	k8s.io/cli-runtime v0.37.2
++	k8s.io/component-helpers v0.37.2
+ 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
+-	k8s.io/metrics v0.37.1 // indirect
++	k8s.io/metrics v0.37.2 // indirect
+ 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+ 	modernc.org/libc v1.74.4 // indirect
+ 	modernc.org/mathutil v1.7.1 // indirect
 ```
 
-**File**: `src/pkg/images/pull.go` (modified, +13/-122)
+**File**: `go.sum` (modified, +16/-16)
 ```diff
-@@ -19,17 +19,11 @@ import (
- 	"github.com/docker/cli/cli/command"
- 	"github.com/docker/cli/cli/context/docker"
- 	"github.com/docker/cli/cli/flags"
--	"github.com/google/go-containerregistry/pkg/name"
--	cranev1 "github.com/google/go-containerregistry/pkg/v1"
--	"github.com/google/go-containerregistry/pkg/v1/daemon"
--	"github.com/google/go-containerregistry/pkg/v1/empty"
--	clayout "github.com/google/go-containerregistry/pkg/v1/layout"
- 	"github.com/mholt/archives"
- 	"github.com/moby/moby/client"
- 	"github.com/moby/moby/client/pkg/versions"
- 	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/config"
--	"github.com/zarf-dev/zarf/src/internal/checksum"
- 	"github.com/zarf-dev/zarf/src/pkg/logger"
- 	"golang.org/x/sync/errgroup"
- 	"oras.land/oras-go/v2"
-@@ -39,7 +33,6 @@ import (
- 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
- 	"github.com/zarf-dev/zarf/src/internal/dns"
- 	"github.com/zarf-dev/zarf/src/pkg/archive"
--	"github.com/zarf-dev/zarf/src/pkg/feature"
- 	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 	orasCache "github.com/zarf-dev/zarf/src/pkg/oci/cache"
- 	"github.com/zarf-dev/zarf/src/pkg/ocischeme"
-@@ -350,40 +343,35 @@ func pullFromDockerDaemon(ctx context.Context, daemonImages []imageWithOverride,
- 	defer func() {
- 		err = errors.Join(err, cli.Close())
- 	}()
--	// Saving images directly from the Docker daemon's OCI image export is faster and simpler than Crane, but it
--	// requires Docker engine v25.0+, the first version to export the OCI layout format. For older versions
--	// or if the feature flag is disabled, we fall back to Crane.
--	directPull := feature.IsEnabled(feature.DockerDaemonDirectPull) && daemonSupportsOCIExport(ctx, cli)
-+	if err := checkDaemonOCIExportSupport(ctx, cli); err != nil {
-+		return nil, err
-+	}
- 	for index, daemonImage := range daemonImages {
--		var pullErr error
--		if directPull {
--			pullErr = saveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count)
--		} else {
--			pullErr = craneSaveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count)
--		}
--		if pullErr != nil {
--			return nil, pullErr
-+		if err := saveImageFromDockerDaemon(ctx, cli, dst, daemonImage, arch, concurrency, index+1, count); err != nil {
-+			return nil, err
- 		}
- 		pulledImages = append(pulledImages, PulledImage{Image: daemonImage.request.Image})
- 	}
- 
- 	return pulledImages, nil
- }
- 
--// minDockerVersionForOCIExport is the first Docker engine version (released Jan 2024) to export images in the OCI
--// layout format via ImageSave.
-+// minDockerVersionForOCIExport is the first Docker engine version to export images in OCI layout format via ImageSave.
- var minDockerVersionForOCIExport = semver.MustParse("25.0.0")
- 
--func daemonSupportsOCIExport(ctx context.Context, cli *client.Client) bool {
-+func checkDaemonOCIExportSupport(ctx context.Context, cli *client.Client) error {
- 	v, err := cli.ServerVersion(ctx, client.ServerVersionOptions{})
- 	if err != nil {
--		return false
-+		return fmt.Errorf("failed to get Docker server version: %w", err)
- 	}
- 	ver, err := semver.NewVersion(v.Version)
- 	if err != nil {
--		return false
-+		return fmt.Errorf("failed to parse Docker server version %q: %w", v.Version, err)
-+	}
-+	if ver.LessThan(minDockerVersionForOCIExport) {
-+		return fmt.Errorf("pulling images from the Docker daemon requires Docker >=%s; found %s", minDockerVersionForOCIExport, v.Version)
- 	}
--	return !ver.LessThan(minDockerVersionForOCIExport)
-+	return nil
- }
- 
- // saveImageFromDockerDaemon exports a single image from the Docker daemon via the engine's OCI image export
-@@ -438,103 +426,6 @@ func saveImageFromDockerDaemon(ctx context.Context, cli *client.Client, dst *oci
- 	return err
- }
- 
--// craneSaveImageFromDockerDaemon exports a single image from the Docker daemon using Crane and copies it into dst.
--// Crane handles the older, pre-OCI-layout Docker export formats
--func craneSaveImageFromDockerDaemon(ctx context.Context, cli *client.Client, dst *oci.Store, daemonImage imageWithOverride, arch string, concurrency, index, count int) (err error) {
--	l := logger.From(ctx)
--	l.Warn("pulling from the Docker daemon using the legacy method. This method will be removed in Zarf v1.0. Upgrade Docker to >=v25.0.0 for continued daemon functionality")
--	tmpDir, err := utils.MakeTempDir(config.CommonOptions.TempDirectory)
--	if err != nil {
--		return fmt.Errorf("failed to make temp directory: %w", err)
--	}
--	defer func() {
--		err = errors.Join(err, os.RemoveAll(tmpDir))
--	}()
--	reference, err := name.ParseReference(daemonImage.overridden.Reference)
--	if err != nil {
--		return fmt.Errorf("failed to parse reference: %w", err)
--	}
--	// Use unbuffered opener to avoid OOM Kill issues https://github.com/zarf-dev/zarf/issues/1214.
--	// This will also take forever to load large images.
--	img, err := daemon.Image(reference, daemon.WithUnbufferedOpener(), daemon.WithClient(cli))
--	if err != nil {
--		return fmt.Errorf("failed to load from docker daemon: 
+@@ -2403,30 +2403,30 @@ honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9
+ honnef.co/go/tools v0.0.1-2020.1.4/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
+ howett.net/plist v1.0.1 h1:37GdZ8tP09Q35o9ych3ehygcsL+HqKSwzctveSlarvM=
+ howett.net/plist v1.0.1/go.mod h1:lqaXoTrLY4hg8tnEzNru53gicrbv7rrk+2xJA/7hw9g=
+-k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
+-k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
++k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
++k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
+ k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
+ k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
+-k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
+-k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
++k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
++k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
+ k8s.io/apiserver v0.37.0 h1:TXg7OxsOWrAH8J4Zi/gBAZuMw1Dfdd+6cca2h4qjRqo=
+ k8s.io/apiserver v0.37.0/go.mod h1:OddHDF4gy9qyIb8o/3+qaeP6S0vEObWLgOygVqXksv0=
+-k8s.io/cli-runtime v0.37.1 h1:3mir5bM4XjMJHW3SMRk++3Ylf4YQne0XFFsW+IGT85U=
+-k8s.io/cli-runtime v0.37.1/go.mod h1:g3VQOm71f//aNbp79g0az9jBRTrvPjAHz7WxVysbZ4M=
+-k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
+-k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
+-k8s.io/component-base v0.37.1 h1:93DMmlENnK7gNLkL4pMqLO5M/HVf3p3sM4q/GasLveY=
+-k8s.io/component-base v0.37.1/go.mod h1:bBrdziT4dreQG5lzTaPVxBwsZe1oxphG+ZVdD56dQWQ=
+-k8s.io/component-helpers v0.37.1 h1:V6ueiH2SBqpZil1X9+uMK8GAwsGYPVfoRN9eA5vY2G8=
+-k8s.io/component-helpers v0.37.1/go.mod h1:Ib5+txJA7lG9/xCdRrPshX8GnRRTXPElxtxo+bFQ0Y8=
++k8s.io/cli-runtime v0.37.2 h1:EpE50B2FmXz8SxkYqoS2q0piDk1qe7g9dGZGIW+apws=
++k8s.io/cli-runtime v0.37.2/go.mod h1:0IDMrrzVnj1cqBlCll8oGSOb2js6mSy0ALtbh0MsYyc=
++k8s.io/client-go v0.37.2 h1:sgFtyRZukGkOrsu+QgS7LYnbFFJ5ut3MchdBNduD//E=
++k8s.io/client-go v0.37.2/go.mod h1:bo3LFC8YbCtKFPX21Yj8puMsoJLAv/+SvuOODma0s54=
++k8s.io/component-base v0.37.2 h1:Ia9IKTg1yWrUntJU5lVetapkC9pXlLg9L6P3R1IkbcY=
++k8s.io/component-base v0.37.2/go.mod h1:qq+ueHZyLfzRJzxyDoyxHWNhF1JPv4zm3hcaddXWDvY=
++k8s.io/component-helpers v0.37.2 h1:TQBsmHFs8gpfiyPFvyMaxqTgojtcXR2mVj+knnycln0=
++k8s.io/component-helpers v0.37.2/go.mod h1:HZMT6lvkix4wkgYYXZJ/45BbYM1TZoOlANisHn7FoVY=
+ k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
+ k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
+ k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
+ k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
+-k8s.io/kubectl v0.37.1 h1:n1VCIntOJiX943uByXCThSZQmE+4v9jGS8S9u94/aHU=
+-k8s.io/kubectl v0.37.1/go.mod h1:66cc4Bz8PxBTxlrHzBuzXEzGIytAnNasKQPeEcpuaV8=
+-k8s.io/metrics v0.37.1 h1:5lc7WH6ljoxaJ4dK6UHwskVsyH7aNdt/ajo6CLQ1l8Q=
+-k8s.io/metrics v0.37.1/go.mod h1:mpnoLxJYJdBQoxPlgi1Y+gk/bxIuXf5SbS/8jkYzqEo=
++k8s.io/kubectl v0.37.2 h1:AGGIhrGSsXtrL6BZWf7Hp2K9yB+2qdx7wovsOP1MiCg=
++k8s.io/kubectl v0.37.2/go.mod h1:0nyX9up426PgGMcGkWjF1DeipLkd41eKZHoLDgop20k=
++k8s.io/metrics v0.37.2 h1:CeIZd07BO8vuraDyd0ooQmsLi2Rutj76zThEf72rcWU=
++k8s.io/metrics v0.37.2/go.mod h1:9HzCbIyPruAmoKmjoBjLEYAlLhAapAj1vvzkbhBDg6E=
+ k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
+ k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
+ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
 ```
 
-**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/README.md` (removed, +0/-11)
+**File**: `vendor/modules.txt` (modified, +8/-8)
 ```diff
-@@ -1,11 +0,0 @@
--# `daemon`
--
--[![GoDoc](https://godoc.org/github.com/google/go-containerregistry/pkg/v1/daemon?status.svg)](https://godoc.org/github.com/google/go-containerregistry/pkg/v1/daemon)
--
--The `daemon` package enables reading/writing images from/to the docker daemon.
--
--It is not fully fleshed out, but is useful for interoperability, see various issues:
--
--* https://github.com/google/go-containerregistry/issues/205
--* https://github.com/google/go-containerregistry/issues/552
--* https://github.com/google/go-containerregistry/issues/627
-```
-
-**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/doc.go` (removed, +0/-17)
-```diff
-@@ -1,17 +0,0 @@
--// Copyright 2018 Google LLC All Rights Reserved.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//    http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--// Package daemon provides facilities for reading/writing v1.Image from/to
--// a running daemon.
--package daemon
-```
-
-**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/image.go` (removed, +0/-378)
-```diff
-@@ -1,378 +0,0 @@
--// Copyright 2018 Google LLC All Rights Reserved.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//    http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package daemon
--
--import (
--	"bytes"
--	"context"
--	"io"
--	"os"
--	"runtime"
--	"sync"
--	"time"
--
--	api "github.com/moby/moby/api/types/image"
--
--	"github.com/google/go-containerregistry/pkg/name"
--	v1 "github.com/google/go-containerregistry/pkg/v1"
--	"github.com/google/go-containerregistry/pkg/v1/tarball"
--	"github.com/google/go-containerregistry/pkg/v1/types"
--	specs "github.com/moby/docker-image-spec/specs-go/v1"
--)
--
--type image struct {
--	ref          name.Reference
--	opener       *imageOpener
--	tarballImage v1.Image
--	computed     bool
--	id           *v1.Hash
--	configFile   *v1.ConfigFile
--
--	once sync.Once
--	err  error
--}
--
--type imageOpener struct {
--	ref name.Reference
--	ctx context.Context
--
--	bufferMode bufferMode
--	client     Client
--
--	once    sync.Once
--	bytes   []byte
--	tmpPath string
--	err     error
--}
--
--func (i *imageOpener) saveImage() (io.ReadCloser, error) {
--	return i.client.ImageSave(i.ctx, []string{i.ref.Name()})
--}
--
--func (i *imageOpener) bufferedOpener() (io.ReadCloser, error) {
--	// Store the tarball in memory and return a new reader into the bytes each time we need to access something.
--	i.once.Do(func() {
--		i.bytes, i.err = func() ([]byte, error) {
--			rc, err := i.saveImage()
--			if err != nil {
--				return nil, err
--			}
--			defer rc.Close()
--
--			return io.ReadAll(rc)
--		}()
--	})
--
--	// Wrap the bytes in a ReadCloser so it looks like an opened file.
--	return io.NopCloser(bytes.NewReader(i.bytes)), i.err
--}
--
--func (i *imageOpener) fileBackedOpener() (io.ReadCloser, error) {
--	i.once.Do(func() {
--		rc, err := i.saveImage()
--		if err != nil {
--			i.err = err
--			return
--		}
--		defer rc.Close()
--
--		f, err := os.CreateTemp("", "go-containerregistry-*.tar")
--		if err != nil {
--			i.err = err
--			return
--		}
--
--		if _, err := io.Copy(f, rc); err != nil {
--			f.Close()
--			os.Remove(f.Name())
--			i.err = err
--			return
--		}
--		f.Close()
--		i.tmpPath = f.Name()
--
--		runtime.AddCleanup(i, func(path string) {
--			_ = os.Remove(path)
--		}, i.tmpPath)
--	})
--
--	if i.err != nil {
--		return nil, i.err
--	}
--	return os.Open(i.tmpPath)
--}
--
--func (i *imageOpener) opener() tarball.Opener {
--	switch i.bufferMode {
--	case bufferMemory:
--		return i.bufferedOpener
--	case bufferFile:
--		return i.fileBackedOpener
--	default:
--		return i.saveImage
--	}
--}
--
--// Image provides access to an image reference from the Docker daemon,
--// applying functional options to the underlying imageOpener before
--// resolving the reference into a v1.Image.
--func Image(ref name.Reference, options ...Option) (v1.Image, error) {
--	o, err := makeOptions(options...)
--	if err != nil {
--		return nil, err
--	}
--
--	i := &imageOpener{
--		ref:        ref,
--		bufferMode: o.bufferMode,
--		client:     o.client,
--		ctx:        o.ctx,
--	}
--
--	img := &image{
--		ref:    ref,
--		opener: i,
--	}
--
--	// Eagerly fetch Image ID to ensure it actually exists.
--	// https://github.com/google/go-containerregistry/issues/1186
--	id, err := img.ConfigName()
--	if err != nil {
--		return nil, err
--	}
--	img.id = &id
--
--	return img, nil
--}
--
--func (i *image) initialize() error {
--	// Don't re-initialize tarball if already initialized.
--	if i.tarballImage == nil {
--		i.once.Do(func() {
--			i.tarballImage, i.err = tarball.Image(i.opener.opener(), nil)
--		})
--	}
--	return i.err
--}
--
--func (i *image) compute() error {
--	// Don't re-compute if already computed.
--	if i.computed {
--		return nil
--	}
--
--	inspect, err := i.opener.client.ImageInspect(i.opener.ctx, i.ref.String())
--	if err != nil {
--		return err
--	}
--
--	configFile, err := i.computeConfigFile(inspect.InspectResponse)
--	if err != nil {
--		return err
--	}
--
--	i.configFile = configFile
--	i.computed = true
--
--	return nil
--}
--
--func (i *image) Layers() ([]v1.Layer, error) {
--	if err := i.initialize(); err != nil {
--		return nil, err
--	}
--	return i.tarballImage.Layers()
--}
--
--func (i *image) MediaType() (types.MediaType, error) {
--	if err := i.initialize(); err != nil {
--		return "", err
--	}
--	return i.tarballImage.MediaType()
--}
--
--func (i *image) Size() (int64, error) {
--	if err := i.initialize(); err != nil {
--		return 0, err
--	}
--	return i.tarballImage.Size()
--}
--
--func (i *image) ConfigName() (v1.Hash, error) {
--	if i.id != nil {
--		return *i.id, nil
--	}
--	res, err := i.opener.client.ImageInspect(i.opener.ctx, i.ref.String())
--	if err != nil {
--		return v1.Hash{}, err
--	}
--	ret
-```
-
-**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/options.go` (removed, +0/-125)
-```diff
-@@ -1,125 +0,0 @@
--// Copyright 2018 Google LLC All Rights Reserved.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//    http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package daemon
--
--import (
--	"context"
--	"io"
--
--	"github.com/moby/moby/client"
--)
--
--// ImageOption is an alias for Option.
--// Deprecated: Use Option instead.
--type ImageOption Option
--
--// Option is a functional option for daemon operations.
--type Option func(*options)
--
--// bufferMode controls how the image tarball is buffered.
--type bufferMode int
--
--const (
--	bufferMemory bufferMode = iota // default: buffer entire image in memory
--	bufferNone                     // no buffering: re-save on each access
--	bufferFile                     // buffer to a temp file on disk
--)
--
--type options struct {
--	ctx        context.Context
--	client     Client
--	bufferMode bufferMode
--}
--
--var defaultClient = func() (Client, error) {
--	return client.New(client.FromEnv)
--}
--
--func makeOptions(opts ...Option) (*options, error) {
--	o := &options{
--		bufferMode: bufferMemory,
--		ctx:        context.Background(),
--	}
--	for _, opt := range opts {
--		opt(o)
--	}
--
--	if o.client == nil {
--		apiClient, err := defaultClient()
--		if err != nil {
--			return nil, err
--		}
--		o.client = apiClient
--	}
--	_, _ = o.client.Ping(o.ctx, client.PingOptions{
--		NegotiateAPIVersion: true,
--	})
--
--	return o, nil
--}
--
--// WithBufferedOpener buffers the entire image into memory.
--func WithBufferedOpener() Option {
--	return func(o *options) {
--		o.bufferMode = bufferMemory
--	}
--}
--
--// WithUnbufferedOpener streams the image to avoid buffering it.
--// Each access triggers a new image save.
--func WithUnbufferedOpener() Option {
--	return func(o *options) {
--		o.bufferMode = bufferNone
--	}
--}
--
--// WithFileBufferedOpener buffers the image to a temporary file on disk.
--// This avoids holding the entire image in memory while still only
--// performing a single image save. The temporary file is cleaned up via
--// runtime.AddCleanup on the imageOpener.
--func WithFileBufferedOpener() Option {
--	return func(o *options) {
--		o.bufferMode = bufferFile
--	}
--}
--
--// WithClient is a functional option to allow injecting a docker client.
--//
--// By default, github.com/moby/moby/client.FromEnv is used.
--func WithClient(client Client) Option {
--	return func(o *options) {
--		o.client = client
--	}
--}
--
--// WithContext is a functional option to pass through a context.Context.
--//
--// By default, context.Background() is used.
--func WithContext(ctx context.Context) Option {
--	return func(o *options) {
--		o.ctx = ctx
--	}
--}
--
--// Client represents the subset of a docker client that the daemon
--// package uses.
--type Client interface {
--	Ping(ctx context.Context, options client.PingOptions) (client.PingResult, error)
--	ImageSave(ctx context.Context, images []string, _ ...client.ImageSaveOption) (client.ImageSaveResult, error)
--	ImageLoad(ctx context.Context, input io.Reader, _ ...client.ImageLoadOption) (client.ImageLoadResult, error)
--	ImageTag(ctx context.Context, options client.ImageTagOptions) (client.ImageTagResult, error)
--	ImageInspect(ctx context.Context, image string, _ ...client.ImageInspectOption) (client.ImageInspectResult, error)
--	ImageHistory(ctx context.Context, image string, _ ...client.ImageHistoryOption) (client.ImageHistoryResult, error)
--}
-```
-
-**File**: `vendor/github.com/google/go-containerregistry/pkg/v1/daemon/write.go` (removed, +0/-88)
-```diff
-@@ -1,88 +0,0 @@
--// Copyright 2018 Google LLC All Rights Reserved.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//    http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package daemon
--
--import (
--	"fmt"
--	"io"
--
--	"github.com/google/go-containerregistry/pkg/name"
--	v1 "github.com/google/go-containerregistry/pkg/v1"
--	"github.com/google/go-containerregistry/pkg/v1/tarball"
--	"github.com/moby/moby/client"
--)
--
--// Tag adds a tag to an already existent image.
--func Tag(src, dest name.Tag, options ...Option) error {
--	o, err := makeOptions(options...)
--	if err != nil {
--		return err
--	}
--
--	_, err = o.client.ImageTag(o.ctx, client.ImageTagOptions{
--		Source: src.String(),
--		Target: dest.String(),
--	})
--	return err
--}
--
--// Write saves the image into the daemon as the given tag.
--func Write(tag name.Tag, img v1.Image, options ...Option) (string, error) {
--	o, err := makeOptions(options...)
--	if err != nil {
--		return "", err
--	}
--
--	// If we already have this image by this image ID, we can skip loading it.
--	id, err := img.ConfigName()
--	if err != nil {
--		return "", fmt.Errorf("computing image ID: %w", err)
--	}
--	if resp, err := o.client.ImageInspect(o.ctx, id.String()); err == nil {
--		want := tag.String()
--
--		// If we already have this tag, we can skip tagging it.
--		for _, have := range resp.RepoTags {
--			if have == want {
--				return "", nil
--			}
--		}
--
--		_, err = o.client.ImageTag(o.ctx, client.ImageTagOptions{
--			Source: id.String(),
--			Target: want,
--		})
--
--		return "", err
--	}
--
--	pr, pw := io.Pipe()
--	go func() {
--		_ = pw.CloseWithError(tarball.Write(tag, img, pw))
--	}()
--
--	// write the image in docker save format first, then load it
--	resp, err := o.client.ImageLoad(o.ctx, pr, client.ImageLoadWithQuiet(false))
--	if err != nil {
--		return "", fmt.Errorf("error loading image: %w", err)
--	}
--	defer resp.Close()
--	b, err := io.ReadAll(resp)
--	response := string(b)
--	if err != nil {
--		return response, fmt.Errorf("error reading load response body: %w", err)
--	}
--	return response, nil
--}
-```
-
-**File**: `vendor/modules.txt` (modified, +0/-1)
-```diff
-@@ -1918,7 +1918,6 @@ github.com/google/go-containerregistry/pkg/name
- github.com/google/go-containerregistry/pkg/registry
- github.com/google/go-containerregistry/pkg/v1
- github.com/google/go-containerregistry/pkg/v1/cache
--github.com/google/go-containerregistry/pkg/v1/daemon
- github.com/google/go-containerregistry/pkg/v1/empty
- github.com/google/go-containerregistry/pkg/v1/google
- github.com/google/go-containerregistry/pkg/v1/layout
+@@ -4108,7 +4108,7 @@ helm.sh/helm/v4/pkg/uploader
+ # howett.net/plist v1.0.1
+ ## explicit; go 1.12
+ howett.net/plist
+-# k8s.io/api v0.37.1
++# k8s.io/api v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/api/admission/v1
+ k8s.io/api/admission/v1beta1
+@@ -4174,7 +4174,7 @@ k8s.io/api/storagemigration/v1beta1
+ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
+ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
+ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1
+-# k8s.io/apimachinery v0.37.1
++# k8s.io/apimachinery v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/apimachinery/pkg/api/equality
+ k8s.io/apimachinery/pkg/api/errors
+@@ -4247,13 +4247,13 @@ k8s.io/apimachinery/third_party/forked/golang/reflect
+ # k8s.io/apiserver v0.37.0
+ ## explicit; go 1.26.0
+ k8s.io/apiserver/pkg/endpoints/deprecation
+-# k8s.io/cli-runtime v0.37.1
++# k8s.io/cli-runtime v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/cli-runtime/pkg/genericclioptions
+ k8s.io/cli-runtime/pkg/genericiooptions
+ k8s.io/cli-runtime/pkg/printers
+ k8s.io/cli-runtime/pkg/resource
+-# k8s.io/client-go v0.37.1
++# k8s.io/client-go v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/client-go/applyconfigurations
+ k8s.io/client-go/applyconfigurations/admissionregistration/v1
+@@ -4616,11 +4616,11 @@ k8s.io/client-go/util/keyutil
+ k8s.io/client-go/util/retry
+ k8s.io/client-go/util/watchlist
+ k8s.io/client-go/util/workqueue
+-# k8s.io/component-base v0.37.1
++# k8s.io/component-base v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/component-base/cli/flag
+ k8s.io/component-base/version
+-# k8s.io/component-helpers v0.37.1
++# k8s.io/component-helpers v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/component-helpers/auth/rbac/reconciliation
+ k8s.io/component-helpers/auth/rbac/validation
+@@ -4654,7 +4654,7 @@ k8s.io/kube-openapi/pkg/util
+ k8s.io/kube-openapi/pkg/util/proto
+ k8s.io/kube-openapi/pkg/util/proto/validation
+ k8s.io/kube-openapi/pkg/validation/spec
+-# k8s.io/kubectl v0.37.1
++# k8s.io/kubectl v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/kubectl/pkg/apps
+ k8s.io/kubectl/pkg/cmd
+@@ -4738,7 +4738,7 @@ k8s.io/kubectl/pkg/util/storage
+ k8s.io/kubectl/pkg/util/templates
+ k8s.io/kubectl/pkg/util/term
+ k8s.io/kubectl/pkg/validation
+-# k8s.io/metrics v0.37.1
++# k8s.io/metrics v0.37.2
+ ## explicit; go 1.26.0
+ k8s.io/metrics/pkg/apis/metrics
+ k8s.io/metrics/pkg/apis/metrics/v1
 ```
 
 ---
 
-### Incident Patch 2: `f3961a93` (2026-11-04)
-**Commit Message**: feat!: remove zarf tools registry export (#5562)
+### Incident Patch 2: `8e854f4f` (2026-11-05)
+**Commit Message**: feat!: error when variables are used with v1beta1 (#5606)
 
 Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
+**File**: `AGENTS.md` (modified, +2/-0)
+```diff
+@@ -18,6 +18,8 @@ Zarf is a Go CLI (`main.go`, `go.mod`). Application code under `src/`. Unit test
+ 
+ Write idiomatic Go; `golangci-lint fmt` applies `gofmt` and `goimports`. Keep packages and files lowercase and descriptive; use `PascalCase` for exported identifiers and `camelCase` otherwise. New Go files need the SPDX header. Keep comments concise and focused on intent, not a restatement of code. Handle errors and justify every `//nolint:<linter>` comment.
+ 
++Keep CLI-specific validation and flag names in `src/cmd`. Validation errors outside of `src/cmd` should describe configuration options in API-neutral terms.
++
+ Install hooks with `pre-commit install`; they enforce formatting, linting, credentials checks, and generated schema/docs consistency.
+ 
+ ## Testing Guidelines
+```
 
+**File**: `src/cmd/package.go` (modified, +3/-0)
+```diff
+@@ -541,6 +541,9 @@ func (o *packageDeployOptions) run(cmd *cobra.Command, args []string) (err error
+ }
+ 
+ func deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts packager.DeployOptions, setVariables map[string]string, optionalComponents string) ([]state.DeployedComponent, error) {
++	if err := opts.Validate(pkgLayout.Definition()); err != nil {
++		return nil, err
++	}
+ 	// Intentionally duplicate the deploy override logic here to allow us to render the updated package in confirm below
+ 	if opts.NamespaceOverride != "" {
+ 		if err := pkgLayout.OverrideNamespace(opts.NamespaceOverride); err != nil {
+```
+
+**File**: `src/pkg/packager/deploy.go` (modified, +17/-6)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 
+ 	"github.com/zarf-dev/zarf/src/api"
+ 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
++	"github.com/zarf-dev/zarf/src/api/v1beta1"
+ 	"github.com/zarf-dev/zarf/src/config"
+ 	"github.com/zarf-dev/zarf/src/config/lang"
+ 	"github.com/zarf-dev/zarf/src/internal/checksum"
+@@ -97,6 +98,20 @@ type DeployOptions struct {
+ 	SkipVersionCheck bool
+ }
+ 
++// Validate checks whether the deployment options are supported by the package.
++func (opts DeployOptions) Validate(pkg api.Package) error {
++	if pkg.GetAPIVersion() == v1beta1.APIVersion && len(opts.SetVariables) > 0 {
++		return fmt.Errorf("variables are not supported in v1beta1 packages; use package values instead")
++	}
++	if opts.Connected && pkg.IsInitConfig() {
++		return fmt.Errorf("connected mode is not supported for init packages")
++	}
++	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
++		return fmt.Errorf("skipping architecture checks is not supported for init packages")
++	}
++	return nil
++}
++
+ // deployer tracks mutable fields across deployments. Because components can create a cluster and create state
+ // any of these fields are subject to change from one component to the next
+ type deployer struct {
+@@ -120,12 +135,8 @@ type DeployResult struct {
+ func Deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) (DeployResult, error) {
+ 	start := time.Now()
+ 	pkg := pkgLayout.Definition()
+-	if opts.Connected && pkg.IsInitConfig() {
+-		return DeployResult{}, fmt.Errorf("--connected is not supported for init packages")
+-	}
+-
+-	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
+-		return DeployResult{}, fmt.Errorf("skipping architecture checks is not supported for init packages")
++	if err := opts.Validate(pkg); err != nil {
++		return DeployResult{}, err
+ 	}
+ 
+ 	// Validate operational requirements before proceeding
+```
+
+**File**: `src/pkg/packager/deploy_test.go` (modified, +55/-1)
+```diff
+@@ -31,13 +31,63 @@ import (
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/load"
+ 	"github.com/zarf-dev/zarf/src/pkg/pki"
+ 	"github.com/zarf-dev/zarf/src/pkg/state"
++	"github.com/zarf-dev/zarf/src/pkg/value"
+ 	"github.com/zarf-dev/zarf/src/test/testutil"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/client-go/kubernetes/fake"
+ 	"sigs.k8s.io/cli-utils/pkg/kstatus/status"
+ )
+ 
++func TestDeployVariablesByAPIVersion(t *testing.T) {
++	t.Parallel()
++	for _, tt := range []struct {
++		name       string
++		apiVersion string
++		kind       api.PackageKind
++		variables  map[string]string
++		values     value.Values
++		wantError  bool
++	}{
++		{name: "legacy", variables: map[string]string{"INPUT": "supplied"}},
++		{name: "alpha", apiVersion: v1alpha1.APIVersion, variables: map[string]string{"INPUT": "supplied"}},
++		{name: "beta without variables", apiVersion: v1beta1.APIVersion},
++		{name: "beta empty variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{}},
++		{name: "beta variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
++		{name: "beta empty variable value", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": ""}, wantError: true},
++		{name: "beta init variables", apiVersion: v1beta1.APIVersion, kind: api.ZarfInitConfig, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
++		{name: "beta values", apiVersion: v1beta1.APIVersion, values: value.Values{"input": "supplied"}},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++			ctx := testutil.TestContext(t)
++			kind := tt.kind
++			if kind == "" {
++				kind = api.ZarfPackageConfig
++			}
++			pkg := api.Package{
++				APIVersion: tt.apiVersion,
++				Kind:       kind,
++				Metadata:   api.PackageMetadata{Name: "deploy-variables"},
++			}
++			pkgLayout, err := assemble.AssemblePackage(ctx, &load.ResolvedPackage{Definition: pkg, Resources: load.NewResourceSet(t.TempDir())}, assemble.AssembleOptions{SkipSBOM: true})
++			require.NoError(t, err)
++			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
++
++			result, err := Deploy(ctx, pkgLayout, DeployOptions{SetVariables: tt.variables, Values: tt.values})
++			if tt.wantError {
++				require.ErrorContains(t, err, "variables are not supported in v1beta1 packages")
++				require.ErrorContains(t, err, "use package values instead")
++				return
++			}
++			require.NoError(t, err)
++			if tt.values != nil {
++				require.Equal(t, tt.values, result.Values)
++			}
++		})
++	}
++}
++
+ func TestDeploySuccessHooksPersistStatusByAPIVersion(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -439,7 +489,11 @@ func TestDeployFileTemplatesByAPIVersion(t *testing.T) {
+ 			definitionPath := filepath.Join(pkgLayout.DirPath(), layout.ZarfYAML)
+ 			originalDefinition, err := os.ReadFile(definitionPath)
+ 			require.NoError(t, err)
+-			_, err = Deploy(ctx, pkgLayout, DeployOptions{SetVariables: map[string]string{"INPUT": "supplied"}})
++			opts := DeployOptions{}
++			if tt.apiVersion == v1alpha1.APIVersion {
++				opts.SetVariables = map[string]string{"INPUT": "supplied"}
++			}
++			_, err = Deploy(ctx, pkgLayout, opts)
+ 			if tt.fail {
+ 				require.ErrorContains(t, err, `command "exit 1" failed`)
+ 			} else {
+```
 
 #### Recent Merged Pull Requests:
+- **PR #5611** (2026-11-05): chore(deps): bump the k8s group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5607** (closed): docs: update custom init package tutorial (@shaversj)
+- **PR #5606** (2026-11-05): feat!: error when variables are used with v1beta1 (@AustinAbro321)
 - **PR #5605** (2026-11-04): feat!: remove deprecated commands and flags (@AustinAbro321)
 - **PR #5599** (closed): feat!: respect component ordering (@brandtkeller)
 - **PR #5597** (2026-11-04): feat(oci): added chuncked retryable resumable blob pulls (@sgettys)
-- **PR #5595** (2026-11-04): chore(deps): bump github.com/docker/cli from 29.8.2+incompatible to 29.9.2+incompatible (@dependabot[bot])
-- **PR #5586** (2026-11-02): chore(deps): bump k8s.io/streaming from 0.37.1 to 0.37.2 in the k8s group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -2156,37 +1844,42 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feat!: remove daemon pull through crane (#5568)
+## X. deps): bump the k8s group across 1 directory with 6 updates (#5611)
 
 **RULE**:
-When implementing operations in `src/pkg/feature/feature.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7fc4d48`: feat!: remove daemon pull through crane (#5568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be6d4c52`: deps): bump the k8s group across 1 directory with 6 updates (#5611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/feature/feature.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			Name:        DockerDaemonDirectPull,
-			Description: "Saves daemon source through direct Docker API interactions. Disabling once enabled Crane daemon pulls, but no longer has any effect",
-			Enabled:     true,
-			Since:       "v0.80.0",
-			Stage:       GA,
+	k8s.io/api v0.37.2
+	k8s.io/apimachinery v0.37.2
+	k8s.io/client-go v0.37.2
+	k8s.io/kubectl v0.37.2
+	k8s.io/component-base v0.37.2 // indirect
+	k8s.io/cli-runtime v0.37.2
+	k8s.io/component-helpers v0.37.2
+	k8s.io/metrics v0.37.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			Name: DockerDaemonDirectPull,
-			Description: "Saves images from the local Docker daemon directly via the engine's OCI image export " +
-				"disabling this feature falls back to pulling with Crane.",
-			Enabled: true,
-			Since:   "v0.80.0",
-			Stage:   GA,
+	k8s.io/api v0.37.1
+	k8s.io/apimachinery v0.37.1
+	k8s.io/client-go v0.37.1
+	k8s.io/kubectl v0.37.1
+	k8s.io/component-base v0.37.1 // indirect
+	k8s.io/cli-runtime v0.37.1
+	k8s.io/component-helpers v0.37.1
+	k8s.io/metrics v0.37.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7fc4d48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be6d4c52` are properly handled with clean fallback behavior.

@@ -4864,3 +4864,7 @@ https://huggingface.co/ricursiveAI/Ripple-65B-Preview
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T06:43:47.505Z] ---
 # [DATABASE-STORAGE-ENGINES] apache/pinot (4996 score [VERIFIED ORG]) - Apache Pinot: a real-time analytics database for low-latency SQL and vector sear
 https://github.com/apache/pinot
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T12:36:20.542Z] ---
+# [AI-AGENTS] N1nEmAn/sapper-v2 (1058 score) - Autonomous pentest legion — AI commander + worker swarm + layered fact-intent gr
+https://github.com/N1nEmAn/sapper-v2

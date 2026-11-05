@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-FB5I",
-    "timestamp": "2026-11-04T04:04:57.270Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-COZE",
-    "timestamp": "2026-11-04T07:18:52.538Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-LPB1",
-    "timestamp": "2026-11-04T07:25:52.861Z",
-    "repository": "jestjs/jest",
-    "learningId": "learn-github-jestjs-jest",
-    "contentHash": "466b6ac349128a0cbb92fd063eb55e2a184bbc5c4936222370cbd9a29c77482b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-LSQ6",
     "timestamp": "2026-11-04T07:25:57.294Z",
     "repository": "Qwen/Qwen3-Embedding-0.6B",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-4XPZ",
+    "timestamp": "2026-11-05T12:36:26.423Z",
+    "repository": "N1nEmAn/sapper-v2",
+    "learningId": "learn-github-n1neman-sapper-v2",
+    "contentHash": "924b6a9101e36089f6e4e107c701eb045752be3de6dcd55786e1fa58e581d13b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-4ZNY",
+    "timestamp": "2026-11-05T12:36:28.942Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "37b0b0024128bcabf15cc004354b16b26ab41bdaac4b120adf51d86066ed7a03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-58U3",
+    "timestamp": "2026-11-05T12:36:40.827Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -20365,5 +20365,20 @@
     "qualityScore": 4996,
     "verifiedOrg": true,
     "discoveredAt": "2026-11-05T06:43:24.205Z"
+  },
+  {
+    "name": "sapper-v2",
+    "fullName": "N1nEmAn/sapper-v2",
+    "url": "https://github.com/N1nEmAn/sapper-v2",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Autonomous pentest legion — AI commander + worker swarm + layered fact-intent graph. 3rd Tencent Intelligent Attack-Defense online champion (634 teams · 8h unattended · 1B tokens beat 4.5B). The Nüwa Test: give AIs Create/Language/History, let a civilization grow.",
+    "stars": 1181,
+    "forks": 706,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 1058,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T12:32:53.841Z"
   }
 ]

@@ -7661,3 +7661,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T12:29:16.186Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ade4d5af` | Multi-dimensional audit evidence | 2026-11-05T12:29:27.263Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `202384a1` | Multi-dimensional audit evidence | 2026-11-05T12:29:31.073Z |
+| `learn-github-n1neman-sapper-v2` | `https://github.com/N1nEmAn/sapper-v2` | `c91881dc` | Multi-dimensional audit evidence | 2026-11-05T12:36:26.426Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-05T12:36:28.946Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `be6d4c52` | Multi-dimensional audit evidence | 2026-11-05T12:36:40.831Z |
