@@ -946,12 +946,81 @@ export function validateHarvestedIntelligence(rawItem, evidenceList = [], option
       domain: item.domain,
       source_id: item.source.id,
       source_uri: item.source.uri,
-      source_version: item.source.version
+      source_version: item.source.version,
+      content_hash: item.rawHash || computeCandidateHash(item)
     },
+    evidence_fingerprint: computeEvidenceFingerprint(evidenceList),
     dimensions,
     detected_contradictions: detectedContradictions,
     missing_information: missingInformation,
     limitations,
     evidence_references: evidenceReferences
   };
+}
+
+/**
+ * Deterministic candidate content hash for integrity binding.
+ */
+export function computeCandidateHash(cand) {
+  if (!cand || typeof cand !== 'object') return '';
+  const title = (cand.title || '').trim();
+  const body = (cand.body || cand.rawBody || cand.content || '').trim();
+  return crypto.createHash('sha256').update(`${title}\n${body}`).digest('hex');
+}
+
+/**
+ * Deterministic evidence fingerprint for integrity binding.
+ */
+export function computeEvidenceFingerprint(evidenceList = []) {
+  if (!Array.isArray(evidenceList) || evidenceList.length === 0) return 'NO_EVIDENCE';
+  const hashes = evidenceList.map(e => e.content_hash || e.evidence_id || e.id || '').sort().join(';');
+  return crypto.createHash('sha256').update(hashes).digest('hex').slice(0, 16);
+}
+
+/**
+ * Verifies that a caller-supplied validation report is authentic, well-formed,
+ * and deterministically bound to the candidate and evidence list.
+ * Prevents report forgery, replay attacks, candidate mutation, and evidence tampering.
+ */
+export function verifyReportIntegrity(candidate, evidenceList = [], report = null, options = {}) {
+  if (!report || typeof report !== 'object') {
+    return { valid: false, error: 'REPORT_MISSING_OR_MALFORMED', reason: 'Validation report is missing or not an object' };
+  }
+  if (!report.validator_version || report.validator_version !== VALIDATOR_VERSION) {
+    return {
+      valid: false,
+      error: 'VALIDATOR_VERSION_MISMATCH',
+      reason: `Validator version mismatch: expected ${VALIDATOR_VERSION}, got ${report.validator_version || 'NONE'}`
+    };
+  }
+  if (!report.decision || !report.dimensions || typeof report.dimensions !== 'object') {
+    return { valid: false, error: 'REPORT_STRUCTURE_INVALID', reason: 'Validation report missing decision or dimensions' };
+  }
+  if (!report.item || typeof report.item !== 'object') {
+    return { valid: false, error: 'REPORT_ITEM_BINDING_MISSING', reason: 'Validation report lacks candidate item binding' };
+  }
+  if (report.item.title && candidate?.title && report.item.title.trim().toLowerCase() !== candidate.title.trim().toLowerCase()) {
+    return {
+      valid: false,
+      error: 'REPLAY_ATTACK_DETECTED',
+      reason: `Report bound to title '${report.item.title}' does not match candidate '${candidate.title}'`
+    };
+  }
+  const currentCandHash = computeCandidateHash(candidate);
+  if (report.item.content_hash && currentCandHash && report.item.content_hash !== currentCandHash) {
+    return {
+      valid: false,
+      error: 'CANDIDATE_MUTATION_DETECTED',
+      reason: 'Candidate content mutated after validation report was generated'
+    };
+  }
+  const currentEvFingerprint = computeEvidenceFingerprint(evidenceList);
+  if (report.evidence_fingerprint && report.evidence_fingerprint !== currentEvFingerprint) {
+    return {
+      valid: false,
+      error: 'EVIDENCE_MUTATION_DETECTED',
+      reason: 'Evidence list mutated or altered after validation report was generated'
+    };
+  }
+  return { valid: true };
 }

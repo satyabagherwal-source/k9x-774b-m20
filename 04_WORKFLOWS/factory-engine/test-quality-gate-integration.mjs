@@ -443,30 +443,38 @@ const fastify = require('fastify')();
       candidate_id: 'rule-gw-pass',
       title: 'Gateway Managed Database Pool Timeout',
       body: '**RULE**: Database connection pools must enforce an acquisition timeout under 2000ms.\n**WHY**: Prevents thread starvation during pool exhaustion.\n**WHEN TO APPLY**: All relational database client configurations.\n**VERIFIED IMPLEMENTATION PATTERN**:\n```javascript\nconst pool = new Pool({ connectionTimeoutMillis: 2000 });\n```\n\n**NEGATIVE CONSTRAINT**:\n```javascript\n// NEVER allow infinite pool acquisition\n```\n\n**VERIFICATION METHOD**: Pool stress test.',
-      quality_validation: {
-        validator_version: '0.1.0',
-        decision: VALIDATOR_DECISIONS.PASS,
-        confidence_score: 0.95,
-        dimensions: {
-          source_reliability: { status: 'PASSED' },
-          generic_engineering_invariants: { status: 'PASSED' }
-        }
-      }
+      repository: 'https://github.com/fastify/fastify',
+      source_url: 'https://github.com/fastify/fastify',
+      license: 'MIT'
     };
+
+    const passEvidence = [
+      createEvidenceRecord({
+        claim_id: 'rule-gw-pass',
+        source_id: 'https://github.com/fastify/fastify',
+        source_uri: 'https://github.com/fastify/fastify',
+        source_version: 'HEAD',
+        evidence_type: EVIDENCE_TYPES.CODE_IMPLEMENTATION,
+        supporting_excerpt: 'new Pool({ connectionTimeoutMillis: 2000 })',
+        assertion: 'Connection timeout pool verified',
+        verification_method: VERIFICATION_METHODS.STATIC_ANALYSIS,
+        license_status: 'MIT'
+      })
+    ];
+    passRule.evidenceList = passEvidence;
+    passRule.quality_validation = validateHarvestedIntelligence(passRule, passEvidence, { brainRoot: SANDBOX_ROOT });
 
     // Test 10B: Rule with CONDITIONAL_PASS
     const conditionalRule = {
       candidate_id: 'rule-gw-cond',
       title: 'Local Docker Compose Cache Mount',
       body: '**RULE**: In local development, mount cache to /root/.cache.\n**WHY**: Faster rebuilds.\n**WHEN TO APPLY**: Local dev only.\n**NEGATIVE CONSTRAINT**: None.\n\n```yaml\nvolumes:\n  - .cache:/root/.cache\n```',
-      quality_validation: {
-        validator_version: '0.1.0',
-        decision: VALIDATOR_DECISIONS.CONDITIONAL_PASS,
-        decision_reason: 'Restricted to dossier staging; local environment specific.',
-        recommended_action: VALIDATOR_ACTIONS.STAGE_IN_DOSSIER_ONLY,
-        confidence_score: 0.70
-      }
+      repository: 'https://github.com/community/local-dev-tool',
+      source_url: 'https://github.com/community/local-dev-tool',
+      license: 'MIT',
+      evidenceList: []
     };
+    conditionalRule.quality_validation = validateHarvestedIntelligence(conditionalRule, [], { brainRoot: SANDBOX_ROOT });
 
     const pkg = {
       learning_id: 'pkg-gateway-test-1',

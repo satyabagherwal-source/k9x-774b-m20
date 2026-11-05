@@ -55,7 +55,8 @@ import { createTaskContract, createSubtask, TASK_STATUS, SUBTASK_STATUS } from '
 import {
   validateHarvestedIntelligence,
   VALIDATOR_DECISIONS,
-  VALIDATOR_ACTIONS
+  VALIDATOR_ACTIONS,
+  verifyReportIntegrity
 } from './harvested-intelligence-quality-validator.mjs';
 
 import {
@@ -961,8 +962,23 @@ export function promoteToCanonicalPatterns(candidate, learningPackage = {}, opti
   }
 
   // 2. Mandatory HIQV Quality Gate Barrier
-  const evidenceList = options.evidenceList || learningPackage?.evidenceList || candidate?.evidenceList || [];
+  const evidenceList = options.evidenceList || candidate?.evidenceList || learningPackage?.evidenceList || [];
   let validationReport = options.validationReport || candidate?.quality_validation;
+
+  // Trust-Boundary Audit: Verify caller-supplied validation report integrity
+  if (validationReport) {
+    const integrity = verifyReportIntegrity(candidate, evidenceList, validationReport, options);
+    if (!integrity.valid) {
+      return {
+        promoted: false,
+        error: 'QUALITY_GATE_INTEGRITY_MISMATCH',
+        reason: `Caller-supplied validation report rejected: ${integrity.reason} (${integrity.error})`,
+        decision: VALIDATOR_DECISIONS.REJECT,
+        status: ACQUISITION_STATUS.FAILED_VALIDATION,
+        ruleNumber: null
+      };
+    }
+  }
 
   if (!validationReport) {
     try {

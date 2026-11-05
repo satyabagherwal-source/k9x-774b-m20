@@ -7,7 +7,8 @@ import { resolveNextRuleNumber } from './concurrency-coordinator.mjs';
 import {
   validateHarvestedIntelligence,
   VALIDATOR_DECISIONS,
-  VALIDATOR_ACTIONS
+  VALIDATOR_ACTIONS,
+  verifyReportIntegrity
 } from './harvested-intelligence-quality-validator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -549,9 +550,8 @@ export function promoteValidatedRules(learningPackage, options = {}) {
 
   const promotedList = [];
   const rulesToPromote = learningPackage.validated_rules || [];
-  const evidenceList = options.evidenceList || learningPackage.evidenceList || [];
-
   for (const rule of rulesToPromote) {
+    const evidenceList = rule.evidenceList || options.evidenceList || learningPackage.evidenceList || [];
     const currentPatterns = fs.readFileSync(p.patternsPath, 'utf-8');
     if (currentPatterns.toLowerCase().includes(rule.title.toLowerCase())) {
       const escapedTitle = rule.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -568,6 +568,21 @@ export function promoteValidatedRules(learningPackage, options = {}) {
 
     // HIQV Quality Validation Gate Barrier
     let valReport = rule.quality_validation || options.validationReport;
+    if (valReport) {
+      const integrity = verifyReportIntegrity(rule, evidenceList, valReport, options);
+      if (!integrity.valid) {
+        console.warn(`🛡️ [GATEWAY QUALITY GATE REJECT] Rule "${rule.title}" has untrusted validation report: ${integrity.reason}`);
+        promotedList.push({
+          number: null,
+          title: rule.title,
+          status: 'WITHHELD_REJECT',
+          decision: VALIDATOR_DECISIONS.REJECT,
+          reason: `Caller-supplied validation report rejected: ${integrity.reason} (${integrity.error})`,
+          recommended_action: VALIDATOR_ACTIONS.REJECT_FAIL_CLOSED
+        });
+        continue;
+      }
+    }
     if (!valReport) {
       try {
         valReport = validateHarvestedIntelligence(
@@ -634,12 +649,18 @@ export function promoteValidatedRules(learningPackage, options = {}) {
         validator_version: valReport.validator_version || '0.1.0',
         dimensions: {
           source_reliability: valReport.dimensions?.source_reliability?.status,
-          cross_source_corroboration: valReport.dimensions?.cross_source_corroboration?.status,
-          adversarial_safety: valReport.dimensions?.adversarial_safety?.status,
-          empirical_reproducibility: valReport.dimensions?.empirical_reproducibility?.status,
-          structural_completeness: valReport.dimensions?.structural_completeness?.status,
-          generic_engineering_invariants: valReport.dimensions?.generic_engineering_invariants?.status,
-          canonical_deduplication: valReport.dimensions?.canonical_deduplication?.status
+          evidence_quality: valReport.dimensions?.evidence_quality?.status,
+          technical_correctness: valReport.dimensions?.technical_correctness?.status,
+          reusability: valReport.dimensions?.reusability?.status,
+          completeness: valReport.dimensions?.completeness?.status,
+          freshness: valReport.dimensions?.freshness?.status,
+          duplication_and_conflict: valReport.dimensions?.duplication_and_conflict?.status,
+          cross_source_corroboration: valReport.dimensions?.evidence_quality?.status,
+          adversarial_safety: valReport.dimensions?.technical_correctness?.status,
+          empirical_reproducibility: valReport.dimensions?.evidence_quality?.status,
+          structural_completeness: valReport.dimensions?.completeness?.status,
+          generic_engineering_invariants: valReport.dimensions?.reusability?.status,
+          canonical_deduplication: valReport.dimensions?.duplication_and_conflict?.status
         }
       }
     };

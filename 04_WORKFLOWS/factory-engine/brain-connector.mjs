@@ -108,7 +108,10 @@ import {
   VALIDATOR_VERSION,
   VALIDATOR_DECISIONS,
   VALIDATOR_ACTIONS,
-  DIMENSION_STATUS
+  DIMENSION_STATUS,
+  computeCandidateHash,
+  computeEvidenceFingerprint,
+  verifyReportIntegrity
 } from './harvested-intelligence-quality-validator.mjs';
 export {
   validateHarvestedIntelligence,
@@ -122,7 +125,10 @@ export {
   VALIDATOR_VERSION,
   VALIDATOR_DECISIONS,
   VALIDATOR_ACTIONS,
-  DIMENSION_STATUS
+  DIMENSION_STATUS,
+  computeCandidateHash,
+  computeEvidenceFingerprint,
+  verifyReportIntegrity
 };
 
 const __filename = fileURLToPath(import.meta.url);
