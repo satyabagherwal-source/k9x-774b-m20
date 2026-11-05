@@ -7732,3 +7732,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T17:07:16.598Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `1dd3e9ec` | Multi-dimensional audit evidence | 2026-11-05T17:07:19.415Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `4ff3fcc6` | Multi-dimensional audit evidence | 2026-11-05T17:07:33.407Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T17:14:50.726Z |

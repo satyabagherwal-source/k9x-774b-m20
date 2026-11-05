@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T17:07:33.425Z",
+  "last_updated": "2026-11-05T17:14:50.736Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17196,14 +17196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "content_hash": "a792dfa263842069c19d096702b8fd857fd71216c69d934b4fe3408dfd14c398",
-      "verified_at": "2026-11-01T02:07:37.836Z",
+      "content_hash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
+      "verified_at": "2026-11-05T17:14:50.735Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:07:37.836Z"
+      "last_updated": "2026-11-05T17:14:50.735Z"
     },
     "fabio-rovai/open-ontologies": {
       "repository": "fabio-rovai/open-ontologies",

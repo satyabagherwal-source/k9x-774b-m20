@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T17:07:33.412Z",
-  "total_cycles_completed": 7700,
-  "total_learnings_persisted": 7700,
+  "last_updated": "2026-11-05T17:14:50.732Z",
+  "total_cycles_completed": 7701,
+  "total_learnings_persisted": 7701,
   "total_rules_promoted": 7347,
   "history": [
-    {
-      "timestamp": "2026-11-05T05:39:04.594Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T05:39:17.461Z",
       "repository": "apache/shardingsphere",
@@ -1403,6 +1396,13 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T17:14:50.732Z",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

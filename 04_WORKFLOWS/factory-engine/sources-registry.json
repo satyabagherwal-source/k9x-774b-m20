@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T17:07:36.030Z",
-    "lastVerified": "2026-11-05T17:07:36.030Z",
+    "lastChecked": "2026-11-05T17:15:02.116Z",
+    "lastVerified": "2026-11-05T17:15:02.116Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T16:06:13.449Z",
-    "lastVerified": "2026-11-05T16:06:13.449Z",
+    "lastChecked": "2026-11-05T17:15:02.104Z",
+    "lastVerified": "2026-11-05T17:15:02.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -802,8 +802,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:05:14.637Z",
-    "lastVerified": "2026-11-05T13:05:14.637Z",
+    "lastChecked": "2026-11-05T17:14:57.057Z",
+    "lastVerified": "2026-11-05T17:14:57.057Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3885,8 +3885,8 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:54:48.693Z",
-    "lastVerified": "2026-11-05T01:54:48.693Z",
+    "lastChecked": "2026-11-05T17:14:59.480Z",
+    "lastVerified": "2026-11-05T17:14:59.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -6698,9 +6698,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-05T02:40:20.560Z",
+    "lastChecked": "2026-11-05T17:14:54.665Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-05T02:40:20.560Z"
+    "lastVerified": "2026-11-05T17:14:54.665Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -8505,12 +8505,12 @@
     "lastVerified": "2026-11-05T00:14:52.335Z"
   },
   "tokio-rs-tokio": {
-    "name": "tokio-rs/tokio",
+    "name": "tokio",
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:12:33.753Z",
-    "lastVerified": "2026-11-04T22:12:33.753Z",
+    "lastChecked": "2026-11-05T17:14:47.155Z",
+    "lastVerified": "2026-11-05T17:14:47.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
@@ -8519,7 +8519,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "695a07dd"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -9210,12 +9211,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T02:07:36.888Z",
-    "lastVerified": "2026-11-01T02:07:36.888Z",
+    "lastChecked": "2026-11-05T17:14:49.701Z",
+    "lastVerified": "2026-11-05T17:14:49.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "a792dfa263842069c19d096702b8fd857fd71216c69d934b4fe3408dfd14c398",
+    "contentHash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11445,9 +11446,9 @@
   "elai950-alerttoast": {
     "name": "AlertToast",
     "officialUrl": "https://github.com/elai950/AlertToast",
-    "lastChecked": "2026-11-03T16:50:32.471Z",
+    "lastChecked": "2026-11-05T17:14:52.043Z",
     "revisionIdentifier": "76a1c179",
-    "lastVerified": "2026-11-03T16:50:32.471Z"
+    "lastVerified": "2026-11-05T17:14:52.043Z"
   },
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
