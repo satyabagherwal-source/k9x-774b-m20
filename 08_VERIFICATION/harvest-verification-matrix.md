@@ -7644,3 +7644,7 @@
 | `CYCLE-20261105-U6QH` | `2026-11-05T12:00:05.273Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`e0d336f0...`) |
 | `CYCLE-20261105-32BY` | `2026-11-05T12:06:59.470Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`2dd84fc5...`) |
 | `CYCLE-20261105-3C97` | `2026-11-05T12:07:12.331Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7213` | Yes (`1af2da4b...`) |
+| `CYCLE-20261105-CR8T` | `2026-11-05T12:14:31.661Z` | `DamascenoRafael/reminders-menubar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7214` | Yes (`d58f4ff1...`) |
+| `CYCLE-20261105-CV4H` | `2026-11-05T12:14:36.689Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7215` | Yes (`f8c5a65e...`) |
+| `CYCLE-20261105-CXBG` | `2026-11-05T12:14:39.532Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7180` | Yes (`299db654...`) |
+| `CYCLE-20261105-CXL9` | `2026-11-05T12:14:39.885Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7216, Rule 7217, Rule 7218` | Yes (`f9a3a835...`) |

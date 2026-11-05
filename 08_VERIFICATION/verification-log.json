@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GCH4",
-    "timestamp": "2026-11-04T03:37:46.024Z",
-    "repository": "wix/Detox",
-    "learningId": "learn-github-wix-detox",
-    "contentHash": "c01b154a01ccfbc7a75562a9e6d1532c1bca18281a239d9c4b8d99e79181c4cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-OJ2R",
-    "timestamp": "2026-11-04T03:44:07.827Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-OKX3",
-    "timestamp": "2026-11-04T03:44:10.215Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-ONGG",
-    "timestamp": "2026-11-04T03:44:13.504Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "e2a10b7c1c8fcb45d6466364eec290550a166f5b593c7d1e2e977a991d3c99d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-XO2S",
     "timestamp": "2026-11-04T03:51:14.212Z",
     "repository": "MaterializeInc/materialize",
@@ -7492,6 +7432,66 @@
     "contentHash": "1af2da4bd81245783451ff3a926bc76b327e2d2d35b625ae1969a07ce2e55f53",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-CR8T",
+    "timestamp": "2026-11-05T12:14:31.661Z",
+    "repository": "DamascenoRafael/reminders-menubar",
+    "learningId": "learn-github-damascenorafael-reminders-menubar",
+    "contentHash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-CV4H",
+    "timestamp": "2026-11-05T12:14:36.689Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-CXBG",
+    "timestamp": "2026-11-05T12:14:39.532Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-CXL9",
+    "timestamp": "2026-11-05T12:14:39.885Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

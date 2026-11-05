@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:07:12.260Z",
+  "last_updated": "2026-11-05T12:14:39.795Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9217,14 +9217,19 @@
       "slug": "damascenorafael-reminders-menubar",
       "platform": "github",
       "source_url": "https://github.com/DamascenoRafael/reminders-menubar",
-      "source_version": "3ee6f0ac",
-      "content_hash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
+      "source_version": "08068dd3",
+      "content_hash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
       "dossier_path": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
       "promoted_rules": [
         {
           "number": 2799,
           "title": "Improve UI by showing reminder count hidden from lists and surfaced in Upcoming",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7214,
+          "title": "Add first day of week settings - Closes #324",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9233,7 +9238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:35:08.062Z",
+      "verified_at": "2026-11-05T12:14:31.532Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16662,8 +16667,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "43f90387",
-      "content_hash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
+      "source_version": "9b9bd5ef",
+      "content_hash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -16706,6 +16711,11 @@
           "number": 5802,
           "title": "Pre-Release Fixes v1.8.0 (#4210)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7215,
+          "title": "Pre-Release Fixes v1.8.0 (#4217)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16713,7 +16723,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T18:02:32.831Z",
+      "verified_at": "2026-11-05T12:14:36.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21267,7 +21277,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
+      "content_hash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -21375,6 +21385,21 @@
           "number": 6333,
           "title": "Acoustic Frame Discrete Alignment Guard for Sub-Sample Latency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7216,
+          "title": "Unified Inference Kernel for Heterogeneous Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7217,
+          "title": "Two-Pass Agreement for Live Streaming ASR",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7218,
+          "title": "Attention-Driven Word Timestamps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21395,7 +21420,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-31T21:39:34.820Z",
+      "verified_at": "2026-11-05T12:14:39.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59482,13 +59507,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "3b6bbb46",
-      "content_hash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -59633,7 +59658,7 @@
         {
           "number": 7180,
           "title": "Merge 'core/time: return NULL instead of panicking when time_date overflows' fro",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59641,7 +59666,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T09:44:49.792Z",
+      "verified_at": "2026-11-05T12:14:39.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181714,14 +181739,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7180,
       "title": "Merge 'core/time: return NULL instead of panicking when time_date overflows' fro",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "3b6bbb46",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T09:44:49.792Z"
+      "verified_at": "2026-11-05T12:14:39.401Z"
     },
     "rule-7181": {
       "learning_id": "rule-7181",
@@ -182184,6 +182209,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:07:12.239Z"
+    },
+    "rule-7214": {
+      "learning_id": "rule-7214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7214,
+      "title": "Add first day of week settings - Closes #324",
+      "source_url": "https://github.com/DamascenoRafael/reminders-menubar",
+      "source_version": "08068dd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:14:31.532Z"
+    },
+    "rule-7215": {
+      "learning_id": "rule-7215",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7215,
+      "title": "Pre-Release Fixes v1.8.0 (#4217)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "9b9bd5ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:14:36.561Z"
+    },
+    "rule-7216": {
+      "learning_id": "rule-7216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7216,
+      "title": "Unified Inference Kernel for Heterogeneous Modalities",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:14:39.766Z"
+    },
+    "rule-7217": {
+      "learning_id": "rule-7217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7217,
+      "title": "Two-Pass Agreement for Live Streaming ASR",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:14:39.766Z"
+    },
+    "rule-7218": {
+      "learning_id": "rule-7218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7218,
+      "title": "Attention-Driven Word Timestamps",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:14:39.766Z"
     }
   },
   "aliases": {

@@ -7653,3 +7653,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T12:00:05.276Z |
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T12:06:59.474Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `17a3f3a6` | Multi-dimensional audit evidence | 2026-11-05T12:07:12.335Z |
+| `learn-github-damascenorafael-reminders-menubar` | `https://github.com/DamascenoRafael/reminders-menubar` | `08068dd3` | Multi-dimensional audit evidence | 2026-11-05T12:14:31.666Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `9b9bd5ef` | Multi-dimensional audit evidence | 2026-11-05T12:14:36.693Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `3b6bbb46` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.536Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-05T12:14:39.889Z |

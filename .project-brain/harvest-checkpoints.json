@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T12:07:12.349Z",
+  "last_updated": "2026-11-05T12:14:39.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "a8e594c9fdeec1c24399d3f5406a92a32bed3e5e43b6c40153fb2a11cc26c26e",
-      "verified_at": "2026-10-31T21:39:34.932Z",
+      "content_hash": "f9a3a8353e3d339c6c99cef800beea30d9997c96d7fcd9ce9bf17359a4a38f50",
+      "verified_at": "2026-11-05T12:14:39.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T21:39:34.932Z"
+      "last_updated": "2026-11-05T12:14:39.906Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
-      "verified_at": "2026-11-03T18:02:32.979Z",
+      "content_hash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
+      "verified_at": "2026-11-05T12:14:36.709Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T18:02:32.980Z"
+      "last_updated": "2026-11-05T12:14:36.709Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
-      "verified_at": "2026-11-05T09:44:49.943Z",
+      "content_hash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
+      "verified_at": "2026-11-05T12:14:39.557Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:44:49.943Z"
+      "last_updated": "2026-11-05T12:14:39.557Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -13506,14 +13506,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-damascenorafael-reminders-menubar",
-      "content_hash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
-      "verified_at": "2026-10-19T20:35:08.119Z",
+      "content_hash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
+      "verified_at": "2026-11-05T12:14:31.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:35:08.119Z"
+      "last_updated": "2026-11-05T12:14:31.692Z"
     },
     "joshcarty/google-searchconsole": {
       "repository": "joshcarty/google-searchconsole",

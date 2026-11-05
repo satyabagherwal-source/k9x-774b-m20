@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T12:07:12.339Z",
-  "total_cycles_completed": 7621,
-  "total_learnings_persisted": 7621,
-  "total_rules_promoted": 7276,
+  "last_updated": "2026-11-05T12:14:39.895Z",
+  "total_cycles_completed": 7625,
+  "total_learnings_persisted": 7625,
+  "total_rules_promoted": 7282,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:40:49.495Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:47:33.904Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:47:34.840Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:47:43.068Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:47:47.512Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1403,6 +1375,34 @@
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:14:31.677Z",
+      "repository": "DamascenoRafael/reminders-menubar",
+      "learningId": "learn-github-damascenorafael-reminders-menubar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:14:36.699Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:14:39.542Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:14:39.895Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

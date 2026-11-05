@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md`  
 > **Source**: github ([https://github.com/DamascenoRafael/reminders-menubar](https://github.com/DamascenoRafael/reminders-menubar))  
-> **Source Version**: `3ee6f0ac`  
+> **Source Version**: `08068dd3`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:35:07.804Z  
+> **Timestamp**: 2026-11-05T12:14:30.791Z  
 > **Learning ID**: `learn-github-damascenorafael-reminders-menubar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DamascenoRafael/reminders-menubar](https://github.com/DamascenoRafael/reminders-menubar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:35:07.799Z  
+> **Harvest Timestamp**: 2026-11-05T12:14:30.710Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Simple macOS menu bar application to view and interact with reminders. Developed with SwiftUI and using Apple Reminders as a source.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3986 stars
+- **Stars / Engagement**: 4007 stars
 
 ---
 
@@ -745,734 +745,342 @@ extension Array where Element == ReminderItem {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ee6f0ac` (2026-10-04)
-**Commit Message**: Improve UI by showing reminder count hidden from lists and surfaced in Upcoming
+### Incident Patch 1: `08068dd3` (2026-11-04)
+**Commit Message**: Add first day of week settings - Closes #324
 
-**File**: `reminders-menubar/Models/ReminderItemTree.swift` (modified, +36/-24)
+**File**: `reminders-menubar/Extensions/Date+Extensions.swift` (modified, +1/-1)
 ```diff
-@@ -1,45 +1,57 @@
- enum ReminderItemTree {
-+    struct ExclusionResult {
-+        let reminders: [ReminderItem]
-+        let excludedCount: Int
-+    }
-+
-     static func excluding(
-         reminderIds excludedReminderIds: Set<String>,
-         from reminders: [ReminderItem]
--    ) -> [ReminderItem] {
--        guard !excludedReminderIds.isEmpty else { return reminders }
-+    ) -> ExclusionResult {
-+        guard !excludedReminderIds.isEmpty else {
-+            return ExclusionResult(reminders: reminders, excludedCount: 0)
-+        }
-+
-         return excluding(
-             reminderIds: excludedReminderIds,
-             from: reminders,
--            itemsAreChildren: false
-+            isChildLevel: false
-         )
+@@ -68,7 +68,7 @@ extension Date {
      }
  
-     private static func excluding(
-         reminderIds excludedReminderIds: Set<String>,
-         from reminders: [ReminderItem],
--        itemsAreChildren: Bool
--    ) -> [ReminderItem] {
--        return reminders.flatMap { reminderItem in
--            let remainingChildren = excluding(
-+        isChildLevel: Bool
-+    ) -> ExclusionResult {
-+        var remainingReminders: [ReminderItem] = []
-+        var excludedCount = 0
-+
-+        for reminderItem in reminders {
-+            let isExcluded = excludedReminderIds.contains(reminderItem.id)
-+            let remainingChildrenResult = excluding(
-                 reminderIds: excludedReminderIds,
-                 from: reminderItem.childReminders,
--                itemsAreChildren: true
--            )
-+                isChildLevel: isExcluded ? isChildLevel : true // Promote retained children to the excluded item's level
+     private func dateDescription(withTime showTimeDescription: Bool, relativeFormatting: Bool) -> String {
+-        let locale = rmbTimeFormattedLocale()
++        let locale = rmbDateTimeFormattedLocale()
+         let dateFormatter = DateFormatter()
  
--            if excludedReminderIds.contains(reminderItem.id) {
--                return remainingChildren.map {
--                    ReminderItem(
--                        for: $0.reminder,
--                        isChild: itemsAreChildren,
--                        withChildren: $0.childReminders
--                    )
--                }
--            }
-+            )
-+            excludedCount += remainingChildrenResult.excludedCount
- 
--            return [
--                ReminderItem(
-+            if isExcluded {
-+                excludedCount += 1
-+                remainingReminders.append(contentsOf: remainingChildrenResult.reminders)
-+            } else {
-+                remainingReminders.append(ReminderItem(
-                     for: reminderItem.reminder,
--                    isChild: itemsAreChildren,
--                    withChildren: remainingChildren
--                )
--            ]
-+                    isChild: isChildLevel,
-+                    withChildren: remainingChildrenResult.reminders
-+                ))
-+            }
-         }
-+
-+        return ExclusionResult(
-+            reminders: remainingReminders,
-+            excludedCount: excludedCount
-+        )
-     }
- }
+         dateFormatter.dateStyle = .medium
 ```
 
-**File**: `reminders-menubar/Models/ReminderList/ReminderListSection.swift` (modified, +16/-9)
+**File**: `reminders-menubar/Resources/Localizable.xcstrings` (modified, +250/-0)
 ```diff
-@@ -1,42 +1,49 @@
- import SwiftUI
- 
- enum ReminderListSection: Identifiable, Equatable {
--    case calendar(CalendarReminderList)
--    case tag(TagReminderList)
-+    case calendar(CalendarReminderList, hiddenUpcomingReminderCount: Int)
-+    case tag(TagReminderList, hiddenUpcomingReminderCount: Int)
- 
-     var id: String {
-         switch self {
--        case .calendar(let list):
-+        case .calendar(let list, _):
-             return "calendar-\(list.id)"
--        case .tag(let list):
-+        case .tag(let list, _):
-             return "tag-\(list.id)"
-         }
-     }
- 
-     var reminders: [ReminderItem] {
-         switch self {
--        case .calendar(let list):
-+        case .calendar(let list, _):
-             return list.reminders
--        case .tag(let list):
-+        case .tag(let list, _):
-             return list.reminders
-         }
-     }
- 
-     var title: String {
-         switch self {
--        case .calendar(let list):
-+        case .calendar(let list, _):
-             return list.calendar.title
--        case .tag(let list):
-+        case .tag(let list, _):
-             return "# \(list.tag.name)"
-         }
-     }
- 
-     var color: Color {
-         switch self {
--        case .calendar(let list):
-+        case .calendar(let list, _):
-             return Color(list.calendar.color)
-         case .tag:
-             return .rmbColor(.tagHighlight)
-         }
-     }
-+
-+    var hiddenUpcomingReminderCount: Int {
-+        switch self {
-+        case .calendar(_, let count), .tag(_, let count):
-+            return count
-+        }
-+    }
- }
-```
-
-**File**: `reminders-menubar/Models/RemindersData.swift` (modified, +16/-12)
-```diff
-@@ -156,25 +156,29 @@ class RemindersData: ObservableObject {
-     var orderedFilteredSections: [ReminderListSection] {
-         let reminderIdsToExclude = upcomingReminderIdsToExcludeFromLists
-         let calendarSections = filteredCalendarReminderLists.map {
--            ReminderListSection.calendar(
-+            let exclusionResult = ReminderItemTree.excluding(
-+                reminderIds: reminderIdsToExclude,
-+                from: $0.reminders
-+            )
-+            return ReminderListSection.calendar(
-                 CalendarReminderList(
-                     for: $0.calendar,
--                    with: ReminderItemTree.excluding(
--                        reminderIds: reminderIdsToExclude,
--                        from: $0.reminders
--                    )
--                )
-+                    with: exclusionResult.reminders
-+                ),
-+                hiddenUpcomingReminderCount: exclusionResult.excludedCount
-             )
-         }
-         let tagSections = filteredTagReminderLists.map {
--            ReminderListSection.tag(
-+            let exclusionResult = ReminderItemTree.excluding(
-+                reminderIds: reminderIdsToExclude,
-+                from: $0.reminders
-+            )
-+            return ReminderListSection.tag(
-                 TagReminderList(
-                     for: $0.tag,
--                    with: ReminderItemTree.excluding(
--                        reminderIds: reminderIdsToExclude,
--                        from: $0.reminders
--                    )
--                )
-+                    with: exclusionResult.reminders
-+                ),
-+                hiddenUpcomingReminderCount: exclusionResult.excludedCount
-             )
-         }
- 
-```
-
-**File**: `reminders-menubar/Resources/Localizable.xcstrings` (modified, +395/-0)
-```diff
-@@ -9001,6 +9001,401 @@
+@@ -8876,6 +8876,256 @@
          }
        }
      },
-+    "hiddenUpcomingRemindersInListHelp" : {
++    "firstWeekdaySettingsLabel" : {
 +      "extractionState" : "manual",
 +      "localizations" : {
 +        "cs" : {
-+          "variations" : {
-+            "plural" : {
-+              "few" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld připomínky skryty, zobrazeny v sekci Naplánováno"
-+                }
-+              },
-+              "many" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld připomínek skryto, zobrazeno v sekci Naplánováno"
-+                }
-+              },
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld připomínka skryta, zobrazena v sekci Naplánováno"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld připomínek skryto, zobrazeno v sekci Naplánováno"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "První den týdne:"
 +          }
 +        },
 +        "de" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld Erinnerung ausgeblendet, unter „Zukünftige Erinnerungen“ angezeigt"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld Erinnerungen ausgeblendet, unter „Zukünftige Erinnerungen“ angezeigt"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Erster Wochentag:"
 +          }
 +        },
 +        "en" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld reminder hidden, shown in Upcoming reminders"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld reminders hidden, shown in Upcoming reminders"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "First day of week:"
 +          }
 +        },
 +        "es-419" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld recordatorio oculto, mostrado en Próximos recordatorios"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld recordatorios ocultos, mostrados en Próximos recordatorios"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Primer día de la semana:"
 +          }
 +        },
 +        "fil-PH" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld paalala nakatago, ipinapakita sa Mga paparating na paalala"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld paalala nakatago, ipinapakita sa Mga paparating na paalala"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Unang araw ng linggo:"
 +          }
 +        },
 +        "fr" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld rappel masqué, affiché dans Prochains rappels"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld rappels masqués, affichés dans Prochains rappels"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Premier jour de la semaine :"
 +          }
 +        },
 +        "id" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld pengingat disembunyikan, ditampilkan di Pengingat yang akan datang"
-+                }
-+              },
-+              "other" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld pengingat disembunyikan, ditampilkan di Pengingat yang akan datang"
-+                }
-+              }
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Hari pertama dalam seminggu:"
 +          }
 +        },
 +        "it" : {
-+          "variations" : {
-+            "plural" : {
-+              "one" : {
-+                "stringUnit" : {
-+                  "state" : "translated",
-+                  "value" : "%lld promemoria nascosto, mostrato in Prossimi promemoria"
-+                }
-+              },
-+              "other" : {
-+                "stringUni
-```
-
-**File**: `reminders-menubar/Resources/remindersLocalized.swift` (modified, +1/-0)
-```diff
-@@ -143,6 +143,7 @@ enum RemindersMenuBarLocalizedKeys: String {
-     case copySampleTags
-     case showUpcomingRemindersSettingsOption
-     case hideUpcomingRemindersFromListsOption
-+    case hiddenUpcomingRemindersInListHelp
-     case reminderDisplaySettingsLabel
-     case showExternalLinksInReminderItemOption
-     case showExternalLinksInReminderItemNote
-```
-
-**File**: `reminders-menubar/Views/ContentView.swift` (modified, +19/-7)
-```diff
-@@ -151,7 +151,7 @@ struct ContentView: View {
-             Section(header: CalendarTitle(
-                 title: rmbLocalized(.recentRemindersSectionTitle),
-                 color: .rmbColor(.recentSectionTitle),
--                icon: {
-+                accessories: {
-                     Image(rmbSymbol: .recentReminders)
-                 }
-             )) {
-@@ -168,10 +168,12 @@ struct ContentView: View {
-                 Section(header: CalendarTitle(
-                     title: userPreferences.upcomingRemindersInterval.sectionTitle,
-                     color: .rmbColor(.upcomingSectionTitle),
--                    icon: {
-+                    accessories: {
-                         if userPreferences.filterUpcomingRemindersByCalendar {
--                            Image(rmbSymbol: .filterCircle)
--                                .help(rmbLocalized(.upcomingRemindersFilterByCalendarEnabledHelp))
-+                            CalendarTitleIndicator(
-+                                symbol: .filterCircle,
-+                                helpText: rmbLocalized(.upcomingRemindersFilterByCalendarEnabledHelp)
-+                            )
-                         }
-                     }
-                 )) {
-@@ -184,10 +186,20 @@ struct ContentView: View {
-                 Section(header: CalendarTitle(
-                     title: section.title,
-                     color: section.color,
--                    icon: {
-+                    accessories: {
-                         if case .tag = section, userPreferences.filterTagRemindersByCalendar {
--                            Image(rmbSymbol: .filterCircle)
--                                .help(rmbLocalized(.tagRemindersFilterByCalendarEnabledHelp))
-+                            CalendarTitleIndicator(
-+                                symbol: .filterCircle,
-+                                helpText: rmbLocalized(.tagRemindersFilterByCalendarEnabledHelp)
-+                            )
-+                        }
-+                        let hiddenCount = section.hiddenUpcomingReminderCount
-+                        if hiddenCount > 0 {
-+                            CalendarTitleIndicator(
-+                                symbol: .calendar,
-+                                helpText: rmbLocalized(.hiddenUpcomingRemindersInListHelp, arguments: hiddenCount),
-+                                text: "+\(hiddenCount)"
-+                            )
-                         }
-                     }
-                 )) {
-```
-
-**File**: `reminders-menubar/Views/Helpers/CalendarTitle.swift` (modified, +52/-16)
-```diff
-@@ -1,42 +1,78 @@
- import SwiftUI
- import EventKit
- 
--struct CalendarTitle<Icon: View>: View {
--    var title: String
--    var color: Color
--    var icon: Icon
-+struct CalendarTitle<Accessories: View>: View {
-+    let title: String
-+    let color: Color
-+    let accessories: Accessories
- 
--    init(calendar: EKCalendar) where Icon == EmptyView {
-+    init(calendar: EKCalendar) where Accessories == EmptyView {
-         self.title = calendar.title
-         self.color = Color(calendar.color)
--        self.icon = EmptyView()
-+        self.accessories = EmptyView()
-     }
- 
--    init(title: String, color: Color) where Icon == EmptyView {
-+    init(title: String, color: Color) where Accessories == EmptyView {
-         self.title = title
-         self.color = color
--        self.icon = EmptyView()
-+        self.accessories = EmptyView()
-     }
- 
--    init(title: String, color: Color, @ViewBuilder icon: () -> Icon) {
-+    init(title: String, color: Color, @ViewBuilder accessories: () -> Accessories) {
-         self.title = title
-         self.color = color
--        self.icon = icon()
-+        self.accessories = accessories()
-     }
--    
-+
-     var body: some View {
--        HStack(alignment: .center) {
-+        HStack(alignment: .center, spacing: 6) {
-             Text(title)
-                 .font(.headline)
-                 .foregroundColor(color)
--                .padding(.top, 2)
--                .padding(.bottom, 5)
-+                .lineLimit(1)
-+                .truncationMode(.tail)
- 
--            icon
--                .padding(.bottom, 3)
-+            HStack(spacing: 4) {
-+                accessories
-+            }
-+            .font(.caption)
-+            .fixedSize(horizontal: true, vertical: false)
- 
-             Spacer()
-         }
-+        .padding(.top, 2)
-+        .padding(.bottom, 5)
-+    }
-+}
-+
-+struct CalendarTitleIndicator: View {
-+    let symbol: RmbSymbol
-+    let helpText: String
-+    let text: String?
-+
-+    init(symbol: RmbSymbol, helpText: String, text: String? = nil) {
-+        self.symbol = symbol
-+        self.helpText = helpText
-+        self.text = text
-+    }
-+
-+    var body: some View {
-+        HStack(spacing: 2) {
-+            Image(rmbSymbol: symbol)
-+                .font(.system(size: 9))
-+            if let text {
-+                Text(text)
-+                    .font(.system(size: 9))
-+            }
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Primo giorno della settimana:"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "週の開始日："
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "한 주의 시작 요일:"
++          }
++        },
++        "nl" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Eerste dag van de week:"
++          }
++        },
++        "pl" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Pierwszy dzień tygodnia:"
++          }
++        },
++        "pt-BR" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Primeiro dia da semana:"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Первый день недели:"
++          }
++        },
++        "sk" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Prvý deň týždňa:"
++          }
++        },
++        "tr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Haftanın ilk günü:"
++          }
++        },
++        "uk" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Перший день тижня:"
++          }
++        },
++        "vi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Ngày đầu tuần:"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "每周起始日："
++          }
++        },
++        "zh-Hant" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "每週起始日："
++          }
 +        }
-+        .foregroundStyle(.secondary)
-+        .padding(.horizontal, 5)
-+        .padding(.vertical, 2)
-+        .background(
-+            Capsule()
-+                .fill(Color.secondary.opacity(0.08))
-+        )
-+        .help(helpText)
-     }
++      }
++    },
++    "firstWeekdaySystemOption" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "cs" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Nastavení systému"
++          }
++        },
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Systemeinstellung"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "System setting"
++          }
++        },
++        "es-419" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Configuración del sistema"
++          }
++        },
++        "fil-PH" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Setting ng system"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Réglage du système"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Pengaturan sistem"
++          }
++        },
++        "it" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Impostazione di sistema"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "システム設定"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "시스템 설정"
++          }
++        },
++        "nl" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Systeeminstelling"
++          }
++        },
++     
+```
+
+**File**: `reminders-menubar/Resources/remindersLocalized.swift` (modified, +15/-3)
+```diff
+@@ -169,6 +169,8 @@ enum RemindersMenuBarLocalizedKeys: String {
+     case timeFormatSettingsLabel
+     case timeFormat12HourOption
+     case timeFormat24HourOption
++    case firstWeekdaySettingsLabel
++    case firstWeekdaySystemOption
+     case generalSettingsTab
+     case menuBarSettingsTab
+     case sectionsSettingsTab
+@@ -227,10 +229,20 @@ func rmbAvailableLocales() -> [ReminderMenuBarLocale] {
+     return locales.sorted(by: { $0.name < $1.name })
  }
  
-```
-
----
-
-### Incident Patch 2: `2a69cd16` (2026-10-03)
-**Commit Message**: Minor UI improvement for External Links to enhance consistency
-
-**File**: `reminders-menubar/Resources/Localizable.xcstrings` (modified, +0/-125)
-```diff
-@@ -6001,131 +6001,6 @@
-         }
-       }
-     },
--    "editReminderExternalLinksEmptyMessage" : {
--      "extractionState" : "manual",
--      "localizations" : {
--        "cs" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Žádné"
--          }
--        },
--        "de" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Keine"
--          }
--        },
--        "en" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "None"
--          }
--        },
--        "es-419" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Ninguno"
--          }
--        },
--        "fil-PH" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Wala"
--          }
--        },
--        "fr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Aucun"
--          }
--        },
--        "id" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Tidak ada"
--          }
--        },
--        "it" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Nessuno"
--          }
--        },
--        "ja" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "なし"
--          }
--        },
--        "ko" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "없음"
--          }
--        },
--        "nl" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Geen"
--          }
--        },
--        "pl" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Brak"
--          }
--        },
--        "pt-BR" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Nenhum"
--          }
--        },
--        "ru" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Нет"
--          }
--        },
--        "sk" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Žiadne"
--          }
--        },
--        "tr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Yok"
--          }
--        },
--        "uk" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Немає"
--          }
--        },
--        "vi" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Không có"
--          }
--        },
--        "zh-Hans" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "无"
--          }
--        },
--        "zh-Hant" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "無"
--          }
--        }
--      }
--    },
-     "editReminderExternalLinksViewOnlyLabel" : {
-       "extractionState" : "manual",
-       "localizations" : {
-```
-
-**File**: `reminders-menubar/Resources/remindersLocalized.swift` (modified, +0/-1)
-```diff
-@@ -8,7 +8,6 @@ enum RemindersMenuBarLocalizedKeys: String {
-     case remindersOptionsButtonHelp
-     case editReminderButton
-     case editReminderTitleTextFieldPlaceholder
--    case editReminderExternalLinksEmptyMessage
-     case editReminderExternalLinksViewOnlyLabel
-     case editReminderNotesTextFieldPlaceholder
-     case editReminderTagsTextFieldPlaceholder
-```
-
-**File**: `reminders-menubar/Views/ReminderEditView/ReminderEditView.swift` (modified, +3/-7)
-```diff
-@@ -116,7 +116,7 @@ struct ReminderEditView: View {
-             actionButtons()
-         }
-         .frame(width: 300, alignment: .top)
--        .frame(minHeight: 410)
-+        .frame(minHeight: 360)
-         .fixedSize(horizontal: false, vertical: true)
-         .padding()
-         .modifier(RmbBackgroundModifier())
-@@ -218,13 +218,9 @@ struct ReminderEditView: View {
-                 .frame(width: 20)
+-func rmbTimeFormattedLocale() -> Locale {
+-    let base = rmbCurrentLocale()
++func rmbDateTimeFormattedLocale() -> Locale {
++    var components = NSLocale.components(fromLocaleIdentifier: rmbCurrentLocale().identifier)
+     let hourCycle = UserPreferences.shared.timeFormatIs24Hour ? "h23" : "h12"
+-    return Locale(identifier: "\(base.identifier)@hours=\(hourCycle)")
++    components["hours"] = hourCycle
++    let weekday = UserPreferences.shared.firstWeekday ?? Calendar.current.firstWeekday
++    components["fw"] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][weekday - 1]
++    return Locale(identifier: NSLocale.localeIdentifier(fromComponents: components))
++}
++
++func rmbWeekdaySymbols() -> [String] {
++    let formatter = DateFormatter()
++    formatter.locale = rmbCurrentLocale()
++    formatter.formattingContext = .standalone
++    return formatter.standaloneWeekdaySymbols
+ }
  
-             VStack(alignment: .leading, spacing: 6) {
--                Text(rmbLocalized(.editReminderExternalLinksViewOnlyLabel))
--                    .font(.system(size: 12))
--                    .foregroundColor(.secondary)
--
-                 if externalLinks.isEmpty {
--                    Text(rmbLocalized(.editReminderExternalLinksEmptyMessage))
--                        .font(.footnote)
-+                    Text(rmbLocalized(.editReminderExternalLinksViewOnlyLabel))
-+                        .font(.system(size: 11))
-                         .foregroundColor(.secondary)
-                 } else {
-                     ReminderExternalLinksView(
+ private func rmbCurrentLocale() -> Locale {
 ```
 
----
-
-### Incident Patch 3: `d1d1dfe4` (2026-10-03)
-**Commit Message**: Fix bug where tag lists might not be displayed when combined with calendar list filter
-
-**File**: `reminders-menubar/Services/RemindersService.swift` (modified, +6/-3)
+**File**: `reminders-menubar/Services/UserPreferences.swift` (modified, +10/-0)
 ```diff
-@@ -205,10 +205,13 @@ class RemindersService {
+@@ -24,6 +24,7 @@ private enum PreferencesKeys {
+     static let sortRemindersByFlagAndPriority = "sortRemindersByPriority"
+     static let reminderSortingOrder = "reminderSortingOrder"
+     static let timeFormatIs24Hour = "timeFormatIs24Hour"
++    static let firstWeekday = "firstWeekday"
+     static let showExternalLinksInReminderItem = "showExternalLinksInReminderItem"
+     static let showNotesInReminderItem = "showNotesInReminderItem"
+     static let menuBarReminderPreviewEnabled = "menuBarReminderPreviewEnabled"
+@@ -426,6 +427,15 @@ class UserPreferences: ObservableObject {
+         }
+     }
  
-         var calendars: [EKCalendar]?
-         if let calendarIdentifiers {
--            if calendarIdentifiers.isEmpty {
--                return []
-+            let selectedCalendars = getCalendars().filter {
-+                calendarIdentifiers.contains($0.calendarIdentifier)
++    @Published var firstWeekday: Int? = {
++        let weekday = defaults.integer(forKey: PreferencesKeys.firstWeekday)
++        return (1...7).contains(weekday) ? weekday : nil
++    }() {
++        didSet {
++            UserPreferences.defaults.set(firstWeekday, forKey: PreferencesKeys.firstWeekday)
++        }
++    }
++
+     // This is intentionally not @Published; it is used for persistence and for driving the NSPopover size directly.
+     var mainPopoverSize: NSSize {
+         get {
+```
+
+**File**: `reminders-menubar/Views/Helpers/RmbDatePicker.swift` (modified, +2/-1)
+```diff
+@@ -33,11 +33,12 @@ struct RmbDatePicker: NSViewRepresentable {
+         picker.datePickerElements = displayedComponents
+         picker.action = #selector(Coordinator.onValueChange(_:))
+         picker.target = context.coordinator
+-        picker.locale = rmbTimeFormattedLocale()
++        picker.locale = rmbDateTimeFormattedLocale()
+         return picker
+     }
+ 
+     func updateNSView(_ picker: NSDatePicker, context: Context) {
++        picker.locale = rmbDateTimeFormattedLocale()
+         picker.dateValue = selection
+     }
+ 
+```
+
+**File**: `reminders-menubar/Views/SettingsView/GeneralSettingsTab.swift` (modified, +12/-0)
+```diff
+@@ -82,6 +82,18 @@ struct GeneralSettingsTab: View {
+                 .labelsHidden()
              }
--            calendars = getCalendars().filter({ calendarIdentifiers.contains($0.calendarIdentifier) })
-+            guard !selectedCalendars.isEmpty else {
-+                return tags.map { TagReminderList(for: $0, with: []) }
-+            }
-+            calendars = selectedCalendars
-         }
  
-         let predicate = eventStore.predicateForIncompleteReminders(
++            SettingsSection(rmbLocalized(.firstWeekdaySettingsLabel)) {
++                Picker(String(""), selection: $userPreferences.firstWeekday) {
++                    Text(rmbLocalized(.firstWeekdaySystemOption)).tag(Int?.none)
++                    Divider()
++                    ForEach(Array(rmbWeekdaySymbols().enumerated()), id: \.element) { index, weekday in
++                        Text(weekday).tag(Optional(index + 1))
++                    }
++                }
++                .pickerStyle(.menu)
++                .labelsHidden()
++            }
++
+             SettingsDivider()
+ 
+             SettingsSection {
+```
+
+**File**: `reminders-menubar/Views/SettingsView/KeyboardSettingsTab.swift` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ struct KeyboardSettingsTab: View {
+         return exampleDate
+             .relativeDateDescription(withTime: true)
+             .replacingOccurrences(of: ", ", with: " ")
+-            .lowercased(with: rmbTimeFormattedLocale())
++            .lowercased(with: rmbDateTimeFormattedLocale())
+     }
+ 
+     var body: some View {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1501,83 +1109,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve UI by showing reminder count hidden from lists and surfaced in Upcoming
+## X. Add first day of week settings - Closes #324
 
 **RULE**:
-When implementing operations in `reminders-menubar/Models/ReminderItemTree.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DamascenoRafael/reminders-menubar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `reminders-menubar/Extensions/Date+Extensions.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DamascenoRafael/reminders-menubar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ee6f0ac`: Improve UI by showing reminder count hidden from lists and surfaced in Upcoming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08068dd3`: Add first day of week settings - Closes #324. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `reminders-menubar/Models/ReminderItemTree.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `reminders-menubar/Extensions/Date+Extensions.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    struct ExclusionResult {
-        let reminders: [ReminderItem]
-        let excludedCount: Int
-    }
-
-    ) -> ExclusionResult {
-        guard !excludedReminderIds.isEmpty else {
-            return ExclusionResult(reminders: reminders, excludedCount: 0)
-        }
-
-            isChildLevel: false
-        isChildLevel: Bool
-    ) -> ExclusionResult {
-        var remainingReminders: [ReminderItem] = []
-        var excludedCount = 0
-
-        for reminderItem in reminders {
-            let isExcluded = excludedReminderIds.contains(reminderItem.id)
-            let remainingChildrenResult = excluding(
-                isChildLevel: isExcluded ? isChildLevel : true // Promote retained children to the excluded item's level
-            )
-            excludedCount += remainingChildrenResult.excludedCount
-            if isExcluded {
-                excludedCount += 1
-                remainingReminders.append(contentsOf: remainingChildrenResult.reminders)
-            } else {
-                remainingReminders.append(ReminderItem(
-                    isChild: isChildLevel,
-                    withChildren: remainingChildrenResult.reminders
-                ))
-            }
-
-        return Excl
+        let locale = rmbDateTimeFormattedLocale()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    ) -> [ReminderItem] {
-        guard !excludedReminderIds.isEmpty else { return reminders }
-            itemsAreChildren: false
-        itemsAreChildren: Bool
-    ) -> [ReminderItem] {
-        return reminders.flatMap { reminderItem in
-            let remainingChildren = excluding(
-                itemsAreChildren: true
-            )
-            if excludedReminderIds.contains(reminderItem.id) {
-                return remainingChildren.map {
-                    ReminderItem(
-                        for: $0.reminder,
-                        isChild: itemsAreChildren,
-                        withChildren: $0.childReminders
-                    )
-                }
-            }
-            return [
-                ReminderItem(
-                    isChild: itemsAreChildren,
-                    withChildren: remainingChildren
-                )
-            ]
+        let locale = rmbTimeFormattedLocale()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ee6f0ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08068dd3` are properly handled with clean fallback behavior.
