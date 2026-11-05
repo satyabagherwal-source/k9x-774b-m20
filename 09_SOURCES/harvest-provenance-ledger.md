@@ -7802,3 +7802,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-05T22:01:24.802Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `e3e4f4eb` | Multi-dimensional audit evidence | 2026-11-05T22:08:31.796Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `a6dfa0c1` | Multi-dimensional audit evidence | 2026-11-05T22:08:39.379Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `5d98077a` | Multi-dimensional audit evidence | 2026-11-05T22:16:01.510Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `2e23492a` | Multi-dimensional audit evidence | 2026-11-05T22:16:06.338Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `8397827b` | Multi-dimensional audit evidence | 2026-11-05T22:16:10.008Z |

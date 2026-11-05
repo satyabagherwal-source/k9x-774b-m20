@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:47:43.123Z",
+  "last_updated": "2026-11-05T22:16:01.516Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3984,6 +3984,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-UACS",
+      "directive_title": "proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#31",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "FalkorDB/FalkorDB",
+      "source_commit": "5d98077a",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-falkordb-falkordb"
     }
   ]
 }

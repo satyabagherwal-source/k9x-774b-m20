@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:08:39.300Z",
+  "last_updated": "2026-11-05T22:16:09.915Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13610,8 +13610,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "43936bab",
-      "content_hash": "e1a5ffc8f0450e0746df9e0829539b670da2ccffa74ce89079db2b8e633308e9",
+      "source_version": "5d98077a",
+      "content_hash": "79c774d0102bbdfe5ebe8dcd71403968df723e49254059658edb7cb57e1cc75b",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -13676,7 +13676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:47:34.740Z",
+      "verified_at": "2026-11-05T22:16:01.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43974,11 +43974,16 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "9bad2e8d",
-      "content_hash": "637dcf1c1ab8fc3d03ba7e9fb8612ee685e57dd7188c0e36dc1cb68449e1e05b",
+      "source_version": "8397827b",
+      "content_hash": "4b0aa5c64a392dfaf1b0395c8dc5e09a8ca02f25f13367ce605587dd478dd1f7",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2393,
           "title": "Two-Phase Synchronous State Transition for Asynchronous Teardown",
@@ -44040,7 +44045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:28:51.400Z",
+      "verified_at": "2026-11-05T22:16:09.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57882,11 +57887,16 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "c51f047e",
-      "content_hash": "b4602181e9a6822a8486919d91f878c41f0e17999a22d7ea764e484d3bacc51d",
+      "source_version": "2e23492a",
+      "content_hash": "b9ee1de5ede4a8f6905e8efc8b99c00d65e5adbdaa7ed3d84ead87164f5c8289",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): update dependency eslint-plugin-security to v4.2.1 (#16466)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2712,
           "title": "tauri-build): skip the missing capabilities dir watch for inline capabilities (#",
@@ -57918,7 +57928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:58:08.722Z",
+      "verified_at": "2026-11-05T22:16:06.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

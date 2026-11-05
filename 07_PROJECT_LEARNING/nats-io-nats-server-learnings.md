@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `9bad2e8d`  
+> **Source Version**: `8397827b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:28:50.722Z  
+> **Timestamp**: 2026-11-05T22:16:08.145Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:28:50.627Z  
+> **Harvest Timestamp**: 2026-11-05T22:16:08.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2726,186 +2726,273 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bad2e8d` (2026-11-04)
-**Commit Message**: [FIXED] Revocations re-check importers on every account update (#8851)
+### Incident Patch 1: `5c17e8e0` (2026-11-05)
+**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
 
-**File**: `server/accounts.go` (modified, +4/-26)
-```diff
-@@ -3643,9 +3643,6 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 
- 	jsEnabled := s.JetStreamEnabled()
- 
--	streamTokenExpirationChanged := false
--	serviceTokenExpirationChanged := false
--
- 	for _, e := range ac.Exports {
- 		// Account scoped mapping functions (e.g. {{account-hash()}}) are resolved into literals here, once.
- 		subject, err := expandSubjectPlaceholders(string(e.Subject), pctx)
-@@ -3697,41 +3694,22 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 			}
- 		}
- 
--		var revocationChanged *bool
- 		var ea *exportAuth
- 
- 		a.mu.Lock()
- 		switch e.Type {
- 		case jwt.Stream:
--			revocationChanged = &streamTokenExpirationChanged
- 			if se, ok := a.exports.streams[subject]; ok && se != nil {
- 				ea = &se.exportAuth
- 			}
- 		case jwt.Service:
--			revocationChanged = &serviceTokenExpirationChanged
- 			if se, ok := a.exports.services[subject]; ok && se != nil {
- 				ea = &se.exportAuth
- 			}
- 		}
-+		// Revocation changes are detected when comparing the exports against old below.
- 		if ea != nil {
--			oldRevocations := ea.actsRevoked
--			if len(e.Revocations) == 0 {
--				// remove all, no need to evaluate existing imports
--				ea.actsRevoked = nil
--			} else if len(oldRevocations) == 0 {
--				// add all, existing imports need to be re evaluated
--				ea.actsRevoked = e.Revocations
--				*revocationChanged = true
--			} else {
--				ea.actsRevoked = e.Revocations
--				// diff, existing imports need to be conditionally re evaluated, depending on:
--				// if a key was added, or it's timestamp increased
--				for k, t := range e.Revocations {
--					if tOld, ok := oldRevocations[k]; !ok || tOld < t {
--						*revocationChanged = true
--					}
--				}
--			}
-+			ea.actsRevoked = e.Revocations
- 		}
- 		a.mu.Unlock()
- 	}
-@@ -3797,7 +3775,7 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 		}
- 	}
- 	// Now check if stream exports have changed.
--	if !a.checkStreamExportsEqual(old) || signersChanged || streamTokenExpirationChanged {
-+	if !a.checkStreamExportsEqual(old) || signersChanged {
- 		clients := map[*client]struct{}{}
- 		// We need to check all accounts that have an import claim from this account.
- 		awcsti := map[string]struct{}{}
-@@ -3832,7 +3810,7 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 		}
- 	}
- 	// Now check if service exports have changed.
--	if !a.checkServiceExportsEqual(old) || signersChanged || serviceTokenExpirationChanged {
-+	if !a.checkServiceExportsEqual(old) || signersChanged {
- 		// We must only allow one goroutine to go through here, otherwise we could deadlock
- 		// due to locking two accounts in succession.
- 		s.mu.Lock()
+In interest-only mode a gateway message's arrival can race with removal
+of an account's last subscription. If there are no subscriptions when
+the message arrives `gatewayHandleSubjectNoInterest` calls
+`sendAccountUnsubToGateway` and replaces the `InterestOnly` inbound
+entry with `nil` then sends `A-`. After that the account stops receiving
+messages across the gateway until the connection restarts even if new
+subscriptions are created.
+
+### Trace
+
+Two servers with `NoSystemAccount` `west` and `east` and one client in
+west's `$G`:
+
+```
+west ->> RS- $G hb     last subscription removed
+                       an hb message east sent before receiving the RS- arrives at west
+west ->> A- $G         $G has no subscriptions -> sendAccountUnsubToGateway
+east <<- A- $G         processGatewayAccountUnsub: outsim[$G] InterestOnly entry -> nil
+west ->> A+ $G         new SUB: insim[$G] == nil -> A+, insim entry deleted
+east <<- A+ $G         processGatewayAccountSub: outsim[$G] deleted
+east                   gatewayInterest: !accountInMap && interestOnlyMode -> no interest, forever
 ```
 
-**File**: `server/jwt_test.go` (modified, +33/-9)
+West has no inbound entry so i
+
+**File**: `server/gateway.go` (modified, +10/-0)
 ```diff
-@@ -4870,9 +4870,15 @@ func TestJWTActivationRevocation(t *testing.T) {
- 			Type:     jwt.Stream,
- 			TokenReq: true,
- 		})
-+		// Revoke an account that doesn't import, which must not affect the importer.
-+		_, otherPub := createKey(t)
-+		aExpClaim.Exports[0].RevokeAt(otherPub, time.Now())
- 		aExp1Jwt := encodeClaim(t, aExpClaim, aExpPub)
- 		aExpCreds := newUser(t, aExpKp)
- 
-+		aExpClaim.Tags.Add("unrelated")
-+		aExp2Jwt := encodeClaim(t, aExpClaim, aExpPub)
+@@ -2776,6 +2776,16 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
+ 	// Check if we have sent the A- or not.
+ 	c.mu.Lock()
+ 	e, sent := c.gw.insim[string(accName)]
++	// Once the account has left optimistic mode (interest-only, or switching
++	// to it), an A- would replace the remote's entry with nil: it then drops
++	// our RS+ and the switch-complete command, and after the next A+ it never
++	// sends on this account again. In interest-only mode a message we have
++	// no interest in crossed our last RS-; while switching, the remote may
++	// still be sending optimistically. Either way, dropping it is enough.
++	if e != nil && e.mode != Optimistic {
++		c.mu.Unlock()
++		return
++	}
+ 	if e != nil || !sent {
+ 		// Add a nil value to indicate that we have sent an A-
+ 		// so that we know to send A+ when needed.
+```
+
+**File**: `server/gateway_test.go` (modified, +96/-0)
+```diff
+@@ -8078,3 +8078,99 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
+ 	s1.Shutdown()
+ 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
+ }
 +
- 		aImpKp, aImpPub := createKey(t)
- 
- 		ac := &jwt.ActivationClaims{}
-@@ -4888,10 +4894,10 @@ func TestJWTActivationRevocation(t *testing.T) {
- 		}
- 
- 		aExpClaim.Exports[0].RevokeAt(revPubKey, time.Now())
--		aExp2Jwt := encodeClaim(t, aExpClaim, aExpPub)
-+		aExp3Jwt := encodeClaim(t, aExpClaim, aExpPub)
- 
- 		aExpClaim.Exports[0].ClearRevocation(revPubKey)
--		aExp3Jwt := encodeClaim(t, aExpClaim, aExpPub)
-+		aExp4Jwt := encodeClaim(t, aExpClaim, aExpPub)
- 
- 		aImpClaim := jwt.NewAccountClaims(aImpPub)
- 		aImpClaim.Name = "Import"
-@@ -4921,7 +4927,7 @@ func TestJWTActivationRevocation(t *testing.T) {
- 			defer removeDir(t, dirSrv) // clean jwt directory
- 
- 			updateJwt(t, srv.ClientURL(), sysCreds, sysJwt, 1)   // update system account jwt
--			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt without revocation
-+			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account jwt with revocation
- 			updateJwt(t, srv.ClientURL(), sysCreds, aImpJwt, 1)
- 
- 			ncExp1 := natsConnect(t, srv.ClientURL(), nats.UserCredentials(aExpCreds))
-@@ -4945,7 +4951,7 @@ func TestJWTActivationRevocation(t *testing.T) {
- 			defer removeDir(t, dirSrv) // clean jwt directory
- 
- 			updateJwt(t, srv.ClientURL(), sysCreds, sysJwt, 1)   // update system account jwt
--			updateJwt(t, srv.ClientURL(), sysCreds, aExp1Jwt, 1) // set account jwt without revocation
-+			updateJwt(t, srv.ClientURL(), sysCreds, aExp1Jwt, 1) // set account jwt with unrelated revocation
- 			updateJwt(t, srv.ClientURL(), sysCreds, aImpJwt, 1)
- 
- 			ncExp1 := natsConnect(t, srv.ClientURL(), nats.UserCredentials(aExpCreds))
-@@ -4962,19 +4968,37 @@ func TestJWTActivationRevocation(t *testing.T) {
- 			require_NoError(t, err)
- 			require_Equal(t, string(m1.Data), "1")
- 
--			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt with revocation
-+			// The import adds a shadow subscription to the exporting account.
-+			aExp, err := srv.LookupAccount(aExpPub)
-+			require_NoError(t, err)
-+			r := aExp.sl.Match("foo")
-+			require_Len(t, len(r.psubs), 1)
-+			shadow := r.psubs[0]
++// A message can still be in flight from the remote when the last subscription
++// on an interest-only account goes away. Its arrival must not produce an A-:
++// that would take the account out of interest-only mode on both sides, the
++// following A+ would leave the remote with no entry for the account, and an
++// interest-only remote then never sends on it again.
++func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
++	ob := testDefaultOptionsForGateway("B")
++	sb := runGatewayServer(ob)
++	defer sb.Shutdown()
 +
-+			updateJwt(t, srv.ClientURL(), sysCreds, aExp2Jwt, 1) // set account jwt with unchanged revocations
- 
- 			require_NoError(t, ncExp1.Publish("foo", []byte("2")))
-+			m2, err := sub.NextMsg(time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, string(m2.Data), "2")
-+			// Re-checking the import would have replaced the shadow subscription.
-+			r = aExp.sl.Match("foo")
-+			require_Len(t, len(r.psubs), 1)
-+			require_Equal(t, r.psubs[0], shadow)
++	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
++	sa := runGatewayServer(oa)
++	defer sa.Shutdown()
 +
-+			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account jwt with revocation
++	waitForOutboundGateways(t, sa, 1, time.Second)
++	waitForOutboundGateways(t, sb, 1, time.Second)
++	waitForInboundGateways(t, sa, 1, time.Second)
++	waitForInboundGateways(t, sb, 1, time.Second)
 +
-+			require_NoError(t, ncExp1.Publish("foo", []byte("3")))
- 			_, err = sub.NextMsg(time.Second)
- 			require_Error(t, err)
- 			require_Equal(t, err.Error(), "nats: timeout")
- 
--			updateJwt(t, srv.ClientURL(), sysCreds, aExp3Jwt, 1) // set account with revocation cleared
-+			updateJwt(t, srv.ClientURL(), sysCreds, aExp4Jwt, 1) // set account with revocation cleared
- 
--			require_NoError(t, ncExp1.Publish("foo", []byte("3")))
--			m2, err := sub.NextMsg(time.Second)
-+			require_NoError(t, ncExp1.Publish("foo", []byte("4")))
-+			m3, err := sub.NextMsg(time.Second)
- 			require_NoError(t, err)
--			require_Equal(t, string(m2.Data), "3")
-+			require_Equal(t, string(m3.Data), "4")
- 		})
- 	}
- 	t.Run("specific-key", func(t *testing.T) {
++	ncA := natsConnect(t, sa.ClientURL())
++	defer ncA.Close()
++	sub := natsSubSync(t, ncA, "foo")
++	natsFlush(t, ncA)
++	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
++
++	natsUnsub(t, sub)
++	natsFlush(t, ncA)
++	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
++		c := sb.getOutboundGatewayConnection("A")
++		ei, _ := c.gw.outsim.Load(globalAccountName)
++		if ei == nil {
++			return fmt.Errorf("no entry for account %q", globalAccountName)
++		}
++		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
++			return fmt.Errorf("interest on %q still registered", "foo")
++		}
++		return nil
++	})
++
++	// Deliver, on A, a message from B that crossed the RS- for "foo": the
++	// account now has no subscriptions at all.
++	var gws []*client
++	sa.getInboundGatewayConnections(&gws)
++	require_Len(t, len(gws), 1)
++	acc := sa.globalAccount()
++	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
++
++	sub = natsSubSync(t, ncA, "bar")
++	natsFlush(t, ncA)
++	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
++	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
++
++	ncB := natsConnect(t, sb.ClientURL())
++	defer ncB.Close()
++	natsPub(t, ncB, "bar", []byte("hello"))
++	natsFlush(t, ncB)
++	natsNexMsg(t, sub, time.Second)
++}
++
++// Same as above, but the message arrives while the account is switching to
++// interest-only mode, before the switch completes.
++func TestGatewayNoAccountUnsubWhileSwitchingToInterestOnlyMode(t *testing.T) {
++	ob := testDefaultOptionsForGateway("B")
++	sb := runGatewayServer(ob)
++	defer sb.Shutdown()
++
++	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
++	sa := runGatewayServer(oa)
++	defer sa.Shutdown()
++
++	waitForOutboundGateways(t, sa, 1, time.Second)
++	waitForOutboundGateways(t, sb, 1, time.Second)
++	waitForInboundGateways(t, sa, 1, time.Second)
++	waitForInboundGateways(t, sb, 1, time.Second)
++	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
++
++	var gws []*client
++	sa.getInboundGatewayConnections(&gws)
++	require_Len(t, len(gws), 1)
++	gwc := gws[0]
++	gwc.mu.Lock()
++	e := gwc.gw.insim[globalAccountName]
++	require_NotNil(t, e)
++	e.mode = Transitioning
++	gwc.mu.Unlock()
++
++	acc := sa.globalAccount()
++	sa.gatewayHandleSubjectNoInterest(gwc, acc, []byte(acc.Name), []byte("foo"))
++
++	gwc.mu.Lock()
++	e = gwc.gw.insim[globalAccountName]
++	gwc.mu.Unlock()
++	require_NotNil(t, e)
++	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
++}
+```
+
+---
+
+### Incident Patch 2: `96b92df5` (2026-11-04)
+**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account
+
+In interest-only mode, a gateway message can still be in flight when the last
+subscription on an account goes away. When it lands on an account with no
+subscriptions, sendAccountUnsubToGateway replaced the interest-only inbound
+entry with nil and sent an A-. The remote then replaced its interest-only
+outbound entry with nil, and the A+ sent for the next subscription deleted it.
+With interestOnlyMode set, an account with no entry gets no messages, and no
+RS+ follows because the inbound entry is gone too, so the account stops
+receiving across that gateway until the connection is re-established.
+
+In interest-only mode the remote already sends only on registered interest,
+so skip the A-.
+
+Signed-off-by: Paul Wells <[REDACTED_EMAIL]>
+
+**File**: `server/gateway.go` (modified, +8/-0)
+```diff
+@@ -2776,6 +2776,14 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
+ 	// Check if we have sent the A- or not.
+ 	c.mu.Lock()
+ 	e, sent := c.gw.insim[string(accName)]
++	// In interest-only mode the remote sends only on interest we registered,
++	// so a message we have no interest in crossed our last RS-. An A- would
++	// take the account out of interest-only mode on both sides, and after the
++	// next A+ the remote would never send on this account again.
++	if e != nil && e.mode == InterestOnly {
++		c.mu.Unlock()
++		return
++	}
+ 	if e != nil || !sent {
+ 		// Add a nil value to indicate that we have sent an A-
+ 		// so that we know to send A+ when needed.
+```
+
+**File**: `server/gateway_test.go` (modified, +61/-0)
+```diff
+@@ -8078,3 +8078,64 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
+ 	s1.Shutdown()
+ 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
+ }
++
++// A message can still be in flight from the remote when the last subscription
++// on an interest-only account goes away. Its arrival must not produce an A-:
++// that would take the account out of interest-only mode on both sides, the
++// following A+ would leave the remote with no entry for the account, and an
++// interest-only remote then never sends on it again.
++func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
++	ob := testDefaultOptionsForGateway("B")
++	sb := runGatewayServer(ob)
++	defer sb.Shutdown()
++
++	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
++	sa := runGatewayServer(oa)
++	defer sa.Shutdown()
++
++	waitForOutboundGateways(t, sa, 1, time.Second)
++	waitForOutboundGateways(t, sb, 1, time.Second)
++	waitForInboundGateways(t, sa, 1, time.Second)
++	waitForInboundGateways(t, sb, 1, time.Second)
++
++	ncA := natsConnect(t, sa.ClientURL())
++	defer ncA.Close()
++	sub := natsSubSync(t, ncA, "foo")
++	natsFlush(t, ncA)
++	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
++
++	natsUnsub(t, sub)
++	natsFlush(t, ncA)
++	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
++		c := sb.getOutboundGatewayConnection("A")
++		ei, _ := c.gw.outsim.Load(globalAccountName)
++		if ei == nil {
++			return fmt.Errorf("no entry for account %q", globalAccountName)
++		}
++		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
++			return fmt.Errorf("interest on %q still registered", "foo")
++		}
++		return nil
++	})
++
++	// Deliver, on A, a message from B that crossed the RS- for "foo": the
++	// account now has no subscriptions at all.
++	var gws []*client
++	sa.getInboundGatewayConnections(&gws)
++	if len(gws) != 1 {
++		t.Fatalf("Expected 1 inbound gateway connection, got %d", len(gws))
++	}
++	acc := sa.globalAccount()
++	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
++
++	sub = natsSubSync(t, ncA, "bar")
++	natsFlush(t, ncA)
++	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
++	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
++
++	ncB := natsConnect(t, sb.ClientURL())
++	defer ncB.Close()
++	natsPub(t, ncB, "bar", []byte("hello"))
++	natsFlush(t, ncB)
++	natsNexMsg(t, sub, time.Second)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8855** (2026-11-05): [IMPROVED] Avoid copying filtered messages in single filter scans (@sciascid)
+- **PR #8854** (2026-11-05): [IMPROVED] Avoid copying filtered messages in first/last matching multi (@sciascid)
+- **PR #8853** (2026-11-05): [FIXED] Gateway: A- in interest-only mode stops delivery for the account (@paulwe)
 - **PR #8851** (2026-11-04): [FIXED] Revocations re-check importers on every account update (@MauriceVanVeen)
 - **PR #8850** (2026-11-04): [FIXED] Clustered healthz ignores write errors on R1 streams (@MauriceVanVeen)
 - **PR #8849** (2026-11-04): [FIXED] Recovery scans not persisted & walking every block (@MauriceVanVeen)
-- **PR #8847** (2026-11-04): (2.15) NRG: Removed unmanaged peer could rejoin as leader (@MauriceVanVeen)
-- **PR #8846** (2026-11-04): [FIXED] Duplicate route RS+ leaks leafnode and gateway interest (@MauriceVanVeen)
-- **PR #8844** (2026-11-04): Fix filestore recovery panic and preserve stream data on failure (@rleungx)
 
 ---
 
@@ -2925,56 +3012,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Revocations re-check importers on every account update (#8851)
+## X. [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
 
 **RULE**:
-When implementing operations in `server/accounts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9bad2e8d`: [FIXED] Revocations re-check importers on every account update (#8851). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c17e8e0`: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/accounts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/gateway.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Revocation changes are detected when comparing the exports against old below.
-			ea.actsRevoked = e.Revocations
-	if !a.checkStreamExportsEqual(old) || signersChanged {
-	if !a.checkServiceExportsEqual(old) || signersChanged {
+	// Once the account has left optimistic mode (interest-only, or switching
+	// to it), an A- would replace the remote's entry with nil: it then drops
+	// our RS+ and the switch-complete command, and after the next A+ it never
+	// sends on this account again. In interest-only mode a message we have
+	// no interest in crossed our last RS-; while switching, the remote may
+	// still be sending optimistically. Either way, dropping it is enough.
+	if e != nil && e.mode != Optimistic {
+		c.mu.Unlock()
+		return
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	streamTokenExpirationChanged := false
-	serviceTokenExpirationChanged := false
-
-		var revocationChanged *bool
-			revocationChanged = &streamTokenExpirationChanged
-			revocationChanged = &serviceTokenExpirationChanged
-			oldRevocations := ea.actsRevoked
-			if len(e.Revocations) == 0 {
-				// remove all, no need to evaluate existing imports
-				ea.actsRevoked = nil
-			} else if len(oldRevocations) == 0 {
-				// add all, existing imports need to be re evaluated
-				ea.actsRevoked = e.Revocations
-				*revocationChanged = true
-			} else {
-				ea.actsRevoked = e.Revocations
-				// diff, existing imports need to be conditionally re evaluated, depending on:
-				// if a key was added, or it's timestamp increased
-				for k, t := range e.Revocations {
-					if tOld, ok := oldRevocations[k]; !ok || tOld < t {
-						*revocationChanged = true
-					}
-				}
-			}
-	if !a.checkStreamExportsEqual(old) || signersChanged || streamTokenExpirationChanged {
-	if !a.checkServiceExportsEqual(old) || signersChanged || serviceTokenExpirationChanged {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bad2e8d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c17e8e0` are properly handled with clean fallback behavior.

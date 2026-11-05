@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:08:39.384Z",
-  "total_cycles_completed": 7770,
-  "total_learnings_persisted": 7770,
-  "total_rules_promoted": 7413,
+  "last_updated": "2026-11-05T22:16:10.014Z",
+  "total_cycles_completed": 7773,
+  "total_learnings_persisted": 7773,
+  "total_rules_promoted": 7415,
   "history": [
-    {
-      "timestamp": "2026-11-05T09:12:33.420Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T09:21:00.253Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T09:25:40.963Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T09:36:22.449Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T22:08:39.384Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:16:01.518Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:16:06.344Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:16:10.014Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

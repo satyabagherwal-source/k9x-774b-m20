@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `43936bab`  
+> **Source Version**: `5d98077a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T01:47:34.171Z  
+> **Timestamp**: 2026-11-05T22:16:01.185Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T01:47:34.164Z  
+> **Harvest Timestamp**: 2026-11-05T22:16:00.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10504 stars
+- **Stars / Engagement**: 10502 stars
 
 ---
 
@@ -824,1478 +824,412 @@ mod tests {
             "DEP_Z_INCLUD
 ```
 
-### Core Architecture Module: `src/graph_core.rs`
+### Core Architecture Module: `proofs/runtime_core/repro_3439.py`
 ```
-//! Core graph execution and concurrency primitives.
-//!
-//! This module owns the execution model used by Redis command handlers.
-//!
-//! ## Concurrency model
-//! ```text
-//! Client query
-//!    |
-//!    v
-//! query_mut -> threadpool worker
-//!    |
-//!    +--> execute_query() detects write IR?
-//!            |
-//!            +-- no --> run on MVCC read snapshot (parallel reads)
-//!            |
-//!            +-- yes -> enqueue blocked client + query
-//!                        |
-//!                        v
-//!                  process_write_queued_query()
-//!                        |
-//!                        +--> single writer loop
-//!                              +--> execute_query_write()
-//!                              +--> commit() on success / drop the fork on error
-//! ```
-//!
-//! The key design goal is predictable write ordering with high read throughput.
-//! Reads are lock-light and concurrent; writes are serialized through an explicit
-//! queue guarded by `write_loop`. Every query runs under a
-//! [`crate::query_session::QuerySession`], which owns its locks and documents the
-//! reader→writer protocol.
+"""Live repro for #3439 (RuntimeCore.Proto.writer_reply_race, pre-existing on main).
 
-use crate::{
-    config::{
-        CONFIGURATION_IMPORT_FOLDER, MAX_QUEUED_QUERIES, QUERY_MEM_CAPACITY, RESULTSET_SIZE,
-        TIMEOUT, TIMEOUT_DEFAULT, TIMEOUT_MAX,
-    },
-    reply::{reply_compact, reply_verbose},
-    slow_log::SlowLog,
-    telemetry,
-};
-use atomic_refcell::AtomicRefCell;
-use crossfire::{
-    MTx, Rx,
-    mpsc::{List, unbounded_blocking},
-};
-use graph::{
-    effects::payload::take_effects_buffer,
-    effects::{EffectsBuffer, ReplicationSink},
-    graph::{
-        graph::{Graph, Plan},
-        mvcc_graph::MvccGraph,
-    },
-    planner::IR,
-    runtime::runtime::{QueryStatistics, Runtime},
-    threadpool::{QueueSlot, spawn},
-};
-use orx_tree::{Collection, Dfs, DynTree, NodeRef};
-use parking_lot::RwLock;
-use redis_module::{Context, ContextFlags, RedisResult, RedisString, RedisValue, raw};
-use std::{
-    collections::HashMap,
-    os::raw::{c_char, c_void},
-    sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-    },
-    time::Instant,
-};
-
-use crate::allocator::{
-    current_thread_usage, disable_tracking, enable_tracking, net_thread_usage, reset_counter,
-};
-use crate::dispatch::must_run_inline;
-use crate::divergence_guard;
-use crate::query_session::QuerySession;
-
-/// The prefix of `s` before its first NUL byte, or all of `s` if it holds none.
-///
-/// This is the whole of C's NUL handling, in one place. C reads both the graph name and
-/// the query text out of a `RedisModuleString` with the length discarded
-/// (`RM_StringPtrLen(x, NULL)`) and treats what it gets as a C string from there on, so
-/// a NUL simply ends the value: the query `RETURN 1\0<anything>` runs as `RETURN 1`, and
-/// a graph addressed as `a\0b` is named `a`. Truncating the same way is what keeps the
-/// two engines answering alike, and it is also what keeps a NUL out of the `CString`
-/// conversions that used to abort the process (#2490).
-#[must_use]
-pub fn up_to_nul(s: &str) -> &str {
-    match s.find('\0') {
-        Some(end) => &s[..end],
-        None => s,
-    }
-}
-
-/// The graph name the C engine would see for `key`: [`up_to_nul`] of its bytes.
-///
-/// C `rm_strdup`s this name into the `GraphContext`, and everything downstream sees only
-/// it — the registry, the `telemetry{%s}` stream name, and every reply that names a
-/// graph or a schema.
-///
-/// Note that this is the *name*, not the key the command addressed: C looks a graph up
-/// by the full key bytes and only rebuilds a key from the name when it creates one.
-/// See [`c_graph_key`].
-#[must_use]
-pub fn c_graph_name(key: &RedisString) -> String {
-    up_to_nul(&key.to_string_lossy()).to_owned()
-}
-
-/// The Redis key C stores a *newly created* graph under: [`c_graph_name`], rebuilt into
-/// a key name. Identical to `key` unless it holds a NUL.
-///
-/// This is `GraphContext_SetKey`, which opens
-/// `RM_CreateString(gc->graph_name, strlen(gc->graph_name))` rather than the key the
-/// command named. C is genuinely asymmetric here — it looks a graph up by the full key
-/// bytes but stores a new one under the truncated name — so a graph asked for as
-/// `a\0b` lands at key `a`, is not found by a later lookup of `a\0b`, and is replaced
-/// by whatever the next create under that name produces. Reproduced deliberately: the
-/// point of this path is that both engines answer the same thing.
-#[must_use]
-pub fn c_graph_key(
-    ctx: &Context,
-    key: &RedisString,
-) -> RedisString {
-    // Built from the bytes, not from `c_graph_name`: a Redis key name is binary and
-    // need not be UTF-8 (`test_binary_key_name_scan_skip` keeps a graph under
-    // `\xc3\x28...`), so rebuilding it through a lossy `String` would replace those
-    // bytes and store the graph under a key nobody can address. Truncation is the only
-    // difference this is allowed to make.
-    let bytes = key.as_slice();
-    let end = bytes.iter().position(|b| *b == 0).unwrap_or(bytes.len());
-    RedisString::create_from_slice(ctx.get_raw(), &bytes[..end])
-}
-
-/// Global registry of all live graph instances.
-/// Used by the pthread_atfork prepare handler to sync all GraphBLAS matrices
-/// before fork, preventing deadlocks in the BGSAVE child process.
-pub static GRAPH_REGISTRY: std::sync::LazyLock<
-    parking_lot::Mutex<HashMap<String, Arc<RwLock<ThreadedGraph>>>>,
-> = std::sync::LazyLock::new(|| parking_lot::Mutex::new(HashMap::new()));
-
-pub fn register_graph(
-    name: String,
-    arc: Arc<RwLock<ThreadedGraph>>,
-) {
-    // Invariant: every registered name must have been removed from the
-    // registry before being re-inserted. `graph_free` removes entries on
-    // Redis key delete/overwrite/expire, and the RDB multi-key load path
-    // mutates the placeholder Arc in place rather than rebinding the name.
-    // If this assert fires, a caller is leaking the previously-registered
-    // Arc and likely racing index/teardown shutdown.
-    let displaced = GRAPH_REGISTRY.lock().insert(name, arc);
-    debug_assert!(
-        displaced.is_none(),
-        "register_graph: name already registered; missing graph_free or placeholder swap"
-    );
-    // Drop any displaced graph off the main Redis thread. Index::drop ->
-    // RediSearch_DropIndex queues a destroyCallback to RediSearch's GC
-    // thread pool when its timer can't be stopped synchronously; that
-    // callback asserts gc->stopped == 1 and aborts under the resulting
-    // race. Moving the drop to a background thread also routes Index::drop
-    // through the GIL-acquiring path, which the synchronous main-thread
-    // drop intentionally skips.
-    if let Some(displaced) = displaced {
-        std::thread::spawn(move || drop(displaced));
-    }
-}
-
-/// True if `arc` is still the graph registered under some Redis key.
-///
-/// A query that has just escalated to writer mode checks this before mutating, and
-/// **aborts** if it fails — mirroring C's `QueryCtx_AcquireWriteLock`, which re-opens
-/// the key under WRITE and raises a runtime exception when the key is empty, is not a
-/// graph, or holds a *different* value than the one the query started on (our
-/// `data_ptr` comparison is that third check).
-///
-/// Aborting rather than committing-and-discarding is required, not just tidy: the
-/// write would still be replicated, and a replica's `GRAPH.EFFECT` handler *creates* a
-/// graph when the key is missing, so it would resurrect a key the primary no longer
-/// has — a diverged replica.
-///
-/// One check is enough. The exposed window is exactly [release read lock → take GIL],
-/// because every path that removes a key (`GRAPH.DELETE`, `FLUSHALL`, overwrite,
-/// expiry) runs inline on the main thread, which cannot execute a command callback
-/// while this query holds the GIL.
-///
-/// The scan compares `data_ptr` rather than looking the name up: `rename_graph`
-/// re-keys the registry without updating `Graph::name()`, so an O(1) by-name lookup
-/// would wrongly abort after a `RENAME`.
-pub fn graph_is_registered(arc: &Arc<RwLock<ThreadedGraph>>) -> bool {
-    let target = arc.data_ptr() as usize;
-    GRAPH_REGISTRY
-        .lock()
-        .values()
-        .any(|registered| registered.data_ptr() as usize == target)
-}
-
-/// Re-key a registry entry when a Redis RENAME moves a graph to a new key.
-///
-/// `graph_free` only runs for the *overwritten destination* value, so without
-/// this the old name keeps a stale entry: the next `register_graph` under
-/// that name (e.g. a concurrent write query re-creating the key) displaces
-/// it and trips the invariant assert above.
-pub fn rename_graph(
-    old_name: &str,
-    new_name: &str,
-) {
-    let displaced = {
-        let mut reg = GRAPH_REGISTRY.lock();
-        reg.remove(old_name)
-            .and_then(|arc| reg.insert(new_name.to_string(), arc))
-    };
-    // The destination entry is normally already removed (overwriting the key
-    // ran `graph_free` synchronously), but under lazy free that removal is
-    // deferred, so we may displace it here. Drop off the main Redis thread
-    // (see `register_graph` for the rationale).
-    if let Some(displaced) = displaced {
-        std::thread::spawn(move || drop(displaced));
-    }
-}
-
-pub struct WriteMessage {
-    pub bc: BlockedClient,
-    pub query: Arc<str>,
-    pub compact: bool,
-    pub cached: bool,
-    pub key_name: Arc<str>,
-    pub timeout: Option<i64>,
-    pub received_at: i64,
-    pub enqueue_instant: Instant,
-    pub waiting_id: u64,
-    /// The query's admission slot, released when the drainer dequeues it — so
-    /// writes waiting here count against `MAX_QUEUED_QUERIES` exactly like jobs
-    /// waiting in the pool queue. Dropped with the message on every other path
-    /// (a failed send, a graph freed with writes still queued).
-    pub slot: Option<QueueSlot>,
-    /// True if this is a GRAPH.PROFILE write: execute with profiling enabled and
-    /// reply with the profile tree instead of the result set. Otherwise handled
-    /// exactly like a 
-```
-
-### Core Architecture Module: `bench/pmc_tool.c`
-```
-// PMU counter tool for Apple Silicon using private kperf/kperfdata frameworks.
-// Requires root. Counts system-wide events (all CPUs) across a time window.
-// Usage:
-//   pmc_tool list [filter]
-//   pmc_tool window
-//
-// `window` programs the counters, prints `READY`, and then blocks until it
-// reads a line on stdin; the counter delta it prints covers everything that
-// happened in between, on every CPU. The caller runs whatever it wants to
-// measure during that gap:
-//
-//     p = Popen([pmc, "window"], stdin=PIPE, stdout=PIPE, text=True)
-//     p.stdout.readline()          # "READY"
-//     subprocess.run(cmd)          # measured, run by the caller
-//     out, _ = p.communicate("\n") # counter deltas
-//
-// This deliberately does NOT run the command itself. The binary is deployed
-// setuid-root so it can program the PMU, and a setuid binary that execs a
-// caller-supplied command is a local privilege escalation waiting to happen —
-// the previous version did exactly that and had to drop groups, gid and uid by
-// hand before the exec to stay safe. Not exec'ing at all removes that whole
-// class of bug: the privileged process now takes no caller-controlled input,
-// and the measured command runs as the unprivileged caller because the caller
-// is the one that spawns it. The counters are system-wide, so bracketing the
-// command in time is all that was ever needed.
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-// strcasestr is not declared by <string.h> under strict feature sets; it is
-// declared in <strings.h> on macOS and needs _GNU_SOURCE on glibc.
-#include <strings.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <sys/sysctl.h>
-#include <sys/time.h>
-
-typedef uint64_t kpc_config_t;
-typedef struct kpep_db kpep_db;
-typedef struct kpep_config kpep_config;
-typedef struct kpep_event {
-    const char *name;
-    const char *description;
-    const char *errata;
-    const char *alias;
-    const char *fallback;
-    uint32_t mask;
-    uint8_t number;
-    uint8_t umask;
-    uint8_t reserved;
-    uint8_t is_fixed;
-} kpep_event;
-
-// kperfdata.framework
-extern int kpep_db_create(const char *name, kpep_db **db);
-extern int kpep_db_events_count(kpep_db *db, size_t *count);
-extern int kpep_db_events(kpep_db *db, kpep_event **buf, size_t buf_size);
-extern int kpep_db_event(kpep_db *db, const char *name, kpep_event **ev);
-extern int kpep_config_create(kpep_db *db, kpep_config **cfg);
-extern int kpep_config_force_counters(kpep_config *cfg);
-extern int kpep_config_add_event(kpep_config *cfg, kpep_event **ev, uint32_t flag, uint32_t *err);
-extern int kpep_config_kpc(kpep_config *cfg, kpc_config_t *buf, size_t buf_size);
-extern int kpep_config_kpc_count(kpep_config *cfg, size_t *count);
-extern int kpep_config_kpc_classes(kpep_config *cfg, uint32_t *classes);
-extern int kpep_config_kpc_map(kpep_config *cfg, size_t *buf, size_t buf_size);
-
-// kperf.framework
-extern int kpc_force_all_ctrs_set(int val);
-extern int kpc_set_config(uint32_t classes, kpc_config_t *config);
-extern int kpc_set_counting(uint32_t classes);
-extern uint32_t kpc_get_counter_count(uint32_t classes);
-extern int kpc_get_cpu_counters(bool all_cpus, uint32_t classes, int *curcpu, uint64_t *buf);
-
-#define KPC_MAX_COUNTERS 32
-#define MAX_EVENTS 8
-
-static const char *event_names[] = {
-    "FIXED_CYCLES",
-    "FIXED_INSTRUCTIONS",
-    "INST_BRANCH",
-    "BRANCH_MISPRED_NONSPEC",
-    "L1D_CACHE_MISS_LD",
-    "L1D_CACHE_MISS_ST",
-};
-static const int n_events = sizeof(event_names) / sizeof(event_names[0]);
-
-static int get_ncpu(void) {
-    int ncpu = 0;
-    size_t sz = sizeof(ncpu);
-    sysctlbyname("hw.ncpu", &ncpu, &sz, NULL, 0);
-    return ncpu;
-}
-
-// Upper bound on CPUs the counter buffer is sized for. kpc_get_cpu_counters
-// fills one counter_count-wide row per CPU, so the buffer must cover every CPU
-// the kernel reports or it writes past the end.
-#define KPC_MAX_CPUS 256
-
-static void read_counters(uint32_t classes, int ncpu, uint32_t counter_count, uint64_t *sums) {
-    static uint64_t buf[KPC_MAX_CPUS * KPC_MAX_COUNTERS];
-    if (ncpu > KPC_MAX_CPUS || counter_count > KPC_MAX_COUNTERS) {
-        // Refuse rather than truncate: a short read would silently under-count
-        // and the numbers would still look plausible.
-        fprintf(stderr,
-                "pmc_tool: ncpu=%d counter_count=%u exceeds buffer (%d x %d)\n",
-                ncpu, counter_count, KPC_MAX_CPUS, KPC_MAX_COUNTERS);
-        exit(1);
-    }
-    int ret = kpc_get_cpu_counters(true, classes, NULL, buf);
-    if (ret != 0) {
-        fprintf(stderr, "kpc_get_cpu_counters failed: %d\n", ret);
-        exit(1);
-    }
-    memset(sums, 0, KPC_MAX_COUNTERS * sizeof(uint64_t));
-    for (int c = 0; c < ncpu; c++)
-        for (uint32_t i = 0; i < counter_count; i++)
-            sums[i] += buf[c * counter_count + i];
-}
-
-int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "usage: %s list [filter] | window\n", argv[0]);
-        return 1;
-    }
-
-    kpep_db *db = NULL;
-    int ret = kpep_db_create(NULL, &db);
-    if (ret != 0) {
-        fprintf(stderr, "kpep_db_create failed: %d\n", ret);
-        return 1;
-    }
-
-    if (strcmp(argv[1], "list") == 0) {
-        size_t count = 0;
-        kpep_db_events_count(db, &count);
-        kpep_event **evs = malloc(count * sizeof(void *));
-        kpep_db_events(db, evs, count * sizeof(void *));
-        const char *filter = argc > 2 ? argv[2] : NULL;
-        for (size_t i = 0; i < count; i++) {
-            if (filter && !strcasestr(evs[i]->name, filter)) continue;
-            printf("%-40s %s\n", evs[i]->name, evs[i]->description ? evs[i]->description : "");
-        }
-        return 0;
-    }
-
-    if (strcmp(argv[1], "window") != 0) {
-        fprintf(stderr, "usage: %s list [filter] | window\n", argv[0]);
-        return 1;
-    }
-
-    kpep_config *cfg = NULL;
-    if (kpep_config_create(db, &cfg) != 0) { fprintf(stderr, "config_create failed\n"); return 1; }
-    if (kpep_config_force_counters(cfg) != 0) { fprintf(stderr, "force_counters failed\n"); return 1; }
-
-    for (int i = 0; i < n_events; i++) {
-        kpep_event *ev = NULL;
-        if (kpep_db_event(db, event_names[i], &ev) != 0) {
-            fprintf(stderr, "event not found: %s (use 'list' to see names)\n", event_names[i]);
-            return 1;
-        }
-        if (kpep_config_add_event(cfg, &ev, 0, NULL) != 0) {
-            fprintf(stderr, "add_event failed: %s\n", event_names[i]);
-            return 1;
-        }
-    }
-
-    uint32_t classes = 0;
-    size_t reg_count = 0;
-    size_t counter_map[KPC_MAX_COUNTERS] = {0};
-    kpc_config_t regs[KPC_MAX_COUNTERS] = {0};
-    kpep_config_kpc_classes(cfg, &classes);
-    kpep_config_kpc_count(cfg, &reg_count);
-    kpep_config_kpc_map(cfg, counter_map, sizeof(counter_map));
-    kpep_config_kpc(cfg, regs, sizeof(regs));
-
-    if (kpc_force_all_ctrs_set(1) != 0) {
-        fprintf(stderr, "kpc_force_all_ctrs_set failed (need root)\n");
-        return 1;
-    }
-    if ((classes & 2 /*configurable*/) && reg_count) {
-        if (kpc_set_config(classes, regs) != 0) {
-            fprintf(stderr, "kpc_set_config failed\n");
-            return 1;
-        }
-    }
-    if (kpc_set_counting(classes) != 0) {
-        fprintf(stderr, "kpc_set_counting failed\n");
-        return 1;
-    }
-
-    int ncpu = get_ncpu();
-    uint32_t counter_count = kpc_get_counter_count(classes);
-    uint64_t before[KPC_MAX_COUNTERS], after[KPC_MAX_COUNTERS];
-
-    struct timeval t0, t1;
-    read_counters(classes, ncpu, counter_count, before);
-    gettimeofday(&t0, NULL);
-
-    /* Hand the window to the caller: announce readiness, then block until it
-     * tells us the measured command has finished. stdout is a pipe in normal
-     * use, so it must be flushed explicitly or READY sits in the buffer and
-     * the caller deadlocks waiting for it. */
-    printf("READY\n");
-    fflush(stdout);
-
-    int wait_failed = 0;
-    {
-        char line[64];
-        if (fgets(line, sizeof(line), stdin) == NULL) {
-            /* EOF without a line means the caller died or closed the pipe
-             * early. Report it rather than printing a window that ended at an
-             * arbitrary point and looks like a real measurement. */
-            wait_failed = 1;
-        }
-    }
-
-    gettimeofday(&t1, NULL);
-    read_counters(classes, ncpu, counter_count, after);
-
-    kpc_set_counting(0);
-    kpc_force_all_ctrs_set(0);
-
-    if (wait_failed) {
-        fprintf(stderr, "pmc_tool: stdin closed before the window was ended\n");
-        return 1;
-    }
-
-    double elapsed = (t1.tv_sec - t0.tv_sec) + (t1.tv_usec - t0.tv_usec) / 1e6;
-    printf("ELAPSED %.6f\n", elapsed);
-    for (int i = 0; i < n_events; i++) {
-        uint64_t a = after[counter_map[i]], b = before[counter_map[i]];
-        // The counters are free-running and monotonic, so after < before means
-        // something reprogrammed or wrapped them mid-window. Refuse rather than
-        // print the underflowed difference, which would be an enormous number
-        // that still looks like a measurement.
-        if (a < b) {
-            fprintf(stderr, "pmc_tool: counter %s went backwards (%llu -> %llu)\n",
-                    event_names[i], (unsigned long long)b, (unsigned long long)a);
-            return 1;
-        }
-        printf("EVENT %s %llu\n", event_names[i], (unsigned long long)(a - b));
-    }
-    fflush(stdout);
-    return 0;
-}
-
-```
-
-### Core Architecture Module: `bench/src/falkorbench/__init__.py`
-```
-"""Per-query performance harness for FalkorDB.
-
-Layered so that each piece can be tested without a running server:
-
-  model      value types (Query, Metric) — no I/O
-  queries    the canonical query set and graph setup — data only
-  metrics    CSV parsing, ratios, thresholds, normalisation — pure functions
-  client     the falkordb-py control plane: server lifecycle, setup, probes
-  counters   per-process instruction/cycle backends (rusage / perf / none)
-  measure    the full-set measurement loop
-  callgrind  deterministic instruction counts by differencing two runs
-  compare    local regression gate      } both on `metrics`, so a local verdict
-  report     the CI markdown comment    } and the CI comment cannot disagree
-  profile    samply profile of one query
-  flow       per-flow-test-file measurement
-
-The measurement boundary is deliberate and load-bearing: anything *inside* a
-counter window is a C binary (`redis-benchmark`, or `redis-cli -r N` under
-callgrind), because the counters either window on a subprocess lifetime or are
-system-wide and would otherwise absorb this process's own work. `client` is
-only ever used *outside* a measurement window.
+Usage: python repro_3439.py PORT SECONDS N_QUEUED_WRITERS N_INLINE_FAILING_WRITERS N_READERS
+Setup first: GRAPH.QUERY g "CREATE INDEX FOR (n:L) ON (n.v)".
+`repro_3439.py P 60 2 1 0` crashes the Rust server ("already immutably borrowed" in
+Pending::resync_published_indexes); C survives. `repro_3439.py P 60 0 2 6` exercises
+resync against PR #3436 read guards (no panic expected).
 """
-
-```
-
-### Core Architecture Module: `bench/src/falkorbench/callgrind.py`
-```
-"""Deterministic per-query instruction counts via callgrind.
-
-Why this exists: no hosted CI runner exposes a PMU. Measured, not assumed — GCE
-rejects `--performance-monitoring-unit` on the v1 and beta APIs alike, `perf`
-there reports `<not supported>`, macOS runners return 0 for `proc_pid_rusage`'s
-ri_instructions, and kperf inside a macOS runner fails with
-`kpep_db_create failed: 7`. Hardware counters are simply unavailable.
-
-Callgrind counts instructions in *software*, so it needs no PMU and no
-privileges, and its counts are near-deterministic.
-
-## How a query is isolated: differencing, not windowing
-
-Callgrind reports one total when the process exits. The obvious approach is to
-window with `callgrind_control --instr=on/off --dump` around each query, and
-that is what the first version did. **It does not work in a container.**
-`callgrind_control` reaches the process through vgdb FIFOs in /tmp, and
-reproduced locally in `debian:trixie-slim` (valgrind 3.24.0, the CI version):
-
-    ==236== open fifo /tmp/vgdb-pipe-from-vgdb-to-236-by-???-on-???
-    ==236== valgrind: fatal error: vgdb FIFO cannot be opened.
-
-The server dies on the first control command, so every dump silently never
-arrives and every query reports nothing. Setting USER/LOGNAME does not help;
-`--vgdb-prefix` makes `callgrind_control` hang instead.
-
-So each query is measured by **differencing two complete runs** of the same
-query at different repeat counts:
-
-    T(n2) = startup + setup + compile + n2 * exec
-    T(n1) = startup + setup + compile + n1 * exec
-    exec  = (T(n2) - T(n1)) / (n2 - n1)
-
-Startup, graph setup and one-time plan compilation appear identically in both
-runs and cancel *exactly* — not approximately — because the counts are
-deterministic. The price is two valgrind runs per query, each paying setup,
-which is why CG_SETUP is deliberately small.
-
-## Precision, and why the span is chosen per query
-
-With the module loaded, CI measured per-run drift of ~300-600k instructions on a
-~236M baseline. At a fixed span of 100 that is 3-6k instr/exec of error —
-nothing for a 7M-instruction query, but **6.7% for `RETURN 1`**, which is how
-the control row once read 1.0673x on two builds whose Rust was byte-identical.
-The error is *absolute*, so "treat sub-1% as noise" is wrong in both directions.
-
-The span is therefore chosen per query as `drift / (TARGET_REL * cost)`, holding
-the *differenced work* constant instead of the span. Cheap queries get a wide
-span (still cheap: `RETURN 1` at span ~3300 is ~300M instructions), expensive
-ones keep the default.
-
-## Not comparable to the full measurement set
-
-CG_SETUP builds a 1,000-node graph, not the 10,000-node one, and skips the
-vector/fulltext indexes, constraints, UDFs and DEBUG RELOAD. Absolute numbers
-here are *not* comparable to `measure` rows — only PR-vs-base ratios are, where
-both sides run this identical setup.
-"""
-
-from __future__ import annotations
-
-import glob
-import math
-import shutil
-import subprocess
-import time
-from collections.abc import Sequence
-from dataclasses import dataclass
-from pathlib import Path
-
-from falkorbench.model import Query
-
-# Per-run drift in the whole-process total, measured in CI with the module
-# loaded. Divided by the span this becomes the per-execution error, so it is an
-# *absolute* budget, not a relative one.
-DRIFT_INSTR = 600_000
-
-# Per-execution precision to aim for. span = drift / (TARGET_REL * cost), so the
-# differenced work is drift/TARGET_REL = 300M instructions regardless of how
-# cheap the query is — a few seconds under valgrind.
-TARGET_REL = 0.002
-MAX_SPAN = 4000
-
-# Widest per-execution error bar still worth reporting. A row that cannot be
-# resolved better than this on the host it ran on is dropped rather than
-# printed: a number nobody can reproduce is worse than a gap, because it still
-# lands in the table looking like a measurement.
-MAX_REL_ERR = 0.02
-
-# A small graph that supports the cg-flagged subset. Deliberately not the full
-# SETUP: that builds 10k nodes, 20k edges, vector and fulltext indexes,
-# constraints, UDFs and a DEBUG RELOAD, and every one of those instructions
-# would be paid twice per measured query under instrumentation.
-#
-# The Person index is created before the ring so the ring build is index-driven
-# rather than a 1000x1000 nested scan.
-CG_SETUP: tuple[str, ...] = (
-    (
-        "UNWIND range(0, 999) AS i "
-        "CREATE (:Person {id: i, name: 'p' + toString(i), age: i % 80, score: i * 1.5})"
-    ),
-    "CREATE INDEX FOR (p:Person) ON (p.id)",
-    (
-        "UNWIND range(0, 999) AS i "
-        "MATCH (a:Person {id: i}) MATCH (b:Person {id: (i + 1) % 1000}) "
-        "CREATE (a)-[:KNOWS]->(b)"
-    ),
-    # `delete node` deletes one :Tmp per execution, so there must be more of them
-    # than the highest repeat count — MAX_SPAN plus n1, since a cheap delete
-    # query gets its span widened. Running dry would not fail loudly: the
-    # remaining executions would measure a no-op delete and quietly halve the
-    # reported cost.
-    "UNWIND range(0, 4999) AS i CREATE (:Tmp {x: i})",
-)
-
-
-@dataclass
-class Measurement:
-    query: str
-    instr: float
-    span: int
-    rel_err: float
-    drift: float
-    seconds: float
-    widened_from: int | None = None
-
-
-class Skipped(Exception):
-    """This query produced no usable number, with the reason as the message."""
-
-
-def parse_total(path: str) -> int | None:
-    """Instruction count from a callgrind output file.
-
-    Callgrind writes `totals:` (and `summary:`) with the first field being
-    instruction reads. None when neither is present, which happens for a file
-    still being written.
-    """
-    try:
-        with open(path, errors="replace") as f:
-            for line in f:
-                if line.startswith(("totals:", "summary:")):
-                    parts = line.split(":", 1)[1].split()
-                    if parts:
-                        return int(parts[0])
-    except OSError:
-        return None
-    return None
-
-
-@dataclass
-class Runner:
-    """Runs one instrumented server lifecycle and reads its instruction total.
-
-    `bare` runs a plain redis-server with no module and no graph setup. That is
-    not a toy mode: valgrind on arm64 cannot execute this module at all
-    (`unhandled instruction 0xB8BFC108` — an ARMv8.1 LSE atomic in RediSearch's
-    slots_tracker, valgrind's limitation rather than a module bug), so the
-    differencing arithmetic above can only be validated against bare redis on
-    that architecture. It used to require editing two module-level constants;
-    making it a flag is what lets the arm64 validation run in CI or locally
-    without a patched checkout.
-    """
-
-    module: Path | None
-    port: int
-    outdir: Path
-    module_args: Sequence[str] = ()
-    bare: bool = False
-
-    @property
-    def setup(self) -> tuple[str, ...]:
-        return () if self.bare else CG_SETUP
-
-    def total(self, cypher: str, reps: int, also_run: Sequence[str] = ()) -> int:
-        """One instrumented lifecycle; returns its whole-process instruction total."""
-        shutil.rmtree(self.outdir, ignore_errors=True)
-        self.outdir.mkdir(parents=True, exist_ok=True)
-
-        argv = [
-            "valgrind",
-            "--tool=callgrind",
-            f"--callgrind-out-file={self.outdir}/callgrind.out.%p",
-            "redis-server",
-            "--port",
-            str(self.port),
-            "--save",
-            "",
-            # serverCron does work proportional to how long the process lives, and
-            # the two runs being differenced live for different durations — so
-            # cron lands in the subtraction as drift. Measured at the default
-            # hz=10 it is ~240k instr per second of life, which swamped a PING
-            # (~20k) and made two (n1,n2) pairs disagree by 44%. hz=1 is the
-            # lowest redis accepts and cuts it 10x.
-            "--hz",
-            "1",
-        ]
-        if self.module is not None and not self.bare:
-            argv += ["--loadmodule", str(self.module), *self.module_args]
-
-        server = subprocess.Popen(argv, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        try:
-            self._wait_ready(server)
-            for stmt in self.setup:
-                self._cli(*self._graph_cmd(stmt))
-            for extra in also_run:
-                self._cli(*self._graph_cmd(extra), check=False)
-            if reps:
-                # One redis-cli with -r, not `reps` of them: a fresh connection
-                # per execution would put accept/handshake/teardown into the
-                # measurement, and the extra wall time feeds the cron drift.
-                self._cli("-r", str(reps), *self._graph_cmd(cypher))
-            self._cli("shutdown", "nosave", check=False)
-            server.wait(timeout=600)
-        finally:
-            if server.poll() is None:
-                server.terminate()
-                try:
-                    server.wait(timeout=120)
-                except subprocess.TimeoutExpired:
-                    server.kill()
-
-        # Redis forks and valgrind profiles the child too; the child's total is
-        # tiny, so the server's own run is the maximum.
-        totals = [
-            t
-            for t in (parse_total(p) for p in glob.glob(str(self.outdir / "callgrind.out.*")))
-            if t is not None
-        ]
-        if not totals:
-            raise Skipped(f"no parseable callgrind output in {self.outdir}")
-        return max(totals)
-
-    def _graph_cmd(self, cypher: str) -> tuple[str, ...]:
-        # In bare mode there is no module, so the payload is a plain PING-ish
-        # command the differencing can still be validated against.
-        return (cypher,) if self.bare else ("GRAPH.QUERY", "bench", cypher)
-
-    def _wait_ready(self, server: subprocess.Popen) -> None:
-        for _ in range(1200):  # instrumented startup is far slower than native
-            if server.poll() is not None:
-                raise Skipped("server exited during startup under callgrind")
-            if self.
-```
-
-### Core Architecture Module: `bench/src/falkorbench/cli.py`
-```
-"""The `bench` command.
-
-One entry point with subcommands, rather than four scripts that each re-declared
---module/--port/--out and one shell script that needed a different one of them to
-have been run first. The shared options are defined once, in `common_options`.
-"""
-
-from __future__ import annotations
-
-import subprocess
-import sys
-from pathlib import Path
-
-import click
-
-from falkorbench import callgrind as cg
-from falkorbench import client as client_mod
-from falkorbench import compare as compare_mod
-from falkorbench import coverage as coverage_mod
-from falkorbench import flow as flow_mod
-from falkorbench import measure as measure_mod
-from falkorbench import metrics
-from falkorbench import profile as profile_mod
-from falkorbench import queries as query_set
-from falkorbench import report as report_mod
-from falkorbench.counters import select_backend
-
-# bench/ is the project root; the repo is its parent.
-BENCH_DIR = Path(__file__).resolve().parents[2]
-REPO_ROOT = BENCH_DIR.parent
-RESULTS = BENCH_DIR / "results"
-
-
-def _select(names: tuple[str, ...], *, cg_only: bool = False):
-    """Resolve query names to Query objects, erroring on an unknown name."""
-    pool = [q for q in query_set.QUERIES if q.cg] if cg_only else list(query_set.QUERIES)
-    if not names:
-        return pool
-    wanted = set(names)
-    chosen = [q for q in pool if q.name in wanted]
-    missing = wanted - {q.name for q in chosen}
-    if missing:
-        raise click.ClickException(f"unknown queries: {sorted(missing)}")
-    # Pull in whatever the chosen rows depend on, transitively. A row that
-    # measures against a graph an earlier row builds is meaningless without it,
-    # and silently so -- it reports a plausible number for the wrong graph.
-    by_name = {q.name: q for q in pool}
-    while True:
-        need = {n for q in chosen for n in q.needs} - {q.name for q in chosen}
-        if not need:
-            break
-        unknown = need - by_name.keys()
-        if unknown:
-            raise click.ClickException(f"unknown prerequisite queries: {sorted(unknown)}")
-        chosen += [by_name[n] for n in need]
-    # Back into suite order: a prerequisite has to run before its dependent.
-    order = {q.name: i for i, q in enumerate(pool)}
-    return sorted(chosen, key=lambda q: order[q.name])
-
-
-def common_options(fn):
-    """--module/--port, shared by every subcommand that starts a server."""
-    fn = click.option(
-        "--module",
-        default=None,
-        help="module to load (default: this repo's target/release build)",
-    )(fn)
-    fn = click.option("--port", default=6399, show_default=True, type=int)(fn)
-    return fn
-
-
-@click.group(context_settings={"help_option_names": ["-h", "--help"]})
-def cli() -> None:
-    """Per-query performance harness for FalkorDB."""
-
-
-# --- measure -----------------------------------------------------------------
-
-
-@cli.command()
-@common_options
-@click.option("--out", default=None, type=click.Path(), help="CSV output path")
-@click.option("--n", "reps", default=1000, show_default=True, help="requests per query")
-@click.option("--once", is_flag=True, help="run each query once, unmeasured (coverage)")
-@click.option("--keep-server", is_flag=True, help="leave the server running afterwards")
-@click.option("--reuse", is_flag=True, help="attach to a server already on --port")
-@click.option("--setup/--no-setup", default=None, help="build the graph (implied unless --reuse)")
-@click.option("--c-compat", is_flag=True, help="measuring the C engine: skip what it cannot do")
-@click.argument("names", nargs=-1)
-def measure(module, port, out, reps, once, keep_server, reuse, setup, c_compat, names):
-    """Measure queries and write a CSV.
-
-    Named queries are merged into an existing CSV, so a subset re-run patches
-    only those rows.
-    """
-    queries = _select(names)
-    out_path = Path(out) if out else RESULTS / "current.csv"
-    module_path = client_mod.find_module(module, REPO_ROOT)
-    # --reuse means "do not start a server". It must NOT silently also mean "do
-    # not build the graph", or the harness measures an empty database and reports
-    # numbers that look real. CI reuses a server from a published image and so
-    # needs setup; default to building unless explicitly told not to.
-    do_setup = (not reuse) if setup is None else setup
-
-    server = client_mod.Server(port=port)
-    if reuse:
-        if not client_mod.is_server_up(port):
-            raise click.ClickException(f"--reuse given but nothing answers on :{port}")
-    else:
-        if client_mod.is_server_up(port):
-            raise click.ClickException(f"port {port} already in use; use --reuse or another --port")
-        if not module_path.exists():
-            raise click.ClickException(f"module not found: {module_path}")
-        client_mod.write_csv_fixtures(Path(query_set.IMPORT_DIR), query_set.CSV_FILES)
-        server = client_mod.start_server(
-            module_path,
-            port,
-            RESULTS / "server_dir",
-            Path(query_set.IMPORT_DIR),
-            appendonly=once,
-        )
-
-    exit_code = 0
-    try:
-        bench = client_mod.connect(server)
-        if do_setup:
-            click.echo(f"server up on :{port}, building graph...")
-            client_mod.build_graph(
-                bench,
-                query_set.SETUP,
-                query_set.SETUP_COMMANDS,
-                c_compat=c_compat,
-            )
-
-        if once:
-            fails = measure_mod.run_once(
-                bench,
-                queries,
-                query_set.ERROR_QUERIES,
-                include_errors=not names,
-                echo=click.echo,
-            )
-            if server.proc is not None and not keep_server:
-                bench.shutdown()  # graceful: flushes .profraw
-            raise SystemExit(1 if fails else 0)
-
-        backend = counter_backend()
-        rows, failures = measure_mod.measure_queries(
-            bench,
-            backend,
-            queries,
-            default_reps=reps,
-            c_compat=c_compat,
-            echo=click.echo,
-        )
-        measure_mod.merge_into_csv(out_path, rows)
-        click.echo(f"wrote {out_path}")
-        if failures:
-            # A query in the set that does not answer is a real problem, and the
-            # CSV is now missing that row rather than carrying a wrong one.
-            click.echo(f"\n{len(failures)} query(ies) failed and were not measured:")
-            for name, why in failures:
-                click.echo(f"  {name}: {why}")
-            exit_code = 1
-    except client_mod.SetupFailed as e:
-        raise click.ClickException(str(e)) from e
-    finally:
-        if server.proc is not None and not keep_server:
-            server.stop()
-        elif server.proc is not None:
-            click.echo(f"server left running on :{port} (pid {server.proc.pid})")
-
-    if exit_code:
-        raise SystemExit(exit_code)
-
-
-def counter_backend():
-    """The counter backend, with pmc_tool picked up if it has been built.
-
-    Without pmc_tool the branch/L1D columns stay empty, which is fine — the
-    regression-gating columns are instructions and allocated bytes.
-    """
-    pmc = BENCH_DIR / "pmc_tool"
-    backend = select_backend(str(pmc) if pmc.exists() else None)
-    if pmc.exists() and getattr(backend, "pmc", None) is None:
-        click.echo("pmc_tool present but not usable — branches/L1D columns stay empty")
-    return backend
-
-
-# --- callgrind ---------------------------------------------------------------
-
-
-@cli.command()
-@common_options
-@click.option("--out", default=None, type=click.Path())
-@click.option("--n1", default=20, show_default=True, help="low repeat count")
-@click.option("--n2", default=120, show_default=True, help="high repeat count")
-@click.option("--shard", default=None, help="measure only shard I/N (1-based, round-robin)")
-@click.option("--job-total", default=None, type=int, help="cross-check N against the CI matrix")
-@click.option("--module-args", multiple=True, help="extra --loadmodule args, e.g. THREAD_COUNT 1")
-@click.option(
-    "--bare",
-    is_flag=True,
-    help="no module, no graph: validates the differencing maths where valgrind "
-    "cannot run this module (arm64)",
-)
-@click.argument("names", nargs=-1)
-def callgrind(module, port, out, n1, n2, shard, job_total, module_args, bare, names):
-    """Deterministic instruction counts, by differencing two runs."""
-    if n2 <= n1:
-        raise click.ClickException(f"--n2 ({n2}) must exceed --n1 ({n1})")
-    cg.require_tools()
-
-    module_path = cg.resolve_module(module, bare)
-    if bare:
-        # Refuse rather than ignore. --bare measures one fixed payload, so a
-        # shard or a name list cannot be honoured — and silently dropping a flag
-        # that changes what gets measured is the failure mode this harness exists
-        # to avoid.
-        conflicting = [n for n, v in (("--shard", shard), ("NAMES", names)) if v]
-        if conflicting:
-            raise click.ClickException(
-                f"--bare measures a single fixed payload, so {', '.join(conflicting)} "
-                f"cannot apply. Drop it, or drop --bare."
-            )
-        queries = [cg.bare_payload()]
-    else:
-        queries = _select(names, cg_only=True)
-        if shard:
-            try:
-                queries = cg.shard(queries, shard, job_total)
-            except ValueError as e:
-                raise click.ClickException(str(e)) from e
-            click.echo(f"shard {shard}: {len(queries)} queries")
-            if not queries:
-                return
-
-    runner = cg.Runner(
-        module=module_path,
-        port=port,
-        outdir=cg.default_outdir(BENCH_DIR),
-        module_args=list(module_args),
-        bare=bare,
-    )
-
-    if not bare:
-        # GraphBLAS compiles kernels on first use and caches them on disk, so the
-        # first server lifecycle in a job pays for that and no later one does.
-        # Measured: the first run came in ~30M instructions above its pair, which
-        # made T(n2) < T(
-```
-
-### Core Architecture Module: `bench/src/falkorbench/client.py`
-```
-"""Server lifecycle and the control plane, over falkordb-py.
-
-Replaces two hand-rolled `redis-cli` subprocess wrappers that had drifted apart
-— one carried a timeout, the other carried server-log diagnostics, and both
-detected success by looking for the substring `"execution time"` in stdout,
-because `redis-cli` exits 0 even when the reply is an error. `Graph.query`
-raises `ResponseError` instead, so failure is an exception rather than a string
-that happens not to match.
-
-Everything here runs *outside* measurement windows. The measured workload stays
-`redis-benchmark` (and `redis-cli -r N` under callgrind) for the reasons in
-`counters`.
-"""
-
-from __future__ import annotations
-
-import contextlib
-import os
-import re
-import shutil
-import signal
-import subprocess
-import time
-from collections.abc import Sequence
-from dataclasses import dataclass
-from dataclasses import field
-from pathlib import Path
-
-from falkordb import FalkorDB
-from falkordb import Graph
-from redis.exceptions import RedisError
-from redis.exceptions import ResponseError
-
-from falkorbench.model import Metric
-
-GRAPH_NAME = "bench"
-
-# Panic/crash markers worth surfacing from a server log. When the module panics,
-# redis prints the panic and backtrace to its log and dies, and every later
-# command fails with the useless "Server closed the connection" — which was all
-# CI ever reported before the log was kept.
-_DEATH_MARKERS = (
-    "panicked at",
-    "FalkorDB panic",
-    "Redis crashed",
-    "signal:",
-    "=== REDIS BUG REPORT",
-)
-
-
-def _jemalloc_table_columns(header: str) -> dict[str, tuple[int, int]]:
-    """Map each column label in a jemalloc `bins:`/`large:` header to the
-    `(start, end)` character range of its field.
-
-    **jemalloc's stats tables cannot be split on whitespace.** Every value is
-    right-aligned in a fixed-width field, and the `(#/sec)` rate fields are only
-    8 characters wide, so a rate of 10,000,000/sec or more fills its field
-    exactly and no space is left between it and the `nmalloc` before it:
-
-    ```text
-    nmalloc (#/sec)      ndalloc (#/sec)     <- header
-        1379247  689623      1355704  677852 <- fine, rates are 6 digits
-    21949879 10974939 21947904 10973952      <- fused: 8-digit rates
-    ```
-
-    `line.split()` turns that second row into `['21949879109749392194790410973952']`
-    -- a 16-digit garbage `nmalloc` -- and shifts every later column left by
-    one, so `ndalloc` reads the fused ndalloc+rate too. The parsed cumulative
-    total jumps by ~7e16 bytes the moment a hot size class crosses 10M
-    allocations/sec, and drops back when it cools. Because `measure` reports
-    *deltas* between two snapshots, that surfaced as per-query allocation
-    figures in the petabytes and, when the fusion cleared between snapshots,
-    as negative ones. It read as a 30,000x memory regression in whichever
-    queries happened to straddle the transition.
-
-    Slicing by the header's own column ranges is immune: overflow in a
-    right-aligned field spills *left*, so a field read up to its own end column
-    is still correct, and only its left neighbour (a rate we do not use) is
-    damaged.
-
-    A field therefore runs from the *previous* column's end to its own, not from
-    its own label's start -- values are commonly wider than their label
-    (`size` labels a 5-digit 49152), and anchoring on the label's start would
-    shear the leading digits off.
-    """
-    cols: dict[str, tuple[int, int]] = {}
-    prev_end = 0
-    for m in re.finditer(r"\S+", header):
-        label = m.group()
-        # `(#/sec)` repeats after every counter, and the leading `bins:`/`large:`
-        # is a row label rather than a column; both still advance the boundary.
-        # First occurrence wins, which is all we need for named counters.
-        if label not in ("bins:", "large:") and label not in cols:
-            cols[label] = (prev_end, m.end())
-        prev_end = m.end()
-    return cols
-
-
-def _jemalloc_row(
-    line: str,
-    cols: dict[str, tuple[int, int]],
-    wanted: Sequence[str],
-) -> dict[str, int] | None:
-    """Read `wanted` integer fields out of one jemalloc table row, or None if
-    this is not a data row (a `total:`/`---` separator, or a short line).
-
-    Fields are located by the header's column ranges rather than by whitespace
-    position; see [`_jemalloc_table_columns`].
-    """
-    out: dict[str, int] = {}
-    for name in wanted:
-        span = cols.get(name)
-        if span is None:
-            return None
-        text = line[span[0] : span[1]].strip()
-        if not text.isdigit():
-            return None
-        out[name] = int(text)
-    return out
-
-
-class SetupFailed(RuntimeError):
-    """Graph setup did not complete, so nothing measured afterwards is valid."""
-
-
-@dataclass
-class Server:
-    """A redis-server this harness started, or one it attached to.
-
-    `proc` and `log_path` are None when attached (`--reuse`): the process is
-    someone else's and its log is not ours to read.
-    """
-
-    port: int
-    proc: subprocess.Popen | None = None
-    log_path: Path | None = None
-    work_dir: Path | None = None
-
-    def death_details(self) -> str:
-        """Panic/crash lines from the log, for when a command failed because the
-        server is gone. Empty string when there is nothing to add."""
-        if self.log_path is None or not self.log_path.exists():
-            return ""
-        try:
-            lines = self.log_path.read_text(errors="replace").splitlines()
-        except OSError:
-            return ""
-        marked = [ln.rstrip() for ln in lines if any(m in ln for m in _DEATH_MARKERS)]
-        tail = marked[:6] or [ln.rstrip() for ln in lines[-6:]]
-        return "\n  server log: " + "\n              ".join(tail)
-
-    def stop(self) -> None:
-        if self.proc is None:
-            return
-        self.proc.send_signal(signal.SIGTERM)
-        self.proc.wait()
-        self.proc = None
-
-
-@dataclass
-class BenchClient:
-    """The control plane for one server: setup, probes, allocation snapshots."""
-
-    db: FalkorDB
-    server: Server
-    graph_name: str = GRAPH_NAME
-    _graph: Graph | None = field(default=None, repr=False)
-
-    @property
-    def graph(self) -> Graph:
-        if self._graph is None:
-            self._graph = self.db.select_graph(self.graph_name)
-        return self._graph
-
-    # --- queries -------------------------------------------------------------
-
-    def run(self, cypher: str, write: bool = True) -> None:
-        """Execute one statement, raising ResponseError on an error reply."""
-        if write:
-            self.graph.query(cypher)
+import sys, threading, time, redis
+port = int(sys.argv[1]); dur = float(sys.argv[2])
+stop = time.time() + dur
+stats = {"w1": 0, "w2": 0, "rd": 0, "err": [], "w1_bad": 0}
+lock = threading.Lock()
+def note(k, e=None):
+    with lock:
+        if e is None: stats[k] += 1
         else:
-            self.graph.ro_query(cypher)
-
-    def command(self, *args: object) -> object:
-        """A raw redis command, for what the graph API does not cover:
-        DEBUG RELOAD, GRAPH.CONSTRAINT, GRAPH.UDF, MEMORY MALLOC-STATS."""
-        return self.db.execute_command(*args)
-
-    # --- probes --------------------------------------------------------------
-
-    @property
-    def pid(self) -> int:
-        """The server's own pid, from a parsed INFO map.
-
-        Was recovered by string surgery on redis-cli output
-        (`out.split("process_id:")[1].split()[0]`) in two different files.
-        """
-        return int(self.db.connection.info("server")["process_id"])
-
-    def jemalloc_totals(self) -> tuple[Metric, Metric]:
-        """Cumulative (allocated, deallocated) bytes from jemalloc's merged-arena
-        stats, or (None, None) if the server is not jemalloc-built.
-
-        Sums size*nmalloc / size*ndalloc over the `bins:` and `large:`
-        size-class tables, reading each field by the character columns of its
-        own table header — see [`_jemalloc_table_columns`] for why splitting
-        those rows on whitespace does not work.
-        """
+            if len(stats["err"]) < 20: stats["err"].append(f"{k}: {e!r}"[:300])
+def w1():
+    r = redis.Redis(port=port, socket_timeout=30)
+    while time.time() < stop:
         try:
-            out = str(self.command("MEMORY", "MALLOC-STATS"))
-        except RedisError:
-            return None, None
-        if "Merged arenas stats:" not in out:
-            return None, None
+            res = r.execute_command("GRAPH.QUERY", "g", "CREATE (x:Q {p0:0, p1:1, p2:2, p3:3, p4:4, p5:5, p6:6, p7:7, p8:8, p9:9, p10:10, p11:11, p12:12, p13:13, p14:14, p15:15, p16:16, p17:17, p18:18, p19:19, p20:20, p21:21, p22:22, p23:23, p24:24, p25:25, p26:26, p27:27, p28:28, p29:29, p30:30, p31:31, p32:32, p33:33, p34:34, p35:35, p36:36, p37:37, p38:38, p39:39, p40:40, p41:41, p42:42, p43:43, p44:44, p45:45, p46:46, p47:47, p48:48, p49:49, p50:50, p51:51, p52:52, p53:53, p54:54, p55:55, p56:56, p57:57, p58:58, p59:59, p60:60, p61:61, p62:62, p63:63, p64:64, p65:65, p66:66, p67:67, p68:68, p69:69, p70:70, p71:71, p72:72, p73:73, p74:74, p75:75, p76:76, p77:77, p78:78, p79:79, p80:80, p81:81, p82:82, p83:83, p84:84, p85:85, p86:86, p87:87, p88:88, p89:89, p90:90, p91:91, p92:92, p93:93, p94:94, p95:95, p96:96, p97:97, p98:98, p99:99, p100:100, p101:101, p102:102, p103:103, p104:104, p105:105, p106:106, p107:107, p108:108, p109:109, p110:110, p111:111, p112:112, p113:113, p114:114, p115:115, p116:116, p117:117, p118:118, p119:119, p120:120, p121:121, p122:122, p123:123, p124:124, p125:125, p126:126, p127:127, p128:128, p129:129, p130:130, p131:131, p132:132, p133:133, p134:134, p135:135, p136:136, p137:137, p138:138, p139:139, p140:140, p141:141, p142:142, p143:143, p144:144, p145:145, p146:146, p147:147, p148:148, p149:149, p150:150, p151:151, p152:152, p153:153, p154:154, p155:155, p156:156, p157:157, p158:158, p159:159, p160:160, p161:161, p162:162, p163:163, p164:164, p165:165, p166:166, p167:167, p168:168, p169:169, p170:170, p171:171, p172:172, p173:173, p174:174, p175:175, p176:176, p177:177, p178:178, p179:179, p180:180, p181:181, p182:182, p183:183, p184:184, p185:185, p186:186, p187:187, p188:188, p189:189, p190:190, p191:191, p192:192, p193:193, p194:194, p195:195, p196:196, p197:197, p198:198, p199:199, p200:200, p201:201, p202:202, p203:203, p204:204, p205:205, p206:206, p207:207, p208:208, p209:209, p210:210, p211:211, p212:212, p213:213, p214:214, p215:215, p216:216, p217:217, p218:218, p219:219, p220:220, p221:221, p222:222, p223:223, p224:224, p225:225, p226:226, p227:227, p228:228, p229:229, p230:230, p231:231, p232:232, p233:233, p234:234, p235:235, p236:236, p237:237, p238:238, p239:239, p240:240, p241:241, p242:242, p243:243, p244:244, p245:245, p246:246, p247:247, p248:248, p249:249, p250:250, p251:251, p252:252, p253:253, p254:254, p255:255, p256:256, p257:257, p258:258, p259:259, p260:260, p261:261, p262:262, p263:263, p264:264, p265:265, p266:266, p267:267, p268:268, p269:269, p270:270, p271:271, p272:272, p273:273, p274:274, p275:275, p276:276, p277:277, p278:278, p279:279, p280:280, p281:281, p282:282, p283:283, p284:284, p285:285, p286:286, p287:287, p288:288, p289:289, p290:290, p291:291, p292:292, p293:293, p294:294, p295:295, p296:296, p297:297, p298:298, p299:299}) WITH x UNWIND range(1,3000) AS i RETURN x")
+            note("w1")
+        except Exception as e:
+            note("w1_err", e); stats["w1_bad"] += 1
+def w2():
+    r = redis.Redis(port=port, socket_timeout=30)
+    i = 0
+    while time.time() < stop:
+        i += 1
+        try:
+            p = r.pipeline(transaction=True)
+            p.execute_command("GRAPH.QUERY", "g", f"CREATE (n:L {{v: {i}}}) WITH n RETURN 1/0")
+            res = p.execute(raise_on_error=False)
+            if isinstance(res[0], Exception) and "Division by zero" in str(res[0]): note("w2")
+            else: note("w2_err", res[0])
+        except redis.ResponseError as e:
+            if "Division by zero" in str(e): note("w2")
+            else: note("w2_err", e)
+        except Exception as e:
+            note("w2_err", e)
+def rd():
+    r = redis.Redis(port=port, socket_timeout=30)
+    while time.time() < stop:
+        try:
+            r.execute_command("GRAPH.RO_QUERY", "g", "MATCH (n:L) WHERE n.v > 0 RETURN count(n)")
+            r.execute_command("GRAPH.RO_QUERY", "g", "MATCH (x:Q) RETURN x.p, labels(x) LIMIT 2000")
+            note("rd")
+        except Exception as e:
+            note("rd_err", e)
+ts = [threading.Thread(target=w1) for _ in range(int(sys.argv[3]))] + [threading.Thread(target=w2) for _ in range(int(sys.argv[4]))] + [threading.Thread(target=rd) for _ in range(int(sys.argv[5]))]
+for t in ts: t.start()
+for t in ts: t.join()
+print(stats)
+try: print("ping", redis.Redis(port=port, socket_timeout=5).ping())
+except Exception as e: print("ping failed", e)
 
-        alloc = dealloc = 0
-        in_merged = False
-        cols: dict[str, tuple[int, int]] | None = None
-        for line in out.splitlines():
-            if line.startswith("Merged arenas stats:"):
-                in_merged = True
-            elif line.startswith("arenas["):
-                break
-            elif in_merged:
-                head = line.split(maxsplit=1)
-                if not head:
-                    continue
-                label = head[0]
-                if label in ("bins:", "large:") and " size " in line:
-                    cols = _jemalloc_table_columns(line)
-                elif label == "extents:":
-                    # A different table with different columns, and no
-                    # nmalloc/ndalloc to contribute.
-                    cols = None
-                elif cols is not None:
-                    row = _jemalloc_row(line, cols, ("size", "nmalloc", "ndalloc"))
-                    if row is None:
-                        continue
-                    alloc += row["size"] * row["nmalloc"]
-                    dealloc += row["size"] * row["ndalloc"]
-        return alloc, dealloc
+```
 
-    def shutdown(self) -> None:
-        """Graceful SHUTDOWN NOSAVE — which also flushes .profraw under
-        coverage instrumentation, so it must not be replaced by SIGKILL."""
-        # The server closing the connection mid-command is the success case here.
-        with contextlib.suppress(RedisError):
-            self.db.connection.shutdown(nosave=True)
-        if self.server.proc is not None:
-            self.server.proc.wait()
-            self.server.proc = None
-
-
-# --- lifecycle ---------------------------------------------------------------
-
-
-def is_server_up(port: int) -> bool:
-    """True when something answers on `port`."""
+### Core Architecture Module: `proofs/search_concurrency/repro/flood.py`
+```
+# Flood one graph with N concurrent writes (one per connection), then probe liveness.
+import asyncio, sys, time, redis
+port=int(sys.argv[1]); N=int(sys.argv[2]); Q=sys.argv[3] if len(sys.argv)>3 else "UNWIND range(1,20000) AS x CREATE (:N)"
+def enc(*a):
+    s=f"*{len(a)}\r\n"
+    for x in a:
+        b=x.encode(); s+=f"${len(b)}\r\n"+x+"\r\n"
+    return s.encode()
+done=0; errs={}
+async def one(i):
+    global done
+    w=None
     try:
-        FalkorDB(host="localhost", port=port).connection.ping()
-        return True
-    except RedisError:
-        return False
+        r,w=await asyncio.open_connection('127.0.0.1',port)
+        w.write(enc("GRAPH.QUERY","fl",Q)); await w.drain()
+        line=await r.readline()
+        if line==b'': errs[b'EOF without a reply']=errs.get(b'EOF without a reply',0)+1
+        elif line.startswith(b'-'): errs[line[:80]]=errs.get(line[:80],0)+1
+    except Exception as e:
+        k=repr(e)[:80].encode(); errs[k]=errs.get(k,0)+1
+    finally:
+        done+=1           # one per task, whatever happened
+        if w is not None: w.close()
+async def main():
+    tasks=[asyncio.create_task(one(i)) for i in range(N)]
+    t0=time.time()
+    deadline=float(sys.argv[4]) if len(sys.argv)>4 else 60.0
+    while time.time()-t0<deadline:
+        await asyncio.sleep(2)
+        def probe():
+            try: return redis.Redis(port=port,socket_timeout=2).ping()
+            except Exception as e: return repr(e)[:60]
+        ok=await asyncio.to_thread(probe)   # off the loop thread: reads and `done` keep moving
+        print(f"t={time.time()-t0:.0f}s done={done}/{N} ping={ok} errs={errs}",flush=True)
+        if done==N: break
+    for t in tasks: t.cancel()
+asyncio.run(main())
 
-
-def start_server(
-    module: Path,
-    port: int,
-    work_dir: Path,
-    import_dir: Path,
-    *,
-    a
 ```
 
-### Core Architecture Module: `bench/src/falkorbench/compare.py`
+### Core Architecture Module: `proofs/search_concurrency/repro/flood2.py`
 ```
-"""Local regression gate: one measurement CSV against a baseline CSV.
+# N concurrent writes spread over G graphs (each graph gets < 1024 writes), then probe liveness.
+import asyncio, sys, time
+port=int(sys.argv[1]); N=int(sys.argv[2]); G=int(sys.argv[3]); Q=sys.argv[4]; DUR=float(sys.argv[5])
+def enc(*a):
+    s=f"*{len(a)}\r\n"
+    for x in a: s+=f"${len(x.encode())}\r\n"+x+"\r\n"
+    return s.encode()
+done=0; errs={}
+async def one(i):
+    global done
+    w=None
+    try:
+        r,w=await asyncio.open_connection('127.0.0.1',port)
+        w.write(enc("GRAPH.QUERY",f"g{i%G}",Q)); await w.drain()
+        line=await r.readline()
+        if line==b'': errs[b'EOF without a reply']=errs.get(b'EOF without a reply',0)+1
+        elif line.startswith(b'-'): errs[line[:60]]=errs.get(line[:60],0)+1
+    except Exception as e:
+        k=repr(e)[:60].encode(); errs[k]=errs.get(k,0)+1
+    finally:
+        done+=1           # one per task, whatever happened
+        if w is not None: w.close()
+async def ping():
+    async def go():
+        r,w=await asyncio.open_connection('127.0.0.1',port)
+        try:
+            w.write(b"PING\r\n"); await w.drain()
+            return (await r.readline()).strip()
+        finally: w.close()
+    try: return await asyncio.wait_for(go(),2)   # connect, write and read all inside the 2 s
+    except Exception as e: return repr(e)[:30] or 'TimeoutError'
+async def main():
+    tasks=[asyncio.create_task(one(i)) for i in range(N)]
+    t0=time.time()
+    while time.time()-t0<DUR:
+        await asyncio.sleep(3)
+        print(f"t={time.time()-t0:.0f}s done={done}/{N} ping={await ping()} errs={errs}",flush=True)
+        if done==N: break
+asyncio.run(main())
 
-Shares `metrics` with `report`, which is the point. This gate used to have its
-own parsing, its own ratio function and its own thresholds, and consequently its
-own answer: it compared raw wall-clock at 1.25x, which across two hosts is a
-noise detector — the very thing the rest of the harness refuses to do. It now
-inherits the control-row normalisation and the non-positive-baseline guard that
-only the CI reporter had.
+```
 
-Baselines are not committed (bench/.gitignore ignores baseline/): a checked-in
-baseline goes stale the moment anything lands and then reports phantom
-regressions for everyone. Produce your own from a base build.
+### Core Architecture Module: `proofs/search_concurrency/repro/multi_race.py`
+```
+import redis, threading, time, sys
+port = int(sys.argv[1])
+r = redis.Redis(port=port, socket_timeout=60)
+r.execute_command("GRAPH.DELETE", "mr") if r.exists("mr") else None
+r.execute_command("GRAPH.QUERY", "mr", "CREATE (:Seed)")
+res = {}
+def slow():
+    t=time.time()
+    try:
+        out = r2.execute_command("GRAPH.QUERY", "mr", "UNWIND range(1,4000000) AS x WITH count(x) AS c CREATE (:N {c:c})")
+        res['slow'] = out[1] if len(out) > 1 else out[0]   # no RETURN: the reply is [stats] only
+    except Exception as e:
+        res['slow'] = 'ERR ' + str(e)
+    res['slow_t'] = time.time()-t
+    res['slow_end'] = time.time()
+r2 = redis.Redis(port=port, socket_timeout=60)
+th = threading.Thread(target=slow); th.start()
+time.sleep(0.05)
+t_multi = time.time()
+p = r.pipeline(transaction=True)
+p.execute_command("GRAPH.QUERY", "mr", "CREATE (:M)")
+try:
+    out = p.execute(raise_on_error=False)
+    res['multi'] = [str(x)[:120] for x in out]
+except Exception as e:
+    res['multi'] = 'ERR ' + str(e)
+res['multi_end'] = time.time()
+th.join()
+# The race needs the MULTI to return while the slow write is still running; say so, or the
+# 'multi' line below proves nothing (a fixed 50 ms sleep does not guarantee it).
+res['overlap'] = res['multi_end'] < res.get('slow_end', float('inf'))
+res['multi_t'] = round(res['multi_end'] - t_multi, 3)
+res['slow_t'] = round(res.get('slow_t', -1), 3)
+del res['multi_end'], res['slow_end']
+if not res['overlap']:
+    print("WARNING: the MULTI finished after the slow write; this run did not exercise the race", file=sys.stderr)
+res['count'] = r.execute_command("GRAPH.QUERY", "mr", "MATCH (n) RETURN labels(n)[0], count(n) ORDER BY labels(n)[0]")[1]
+print(port, res)
 
-Caveat worth knowing before trusting a verdict: the baseline is a single file,
-so after switching branches this compares against numbers measured somewhere
-else, silently. And a baseline from another machine is not comparable at all —
-per-host speed differences alone measured 1.46x.
-"""
+```
 
-from __future__ import annotations
+### Core Architecture Module: `proofs/search_concurrency/repro/poprace.py`
+```
+# Index population vs concurrent writer: after quiescence the index must agree with a scan.
+import redis, threading, time, sys, random
+from redis.retry import Retry
+from redis.backoff import NoBackoff
+port=int(sys.argv[1]); N=int(sys.argv[2]); ROUNDS=int(sys.argv[3])
+def conn(): return redis.Redis(port=port, socket_timeout=300, retry=Retry(NoBackoff(),0))
+r=conn()
+if r.exists("pr"): r.execute_command("GRAPH.DELETE","pr")
+r.execute_command("GRAPH.QUERY","pr",f"UNWIND range(0,{N-1}) AS x CREATE (:L {{k:x, v:0}})")
+bad=0
+for rnd in range(ROUNDS):
+    stop=False
+    wfail=[]
+    def w():
+        try:
+            c=conn(); i=0
+            while not stop:
+                m=random.randrange(50)
+                c.execute_command("GRAPH.QUERY","pr",f"MATCH (n:L) WHERE n.k % 50 = {m} SET n.v = n.v + 1"); i+=1
+        except Exception as e:
+            wfail.append(repr(e)[:80])
+    # daemon: if this round raises, the writer must not keep the process alive
+    t=threading.Thread(target=w, daemon=True); t.start()
+    time.sleep(0.05)
+    r.execute_command("GRAPH.QUERY","pr","CREATE INDEX FOR (n:L) ON (n.v)")
+    # wait for population
+    while True:
+        st=r.execute_command("GRAPH.QUERY","pr","CALL db.indexes() YIELD status RETURN status")[1]
+        if st and st[0][0]==b'OPERATIONAL': break
+        time.sleep(0.01)
+    time.sleep(0.2); stop=True; t.join()
+    if wfail:   # the writer died: this round did not race the index build
+        print(f"round {rnd}: WRITER FAILED {wfail[0]}", flush=True); bad+=1
+        r.execute_command("GRAPH.QUERY","pr","DROP INDEX FOR (n:L) ON (n.v)"); continue
+    vals=r.execute_command("GRAPH.QUERY","pr","MATCH (n:L) RETURN n.v, count(n) ORDER BY n.v")[1]
+    mism=[]
+    for v,c in vals:
+        ci=r.execute_command("GRAPH.QUERY","pr",f"MATCH (n:L) WHERE n.v = {v} RETURN count(n)")[1][0][0]
+        if ci!=c: mism.append((v,c,ci))
+    # also: index hits whose actual value differs. Not vacuous: `n.v = q` is served by the
+    # index (Node By Index Scan in GRAPH.EXPLAIN), and the `WITH ... WHERE n.v <> q` filter after
+    # the WITH re-reads the node's stored property, so a stale index entry shows up here.
+    wrong=r.execute_command("GRAPH.QUERY","pr","UNWIND range(0,200) AS q MATCH (n:L) WHERE n.v = q WITH q, n WHERE n.v <> q RETURN count(n)")[1][0][0]
+    print(f"round {rnd}: distinct v={len(vals)} mismatches={mism[:5]} n_mism={len(mism)} wrong_hits={wrong}", flush=True)
+    bad+=len(mism)>0 or wrong>0
+    r.execute_command("GRAPH.QUERY","pr","DROP INDEX FOR (n:L) ON (n.v)")
+print("BAD ROUNDS", bad)
 
-from dataclasses import dataclass
+```
 
-from falkorbench.metrics import GATED_BY_DEFAULT
-from falkorbench.metrics import MS_THRESHOLD
-from falkorbench.metrics import THRESHOLDS
-from falkorbench.metrics import Row
-from falkorbench.metrics import has_data
-from falkorbench.metrics import normalise_ms
-from falkorbench.metrics import ratio
+### Core Architecture Module: `proofs/search_concurrency/repro/repro_search.py`
+```
+# Search-layer repros, Rust vs C.  usage: python3 repro_search.py RUST_PORT C_PORT
+# Each case prints both engines' answer. Cases are regression checks: Rust and C should agree now (case 1 fixed by #3087, case 4 by #3088); on a pre-#3088 Rust, case 4 aborts the server, so run on throwaway servers.
+import sys, time, redis
 
+rp, cp = int(sys.argv[1]), int(sys.argv[2])
+R = {"rust": redis.Redis(port=rp, socket_timeout=30), "c": redis.Redis(port=cp, socket_timeout=30)}
 
-@dataclass
-class Regression:
-    query: str
-    metric: str
-    ratio: float
-    base: float
-    current: float
-    threshold: float
+def q(r, g, s):
+    try:
+        out = r.execute_command("GRAPH.QUERY", g, s)
+        # [header, rows, stats] with a RETURN; a query without one replies with [stats] only,
+        # whose timing lines differ per run, so drop them to keep Rust and C comparable
+        if len(out) > 1:
+            return out[1]
+        return [s for s in out[0] if not s.startswith((b"Query internal execution time", b"Cached execution"))]
+    except Exception as e:
+        return "ERR " + str(e)[:90]
 
+def case(name, g, setup, probe):
+    print("##", name)
+    for eng, r in R.items():
+        try:
+            r.execute_command("GRAPH.DELETE", g)
+        except Exception:
+            pass
+        for s in setup:
+            q(r, g, s)
+        time.sleep(0.3)
+        print(f"  {eng:4}: {q(r, g, probe)}")
 
-@dataclass
-class Comparison:
-    metrics: list[str]
-    skipped: list[str]
-    regressions: list[Regression]
-    missing: list[str]
-    added: list[str]
-    ratios: dict[str, dict[str, float | None]]
-    ms_offset: float | None
+# 1. historical regression (fixed by #3087): a wrong-dimension vector used to drop the node from every other index on its label; Rust must now agree with C
+case("1 vector dim mismatch hides range index", "h1",
+     ["CREATE INDEX FOR (n:L) ON (n.name)",
+      "CREATE VECTOR INDEX FOR (n:L) ON (n.v) OPTIONS {dimension:2, similarityFunction:'euclidean'}",
+      "CREATE (:L {name:'a', v:vecf32([1,2,3])})"],
+     "MATCH (n:L) WHERE n.name = 'a' RETURN n.name")
 
+# 2. second range index created while the first populates is never populated
+N = 300000
+case("2 second index lost during population", "ti",
+     [f"UNWIND range(0,{N-1}) AS x CREATE (:L {{a:x, b:x}})",
+      "CREATE INDEX FOR (n:L) ON (n.a)", "CREATE INDEX FOR (n:L) ON (n.b)"],
+     "CALL db.indexes() YIELD status RETURN status")
+for eng, r in R.items():
+    for _ in range(300):
+        st = q(r, "ti", "CALL db.indexes() YIELD status RETURN status")
+        if st and all(row[0] == b"OPERATIONAL" for row in st):   # every index, not just the first
+            break
+        time.sleep(0.1)
+    print(f"  {eng:4}: count via index on b = {q(r, 'ti', f'MATCH (n:L) WHERE n.b < {N} RETURN count(n)')} (expect {N})")
 
-def compare(
-    current: dict[str, Row],
-    baseline: dict[str, Row],
-    *,
-    metrics: list[str] | None = None,
-    threshold: float | None = None,
-) -> Comparison:
-    """Compare two measurement sets. Pure — no printing, so it is testable.
+# 3. vector index option validation regression checks (these option maps should agree with C)
+for opts in ["{similarityFunction:'euclidean'}", "{dimension:2}",
+             "{dimension:2, similarityFunction:'Euclidean'}"]:
+    case("3 vector options " + opts, "vo", [], f"CREATE VECTOR INDEX FOR (n:L) ON (n.v) OPTIONS {opts}")
 
-    `metrics=None` gates the deterministic columns only. Naming `ms` explicitly
-    opts into gating on wall-clock, which is not something to do casually.
-    """
-    wanted = list(metrics) if metrics else list(GATED_BY_DEFAULT)
-    # Displayed regardless of whether it gates, so a reader can see the column.
-    shown = list(dict.fromkeys([*wanted, "ms"]))
-    limits = {m: (threshold if threshold is not None else THRESHOLDS[m]) for m in shown}
-    gated = set(wanted)
+# 4. huge k: aborted the Rust server before #3088 (clamp); now Rust must return like C (keep last)
+case("4 huge k", "vk",
+     ["CREATE VECTOR INDEX FOR (n:L) ON (n.v) OPTIONS {dimension:2, similarityFunction:'euclidean'}",
+      "CREATE (:L {v:vecf32([1,2])})"],
+     "CALL db.idx.vector.queryNodes('L','v',1000000000000000,vecf32([1,2])) YIELD node RETURN count(node)")
+for eng, r in R.items():
+    try:
+        print(f"  {eng:4} alive after: {r.ping()}")
+    except Exception as e:
+        print(f"  {eng:4} alive after: {e}")
 
-    # A metric absent from either side is skipped rather than gated. Gating a
-    # metric that no row carries silently gates on nothing.
-    present = [m for m in shown if has_data(baseline.values(), m) and has_data(current.values(), m)]
-    skipped = [m for m in shown if m not in present]
+```
 
-    # Wall-clock only means something once the per-host offset is cancelled.
-    ms_offset = normalise_ms(current, baseline)
-
-    ratios: dict[str, dict[str, float | None]] = {}
-    regressions: list[Regression] = []
-    for name, base_row in baseline.items():
-        cur_row = current.get(name)
-        if cur_row is None:
-            continue
-        per_metric: dict[str, float | None] = {}
-        for m in present:
-            r = ratio(base_row, cur_row, m)
-            if r is not None and m == "ms":
-                if ms_offset is None:
-                    # No control row: report nothing rather than an uncorrected
-                    # cross-host ratio.
-                    r = None
-                else:
-                    r /= ms_offset
-            per_metric[m] = r
-            if r is None or m not in gated:
-                continue
-            limit = MS_THRESHOLD + 1.0 if m == "ms" else limits[m]
-            if r > limit:
-                regressions.append(
-                    Regression(
-                        query=name,
-                        metric=m,
-                        ratio=r,
-                        base=base_row[m],  # type: ignore[arg-type]
-                        current=cur_row[m],  # type: ignore[arg-type]
-                        threshold=limit,
-                    )
-                )
-        ratios[name] = per_metric
-
-    return Comparison(
-        metrics=present,
-        skipped=skipped,
-        regressions=regressions,
-        missing=[n for n in baseline if n not in current],
-        added=[n for n in current if n not in baseline],
-        ratios=ratios,
-        ms_offset=ms_offset,
-    )
-
-
-def render(cmp: Comparison) -> list[str]:
-    """The comparison as printable lines."""
-    widths = {m: max(8, len(m) + 2) for m in cmp.metrics}
-    header = f"{'query':<24} " + "".join(f"{m:>{widths[m]}}" for m in cmp.metrics)
-    out = [header, "-" * len(header)]
-
-    flagged = {(r.query, r.metric) for r in cmp.regressions}
-    for name, per_metric in cmp.ratios.items():
-        cells = "".join(
-            f"{per_metric[m]:>{widths[m]}.2f}"
-            if per_metric.get(m) is not None
-            else f"{'-':>{widths[m]}}"
-            for m in cmp.metrics
-        )
-        hits = [m for m in cmp.metrics if (name, m) in flagged]
-        suffix = "  <-- REGRESSION: " + ",".join(hits) if hits else ""
-        out.append(f"{name:<24} {cells}{suffix}")
-
-    for name in cmp.missing:
-        out.append(f"{name:<24} MISSING from current")
-    for name in cmp.added:
-        out.append(f"{name:<24} NEW (not in baseline)")
-
-    out.append("")
-    gated = [m for m in cmp.metrics if m != "ms"]
-    out.append("gated: " + ", ".join(f"{m} {THRESHOLDS[m]:.0%}" for m in gated))
-    if "ms" in cmp.metrics:
-        out.append(
-            "ms is shown but NOT gated: wall-clock is never the gate here. Most "
-            "queries cost 0.02-0.3 ms, so a ratio's denominator is process "
-            "scheduling. Pass --metrics ms to gate on it anyway."
-        )
-    if cmp.ms_offset is not None and "ms" in cmp.metrics:
-        out.append(
-            f"ms ratios are normalised by the control row ({cmp.ms_offset:.2f}x); "
-            f"raw wall-clock across two hosts is not comparable."
-        )
-    if cmp.skipped:
-        out.append("no data in both CSVs (skipped): " + ", ".join(cmp.skipped))
-
-    if cmp.regressions:
-        out.append("")
-        out.append(f"{len(cmp.regressions)} regression(s):")
-        for r in sorted(cmp.regressions, key=lambda x: -x.ratio):
-            out.append(
-                f"  {r.query} [{r.metric}]: {r.ratio:.2f}x  "
-                f"({r.base:,.0f} -> {r.current:,.0f}, threshold {r.threshold:.2f}x)"
-            )
-    else:
-        out.append("")
-        out.append("no regressions")
-    return out
+### Core Architecture Module: `proofs/search_concurrency/repro/stress.py`
+```
+# Concurrent readers + writers + GRAPH.DELETE + BGSAVE stress, checking the model's properties.
+import redis, threading, time, sys, random, collections
+port=int(sys.argv[1]); DUR=float(sys.argv[2]) if len(sys.argv)>2 else 30
+stop=False; lock=threading.Lock()
+stats=collections.Counter(); violations=[]
+from redis.retry import Retry
+from redis.backoff import NoBackoff
+def conn(): return redis.Redis(port=port, socket_timeout=120, retry=Retry(NoBackoff(),0), retry_on_error=[])
+def q(r,g,s,ro=False):
+    return r.execute_command("GRAPH.RO_QUERY" if ro else "GRAPH.QUERY", g, s)
+def note(k,v=1):
+    with lock: stats[k]+=v
+def viol(m):
+    with lock: violations.append(m)
+acked={}  # writer id -> list of seq acked
+def writer(wid, g="s"):
+    r=conn(); seq=0; acked[wid]=[]
+    while not stop:
+        try:
+            # advance only after the CREATE is acked: a failed write must not leave a gap
+            q(r,g,f"CREATE (:A {{w:{wid}, s:{seq+1}}}), (:B {{w:{wid}, s:{seq+1}}})")
+            seq+=1; acked[wid].append(seq); note('w_ok')
+        except Exception as e: note('w_err:'+str(e)[:50])
+def reader(rid, g="s"):
+    r=conn(); last={}
+    while not stop:
+        try:
+            res=q(r,g,"MATCH (a:A) WITH a.w AS w, count(a) AS ca, max(a.s) AS ma, count(DISTINCT a.s) AS da OPTIONAL MATCH (b:B {w:w}) RETURN w, ca, ma, da, count(b)",ro=True)[1]
+            if not res: note('r_empty'); continue
+            for w,ca,ma,da,cb in res:
+                if ca!=cb: viol(f"reader{rid}: partial commit w{w} ca={ca} cb={cb}")
+                if ma<last.get(w,0): viol(f"reader{rid}: time went back w{w} {last[w]}->{ma}")
+                if not (ca==ma==da): viol(f"reader{rid}: gap/dup w{w}: count {ca} distinct {da} max {ma}")
+                last[w]=ma
+            note('r_ok')
+        except Exception as e: note('r_err:'+str(e)[:50])
+def deleter():
+    r=conn()
+    while not stop:
+        try:
+            q(r,"d","UNWIND range(1,200) AS x CREATE (:X {v:x})")
+            def rd():
+                rr=conn()
+                try: q(rr,"d","MATCH (x:X) WITH x, range(1,50) AS l UNWIND l AS y RETURN count(*)",ro=True); note('d_read_ok')
+                except Exception as e: note('d_read_err:'+str(e)[:40])
+            def wr():
+                rr=conn()
+                try: q(rr,"d","MATCH (x:X) WITH count(x) AS c UNWIND range(1,20000) AS y WITH c, y WHERE y % 1000 = 0 CREATE (:Y {c:c})"); note('d_write_ok')
+                except Exception as e: note('d_write_err:'+str(e)[:60])
+            ts=[threading.Thread(target=f) for f in (rd,rd,wr,wr)]
+            for t in ts: t.start()
+            time.sleep(random.random()*0.02)
+            r.execute_command("GRAPH.DELETE","d"); note('deletes')
+            for t in ts: t.join()
+            if r.exists("d"):
+                cnt=q(r,"d","MATCH (n:X) RETURN count(n)")[1]
+                note('d_resurrected')
+                if cnt and cnt[0][0]>0: viol(f"deleted graph content survived: X={cnt}"); r.execute_command("GRAPH.DELETE","d")
+        except Exception as e: note('del_err:'+str(e)[:60])
+def saver():
+    r=conn()
+    while not stop:
+        try:
+            info=r.info('persistence')
+            if not info['rdb_bgsave_in_progress']:
+                r.bgsave(); note('bgsave')
+            if info.get('rdb_last_bgsave_status')!='ok': viol('bgsave failed: '+str(info.get('rdb_last_bgsave_status')))
+        except Exception as e: note('save_err:'+str(e)[:50])
+        time.sleep(0.3)
+th=[threading.Thread(target=writer,args=(i,)) for i in range(3)]+[threading.Thread(target=reader,args=(i,)) for i in range(6)]+[threading.Thread(target=deleter),threading.Thread(target=saver)]
+for t in th: t.start()
+t0=time.time()
+while time.time()-t0<DUR:
+    time.sleep(5)
+    try: alive=conn().ping()
+    except Exception as e: alive=repr(e)[:40]
+    print(f"t={time.time()-t0:.0f} alive={alive} {dict(stats)} viol={len(violations)}",flush=True)
+stop=True
+# worker sockets time out after 120 s, so wait longer than that; a worker still inside a
+# query would make the final-state checks below race with it, so fail instead
+for t in th: t.join(timeout=150)
+if any(t.is_alive() for t in th):
+    viol("workers still running after stop: final-state checks are unreliable")
+r=conn()
+res=q(r,"s","MATCH (a:A) RETURN a.w, count(a), max(a.s)")[1]
+for w,c,m in res:
+    if c!=len(acked[w]): viol(f"lost/extra writes w{w}: in graph {c}, acked {len(acked[w])}")
+print("FINAL", dict(stats)); print("VIOLATIONS", violations[:6], len(violations)); print([v for v in violations if "lost" in v])
+print("dups", q(r,"s","MATCH (a:A) WITH a.w AS w, a.s AS s, count(a) AS c WHERE c>1 RETURN w, s, c ORDER BY w, s LIMIT 20")[1])
+print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 
 ```
 
@@ -2328,581 +1262,616 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b891775c` (2026-11-04)
-**Commit Message**: Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)
+### Incident Patch 1: `5d98077a` (2026-11-05)
+**Commit Message**: proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#3172)
 
-CCH-specific test support on top of the graph test kit (crate::testkit, which
-it re-exports, so cch::testkit::{grid, dijkstra, ...} keeps working), written
-from the CchInput contract and the C implementation's tests rather than from
-any Rust CCH code.
+* proofs: Lean 4 proofs of the Rust engine, and a skill for working with them
 
-- to_input, the CchInput a weight matrix stands for, built with the GraphBLAS
-  calls cch.c makes rather than through CchInput::build, the code under test:
-  GrB_select OFFDIAG drops the self-loops, and the skeleton is the pattern of
-  W + W^T. Matrix::drop_diagonal comes with it, test-only for now. And
-  assert_input_invariants over any CchInput.
-- lower_rank_distances, the exact customization oracle, checked against a brute
-  force over every generator; valley, the graph of C's test01_create_query_drop.
-- EditGraph, Edit, apply_edit and random_edit_batch: seeded weight and structure
-  edits for the maintenance tests. An EditGraph keeps every parallel edge of a
-  pair (an edit can add one); its oracle is the matrix of each pair's cheapest,
-  and removing that edge reveals the next. A NaN weight panics there, since
-  f64::min would drop it before any ora
+Adds proofs/: 35 standalone Lake projects (Lean 4.34, core only) that model
+the engine function by function and prove properties of those models, plus
+proofs/lean_ci.sh (build all; reject sorry/admit/native_decide/unjustified
+axioms), proofs/coverage.sh (per-function coverage from COVERAGE.tsv) and
+proofs/FINDINGS.md (the bug ledger: repro, Rust vs C, theorem, fixing PR).
 
-**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +26/-1)
+All 2449 non-FFI, non-test functions in graph/src and src are PROVEN against
+models of origin/main a9377c636; FFI boundaries are explicit hypotheses or
+justified axioms.
+
+Adds .claude/skills/proofs/ describing how to build and check the proofs,
+re-target them after main moves, prove new functions, confirm bugs, and
+review a PR against them.
+
+Closes #3171
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* skill(proofs): run flow tests with RLTest -p <port>, not --randomize-ports
+
+Env() connects to the port given by -p (default 6379), so randomized runs
+still hit 6379.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* p
+
+**File**: `.claude/skills/proofs/REFERENCE.md` (added, +88/-0)
 ```diff
-@@ -103,7 +103,8 @@ use super::{
-     GxB_unload_Matrix_into_Container,
- };
- use super::{
--    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_setElement_FP64,
-+    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_select_INT64,
-+    GrB_Matrix_setElement_FP64, GrB_OFFDIAG,
- };
- use super::{
-     GrB_GT_UINT64, GrB_Matrix_eWiseMult_BinaryOp, GrB_Matrix_select_BOOL, GrB_VALUEEQ_BOOL,
-@@ -972,6 +973,30 @@ impl<T> Matrix<T> {
-         self.has_pending.store(true, Ordering::Relaxed);
-     }
- 
-+    /// Remove every entry on the main diagonal (`GrB_select` with
-+    /// `GrB_OFFDIAG`, whose thunk 0 names the main diagonal), in place.
-+    /// So far only the CCH test kit uses it, to drop a weight matrix's self-loops.
-+    #[cfg(test)]
-+    pub(crate) fn drop_diagonal(&mut self) {
-+        let info = unsafe {
-+            GrB_Matrix_select_INT64(
-+                self.inner(),
-+                null_mut(),
-+                null_mut(),
-+                GrB_OFFDIAG,
-+                self.inner(),
-+                0,
-+                null_mut(),
-+            )
-+        };
-+        assert_eq!(
-+            info,
-+            GrB_Info::GrB_SUCCESS,
-+            "GrB_Matrix_select_INT64: {info:?}"
-+        );
-+        self.has_pending.store(true, Ordering::Relaxed);
-+    }
+@@ -0,0 +1,88 @@
++# Proof conventions
 +
-     pub fn select(
-         &mut self,
-         mask: &Matrix<bool>,
++## Project layout
++
++```
++proofs/<area>/
++  lakefile.toml        # name, defaultTargets, [[lean_lib]] (copy an existing one)
++  lean-toolchain       # leanprover/lean4:v4.35.0
++  .gitignore           # .lake/
++  <Root>.lean          # imports the modules; header doc-comment = the report
++  <Root>/*.lean        # modules, < ~400 lines each, build after each
++  COVERAGE.tsv
++  repro.py             # optional: live repros needing RediSearch / a server
++```
++
++No Mathlib: use core Lean 4 plus `omega`, `simp`, `decide`, `induction`, and the
++`List`/`Array` lemmas in core. When you need another project's definitions, import
++them instead of copying: add a Lake path dependency to `lakefile.toml`
++
++```toml
++[[require]]
++name = "falkor-value-order"      # the dependency's own `name`
++path = "../value_order"
++```
++
++then `lake update` (commit the generated `lake-manifest.json`) and `import
++FalkorValueOrder.Model`. Shared foundations live in `proofs/core` (`FalkorCore`: the
++engine Value `V F`, the float model `F`, `i64` helpers, `cmpI`/comparator laws); reuse
++them with `open FalkorCore` (and `open FalkorCore.Laws` for the comparator laws `Lw`, `lexA`, `thn`) rather than defining another copy (pilot: value_order,
++value_math, expr_semantics, functions_str_list use it). `export Ns (a b c)` inside your namespace keeps local short
++names. All projects pin the same toolchain; `lean_ci.sh` builds dependencies first
++(inside their own `.lake`) and scans only each project's own files.
++
++## Faithful models
++
++- Follow the Rust line by line: same branch structure, same names, and a `file:line` cite for each modelled fn.
++- Model machine integers faithfully where overflow matters: `BitVec 64` or `Int` with Rust's semantics (debug panic vs release wrap, `checked_*`, `wrapping_*`, `as` casts).
++- f64 stays abstract: use a float structure or class with only the laws you need. Never add an `axiom` for it.
++- Where hashing or equality is involved, the float model must represent `-0.0` and NaN sign/payload (and vector/point components, not just a type tag): `to_bits` tells them apart while `==`/`partial_cmp` do not (see value_order `F`).
++- A premise about another Rust fn's behaviour must be discharged (copy that fn's model and prove the premise) or the row is CONDITIONAL with the hypothesis named in the reason.
++- FFI (GraphBLAS, LAGraph, RediSearch, the Redis module API, QuickJS, libc): state the C API spec you rely on as a hypothesis structure (preferred), or as an `axiom` with a `-- AXIOM-OK: <C doc>` comment. Those fns are AXIOMATISED.
++
++## COVERAGE.tsv
++
++`file<TAB>function<TAB>line<TAB>bucket<TAB>lean_name_or_reason`, where `file` is the
++repo-relative path (`graph/src/...` or `src/...`). There is one row per Rust fn in the
++files the project targets; `#` lines are comments.
++
++| bucket | meaning |
++| --- | --- |
++| PROVEN | a theorem (no sorry) about a faithful model of that fn; for glue or accessors, a small theorem stating exactly what it returns is enough |
++| CONDITIONAL | a theorem about a faithful model, but resting on an undischarged hypothesis about *other Rust code* (a contract proven elsewhere, an invariant maintained elsewhere, or one known false); the reason names it. Covered, not proven |
++| AXIOMATISED | true FFI only |
++| MODELLED | modelled, but checked only by `#eval`/`decide`, or no theorem about it |
++| NOT COVERED | with a reason; test-only code uses a reason starting `TEST-ONLY:` |
++
++`coverage.sh` keeps each fn's best bucket across projects (PROVEN > CONDITIONAL >
++AXIOMATISED > MODELLED > NOT COVERED), reports CONDITIONAL as its own column (it counts in
++cov% but not in prov% or the non-FFI PROVEN numerator), and excludes test code (`#[cfg(test)]`, `*_bench.rs`,
++`tests.rs`, `test_aux.rs`) from the denominator. The target is 100% of non-FFI,
++non-test fns PROVEN, with 0 unlisted.
++
++## Bugs
++
++- Confirmed means a repro against the real Rust shows it. Compare with C where the semantics are C's (C module: the `falkordb/falkordb-server:edge-c` image, or a local `master` build under `bin/`).
++- In FINDINGS.md, give each bug an id, `file:line`, the repro, the Rust vs C output, the Lean theorem name, and a suggested fix.
++- When main fixes a bug: rename the counterexample to `pre<PR>_…`, add the correctness theorem, and note `fixed by #PR (sha)` in FINDINGS.md.
++
++## Live repros
++
++Query repros: start a server by hand on a free port (a concrete number, e.g. 7431).
++
++```bash
++MOD=/tmp/fdb_$(date +%s).dylib                    # fresh path each rebuild (macOS kills redis if a loaded dylib is overwritten)
++cp "$PWD/target/release/libfalkordb.dylib" "$MOD"
++redis-server --port 7431 --loadmodule "$MOD" --daemonize yes --save ''
++# wait for PING (RediSearch init takes a few seconds), run queries, then: redis-cli -p 7431 shutdown nosave
++```
++
++Flow tests: use RLTest alone (it spawns its own server on the port; do not also start one by hand on that port).
++
++```bash
++RLT
 ```
 
-**File**: `graph/src/index/falkordb/cch/mod.rs` (modified, +2/-0)
+**File**: `.claude/skills/proofs/SKILL.md` (added, +76/-0)
 ```diff
-@@ -20,6 +20,8 @@ mod customize;
- mod input;
- mod order;
- mod query;
-+#[cfg(test)]
-+pub(crate) mod testkit;
- 
- use std::sync::Arc;
- 
+@@ -0,0 +1,76 @@
++---
++name: proofs
++description: Work with FalkorDB's Lean 4 proofs of the Rust engine in proofs/ — build and check them, keep them in sync with main, prove new or changed functions, confirm bugs the models find, and review a PR against the proofs. Use when asked to update/run/extend the proofs, check Lean coverage, re-target proofs after main moves, verify a function or PR formally, or when a change touches code listed in proofs/*/COVERAGE.tsv.
++allowed-tools: Bash, Read, Edit, Write
++---
++
++# Proofs (Lean 4)
++
++`proofs/` holds one standalone Lake project per engine area (`value_order`,
++`binder`, `pending_commit`, `index_layer`, …). Each models the Rust code it
++covers line by line and proves properties about that model. Lean 4 only, no
++Mathlib. The toolchain comes from each project's `lean-toolchain`
++(all pin `leanprover/lean4:v4.35.0`).
++
++- `proofs/<area>/<Root>.lean` — the header is the report: Lean↔Rust `file:line` table, theorems, bugs, gaps.
++- `proofs/<area>/COVERAGE.tsv` — one row per Rust fn: bucket PROVEN / CONDITIONAL / AXIOMATISED / MODELLED / NOT COVERED.
++- `proofs/FINDINGS.md` — the bug ledger. Each bug is confirmed by a repro unless its entry is marked Lean-only, Unconfirmed or a model note; later notes record which commits fixed it.
++- `proofs/lean_ci.sh`, `proofs/coverage.sh` — the two gates. `.github/workflows/lean-proofs.yml` (check name `Lean proofs`) reports on every pull request, so it can be a required check: the job itself skips, with a summary line, a PR that touches none of `proofs/**`, `graph/src/**`, `src/**` or the workflow file, and otherwise (and on pushes to `main`) runs both (a separate check, not in `ci-gate`).
++
++## Quick start
++
++```bash
++# install elan once: https://github.com/leanprover/elan/releases (CI's pinned, checksum-verified install is in .github/workflows/lean-proofs.yml)
++bash proofs/lean_ci.sh                     # build all projects; fails on sorry/admit/native_decide/unjustified axiom
++bash proofs/lean_ci.sh binder value_order  # just some projects
++bash proofs/coverage.sh                    # per-file + total coverage; --unmatched lists stale rows
++```
++
++Proofs cite `origin/main`. If your checkout is on another branch, read the Rust from
++a clean worktree: `git worktree add --detach ../fdb-main origin/main` then
++`COVERAGE_RUST_ROOT=../fdb-main bash proofs/coverage.sh`.
++
++## Workflows
++
++**Re-target after main moves** (keep the proofs true for the current code):
++1. `git diff <old-sha> origin/main --stat -- graph/src src`. The old sha is in FINDINGS.md "Current state".
++2. Find the projects to update: `grep -l "<file>" proofs/*/COVERAGE.tsv` for each changed file.
++3. For each changed fn: update the Lean model to the new code, re-prove, fix `file:line` cites. Add rows for new fns and delete rows for removed ones.
++4. If the commit fixed a bug, turn its counterexample theorem into a correctness theorem. Keep the old one as a labelled historical note: `pre<PR>_…`, fixed by `#PR (sha)`.
++5. Run `lean_ci.sh` (all green) and `COVERAGE_RUST_ROOT=../fdb-main bash proofs/coverage.sh` (the worktree override above, when this checkout is not main; 0 unlisted; PROVEN + CONDITIONAL = 100% non-FFI, and no new CONDITIONAL), then update FINDINGS.md "Current state".
++
++**Prove a new or changed function**: model it in the owning project, or start a new
++project by copying the shape of an existing one. Then add the COVERAGE row and prove.
++Conventions are in [REFERENCE.md](REFERENCE.md).
++
++**When a theorem is false** (the model has a bug): get a concrete counterexample
++(`#eval` or `decide`), then reproduce it against the real Rust before calling it a bug:
++a Rust test, or a live query compared with the C module. Record it in FINDINGS.md with
++`file:line`, the repro, and the Rust vs C output. Keep the counterexample as a theorem.
++
++**Review a PR with the proofs**: in a new `proofs/pr<N>_review/` project, import the
++definitions you need from the owning projects (Lake path dependency, see REFERENCE.md);
++copy only what the PR changes. Model the PR's merged code for the
++changed functions, and prove or refute each claim the PR makes. Confirm any refutation
++live. Also check that the existing theorems still hold for the new code. A PR that
++changes `Eq`/`Hash`/`Ord`/`sort_cmp`/`compare_value` (or anything a `HashMap` key or a
++sort uses) **must** get a `pr<N>_review` project proving Eq ⇒ equal Hash and the order
++laws on the PR's code (value_order `Main.lean` holds what pr2917_review proved). Until
++it merges, its COVERAGE rows stay commented out. **Once the PR merges, delete the review
++project**: fold each theorem into the owning project (drop it if an equivalent already
++exists there, otherwise move it, re-stated on the owner's definitions), merge its COVERAGE
++rows into the owner's rows, and update names cited in FINDINGS.md (see the retired
++pr2845_review → binder/columnar/optimizer_rewrites `CallBoundary.lean`).
++
++**Hypotheses about Rust code**:
 ```
 
-**File**: `graph/src/index/falkordb/cch/testkit.rs` (added, +1116/-0)
+**File**: `.gitattributes` (added, +2/-0)
 ```diff
-@@ -0,0 +1,1116 @@
-+//! Test fixtures for CCH (#3207), on top of the graph test kit ([`crate::testkit`], re-exported
-+//! here, so `cch::testkit::{grid, dijkstra, ...}` keeps working).
-+//!
-+//! Written from the [`CchInput`] contract and the C reference on FalkorDB's
-+//! `master` branch (`src/algorithms/cch.c`, `tests/flow/test_cch.py`) -- never
-+//! from any Rust CCH implementation:
-+//! - [`to_input`], the `CchInput` a weight matrix stands for, built with `cch.c`'s GraphBLAS
-+//!   calls, and [`assert_input_invariants`], the contract any `CchInput` must meet;
-+//! - [`lower_rank_distances`], the exact customization oracle, and [`valley`], the graph of C's
-+//!   `test01_create_query_drop`;
-+//! - [`EditGraph`], [`Edit`] and [`random_edit_batch`], the weight and structure edits the
-+//!   maintenance tests replay, over a graph that keeps every parallel edge of a pair.
-+
-+pub(crate) use crate::testkit::*;
-+
-+use super::{CchInput, Csr, WeightCsr};
-+use crate::graph::graphblas::matrix::{Descriptor, Dup, Matrix};
-+use rand::rngs::SmallRng;
-+use rand::{RngExt, SeedableRng};
-+use std::collections::BTreeMap;
-+use std::collections::HashSet;
-+
-+/// [`CchInput`] as its contract defines it, for the weight matrix `g`: a symmetric,
-+/// self-loop-free skeleton for Phase 1, and directed weights, one per entry of `g`. Built with
-+/// the GraphBLAS calls `cch.c` makes, not through `CchInput::build`, which is the code under
-+/// test: the diagonal goes (`GrB_select` with `GrB_OFFDIAG`; a self-loop carries no
-+/// shortest-path information, and `test14_parallel_selfloop_unreachable` treats one as a no-op),
-+/// and the skeleton is the pattern of `W + Wᵀ`.
-+///
-+/// Weights are **not** validated here, on purpose: the tests of `Cch::build`'s
-+/// `InvalidWeight` path build a deliberately invalid `CchInput` through this function.
-+/// (The oracles, [`dijkstra`] and [`lower_rank_distances`], do reject them.)
-+#[must_use]
-+pub(crate) fn to_input(g: &Matrix<f64>) -> CchInput {
-+    let n = node_count(g);
-+    let mut w = g.dup();
-+    w.drop_diagonal();
-+    // A pattern: its values (1.0) are never read.
-+    let mut skeleton = Matrix::<f64>::new(n as u64, n as u64);
-+    skeleton.set_pattern(None, &w, None);
-+    skeleton.set_pattern(None, &w, Some(Descriptor::T0));
-+
-+    let (rows, cols, w) = w.extract_tuples();
-+    let (skeleton_rows, skeleton_cols, _) = skeleton.extract_tuples();
-+    CchInput {
-+        n,
-+        skeleton: csr(n, &skeleton_rows, skeleton_cols),
-+        weights: WeightCsr {
-+            csr: csr(n, &rows, cols),
-+            w,
-+        },
-+    }
-+}
-+
-+/// The CSR of entries extracted row by row (`rows` sorted): row `r` starts where `rows` first
-+/// reaches `r`.
-+fn csr(
-+    n: usize,
-+    rows: &[u64],
-+    i: Vec<u64>,
-+) -> Csr {
-+    let p = (0..=n as u64)
-+        .map(|r| rows.partition_point(|&row| row < r) as u64)
-+        .collect();
-+    Csr { n, p, i }
-+}
-+
-+/// C's `test01_create_query_drop` valley, both ways: `0 - 1` direct is 10, `0 - 2 - 1` is 2.
-+#[must_use]
-+pub(super) fn valley() -> Matrix<f64> {
-+    weights(
-+        3,
-+        &[
-+            (0, 1, 10.0),
-+            (1, 0, 10.0),
-+            (0, 2, 1.0),
-+            (2, 0, 1.0),
-+            (2, 1, 1.0),
-+            (1, 2, 1.0),
-+        ],
-+    )
-+}
-+
-+/// The exact CCH customization oracle. `perm[rank] = node` is the
-+/// elimination order, exactly the convention a CCH's own `perm` array uses:
-+/// processing nodes in increasing rank order corresponds to eliminating
-+/// them one at a time, lowest rank first.
-+///
-+/// `result[a][b]` is the weight of the cheapest directed walk `a -> b`
-+/// whose *intermediate* nodes -- everything but `a` and `b` themselves --
-+/// all have strictly lower rank than BOTH `a` and `b`, i.e. `rank <
-+/// min(rank(a), rank(b))`. `a` and `b` are themselves unrestricted: either
-+/// may have any rank at all, including the highest in the graph.
-+/// `result[a][a] == 0.0` always (the trivial empty walk). `f64::INFINITY`
-+/// if no such walk exists. Self-loops are ignored entirely -- a diagonal entry
-+/// contributes nothing.
-+///
-+/// This is precisely the quantity a correctly customized CCH must hold:
-+/// for an arc `(a, b)` in the hierarchy with `rank(a) < rank(b)`, the
-+/// **up** weight of that arc must equal `result[a][b]`, and the **down**
-+/// weight of the reverse arc `(b, a)` must equal `result[b][a]` -- both
-+/// bounded by the same `rank(a)` (the lower of the two ranks), just walked
-+/// in opposite directions over a graph that need not be symmetric.
-+///
-+/// Computed by Floyd-Warshall, inserting nodes as allowed intermediates in
-+/// rank order and recording `result[a][b]`/`result[b][a]` for every pair
-+/// whose bound is exactly the rank about to be inserted -- the standard FW
-+/// invariant that the matrix before inserting the `r`-th vertex (in a given
-+/// order) holds shortest paths using only the first `r` as intermediates.
-+///
-+/// # Panics
-+/// If `perm` is not a permutation 
+@@ -0,0 +1,2 @@
++# keep Lean proofs out of the GitHub language stats
++proofs/** linguist-detectable=false
 ```
 
----
-
-### Incident Patch 2: `65654bc2` (2026-11-04)
-**Commit Message**: feat(index): GRAPH.MEMORY USAGE counts the native index (#3569)
-
-* feat(index): GRAPH.MEMORY USAGE counts the native index
-
-`indices_sz_mb` was RediSearch's own estimate of its indexes. Under
-`index-falkordb` Range fields no longer reach RediSearch, so a graph whose
-indexes are all Range reported no index memory while its native columns held
-it.
-
-`VersionedIndex` gets `memory_usage()`, the heap bytes an index's own
-structure holds in a version. The tuple column answers with its tree's
-`heap_bytes()`, which had no caller. A page that versions share counts in each
-version that reaches it, so the sizes of two versions do not add up;
-`GRAPH.MEMORY USAGE` reads the published version. `IndexEntry::memory_usage()`
-adds, while the index is Building, the entities written since its last
-indexer batch, by their serialized size. `written_by_this_version` is always
-empty in a published version, so it is not counted.
-
-A build with the flag adds `FalkorDbIndex::memory_usage()`, the node and edge
-columns, to `indices_sz_mb`. There the native index holds the Range fields and
-RediSearch the rest, side by side until RediSearch goes, and the field counts
-both. The reply stays C's nine pairs on every b
-
-**File**: `.github/workflows/_ci-pipeline.yml` (modified, +3/-1)
+**File**: `.github/workflows/lean-proofs.yml` (added, +138/-0)
 ```diff
-@@ -478,6 +478,8 @@ jobs:
-         #
-         # `test_constraint` is here because under the flag a unique constraint looks up duplicates
-         # in the native index, and every class in that file creates or enforces constraints.
-+        # `test_memory_usage` is here because only this build counts the native index in
-+        # `indices_sz_mb`, and its test checks that size against what CREATE INDEX costs the server.
-         shell: bash
-         run: |
-           set +e
-@@ -486,7 +488,7 @@ jobs:
-           for t in tests/flow/test_index_create tests/flow/test_index_scans \
-                    tests/flow/test_index_updates tests/flow/test_index_delete \
-                    tests/flow/test_edge_index_scans tests/flow/test_edge_index_updates \
--                   tests/flow/test_constraint; do
-+                   tests/flow/test_constraint tests/flow/test_memory_usage; do
-             TEST="$t" ./flow.sh 2>&1 | tee -a /tmp/nextgen_flow.log
-             status=${PIPESTATUS[0]}
-             echo "SUITE_EXIT $t $status" | tee -a /tmp/nextgen_flow.log
+@@ -0,0 +1,138 @@
++name: Lean proofs
++
++# The Lean 4 proofs in proofs/ are models of the Rust engine. Two gates keep them
++# true: `proofs/lean_ci.sh` builds every project and rejects sorry, admit,
++# native_decide and unjustified axioms; `proofs/coverage.sh --unmatched` checks
++# every Rust fn is listed in a COVERAGE.tsv and every row still points at a fn.
++#
++# Built to be a REQUIRED check, which drives two deliberate choices:
++#
++#   1. No `paths:` filter on the triggers. A required status check that never
++#      reports leaves a PR blocked forever (see the top of pr-linked-issue.yml),
++#      so the job runs on every PR to a covered branch and the job name
++#      ("Lean proofs") stays stable.
++#   2. The job decides relevance itself. Lean builds read only proofs/, but the
++#      coverage gate reads graph/src and src (a Rust change that adds, removes or
++#      renames a fn can break it), so a PR that touches none of proofs/**,
++#      graph/src/**, src/** or this file reports success at once, with a summary
++#      line saying it was skipped. Every other PR, and every push to main, runs
++#      both gates in full.
++#
++# It is not part of ci-gate; whether to require it is a branch-protection setting.
++on:
++  pull_request:
++    branches:
++      - main
++      - "[0-9]*.[0-9]*"
++  push:
++    branches:
++      - main
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
++permissions:
++  contents: read
++
++env:
++  # elan is installed from a pinned release asset, never from the moving
++  # elan-init.sh on master. v4.2.4 was published 2026-08-25. The sha256 is the
++  # asset's own digest (also what GitHub shows for the release); bumping elan means
++  # bumping both lines together. The Lean toolchain itself is the one each project
++  # pins in its lean-toolchain file.
++  ELAN_VERSION: v4.2.4
++  ELAN_SHA256: 42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63
++
++jobs:
++  proofs:
++    name: Lean proofs
++    runs-on: ubuntu-latest
++    # A cold build (no cache) took 19 minutes on ubuntu-latest, a warm one is a few; 45 leaves room for slower runners.
++    timeout-minutes: 45
++    steps:
++      - name: Checkout repository
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++          # A PR is checked out as its merge commit; two levels give its first
++          # parent (the base tip), which the scope step diffs against.
++          fetch-depth: 2
++
++      # A PR that touches nothing the proofs read reports success here, without
++      # installing or building anything. A push always runs the gates, and so does
++      # anything this step cannot decide (no merge parent).
++      - name: Decide whether the proofs are in scope
++        id: scope
++        env:
++          EVENT_NAME: ${{ github.event_name }}
++        run: |
++          set -euo pipefail
++          run=true
++          # --no-renames: a file moved out of src/ must list its old path too, or the gates would be skipped.
++          if [[ "$EVENT_NAME" == pull_request ]] && git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
++            changed=$(git diff --name-only --no-renames 'HEAD^1' HEAD)
++            if grep -qE '^(proofs/|graph/src/|src/|\.github/workflows/lean-proofs\.yml$)' <<<"$changed"; then
++              echo "This PR touches proofs/**, graph/src/**, src/** or the workflow: running both gates." >> "$GITHUB_STEP_SUMMARY"
++            else
++              run=false
++              echo "Skipped: this PR touches none of proofs/**, graph/src/**, src/** or .github/workflows/lean-proofs.yml, so the proofs and the coverage gate are unaffected." >> "$GITHUB_STEP_SUMMARY"
++            fi
++          fi
++          echo "run=${run}" >> "$GITHUB_OUTPUT"
++
++      # The Lean build is incremental on its own trace files, so a restored
++      # proofs/*/.lake makes an unchanged project a no-op. The exact key hits when
++      # no .lean file changed; otherwise the newest cache for the same toolchains is
++      # restored and only the changed modules (and their dependents) are rebuilt.
++      - name: Cache elan and the Lake build directories
++        if: steps.scope.outputs.run == 'true'
++        id: cache
++        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
++        with:
++          path: |
++            ~/.elan
++            proofs/*/.lake
++          key: lean-${{ runner.os }}-elan-${{ env.ELAN_VERSION }}-${{ hashFiles('proofs/*/lean-toolchain') }}-${{ hashFiles('proofs/**/*.lean', 'proofs/*/lakefile.toml', 'proofs/*/lake-manifest.json') }}
++          restore-keys: |
++            lean-${{ runner.os }}-elan-${{ env.ELAN_VERSION }}-${{ hashFiles('proofs/*/lean-toolchain') }}-
++
++      - name: Install elan
++        if: steps.scope.outputs.run == 'true'
++        env:
++          RUNNER_TEMP_DIR: ${{ runner.temp }}
++        run: |
++          set -euo pipefail
++          asse
 ```
 
-**File**: `graph/src/graph/graph.rs` (modified, +7/-0)
+**File**: `proofs/algo_udf/.gitignore` (added, +1/-0)
 ```diff
-@@ -291,6 +291,8 @@ pub struct MemoryUsageReport {
-     pub unlabeled_node_attr_sz: usize,
-     pub edge_block_storage_sz: usize,
-     pub edge_attr_by_type: Vec<(Arc<String>, usize)>,
-+    /// RediSearch's own estimate of its indexes, and on a build with `index-falkordb` the native
-+    /// index's columns as well.
-     pub indices_sz: usize,
- }
- 
-@@ -5067,7 +5069,12 @@ impl Graph {
-         }
- 
-         // --- indices ---
-+        // RediSearch's own estimate, as C reports it. Under the flag the native columns hold the
-+        // Range fields and RediSearch the rest, so both count: this version's pages, including
-+        // those it shares with another version.
-         let indices_sz = self.node_indexer.memory_usage() + self.edge_indexer.memory_usage();
-+        #[cfg(feature = "index-falkordb")]
-+        let indices_sz = indices_sz + self.falkordb_index.memory_usage();
- 
-         MemoryUsageReport {
-             label_matrices_sz,
+@@ -0,0 +1 @@
++.lake/
 ```
 
-**File**: `graph/src/index/falkordb/cch/mod.rs` (modified, +6/-0)
+**File**: `proofs/algo_udf/AlgoUdf.lean` (added, +290/-0)
 ```diff
-@@ -405,6 +405,12 @@ impl VersionedIndex for CchIndex {
-     ) {
-         unreachable!("CCH is not dispatched through IndexId until the background build")
-     }
+@@ -0,0 +1,290 @@
++/-
++# algo.* procedures and the JS UDF layer: models, proofs, and the bugs they found
 +
-+    /// Never called: [`FalkorDbIndex::memory_usage`] counts the node and edge columns only, since
-+    /// the hierarchy holds no arrays until #3208 and #3209.
-+    fn memory_usage(&self) -> usize {
-+        unreachable!("GRAPH.MEMORY USAGE counts no CCH index until the hierarchy holds arrays")
-+    }
- }
- 
- /// What a unit of work's writes touched that the graph's CCH indexes might care about. The
++Scope: `graph/src/runtime/functions/algo_procedures.rs` (BFS, WCC, CDLP, pageRank,
++betweenness, HarmonicCentrality, MSF, maxFlow, SPpaths/SSpaths) and
++`graph/src/udf/` (all files). Rust source of truth: origin/main ee21013d6 (re-targeted from 1c0e6c8de: #3045, #3032, #3580 — see "Fixed on main (re-target 1c0e6c8de → ee21013d6)"; before that from e860645bb: #3058, #3586, #3066, #3464 — see "Fixed on main (re-target e860645bb → 1c0e6c8de)"); earlier: 3fec7d7c9, re-checked at 5e475e6c9 (#3436 only: `rt.g.borrow()` -> `rt.graph()` in every `algo_procedures.rs` / `procedures.rs` registration, and `call_udf_bridge` takes `rt.graph_arc()` (the same `Arc` clone `rt.g.clone()` was) for `set_current_graph`; no function moved, nothing modelled changed); `js_globals.rs`
++re-targeted to 8743953a8 (#3079), `type_convert.rs` to cab3cf192 (#3074, #3336 — see "Fixed on main").
++Per-function buckets: `COVERAGE.tsv` (every function PROVEN except three
++GraphBLAS FFI wrappers, AXIOMATISED). Repros: wave 1-4 in
++`graph/tests/lean_algo_udf.rs`; wave 5 in the standalone package
++a standalone Rust test (not committed) (built against origin/main with
++`cargo test --test w5 -- --test-threads=1` on an origin/main checkout).
++Every `bug_*` test asserts C's answer and fails today.
++
++## Modules
++
++| here | there |
++| --- | --- |
++| `AlgoUdf.Config`     | `opt_string`, `validate_config_map`, `extract_node_labels`/`extract_rel_types`, `parse_config`, samplingSize / maxIterations / maxLen / pathCount parsing |
++| `AlgoUdf.Compact`    | `build_compact_adj_*` id ↔ index maps, WCC/CDLP/pageRank/Harmonic result assembly, deleted-id skipping, betweenness sampling |
++| `AlgoUdf.Paths`      | `far_endpoint`, `cmp_found_path`, `record_found_path`, cost accumulation, `build_path_batch`, Dijkstra dispatch guard |
++| `AlgoUdf.MsfFlow`    | `msf_keep_min_score` monoid laws, MSF component keys, maxFlow flow/edge alignment and super-node freshness |
++| `AlgoUdf.Marshal`/`MarshalThm` | `value_to_js` / `js_to_value` over an abstract f64 and QuickJS value/heap model (cyclic values included) |
++| `AlgoUdf.Nesting`/`MarshalCap` | #3336: the depth cap `MAX_UDF_VALUE_NESTING`, `value_to_js_at` / `js_to_value_at` with an explicit stack |
++| `AlgoUdf.Repo`       | `UdfRepo::load`/`delete` + the case-sensitive function registry (#3066) |
++| `AlgoUdf.Neighbors`  | `collect_edges`, `js_get_neighbors` filters |
++| `AlgoUdf.Graph`      | shared graph view for the path searches (`Edge`, weighted `Walk`, hop `HWalk`/`NWalk`, `node_successors`) |
++| `AlgoUdf.DijkstraModel`/`DijkstraInv`/`Dijkstra` | `dijkstra_single_path`, `DijkstraItem::{cmp,partial_cmp}` |
++| `AlgoUdf.BfsModel`/`BfsBound` | `bfs_find_bound` |
++| `AlgoUdf.Dfs`/`DfsSound`/`DfsComplete`/`DfsExplore`/`DfsResult` | `enumerate_paths`, `record_found_path` (with the bound) |
++| `AlgoUdf.PathDispatch`/`PathSeed` | `parse_sp_config`, `parse_ss_config`, `to_numeric_value`, `algo_sp_paths`, `algo_ss_paths`, `run_path_algo` |
++| `AlgoUdf.AlgoGlue`   | `new_msg`, `msg_to_string`, `msf_score` + its GraphBLAS callbacks, `node_value`, `collect_node_ids`, `active_node_set`, LAGraph graph create/delete ownership, `cmp_found_path`, `parse_config` |
++| `AlgoUdf.AlgoBfsReg` | `algo_bfs` result assembly, `register` and every `register_*` |
++| `AlgoUdf.UdfTraverse`| `js_traverse_impl` (`graph.traverse`) |
++| `AlgoUdf.UdfClasses` | `CURRENT_GRAPH` slot, `create_js_node/edge/path`, `getNodeById`, `iterateNodes/Edges`, the native entry points |
++| `AlgoUdf.UdfNodeView` | #3454 (fixed by #3464): which view (`Runtime` vs committed `Graph`) `create_js_node` reads labels/attributes from; `set_node_labels`, `set_node_attrs` |
++| `AlgoUdf.UdfContext` | `caught_error_message`, timeouts, `validate_script`, `ensure_context_current`, `rebuild_context`, `call_udf_bridge` |
++| `AlgoUdf.UdfGlobals` | the JS `falkor.register` bodies, `collect_*`, `js_value_to_log_string` |
++| `AlgoUdf.UdfRepoOps` | `UdfRepo::{new,default,version,bump_version,flush,list,get_all_libraries,serialize,deserialize}`, `init_udf_repo`, `get_udf_repo` |
++
++## Assumptions (AXIOMATISED as hypotheses/definitions, no Lean `axiom`)
++* LAGraph: WCC/CDLP output is a dense vector of representative indices `< n`
++  (`Compact.LagWcc`); `LAGraph_msf` component vector is dense
++  (`MsfFlow.msf_dense_no_fallback` hypothesis); PageRank rejects n = 0.
++* `Graph::get_node_relationships` yields out-edges then in-edges (self-loop in both).
++* QuickJS: `obj.set("__proto__", v)` never creates an own key; `obj.keys()`
++  lists array-index keys first; `obj.get("constructor")` falls back to the
++  prototype's constructor; `JS_IsDate` / `JS_IsRegExp`
++  test the internal class (`Marshal.JsKind`); `Object.prototype.toString` gives "[object Object]";
++  `new Date(ms)` is NaN beyond ±8.64e15 ms.
++* f64 is abstracted (`Marshal.F64`, `MsfFlow.Score`): only `==`, `<`, `floor`,
++  `abs < 
 ```
 
-**File**: `graph/src/index/falkordb/falkordb_index.rs` (modified, +151/-0)
+**File**: `proofs/algo_udf/AlgoUdf/AlgoBfsReg.lean` (added, +212/-0)
 ```diff
-@@ -401,6 +401,12 @@ impl VersionedIndex for IndexColumn {
-     ) {
-         self.add_encoded(batch);
-     }
+@@ -0,0 +1,212 @@
++import AlgoUdf.Repo
++import AlgoUdf.Config
++/-! # `algo.BFS` result assembly and the procedure registration table
 +
-+    fn memory_usage(&self) -> usize {
-+        match self {
-+            Self::Numeric(idx) => idx.memory_usage(),
-+        }
-+    }
- }
- 
- /// How to answer a query by scanning while its column is still building: keep the entities whose
-@@ -568,6 +574,19 @@ impl FalkorDbIndex {
-         self.node_columns.len() + self.edge_columns.len()
-     }
- 
-+    /// Heap bytes every column holds in this version, node and edge
-+    /// ([`VersionedIndex::memory_usage`]): what a build with `index-falkordb` adds to
-+    /// `indices_sz_mb` in `GRAPH.MEMORY USAGE`. Walks every page of every column. The CCH
-+    /// indexes are not counted: their hierarchy holds no arrays until #3208 and #3209.
-+    #[must_use]
-+    pub fn memory_usage(&self) -> usize {
-+        self.node_columns
-+            .values()
-+            .chain(self.edge_columns.values())
-+            .map(IndexEntry::memory_usage)
-+            .sum()
-+    }
++| here | there (`algo_procedures.rs`) |
++| --- | --- |
++| `algoBfs`         | `algo_bfs` :1108-1247; LAGraph's BFS output is the input `Lag` (AXIOMATISED: `LAGr_BreadthFirstSearch_Extended` level/parent vectors, extracted in ascending index order) |
++| `relOf p c`       | `g.get_src_dest_relationships(parent, child, &rel_types).next()` :1207 |
++| `Entry`, `addProc`| `Functions::add_procedure` (functions/mod.rs:943-965: panics on a duplicate lowercase name) |
++| `registerX`       | `register_pagerank` :731 … `register_maxflow` :2918, via `cypher_fn!` (functions/mod.rs:328-352) |
++| `register`        | `register` :716 |
++-/
++namespace AlgoUdf.AlgoBfsReg
++open AlgoUdf AlgoUdf.Config
 +
-     /// The column map for `entity` — node labels and relationship types keep
-     /// separate keyspaces (a label and a type may share a name).
-     fn columns(
-@@ -1247,6 +1266,138 @@ mod tests {
-         assert_eq!(all(&v2), vec![1, 2]); // new version sees the write
-     }
- 
-+    /// Tuples for entities `0..n`, entity `i` holding `value(i)`.
-+    fn tuples(
-+        n: u64,
-+        value: impl Fn(u64) -> i64,
-+    ) -> EncodedTuples {
-+        EncodedTuples::scalars(
-+            (0..n)
-+                .map(|i| (encode_numeric(&Value::Int(value(i))).unwrap(), i))
-+                .collect(),
-+        )
-+    }
++/-! ## algo.BFS -/
 +
-+    /// A column built from `tuples`, as an indexer batch builds one.
-+    fn column_of(mut tuples: EncodedTuples) -> IndexColumn {
-+        let mut column = IndexColumn::Numeric(NumericIndex::new());
-+        column.indexer_add(&mut tuples);
-+        column
-+    }
++/-- LAGraph BFS output: `(index, parent)` and `(index, level)` entries. -/
++structure Lag where
++  parent : List (Nat × Nat)
++  level : List (Nat × Nat)
 +
-+    /// A column reports its pages, at sizes from empty to several levels of branches.
-+    ///
-+    /// Distinct ints are far apart once encoded, so every leaf stays in the 16-byte
-+    /// array-of-structs form: the tuples are a floor. Above each leaf a branch holds one child
-+    /// and one 16-byte separator, under 64 bytes a leaf between them.
-+    #[test]
-+    fn a_column_reports_its_pages() {
-+        let mut smaller = 0;
-+        for n in [0, 1, 255, 256, 257, 10_000, 200_000] {
-+            let size = VersionedIndex::memory_usage(&column_of(tuples(n, |i| i as i64)));
-+            let floor = usize::try_from(n).unwrap() * 16;
-+            let leaves = floor.div_ceil(256 * 16);
-+            assert!(
-+                (floor..=floor + 64 * leaves).contains(&size),
-+                "{n} tuples reported {size} bytes, not {floor} plus at most {} for branches",
-+                64 * leaves
-+            );
-+            assert!(
-+                size > smaller || n == 0,
-+                "{n} tuples reported no more than fewer did"
-+            );
-+            smaller = size;
-+        }
-+    }
++inductive BfsOut | empty | rows (nodes : List Nat) (edges : List Nat)
++  deriving DecidableEq, Repr
 +
-+    /// The compact leaf form counts too: every entity holding one value packs a tuple into a
-+    /// one-byte index entry plus its doc, well under the 16 bytes the other form takes.
-+    #[test]
-+    fn a_compact_column_reports_its_pages() {
-+        for n in [256, 10_000, 200_000] {
-+            let size = VersionedIndex::memory_usage(&column_of(tuples(n, |_| 7)));
-+            let n = usize::try_from(n).unwrap();
-+            assert!(
-+                (n..=n * 8).contains(&size),
-+                "{n} tuples of one value reported {size} bytes"
-+            );
-+        }
-+    }
++/-- The `want_edges` branch :1182-1211. -/
++def edgesBranch (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
++    List (Nat × Nat) → List Nat × List Nat
++  | [] => ([], [])
++  | (c, p) :: t =>
++    let (ns, es) := edgesBranch src hasDel del relOf t
++    if c = src then (ns, es)
++    else if hasDel && (del c || del p) then (ns, es)
++    else (c :: ns, (match relOf p c with | some e => [e] | none => []) ++ es)
 +
-+    /// Versions that share pages each count them: a fork reports what its parent does, and
-+    /// writing the fork changes only the fork's number.
-+    #[test]
-+    fn each_version_counts_the_pages_it_shares() {
-+        let (label, attr) = (arc("Person"), arc("age"));
-+        let adds = |ids: std::ops::Range<u64>| -> Vec<(i64, u64, bool)> {
-+            ids.map(|id| (id as i64, id, true)).collect()
-+        };
-+        let mut v1 = FalkorDbIndex::new();
-+        v1.create_numeric(Node, &label, &attr);
-+        write(&mut v1, &label, &attr, &adds(0..10_000));
-+        let before = v1.memory_usage();
-+        assert!(before > 0);
++/-- The level branch :1212-1227. -/
++def levelBranch (src : Nat) (hasDel : Bool) (del : Nat → Bool) : List (Nat × Nat) → List Nat
++  | [] => []
++  | (c, _) :: t =>
++    if c = src then levelBranch src hasDel del t
++    else if hasDel && del c then levelBranch src hasDel del t
++    else c :: levelBranch src hasDel del t
 +
-+        let mut v2 = v1.clone();
-+        assert_eq!(v2.memory_usage(), before);
-+        write(&mut v2, &label, &attr, &adds(10_000..20_000));
-+        assert_eq!(v1.memory_usage(), before);
-+        assert!(v2.memory_usage() > before);
-+    }
++def algoBfs (args : List Val) (nodeCount : Nat) (del : Nat → Bool) (hasDel : Bool) (wantEdges : Bool)
++    (lag : Lag) (relOf : Nat → Nat → Option Nat) : Except String BfsOut :=
++  match args with
++  | a0 :: a1 :: a2 :: _ =>
++    match a0 with
++    | .null => .ok .empty
++    | .node src =>
++      match a1 with
++      | .int _ =>
++        match optString a2 with
++        | .error e => .error e
++        | .ok _ =>
++          if nodeCount = 0 then .ok .empty
++          else if del src then .error "Source node not found in graph"
++          else
++            let (ns, es) := if wantEdges then edgesBranch src hasDel del relOf lag.parent
++                            else (levelBranch src hasDel del lag.level, [])
++            if ns = [] then .ok .empty else .ok (.rows ns es)
++      | _ => .error "maxDepth must be an integer"
++    | _ => .error "Source must be a node or null"
++  | _ => .error "arity"
 +
-+    /// The index reports every column, node and edge, each by its own pages.
-+    #[test]
-+    fn the_index_counts_node_and_edge_columns() {
-+        let (label, attr) = (arc("Rated"), arc("score")); // a node label and a relationship type
-+        let with = |columns: &[(EntityType, u64)]| -> FalkorDbIndex {
-+            let mut idx = FalkorDbIndex::new();
-+            for &(entity, n) in columns {
-+                idx.create_numeric(entity, &label, &attr);
-+              
++/-- The parent→child relationship exists for every reported child (LAGraph
++contract: a parent is adjacent to its child in the typed adjacency matrix). -/
++def ParentsAdjacent (src : Nat) (relOf : Nat → Nat → Option Nat) (parent : List (Nat × Nat)) : Prop :=
++  ∀ c p, (c, p) ∈ parent → c ≠ src → relOf p c ≠ none
++
++/-- **Aligned columns**: under the LAGraph contract each reported node comes
++with exactly one edge, the parent→node relationship. -/
++theorem edgesBranch_aligned (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
++    ∀ parent, ParentsAdjacent src relOf parent →
++      (edgesBranch src hasDel del relOf parent).2.length = (edgesBranch src hasDel del relOf parent).1.length := by
++  intro parent
++  induction parent with
++  | nil => intro _; rfl
++  | cons cp t ih =>
++    obtain ⟨c, p⟩ := cp
++    intro hadj
++    have ih' := ih (fun c' p' h hc => hadj c' p' (List.mem_cons_of_mem _ h) hc)
++    simp only [edgesBranch]
++    split
++    · exact ih'
++    · split
++      · exact ih'
++      · rename_i hc _
++        have := hadj c p (by simp) hc
++        cases hr : relOf p c with
++        | none => exact absurd hr this
++        | some e => simp [ih']
++
++/-- **The `nodes` column does not depend on the yields bitmask** when LAGraph's
++parent and level vectors share their pattern and no reached node's parent is
++deleted (deleted nodes have no edges). -/
++theorem branches_agree (src : Nat) (hasDel : Bool) (del : Nat → Bool) (relOf : Nat → Nat → Option Nat) :
++    ∀ (parent level : List (Nat × Nat)), parent.map (·.1) = level.map (·.1) →
++      (∀ c p, (c, p) ∈ parent → c ≠ src → del p = false) →
++      (edgesBranch src hasDel del relOf parent).1 = levelBranch src hasDel del level := by
++  intro parent
++  induction parent with
++  | nil => intro level h _; cases level; rfl; simp at h
++  | cons cp t ih =>
++    intro level h hp
++    obtain ⟨c, p⟩ := cp
++    cases level with
++    | nil => simp at h
++    | cons cl lt =>
++      obtain ⟨c', l⟩ := cl
++      simp only [List.map_cons, List.cons.injEq] at h
++      obtain ⟨rfl, ht⟩ := h
++      have ih' := ih lt ht (fun c'' p'' hm hc => hp c'' p'' (List.mem_cons_of_mem _ hm) hc)
++      simp only [edgesBranch, leve
 ```
 
-**File**: `graph/src/index/falkordb/numeric.rs` (modified, +7/-0)
+**File**: `proofs/algo_udf/AlgoUdf/AlgoGlue.lean` (added, +223/-0)
 ```diff
-@@ -290,6 +290,13 @@ impl NumericIndex {
-         self.tree.is_empty()
-     }
- 
-+    /// Heap bytes the tree holds ([`CowBTree::heap_bytes`]): every page this version reaches,
-+    /// whether or not another version shares it. Walks every page.
-+    #[must_use]
-+    pub fn memory_usage(&self) -> usize {
-+        self.tree.heap_bytes()
-+    }
+@@ -0,0 +1,223 @@
++import AlgoUdf.MsfFlow
++import AlgoUdf.Config
++import AlgoUdf.Dfs
++/-! # Remaining helpers of `algo_procedures.rs`
 +
-     /// Entity ids whose value equals `value`. Empty for a non-numeric value.
-     #[must_use]
-     pub fn point(
-```
-
-**File**: `graph/src/index/falkordb/versioned.rs` (modified, +20/-0)
-```diff
-@@ -300,6 +300,11 @@ pub(crate) trait VersionedIndex: Clone + Sized {
-         &mut self,
-         batch: &mut Self::Batch,
-     );
++| here | there |
++| --- | --- |
++| `newMsg`, `msgToString`  | `new_msg` :101, `msg_to_string` :105 (`CStr::from_ptr`: bytes up to the first NUL) |
++| `Ctx`, `msfScore`        | `MsfWeightCtx`, `msf_score` :144 (attribute lookup as an `Option Attr`) |
++| `indexOp`, `valueOp`     | `msf_scored_edge_index_op` :176, `msf_scored_edge_value_op` :200 (null guard = no write) |
++| `scoreOf`                | `msf_score_of` :266 |
++| `nodeValue`              | `node_value` :474 |
++| `collectNodeIds`         | `collect_node_ids` :498 (label scans AXIOMATISED as `scan`; FxHashSet + `sort_unstable`) |
++| `activeNodes`            | `active_node_set` :522 / `Graph::get_nodes(∅, 0)` (graph.rs:2565) |
++| `Own`, `lifecycle`       | `create_lagraph_graph` :372, `delete_lagraph_graph` :397, `_borrowed` :404, `_maybe_borrowed` :417 under the LAGraph ownership contract |
++| `cmpKey`                 | `cmp_found_path` :2155 (= `Dfs.fpLt`) |
++-/
++namespace AlgoUdf.AlgoGlue
++open AlgoUdf
 +
-+    /// Heap bytes this index's own structure holds in this version: every page it reaches,
-+    /// counted once, whether or not another version shares it. So the sizes of two versions that
-+    /// share pages do not add up; each says what that version would cost alone.
-+    fn memory_usage(&self) -> usize;
- }
- 
- impl<K: VersionedIndex> IndexEntry<K> {
-@@ -338,6 +343,21 @@ impl<K: VersionedIndex> IndexEntry<K> {
-             .writer_record(&mut self.state, changes, place, scratch);
-     }
- 
-+    /// Heap bytes this index holds in this version: its structure ([`VersionedIndex::memory_usage`])
-+    /// and, while `Building`, the entities written since a batch last committed on it
-+    /// ([`Written::since_last_indexer_step`]), by their serialized size.
-+    /// [`Written::by_this_version`] is not counted: a published version, which is what
-+    /// `GRAPH.MEMORY USAGE` reads, always has it empty ([`Self::publish`]).
-+    pub(crate) fn memory_usage(&self) -> usize {
-+        let written = match &self.state {
-+            BuildState::Building { written, .. } if !written.since_last_indexer_step.is_empty() => {
-+                written.since_last_indexer_step.serialized_size()
-+            }
-+            _ => 0,
-+        };
-+        self.index.memory_usage() + written
-+    }
++/-! ## LAGraph message buffer -/
 +
-     /// Add an indexer batch's `work`, read from this same version, then move the cursor to `next`,
-     /// or flip the index `Ready` when it is `None`. `false`, changing nothing, if the index is not
-     /// `Building`.
-```
-
-**File**: `src/commands/memory.rs` (modified, +4/-0)
-```diff
-@@ -27,6 +27,10 @@
- //!   "indices_sz_mb",                              <int> ]
- //! ```
- //!
-+//! `indices_sz_mb` is RediSearch's own estimate of its indexes, as C reports it.
-+//! A build with `index-falkordb` adds the native index's columns, which hold the
-+//! Range fields there, so the reply is C's nine pairs on every build.
-+//!
- //! The `total_graph_sz_mb` value is the sum of all other MB-rounded
- //! components, which avoids truncation discrepancies when clients verify
- //! the total against the individual parts.
-```
-
-**File**: `tests/flow/test_index_updates.py` (modified, +22/-14)
-```diff
-@@ -305,10 +305,11 @@ def test11_failed_write_during_index_population(self):
- class testNativeOnlyFeedFlow(FlowTestsBase):
-     # Under `index-falkordb` the native index is the only Range index, so nothing may also feed
-     # Range fields to RediSearch: not a write, not the build after CREATE INDEX, not the build
--    # after an RDB load. `indices_sz_mb` in GRAPH.MEMORY USAGE is RediSearch's own memory, which
--    # is what makes those feeds visible from a client. Without the flag RediSearch is the Range
--    # index and all three must reach it; that half also shows the data is big enough for a
--    # whole-MB counter to see.
-+    # after an RDB load. `indices_sz_mb` in GRAPH.MEMORY USAGE is what makes those feeds visible
-+    # from a client: RediSearch's own memory, plus under the flag the native columns, which cost
-+    # several times less than a RediSearch copy of the same entries. Without the flag RediSearch
-+    # is the Range index and all three must reach it; that half also shows the data is big enough
-+    # for a whole-MB counter to see.
-     def __init__(self):
-         # enableDebugCommand: the test reloads via DEBUG RELOAD, which redis refuses by default.
-         self.env, self.db = Env(enableDebugCommand=True)
-@@ -317,7 +318,7 @@ def test01_native_only_build_feeds_no_range_fields_to_redisearch(self):
-         key = 'native_only_feed'
-         g = self.db.select_graph(key)
- 
--        def redisearch_mb():
-+        def indices_mb():
-             res = self.env.getConnection().execute_command("GRAPH.MEMORY", "USAGE", key)
-             fields = [f.decode() if isinstance(f, bytes) else f for f in res[0::2]]
-             return res[2 * fields.index('indices_sz_mb') + 1]
-@@ -328,9 +329,9 @@ def redisearch_mb():
-         create_edge_range_index(g, 'RF', 'w', sync=True)
- 
-         g.query("UNWIND range(1, 50000) AS i CREATE (:NF {v: i})")
--        after_nodes = redisearch_mb()
-+        after_nodes = indices_mb()
-         g.query("UNWIND range(1, 50000) AS i CREATE ()-[:RF {w: i}]->()")
--        after_writes = redisearch_mb()
-+        after_writes = indices_mb()
- 
-         # The indexes the writes filled, and those a build fills below: each must still be one the
-         # planner uses and that answers.
-@@ -358,7 +359,7 @@ def answers(queries):
-         # The build after CREATE INDEX: the data exists before the indexes.
-         g.query("UNWIND range(1, 50000) AS i CREATE (:NB {v: i})")
-         g.query("UNWIND range(1, 50000) AS i CREATE ()-[:RB {w: i}]->()")
--        before_build = redisearch_mb()
-+        before_build = indices_mb()
-         create_node_range_index(g, 'NB', 'v')
-         create_edge_range_index(g, 'RB', 'w')
-         if native_only:
-@@ -370,17 +371,24 @@ def answers(queries):
-             self.env.assertEqual(res.result_set, [['NB', 'OPERATIONAL'], ['RB', 'OPERATIONAL']])
-         # A RediSearch build runs in the background; it has to finish before the reading shows it.
-         wait_for_indices_to_sync(g)
--        after_build = redisearch_mb()
-+        after_build = indices_mb()
- 
-         # The build after an RDB load.
-         self.env.dumpAndReload()
--        after_reload = redisearch_mb()
-+        after_reload = indices_mb()
- 
-         if native_only:
--            self.env.assertEqual(after_nodes, 0)
--            self.env.assertEqual(after_writes, 0)
--            self.env.assertEqual(after_build, 0)
--            self.env.assertEqual(after_reload, 0)
-+            # Only the native columns: an entry takes at most 16 bytes in its page and the
-+            # branches above it under one more, so 32 is a ceiling with room to spare; the fixed
-+            # cost is under 1 MiB, and the reading truncates to whole MiB. A RediSearch copy is
-+            # 3.5x to 5x this bound at each step (7, 18, 36 and 36 MiB against 2, 4, 7 and 7).
-+            def native_mb(entries):
-+                return entries * 32 // (1 << 20) + 1
++def newMsg : List Nat := List.replicate 256 0
 +
-+            self.env.assertLessEqual(after_nodes, native_mb(50000))
-+            self.env.assertLessEqual(after_writes, native_mb(100000))
-+            self.env.assertLessEqual(after_build, native_mb(200000))
-+            self.env.assertLessEqual(after_reload, native_mb(200000))
-         else:
-             self.env.assertGreater(after_nodes, 0)
-             self.env.assertGreater(after_writes, after_nodes)
++/-- `CStr::from_ptr(..).to_string_lossy()`: the bytes before the first NUL. -/
++def msgToString (m : List Nat) : List Nat := m.takeWhile (· ≠ 0)
++
++theorem msgToString_new : msgToString newMsg = [] := by decide
++
++theorem msgToString_prefix (m : List Nat) : ∃ rest, m = msgToString m ++ rest ∧
++    (rest = [] ∨ rest.head? = some 0) := by
++  refine ⟨m.dropWhile (· ≠ 0), (List.takeWhile_append_dropWhile).symm, ?_⟩
++  induction m with
++  | nil => simp
++  | cons x t ih =>
++    by_cases hx : x = 0
++    · right; simp [List.dropWhile_cons, hx]
++    · simp only [List.dropWhile_cons, ne_eq, hx, not_false_eq_true, decide_true, if_true]; exact ih
++
++/-! ## MSF scoring callbacks -/
++
++inductive Attr | float (f : Int) | int (k : Int) | other deriving DecidableEq, Repr
++
++structure Ctx where
++  attr : Nat → Option Attr
++  maximize : Bool
++  unit : Bool
++
++/-- `msf_score`: `1.0` when unweighted, the numeric weight (negated when
++maximizing), `±inf` (here `MsfFlow.inf`) when missing / non-numeric. Finite
++f64 weights are modelled by their integer image. -/
++def msfScore (ctx : Ctx) (e : Nat) : MsfFlow.Score :=
++  if ctx.unit then .num 1 else
++  let miss : Int := if ctx.maximize then -MsfFlow.inf else MsfFlow.inf
++  let raw : Int := match ctx.attr e with
++    | some (.float f) => f
++    | some (.int k) => k
++    | _ => miss
++  .num (if ctx.maximize then -raw else raw)
++
++/-- A missing weight scores `+inf` in both modes (negation flips the `-inf`
++miss of the maximizing mode), so it never beats a finite edge. -/
++theorem msfScore_missing (ctx : Ctx) (e : Nat) (hu : ctx.unit = false)
++    (h : ctx.attr e = none ∨ ctx.attr e = some .other) : msfScore ctx e = .num MsfFlow.inf := by
++  unfold msfScore
++  rcases h with h | h <;> cases hm : ctx.maximize <;> simp [hu, h]
++
++theorem msfScore_unit (ctx : Ctx) (e : Nat) (hu : ctx.unit = true) : msfScore ctx e = .num 1 := by
++  simp [msfScore, hu]
++
++theorem msfScore_max (ctx : Ctx) (e : Nat) (k : Int) (hu : ctx.unit = false) (hm : ctx.maximize = true)
++    (h : ctx.attr e = some (.int k) ∨ ctx.attr e = some (.float k)) : msfScore ctx e = .num (-k) := by
++  unfold msfScore; rcases h with h | h <;> simp [hu, hm, h]
++
++/-- A finite (|k| < inf) edge beats a missing-weight edge under `keepMin`. -/
++theorem missing_never_selected (k : Int) (e e' : Nat) (hk : k < MsfFlow.inf) :
++    MsfFlow.keepMin ⟨.num MsfFlow.inf, e'⟩ ⟨.num k, e⟩ = ⟨.num k, e⟩ := by
++  simp [MsfFlow.keepMin, MsfFlow.Score.lt, hk]
++
++/-- `msf_scored_edge_index_op`: `none` = a null pointer (no write). -/
++def indexOp (ctx : Option Ctx) (zNull : Bool) (j : Nat) : Option MsfFlow.SE :=
++  if zNull then none else ctx.map fun c => ⟨msfScore c j, j⟩
++
++def valueOp (ctx : Option Ctx) (zNull : Bool) (x : Option Nat) : Option MsfFlow.SE :=
++  if zNull then none else
++  match x, ctx with
++  | some e, some c => some ⟨msfScore c e, e⟩
++  | _, _ => none
++
++theorem indexOp_spec (c : Ctx) (j : Nat) : indexOp (some c) false j = some ⟨msfScore c j, j⟩ := rfl
++theorem valueOp_spec (c : Ctx) (e : Nat) : valueOp (some c) false (some e) = some ⟨msfScore c e, e⟩ := rfl
++theorem ops_null_guard (c : Option Ctx) (j : Nat) (x : Option Nat) :
++    indexOp c true j = none ∧ valueOp c true x = none ∧ indexOp none false j = none ∧
++    valueOp c false none = none := by
++  refine ⟨rfl, rfl, rfl, ?_⟩; cases c <;> rfl
++
++/-- `msf_score_of`. -/
++def scoreOf (x : Option MsfFlow.SE) : Option MsfFlow.Score := x.map (·.score)
++theorem scoreOf_spec (s : MsfFlow.SE) : scoreOf (some s) = some s.score := rfl
++
++/-- `node_value`. -/
++def nodeValue (id : Nat) : Val := .node id
++theorem nodeValue_spec (id : Nat) : nodeValue id = .node id := rfl
++
++/-! ## Node collection -/
++
++/-- `Graph::get_nodes(&∅, 0)` (`Graph::get_nodes`, graph.rs:2565). -/
++def activeNodes (nodeCount maxId : Nat) (dele
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3682** (2026-11-05): [6.0] Batch backport (74 commits) (@github-actions[bot])
+- **PR #3673** (closed): feat(index): an edge batch resumes anywhere, and reads exactly its size (@DvirDukhan)
 - **PR #3666** (2026-11-04): ci: install Trivy 0.76.1 from its GitHub release (get.trivy.dev is down) (@AviAvni)
 - **PR #3665** (2026-11-04): ci: remove the unused gh-aw agentic workflow setup (@AviAvni)
 - **PR #3657** (2026-11-02): refactor(mvcc): writers fork and commit; drop the write slot (@DvirDukhan)
 - **PR #3655** (closed): Truncated shortestPath relationship filters can hang the parser (@gkorland)
-- **PR #3638** (2026-11-01): build(asan): make the symbolizer COPY robust to the toolchain's libLLVM layout (@AviAvni)
-- **PR #3636** (closed): fix(rdb): encode an empty tensor section as one zero, load legacy ones (@dudizimber)
 
 ---
 
@@ -2922,53 +1891,56 @@ both. The reply stays C's nine pairs on every b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)
+## X. proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#31
 
 **RULE**:
-When implementing operations in `graph/src/graph/graphblas/matrix.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/proofs/REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b891775c`: Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d98077a`: proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#3172). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/graph/graphblas/matrix.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/proofs/REFERENCE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_select_INT64,
-    GrB_Matrix_setElement_FP64, GrB_OFFDIAG,
-    /// Remove every entry on the main diagonal (`GrB_select` with
-    /// `GrB_OFFDIAG`, whose thunk 0 names the main diagonal), in place.
-    /// So far only the CCH test kit uses it, to drop a weight matrix's self-loops.
-    #[cfg(test)]
-    pub(crate) fn drop_diagonal(&mut self) {
-        let info = unsafe {
-            GrB_Matrix_select_INT64(
-                self.inner(),
-                null_mut(),
-                null_mut(),
-                GrB_OFFDIAG,
-                self.inner(),
-                0,
-                null_mut(),
-            )
-        };
-        assert_eq!(
-            info,
-            GrB_Info::GrB_SUCCESS,
-            "GrB_Matrix_select_INT64: {info:?}"
-        );
-        self.has_pending.store(true, Ordering::Relaxed);
-    }
+# Proof conventions
 
+## Project layout
+
+```
+proofs/<area>/
+  lakefile.toml        # name, defaultTargets, [[lean_lib]] (copy an existing one)
+  lean-toolchain       # leanprover/lean4:v4.35.0
+  .gitignore           # .lake/
+  <Root>.lean          # imports the modules; header doc-comment = the report
+  <Root>/*.lean        # modules, < ~400 lines each, build after each
+  COVERAGE.tsv
+  repro.py             # optional: live repros needing RediSearch / a server
+```
+
+No Mathlib: use core Lean 4 plus `omega`, `simp`, `decide`, `induction`, and the
+`List`/`Array` lemmas in core. When you need another project's definitions, import
+them instead of copying: add a Lake path dependency to `lakefile.toml`
+
+```toml
+[[require]]
+name = "falkor-value-order"      # the dependency's own `name`
+path = "../value_order"
+```
+
+then `lake update` (commit the generated `lake-manifest.json`) and `import
+FalkorValueOrder.Model`. Shared foundations live in `proofs/core` (`FalkorCore`: the
+engine Value `V F`, the float model `F`, `i64` helpers, `cmpI`/comparator laws); reuse
+them with `open FalkorCore` (and `open FalkorCore.Laws` for the comparator laws `Lw`, `lexA`, `thn`) rather than defining another copy (
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_setElement_FP64,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b891775c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d98077a` are properly handled with clean fallback behavior.
