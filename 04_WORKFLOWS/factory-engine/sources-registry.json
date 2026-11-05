@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T17:49:19.251Z",
-    "lastVerified": "2026-11-05T17:49:19.251Z",
+    "lastChecked": "2026-11-05T18:00:54.695Z",
+    "lastVerified": "2026-11-05T18:00:54.695Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T17:22:02.044Z",
+    "lastChecked": "2026-11-05T17:57:32.355Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T17:22:02.044Z"
+    "lastVerified": "2026-11-05T17:57:32.355Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1251,22 +1251,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet-core",
+    "name": "freenet/freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:40:17.082Z",
-    "lastVerified": "2026-11-05T13:40:17.082Z",
+    "lastChecked": "2026-11-05T17:57:31.126Z",
+    "lastVerified": "2026-11-05T17:57:31.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
+    "contentHash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b94bef03"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -4170,9 +4169,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-05T02:33:09.793Z",
+    "lastChecked": "2026-11-05T17:57:29.826Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-05T02:33:09.793Z"
+    "lastVerified": "2026-11-05T17:57:29.826Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -7028,14 +7027,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:20:42.605Z",
-    "lastVerified": "2026-11-05T03:20:42.605Z",
+    "lastChecked": "2026-11-05T17:57:28.922Z",
+    "lastVerified": "2026-11-05T17:57:28.922Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
+    "contentHash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8692,14 +8691,14 @@
     "officialUrl": "https://github.com/apache/arrow",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-04T22:45:28.330Z",
-    "lastVerified": "2026-11-04T22:45:28.330Z",
+    "lastChecked": "2026-11-05T17:57:21.313Z",
+    "lastVerified": "2026-11-05T17:57:21.313Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-arrow",
-    "contentHash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
+    "contentHash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11560,12 +11559,12 @@
     "lastVerified": "2026-11-04T01:34:47.348Z"
   },
   "sozercan-kaset": {
-    "name": "sozercan/kaset",
+    "name": "kaset",
     "officialUrl": "https://github.com/sozercan/kaset",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T17:30:11.276Z",
-    "lastVerified": "2026-11-03T17:30:11.276Z",
+    "lastChecked": "2026-11-05T17:57:22.226Z",
+    "lastVerified": "2026-11-05T17:57:22.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sozercan-kaset",
@@ -11574,7 +11573,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6a20e60c"
   },
   "mozilla-readability": {
     "name": "readability",
@@ -13264,12 +13264,12 @@
     "officialUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-02T14:31:51.061Z",
-    "lastVerified": "2026-11-02T14:31:51.061Z",
+    "lastChecked": "2026-11-05T17:57:19.775Z",
+    "lastVerified": "2026-11-05T17:57:19.775Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
+    "contentHash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

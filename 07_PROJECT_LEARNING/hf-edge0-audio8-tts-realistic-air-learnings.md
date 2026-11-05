@@ -3,7 +3,7 @@
 > **Source Version**: `hf-edge0-aud`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:31:51.159Z  
+> **Timestamp**: 2026-11-05T18:00:51.820Z  
 > **Learning ID**: `learn-huggingface-edge0-audio8-tts-realistic-air`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:31:51.061Z  
+> **Harvest Timestamp**: 2026-11-05T17:57:19.775Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7259 downloads | 235 likes
+- **Stars / Engagement**: 11349 downloads | 313 likes
 
 ---
 

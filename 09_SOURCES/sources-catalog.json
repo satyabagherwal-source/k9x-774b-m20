@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "b94bef03",
+    "sourceVersion": "24d872db",
     "license": "NOASSERTION",
-    "contentHash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
-    "lastHarvestedAt": "2026-11-05T10:16:09.828Z",
+    "contentHash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
+    "lastHarvestedAt": "2026-11-05T17:57:33.005Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "e1250f62",
+    "sourceVersion": "3ad9af7b",
     "license": "Apache-2.0",
-    "contentHash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
-    "lastHarvestedAt": "2026-11-05T03:20:43.538Z",
+    "contentHash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
+    "lastHarvestedAt": "2026-11-05T17:57:30.771Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "6bddeb67",
+    "sourceVersion": "802102ad",
     "license": "Apache-2.0",
-    "contentHash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
-    "lastHarvestedAt": "2026-11-04T22:45:29.250Z",
+    "contentHash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
+    "lastHarvestedAt": "2026-11-05T17:57:23.640Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -11685,8 +11685,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
     "license": "Open-Source",
-    "contentHash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
-    "lastHarvestedAt": "2026-11-02T14:31:51.455Z",
+    "contentHash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
+    "lastHarvestedAt": "2026-11-05T18:00:52.151Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
   },
   "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {

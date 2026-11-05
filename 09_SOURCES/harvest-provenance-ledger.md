@@ -7745,3 +7745,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-05T17:47:55.812Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `c250f749` | Multi-dimensional audit evidence | 2026-11-05T17:47:59.166Z |
 | `learn-github-had0yun-cozyclay` | `https://github.com/HaD0Yun/CozyClay` | `ba079c02` | Multi-dimensional audit evidence | 2026-11-05T17:49:16.682Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `802102ad` | Multi-dimensional audit evidence | 2026-11-05T17:57:23.640Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `3ad9af7b` | Multi-dimensional audit evidence | 2026-11-05T17:57:30.771Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `24d872db` | Multi-dimensional audit evidence | 2026-11-05T17:57:33.005Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-05T18:00:52.151Z |

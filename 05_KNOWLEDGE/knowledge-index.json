@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T17:49:16.571Z",
+  "last_updated": "2026-11-05T18:00:52.041Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2337,11 +2337,16 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "6bddeb67",
-      "content_hash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
+      "source_version": "802102ad",
+      "content_hash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#553",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2478,
           "title": "GH-51018: [C++] Fix indices_nonzero segfault on chunkless ChunkedArray (#51021)",
@@ -2398,7 +2403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:45:29.134Z",
+      "verified_at": "2026-11-05T17:57:23.522Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14608,11 +14613,16 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "b94bef03",
-      "content_hash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
+      "source_version": "24d872db",
+      "content_hash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "transport): send QUIC data on the path with fallback to UDP (#6114)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1769,
           "title": "test: fix refresh-lock table test self-deadlock under cargo test (#5905)",
@@ -14829,7 +14839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:16:09.724Z",
+      "verified_at": "2026-11-05T17:57:32.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46663,11 +46673,16 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "e1250f62",
-      "content_hash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
+      "source_version": "3ad9af7b",
+      "content_hash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "eval: a few more fixes reducing allocations (#9514)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2168,
           "title": "topdown: fix substring overflow with huge length",
@@ -46744,7 +46759,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:20:43.414Z",
+      "verified_at": "2026-11-05T17:57:30.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170351,7 +170366,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
       "source_version": "hf-edge0-audio8-tts-realistic-air",
-      "content_hash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
+      "content_hash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "promoted_rules": [],
@@ -170360,7 +170375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:31:51.324Z",
+      "verified_at": "2026-11-05T18:00:52.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

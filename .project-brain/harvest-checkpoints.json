@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T17:49:16.691Z",
+  "last_updated": "2026-11-05T18:00:52.162Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
-      "verified_at": "2026-11-05T10:16:09.844Z",
+      "content_hash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
+      "verified_at": "2026-11-05T17:57:33.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:16:09.844Z"
+      "last_updated": "2026-11-05T17:57:33.024Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
-      "verified_at": "2026-11-05T03:20:43.555Z",
+      "content_hash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
+      "verified_at": "2026-11-05T17:57:30.780Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:20:43.555Z"
+      "last_updated": "2026-11-05T17:57:30.780Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "1cadf76f02d90450f2f79e2d59a61a4dd2a51362b1621dc117c1403fc1c8e6a2",
-      "verified_at": "2026-11-04T22:45:29.269Z",
+      "content_hash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
+      "verified_at": "2026-11-05T17:57:23.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:45:29.269Z"
+      "last_updated": "2026-11-05T17:57:23.650Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "content_hash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
-      "verified_at": "2026-11-05T06:44:02.464Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
+      "verified_at": "2026-11-05T18:00:52.161Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:44:02.464Z"
+      "last_updated": "2026-11-05T18:00:52.161Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

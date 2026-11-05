@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-RHU1",
-    "timestamp": "2026-11-04T16:50:15.433Z",
-    "repository": "olric-data/olric",
-    "learningId": "learn-github-olric-data-olric",
-    "contentHash": "4d5629280e73c26563ef89255f580f3a34676b2261a034af5bd6e1f95065a294",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-RKE6",
-    "timestamp": "2026-11-04T16:50:18.750Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "5544fc11bd5854729b52975ec9e8d9e76538b5619195e6d8fd7538d871f0df14",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-36NW",
-    "timestamp": "2026-11-04T16:59:20.828Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "968e4be5df0801ad7530864b1154fcc59cdb1e984272fc200bc4914aabada2b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-3CLU",
-    "timestamp": "2026-11-04T16:59:28.530Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-4KE3",
     "timestamp": "2026-11-04T17:00:25.275Z",
     "repository": "yvgude/lean-ctx",
@@ -7492,6 +7432,66 @@
     "contentHash": "1a2eb4041670fb199195588d07df5b896a57b5001eada1b79cbf4fa1921933e9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LOOL",
+    "timestamp": "2026-11-05T17:57:23.637Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LU6M",
+    "timestamp": "2026-11-05T17:57:30.766Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-LVWP",
+    "timestamp": "2026-11-05T17:57:33.002Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "4b78f68a6c1aa90d6fdf87c6825f0492a593d3c22992b5830f8d1d2806284c0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Q5KJ",
+    "timestamp": "2026-11-05T18:00:52.147Z",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
+    "contentHash": "5501fbcb63ec6d6fefe0db01bb182cf01fb31dc079a3cf63fefa665853d5f460",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
