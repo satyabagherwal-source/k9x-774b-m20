@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:07:19.634Z",
+  "last_updated": "2026-11-05T04:14:38.048Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1040,14 +1040,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "content_hash": "86cafee22cbfeda5d482ba7763a58862667d79c248d11d15fba97356f9ab5e03",
-      "verified_at": "2026-10-31T13:34:06.663Z",
+      "content_hash": "c5d20032aa8eff8bd7737826f91e033ae2501383c6bcea1c28be5bf0f534abba",
+      "verified_at": "2026-11-05T04:14:28.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:34:06.663Z"
+      "last_updated": "2026-11-05T04:14:28.142Z"
     },
     "meta-llama/Meta-Llama-3-8B": {
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "976862de385c385ae4b42533325ea86b1617b15b4f9240961f5ee67d1410a4f3",
-      "verified_at": "2026-11-04T08:47:17.702Z",
+      "content_hash": "460e853077b6ec17492757ff913bf404dd6d3467c8c3536b1be1d0ef59f7a820",
+      "verified_at": "2026-11-05T04:14:38.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:47:17.702Z"
+      "last_updated": "2026-11-05T04:14:38.047Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",

@@ -7507,3 +7507,5 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `da11df74` | Multi-dimensional audit evidence | 2026-11-05T04:00:44.018Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-05T04:07:10.803Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `f5cba99a` | Multi-dimensional audit evidence | 2026-11-05T04:07:19.619Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-05T04:14:28.132Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3ba92575` | Multi-dimensional audit evidence | 2026-11-05T04:14:38.030Z |
