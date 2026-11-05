@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:59:21.656Z",
+  "last_updated": "2026-11-05T16:06:05.800Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
-      "verified_at": "2026-11-01T01:40:30.185Z",
+      "content_hash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
+      "verified_at": "2026-11-05T16:06:02.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:40:30.185Z"
+      "last_updated": "2026-11-05T16:06:02.217Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "c2c2b18b0c2cd52cc32b51308f54c1fdeab46388d366d53021b98836bb9dd0a9",
-      "verified_at": "2026-11-04T21:42:24.729Z",
+      "content_hash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
+      "verified_at": "2026-11-05T16:06:05.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:42:24.729Z"
+      "last_updated": "2026-11-05T16:06:05.799Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

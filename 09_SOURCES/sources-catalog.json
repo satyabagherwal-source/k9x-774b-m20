@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "0c3242062bb6544936efc2b098a66f06017d149a26d46f6d6b18f61fb1485614",
-    "lastHarvestedAt": "2026-11-01T01:40:30.178Z",
+    "contentHash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
+    "lastHarvestedAt": "2026-11-05T16:06:02.211Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "fe9248e5",
+    "sourceVersion": "7d1939dc",
     "license": "Apache-2.0",
-    "contentHash": "c2c2b18b0c2cd52cc32b51308f54c1fdeab46388d366d53021b98836bb9dd0a9",
-    "lastHarvestedAt": "2026-11-04T21:42:24.716Z",
+    "contentHash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
+    "lastHarvestedAt": "2026-11-05T16:06:05.787Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-69XF",
-    "timestamp": "2026-11-04T10:29:50.403Z",
-    "repository": "vercel-labs/agent-desktop",
-    "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "f3680f1684637c15590bd0fd44d02ebcc38a0b83a6aeaff7abf41fa28b53dab0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-6H6Q",
-    "timestamp": "2026-11-04T10:29:59.810Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e29c11dc5de58a8e54ecc7704e0f9c57f63ce700adba97fb98144e18b2940641",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-6ZU5",
     "timestamp": "2026-11-04T10:30:23.981Z",
     "repository": "autogluon/chronos-2",
@@ -7490,6 +7460,36 @@
     "repository": "codewhale-hq/Codewhale",
     "learningId": "learn-github-codewhale-hq-codewhale",
     "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-MH9C",
+    "timestamp": "2026-11-05T16:06:02.208Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "0383aefa1c9e0480d2e431e20e02cbb13f980e63368545aaf35e45fde0e4f896",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-MK0O",
+    "timestamp": "2026-11-05T16:06:05.784Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
