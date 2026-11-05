@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T11:16:54.291Z",
-    "lastVerified": "2026-11-05T11:16:54.291Z",
+    "lastChecked": "2026-11-05T11:23:36.220Z",
+    "lastVerified": "2026-11-05T11:23:36.220Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T10:50:47.523Z",
-    "lastVerified": "2026-11-05T10:50:47.523Z",
+    "lastChecked": "2026-11-05T11:23:31.111Z",
+    "lastVerified": "2026-11-05T11:23:31.111Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -741,9 +741,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-04T20:32:04.663Z",
+    "lastChecked": "2026-11-05T11:23:28.805Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-11-04T20:32:04.663Z"
+    "lastVerified": "2026-11-05T11:23:28.805Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -1950,22 +1950,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T07:13:06.813Z",
-    "lastVerified": "2026-11-05T07:13:06.813Z",
+    "lastChecked": "2026-11-05T11:23:33.170Z",
+    "lastVerified": "2026-11-05T11:23:33.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
+    "contentHash": "495656668889490839cde2518eca48cf1c7d128452d8d38d7bbc99e759f80eb8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cff73042"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3984,9 +3983,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-04T21:18:47.081Z",
+    "lastChecked": "2026-11-05T11:23:23.568Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-04T21:18:47.081Z"
+    "lastVerified": "2026-11-05T11:23:23.568Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -6344,14 +6343,14 @@
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T16:59:09.124Z",
-    "lastVerified": "2026-11-04T16:59:09.124Z",
+    "lastChecked": "2026-11-05T11:23:22.765Z",
+    "lastVerified": "2026-11-05T11:23:22.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
+    "contentHash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7532,12 +7531,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T20:38:45.764Z",
-    "lastVerified": "2026-10-31T20:38:45.764Z",
+    "lastChecked": "2026-11-05T11:23:19.104Z",
+    "lastVerified": "2026-11-05T11:23:19.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
+    "contentHash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10443,9 +10442,9 @@
   "icerockdev-moko-mvvm": {
     "name": "moko-mvvm",
     "officialUrl": "https://github.com/icerockdev/moko-mvvm",
-    "lastChecked": "2026-11-02T16:26:05.651Z",
+    "lastChecked": "2026-11-05T11:23:21.150Z",
     "revisionIdentifier": "ad0f844e",
-    "lastVerified": "2026-11-02T16:26:05.651Z"
+    "lastVerified": "2026-11-05T11:23:21.150Z"
   },
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",

@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
-    "lastHarvestedAt": "2026-10-31T20:38:46.871Z",
+    "contentHash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
+    "lastHarvestedAt": "2026-11-05T11:23:20.033Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "cff73042",
+    "sourceVersion": "851f91a9",
     "license": "Apache-2.0",
-    "contentHash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
-    "lastHarvestedAt": "2026-11-05T00:15:03.706Z",
+    "contentHash": "495656668889490839cde2518eca48cf1c7d128452d8d38d7bbc99e759f80eb8",
+    "lastHarvestedAt": "2026-11-05T11:23:33.679Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "28d7f7cc",
+    "sourceVersion": "ffe6e95c",
     "license": "Apache-2.0",
-    "contentHash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
-    "lastHarvestedAt": "2026-11-04T17:00:25.279Z",
+    "contentHash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
+    "lastHarvestedAt": "2026-11-05T11:23:23.270Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {

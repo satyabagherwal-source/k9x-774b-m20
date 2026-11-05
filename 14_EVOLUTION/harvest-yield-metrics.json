@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:16:51.727Z",
-  "total_cycles_completed": 7606,
-  "total_learnings_persisted": 7606,
-  "total_rules_promoted": 7265,
+  "last_updated": "2026-11-05T11:23:33.683Z",
+  "total_cycles_completed": 7609,
+  "total_learnings_persisted": 7609,
+  "total_rules_promoted": 7267,
   "history": [
-    {
-      "timestamp": "2026-11-05T00:48:52.047Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:49:02.415Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:51:30.764Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:00:36.130Z",
       "repository": "sharkdp/fd",
@@ -1403,6 +1382,27 @@
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:23:20.037Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:23:23.274Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:23:33.683Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

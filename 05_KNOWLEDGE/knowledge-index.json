@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T11:16:51.632Z",
+  "last_updated": "2026-11-05T11:23:33.605Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7209,8 +7209,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "cff73042",
-      "content_hash": "4325bde0c36a7aa0e5d47d504bf7ce145db4aea4b4e23e04254a13d3daa21c10",
+      "source_version": "851f91a9",
+      "content_hash": "495656668889490839cde2518eca48cf1c7d128452d8d38d7bbc99e759f80eb8",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7443,6 +7443,11 @@
           "number": 7042,
           "title": "ci: Raise the Release Helm job timeout to 55 minutes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7204,
+          "title": "cilium-cli: Fix TCPRoute sysdump filename",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7450,7 +7455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:15:03.584Z",
+      "verified_at": "2026-11-05T11:23:33.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19713,7 +19718,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "1d1cc344e296d743616df1339bbfd5d1c3d1825faf04bb3551632a3084271e1d",
+      "content_hash": "731d214e1c2fe4bc1991d735812e65cf9127aafd9469f0739d8d75dae04864f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -19809,7 +19814,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-31T20:38:46.750Z",
+      "verified_at": "2026-11-05T11:23:19.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63089,8 +63094,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "28d7f7cc",
-      "content_hash": "491af6b47c3d0c51a16c34c153e4fb2e67549cba779b465db5448cc409370353",
+      "source_version": "ffe6e95c",
+      "content_hash": "8c46193c75f339c9607b30f8f587f77044c9f889ef38e0346df46763965305a5",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -63128,6 +63133,11 @@
           "number": 6851,
           "title": "Merge pull request #2188 from yvgude/fix/telemetry-test-guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7203,
+          "title": "Merge pull request #2193 from yvgude/fix/3122-exec-race",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63135,7 +63145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:00:25.168Z",
+      "verified_at": "2026-11-05T11:23:23.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181975,6 +181985,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T11:16:51.609Z"
+    },
+    "rule-7203": {
+      "learning_id": "rule-7203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7203,
+      "title": "Merge pull request #2193 from yvgude/fix/3122-exec-race",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "ffe6e95c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:23:23.198Z"
+    },
+    "rule-7204": {
+      "learning_id": "rule-7204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7204,
+      "title": "cilium-cli: Fix TCPRoute sysdump filename",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "851f91a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:23:33.590Z"
     }
   },
   "aliases": {

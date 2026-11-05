@@ -7638,3 +7638,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-05T11:09:32.410Z |
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `86599b9d` | Multi-dimensional audit evidence | 2026-11-05T11:16:44.556Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-05T11:16:51.722Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T11:23:20.033Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `ffe6e95c` | Multi-dimensional audit evidence | 2026-11-05T11:23:23.270Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `851f91a9` | Multi-dimensional audit evidence | 2026-11-05T11:23:33.679Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `cff73042`  
+> **Source Version**: `851f91a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:15:02.894Z  
+> **Timestamp**: 2026-11-05T11:23:33.174Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:15:02.887Z  
+> **Harvest Timestamp**: 2026-11-05T11:23:33.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25774 stars
+- **Stars / Engagement**: 25775 stars
 
 ---
 
@@ -1259,13 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49840** (2026-11-05): **cilium-cli: Discover Gateway API versions for sysdump**
+  *Symptoms*: Fixed API versions prevent sysdump from collecting Gateway API resources when installed CRDs only expose other versions. For example, older CRDs provide TCPRoute and UDPRoute at v1alpha2, while newer standard CRDs provide TLSRoute only at v1.  Discover the preferred available version for each Gateway API resource, including CiliumGatewayClassConfig. Resources that are not installed are still skipped.  Additionally  ``` cilium-cli: Fix TCPRoute sysdump filename  Rename gatewayapi-tcroutes-<ts>.yaml to gatewayapi-tcproutes-<ts>.yaml to match the resource name and other Gateway API filenames. ```  Note: I manually tested by running the same version of the cilium-cli against `v1.19` & `main`.  Note 2: This could be something that we want to improve for sysdumping K8s resources in general. I thought that it's best to focus on Gateway API related resources first where the issue is more pressing due to the frequent version changes.   Note 3: I hope it's ok that some unrelated formatting changes in `sysdump[_test].go` are included. But these shouldn't affect any backporting as CLI is `main`-only anyway
+
 - **Issue #49837** (2026-11-04): **cilium-cli: add explicit timeout to ensure health check termination**
   *Symptoms*: Otherwise, the test would continue running forever until manually stopped (or the CI timeout hits) in case the health status does not converge. The timeout is set to five minutes, which should be generous enough to not risk causing flakes. 
   **Post-Mortem & Fix Analysis**:
   > /test
-
-- **Issue #49833** (2026-11-04): **.github: Make the vulnerability report components optional**
-  *Symptoms*: GitHub's private vulnerability report form treats a required dropdown with `multiple: true` as requiring every option [1]. Our Affected components dropdown sets both, so a reporter cannot submit a report without selecting all 13 components.  This commit drops the required validation from that dropdown and keeps `multiple: true`. A reporter can now leave it empty, and the Security Team fills in the component during triage.  1: https://github.com/orgs/community/discussions/210542 Fixes: e5827d55a0c3 (".github: Add a private vulnerability report form") Reported-by: @peoyekunle  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,1005 +1282,143 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cff73042` (2026-11-04)
-**Commit Message**: ci: Raise the Release Helm job timeout to 55 minutes
+### Incident Patch 1: `7813fae2` (2026-11-04)
+**Commit Message**: cilium-cli: Fix TCPRoute sysdump filename
 
-On 2026-07-16, the v1.19.6 Release Helm job took 37 of its 40 minutes
-over three chart runs, whose Tetragon "validate" jobs queued for 467,
-784 and 510 seconds. The job now waits for the Cilium chart runs, which
-finished 352 seconds later in total that day, so that day would have
-taken about 43 minutes.
+Rename gatewayapi-tcroutes-<ts>.yaml to gatewayapi-tcproutes-<ts>.yaml
+to match the resource name and other Gateway API filenames.
 
-This commit raises the timeout to 55 minutes, within the 1-hour
-lifetime of the app token that the job mints at its start. That covers
-the three runs of that day, but not a fourth run at the same queue
-times, such as one after a failed Cilium chart check.
+Signed-off-by: Marco Hofstetter <[REDACTED_EMAIL]>
 
-This commit was prepared with AIL:3. I personally checked the Tetragon
-and Cilium chart run timings of the 2026-07-16 v1.19.6 release.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release.yaml` (modified, +1/-1)
+**File**: `cilium-cli/k8s/client.go` (modified, +2/-2)
 ```diff
-@@ -123,7 +123,7 @@ jobs:
-     environment:
-       name: release-helm
-       deployment: false
--    timeout-minutes: 40
-+    timeout-minutes: 55
-     runs-on: ubuntu-26.04
-     steps:
-       - name: Install Go
-```
-
----
-
-### Incident Patch 2: `45376462` (2026-11-02)
-**Commit Message**: routing/reconciler: Avoid udev MAC races in script tests
-
-Set the test link MAC during creation to prevent udev from replacing it.
-
-AIL:4
-
-Fixes: db4c861c34bb ("routing/reconciler: Add script-based tests")
-Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one dual-stack ENI as the operator would report it to the agent.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- hive start
- ipam/start
-@@ -13,6 +13,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Endpoint creation waits for both address families to be reconciled.
- endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one ENI as the operator would report it to the agent.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- hive start
- ipam/start
-@@ -13,6 +13,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Endpoint creation installs both endpoint rules and the shared ENI routes.
- endpoint/add pod-a 192.0.2.10
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one ENI with an IPv6 delegated prefix as the operator would report it.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- hive start
- ipam/start
-@@ -13,6 +13,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Endpoint creation installs IPv6 endpoint rules and routes through the AWS
- # link-local gateway.
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one ENI as the operator would report it to the agent.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- hive start
- ipam/start
-@@ -13,6 +13,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Losing the parent ENI keeps reconciliation failing. Bound the simulated
- # request and assert its routing error without expiring the script context,
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one ENI as the operator would report it to the agent.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- hive start
- ipam/start
-@@ -13,6 +13,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Simulate an upgrade with an old destination-scoped egress rule. Endpoint
- # creation replaces it with the desired unconditional rule.
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (modified, +3/-2)
-```diff
-@@ -2,8 +2,8 @@
- 
- # Configure one ENI as the operator would report it to the agent.
- k8s/add cilium-node.yaml
--link/add cilium-rr-test dummy
--link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+link/add cilium-rr-test dummy --hwaddr=02:ca:fe:00:00:01
-+link/set cilium-rr-test mtu=1400
- 
- # Seed orphan rules before starting the reconciler.
- rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
-@@ -23,6 +23,7 @@ link/list
- * stdout 'addr: 192[.]0[.]2[.]5/24'
- stdout 'cilium-rr-test dummy <up[|>]'
- stdout 'mtu: 1500'
-+stdout 'hwaddr: 02:ca:fe:00:00:01'
- 
- # Wait for the initial reconciler prune without replaying the rule additions.
- rule/list --family=ipv4 --priority=20 --protocol=kernel
-```
-
-**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +13/-0)
-```diff
-@@ -343,6 +343,7 @@ func linkAddCmd(nsm *NetNSManager) script.Cmd {
- 			Args:    "<name> <type>",
- 			Flags: func(fs *pflag.FlagSet) {
- 				fs.String("netns", "", "Execute in the specified network namespace")
-+				fs.String("hwaddr", "", "Hardware address to assign when creating the link")
- 				fs.String("peername", "", "Name of the veth peer interface (veth only)")
- 				fs.String("peerns", "", "Network namespace of the veth peer (veth only)")
- 			},
-@@ -364,6 +365,18 @@ func linkAddCmd(nsm *NetNSManager) script.Cmd {
- 			}
- 
- 			linkAttrs := netlink.LinkAttrs{Name: name}
-+			hwAddr, err := s.Flags.GetString("hwaddr")
-+			if err != nil {
-+				return nil, fmt.Errorf("failed to get hwaddr flag: %w", err)
-+			}
-+			// Assign the MAC at creation so udev sees NET_ADDR_SET before handling
-+			// the device and does not replace it with a persistent MAC.
-+			if hwAddr != "" {
-+				linkAttrs.HardwareAddr, err = net.ParseMAC(hwAddr)
-+				if err != nil {
-+					return nil, fmt.Errorf("invalid hwaddr value %q: %w", hwAddr, err)
-+				}
-+			}
- 
- 			err = nsm.exec(nsName, func() error {
- 				var link netlink.Link
-```
-
----
-
-### Incident Patch 3: `b6698674` (2026-11-02)
-**Commit Message**: Revert "Revert "routing/reconciler: Add script-based tests""
-
-This reverts commit 9b0aad96d4b73890a04fc3d9d65d16a327360b28.
-
-Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
-
-**File**: `pkg/datapath/linux/routing/reconciler/script_test.go` (added, +543/-0)
-```diff
-@@ -0,0 +1,543 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package reconciler_test
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"log/slog"
-+	"maps"
-+	"net/netip"
-+	"os"
-+	"strings"
-+	"testing"
-+
-+	"github.com/cilium/hive/cell"
-+	"github.com/cilium/hive/hivetest"
-+	"github.com/cilium/hive/script"
-+	"github.com/cilium/hive/script/scripttest"
-+	"github.com/cilium/statedb"
-+	"github.com/spf13/pflag"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"github.com/vishvananda/netlink"
-+	"golang.org/x/sys/unix"
-+
-+	"github.com/cilium/cilium/api/v1/models"
-+	agentK8s "github.com/cilium/cilium/daemon/k8s"
-+	awsAgent "github.com/cilium/cilium/pkg/aws/agent"
-+	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
-+	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
-+	linuxrouting "github.com/cilium/cilium/pkg/datapath/linux/routing"
-+	routingReconciler "github.com/cilium/cilium/pkg/datapath/linux/routing/reconciler"
-+	"github.com/cilium/cilium/pkg/datapath/linux/safenetlink"
-+	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
-+	sysctlFake "github.com/cilium/cilium/pkg/datapath/linux/sysctl/fake"
-+	fakeloader "github.com/cilium/cilium/pkg/datapath/loader/fake"
-+	datapathTables "github.com/cilium/cilium/pkg/datapath/tables"
-+	"github.com/cilium/cilium/pkg/endpoint"
-+	fakeendpoint "github.com/cilium/cilium/pkg/endpoint/fake"
-+	"github.com/cilium/cilium/pkg/endpointmanager"
-+	"github.com/cilium/cilium/pkg/endpointstate"
-+	fqdnRules "github.com/cilium/cilium/pkg/fqdn/rules"
-+	"github.com/cilium/cilium/pkg/hive"
-+	"github.com/cilium/cilium/pkg/identity/identitymanager"
-+	"github.com/cilium/cilium/pkg/ipam"
-+	ipamcell "github.com/cilium/cilium/pkg/ipam/cell"
-+	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
-+	"github.com/cilium/cilium/pkg/ipmasq"
-+	k8sClientTest "github.com/cilium/cilium/pkg/k8s/client/testutils"
-+	k8sTables "github.com/cilium/cilium/pkg/k8s/tables"
-+	"github.com/cilium/cilium/pkg/k8s/watchers"
-+	"github.com/cilium/cilium/pkg/maps/ctmap"
-+	"github.com/cilium/cilium/pkg/maps/lxcmap"
-+	"github.com/cilium/cilium/pkg/metrics"
-+	monitorAgent "github.com/cilium/cilium/pkg/monitor/agent"
-+	"github.com/cilium/cilium/pkg/mtu"
-+	mtuFake "github.com/cilium/cilium/pkg/mtu/fake"
-+	"github.com/cilium/cilium/pkg/node"
-+	nodeFake "github.com/cilium/cilium/pkg/node/fake"
-+	nodeTypes "github.com/cilium/cilium/pkg/node/types"
-+	"github.com/cilium/cilium/pkg/nodediscovery"
-+	"github.com/cilium/cilium/pkg/option"
-+	"github.com/cilium/cilium/pkg/policy"
-+	"github.com/cilium/cilium/pkg/promise"
-+	"github.com/cilium/cilium/pkg/testutils"
-+	testidentity "github.com/cilium/cilium/pkg/testutils/identity"
-+	testmonitor "github.com/cilium/cilium/pkg/testutils/monitor"
-+	testpolicy "github.com/cilium/cilium/pkg/testutils/policy"
-+	"github.com/cilium/cilium/pkg/testutils/scriptnet"
-+	"github.com/cilium/cilium/pkg/time"
-+	fakewireguard "github.com/cilium/cilium/pkg/wireguard/fake"
-+)
-+
-+const (
-+	testENILinkName = "cilium-rr-test"
-+	testENILinkMAC  = "02:ca:fe:00:00:01"
-+)
-+
-+func TestPrivilegedScript(t *testing.T) {
-+	testutils.PrivilegedTest(t)
-+
-+	defer testutils.GoleakVerifyNone(t,
-+		// Endpoint-manager policy-map pressure triggers live for the process lifetime.
-+		// Disable them to avoid a false negative from Goleak.
-+		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/trigger.(*Trigger).waiter"),
-+		// ENI setup workers are not managed by Hive via Jobs and can still be
-+		// sleeping between device lookups when the test ends.
-+		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/aws/agent.setupENIDevices"),
-+	)
-+
-+	nodeTypes.SetName("test-node")
-+
-+	scripttest.Test(t,
-+		t.Context(),
-+		func(t testing.TB, args []string) *script.Engine {
-+			daemonCfg := daemonConfig(t, args)
-+			daemonCfg.StateDir = t.TempDir()
-+
-+			nsManager, err := scriptnet.NewNSManager(t)
-+			require.NoError(t, err, "NewNSManager")
-+
-+			// Keep the test in the process network namespace so asynchronous ENI
-+			// provider jobs operate on the links created by the script.
-+			require.NoError(t, nsManager.LockThreadAndInitialize(t, false), "LockThreadAndInitialize")
-+
-+			// Remove state left by an interrupted prior run, and register the same
-+			// cleanup in case this scenario fails before removing its state.
-+			registerTestCleanup(t)
-+
-+			restorerResolver, restorerPromise := promise.New[endpointstate.Restorer]()
-+			restorerResolver.Resolve(fakeRestorer{})
-+
-+			var (
-+				initializer   *ipamcell.IPAMInitializer
-+				ipamManager   *ipam.IPAM
-+				epManager     endpointmanager.EndpointManager
-+				routingWaiter endpointmanager.EndpointRoutingWaiter
-+			)
-+
-+			h := hive.New(
-+				k8sClientTest.FakeClientCell(),
-+				agentK8s.ResourcesCell,
-+				k8sTables.TablesCell,
-+				datapathTables.DirectRoutingDeviceCell,
-+				endpointmanager.TestCell,
-+
-+				// Exercise the production ENI pool accessor, device configurator,
-+				// native-routing-CIDR ob
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+#! --family=ipv4 --family=ipv6
-+
-+# Configure one dual-stack ENI as the operator would report it to the agent.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Endpoint creation waits for both address families to be reconciled.
-+endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
-+stdout --count=1 '^192[.]0[.]2[.]10$'
-+stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
-+
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
-+
-+rule/list --family=ipv6 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
-+
-+rule/list --family=ipv6 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
-+
-+route/list --table=11
-+stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
-+stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
-+stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
-+stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
-+
-+# Endpoint deletion removes both rule families but leaves the shared routes.
-+endpoint/del pod-a
-+
-+# Wait for asynchronous rule deletion without replaying endpoint/del.
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv6 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv6 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+route/list --table=11
-+stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
-+stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
-+stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
-+stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        addresses:
-+        - 192.0.2.10
-+        ipv6-prefixes:
-+        - 2001:db8:1::/80
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+#! --family=ipv4
-+
-+# Configure one ENI as the operator would report it to the agent.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Endpoint creation installs both endpoint rules and the shared ENI routes.
-+endpoint/add pod-a 192.0.2.10
-+stdout '^192.0.2.10$'
-+
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
-+
-+route/list --table=11
-+stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
-+stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
-+
-+# Endpoint deletion removes its rules but leaves routes shared by the ENI.
-+endpoint/del pod-a
-+
-+# Wait for asynchronous rule deletion without replaying endpoint/del.
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+route/list --table=11
-+stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
-+stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        addresses:
-+        - 192.0.2.10
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+#! --family=ipv6
-+
-+# Configure one ENI with an IPv6 delegated prefix as the operator would report it.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Endpoint creation installs IPv6 endpoint rules and routes through the AWS
-+# link-local gateway.
-+endpoint/add pod-a 2001:db8:1::/80
-+stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
-+
-+rule/list --family=ipv6 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
-+
-+rule/list --family=ipv6 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
-+
-+route/list --table=11
-+stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
-+stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
-+
-+# Endpoint deletion removes its rules but leaves routes shared by the ENI.
-+endpoint/del pod-a
-+
-+# Wait for asynchronous rule deletion without replaying endpoint/del.
-+rule/list --family=ipv6 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv6 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+route/list --table=11
-+stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
-+stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        ipv6-prefixes:
-+        - 2001:db8:1::/80
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+#! --family=ipv4
-+
-+# Configure one ENI as the operator would report it to the agent.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Losing the parent ENI keeps reconciliation failing. Bound the simulated
-+# request and assert its routing error without expiring the script context,
-+# so the following commands can still verify endpoint cleanup.
-+link/del cilium-rr-test
-+endpoint/add --timeout=5s --expect-error='interface with MAC 02:ca:fe:00:00:01 not found' pod-a 192.0.2.10
-+
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+empty stdout
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+empty stdout
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        addresses:
-+        - 192.0.2.10
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+#! --family=ipv4
-+
-+# Configure one ENI as the operator would report it to the agent.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Simulate an upgrade with an old destination-scoped egress rule. Endpoint
-+# creation replaces it with the desired unconditional rule.
-+rule/add --family=ipv4 --from=192.0.2.10/32 --to=192.0.2.0/24 --priority=111 --table=11 --protocol=kernel
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to 192[.]0[.]2[.]0/24 table 11 protocol kernel$'
-+
-+endpoint/add pod-a 192.0.2.10
-+stdout '^192.0.2.10$'
-+
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
-+
-+endpoint/del pod-a
-+
-+# Wait for asynchronous rule deletion without replaying endpoint/del.
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        addresses:
-+        - 192.0.2.10
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+#! --family=ipv4
-+
-+# Configure one ENI as the operator would report it to the agent.
-+k8s/add cilium-node.yaml
-+link/add cilium-rr-test dummy
-+link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
-+
-+# Seed orphan rules before starting the reconciler.
-+rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
-+rule/add --family=ipv4 --from=192.0.2.99/32 --priority=111 --table=11 --protocol=kernel
-+
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]99/32 table main protocol kernel$'
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+stdout --count=1 '^priority 111 from 192[.]0[.]2[.]99/32 to all table 11 protocol kernel$'
-+
-+hive start
-+ipam/start
-+
-+# Wait for the production ENI device configurator before reconciling routing.
-+link/list
-+* stdout 'addr: 192[.]0[.]2[.]5/24'
-+stdout 'cilium-rr-test dummy <up[|>]'
-+stdout 'mtu: 1500'
-+
-+# Wait for the initial reconciler prune without replaying the rule additions.
-+rule/list --family=ipv4 --priority=20 --protocol=kernel
-+* empty stdout
-+
-+rule/list --family=ipv4 --priority=111 --protocol=kernel
-+* empty stdout
-+
-+hive stop
-+
-+-- cilium-node.yaml --
-+apiVersion: cilium.io/v2
-+kind: CiliumNode
-+metadata:
-+  name: test-node
-+spec:
-+  eni: {}
-+status:
-+  eni:
-+    enis:
-+      eni-1:
-+        id: eni-1
-+        ip: 192.0.2.5
-+        mac: 02:ca:fe:00:00:01
-+        number: 1
-+        addresses:
-+        - 192.0.2.10
-+        subnet:
-+          id: subnet-1
-+          cidr: 192.0.2.0/24
-+        vpc:
-+          id: vpc-1
-+          primary-cidr: 192.0.2.0/24
-```
-
-**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +330/-0)
-```diff
-@@ -123,6 +123,9 @@ func (nsm *NetNSManager) Commands() map[string]script.Cmd {
- 		"route/add":     routeAddCmd(nsm),
- 		"route/replace": routeReplaceCmd(nsm),
- 		"route/del":     routeDelCmd(nsm),
-+		"rule/list":     ruleListCmd(nsm),
-+		"rule/add":      ruleAddCmd(nsm),
-+		"rule/del":      ruleDelCmd(nsm),
- 		"sysctl/get":    sysctlGetCmd(nsm),
- 		"sysctl/set":    sysctlSetCmd(nsm),
- 	}
-@@ -590,6 +593,333 @@ func addAddCmd(nsm *NetNSManager) script.Cmd {
- 	)
+@@ -1419,6 +1419,6 @@ func (c *Client) GetOpenshiftClusterVersion(ctx context.Context) (*OpenshiftClus
+ 	return &cv, nil
  }
  
-+func ruleFamily(value string, allowAll bool) (int, error) {
-+	switch value {
-+	case "ipv4":
-+		return netlink.FAMILY_V4, nil
-+	case "ipv6":
-+		return netlink.FAMILY_V6, nil
-+	case "all":
-+		if allowAll {
-+			return netlink.FAMILY_ALL, nil
-+		}
-+	}
-+	valid := "'ipv4', 'ipv6'"
-+	if allowAll {
-+		valid += ", 'all'"
-+	}
-+	return 0, fmt.Errorf("invalid family %q: must be one of %s", value, valid)
-+}
-+
-+func ruleTable(value string, allowAll bool) (int, error) {
-+	switch value {
-+	case "main":
-+		return unix.RT_TABLE_MAIN, nil
-+	case "local":
-+		return unix.RT_TABLE_LOCAL, nil
-+	case "default":
-+		return unix.RT_TABLE_DEFAULT, nil
-+	case "all":
-+		if allowAll {
-+			return unix.RT_TABLE_UNSPEC, nil
-+		}
-+	}
-+
-+	table, err := strconv.Atoi(value)
-+	if err != nil {
-+		valid := "'main', 'local', 'default'"
-+		if allowAll {
-+			valid += ", 'all'"
-+		}
-+		return 0, fmt.Errorf("invalid table %q: must be an integer or one of %s", value, valid)
-+	}
-+	return table, nil
-+}
-+
-+func ruleProtocol(value string) (uint8, error) {
-+	switch value {
-+	case "kernel":
-+		return unix.RTPROT_KERNEL, nil
-+	case "static":
-+		return unix.RTPROT_STATIC, nil
-+	case "unspec":
-+		return unix.RTPROT_UNSPEC, nil
-+	}
-+
-+	protocol, err := strconv.ParseUint(value, 10, 8)
-+	if err != nil {
-+		return 0, fmt.Errorf("invalid protocol %q: must be an integer or one of 'kernel', 'static', 'unspec'", value)
-+	}
-+	return uint8(protocol), nil
-+}
-+
-+func rulePrefix(value string) (*net.IPNet, error) {
-+	if value == "all" {
-+		return nil, nil
-+	}
-+
-+	prefix, err := netlink.ParseIPNet(value)
-+	if err != nil {
-+		return nil, fmt.Errorf("invalid rule prefix %q: %w", value, err)
-+	}
-+	return prefix, nil
-+}
-+
-+func ruleFlags(fs *pflag.FlagSet, family, table string) {
-+	fs.String("netns", "", "Execute in the specified network namespace")
-+	fs.String("family", family, "Address family: ipv4, ipv6, or all")
-+	fs.String("from", "all", "Source prefix")
-+	fs.String("to", "all", "Destination prefix")
-+	fs.Int("priority", -1, "Rule priority")
-+	fs.String("table", table, "Routing table")
-+	fs.String("protocol", "unspec", "Rule protocol")
-+}
-+
-+func ruleFromFlags(fs *pflag.FlagSet, allowAll bool) (*netlink.Rule, error) {
-+	rule := netlink.NewRule()
-+
-+	family, err := fs.GetString("family")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get family flag: %w", err)
-+	}
-+	rule.Family, err = ruleFamily(family, allowAll)
-+	if err != nil {
+-func (c *Client) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
+-	return c.Clientset.Discovery().ServerPreferredResources()
++func (c *Client) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
++	return c.Clientset.Discovery().ServerPreferredResourcesWithContext(ctx)
+ }
+```
+
+**File**: `cilium-cli/sysdump/client.go` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ import (
+ )
+ 
+ type KubernetesClient interface {
+-	GetServerPreferredResources() ([]*metav1.APIResourceList, error)
++	GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error)
+ 	AutodetectFlavor(ctx context.Context) k8s.Flavor
+ 	CopyFromPod(ctx context.Context, namespace, pod, container, fromFile, destFile string, retryLimit int) error
+ 	CreateEphemeralContainer(ctx context.Context, pod *corev1.Pod, ec *corev1.EphemeralContainer) (*corev1.Pod, error)
+```
+
+**File**: `cilium-cli/sysdump/constants.go` (modified, +1/-1)
+```diff
+@@ -120,7 +120,7 @@ const (
+ 	httpRoutesFileName                       = "gatewayapi-httproutes-<ts>.yaml"
+ 	tlsRoutesFileName                        = "gatewayapi-tlsroutes-<ts>.yaml"
+ 	grpcRoutesFileName                       = "gatewayapi-grpcroutes-<ts>.yaml"
+-	tcpRoutesFileName                        = "gatewayapi-tcroutes-<ts>.yaml"
++	tcpRoutesFileName                        = "gatewayapi-tcproutes-<ts>.yaml"
+ 	udpRoutesFileName                        = "gatewayapi-udproutes-<ts>.yaml"
+ 	backendTLSPoliciesFileName               = "gatewayapi-backendtlspolicies-<ts>.yaml"
+ 	referenceGrantsFileName                  = "gatewayapi-referencegrants-<ts>.yaml"
+```
+
+**File**: `cilium-cli/sysdump/gateway_api_test.go` (modified, +19/-1)
+```diff
+@@ -22,12 +22,17 @@ type discoveryClient struct {
+ 	resources      []*metav1.APIResourceList
+ 	discoveryErr   error
+ 	discoveryCalls int
++	discoveryCtx   context.Context
+ 	listed         []schema.GroupVersionResource
+ 	listErr        error
+ }
+ 
+-func (c *discoveryClient) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
++func (c *discoveryClient) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
+ 	c.discoveryCalls++
++	c.discoveryCtx = ctx
++	if err := ctx.Err(); err != nil {
 +		return nil, err
 +	}
-+
-+	from, err := fs.GetString("from")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get from flag: %w", err)
+ 	return c.resources, c.discoveryErr
+ }
+ 
+@@ -81,6 +86,19 @@ func TestGatewayAPIVersions(t *testing.T) {
+ 	}
+ }
+ 
++func TestGatewayAPIDiscoveryCancellation(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	client := &discoveryClient{}
++	c := &Collector{Client: client}
++	for _, task := range c.getGatewayAPITasks() {
++		require.ErrorIs(t, task.Task(ctx), context.Canceled)
 +	}
-+	rule.Src, err = rulePrefix(from)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	to, err := fs.GetString("to")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get to flag: %w", err)
-+	}
-+	rule.Dst, err = rulePrefix(to)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	rule.Priority, err = fs.GetInt("priority")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get priority flag: %w", err)
-+	}
-+
-+	table, err := fs.GetString("table")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get table flag: %w", err)
-+	}
-+	rule.Table, err = ruleTable(table, allowAll)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	protocol, err := fs.GetString("protocol")
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get protocol flag: %w", err)
-+	}
-+	rule.Protocol, err = ruleProtocol(protocol)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	return rule, nil
++	require.Same(t, ctx, client.discoveryCtx)
++	require.Equal(t, 1, client.discoveryCalls)
++	require.Empty(t, client.listed)
 +}
 +
-+func ruleAddCmd(nsm *NetNSManager) script.Cmd {
-+	return script.Command(
-+		script.CmdUsage{
-+			Summary: "Add a policy routing rule",
-+			Args:    "",
-+			Flags: func(fs *pflag.FlagSet) {
-+				ruleFlags(fs, "ipv4", "main")
-+			},
-+		},
-+		func(s *script.State, args ...string) (script.WaitFunc, error) {
-+			if len(args) != 0 {
-+				return nil, script.ErrUsage
-+			}
-+
-+			rule, err := ruleFromFlags(s.Flags, false)
-+			if err != nil {
-+				return nil, err
-+			}
-+
-+			nsName, err := s.Flags.GetString("netns")
-+			if err != nil {
-+				return nil, fmt.Errorf("failed to get netns flag: %w", err)
-+			}
-+			if nsName == "" {
-+				nsName = nsm.currentNamespaceName()
-+			}
-+
-+			err = nsm.exec(nsName, func() error {
-+				if err := netlink.RuleAdd(rule); err != nil {
-+					return fmt.Errorf("failed to add rule: %w", err)
-+				}
-+				return nil
-+			})
-+			return nil, err
-+		},
+ func TestGatewayAPIDiscoveryErrors(t *testing.T) {
+ 	failure := errors.New("discovery unavailable")
+ 	for _, tt := range []struct {
+```
+
+**File**: `cilium-cli/sysdump/sysdump.go` (modified, +8/-2)
+```diff
+@@ -2111,7 +2111,11 @@ func (c *Collector) getSPIRETasks() []Task {
+ func (c *Collector) getGatewayAPITasks() []Task {
+ 	// Discover each resource's preferred API version because supported versions
+ 	// vary across installed Gateway API CRD releases.
+-	discover := sync.OnceValues(c.Client.GetServerPreferredResources)
++	var (
++		discoverOnce sync.Once
++		lists        []*metav1.APIResourceList
++		discoveryErr error
 +	)
-+}
-+
-+func ruleDelCmd(nsm *NetNSManager) script.Cmd {
-+	return script.Command(
-+		script.CmdUsage{
-+			Summary: "Delete a policy routing rule",
-+			Args:    "",
-+			Flags: func(fs *pflag.FlagSet) {
-+				ruleFlags(fs, "ipv4", "ma
+ 	resources := []struct {
+ 		name          string
+ 		groupResource schema.GroupResource
+@@ -2135,7 +2139,9 @@ func (c *Collector) getGatewayAPITasks() []Task {
+ 			Description: "Collecting " + resource.name + " entries",
+ 			Quick:       true,
+ 			Task: func(ctx context.Context) error {
+-				lists, discoveryErr := discover()
++				discoverOnce.Do(func() {
++					lists, discoveryErr = c.Client.GetServerPreferredResources(ctx)
++				})
+ 				gvr, found, err := preferredResource(resource.groupResource, lists, discoveryErr)
+ 				if err != nil {
+ 					return fmt.Errorf("failed to discover %s: %w", resource.name, err)
+```
+
+**File**: `cilium-cli/sysdump/sysdump_test.go` (modified, +1/-1)
+```diff
+@@ -870,6 +870,6 @@ func TestFormatNodeDiskUsageRow(t *testing.T) {
+ 	assert.Contains(t, row, "Unknown")
+ }
+ 
+-func (c *fakeClient) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
++func (c *fakeClient) GetServerPreferredResources(_ context.Context) ([]*metav1.APIResourceList, error) {
+ 	return nil, nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49840** (2026-11-05): cilium-cli: Discover Gateway API versions for sysdump (@mhofstetter)
 - **PR #49837** (2026-11-04): cilium-cli: add explicit timeout to ensure health check termination (@giorio94)
 - **PR #49833** (2026-11-04): .github: Make the vulnerability report components optional (@aanm)
 - **PR #49832** (2026-11-04): datapath: convert `ENABLE_IPV4` #ifdefs to `is_defined()` in bpf_lxc.c (@ekoops)
 - **PR #49827** (2026-11-04): fix: pass the real IPsec config to node handler (@vakalapa)
 - **PR #49820** (2026-11-04): Reapply "datapath: turn `ENABLE_NODEPORT` into runtime config" (@ekoops)
-- **PR #49819** (2026-11-04): build: Update iptables-wrapper to v4 (@HadrienPatte)
 
 ---
 
@@ -2300,28 +1438,30 @@ Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Raise the Release Helm job timeout to 55 minutes
+## X. cilium-cli: Fix TCPRoute sysdump filename
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-cli/k8s/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cff73042`: ci: Raise the Release Helm job timeout to 55 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7813fae2`: cilium-cli: Fix TCPRoute sysdump filename. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/k8s/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    timeout-minutes: 55
+func (c *Client) GetServerPreferredResources(ctx context.Context) ([]*metav1.APIResourceList, error) {
+	return c.Clientset.Discovery().ServerPreferredResourcesWithContext(ctx)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    timeout-minutes: 40
+func (c *Client) GetServerPreferredResources() ([]*metav1.APIResourceList, error) {
+	return c.Clientset.Discovery().ServerPreferredResources()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cff73042` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7813fae2` are properly handled with clean fallback behavior.

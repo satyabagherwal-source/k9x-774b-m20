@@ -7629,3 +7629,6 @@
 | `CYCLE-20261105-16K5` | `2026-11-05T11:09:32.405Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`ae0ec327...`) |
 | `CYCLE-20261105-AG08` | `2026-11-05T11:16:44.552Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7199` | Yes (`12d2804e...`) |
 | `CYCLE-20261105-ALJA` | `2026-11-05T11:16:51.718Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7200, Rule 7201, Rule 7202` | Yes (`f94fb6f1...`) |
+| `CYCLE-20261105-IX5R` | `2026-11-05T11:23:20.031Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`731d214e...`) |
+| `CYCLE-20261105-IZNN` | `2026-11-05T11:23:23.267Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7203` | Yes (`8c46193c...`) |
+| `CYCLE-20261105-J7OT` | `2026-11-05T11:23:33.677Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7204` | Yes (`49565666...`) |
