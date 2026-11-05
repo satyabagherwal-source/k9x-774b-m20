@@ -7697,3 +7697,4 @@
 | `CYCLE-20261105-O7HJ` | `2026-11-05T14:43:24.007Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`91c2ebd9...`) |
 | `CYCLE-20261105-XYZB` | `2026-11-05T14:50:59.543Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7258, Rule 7259, Rule 7260` | Yes (`2d64e54d...`) |
 | `CYCLE-20261105-XZAB` | `2026-11-05T14:50:59.939Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7261` | Yes (`25510fa6...`) |
+| `CYCLE-20261105-7WXJ` | `2026-11-05T14:58:43.447Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`42de5eed...`) |

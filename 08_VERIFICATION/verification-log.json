@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-EAVA",
-    "timestamp": "2026-11-04T09:40:05.638Z",
-    "repository": "DylanVann/react-native-fast-image",
-    "learningId": "learn-github-dylanvann-react-native-fast-image",
-    "contentHash": "119efb3b4db00c7f93480f3a1ed0516b72f856ab2384d24525b1a47bba4ac954",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-END9",
     "timestamp": "2026-11-04T09:40:21.837Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7477,21 @@
     "contentHash": "25510fa6da68997e418d4cf8d87fda89bae597ba851254610be655e288107c06",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-7WXJ",
+    "timestamp": "2026-11-05T14:58:43.447Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "42de5eed2eeabda02d729072a2551d0deba7f6274b54cd3ff89d119a7316c823",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

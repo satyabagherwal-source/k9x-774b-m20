@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T14:51:02.514Z",
-    "lastVerified": "2026-11-05T14:51:02.514Z",
+    "lastChecked": "2026-11-05T14:58:45.993Z",
+    "lastVerified": "2026-11-05T14:58:45.993Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T14:22:49.745Z",
-    "lastVerified": "2026-11-05T14:22:49.745Z",
+    "lastChecked": "2026-11-05T14:58:35.094Z",
+    "lastVerified": "2026-11-05T14:58:35.094Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2051,12 +2051,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:30:54.864Z",
-    "lastVerified": "2026-11-05T11:30:54.864Z",
+    "lastChecked": "2026-11-05T14:58:30.158Z",
+    "lastVerified": "2026-11-05T14:58:30.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2065,7 +2065,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fb0eed51"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3038,9 +3039,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-05T00:07:47.768Z",
+    "lastChecked": "2026-11-05T14:58:32.594Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-05T00:07:47.768Z"
+    "lastVerified": "2026-11-05T14:58:32.594Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -5829,9 +5830,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-05T01:00:39.066Z",
+    "lastChecked": "2026-11-05T14:58:27.574Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-05T01:00:39.066Z"
+    "lastVerified": "2026-11-05T14:58:27.574Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite",
@@ -7904,12 +7905,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zenbu-labs-terminal-browser": {
-    "name": "zenbu-labs/terminal-browser",
+    "name": "terminal-browser",
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T20:31:56.365Z",
-    "lastVerified": "2026-11-04T20:31:56.365Z",
+    "lastChecked": "2026-11-05T14:58:20.095Z",
+    "lastVerified": "2026-11-05T14:58:20.095Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
@@ -7918,7 +7919,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d02e800f"
   },
   "hf-cactus-compute-whistle": {
     "name": "Cactus-Compute/whistle",
@@ -8795,13 +8797,13 @@
     "officialUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T00:29:55.130Z",
-    "lastVerified": "2026-11-01T00:29:55.130Z",
+    "lastChecked": "2026-11-05T14:58:22.661Z",
+    "lastVerified": "2026-11-05T14:58:22.661Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
-    "promotedRulesCount": 3,
+    "contentHash": "42de5eed2eeabda02d729072a2551d0deba7f6274b54cd3ff89d119a7316c823",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -11124,9 +11126,9 @@
   "sindresorhus-keyboardshortcuts": {
     "name": "KeyboardShortcuts",
     "officialUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
-    "lastChecked": "2026-11-03T12:24:57.215Z",
+    "lastChecked": "2026-11-05T14:58:25.047Z",
     "revisionIdentifier": "772133d9",
-    "lastVerified": "2026-11-03T12:24:57.215Z"
+    "lastVerified": "2026-11-05T14:58:25.047Z"
   },
   "remarkjs-remark": {
     "name": "remark",

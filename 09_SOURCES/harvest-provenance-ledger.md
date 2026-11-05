@@ -7706,3 +7706,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T14:43:24.010Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.547Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `83db4fd8` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.943Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-05T14:58:43.451Z |

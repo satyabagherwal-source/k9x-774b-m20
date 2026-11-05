@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:50:59.949Z",
-  "total_cycles_completed": 7674,
-  "total_learnings_persisted": 7674,
+  "last_updated": "2026-11-05T14:58:43.456Z",
+  "total_cycles_completed": 7675,
+  "total_learnings_persisted": 7675,
   "total_rules_promoted": 7326,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:07:19.623Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:14:28.138Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1403,6 +1396,13 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T14:58:43.456Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
