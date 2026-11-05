@@ -7815,3 +7815,7 @@
 | `CYCLE-20261105-8G8R` | `2026-11-05T22:55:01.947Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`46266a74...`) |
 | `CYCLE-20261105-8JAG` | `2026-11-05T22:55:05.896Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d3addf1...`) |
 | `CYCLE-20261105-HOSY` | `2026-11-05T23:02:12.946Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`433c190f...`) |
+| `CYCLE-20261105-QZ8E` | `2026-11-05T23:09:26.366Z` | `flox/flox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flox-flox-learnings.md` | Yes (`4e9907f4...`) |
+| `CYCLE-20261105-R3ZK` | `2026-11-05T23:09:32.528Z` | `makecindy/cindy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/makecindy-cindy-learnings.md` | Yes (`21c397d3...`) |
+| `CYCLE-20261105-R6DC` | `2026-11-05T23:09:35.616Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`926ffb94...`) |
+| `CYCLE-20261105-R9QF` | `2026-11-05T23:09:39.975Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`c90639fe...`) |

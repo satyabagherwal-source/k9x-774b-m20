@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T23:02:12.959Z",
+  "last_updated": "2026-11-05T23:09:39.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
-      "verified_at": "2026-11-04T17:52:25.682Z",
+      "content_hash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
+      "verified_at": "2026-11-05T23:09:35.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:52:25.682Z"
+      "last_updated": "2026-11-05T23:09:35.630Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
-      "verified_at": "2026-11-05T02:40:19.706Z",
+      "content_hash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
+      "verified_at": "2026-11-05T23:09:26.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:40:19.706Z"
+      "last_updated": "2026-11-05T23:09:26.381Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
-      "verified_at": "2026-11-03T22:59:08.781Z",
+      "content_hash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
+      "verified_at": "2026-11-05T23:09:32.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:59:08.781Z"
+      "last_updated": "2026-11-05T23:09:32.544Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",
@@ -17706,14 +17706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
-      "verified_at": "2026-11-02T21:30:10.553Z",
+      "content_hash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
+      "verified_at": "2026-11-05T23:09:39.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T21:30:10.553Z"
+      "last_updated": "2026-11-05T23:09:39.997Z"
     },
     "alfa546/Crawler": {
       "repository": "alfa546/Crawler",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:54:58.879Z",
+  "last_updated": "2026-11-05T23:09:32.538Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4006,6 +4006,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-higress-group-higress"
+    },
+    {
+      "id": "CD-R3ZU",
+      "directive_title": "computer): retain input failure diagnostics and align recovery advice",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "makecindy/cindy",
+      "source_commit": "fc0d9c4c",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-makecindy-cindy"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:02:12.811Z",
+  "last_updated": "2026-11-05T23:09:39.881Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6838,11 +6838,16 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "ed58a25b",
-      "content_hash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
+      "source_version": "9234319d",
+      "content_hash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs(changelog): record physical machine fixes (#5209)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1716,
           "title": "multicluster): isolate remote API failures and retry forwarding (#5134)",
@@ -6909,7 +6914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:52:25.563Z",
+      "verified_at": "2026-11-05T23:09:35.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14411,8 +14416,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "c310e5dc",
-      "content_hash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
+      "source_version": "120bc0ad",
+      "content_hash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -14452,7 +14457,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:40:19.562Z",
+      "verified_at": "2026-11-05T23:09:26.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135826,8 +135831,8 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "ac785430",
-      "content_hash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
+      "source_version": "fc0d9c4c",
+      "content_hash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
@@ -135867,7 +135872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:59:08.683Z",
+      "verified_at": "2026-11-05T23:09:32.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172123,10 +172128,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
       "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
+      "content_hash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization Grid Preservation During Weight Surgery",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Surgical Tensor Selection for Alignment Removal",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6485,
           "title": "Surgical Tensor Replacement Invariant",
@@ -172143,7 +172158,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T21:30:10.412Z",
+      "verified_at": "2026-11-05T23:09:39.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

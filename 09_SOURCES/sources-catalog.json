@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "ed58a25b",
+    "sourceVersion": "9234319d",
     "license": "Apache-2.0",
-    "contentHash": "2e9266dce057e2a0d7d008f0b2dc30e8d9116b5c1da2771cec0d32903316a625",
-    "lastHarvestedAt": "2026-11-04T17:52:25.673Z",
+    "contentHash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
+    "lastHarvestedAt": "2026-11-05T23:09:35.620Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "c310e5dc",
+    "sourceVersion": "120bc0ad",
     "license": "GPL-2.0",
-    "contentHash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
-    "lastHarvestedAt": "2026-11-05T02:40:19.698Z",
+    "contentHash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
+    "lastHarvestedAt": "2026-11-05T23:09:26.370Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "ac785430",
+    "sourceVersion": "fc0d9c4c",
     "license": "Apache-2.0",
-    "contentHash": "99cebca511065240d0cad635886626027e3039a53ab2f1e27633327855aa56ae",
-    "lastHarvestedAt": "2026-11-03T22:59:08.773Z",
+    "contentHash": "21c397d3a844de368427daa883e69ec8e222e47c7ad705379053e4d3b07d9671",
+    "lastHarvestedAt": "2026-11-05T23:09:32.532Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {
@@ -11765,8 +11765,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
-    "lastHarvestedAt": "2026-11-02T21:30:10.543Z",
+    "contentHash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
+    "lastHarvestedAt": "2026-11-05T23:09:39.979Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   },
   "alfa546-crawler": {

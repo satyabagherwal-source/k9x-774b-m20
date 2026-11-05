@@ -7824,3 +7824,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-05T22:55:01.950Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `e0ad46db` | Multi-dimensional audit evidence | 2026-11-05T22:55:05.899Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5366ee35` | Multi-dimensional audit evidence | 2026-11-05T23:02:12.950Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `120bc0ad` | Multi-dimensional audit evidence | 2026-11-05T23:09:26.370Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `fc0d9c4c` | Multi-dimensional audit evidence | 2026-11-05T23:09:32.532Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `9234319d` | Multi-dimensional audit evidence | 2026-11-05T23:09:35.620Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-05T23:09:39.979Z |
