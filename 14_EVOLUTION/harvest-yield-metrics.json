@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T00:15:03.712Z",
-  "total_cycles_completed": 7394,
-  "total_learnings_persisted": 7394,
-  "total_rules_promoted": 7090,
+  "last_updated": "2026-11-05T00:22:41.139Z",
+  "total_cycles_completed": 7398,
+  "total_learnings_persisted": 7398,
+  "total_rules_promoted": 7093,
   "history": [
-    {
-      "timestamp": "2026-11-04T10:37:47.824Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:45:25.122Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:45:26.340Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T10:45:28.452Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T10:57:37.092Z",
       "repository": "pingcap/tidb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-05T00:15:03.712Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:22:30.320Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:22:31.320Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:22:40.603Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:22:41.139Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

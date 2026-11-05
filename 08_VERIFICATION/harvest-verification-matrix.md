@@ -7417,3 +7417,7 @@
 | `CYCLE-20261105-NE0E` | `2026-11-05T00:14:57.710Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7039, Rule 1561, Rule 7040` | Yes (`6cf68b75...`) |
 | `CYCLE-20261105-NF90` | `2026-11-05T00:14:59.316Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7041` | Yes (`1ecaf610...`) |
 | `CYCLE-20261105-NIMU` | `2026-11-05T00:15:03.702Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7042` | Yes (`4325bde0...`) |
+| `CYCLE-20261105-X38G` | `2026-11-05T00:22:30.304Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`336fa1b7...`) |
+| `CYCLE-20261105-X40E` | `2026-11-05T00:22:31.310Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7043` | Yes (`de31ed63...`) |
+| `CYCLE-20261105-XB69` | `2026-11-05T00:22:40.593Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7044` | Yes (`6007edf3...`) |
+| `CYCLE-20261105-XBL5` | `2026-11-05T00:22:41.129Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7045` | Yes (`797008e5...`) |

@@ -7426,3 +7426,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-05T00:14:57.714Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6e727661` | Multi-dimensional audit evidence | 2026-11-05T00:14:59.320Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cff73042` | Multi-dimensional audit evidence | 2026-11-05T00:15:03.706Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-05T00:22:30.314Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `3bf9166a` | Multi-dimensional audit evidence | 2026-11-05T00:22:31.314Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `df707d92` | Multi-dimensional audit evidence | 2026-11-05T00:22:40.597Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `5eadb108` | Multi-dimensional audit evidence | 2026-11-05T00:22:41.133Z |

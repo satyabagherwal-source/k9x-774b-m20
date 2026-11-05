@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:15:03.619Z",
+  "last_updated": "2026-11-05T00:22:41.045Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21881,7 +21881,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "2fb456561d5404b7576c82baaab05262ce6e64c476beacb1c02395fa3e5cf2f8",
+      "content_hash": "336fa1b7da96a441a1581b2d34d5cb7ece5847d816b450217ae3fbe3d423ea39",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -22012,7 +22012,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-31T10:00:41.023Z",
+      "verified_at": "2026-11-05T00:22:30.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39611,8 +39611,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "786978fd",
-      "content_hash": "32e699b10636cf615d68e68a61d74d4890a0ed316d52a6adb8833926a58e509a",
+      "source_version": "3bf9166a",
+      "content_hash": "de31ed6397295f67889824fd45f56ca561a7a19df95035426938a1e1af601d37",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -39680,6 +39680,11 @@
           "number": 6618,
           "title": "list): measure truncated cells by grapheme cluster so VS16 emoji don't overflow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7043,
+          "title": "plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39687,7 +39692,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:28:35.765Z",
+      "verified_at": "2026-11-05T00:22:31.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40318,8 +40323,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "501f825c",
-      "content_hash": "fe64b0a5809f1e83d63700cfd3943dbfea085e35e3a2e7e659e2d10ae19e8f2b",
+      "source_version": "5eadb108",
+      "content_hash": "797008e51d6ef3289279f775feb6b9c34f05df4a4e5cb47804e9c398823161bf",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -40392,6 +40397,11 @@
           "number": 6718,
           "title": "Merge pull request #22769 from meshery/fix/22764-event-metadata-no-design-conten",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7045,
+          "title": "[mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40399,7 +40409,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:04:47.417Z",
+      "verified_at": "2026-11-05T00:22:41.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48598,8 +48608,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "82d5a8ac",
-      "content_hash": "663c0d0f6f87ea2fe0bd3f73744b3d7c8e6fe4458ba151becfc32bb03d124ba5",
+      "source_version": "df707d92",
+      "content_hash": "6007edf344c69bf439f731f95ac27d2533f2f40707a4a25b5fe19b1c1334ab69",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -48717,6 +48727,11 @@
           "number": 6861,
           "title": "exporters: verify TLS certificates (#8042)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7044,
+          "title": "Verify TLS for cloud uploads (#8048)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48724,7 +48739,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:18:01.522Z",
+      "verified_at": "2026-11-05T00:22:40.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178792,6 +178807,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:15:03.584Z"
+    },
+    "rule-7043": {
+      "learning_id": "rule-7043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7043,
+      "title": "plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "3bf9166a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:22:31.195Z"
+    },
+    "rule-7044": {
+      "learning_id": "rule-7044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7044,
+      "title": "Verify TLS for cloud uploads (#8048)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "df707d92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:22:40.480Z"
+    },
+    "rule-7045": {
+      "learning_id": "rule-7045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7045,
+      "title": "[mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "5eadb108",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:22:41.022Z"
     }
   },
   "aliases": {

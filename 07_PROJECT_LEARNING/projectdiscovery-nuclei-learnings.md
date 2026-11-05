@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `82d5a8ac`  
+> **Source Version**: `df707d92`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:18:00.859Z  
+> **Timestamp**: 2026-11-05T00:22:39.819Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:18:00.756Z  
+> **Harvest Timestamp**: 2026-11-05T00:22:39.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32586 stars
+- **Stars / Engagement**: 32589 stars
 
 ---
 
@@ -1446,154 +1446,712 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82d5a8ac` (2026-11-04)
-**Commit Message**: exporters: verify TLS certificates (#8042)
+### Incident Patch 1: `df707d92` (2026-11-04)
+**Commit Message**: Verify TLS for cloud uploads (#8048)
 
-**File**: `pkg/reporting/exporters/es/elasticsearch.go` (modified, +4/-3)
+**File**: `internal/pdcp/writer.go` (modified, +29/-5)
 ```diff
-@@ -71,9 +71,10 @@ func New(option *Options) (*Exporter, error) {
- 			Transport: &http.Transport{
- 				MaxIdleConns:        10,
- 				MaxIdleConnsPerHost: 10,
--				DialContext:         dialers.Fastdialer.Dial,
--				DialTLSContext:      dialers.Fastdialer.DialTLS,
--				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
-+				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
-+				// skips verification; net/http does the handshake with TLSClientConfig.
-+				DialContext:     dialers.Fastdialer.Dial,
-+				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
- 			},
- 		}
- 	}
+@@ -4,6 +4,8 @@ import (
+ 	"bufio"
+ 	"bytes"
+ 	"context"
++	"crypto/tls"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -87,11 +89,7 @@ func NewUploadWriter(ctx context.Context, logger *gologger.Logger, creds *pdcpau
+ 	tmp.Update()
+ 	u.uploadURL = tmp.URL
+ 
+-	// create http client
+-	opts := retryablehttp.DefaultOptionsSingle
+-	opts.NoAdjustTimeout = true
+-	opts.Timeout = time.Duration(3) * time.Minute
+-	u.client = retryablehttp.NewClient(opts)
++	u.client = newUploadClient()
+ 
+ 	// create context
+ 	ctx, u.cancel = context.WithCancel(ctx)
+@@ -101,6 +99,32 @@ func NewUploadWriter(ctx context.Context, logger *gologger.Logger, creds *pdcpau
+ 	return u, nil
+ }
+ 
++// newUploadClient returns the client for cloud uploads. The upload sends the
++// API key and the scan results, so the client verifies the server certificate.
++// The retryablehttp default clients skip verification.
++func newUploadClient() *retryablehttp.Client {
++	transport := retryablehttp.DefaultReusePooledTransport()
++	// fastdialer DialTLS does not verify certificates, so net/http does the
++	// TLS handshake over the fastdialer connection.
++	transport.DialTLSContext = nil
++	transport.TLSClientConfig = &tls.Config{MinVersion: tls.VersionTLS12}
++
++	opts := retryablehttp.DefaultOptionsSingle
++	opts.NoAdjustTimeout = true
++	opts.Timeout = time.Duration(3) * time.Minute
++	opts.HttpClient = &http.Client{Transport: transport}
++	// a certificate error does not go away on retry
++	defaultRetry := retryablehttp.DefaultRetryPolicy()
++	opts.CheckRetry = func(ctx context.Context, resp *http.Response, err error) (bool, error) {
++		var certErr *tls.CertificateVerificationError
++		if errors.As(err, &certErr) {
++			return false, nil
++		}
++		return defaultRetry(ctx, resp, err)
++	}
++	return retryablehttp.NewClient(opts)
++}
++
+ // SetScanID sets the scan id for the upload writer
+ func (u *UploadWriter) SetScanID(id string) error {
+ 	if !xidRegex.MatchString(id) {
 ```
 
-**File**: `pkg/reporting/exporters/es/tls_test.go` (added, +46/-0)
+**File**: `internal/pdcp/writer_tls_test.go` (added, +55/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+package es
+@@ -0,0 +1,55 @@
++package pdcp
 +
 +import (
-+	"net"
++	"context"
++	"crypto/tls"
++	"crypto/x509"
 +	"net/http"
 +	"net/http/httptest"
-+	"strconv"
 +	"sync/atomic"
 +	"testing"
 +
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/gologger"
++	pdcpauth "github.com/projectdiscovery/utils/auth/pdcp"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestExporterVerifiesTLS(t *testing.T) {
-+	var got atomic.Int32
++func newTestUploadWriter(t *testing.T, gotKey *atomic.Value) (*UploadWriter, *httptest.Server) {
++	t.Helper()
 +	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		got.Add(1)
-+		w.WriteHeader(http.StatusCreated)
++		gotKey.Store(r.Header.Get(pdcpauth.ApiKeyHeaderName))
++		_, _ = w.Write([]byte(`{"id":"abcdefghij0123456789"}`))
 +	}))
-+	defer srv.Close()
-+	host, port, err := net.SplitHostPort(srv.Listener.Addr().String())
++	t.Cleanup(srv.Close)
++	creds := &pdcpauth.PDCPCredentials{APIKey: "test-key", Server: srv.URL}
++	u, err := NewUploadWriter(context.Background(), gologger.DefaultLogger, creds)
 +	require.NoError(t, err)
-+	p, err := strconv.Atoi(port)
-+	require.NoError(t, err)
++	t.Cleanup(u.Close)
++	return u, srv
++}
 +
-+	opts := types.DefaultOptions()
-+	opts.SetExecutionID("es-tls-verify")
-+	require.NoError(t, protocolstate.Init(opts))
-+	defer protocolstate.Close(opts.ExecutionId)
++func TestUploadRejectsUntrustedCertificate(t *testing.T) {
++	var gotKey atomic.Value
++	u, _ := newTestUploadWriter(t, &gotKey)
 +
-+	newExporter := func(skipVerify bool) *Exporter {
-+		e, err := New(&Options{IP: host, Port: p, SSL: true, SSLVerification: skipVerify, Username: "elastic", Password: "secret", IndexName: "nuclei", ExecutionId: opts.ExecutionId})
-+		require.NoError(t, err)
-+		return e
-+	}
++	err := u.upload([]byte("{}\n"))
++	require.Error(t, err)
++	var unknownAuthority x509.UnknownAuthorityError
++	require.ErrorAs(t, err, &unknownAuthority)
++	require.Nil(t, gotKey.Load(), "API key must not reach a server with an untrusted certificate")
++}
 +
-+	err = newExporter(false).Export(&output.ResultEvent{})
-+	require.ErrorContains(t, err, "certificate")
-+	require.Zero(t, got.Load(), "the password went to an untrusted server")
++func TestUploadTrustedCertificate(t *testing.T) {
++	var gotKey atomic.Value
++	u, srv := newTestUploadWriter(t, &gotKey)
 +
-+	require.NoError(t, newExporter(true).Export(&output.ResultEvent{}))
-+	require.EqualValues(t, 1, got.Load())
++	pool := x509.NewCertPool()
++	pool.AddCert(srv.Certificate())
++	transport, ok := u.client.HTTPClient.Transport.(*http.Transport)
++	require.True(t, ok)
++	transport.TLSClientConfig = &tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}
++
++	require.NoError(t, u.upload([]byte("{}\n")))
++	require.Equal(t, "test-key", gotKey.Load())
++	require.Equal(t, "abcdefghij0123456789", u.scanID)
 +}
 ```
 
-**File**: `pkg/reporting/exporters/splunk/splunkhec.go` (modified, +4/-3)
-```diff
-@@ -63,9 +63,10 @@ func New(option *Options) (*Exporter, error) {
- 			Transport: &http.Transport{
- 				MaxIdleConns:        10,
- 				MaxIdleConnsPerHost: 10,
--				DialContext:         dialers.Fastdialer.Dial,
--				DialTLSContext:      dialers.Fastdialer.DialTLS,
--				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
-+				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
-+				// skips verification; net/http does the handshake with TLSClientConfig.
-+				DialContext:     dialers.Fastdialer.Dial,
-+				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
- 			},
- 		}
- 	}
-```
+---
 
-**File**: `pkg/reporting/exporters/splunk/tls_test.go` (added, +46/-0)
+### Incident Patch 2: `5f5a40c2` (2026-11-04)
+**Commit Message**: Merge pull request #8040 from projectdiscovery/feat/js-ipmi
+
+add ipmi javascript library
+
+**File**: `internal/tests/integration/javascript_ipmi_test.go` (added, +89/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+package splunk
+@@ -0,0 +1,89 @@
++//go:build integration
++// +build integration
++
++package integration_test
 +
 +import (
++	"fmt"
 +	"net"
-+	"net/http"
-+	"net/http/httptest"
-+	"strconv"
-+	"sync/atomic"
-+	"testing"
++	"time"
 +
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+	"github.com/stretchr/testify/require"
++	"github.com/ory/dockertest/v3"
 +)
 +
-+func TestExporterVerifiesTLS(t *testing.T) {
-+	var got atomic.Int32
-+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		got.Add(1)
-+		w.WriteHeader(http.StatusCreated)
-+	}))
-+	defer srv.Close()
-+	host, port, err := net.SplitHostPort(srv.Listener.Addr().String())
-+	require.NoError(t, err)
-+	p, err := strconv.Atoi(port)
-+	require.NoError(t, err)
++// ipmiSimSetup runs OpenIPMI's BMC simulator with an anonymous user,
++// ADMIN/ADMIN and root/calvin, and cipher suite 0 enabled.
++const ipmiSimSetup = `apt-get update -qq && apt-get install -y -qq --no-install-recommends openipmi >/dev/null && mkdir -p /etc/ipmi && cat > /etc/ipmi/lan.conf <<'EOF'
++name "bmc"
++set_working_mc 0x20
++  startlan 1
++    addr 0.0.0.0 623
++    priv_limit admin
++    allowed_auths_callback none md2 md5 straight
++    allowed_auths_user none md2 md5 straight
++    allowed_auths_operator none md2 md5 straight
++    allowed_auths_admin none md2 md5 straight
++    guid a123456789abcdefa123456789abcdef
++  endlan
++  user 1 true  ""      ""       user  10 none md2 md5 straight
++  user 2 true  "ADMIN" "ADMIN"  admin 10 none md2 md5 straight
++  user 3 true  "root"  "calvin" admin 10 none md2 md5 straight
++EOF
++printf 'mc_setbmc 0x20\nmc_add 0x20 0 no-device-sdrs 0x23 9 8 0x9f 0x1291 0xf02 persist_sdr\nmc_enable 0x20\n' > /etc/ipmi/emu.cmd
++exec ipmi_sim -c /etc/ipmi/lan.conf -f /etc/ipmi/emu.cmd -n`
 +
-+	opts := types.DefaultOptions()
-+	opts.SetExecutionID("splunk-tls-verify")
-+	require.NoError(t, protocolstate.Init(opts))
-+	defer protocolstate.Close(opts.ExecutionId)
++type javascriptIPMI struct{}
 +
-+	newExporter := func(skipVerify bool) *Exporter {
-+		e, err := New(&Options{Host: host, Port: p, SSL: true, SSLVerification: skipVerify, Token: "secret", IndexName: "nuclei", ExecutionId: opts.ExecutionId})
-+		require.NoError(t, err)
-+		return e
++func (j *javascriptIPMI) Execute(filePath string) error {
++	pool, err := dockertest.NewPool("")
++	if err != nil {
++		return fmt.Errorf("could not create docker pool: %w", err)
++	}
++	if err := pool.Client.Ping(); err != nil {
++		return fmt.Errorf("could not connect to Docker: %w", err)
++	}
++	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
++		Repository:   "debian",
++		Tag:          "bookworm-slim",
++		Platform:     "linux/amd64",
++		Cmd:          []string{"sh", "-c", ipmiSimSetup},
++		ExposedPorts: []string{"623/udp"},
++	})
++	if err != nil {
++		return fmt.Errorf("could not start ipmi simulator: %w", err)
++	}
++	defer purge(pool, resource)
++
++	address := net.JoinHostPort("127.0.0.1", resource.GetPort("623/udp"))
++	if err := waitForServiceCheck(address, 3*time.Minute, rmcpPingCheck); err != nil {
++		return err
++	}
++	results, err := runSignedNucleiTemplateAndGetResults(filePath, address, debug)
++	if err != nil {
++		return err
++	}
++	return expectResultsCount(results, 1)
++}
++
++// rmcpPingCheck waits for an answer to an RMCP presence ping, since the
++// port is udp and cannot be probed with a connect.
++func rmcpPingCheck(address string) error {
++	conn, err := net.Dial("udp", address)
++	if err != nil {
++		return err
++	}
++	defer func() { _ = conn.Close() }()
++	if _, err := conn.Write([]byte{0x06, 0x00, 0xff, 0x06, 0x00, 0x00, 0x11, 0xbe, 0x80, 0x00, 0x00, 0x00}); err != nil {
++		return err
++	}
++	_ = conn.SetReadDeadline(time.Now().Add(time.Second))
++	reply := make([]byte, 64)
++	n, err := conn.Read(reply)
++	if err != nil {
++		return err
++	}
++	if n < 9 || reply[8] != 0x40 {
++		return fmt.Errorf("unexpected rmcp reply")
++	}
++	return nil
++}
+```
+
+**File**: `internal/tests/integration/javascript_test.go` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ var jsTestcases = []integrationCase{
+ 	{Path: "protocols/javascript/http-get.yaml", TestCase: &javascriptHTTPGet{}},
+ 	{Path: "protocols/javascript/http-client-flow.yaml", TestCase: &javascriptHTTPClientFlow{}},
+ 	{Path: "protocols/javascript/http-denied.yaml", TestCase: &javascriptHTTPDenied{}},
++	{Path: "protocols/javascript/ipmi.yaml", TestCase: &javascriptIPMI{}, DisableOn: javascriptDockerDisabled, Serial: true},
+ 	{Path: "protocols/javascript/rsync-test.yaml", TestCase: &javascriptRsyncTest{}, DisableOn: javascriptDockerDisabled, Serial: true},
+ 	{Path: "protocols/javascript/vnc-pass-brute.yaml", TestCase: &javascriptVncPassBrute{}, DisableOn: javascriptDockerDisabled, Serial: true},
+ 	{Path: "protocols/javascript/postgres-pass-brute.yaml", TestCase: &javascriptPostgresPassBrute{}, DisableOn: javascriptDockerDisabled, Serial: true},
+```
+
+**File**: `internal/tests/integration/testdata/protocols/javascript/ipmi.yaml` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++id: ipmi-checks
++
++info:
++  name: IPMI Checks
++  author: pdteam
++  severity: info
++
++javascript:
++  - code: |
++      const ipmi = require('nuclei/ipmi');
++      const caps = ipmi.GetAuthCapabilities(Host, Port);
++      const root = ipmi.GetRAKPHash(Host, Port, 'root');
++
++      // cipher suite 0 lets a wrong password in
++      const anyPassword = new ipmi.Client();
++      const cipherZero = anyPassword.Login(Host, Port, 'ADMIN', 'wrong', 0);
++      anyPassword.Close();
++
++      // an encrypted, signed session, then Get Device ID and admin privilege
++      const client = new ipmi.Client();
++      client.Login(Host, Port, 'ADMIN', 'ADMIN', 3);
++      const device = client.Command(0x06, 0x01, []);
++      const admin = client.Command(0x06, 0x3b, [0x04]);
++      client.Close();
++      const manufacturer = device.Data[6] | device.Data[7] << 8 | device.Data[8] << 16;
++
++      let wrongRejected = false;
++      try { new ipmi.Client().Login(Host, Port, 'ADMIN', 'wrong', 3); } catch (e) { wrongRejected = true; }
++
++      ipmi.Ping(Host, Port) && caps.IPMI20 && caps.AnonymousLogin &&
++        ipmi.GetCipherSuites(Host, Port).includes(0) &&
++        ipmi.GetSystemGUID(Host, Port).length == 32 &&
++        ipmi.FindRAKPPassword(root, ['admin', 'calvin']) == 'calvin' &&
++        !ipmi.CheckRAKPPassword(root, 'admin') &&
++        cipherZero && wrongRejected &&
++        device.CompletionCode == 0 && manufacturer == 4753 &&
++        admin.CompletionCode == 0;
++
++    args:
++      Host: "{{Host}}"
++      Port: "623"
++
++    matchers:
++      - type: dsl
++        dsl:
++          - "success == true"
+```
+
+**File**: `pkg/js/compiler/pool.go` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libhash"
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libhttp"
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libikev2"
++	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libipmi"
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libkerberos"
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libkrbforge"
+ 	_ "github.com/projectdiscovery/nuclei/v3/pkg/js/generated/go/libkrbroast"
+```
+
+**File**: `pkg/js/generated/go/libipmi/ipmi.go` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++package ipmi
++
++import (
++	lib_ipmi "github.com/projectdiscovery/nuclei/v3/pkg/js/libs/ipmi"
++
++	"github.com/projectdiscovery/goja"
++	"github.com/projectdiscovery/nuclei/v3/pkg/js/gojs"
++)
++
++var (
++	module = gojs.NewGojaModule("nuclei/ipmi")
++)
++
++func init() {
++	module.Set(
++		gojs.Objects{
++			// Functions
++			"CheckRAKPPassword":   lib_ipmi.CheckRAKPPassword,
++			"FindRAKPPassword":    lib_ipmi.FindRAKPPassword,
++			"GetAuthCapabilities": lib_ipmi.GetAuthCapabilities,
++			"GetCipherSuites":     lib_ipmi.GetCipherSuites,
++			"GetRAKPHash":         lib_ipmi.GetRAKPHash,
++			"GetSystemGUID":       lib_ipmi.GetSystemGUID,
++			"Ping":                lib_ipmi.Ping,
++
++			// Var and consts
++
++			// Objects / Classes
++			"AuthCapabilities": gojs.GetClassConstructor[lib_ipmi.AuthCapabilities](&lib_ipmi.AuthCapabilities{}),
++			"Client":           gojs.GetClassConstructor[lib_ipmi.Client](&lib_ipmi.Client{}),
++			"CommandResponse":  gojs.GetClassConstructor[lib_ipmi.CommandResponse](&lib_ipmi.CommandResponse{}),
++			"RAKPHash":         gojs.GetClassConstructor[lib_ipmi.RAKPHash](&lib_ipmi.RAKPHash{}),
++		},
++	).Register()
++}
++
++func Enable(runtime *goja.Runtime) {
++	module.Enable(runtime)
++}
+```
+
+**File**: `pkg/js/generated/ts/index.ts` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@ export * as grpc from './grpc';
+ export * as hash from './hash';
+ export * as http from './http';
+ export * as ikev2 from './ikev2';
++export * as ipmi from './ipmi';
+ export * as kerberos from './kerberos';
+ export * as krbforge from './krbforge';
+ export * as krbroast from './krbroast';
+```
+
+**File**: `pkg/js/generated/ts/ipmi.ts` (added, +304/-0)
+```diff
+@@ -0,0 +1,304 @@
++
++
++/**
++ * CheckRAKPPassword reports whether password produced hash. It runs offline,
++ * so it can test any number of passwords without touching the BMC.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const hash = ipmi.GetRAKPHash('acme.com', 623, 'ADMIN');
++ * log(ipmi.CheckRAKPPassword(hash, 'ADMIN'));
++ * ```
++ */
++export function CheckRAKPPassword(hash: RAKPHash, password: string): boolean {
++    return false;
++}
++
++
++
++/**
++ * FindRAKPPassword returns the first of passwords that produced hash, or an
++ * empty string.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const hash = ipmi.GetRAKPHash('acme.com', 623, 'root');
++ * log(ipmi.FindRAKPPassword(hash, ['calvin', 'root', 'admin']));
++ * ```
++ */
++export function FindRAKPPassword(hash: RAKPHash, passwords: string[]): string {
++    return "";
++}
++
++
++
++/**
++ * GetAuthCapabilities returns the authentication capabilities the BMC
++ * advertises on the current channel.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const caps = ipmi.GetAuthCapabilities('acme.com', 623);
++ * log(caps.AnonymousLogin);
++ * ```
++ */
++export function GetAuthCapabilities(ctx: any, host: string, port: number): AuthCapabilities | null {
++    return null;
++}
++
++
++
++/**
++ * GetCipherSuites returns the IDs of the RMCP+ cipher suites the BMC
++ * offers. Cipher suite 0 authenticates nothing, so any password logs in.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const suites = ipmi.GetCipherSuites('acme.com', 623);
++ * log(suites.includes(0));
++ * ```
++ */
++export function GetCipherSuites(ctx: any, host: string, port: number): number[] | null {
++    return null;
++}
++
++
++
++/**
++ * GetRAKPHash starts an RMCP+ session as username and returns the HMAC the
++ * BMC answers with. The session is never completed, so no login is
++ * attempted; the BMC drops the half-open session after its timeout. It fails
++ * when the BMC rejects the username.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const hash = ipmi.GetRAKPHash('acme.com', 623, 'ADMIN');
++ * log(ipmi.CheckRAKPPassword(hash, 'ADMIN'));
++ * ```
++ */
++export function GetRAKPHash(ctx: any, host: string, port: number, username: string): RAKPHash | null {
++    return null;
++}
++
++
++
++/**
++ * GetSystemGUID returns the BMC system GUID, which vendors derive from
++ * serial numbers or MAC addresses.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const guid = ipmi.GetSystemGUID('acme.com', 623);
++ * log(guid);
++ * ```
++ */
++export function GetSystemGUID(ctx: any, host: string, port: number): string | null {
++    return null;
++}
++
++
++
++/**
++ * Ping reports whether the host answers an RMCP presence ping and advertises
++ * IPMI support.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const isIPMI = ipmi.Ping('acme.com', 623);
++ * log(isIPMI);
++ * ```
++ */
++export function Ping(ctx: any, host: string, port: number): boolean | null {
++    return null;
++}
++
++
++
++/**
++ * Client holds one RMCP+ session, for commands that need a login.
++ * Close it when done: BMCs allow only a few sessions at a time.
++ * @example
++ * ```javascript
++ * const ipmi = require('nuclei/ipmi');
++ * const client = new ipmi.Client();
++ * client.Login('acme.com', 623, 'ADMIN', 'ADMIN', 3);
++ * const id = client.Command(0x06, 0x01, []);
++ * client.Close();
++ * ```
++ */
++export class Client {
++    
++
++    // Constructor of Client
++    constructor() {}
++    /**
++    * Login opens an RMCP+ session as username with the given cipher suite
++    * (0, 1, 2, 3 or 6). Cipher suite 0 skips authentication, so a BMC
++    * that allows it accepts any password. A rejected login is an error.
++    * @example
++    * ```javascript
++    * const ipmi = require('nuclei/ipmi');
++    * const client = new ipmi.Client();
++    * client.Login('acme.com', 623, 'ADMIN', 'not-the-password', 0);
++    * ```
++    */
++    public Login(ctx: any, host: string, port: number, username: string, password: string, cipherSuite: number): boolean | null {
++        return null;
++    }
++    
++
++    /**
++    * Command sends an IPMI request in the session, such as Get Device ID
++    * (netFn 0x06, cmd 0x01) or Set Session Privilege Level (0x06, 0x3b).
++    * @example
++    * ```javascript
++    * const ipmi = require('nuclei/ipmi');
++    * const client = new ipmi.Client();
++    * client.Login('acme.com', 623, 'ADMIN', 'ADMIN', 3);
++    * const admin = client.Command(0x06, 0x3b, [0x04]).CompletionCode == 0;
++    * client.Close();
++    * ```
++    */
++    public Command(netFn: number, cmd: number, data: Uint8Array): CommandResponse | null {
++        return null;
++    }
++    
++
++    /**
++    * Close ends the session on the BMC, freeing its slot.
++    * @example
++    * ```javascript
++    * const ipmi = require('nuclei/ipmi');
++    * const client = new ipmi.Client();
++    * client.Login('acme.com', 623, 'ADMIN', 'ADMIN', 
+```
+
+**File**: `pkg/js/libs/ipmi/ipmi.go` (added, +394/-0)
+```diff
+@@ -0,0 +1,394 @@
++package ipmi
++
++import (
++	"context"
++	"crypto/hmac"
++	"crypto/md5"
++	"crypto/sha1"
++	"encoding/hex"
++	"errors"
++	"fmt"
++)
++
++type (
++	// AuthCapabilities is what a BMC advertises before any login, from Get
++	// Channel Authentication Capabilities.
++	// @example
++	// ```javascript
++	// const ipmi = require('nuclei/ipmi');
++	// const caps = ipmi.GetAuthCapabilities('acme.com', 623);
++	// log(toJSON(caps));
++	// ```
++	AuthCapabilities struct {
++		// IPMI20 is true when the BMC supports IPMI 2.0 (RMCP+).
++		IPMI20 bool
++		// AuthTypes are the IPMI 1.5 authentication types the channel
++		// accepts: none, md2, md5, straight (cleartext password), oem.
++		AuthTypes []string
++		// AnonymousLogin is true when a null username with a null password
++		// is accepted.
++		AnonymousLogin bool
++		// NullUsernames is true when accounts with an empty name are enabled.
++		NullUsernames bool
++		// NonNullUsernames is true when named accounts are enabled.
++		NonNullUsernames bool
++		// PerMessageAuth is false when the BMC skips authenticating
++		// messages after login.
++		PerMessageAuth bool
++		// UserLevelAuth is false when user-level commands skip
++		// authentication.
++		UserLevelAuth bool
++		// OEMID is the IANA enterprise number of the BMC vendor, or 0.
++		OEMID int
 +	}
 +
-+	err = newExporter(false).Export(&output.ResultEvent{})
-+	require.ErrorContains(t, err, "certificate")
-+	require.Zero(t, got.Load(), "the token went to an untrusted server")
++	// RAKPHash is the HMAC a BMC returns for a user during RMCP+ session
++	// setup (CVE-2013-4786). It can be checked offline against candidate
++	// passwords, which tests credentials without a login attempt.
++	// @example
++	// ```javascript
++	// const ipmi = require('nuclei/ipmi');
++	// const hash = ipmi.GetRAKPHash('acme.com', 623, 'ADMIN');
++	// log(hash.Hashcat);
++	// ```
++	RAKPHash struct {
++		Username string
++		// Algorithm is the HMAC the BMC used: sha1 or md5.
++		Algorithm string
++		// Salt and HMAC are hex encoded; Salt is everything the HMAC covers.
++		Salt string
++		HMAC string
++		// Hashcat is the hash in hashcat mode 7300 format, for sha1 only.
++		Hashcat string
++	}
 +
-+	require.NoError(t, newExporter(true).Export(&output.ResultEvent{}))
-+	require.EqualValues(t, 1, got.Load())
++	// Client holds one RMCP+ session, for commands that need a login.
++	// Close it when done: BMCs allow only a few sessions at a time.
++	// @example
++	// ```javascript
++	// const ipmi = require('nuclei/ipmi');
++	// const client = new ipmi.Client();
++	// client.Login('acme.com', 623, 'ADMIN', 'ADMIN', 3);
++	// const id = client.Command(0x06, 0x01, []);
++	// client.Close();
++	// ```
++	Client struct {
++		session *established
++	}
++
++	// CommandResponse is the reply to an IPMI command.
++	CommandResponse struct {
++		// CompletionCode is 0 on success.
++		CompletionCode int
++		Data           []byte
++	}
++)
++
++var authTypes = []struct {
++	bit  byte
++	name string
++}{{0x01, "none"}, {0x02, "md2"}, {0x04, "md5"}, {0x10, "straight"}, {0x20, "oem"}}
++
++// Ping reports whether the host answers an RMCP presence ping and advertises
++// IPMI support.
++// @example
++// ```javascript
++// const ipmi = require('nuclei/ipmi');
++// const isIPMI = ipmi.Ping('acme.com', 623);
++// log(isIPMI);
++// ```
++func Ping(ctx context.Context, host string, port int) (bool, error) {
++	s, err := dial(ctx, host, port)
++	if err != nil {
++		return false, err
++	}
++	defer s.close()
++	return s.ping()
 +}
++
++// GetAuthCapabilities returns the authentication capabilities the BMC
++// advertises on the current channel.
++// @example
++// ```javascript
++// const ipmi = require('nuclei/ipmi');
++// const caps = ipmi.GetAuthCapabilities('acme.com', 623);
++// log(caps.AnonymousLogin);
++// ```
++func GetAuthCapabilities(ctx context.Context, host string, port int) (*AuthCapabilities, error) {
++	s, err := dial(ctx, host, port)
++	if err != nil {
++		return nil, err
++	}
++	defer s.close()
++
++	// bit 7 asks for the IPMI 2.0 extended data; an IPMI 1.5 only BMC
++	// rejects it, so ask again without
++	data, err := s.command(cmdGetChannelAuthCaps, []byte{0x80 | currentChannel, privAdmin})
++	if err != nil {
++		if data, err = s.command(cmdGetChannelAuthCaps, []byte{currentChannel, privAdmin}); err != nil {
++			return nil, err
++		}
++	}
++	return parseAuthCapabilities(data)
++}
++
++// parseAuthCapabilities decodes the Get Channel Authentication Capabilities
++// response data (IPMI v2.0 table 22-15).
++func parseAuthCapabilities(data []byte) (*AuthCapabilities, error) {
++	if len(data) < 8 {
++		return nil, fmt.Errorf("short channel authentication capabilities response")
++	}
++	caps := &AuthCapabilities{
++		IPMI20:           data[1]&0x80 != 0 && data[3]&0x02 != 0,
++		AnonymousLogin:   data[2]&0x01 != 0,
++		NullUsernames:    data[2]&0x02 != 0,
++		NonNullUsernames: data[2]&0x04 != 0,
++		UserLevelAuth:    data[2]&0x08 == 0,
++		PerMessageAuth:   data[2]&0x10 == 0,
++		OEMID:            int(data[4]) | int(data[5])<<8 | int(data[6])<<16,
++	}
++	for _, authType := range authTypes {
++		if data[1]&authType.bit != 0 {
++			caps.AuthTypes = append(caps.AuthTypes, authType.name)
++		}
++	}
++	return caps, nil
++}
++
++// GetSystemGUID returns the BMC system GUID, which vendors derive from
++// serial numbers or MAC addresses.
++// @example
++// ```javascript
++// c
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8048** (2026-11-04): Verify TLS for cloud uploads (@Mzack9999)
 - **PR #8042** (2026-11-04): exporters: verify TLS certificates (@Mzack9999)
+- **PR #8040** (2026-11-04): add ipmi javascript library (@dogancanbakir)
 - **PR #8024** (2026-11-03): Read headless excludes under the dialer lock (@Mzack9999)
 - **PR #8023** (2026-11-03): Give each scan its own DNS resolvers (@Mzack9999)
 - **PR #8019** (closed): fix(headless): prevent nil pointer dereference on invalid URL in cookie jar (#8015) (@TassioSales)
-- **PR #8018** (2026-11-03): use jev for llm matchers when -llm-provider jev (@dogancanbakir)
-- **PR #8016** (2026-11-03): fix(headless): fail requests whose URL net/url cannot parse (@dwisiswant0)
 
 ---
 
@@ -1613,33 +2171,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. exporters: verify TLS certificates (#8042)
+## X. Verify TLS for cloud uploads (#8048)
 
 **RULE**:
-When implementing operations in `pkg/reporting/exporters/es/elasticsearch.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pdcp/writer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82d5a8ac`: exporters: verify TLS certificates (#8042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df707d92`: Verify TLS for cloud uploads (#8048). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/exporters/es/elasticsearch.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pdcp/writer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				// No DialTLSContext: fastdialer DialTLS ignores TLSClientConfig and
-				// skips verification; net/http does the handshake with TLSClientConfig.
-				DialContext:     dialers.Fastdialer.Dial,
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: option.SSLVerification},
+	"crypto/tls"
+	"errors"
+	u.client = newUploadClient()
+// newUploadClient returns the client for cloud uploads. The upload sends the
+// API key and the scan results, so the client verifies the server certificate.
+// The retryablehttp default clients skip verification.
+func newUploadClient() *retryablehttp.Client {
+	transport := retryablehttp.DefaultReusePooledTransport()
+	// fastdialer DialTLS does not verify certificates, so net/http does the
+	// TLS handshake over the fastdialer connection.
+	transport.DialTLSContext = nil
+	transport.TLSClientConfig = &tls.Config{MinVersion: tls.VersionTLS12}
+
+	opts := retryablehttp.DefaultOptionsSingle
+	opts.NoAdjustTimeout = true
+	opts.Timeout = time.Duration(3) * time.Minute
+	opts.HttpClient = &http.Client{Transport: transport}
+	// a certificate error does not go away on retry
+	defaultRetry := retryablehttp.DefaultRetryPolicy()
+	opts.CheckRetry = func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		var certErr *tls.CertificateVerificationError
+		if errors.As(err, &certErr) {
+			return false, nil
+		}
+		return defaultRetry(ctx, resp, err)
+	}
+	return retryablehttp.NewClient(opts)
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				DialContext:         dialers.Fastdialer.Dial,
-				DialTLSContext:      dialers.Fastdialer.DialTLS,
-				TLSClientConfig:     &tls.Config{InsecureSkipVerify: option.SSLVerification},
+	// create http client
+	opts := retryablehttp.DefaultOptionsSingle
+	opts.NoAdjustTimeout = true
+	opts.Timeout = time.Duration(3) * time.Minute
+	u.client = retryablehttp.NewClient(opts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82d5a8ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df707d92` are properly handled with clean fallback behavior.
