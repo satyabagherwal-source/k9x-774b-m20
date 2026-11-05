@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "bcf3dc11",
+    "sourceVersion": "bcf527e4",
     "license": "MPL-2.0",
-    "contentHash": "99d9dd5643e0ff71914b23a4644909cd3bbd929fcbfc34d2da5614c0416eebc2",
-    "lastHarvestedAt": "2026-11-05T03:46:35.870Z",
+    "contentHash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
+    "lastHarvestedAt": "2026-11-05T19:06:59.934Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -11745,8 +11745,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
     "license": "Open-Source",
-    "contentHash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
-    "lastHarvestedAt": "2026-11-02T15:15:27.626Z",
+    "contentHash": "615371e071a410939897d89860cf6c0d6789287a9fb08e8261e3b60982cbbe38",
+    "lastHarvestedAt": "2026-11-05T19:06:49.605Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   },
   "hf-pyannote-speaker-diarization-3.1": {

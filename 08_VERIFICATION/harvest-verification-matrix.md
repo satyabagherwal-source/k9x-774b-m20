@@ -7761,3 +7761,5 @@
 | `CYCLE-20261105-M4HQ` | `2026-11-05T18:53:43.358Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ece7117...`) |
 | `CYCLE-20261105-UKZR` | `2026-11-05T19:00:17.991Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4ac2589c...`) |
 | `CYCLE-20261105-UPSR` | `2026-11-05T19:00:24.219Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c63451d8...`) |
+| `CYCLE-20261105-2Z5V` | `2026-11-05T19:06:49.603Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`615371e0...`) |
+| `CYCLE-20261105-374S` | `2026-11-05T19:06:59.932Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`52bb3d09...`) |

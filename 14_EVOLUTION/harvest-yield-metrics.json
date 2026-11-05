@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T19:00:24.230Z",
-  "total_cycles_completed": 7738,
-  "total_learnings_persisted": 7738,
-  "total_rules_promoted": 7381,
+  "last_updated": "2026-11-05T19:06:59.945Z",
+  "total_cycles_completed": 7740,
+  "total_learnings_persisted": 7740,
+  "total_rules_promoted": 7384,
   "history": [
-    {
-      "timestamp": "2026-11-05T07:13:13.402Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T07:20:22.968Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T07:20:34.002Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T19:00:24.230Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:06:49.610Z",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:06:59.945Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
