@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:02:02.320Z",
-    "lastVerified": "2026-11-05T02:02:02.320Z",
+    "lastChecked": "2026-11-05T02:11:40.910Z",
+    "lastVerified": "2026-11-05T02:11:40.910Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:40:51.421Z",
-    "lastVerified": "2026-11-05T01:40:51.421Z",
+    "lastChecked": "2026-11-05T02:11:40.295Z",
+    "lastVerified": "2026-11-05T02:11:40.295Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -786,8 +786,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:34:46.895Z",
-    "lastVerified": "2026-11-04T22:34:46.895Z",
+    "lastChecked": "2026-11-05T02:11:35.216Z",
+    "lastVerified": "2026-11-05T02:11:35.216Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2060,12 +2060,12 @@
     "lastVerified": "2026-11-04T22:27:36.644Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "unhappychoice/gitlogue",
+    "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:32:11.048Z",
-    "lastVerified": "2026-11-03T23:32:11.048Z",
+    "lastChecked": "2026-11-05T02:11:25.197Z",
+    "lastVerified": "2026-11-05T02:11:25.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -2074,7 +2074,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5d33d8ea"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -3217,12 +3218,12 @@
     "officialUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T11:39:46.495Z",
-    "lastVerified": "2026-10-31T11:39:46.495Z",
+    "lastChecked": "2026-11-05T02:11:28.048Z",
+    "lastVerified": "2026-11-05T02:11:28.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
+    "contentHash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3945,9 +3946,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-04T02:53:32.001Z",
+    "lastChecked": "2026-11-05T02:11:37.732Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-04T02:53:32.001Z"
+    "lastVerified": "2026-11-05T02:11:37.732Z"
   },
   "svenstaro-miniserve": {
     "name": "svenstaro/miniserve",
@@ -6398,9 +6399,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-04T03:37:41.983Z",
+    "lastChecked": "2026-11-05T02:11:32.726Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-04T03:37:41.983Z"
+    "lastVerified": "2026-11-05T02:11:32.726Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -8969,11 +8970,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mochidiffusion-mochidiffusion": {
-    "name": "MochiDiffusion",
+    "name": "MochiDiffusion/MochiDiffusion",
     "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
-    "lastChecked": "2026-10-31T19:14:32.535Z",
-    "revisionIdentifier": "5e978c69",
-    "lastVerified": "2026-10-31T19:14:32.535Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-05T02:11:35.104Z",
+    "lastVerified": "2026-11-05T02:11:35.104Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mochidiffusion-mochidiffusion",
+    "contentHash": "047da123ba539fd93421afad0fb422f6ffa770f25d7ddc56fdb901eb4a781e23",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:01:52.616Z",
-  "total_cycles_completed": 7429,
-  "total_learnings_persisted": 7429,
-  "total_rules_promoted": 7118,
+  "last_updated": "2026-11-05T02:11:38.369Z",
+  "total_cycles_completed": 7431,
+  "total_learnings_persisted": 7431,
+  "total_rules_promoted": 7121,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:30:49.370Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:37:25.075Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T17:37:26.123Z",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -1403,6 +1389,20 @@
       "repository": "metalbear-co/mirrord",
       "learningId": "learn-github-metalbear-co-mirrord",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:11:36.036Z",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "learningId": "learn-github-mochidiffusion-mochidiffusion",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:11:38.369Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

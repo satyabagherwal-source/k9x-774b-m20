@@ -7461,3 +7461,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-05T01:54:40.505Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-05T02:01:51.050Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `89bfc07c` | Multi-dimensional audit evidence | 2026-11-05T02:01:52.610Z |
+| `learn-github-mochidiffusion-mochidiffusion` | `https://github.com/MochiDiffusion/MochiDiffusion` | `d23807f2` | Multi-dimensional audit evidence | 2026-11-05T02:11:36.030Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-05T02:11:38.363Z |

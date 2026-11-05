@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
-    "lastHarvestedAt": "2026-10-31T11:39:55.769Z",
+    "contentHash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
+    "lastHarvestedAt": "2026-11-05T02:11:38.363Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -7943,10 +7943,10 @@
     "repository": "MochiDiffusion/MochiDiffusion",
     "platform": "github",
     "sourceUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
-    "sourceVersion": "5e978c69",
+    "sourceVersion": "d23807f2",
     "license": "GPL-3.0",
-    "contentHash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
-    "lastHarvestedAt": "2026-10-19T11:54:50.397Z",
+    "contentHash": "047da123ba539fd93421afad0fb422f6ffa770f25d7ddc56fdb901eb4a781e23",
+    "lastHarvestedAt": "2026-11-05T02:11:36.030Z",
     "learningId": "learn-github-mochidiffusion-mochidiffusion"
   },
   "swiftkickmobile-swiftmessages": {

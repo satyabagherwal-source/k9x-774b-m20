@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:01:52.521Z",
+  "last_updated": "2026-11-05T02:11:38.273Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28945,7 +28945,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "51da8314b6c139fe9fd53fbb3990a521b8b42090ad87dcffad6b8cdc2e41fb04",
+      "content_hash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -29037,6 +29037,16 @@
           "number": 6183,
           "title": "Non-Uniform Depth Allocation for Semantic Hierarchy",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7069,
+          "title": "Hierarchical Dimension Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7070,
+          "title": "Checkpoint-Config Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29057,7 +29067,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-31T11:39:55.659Z",
+      "verified_at": "2026-11-05T02:11:38.250Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42194,14 +42204,19 @@
       "slug": "mochidiffusion-mochidiffusion",
       "platform": "github",
       "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
-      "source_version": "5e978c69",
-      "content_hash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
+      "source_version": "d23807f2",
+      "content_hash": "047da123ba539fd93421afad0fb422f6ffa770f25d7ddc56fdb901eb4a781e23",
       "dossier_path": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
       "promoted_rules": [
         {
           "number": 2555,
           "title": "keep Quick Look bound to a State mirror",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7068,
+          "title": "move iris.c to the attention reduction fix",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42210,7 +42225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:54:50.317Z",
+      "verified_at": "2026-11-05T02:11:35.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179272,6 +179287,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:01:52.498Z"
+    },
+    "rule-7068": {
+      "learning_id": "rule-7068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7068,
+      "title": "move iris.c to the attention reduction fix",
+      "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "source_version": "d23807f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:11:35.915Z"
+    },
+    "rule-7069": {
+      "learning_id": "rule-7069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7069,
+      "title": "Hierarchical Dimension Consistency Invariant",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:11:38.250Z"
+    },
+    "rule-7070": {
+      "learning_id": "rule-7070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7070,
+      "title": "Checkpoint-Config Synchronization Invariant",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:11:38.250Z"
     }
   },
   "aliases": {
