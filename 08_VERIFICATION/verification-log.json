@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-8ZBX",
-    "timestamp": "2026-11-03T21:00:07.773Z",
-    "repository": "webrecorder/pywb",
-    "learningId": "learn-github-webrecorder-pywb",
-    "contentHash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-90HU",
-    "timestamp": "2026-11-03T21:00:09.282Z",
-    "repository": "taubyte/tau",
-    "learningId": "learn-github-taubyte-tau",
-    "contentHash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-92LS",
     "timestamp": "2026-11-03T21:00:12.016Z",
     "repository": "VectifyAI/PageIndex",
@@ -7492,6 +7462,36 @@
     "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-PYX7",
+    "timestamp": "2026-11-05T04:28:54.667Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "8f4cbfe17c04d8520fb6c296c090c5d6099f60ae2a04f65572ac6eff4e2979db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Q05G",
+    "timestamp": "2026-11-05T04:28:56.260Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

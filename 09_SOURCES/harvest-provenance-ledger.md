@@ -7511,3 +7511,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3ba92575` | Multi-dimensional audit evidence | 2026-11-05T04:14:38.030Z |
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-05T04:21:45.656Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `cc6facab` | Multi-dimensional audit evidence | 2026-11-05T04:21:46.602Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d14c0804` | Multi-dimensional audit evidence | 2026-11-05T04:28:54.670Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T04:28:56.263Z |

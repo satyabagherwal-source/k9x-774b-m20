@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T04:21:46.608Z",
-  "total_cycles_completed": 7479,
-  "total_learnings_persisted": 7479,
-  "total_rules_promoted": 7157,
+  "last_updated": "2026-11-05T04:28:56.267Z",
+  "total_cycles_completed": 7481,
+  "total_learnings_persisted": 7481,
+  "total_rules_promoted": 7161,
   "history": [
-    {
-      "timestamp": "2026-11-04T19:41:24.419Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T19:41:34.570Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T19:41:36.061Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "ClementTsang/bottom",
       "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:28:54.674Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:28:56.267Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

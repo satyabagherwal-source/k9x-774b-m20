@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:21:46.510Z",
+  "last_updated": "2026-11-05T04:28:56.198Z",
   "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27287,7 +27287,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
+      "content_hash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [
@@ -27311,6 +27311,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx",
           "verified_at": "2026-10-12T02:39:57.212Z"
+        },
+        {
+          "number": 779,
+          "title": "Tokenizer-Model Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1413,
@@ -27356,6 +27361,16 @@
           "number": 4416,
           "title": "Grouped Query Attention (GQA) Head Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7104,
+          "title": "LLM Weight Loading Memory Safety & OOM Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7105,
+          "title": "Inference Batch Processing Race Condition Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27376,7 +27391,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
       ],
-      "verified_at": "2026-10-31T13:47:17.702Z",
+      "verified_at": "2026-11-05T04:28:56.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54135,8 +54150,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "3799e0d0",
-      "content_hash": "b6ac7fe9d3af27969984c5f97006b523f7387478638c80456a186eadbbc0a837",
+      "source_version": "d14c0804",
+      "content_hash": "8f4cbfe17c04d8520fb6c296c090c5d6099f60ae2a04f65572ac6eff4e2979db",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -54179,6 +54194,11 @@
           "number": 6773,
           "title": "Writing up the PR from the uncommitted change to the WAL writer. (#2217)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7103,
+          "title": "Lazily build and skip sources in recency scans (#2221)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54186,7 +54206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:14:18.492Z",
+      "verified_at": "2026-11-05T04:28:54.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84097,15 +84117,15 @@
       "learning_id": "rule-779",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 779,
-      "title": "Tokenizer-Model Consistency Invariant (Harvested from meta-llama/Meta-Llama-3-8B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer-Model Consistency Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-11-05T04:28:56.181Z"
     },
     "rule-780": {
       "learning_id": "rule-780",
@@ -180005,6 +180025,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:21:46.485Z"
+    },
+    "rule-7103": {
+      "learning_id": "rule-7103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7103,
+      "title": "Lazily build and skip sources in recency scans (#2221)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "d14c0804",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:28:54.587Z"
+    },
+    "rule-7104": {
+      "learning_id": "rule-7104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7104,
+      "title": "LLM Weight Loading Memory Safety & OOM Prevention",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:28:56.181Z"
+    },
+    "rule-7105": {
+      "learning_id": "rule-7105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7105,
+      "title": "Inference Batch Processing Race Condition Guard",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:28:56.181Z"
     }
   },
   "aliases": {
