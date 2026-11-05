@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T11:23:33.605Z",
+  "last_updated": "2026-11-05T11:30:55.574Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7035,8 +7035,8 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "d83f6e28",
-      "content_hash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
+      "source_version": "72628aea",
+      "content_hash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
@@ -7064,6 +7064,11 @@
           "number": 6455,
           "title": "Drop the ready-for-agent label requirement from to-plan (#138)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7205,
+          "title": "Bump version to 2026.11.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7071,7 +7076,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:33:27.761Z",
+      "verified_at": "2026-11-05T11:30:50.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19446,7 +19451,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "4f3fe48d90e964f5d207078f1c38bca675da081bc79f854653c67625b59b9182",
+      "content_hash": "a636c09e24ca33a822e5378ce81148c8d9bf53d851c7eda551dbcbd781aa135f",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -19523,7 +19528,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-31T20:46:37.508Z",
+      "verified_at": "2026-11-05T11:30:44.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49228,8 +49233,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "27ac1e87",
-      "content_hash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
+      "source_version": "fb0eed51",
+      "content_hash": "0731a8c10bcae7cb33d6d2292ee08e71e17c0587b8b91cefd0c6269d84328076",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -49357,6 +49362,11 @@
           "number": 7153,
           "title": "deps): bump go-jose to v4.1.6 (#8037)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7206,
+          "title": "http): render self-contained raw requests once (#8059)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49364,7 +49374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:20:33.866Z",
+      "verified_at": "2026-11-05T11:30:55.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182013,6 +182023,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T11:23:33.590Z"
+    },
+    "rule-7205": {
+      "learning_id": "rule-7205",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7205,
+      "title": "Bump version to 2026.11.3",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "72628aea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:30:50.672Z"
+    },
+    "rule-7206": {
+      "learning_id": "rule-7206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7206,
+      "title": "http): render self-contained raw requests once (#8059)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "fb0eed51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:30:55.550Z"
     }
   },
   "aliases": {

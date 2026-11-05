@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:23:33.683Z",
-  "total_cycles_completed": 7609,
-  "total_learnings_persisted": 7609,
-  "total_rules_promoted": 7267,
+  "last_updated": "2026-11-05T11:30:55.673Z",
+  "total_cycles_completed": 7612,
+  "total_learnings_persisted": 7612,
+  "total_rules_promoted": 7269,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:00:36.130Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:00:46.256Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T01:07:51.355Z",
-      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:07:54.283Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T11:23:33.683Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:30:44.703Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:30:50.799Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T11:30:55.673Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -7632,3 +7632,6 @@
 | `CYCLE-20261105-IX5R` | `2026-11-05T11:23:20.031Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`731d214e...`) |
 | `CYCLE-20261105-IZNN` | `2026-11-05T11:23:23.267Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7203` | Yes (`8c46193c...`) |
 | `CYCLE-20261105-J7OT` | `2026-11-05T11:23:33.677Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7204` | Yes (`49565666...`) |
+| `CYCLE-20261105-SG9H` | `2026-11-05T11:30:44.693Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`a636c09e...`) |
+| `CYCLE-20261105-SKYT` | `2026-11-05T11:30:50.789Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7205` | Yes (`acbde899...`) |
+| `CYCLE-20261105-SOQ7` | `2026-11-05T11:30:55.663Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7206` | Yes (`0731a8c1...`) |

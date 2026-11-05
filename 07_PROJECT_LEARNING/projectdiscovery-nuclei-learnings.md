@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `27ac1e87`  
+> **Source Version**: `fb0eed51`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T07:20:33.158Z  
+> **Timestamp**: 2026-11-05T11:30:54.872Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T07:20:33.151Z  
+> **Harvest Timestamp**: 2026-11-05T11:30:54.864Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32595 stars
+- **Stars / Engagement**: 32600 stars
 
 ---
 
@@ -1446,157 +1446,802 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27ac1e87` (2026-11-05)
-**Commit Message**: chore(deps): bump go-jose to v4.1.6 (#8037)
+### Incident Patch 1: `9b519d22` (2026-11-05)
+**Commit Message**: fix(http): render self-contained raw requests once (#8059)
 
-**File**: `go.mod` (modified, +1/-1)
+A self-contained raw request was rendered twice: once to read the URL
+from its request line, and again with the variables that URL provides,
+such as {{Hostname}}. The second pass evaluated values that the first
+pass had inserted. A response body of {{secret}} reused in a later
+request was sent as the template variable's value, and with -ev a
+response body naming an environment variable was sent as its value.
+
+Render the request line first and check its host. Then evaluate again
+only the template variables and payloads whose template text names a
+URL variable, and render the annotations and the rest of the request
+once. Response data is now sent unchanged, as in templates that are
+not self-contained. A value that changes which line is the request
+line is rejected, so the host checked against the network policy is
+the host that is sent.
+
+Fixes: #8058
+
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/common/expressions/variables.go` (modified, +20/-0)
 ```diff
-@@ -264,7 +264,7 @@ require (
- 	github.com/go-fed/httpsig v1.1.0 // indirect
- 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
- 	github.com/go-git/go-billy/v5 v5.9.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
+@@ -115,6 +115,26 @@ func ContainsVariablesWithIgnoreList(skipNames map[string]interface{}, items ...
+ 	return nil
+ }
+ 
++// ReferencesVariables reports whether data contains a {{...}} marker that
++// refers to a variable in names, either alone or inside an expression. It
++// parses the marker but does not evaluate it.
++func ReferencesVariables(data string, names map[string]interface{}) bool {
++	for _, match := range unresolvedVariablesRegex.FindAllStringSubmatch(data, -1) {
++		expr, err := govaluate.NewEvaluableExpressionWithFunctions(match[1], dsl.HelperFunctions)
++		if err != nil {
++			continue
++		}
++
++		for _, name := range expr.Vars() {
++			if _, ok := names[name]; ok {
++				return true
++			}
++		}
++	}
++
++	return false
++}
++
+ func hasLiteralsOnly(data string) bool {
+ 	expr, err := govaluate.NewEvaluableExpressionWithFunctions(data, dsl.HelperFunctions)
+ 	if err != nil {
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `pkg/protocols/common/expressions/variables_test.go` (modified, +20/-0)
 ```diff
-@@ -455,8 +455,8 @@ github.com/go-git/go-git/v5 v5.19.2/go.mod h1:QqCBE1EFN5ddFmrliLQ3/ntRCUjZU3EJuw
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
+@@ -44,6 +44,26 @@ func TestUnresolvedVariablesCheck(t *testing.T) {
+ 	}
+ }
+ 
++func TestReferencesVariables(t *testing.T) {
++	names := map[string]interface{}{"Hostname": "", "Port": ""}
++
++	tests := []struct {
++		data string
++		want bool
++	}{
++		{data: "user@{{Hostname}}", want: true},
++		{data: "{{to_lower(Hostname)}}:{{Port}}", want: true},
++		{data: "{{Hostname_suffix}}", want: false},
++		{data: "{{secret}}-{{to_upper(seed)}}", want: false},
++		{data: "{{7*7}}", want: false},
++		{data: "Hostname", want: false},
++	}
++
++	for _, test := range tests {
++		require.Equal(t, test.want, ReferencesVariables(test.data, names), test.data)
++	}
++}
++
+ func TestUnresolvedVariablesCheckDoesNotExecuteHelpers(t *testing.T) {
+ 	var calls int
+ 	withTestHelperFunction(t, "test_side_effect", func(args ...interface{}) (interface{}, error) {
+```
+
+**File**: `pkg/protocols/http/build_request.go` (modified, +210/-69)
+```diff
+@@ -1,7 +1,6 @@
+ package http
+ 
+ import (
+-	"bufio"
+ 	"context"
+ 	"fmt"
+ 	"net/http"
+@@ -272,18 +271,201 @@ func (r *requestGenerator) validateSelfContainedHost(host string) error {
+ // selfContained templates do not need/use target data and all values i.e {{Hostname}} , {{BaseURL}} etc are already available
+ // in template . makeSelfContainedRequest parses and creates variables map and then creates corresponding http request or raw request
+ func (r *requestGenerator) makeSelfContainedRequest(ctx context.Context, input *contextargs.Context, data string, payloads, dynamicValues map[string]interface{}) (*generatedRequest, error) {
+-	isRawRequest := r.request.isRaw()
++	if r.request.isRaw() {
++		return r.makeSelfContainedRawRequest(ctx, input, data, payloads, dynamicValues)
++	}
++
++	values, _, err := r.selfContainedValues(input, payloads, dynamicValues, nil)
++	if err != nil {
++		return nil, err
++	}
++
++	data, err = r.renderText(data, values)
++	if err != nil {
++		return nil, errkit.Wrap(err, "could not evaluate helper expressions")
++	}
++	if err := expressions.ContainsUnresolvedVariables(data); err != nil && !r.request.SkipVariablesCheck {
++		// early exit: if there are any unresolved variables in `path` after evaluation
++		// then return early since this will definitely fail
++		return nil, errkit.Newf("unresolved variables `%v` found in request", data)
++	}
++
++	urlx, err := urlutil.ParseURL(data, true)
++	if err != nil {
++		return nil, errkit.Wrapf(err, "failed to parse %v in self contained request", data)
++	}
++	// validate the self-chosen destination host against the network policy.
++	if err := r.validateSelfContainedHost(urlx.Hostname()); err != nil {
++		return nil, err
++	}
++	return r.generateHttpRequest(ctx, urlx, values, payloads)
++}
++
++// makeSelfContainedRawRequest makes a self-contained raw request. Its request
++// line names the URL, and that URL provides variables such as {{Hostname}} to
++// the rest of the request. Each part of the template text is rendered once,
++// so inserted values such as response data are sent unchanged:
++//
++//  1. Render the request line and check its host against the network policy.
++//  2. Evaluate again the template variables and payloads whose template text
++//     names URL variables. The others keep their values, so a random value
++//     is the same in the request line and in the rest of the request.
++//  3. Render the annotations and the rest of the request.
++func (r *requestGenerator) makeSelfContainedRawRequest(ctx context.Context, input *contextargs.Context, data string, payloads, dynamicValues map[string]interface{}) (*generatedRequest, error) {
++	annotations, requestLine, rest, err := splitRequestLine(data)
++	if err != nil {
++		return nil, err
++	}
++
++	// Payloads are rendered in place, so keep their template text for step 2.
++	payloadText := generators.CopyMap(payloads)
++
++	values, authored, err := r.selfContainedValues(input, payloads, dynamicValues, nil)
++	if err != nil {
++		return nil, err
++	}
++
++	requestLine, err = r.renderText(requestLine, values)
++	if err != nil {
++		return nil, errkit.Wrap(err, "could not evaluate helper expressions")
++	}
++
++	// Parse the line that raw.ParseRawRequest will read, even if a value
++	// added a line break.
++	firstLine, _, _ := strings.Cut(requestLine, "\n")
++
++	parsed, err := r.requestLineURL(firstLine)
++	if err != nil {
++		return nil, err
++	}
++
++	// URL variables only fill in names that have no other value.
++	fixed := make(map[string]interface{})
++
++	for name, value := range protocolutils.GenerateVariables(parsed, false, nil) {
++		if _, ok := values[name]; !ok {
++			fixed[name] = value
++		}
++	}
++
++	stale := r.staleValues(authored, payloadText, fixed)
++	if len(stale) == 0 {
++		values = generators.MergeMaps(fixed, values)
++	} else {
++		// Keep every other value, and evaluate the stale template variables
++		// and payloads again from their template text.
++		for name, value := range values {
++			if _, ok := stale[name]; !ok {
++				fixed[name] = value
++			}
++		}
++
++		for name := range stale {
++			if text, ok := payloadText[name]; ok {
++				payloads[name] = text
++			}
++		}
++
++		values, _, err = r.selfContainedValues(input, payloads, dynamicValues, fixed)
++		if err != nil {
++			return nil, err
++		}
++	}
++
++	annotations, err = r.renderText(annotations, values)
++	if err != nil {
++		return nil, errkit.Wrap(err, "could not evaluate helper expressions")
++	}
++
++	rest, err = r.renderText(rest, values)
++	if err != nil {
++		return nil, errkit.Wrap(err, "could not evaluate helper expressions")
++	}
+ 
++	data = annotations + requestLine + rest
++
++	// A value with a line break must not change which line is the request
++	// line, or the request would go to a host that was not checked.
++	if _, line, _, err := splitRequestLine(data); err != nil || line != firstLine {
++		return nil, errkit.New("malformed request supplied: a value changed the request line")
++	}
++
++	return r.generateRawRequest(ctx, data, parsed, values, payloads)
++}
++
++// staleValues returns 
+```
+
+**File**: `pkg/protocols/http/build_request_test.go` (modified, +209/-0)
+```diff
+@@ -14,10 +14,14 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/generators"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/variables"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
+ 	urlutil "github.com/projectdiscovery/utils/url"
+ )
+@@ -451,6 +455,211 @@ func TestMakeSelfContainedRequestDoesNotAllocateRuntimeInteractshMarkerFromPaylo
+ 	require.Equal(t, "{{interactsh-url}}", string(body))
+ }
+ 
++func TestSelfContainedRawRequestSendsResponseDataLiterally(t *testing.T) {
++	const envName = "NUCLEI_TEST_SELF_CONTAINED_ENV"
++
++	t.Setenv(envName, "ENV-VALUE")
++
++	// A fresh Options pointer, because option payloads are cached per pointer.
++	options := testutils.DefaultOptions.Copy()
++	options.EnvironmentVariables = true
++	testutils.Init(options)
++
++	tests := []struct {
++		name string
++		body string
++	}{
++		{name: "template variable", body: "{{secret}}"},
++		{name: "helper expression", body: "{{to_upper(seed)}}"},
++		{name: "environment variable", body: "{{" + envName + "}}"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			probes := make(chan http.Header, 1)
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				switch r.URL.Path {
++				case "/source":
++					_, _ = io.WriteString(w, tt.body)
++				case "/probe":
++					header := r.Header.Clone()
++					header.Set("Host", r.Host)
++
++					probes <- header
++				}
++			}))
++			t.Cleanup(server.Close)
++
++			request := &Request{
++				ID:            "testing-self-contained-raw-response-data",
++				SelfContained: true,
++				// Send the probe even though it holds a literal {{...}}.
++				SkipVariablesCheck: true,
++				Raw: []string{
++					"GET " + server.URL + "/source HTTP/1.1\nHost: {{Hostname}}\n\n",
++					"GET " + server.URL + "/probe HTTP/1.1\nHost: {{Hostname}}\n" +
++						"Probe: [{{tpl}}]\nAuthored: [{{base64(seed)}}-{{" + envName + "}}]\n\n",
++				},
++				Operators: operators.Operators{
++					Extractors: []*extractors.Extractor{{
++						Name:     "tpl",
++						Part:     "body",
++						Type:     extractors.ExtractorTypeHolder{ExtractorType: extractors.RegexExtractor},
++						Regex:    []string{".+"},
++						Internal: true,
++					}},
++				},
++			}
++			templateVars := variables.Variable{
++				InsertionOrderedStringMap: *utils.NewEmptyInsertionOrderedStringMap(2),
++			}
++			templateVars.Set("seed", "hello")
++			templateVars.Set("secret", "TOP-SECRET")
++			executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++				ID:   request.ID,
++				Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++			})
++			executerOpts.Variables = templateVars
++			require.NoError(t, request.Compile(executerOpts))
++
++			err := request.ExecuteWithResults(
++				contextargs.NewWithInput(context.Background(), ""),
++				make(output.InternalEvent),
++				make(output.InternalEvent),
++				func(*output.InternalWrappedEvent) {},
++			)
++			require.NoError(t, err)
++
++			var probe http.Header
++			select {
++			case probe = <-probes:
++			default:
++				t.Fatal("probe request was not sent")
++			}
++
++			require.Equal(t, "["+tt.body+"]", probe.Get("Probe"), "response data must be sent unchanged")
++			// Template-authored text still renders, including variables derived
++			// from the request URL.
++			require.Equal(t, "[aGVsbG8=-ENV-VALUE]", probe.Get("Authored"))
++			require.Equal(t, strings.TrimPrefix(server.URL, "http://"), probe.Get("Host"))
++		})
++	}
++}
++
++// makeSelfContainedRawRequest compiles request as a self-contained raw request
++// with the given template variables and makes its first request.
++func makeSelfContainedRawRequest(t *testing.T, request *Request, vars [][2]string, dynamicValues map[string]interface{}) (*generatedRequest, error) {
++	t.Helper()
++
++	options := testutils.DefaultOptions
++	testutils.Init(options)
++
++	request.ID = "testing-self-contained-raw"
++	request.SelfContained = true
++	templateVars := variables.Variable{
++		InsertionOrderedStringMap: *utils.NewEmptyInsertionOrderedStringMap(len(vars)),
++	}
++
++	for _, v := range vars {
++		templateVars.Set(v[0], v[1])
++	}
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++		ID:   request.ID,
++		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++	})
++	executerOpts.Variables = templateVars
++	require.NoError(t, request.Compile(executer
 ```
 
 ---
 
-### Incident Patch 2: `5b499e06` (2026-11-05)
-**Commit Message**: verify TLS and validate template_id for nuclei -ai (#8044)
+### Incident Patch 2: `fb0eed51` (2026-11-05)
+**Commit Message**: fix(http): flag truncated responses at the effective read limit (#8046)
 
-**File**: `pkg/catalog/loader/ai_loader.go` (modified, +11/-3)
+The "(Truncated)" marker on dumped responses rebuilt the read-limit
+rule from the template max-size and -rsr instead of using the limit
+the body was read with. With neither set, the body is cut at the
+10 MB default, but the dump was not marked truncated.
+
+Comparing the body length with the effective limit keeps one rule for
+both the read and the marker. c918d010c already made -rsr a ceiling
+over a smaller template max-size; no release contains it yet, which
+is why v3.8.0 still reads the full -rsr limit per response.
+
+Fixes: #8045
+Reported-by: @Lidar-Baruch
+
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/http/request.go` (modified, +1/-2)
 ```diff
-@@ -7,18 +7,22 @@ import (
- 	"net/http"
- 	"os"
- 	"path/filepath"
-+	"regexp"
- 	"strings"
+@@ -1675,8 +1675,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		}
  
- 	"github.com/alecthomas/chroma/quick"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
--	"github.com/projectdiscovery/retryablehttp-go"
- 	pdcpauth "github.com/projectdiscovery/utils/auth/pdcp"
- 	"github.com/projectdiscovery/utils/errkit"
- )
+ 		responseContentType := respChain.Response().Header.Get("Content-Type")
+-		isResponseTruncated := (request.MaxSize > 0 && respChain.Body().Len() >= request.MaxSize) ||
+-			(request.options.Options.ResponseReadSize > 0 && respChain.Body().Len() >= request.options.Options.ResponseReadSize)
++		isResponseTruncated := respChain.Body().Len() >= maxBodylimit
+ 		dumpResponse(event, request, fullResponseStr, formedURL, responseContentType, isResponseTruncated, input.MetaInput.Input)
  
--const (
-+var (
- 	aiTemplateGeneratorAPIEndpoint = "https://api.projectdiscovery.io/v1/template/ai"
-+	// aiTemplateHTTPClient verifies TLS, since the request carries the PDCP API key.
-+	aiTemplateHTTPClient = &http.Client{}
-+	// aiTemplateIDRegex keeps the template file name inside the pdcp directory.
-+	aiTemplateIDRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
- )
- 
- type AITemplateResponse struct {
-@@ -112,7 +116,7 @@ func generateAITemplate(prompt string) (string, string, error) {
- 	req.Header.Set("Content-Type", "application/json")
- 	req.Header.Set(pdcpauth.ApiKeyHeaderName, creds.APIKey)
- 
--	resp, err := retryablehttp.DefaultClient().Do(req)
-+	resp, err := aiTemplateHTTPClient.Do(req)
- 	if err != nil {
- 		return "", "", errkit.Newf("Failed to send HTTP request: %v", err)
- 	}
-@@ -138,5 +142,9 @@ func generateAITemplate(prompt string) (string, string, error) {
- 		return "", "", errkit.Newf("Failed to generate template")
- 	}
- 
-+	if !aiTemplateIDRegex.MatchString(result.TemplateID) {
-+		return "", "", errkit.Newf("Invalid template ID in API response: %q", result.TemplateID)
-+	}
-+
- 	return result.Completion, result.TemplateID, nil
- }
+ 		callback(event)
 ```
 
-**File**: `pkg/catalog/loader/ai_loader_test.go` (added, +55/-0)
+**File**: `pkg/protocols/http/request_test.go` (modified, +79/-0)
 ```diff
-@@ -0,0 +1,55 @@
-+package loader
+@@ -1,6 +1,7 @@
+ package http
+ 
+ import (
++	"cmp"
+ 	"context"
+ 	"crypto/tls"
+ 	"fmt"
+@@ -1865,6 +1866,84 @@ func TestHTTPResponseReadSizeHonoursTemplateMaxSize(t *testing.T) {
+ 	}
+ }
+ 
++// storedResponseWriter keeps the stored response dumps.
++type storedResponseWriter struct {
++	*testutils.MockOutputWriter
++
++	responses []string
++}
++
++func (w *storedResponseWriter) WriteStoreDebugData(_, _, _, data string) {
++	if strings.Contains(data, "Dumped HTTP response") {
++		w.responses = append(w.responses, data)
++	}
++}
++
++// TestHTTPResponseTruncatedUsesEffectiveReadLimit checks that a stored response
++// is marked truncated exactly when its body reached the limit it was read with.
++func TestHTTPResponseTruncatedUsesEffectiveReadLimit(t *testing.T) {
++	previous := MaxBodyRead
++
++	t.Cleanup(func() { MaxBodyRead = previous })
++
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		w.Header().Set("Content-Type", "text/plain")
++		_, _ = w.Write([]byte(strings.Repeat("A", 2000)))
++	}))
++	defer server.Close()
++
++	tests := []struct {
++		name             string
++		defaultLimit     int // replaces MaxBodyRead when set
++		templateMaxSize  int
++		responseReadSize int
++		wantTruncated    bool
++	}{
++		{name: "default limit", defaultLimit: 1000, wantTruncated: true},
++		{name: "default limit, negative response-size-read", defaultLimit: 1000, responseReadSize: -1, wantTruncated: true},
++		{name: "body under default limit", wantTruncated: false},
++		{name: "template max-size", templateMaxSize: 500, wantTruncated: true},
++		{name: "response-size-read", responseReadSize: 800, wantTruncated: true},
++		{name: "max-size below response-size-read", templateMaxSize: 500, responseReadSize: 3000, wantTruncated: true},
++		{name: "limits above body length", templateMaxSize: 4000, responseReadSize: 3000, wantTruncated: false},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			MaxBodyRead = cmp.Or(tc.defaultLimit, previous)
++
++			opts := testutils.DefaultOptions.Copy()
++			opts.StoreResponse = true
++			opts.ResponseReadSize = tc.responseReadSize
++			testutils.Init(opts)
++			t.Cleanup(func() { testutils.Cleanup(opts) })
++
++			request := &Request{
++				ID:      "test-truncated",
++				MaxSize: tc.templateMaxSize,
++				Raw:     []string{"GET / HTTP/1.1\nHost: {{Hostname}}\n\n"},
++			}
++			executerOptions := testutils.NewMockExecuterOptions(opts, &testutils.TemplateInfo{
++				ID:   request.ID,
++				Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++			})
++			writer := &storedResponseWriter{MockOutputWriter: testutils.NewMockOutputWriter(opts.OmitTemplate)}
++			executerOptions.Output = writer
++			require.NoError(t, request.Compile(executerOptions))
++
++			err := request.ExecuteWithResults(
++				contextargs.NewWithInput(context.Background(), server.URL),
++				make(output.InternalEvent),
++				make(output.InternalEvent),
++				func(*output.InternalWrappedEvent) {},
++			)
++			require.NoError(t, err)
++			require.Len(t, writer.responses, 1)
++			require.Equal(t, tc.wantTruncated, strings.Contains(writer.responses[0], "(Truncated)"))
++		})
++	}
++}
++
+ const httpToHTTPSPage = "<html><title>400 The plain HTTP request was sent to HTTPS port</title><center>The plain HTTP request was sent to HTTPS port</center></html>"
+ 
+ // servePlainOrTLS accepts HTTP and TLS on one port. A plaintext request is
+```
+
+---
+
+### Incident Patch 3: `4fed40f7` (2026-11-05)
+**Commit Message**: fix(fuzz): stop re-rendering evaluated template variables (#8057)
+
+Fuzz rules rendered the template's variables once against request
+data, then passed the output to the Interactsh render pass as template
+text. A variable such as b: "{{body}}" therefore had the request body
+substituted into it and was rendered a second time, so DSL-shaped bytes
+in the incoming request were evaluated and the result was sent to the
+target. With payloads, the same leak depended on map iteration order,
+because that pass rendered each value against the map it was writing
+to.
+
+Treat rendered variable output as data, as the HTTP request builder
+does, so only generator payload definitions remain template text.
+Without payloads nothing is left to render, so the second pass is
+dropped. Payload values now render against the unrendered input, which
+makes the result independent of map iteration order. A variable that
+references a payload now gets the payload's unrendered definition; it
+only saw the rendered value through the second pass.
+
+Fixes: #8054
+
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/fuzz/execute.go` (modified, +14/-18)
+```diff
+@@ -155,23 +155,14 @@ func (rule *Rule) Execute(input *ExecuteRuleInput) (err error) {
+ 	baseInteractURLs := append([]string(nil), input.InteractURLs...)
+ 	if rule.generator == nil {
+ 		for _, component := range finalComponentList {
+-			var dataKeys map[string]struct{}
+-
+ 			optionVars := rule.options.Options.Vars.AsMap()
+ 			constants := rule.options.Constants
+ 			dataValues := rule.options.NewVariablesScope(baseValues, optionVars, constants)
+-			// get vars from variables while replacing interactsh urls
++			// Render variables once, allocating their interactsh URLs. The
++			// output may contain runtime data, so it is never rendered again.
+ 			evaluation := rule.options.Variables.EvaluateWithInteractshScope(dataValues, rule.options.Interactsh)
+-			evaluatedValues, interactURLs := evaluation.Values, evaluation.InteractURLs
+-			input.Values, dataKeys = mergeFuzzValueLayers(
+-				fuzzValueLayer{values: evaluatedValues, kind: fuzzValueTemplate},
+-				fuzzValueLayer{values: baseValues, kind: fuzzValueData},
+-				fuzzValueLayer{values: optionVars, kind: fuzzValueData},
+-				fuzzValueLayer{values: constants, kind: fuzzValueData},
+-			)
+-			// Replace template-text interactsh markers without evaluating runtime values.
+-			input.Values, interactURLs = rule.evaluateVarsWithInteractsh(input.Values, interactURLs, dataKeys)
+-			input.InteractURLs = mergeInteractURLs(baseInteractURLs, interactURLs)
++			input.Values = generators.MergeMaps(evaluation.Values, baseValues, optionVars, constants)
++			input.InteractURLs = mergeInteractURLs(baseInteractURLs, evaluation.InteractURLs)
+ 
+ 			err := rule.executeRuleValues(input, component)
+ 			if err != nil {
+@@ -240,15 +231,17 @@ func (rule *Rule) prepareGeneratorValues(values, baseValues map[string]interface
+ 	evaluation := rule.options.Variables.EvaluateWithInteractshScope(evaluationValues, rule.options.Interactsh)
+ 	evaluatedValues, interactURLs := evaluation.Values, evaluation.InteractURLs
+ 	inputValues, dataKeys := mergeFuzzValueLayers(
++		fuzzValueLayer{values: evaluatedValues, kind: fuzzValueData},
+ 		fuzzValueLayer{values: values, kind: fuzzValueTemplate},
+-		fuzzValueLayer{values: evaluatedValues, kind: fuzzValueTemplate},
+ 		fuzzValueLayer{values: baseValues, kind: fuzzValueData},
+ 		fuzzValueLayer{values: optionVars, kind: fuzzValueData},
+ 		fuzzValueLayer{values: constants, kind: fuzzValueData},
+ 	)
+ 
+ 	// Generator values are template-authored payload definitions until this
+-	// render. Runtime/base, CLI option, and constant values remain data.
++	// render. Rendered variables, runtime/base, CLI option, and constant
++	// values remain data. Payloads layer over variables so a payload that
++	// shares a variable's name is still rendered.
+ 	return rule.evaluateVarsWithInteractsh(inputValues, interactURLs, dataKeys)
+ }
+ 
+@@ -326,7 +319,7 @@ func (rule *Rule) evaluateVars(input string) (string, error) {
+ func (rule *Rule) evaluateVarsWithInteractsh(data map[string]interface{}, interactshUrls []string, dataKeys map[string]struct{}) (map[string]interface{}, []string) {
+ 	// Check if Interactsh options are configured
+ 	if rule.options.Interactsh != nil {
+-		data = maps.Clone(data)
++		rendered := maps.Clone(data)
+ 
+ 		interactshUrlsMap := make(map[string]struct{})
+ 		for _, url := range interactshUrls {
+@@ -335,7 +328,8 @@ func (rule *Rule) evaluateVarsWithInteractsh(data map[string]interface{}, intera
+ 
+ 		interactshUrls = mapsutil.GetKeys(interactshUrlsMap)
+ 
+-		// Iterate through template-text data to replace Interactsh URL markers.
++		// Render each template-text value against the unrendered input, so
++		// the result does not depend on map iteration order.
+ 		for k, v := range data {
+ 			if _, ok := dataKeys[k]; ok {
+ 				continue
+@@ -349,7 +343,7 @@ func (rule *Rule) evaluateVarsWithInteractsh(data map[string]interface{}, intera
+ 				InteractURLs: interactshUrls,
+ 			})
+ 			if err == nil {
+-				data[k] = got.Text
++				rendered[k] = got.Text
+ 				for _, url := range got.InteractURLs {
+ 					if _, ok := interactshUrlsMap[url]; ok {
+ 						continue
+@@ -360,6 +354,8 @@ func (rule *Rule) evaluateVarsWithInteractsh(data map[string]interface{}, intera
+ 				}
+ 			}
+ 		}
++
++		data = rendered
+ 	}
+ 
+ 	return data, interactshUrls
+```
+
+**File**: `pkg/fuzz/execute_values_test.go` (added, +224/-0)
+```diff
+@@ -0,0 +1,224 @@
++package fuzz
 +
 +import (
-+	"encoding/json"
++	"context"
++	"fmt"
++	"io"
 +	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
++	"strings"
 +	"testing"
 +
++	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/disk"
++	"github.com/projectdiscovery/nuclei/v3/pkg/fuzz/component"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/generators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/variables"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/retryablehttp-go"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func newAITemplateServer(t *testing.T, templateID string, gotKey *atomic.Value) {
-+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		gotKey.Store(r.Header.Get("X-Api-Key"))
-+		_ = json.NewEncoder(w).Encode(map[string]string{
-+			"completion":  "id: test\n",
-+			"template_id": templateID,
-+		})
-+	}))
-+	t.Cleanup(srv.Close)
++const (
++	// requestBodyWithDSL is request data that looks like a DSL expression.
++	requestBodyWithDSL = `PLAIN-{{to_upper("abc")}}-END`
++	queryRuleTarget    = "http://127.0.0.1/echo?p=SEED"
++)
 +
-+	oldEndpoint, oldClient := aiTemplateGeneratorAPIEndpoint, aiTemplateHTTPClient
-+	t.Cleanup(func() { aiTemplateGeneratorAPIEndpoint, aiTemplateHTTPClient = oldEndpoint, oldClient })
-+	aiTemplateGeneratorAPIEndpoint = srv.URL
-+	t.Setenv("PDCP_API_KEY", "test-key")
-+	if templateID != "" {
-+		// Trust the test certificate, to check the template_id only.
-+		aiTemplateHTTPClient = srv.Client()
-+	}
++// fakeInteractshClient hands out numbered URLs without contacting a server.
++// Fuzz rules only allocate URLs through NewURLWithData, so the embedded nil
++// IClient is never called.
++type fakeInteractshClient struct {
++	interactsh.IClient
++
++	issued int
 +}
 +
-+func TestAITemplateVerifiesTLS(t *testing.T) {
-+	var gotKey atomic.Value
-+	newAITemplateServer(t, "", &gotKey)
++func (c *fakeInteractshClient) NewURLWithData(string) (string, error) {
++	c.issued++
 +
-+	_, _, err := generateAITemplate("check for exposed admin panels")
-+	require.ErrorContains(t, err, "certificate")
-+	require.Nil(t, gotKey.Load(), "the API key went to an untrusted server")
++	return fmt.Sprintf("oast%d.example", c.issued), nil
 +}
 +
-+func TestAITemplateRejectsUnsafeID(t *testing.T) {
-+	for _, id := range []string{"../../.config/nuclei/config", "a/b", `a\b`, "a.b", "a b"} {
-+		var gotKey atomic.Value
-+		newAITemplateServer(t, id, &gotKey)
-+		_, _, err := generateAITemplate("check for exposed admin panels")
-+		require.Error(t, err, id)
-+	}
++// newQueryRule compiles a single-mode rule that replaces the p query value
++// with fuzzValue.
++func newQueryRule(
++	t *testing.T,
++	fuzzValue string,
++	generator *generators.PayloadGenerator,
++	templateVars variables.Variable,
++	client interactsh.IClient,
++) *Rule {
++	t.Helper()
 +
-+	var gotKey atomic.Value
-+	newAITemplateServer(t, "Abc-123_x", &gotKey)
-+	_, templateID, err := generateAITemplate("check for exposed admin panels")
++	rule := &Rule{
++		Part: component.RequestQueryComponent,
++		Type: "replace",
++		Mode: "single",
++		Fuzz: SliceOrMapSlice{Value: []string{fuzzValue}},
++	}
++	err := rule.Compile(generator, &protocols.ExecutorOptions{
++		Variables:  templateVars,
++		Options:    &types.Options{},
++		Interactsh: client,
++	})
 +	require.NoError(t, err)
-+	require.Equal(t, "Abc-123_x", templateID)
++
++	return rule
 +}
++
++// executeQueryRule runs rule against queryRuleTarget and returns the generated
++// requests.
++func executeQueryRule(
++	t *testing.T,
++	rule *Rule,
++	method string,
++	body io.Reader,
++	values map[string]any,
++) []GeneratedRequest {
++	t.Helper()
++
++	req, err := retryablehttp.NewRequest(method, queryRuleTarget, body)
++	require.NoError(t, err)
++
++	var got []GeneratedRequest
++	err = rule.Execute(&ExecuteRuleInput{
++		Input:       contextargs.NewWithInput(context.Background(), queryRuleTarget),
++		BaseRequest: req,
++		Values:      values,
++		Callback: func(gr GeneratedRequest) bool {
++			got = append(got, gr)
++
++			return true
++		},
++	})
++	require.NoError(t, err)
++
++	return got
++}
++
++// newRequestDataVariableRule returns a query rule whose template declares
++// b: "{{body}}", so b captures request data.
++func newRequestDataVariableRule(t *testing.T, fuzzValue string, payloads map[string]any) *Rule {
++	t.Helper()
++
++	templateVars := newFuzzTestVariables()
++	templateVars.Set("b", "{{body}}")
++
++	var generator *generators.PayloadGenerator
++
++	if payloads != nil {
++		var err error
++
++		generator, err = generators.New(
++			payloads, generators.BatteringRamAttack, "", disk.NewCatalog(""), "", types.DefaultOptions(),
++		)
++		require.NoError(t, err)
++	}
++
++	// The CLI creates an Interactsh client even with -no-interactsh.
++	return newQueryRule(t, fuzzValue, generator, templateVars, &interactsh.Client{})
++}
++
++// fuzzedQueryValues runs rule against a POST request whose body is
++// requestBodyWithDSL and returns the fuzzed p query value of each generated
++// request.
++func fuzzedQueryValues(t *testing.T, rule *Rule) []string {
++	t.Helper()
++
++	generated := executeQueryRule(t, rule, http.MethodPost, strings.NewReader(requestBodyWithDSL), map[string]any{
++		"body": requestBodyWithDSL,
++	})
++
++	got := make([]string, 0, len(generated))
++	for _, gr := range generated {
++		got = append(got, gr.Request.URL.Query().Get("p"))
++	}
++
++	return got
++}
++
++func TestExecuteKeepsRequestDataInTemplateVariableLiteral(t *testing.T) {
++	t.Parallel()
++
++	t.Run("fuzz value", func(t *testing.T) {
++		t.Parallel()
++
++		rule := newRequestDataVariableRule(t, "{{b}}", nil)
++
++		require.Equal(t, []string{requestBodyWithDSL}, fuzzedQueryValues(t, rule))
++	})
++
++	t.Run("payload value", func(t *testing.T) {
++		t.Parallel()
++
++		rule := newRequestDataVariableRule(t, "{{inj}}", map[string]any{
++			"inj": []any{"{{b}}"},
++		})
++
++		// Each run iterates a fresh value map. Repeat so the result
++		// cannot depend on map iteration order.
++		for range 256 {
++			require.Equal(t, []string{requestBodyWithDSL}, fuzzedQueryValues(t, rule))
++		}
++	})
++}
++
++func TestExecuteRendersTemplateVariableInteractshMarker(t *testing.T) {
++	t.Parallel()
++
++	templateVars := newFuzzTestVariables()
++	templateVars.Set("marker", "{{interactsh-url}}")
++	rule := newQueryRule(t, "{{marker}}", nil, templateVars, &fakeInteractshClient{})
++
++	got := executeQueryRule(t, rule, http.MethodGet, nil, nil)
++
++	require.Len(t, got, 1)
++	require.Equal(t, []string
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8064** (2026-11-05): send template doh queries through the scan dialer (@Mzack9999)
+- **PR #8059** (2026-11-05): fix(http): render self-contained raw requests once (@dwisiswant0)
+- **PR #8057** (2026-11-05): fix(fuzz): stop re-rendering evaluated template variables (@dwisiswant0)
+- **PR #8056** (2026-11-05): fix(expressions): evaluate template expressions in place (@dwisiswant0)
 - **PR #8048** (2026-11-04): Verify TLS for cloud uploads (@Mzack9999)
-- **PR #8044** (2026-11-05): verify TLS and validate template_id for nuclei -ai (@Mzack9999)
-- **PR #8042** (2026-11-04): exporters: verify TLS certificates (@Mzack9999)
-- **PR #8040** (2026-11-04): add ipmi javascript library (@dogancanbakir)
-- **PR #8037** (2026-11-05): bump go-jose to v4.1.6 (@Mzack9999)
-- **PR #8024** (2026-11-03): Read headless excludes under the dialer lock (@Mzack9999)
+- **PR #8046** (2026-11-05): fix(http): flag truncated responses at the effective read limit (@dwisiswant0)
 
 ---
 
@@ -1616,28 +2261,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump go-jose to v4.1.6 (#8037)
+## X. http): render self-contained raw requests once (#8059)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/common/expressions/variables.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27ac1e87`: deps): bump go-jose to v4.1.6 (#8037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b519d22`: http): render self-contained raw requests once (#8059). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/expressions/variables.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+// ReferencesVariables reports whether data contains a {{...}} marker that
+// refers to a variable in names, either alone or inside an expression. It
+// parses the marker but does not evaluate it.
+func ReferencesVariables(data string, names map[string]interface{}) bool {
+	for _, match := range unresolvedVariablesRegex.FindAllStringSubmatch(data, -1) {
+		expr, err := govaluate.NewEvaluableExpressionWithFunctions(match[1], dsl.HelperFunctions)
+		if err != nil {
+			continue
+		}
+
+		for _, name := range expr.Vars() {
+			if _, ok := names[name]; ok {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27ac1e87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b519d22` are properly handled with clean fallback behavior.

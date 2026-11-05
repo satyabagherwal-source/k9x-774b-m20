@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T11:23:33.694Z",
+  "last_updated": "2026-11-05T11:30:55.685Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1790,14 +1790,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
-      "content_hash": "4f3fe48d90e964f5d207078f1c38bca675da081bc79f854653c67625b59b9182",
-      "verified_at": "2026-10-31T20:46:37.632Z",
+      "content_hash": "a636c09e24ca33a822e5378ce81148c8d9bf53d851c7eda551dbcbd781aa135f",
+      "verified_at": "2026-11-05T11:30:44.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:46:37.632Z"
+      "last_updated": "2026-11-05T11:30:44.708Z"
     },
     "ConwayResearch/Underdog-Saluki-27B-1.0": {
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
-      "verified_at": "2026-11-05T07:20:34.015Z",
+      "content_hash": "0731a8c10bcae7cb33d6d2292ee08e71e17c0587b8b91cefd0c6269d84328076",
+      "verified_at": "2026-11-05T11:30:55.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:20:34.015Z"
+      "last_updated": "2026-11-05T11:30:55.684Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
-      "verified_at": "2026-11-02T16:33:27.879Z",
+      "content_hash": "acbde89916fcc54d3900962e4c615714e30c9c84e0ad40be3a4db14c5b030d1e",
+      "verified_at": "2026-11-05T11:30:50.813Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T16:33:27.879Z"
+      "last_updated": "2026-11-05T11:30:50.813Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",
