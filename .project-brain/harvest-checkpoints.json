@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T08:42:43.698Z",
+  "last_updated": "2026-11-05T08:52:11.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "fc564f9e494d7b9a7a35e4c0d93a92d3c8f06a7cd5ad6c06024f4e522d502a9d",
-      "verified_at": "2026-10-31T18:01:42.416Z",
+      "content_hash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
+      "verified_at": "2026-11-05T08:52:11.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:01:42.416Z"
+      "last_updated": "2026-11-05T08:52:11.380Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
-      "verified_at": "2026-11-05T08:02:22.757Z",
+      "content_hash": "baf58ec7129091ea759607be048744b8625590273319835069f84b8cf6b56840",
+      "verified_at": "2026-11-05T08:50:21.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:02:22.757Z"
+      "last_updated": "2026-11-05T08:50:21.685Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
-      "verified_at": "2026-11-04T19:08:55.708Z",
+      "content_hash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
+      "verified_at": "2026-11-05T08:50:19.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:08:55.708Z"
+      "last_updated": "2026-11-05T08:50:19.522Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
-      "verified_at": "2026-11-04T18:13:55.742Z",
+      "content_hash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
+      "verified_at": "2026-11-05T08:50:22.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:13:55.742Z"
+      "last_updated": "2026-11-05T08:50:22.809Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

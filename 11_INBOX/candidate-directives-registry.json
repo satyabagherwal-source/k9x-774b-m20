@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T08:02:56.128Z",
+  "last_updated": "2026-11-05T08:50:21.679Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3918,6 +3918,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-thebaselab-codeapp"
+    },
+    {
+      "id": "CD-273J",
+      "directive_title": "Record ARC 6e02f1e3 publication blockers",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "c57cbd6c",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

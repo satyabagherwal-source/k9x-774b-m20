@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `27424dee`  
+> **Source Version**: `05de5692`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:13:54.975Z  
+> **Timestamp**: 2026-11-05T08:50:21.944Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:13:54.329Z  
+> **Harvest Timestamp**: 2026-11-05T08:50:21.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,610 +1626,37 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de0080dd` (2026-11-04)
-**Commit Message**: skills: suggest Box::into_raw over Box::leak in rust-review (#11875)
+### Incident Patch 1: `be5b6f5c` (2026-11-04)
+**Commit Message**: [MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (#12200)
 
-skills: forbid Box::leak in rust-review
+Chore: use NonNull::from_ref in ThinVec constructor
 
-Box::leak is meant for values that live for the rest of the program,
-which RediSearch almost never has. A leak that is never reclaimed fails
-Miri's leak checker; one reclaimed with Box::from_raw goes through a
-&'static mut that misstates the ownership.
-
-Add check 3i: any new Box::leak is a blocking finding, with the
-alternatives to use instead (Box::into_raw, storing the Box, OnceLock /
-LazyLock for true globals). The only exception is a process-lifetime
-value with a comment explaining why no alternative fits.
-
-**File**: `.skills/rust-review/SKILL.md` (modified, +31/-1)
+**File**: `src/redisearch_rs/thin_vec/src/lib.rs` (modified, +1/-7)
 ```diff
-@@ -290,6 +290,36 @@ Violations (report as suggestions):
- - A test calling `*_ffi` constructors or vtable callbacks where the crate's safe API
-   covers the same path.
- 
-+#### 3i. Don't use `Box::leak`
-+
-+Treat [`Box::leak`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.leak) as
-+off-limits in this codebase. It exists for data that lives for the rest of the program,
-+and RediSearch has almost no such data: every index, query, and result is eventually
-+freed. A leaked value that is never reclaimed is a real leak, and Miri's leak checker
-+fails `cargo miri test` whenever a test exercises the leaking path. A leaked value that
-+*is* reclaimed with `Box::from_raw` works, but the `&'static mut T` it goes through
-+misstates the ownership and hides the reclaim path from the reader.
-+
-+Use instead:
-+- To hand ownership to C or store it as a raw pointer:
-+  [`Box::into_raw`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.into_raw),
-+  reclaimed with `Box::from_raw`.
-+- To get a `NonNull<T>`:
-+  `NonNull::new(Box::into_raw(b)).expect("Box pointers are non-null")`, which needs no
-+  `unsafe` while `Box::into_non_null` is unstable.
-+- To keep an owned value alongside a borrowed one: store the `Box` (or an enum of owned
-+  and borrowed variants) rather than leaking it to obtain a reference.
-+- For a true process-lifetime global: a `static` with `OnceLock` / `LazyLock`.
-+
-+Violations:
-+- Any new `Box::leak` call, whatever the result is used for and whether or not it is
-+  later reclaimed. The only exception is a value that is provably initialized once and
-+  never freed for the life of the process, with a comment stating why none of the
-+  alternatives above fit.
-+
-+A leak on a path that repeats (per query, per index, per document) with no matching
-+`Box::from_raw` is also unbounded allocation; report it under 3e as well.
-+
- ### 4. Porting-mode checks (only when porting mode = true)
- 
- #### 4a. Semantic equivalence
-@@ -347,7 +377,7 @@ At the end, provide a short summary:
- - Total suggestions
- - Whether the change is **ready to merge** or **needs revision**
- 
--Blocking violations: any issue in 3a, 3b, 4a, 4b, or 4c, plus any 3e issue that
-+Blocking violations: any issue in 3a, 3b, 3i, 4a, 4b, or 4c, plus any 3e issue that
- can cause memory unsoundness, crashes, data exposure, unauthorized access, or
- denial of service, plus the first two 3g violations (behavior with no test, and
- uncovered code paths).
-```
-
----
-
-### Incident Patch 2: `365789b1` (2026-11-04)
-**Commit Message**: [MOD-20055] Fix use-after-free when scoring filtered vector queries whose filter index changes mid-query (#12022)
-
-* index_result: Share query terms between term records
-
-Borrowed and FullyOwned term records own their query term in a Box, so
-a to_owned copy can only borrow it, and is left dangling if the record
-goes first. A FullyOwned record is the one meant to outlive its source,
-so that is the copy most likely to be held past it.
-
-Hold the term of Borrowed and FullyOwned records in a SharedQueryTerm,
-a reference-counted pointer to the term itself, and have to_owned share
-the term of a FullyOwned record rather than borrow it. Sharing only bumps
-a counter. C still sees an RSQueryTerm pointer.
-
-* index_result: Merge the two owned term record variants
-
-With query terms shared, an Owned term record borrowing its term from
-another record no longer saves anything worth a variant: sharing the
-term costs a counter bump. Make Owned share its term, as FullyOwned did,
-and drop FullyOwned. A to_owned copy then borrows nothing from its
-source, so to_owned takes &self rather than &'a self, and the copy stays
-valid after the iterator that produced the record is dropped, which the
-top-k's captur
-
-**File**: `src/aggregate/functions/string.c` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ static int func_matchedTerms(ExprEval *ctx, RSValue **argv, size_t argc, RSValue
-   const SearchResult *res = ctx->res;
- 
-   if (res && SearchResult_HasIndexResult(res)) {
--    RSQueryTerm *terms[maxTerms];
-+    const RSQueryTerm *terms[maxTerms];
-     size_t n = IndexResult_GetMatchedTerms(SearchResult_GetIndexResult(ctx->res), terms, maxTerms);
-     if (n) {
-       RSValue **arr = RSValue_NewArrayBuilder(n);
-```
-
-**File**: `src/ext/debug_scorers.c` (modified, +2/-2)
-```diff
-@@ -37,7 +37,7 @@
- /* Recursively sum IDF values from all terms in the result */
- static double sumIdfRecursive(const RSIndexResult *r) {
-   if (r->data.tag == RSResultData_Term) {
--    RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+    const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-     return term ? QueryTerm_GetIDF(term) : 0;
-   }
-   if (r->data.tag & (RSResultData_Intersection | RSResultData_Union | RSResultData_HybridMetric)) {
-@@ -55,7 +55,7 @@ static double sumIdfRecursive(const RSIndexResult *r) {
- /* Recursively sum BM25 IDF values from all terms in the result */
- static double sumBm25IdfRecursive(const RSIndexResult *r) {
-   if (r->data.tag == RSResultData_Term) {
--    RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+    const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-     return term ? QueryTerm_GetBM25_IDF(term) : 0;
-   }
-   if (r->data.tag & (RSResultData_Intersection | RSResultData_Union | RSResultData_HybridMetric)) {
-```
-
-**File**: `src/ext/default.c` (modified, +3/-3)
-```diff
-@@ -68,7 +68,7 @@ static void strExpCreateParent(const ScoringFunctionArgs *ctx, RSScoreExplain **
- static double tfidfRecursive(const RSIndexResult *r, const RSDocumentMetadata *dmd,
-                              RSScoreExplain *scrExp) {
-   if (r->data.tag == RSResultData_Term) {
--    RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+    const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-     double idf = term ? QueryTerm_GetIDF(term) : 0;
-     double res = r->weight * ((double)r->freq) * idf;
-     EXPLAIN(scrExp, "(TFIDF %.2f = Weight %.2f * TF %d * IDF %.2f)", res, r->weight, r->freq, idf);
-@@ -168,7 +168,7 @@ static double bm25Recursive(const ScoringFunctionArgs *ctx, const RSIndexResult
-   double f = (double)r->freq;
-   double ret = 0;
-   if (r->data.tag == RSResultData_Term) {
--    RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+    const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-     double idf = (term ? QueryTerm_GetIDF(term) : 0);
-     ret = r->weight * idf * f / (f + k1 * (1.0f - b + b * ctx->indexStats.avgDocLen));
-     EXPLAIN(scrExp,
-@@ -258,7 +258,7 @@ static double bm25StdRecursive(const ScoringFunctionArgs *ctx, const RSIndexResu
-   double ret = 0;
-   if (r->data.tag == RSResultData_Term) {
-     // Compute IDF based on total number of docs in the index and the term's total frequency.
--    RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+    const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-     double idf = QueryTerm_GetBM25_IDF(term);
-     size_t term_len = 0;
-     const char *term_str = QueryTerm_GetStrAndLen(term, &term_len);
-```
-
-**File**: `src/fragmenter.c` (modified, +1/-1)
-```diff
-@@ -495,7 +495,7 @@ int FragmentTermIterator_Next(FragmentTermIterator *iter, FragmentTerm **termInf
-     return 1;
-   }
- 
--  RSQueryTerm *term = iter->curMatchRec;
-+  const RSQueryTerm *term = iter->curMatchRec;
- 
-   iter->tmpTerm.score = QueryTerm_GetIDF(term);
-   iter->tmpTerm.termId = QueryTerm_GetID(term);
-```
-
-**File**: `src/fragmenter.h` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ typedef struct {
- typedef struct {
-   RSByteOffsetIterator *byteIter;
-   RSOffsetIterator *offsetIter;
--  RSQueryTerm *curMatchRec;
-+  const RSQueryTerm *curMatchRec;
-   uint32_t curTokPos;
-   uint32_t curByteOffset;
-   FragmentTerm tmpTerm;
-```
-
-**File**: `src/index_result/index_result.c` (modified, +4/-3)
-```diff
-@@ -104,7 +104,8 @@ int IndexResult_MinOffsetDelta(const RSIndexResult *r) {
-   return dist ? sqrt(dist) : num - 1;
- }
- 
--void result_GetMatchedTerms(const RSIndexResult *r, RSQueryTerm *arr[], size_t cap, size_t *len) {
-+void result_GetMatchedTerms(const RSIndexResult *r, const RSQueryTerm *arr[], size_t cap,
-+                            size_t *len) {
-   if (*len == cap) return;
- 
-   switch (r->data.tag) {
-@@ -123,7 +124,7 @@ void result_GetMatchedTerms(const RSIndexResult *r, RSQueryTerm *arr[], size_t c
-     }
-     case RSResultData_Term:
-     {
--      RSQueryTerm *term = IndexResult_QueryTermRef(r);
-+      const RSQueryTerm *term = IndexResult_QueryTermRef(r);
-       if (term) {
-         size_t s_len = 0;
-         // make sure we have a term string and it's not an expansion
-@@ -137,7 +138,7 @@ void result_GetMatchedTerms(const RSIndexResult *r, RSQueryTerm *arr[], size_t c
-   }
- }
- 
--size_t IndexResult_GetMatchedTerms(const RSIndexResult *r, RSQueryTerm **arr, size_t cap) {
-+size_t IndexResult_GetMatchedTerms(const RSIndexResult *r, const RSQueryTerm **arr, size_t cap) {
-   size_t arrlen = 0;
-   result_GetMatchedTerms(r, arr, cap, &arrlen);
-   return arrlen;
-```
-
-**File**: `src/index_result/index_result.h` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ int IndexResult_MinOffsetDelta(const RSIndexResult *r);
- 
- /* Fill an array of max capacity cap with all the matching text terms for the result. The number of
-  * matching terms is returned */
--size_t IndexResult_GetMatchedTerms(const RSIndexResult *r, RSQueryTerm **arr, size_t cap);
-+size_t IndexResult_GetMatchedTerms(const RSIndexResult *r, const RSQueryTerm **arr, size_t cap);
- 
- #ifdef __cplusplus
- }
-```
-
-**File**: `src/offset_vector.c` (modified, +10/-10)
-```diff
-@@ -29,21 +29,21 @@ typedef struct {
-   Buffer buf;
-   BufferReader br;
-   uint32_t lastValue;
--  RSQueryTerm *term;
-+  const RSQueryTerm *term;
- } _RSOffsetVectorIterator;
- 
- typedef struct {
-   const RSAggregateResult *res;
-   size_t size;
-   RSOffsetIterator *iters;
-   uint32_t *offsets;
--  RSQueryTerm **terms;
-+  const RSQueryTerm **terms;
-   // uint32_t lastOffset; - TODO: Avoid duplicate offsets
- 
- } _RSAggregateOffsetIterator;
- 
- /* Get the next entry, or return RS_OFFSETVECTOR_EOF */
--uint32_t _ovi_Next(void *ctx, RSQueryTerm **t);
-+uint32_t _ovi_Next(void *ctx, const RSQueryTerm **t);
- /* Rewind the iterator */
- void _ovi_Rewind(void *ctx);
- 
-@@ -65,7 +65,7 @@ void *newOffsetIterator() {
-   return rm_malloc(sizeof(_RSOffsetVectorIterator));
- }
- /* Create an offset iterator interface  from a raw offset vector */
--RSOffsetIterator RSOffsetVector_Iterate(const RSOffsetVector *v, RSQueryTerm *t) {
-+RSOffsetIterator RSOffsetVector_Iterate(const RSOffsetVector *v, const RSQueryTerm *t) {
-   mempool_t *pool = pthread_getspecific(__offsetIters);
-   if (!pool) {
-     mempool_options options = {
-@@ -85,7 +85,7 @@ RSOffsetIterator RSOffsetVector_Iterate(const RSOffsetVector *v, RSQueryTerm *t)
- }
- 
- /* An aggregate offset iterator yielding offsets one by one */
--uint32_t _aoi_Next(void *ctx, RSQueryTerm **term);
-+uint32_t _aoi_Next(void *ctx, const RSQueryTerm **term);
- void _aoi_Free(void *ctx);
- void _aoi_Rewind(void *ctx);
- 
-@@ -127,7 +127,7 @@ static RSOffsetIterator _aggregateResult_iterate(const RSAggregateResult *agg) {
-     rm_free(it->terms);
-     it->iters = rm_calloc(numChildren, sizeof(RSOffsetIterator));
-     it->offsets = rm_calloc(numChildren, sizeof(uint32_t));
--    it->terms = rm_calloc(numChildren, sizeof(RSQueryTerm *));
-+    it->terms = rm_calloc(numChildren, sizeof(const RSQueryTerm *));
-   }
- 
-   AggregateRecordsSlice children = AggregateResult_GetRecordsSlice(agg);
-@@ -139,7 +139,7 @@ static RSOffsetIterator _aggregateResult_iterate(const RSAggregateResult *agg) {
- 
-   return (RSOffsetIterator){.Next = _aoi_Next, .Rewind = _aoi_Rewind, .Free = _aoi_Free, .ctx = it};
- }
--uint32_t _empty_Next(void *ctx, RSQueryTerm **t) {
-+uint32_t _empty_Next(void *ctx, const RSQueryTerm **t) {
-   return RS_OFFSETVECTOR_EOF;
- }
- void _empty_Free(void *ctx) {
-@@ -159,7 +159,7 @@ RSOffsetIterator RSIndexResult_IterateOffsets(const RSIndexResult *res) {
-     case RSResultData_Term:
-     {
-       const RSOffsetVector *offsets = IndexResult_TermOffsetsRef(res);
--      RSQueryTerm *term = IndexResult_QueryTermRef(res);
-+      const RSQueryTerm *term = IndexResult_QueryTermRef(res);
-       return RSOffsetVector_Iterate(offsets, term);
-     }
- 
-@@ -201,7 +201,7 @@ void _ovi_Free(void *ctx) {
-   rm_free(ctx);
- }
- 
--uint32_t _ovi_Next(void *ctx, RSQueryTerm **t) {
-+uint32_t _ovi_Next(void *ctx, const RSQueryTerm **t) {
-   _RSOffsetVectorIterator *vi = ctx;
- 
-   if (!BufferReader_AtEnd(&vi->br)) {
-@@ -213,7 +213,7 @@ uint32_t _ovi_Next(void *ctx, RSQueryTerm **t) {
-   return RS_OFFSETVECTOR_EOF;
- }
- 
--uint32_t _aoi_Next(void *ctx, RSQueryTerm **t) {
-+uint32_t _aoi_Next(void *ctx, const RSQueryTerm **t) {
-   _RSAggregateOffsetIterator *it = ctx;
- 
-   int minIdx = -1;
-```
-
----
-
-### Incident Patch 3: `1d5ed985` (2026-11-04)
-**Commit Message**: [MOD-20241] Stop row and reply loops on a query memory stop (#12099)
-
-* Add a stop request with a reason to the query timeout state
-
-Any thread can now ask a query execution cycle to stop, in every timeout
-kind including unarmed. IsTimedOut and IsTimedOutExact report it
-unamortized, and so does the Rust request timeout context, so their
-callers stop without a per-site change. IsBlockedClientTimedOut ignores
-it, since its callers ask whether the timeout callback owns the reply.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Stop row and reply loops on a requested query stop
-
-Add QueryRequest_ShouldStop, a requested stop or the blocked-client
-timeout, and use it at the per-row checks of AggregateResults and the
-safe depleter, the coordinator network processor's entry and post-pop
-checks, and the per-shard merge loops of the FT.SEARCH reducer. The
-coordinator pop also aborts on the stop flag in every timeout kind.
-Ownership checks keep IsBlockedClientTimedOut.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Keep the stop out of the timeout checks
-
-Timeout checks run on every iterator probe; reading the stop there cost
-about 14 instructions per probe. Stop-check sites re
-
-**File**: `src/aggregate/aggregate_exec_common.c` (modified, +8/-6)
-```diff
-@@ -102,10 +102,11 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // clean the search result
-      r = SearchResult_New();
- 
--     // Honour a main-thread timeout flag at the row boundary: buffering
--     // stages (safe loader, sorter yield) can keep emitting from internal
--     // buffers without re-touching upstream's per-row timeout check.
--     if (areq && QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) {
-+     // Honour a memory stop or a main-thread timeout flag at the row
-+     // boundary: buffering stages (safe loader, sorter yield) can keep emitting
-+     // from internal buffers without re-touching upstream's per-row timeout check.
-+     if (areq && (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-+                  QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits))) {
-        *rc = RS_RESULT_TIMEDOUT;
-        break;
-      }
-@@ -122,8 +123,9 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-    if (ctx->limits->timeout.config.timeoutPolicy != TimeoutPolicy_Return || ctx->oomPolicy == OomPolicy_Fail) {
-      // Aggregate all results before populating the response
-      *results = AggregateResults(rp, ctx->areq, rc);
--     // Check timeout after aggregation
--     if (QueryRequestLimits_IsTimedOutExact(ctx->limits)) {
-+     // Check timeout after aggregation; a memory stop raised while filling the limit ends it the
-+     // same way.
-+     if (QueryRequestLimits_ShouldStopExact(ctx->limits)) {
-        *rc = RS_RESULT_TIMEDOUT;
-      }
-    } else {
-```
-
-**File**: `src/coord/hybrid/dist_hybrid.c` (modified, +1/-1)
-```diff
-@@ -997,7 +997,7 @@ static ResultProcessor *findSafeDepleter(const HybridRequest *hreq, size_t i) {
- // the tail hybrid merger job that cv-waits on their completion or this will
- // deadlock (see submitHybridTail).
- static void scheduleDepleters(HybridRequest *hreq) {
--    const bool timedOut = QueryRequestLimits_IsTimedOutExact(&hreq->base.limits);
-+    const bool timedOut = QueryRequestLimits_ShouldStopExact(&hreq->base.limits);
-     for (size_t i = 0; i < hreq->nrequests; i++) {
-         ResultProcessor *depleter = findSafeDepleter(hreq, i);
-         if (timedOut) {
-```
-
-**File**: `src/coord/rmr/chan.c` (modified, +6/-4)
-```diff
-@@ -171,15 +171,17 @@ static bool waitForCond(pthread_cond_t *cond, pthread_mutex_t *lock,
- }
- 
- void *MRChannel_PopWithTimeout(MRChannel *chan, const struct timespec *abstimeMono,
--                               atomic_bool *abortFlag, bool *timedOut) {
--  // At least one wake mechanism must be provided; callers without either should use MRChannel_Pop.
--  RS_ASSERT(abstimeMono || abortFlag);
-+                               atomic_bool *timedOutFlag, atomic_bool *memoryStopFlag,
-+                               bool *timedOut) {
-+  // At least one wake mechanism must be provided; callers without any should use MRChannel_Pop.
-+  RS_ASSERT(abstimeMono || timedOutFlag || memoryStopFlag);
-   if (timedOut) *timedOut = false;
- 
-   pthread_mutex_lock(&chan->lock);
-   while (!chan->size) {
-     // Sticky abort flipped by another thread (e.g. timeout callback + MRChannel_WakeAbort).
--    if (abortFlag && atomic_load_explicit(abortFlag, memory_order_relaxed)) goto aborted;
-+    if (timedOutFlag && atomic_load_explicit(timedOutFlag, memory_order_relaxed)) goto aborted;
-+    if (memoryStopFlag && atomic_load_explicit(memoryStopFlag, memory_order_relaxed)) goto aborted;
-     // One-shot unblock via MRChannel_Unblock; reset for the next pop.
-     if (!chan->wait) { chan->wait = true; goto aborted; }
-     // Park until pushed/broadcast/deadline. Re-checks all conditions on wake.
-```
-
-**File**: `src/coord/rmr/chan.h` (modified, +6/-4)
-```diff
-@@ -28,11 +28,13 @@ void *MRChannel_Pop(MRChannel *chan);
- void *MRChannel_TryPop(MRChannel *chan);
- 
- /* Pop an item, with optional CLOCK_MONOTONIC_RAW deadline (`abstime`) and/or abort
-- * flag (re-checked on each wait entry; pair with MRChannel_WakeAbort). `timedOut`
-- * set if deadline expired. At least one of `abstime` / `abortFlag` must be non-NULL;
-- * callers wanting an indefinite blocking pop should use MRChannel_Pop. */
-+ * flags (either one aborts; re-checked on each wait entry; pair with
-+ * MRChannel_WakeAbort). `timedOut` set if deadline expired. At least one of
-+ * `abstime` / `timedOutFlag` / `memoryStopFlag` must be non-NULL; callers wanting an
-+ * indefinite blocking pop should use MRChannel_Pop. */
- void *MRChannel_PopWithTimeout(MRChannel *chan, const struct timespec *abstime,
--                               atomic_bool *abortFlag, bool *timedOut);
-+                               atomic_bool *timedOutFlag, atomic_bool *memoryStopFlag,
-+                               bool *timedOut);
- 
- /* Wake any thread currently blocked in MRChannel_PopWithTimeout so it re-evaluates
-  * its abort flag. Safe to call even if no reader is blocked. */
-```
-
-**File**: `src/coord/rmr/rmr.c` (modified, +3/-2)
-```diff
-@@ -1017,8 +1017,9 @@ MRReply *MRIterator_Next(MRIterator *it) {
- }
- 
- MRReply *MRIterator_NextWithTimeout(MRIterator *it, const struct timespec *abstime,
--                                    atomic_bool *abortFlag, bool *timedOut) {
--  return MRChannel_PopWithTimeout(it->ctx.chan, abstime, abortFlag, timedOut);
-+                                    atomic_bool *timedOutFlag, atomic_bool *memoryStopFlag,
-+                                    bool *timedOut) {
-+  return MRChannel_PopWithTimeout(it->ctx.chan, abstime, timedOutFlag, memoryStopFlag, timedOut);
- }
- 
- struct MRChannel *MRIterator_GetChannel(MRIterator *it) {
-```
-
-**File**: `src/coord/rmr/rmr.h` (modified, +5/-4)
-```diff
-@@ -210,11 +210,12 @@ MRReply *MRIterator_Next(MRIterator *it);
- MRReply *MRIterator_TryNext(MRIterator *it);
- 
- /* Get next reply, with optional CLOCK_MONOTONIC_RAW deadline (`abstime`) and/or
-- * abort flag (pair with MRChannel_WakeAbort). `timedOut` set if deadline expired.
-- * At least one of `abstime` / `abortFlag` must be non-NULL; for an indefinite
-- * blocking next, use MRIterator_Next. */
-+ * abort flags (either one aborts; pair with MRChannel_WakeAbort). `timedOut` set
-+ * if deadline expired. At least one of `abstime` / `timedOutFlag` / `memoryStopFlag`
-+ * must be non-NULL; for an indefinite blocking next, use MRIterator_Next. */
- MRReply *MRIterator_NextWithTimeout(MRIterator *it, const struct timespec *abstime,
--                                    RS_Atomic(bool) *abortFlag, bool *timedOut);
-+                                    RS_Atomic(bool) *timedOutFlag,
-+                                    RS_Atomic(bool) *memoryStopFlag, bool *timedOut);
- 
- /* Return the underlying channel used by the iterator. Intended for callers that need to
-  * invoke MRChannel_WakeAbort directly (e.g. from a timeout callback on another thread). */
-```
-
-**File**: `src/coord/rpnet.c` (modified, +21/-16)
-```diff
-@@ -378,32 +378,33 @@ int getNextReply(RPNet *nc) {
-       return RS_RESULT_EOF;
-     }
-   }
--  // Pop wake mechanisms: the abort flag is flipped by the FAIL / RETURN-STRICT
-+  // Pop wake mechanisms: the timed-out flag is flipped by the FAIL / RETURN-STRICT
-   // timeout callback via MRChannel_WakeAbort. Under RETURN the flag is never
--  // flipped: aggregate streams degrade to a blocking pop (legacy RETURN waits
-+  // flipped: aggregate streams wait without a deadline (legacy RETURN waits
-   // beyond the deadline for in-flight shard replies), while hybrid streams get
-   // the in-band wall-clock deadline from getAbsTimeout — see its doc for why.
--  // An unarmed timeout source provides neither mechanism and uses MRIterator_Next.
-+  // The memory stop flag aborts the pop in every timeout kind, including
-+  // unarmed; whoever requests the memory stop wakes the channel.
- #ifdef ENABLE_ASSERT
-   // Sync point (debug): park BG when it is about to wait for the next shard
-   // reply. Reaching this site implies any previously admitted reply has been
-   // fully drained downstream.
-   SyncPoint_WaitUntil(SYNC_POINT_RPNET_WAITING_FOR_REPLY, areq_timed_out, nc->areq);
- #endif
-   RS_ASSERT(nc->areq);
--  QueryRequestLimits *timeout = &nc->areq->base.limits;
-+  QueryRequestLimits *limits = &nc->areq->base.limits;
-   const struct timespec *deadline = getAbsTimeout(nc);
--  RS_Atomic(bool) *abortFlag =
--      timeout->timeout.kind == QUERY_REQUEST_TIMEOUT_BLOCKED_CLIENT
--          ? QueryRequestLimits_GetBlockedClientFlag(timeout)
-+  RS_Atomic(bool) *timedOutFlag =
-+      limits->timeout.kind == QUERY_REQUEST_TIMEOUT_BLOCKED_CLIENT
-+          ? QueryRequestLimits_GetBlockedClientFlag(limits)
-           : NULL;
-+  RS_Atomic(bool) *memoryStopFlag = QueryRequestLimits_GetMemoryStopFlag(limits);
-   bool popTimedOut = false;
-   rs_wall_clock waitStart;
-   if (nc->profileBreakdown) rs_wall_clock_init(&waitStart);
-   MRReply *root = nc->drainOnly ? MRIterator_TryNext(nc->it)
--                  : deadline || abortFlag
--                      ? MRIterator_NextWithTimeout(nc->it, deadline, abortFlag, &popTimedOut)
--                      : MRIterator_Next(nc->it);
-+                                : MRIterator_NextWithTimeout(nc->it, deadline, timedOutFlag, memoryStopFlag,
-+                                                             &popTimedOut);
-   if (nc->profileBreakdown) {
-     accumulateSince(&nc->breakdown.waitTime, &waitStart);
-     if (root) nc->breakdown.replies++;
-@@ -416,7 +417,8 @@ int getNextReply(RPNet *nc) {
-     if (nc->drainOnly) {
-       return RS_RESULT_EOF;
-     }
--    if (popTimedOut || QueryRequestLimits_IsBlockedClientTimedOut(timeout)) {
-+    if (popTimedOut || QueryRequestLimits_IsMemoryStopped(limits) ||
-+        QueryRequestLimits_IsBlockedClientTimedOut(limits)) {
-       return RS_RESULT_TIMEDOUT;
-     }
-     return MRIterator_GetPending(nc->it) ? RS_RESULT_OK : RS_RESULT_EOF;
-@@ -590,11 +592,14 @@ int rpnetNext(ResultProcessor *self, SearchResult *r) {
-   SyncPoint_WaitUntil(SYNC_POINT_BEFORE_RPNET_NEXT, areq_timed_out, areq);
- #endif
- 
--  // Surface RETURN_STRICT timeouts on follow-up cursor reads where the channel
--  // may already hold a buffered reply (the NULL-reply check below wouldn't fire
--  // and we'd silently return rows). Skipped during the timer's own drain.
--  if (QueryRequest_UsesReplyCallback(&areq->base) && !nc->drainOnly &&
--      QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) {
-+  // Surface a memory stop, and RETURN_STRICT timeouts on follow-up cursor
-+  // reads, where the channel may already hold a buffered reply (the NULL-reply
-+  // check below wouldn't fire and we'd silently return rows). Skipped during
-+  // the timer's own drain.
-+  if (!nc->drainOnly &&
-+      (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-+       (QueryRequest_UsesReplyCallback(&areq->base) &&
-+        QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)))) {
-     return RS_RESULT_TIMEDOUT;
-   }
- 
-```
-
-**File**: `src/module.c` (modified, +10/-2)
-```diff
-@@ -3480,6 +3480,14 @@ static bool should_return_error(const searchRequestCtx *req, QueryErrorCode errC
-   return true;
- }
- 
-+// Whether merging replies should end. The timeout callback owns the reply, so a fired
-+// blocked-client timeout does not stop its own merge, but a memory stop still does: it must not
-+// leave the main thread merging every queued shard reply.
-+static inline bool replyMergeShouldStop(searchRequestCtx *req, bool fromTimeout) {
-+  return QueryRequestLimits_IsMemoryStopped(&req->base.limits) ||
-+         (!fromTimeout && QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits));
-+}
-+
- static int searchResultReducer(searchRequestCtx *req, int count, MRReply **replies,
-                                bool fromTimeout) {
-   RedisModuleBlockedClient *bc = NULL;
-@@ -3589,7 +3597,7 @@ static int searchResultReducer(searchRequestCtx *req, int count, MRReply **repli
-   if (!profile) {
-     for (int i = 0; i < count; ++i) {
-       rCtx->processReply(replies[i], rCtx);
--      if (!fromTimeout && QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-+      if (replyMergeShouldStop(req, fromTimeout)) {
-         goto cleanup;
-       }
-     }
-@@ -3609,7 +3617,7 @@ static int searchResultReducer(searchRequestCtx *req, int count, MRReply **repli
-         mr_reply = MRReply_ArrayElement(replies[i], 0);
-       }
-       rCtx->processReply(mr_reply, rCtx);
--      if (!fromTimeout && QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-+      if (replyMergeShouldStop(req, fromTimeout)) {
-         goto cleanup;
-       }
-     }
+@@ -295,13 +295,7 @@ impl<T, S: VecCapacity> ThinVec<T, S> {
+     ///
+     /// This will not allocate.
+     pub const fn new() -> ThinVec<T, S> {
+-        // SAFETY:
+-        // The pointer is not null since it comes from a (static) reference.
+-        let ptr = unsafe {
+-            // TODO: Use [NonNull::from_ref](https://doc.rust-lang.org/std/ptr/struct.NonNull.html#method.from_ref)
+-            //   when it stabilizes
+-            NonNull::new_unchecked(S::EMPTY_HEADER as *const Header<S> as *mut Header<S>)
+-        };
++        let ptr = NonNull::from_ref(S::EMPTY_HEADER);
+         ThinVec {
+             ptr,
+             _phantom: PhantomData,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12200** (2026-11-04): [MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (@GuyAv46)
 - **PR #12197** (2026-11-04): [8.12] [MOD-20707] Use SVS v0.5.1: fix GCC 16 builds with prebuilt SVS and filtered SVS search recall (@alonre24)
 - **PR #12196** (2026-11-04): [MOD-20707] Use SVS v0.5.1: fix GCC 16 builds with prebuilt SVS and filtered SVS search recall (@alonre24)
 - **PR #12195** (closed): Jonas topk lifecycle integration (@JonasKruckenberg)
 - **PR #12193** (closed): [MOD-20593] Fast-track smoke test: draft rejection (@dkyurtovv)
 - **PR #12192** (closed): [MOD-20593] Fast-track smoke test: eligible approval (@dkyurtovv)
-- **PR #12191** (2026-11-04): Install cargo-mutants and lcov in Amp orbs (@JonasKruckenberg)
 
 ---
 
@@ -2249,47 +1676,34 @@ about 14 instructions per probe. Stop-check sites re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills: suggest Box::into_raw over Box::leak in rust-review (#11875)
+## X. [MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (#12200)
 
 **RULE**:
-When implementing operations in `.skills/rust-review/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/redisearch_rs/thin_vec/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de0080dd`: skills: suggest Box::into_raw over Box::leak in rust-review (#11875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be5b6f5c`: [MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (#12200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.skills/rust-review/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/thin_vec/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#### 3i. Don't use `Box::leak`
-
-Treat [`Box::leak`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.leak) as
-off-limits in this codebase. It exists for data that lives for the rest of the program,
-and RediSearch has almost no such data: every index, query, and result is eventually
-freed. A leaked value that is never reclaimed is a real leak, and Miri's leak checker
-fails `cargo miri test` whenever a test exercises the leaking path. A leaked value that
-*is* reclaimed with `Box::from_raw` works, but the `&'static mut T` it goes through
-misstates the ownership and hides the reclaim path from the reader.
-
-Use instead:
-- To hand ownership to C or store it as a raw pointer:
-  [`Box::into_raw`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.into_raw),
-  reclaimed with `Box::from_raw`.
-- To get a `NonNull<T>`:
-  `NonNull::new(Box::into_raw(b)).expect("Box pointers are non-null")`, which needs no
-  `unsafe` while `Box::into_non_null` is unstable.
-- To keep an owned value alongside a borrowed one: store the `Box` (or an enum of owned
-  and borrowed variants) rather than leaking it to obtain a reference.
-- For a true process-lifetime global: a `static` with `OnceLock` /
+        let ptr = NonNull::from_ref(S::EMPTY_HEADER);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Blocking violations: any issue in 3a, 3b, 4a, 4b, or 4c, plus any 3e issue that
+        // SAFETY:
+        // The pointer is not null since it comes from a (static) reference.
+        let ptr = unsafe {
+            // TODO: Use [NonNull::from_ref](https://doc.rust-lang.org/std/ptr/struct.NonNull.html#method.from_ref)
+            //   when it stabilizes
+            NonNull::new_unchecked(S::EMPTY_HEADER as *const Header<S> as *mut Header<S>)
+        };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de0080dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be5b6f5c` are properly handled with clean fallback behavior.

@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "fc564f9e494d7b9a7a35e4c0d93a92d3c8f06a7cd5ad6c06024f4e522d502a9d",
-    "lastHarvestedAt": "2026-10-31T18:01:42.409Z",
+    "contentHash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
+    "lastHarvestedAt": "2026-11-05T08:52:11.371Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f4cf6803",
+    "sourceVersion": "c57cbd6c",
     "license": "Apache-2.0",
-    "contentHash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
-    "lastHarvestedAt": "2026-11-05T08:02:22.740Z",
+    "contentHash": "baf58ec7129091ea759607be048744b8625590273319835069f84b8cf6b56840",
+    "lastHarvestedAt": "2026-11-05T08:50:21.672Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "817da822",
+    "sourceVersion": "a723f1e0",
     "license": "Apache-2.0",
-    "contentHash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
-    "lastHarvestedAt": "2026-11-04T19:08:55.699Z",
+    "contentHash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
+    "lastHarvestedAt": "2026-11-05T08:50:19.505Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "27424dee",
+    "sourceVersion": "05de5692",
     "license": "NOASSERTION",
-    "contentHash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
-    "lastHarvestedAt": "2026-11-04T18:13:55.733Z",
+    "contentHash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
+    "lastHarvestedAt": "2026-11-05T08:50:22.793Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {

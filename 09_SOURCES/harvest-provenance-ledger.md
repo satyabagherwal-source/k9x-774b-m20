@@ -7594,3 +7594,7 @@ Every entry in this ledger must capture:
 | `learn-github-easegress-io-easegress` | `https://github.com/easegress-io/easegress` | `b8d95290` | Multi-dimensional audit evidence | 2026-11-05T08:32:48.614Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-05T08:41:00.795Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6aab26ea` | Multi-dimensional audit evidence | 2026-11-05T08:42:43.684Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `a723f1e0` | Multi-dimensional audit evidence | 2026-11-05T08:50:19.505Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c57cbd6c` | Multi-dimensional audit evidence | 2026-11-05T08:50:21.672Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `05de5692` | Multi-dimensional audit evidence | 2026-11-05T08:50:22.793Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T08:52:11.371Z |

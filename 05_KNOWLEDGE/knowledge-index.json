@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T08:42:43.626Z",
+  "last_updated": "2026-11-05T08:52:11.258Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28211,7 +28211,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "fc564f9e494d7b9a7a35e4c0d93a92d3c8f06a7cd5ad6c06024f4e522d502a9d",
+      "content_hash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -28302,7 +28302,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-31T18:01:42.342Z",
+      "verified_at": "2026-11-05T08:52:11.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36191,8 +36191,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "817da822",
-      "content_hash": "503c6a4578582bbbb3ca956f0851f8ec71ef2b4a15217e64e1001c60dd65c549",
+      "source_version": "a723f1e0",
+      "content_hash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -36255,6 +36255,11 @@
           "number": 6915,
           "title": "test(e2e): give Tracing and BackendConfigPolicy distinct, suite-level Pods (#149",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7171,
+          "title": "e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body tr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36262,7 +36267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:08:55.573Z",
+      "verified_at": "2026-11-05T08:50:19.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44948,8 +44953,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "f4cf6803",
-      "content_hash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
+      "source_version": "c57cbd6c",
+      "content_hash": "baf58ec7129091ea759607be048744b8625590273319835069f84b8cf6b56840",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45234,7 +45239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:02:22.626Z",
+      "verified_at": "2026-11-05T08:50:21.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50814,8 +50819,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "27424dee",
-      "content_hash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
+      "source_version": "05de5692",
+      "content_hash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -50883,6 +50888,11 @@
           "number": 6889,
           "title": "skills: suggest Box::into_raw over Box::leak in rust-review (#11875)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7172,
+          "title": "[MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (#12200)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50890,7 +50900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:13:55.622Z",
+      "verified_at": "2026-11-05T08:50:22.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181362,6 +181372,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T08:42:43.611Z"
+    },
+    "rule-7171": {
+      "learning_id": "rule-7171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7171,
+      "title": "e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body tr",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "a723f1e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:50:19.381Z"
+    },
+    "rule-7172": {
+      "learning_id": "rule-7172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7172,
+      "title": "[MOD-20869] Chore: use NonNull::from_ref in ThinVec constructor (#12200)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "05de5692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:50:22.675Z"
     }
   },
   "aliases": {

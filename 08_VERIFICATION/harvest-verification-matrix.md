@@ -7585,3 +7585,7 @@
 | `CYCLE-20261105-FMJN` | `2026-11-05T08:32:48.611Z` | `easegress-io/easegress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7169` | Yes (`6b485ff7...`) |
 | `CYCLE-20261105-Q6BC` | `2026-11-05T08:41:00.792Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`b8d7e48c...`) |
 | `CYCLE-20261105-SDPD` | `2026-11-05T08:42:43.681Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7170` | Yes (`e7198587...`) |
+| `CYCLE-20261105-25F1` | `2026-11-05T08:50:19.501Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7171` | Yes (`3d165bc8...`) |
+| `CYCLE-20261105-2738` | `2026-11-05T08:50:21.668Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`baf58ec7...`) |
+| `CYCLE-20261105-27YD` | `2026-11-05T08:50:22.789Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7172` | Yes (`9ebecf01...`) |
+| `CYCLE-20261105-4JQF` | `2026-11-05T08:52:11.367Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`f5de1681...`) |
