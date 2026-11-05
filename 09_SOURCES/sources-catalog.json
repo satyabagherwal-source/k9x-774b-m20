@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "d8324353668a6c6968859aae01b4ec0baada4db0c3ba2234070aededcd1ecee0",
-    "lastHarvestedAt": "2026-10-31T13:47:17.814Z",
+    "contentHash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
+    "lastHarvestedAt": "2026-11-05T04:28:56.263Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
-    "lastHarvestedAt": "2026-10-31T13:40:35.347Z",
+    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
+    "lastHarvestedAt": "2026-11-05T04:21:45.656Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "55c0f368aa4414e05528e2a9d910a1dc075f18a2bb6a859a4b23b07389b4b298",
-    "lastHarvestedAt": "2026-10-31T13:54:15.120Z",
+    "contentHash": "322d92af2dedfdd448b30161abb59ae821c1f81e1ff1da7a53c426eb2562f6cf",
+    "lastHarvestedAt": "2026-11-05T04:36:02.731Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "f637446f",
+    "sourceVersion": "cc6facab",
     "license": "MIT",
-    "contentHash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
-    "lastHarvestedAt": "2026-11-04T01:34:51.017Z",
+    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+    "lastHarvestedAt": "2026-11-05T04:21:46.602Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "2baa819b",
+    "sourceVersion": "641aca38",
     "license": "Apache-2.0",
-    "contentHash": "9a6934b60ac7f3a155d2cb38001dbc94c092898903dcad799b9893c325aa4cf0",
-    "lastHarvestedAt": "2026-11-04T01:58:20.803Z",
+    "contentHash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
+    "lastHarvestedAt": "2026-11-05T04:43:35.775Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "af90d05b",
+    "sourceVersion": "0daf9b82",
     "license": "Apache-2.0",
-    "contentHash": "02ef78142b3fa634f1e5d0acdaf1ee976acb6f274ccccbc6f3753a044bf70e27",
-    "lastHarvestedAt": "2026-11-04T08:28:39.006Z",
+    "contentHash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
+    "lastHarvestedAt": "2026-11-05T04:43:47.214Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "3799e0d0",
+    "sourceVersion": "d14c0804",
     "license": "Apache-2.0",
-    "contentHash": "b6ac7fe9d3af27969984c5f97006b523f7387478638c80456a186eadbbc0a837",
-    "lastHarvestedAt": "2026-11-04T08:14:18.570Z",
+    "contentHash": "8f4cbfe17c04d8520fb6c296c090c5d6099f60ae2a04f65572ac6eff4e2979db",
+    "lastHarvestedAt": "2026-11-05T04:28:54.670Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "311c58a2",
+    "sourceVersion": "4d69ce36",
     "license": "Apache-2.0",
-    "contentHash": "fa951e075f475600f1969681e829f3b934d6d46e2a61bba05cd6d0e247e04399",
-    "lastHarvestedAt": "2026-11-04T09:25:13.780Z",
+    "contentHash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
+    "lastHarvestedAt": "2026-11-05T04:43:41.840Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "0c1d83e8dad587c927c0a7f081a970941446e66baa7d8eda82027a1bfdac4183",
-    "lastHarvestedAt": "2026-10-31T14:01:19.852Z",
+    "contentHash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
+    "lastHarvestedAt": "2026-11-05T04:43:32.228Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {

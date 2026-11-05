@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `2baa819b`  
+> **Source Version**: `641aca38`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:58:19.976Z  
+> **Timestamp**: 2026-11-05T04:43:34.931Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:58:17.910Z  
+> **Harvest Timestamp**: 2026-11-05T04:43:34.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12099 stars
+- **Stars / Engagement**: 12103 stars
 
 ---
 
@@ -1612,13 +1612,17 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3152** (2026-11-03): **even faster qa**
-  *Symptoms*: ### Tasks  * [x] windows improvements * [x] refackiew 
+- **Issue #3157** (2026-11-05): **Create `oid` from bytes in one `unsafe` block in `gix-hash`**
+  *Symptoms*: Title: Create `oid` from bytes in one `unsafe` block in `gix-hash`  **AI disclosure:** Claude Code, an AI agent, wrote this description and the patch, and is speaking through the `b84330808` account. The commit carries a `Co-Authored-By` trailer for the same reason.  ### Motivation  This follows #3150. The account holder asked me to look for `unsafe` in gitoxide's parsers that can be removed or narrowed, as security hardening and for Google's Patch Rewards program. The cast from `&[u8]` to `&oid` can't be written in safe Rust, but `gix-hash` had three copies of it, none with a `SAFETY` comment. `oid::try_from_bytes()` gets its input from the tree parser in `gix-object`, among others.  ### Change  - `try_from_bytes()` calls `from_bytes()` after its length check instead of repeating the cast for   each hash kind. `gix-hash` now has one `unsafe` block. - Add a `SAFETY` comment to that block: `oid` is `#[repr(transparent)]` over `[u8]`, the cast keeps   the length, and an unexpected length makes `kind()` panic but isn't undefined behaviour. - Mark `from_bytes()` `#[inline]` so callers of the `#[inline]` `try_from_bytes()` in other crates   still see the cast.  ### Verification (by the agent, on Windows, `x86_64-pc-windows-gnu`, Rust 1.99.1)  - `cargo test -p gix-hash` with `--features sha1`, `sha256` and `sha1,sha256`: all passed. - `cargo clippy -p gix-hash --all-targets --features sha1,sha256 --no-deps -- -D warnings`: no findings. - `cargo +stable fmt -p gix-hash -- --check` a
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"19ff6a69569cf678ed7750d84fa749bb9840d9cd","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-03T10:30:12.047230Z">2026-11-03T10:30:12.047230Z</relative-time> | `19ff6a6` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review"
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"d7949ff324e17555b50adb2d544ca8d7077c35e5","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T16:10:24.044911Z">2026-11-04T16:10:24.044911Z</relative-time> | `d7949ff` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > That's a warning - I rubber-stamped the commit that introduced this, in a rush. While it's not actually unsafe, it's something I wouldn't have allowed either.
 
-- **Issue #3150** (2026-11-03): **Remove the last `unsafe` block from `gix-revision` and forbid `unsafe` there**
-  *Symptoms*: **AI disclosure:** Claude Code, an AI agent, wrote this description, the patch and the test, and is speaking through the `b84330808` account. The commit carries a `Co-Authored-By` trailer for the same reason.  ### Motivation  The account holder asked me to look for `unsafe` in gitoxide's OSS-Fuzz-fuzzed parsers that can be removed without a performance cost, as security hardening. This is also meant for Google's Patch Rewards program, which rewards removing `unsafe` from Rust crates in OSS-Fuzz projects. `gix-revision` was the smallest case: one `unsafe` block, and safe code is faster there.  ### Change  For rev-specs that look like `git describe` output, such as `v1.0-12-g3bee7fb`, `long_describe_prefix()` computes the length of the anchor's reference name. It did this with `<*const u8>::offset_from()` on two pointers into `name`. That was the only `unsafe` block in `gix-revision`.  - Compute the length as the distance between the address where `name` starts and the address where the   last anchor token ends. This is safe Rust. If the computation were ever wrong, the bounds-checked   `name[..len]` would panic. It could not cause undefined behaviour. - Drop the `next_back()` call. It only located the first token for `offset_from()`. - Switch the crate from `#![deny(unsafe_code)]` to `#![forbid(unsafe_code)]`. Then a local   `#[allow(unsafe_code)]` or `#[expect(unsafe_code)]` can't bring `unsafe` back. - Extend `full_format_parses_hash_portion_as_prefix` with `foo--bar-12-g3be
+- **Issue #3156** (2026-11-04): **much faster qa**
+  *Symptoms*: Prune dependency configurations more. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"71bbcef515982cf49df854c44bc8ea0a29736f0f","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T14:50:13.210149Z">2026-11-04T14:50:13.210149Z</relative-time> | `71bbcef` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review"
+  > CI isn't quite as fast here yet as it sees changes to the `it` tool which make it conservative. However, ideally soon this will get much better.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1635,1033 +1639,616 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c6c639c` (2026-11-03)
-**Commit Message**: Share generated fixtures between exhaustive native QA passes
+### Incident Patch 1: `61bbd5b5` (2026-11-04)
+**Commit Message**: Share generated fixtures across QA test stages
 
-The archived and generated native passes use separate source snapshots,
-so scripts without portable archives used to regenerate identical fixtures
-within one CI job. Allocate one fresh generated-fixture cache for the two
-passes and tell `gix-testtools` which source snapshot each replay uses.
-Archive extraction and source-integrity checks remain separate.
+The demand-driven `gix-archive` PR run still regenerated the same expensive
+`gix` fixtures in its native and feature test stages. CI shared generated
+fixtures within native archive/generated replays, but each local test task
+started with a separate cache.
 
-Keep every producer snapshot and the cache alive until both replays finish.
-Retain them together if a source copy changes. Scrub inherited cache settings
-and allocate nothing for fast mode, whose single replay already shares its
-local fixture cache. Feature/hash variants keep their existing shared
-snapshot; no checks, fixture modes or failure gates are removed.
+Keep one fresh generated-fixture cache and its source snapshots alive for
+an entire QA invocation. Run native tests in the catalog process so native,
+isolated and feature suites can use the existing `gix-testtools` cache
+without new inherited environment variables or CLI options. Preserve each
+replay's fixture hash, archive policy, source isolation and detailed logs.
 
-A controlled Windows multi-round fetch benchmark, using the same compiled
-test binary and identical scripts, measured two passes at 45.212s without
-sharing and 23.998s with sharing (46.9% faster). The shared second pass took
-1.685s, and both passes used one generated fixture at the same absolute path.
+Reject cache reuse when source copies differ between stages. Check every
+retained snapshot after each stage, since a shared fixture can reference
+an earlier source copy, and retain all related paths on integrity failure.
+Separate invocations and CI jobs still start fresh.
 
-All 39 QA tests pass, including fresh cache ownership, normal cleanup,
-retention after source mutation, and the
+The new ownership tests also exposed a temporary-directory name collision
+between concurrent tests. Retry creation with a new name on `AlreadyExists`;
+never reuse an existing directory.
 
-**File**: `DEVELOPMENT.md` (modified, +6/-1)
+Validation: 56 QA self-tests and Clippy pass, including a regre
+
+**File**: `DEVELOPMENT.md` (modified, +6/-5)
 ```diff
-@@ -352,7 +352,12 @@ when an archive is absent or stale. This avoids repeated expensive Git subproces
+@@ -393,14 +393,15 @@ when an archive is absent or stale. This avoids repeated expensive Git subproces
  comparisons against freshly generated Git baselines still run in exhaustive QA. Linux and macOS
  fast tests use freshly generated fixtures. Exhaustive native tests compile/list once,
  then reuse the same nextest binaries for archived and generated fixtures in separate temporary
--source copies. Feature/hash variants also run in an isolated copy, sharing compatible fixture
-+source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
-+When no archive is available, the archived pass can generate a fixture once for both passes;
-+the shared cache never substitutes extracted archives for generated fixtures. Fixtures that write archives or require
-+execution in a writable destination keep their existing behavior. The cache and its source
-+copies remain alive until both passes finish, and are retained together if a source copy changes.
-+Feature/hash variants also run in an isolated copy, sharing compatible fixture
- caches within their task and continuing after individual failures. Their fixture caches cannot
- reuse a previous local run's extracted archives. Archive changes cause
+-source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
++source copies. Native passes and feature/hash or isolated test variants within one QA run
++share a fresh cache of generated read-only scripted fixtures, locally and within each CI job.
+ When no archive is available, the archived pass can generate a fixture once for both passes;
+ the shared cache never substitutes extracted archives for generated fixtures. Fixtures that write archives or require
+ execution in a writable destination keep their existing behavior. The cache and its source
+-copies remain alive until both passes finish, and are retained together if a source copy changes.
+-Feature/hash variants also run in an isolated copy, sharing compatible fixture
+-caches within their task and continuing after individual failures. Their fixture caches cannot
+-reuse a previous local run's extracted archives. Archive changes cause
++copies remain alive until the run finishes, and are retained together if a source copy changes.
++Changes to source files between stages prevent cache reuse. Feature/hash variants also run in
++an isolated copy and continue after individual failures. Separate runs and CI jobs never reuse
++each other's generated fixtures or extracted archives. Archive changes cause
  a failure and retain the changed copy for inspection. Explicit archive-only fixtures keep
+ their normal semantics.
+ 
 ```
 
-**File**: `gix-archive/Cargo.toml` (modified, +1/-0)
+**File**: `tests/it/src/qa/catalog.rs` (modified, +5/-2)
 ```diff
-@@ -48,6 +48,7 @@ document-features = { version = "0.2.0", optional = true }
- 
- [dev-dependencies]
- gix-testtools = { path = "../tests/tools" }
-+gix-path = { path = "../gix-path" }
- gix-odb = { path = "../gix-odb", features = ["sha1", "sha256"] }
- gix-worktree = { path = "../gix-worktree", default-features = false, features = [
-     "attributes",
-```
-
-**File**: `gix-archive/tests/archive.rs` (modified, +22/-11)
-```diff
-@@ -59,7 +59,8 @@ mod from_tree {
- 
-     #[test]
-     fn basic_usage_internal() -> TestResult {
--        Ok(basic_usage(Format::InternalTransientNonPersistable, |buf| {
-+        let format = Format::InternalTransientNonPersistable;
-+        Ok(basic_usage(format, |buf, link_target| {
-             #[cfg(target_pointer_width = "64")]
-             let expected_buffer_length = match gix_testtools::object_hash() {
-                 gix_hash::Kind::Sha1 => 551,
-@@ -72,14 +73,20 @@ mod from_tree {
-                 gix_hash::Kind::Sha256 => todo!("let the test fail on CI and add the value here"),
-                 _ => unimplemented!(),
-             };
--            assert_eq!(buf.len(), expected_buffer_length);
-+            assert_eq!(
-+                buf.len(),
-+                expected_buffer_length - b"../extra-file".len() + link_target.len()
-+            );
- 
-             let mut stream = gix_worktree_stream::Stream::from_read(std::io::Cursor::new(buf));
-             let mut paths_and_modes = Vec::new();
-             while let Some(mut entry) = stream.next_entry().expect("entry retrieval does not fail") {
-                 paths_and_modes.push((entry.relative_path().to_owned(), entry.mode.kind(), entry.id));
-                 let mut buf = Vec::new();
-                 entry.read_to_end(&mut buf).expect("stream can always be read");
-+                if entry.relative_path() == "extra-dir/symlink-to-extra" {
-+                    assert_eq!(buf.as_bstr(), link_target, "the symlink target is preserved");
-+                }
-             }
- 
-             assert_eq!(
-@@ -143,7 +150,7 @@ mod from_tree {
-     #[test]
-     #[cfg(feature = "tar")]
-     fn basic_usage_tar() -> TestResult {
--        Ok(basic_usage(Format::Tar, |buf| {
-+        Ok(basic_usage(Format::Tar, |buf, _link_target| {
-             use tar::EntryType;
-             let mut ar = tar::Archive::new(buf.as_slice());
-             let mut out = Vec::new();
-@@ -197,10 +204,11 @@ mod from_tree {
-             Format::TarGz {
-                 compression_level: Some(9),
-             },
--            |buf| {
-+            |buf, link_target| {
-+                let limit = 340 - b"../extra-file".len() + link_target.len();
-                 assert!(
--                    buf.len() < 340,
--                    "quite a bit smaller than uncompressed: {} < 340",
-+                    buf.len() < limit,
-+                    "quite a bit smaller than uncompressed: {} < {limit}",
-                     buf.len()
-                 );
-                 Ok(())
-@@ -215,10 +223,11 @@ mod from_tree {
-             Format::Zip {
-                 compression_level: Some(9),
-             },
--            |buf| {
-+            |buf, link_target| {
-+                let limit = 1400 - b"../extra-file".len() + link_target.len();
-                 assert!(
--                    buf.len() < 1400,
--                    "much bigger than uncompressed for some reason (565): {} < 1400",
-+                    buf.len() < limit,
-+                    "ZIP metadata overhead stays bounded: {} < {limit}",
-                     buf.len()
-                 );
-                 let ar = rawzip::ZipArchive::from_slice(buf.as_slice())?;
-@@ -275,9 +284,11 @@ mod from_tree {
- 
-     fn basic_usage(
-         format: gix_archive::Format,
--        make_assertion: impl FnOnce(Vec<u8>) -> gix_testtools::Result,
-+        make_assertion: impl FnOnce(Vec<u8>, &gix_testtools::bstr::BStr) -> gix_testtools::Result,
-     ) -> gix_testtools::Result {
-         let (dir, head_tree, odb, mut cache) = basic()?;
-+        // Windows can report an absolute target for this MSYS-created relative symlink.
-+        let link_target = gix_path::into_bstr(std::fs::read_link(dir.join("extra-dir/symlink-to-extra"))?)?;
-         let mut stream = gix_worktree_stream::from_tree(
-             head_tree,
-             odb.clone(),
-@@ -328,7 +339,7 @@ mod from_tree {
-                 "stream is exhausted, all written to buf"
+@@ -554,6 +554,7 @@ pub fn execute(
+     let mut nonblocking_failed = 0;
+     let count = tasks.len();
+     let mut timings = Vec::with_capacity(count);
++    let mut snapshots = super::native_tests::NativeSnapshots::default();
+     for (index, task) in tasks.into_iter().enumerate() {
+         let started = Instant::now();
+         let path = logs.map(|logs| logs.join(format!("{}.log", task.id)));
+@@ -570,8 +571,10 @@ pub fn execute(
+                 if task.blocking { "" } else { " (nonblocking)" }
              );
          }
--        make_assertion(buf).expect("all tests pass");
-+        make_assertion(buf, link_target.as_ref()).expect("all tests pass");
-         Ok(())
+-        let result = if matches!(task.id, "feature-tests" | "isolated-tests") {
+-            super::native_tests::variants(root, task.commands, dry_run, log.as_ref())
++        let result = if task.id == "native-tests" && !dry_run {
++            super::native_tests::execute(root, &task.commands[0].args[1..], &mut snapshots, log.as_ref())
++        } else if matches!(task.id, "feature-tests" | "isolated-tests") {
++            super::native_tests::variants(root, task.commands, dry_run, &mut snapshots, log.as_ref())
+         } else if task.id == "feature-builds" {
+             run::each_case(task.commands, log.as_ref(), |command| {
+                 run::execute(root, vec![command], dry_run, log.as_ref())
+```
+
+**File**: `tests/it/src/qa/main.rs` (modified, +6/-1)
+```diff
+@@ -100,7 +100,12 @@ fn main() -> Result<()> {
      }
- 
+     if let Action::Exec { args } = &args.command {
+         if args[0] == "native-tests" {
+-            return native_tests::execute(&current_dir, &args[1..]);
++            return native_tests::execute(
++                &current_dir,
++                &args[1..],
++                &mut native_tests::NativeSnapshots::default(),
++                None,
++            );
+         }
+         return ops::execute(&current_dir, args);
+     }
 ```
 
-**File**: `gix-worktree-stream/tests/stream.rs` (modified, +6/-1)
+**File**: `tests/it/src/qa/native_tests.rs` (modified, +211/-78)
 ```diff
-@@ -137,6 +137,8 @@ mod from_tree {
-     #[test]
-     fn will_provide_all_information_and_respect_export_ignore() -> gix_testtools::TestResult {
-         let (dir, head_tree, odb, mut cache) = basic()?;
-+        // Windows can report an absolute target for this MSYS-created relative symlink.
-+        let link_target = gix_path::into_bstr(std::fs::read_link(dir.join("extra-dir/symlink-to-extra"))?)?;
-         let mut stream = gix_worktree_stream::from_tree(
-             head_tree,
-             odb.clone(),
-@@ -168,6 +170,9 @@ mod from_tree {
-             paths_and_modes.push((entry.relative_path().to_owned(), entry.mode.kind(), entry.id));
-             let mut buf = Vec::new();
-             entry.read_to_end(&mut buf)?;
-+            if entry.relative_path() == "extra-dir/symlink-to-extra" {
-+                assert_eq!(buf.as_bstr(), link_target.as_ref(), "the symlink target is preserved");
-+            }
-             if !buf.is_empty() && entry.mode.is_blob() {
-                 if entry.relative_path().contains_str("extra") {
-                     assert!(
-@@ -285,7 +290,7 @@ mod from_tree {
- 
-         assert_eq!(
-             copy.lock().len(),
--            expected_buffer_length,
-+            expected_buffer_length - b"../extra-file".len() + link_target.len(),
-             "keep track of file size changes of the streaming format"
-         );
- 
-```
-
-**File**: `tests/it/src/qa/native_tests.rs` (modified, +129/-13)
-```diff
-@@ -7,7 +7,7 @@ use std::{
- use gix_error::{OptionExt, Result, ResultExt, bail, message};
- 
- use super::{
--    ops::{Snapshot, SourceState, checked, git, output, source_snapshot, source_state},
-+    ops::{Snapshot, SourceState, checked, empty_snapshot, git, output, source_snapshot, source_state},
-     run,
- };
- 
-@@ -17,6 +17,36 @@ enum Fixtures {
+@@ -17,33 +17,48 @@ enum Fixtures {
      Generated,
  }
  
-+struct NativeSnapshots {
-+    sources: Vec<(Snapshot, SourceState)>,
-+    // Only generated fixtures use this cache; extracted archives stay in their source snapshot.
-+    cache: Option<Snapshot>,
-+}
-+
-+impl NativeSnapshots {
-+    fn new(root: &Path, count: usize) -> Result<Self> {
-+        Ok(Self {
-+            sources: (0..count).map(|_| snapshot(root)).collect::<Result<_>>()?,
-+            cache: (count > 1).then(empty_snapshot).transpose()?,
-+        })
-+    }
-+
-+    fn check(self, index: usize) -> Result<Self> {
-+        let (snapshot, before) = &self.sources[index];
-+        if let Err(error) = unchanged(&snapshot.path, before) {
-+            for (snapshot, _) in &self.sources {
-+                eprintln!("Retained native test snapshot at {}", snapshot.path.display());
+-struct NativeSnapshots {
++#[derive(Default)]
++pub(super) struct NativeSnapshots {
+     sources: Vec<(Snapshot, SourceState)>,
+     // Only generated fixtures use this cache; extracted archives stay in their source snapshot.
+     cache: Option<Snapshot>,
+ }
+ 
+ impl NativeSnapshots {
+-    fn new(root: &Path, count: usize) -> Result<Self> {
+-        Ok(Self {
+-            sources: (0..count).map(|_| snapshot(root)).collect::<Result<_>>()?,
+-            cache: (count > 1).then(empty_snapshot).transpose()?,
+-        })
++    fn add(&mut self, root: &Path, count: usize) -> Result<usize> {
++        let first = self.sources.len();
++        for _ in 0..count {
++            let source = snapshot(root)?;
++            if self.sources.first().is_some_and(|(_, before)| *before != source.1) {
++                self.retain();
++                bail!("Source files changed between native test stages; refusing to reuse generated fixtures");
 +            }
-+            if let Some(cache) = &self.cache {
-+                eprintln!("Retained native fixture cache at {}", cache.path.display());
-+            }
-+            std::mem::forget(self);
-+            return Err(error);
++            self.sources.push(source);
 +        }
-+        Ok(self)
++        if self.cache.is_none() {
++            self.cache = Some(empty_snapshot()?);
++        }
++        Ok(first)
+     }
+ 
+-    fn check(self, index: usize) -> Result<Self> {
+-        let (snapshot, before) = &self.sources[index];
+-        if let Err(error) = unchanged(&snapshot.path, before) {
+-            for (snapshot, _) in &self.sources {
+-                eprintln!("Retained native test snapshot at {}", snapshot.path.display());
++    fn check(&mut self) -> Result<()> {
++        for (snapshot, before) in &self.sources {
++            if let Err(error) = unchanged(&snapshot.path, before) {
++                self.retain();
++                return Err(error);
+             }
+-            if let Some(cache) = &self.cache {
+-                eprintln!("Retained native fixture cache at {}", cache.path.display());
+-            }
+-            std::mem::forget(self);
+-            return Err(error);
+         }
+-        Ok(self)
++        Ok(())
 +    }
-+}
 +
- fn fixture_modes(mode: &str, windows: bool) -> Result<&'static [Fixtures]> {
-     match mode {
-         "fast" if windows => Ok(&[Fixtures::Archived]),
-@@ -46,6 +76,7 @@ fn test_command(
++    fn retain(&mut self) {
++        for (snapshot, _) in &self.sources {
++            eprintln!("Retained native test snapshot at {}", snapshot.path.display());
++        }
++        if let Some(cache) = &self.cache {
++            eprintln!("Retained native fixture cache at {}", cache.path.display());
++        }
++        std::mem::forget(std::mem::take(self));
+     }
+ }
+ 
+@@ -60,37 +75,34 @@ fn cargo(root: &Path) -> Result<Command> {
+     run::process(root, &run::normalize(run::Command::new("cargo", &[])))
+ }
+ 
+-fn reuse_binaries(command: &mut Command, metadata: &Path, binaries: &Path, snapshot: &Path) {
++fn reuse_binaries(command: &mut Command, metadata: &Path, binaries: &Path, snapshot: &Path, cache: &Path) {
+     command
+         .args(["nextest", "run", "--cargo-metadata"])
+         .arg(metadata)
+         .arg("--binaries-metadata")
+         .arg(binaries)
+         .arg("--workspace-remap")
+         .arg(snapshot)
+-        .arg("--no-fail-fast");
++        .arg("--no-fail-fast")
++        .env("GIX_TEST_FIXTURE_CACHE", cache)
++        .env("GIX_TEST_FIXTURE_SOURCE_ROOT", snapshot);
+ }
+ 
+ fn test_command(
+     root: &Path,
      metadata: &Path,
      binaries: &Path,
      snapshot: &Path,
-+    cache: Option<&Path>,
+-    cache: Option<&Path>,
++    cache: &Path,
      fixtures: Fixtures,
      windows_arm: bool,
  ) -> Result<Command> {
-@@ -55,6 +86,11 @@ fn test_command(
+     let mut command = cargo(root)?;
+-    reuse_binaries(&mut command, metadata, binaries, snapshot);
++    reuse_binaries(&mut command, metadata, binaries, snapshot, cache);
+     command
          .args(["--no-tests", "pass"])
          .env_remove("GIX_TEST_IGNORE_ARCHIVES")
          .env_remove("GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI");
-+    if let Some(cache) = cache {
-+        command
-+            .env("GIX_TEST_FIXTURE_CACHE", cache)
-+            .env("GIX_TEST_FIXTURE_SOURCE_ROOT", snapshot);
-+    }
+-    if let Some(cache) = cache {
+-        command
+-            .env("GIX_TEST_FIXTURE_CACHE", cache)
+-            .env("GIX_TEST_FIXTURE_SOURCE_ROOT", snapshot);
+-    }
      command.env(
          match fixtures {
              Fixtures::Archived => "GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI",
-@@ -101,32 +137,26 @@ fn run(root: &Path, args: &[String], modes: &[Fixtures]) -> Result<()> {
-             .args(args)
-             .stderr(Stdio::inherit()),
-     )?;
--    let mut snapshots = Vec::new();
--    for _ in modes {
--        snapshots.push(snapshot(root)?);
--    }
-+    let mut snapshots = NativeSnapshots::new(root, modes.len())?;
-     // Keep metadata beside the first snapshot's index, outside fixture status checks.
--    let state = snapshots[0].0.path.join(".git");
--    let metadata_path = save_metadata(root, &snapshots[0].0.path)?;
-+    let state = snapshots.sources[0].0.path.join(".git");
-+    let metadata_path = save_metadata(root, &snapshots.sources[0].0.path)?;
-     let binaries_path = state.join("binaries-metadata.json");
-     fs::write(&binaries_path, binaries).or_raise(|| message("Save nextest binaries for native tests"))?;
-     let mut result = Ok(());
-     for (index, fixtures) in modes.iter().enumerate() {
--        let (snapshot, state) = &snapshots[index];
-+        let (snapshot, _) = &snapshots.sources[index];
-         eprintln!("Native tests with {fixtures:?} fixtures in {}", snapshot.path.display());
-         let test_result = checked(&mut test_command(
-             root,
-             &metadata_path,
-             &binaries_path,
-             &snapshot.path,
-+            snapshots.cache.as_ref().map(|cache| cache.path.as_path()),
-             *fixtures,
-             cfg!(all(windows, target_arch = "aarch64")),
-         )?);
--        if let Err(error) = unchanged(&snapshot.path, state) {
--            eprintln!("Retained native test snapshot at {}", snapshot.path.display());
--            std::mem::forget(snapshots.remove(index));
--            return Err(error);
--        }
-+        snapshots = snapshots.check(index)?;
-         if test_result.is_err() {
-             result = test_result;
-         }
-@@ -262,6 +292,80 @@ mod tests {
- 
-     use super::*;
- 
-+    #[test]
-+    fn native_cache_is_fresh_and_retained_with_changed_snapshots() -> gix_error::TestResult {
-+        let source = empty_snapshot()?;
-+        checked(git(&source.path)?.args(["init", "--quiet"]))?;
-+        fs::write(source.path.join("input"), "original")?;
-+        checked(git(&source.path)?.args(["add", "input"]))?;
-+        assert!(
-+            NativeSnapshots::new(&source.path, 1)?.cache.is_none(),
-+            "fast mode's single replay already shares its local fixture cache"
-+        );
-+        let mut previous_cache = PathBuf::new();
-+        for changed in [false, true] {
-+            let snapshots = NativeSnapshots::new(&source.path, 2)?;
-+            let cache = snapshots
-+                .cache
-+                .as_ref()
-+                .expect("two replays share generated fixtures")
-+   
-```
-
-**File**: `tests/it/src/qa/ops.rs` (modified, +9/-3)
-```diff
-@@ -311,17 +311,23 @@ pub(super) fn source_snapshot(root: &Path) -> Result<Snapshot> {
-     snapshot_files(root, &files)
+@@ -109,54 +121,68 @@ fn test_command(
+     Ok(command)
  }
  
--fn snapshot_files(root: &Path, files: &[u8]) -> Result<Snapshot> {
-+pub(super) fn empty_snapshot() -> Result<Snapshot> {
-     let stamp = SystemTime::now()
+-pub fn execute(root: &Path, args: &[String]) -> Result<()> {
++pub fn execute(root: &Path, args: &[String], snapshots: &mut NativeSnapshots, log: Option<&File>) -> Result<()> {
+     let (mode, args) = args
+         .split_first()
+         .ok_or_raise(|| message("native-tests needs a mode and Cargo selection arguments"))?;
+     let modes = fixture_modes(mode, cfg!(windows))?;
+     let before = source_state(root)?;
+-    let result = run(root, args, modes);
++    let result = run(root, args, modes, snapshots, log);
+     if before != source_state(root)? {
+         bail!("Native tests changed tracked or visible untracked source files; changes were retained for inspection");
+     }
+     result
+ }
+ 
+-fn run(root: &Path, args: &[String], modes: &[Fixtures]) -> Result<()> {
+-    let binaries = output(
+-        cargo(root)?
+-            .args([
+-                "nextest",
+-                "list",
+-                "--list-type",
+-                "binaries-only",
+-     
+```
+
+**File**: `tests/it/src/qa/ops.rs` (modified, +13/-9)
+```diff
+@@ -312,18 +312,22 @@ pub(super) fn source_snapshot(root: &Path) -> Result<Snapshot> {
+ }
+ 
+ pub(super) fn empty_snapshot() -> Result<Snapshot> {
+-    let stamp = SystemTime::now()
++    let mut stamp = SystemTime::now()
          .duration_since(UNIX_EPOCH)
          .or_raise(|| message("Read time for QA snapshot"))?
          .as_nanos();
-     // Git for Windows still limits some repository paths even with core.longpaths enabled.
-     let mut id = DefaultHasher::new();
-     (std::process::id(), stamp).hash(&mut id);
--    let path = std::env::temp_dir().join(format!("qa-{:x}", id.finish()));
-+    let path = std::path::absolute(std::env::temp_dir())
-+        .or_raise(|| message("Resolve QA temporary directory"))?
-+        .join(format!("qa-{:x}", id.finish()));
-     fs::create_dir(&path).or_raise(|| message!("Create QA snapshot {}", path.display()))?;
--    let snapshot = Snapshot { path };
-+    Ok(Snapshot { path })
-+}
-+
-+fn snapshot_files(root: &Path, files: &[u8]) -> Result<Snapshot> {
-+    let snapshot = empty_snapshot()?;
-     for path in source_paths(files)? {
-         let source = root.join(&path);
-         let Some(metadata) = source_metadata(root, &path)? else {
-```
-
-**File**: `tests/it/src/qa/run.rs` (modified, +4/-0)
-```diff
-@@ -383,6 +383,8 @@ pub(super) fn process(root: &Path, command: &Command) -> Result<process::Command
-         "GIX_TEST_IGNORE_ARCHIVES",
-         "GIX_TEST_CREATE_ARCHIVES_EVEN_ON_CI",
-         "GIX_TEST_FIXTURE_HASH",
-+        "GIX_TEST_FIXTURE_CACHE",
-+        "GIX_TEST_FIXTURE_SOURCE_ROOT",
-         "GIX_MERGE_UPDATE_CARTESIAN_BASELINE",
-         "GIX_MERGE_UPDATE_BASELINE",
-         "INSTA_FORCE_UPDATE",
-@@ -565,6 +567,8 @@ mod tests {
-             ("INSTA_FORCE_PASS", Some("0")),
-             ("RUSTUP_TOOLCHAIN", Some("1.99.0")),
-             ("GIX_TEST_FIXTURE_HASH", Some("sha256")),
-+            ("GIX_TEST_FIXTURE_CACHE", None),
-+            ("GIX_TEST_FIXTURE_SOURCE_ROOT", None),
-             ("INSTA_FORCE_UPDATE", None),
-             ("INSTA_FORCE_UPDATE_SNAPSHOTS", None),
-             ("TRYBUILD", None),
+-    // Git for Windows still limits some repository paths even with core.longpaths enabled.
+-    let mut id = DefaultHasher::new();
+-    (std::process::id(), stamp).hash(&mut id);
+-    let path = std::path::absolute(std::env::temp_dir())
+-        .or_raise(|| message("Resolve QA temporary directory"))?
+-        .join(format!("qa-{:x}", id.finish()));
+-    fs::create_dir(&path).or_raise(|| message!("Create QA snapshot {}", path.display()))?;
+-    Ok(Snapshot { path })
++    let directory = std::path::absolute(std::env::temp_dir()).or_raise(|| message("Resolve QA temporary directory"))?;
++    loop {
++        // Git for Windows still limits some repository paths even with core.longpaths enabled.
++        let mut id = DefaultHasher::new();
++        (std::process::id(), stamp).hash(&mut id);
++        let path = directory.join(format!("qa-{:x}", id.finish()));
++        match fs::create_dir(&path) {
++            Ok(()) => return Ok(Snapshot { path }),
++            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => stamp += 1,
++            Err(error) => return Err(error).or_raise(|| message!("Create QA snapshot {}", path.display())),
++        }
++    }
+ }
+ 
+ fn snapshot_files(root: &Path, files: &[u8]) -> Result<Snapshot> {
 ```
 
 ---
 
-### Incident Patch 2: `a6fbf76b` (2026-11-03)
-**Commit Message**: Reduce Linux QA serialization and debug artifacts
+### Incident Patch 2: `2daa02cb` (2026-11-04)
+**Commit Message**: fix(gix-credentials): address review feedback on ephemeral token lifetime
 
-The one-file histogram optimization in `gix-imara-diff` exposed a 24m09s
-Linux feature job in CI run 41510500602. Its 103 compilation checks took
-7m18s, and 98 feature-test builds took 12m22s, while test execution took
-only 2m58s. The conservative reverse-dependency closure selects 65 of 71
-crates; keep that coverage intact rather than pruning configurations
-without accounting for Cargo feature activation and unification.
-
-Run feature tests in their own Linux job so compilation checks no longer
-precede them. Each test variant already builds its own binaries and
-creates its own fixture snapshot. Keep exhaustive feature contracts with
-compilation checks, and extend the partition regression to verify exact
-ownership and test-only provisioning in fast and exhaustive plans.
-
-Use `CARGO_PROFILE_DEV_DEBUG=line-tables-only` for Linux CI runner builds,
-including downstream checks, before cache lookup. The test and QA profiles
-inherit it, preserving assertions, overflow checks and source-location
-backtraces while omitting full debugger variable/type information.
-
-The missing feature cache had been restored with the exact same key by an
-earli
-
-**File**: `.github/workflows/ci.yml` (modified, +8/-0)
-```diff
-@@ -25,6 +25,8 @@ jobs:
-   plan:
-     name: Select QA work
-     runs-on: ubuntu-latest
-+    env:
-+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
-     outputs:
-       matrix: ${{ steps.plan.outputs.matrix }}
-       plan: ${{ steps.plan.outputs.plan }}
-@@ -141,6 +143,10 @@ jobs:
-         if: matrix.just
-         with:
-           just-version: ${{ matrix.just_version }} # zizmor: ignore[unpinned-tools] Exact version in Cargo.toml's workspace.metadata.qa.tool-versions.
-+      - name: Reduce Linux debug artifacts while retaining backtraces
-+        if: runner.os == 'Linux'
-+        shell: bash
-+        run: echo 'CARGO_PROFILE_DEV_DEBUG=line-tables-only' >> "$GITHUB_ENV"
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-         with:
-           shared-key: ${{ matrix.cache || matrix.id }}
-@@ -177,6 +183,8 @@ jobs:
-       matrix: ${{ fromJSON(needs.plan.outputs.downstream) }}
-     continue-on-error: true
-     runs-on: ubuntu-latest
-+    env:
-+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
-     steps:
-       - name: Check out the gix version under test
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-```
-
-**File**: `DEVELOPMENT.md` (modified, +11/-0)
-```diff
-@@ -262,6 +262,17 @@ runs the constrained pure-Rust Docker check. Journey tests require Unix. CI also
- Windows baseline doctests and MSRV builds. `--all-platforms` shows these exact assignments;
- a local run never attempts another host's native checks.
- 
-+Linux feature compilation checks and feature tests run in separate jobs, retaining every
-+selected configuration. Linux CI runner builds use `CARGO_PROFILE_DEV_DEBUG=line-tables-only` (also inherited
-+by the test and QA profiles) to reduce compilation and cache storage costs while preserving
-+debug assertions, overflow checks, and file/line backtraces. Full debugger variable and type
-+information is omitted. Reproduce this setting locally by exporting the same variable.
-+
-+Rust caches are saved by `main` runs and restored by PRs. They retain downloaded dependencies
-+and their build artifacts; workspace crates are rebuilt. Job caches compete for the repository's
-+storage allowance, so a correct key can still miss after eviction. Changes to the Cargo profile
-+environment produce new cache keys that need a `main` run to populate.
-+
- | Stage | Checks |
- | --- | --- |
- | `self-test` | Lightweight planner/runner tests; CI runs these once in the planning gate |
-```
-
-**File**: `tests/it/src/qa/catalog.rs` (modified, +31/-5)
-```diff
-@@ -270,7 +270,7 @@ pub fn tasks(metadata: &Value, selection: &Value, platform: &str) -> Result<Vec<
-     }
-     let variants = core("variants")?;
-     if !variants.is_empty() {
--        out.push(Task::new("feature-tests", "features", &["tests"], variants));
-+        out.push(Task::new("feature-tests", "feature-tests", &["tests"], variants));
-     }
-     for (id, stage) in [
-         ("default-doctests", "default-doctests"),
-@@ -806,13 +806,39 @@ mod tests {
- 
-     #[test]
-     fn ci_jobs_partition_the_same_local_tasks() -> gix_error::TestResult {
-+        let mut metadata = metadata();
-+        metadata["packages"][0]["metadata"]["qa"]["checks"] = json!([{"args":["--all-features"]}]);
-+        metadata["packages"][0]["metadata"]["qa"]["tests"] = json!([{"args":["--all-features"], "requires":["xz"]}]);
-         for mode in ["fast", "exhaustive"] {
-             let selection = json!({"mode":mode, "packages":["gix-path","gitoxide","internal-tools"]});
--            let plan = plan(&metadata(), &selection, "linux-x86_64", true)?;
-+            let plan = plan(&metadata, &selection, "linux-x86_64", true)?;
-+            let jobs = plan["jobs"].as_array().expect("plan jobs");
-+            let owner = |task| {
-+                jobs.iter()
-+                    .find(|job| job["tasks"].as_array().expect("job tasks").contains(&json!(task)))
-+                    .expect("feature task has a CI job")
-+            };
-+            let builds = owner("feature-builds");
-+            let tests = owner("feature-tests");
-+            assert_ne!(
-+                builds["id"], tests["id"],
-+                "feature builds and tests can run concurrently"
-+            );
-+            assert_eq!(builds["tools"], json!([]), "build checks do not need nextest");
-+            assert_eq!(tests["tools"], json!(["cargo-nextest@0.9.122"]));
-+            assert_eq!(builds["xz"], false, "test-only requirements stay with the tests");
-+            assert_eq!(tests["xz"], true);
-+            if mode == "exhaustive" {
-+                assert_eq!(
-+                    owner("feature-contracts")["id"],
-+                    builds["id"],
-+                    "feature contracts remain with compilation checks"
-+                );
-+            }
-             let mut seen = BTreeSet::new();
--            for job in plan["jobs"].as_array().expect("plan jobs") {
-+            for job in jobs {
-                 let platform = job["platform"].as_str().expect("job platform");
--                let local = tasks(&metadata(), &selection, platform)?;
-+                let local = tasks(&metadata, &selection, platform)?;
-                 for id in job["tasks"].as_array().expect("job task IDs") {
-                     let id = id.as_str().expect("task ID");
-                     assert!(
-@@ -826,7 +852,7 @@ mod tests {
-                 }
-             }
-             for platform in CI_PLATFORMS {
--                for task in tasks(&metadata(), &selection, platform)? {
-+                for task in tasks(&metadata, &selection, platform)? {
-                     assert_eq!(
-                         seen.contains(&(*platform, task.id)),
-                         assigned(&task, platform, mode == "exhaustive"),
-```
-
----
-
-### Incident Patch 3: `cd9b3ad4` (2026-11-03)
-**Commit Message**: feat(gix-testtools): share generated scripted fixtures within a test run
-
-I looked at this in detail and changed a thing or two. The tests I left
-untouched, they are quite insane but I presume they are correctly reflecting
-how this feature is going to be used.
+Rubber-stamp tests, checked production code.
 
 <!-- agent -->
-Exhaustive native QA uses separate source snapshots for archived and
-freshly generated fixtures. Scripts without portable archives therefore
-run twice even when their output is read-only and identical. Expensive
-remote histories made this visible in Windows CI.
+One helper can return `ephemeral=1` before a later helper supplies the token.
+Previously, a later `credential` without an `ephemeral` line reset the flag
+to `None`. Store callbacks then omitted the no-cache hint and could allow a
+short-lived token to be cached.
 
-Add an opt-in generated fixture cache using `GIX_TEST_FIXTURE_CACHE` and
-`GIX_TEST_FIXTURE_SOURCE_ROOT`. Equivalent snapshots share a stable
-absolute fixture directory, keyed by source namespace, exact script
-contents and invocation spelling, arguments, object hash and post-process
-version. An absolute lock and atomic completion record prevent concurrent
-or failed generators from publishing partial fixtures. Generation stays
-at its final path so embedded alternates and worktree links remain valid.
+The review requested:
+> Git retains the earlier flag for the same exchange; merge this field only
+> when the later helper supplies a value.
 
-Only normal read-only fixtures with ignored or absent archives participate,
-and only when archive writing is disabled or excluded. Existing archives
-retain 
+Merge the lifetime flag independently of the credential, changing it only
+for an explicit helper value. Retain explicit false/true overrides and the
+existing expiry handling.
 
-**File**: `gix-diff/tests/diff/blob/slider.rs` (modified, +6/-2)
+The regression failed before the fix. It checks omitted, false, and true
+values from the later helper, verifies both store and erase payloads, and
+compares the same two-helper exchange against isolated Git 2.54.0. Git omits
+false flags when serializing its result; lifetime semantics match in every
+case.
+
+Assisted-by: GPT 6.0 Astra
+Co-authored-by: GPT 6.0 Astra <[REDACTED_EMAIL]>
+
+**File**: `gix-credentials/src/helper/cascade.rs` (modified, +2/-2)
 ```diff
-@@ -128,7 +128,11 @@ fn read_fixture(
-     let baseline_path = worktree_path.join(&file_name);
-     let baseline = std::fs::read(&baseline_path)?;
-     let baseline = crate::blob::skip_header_and_fold_to_unidiff(&baseline);
--    let baseline_path = crate_root.join(&baseline_path).strip_prefix(project_root)?.to_owned();
-+    let baseline_path = crate_root.join(&baseline_path);
-+    let baseline_path = baseline_path
-+        .strip_prefix(project_root)
-+        .unwrap_or(&baseline_path)
-+        .to_owned();
-     let git_no_indent_heuristic = if read_no_indent {
-         read_no_indent_baseline(worktree_path, &file_name)?
-     } else {
-@@ -166,7 +170,7 @@ fn cases_from_fixture(fixture: &str, read_no_indent: bool) -> gix_testtools::Res
- 
- struct Case {
-     file_name: String,
--    /// Location of the generated baseline, relative to the workspace root.
-+    /// Location of the generated baseline, relative to the workspace root when possible.
-     baseline_path: PathBuf,
-     algorithm: Algorithm,
-     /// The primary Git baseline, generated with `--indent-heuristic` and used for the pass/fail comparison.
+@@ -141,8 +141,8 @@ impl Cascade {
+                             }
+                             if let Some(src) = credential {
+                                 dst_ctx.credential = Some(src);
+-                                dst_ctx.ephemeral = ephemeral;
+-                            } else if let Some(src) = ephemeral {
++                            }
++                            if let Some(src) = ephemeral {
+                                 dst_ctx.ephemeral = Some(src);
+                             }
+                         }
 ```
 
-**File**: `gix-discover/tests/discover/upwards/ceiling_dirs.rs` (modified, +31/-21)
+**File**: `gix-credentials/tests/helper/cascade.rs` (modified, +73/-0)
 ```diff
-@@ -142,22 +142,24 @@ fn more_restrictive_ceiling_dirs_overrule_less_restrictive_ones() -> TestResult
- }
+@@ -90,6 +90,79 @@ ephemeral=1
+         Ok(())
+     }
  
- #[test]
--fn ceiling_dirs_are_not_processed_differently_than_the_git_dir_candidate() -> TestResult {
--    let work_dir = repo_path()?;
--    let dir = work_dir.join("some/very/deeply/nested/subdir/../../../../../..");
-+fn nonmatching_relative_ceiling_is_ignored_after_resolving_start_path() -> TestResult {
-+    let outer = gix_testtools::scripted_fixture_read_only("make_nested_repos.sh")?;
-+    let inner = std::env::current_dir()?.join(outer).join("inner");
-+    let dir = Path::new("some/very/deeply/nested/subdir/../../../../../..");
-     let (repo_path, _trust) = gix_discover::upwards_opts(
--        &dir,
-+        dir,
-         Options {
-+            current_dir: Some(&inner),
-             match_ceiling_dir_or_error: false,
-             ceiling_dirs: vec![Path::new("./some").into()],
-             ..Default::default()
-         },
-     )?;
- 
--    assert_ne!(
--        &repo_path.as_ref().canonicalize()?,
--        &work_dir,
--        "a relative path that climbs above the test repo should yield the gitoxide repo"
-+    assert_eq!(
-+        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
-+        Some(Path::new("..")),
-+        "the start path resolves to the outer fixture; the relative ceiling does not contain it and is ignored"
-     );
- 
-     Ok(())
-@@ -186,30 +188,38 @@ fn no_matching_ceiling_dirs_errors_by_default() -> TestResult {
- 
- #[test]
- fn ceilings_are_adjusted_to_match_search_dir() -> TestResult {
--    let relative_work_dir = repo_path()?;
--    let cwd = std::env::current_dir()?;
--    let absolute_ceiling_dir = gix_path::realpath_opts(&relative_work_dir, &cwd, 8)?;
--    let dir = relative_work_dir.join("some");
--    assert!(dir.is_relative());
-+    // This test changes the process-wide CWD to resolve relative search and ceiling paths against the fixture.
-+    // Restoring it afterward does not prevent races with other tests, so run the body in an isolated child.
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let work_dir = std::env::current_dir()?.join(repo_path()?);
-+    let _cwd = gix_testtools::set_current_dir(&work_dir)?;
-     let (repo_path, _trust) = gix_discover::upwards_opts(
--        &dir,
-+        Path::new("some"),
-         Options {
--            ceiling_dirs: vec![absolute_ceiling_dir],
-+            ceiling_dirs: vec![work_dir.clone()],
-             ..Default::default()
-         },
-     )?;
--    assert_repo_is_current_workdir(repo_path, &relative_work_dir);
-+    assert_eq!(
-+        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
-+        Some(Path::new(".")),
-+        "an absolute ceiling matches the relative search and preserves its relative result"
-+    );
- 
--    assert!(relative_work_dir.is_relative());
--    let absolute_dir = gix_path::realpath_opts(relative_work_dir.join("some").as_ref(), &cwd, 8)?;
-     let (repo_path, _trust) = gix_discover::upwards_opts(
--        &absolute_dir,
-+        &work_dir.join("some"),
-         Options {
--            ceiling_dirs: vec![relative_work_dir.clone()],
-+            ceiling_dirs: vec![Path::new(".").into()],
-             ..Default::default()
-         },
-     )?;
--    assert_repo_is_current_workdir(repo_path, &relative_work_dir);
-+    assert_eq!(
-+        repo_path.into_repository_and_work_tree_directories().1.as_deref(),
-+        Some(work_dir.as_path()),
-+        "a relative ceiling matches the absolute search and preserves its absolute result"
-+    );
-     Ok(())
- }
- 
-```
-
-**File**: `tests/tools/src/fixture_cache.rs` (added, +245/-0)
-```diff
-@@ -0,0 +1,245 @@
-+use std::{
-+    collections::hash_map::DefaultHasher,
-+    env, fs,
-+    hash::Hasher,
-+    io::Write,
-+    path::{Component, Path, PathBuf},
-+    time::Duration,
-+};
-+
-+use gix_error::{Error, Result, ResultExt, bail};
-+
-+use crate::{FixtureState, PostResult};
-+
-+/// A handle to one entry in a caller-owned cache of generated fixtures.
-+/// Equivalent requests select the same entry, even through separate handles. Archives never populate it.
-+pub(super) struct Cache {
-+    /// Absolute entry directory selected by the identity hash, containing `identity` and `completed` files
-+    /// alongside `fixture-*` generation-attempt directories, rather than the fixture payload directly.
-+    /// For example, `/tmp/qa-run-123/fixture-cache/<identity-hash>`, with the payload in a child
-+    /// directory such as `fixture-AbCd12/`. A successful attempt's random name is recorded in `completed`
-+    /// and reused by later requests; a new suffix is chosen only when starting a generation attempt.
-+    directory: PathBuf,
-+    /// Serialized cache-key inputs, hashed to select `directory` and persisted there in full.
-+    /// Comparing these bytes before reuse detects hash collisions instead of accepting the wrong fixture.
-+    identity: Vec<u8>,
-+}
-+
-+impl Cache {
-+    /// Whether either cache environment variable is set, requesting shared caching.
-+    /// Partial configuration counts as a request so [`Self::from_env()`] can report it as invalid.
-+    pub(super) fn is_requested_from_env() -> bool {
-+        env::var_os("GIX_TEST_FIXTURE_CACHE").is_some() || env::var_os("GIX_TEST_FIXTURE_SOURCE_ROOT").is_some()
-+    }
-+
-+    pub(super) fn from_env(
-+        script: &Path,
-+        args: &[String],
-+        object_hash: gix_hash::Kind,
-+        script_identity: u32,
-+        post_version: Option<u32>,
-+    ) -> Result<Option<Self>> {
-+        let Some((directory, source_root)) = Self::paths_from_env()? else {
-+            return Ok(None);
-+        };
-+        let Some(mut identity) = source_identity(script, &source_root, object_hash)? else {
-+            return Ok(None);
-+        };
-+        fs::create_dir_all(&directory).or_error()?;
-+        let directory = fixture_realpath(&directory)?;
-+        append_invocation_identity(&mut identity, args, script_identity, post_version);
-+        let mut hash = DefaultHasher::new();
-+        hash.write(&identity);
-+        Ok(Some(Self {
-+            directory: directory.join(format!("{:016x}", hash.finish())),
-+            identity,
-+        }))
-+    }
-+
-+    pub(super) fn obtain<T>(
-+        self,
-+        make_fixture: impl FnOnce(FixtureState<'_>) -> PostResult<T>,
-+    ) -> Result<(PathBuf, T)> {
-+        let _lock = self.lock_entry()?;
-+        self.create_entry_and_verify_identity()?;
-+        if let Some(path) = self.read_completed_fixture()? {
-+            let value = make_fixture(FixtureState::Fresh(&path)).map_err(Error::from_boxed)?;
-+            return Ok((path, value));
++    #[test]
++    fn later_helpers_preserve_or_explicitly_override_ephemeral() -> TestResult {
++        if gix_testtools::run_in_isolated_process()? {
++            return Ok(());
 +        }
-+
-+        let path = self.create_generation_directory()?;
-+        let value = make_fixture(FixtureState::Uninitialized(&path))
-+            .inspect_err(|_| {
-+                eprintln!("Retained incomplete generated fixture at {}", path.display());
-+            })
-+            .map_err(Error::from_boxed)?;
-+        self.publish_completed_fixture(&path)?;
-+        Ok((path, value))
-+    }
-+
-+    fn paths_from_env() -> Result<Option<(PathBuf, PathBuf)>> {
-+        let (directory, source_root) = match (
-+            env::var_os("GIX_TEST_FIXTURE_CACHE"),
-+            env::var_os("GIX_TEST_FIXTURE_SOURCE_ROOT"),
-+        ) {
-+            (None, None) => return Ok(None),
-+            (Some(directory), Some(source_root)) => (PathBuf::from(directory), PathBuf::from(source_root)),
-+            _ => bail!("GIX_TEST_FIXTURE_CACHE and GIX_TEST_FIXTURE_SOURCE_ROOT must be set together"),
-+        };
-+        if !directory.is_absolute() || !source_root.is_absolute() {
-+            bail!("GIX_TEST_FIXTURE_CACHE and GIX_TEST_FIXTURE_SOURCE_ROOT must be absolute paths");
++        let temp = gix_testtools::tempfile::tempdir()?;
++        let _cwd = gix_testtools::set_current_dir(temp.path())?;
++        for later_ephemeral in [None, Some(false), Some(true)] {
++            let first_helper = r#"!f() {
++                cat >/dev/null
++                printf 'capability[]=authtype\nauthtype=Bearer\nephemeral=1\n'
++            }; f"#;
++            let second_helper = format!(
++                "!f() {{ cat >/dev/null; printf '%s' 'capability[]=authtype
++credential=access-token
++{}'; }}; f",
++                later_ephemeral.map_or_else(String::new, |value| format!("ephemeral={}\n", u8::from(value)))
++            );
++            let mut context = Context::from_url("https://example.com/repo", Default::default());
++            context.capability.push(Capability::Authtype);
++            let outcome = Cascade::default()
++                .extend([
++                    Program::from_custom_definition(first_helper)?,
++                    Program::from_custom_definition(second_helper.as_str())?,
++                ])
++                .invoke(
++                    Action::Get(context.clone()),
++                    gix_prompt::Options {
++                        mode: gix_prompt::Mode::Disable,
++                        askpass: None,
++                    },
++                )?
++                .expect("the helpers jointly supply complete token credentials");
++            assert_eq!(
++                outcome.credentials,
++                Credentials::Encoded {
++                    authtype: "Bearer".into(),
++                    credential: "access-token".into(),
++                    oauth_refresh_token: None,
++                },
++                "the later helper completes the token supplied across the exchange"
++            );
++            for action in [outcome.next.clone().store(), outcome.next.clone().erase()] {
++                let payload = action.payload().expect("follow-up actions have a payload");
++                assert_eq!(
++                    Context::from_bytes(payload, Default::default())?.ephemeral,
++                    Some(later_ephemeral.unwrap_or(true)),
++                    "omitting ephemeral preserves the no-cache hint; an explicit value overrides it"
++                );
++            }
++            if !gix_testtools::should_skip_as_git_version_is_smaller_than(2, 46, 0) {
++                let _env = gix_testtools::Env::new()
++                    .set("GIT_CONFIG_COUNT", "2")
++                    .set("GIT_CONFIG_KEY_0", "credential.helper")
++                    .set("GIT_CONFIG_VALUE_0", first_helper)
++                    .set("GIT_CONFIG_KEY_1", "credential.helper")
++                    .set("GIT_CONFIG_VALUE_1", second_helper);
++                let git_outcome = gix_credentials::builtin(Action::Get(context))?
++                    .expect("Git also completes the token across both helpers");
++                assert_eq!(
++                    git_outcome.credentials, outcome.credentials,
++                    "credential selection matches Git"
++                );
++                assert_eq!(
++                    Context::try_from(&git_outcome.next)?.ephemeral.unwrap_or(false),
++                    Context::try_from(&outcome.next)?.ephemeral.unwrap_or(false),
++                    "the lifetime semantics match Git, which omits a false flag from its output"
++                );
++            }
 +        }
-+        Ok(Some((directory, source_root)))
++        Ok(())
 +    }
 +
-+    fn lock_entry(&self) -> Result<gix_lock::Marker> {
-+        fs::create_dir_all(self.directory.parent().expect("cache entries have a parent")).or_error()?;
-+        gix_lock::Marker::acquire_to_hold_resource(
-+            &self.directory,
-+            gix_lock::acquire::Fail::AfterDurationWithBackoff(Duration::from_secs(6 * 60)),
-+            None,
-+            0,
-+        )
-+        .or_error()
-+    }
-+
-+    fn create_entry_and_verify_identity(&self) -> Result<()> {
-+        fs::create_dir_all(&self.directory).or_error()?;
-+        let identity_path = self.directory.join("identity");
-+        match fs::read(&identity_path) {
-+            Ok(identity) if identity == self.identity => {}
-+            Ok(_) => bail!("Fixture cache identity mismatch at {}", self.directory.display()),
-+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
-+    
+     #[test]
+     fn incomplete_unnegotiated_or_expired_authtype_allows_password_fallback() -> TestResult {
+         for (announce, response) in [
 ```
 
-**File**: `tests/tools/src/lib.rs` (modified, +86/-47)
+---
+
+### Incident Patch 3: `71551f1a` (2026-11-04)
+**Commit Message**: fix(gix-credentials): address review feedback on token diagnostics
+
+Rubber-stamp tests, checked production code.
+
+<!-- agent -->
+Invalid negotiated token values were included in validation error text and
+printable `input` metadata. `Cascade::invoke()` can propagate these errors
+before the HTTP transport's secret-free validation runs.
+
+The review requested:
+> Return a secret-free validation error here without retaining the credential
+> as metadata.
+
+Keep credential protocol and UTF-8 errors free of token values and metadata.
+The regression failed before the fix and covers CR, LF, NUL, invalid UTF-8,
+and errors propagated by the cascade's input validation.
+
+Assisted-by: GPT 6.0 Astra
+Co-authored-by: GPT 6.0 Astra <[REDACTED_EMAIL]>
+
+**File**: `gix-credentials/src/protocol/context/serde.rs` (modified, +22/-4)
 ```diff
-@@ -8,6 +8,30 @@
- //! Valid values are the names of hash functions supported by `gix_hash::Kind` (e.g., `sha1`, `sha256`).
- //! If not set, the default hash function via `gix_hash::Kind::default()` is used.
- //!
-+//! ### `GIX_TEST_FIXTURE_CACHE` and `GIX_TEST_FIXTURE_SOURCE_ROOT`
-+//!
-+//! Set both to absolute paths to share generated read-only scripted fixtures across equivalent source
-+//! snapshots within one owned test run.
-+//!
-+//! A source snapshot is a source tree kept at a fixed revision or working-tree state for testing, such
-+//! as a checkout or an exported copy of the workspace. It contains the crates, fixture scripts and their
-+//! inputs, not the generated fixtures. Equivalent snapshots can live at different absolute paths.
-+//!
-+//! - `GIX_TEST_FIXTURE_SOURCE_ROOT` names the current snapshot's workspace root, for example
-+//!   `/tmp/qa-run-123/snapshot-a`, not a crate directory or its `tests/fixtures` directory.
-+//!   An example fixture script would be at
-+//!   `/tmp/qa-run-123/snapshot-a/gix-discover/tests/fixtures/make_nested_repos.sh`.
-+//! - `GIX_TEST_FIXTURE_CACHE` names the shared output directory, for example
-+//!   `/tmp/qa-run-123/fixture-cache`. Use a fresh cache namespace for each owned test run.
-+//!   When shared caching applies, that script's generated test files are under
-+//!   `/tmp/qa-run-123/fixture-cache/<key>/fixture-<suffix>/`, including `.git/HEAD` and
-+//!   `inner/.git/HEAD`. Here `<key>` is the fixture-identity hash and `<suffix>` is a random directory suffix.
-+//!
-+//! Tests in a second equivalent snapshot at `/tmp/qa-run-123/snapshot-b` use that path for
-+//! `GIX_TEST_FIXTURE_SOURCE_ROOT` but keep `GIX_TEST_FIXTURE_CACHE` pointing to the same
-+//! `/tmp/qa-run-123/fixture-cache`. Crate and script paths are keyed relative to the source root, allowing
-+//! equivalent requests from both snapshots to reuse a generated fixture despite their different roots.
-+//!
- //! ## Script Isolation
- //!
- //! Fixture scripts and [`git()`] use `GIT_CONFIG_PARAMETERS` to disable signing and automatic maintenance
-@@ -53,6 +77,8 @@ pub mod signature;
- /// Capture complete, stable repository state for integration-test assertions.
- pub mod repository;
+@@ -11,7 +11,8 @@ mod write {
+         /// Write the serializable fields to `out` for decoding with [`from_bytes()`][Self::from_bytes()].
+         /// Unsupported capabilities and `quit` are omitted. Fields enabled by `authtype` are only
+         /// written if that capability is set.
+-        /// Invalid field values are retained as `input` bytes in the I/O error.
++        /// Invalid field values, except `password`, `credential`, and `oauth_refresh_token` secrets,
++        /// are retained as `input` bytes in the I/O error.
+         /// After [wrapping](gix_error::Error::from_error()), inspect them with
+         /// [metadata](gix_error::Error::metadata()).
+         pub fn write_to(&self, mut out: impl std::io::Write) -> std::io::Result<()> {
+@@ -106,15 +107,19 @@ pub mod decode {
  
-+mod fixture_cache;
-+
- const ARCHIVE_DIR_NAME: &str = "generated-archives";
- const BASH_FIXTURE_PRELUDE: &str = include_str!("scripted_fixture_prelude.sh");
+     use gix_error::{ErrorExt, Result, bail, validation};
  
-@@ -1848,48 +1874,47 @@ where
-         &script_identity,
-         archive_policy.cache_variant(),
-     );
--    let _marker = marker_if_needed(destination_dir, script_basename)?;
--
-     let script_identity_for_archive = match args_in_hash {
-         ArgsInHash::Yes => script_identity,
-         ArgsInHash::No => 0,
-     };
-     let script_absolute_path = env::current_dir()?.join(&script_path);
-+    let shared_cache = if !force_run
-+        && archive_policy == ArchivePolicy::Normal
-+        && fixture_cache::Cache::is_requested_from_env()
-+        && (env::var_os("GIX_TEST_IGNORE_ARCHIVES").is_some() || !archive_file_path.try_exists()?)
-+        && (should_skip_all_archive_creation() || excludes.is_excluded(&archive_file_path))
-+    {
-+        fixture_cache::Cache::from_env(&script_path, &args, object_hash, script_identity, post_version)?
-+    } else {
-+        None
+-    use crate::protocol::{Capability, Context, ContextOptions, context::serde::validate};
++    use crate::protocol::{
++        Capability, Context, ContextOptions,
++        context::serde::{is_secret_field, validate},
 +    };
-     let post_process_closure = post_process.map(|(_, f)| f);
--
--    let res = run_fixture_generator_with_marker_handling(
--        &archive_file_path,
--        &script_result_directory,
--        script_identity_for_archive,
--        force_run,
--        archive_policy,
--        excludes,
--        &format!("using script \"{}\"", script_location.display()),
--        |fixture_state| {
--            if let FixtureState::Uninitialized(dir) = fixture_state {
--                // Bash 3.2 loses BASH_SOURCE after calling functions defined by `-c`. Sourcing a
--                // temporary prelude file preserves script context without exporting functions.
--                let prelude_file = if is_bash_fixture {
--                    let mut file = tempfile::NamedTempFile::new()?;
--                    std::io::Write::write_all(file.as_file_mut(), BASH_FIXTURE_PRELUDE.as_bytes())?;
--                    Some(file)
--                } else {
--                    None
--                };
--                let mut cmd = if let Some(file) = prelude_file.as_ref() {
--                    let mut cmd = command_with_environment_snapshot(bash_program());
--                    let prelude_path = gix_path::from_bstring(
--                        gix_path::to_unix_separators_on_windows(gix_path::into_bstr(file.path())?).into_owned(),
--                    )?;
--                    cmd.arg("-c")
--                        .arg("source \"$1\" || exit; shift; source \"$0\" \"$@\"")
--                        .arg(&script_absolute_path)
--                        .arg(prelude_path);
--                    cmd
--                } else {
--                    command_with_environment_snapshot(&script_absolute_path)
--                };
--                let outpu
+ 
+     impl Context {
+         /// Decode ourselves from `input` which is the format written by [`write_to()`][Self::write_to()].
+         /// Fields enabled by `authtype` require a preceding `capability[]=authtype` line.
+         /// Unsupported capability names are retained for inspection, but do not enable any fields
+         /// and are omitted when encoding the context again.
+         /// `options` control what to support during deserialization.
+-        /// Invalid line or value bytes are stored as `input` in [`gix_error::Message::values`].
++        /// Invalid line or value bytes, except `password`, `credential`, and `oauth_refresh_token` secrets,
++        /// are stored as `input` in [`gix_error::Message::values`].
+         /// After [wrapping](gix_error::Error::from_error()), inspect them with
+         /// [metadata](gix_error::Error::metadata()).
+         pub fn from_bytes(input: &[u8], options: ContextOptions) -> Result<Self> {
+@@ -165,7 +170,11 @@ pub mod decode {
+                     | "credential"
+                     | "capability[]" => {
+                         if !value.is_utf8() {
+-                            bail!(validation(format!("Illformed UTF-8 in value of key {key:?}")).with_input(value));
++                            let mut error = validation(format!("Illformed UTF-8 in value of key {key:?}"));
++                            if !is_secret_field(key) {
++                                error = error.with_input(value);
++                            }
++                            bail!(error);
+                         }
+                         let value = value.to_string();
+                         if key == "capability[]" {
+@@ -206,6 +215,10 @@ pub mod decode {
+     }
+ }
+ 
++fn is_secret_field(key: &str) -> bool {
++    matches!(key, "password" | "credential" | "oauth_refresh_token")
++}
++
+ fn validate(key: &str, value: &BStr, protect_protocol: bool) -> Result {
+     if key.contains('\0')
+         || key.contains('\n')
+@@ -214,6 +227,11 @@ fn validate(key: &str, value: &BStr, protect_protocol: bool) -> Result {
+         || value.contains(&b'\n')
+         || (protect_protocol && value.contains(&b'\r'))
+     {
++        if is_secret_field(key) {
++            bail!(gix_error::validation(format!(
++                "{key:?} must not contain null bytes or newlines"
++            )));
++        }
+         bail!(
+             gix_error::validation(format!(
+                 "{key:?}={value:?} must not contain null bytes or newlines neither in key nor in value."
 ```
 
-**File**: `tests/tools/tests/tools/fixture_cache.rs` (added, +653/-0)
+**File**: `gix-credentials/tests/helper/context.rs` (modified, +97/-0)
 ```diff
-@@ -0,0 +1,653 @@
-+use std::{
-+    path::{Path, PathBuf},
-+    process::{Child, Command, Stdio},
-+};
-+
-+use gix_testtools::TestResult;
-+
-+const SCRIPT: &str = r#"#!/usr/bin/env bash
-+set -eu -o pipefail
-+printf 'run\n' >> "$FIXTURE_CACHE_RUNS"
-+printf 'generated\n' > origin
-+pwd -W 2>/dev/null > generation-path || pwd > generation-path
-+printf '%s\n' "$@" > arguments
-+if test -n "${FIXTURE_CACHE_FAIL:-}"; then exit 1; fi
-+"#;
-+
-+#[cfg(windows)]
-+#[test]
-+fn short_cache_paths_match_paths_recorded_by_git_and_the_shell() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let mut fixture = Cache::new()?;
-+    fixture.cache = fixture.directory.path().join("long-cache-directory");
-+    std::fs::create_dir(&fixture.cache)?;
-+    let root = fixture.snapshot("source", "crate", SCRIPT)?;
-+    let output = Command::new(gix_testtools::bash_program())
-+        .args(["-c", "cygpath -d \"$1\"", "short-cache-path"])
-+        .arg(&fixture.cache)
-+        .output()?;
-+    assert!(output.status.success(), "Git Bash can resolve the cache's short path");
-+    let short_path = PathBuf::from(std::str::from_utf8(&output.stdout)?.trim());
-+    assert_ne!(short_path, fixture.cache, "the regression exercises a short path alias");
-+    let mut request = fixture.invocation(&root, "crate", true)?;
-+    request.command.env("GIX_TEST_FIXTURE_CACHE", short_path);
-+    let generated = request.run()?;
-+    assert_eq!(
-+        generated,
-+        fixture.invocation(&root, "crate", true)?.run()?,
-+        "short and long cache paths share the same fixture"
-+    );
-+    let mut request = fixture.invocation(&root, "crate", true)?;
-+    request
-+        .command
-+        .env("GIX_TEST_FIXTURE_CACHE", fixture.cache.canonicalize()?);
-+    assert_eq!(
-+        request.run()?,
-+        generated,
-+        "verbatim cache paths reuse an ordinary fixture path"
-+    );
-+    assert_eq!(fixture.runs()?, 1, "path aliases do not regenerate fixtures");
-+    Ok(())
-+}
-+
-+#[cfg(unix)]
-+#[test]
-+fn symlinked_cache_roots_return_physical_fixture_paths() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let fixture = Cache::new()?;
-+    let root = fixture.snapshot("source", "crate", SCRIPT)?;
-+    let alias = fixture.directory.path().join("cache-alias");
-+    std::os::unix::fs::symlink(&fixture.cache, &alias)?;
-+    let mut request = fixture.invocation(&root, "crate", true)?;
-+    request.command.env("GIX_TEST_FIXTURE_CACHE", &alias);
-+    let path = request.run()?;
-+    assert_eq!(
-+        path,
-+        path.canonicalize()?,
-+        "fixture paths match the physical paths recorded by Git and the shell"
-+    );
-+    assert_eq!(fixture.invocation(&root, "crate", true)?.run()?, path);
-+    assert_eq!(fixture.runs()?, 1, "cache aliases reuse the same generated fixture");
-+    Ok(())
-+}
-+
-+#[test]
-+fn missing_archive_generation_is_reused_across_snapshots_and_modes() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let fixture = Cache::new()?;
-+    let first = fixture.snapshot("archived", "crate", SCRIPT)?;
-+    let second = fixture.snapshot("generated", "crate", SCRIPT)?;
-+    let archived = fixture.invocation(&first, "crate", false)?.run()?;
-+    let generated = fixture.invocation(&second, "crate", true)?.run()?;
-+    assert_eq!(
-+        archived, generated,
-+        "a missing archive generates one stable fixture shared by later generated-mode snapshots"
-+    );
-+    assert_eq!(
-+        generated
-+            .parent()
-+            .and_then(Path::parent)
-+            .map(Path::canonicalize)
-+            .transpose()?,
-+        Some(fixture.cache.canonicalize()?),
-+        "hash-keyed fixture entries live directly under the job cache root"
-+    );
-+    assert_eq!(fixture.runs()?, 1, "equivalent snapshots execute the script only once");
-+    assert_eq!(std::fs::read(generated.join("origin"))?, b"generated\n");
-+    let generation_path = PathBuf::from(std::fs::read_to_string(generated.join("generation-path"))?.trim());
-+    assert_eq!(
-+        generation_path.canonicalize()?,
-+        generated.canonicalize()?,
-+        "absolute paths recorded by the script remain valid after publication"
-+    );
-+    let mut entries = std::fs::read_dir(&generated)?
-+        .map(|entry| entry.map(|entry| entry.file_name()))
-+        .collect::<Result<Vec<_>, _>>()?;
-+    entries.sort();
-+    assert_eq!(
-+        entries,
-+        ["arguments", "generation-path", "origin"],
-+        "cache metadata stays outside the fixture payload"
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn archives_remain_local_and_never_supply_generated_mode() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let fixture = Cache::new()?;
-+    let first = fixture.snapshot("first", "crate", SCRIPT)?;
-+    let second = fixture.snapshot("second", "crate", SCRIPT)?;
-+    fixture.archive(&first, 0)?;
-+
-```
-
-**File**: `tests/tools/tests/tools/main.rs` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- #[cfg(all(feature = "worktree-exclusions", not(windows)))]
- mod archive_regeneration;
+@@ -164,6 +164,103 @@ fn authtype_protocol_fields_reject_record_injection() {
+     }
+ }
  
-+mod fixture_cache;
++#[test]
++fn invalid_secrets_never_appear_in_encoding_diagnostics_or_metadata() -> TestResult {
++    for value in [
++        "secret-token\rcontent",
++        "secret-token
++content",
++        "secret-token\0content",
++    ] {
++        for (key, context) in [
++            (
++                "password",
++                Context {
++                    password: Some(value.into()),
++                    ..Default::default()
++                },
++            ),
++            (
++                "credential",
++                Context {
++                    capability: vec![Capability::Authtype],
++                    credential: Some(value.into()),
++                    ..Default::default()
++                },
++            ),
++            (
++                "oauth_refresh_token",
++                Context {
++                    oauth_refresh_token: Some(value.into()),
++                    ..Default::default()
++                },
++            ),
++        ] {
++            let write_error = context
++                .write_to(Vec::new())
++                .expect_err("protocol delimiters in secrets are rejected");
++            let cascade_error = gix_credentials::helper::Cascade::default()
++                .invoke(
++                    gix_credentials::helper::Action::Get(context),
++                    gix_prompt::Options {
++                        mode: gix_prompt::Mode::Disable,
++                        askpass: None,
++                    },
++                )
++                .expect_err("the cascade validates secrets before invoking helpers");
++            for error in [gix_error::Error::from_error(write_error), cascade_error] {
++                assert!(
++                    !error.to_string().contains("secret-token") && !format!("{error:?}").contains("secret-token"),
++                    "encoding and cascade diagnostics must not expose any part of the rejected {key}"
++                );
++                assert!(
++                    error.metadata().all(|values| !values.contains_key("input")),
++                    "rejected {key} values must not be retained in diagnostic metadata"
++                );
++                assert!(
++                    error.to_string().contains(key),
++                    "the rejected secret field remains identifiable"
++                );
++            }
++        }
++    }
++    Ok(())
++}
 +
- mod isolation {
-     use gix_testtools::{Creation, TestResult, redact_debug_snapshot, redact_display_snapshot};
- 
++#[test]
++fn invalid_secrets_never_appear_in_decoding_diagnostics_or_metadata() -> TestResult {
++    for key in ["password", "credential", "oauth_refresh_token"] {
++        for value in [
++            b"secret-token\xff".as_slice(),
++            b"secret-token\rcontent",
++            b"secret-token\0content",
++        ] {
++            let input = [
++                b"capability[]=authtype\n".as_slice(),
++                key.as_bytes(),
++                b"=",
++                value,
++                b"\n",
++            ]
++            .concat();
++            let error = Context::from_bytes(&input, Default::default()).expect_err("invalid secret bytes are rejected");
++            assert!(
++                !error.to_string().contains("secret-token") && !format!("{error:?}").contains("secret-token"),
++                "decoding diagnostics must not expose invalid {key} values"
++            );
++            assert!(
++                error.metadata().all(|values| !values.contains_key("input")),
++                "neither protocol nor UTF-8 validation may retain the secret {key} input"
++            );
++            assert!(
++                error.to_string().contains(key),
++                "the rejected secret field remains identifiable"
++            );
++        }
++    }
++    Ok(())
++}
++
+ #[test]
+ fn authentication_challenges_survive_a_protocol_roundtrip() -> TestResult {
+     let input = b"protocol=https
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3157** (2026-11-05): Create `oid` from bytes in one `unsafe` block in `gix-hash` (@b84330808)
+- **PR #3156** (2026-11-04): much faster qa (@Byron)
+- **PR #3155** (2026-11-04): fix(gix-merge): treat merge driver exit codes 1 to 128 as conflicts, like Git does (@arthurzam)
+- **PR #3154** (2026-11-04): Decode into a `String` and forbid `unsafe` in `gix-filter` (@b84330808)
 - **PR #3152** (2026-11-03): even faster qa (@Byron)
 - **PR #3150** (2026-11-03): Remove the last `unsafe` block from `gix-revision` and forbid `unsafe` there (@b84330808)
-- **PR #3149** (2026-11-03): Enforce allocation limits for pack traversal metadata (@Byron)
-- **PR #3148** (2026-11-02): faster qa (@Byron)
-- **PR #3146** (2026-11-02): Release gix-macros v0.2.1 (@Byron)
-- **PR #3144** (2026-11-01): Bump the github-actions group with 7 updates (@dependabot[bot])
 
 ---
 
@@ -2681,13 +2268,13 @@ retain
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Share generated fixtures between exhaustive native QA passes
+## X. Share generated fixtures across QA test stages
 
 **RULE**:
 When implementing operations in `DEVELOPMENT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c6c639c`: Share generated fixtures between exhaustive native QA passes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61bbd5b5`: Share generated fixtures across QA test stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEVELOPMENT.md`.
@@ -2695,19 +2282,23 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
-When no archive is available, the archived pass can generate a fixture once for both passes;
-the shared cache never substitutes extracted archives for generated fixtures. Fixtures that write archives or require
-execution in a writable destination keep their existing behavior. The cache and its source
-copies remain alive until both passes finish, and are retained together if a source copy changes.
-Feature/hash variants also run in an isolated copy, sharing compatible fixture
+source copies. Native passes and feature/hash or isolated test variants within one QA run
+share a fresh cache of generated read-only scripted fixtures, locally and within each CI job.
+copies remain alive until the run finishes, and are retained together if a source copy changes.
+Changes to source files between stages prevent cache reuse. Feature/hash variants also run in
+an isolated copy and continue after individual failures. Separate runs and CI jobs never reuse
+each other's generated fixtures or extracted archives. Archive changes cause
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source copies. Feature/hash variants also run in an isolated copy, sharing compatible fixture
+source copies. The native passes share a fresh cache of generated read-only scripted fixtures.
+copies remain alive until both passes finish, and are retained together if a source copy changes.
+Feature/hash variants also run in an isolated copy, sharing compatible fixture
+caches within their task and continuing after individual failures. Their fixture caches cannot
+reuse a previous local run's extracted archives. Archive changes cause
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c6c639c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61bbd5b5` are properly handled with clean fallback behavior.

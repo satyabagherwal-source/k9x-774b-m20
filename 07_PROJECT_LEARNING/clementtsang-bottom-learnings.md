@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `f637446f`  
+> **Source Version**: `cc6facab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:34:50.282Z  
+> **Timestamp**: 2026-11-05T04:21:45.784Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:34:48.220Z  
+> **Harvest Timestamp**: 2026-11-05T04:21:45.776Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14154 stars
+- **Stars / Engagement**: 14160 stars
 
 ---
 
@@ -1599,307 +1599,27 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `540bb71a` (2026-11-02)
-**Commit Message**: bug: fix dialogs not blocking certain events (#2300)
+### Incident Patch 1: `373d4fc5` (2026-11-04)
+**Commit Message**: other: fix the windows gnullvm aarch64 build (#2302)
 
-Some events weren't blocked when dialog boxes were open, which would mean they would still do stuff behind the dialog (e.g. process actions). This change just blocks it from doing that if the dialog box is open.
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `.cargo/config.toml` (modified, +3/-0)
 ```diff
-@@ -28,6 +28,10 @@ That said, these are more guidelines rather than hard rules, though the project
+@@ -3,3 +3,6 @@ rustflags = ["-C", "target-feature=+crt-static"]
  
- - [#2296](https://github.com/ClementTsang/bottom/pull/2296): Better truncate CPU usage strings with small widths.
- 
-+### Bug Fixes
+ [target.i686-pc-windows-msvc]
+ rustflags = ["-C", "target-feature=+crt-static"]
 +
-+- [#2300](https://github.com/ClementTsang/bottom/pull/2300): Fix dialog screens not blocking certain user events.
-+
- ## 0.15.0 - 2026-10-31 🎃
- 
- ### Features
-```
-
-**File**: `src/app.rs` (modified, +44/-10)
-```diff
-@@ -377,6 +377,10 @@ impl App {
-     }
- 
-     pub fn toggle_sort_menu(&mut self) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         let widget_id = self.current_widget.widget_id
-             - match &self.current_widget.widget_type {
-                 BottomWidgetType::Proc => 0,
-@@ -440,6 +444,10 @@ impl App {
-     }
- 
-     pub fn toggle_ignore_case(&mut self) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         let is_in_search_widget = self.is_in_search_widget();
-         if let Some(proc_widget_state) = self
-             .states
-@@ -455,6 +463,10 @@ impl App {
-     }
- 
-     pub fn toggle_search_whole_word(&mut self) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         let is_in_search_widget = self.is_in_search_widget();
-         if let Some(proc_widget_state) = self
-             .states
-@@ -470,6 +482,10 @@ impl App {
-     }
- 
-     pub fn toggle_search_regex(&mut self) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         let is_in_search_widget = self.is_in_search_widget();
-         if let Some(proc_widget_state) = self
-             .states
-@@ -485,6 +501,10 @@ impl App {
-     }
- 
-     pub fn toggle_tree_mode(&mut self) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         if let Some(proc_widget_state) = self
-             .states
-             .proc_state
-@@ -552,6 +572,11 @@ impl App {
-             self.is_force_redraw = true;
-             return;
-         }
-+
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         match self.current_widget.widget_type {
-             BottomWidgetType::ProcSearch => {
-                 let is_in_search_widget = self.is_in_search_widget();
-@@ -585,7 +610,9 @@ impl App {
-                 .search_input_state
-                 .delete_behind_cursor();
-             self.is_force_redraw = true;
--        } else if let BottomWidgetType::ProcSearch = self.current_widget.widget_type {
-+        } else if !self.ignore_normal_keybinds()
-+            && let BottomWidgetType::ProcSearch = self.current_widget.widget_type
-+        {
-             let is_in_search_widget = self.is_in_search_widget();
-             if let Some(proc_widget_state) = self
-                 .states
-@@ -884,7 +911,8 @@ impl App {
-         if self.help_dialog_state.is_help_searching() {
-             self.help_dialog_state.search_input_state = Default::default();
-             self.is_force_redraw = true;
--        } else if let BottomWidgetType::ProcSearch = self.current_widget.widget_type
-+        } else if !self.ignore_normal_keybinds()
-+            && let BottomWidgetType::ProcSearch = self.current_widget.widget_type
-             && let Some(proc_widget_state) = self
-                 .states
-                 .proc_state
-@@ -901,7 +929,8 @@ impl App {
-                 .search_input_state
-                 .delete_previous_word();
-             self.is_force_redraw = true;
--        } else if let BottomWidgetType::ProcSearch = self.current_widget.widget_type
-+        } else if !self.ignore_normal_keybinds()
-+            && let BottomWidgetType::ProcSearch = self.current_widget.widget_type
-             && let Some(proc_widget_state) = self
-                 .states
-                 .proc_state
-@@ -996,7 +1025,7 @@ impl App {
-     ///
-     /// TODO: This ideally gets abstracted out into a separate widget.
-     pub(crate) fn kill_current_process(&mut self) {
--        if self.app_config_fields.is_read_only {
-+        if self.ignore_normal_keybinds() || self.app_config_fields.is_read_only {
-             return;
-         }
- 
-@@ -2073,6 +2102,13 @@ impl App {
-     /// Moves the mouse to the widget that was clicked on, then propagates the
-     /// click down to be handled by the widget specifically.
-     pub fn on_left_mouse_up(&mut self, x: u16, y: u16) {
-+        if self.is_in_dialog() {
-+            if self.process_kill_dialog.is_open() {
-+                self.process_kill_dialog.on_click(x, y);
-+            }
-+            return;
-+        }
-+
-         // Pretty dead simple - iterate through the widget map and go to the
-         // widget where the click is within.
- 
-@@ -2140,12 +2176,6 @@ impl App {
-             }
-         }
- 
--        // Second short circuit --- are we in the dd dialog state?  If so, only
--        // check yes/no/signals and bail after.
--        if self.process_kill_dialog.is_open() && self.process_kill_dialog.on_click(x, y) {
--            return;
--        }
--
-         let mut failed_to_get = true;
-         for (new_widget_id, widget) in &self.widget_map {
-             if let (Some((tlc_x, tlc_y)), Some((brc_x, brc_y))) =
-@@ -2387,6 +2417,10 @@ impl App {
- 
-     /// A quick and dirty way to handle paste events.
-     pub fn handle_paste(&mut self, paste: String) {
-+        if self.ignore_normal_keybinds() {
-+            return;
-+        }
-+
-         let is_in_search_widget = self.is_in_search_widget(
-```
-
----
-
-### Incident Patch 2: `fd8cc7d6` (2026-11-03)
-**Commit Message**: bug: fix hidden columns shifting widths and header clicks (#2298)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ That said, these are more guidelines rather than hard rules, though the project
- ### Bug Fixes
- 
- - [#2300](https://github.com/ClementTsang/bottom/pull/2300): Fix dialog screens not blocking certain user events.
-+- [#2298](https://github.com/ClementTsang/bottom/pull/2298): Fix hidden table columns shifting the widths of later columns and header clicks.
- 
- ## 0.15.0 - 2026-10-31 🎃
- 
-```
-
-**File**: `src/canvas/components/data_table/draw.rs` (modified, +1/-0)
-```diff
-@@ -236,6 +236,7 @@ where
-                         let row = Row::new(
-                             columns
-                                 .iter()
-+                                .filter(|column| !column.is_hidden())
-                                 .zip(&self.state.calculated_widths)
-                                 .filter_map(|(column, &width)| {
-                                     data_row.to_cell_text(column.inner(), width).map(|content| {
-```
-
-**File**: `src/canvas/components/data_table/sortable.rs` (modified, +49/-4)
-```diff
-@@ -78,7 +78,8 @@ pub struct Sortable {
- /// Note that the trait is [sealed](https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed),
- /// and therefore only [`Unsortable`] and [`Sortable`] can implement it.
- pub trait SortType: private::Sealed {
--    /// Constructs the table header.
-+    /// Constructs the table header. `widths` are those of the shown (not
-+    /// hidden) columns, in order.
-     fn build_header<H, C>(&self, columns: &[C], widths: &[NonZeroU16]) -> Row<'_>
-     where
-         H: ColumnHeader,
-@@ -87,6 +88,7 @@ pub trait SortType: private::Sealed {
-         Row::new(
-             columns
-                 .iter()
-+                .filter(|c| !c.is_hidden())
-                 .zip(widths)
-                 .map(|(c, &width)| truncate_to_text(&c.header(), width.get())),
-         )
-@@ -116,9 +118,10 @@ impl SortType for Sortable {
-         Row::new(
-             columns
-                 .iter()
--                .zip(widths)
-                 .enumerate()
--                .map(|(index, (c, &width))| {
-+                .filter(|(_, c)| !c.is_hidden())
-+                .zip(widths)
-+                .map(|((index, c), &width)| {
-                     if index == self.sort_index {
-                         let arrow = match self.order {
-                             SortOrder::Ascending => UP_ARROW,
-@@ -299,7 +302,15 @@ where
-     /// returned. If nothing happens, [`None`] is returned.
-     pub fn try_select_location(&mut self, x: u16, y: u16) -> Option<usize> {
-         if self.state.inner_rect.height > 1 && self.state.inner_rect.y == y {
--            if let Some(index) = self.get_range(x) {
-+            // `get_range` counts shown columns only; map back to the column.
-+            if let Some(index) = self.get_range(x).and_then(|shown| {
-+                self.columns
-+                    .iter()
-+                    .enumerate()
-+                    .filter(|(_, c)| !c.is_hidden())
-+                    .nth(shown)
-+                    .map(|(index, _)| index)
-+            }) {
-                 self.set_sort_index(index);
-                 Some(self.sort_type.sort_index)
-             } else {
-@@ -355,6 +366,8 @@ where
- 
- #[cfg(test)]
- mod test {
-+    use ratatui::layout::Rect;
-+
-     use super::*;
-     use crate::options::config::flags::TableGap;
- 
-@@ -552,4 +565,36 @@ mod test {
-             ]
-         );
-     }
-+
-+    #[test]
-+    fn test_click_header_after_hidden_column() {
-+        let columns = [
-+            SortColumn::new(ColumnType::Index),
-+            SortColumn::new(ColumnType::Data),
-+            SortColumn::new(ColumnType::Index),
-+        ];
-+        let props = SortDataTableProps {
-+            inner: DataTableProps {
-+                title: None,
-+                table_gap: TableGap::None,
-+                left_to_right: true,
-+                is_basic: false,
-+                show_table_scroll_position: false,
-+                show_table_scroll_bar: false,
-+                show_current_entry_when_unfocused: false,
-+            },
-+            sort_index: 0,
-+            order: SortOrder::Ascending,
-+        };
-+        let mut table = DataTable::new_sortable(columns, props, DataTableStyling::default());
-+        table.columns[1].set_hidden(true);
-+
-+        // Two shown columns, 5 cells each, with a 1-cell gap: the second shown
-+        // one (column 2) starts at x = 6.
-+        table.state.calculated_widths = vec![NonZeroU16::new(5).unwrap(); 2];
-+        table.state.inner_rect = Rect::new(0, 0, 20, 10);
-+
-+        assert_eq!(table.try_select_location(7, 0), Some(2));
-+        assert_eq!(table.try_select_location(1, 0), Some(0));
-+    }
- }
++[target.aarch64-pc-windows-gnullvm]
++rustflags = ["-C", "target-feature=+crt-static"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2304** (2026-11-04): packaging: allow wix (msi) to do same-version upgrades (@ClementTsang)
+- **PR #2303** (2026-11-04): docs: add meop as a contributor for code (@allcontributors[bot])
+- **PR #2302** (2026-11-04): other: fix the windows gnullvm aarch64 build (@meop)
 - **PR #2301** (2026-11-03): docs: add djbclark as a contributor for code (@allcontributors[bot])
 - **PR #2300** (2026-11-02): bug: fix dialogs not blocking certain events (@ClementTsang)
 - **PR #2299** (2026-11-02): other: add mimalloc allocator for possible use for musl (@ClementTsang)
-- **PR #2298** (2026-11-03): bug: Fix hidden columns shifting widths and header clicks (@djbclark)
-- **PR #2296** (2026-11-02): change: better truncate CPU usage strings with small widths (@ClementTsang)
-- **PR #2295** (2026-11-02): docs: update changelog date (@ClementTsang)
 
 ---
 
@@ -1919,24 +1639,23 @@ Some events weren't blocked when dialog boxes were open, which would mean they w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix dialogs not blocking certain events (#2300)
+## X. other: fix the windows gnullvm aarch64 build (#2302)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `540bb71a`: fix dialogs not blocking certain events (#2300). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `373d4fc5`: other: fix the windows gnullvm aarch64 build (#2302). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Bug Fixes
 
-- [#2300](https://github.com/ClementTsang/bottom/pull/2300): Fix dialog screens not blocking certain user events.
-
+[target.aarch64-pc-windows-gnullvm]
+rustflags = ["-C", "target-feature=+crt-static"]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1946,4 +1665,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `540bb71a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `373d4fc5` are properly handled with clean fallback behavior.

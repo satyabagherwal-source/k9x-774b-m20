@@ -7500,3 +7500,12 @@
 | `CYCLE-20261105-Y7NL` | `2026-11-05T04:07:19.617Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7100` | Yes (`843695b4...`) |
 | `CYCLE-20261105-7EAH` | `2026-11-05T04:14:28.121Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`c5d20032...`) |
 | `CYCLE-20261105-7LXM` | `2026-11-05T04:14:38.026Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7101` | Yes (`460e8530...`) |
+| `CYCLE-20261105-GRVX` | `2026-11-05T04:21:45.645Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`18057e3c...`) |
+| `CYCLE-20261105-GSMF` | `2026-11-05T04:21:46.599Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7102` | Yes (`e3f7bb5a...`) |
+| `CYCLE-20261105-PYX7` | `2026-11-05T04:28:54.667Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7103` | Yes (`8f4cbfe1...`) |
+| `CYCLE-20261105-Q05G` | `2026-11-05T04:28:56.260Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7104, Rule 779, Rule 7105` | Yes (`1c7e369e...`) |
+| `CYCLE-20261105-Z57I` | `2026-11-05T04:36:02.718Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`322d92af...`) |
+| `CYCLE-20261105-8S1N` | `2026-11-05T04:43:32.219Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`abbacf34...`) |
+| `CYCLE-20261105-8USB` | `2026-11-05T04:43:35.771Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7106` | Yes (`054b00dd...`) |
+| `CYCLE-20261105-8ZGT` | `2026-11-05T04:43:41.837Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7107` | Yes (`c503448f...`) |
+| `CYCLE-20261105-93M3` | `2026-11-05T04:43:47.211Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7108` | Yes (`1ce2062e...`) |
