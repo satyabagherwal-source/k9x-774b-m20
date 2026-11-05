@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-75GW",
-    "timestamp": "2026-11-04T03:30:37.040Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-7BFY",
     "timestamp": "2026-11-04T03:30:44.782Z",
     "repository": "risingwavelabs/risingwave",
@@ -7492,6 +7477,21 @@
     "contentHash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-U6QH",
+    "timestamp": "2026-11-05T12:00:05.273Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "e0d336f0fea089cb947d37e97dd3b80f39241c062f370e5eb3cb805051cb6377",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

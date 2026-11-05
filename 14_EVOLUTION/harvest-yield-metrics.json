@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T11:53:16.796Z",
-  "total_cycles_completed": 7618,
-  "total_learnings_persisted": 7618,
+  "last_updated": "2026-11-05T12:00:05.281Z",
+  "total_cycles_completed": 7619,
+  "total_learnings_persisted": 7619,
   "total_rules_promoted": 7275,
   "history": [
-    {
-      "timestamp": "2026-11-05T01:33:16.078Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T01:33:23.601Z",
       "repository": "DNSControl/dnscontrol",
@@ -1403,6 +1396,13 @@
       "repository": "touchlab/Kermit",
       "learningId": "learn-github-touchlab-kermit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T12:00:05.281Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
