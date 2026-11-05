@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-K8R7",
-    "timestamp": "2026-11-03T21:36:52.819Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-K8RG",
     "timestamp": "2026-11-03T21:36:52.828Z",
     "repository": "weaviate/weaviate",
@@ -7492,6 +7477,21 @@
     "contentHash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-F2GE",
+    "timestamp": "2026-11-05T05:16:25.262Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "9a074774c42f8b8305fa2ec5752d8f3ab66401c25edf454d0fea2fc9167b34d6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
