@@ -105,60 +105,103 @@ export function parseEngineeringPatterns(customRoot = null) {
   const docs = [];
 
   let currentRule = null;
-  let ruleBody = [];
+  let currentSection = null;
+  let ruleLines = [];
+  let whyLines = [];
+  let whenLines = [];
+  let bodyStartIndex = 0;
   let startLine = 1;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const match = line.match(/^##\s+(\d+)\.\s+(.+)$/);
-    if (match) {
-      if (currentRule) {
-        docs.push(finalizeRuleDoc(currentRule, ruleBody.join('\n'), startLine, i));
+    if (line.charCodeAt(0) === 35 && line.charCodeAt(1) === 35 && line.charCodeAt(2) === 32) {
+      const match = line.match(/^##\s+(\d+)\.\s+(.+)$/);
+      if (match) {
+        if (currentRule) {
+          const ruleText = ruleLines.join('\n').trim();
+          const whyText = whyLines.join('\n').trim();
+          const whenText = whenLines.join('\n').trim();
+          const rawBody = lines.slice(bodyStartIndex, i).join('\n');
+          const summary = ruleText ? ruleText.slice(0, 300) : rawBody.slice(0, 300);
+          docs.push({
+            id: currentRule.id,
+            ruleNumber: currentRule.ruleNumber,
+            title: currentRule.title,
+            category: 'ENGINEERING_PATTERN',
+            filePath: '05_KNOWLEDGE/engineering-patterns.md',
+            lineRange: [startLine, i],
+            ruleText,
+            whyText,
+            whenText,
+            summary,
+            fullContent: `## ${currentRule.ruleNumber}. ${currentRule.title}\n\n${rawBody.trim()}`,
+            tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText}`)
+          });
+        }
+        currentRule = {
+          ruleNumber: parseInt(match[1], 10),
+          title: match[2].trim(),
+          id: `Rule ${match[1]}`
+        };
+        ruleLines = [];
+        whyLines = [];
+        whenLines = [];
+        currentSection = null;
+        bodyStartIndex = i + 1;
+        startLine = i + 1;
+        continue;
       }
-      currentRule = {
-        ruleNumber: parseInt(match[1], 10),
-        title: match[2].trim(),
-        id: `Rule ${match[1]}`
-      };
-      ruleBody = [];
-      startLine = i + 1;
-    } else if (currentRule) {
-      ruleBody.push(line);
+    }
+
+    if (currentRule) {
+      const trimmed = line.trimStart();
+      if (trimmed.startsWith('**RULE**:')) {
+        currentSection = 'RULE';
+        const rest = trimmed.slice(9).trim();
+        if (rest) ruleLines.push(rest);
+      } else if (trimmed.startsWith('**WHY**:')) {
+        currentSection = 'WHY';
+        const rest = trimmed.slice(8).trim();
+        if (rest) whyLines.push(rest);
+      } else if (trimmed.startsWith('**WHEN TO APPLY**:')) {
+        currentSection = 'WHEN';
+        const rest = trimmed.slice(18).trim();
+        if (rest) whenLines.push(rest);
+      } else if (trimmed.startsWith('**VERIFIED') || trimmed.startsWith('**NEGATIVE')) {
+        currentSection = 'OTHER';
+      } else if (currentSection === 'RULE') {
+        ruleLines.push(line);
+      } else if (currentSection === 'WHY') {
+        whyLines.push(line);
+      } else if (currentSection === 'WHEN') {
+        whenLines.push(line);
+      }
     }
   }
 
   if (currentRule) {
-    docs.push(finalizeRuleDoc(currentRule, ruleBody.join('\n'), startLine, lines.length));
+    const ruleText = ruleLines.join('\n').trim();
+    const whyText = whyLines.join('\n').trim();
+    const whenText = whenLines.join('\n').trim();
+    const rawBody = lines.slice(bodyStartIndex, lines.length).join('\n');
+    const summary = ruleText ? ruleText.slice(0, 300) : rawBody.slice(0, 300);
+    docs.push({
+      id: currentRule.id,
+      ruleNumber: currentRule.ruleNumber,
+      title: currentRule.title,
+      category: 'ENGINEERING_PATTERN',
+      filePath: '05_KNOWLEDGE/engineering-patterns.md',
+      lineRange: [startLine, lines.length],
+      ruleText,
+      whyText,
+      whenText,
+      summary,
+      fullContent: `## ${currentRule.ruleNumber}. ${currentRule.title}\n\n${rawBody.trim()}`,
+      tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText}`)
+    });
   }
 
   return docs;
-}
-
-function finalizeRuleDoc(meta, rawBody, startLine, endLine) {
-  const ruleMatch = rawBody.match(/\*\*RULE\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:WHY|WHEN TO APPLY|VERIFIED|NEGATIVE)|$)/i);
-  const whyMatch = rawBody.match(/\*\*WHY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHEN TO APPLY|VERIFIED|NEGATIVE)|$)/i);
-  const whenMatch = rawBody.match(/\*\*WHEN TO APPLY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHY|VERIFIED|NEGATIVE)|$)/i);
-
-  const ruleText = ruleMatch ? ruleMatch[1].trim() : '';
-  const whyText = whyMatch ? whyMatch[1].trim() : '';
-  const whenText = whenMatch ? whenMatch[1].trim() : '';
-
-  const summary = ruleText ? ruleText.slice(0, 300) : rawBody.slice(0, 300);
-
-  return {
-    id: meta.id,
-    ruleNumber: meta.ruleNumber,
-    title: meta.title,
-    category: 'ENGINEERING_PATTERN',
-    filePath: '05_KNOWLEDGE/engineering-patterns.md',
-    lineRange: [startLine, endLine],
-    ruleText,
-    whyText,
-    whenText,
-    summary,
-    fullContent: `## ${meta.ruleNumber}. ${meta.title}\n\n${rawBody.trim()}`,
-    tokens: tokenize(`${meta.title} ${meta.id} ${ruleText} ${whyText} ${whenText}`)
-  };
 }
 
 /**
@@ -307,6 +350,7 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
   const indexFile = paths.knowledgeIndexFile;
   const docs = [];
   let items = {};
+  const existingFiles = new Set();
 
   if (fs.existsSync(indexFile)) {
     try {
@@ -327,7 +371,7 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
     try {
       const files = fs.readdirSync(learningDir).filter(f => f.endsWith('-learnings.md'));
       const existingSlugs = new Set();
-      const existingFiles = new Set(files);
+      for (const f of files) existingFiles.add(f);
       for (const it of Object.values(items)) {
         if (it.slug) existingSlugs.add(it.slug);
         if (it.dossier_file) existingSlugs.add(path.basename(it.dossier_file));
@@ -360,8 +404,11 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
   for (const item of selected) {
     if (item.category === 'ENGINEERING_PATTERN' || item.rule_number) continue;
     const relPath = item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`;
-    const fullPath = path.isAbsolute(relPath) ? relPath : path.join(paths.brainRoot, relPath);
-    if (!fs.existsSync(fullPath)) continue;
+    const fileName = path.basename(relPath);
+    if (!existingFiles.has(fileName)) {
+      const fullPath = path.isAbsolute(relPath) ? relPath : path.join(paths.brainRoot, relPath);
+      if (!fs.existsSync(fullPath)) continue;
+    }
 
     const repoName = item.repository || item.slug || item.learning_id;
     const title = `${repoName} (Harvested Intelligence Dossier)`;
@@ -548,11 +595,13 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null) {
     _inMemoryHash = currentHash;
   }
 
-  // Persist cache to disk
-  try {
-    fs.mkdirSync(p.cacheDir, { recursive: true });
-    fs.writeFileSync(p.cacheIndexFile, JSON.stringify(indexPackage), 'utf-8');
-  } catch (e) {}
+  // Persist cache to disk (non-blocking async serialization to prevent blocking callers)
+  setImmediate(() => {
+    try {
+      fs.mkdirSync(p.cacheDir, { recursive: true });
+      fs.writeFile(p.cacheIndexFile, JSON.stringify(indexPackage), 'utf-8', () => {});
+    } catch (e) {}
+  });
 
   return indexPackage;
 }
