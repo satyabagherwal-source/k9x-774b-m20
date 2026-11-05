@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:13:13.318Z",
+  "last_updated": "2026-11-05T07:20:33.901Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25488,7 +25488,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
+      "content_hash": "157ac6c15488d3814c55121382874fb99ff8c28def592d77c1673906f6a29487",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
@@ -25540,7 +25540,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-31T16:50:25.489Z",
+      "verified_at": "2026-11-05T07:20:22.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49028,8 +49028,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "df707d92",
-      "content_hash": "6007edf344c69bf439f731f95ac27d2533f2f40707a4a25b5fe19b1c1334ab69",
+      "source_version": "27ac1e87",
+      "content_hash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -49152,6 +49152,11 @@
           "number": 7044,
           "title": "Verify TLS for cloud uploads (#8048)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7153,
+          "title": "deps): bump go-jose to v4.1.6 (#8037)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49159,7 +49164,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:22:40.480Z",
+      "verified_at": "2026-11-05T07:20:33.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181020,6 +181025,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:13:13.292Z"
+    },
+    "rule-7153": {
+      "learning_id": "rule-7153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7153,
+      "title": "deps): bump go-jose to v4.1.6 (#8037)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "27ac1e87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:20:33.866Z"
     }
   },
   "aliases": {

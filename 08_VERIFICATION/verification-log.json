@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-6HH7",
-    "timestamp": "2026-11-03T23:46:09.019Z",
-    "repository": "axios/axios",
-    "learningId": "learn-github-axios-axios",
-    "contentHash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-6IE3",
-    "timestamp": "2026-11-03T23:46:10.203Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-6JLI",
     "timestamp": "2026-11-03T23:46:11.766Z",
     "repository": "Agent-Field/agentfield",
@@ -7492,6 +7462,36 @@
     "contentHash": "ec9651b297afa7c99bbe5eb54540a41b2b00ea2e00f78251473d7bb8a4a2b383",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UHF2",
+    "timestamp": "2026-11-05T07:20:22.958Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "157ac6c15488d3814c55121382874fb99ff8c28def592d77c1673906f6a29487",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UPXI",
+    "timestamp": "2026-11-05T07:20:33.990Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

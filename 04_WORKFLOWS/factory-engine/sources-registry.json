@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T07:13:15.942Z",
-    "lastVerified": "2026-11-05T07:13:15.942Z",
+    "lastChecked": "2026-11-05T07:20:36.551Z",
+    "lastVerified": "2026-11-05T07:20:36.551Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T06:51:06.719Z",
+    "lastChecked": "2026-11-05T07:20:34.401Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T06:51:06.719Z"
+    "lastVerified": "2026-11-05T07:20:34.401Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2049,22 +2049,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T04:00:39.372Z",
-    "lastVerified": "2026-11-05T04:00:39.372Z",
+    "lastChecked": "2026-11-05T07:20:33.151Z",
+    "lastVerified": "2026-11-05T07:20:33.151Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "6007edf344c69bf439f731f95ac27d2533f2f40707a4a25b5fe19b1c1334ab69",
+    "contentHash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "df707d92"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2283,12 +2282,12 @@
     "lastVerified": "2026-11-04T02:39:39.909Z"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh/chaos-mesh",
+    "name": "chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T17:52:24.244Z",
-    "lastVerified": "2026-11-04T17:52:24.244Z",
+    "lastChecked": "2026-11-05T07:20:26.857Z",
+    "lastVerified": "2026-11-05T07:20:26.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
@@ -2297,7 +2296,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ed58a25b"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
@@ -4541,12 +4541,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
-    "name": "kucherenko/jscpd",
+    "name": "jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T07:33:14.469Z",
-    "lastVerified": "2026-11-04T07:33:14.469Z",
+    "lastChecked": "2026-11-05T07:20:19.346Z",
+    "lastVerified": "2026-11-05T07:20:19.346Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
@@ -4555,7 +4555,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cbd54239"
   },
   "hf-minimaxai-minimax-h3": {
     "name": "MiniMaxAI/MiniMax-H3",
@@ -5683,12 +5684,12 @@
     "officialUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T16:50:24.139Z",
-    "lastVerified": "2026-10-31T16:50:24.139Z",
+    "lastChecked": "2026-11-05T07:20:21.933Z",
+    "lastVerified": "2026-11-05T07:20:21.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
+    "contentHash": "157ac6c15488d3814c55121382874fb99ff8c28def592d77c1673906f6a29487",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6667,9 +6668,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-04T16:59:15.311Z",
+    "lastChecked": "2026-11-05T07:20:31.881Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-04T16:59:15.311Z"
+    "lastVerified": "2026-11-05T07:20:31.881Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -9904,9 +9905,9 @@
   "sayaka-sh-spmp": {
     "name": "spmp",
     "officialUrl": "https://github.com/sayaka-sh/spmp",
-    "lastChecked": "2026-11-01T00:55:55.278Z",
+    "lastChecked": "2026-11-05T07:20:24.413Z",
     "revisionIdentifier": "2fb03e84",
-    "lastVerified": "2026-11-01T00:55:55.278Z"
+    "lastVerified": "2026-11-05T07:20:24.413Z"
   },
   "kaimodev-trivium": {
     "name": "trivium",

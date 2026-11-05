@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
-    "lastHarvestedAt": "2026-10-31T16:50:25.604Z",
+    "contentHash": "157ac6c15488d3814c55121382874fb99ff8c28def592d77c1673906f6a29487",
+    "lastHarvestedAt": "2026-11-05T07:20:22.963Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "df707d92",
+    "sourceVersion": "27ac1e87",
     "license": "MIT",
-    "contentHash": "6007edf344c69bf439f731f95ac27d2533f2f40707a4a25b5fe19b1c1334ab69",
-    "lastHarvestedAt": "2026-11-05T00:22:40.597Z",
+    "contentHash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
+    "lastHarvestedAt": "2026-11-05T07:20:33.994Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

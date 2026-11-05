@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T07:13:13.413Z",
+  "last_updated": "2026-11-05T07:20:34.016Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "efe24c6bc2703e3ed0ba3474d8386aff98197cffcc826ec6cfed3d1e7360fc75",
-      "verified_at": "2026-10-31T16:50:25.613Z",
+      "content_hash": "157ac6c15488d3814c55121382874fb99ff8c28def592d77c1673906f6a29487",
+      "verified_at": "2026-11-05T07:20:22.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:50:25.613Z"
+      "last_updated": "2026-11-05T07:20:22.972Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "6007edf344c69bf439f731f95ac27d2533f2f40707a4a25b5fe19b1c1334ab69",
-      "verified_at": "2026-11-05T00:22:40.616Z",
+      "content_hash": "452ce2e0b98c1143f7148cb7c3a57b7c3f9a9d3949a8a423c562c2aafb67ef07",
+      "verified_at": "2026-11-05T07:20:34.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:22:40.616Z"
+      "last_updated": "2026-11-05T07:20:34.015Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

@@ -7571,3 +7571,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-05T07:06:00.063Z |
 | `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `38fe3de1` | Multi-dimensional audit evidence | 2026-11-05T07:13:07.617Z |
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T07:13:13.397Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-05T07:20:22.963Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `27ac1e87` | Multi-dimensional audit evidence | 2026-11-05T07:20:33.994Z |

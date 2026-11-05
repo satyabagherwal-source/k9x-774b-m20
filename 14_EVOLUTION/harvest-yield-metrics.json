@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T07:13:13.402Z",
-  "total_cycles_completed": 7539,
-  "total_learnings_persisted": 7539,
-  "total_rules_promoted": 7210,
+  "last_updated": "2026-11-05T07:20:34.002Z",
+  "total_cycles_completed": 7541,
+  "total_learnings_persisted": 7541,
+  "total_rules_promoted": 7211,
   "history": [
-    {
-      "timestamp": "2026-11-04T22:05:19.727Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:12:34.838Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T22:12:40.194Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1403,6 +1389,20 @@
       "repository": "openbmb/MiniCPM-OCR-1.0",
       "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:20:22.968Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T07:20:34.002Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

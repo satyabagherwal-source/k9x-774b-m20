@@ -7562,3 +7562,5 @@
 | `CYCLE-20261105-BZLM` | `2026-11-05T07:06:00.058Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7147, Rule 7148` | Yes (`12634f3c...`) |
 | `CYCLE-20261105-L5I5` | `2026-11-05T07:13:07.613Z` | `exyte/PopupView` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7149` | Yes (`df20eb6d...`) |
 | `CYCLE-20261105-L9YQ` | `2026-11-05T07:13:13.394Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7150, Rule 7151, Rule 7152` | Yes (`ec9651b2...`) |
+| `CYCLE-20261105-UHF2` | `2026-11-05T07:20:22.958Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`157ac6c1...`) |
+| `CYCLE-20261105-UPXI` | `2026-11-05T07:20:33.990Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7153` | Yes (`452ce2e0...`) |
