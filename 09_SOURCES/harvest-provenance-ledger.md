@@ -7759,3 +7759,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `05b25923` | Multi-dimensional audit evidence | 2026-11-05T18:31:28.735Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `fd11e5d5` | Multi-dimensional audit evidence | 2026-11-05T18:31:36.763Z |
 | `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T18:31:38.902Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-05T18:38:26.032Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `ce49cf62` | Multi-dimensional audit evidence | 2026-11-05T18:38:36.753Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `15f9a3fa` | Multi-dimensional audit evidence | 2026-11-05T18:38:42.270Z |

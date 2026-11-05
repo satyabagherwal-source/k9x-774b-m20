@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:31:38.802Z",
+  "last_updated": "2026-11-05T18:38:42.151Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12661,11 +12661,16 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "da11df74",
-      "content_hash": "befef0e0065ea0ff02d6629b3b3ba3320646f3bbd39a5922a0bb67953cc9ac53",
+      "source_version": "ce49cf62",
+      "content_hash": "bc2f44e19d7c7a962106e42aee587d7f43acb47970a72ecb9c2f16a6546afac1",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2187,
           "title": "wasm: fix a regression for remote code (#48415)",
@@ -12737,7 +12742,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:00:43.904Z",
+      "verified_at": "2026-11-05T18:38:36.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40007,11 +40012,16 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "9b376dfd",
-      "content_hash": "94b9feff9ae4ff151af2adf0f36c69a916fc429d0af8f7964bfee621bfd549dc",
+      "source_version": "15f9a3fa",
+      "content_hash": "7be60daff658beb0b309a9f444e2b87d6022a40f38b82d2b2fc76ca1b2654969",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the for",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1900,
           "title": "build(deps): bump python-slugify from 8.0.4 to 9.1.3 in /misc/dbt-materialize (#",
@@ -40098,7 +40108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:13:17.709Z",
+      "verified_at": "2026-11-05T18:38:42.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170653,7 +170663,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FusionCow/Sulphur-3",
       "source_version": "hf-fusioncow-sulphur-3",
-      "content_hash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+      "content_hash": "7dc2e2fd591d2fb14697a898809692fc2acb5abfc9a986d133239f4017bd48d7",
       "dossier_path": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
       "promoted_rules": [
@@ -170668,7 +170678,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:53:40.970Z",
+      "verified_at": "2026-11-05T18:38:25.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

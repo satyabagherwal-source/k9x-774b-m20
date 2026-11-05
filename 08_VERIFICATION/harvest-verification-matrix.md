@@ -7750,3 +7750,6 @@
 | `CYCLE-20261105-TIOS` | `2026-11-05T18:31:28.732Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`91bd071a...`) |
 | `CYCLE-20261105-TOVR` | `2026-11-05T18:31:36.759Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eaf16f48...`) |
 | `CYCLE-20261105-TQIW` | `2026-11-05T18:31:38.888Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`eaa3c4fd...`) |
+| `CYCLE-20261105-2GOD` | `2026-11-05T18:38:26.029Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`7dc2e2fd...`) |
+| `CYCLE-20261105-2OY6` | `2026-11-05T18:38:36.750Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bc2f44e1...`) |
+| `CYCLE-20261105-2T7F` | `2026-11-05T18:38:42.267Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7be60daf...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:31:38.907Z",
-  "total_cycles_completed": 7727,
-  "total_learnings_persisted": 7727,
-  "total_rules_promoted": 7371,
+  "last_updated": "2026-11-05T18:38:42.275Z",
+  "total_cycles_completed": 7730,
+  "total_learnings_persisted": 7730,
+  "total_rules_promoted": 7373,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:44:11.273Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:50:55.903Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:51:04.082Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:51:09.747Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1403,6 +1382,27 @@
       "repository": "LiquidAI/d1-2B",
       "learningId": "learn-huggingface-liquidai-d1-2b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:38:26.037Z",
+      "repository": "FusionCow/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:38:36.758Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:38:42.275Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

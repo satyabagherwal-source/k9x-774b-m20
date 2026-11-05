@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `9b376dfd`  
+> **Source Version**: `15f9a3fa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:13:17.182Z  
+> **Timestamp**: 2026-11-05T18:38:40.708Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:12:54.899Z  
+> **Harvest Timestamp**: 2026-11-05T18:38:40.702Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -172,7 +172,16 @@ import { executeSqlV2, queryBuilder } from "~/api/materialize";
  * NOTE: fractions, not percentages. The hour bound leaves a replica with no
  * recent sample blank rather than hours stale.
  */
-export function buildReplicaUtilizationQuery() {
+export function buildReplicaUtilizationQuery({
+  includeSwap = false,
+}: {
+  /**
+   * Select `swapPercent`, swap's share of the heap limit as the cluster page's
+   * memory chart stacks it, or null for a size whose heap limit is only its
+   * RAM. Its columns need mz >= 26.44.
+   */
+  includeSwap?: boolean;
+} = {}) {
   return queryBuilder
     .selectFrom("mz_console_cluster_utilization_overview_3h")
     .distinctOn("replica_id")
@@ -184,6 +193,12 @@ export function buildReplicaUtilizationQuery() {
       "disk_percent as diskPercent",
       "heap_percent as heapPercent",
     ])
+    .$if(includeSwap, (qb) =>
+      qb.select(
+        sql<number | null>`CASE WHEN heap_limit_percent > 1
+          THEN swap_of_ram_percent / heap_limit_percent END`.as("swapPercent"),
+      ),
+    )
     .orderBy("replica_id")
     .orderBy("occurred_at", "desc");
 }
@@ -194,13 +209,15 @@ export type ReplicaUtilization = InferResult<
 
 /** Fetches the latest utilization sample for every replica in the environment. */
 export async function fetchReplicaUtilization({
+  params,
   queryKey,
   requestOptions,
 }: {
+  params: Parameters<typeof buildReplicaUtilizationQuery>[0];
   queryKey: QueryKey;
   requestOptions?: RequestInit;
 }) {
-  const compiledQuery = buildReplicaUtilizationQuery().compile();
+  const compiledQuery = buildReplicaUtilizationQuery(params).compile();
   return executeSqlV2({ queries: compiledQuery, queryKey, requestOptions });
 }
 
@@ -1064,11 +1081,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40502** (2026-11-05): **release: mark v26.49 as released**
-  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
+- **Issue #40511** (2026-11-05): **enabled freshness page for self-managed**
+  *Symptoms*: Enable Freshness page for all customers. 
 
-- **Issue #40500** (2026-11-04): **helm: disable enableUserNamespaces by default**
-  *Symptoms*: ### Motivation  #40435 turned on `operator.args.enableUserNamespaces` by default, so the chart runs the operator, environmentd, clusterd, balancerd and console with `hostUsers: false`. That only works on nodes that allow user namespaces. Bottlerocket sets `user.max_user_namespaces = 0`. It's the default AMI family for EKS with Karpenter and the one our self-managed Terraform modules use for both the EKS node groups and Karpenter. On those nodes every pod with `hostUsers: false` fails at sandbox creation:  ``` Failed to create pod sandbox: ... failed to start noop process for unshare: fork/exec /proc/self/exe: no space left on device ```  We hit this on a Cloud personal stack, which runs Bottlerocket nodes too. With the default on, upgrading to v26.50 would take down every self-managed deployment on Bottlerocket, starting with the operator itself. v26.50 hasn't been released, so this changes the default before it ships.  ### Description  - `operator.args.enableUserNamespaces` now defaults to `false`. The value's comment lists the nonzero `user.max_user_namespaces` requirement and calls out Bottlerocket. - Flipped the helm unittest cases to match. - Removed the `test/orchestratord` override that turned the value off for the pinned operator image. It's off by default now. - Added a `UserNamespaces` modification to `test/orchestratord`, so the nightly individual and combined property runs (`orchestratord-individual`, `orchestratord-combine` and the upgrade variants) install the c
+- **Issue #40507** (2026-11-05): **sql-parser: only take `WITH` as part of `WITH TIME ZONE`**
+  *Symptoms*: Parsing a `time`/`timestamp` type consumed any following `WITH` and then required `TIME ZONE`, so a cast right before a clause's `WITH` failed to parse, e.g. `COPY t TO 's3://b/' || now()::timestamp WITH (FORMAT = 'csv')`. Since it failed to parse, nothing needed to migrate.  Seen in https://buildkite.com/materialize/release-qualification/builds/1426#01a1a2ff-5b36-4ef2-88b5-9d6d00854ed1
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,460 +1102,367 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac8bac66` (2026-11-04)
-**Commit Message**: build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)
+### Incident Patch 1: `77ae0a30` (2026-11-05)
+**Commit Message**: build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the forms group (#40471)
 
-Bumps [browserslist](https://github.com/browserslist/browserslist) from
-4.24.0 to 4.29.4.
+Bumps the forms group in /console with 1 update:
+[@hookform/resolvers](https://github.com/react-hook-form/resolvers).
+
+Updates `@hookform/resolvers` from 7.0.0 to 7.0.1
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/browserslist/browserslist/releases">browserslist's
+href="https://github.com/react-hook-form/resolvers/releases">@​hookform/resolvers's
 releases</a>.</em></p>
 <blockquote>
-<h2>4.29.4</h2>
+<h2>v7.0.1</h2>
+<h2><a
+href="https://github.com/react-hook-form/resolvers/compare/v7.0.0...v7.0.1">7.0.1</a>
+(2026-11-01)</h2>
+<h3>Bug Fixes</h3>
 <ul>
-<li>Fixed joined version bounds in version ray and range queries (by <a
-href="https://github.com/ybai08"><code>@​ybai08</code></a>).</li>
-<li>Fixed whitespaces processing (by <a
-href="https://github.com/abhu85"><code>@​abhu85</code></a>).</li>
+<li><strong>fluentvalidation-ts:</strong> preserve primitive array error
+messages (<a
+href="https://redirect.github.com/react-hook-form/resolvers/issues/889">#889</a>)
+(<a
+href="https://github.com/react-hook-form/resolvers/commit/5845b81fba4d5e63f501c6f2a48cd9b2b04f31e3">5845b81</a>)</li>
 </ul>
-<h2>4.29.3</h2>
-<ul>
-<li>Updated Firefox ESR.</li>
-</ul>
-<h2>4.29.2</h2>
-<ul>
-<li>Fixed ignoring <code>null</code> usage in <code>cover X in Y</code>
-query (by <a
-href="https://github.com/wahidrizka"><code>@​wahidrizka</code></a>).</li>
-</ul>
-<h2>4.29.1</h2>
-<ul>
-<li>Fixed config name loading protection on Windows (by <a
-href="https://github.com/oss-security-shop"><code>@​oss-security-shop</code></a>).</li>
-<li>Fixed case-insensitive negation queries (by <a
-href="https://github.com/jakezwang"><code>@​jakezwang</code></a>).</li>
-<li>Fixed percentage and supports queries case-insen
-
-**File**: `console/e2e-tests/platform.spec.ts` (modified, +11/-2)
-```diff
-@@ -21,7 +21,14 @@ import { Client } from "pg";
- 
- import { Region } from "~/api/cloudGlobalApi";
- 
--import { CONSOLE_ADDR, EMAIL, REGIONS, STATE_NAME, TestContext } from "./util";
-+import {
-+  CONSOLE_ADDR,
-+  EMAIL,
-+  FRONTEGG_LOADING_TIMEOUT,
-+  REGIONS,
-+  STATE_NAME,
-+  TestContext,
-+} from "./util";
- 
- const test = base.extend<{
-   testContext: TestContext;
-@@ -109,7 +116,9 @@ for (const region of REGIONS) {
-     );
-     await page.getByRole("textbox", { name: "Name" }).fill(apiKeyName);
-     await page.getByRole("button", { name: "Create password" }).click();
--    await page.getByText(`New password "${apiKeyName}"`).waitFor();
-+    await page.getByText(`New password "${apiKeyName}"`).waitFor({
-+      timeout: FRONTEGG_LOADING_TIMEOUT,
-+    });
-     await page.getByRole("button", { name: "visibility" }).first().click();
-     const passwordField = page.getByLabel("clientId");
-     const password = await passwordField.evaluate((e) => e.textContent);
-```
-
-**File**: `console/src/platform/clusters/AlterClusterModal.test.tsx` (modified, +46/-16)
-```diff
-@@ -15,6 +15,7 @@ import React from "react";
- import { onTestFinished } from "vitest";
- 
- import { Cluster } from "~/api/materialize/cluster/clusterList";
-+import { labelSql } from "~/api/materialize/executeSqlV2";
- import {
-   ErrorCode,
-   ExtendedRequest,
-@@ -390,13 +391,16 @@ describe("ClusterOverview", () => {
-     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
-     expect(sent).toEqual([
-       [
--        [
--          `ALTER CLUSTER "prod" SET (`,
--          "  AUTO SCALING STRATEGY = (",
--          "    ON HYDRATION (HYDRATION SIZE = '1600cc', LINGER DURATION = '90s')",
--          "  )",
--          ")",
--        ].join("\n"),
-+        labelSql(
-+          [
-+            `ALTER CLUSTER "prod" SET (`,
-+            "  AUTO SCALING STRATEGY = (",
-+            "    ON HYDRATION (HYDRATION SIZE = '1600cc', LINGER DURATION = '90s')",
-+            "  )",
-+            ")",
-+          ].join("\n"),
-+          "clusters.alter",
-+        ),
-       ],
-     ]);
-   });
-@@ -412,7 +416,7 @@ describe("ClusterOverview", () => {
-     await user.click(screen.getByRole("button", { name: "Alter cluster" }));
- 
-     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
--    expect(sent).toEqual([[RESET_PROD]]);
-+    expect(sent).toEqual([[labelSql(RESET_PROD, "clusters.alter")]]);
-   });
- 
-   it("removes a policy in the same SET as a resize to its burst size", async () => {
-@@ -428,7 +432,10 @@ describe("ClusterOverview", () => {
-     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
-     expect(sent).toEqual([
-       [
--        `ALTER CLUSTER "prod" SET (\n  SIZE = '800cc',\n  AUTO SCALING STRATEGY = ()\n)`,
-+        labelSql(
-+          `ALTER CLUSTER "prod" SET (\n  SIZE = '800cc',\n  AUTO SCALING STRATEGY = ()\n)`,
-+          "clusters.alter",
-+        ),
-       ],
-     ]);
-   });
-@@ -467,8 +474,18 @@ describe("ClusterOverview", () => {
- 
-     await waitFor(() => expect(sent).toHaveLength(2));
-     expect(sent).toEqual([
--      [`ALTER CLUSTER "prod" SET (\n  SIZE = '1600cc'\n)`],
--      [`ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`],
-+      [
-+        labelSql(
-+          `ALTER CLUSTER "prod" SET (\n  SIZE = '1600cc'\n)`,
-+          "clusters.alter",
-+        ),
-+      ],
-+      [
-+        labelSql(
-+          `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+          "clusters.alter",
-+        ),
-+      ],
-     ]);
-   });
- 
-@@ -486,7 +503,9 @@ describe("ClusterOverview", () => {
-     ).toBeInTheDocument();
-     await user.click(screen.getByRole("button", { name: "Alter cluster" }));
-     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
--    expect(sent).toEqual([[`ALTER CLUSTER "prod" RENAME TO "renamed"`]]);
-+    expect(sent).toEqual([
-+      [labelSql(`ALTER CLUSTER "prod" RENAME TO "renamed"`, "clusters.alter")],
-+    ]);
-   });
- 
-   it("diffs against the values it opened with when they change under it", async () => {
-@@ -532,7 +551,12 @@ describe("ClusterOverview", () => {
- 
-     await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
-     expect(sent).toEqual([
--      [`ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`],
-+      [
-+        labelSql(
-+          `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+          "clusters.alter",
-+        ),
-+      ],
-     ]);
-   });
- 
-@@ -563,7 +587,10 @@ describe("ClusterOverview", () => {
- 
-     await waitFor(() => expect(sent).toHaveLength(2));
-     expect(sent[1]).toEqual([
--      `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+      labelSql(
-+        `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+        "clusters.alter",
-+      ),
-     ]);
-   });
- 
-@@ -585,7 +612,7 @@ describe("ClusterOverview", () => {
-         screen.queryByRole("dialog", { name: "Alter cluster" }),
-       ).not.toBeInTheDocument(),
-     );
--    expect(sent).toEqual([[RESET_PROD]]);
-+    expect(sent).toEqual([[labelSql(RESET_PROD, "clusters.alter")]]);
- 
-     await user.click(screen.getByRole("button", { name: "Open" }));
-     expect(
-@@ -597,7 +624,10 @@ describe("ClusterOverview", () => {
- 
-     await waitFor(() => expect(sent).toHaveLength(2));
-     expect(sent[1]).toEqual([
--      `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+      labelSql(
-+        `ALTER CLUSTER "prod" SET (\n  REPLICATION FACTOR = 2\n)`,
-+        "clusters.alter",
-+      ),
-     ]);
-   });
- 
-```
-
-**File**: `console/yarn.lock` (modified, +29/-130)
-```diff
-@@ -6725,21 +6725,12 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"baseline-browser-mapping@npm:^2.11.25":
--  version: 2.11.26
--  resolution: "baseline-browser-mapping@npm:2.11.26"
-+"baseline-browser-mapping@npm:^2.11.29":
-+  version: 2.11.34
-+  resolution: "baseline-browser-mapping@npm:2.11.34"
-   bin:
-     baseline-browser-mapping: dist/cli.cjs
--  checksum: 10c0/62abc56f5afad332e9da97bbb1c0fac78a455c67ce94564007b3eb8e6051bcea2c1c8b14e21a34d00deefca9cd4c08d9c980aee5be662bb68f52f7a71556f2ea
--  languageName: node
--  linkType: hard
--
--"baseline-browser-mapping@npm:^2.11.26":
--  version: 2.11.28
--  resolution: "baseline-browser-mapping@npm:2.11.28"
--  bin:
--    baseline-browser-mapping: dist/cli.cjs
--  checksum: 10c0/769e7a09a43babb7436f6c78c45323580f7fdf8c846ef97b93895f31a95adc1898168415e3a7ff1091610d74b96a826aceddaa4ed7f2bfe95caa453bbb331e60
-+  checksum: 10c0/294a4513440f4cacca2d84032ccff2dd284b429356af0c12574360d1e471ad1ab2383b101261193bec87891f90d2fea29cb75d3e54b2b69a060c6e726c433c58
-   languageName: node
-   linkType: hard
- 
-@@ -6818,47 +6809,18 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"browserslist@npm:^4.24.0":
--  version: 4.24.0
--  resolution: "browserslist@npm:4.24.0"
-+"browserslist@npm:^4.24.0, browserslist@npm:^4.28.7, browserslist@npm:^4.29.1":
-+  version: 4.29.4
-+  resolution: "browserslist@npm:4.29.4"
-   dependencies:
--    caniuse-lite: "npm:^1.0.30001663"
--    electron-to-chromium: "npm:^1.5.28"
--    node-releases: "npm:^2.0.18"
--    update-browserslist-db: "npm:^1.1.0"
-+    baseline-browser-mapping: "npm:^2.11.29"
-+    caniuse-lite: "npm:^1.0.30001816"
-+    electron-to-chromium: "npm:^1.5.459"
-+    node-releases: "npm:^2.0.59"
-+    update-browserslist-db: "npm:^1.3.4"
-   bin:
-     browserslist: cli.js
--  checksum: 10c0/95e76ad522753c4c470427f6e3c8a4bb5478ff448841e22b3d3e53f89ecaf17b6984666d6c7e715c370f1e7fa0cf684f42e34e554236a8b2fab38ea76b9e4c52
--  languageName: node
--  linkType: hard
--
--"browserslist@npm:^4.28.7":
--  version: 4.29.1
--  resolution: "browserslist@npm:4.29.1"
--  dependencies:
--    baseline-browser-mapping: "npm:^2.11.25"
--    caniuse-lite: "npm:^1.0.30001810"
--    electron-to-chromium: "npm:^1.5.438"
--    node-releases: "npm:^2.0.57"
--    update-browserslist-db: "npm:^1.3.3"
--  bin:
--    browserslist: cli.js
--  checksum: 10c0/038459d4c2e011393267870efd139cda3fad3e025b857bf9d43724ac29ef97a48bb1a5ba3126777caa6d07769ad81c847ece761319f7972647a9fe78416a813f
--  languageName: node
--  linkType: hard
--
--"browserslist@npm:^4.29.1":
--  version: 4.29.3
--  resolution: "browserslist@npm:4.29.3"
--  dependencies:
--    baseline-browser-mapping: "npm:^2.11.26"
--    caniuse-lite: "npm:^1.0.30001813"
--    electron-to-chromium: "npm:^1.5.439"
--    node-releases: "npm:^2.0.57"
--    update-browserslist-db: "npm:^1.3.3"
--  bin:
--    browserslist: cli.js
--  checksum: 10c0/6e1a1fcae77369260e936fe63e7994105f04c6b7aea4f2139fdf3ecccfcb1eb24d4522c2828c6ed48ef71206a33f4346e11cf714c5aac0f7496cead06bb66bac
-+  checksum: 10c0/e706dfb56f89a78a3b5fef681d9793327779f5d30885606e49c4af788a7f60b92dd8c2ead153d780109e8fcc2529a784491854037b18c8b8700fb464b87f9f93
-   languageName: node
-   linkType: hard
- 
-@@ -7021,24 +6983,10 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"caniuse-lite@npm:^1.0.30001663":
--  version: 1.0.30001669
--  resolution: "caniuse-lite@npm:1.0.30001669"
--  checksum: 10c0/f125f23440d3dbb6c25ffb8d55f4ce48af36a84d0932b152b3b74f143a4170cbe92e02b0a9676209c86609bf7bf34119ff10cc2bc7c1b7ea40e936cc16598408
--  languageName: node
--  linkType: hard
--
--"caniuse-lite@npm:^1.0.30001810":
--  version: 1.0.30001812
--  resolution: "caniuse-lite@npm:1.0.30001812"
--  checksum: 10c0/7f7375d80dbec0c4feeb11a0f655de12d27fd38a5ecff831ef2ceb7a74a87b9fb27d9ffcdd8b114e6f33f951e401ba86cfca489b8e78de505392d3d08e223abe
--  languageName: node
--  linkType: hard
--
--"caniuse-lite@npm:^1.0.30001813":
--  version: 1.0.30001815
--  resolution: "caniuse-lite@npm:1.0.30001815"
--  checksum: 10c0/9ff9c5d036cf9f4b5569b534c251b417a924dc83a96fde0eedbb60ce9fe766c406efdc278d7c87fe0feaa8b93171b1e8df7921a93ed9ed525202877425207e11
-+"caniuse-lite@npm:^1.0.30001816":
-+  version: 1.0.30001819
-+  resolution: "caniuse-lite@npm:1.0.30001819"
-+  checksum: 10c0/6842319cdb9c8ac950ef0910fc3cc7dac3320b96b150de83ac65162c6b4906d2721ca830943a9e5a833c265b186aa0c417402ddd4157108bbf5474d6fabdc843
-   languageName: node
-   linkType: hard
- 
-@@ -8385,24 +8333,10 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"electron-to-chromium@npm:^1.5.28":
--  version: 1.5.32
--  resolution: "electron-to-chromium@npm:1.5.32"
--  checksum: 10c0/d0c0c418fae6f7714fb6cfeb8f6a74a9504cf41ed6a4119d5388d94442ee224238c331bacc5917f2c89e3ffebd1b9f870ea5c0951c473ca7e58debef0f3e9137
--  languageName: node
--  linkType: hard
--
--"electron-to-chromium@npm:^1.5.438":
--  version: 1.5.439
--  resolution: "electron-to-chromium@npm:1.5.439"
--  checksum: 10c0/cacda90b1addee4f59d57b1f850c0558a678d1b911a0f64e06af555c2ed6844562858f74255a83d7d83ea0618948377ba56e276108ef7
-```
-
----
-
-### Incident Patch 2: `8b26a0b1` (2026-11-04)
-**Commit Message**: build(deps): bump brace-expansion from 1.1.18 to 1.1.21 in /console (#40440)
-
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion)
-from 1.1.18 to 1.1.21.
+</blockquote>
+</details>
 <details>
 <summary>Commits</summary>
 <ul>
 <li><a
-href="https://github.com/juliangruber/brace-expansion/commit/8e81e187b6e9c6c723d16c042657c00acefc2483"><code>8e81e18</code></a>
-1.1.21</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e"><code>ffdfa3e</code></a>
-Merge commit from fork</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/c6513ad31e08edb56dc414a629e39cba724b7548"><code>c6513ad</code></a>
-1.1.20</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b"><code>1efee7c</code></a>
-Merge commit from fork</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/a34340a053abb475cc226aeb3f71887018e71bd0"><code>a34340a</code></a>
-1.1.19</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc"><code>0bcbfc0</code></a>
-Merge commit from fork</li>
-<li>See full diff in <a
-href="https://github.com/julia
+href="https://github.com/react-hook-form/resolvers/commit/5845b81fba4d5e63f501c6f2a48cd9b2b04f31e3"><code>5845b81</code></a>
+fix(fluentvalidation-ts): preserve primitive array error messages (<a
+href="https://redirect.github.
 
-**File**: `console/yarn.lock` (modified, +4/-13)
+**File**: `console/package.json` (modified, +1/-1)
 ```diff
-@@ -6751,12 +6751,12 @@ __metadata:
-   linkType: hard
- 
- "brace-expansion@npm:^1.1.7":
--  version: 1.1.18
--  resolution: "brace-expansion@npm:1.1.18"
-+  version: 1.1.21
-+  resolution: "brace-expansion@npm:1.1.21"
-   dependencies:
-     balanced-match: "npm:^1.0.0"
-     concat-map: "npm:0.0.1"
--  checksum: 10c0/3432c18a9e2ebf94162d4effb62198bd0adea06a9f332b2c0188df5d5e30b1e51ea3c848b6608e47d0b857ebe1ea5b3888ed3326dd3c4f6f9645c94153cf9c14
-+  checksum: 10c0/8f0a68a720f9cb28c2ecaea5cdaf15fafd686d6b6e4e722a81c9d4bd2f68c1fd0619731cac05875d842221eaf4d97d564d329a12eb3c4c22137502fb3c65be8b
+@@ -45,7 +45,7 @@
+     "@emotion/styled": "^11.14.1",
+     "@fontsource/roboto-mono": "^5.3.0",
+     "@frontegg/react": "^7.2.0",
+-    "@hookform/resolvers": "^7.0.0",
++    "@hookform/resolvers": "^7.0.1",
+     "@intercom/messenger-js-sdk": "^0.0.20",
+     "@juggle/resize-observer": "^3.4.0",
+     "@lezer/common": "^1.5.3",
+```
+
+**File**: `console/yarn.lock` (modified, +5/-5)
+```diff
+@@ -2732,9 +2732,9 @@ __metadata:
    languageName: node
    linkType: hard
  
-@@ -6769,16 +6769,7 @@ __metadata:
+-"@hookform/resolvers@npm:^7.0.0":
+-  version: 7.0.0
+-  resolution: "@hookform/resolvers@npm:7.0.0"
++"@hookform/resolvers@npm:^7.0.1":
++  version: 7.0.1
++  resolution: "@hookform/resolvers@npm:7.0.1"
+   dependencies:
+     "@standard-schema/utils": "npm:^0.3.0"
+   peerDependencies:
+@@ -2809,7 +2809,7 @@ __metadata:
+       optional: true
+     zod:
+       optional: true
+-  checksum: 10c0/9ee4ce5f8f08dc73268ddad451b21f38d3367f61b3ec75b54dc77691650af336514dd948d09a36cb4caab730c2901bbaa07428239f187e335a9ca2f97a2b69fd
++  checksum: 10c0/d0af589e638d4879e37a19cc7e0af0c2380ed72b179080516a17b525a9e3ee48f2e8dcac49a381353cd87a062aca42e28caca55ac0d2e8d9ec3aa6fc684a4f65
    languageName: node
    linkType: hard
  
--"brace-expansion@npm:^5.0.2":
--  version: 5.0.9
--  resolution: "brace-expansion@npm:5.0.9"
--  dependencies:
--    balanced-match: "npm:^4.0.2"
--  checksum: 10c0/3dea38884a1c3c8b1c9c44a7402a0c76fca460f70cffb3127242b0b4cbf4472019e022ade021eec44838ff19f1dac2625dfd11dd459d7e1e055b0698a8d52fec
--  languageName: node
--  linkType: hard
--
--"brace-expansion@npm:^5.0.8":
-+"brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.8":
-   version: 5.0.12
-   resolution: "brace-expansion@npm:5.0.12"
-   dependencies:
+@@ -11760,7 +11760,7 @@ __metadata:
+     "@fontsource/roboto-mono": "npm:^5.3.0"
+     "@frontegg/client": "npm:^5.3.2"
+     "@frontegg/react": "npm:^7.2.0"
+-    "@hookform/resolvers": "npm:^7.0.0"
++    "@hookform/resolvers": "npm:^7.0.1"
+     "@intercom/messenger-js-sdk": "npm:^0.0.20"
+     "@juggle/resize-observer": "npm:^3.4.0"
+     "@lezer/common": "npm:^1.5.3"
 ```
 
 ---
 
-### Incident Patch 3: `38b176cc` (2026-11-04)
-**Commit Message**: build(deps): bump jsondiffpatch from 0.7.3 to 0.7.6 (#40460)
+### Incident Patch 2: `962b6a3c` (2026-11-05)
+**Commit Message**: build(deps): bump the tanstack-query group in /console with 2 updates (#40472)
 
-See
-https://github.com/MaterializeInc/materialize/security/dependabot/604
+Bumps the tanstack-query group in /console with 2 updates:
+[@tanstack/react-query](https://github.com/TanStack/query/tree/HEAD/packages/react-query)
+and
+[@tanstack/react-query-devtools](https://github.com/TanStack/query/tree/HEAD/packages/react-query-devtools).
 
-**File**: `console/package.json` (modified, +1/-1)
+Updates `@tanstack/react-query` from 5.105.0 to 5.105.1
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/TanStack/query/releases">@​tanstack/react-query's
+releases</a>.</em></p>
+<blockquote>
+<h2><code>@​tanstack/react-query-devtools</code><a
+href="https://github.com/5"><code>@​5</code></a>.105.1</h2>
+<h3>Patch Changes</h3>
+<ul>
+<li>Updated dependencies [<a
+href="https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6"><code>7ccba6e</code></a>,
+<a
+href="https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf"><code>18e54bf</code></a>]:
+<ul>
+<li><code>@​tanstack/react-query</code><a
+href="https://github.com/5"><code>@​5</code></a>.105.1</li>
+<li><code>@​tanstack/query-devtools</code><a
+href="https://github.com/5"><code>@​5</code></a>.105.1</li>
+</ul>
+</li
+
+**File**: `console/package.json` (modified, +2/-2)
 ```diff
-@@ -203,7 +203,7 @@
-     "ip-address": "^10.4.0",
-     "js-cookie": "^3.0.7",
-     "js-yaml": "^4.3.2",
--    "jsondiffpatch": "^0.7.2",
-+    "jsondiffpatch": "^0.7.6",
-     "tar": "^7.5.22",
-     "uuid": "^14.0.2"
-   },
+@@ -59,8 +59,8 @@
+     "@stripe/stripe-js": "^10.0.0",
+     "@tanstack/db": "0.15.2",
+     "@tanstack/react-db": "0.5.12",
+-    "@tanstack/react-query": "^5.105.0",
+-    "@tanstack/react-query-devtools": "^5.105.0",
++    "@tanstack/react-query": "^5.105.1",
++    "@tanstack/react-query-devtools": "^5.105.1",
+     "@tanstack/react-table": "^8.21.3",
+     "@types/d3": "^7.4.3",
+     "@types/d3-graphviz": "^3.1.0",
 ```
 
-**File**: `console/yarn.lock` (modified, +4/-4)
+**File**: `console/yarn.lock` (modified, +22/-22)
 ```diff
-@@ -11107,14 +11107,14 @@ __metadata:
+@@ -4720,29 +4720,29 @@ __metadata:
    languageName: node
    linkType: hard
  
--"jsondiffpatch@npm:^0.7.2":
--  version: 0.7.3
--  resolution: "jsondiffpatch@npm:0.7.3"
-+"jsondiffpatch@npm:^0.7.6":
-+  version: 0.7.7
-+  resolution: "jsondiffpatch@npm:0.7.7"
+-"@tanstack/query-core@npm:5.105.0":
+-  version: 5.105.0
+-  resolution: "@tanstack/query-core@npm:5.105.0"
+-  checksum: 10c0/1b4baa128a95810b677d93f91156e3d32eb07dbe9e062fe0a2651089569f3fca275e43dc9fe569efd55b9e5a00d0d2e18b78de6fa9ed65b1ad54f24e5a90106e
++"@tanstack/query-core@npm:5.105.1":
++  version: 5.105.1
++  resolution: "@tanstack/query-core@npm:5.105.1"
++  checksum: 10c0/2e13312a127e82a54024230ccb3e3644141cebb51719443767de39e90188f9b235b87abd2c0074addd02bf226f9eebf0371fc3e39577bbfaa19545cd4402b5de
+   languageName: node
+   linkType: hard
+ 
+-"@tanstack/query-devtools@npm:5.105.0":
+-  version: 5.105.0
+-  resolution: "@tanstack/query-devtools@npm:5.105.0"
++"@tanstack/query-devtools@npm:5.105.1":
++  version: 5.105.1
++  resolution: "@tanstack/query-devtools@npm:5.105.1"
    dependencies:
-     "@dmsnell/diff-match-patch": "npm:^1.1.0"
-   bin:
-     jsondiffpatch: bin/jsondiffpatch.js
--  checksum: 10c0/fae49073e5cacef98a4700bf6c46d1a946549bb526597f57ad52a0ca4ac7f510be256386577ff39a966e227f132fc667bef4c547be7b68a69c2a5e7db9cc2d4f
-+  checksum: 10c0/fb436068076267b19fbed52313ab1440ce36f398159f86d2744f1560585434746cf8c97e45b5525c26fb7d3d912ff8cf7f520d09bbed0d95f4e580beab7779e9
+     "@kobalte/core": "npm:^0.13.14"
+     "@solid-primitives/keyed": "npm:^1.5.3"
+     "@solid-primitives/resize-observer": "npm:^2.2.0"
+     "@solid-primitives/storage": "npm:^1.3.11"
+     "@tanstack/match-sorter-utils": "npm:^9.1.2"
+-    "@tanstack/query-core": "npm:5.105.0"
++    "@tanstack/query-core": "npm:5.105.1"
+     clsx: "npm:^2.1.1"
+     goober: "npm:^2.1.19"
+     solid-js: "npm:^1.9.15"
+     solid-transition-group: "npm:^0.2.3"
+     superjson: "npm:^2.2.6"
+-  checksum: 10c0/cd3381ea1167570cbc6270fc1dc3e1b364085e012e53540f8803257c617a7a920e5362d4ef060a85789f47a52bc889aa17e93fd9812b7409c14816ae42f53da7
++  checksum: 10c0/3671e30a7da10f9e9e647df30ec895fbff321404f598e8518e91db093446783c5ffdbfc5ef0ce1de9fdf8975569586b401393516b6a787464d815776750421ee
    languageName: node
    linkType: hard
  
+@@ -4757,34 +4757,34 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@tanstack/react-query-devtools@npm:^5.105.0":
+-  version: 5.105.0
+-  resolution: "@tanstack/react-query-devtools@npm:5.105.0"
++"@tanstack/react-query-devtools@npm:^5.105.1":
++  version: 5.105.1
++  resolution: "@tanstack/react-query-devtools@npm:5.105.1"
+   dependencies:
+-    "@tanstack/query-devtools": "npm:5.105.0"
++    "@tanstack/query-devtools": "npm:5.105.1"
+   peerDependencies:
+-    "@tanstack/react-query": ^5.105.0
++    "@tanstack/react-query": ^5.105.1
+     "@types/react": ^18 || ^19
+     react: ^18 || ^19
+   peerDependenciesMeta:
+     "@types/react":
+       optional: true
+-  checksum: 10c0/a9564a298fe164e8d067fd8d409844b188babfa0a4f54e58674b13e9d606df81d7b557ea98b6af73ede71b3636f5ce6fbf06a7fb5ab1817e3ced0300348196a5
++  checksum: 10c0/39d6ba0435b0a2ee8fc5aa17be8363cf474ccba2fad8ee021c171f37309ffcca6966c87935347536cd913a5c17090613c76d820c9c623e54625cf69d83a7fb1e
+   languageName: node
+   linkType: hard
+ 
+-"@tanstack/react-query@npm:^5.105.0":
+-  version: 5.105.0
+-  resolution: "@tanstack/react-query@npm:5.105.0"
++"@tanstack/react-query@npm:^5.105.1":
++  version: 5.105.1
++  resolution: "@tanstack/react-query@npm:5.105.1"
+   dependencies:
+-    "@tanstack/query-core": "npm:5.105.0"
++    "@tanstack/query-core": "npm:5.105.1"
+   peerDependencies:
+     "@types/react": ^18 || ^19
+     react: ^18 || ^19
+   peerDependenciesMeta:
+     "@types/react":
+       optional: true
+-  checksum: 10c0/7c9e8d073a0a9192937d0996b18ff6c27a769efb93a3a9cf6cf31c811c9187229573c0746849f1f99c0c96af63e7d738c475e445e53cea6c3a8b0718d8b16f7d
++  checksum: 10c0/2cb228aa68476e743b3a39fc6e657aa6f8f8226427f3d92940feda671b147cd5ac417477f48eba670a360f1c563dc1f51c6a5dc2e43203d5d47f2b299a432a0b
+   languageName: node
+   linkType: hard
+ 
+@@ -11780,8 +11780,8 @@ __metadata:
+     "@tanstack/db": "npm:0.15.2"
+     "@tanstack/eslint-plugin-query": "npm:^5.105.1"
+     "@tanstack/react-db": "npm:0.5.12"
+-    "@tanstack/react-query": "npm:^5.105.0"
+-    "@tanstack/react-query-devtools": "npm:^5.105.0"
++    "@tanstack/react-query": "npm:^5.105.1"
++    "@tanstack/react-query-devtools": "npm:^5.105.1"
+     "@tanstack/react-table": "npm:^8.21.3"
+     "@testing-library/dom": "npm:^10.4.2"
+     "@testing-library/jest-dom": "npm:^7.0.1"
+```
+
+---
+
+### Incident Patch 3: `f488ce42` (2026-11-05)
+**Commit Message**: build(deps-dev): bump the typescript-and-eslint group in /console with 2 updates (#40470)
+
+Bumps the typescript-and-eslint group in /console with 2 updates:
+[@tanstack/eslint-plugin-query](https://github.com/TanStack/query/tree/HEAD/packages/eslint-plugin-query)
+and [globals](https://github.com/sindresorhus/globals).
+
+Updates `@tanstack/eslint-plugin-query` from 5.105.0 to 5.105.1
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/TanStack/query/releases">@​tanstack/eslint-plugin-query's
+releases</a>.</em></p>
+<blockquote>
+<h2><code>@​tanstack/eslint-plugin-query</code><a
+href="https://github.com/5"><code>@​5</code></a>.105.1</h2>
+<h3>Patch Changes</h3>
+<ul>
+<li><a
+href="https://redirect.github.com/TanStack/query/pull/12409">#12409</a>
+<a
+href="https://github.com/TanStack/query/commit/ec1910188588b182394a589313678714bc6a1798"><code>ec19101</code></a>
+- Fix stable-query-client detection for arrow functions, function
+expressions, and clients created directly in JSX. Keep state
+initializers and nested helper functions valid.</li>
+</ul>
+</blockquote>
+</details>
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a
+href="https://github.com
+
+**File**: `console/package.json` (modified, +2/-2)
+```diff
+@@ -132,7 +132,7 @@
+     "@sentry/vite-plugin": "^5.4.0",
+     "@storybook/react-vite": "^10",
+     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
+-    "@tanstack/eslint-plugin-query": "^5.105.0",
++    "@tanstack/eslint-plugin-query": "^5.105.1",
+     "@testing-library/dom": "^10.4.2",
+     "@testing-library/jest-dom": "^7.0.1",
+     "@testing-library/react": "^16.3.3",
+@@ -165,7 +165,7 @@
+     "eslint-plugin-simple-import-sort": "^14.0.0",
+     "eslint-plugin-unicorn": "^79.0.0",
+     "fast-xml-parser": "^5.11.2",
+-    "globals": "^17.13.0",
++    "globals": "^17.14.0",
+     "intersection-observer": "^0.12.2",
+     "jotai-devtools": "^0.10.1",
+     "jsdom": "^29.1.1",
+```
+
+**File**: `console/yarn.lock` (modified, +14/-7)
+```diff
+@@ -4689,9 +4689,9 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@tanstack/eslint-plugin-query@npm:^5.105.0":
+-  version: 5.105.0
+-  resolution: "@tanstack/eslint-plugin-query@npm:5.105.0"
++"@tanstack/eslint-plugin-query@npm:^5.105.1":
++  version: 5.105.1
++  resolution: "@tanstack/eslint-plugin-query@npm:5.105.1"
+   dependencies:
+     "@typescript-eslint/utils": "npm:^8.71.0"
+   peerDependencies:
+@@ -4700,7 +4700,7 @@ __metadata:
+   peerDependenciesMeta:
+     typescript:
+       optional: true
+-  checksum: 10c0/009aa34de317547c47525c99995408dfdc2c868aba0ed552f19959dc612b79d1f2859ce7f6800d09d5ee17cefb56230331861f77b056e03acd3d50ef02b54e8f
++  checksum: 10c0/9e1201c9763e3bb92f19d1af879f7c6afa75743756a4d709bd983ed008bb9bd2a9953b5cd84a03f27d98f93a37ccbc779d814c42565d93c99799e552e405021c
+   languageName: node
+   linkType: hard
+ 
+@@ -9817,13 +9817,20 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"globals@npm:^17.12.0, globals@npm:^17.13.0":
++"globals@npm:^17.12.0":
+   version: 17.13.0
+   resolution: "globals@npm:17.13.0"
+   checksum: 10c0/8371d9e4e5581640141b5cce70a098edd765d2e3ab063b14998e590698071e0afb4a4a6739ccfbdcbdeb2565c5553697ba07d95703c51039912cf341a7dba7a7
+   languageName: node
+   linkType: hard
+ 
++"globals@npm:^17.14.0":
++  version: 17.14.0
++  resolution: "globals@npm:17.14.0"
++  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
++  languageName: node
++  linkType: hard
++
+ "globalthis@npm:^1.0.3":
+   version: 1.0.3
+   resolution: "globalthis@npm:1.0.3"
+@@ -11771,7 +11778,7 @@ __metadata:
+     "@stripe/stripe-js": "npm:^10.0.0"
+     "@svgr/babel-plugin-transform-svg-component": "npm:^8.0.0"
+     "@tanstack/db": "npm:0.15.2"
+-    "@tanstack/eslint-plugin-query": "npm:^5.105.0"
++    "@tanstack/eslint-plugin-query": "npm:^5.105.1"
+     "@tanstack/react-db": "npm:0.5.12"
+     "@tanstack/react-query": "npm:^5.105.0"
+     "@tanstack/react-query-devtools": "npm:^5.105.0"
+@@ -11834,7 +11841,7 @@ __metadata:
+     fast-deep-equal: "npm:^3.1.3"
+     fast-xml-parser: "npm:^5.11.2"
+     framer-motion: "npm:^14.0.0"
+-    globals: "npm:^17.13.0"
++    globals: "npm:^17.14.0"
+     intersection-observer: "npm:^0.12.2"
+     jotai: "npm:^2.9.3"
+     jotai-devtools: "npm:^0.10.1"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40511** (2026-11-05): enabled freshness page for self-managed (@jdonelson)
+- **PR #40507** (2026-11-05): sql-parser: only take `WITH` as part of `WITH TIME ZONE` (@def-)
+- **PR #40506** (2026-11-05): ci: Nightly fixes (2026-11-05) (@def-)
+- **PR #40505** (closed): build(deps): bump the simple group across 1 directory with 17 updates (@dependabot[bot])
+- **PR #40504** (closed): compute: arrange through a Materialize-owned copy of differential's trace agent (@antiguru)
 - **PR #40502** (2026-11-05): release: mark v26.49 as released (@materialize-bot)
-- **PR #40500** (2026-11-04): helm: disable enableUserNamespaces by default (@jubrad)
-- **PR #40475** (2026-11-04): doc: correct the Terraform paragraph in the drop-in-use-index design doc (@ggevay)
-- **PR #40467** (2026-11-04): adapter: explain intent of the catalog command framework (@aljoscha)
-- **PR #40465** (2026-11-04): ci: Nightly fixes (2026-11-04) (@def-)
-- **PR #40464** (2026-11-04): build(deps): Bump js-yaml from 4.3.1 to 4.3.2 (@def-)
 
 ---
 
@@ -1558,39 +1482,28 @@ https://github.com/MaterializeInc/materialize/security/dependabot/604
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289)
+## X. build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the for
 
 **RULE**:
-When implementing operations in `console/e2e-tests/platform.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `console/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac8bac66`: build(deps): bump browserslist from 4.24.0 to 4.29.4 in /console (#40289). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77ae0a30`: build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the forms group (#40471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/e2e-tests/platform.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import {
-  CONSOLE_ADDR,
-  EMAIL,
-  FRONTEGG_LOADING_TIMEOUT,
-  REGIONS,
-  STATE_NAME,
-  TestContext,
-} from "./util";
-    await page.getByText(`New password "${apiKeyName}"`).waitFor({
-      timeout: FRONTEGG_LOADING_TIMEOUT,
-    });
+    "@hookform/resolvers": "^7.0.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-import { CONSOLE_ADDR, EMAIL, REGIONS, STATE_NAME, TestContext } from "./util";
-    await page.getByText(`New password "${apiKeyName}"`).waitFor();
+    "@hookform/resolvers": "^7.0.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac8bac66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77ae0a30` are properly handled with clean fallback behavior.
