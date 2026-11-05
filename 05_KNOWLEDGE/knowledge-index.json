@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:57:38.741Z",
+  "last_updated": "2026-11-05T05:04:39.960Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29709,7 +29709,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
+      "content_hash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -29747,7 +29747,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-31T14:19:29.021Z",
+      "verified_at": "2026-11-05T05:04:27.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52737,8 +52737,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "c28cd7c3",
-      "content_hash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
+      "source_version": "8dcfc003",
+      "content_hash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -52786,6 +52786,11 @@
           "number": 6509,
           "title": "build(rust): bump mssql-tds from 0.2.0 to 0.3.0 (#1036)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7113,
+          "title": "build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52793,7 +52798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:22:20.313Z",
+      "verified_at": "2026-11-05T05:04:39.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180227,6 +180232,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:57:38.721Z"
+    },
+    "rule-7113": {
+      "learning_id": "rule-7113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7113,
+      "title": "build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "8dcfc003",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:04:39.941Z"
     }
   },
   "aliases": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T04:57:38.821Z",
-  "total_cycles_completed": 7490,
-  "total_learnings_persisted": 7490,
-  "total_rules_promoted": 7168,
+  "last_updated": "2026-11-05T05:04:40.039Z",
+  "total_cycles_completed": 7492,
+  "total_learnings_persisted": 7492,
+  "total_rules_promoted": 7169,
   "history": [
-    {
-      "timestamp": "2026-11-04T20:10:03.794Z",
-      "repository": "amir1376/ab-download-manager",
-      "learningId": "learn-github-amir1376-ab-download-manager",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T20:10:10.989Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T20:10:57.183Z",
       "repository": "baidu/Unlimited-OCR-2",
@@ -1403,6 +1389,20 @@
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-minimaxai-minimax-h3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:04:27.232Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:04:40.039Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

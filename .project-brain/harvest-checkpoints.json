@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:57:38.832Z",
+  "last_updated": "2026-11-05T05:04:40.050Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
-      "verified_at": "2026-10-31T14:19:29.151Z",
+      "content_hash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
+      "verified_at": "2026-11-05T05:04:27.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:19:29.151Z"
+      "last_updated": "2026-11-05T05:04:27.235Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
-      "verified_at": "2026-11-03T11:22:20.427Z",
+      "content_hash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
+      "verified_at": "2026-11-05T05:04:40.049Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T11:22:20.427Z"
+      "last_updated": "2026-11-05T05:04:40.049Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",

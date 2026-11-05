@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "5c910b13da537a4bb2e36132a64d757e7367380703feef67a0ee190ba4057a3a",
-    "lastHarvestedAt": "2026-10-31T14:19:29.141Z",
+    "contentHash": "e2f490906c87c6ba5697045958af7d0af562a6a1c5f64e16447638787b9c5d0e",
+    "lastHarvestedAt": "2026-11-05T05:04:27.227Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "c28cd7c3",
+    "sourceVersion": "8dcfc003",
     "license": "MIT",
-    "contentHash": "6aae1fddb2e7a08110ada8ba353d7ca2d1b153acbe7382c4c2cdb04b7a358542",
-    "lastHarvestedAt": "2026-11-03T11:22:20.418Z",
+    "contentHash": "5a744c58e99e8b612013b7bbe0d745308ba005a96ead6d4d13d6125666785428",
+    "lastHarvestedAt": "2026-11-05T05:04:40.035Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {

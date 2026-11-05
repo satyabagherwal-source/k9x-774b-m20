@@ -7513,3 +7513,5 @@
 | `CYCLE-20261105-HSJ9` | `2026-11-05T04:50:32.757Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`fda7f391...`) |
 | `CYCLE-20261105-QWR2` | `2026-11-05T04:57:38.126Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7110` | Yes (`7cb5f799...`) |
 | `CYCLE-20261105-QXA4` | `2026-11-05T04:57:38.812Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7109, Rule 7111, Rule 7112` | Yes (`357a97dd...`) |
+| `CYCLE-20261105-ZOER` | `2026-11-05T05:04:27.219Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`e2f49090...`) |
+| `CYCLE-20261105-ZYAN` | `2026-11-05T05:04:40.031Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7113` | Yes (`5a744c58...`) |
