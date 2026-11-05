@@ -7773,3 +7773,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-05T19:06:49.605Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `bcf527e4` | Multi-dimensional audit evidence | 2026-11-05T19:06:59.934Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `f8221ca5` | Multi-dimensional audit evidence | 2026-11-05T19:15:19.438Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9846078c` | Multi-dimensional audit evidence | 2026-11-05T19:22:14.591Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8aa18b51` | Multi-dimensional audit evidence | 2026-11-05T19:22:23.804Z |

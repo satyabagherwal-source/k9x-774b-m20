@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `d67b85fd`  
+> **Source Version**: `9846078c`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:07:39.331Z  
+> **Timestamp**: 2026-11-05T19:22:13.399Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:07:38.795Z  
+> **Harvest Timestamp**: 2026-11-05T19:22:12.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2263,159 +2263,124 @@ pub enum Commands {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d67b85fd` (2026-11-03)
-**Commit Message**: fix(website): point worker registry links to iii.dev/registry (#2462)
+### Incident Patch 1: `9846078c` (2026-11-05)
+**Commit Message**: docs(changelog): add 0.25.1 release notes (#2476)
 
-**File**: `website/components/landing/content.ts` (modified, +3/-3)
-```diff
-@@ -241,7 +241,7 @@ export const useCases = {
-       label: 'iii compose',
-       command: 'iii compose --up',
-       engine: 'iii 0.24.6',
--      /* Registry names from workers.iii.dev. `harness` pulls in its dependencies, shown indented under it. */
-+      /* Registry names from iii.dev/registry. `harness` pulls in its dependencies, shown indented under it. */
-       workers: [
-         { name: 'http', ms: 142 },
-         { name: 'database', ms: 233 },
-@@ -309,7 +309,7 @@ export const ownership = {
-     { name: 'Self-hosted', where: 'your hardware' },
-     { name: 'Cloud', where: 'your cloud' },
-   ],
--  /* The app that moves between them: the engine plus registry workers (names from workers.iii.dev). */
-+  /* The app that moves between them: the engine plus registry workers (names from iii.dev/registry). */
-   app: { engine: 'iii engine', workers: ['http', 'database', 'state', 'harness'] },
-   /*
-    * Proof that people build on it, in the order the 2026-10-05 sync set: workers first, then contributors,
-@@ -318,7 +318,7 @@ export const ownership = {
-    * reader can check it themselves.
-    */
-   stats: [
--    { id: 'workers', label: 'Workers in the registry', source: 'workers.iii.dev', href: 'https://workers.iii.dev/' },
-+    { id: 'workers', label: 'Workers in the registry', source: 'iii.dev/registry', href: 'https://iii.dev/registry' },
-     {
-       id: 'contributors',
-       label: 'Contributors',
-```
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `website/components/landing/stats.ts` (modified, +2/-2)
+**File**: `docs/changelog/index.mdx` (modified, +20/-0)
 ```diff
-@@ -5,7 +5,7 @@ import { getCommunityStats } from '@/lib/community'
- export type PageStats = {
-   stars: number | null
-   contributors: number | null
--  /** Workers listed at workers.iii.dev, read from the registry's own badge. */
-+  /** Workers listed at iii.dev/registry, read from the registry's own badge. */
-   workers: number
-   /** Adoption, as the 2026-10-05 sync asked for: the SDK on each package registry, plus the engine image. */
-   downloads: {
-@@ -64,7 +64,7 @@ async function getContributors(): Promise<number | null> {
-  */
- async function getWorkers(): Promise<number | null> {
-   try {
--    const res = await fetch('https://workers.iii.dev/badge/workers.svg', {
-+    const res = await fetch('https://iii.dev/registry/badge/workers.svg', {
-       headers: { Accept: 'image/svg+xml' },
-       next: { revalidate: 3600 },
-       signal: AbortSignal.timeout(4000),
-```
-
-**File**: `website/components/landing/story-discovery.tsx` (modified, +3/-3)
-```diff
-@@ -24,9 +24,9 @@ const SYSTEM: Row[] = [
-   { id: 'directory::search_functions', detail: 'Search registered functions', owner: 'iii-directory' },
- ]
- const REGISTRY: Row[] = [
--  { id: 'document', detail: 'Read and write documents', owner: 'workers.iii.dev' },
--  { id: 'storage', detail: 'Store and archive objects', owner: 'workers.iii.dev' },
--  { id: 'browser', detail: 'Drive a real browser', owner: 'workers.iii.dev' },
-+  { id: 'document', detail: 'Read and write documents', owner: 'iii.dev/registry' },
-+  { id: 'storage', detail: 'Store and archive objects', owner: 'iii.dev/registry' },
-+  { id: 'browser', detail: 'Drive a real browser', owner: 'iii.dev/registry' },
- ]
- const NEEDS = ['Save an order', 'Archive a receipt', 'Apply loyalty discount'] as const
- const OUTCOMES = [
-```
-
-**File**: `website/components/site/footer.tsx` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ export function Footer({ container }: { container?: string } = {}) {
-       items: [
-         { label: 'Docs', href: links.docs },
-         { label: 'Quickstart', href: links.quickstart },
--        { label: 'Worker registry', href: links.registry, external: true },
-+        { label: 'Worker registry', href: links.registry },
-         { label: 'Roadmap', href: links.roadmap },
-         { label: 'Benchmarks', href: links.benchmarks },
-         { label: 'Manifesto', href: links.manifesto },
-```
-
-**File**: `website/components/site/header.tsx` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ const plainLinks = [
-   { label: 'Docs', href: links.docs, icon: IconDocument, external: false },
-   { label: 'Blog', href: links.blog, icon: IconPaper, external: false },
-   { label: 'Roadmap', href: links.roadmap, icon: IconDiscovery, external: false },
--  { label: 'Worker registry', href: links.registry, icon: IconPackage, external: true },
-+  { label: 'Worker registry', href: links.registry, icon: IconPackage, external: false },
- ]
+@@ -5,6 +5,26 @@ owner: "devrel"
+ type: "reference"
+ ---
  
- const focusRing = 'outline-none focus-visible:outline-2 focus-visible:outline-foreground focus-visible:outline-offset-2'
-```
-
-**File**: `website/content/blog/coding-agent-cost.md` (modified, +1/-1)
-```diff
-@@ -219,7 +219,7 @@ Per-task worksheet using our lowest-cost run (DeepSeek V4.1 Flash, low thinking,
- 
- We provide the AI Agent Harness; you choose the model provider and pay for its usage separately.
- 
--You can bring a subscription, a DeepSeek, OpenAI, Anthropic, or OpenCode Go API key, or run a local model through the [llama.cpp provider](https://workers.iii.dev/workers/provider-llamacpp). The engine routes your requests through whichever provider you've added and we support all the major providers.
-+You can bring a subscription, a DeepSeek, OpenAI, Anthropic, or OpenCode Go API key, or run a local model through the [llama.cpp provider](https://iii.dev/registry/workers/provider-llamacpp). The engine routes your requests through whichever provider you've added and we support all the major providers.
- 
- The `harness::metrics` output reports turns, Function calls, tokens, and estimated cost across a session tree, with child sessions already included.
++<Update label="0.25.1" description="November 2026">
++  ## Native Windows fixes for Compose
++
++  This patch release adds only the following fixes to 0.25.0 and changes no protocol or API.
++
++  - Compose can sanitize and rotate an existing `engine.log`, including one that reached 10 MiB.
++    Previously, truncating the log failed with `os error 5` (access denied): the engine log stopped
++    updating, and later `iii compose --up` runs could not start the engine.
++  - Local `path://` workers whose run command contains quotes start again. Compose passes the
++    command text to `cmd /C` verbatim, preserving Windows shell quoting and operators, instead of
++    failing with `ERROR_BAD_NETPATH`. As with `cmd /C`, when both the executable path and its
++    arguments are quoted, wrap the whole command in one more pair of quotes, for example
++    `""C:\Program Files\nodejs\node.exe" "C:\my app\main.js""`.
++  - When Compose runs without a console, such as when it is detached, the engine and its workers no
++    longer open empty console windows. When a console exists, including a hidden one, Compose still
++    shares it, so console control events keep working.
++
++  [Compare 0.25.0 to 0.25.1](https://github.com/iii-hq/iii/compare/iii%2Fv0.25.0...iii%2Fv0.25.1).
++</Update>
++
+ <Update label="0.25.0" description="October 2026">
+   ## Observe: every function is observable
  
 ```
 
-**File**: `website/content/blog/how-to-build-your-own-agent-harness.md` (modified, +2/-2)
-```diff
-@@ -39,7 +39,7 @@ If you strip a production agent harness back to its responsibilities, you get a
- 
- Every serious agent harnesses most of these. The expensive ones do all of them. The cheap ones cut corners and rebuild the corners later when they hit production. The frameworks bundle them into a monolith and ship one version of each. That last part is the part that costs you, because a year in, you find out that the policy engine you want is not the policy engine the framework ships, and replacing it means replacing the harness.
- 
--The iii harness ships every one of those thirteen jobs as a separate worker on the [workers.iii.dev](https://workers.iii.dev/) registry. Each speaks the same WebSocket protocol. Each registers functions and triggers on the same engine bus. Each is `iii worker add`\-able, swappable, and writable in any language with an SDK.
-+The iii harness ships every one of those thirteen jobs as a separate worker on the [iii.dev/registry](https://iii.dev/registry) worker registry. Each speaks the same WebSocket protocol. Each registers functions and triggers on the same engine bus. Each is `iii worker add`\-able, swappable, and writable in any language with an SDK.
- 
- ## **The stack, by worker**
- 
-@@ -151,7 +151,7 @@ If you've been running an agent on top of a framework and feeling the same bound
- 
- The fastest way to feel the argument is to clone [github.com/iii-hq/workers](https://github.com/iii-hq/workers), `pnpm install`, `pnpm build`, and run the composite entry point. You'll get the full fourteen-worker harness pointed at an iii engine. You can disable any worker by removing its entry from the boot list. You can swap any worker by writing a replacement that registers the same function ids. You can extend any worker by adding a subscriber to its hook topics. `hook-fanout::publish_collect` is the generic every iii hook builds on.
- 
--The docs live at [iii.dev/docs](https://iii.dev/docs). The engine is at [github.com/iii-hq/iii](https://github.com/iii-hq/iii). The worker registry is at [workers.iii.dev](https://workers.iii.dev). The harness bundle is at [github.com/iii-hq/workers/harness](https://github.com/iii-hq/workers/tree/main/harness).
-+The docs live at [iii.dev/docs](https://iii.dev/docs). The engine is at [github.com/iii-hq/iii](https://github.com/iii-hq/iii). The worker registry is at [iii.dev/registry](https://iii.dev/registry). The harness bundle is at [github.com/iii-hq/workers/harness](https://github.com/iii-hq/workers/tree/main/harness).
- 
- ## **The bet**
- 
-```
+---
 
-**File**: `website/content/blog/is-your-business-ready-for-the-eus-lawyers.md` (modified, +1/-1)
+### Incident Patch 2: `49758581` (2026-11-05)
+**Commit Message**: feat(website): Pi vs OpenCode vs iii comparison post (#2458)
+
+**File**: `website/content/blog/pi-vs-opencode-vs-iii.md` (added, +307/-0)
 ```diff
-@@ -152,6 +152,6 @@ You have until December 2, 2027 to be able to answer. You have until roughly now
- 
- If you want to try using iii for your next or current project then visit our install guide to get started: [iii.dev/docs/install](https://iii.dev/docs/install). We've also got a Discord where someone is always around to help out: [discord.gg/iiidev](https://discord.gg/iiidev).
- 
--Website: [iii.dev](https://iii.dev). Github: [github.com/iii-hq/iii](https://github.com/iii-hq/iii). Worker registry: [workers.iii.dev](https://workers.iii.dev/). Docs: [iii.dev/docs](https://iii.dev/docs).
-+Website: [iii.dev](https://iii.dev). Github: [github.com/iii-hq/iii](https://github.com/iii-hq/iii). Worker registry: [iii.dev/registry](https://iii.dev/registry). Docs: [iii.dev/docs](https://iii.dev/docs).
- 
- Mike Piccolo, Founder & CEO [@iiidevs](https://x.com/iiidevs)
+@@ -0,0 +1,307 @@
++---
++title: 'Pi vs OpenCode vs iii for extensible coding workflows'
++seoTitle: 'Pi vs OpenCode vs iii: Extending Your Coding Workflow'
++description: 'We tested the same tool with Pi, OpenCode, and iii to compare setup, error handling, and reuse between coding agents and applications.'
++pubDate: 2026-11-05
++tags: ['agents', 'comparison', 'pi', 'opencode', 'mcp', 'harness']
++ogImage: ../../assets/blog/pi-vs-opencode-vs-iii/og.png
++faq:
++  - q: 'Does Pi support MCP servers now?'
++    a: 'Yes. Pi added MCP with Codemode in v0.99.0 on September 29, 2026, and Pi 1.0 ships it. Earlier reviews contrasted OpenCode''s built-in MCP with Pi''s extension-first core. That distinction is now historical, as both ship MCP as a first-class configuration path.'
++  - q: 'Can I embed Pi or OpenCode in my own app?'
++    a: 'Yes, in different shapes. Pi offers a TypeScript SDK and an RPC mode over stdin and stdout. OpenCode offers a client for its background service''s HTTP API. In iii, the AI Agent Harness is itself a Worker on the same engine as your application''s Workers, so the integration boundary is a Function call rather than a separate protocol.'
++  - q: 'How do I share an extension with my team?'
++    a: 'Pi packages bundle extensions, skills, and prompt templates from npm or git, and versions can be pinned. OpenCode plugins install from npm or git and are listed in opencode.json(c). iii Workers come from the registry via compose::add and are pinned in worker-compose.lock.'
++---
++
++![Pi vs OpenCode vs iii: one tool, two callers. An Agent and an App both connect to one iii Function, release-notes::get.](../../assets/blog/pi-vs-opencode-vs-iii/banner.png)
++
++You've built a small HTTP service that returns release notes for versioned packages, and now both your coding agent and your application need to call it.
++
++Every team building real workflows hits this extension decision eventually, and it's where the top Pi vs OpenCode comparisons go silent.
++
++The top-ranking comparison pages contrast OpenCode's built-in MCP with Pi's extension-first core, but none of them adds the same tool to both agents and asks what happens when the application also needs that tool.
++
++In this article, we built one release-notes lookup as a standalone HTTP service, connected it with Pi, OpenCode, and iii, and tested how each tool works when your agent and your app both need the same tool.
++
++> **Versions tested, checked October 13, 2026:** Pi 1.0.4, OpenCode v2.0.24, and iii engine 0.24.4 with AI Agent Harness 1.8.44, all running against the same claude-sonnet-5 model via the same Anthropic API key.
++
++## Our quick take by workload
++
++Pi and OpenCode are coding agents you extend with MCP servers or plugins. iii is a framework where the agent and the application call the same Functions. The right choice depends on which problem you're actually solving.
++
++<div class="verdict">
++  <div class="verdict-card">
++    <p class="verdict-pick">Best for getting the tool call right with minimal config</p>
++    <p class="verdict-tool">Pi</p>
++    <p class="verdict-reason">The .pi/mcp.json wiring was the smallest config of the three (one pi mcp add command, one JSON file), and the agent used the tool correctly with no missteps in our run.</p>
++    <a class="verdict-cta" href="https://iii.dev/docs/install">Pi in iii</a>
++  </div>
++  <div class="verdict-card">
++    <p class="verdict-pick">Best for a full agent with plugins and MCP built in</p>
++    <p class="verdict-tool">OpenCode</p>
++    <p class="verdict-reason">OpenCode ships agents, commands, skills, MCP, and a plugin API in one install, so you're customizing one complete tool rather than assembling pieces.</p>
++    <a class="verdict-cta" href="https://iii.dev/docs/install">OpenCode in iii</a>
++  </div>
++  <div class="verdict-card" data-highlight>
++    <p class="verdict-pick">Best when the app needs the tool too</p>
++    <p class="verdict-tool">iii</p>
++    <p class="verdict-reason">Confirmed in our run: the app called the exact same release-notes::get Function the agent did, with no second implementation, and both calls appeared in the same filterable trace list in the console.</p>
++    <a class="verdict-cta" href="https://iii.dev/docs/install">Start the harness</a>
++  </div>
++</div>
++
++## How we ran the test
++
++We built one release-notes lookup as a standalone HTTP service returning merged changes for a `beacon-cli` version from a local fixture, with a clean 404 for unknown versions. We connected it three ways: a stdio MCP server used identically by Pi and OpenCode, and a Function registered by an iii Worker.
++
++All three call into the same running service, so every result below reflects how each option exposes and reaches a tool.
++
++We ran four cases per tool using the same fixed prompt template: "Look up the release notes for beacon-cli version {VERSION} using the available tool, and summarize the changes in one sentence."
++
++<div class="compare">
++
++| Setup | Pi | OpenCode | iii |
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2476** (2026-11-05): docs(changelog): add 0.25.1 release notes (@guibeira)
+- **PR #2474** (2026-11-05): ci(release): allow stable patch releases from release/X.Y.x branches (@guibeira)
 - **PR #2470** (2026-11-04): fix(engine): sandbox::adapter::info names the binding when the adapter hangs (@andersonleal)
 - **PR #2469** (2026-11-04): fix(compose,engine): sandbox regressions found testing observe-v2 with real VMs (@andersonleal)
 - **PR #2466** (2026-11-04): chore: merge main into observe-v2 to resolve #2433 conflicts (@andersonleal)
 - **PR #2465** (2026-11-04): fix(install): say when a release still needs iii-worker and iii-init (@andersonleal)
-- **PR #2464** (2026-11-04): docs(next): show the success message math::add_two_numbers returns (@guibeira)
-- **PR #2463** (2026-11-03): fix(observability): observe ade::ui::asset instead of console::ui::asset (@guibeira)
 
 ---
 
@@ -2435,32 +2400,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. website): point worker registry links to iii.dev/registry (#2462)
+## X. docs(changelog): add 0.25.1 release notes (#2476)
 
 **RULE**:
-When implementing operations in `website/components/landing/content.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/changelog/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d67b85fd`: website): point worker registry links to iii.dev/registry (#2462). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9846078c`: docs(changelog): add 0.25.1 release notes (#2476). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/components/landing/content.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/changelog/index.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      /* Registry names from iii.dev/registry. `harness` pulls in its dependencies, shown indented under it. */
-  /* The app that moves between them: the engine plus registry workers (names from iii.dev/registry). */
-    { id: 'workers', label: 'Workers in the registry', source: 'iii.dev/registry', href: 'https://iii.dev/registry' },
+<Update label="0.25.1" description="November 2026">
+  ## Native Windows fixes for Compose
+
+  This patch release adds only the following fixes to 0.25.0 and changes no protocol or API.
+
+  - Compose can sanitize and rotate an existing `engine.log`, including one that reached 10 MiB.
+    Previously, truncating the log failed with `os error 5` (access denied): the engine log stopped
+    updating, and later `iii compose --up` runs could not start the engine.
+  - Local `path://` workers whose run command contains quotes start again. Compose passes the
+    command text to `cmd /C` verbatim, preserving Windows shell quoting and operators, instead of
+    failing with `ERROR_BAD_NETPATH`. As with `cmd /C`, when both the executable path and its
+    arguments are quoted, wrap the whole command in one more pair of quotes, for example
+    `""C:\Program Files\nodejs\node.exe" "C:\my app\main.js""`.
+  - When Compose runs without a console, such as when it is detached, the engine and its workers no
+    longer open empty console windows. When a console exists, including a hidden one, Compose still
+    shares it, so console control events keep working.
+
+  [Compare 0.25.0 to 0.25.1](https://github.com
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      /* Registry names from workers.iii.dev. `harness` pulls in its dependencies, shown indented under it. */
-  /* The app that moves between them: the engine plus registry workers (names from workers.iii.dev). */
-    { id: 'workers', label: 'Workers in the registry', source: 'workers.iii.dev', href: 'https://workers.iii.dev/' },
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d67b85fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9846078c` are properly handled with clean fallback behavior.

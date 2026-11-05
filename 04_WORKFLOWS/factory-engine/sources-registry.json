@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T19:15:22.026Z",
-    "lastVerified": "2026-11-05T19:15:22.026Z",
+    "lastChecked": "2026-11-05T19:22:26.395Z",
+    "lastVerified": "2026-11-05T19:22:26.395Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T18:53:45.561Z",
-    "lastVerified": "2026-11-05T18:53:45.561Z",
+    "lastChecked": "2026-11-05T19:22:23.264Z",
+    "lastVerified": "2026-11-05T19:22:23.264Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -393,12 +393,12 @@
     "lastVerified": "2026-11-03T23:59:10.780Z"
   },
   "nginx-kubernetes-ingress": {
-    "name": "nginx/kubernetes-ingress",
+    "name": "kubernetes-ingress",
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T04:43:40.980Z",
-    "lastVerified": "2026-11-05T04:43:40.980Z",
+    "lastChecked": "2026-11-05T19:22:15.649Z",
+    "lastVerified": "2026-11-05T19:22:15.649Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
@@ -407,7 +407,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4d69ce36"
   },
   "openziti-zrok": {
     "name": "zrok",
@@ -667,14 +668,14 @@
     "officialUrl": "https://github.com/iii-hq/iii",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T00:07:38.795Z",
-    "lastVerified": "2026-11-05T00:07:38.795Z",
+    "lastChecked": "2026-11-05T19:22:12.384Z",
+    "lastVerified": "2026-11-05T19:22:12.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
+    "contentHash": "eb19e8d598f6b4b7a2e403ccc20ef67b8a30e9032e3df4887b911d42c184c322",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2228,22 +2229,21 @@
     "lastVerified": "2026-11-05T07:13:04.164Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T15:13:07.933Z",
-    "lastVerified": "2026-11-05T15:13:07.933Z",
+    "lastChecked": "2026-11-05T19:22:22.274Z",
+    "lastVerified": "2026-11-05T19:22:22.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "3cf5257e9abd01959c45761fa06cf8021f304d2437039eeb0ae05d7920f21d0d",
+    "contentHash": "59cb5008ddd79869fe3f83fbb0b638adf795c90bce17902fcb58682c008a72d3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2993b5e6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -4884,9 +4884,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-05T04:00:41.790Z",
+    "lastChecked": "2026-11-05T19:22:20.554Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-11-05T04:00:41.790Z"
+    "lastVerified": "2026-11-05T19:22:20.554Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -9352,9 +9352,9 @@
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
     "officialUrl": "https://github.com/davo20019/seo-analysis",
-    "lastChecked": "2026-11-02T15:22:17.016Z",
+    "lastChecked": "2026-11-05T19:22:10.679Z",
     "revisionIdentifier": "902c09fd",
-    "lastVerified": "2026-11-02T15:22:17.016Z"
+    "lastVerified": "2026-11-05T19:22:10.679Z"
   },
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
@@ -11836,9 +11836,9 @@
   "mikeroyal-apple-silicon-guide": {
     "name": "Apple-Silicon-Guide",
     "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
-    "lastChecked": "2026-11-03T19:15:03.756Z",
+    "lastChecked": "2026-11-05T19:22:13.070Z",
     "revisionIdentifier": "7e58c7d7",
-    "lastVerified": "2026-11-03T19:15:03.756Z"
+    "lastVerified": "2026-11-05T19:22:13.070Z"
   },
   "tanstack-query": {
     "name": "TanStack/query",
