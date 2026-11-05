@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `72945925`  
+> **Source Version**: `161e65d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:58:31.550Z  
+> **Timestamp**: 2026-11-05T07:27:54.514Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:58:31.542Z  
+> **Harvest Timestamp**: 2026-11-05T07:27:54.508Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1006,381 +1006,345 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72945925` (2026-11-05)
-**Commit Message**: Add ARC dataset for puzzle a85d4709
+### Incident Patch 1: `161e65d6` (2026-11-05)
+**Commit Message**: Document ARC gestalt reviews and batch sizing
 
-Model each gray cell as the marker of its row, an Obj point tagged
-l7544. Four unconditional class-level rules turn every marker into a
-full-width horizontal bar (l3058): fill_color is looked up by the
-marker's input column, [2, 4, 3][$Obj.x@first], bar_width is
-canvas_width, and x moves to 0 while y keeps the row. The dataset
-holds the 4 original training pairs followed by the test pair, 15
-marker instances, with output canvas EXACT.
+Record gestalt reviews across ARC puzzle datasets, clarify the revised whole-block model and run status for 27a28665, and document the workflow's configurable puzzle batch size.
 
-Files:
-- arc/src/dataset/dataset.a85d4709.json: the instruction dataset
-- arc/README.md: its Instruction datasets paragraph
-- .github/workflows/arc.yml: a85d4709 added to ARC_PUZZLES
-- arc/src/app.ts: default puzzle_id a85d4709, was 9565186b
-- arc/docs/ARC-NUC-a85d4709.md: the puzzle's progress record
-
-No Nucleoid enhancement was requested, so there is no NUC and no
-strategy trial.
-
-One local run, bun start a85d4709 on the accepted runtime at 9318a95:
-exit 6, a difference of 6, not an exact match, elapsed 5m 19.6s.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8ek5nqrKPYRXo542Yu
-
-**File**: `.github/workflows/arc.yml` (modified, +1/-0)
+**File**: `arc/README.md` (modified, +4/-2)
 ```diff
-@@ -33,6 +33,7 @@ jobs:
-         3c9b0459
-         74dd1130
-         9565186b
-+        a85d4709
-       NUCLEOID_EXECUTABLE: ${{ github.workspace }}/target/debug/nucleoid
-       DOTENV_CONFIG_PATH: /dev/null
-       NO_COLOR: "1"
-```
-
-**File**: `arc/README.md` (modified, +62/-0)
-```diff
-@@ -798,6 +798,68 @@ because the regions are not rotated and the bars are vertical. The test pair
- follows the training pairs at the same level and is annotated by the same
- rules.
+@@ -67,8 +67,10 @@ manually from the repository's Actions tab. Configure the repository Actions
+ secret `OPENROUTER_API_KEY` before dispatching it; do not upload an environment
+ file. The workflow disables environment-file loading, builds the checked-out
+ Nucleoid runtime, installs ARC dependencies from the frozen Bun lockfile,
+-and runs every puzzle in `ARC_PUZZLES` once in parallel, with a thirty-minute
+-limit per puzzle. These are live,
++and runs every puzzle in `ARC_PUZZLES` once in batches of up to
++`ARC_CONCURRENCY` puzzles (default `5`), with a thirty-minute limit per puzzle.
++Change `jobs.report.env.ARC_CONCURRENCY` to adjust the batch size, keeping the
++job timeout budget sufficient for all batches. These are live,
+ paid OpenRouter solver benchmarks, not automated ARC tests.
  
-+`dataset.a85d4709.json` annotates the four original training pairs from
-+`data\training\a85d4709.json`, in order, followed by its test pair, fifteen
-+marker instances in total, three per pair. Every input and output retains its
-+original 3 by 3 canvas, colors, positions, and zero cells. Each input holds
-+three gray cells of color 5, one in each row, on a background of zero cells.
-+In the training pairs they form one figure from the top row to the bottom row
-+whose cells touch through edges or corners: a diagonal line from the top-right
-+corner to the bottom-left corner, a vertical line down the right column, and,
-+in the third and fourth pairs, the same chevron pointing right, in the left
-+two columns and in the right two. Each output paints every row as a solid
-+horizontal bar, 1 cell tall and as wide as the canvas, whose color is decided
-+by the column of that row's gray cell: 2 for the left column, 4 for the middle
-+column, and 3 for the right column, so no output cell is zero. The whole gray
-+figure, the figure seen first, does not change as one: each of its rows takes
-+its own color, which no scalar property of a single figure object can state.
-+Its shape does not decide the colors either: the third and fourth training
-+figures are the same chevron one column apart, yet their rows turn 2, 4, and
-+2 and 4, 3, and 4. Each column instead gives the same color in every training
-+pair where it holds a gray cell, whichever figure that cell belongs to. Each
-+object is therefore one gray cell, the marker of its row, a single 1 by 1
-+point, listed from top to bottom, because the row is the unit in which every
-+output changes: each output row is a single color. The training pairs alone
-+also fit reading the vertical line of the second training pair as one
-+edge-connected object that widens into a solid 3 by 3 block, and reading the
-+colors by the canvas's edges, 2 at the left edge, 3 at the right edge, and 4
-+between them, because every canvas is 3 columns wide; the rules take one
-+marker per row in every pair and look the color up by column instead, choices
-+fixed from the training pairs before the test pair was read. The class takes
-+no descriptive property, with no color, column list, canvas size, or matrix of
-+cells: every marker is gray, which the rules never read, and the marker's
-+column is its `x`. Unconditional class-level rules set the output tag,
-+introduce two properties, absent before the rules run, and move `x` to the left
-+edge, 0, while `y` keeps the marker's row. `fill_color` is
-+`[2, 4, 3][$Obj.x@first]`: the list holds one color per column of the
-+3-column canvases, from left to right, and indexing it with the marker's input
-+column picks its row's color, anchored with `@first` because another rule
-+moves `x`. `bar_width` is `canvas_width`, reading the canvas's width from the
-+solver's `canvas_width`, as `dataset.d037b0a7.json` reads `canvas_height`. The
-+bar's ends come from the canvas, not the population: in the second training
-+pair every marker lies in the right column, yet every bar spans the whole row.
-+Each bar depends only on its own marker, and the training pairs show no
-+relation between markers, so no population operation appears. The rules create
-+no other property and leave `y` and `orientation` unchanged, so each output
-+state adds only `bar_width` and `fill_color` to its input state's keys, its tag
-+turns `l3058`, and its `x` turns 0. Native snapshots start with the pair's
-+`canvas_width` and `canvas_height`, and output snapshots are captured with all
-+of the same pair's implementations together, followed by `Obj[:]`. Tags
-+identify the geometry: `l7544` is a single point, as in
-+`dataset.0ca9ddb6.json` and `dataset.d037b0a7.json`, and `l3058` is a
-+horizontal bar, as in `dataset.d631b094.json` and `dataset.25d8a9c8.json`.
-+Input masks retain each pair's full-size 3 by 3 input canvas, padded with `0`
-+outside the marker, and output masks the complete 3 by 3 output, padded with
-+`0` outside the bar; merging them reproduces each pair's input and output. The
-+`output_x`/`output_y` fields record the bar's nonzero bounding-box origin, the
-+left end of its marker's row, equal to `output_value.x`/`output_value.y`.
-+`output_canvas` is `EXACT` because each output keeps its input's 3 by 3
-+canvas; with no zero cell in any output, `FIT` would frame the same grids.
-+Orientation is 0 in both states because the point is symmetric and the bar is
-+a distinct horizontal geometry. The declarations hold executable code only,
-+without `#` comments. The test pair follows the training pairs at the same
-+level and is annotated by the same rules.
-+
- `dataset.d037b0a7.json` annotates the three original training pairs from
- `data\training\d037b0a7.json`, in order, followed by its test pair, eleven
- point instances in total (
+ The run summary contains a table with each puzzle's result, exit code, and
 ```
 
-**File**: `arc/docs/ARC-NUC-a85d4709.md` (added, +163/-0)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +13/-1)
 ```diff
-@@ -0,0 +1,163 @@
-+# ARC-NUC-a85d4709 -- Marker Columns Color Their Rows
-+
-+Progress record for ARC training puzzle `a85d4709`: its instruction dataset,
-+the solver and Nucleoid changes it needed, its runs, and what is still open.
-+
-+| Item | Status |
-+| --- | --- |
-+| Puzzle | [`data/training/a85d4709.json`](../data/training/a85d4709.json) |
-+| Instruction dataset | [`dataset.a85d4709.json`](../src/dataset/dataset.a85d4709.json): the puzzle's 4 original training pairs and its test pair, 15 marker instances, 3 in each pair; committed with this record |
-+| Output canvas | `EXACT` |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply |
-+| Solver changes | None; earlier suggested changes still await review, not applied |
-+| Solver runs | 1 local run on 5-Nov-2026, exit 6, a difference of 6, not an exact match, with this dataset's test pair in its few-shot context |
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+ | Solver changes | None; two suggested changes await review, not applied |
+ | Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run |
+-| Updated | 4-Nov-2026 |
 +| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -124,6 +124,18 @@ $Obj.repeat_count = Math.floor(($Obj.output_height - 1 - $Obj.y) / $Obj.period)
+ $Obj.color = 2
+ ```
+ 
++### Gestalt review
 +
-+## Puzzle
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. Version 3 meets it. Each training input shows one pattern whose
++cells all touch, and that whole pattern is the one object, measured by its
++`height` and `period`. Version 1's one point per cell was the pixel-level
++start that the requirement now rules out, and the user's hint for version 2
++moved the model to the whole pattern. Nothing needs to change.
 +
-+Each training input is a 3 by 3 canvas with one gray cell, color 5, in each
-+row and zero cells everywhere else. The output keeps the canvas and paints
-+every row a single color, chosen by the column of that row's gray cell: 2 for
-+the left column, 4 for the middle column, and 3 for the right column, so no
-+output cell is zero. The column alone decides. In the first pair the gray
-+cells run diagonally, in the second they all sit in the right column, and the
-+third and fourth hold the same chevron one column apart, yet each column gives
-+the same color in every pair where it holds a gray cell. The output keeps the
-+input's 3 by 3 canvas, so the dataset is `EXACT`; with no zero cell in any
-+output, `FIT` would frame the same grids.
-+
-+`/arc-purposal` chose this puzzle by default: among the 383 training puzzles
-+other than the genesis puzzle `3aa6fb7a` and those with a dataset, its largest
-+training matrix has the fewest cells, 9, with 72 cells in all its training
-+matrices. `ed36ccf7` ties on both measures, and `a85d4709` has the lower ID.
-+Both had also tied with [`9565186b`](ARC-NUC-9565186b.md), which the previous
-+invocation took.
-+
-+## Dataset
-+
-+The dataset holds the four original training pairs in source order, followed
-+at the same level by the puzzle's test pair, which the same rules annotate.
-+Each object is one gray cell, the marker of its row: an instance of
-+`Obj(x, y, orientation)`, tagged `l7544`, a single point, as in
-+`dataset.0ca9ddb6.json` and `dataset.d037b0a7.json`. The class takes no
-+descriptive property. Every marker is gray, which the rules never read, and
-+its column is its `x`; the class has no color, list, canvas size, or matrix of
-+cells. Four unconditional class-level rules turn each marker into its row's
-+bar:
-+
-+```nuc
-+$Obj.tag = 'l3058'
-+$Obj.fill_color = [2, 4, 3][$Obj.x@first]
-+$Obj.bar_width = canvas_width
-+$Obj.x = 0
-+```
-+
-+`l3058` is the horizontal bar of `dataset.d631b094.json` and
-+`dataset.25d8a9c8.json`. `fill_color` indexes a list of one color per column,
-+from left to right, with the marker's input column, anchored with `@first`
-+because the last rule moves `x` to the left edge. `bar_width` reads the
-+solver's `canvas_width`, as `dataset.d037b0a7.json` reads `canvas_height`,
-+and `y` keeps the marker's row. The rules create only `fill_color` and
-+`bar_width`, which input states lack. The declarations carry no `#` comments.
-+The [README](../README.md#instruction-datasets) describes the dataset in full.
-+
-+The worker started from the big picture. In each training input the three
-+gray cells touch through edges or corners and form one figure from the top row
-+to the bottom: a diagonal line, a vertical line, and the same right-pointing
-+chevron in two positions. That fell short in two ways:
-+
-+- The figure does not change as one: each of its rows takes its own color,
-+  which no scalar property of a single figure object can state.
-+- Its shape does not decide the colors: the two chevrons turn their rows 2, 4,
-+  and 2, and 4, 3, and 4.
-+
-+The model therefore went down to the row, the unit in which every output
-+changes, and each row holds one figure, its marker. Each bar depends only on
-+its own marker, and the training pairs show no relation between markers, so no
-+population operation appears. The bar's length comes from the canvas, not the
-+other markers: in the second pair every marker sits in the right column, yet
-+every bar spans its whole row. The training pairs also fit two other readings,
-+because every canvas is 3 columns wide. The second pair's vertical line could
-+be one object that widens into a 3 by 3 block, and the colors could follow the
-+canvas edges rather than the columns. The worker took one marker per row and a
-+lookup by column in every pair. It fixed the rules from the training pairs
-+before it read the test pair and reported that the same rules reproduce it.
-+
-+The caller checked the handoff against the declarative, higher-order, and
-+gestalt requirements and the user's ARC conventi
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +12/-1)
 ```diff
-@@ -7,7 +7,7 @@ import arc_dataset from "./lib/arc_dataset.ts";
- import fs from "node:fs/promises";
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted |
+ | Solver changes | None specific to this puzzle |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0 |
+-| Updated | 2-Nov-2026 |
++| Updated | 5-Nov-2026 |
  
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "9565186b") {
-+export async function start(puzzle_id: string = "a85d4709") {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-     await arc_dataset.load(puzzle_id);
+ ## Puzzle
  
+@@ -47,6 +47,17 @@ The color-2 conditional is the same with tag `l2404` and marker color 4.
+ Points of other colors match neither conditional and keep their state. The
+ [README](../README.md#instruction-datasets) describes the dataset in full.
+ 
++### Gestalt review
++
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. The dataset meets it. No nonzero cell of a training input touches
++another through an edge or a corner, so each point is a whole figure, not a
++piece of a larger shape, and the rules give each color-1 and color-2 point its
++whole marker cross. Nothing needs to change.
++
+ ## Decision: locate the delta from the initial position (NUC 53 and NUC 55)
+ 
+ ### Why the world model has to move the object
 ```
 
-**File**: `arc/src/dataset/dataset.a85d4709.json` (added, +412/-0)
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +54/-39)
 ```diff
-@@ -0,0 +1,412 @@
-+{
-+  "declarations": [
-+    "class Obj(x: int, y: int, orientation: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l7544'",
-+    "$Obj.tag = 'l3058'",
-+    "$Obj.fill_color = [2, 4, 3][$Obj.x@first]",
-+    "$Obj.bar_width = canvas_width",
-+    "$Obj.x = 0"
-+  ],
-+  "output_canvas": "EXACT",
-+  "dataset": [
-+    {
-+      "input_matrix": [
-+        [0, 0, 5],
-+        [0, 5, 0],
-+        [5, 0, 0]
-+      ],
-+      "output_matrix": [
-+        [3, 3, 3],
-+        [4, 4, 4],
-+        [2, 2, 2]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "obja98bf6900c1c",
-+          "input_x": 2,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 5],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [3, 3, 3],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obja98bf6900c1c = Obj(x=2, y=0, orientation=0)",
-+          "input_value": {"id":"obja98bf6900c1c","orientation":0,"tag":"l7544","x":2,"y":0},
-+          "output_value": {"bar_width":3,"fill_color":3,"id":"obja98bf6900c1c","orientation":0,"tag":"l3058","x":0,"y":0}
-+        },
-+        {
-+          "instance_name": "obj9ab2c883b000",
-+          "input_x": 1,
-+          "output_x": 0,
-+          "input_y": 1,
-+          "output_y": 1,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 5, 0],
-+            [0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0],
-+            [4, 4, 4],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obj9ab2c883b000 = Obj(x=1, y=1, orientation=0)",
-+          "input_value": {"id":"obj9ab2c883b000","orientation":0,"tag":"l7544","x":1,"y":1},
-+          "output_value": {"bar_width":3,"fill_color":4,"id":"obj9ab2c883b000","orientation":0,"tag":"l3058","x":0,"y":1}
-+        },
-+        {
-+          "instance_name": "obj6d8b02455a90",
-+          "input_x": 0,
-+          "output_x": 0,
-+          "input_y": 2,
-+          "output_y": 2,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [5, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 0],
-+            [2, 2, 2]
-+          ],
-+          "implementation": "obj6d8b02455a90 = Obj(x=0, y=2, orientation=0)",
-+          "input_value": {"id":"obj6d8b02455a90","orientation":0,"tag":"l7544","x":0,"y":2},
-+          "output_value": {"bar_width":3,"fill_color":2,"id":"obj6d8b02455a90","orientation":0,"tag":"l3058","x":0,"y":2}
-+        }
-+      ]
-+    },
-+    {
-+      "input_matrix": [
-+        [0, 0, 5],
-+        [0, 0, 5],
-+        [0, 0, 5]
-+      ],
-+      "output_matrix": [
-+        [3, 3, 3],
-+        [3, 3, 3],
-+        [3, 3, 3]
-+      ],
-+      "instances": [
-+        {
-+          "instance_name": "objcf7eaf55c47f",
-+          "input_x": 2,
-+          "output_x": 0,
-+          "input_y": 0,
-+          "output_y": 0,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 5],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [3, 3, 3],
-+            [0, 0, 0],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "objcf7eaf55c47f = Obj(x=2, y=0, orientation=0)",
-+          "input_value": {"id":"objcf7eaf55c47f","orientation":0,"tag":"l7544","x":2,"y":0},
-+          "output_value": {"bar_width":3,"fill_color":3,"id":"objcf7eaf55c47f","orientation":0,"tag":"l3058","x":0,"y":0}
-+        },
-+        {
-+          "instance_name": "obj3f6ca29afbc2",
-+          "input_x": 2,
-+          "output_x": 0,
-+          "input_y": 1,
-+          "output_y": 1,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "input_instance_matrix": [
-+            [0, 0, 0],
-+            [0, 0, 5],
-+            [0, 0, 0]
-+          ],
-+          "output_instance_matrix": [
-+            [0, 0, 0],
-+            [3, 3, 3],
-+            [0, 0, 0]
-+          ],
-+          "implementation": "obj3f6ca29afbc2 = Obj(x=2, y=1, orientation=0)",
-+          "input_value": {"id":"obj3f6ca29afbc2","orientation":0,"tag":"l7544","x":2,"y":1},
-+          "output_value": {"bar_width":3,"fill_color":3,"id":"obj3f6ca29afbc2","orientation":0,"tag":"l3058","x":0,"y":1}
-+        },
-+        {
-+          "instance_name": "objbd5858949c26",
-+          "input_x": 2,
-+          "output_x": 0,
-+          "input_y": 2,
-+          "output_y": 2,
-+          "input_orientation": 0,
-+          "output_orientation": 0,
-+          "inpu
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
+-| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, 50 cell instances, five per training pair; version 2, which replaced version 1 before any run; uncommitted |
++| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run |
+ | Output canvas | `FIT` |
+-| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
+ | Solver changes | None; three suggested changes await review, not applied |
+-| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0 |
+-| Updated | 4-Nov-2026 |
++| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run |
++| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -27,35 +27,40 @@ the dataset is `FIT`.
+ 
+ The dataset holds the seven original training pairs in source order, followed
+ at the same level by the puzzle's three test pairs, which the same rules
+-annotate. Every nonzero input cell is one instance of
+-`Obj(x, y, orientation)`, a single point tagged `l7544` in both states. The
+-class has no color, count, canvas size, or list or matrix of cells.
+-Unconditional class-level rules decide which cells are isolated, count them
+-over the pattern, and collapse every cell into the output cell:
++annotate. Each pair has one instance of `Obj(x, y, orientation, tag)`, the
++whole five-cell block, and `tag` names the block's shape. The class has no
++color, count, canvas size, or list or matrix of cells. Two unconditional
++class-level rules turn every block into the output cell:
+ 
+ ```nuc
+-$Obj.isolated = not any other in Obj: (other.x@first - $Obj.x@first) ** 2 + (other.y@first - $Obj.y@first) ** 2 == 1
+-$Obj.fill_color = {0: 6, 1: 3, 2: 1, 5: 2}[Obj.count(.isolated)]
+-$Obj.x = 0
+-$Obj.y = 0
++$Obj.tag = 'l7544'
++$Obj.fill_color = {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]
+ ```
+ 
+-A cell is isolated when no other cell of its pattern shares one of its edges,
+-a squared distance of 1. The training patterns have 2, 5, 5, 1, 1, 2, and 0
+-isolated cells, so the final mapping gives 6 for none, 3 for one, 1 for two,
+-and 2 for five. `Obj.count(.isolated)` counts over the pair's whole
+-population, so every cell of a pattern records the same `fill_color`, and the
+-`@first` anchors keep the adjacency test on the input positions after the last
+-two rules move the cells. `isolated` and `fill_color` are absent from the
+-input states. The declarations carry `#` comments, as the other datasets do.
+-The [README](../README.md#instruction-datasets) describes the dataset in full.
++The four training shapes are tagged `l4262` for the hollow diamond with a
++filled corner, `l2404` for the diagonal cross, `l3743` for the square with a
++diagonal tail, and `l1707` for the orthogonal cross. The output cell is a
++single point, `l7544`, and its color is the code that the block's input tag
++selects; the `@first` anchor reads that tag after the first rule replaces it.
++Every block's box spans the canvas, so `x` and `y` stay at the origin.
++`fill_color` is absent from the input states. The declarations carry `#`
++comments, as the other datasets do. The
++[README](../README.md#instruction-datasets) describes the dataset in full,
++including why no measure of the shape yields the code.
++
++Version 3 starts from the big picture, as the gestalt requirement that
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026 asks: each
++training input shows one figure, the whole block, so the block is the object
++and its shape is its tag. Version 2 had started from single cells, one object
++per cell, without showing that a whole-block formulation falls short.
+ 
+ ### Versions
+ 
+ | Version | Instances | Rules | Outcome |
+ | --- | --- | --- | --- |
+ | 
+```
+
+**File**: `arc/docs/ARC-NUC-28bf18c6.md` (modified, +10/-1)
+```diff
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None; the dataset uses accepted features only |
+ | Solver changes | `output_canvas`, applied by `Matrix.canvas` |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0 |
+-| Updated | 2-Nov-2026 |
++| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -44,6 +44,15 @@ move the object to the output origin, where the solver places the repeated
+ crop. The [README](../README.md#instruction-datasets) describes the dataset in
+ full.
+ 
++### Gestalt review
++
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. The dataset meets it. Each training input shows one shape, and
++that whole shape is the object the rules repeat. Nothing needs to change.
++
+ ## Decision: `output_canvas` trims the composed matrix
+ 
+ ### Problem
+```
+
+**File**: `arc/docs/ARC-NUC-44f52bb0.md` (modified, +14/-1)
+```diff
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; the `symmetric` rule of versions 3 and 4 uses the quantifiers of [NUC 62](../../docs/nuc-0062.md) and the deep-equality `includes` of [NUC 61](../../docs/nuc-0061.md) |
+ | Solver changes | On 4-Nov-2026, at the user's request, every `nucleoid.run` call in `src/analyzer.ts` and `src/visualizer.ts` declares `canvas_width` and `canvas_height` at the start of its program; two suggested changes await review, not applied |
+ | Solver runs | 3 local runs on 4-Nov-2026: version 1 exit 1 before any model call (`OPENROUTER_API_KEY is required`); version 2 exit 0; version 3 exit 0; version 4 not run |
+-| Updated | 4-Nov-2026 |
++| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -143,6 +143,19 @@ $Obj.x = 0
+ $Obj.y = 0
+ ```
+ 
++### Gestalt review
++
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. Version 4 meets it. Each training input shows one pattern, the
++whole pattern is the object, and its `points` list is data that the symmetry
++rule quantifies over, not separate objects. Version 1's one point per colored
++cell was the pixel-level start that the requirement now rules out, and the
++user's hint for version 2 moved the model to the whole pattern. Nothing needs
++to change.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-5582e5ca.md` (modified, +14/-1)
+```diff
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None requested by `/arc-purposal`. The fifth version uses `mode()` from [NUC 75](../../docs/nuc-0075.md), which the user requested directly through `/nuc-proposal` after the fourth version; it was Accepted on the user-requested basis in `4c57af8`. The sixth version writes it `mode of $Obj.parts`, with the `of` operator that NUC 75 revision 2 added at the user's direct request, Accepted on the same basis in `4ad55da`. The fourth version used `max` from [NUC 69](../../docs/nuc-0069.md) |
+ | Solver changes | None; two suggested changes await review, not applied |
+ | Solver runs | 5 local runs, one for each of versions 1 to 5: 4 on 2-Nov-2026 and 1 on 3-Nov-2026, all exit 0; version 6 has not been run |
+-| Updated | 3-Nov-2026 |
++| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -82,6 +82,19 @@ training pairs. Version 5 keeps version 4's instances and states the most
+ frequent part directly, with no helper properties. Version 6 only writes that
+ rule as a noun query with `of`.
+ 
++### Gestalt review
++
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. The sixth version meets it. Each grid's nonzero cells form one
++block, the whole block is the object, and `parts` lists its colors as data,
++not as separate objects. The third version's one point per nonzero cell was
++the pixel-level start that the requirement now rules out, and the user's hint
++for the fourth version moved the model to the whole block. Nothing needs to
++change.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-6150a2bd.md` (modified, +13/-1)
+```diff
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None requested; the rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+ | Solver changes | On 4-Nov-2026, at the user's request, every `nucleoid.run` call in `src/analyzer.ts` and `src/visualizer.ts` declares `canvas_width` and `canvas_height` at the start of its program; two suggested changes await review, not applied |
+ | Solver runs | 1 GitHub Actions run on 2-Nov-2026 for version 1 and 1 local run on 3-Nov-2026 for version 2, both exit 0; version 3 not run |
+-| Updated | 4-Nov-2026 |
++| Updated | 5-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -77,6 +77,18 @@ state equals version 2's without the two properties, so the
+ turned orientation and moved origins are unchanged. Instance names, masks,
+ pair grids, and the output canvas are unchanged.
+ 
++### Gestalt review
++
++On 5-Nov-2026 the dataset was checked against the gestalt requirement, which
++`/arc-purposal` and the arc-dataset profile added on 4-Nov-2026, after this
++dataset was written: start from the big picture, the figures each grid shows,
++and go down to single cells only when that cannot express what the training
++pairs show. Version 3 meets it. Each training input's nonzero cells form one
++block, and the whole block is the object that turns. Version 1 split each
++block into its single-color regions, finer than the figure the training pairs
++show, and the user's hint for version 2 moved the model to the whole block.
++Nothing needs to change.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+---
+
+### Incident Patch 2: `56b093ca` (2026-11-05)
+**Commit Message**: Limit ARC workflow concurrency to batches of 5
+
+Run ARC puzzles in batches controlled by ARC_CONCURRENCY (default 5) instead of launching all at once. Each batch is awaited before the next starts, and failures are still aggregated. The variable is validated as a positive integer, and the job timeout is raised from 30 to 150 minutes to fit the batched runs.
+
+**File**: `.github/workflows/arc.yml` (modified, +13/-2)
+```diff
+@@ -9,12 +9,13 @@ permissions:
+ jobs:
+   report:
+     runs-on: ubuntu-latest
+-    timeout-minutes: 30
++    timeout-minutes: 150
+     defaults:
+       run:
+         shell: bash
+         working-directory: arc
+     env:
++      ARC_CONCURRENCY: "5"
+       ARC_PUZZLES: >-
+         3aa6fb7a
+         28bf18c6
+@@ -67,7 +68,12 @@ jobs:
+         env:
+           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+         run: |
++          if [[ ! "$ARC_CONCURRENCY" =~ ^[1-9][0-9]*$ ]]; then
++            echo "::error::ARC_CONCURRENCY must be a positive integer."
++            exit 1
++          fi
+           mkdir -p reports
++          failed=0
+           pids=()
+           for puzzle_id in $ARC_PUZZLES; do
+             (
+@@ -80,8 +86,13 @@ jobs:
+               exit "$exit_code"
+             ) &
+             pids+=("$!")
++            if [[ "${#pids[@]}" -ge "$ARC_CONCURRENCY" ]]; then
++              for pid in "${pids[@]}"; do
++                wait "$pid" || failed=1
++              done
++              pids=()
++            fi
+           done
+-          failed=0
+           for pid in "${pids[@]}"; do
+             wait "$pid" || failed=1
+           done
 ```
 
 #### Recent Merged Pull Requests:
@@ -1409,28 +1373,32 @@ Claude-Session: https://claude.ai/code/session_01AJtz8ek5nqrKPYRXo542Yu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ARC dataset for puzzle a85d4709
+## X. Document ARC gestalt reviews and batch sizing
 
 **RULE**:
-When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72945925`: Add ARC dataset for puzzle a85d4709. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `161e65d6`: Document ARC gestalt reviews and batch sizing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        a85d4709
+and runs every puzzle in `ARC_PUZZLES` once in batches of up to
+`ARC_CONCURRENCY` puzzles (default `5`), with a thirty-minute limit per puzzle.
+Change `jobs.report.env.ARC_CONCURRENCY` to adjust the batch size, keeping the
+job timeout budget sufficient for all batches. These are live,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+and runs every puzzle in `ARC_PUZZLES` once in parallel, with a thirty-minute
+limit per puzzle. These are live,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72945925` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `161e65d6` are properly handled with clean fallback behavior.

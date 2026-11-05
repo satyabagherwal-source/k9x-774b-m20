@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:20:33.901Z",
+  "last_updated": "2026-11-05T07:27:55.191Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -512,8 +512,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "81bb9971",
-      "content_hash": "914ed3b9c03c423d7cde42020d5e44775e3a2b1842fbd0d8bdae547105de0aa4",
+      "source_version": "3396bd83",
+      "content_hash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -556,6 +556,11 @@
           "number": 6398,
           "title": "web): return allowed methods for macro route mismatches (#4374)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7154,
+          "title": "build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -563,7 +568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:42:05.381Z",
+      "verified_at": "2026-11-05T07:27:40.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28819,7 +28824,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
+      "content_hash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -28941,7 +28946,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-31T16:57:19.254Z",
+      "verified_at": "2026-11-05T07:27:38.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44888,8 +44893,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "72945925",
-      "content_hash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
+      "source_version": "161e65d6",
+      "content_hash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45157,6 +45162,11 @@
           "number": 7146,
           "title": "Add ARC dataset for puzzle a85d4709",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7155,
+          "title": "Document ARC gestalt reviews and batch sizing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45164,7 +45174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:58:32.249Z",
+      "verified_at": "2026-11-05T07:27:55.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181039,6 +181049,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:20:33.866Z"
+    },
+    "rule-7154": {
+      "learning_id": "rule-7154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7154,
+      "title": "build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "3396bd83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:27:40.675Z"
+    },
+    "rule-7155": {
+      "learning_id": "rule-7155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7155,
+      "title": "Document ARC gestalt reviews and batch sizing",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "161e65d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T07:27:55.169Z"
     }
   },
   "aliases": {

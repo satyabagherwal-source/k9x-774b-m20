@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T07:20:34.016Z",
+  "last_updated": "2026-11-05T07:27:55.297Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
-      "verified_at": "2026-10-31T16:57:19.349Z",
+      "content_hash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
+      "verified_at": "2026-11-05T07:27:38.557Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:57:19.349Z"
+      "last_updated": "2026-11-05T07:27:38.557Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
-      "verified_at": "2026-11-05T06:58:32.392Z",
+      "content_hash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
+      "verified_at": "2026-11-05T07:27:55.296Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:58:32.392Z"
+      "last_updated": "2026-11-05T07:27:55.296Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "914ed3b9c03c423d7cde42020d5e44775e3a2b1842fbd0d8bdae547105de0aa4",
-      "verified_at": "2026-11-04T07:42:05.532Z",
+      "content_hash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
+      "verified_at": "2026-11-05T07:27:40.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:42:05.532Z"
+      "last_updated": "2026-11-05T07:27:40.803Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

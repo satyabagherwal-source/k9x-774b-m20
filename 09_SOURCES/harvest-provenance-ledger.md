@@ -7573,3 +7573,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T07:13:13.397Z |
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-05T07:20:22.963Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `27ac1e87` | Multi-dimensional audit evidence | 2026-11-05T07:20:33.994Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-05T07:27:38.548Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `3396bd83` | Multi-dimensional audit evidence | 2026-11-05T07:27:40.786Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `161e65d6` | Multi-dimensional audit evidence | 2026-11-05T07:27:55.279Z |

@@ -7564,3 +7564,6 @@
 | `CYCLE-20261105-L9YQ` | `2026-11-05T07:13:13.394Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7150, Rule 7151, Rule 7152` | Yes (`ec9651b2...`) |
 | `CYCLE-20261105-UHF2` | `2026-11-05T07:20:22.958Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`157ac6c1...`) |
 | `CYCLE-20261105-UPXI` | `2026-11-05T07:20:33.990Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7153` | Yes (`452ce2e0...`) |
+| `CYCLE-20261105-3TIO` | `2026-11-05T07:27:38.544Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`0d1b214c...`) |
+| `CYCLE-20261105-3V8U` | `2026-11-05T07:27:40.782Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7154` | Yes (`64ba778a...`) |
+| `CYCLE-20261105-46FF` | `2026-11-05T07:27:55.275Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7155` | Yes (`d33d2a6f...`) |

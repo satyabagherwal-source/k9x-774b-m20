@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "d1ab6a83a62cdab8f4ac358c082503a69bf7853b2c5330ff5acb223ec049a48e",
-    "lastHarvestedAt": "2026-10-31T16:57:19.342Z",
+    "contentHash": "0d1b214ce82e79eff781e49c44d233d001685bc7bb1bc96f179b188e055003ed",
+    "lastHarvestedAt": "2026-11-05T07:27:38.548Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "72945925",
+    "sourceVersion": "161e65d6",
     "license": "Apache-2.0",
-    "contentHash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
-    "lastHarvestedAt": "2026-11-05T06:58:32.376Z",
+    "contentHash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
+    "lastHarvestedAt": "2026-11-05T07:27:55.279Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "81bb9971",
+    "sourceVersion": "3396bd83",
     "license": "Apache-2.0",
-    "contentHash": "914ed3b9c03c423d7cde42020d5e44775e3a2b1842fbd0d8bdae547105de0aa4",
-    "lastHarvestedAt": "2026-11-04T07:42:05.523Z",
+    "contentHash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
+    "lastHarvestedAt": "2026-11-05T07:27:40.786Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
