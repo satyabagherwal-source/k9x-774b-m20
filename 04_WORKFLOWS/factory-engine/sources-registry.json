@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T01:47:50.063Z",
-    "lastVerified": "2026-11-05T01:47:50.063Z",
+    "lastChecked": "2026-11-05T01:54:51.201Z",
+    "lastVerified": "2026-11-05T01:54:51.201Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T01:22:27.178Z",
-    "lastVerified": "2026-11-05T01:22:27.178Z",
+    "lastChecked": "2026-11-05T01:54:51.162Z",
+    "lastVerified": "2026-11-05T01:54:51.162Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -618,8 +618,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T22:20:09.487Z",
-    "lastVerified": "2026-11-04T22:20:09.487Z",
+    "lastChecked": "2026-11-05T01:54:46.216Z",
+    "lastVerified": "2026-11-05T01:54:46.216Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1864,12 +1864,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "michael-a-kuykendall-shimmy": {
-    "name": "Michael-A-Kuykendall/shimmy",
+    "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:13:05.654Z",
-    "lastVerified": "2026-11-03T23:13:05.654Z",
+    "lastChecked": "2026-11-05T01:54:36.423Z",
+    "lastVerified": "2026-11-05T01:54:36.423Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -1878,7 +1878,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fc792f3a"
   },
   "hf-supersoniclabs-julia-1": {
     "name": "SupersonicLabs/Julia-1",
@@ -3085,12 +3086,12 @@
     "officialUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T11:25:59.045Z",
-    "lastVerified": "2026-10-31T11:25:59.045Z",
+    "lastChecked": "2026-11-05T01:54:39.277Z",
+    "lastVerified": "2026-11-05T01:54:39.277Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "d61be63f840f9bb4a673ae6fab30637c946f0b76725ae289d906a0a88ee65f8d",
+    "contentHash": "91059770a04739cd1f77921a3276de4a7d37515ebcb637dcd691b691d01e7a71",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3835,8 +3836,8 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T02:39:47.385Z",
-    "lastVerified": "2026-11-04T02:39:47.385Z",
+    "lastChecked": "2026-11-05T01:54:48.693Z",
+    "lastVerified": "2026-11-05T01:54:48.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -6266,9 +6267,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-04T03:23:33.986Z",
+    "lastChecked": "2026-11-05T01:54:43.713Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-04T03:23:33.986Z"
+    "lastVerified": "2026-11-05T01:54:43.713Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8922,9 +8923,9 @@
   "sindresorhus-gifski": {
     "name": "Gifski",
     "officialUrl": "https://github.com/sindresorhus/Gifski",
-    "lastChecked": "2026-10-31T18:52:32.109Z",
+    "lastChecked": "2026-11-05T01:54:41.221Z",
     "revisionIdentifier": "e184b284",
-    "lastVerified": "2026-10-31T18:52:32.109Z"
+    "lastVerified": "2026-11-05T01:54:41.221Z"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
     "name": "meta-models/Muse-Spark-Open-816B-A42B",

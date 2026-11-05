@@ -7458,3 +7458,4 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `43936bab` | Multi-dimensional audit evidence | 2026-11-05T01:47:34.836Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a0325326` | Multi-dimensional audit evidence | 2026-11-05T01:47:43.063Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a2ee57d3` | Multi-dimensional audit evidence | 2026-11-05T01:47:47.508Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-05T01:54:40.505Z |

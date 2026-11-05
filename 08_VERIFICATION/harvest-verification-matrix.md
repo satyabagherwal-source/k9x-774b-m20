@@ -7449,3 +7449,4 @@
 | `CYCLE-20261105-YHWW` | `2026-11-05T01:47:34.832Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7064` | Yes (`e1a5ffc8...`) |
 | `CYCLE-20261105-YO9G` | `2026-11-05T01:47:43.060Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7065` | Yes (`1bd7d2f2...`) |
 | `CYCLE-20261105-YROW` | `2026-11-05T01:47:47.504Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7066` | Yes (`7230afd9...`) |
+| `CYCLE-20261105-7MCX` | `2026-11-05T01:54:40.497Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`91059770...`) |
