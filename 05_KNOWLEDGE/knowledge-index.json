@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T17:36:41.081Z",
-  "total_verified_learnings": 1218,
+  "last_updated": "2026-11-05T17:49:16.571Z",
+  "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -73012,14 +73012,19 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "ddfec329",
-      "content_hash": "455ebac24196ab3de15ecd975ea496b7bf91ecd7eadb2bfb37c3d2eb2d1cd975",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "c250f749",
+      "content_hash": "fff181b9d9d0e9d11d1b859da55634a07c43d6a26aea80ed9b3694e5d524ddf0",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add a devnet entry that crashes all validators with SIGKILL",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1114,
           "title": "Merge pull request #4531 from ProvableHQ/fix/staging-cargo-workflow",
@@ -73146,7 +73151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:30:15.001Z",
+      "verified_at": "2026-11-05T17:47:59.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170400,10 +170405,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/burner22/numbat",
       "source_version": "hf-burner22-numbat",
-      "content_hash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+      "content_hash": "ead199f767b1ddaa5b6b0cd61f296abf33308176f7377ec62f13c4551987b40f",
       "dossier_path": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mixed-Precision Stability Invariant for Linear Attention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Router Load Balancing Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Speculative Decoding Draft-Target Consistency Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6406,
           "title": "Hybrid Attention Layer Dispatch Invariant",
@@ -170425,7 +170445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:32:05.456Z",
+      "verified_at": "2026-11-05T17:47:55.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183474,6 +183494,39 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T16:06:05.721Z"
+    },
+    "learn-github-had0yun-cozyclay": {
+      "learning_id": "learn-github-had0yun-cozyclay",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "HaD0Yun/CozyClay",
+      "repository": "HaD0Yun/CozyClay",
+      "slug": "had0yun-cozyclay",
+      "platform": "github",
+      "source_url": "https://github.com/HaD0Yun/CozyClay",
+      "source_version": "ba079c02",
+      "content_hash": "1a2eb4041670fb199195588d07df5b896a57b5001eada1b79cbf4fa1921933e9",
+      "dossier_path": "07_PROJECT_LEARNING/had0yun-cozyclay-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/had0yun-cozyclay-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "app): stop the playback-frame update-depth loop and survive page translation (#1",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T17:49:16.534Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

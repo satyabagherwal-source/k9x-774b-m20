@@ -7733,3 +7733,6 @@
 | `CYCLE-20261105-LEXX` | `2026-11-05T17:29:11.397Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`87bc7d29...`) |
 | `CYCLE-20261105-UX4I` | `2026-11-05T17:36:34.866Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9de6a9f7...`) |
 | `CYCLE-20261105-V1ZN` | `2026-11-05T17:36:41.171Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b5974e7f...`) |
+| `CYCLE-20261105-9IJK` | `2026-11-05T17:47:55.808Z` | `burner22/numbat` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`ead199f7...`) |
+| `CYCLE-20261105-9L4Q` | `2026-11-05T17:47:59.162Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fff181b9...`) |
+| `CYCLE-20261105-B8XY` | `2026-11-05T17:49:16.678Z` | `HaD0Yun/CozyClay` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1a2eb404...`) |

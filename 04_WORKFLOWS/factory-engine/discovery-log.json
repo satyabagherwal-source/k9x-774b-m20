@@ -20410,5 +20410,20 @@
     "qualityScore": 17873,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T13:51:11.147Z"
+  },
+  {
+    "name": "CozyClay",
+    "fullName": "HaD0Yun/CozyClay",
+    "url": "https://github.com/HaD0Yun/CozyClay",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open source previs software in the browser: block a scene, pose characters, author camera moves and cuts, then take the same shots to an AI video model.",
+    "stars": 1530,
+    "forks": 179,
+    "openIssues": 14,
+    "language": "JavaScript",
+    "qualityScore": 1097,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T17:44:02.307Z"
   }
 ]

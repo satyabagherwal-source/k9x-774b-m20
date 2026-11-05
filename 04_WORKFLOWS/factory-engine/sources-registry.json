@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T17:36:43.781Z",
-    "lastVerified": "2026-11-05T17:36:43.781Z",
+    "lastChecked": "2026-11-05T17:49:19.251Z",
+    "lastVerified": "2026-11-05T17:49:19.251Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T17:15:02.104Z",
-    "lastVerified": "2026-11-05T17:15:02.104Z",
+    "lastChecked": "2026-11-05T17:47:56.174Z",
+    "lastVerified": "2026-11-05T17:47:56.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1169,22 +1169,21 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:33:43.799Z",
-    "lastVerified": "2026-11-05T13:33:43.799Z",
+    "lastChecked": "2026-11-05T17:47:57.106Z",
+    "lastVerified": "2026-11-05T17:47:57.106Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "383705f793aa2a820ee88096e9635ec068f0216a535858282c83bec2c40ea1b9",
+    "contentHash": "fff181b9d9d0e9d11d1b859da55634a07c43d6a26aea80ed9b3694e5d524ddf0",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "acb81361"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4105,9 +4104,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-05T02:25:50.425Z",
+    "lastChecked": "2026-11-05T17:47:53.462Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-05T02:25:50.425Z"
+    "lastVerified": "2026-11-05T17:47:53.462Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -6972,9 +6971,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-05T03:12:45.987Z",
+    "lastChecked": "2026-11-05T17:47:48.356Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-05T03:12:45.987Z"
+    "lastVerified": "2026-11-05T17:47:48.356Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -11549,9 +11548,9 @@
   "kartiklabhshetwar-better-shot": {
     "name": "better-shot",
     "officialUrl": "https://github.com/KartikLabhshetwar/better-shot",
-    "lastChecked": "2026-11-03T17:22:37.540Z",
+    "lastChecked": "2026-11-05T17:47:45.802Z",
     "revisionIdentifier": "0e005e9c",
-    "lastVerified": "2026-11-03T17:22:37.540Z"
+    "lastVerified": "2026-11-05T17:47:45.802Z"
   },
   "goose3-goose3": {
     "name": "goose3",
@@ -13299,12 +13298,12 @@
     "officialUrl": "https://huggingface.co/burner22/numbat",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-02T14:31:48.560Z",
-    "lastVerified": "2026-11-02T14:31:48.560Z",
+    "lastChecked": "2026-11-05T17:47:43.490Z",
+    "lastVerified": "2026-11-05T17:47:43.490Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-burner22-numbat",
-    "contentHash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+    "contentHash": "ead199f767b1ddaa5b6b0cd61f296abf33308176f7377ec62f13c4551987b40f",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -13784,6 +13783,23 @@
     "contentHash": "7d7ce1210426259647a8e15a0f2ddb915b2274096b1d7042b7a8f5682f580e60",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "had0yun-cozyclay": {
+    "name": "HaD0Yun/CozyClay",
+    "officialUrl": "https://github.com/HaD0Yun/CozyClay",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-05T17:47:41.309Z",
+    "lastVerified": "2026-11-05T17:47:41.309Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-had0yun-cozyclay",
+    "contentHash": "1a2eb4041670fb199195588d07df5b896a57b5001eada1b79cbf4fa1921933e9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
