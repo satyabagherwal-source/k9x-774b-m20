@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T05:32:34.046Z",
+  "last_updated": "2026-11-05T08:02:56.128Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3907,6 +3907,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-D7GG",
+      "directive_title": "Merge pull request #1354 from thebaselab/l10n/1.12.4-release-notes",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "thebaselab/codeapp",
+      "source_commit": "ef33ee57",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-thebaselab-codeapp"
     }
   ]
 }

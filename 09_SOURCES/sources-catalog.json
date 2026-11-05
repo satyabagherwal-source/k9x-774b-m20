@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
-    "lastHarvestedAt": "2026-10-31T17:30:14.202Z",
+    "contentHash": "a77b1df839dc53f8154aaa280082141743941bf3eac20c8047646703f378d5e2",
+    "lastHarvestedAt": "2026-11-05T08:03:43.129Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "161e65d6",
+    "sourceVersion": "f4cf6803",
     "license": "Apache-2.0",
-    "contentHash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
-    "lastHarvestedAt": "2026-11-05T07:27:55.279Z",
+    "contentHash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
+    "lastHarvestedAt": "2026-11-05T08:02:22.740Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "d1996344",
+    "sourceVersion": "cf9beb71",
     "license": "Apache-2.0",
-    "contentHash": "f95b27cc6d6b8c32303e9c61be580883c6ee94eaadebce433cbbaf3b0ae364a0",
-    "lastHarvestedAt": "2026-11-04T08:14:08.605Z",
+    "contentHash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
+    "lastHarvestedAt": "2026-11-05T08:03:34.121Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "bdf154a3",
+    "sourceVersion": "d4923790",
     "license": "GPL-2.0",
-    "contentHash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
-    "lastHarvestedAt": "2026-11-03T17:22:51.115Z",
+    "contentHash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
+    "lastHarvestedAt": "2026-11-05T08:01:22.261Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -8423,10 +8423,10 @@
     "repository": "thebaselab/codeapp",
     "platform": "github",
     "sourceUrl": "https://github.com/thebaselab/codeapp",
-    "sourceVersion": "8964f069",
+    "sourceVersion": "ef33ee57",
     "license": "MIT",
-    "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
-    "lastHarvestedAt": "2026-10-30T03:37:09.542Z",
+    "contentHash": "c15e583b02ac891f0ccba8933d0a53fdf9427cfa3d63148ad6968f83eba37b87",
+    "lastHarvestedAt": "2026-11-05T08:02:56.122Z",
     "learningId": "learn-github-thebaselab-codeapp"
   },
   "callstack-react-native-builder-bob": {

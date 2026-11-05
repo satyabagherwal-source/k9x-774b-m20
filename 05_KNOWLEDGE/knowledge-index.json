@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T07:53:33.937Z",
+  "last_updated": "2026-11-05T08:03:43.012Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12113,8 +12113,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "d1996344",
-      "content_hash": "f95b27cc6d6b8c32303e9c61be580883c6ee94eaadebce433cbbaf3b0ae364a0",
+      "source_version": "cf9beb71",
+      "content_hash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -12182,6 +12182,11 @@
           "number": 6771,
           "title": "Merge pull request #7410 from Sandvoxel/stm32-i2c-blocking-timeout-recovery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7163,
+          "title": "Merge pull request #7408 from tobymurray/stm32-lptim-now-ue-race",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12189,7 +12194,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:14:08.539Z",
+      "verified_at": "2026-11-05T08:03:34.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30384,7 +30389,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
+      "content_hash": "a77b1df839dc53f8154aaa280082141743941bf3eac20c8047646703f378d5e2",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -30441,7 +30446,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-31T17:30:14.082Z",
+      "verified_at": "2026-11-05T08:03:42.980Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39531,8 +39536,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "bdf154a3",
-      "content_hash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
+      "source_version": "d4923790",
+      "content_hash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -39575,6 +39580,11 @@
           "number": 6553,
           "title": "sys_vars.tmp_disk_table_size_basic when no perfschema",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7161,
+          "title": "MDEV-42033: Memory leak of derived_handler when a statement fails early",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39582,7 +39592,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T17:22:51.006Z",
+      "verified_at": "2026-11-05T08:01:22.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44913,8 +44923,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "161e65d6",
-      "content_hash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
+      "source_version": "f4cf6803",
+      "content_hash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45187,6 +45197,11 @@
           "number": 7155,
           "title": "Document ARC gestalt reviews and batch sizing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7162,
+          "title": "Add ARC dataset for puzzle ed36ccf7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45194,7 +45209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:27:55.169Z",
+      "verified_at": "2026-11-05T08:02:22.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57843,8 +57858,8 @@
       "slug": "thebaselab-codeapp",
       "platform": "github",
       "source_url": "https://github.com/thebaselab/codeapp",
-      "source_version": "8964f069",
-      "content_hash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
+      "source_version": "ef33ee57",
+      "content_hash": "c15e583b02ac891f0ccba8933d0a53fdf9427cfa3d63148ad6968f83eba37b87",
       "dossier_path": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
       "promoted_rules": [
@@ -57884,7 +57899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:37:09.445Z",
+      "verified_at": "2026-11-05T08:02:55.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181172,6 +181187,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T07:53:33.914Z"
+    },
+    "rule-7161": {
+      "learning_id": "rule-7161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7161,
+      "title": "MDEV-42033: Memory leak of derived_handler when a statement fails early",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "d4923790",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:01:22.147Z"
+    },
+    "rule-7162": {
+      "learning_id": "rule-7162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7162,
+      "title": "Add ARC dataset for puzzle ed36ccf7",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "f4cf6803",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:02:22.626Z"
+    },
+    "rule-7163": {
+      "learning_id": "rule-7163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7163,
+      "title": "Merge pull request #7408 from tobymurray/stm32-lptim-now-ue-race",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "cf9beb71",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:03:34.005Z"
     }
   },
   "aliases": {

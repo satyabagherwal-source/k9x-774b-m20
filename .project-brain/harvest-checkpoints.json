@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T07:53:34.046Z",
+  "last_updated": "2026-11-05T08:03:43.139Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "e5d00afc0b0fe73e299a14f51572613b21eb79dfa2ba9c17e175b859ca3c1907",
-      "verified_at": "2026-10-31T17:30:14.211Z",
+      "content_hash": "a77b1df839dc53f8154aaa280082141743941bf3eac20c8047646703f378d5e2",
+      "verified_at": "2026-11-05T08:03:43.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:30:14.211Z"
+      "last_updated": "2026-11-05T08:03:43.138Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d33d2a6f4dcbba1919322b9a9b65b90109bc55632fabbaa51ce28bae07470fa3",
-      "verified_at": "2026-11-05T07:27:55.296Z",
+      "content_hash": "86ed51d817d015099e71bf3c2fdd4d190e2a7c9d41ff0c0907aa4577f2f16b37",
+      "verified_at": "2026-11-05T08:02:22.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:27:55.296Z"
+      "last_updated": "2026-11-05T08:02:22.757Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "f95b27cc6d6b8c32303e9c61be580883c6ee94eaadebce433cbbaf3b0ae364a0",
-      "verified_at": "2026-11-04T08:14:08.611Z",
+      "content_hash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
+      "verified_at": "2026-11-05T08:03:34.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:14:08.611Z"
+      "last_updated": "2026-11-05T08:03:34.138Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "a4f8fe5d4dfa15025c879b47e65a4f640640d3a81d99853113b0e0e74f2fc510",
-      "verified_at": "2026-11-03T17:22:51.125Z",
+      "content_hash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
+      "verified_at": "2026-11-05T08:01:22.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T17:22:51.125Z"
+      "last_updated": "2026-11-05T08:01:22.279Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -12681,14 +12681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thebaselab-codeapp",
-      "content_hash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
-      "verified_at": "2026-10-30T03:37:09.551Z",
+      "content_hash": "c15e583b02ac891f0ccba8933d0a53fdf9427cfa3d63148ad6968f83eba37b87",
+      "verified_at": "2026-11-05T08:02:56.134Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:37:09.551Z"
+      "last_updated": "2026-11-05T08:02:56.134Z"
     },
     "callstack/react-native-builder-bob": {
       "repository": "callstack/react-native-builder-bob",

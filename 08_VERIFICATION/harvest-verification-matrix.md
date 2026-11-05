@@ -7573,3 +7573,8 @@
 | `CYCLE-20261105-Z567` | `2026-11-05T07:51:59.983Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7157` | Yes (`85e2e957...`) |
 | `CYCLE-20261105-Z8RM` | `2026-11-05T07:52:04.642Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7128` | Yes (`5114d0e9...`) |
 | `CYCLE-20261105-15QG` | `2026-11-05T07:53:34.024Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7158, Rule 7159, Rule 7160` | Yes (`6d0925d8...`) |
+| `CYCLE-20261105-B70X` | `2026-11-05T08:01:22.257Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7161` | Yes (`8a5ae444...`) |
+| `CYCLE-20261105-CHOX` | `2026-11-05T08:02:22.737Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7162` | Yes (`86ed51d8...`) |
+| `CYCLE-20261105-D7G7` | `2026-11-05T08:02:56.119Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md` | Yes (`c15e583b...`) |
+| `CYCLE-20261105-E0RP` | `2026-11-05T08:03:34.117Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7163` | Yes (`cd02347e...`) |
+| `CYCLE-20261105-E7PX` | `2026-11-05T08:03:43.125Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`a77b1df8...`) |

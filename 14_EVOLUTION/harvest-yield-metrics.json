@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T07:53:34.033Z",
-  "total_cycles_completed": 7550,
-  "total_learnings_persisted": 7550,
-  "total_rules_promoted": 7219,
+  "last_updated": "2026-11-05T08:03:43.135Z",
+  "total_cycles_completed": 7555,
+  "total_learnings_persisted": 7555,
+  "total_rules_promoted": 7222,
   "history": [
-    {
-      "timestamp": "2026-11-04T22:34:41.035Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:34:43.773Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:34:47.699Z",
-      "repository": "kosi-libs/Kodein",
-      "learningId": "learn-github-kosi-libs-kodein",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:34:51.867Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T22:34:56.152Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T22:45:29.256Z",
       "repository": "apache/arrow",
@@ -1403,6 +1368,41 @@
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:01:22.266Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:02:22.746Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:02:56.130Z",
+      "repository": "thebaselab/codeapp",
+      "learningId": "learn-github-thebaselab-codeapp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:03:34.126Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T08:03:43.135Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

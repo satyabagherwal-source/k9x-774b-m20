@@ -7582,3 +7582,8 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `0c9feb49` | Multi-dimensional audit evidence | 2026-11-05T07:51:59.987Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `acb81361` | Multi-dimensional audit evidence | 2026-11-05T07:52:04.646Z |
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T07:53:34.028Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `d4923790` | Multi-dimensional audit evidence | 2026-11-05T08:01:22.261Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f4cf6803` | Multi-dimensional audit evidence | 2026-11-05T08:02:22.740Z |
+| `learn-github-thebaselab-codeapp` | `https://github.com/thebaselab/codeapp` | `ef33ee57` | Multi-dimensional audit evidence | 2026-11-05T08:02:56.122Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `cf9beb71` | Multi-dimensional audit evidence | 2026-11-05T08:03:34.121Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T08:03:43.129Z |
