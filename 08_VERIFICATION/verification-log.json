@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-4Q4R",
-    "timestamp": "2026-11-04T02:04:45.003Z",
-    "repository": "microsoft/Mage-VL-Cowork",
-    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-    "contentHash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-4S1J",
     "timestamp": "2026-11-04T02:04:47.479Z",
     "repository": "meshery/meshery",
@@ -7492,6 +7477,21 @@
     "contentHash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-UUOG",
+    "timestamp": "2026-11-05T10:36:37.456Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "f1c8b8f483f55f49ca180a24ffc1c1d8d1c837544561d7911d5bac02810fe8c6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
