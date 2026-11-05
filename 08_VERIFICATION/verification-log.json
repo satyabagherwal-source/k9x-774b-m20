@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-DJBT",
-    "timestamp": "2026-11-04T19:55:21.497Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-DRDF",
-    "timestamp": "2026-11-04T19:55:31.923Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-    "contentHash": "44a1dcd4b63e51e98b6ae8932e479fbd083f6586665032012ebf92725d58f63c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-MZJK",
-    "timestamp": "2026-11-04T20:02:42.416Z",
-    "repository": "FastVideo/FastH3-Omni-Comfy",
-    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "327d116ea8e9c00cbac9e4b0fd78bcb8cbc58f3cfe61cb79584a5f49e8cc61a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-N33Q",
-    "timestamp": "2026-11-04T20:02:47.030Z",
-    "repository": "run-llama/llama_index",
-    "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "ae503e7eab28ad66943c5aec41d725bf04d541c5163af626b63d5eb50564001e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-WG3S",
-    "timestamp": "2026-11-04T20:10:03.784Z",
-    "repository": "amir1376/ab-download-manager",
-    "learningId": "learn-github-amir1376-ab-download-manager",
-    "contentHash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-WLNN",
     "timestamp": "2026-11-04T20:10:10.979Z",
     "repository": "milvus-io/milvus",
@@ -7490,6 +7415,81 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-89GR",
+    "timestamp": "2026-11-05T22:54:53.163Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8DV7",
+    "timestamp": "2026-11-05T22:54:58.867Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8F3F",
+    "timestamp": "2026-11-05T22:55:00.459Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8G8R",
+    "timestamp": "2026-11-05T22:55:01.947Z",
+    "repository": "pyannote/speaker-diarization-3.1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+    "contentHash": "46266a7447cf96df09b612b0a571937a12b4ca454f862b7151c0ccf525e61da7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8JAG",
+    "timestamp": "2026-11-05T22:55:05.896Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

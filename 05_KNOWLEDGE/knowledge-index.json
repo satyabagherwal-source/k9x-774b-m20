@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:47:58.783Z",
+  "last_updated": "2026-11-05T22:55:05.820Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7587,11 +7587,16 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "843ef6f0",
-      "content_hash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
+      "source_version": "e0ad46db",
+      "content_hash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Cache prepared statement plans for fast path queries on worker connections (#882",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2057,
           "title": "transaction recovery after node removal (#8885)",
@@ -7633,7 +7638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:12:24.022Z",
+      "verified_at": "2026-11-05T22:55:05.800Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13703,11 +13708,16 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "a275a777",
-      "content_hash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
+      "source_version": "372d151c",
+      "content_hash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "security): trace require() bindings of node child_process and fs (#4238)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1807,
           "title": "oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)",
@@ -13784,7 +13794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:18:06.194Z",
+      "verified_at": "2026-11-05T22:54:53.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33264,8 +33274,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "a89b18dc",
-      "content_hash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
+      "source_version": "bfcd87d1",
+      "content_hash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -33305,7 +33315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:37:25.001Z",
+      "verified_at": "2026-11-05T22:54:58.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129092,11 +129102,16 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "36a1b9f1",
-      "content_hash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
+      "source_version": "b4f4a5a6",
+      "content_hash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3763,
           "title": "arm64-wine11.18-r6: the flight check passed. Microsoft Flight Simulator 2024 on",
@@ -129123,7 +129138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:38:46.688Z",
+      "verified_at": "2026-11-05T22:55:00.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -172051,16 +172066,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
       "source_version": "hf-pyannote-speaker-diarization-3.1",
-      "content_hash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
+      "content_hash": "46266a7447cf96df09b612b0a571937a12b4ca454f862b7151c0ccf525e61da7",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Temporal Alignment Invariant in Audio Pipelines",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Idempotent Post-Processing in Diarization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T21:22:51.823Z",
+      "verified_at": "2026-11-05T22:55:01.845Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

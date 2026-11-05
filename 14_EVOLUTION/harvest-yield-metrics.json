@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T22:47:58.843Z",
-  "total_cycles_completed": 7786,
-  "total_learnings_persisted": 7786,
-  "total_rules_promoted": 7430,
+  "last_updated": "2026-11-05T22:55:05.904Z",
+  "total_cycles_completed": 7791,
+  "total_learnings_persisted": 7791,
+  "total_rules_promoted": 7435,
   "history": [
-    {
-      "timestamp": "2026-11-05T10:16:07.561Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:16:07.614Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:16:09.833Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:16:12.511Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T10:23:08.286Z",
-      "repository": "vercel-labs/agent-desktop",
-      "learningId": "learn-github-vercel-labs-agent-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T10:23:19.000Z",
       "repository": "Mintplex-Labs/anything-llm",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-05T22:47:58.843Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:54:53.172Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:54:58.882Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:55:00.469Z",
+      "repository": "gauthierpiarrette/highball",
+      "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:55:01.963Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:55:05.904Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

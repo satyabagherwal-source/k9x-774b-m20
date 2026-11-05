@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "a89b18dc",
+    "sourceVersion": "bfcd87d1",
     "license": "Apache-2.0",
-    "contentHash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
-    "lastHarvestedAt": "2026-11-04T17:37:25.072Z",
+    "contentHash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
+    "lastHarvestedAt": "2026-11-05T22:54:58.872Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "a275a777",
+    "sourceVersion": "372d151c",
     "license": "MIT",
-    "contentHash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
-    "lastHarvestedAt": "2026-11-05T02:18:06.266Z",
+    "contentHash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
+    "lastHarvestedAt": "2026-11-05T22:54:53.167Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "843ef6f0",
+    "sourceVersion": "e0ad46db",
     "license": "AGPL-3.0",
-    "contentHash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
-    "lastHarvestedAt": "2026-10-30T05:12:24.120Z",
+    "contentHash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
+    "lastHarvestedAt": "2026-11-05T22:55:05.899Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {
@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "36a1b9f1",
+    "sourceVersion": "b4f4a5a6",
     "license": "GPL-3.0",
-    "contentHash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
-    "lastHarvestedAt": "2026-11-03T22:38:46.751Z",
+    "contentHash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
+    "lastHarvestedAt": "2026-11-05T22:55:00.463Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {
@@ -11755,8 +11755,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-3.1",
     "sourceVersion": "hf-pyannote-speaker-diarization-3.1",
     "license": "Open-Source",
-    "contentHash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
-    "lastHarvestedAt": "2026-11-02T21:22:51.967Z",
+    "contentHash": "46266a7447cf96df09b612b0a571937a12b4ca454f862b7151c0ccf525e61da7",
+    "lastHarvestedAt": "2026-11-05T22:55:01.950Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
   },
   "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {

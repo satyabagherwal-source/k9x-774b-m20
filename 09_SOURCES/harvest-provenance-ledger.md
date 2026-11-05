@@ -7818,3 +7818,8 @@ Every entry in this ledger must capture:
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `f7b795e4` | Multi-dimensional audit evidence | 2026-11-05T22:47:51.223Z |
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-05T22:47:57.427Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `d2de4602` | Multi-dimensional audit evidence | 2026-11-05T22:47:58.839Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `372d151c` | Multi-dimensional audit evidence | 2026-11-05T22:54:53.167Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `bfcd87d1` | Multi-dimensional audit evidence | 2026-11-05T22:54:58.872Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `b4f4a5a6` | Multi-dimensional audit evidence | 2026-11-05T22:55:00.463Z |
+| `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-05T22:55:01.950Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `e0ad46db` | Multi-dimensional audit evidence | 2026-11-05T22:55:05.899Z |

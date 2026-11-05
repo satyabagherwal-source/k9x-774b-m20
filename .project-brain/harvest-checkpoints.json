@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T22:47:58.851Z",
+  "last_updated": "2026-11-05T22:55:05.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "35da1e94e714a2d6c8fd0227ed291efa2b0523466ce668a988ec651808a7ef12",
-      "verified_at": "2026-11-04T17:37:25.078Z",
+      "content_hash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
+      "verified_at": "2026-11-05T22:54:58.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:37:25.078Z"
+      "last_updated": "2026-11-05T22:54:58.886Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
-      "verified_at": "2026-11-05T02:18:06.279Z",
+      "content_hash": "396cac133563071e39baae4baa0c5bc007efc6458172b13799982ce24f86163f",
+      "verified_at": "2026-11-05T22:54:53.175Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:18:06.279Z"
+      "last_updated": "2026-11-05T22:54:53.175Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
-      "verified_at": "2026-10-30T05:12:24.130Z",
+      "content_hash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
+      "verified_at": "2026-11-05T22:55:05.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:12:24.130Z"
+      "last_updated": "2026-11-05T22:55:05.907Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "4de3dcffd1a00e5b9a68cc68dcf2cdbc6ddb7f1d9c182ad10ac12790a9ba1707",
-      "verified_at": "2026-11-03T22:38:46.757Z",
+      "content_hash": "841e6e01f3d30c111a2c3ad10ddc7af3b1341827db0144e4b8f15f4dac766e18",
+      "verified_at": "2026-11-05T22:55:00.473Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:38:46.757Z"
+      "last_updated": "2026-11-05T22:55:00.473Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
@@ -17691,14 +17691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "content_hash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
-      "verified_at": "2026-11-02T21:22:51.976Z",
+      "content_hash": "46266a7447cf96df09b612b0a571937a12b4ca454f862b7151c0ccf525e61da7",
+      "verified_at": "2026-11-05T22:55:01.966Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T21:22:51.976Z"
+      "last_updated": "2026-11-05T22:55:01.966Z"
     },
     "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF": {
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
