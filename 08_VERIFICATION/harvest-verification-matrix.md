@@ -7589,3 +7589,5 @@
 | `CYCLE-20261105-2738` | `2026-11-05T08:50:21.668Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`baf58ec7...`) |
 | `CYCLE-20261105-27YD` | `2026-11-05T08:50:22.789Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7172` | Yes (`9ebecf01...`) |
 | `CYCLE-20261105-4JQF` | `2026-11-05T08:52:11.367Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`f5de1681...`) |
+| `CYCLE-20261105-KVB2` | `2026-11-05T09:04:52.862Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`eade2f2b...`) |
+| `CYCLE-20261105-L34E` | `2026-11-05T09:05:02.990Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7173` | Yes (`9beb91d5...`) |

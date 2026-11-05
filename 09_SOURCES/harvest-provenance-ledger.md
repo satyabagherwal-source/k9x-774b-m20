@@ -7598,3 +7598,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c57cbd6c` | Multi-dimensional audit evidence | 2026-11-05T08:50:21.672Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `05de5692` | Multi-dimensional audit evidence | 2026-11-05T08:50:22.793Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T08:52:11.371Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T09:04:52.867Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `932cd18b` | Multi-dimensional audit evidence | 2026-11-05T09:05:02.993Z |

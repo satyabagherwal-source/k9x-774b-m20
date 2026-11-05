@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T08:52:11.376Z",
-  "total_cycles_completed": 7566,
-  "total_learnings_persisted": 7566,
-  "total_rules_promoted": 7231,
+  "last_updated": "2026-11-05T09:05:02.999Z",
+  "total_cycles_completed": 7568,
+  "total_learnings_persisted": 7568,
+  "total_rules_promoted": 7232,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:06:27.623Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T23:06:28.292Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:13:29.013Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1403,6 +1389,20 @@
       "repository": "openai-community/gpt2",
       "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:04:52.885Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:05:02.999Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

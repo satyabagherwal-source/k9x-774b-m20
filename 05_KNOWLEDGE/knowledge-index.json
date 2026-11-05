@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T08:52:11.258Z",
+  "last_updated": "2026-11-05T09:05:02.903Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11204,8 +11204,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "5d9ae0f9",
-      "content_hash": "ab9bf248d8466c88ddd7d22d43b14758bb0b1025af05e3c07fe1642b602084fc",
+      "source_version": "932cd18b",
+      "content_hash": "9beb91d565a43649ebd0d6895ac1a5fc492f609ff80e992cb51340cab2859e02",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -11293,6 +11293,11 @@
           "number": 6894,
           "title": "server): Unify key expiry capping and fix GETEX replies (#8741)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7173,
+          "title": "tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#874",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11300,7 +11305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:21:43.834Z",
+      "verified_at": "2026-11-05T09:05:02.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29723,7 +29728,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "08fe11cfabf6683201899ca7f312d213934e9f98748cb44ea63b58aca0f075b3",
+      "content_hash": "eade2f2b785adbfdba0b76b6ded1e8d42f77627bad4bd95692be74a73ce4cbe8",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -29760,7 +29765,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-31T18:08:40.319Z",
+      "verified_at": "2026-11-05T09:04:52.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181400,6 +181405,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T08:50:22.675Z"
+    },
+    "rule-7173": {
+      "learning_id": "rule-7173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7173,
+      "title": "tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#874",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "932cd18b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T09:05:02.880Z"
     }
   },
   "aliases": {

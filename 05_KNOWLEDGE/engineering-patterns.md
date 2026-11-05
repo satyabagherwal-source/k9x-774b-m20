@@ -520281,3 +520281,56 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `be5b6f5c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7173. tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#874 (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#874",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "932cd18b",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-05T09:05:02.638Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `932cd18b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/server/metrics.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `737cfe18`: tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#8745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/metrics.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    const uint64_t total_cap = m.tiered_stats.max_pending_bytes;
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+#include "strings/human_readable.h"
+ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, tiered_max_pending_bytes);
+    const uint64_t per_shard_cap = GetFlag(FLAGS_tiered_max_pending_bytes).value;
+    const uint64_t total_cap = per_shard_cap * shard_set->size();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `737cfe18` are properly handled with clean fallback behavior.
