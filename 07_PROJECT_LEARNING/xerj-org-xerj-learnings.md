@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `b7800483`  
+> **Source Version**: `344a95f6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:27:52.980Z  
+> **Timestamp**: 2026-11-05T00:29:51.575Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:27:52.729Z  
+> **Harvest Timestamp**: 2026-11-05T00:29:51.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 18945 stars
+- **Stars / Engagement**: 19084 stars
 
 ---
 
@@ -1896,11 +1896,11 @@ impl Embedder {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2903** (2026-11-04): **tests: debug-profile local_def tests stack-overflow on macOS arm64, and the 127.0.0.2 loopback_proxy test fails on stock macOS without naming the missing alias**
+  *Symptoms*: From field report #2902 (JoyCode, macOS 26.2 arm64, rc.100 / main):  1. Debug-profile `local_def` tests stack-overflow and SIGABRT on clean `main` on this host. Nothing in CONTRIBUTING says to use `--profile ci-test`, so contributors first think their patch broke it. 2. `loopback_proxy::loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy` needs a `127.0.0.2` loopback alias, which stock macOS doesn't have. The failure says "request to http://127.0.0.2:9/... failed" with no hint that the host lacks the alias.  Expected: the debug-profile tests either pass (e.g. larger test thread stack) or CONTRIBUTING documents `--profile ci-test`; the 127.0.0.2 test skips with a clear message (or names the missing alias and the `ifconfig lo0 alias 127.0.0.2` fix) when the alias isn't configured.
+
 - **Issue #2898** (2026-11-03): **mcp: a tools/call with no id blocks the stdio read loop and still gets a response**
   *Symptoms*: ### XERJ version  `origin/main` at `4ce1fbb5503beb1f5a1cd8f54d2e34ab7499657f`  ### How did you install / run XERJ?  Other (describe in steps below). Read the dispatch in `engine/crates/xerj-mcp/src/lib.rs` on that commit. No node was started.  ### Operating system & architecture  Windows 11 x86_64. The dispatch is the same on every platform.  ### Steps to reproduce  On `origin/main`, the stdio loop and `handle_message` disagree about what a `tools/call` without a usable id is.  `is_tool_call_request` (`lib.rs` 517-519) is the only path that runs a tool call off the read loop:  ```rust fn is_tool_call_request(msg: &Value) -> bool {     msg.get("method").and_then(Value::as_str) == Some("tools/call")         && msg.get("id").is_some_and(|id| !id.is_null()) } ```  Anything else falls through to the read loop (`lib.rs` 504):  ```rust other => handle_message(&ctx, other).await.into_iter().collect(), ```  `handle_message` (`lib.rs` 606-621) does not treat a missing id as "do not reply" for the methods it knows. A notification is `id.is_none()`, and that flag is consulted only in the unknown-method arm. `tools/call` always awaits `call_tool` and always returns a response:  ```rust "tools/call" => Some(rpc_result(id, call_tool(ctx, &msg).await)), ```  `rpc_result` turns a missing id into JSON `null` (`lib.rs` 726-727).  Send either of these as one stdio line:  ```json {"jsonrpc":"2.0","method":"tools/call","params":{"name":"xerj_search","arguments":{"query":"x"}}} ```  ```json {"jsonr
-
-- **Issue #2841** (2026-11-02): **[bug]: autoindex stalls on 26-file scientific CSV corpus at 16–32 workers; completes at 4 workers (rc.100)**
-  *Symptoms*: ### XERJ version  v1.0.0-rc.100  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Ubuntu 26.04 LTS / WSL2 / x86_64  ### Steps to reproduce  ```shell Steps to reproduce Generate the approximately 27 MB, 26-file input directory from .csv / .csv.gz-named files in the SCTransform repo (note: XERJ classified 18 as CSV and 8 as txt-lines; the latter is the reader's content-based classification): git clone https://github.com/Zikun-Yang/SCTransform.git cd SCTransform git checkout 8ade6eded351689ff53e37958a8190d70279fe31 mkdir -p /tmp/xerj-sct-csv-files find "$PWD" -type f \( -name '*.csv' -o -name '*.csv.gz' \) -printf '%P\0' | \   rsync -a --from0 --files-from=- "$PWD/" /tmp/xerj-sct-csv-files/ Start a local XERJ server with an empty data directory and an ES-compatible REST endpoint (the measured runs used port 19200). Then, on one server, run the variants separately, with distinct prefixes and journal paths: # Variant 1: 32 workers, 420-second external cutoff mkdir -p /tmp/xerj-states set -o pipefail timeout --signal=INT --kill-after=30s 420s \   xerj autoindex /tmp/xerj-sct-csv-files \     --url http://127.0.0.1:19200 \     --prefix sct-repro-w32 \     --state-dir /tmp/xerj-states/w32 \     --workers 32 --progress plain --progress-interval 5 # Repeat with a NEW prefix and NEW state-dir for --workers 16 and 4. The input construction command above is derived from the original snapshot preparation, not yet independently rerun from a p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1917,555 +1917,529 @@ impl Embedder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9f8e4a7` (2026-11-03)
-**Commit Message**: fix(tests): name loopback networking when a test's bind is denied (#2889)
+### Incident Patch 1: `702b8d3d` (2026-11-04)
+**Commit Message**: fix(tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 alias (#2910)
 
-* fix(autoindex): name loopback networking when a test's bind is denied
+* fix(tests): pass a debug cargo test in local_def, and name the missing 127.0.0.2 alias
 
-In a sandbox that forbids binding 127.0.0.1, about 250 xerj-autoindex
-tests failed with only `Os { kind: PermissionDenied }` from an unwrap,
-which reads as a broken build (#2886).
+#2903, from a macOS field report; the first half reproduces on Linux too.
 
-Every fake-node listener in the crate's tests now comes from
-`test_loopback::bind()`. On PermissionDenied or AddrNotAvailable it
-panics with "the xerj-autoindex tests start fake nodes on 127.0.0.1 and
-need loopback networking". tests/feedback_offline.rs, which cannot see
-cfg(test) items, gets the same message from a local helper, and its env
-lock now survives a poisoned holder, so the other six tests there show
-the cause instead of PoisonError. CONTRIBUTING.md says the tests need
-loopback.
+- xerj-mcp tests/local_def.rs: the test that serves the ES-compat router in
+  process ran on #[tokio::test]'s 2 MiB workers, and in a debug build a
+  handler overflowed the stack ("thread 'tokio-rt-worker' has overflowed its
+  stack", SIGABRT), taking the whole binary down. It now builds its runtime
+  with the server's 4 MiB RT_THREAD_STACK_SIZE, the pattern the other
+  in-process router tests in xerj-api already use.
+- xerj_common::loopback_test::require_loopback_alias(addr): binds the address
+  and, if the host lacks it (AddrNotAvailable), fails naming it and the macOS
+  fix, `sudo ifconfig lo0 alias <addr> up`. loopback_proxy calls it for
+  127.0.0.2 first, instead of failing later on a bare connection error.
+- CONTRIBUTING (Testing): CI runs --profile ci-test, a debug cargo test passes
+  too, the 4 MiB rule for in-process router tests, and the 127.0.0.2 alias.
 
-Tests: test_loopback::tests::a_denied_or_unavailable_loopback_bind_names_the_requirement.
-With bind() denied by a seccomp filter (EPERM), the lib tests' 250 bind
-panics change from a bare PermissionDenied to the loopback message, and
-all 7 feedback_offline tests show it. With loopback allowed the crate
-passes except the 3 harvest unreadable-path tests, which fail only when
+Tests: on main, a debug `cargo test -p xerj-mcp --test local
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -132,6 +132,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -139,6 +139,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Fixed
  
-+- Tests name the cause when loopback networking is unavailable (#2886). Every
-+  test that binds an ephemeral 127.0.0.1 port, in all crates, goes through
-+  `xerj_common::loopback_test::expect_loopback`, so a sandbox that denies the
-+  bind fails with "this test starts a fake server on 127.0.0.1 and needs
-+  loopback networking" instead of hundreds of bare `PermissionDenied` panics.
-+
- - `/lead` rejects non-string email values with HTTP 400 before storage.
-   Arrays no longer become accepted addresses through string coercion, and
-   objects with a non-callable `toString` no longer cause HTTP 500.
++- A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
++  and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
++  tests that run the ES-compat router on multi-thread workers overflowed tokio's
++  2 MiB worker stack in a debug build, killing their whole test binary: one in
++  `xerj-mcp`'s `local_def`, one in `xerj-api`'s
++  `autoindex_changed_file_drops_stale_symbols`, and three in `hub_api`. They now
++  use the server's 4 MiB, as the other in-process router tests do. On a host without `127.0.0.2`,
++  `loopback_proxy` fails up front with
++  `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
++  through the new `xerj_common::loopback_test::require_loopback_alias`.
++  CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
+ - Data-stream `_rollover` honours `dry_run` and its `conditions` instead of
+   ignoring the body: `max_docs`/`max_age` are ORed and reported in
+   `conditions`, and a dry run or an unmet condition creates no backing index.
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +5/-0)
+**File**: `CONTRIBUTING.md` (modified, +11/-0)
 ```diff
-@@ -42,6 +42,11 @@ cargo test                                # unit + integration tests
- cargo test -p xerj-engine --test integration
- ```
+@@ -47,6 +47,17 @@ sandbox that denies binding `127.0.0.1`, those tests fail with a message that sa
+ so. A new test that binds an ephemeral loopback port should wrap the bind in
+ `xerj_common::loopback_test::expect_loopback`.
  
-+Many tests start fake nodes on `127.0.0.1`, so they need loopback networking. In a
-+sandbox that denies binding `127.0.0.1`, those tests fail with a message that says
-+so. A new test that binds an ephemeral loopback port should wrap the bind in
-+`xerj_common::loopback_test::expect_loopback`.
++CI runs the tests with `cargo test --profile ci-test` (optimised, with unwinding
++panics). A plain debug `cargo test` passes too. In a debug build, the ES-compat
++handlers need more than tokio's 2 MiB default worker stack, so a test that
++serves the router in process builds its runtime with
++`thread_stack_size(4 * 1024 * 1024)`, the server's own size, instead of using
++`#[tokio::test]`.
++
++One test, `xerj-mcp`'s `loopback_proxy`, connects to `127.0.0.2`. Linux routes
++all of `127.0.0.0/8` to loopback. Stock macOS configures only `127.0.0.1`, so the
++test fails and names the fix: `sudo ifconfig lo0 alias 127.0.0.2 up`.
 +
  ### ES-YAML conformance suite (required)
  
  XERJ's compatibility contract is the Elasticsearch REST API YAML test suite based on ES 8.13. **CI requires 0 failed cases — there is no "known failures" list.** The runner reports passed, failed, and skipped cases separately; skipped cases do not fail the gate, and the total changes as cases are added. If a test expects one response and XERJ returns another, XERJ is wrong; fix the engine, not the test.
 ```
 
-**File**: `engine/Cargo.lock` (modified, +1/-0)
+**File**: `engine/crates/xerj-api/tests/autoindex_changed_file_drops_stale_symbols.rs` (modified, +15/-2)
 ```diff
-@@ -7813,6 +7813,7 @@ dependencies = [
-  "tokio",
-  "tracing",
-  "xerj-ai",
-+ "xerj-common",
- ]
+@@ -348,8 +348,21 @@ async fn reindex_changed_code(app: &axum::Router, url: &str, no_graph: bool) {
+     assert_only_current(&format!("{mode} incremental reindex"), &live, &fresh);
+ }
+ 
+-#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+-async fn changed_code_file_reindex_drops_shifted_and_removed_symbols_on_the_engine() {
++#[test]
++fn changed_code_file_reindex_drops_shifted_and_removed_symbols_on_the_engine() {
++    // The router is served in process, and its handlers do not fit tokio's
++    // 2 MiB default worker stack in a debug build (#2903). The server runtime
++    // is 4 MiB (`xerj-server`'s `RT_THREAD_STACK_SIZE`); match it.
++    let rt = tokio::runtime::Builder::new_multi_thread()
++        .worker_threads(2)
++        .thread_stack_size(4 * 1024 * 1024)
++        .enable_all()
++        .build()
++        .expect("runtime");
++    rt.block_on(changed_code_file_reindex_drops_shifted_and_removed_symbols_inner());
++}
++
++async fn changed_code_file_reindex_drops_shifted_and_removed_symbols_inner() {
+     let app = app().await;
+     let listener = xerj_common::loopback_test::expect_loopback(
+         tokio::net::TcpListener::bind("127.0.0.1:0").await,
+```
+
+**File**: `engine/crates/xerj-api/tests/hub_api.rs` (modified, +32/-6)
+```diff
+@@ -366,6 +366,20 @@ fn bare(o: &Opts) -> Hub {
+     }
+ }
+ 
++/// Runs `test` on four workers with the server's 4 MiB stack. The hub's Ask
++/// and Def paths do not fit tokio's 2 MiB default worker stack in a debug
++/// build (#2903); the server runtime is 4 MiB (`xerj-server`'s
++/// `RT_THREAD_STACK_SIZE`).
++fn on_server_stack<F: std::future::Future>(test: F) -> F::Output {
++    tokio::runtime::Builder::new_multi_thread()
++        .worker_threads(4)
++        .thread_stack_size(4 * 1024 * 1024)
++        .enable_all()
++        .build()
++        .expect("runtime")
++        .block_on(test)
++}
++
+ /// A node with the fixture indices seeded.
+ async fn hub(o: Opts) -> Hub {
+     let hub = bare(&o);
+@@ -908,8 +922,12 @@ async fn catalogue_follows_the_file_when_it_changes() {
+     assert_ne!(etag1, etag2, "and under a new ETag");
+ }
+ 
+-#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+-async fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin() {
++#[test]
++fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin() {
++    on_server_stack(def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin_inner());
++}
++
++async fn def_answers_with_the_fixture_value_the_pin_and_a_hosted_origin_inner() {
+     let h = hub(Opts::new(false, false)).await;
+     let r = h.get("/_hub/v1/def/mini-c/MINI_LIMIT").await;
+     assert_eq!(r.status, StatusCode::OK, "{:?}", r.json());
+@@ -1303,8 +1321,12 @@ async fn k_is_clamped_to_fifty_and_garbage_k_is_400() {
+     assert!(hub_api::parse_k(Some("0"), 5).is_err());
+ }
+ 
+-#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+-async fn oversized_blank_missing_and_stray_inputs_are_400() {
++#[test]
++fn oversized_blank_missing_and_stray_inputs_are_400() {
++    on_server_stack(oversized_blank_missing_and_stray_inputs_are_400_inner());
++}
++
++async fn oversized_blank_missing_and_stray_inputs_are_400_inner() {
+     let h = hub(Opts::new(false, false)).await;
+     let big = "a".repeat(600);
+     let edge = "a".repeat(512);
+@@ -3103,8 +3125,12 @@ fn the_fixture_dir_is_the_shared_one() {
+ /// index's store is `<data_dir>/<index name>` — so it must carry a name no
+ /// index can take. It used to be `hub-routing`, a legal index name: an `Ask`
+ /// wrote `.git` into a user's `hub-routing` index on every request.
+-#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+-async fn ask_never_writes_into_a_user_index_named_like_its_routing_dir() {
++#[test]
++fn ask_never_writes_into_a_user_index_named_like_its_routing_dir() {
++    on_server_stack(ask_never_writes_into_a_user_index_named_like_its_routing_dir_inner());
++}
++
++async fn ask_never_writes_into_a_user_index_named_like_its_routing_dir_inner() {
+     let h = hub(Opts::new(false, false)).await;
+     let data = PathBuf::from(&h.state.config.server.data_dir);
+     // The old name, and the shape of the new one: an index may take the first,
+```
+
+**File**: `engine/crates/xerj-common/src/loopback_test.rs` (modified, +54/-0)
+```diff
+@@ -40,6 +40,34 @@ pub fn bind_failure(e: &io::Error) -> String {
+     }
+ }
+ 
++/// Fails the test, naming the fix, unless `addr` (a loopback address other
++/// than 127.0.0.1, such as 127.0.0.2) is usable on this host. Linux routes all
++/// of 127.0.0.0/8 to loopback; stock macOS configures only 127.0.0.1, and a
++/// connection to another address fails with an error that does not say why
++/// (#2903). Call it at the top of a test that connects to such an address.
++#[track_caller]
++pub fn require_loopback_alias(addr: std::net::Ipv4Addr) {
++    if let Err(e) = std::net::TcpListener::bind((addr, 0)) {
++        panic!("{}", alias_failure(addr, &e));
++    }
++}
++
++/// The panic message for a loopback address the host cannot bind.
++pub fn alias_failure(addr: std::net::Ipv4Addr, e: &io::Error) -> String {
++    match e.kind() {
++        io::ErrorKind::AddrNotAvailable => format!(
++            "loopback address {addr} is not configured on this host ({e}): this test \
++             connects to {addr} as a second loopback address. Linux has it by default; \
++             on macOS add it with `sudo ifconfig lo0 alias {addr} up`."
++        ),
++        io::ErrorKind::PermissionDenied => format!(
++            "loopback bind to {addr} failed ({e}): this test needs loopback networking. \
++             Run the tests where binding {addr} is allowed."
++        ),
++        _ => format!("bind {addr}: {e}"),
++    }
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -69,4 +97,30 @@ mod tests {
+     fn expect_loopback_passes_a_listener_through() {
+         assert_eq!(expect_loopback(Ok::<u16, io::Error>(7)), 7);
+     }
++
++    #[test]
++    fn a_missing_loopback_alias_names_the_address_and_the_fix() {
++        let addr = std::net::Ipv4Addr::new(127, 0, 0, 2);
++        let msg = alias_failure(addr, &io::Error::from(io::ErrorKind::AddrNotAvailable));
++        assert!(msg.contains("127.0.0.2 is not configured"), "{msg}");
++        assert!(msg.contains("ifconfig lo0 alias 127.0.0.2"), "{msg}");
++        let denied = alias_failure(addr, &io::Error::from(io::ErrorKind::PermissionDenied));
++        assert!(denied.contains("needs loopback networking"), "{denied}");
++        assert!(!denied.contains("ifconfig"), "{denied}");
++        let other = alias_failure(addr, &io::Error::from(io::ErrorKind::Other));
++        assert!(!other.contains("ifconfig"), "{other}");
++    }
++
++    #[test]
++    fn require_loopback_alias_accepts_127_0_0_1() {
++        require_loopback_alias(std::net::Ipv4Addr::LOCALHOST);
++    }
++
++    /// A non-loopback documentation address (TEST-NET-1) is never configured,
++    /// so it stands in for macOS's missing 127.0.0.2.
++    #[test]
++    #[should_panic(expected = "is not configured on this host")]
++    fn require_loopback_alias_panics_for_an_unconfigured_address() {
++        require_loopback_alias(std::net::Ipv4Addr::new(192, 0, 2, 1));
++    }
+ }
+```
+
+**File**: `engine/crates/xerj-mcp/tests/local_def.rs` (modified, +16/-2)
+```diff
+@@ -221,8 +221,22 @@ async fn lookup(url: &str, arguments: Value) -> Value {
+     serde_json::from_str(response["result"]["content"][0]["text"].as_str().unwrap()).unwrap()
+ }
+ 
+-#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+-async fn local_def_returns_ranked_unique_declarations_in_the_requested_scope() {
++#[test]
++fn local_def_returns_ranked_unique_declarations_in_the_requested_scope() {
++    // This test serves the ES-compat router in process. Its handlers do not fit
++    // tokio's 2 MiB default worker stack in a debug build, which overflowed a
++    // plain `cargo test` (#2903). The server runtime is 4 MiB
++    // (`xerj-server`'s `RT_THREAD_STACK_SIZE`); match it.
++    let rt = tokio::runtime::Builder::new_multi_thread()
++        .worker_threads(2)
++        .thread_stack_size(4 * 1024 * 1024)
++        .enable_all()
++        .build()
++        .expect("runtime");
++    rt.block_on(local_def_returns_ranked_unique_declarations_in_the_requested_scope_inner());
++}
++
++async fn local_def_returns_ranked_unique_declarations_in_the_requested_scope_inner() {
+     let tmp = tempfile::tempdir().unwrap();
+     let mut config = xerj_common::config::Config::default();
+     config.server.data_dir = tmp.path().join("data").to_string_lossy().into_owned();
+```
+
+**File**: `engine/crates/xerj-mcp/tests/loopback_proxy.rs` (modified, +3/-0)
+```diff
+@@ -145,6 +145,9 @@ async fn tool(url: &str, msg: Value) -> (bool, String) {
+ 
+ #[tokio::test]
+ async fn loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy() {
++    // Phase 3 connects to 127.0.0.2 directly. Stock macOS has no such alias,
++    // and the connection error alone does not say so (#2903).
++    xerj_common::loopback_test::require_loopback_alias(std::net::Ipv4Addr::new(127, 0, 0, 2));
+     let _guard = EnvGuard::capture();
+ 
+     let node_hits = Arc::new(AtomicUsize::new(0));
+```
+
+---
+
+### Incident Patch 2: `4f5471fe` (2026-11-04)
+**Commit Message**: fix(deps): calamine 0.38.0 for RUSTSEC-2026-0436 (cargo-audit red on every PR) (#2912)
+
+cargo-audit is red on main and on every PR opened or re-run since RustSec
+published RUSTSEC-2026-0436 on 2026-11-03 (09:44Z). The last green audit
+on main ran at 08:29Z, so no change in between caused it.
+
+Root cause: calamine 0.37.0's CFB/OLE2 reader (src/cfb.rs) can panic on a
+directory stream whose length is not a multiple of 128 (an unchecked fixed
+offset slice of a short final chunk), and can allocate without bound
+walking a crafted self-referential DIFAT chain. Both are reachable through
+Xls::new on an attacker-supplied file, which is how xerj-autoindex reads
+legacy .xls. Fixed upstream in calamine 0.38.0 (tafia/calamine#762);
+patched = ">= 0.38.0".
+
+- xerj-autoindex: calamine =0.37.0 -> =0.38.0, and the comment above the
+  pin now names the advisory it clears.
+- Cargo.lock: calamine version and checksum only. Its dependency list is
+  unchanged (still zip ^9 and quick-xml 0.42), so nothing else moves.
+- No call-site changes: the 0.38.0 changelog has no Changed or Removed
+  section, only additions (XLSX styles, workbook_properties on Xls/Ods)
+  and fixes. xls.rs uses Xls, Reader, Data and D
+
+**File**: `engine/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -956,9 +956,9 @@ dependencies = [
  
  [[package]]
+ name = "calamine"
+-version = "0.37.0"
++version = "0.38.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
++checksum = "f431b67cba6122a1f7d26b7adafc71bbdf07026095fe811f5efc025d8748e1d8"
+ dependencies = [
+  "atoi_simd",
+  "byteorder",
 ```
 
-**File**: `engine/crates/xerj-ai/src/embed.rs` (modified, +6/-3)
+**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +6/-4)
 ```diff
-@@ -509,7 +509,8 @@ mod tests {
-     /// `/v1/embeddings` URL must all POST to `/v1/embeddings`.
-     #[tokio::test]
-     async fn posts_v1_base_trailing_slash_and_full_url_to_embeddings() {
--        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(std::net::TcpListener::bind("127.0.0.1:0"));
-         let addr = listener.local_addr().unwrap();
-         let handle = std::thread::spawn(move || {
-             use std::io::{Read, Write};
-@@ -597,7 +598,8 @@ mod tests {
-         // 200ms base backoff, the OLD code would sleep 200+400+800+1600+3200ms
-         // ≈ 6.2s before giving up. Classified as permanent, we return on the
-         // first attempt — well under the first backoff.
--        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(std::net::TcpListener::bind("127.0.0.1:0"));
-         let addr = listener.local_addr().unwrap();
-         let handle = std::thread::spawn(move || {
-             use std::io::{Read, Write};
-@@ -640,7 +642,8 @@ mod tests {
-     // order across chunk boundaries.
-     #[tokio::test]
-     async fn batch_size_splits_requests_and_preserves_order() {
--        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(std::net::TcpListener::bind("127.0.0.1:0"));
-         let addr = listener.local_addr().unwrap();
-         let handle = std::thread::spawn(move || {
-             use std::io::{Read, Write};
-```
-
-**File**: `engine/crates/xerj-api/src/binary_protocol.rs` (modified, +4/-6)
-```diff
-@@ -540,9 +540,8 @@ mod tests {
-                 }
-             }),
-         );
--        let listener = TcpListener::bind("127.0.0.1:0")
--            .await
--            .expect("bind mock backend");
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(TcpListener::bind("127.0.0.1:0").await);
-         let addr = listener.local_addr().expect("mock backend addr");
-         tokio::spawn(async move {
-             let _ = axum::serve(listener, app).await;
-@@ -563,9 +562,8 @@ mod tests {
-         let (config, engine, dir) = semantic_engine(endpoint);
-         let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-         let state = Arc::new(crate::state::AppState::new(config, engine, metrics));
--        let listener = TcpListener::bind("127.0.0.1:0")
--            .await
--            .expect("bind binary protocol");
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(TcpListener::bind("127.0.0.1:0").await);
-         let addr = listener.local_addr().expect("binary protocol addr");
-         tokio::spawn(async move {
-             while let Ok((stream, _)) = listener.accept().await {
-```
-
-**File**: `engine/crates/xerj-api/tests/autoindex_changed_file_drops_stale_symbols.rs` (modified, +3/-1)
-```diff
-@@ -351,7 +351,9 @@ async fn reindex_changed_code(app: &axum::Router, url: &str, no_graph: bool) {
- #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
- async fn changed_code_file_reindex_drops_shifted_and_removed_symbols_on_the_engine() {
-     let app = app().await;
--    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let listener = xerj_common::loopback_test::expect_loopback(
-+        tokio::net::TcpListener::bind("127.0.0.1:0").await,
-+    );
-     let addr = listener.local_addr().unwrap();
-     let served = app.clone();
-     tokio::spawn(async move {
-```
-
-**File**: `engine/crates/xerj-api/tests/autoindex_html_inline_script.rs` (modified, +3/-1)
-```diff
-@@ -234,7 +234,9 @@ fn autoindex_finds_inline_script_functions_by_def_and_search() {
- 
- async fn autoindex_finds_inline_script_functions_by_def_and_search_inner() {
-     let app = app().await;
--    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let listener = xerj_common::loopback_test::expect_loopback(
-+        tokio::net::TcpListener::bind("127.0.0.1:0").await,
-+    );
-     let addr = listener.local_addr().unwrap();
-     let served = app.clone();
-     tokio::spawn(async move {
-```
-
-**File**: `engine/crates/xerj-api/tests/body_named_index_bypasses.rs` (modified, +3/-3)
-```diff
-@@ -50,9 +50,9 @@ struct Node {
- 
- /// Bind an ephemeral port and serve `app` on it.
- async fn serve(app: axum::Router) -> SocketAddr {
--    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
--        .await
--        .expect("bind");
-+    let listener = xerj_common::loopback_test::expect_loopback(
-+        tokio::net::TcpListener::bind("127.0.0.1:0").await,
-+    );
-     let addr = listener.local_addr().expect("local addr");
-     tokio::spawn(async move {
-         let _ = axum::serve(listener, app).await;
+@@ -144,14 +144,16 @@ quick-xml = "0.41"                               # XML pull parser + DOCX intern
+ zip = { version = "9", default-features = false, features = ["deflate"] }  # DOCX container
+ # --- Legacy Microsoft Office binary formats (OLE2 / Compound File Binary) ---
+ # calamine reads the legacy BIFF `.xls` worksheet stream (it ships its own CFB
+-# reader internally); pinned to 0.37.0, which depends on `zip ^9` (the
+-# zip 8.x line carries RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it
+-# shares this crate's `zip 9` major, and never retains `quick-xml 0.31.0`
++# reader internally); pinned to 0.38.0, the first release with the CFB reader
++# fix for RUSTSEC-2026-0436 (panic and unbounded allocation on a malformed
++# compound file). It depends on `zip ^9` (the zip 8.x line carries
++# RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it shares this crate's
++# `zip 9` major, and never retains `quick-xml 0.31.0`
+ # (RUSTSEC-2026-0194 / 0195); it brings `quick-xml 0.42` alongside our 0.41.
+ # Licence: MIT. Its transitive adds are codepage (MIT, for the legacy 8-bit
+ # cell codepage) and log (MIT/Apache-2.0); byteorder and encoding_rs are
+ # already here.
+-calamine = { version = "=0.37.0", features = ["dates"] }
++calamine = { version = "=0.38.0", features = ["dates"] }
+ # `cfb` reads the OLE2/Compound File Binary container directly: used by the
+ # content sniffer to route a `.doc`/`.xls`/other OLE2 file by its stream names,
+ # and by the `.doc` extractor to pull the WordDocument + Table streams and the
 ```
 
 ---
 
-### Incident Patch 2: `1fc45697` (2026-11-02)
-**Commit Message**: fix(api): refuse more than one alias write index at update time (#2876)
+### Incident Patch 3: `3bba497a` (2026-11-04)
+**Commit Message**: fix(api): enforce index.max_terms_count on terms queries (#2936)
 
-`POST /_aliases` and `PUT /{index}/_alias/{name}` stored every
-`is_write_index: true` they were given, even when two members of the same
-alias carried it. The update answered 200 and the alias was unusable: every
-document write through it answered 400 "has more than one write index",
-potentially long after the change.
+* fix(api): enforce index.max_terms_count on terms queries
 
-Both APIs now simulate the final member set of the request before mutating
-anything and refuse a state with more than one designated writer with a 400
-`illegal_argument_exception`. The final state is what matters: an atomic
-switch (add the new write index, then clear the old one) is accepted even
-though an intermediate action names two. A wildcard add that expands to
-several indices with `is_write_index:true` is refused, as is a second PUT. A
-single-member alias with no explicit flag remains an implicit writer, so
-adding one explicit `true` member is valid. A refused request leaves no
-alias/member behind.
+Motivation:
+`index.max_terms_count` (default 65 536) bounds how many values one
+`terms` query may carry. ES refuses a longer list with `The number of
+terms [3] used in the Terms Query request has exceeded the allowed
+maximum of [2]. This maximum can be set by changing the
+[index.max_terms_count] index level setting.` (TermsQueryBuilder
+#doToQuery), and counts the values a terms lookup fetched, not the
+lookup object. XERJ stored the setting but never read it, so an index
+configured with a small limit accepted any number of terms and the
+default bounded nothing. One catch-lenient line is this case
+(`search/170_terms_query.yml · Terms Query with No.of terms exceeding
+index.max_terms_count should FAIL`).
 
-Evidence (rc.100, real node):
-- before: add i1+i2 with is_write_index:true -> 200, _cat shows both true,
-  write via alias -> 400; PUT i4/_alias/b true when i3 true -> 200, write 400;
-  wildca
+Fix:
+`find_terms_query_over_limit` runs in `search_impl` right after the
+terms lookups are resolved, over the query and both aggregation keys
+(filter / filters buckets carry terms queries too). It takes the
+longest value list of any `terms` clause and compares it with the
+largest `index.max_terms_count` among the target indices: ES checks per
+shard, so a reques
 
-**File**: `CHANGELOG.md` (modified, +8/-0)
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +192/-0)
 ```diff
-@@ -232,6 +232,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   bytes) is reported as the new `version_map` category. On the 1 GB gate's
-   search node the map held ~0.5 GB that no budget saw. (#2427)
- - `xerj autoindex`: Vue (`.vue`) and Svelte (`.svelte`) single-file components are indexed as code instead of being junk-filed as malformed XML. Their `<script>` blocks are parsed with the TypeScript or JavaScript grammar (by `lang`), so their declarations are symbols on the component's own lines, and the record's `language` is `vue` or `svelte`. (#2732)
-+- The alias APIs reject an update that would leave more than one
-+  `is_write_index: true` member (`POST /_aliases` and
-+  `PUT /{index}/_alias/{name}`), including a wildcard add that expands to
-+  several indices. The check is on the final state of a batch, so an atomic
-+  switch (add the new writer, clear the old one) still works; a rejected
-+  update changes nothing instead of leaving an alias whose every write
-+  answers 400.
-+
- - `_reindex` applies `source._source` field filtering to the documents it
-   copies, so an excluded secret or large field no longer reaches the
-   destination. `_source:false` is refused with ES's sentence, and a `script`
-```
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +92/-0)
-```diff
-@@ -26256,6 +26256,49 @@ fn alias_target_is_pattern(spec: &str) -> bool {
-         .any(|p| p == "_all" || p.contains('*'))
+@@ -6346,6 +6346,186 @@ fn rewrite_unqueryable_exists(q: &mut Value, state: &AppState, indices: &[String
+     walk(q, state, indices);
  }
  
-+/// The members of `alias` explicitly marked `is_write_index: true`.
++/// ES's default for `index.max_terms_count` (`IndexSettings.MAX_TERMS_COUNT_SETTING`).
++const DEFAULT_MAX_TERMS_COUNT: u64 = 65_536;
++
++/// The first `terms` query whose value list is longer than
++/// `index.max_terms_count`, with ES's message (`TermsQueryBuilder#doToQuery`).
 +///
-+/// A single-member alias with no explicit flag is an implicit write target and
-+/// is deliberately not listed: adding a second member with an explicit `true`
-+/// leaves exactly one designated write index, which ES accepts. The list is
-+/// what the alias-update invariant counts.
-+fn alias_write_members(state: &AppState, alias: &str) -> HashSet<String> {
-+    let mut writes = HashSet::new();
-+    if let Some(members) = state.engine.aliases.get(alias) {
-+        for member in members.iter() {
-+            let is_write = state
-+                .engine
-+                .index_alias_metadata
-+                .get(member.as_str())
-+                .is_some_and(|meta| {
-+                    meta.get(alias)
-+                        .and_then(|alias_meta| alias_meta.get("is_write_index"))
-+                        .and_then(Value::as_bool)
-+                        == Some(true)
-+                });
-+            if is_write {
-+                writes.insert(member.clone());
-+            }
-+        }
-+    }
-+    writes
-+}
-+
-+/// ES's metadata invariant: an alias can designate at most one write index.
-+/// Refuse the alias update before it is stored, rather than accepting an alias
-+/// whose every later write answers 400.
-+fn more_than_one_write_index(alias: &str, writes: &HashSet<String>) -> Option<String> {
-+    if writes.len() <= 1 {
-+        return None;
-+    }
-+    let mut names: Vec<&str> = writes.iter().map(String::as_str).collect();
-+    names.sort_unstable();
-+    Some(format!(
-+        "alias [{alias}] has more than one write index [{}]",
-+        names.join(", ")
-+    ))
-+}
-+
- pub async fn post_aliases(
-     State(state): State<AppState>,
-     Json(body): Json<AliasActionsBody>,
-@@ -26307,6 +26350,41 @@ pub async fn post_aliases(
-             plan.push(Resolved::Remove(remove, targets));
-         }
-     }
-+    // At most one `is_write_index: true` per alias. Actions run in order, so
-+    // an atomic swap (add the new write index, then clear the old one) is
-+    // valid even though an intermediate action has two. Simulate the final
-+    // state and refuse the whole request before the first mutation; otherwise
-+    // the alias is persisted and every later write answers 400.
-+    let mut write_members: HashMap<String, HashSet<String>> = HashMap::new();
-+    for step in &plan {
-+        match step {
-+            Resolved::Add(add, targets) => {
-+                let writes = write_members
-+                    .entry(add.alias.clone())
-+                    .or_insert_with(|| alias_write_members(&state, &add.alias));
-+                for target in targets {
-+                    if add.is_write_index == Some(true) {
-+                        writes.insert(target.clone());
-+                    } else {
-+                        writes.remove(target);
++/// ES counts the values each `terms` clause carries after a terms lookup has
++/// been fetched, so this runs on the resolved body. The setting is per index
++/// and ES checks it per shard: a request only fails outright when it exceeds
++/// the limit of every target index, so the largest limit among the targets is
++/// the one that decides. XERJ never read the setting, so an index configured
++/// with a small limit accepted any number of terms, and the 65 536 default did
++/// not bound a request either.
++fn find_terms_query_over_limit(
++    roots: &[Option<&Value>],
++    state: &AppState,
++    indices: &[&str],
++) -> Option<String> {
++    fn longest(v: &Value, out: &mut usize) {
++        match v {
++            Value::Object(obj) => {
++                if let Some(Value::Object(terms)) = obj.get("terms") {
++                    for (field, values) in terms {
++                        if matches!(field.as_str(), "boost" | "_name") {
++                            continue;
++                        }
++                        if let Value::Array(values) = values {
++                            *out = (*out).max(values.len());
++                        }
 +                    }
 +                }
-+            }
-+            Resolved::Remove(remove, targets) => {
-+                let writes = write_members
-+                    .entry(remove.alias.clone())
-+                    .or_insert_with(|| alias_write_members(&state, &remove.alias));
-+                for target in targets {
-+                    writes.remove(target);
++                for child in obj.values() {
++                    longest(child, out);
 +                }
 +            }
++            Value::Array(items) => {
++                for item in items {
++                    longest(item, out);
++                }
++            }
++            _ => {}
 +        }
 +    }
-+    for (alias, writes) in &write_members {
-+        if let Some(reason) = more_than_one_write_index(alias, writes) {
-+            return es_bad_request("illegal_argument_exception", &reason, None);
-+        }
++    let mut count = 0usize;
++    for root in roots.iter().flatten() {
++        longest(root, &mut count);
 +    }
-     for step in &plan {
-         match step {
-             Resolved::Add(add, targets) => {
-@@ -26634,6 +26712,20 @@ pub async fn put_alias(
-         let e = xerj_common::XerjError::index_not_found(&index);
-         return ApiError::new(e).into_response();
-     }
-+    // Re-putting an alias replaces its definition (including the write flag).
-+    // Simulate the final member set and refuse a second write index before
-+    // any member is attached, so a rejected PUT leaves the alias untouched.
-+    let mut write_members = alias_write_members(&state, &alias);
-+    for target in &targets {
-+        if alias_meta.get("is_write_index").and_then(Value::as_bool) == Some(true) {
-+            write_members.insert(target.clone());
-+        } else {
-+            write_members.remove(target);
-+        }
-+    }
-+    if let Some(reason) = more_than_one_write_index(&alias, &write_members) {
-+        return es_bad_request("illegal_argument_exception", &reason, None);
-+    }
-     for idx in &targets {
-         if let Err(error) = attach(idx) {
-             return ApiError::new(xerj_common::XerjError::from(error)).into_response();
-```
-
-**File**: `engine/crates/xerj-api/tests/alias_write_index_uniqueness.rs` (added, +240/-0)
-```diff
-@@ -0,0 +1,240 @@
-+//! An alias may designate at most one write index.
-+//!
-+//! `POST /_aliases` and `PUT /{index}/_alias/{alias}` used to accept two
-+//! members with `is_write_index: true` and answer 200. The resulting alias
-+//! was unusable: every document write through it answered 400 "alias [a] has
-+//! more than one write index", so the configuration error surfaced only at
-+//! the next write, possibly long after the alias update.
-+//!
-+//! The invariant is checked against the FINAL state of the action batch:
-+//! actions run in order, so an atomic swap (add the new write index, then
-+//! clear the old one) is valid even though an intermediate step names two.
-+//! A refused batch changes nothing, including when the second write index is
-+//! added through a wildcard that expands to several indices.
-+//!
-+//! Elasticsearch is referenced for wire semantics only; no ES code is
-+//! reproduced here.
-+
-+use axum::body::Body;
-+use axum::http::{Request, StatusCode};
-+use serde_json::{json, Value};
-+use tower::ServiceExt;
-+
-+async fn app() -> (axum::Router, tempfile::TempDir) {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut config = xerj_common::config::Config::default();
-+    config.server.data_dir = dir.path().to_string_lossy().into_owned();
-+    config.storage.wal_sync = xerj_common::config::WalSync::Async;
-+    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-+    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
-+    let state = xerj_api::state::AppState::new(config, engine, metrics);
-+    (xerj_api::router::build_es_compat_router(state), dir)
-+}
-+
-+async fn call(app: &axum::Router, method: &str, path: &str, body: Value) -> (StatusCode, Value) {
-+    let mut req = Request::builder().method(method).uri(path);
-+    let body = if body.is_null() {
-+        Body::empty()
-+    } else {
-+        req = req.header("content-type", "application/json");
-+        Body::from(body.to_string())
-+    };
-+    let response = app.clone().oneshot(req.body(body).unwrap()).await.unwrap();
-+    let status = response.status();
-+    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-+        .await
-+        .unwrap();
-+    (
-+        status,
-+        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
-+    )
-+}
-+
-+async fn create_index(app: &axum::Router, index: &str) {
-+    let (status, body) = call(app, "PUT", &format!("/{index}"), json!({})).await;
-+    assert_eq!(status, StatusCode::OK, "{body}");
-+}
-+
-+async fn post_actions(app: &axum::Router, actions: Value) -> (StatusCode, Value) {
-+    call(app, "POST", "/_aliases", json!({"actions": actions})).await
-+}
-+
-+async fn put_alias(
-+    app: &axum::Router,
-+    index: &str,
-+    alias: &str,
-+    body: Value,
-+) -> (StatusCode, Value) {
-+    call(app, "PUT", &format!("/{index}/_alias/{alias}"), body).await
-+}
-+
-+fn is_write(entry: &Value) -> bool {
-+    entry["is_write_index"] == json!(true) || entry["is_write_index"] == json!("true")
-+}
-+
-+/// `(index, is_write_index)` for one alias from `_cat/aliases?format=json`.
-+async fn alias_members(app: &axum::Router, alias: &str) -> Vec<(String, bool)> {
-+    let (status, body) = call(app, "GET", "/_cat/aliases?format=json", Value::Null).await;
-+    assert_eq!(status, StatusCode::OK, "{body}");
-+    let mut members: Vec<(String, bool)> = body
-+        .as_array()
-+        .unwrap()
++    let limit = indices
 +        .iter()
-+        .filter(|entry| entry["alias"] == alias)
-+        .map(|entry| {
-+            (
-+                entry["index"].as_str().unwrap_or_default().to_string(),
-+                is_write(entry),
-+            )
++        .map(|ix| {
++            index_int_setting(state, ix, "max_terms_count").unwrap_or(DEFAULT_MAX_TERMS_COUNT)
 +        })
-+        .collect();
-+    members.sort_by(|a, b| a.0.cmp(&b.0));
-+    members
++        .max()?;
++    (count as u64 > limit).then(|| {
++        format!(
++            "The number of terms [{count}] used in the Terms Query request has exceeded the \
++             allowed maximum of [{limit}]. This maximum can be set by changing the \
++             [index.max_terms_count] index level setting."
++        )
++    })
 +}
 +
-+async fn write_through_alias(app: &axum::Router, alias: &str) -> (StatusCode, Value) {
-+    call(app, "PUT", &format!("/{alias}/_doc/1"), json!({"v": "x"})).await
-+}
++#[cfg(test)]
++mod max_terms_count_tests {
++    use super::*;
++    use axum::{body::Body, http::Request};
++    use tower::ServiceExt;
++    use xerj_common::{
++        config::{Config, WalSync},
++        metrics::Metrics,
++    };
++    use xerj_engine::Engine;
 +
-+fn reason(body: &Value) -> &str {
-+    body.pointer("/error/root_cause/0/reason")
-+        .and_then(Value::as_str)
-+        .or_else(|| body.get("error").and_then(Value::as_str))
-+        .unwrap_or_default()
-+}
++    fn test_state() -> AppState {
++        let dir = tempfile::tempdir().expect("tempdir").keep();
++        let mut config = Config::default();
++        config.server.data_dir = dir.to_string_lossy().into_owned();
++        config.storage.wal_sync = WalSync::Async;
++        let metrics = Metrics::new().expect("metrics");
++        let engine = Engine::new(config.clone()).expect("engine");
++        AppState::new(config, engine, metrics)
++    }
 +
-+#[tokio::test]
-+async fn post_aliases_rejects_two_write_indices_atomically() {
-+    let (app, _dir) = app().await;
-+    create_index(&app, "i1").await;
-+    create_index(&app, "i2").await;
++    async fn send(app: &axum::Router, method: &str, uri: &str, body: Value) -> (StatusCode, Value) {
++        let resp = app
++            .clone()
++            .oneshot(
++                Request::builder()
++                    .method(method)
++                    .uri(uri)
++                    .header("content-type", "application/json")
++                    .body(Body::from(body.to_string()))
++                    .unwrap(),
++            )
++            .await
++            .unwrap();
++        let status = resp.status();
++        let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX)
++            .await
++            .unwrap();
++        (status, serde_json::from_slice(&bytes).unwrap())
++    }
 +
-+    let (status, body) = post_actions(
-+        &app,
-+        json!([
-+            {"add": {"index": "i1", "alias": "a", "is_write_index": true}},
-+            {"add": {"index": "i2", "alias": "a", "is_write_index": true}}
-+        ]),
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
-+    assert_eq!(
-+        body.pointer("/error/type").and_then(Value::as_str),
-+        Some("illegal_argument_exception"),
-+        "{body}"
-+    );
-+    assert!(
-+        reason(&body).contains("alias [a] has more than one write index"),
-+        "{body}"
-+    );
-+    assert!(
-+        alias_members(&app, "a").await.is_empty(),
-+        "a refused batch must leave no alias behin
++    /// `small` allows two terms, `big` keeps the default.
++    async fn app() -> axum::Router {
++        let app = crate::router::build_es_compat_router(test_state());
++        let mappings = json!({"properties": {"user": {"type": "keyword"},
++                                             "followers": {"type": "keyword"}}});
++        let (status, body) = send(
++            &app,
++            "PUT",
++            "/small",
++            json!({"settings": {"index.max_terms_count": 2}, "mappings": mappings}),
++        )
++        .await;
++        assert_eq!(status, StatusCode::OK, "{body}");
++        let (status, body) = send(&app, "PUT", "/big", json!({ "mappings": mappings })).await;
++        assert_eq!(status, StatusCode::OK, "{body}");
++        for (id, followers) in [
++            ("u1", json!(["u2", "u3"])),
++            ("u2", json!(["u1", "u3", "u4"])),
++        ] {
++            let doc = json!({"user": id, "followers": followers});
++            let (status, body) =
++                send(&app, "PUT", 
 ```
 
-**File**: `engine/crates/xerj-api/tests/alias_write_routing.rs` (modified, +5/-3)
+**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-1)
 ```diff
-@@ -211,19 +211,21 @@ async fn writes_follow_the_alias_write_index_and_refuse_ambiguity() {
-     assert_eq!(status, StatusCode::CREATED, "{body}");
-     assert_eq!(body["_index"], "i1", "{body}");
- 
--    // Two designated write indices are refused like the ambiguous shape.
-+    // A second designated write index is refused at the alias update, before
-+    // it can leave the alias unusable; i2 remains the write target.
-     let (status, body) = call(
-         &app,
-         "PUT",
-         "/i1/_alias/multi",
-         json!({"is_write_index": true}),
-     )
-     .await;
--    assert_eq!(status, StatusCode::OK, "{body}");
--    let (status, body) = call(&app, "PUT", "/multi/_doc/10", json!({"t": "ten"})).await;
-     assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
-     assert!(
-         refusal(&body).contains("has more than one write index"),
-         "{body}"
-     );
-+    let (status, body) = call(&app, "PUT", "/multi/_doc/10", json!({"t": "ten"})).await;
-+    assert_eq!(status, StatusCode::CREATED, "{body}");
-+    assert_eq!(body["_index"], "i2", "{body}");
- }
-```
-
----
-
-### Incident Patch 3: `526ac8db` (2026-11-03)
-**Commit Message**: docs(feedback): report MCP stdio protocol fix session (#2902)
-
-Agent field report for the session that produced PR #2901 (issue #2898).
-Written by an AI agent (JoyCode), operated and submitted by @Jarvis636431.
-
-Records what the stdio test scaffolding was like to work in, and the two
-host-specific test failures that read as regressions on first contact: the
-debug-profile local_def stack overflow and the loopback_proxy test's
-undocumented need for a 127.0.0.2 alias. Both reproduce on clean upstream/main
-on this host. Every number in the file comes from a command run in the session;
-no retrieval or indexing was measured because none was run.
-
-One new file under user-feedback/16-agent-field-reports/, 13 lines, nothing
-else in the diff.
-
-**File**: `user-feedback/16-agent-field-reports/2026-11-03-mcp-stdio-gate.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+# Fixing an MCP stdio protocol defect, with the binary as its own test node (2026-11-03)
-+
-+**Agent:** JoyCode (GPT-6)  ·  **XERJ:** xerj v1.0.0-rc.100  ·  **Platform:** macOS 26.2, arm64
-+
-+**Pointed at:** nothing indexed this session — the XERJ repo itself, as the subject of the change, plus a locally built node used only as the target of the ES-YAML conformance suite.
-+
-+**Used it for:** `xerj mcp` protocol work (issue #2898: an id-less `tools/call` was answered with `"id": null` and awaited on the stdio read loop), then the repo's own gates to prove the fix.
-+
-+**Verdict:** The stdio layer was pleasant to work in: `stdio_session` / `silent_node` let me write four failing tests in one pass, and the #2390 cancellation machinery was documented well enough in comments that I could tell *why* a `null` registration key would be unsafe without guessing. Two things cost real time, both in the test harness rather than the product. Debug-profile `local_def` tests stack-overflow and SIGABRT on this host on clean `upstream/main` too, and nothing says so — I burned a cycle confirming it was a baseline failure before switching everything to `--profile ci-test`. And `loopback_proxy::loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy` fails on stock macOS because it needs a `127.0.0.2` loopback alias; after #2886 the message says "request to http://127.0.0.2:9/... failed", which is accurate and still does not hint that the host, not the code, is wrong. Both read as "your patch broke something" on first contact. I have not filed either as an issue.
-+
-+**Numbers:** `cargo test --locked --profile ci-test -p xerj-mcp --no-fail-fast` -> 195 passed, 1 failed (the `127.0.0.2` test above, identical on stashed clean `upstream/main`). ES-YAML gate -> 1453 passed, 0 failed, 10 skipped, 233 files, runner exit 0. `cargo build --locked --profile ci-test -j 32 -p xerj-server -p es-yaml-runner` -> 5m22s. No retrieval or indexing measured; I ran no queries.
-+
-+**Filed alongside:** https://github.com/xerj-org/xerj/pull/2901 (fix for #2898)
+@@ -59,7 +59,6 @@ search/120_batch_reduce_size.yml · batched_reduce_size lower limit
+ search/140_pre_filter_search_shards.yml · pre_filter_shard_size with invalid parameter
+ search/150_rewrite_on_coordinator.yml · Ensure that we fetch the document only once
+ search/160_exists_query.yml · Test exists query on _source field
+-search/170_terms_query.yml · Terms Query with No.of terms exceeding index.max_terms_count should FAIL
+ search/220_total_hits_object.yml · hits.total as an object
+ search/260_parameter_validation.yml · test negative size throws IAE
+ search/260_parameter_validation.yml · test negative terminate_after throws IAE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2906** (2026-11-03): hub: propose localized spectral-bound Lean corpus (rebase of #2629) (@xerj-org)
-- **PR #2902** (2026-11-03): docs(feedback): report MCP stdio protocol fix session (@Jarvis636431)
-- **PR #2900** (2026-11-03): fix(api,engine): data-stream rollover honours dry_run, conditions and write routing (@Tong-bit-art)
-- **PR #2899** (2026-11-03): fix(mcp): never answer a notification, and run every tools/call off the loop (@Term56)
-- **PR #2897** (2026-11-03): chore: add richuff to contributors (CLA signature) (@richuff)
-- **PR #2896** (2026-11-03): corpus: rctool-live2d — Flutter × Cubism Live2D integration (WebView, local asset server, lip sync) (@richuff)
+- **PR #2937** (2026-11-04): fix(api): enforce the search.max_keep_alive cluster setting (@amartya1523)
+- **PR #2936** (2026-11-04): fix(api): enforce index.max_terms_count on terms queries (@amartya1523)
+- **PR #2934** (2026-11-04): Sign CLA: add parijat1222q to .contributors (@parijat1222q)
+- **PR #2932** (2026-11-04): feat(hub): wire opt-in pinned answer evidence receipts (@drk-ram)
+- **PR #2923** (2026-11-04): docs(feedback): add Antigravity Windows 11 field report (@napattan)
+- **PR #2915** (2026-11-04): fix(api): validate scroll searches the way SearchRequest#validate does (@amartya1523)
 
 ---
 
@@ -2485,13 +2459,13 @@ else in the diff.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): name loopback networking when a test's bind is denied (#2889)
+## X. tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 al
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9f8e4a7`: tests): name loopback networking when a test's bind is denied (#2889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `702b8d3d`: tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 alias (#2910). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2499,12 +2473,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Tests name the cause when loopback networking is unavailable (#2886). Every
-  test that binds an ephemeral 127.0.0.1 port, in all crates, goes through
-  `xerj_common::loopback_test::expect_loopback`, so a sandbox that denies the
-  bind fails with "this test starts a fake server on 127.0.0.1 and needs
-  loopback networking" instead of hundreds of bare `PermissionDenied` panics.
-
+- A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
+  and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
+  tests that run the ES-compat router on multi-thread workers overflowed tokio's
+  2 MiB worker stack in a debug build, killing their whole test binary: one in
+  `xerj-mcp`'s `local_def`, one in `xerj-api`'s
+  `autoindex_changed_file_drops_stale_symbols`, and three in `hub_api`. They now
+  use the server's 4 MiB, as the other in-process router tests do. On a host without `127.0.0.2`,
+  `loopback_proxy` fails up front with
+  `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
+  through the new `xerj_common::loopback_test::require_loopback_alias`.
+  CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2514,4 +2493,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9f8e4a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `702b8d3d` are properly handled with clean fallback behavior.

@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
-    "lastHarvestedAt": "2026-10-31T10:07:22.038Z",
+    "contentHash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
+    "lastHarvestedAt": "2026-11-05T00:29:38.101Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "b7800483",
+    "sourceVersion": "344a95f6",
     "license": "Apache-2.0",
-    "contentHash": "60014225ca83bd25e8f278447360d0c1f7a4d02d3b7dad5d4c5af9cd860ab85d",
-    "lastHarvestedAt": "2026-11-04T01:27:53.763Z",
+    "contentHash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
+    "lastHarvestedAt": "2026-11-05T00:29:52.219Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -7733,10 +7733,10 @@
     "repository": "pointfreeco/swift-composable-architecture",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/swift-composable-architecture",
-    "sourceVersion": "bb175b54",
+    "sourceVersion": "9ac5a9dc",
     "license": "MIT",
-    "contentHash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
-    "lastHarvestedAt": "2026-10-28T02:41:15.265Z",
+    "contentHash": "d41f09d65ebfc55fa5c4638492508d2a0343848d74fa66378f89fbbf598bcbce",
+    "lastHarvestedAt": "2026-11-05T00:29:44.225Z",
     "learningId": "learn-github-pointfreeco-swift-composable-architecture"
   },
   "pola-rs-polars": {

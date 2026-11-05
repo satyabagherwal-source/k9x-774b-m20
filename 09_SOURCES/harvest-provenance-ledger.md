@@ -7430,3 +7430,6 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `3bf9166a` | Multi-dimensional audit evidence | 2026-11-05T00:22:31.314Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `df707d92` | Multi-dimensional audit evidence | 2026-11-05T00:22:40.597Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `5eadb108` | Multi-dimensional audit evidence | 2026-11-05T00:22:41.133Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-05T00:29:38.101Z |
+| `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `9ac5a9dc` | Multi-dimensional audit evidence | 2026-11-05T00:29:44.225Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `344a95f6` | Multi-dimensional audit evidence | 2026-11-05T00:29:52.219Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:22:41.045Z",
+  "last_updated": "2026-11-05T00:29:52.146Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18208,7 +18208,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "683486cc069a60caaf519cf3c344c09e28c1e01508facc194d85caa9b4d67ff2",
+      "content_hash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -18285,7 +18285,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-10-31T10:07:21.925Z",
+      "verified_at": "2026-11-05T00:29:37.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48162,8 +48162,8 @@
       "slug": "pointfreeco-swift-composable-architecture",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
-      "source_version": "bb175b54",
-      "content_hash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
+      "source_version": "9ac5a9dc",
+      "content_hash": "d41f09d65ebfc55fa5c4638492508d2a0343848d74fa66378f89fbbf598bcbce",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
       "promoted_rules": [
@@ -48176,6 +48176,11 @@
           "number": 5138,
           "title": "Deprecate `ReducerBuilder.buildArray` (#3971)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7046,
+          "title": "Update Korean translation in README.md (#3973)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48183,7 +48188,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:41:15.187Z",
+      "verified_at": "2026-11-05T00:29:44.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61324,8 +61329,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "b7800483",
-      "content_hash": "60014225ca83bd25e8f278447360d0c1f7a4d02d3b7dad5d4c5af9cd860ab85d",
+      "source_version": "344a95f6",
+      "content_hash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -61408,6 +61413,11 @@
           "number": 6702,
           "title": "tests): name loopback networking when a test's bind is denied (#2889)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7047,
+          "title": "tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 al",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61415,7 +61425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:27:53.648Z",
+      "verified_at": "2026-11-05T00:29:52.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178849,6 +178859,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:22:41.022Z"
+    },
+    "rule-7046": {
+      "learning_id": "rule-7046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7046,
+      "title": "Update Korean translation in README.md (#3973)",
+      "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
+      "source_version": "9ac5a9dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:29:44.115Z"
+    },
+    "rule-7047": {
+      "learning_id": "rule-7047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7047,
+      "title": "tests): stop debug cargo test stack overflows, and name the missing 127.0.0.2 al",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "344a95f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:29:52.127Z"
     }
   },
   "aliases": {

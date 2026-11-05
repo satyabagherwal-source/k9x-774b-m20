@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-C9G4",
-    "timestamp": "2026-11-03T15:54:45.076Z",
-    "repository": "pingcap/talent-plan",
-    "learningId": "learn-github-pingcap-talent-plan",
-    "contentHash": "a40c4f3b451ac0067309aa8f8f0c064c679ce36678a247b71b843f75b2c26536",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-C9NJ",
-    "timestamp": "2026-11-03T15:54:45.343Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "3419dc50c77549821d4bff1b3b33213d9b95a91f72f27c7280abfac1aa64ddd6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-KYZB",
-    "timestamp": "2026-11-03T16:01:31.415Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "d4003470024263fc674d412d83ade452e0e77b71aeed323f5b97aa5e5ee23178",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-KZ0S",
     "timestamp": "2026-11-03T16:01:31.468Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7445,51 @@
     "repository": "meshery/meshery",
     "learningId": "learn-github-meshery-meshery",
     "contentHash": "797008e51d6ef3289279f775feb6b9c34f05df4a4e5cb47804e9c398823161bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-69BG",
+    "timestamp": "2026-11-05T00:29:38.092Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-6E1Q",
+    "timestamp": "2026-11-05T00:29:44.222Z",
+    "repository": "pointfreeco/swift-composable-architecture",
+    "learningId": "learn-github-pointfreeco-swift-composable-architecture",
+    "contentHash": "d41f09d65ebfc55fa5c4638492508d2a0343848d74fa66378f89fbbf598bcbce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-6K7S",
+    "timestamp": "2026-11-05T00:29:52.216Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
