@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:07:56.824Z",
+  "last_updated": "2026-11-05T18:15:31.500Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16434,8 +16434,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "e9779b6f",
-      "content_hash": "fcaa4c202f436aeb9f3183a49a1ee4eb30ae6a374d18d68c1d673657ecea8414",
+      "source_version": "20d58d49",
+      "content_hash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -16510,7 +16510,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:58:52.577Z",
+      "verified_at": "2026-11-05T18:15:18.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38800,11 +38800,16 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "59d4d4ca",
-      "content_hash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
+      "source_version": "73a365c0",
+      "content_hash": "49bae958ccf45e79b9cbba50d65e1be4c8aa1209f5271a2ac55d196f9d9bce2b",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "bump k8s testing ref to 1.37 (#15740)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2183,
           "title": "build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686)",
@@ -38851,7 +38856,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:40:00.786Z",
+      "verified_at": "2026-11-05T18:15:24.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51712,11 +51717,16 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "c407b590",
-      "content_hash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
+      "source_version": "0c03d749",
+      "content_hash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "return an error when a stored definition fails to parse (#27823)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1881,
           "title": "stream): support changelog over a singleton input (#27524)",
@@ -51798,7 +51808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:47:47.946Z",
+      "verified_at": "2026-11-05T18:15:31.471Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

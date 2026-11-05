@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GWZD",
-    "timestamp": "2026-11-04T17:10:01.465Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "393ce61c65ae263db8d09173f6bebf28abdb525914c6044cdfe73a53f3c0142c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-H07Y",
-    "timestamp": "2026-11-04T17:10:05.662Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-H6F4",
-    "timestamp": "2026-11-04T17:10:13.696Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "fc612bcdc098d99fbe55f5a54d06f07fa95cbb55bfc0e4594919f4399d76769c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-R0JR",
     "timestamp": "2026-11-04T17:17:52.648Z",
     "repository": "Ataraxy-Labs/sem",
@@ -7490,6 +7445,51 @@
     "repository": "meta/folly",
     "learningId": "learn-github-meta-folly",
     "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8PU4",
+    "timestamp": "2026-11-05T18:15:18.220Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-8V45",
+    "timestamp": "2026-11-05T18:15:25.061Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "49bae958ccf45e79b9cbba50d65e1be4c8aa1209f5271a2ac55d196f9d9bce2b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-9069",
+    "timestamp": "2026-11-05T18:15:31.617Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

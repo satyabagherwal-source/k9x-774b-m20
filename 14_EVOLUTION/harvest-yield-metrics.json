@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:07:56.913Z",
-  "total_cycles_completed": 7719,
-  "total_learnings_persisted": 7719,
-  "total_rules_promoted": 7362,
+  "last_updated": "2026-11-05T18:15:31.627Z",
+  "total_cycles_completed": 7722,
+  "total_learnings_persisted": 7722,
+  "total_rules_promoted": 7364,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:21:35.359Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:28:51.538Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:28:57.472Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:28:58.256Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-05T18:07:56.913Z",
       "repository": "meta/folly",
       "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:15:18.232Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:15:25.072Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:15:31.627Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

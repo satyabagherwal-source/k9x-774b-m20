@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T18:08:01.900Z",
-    "lastVerified": "2026-11-05T18:08:01.900Z",
+    "lastChecked": "2026-11-05T18:15:34.194Z",
+    "lastVerified": "2026-11-05T18:15:34.194Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T17:36:42.036Z",
-    "lastVerified": "2026-11-05T17:36:42.036Z",
+    "lastChecked": "2026-11-05T18:15:26.113Z",
+    "lastVerified": "2026-11-05T18:15:26.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1450,9 +1450,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-05T13:55:01.397Z",
+    "lastChecked": "2026-11-05T18:15:21.112Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-05T13:55:01.397Z"
+    "lastVerified": "2026-11-05T18:15:21.112Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4305,14 +4305,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T02:47:47.286Z",
-    "lastVerified": "2026-11-05T02:47:47.286Z",
+    "lastChecked": "2026-11-05T18:15:29.736Z",
+    "lastVerified": "2026-11-05T18:15:29.736Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
+    "contentHash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7168,14 +7168,14 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T03:40:00.071Z",
-    "lastVerified": "2026-11-05T03:40:00.071Z",
+    "lastChecked": "2026-11-05T18:15:23.612Z",
+    "lastVerified": "2026-11-05T18:15:23.612Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
+    "contentHash": "49bae958ccf45e79b9cbba50d65e1be4c8aa1209f5271a2ac55d196f9d9bce2b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8784,14 +8784,14 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-04T22:58:52.464Z",
-    "lastVerified": "2026-11-04T22:58:52.464Z",
+    "lastChecked": "2026-11-05T18:15:16.637Z",
+    "lastVerified": "2026-11-05T18:15:16.637Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "fcaa4c202f436aeb9f3183a49a1ee4eb30ae6a374d18d68c1d673657ecea8414",
+    "contentHash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
     "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9262,9 +9262,9 @@
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
     "officialUrl": "https://github.com/MelnixDev/seo-crawl-audit",
-    "lastChecked": "2026-11-02T14:39:10.381Z",
+    "lastChecked": "2026-11-05T18:15:13.593Z",
     "revisionIdentifier": "082076c",
-    "lastVerified": "2026-11-02T14:39:10.381Z"
+    "lastVerified": "2026-11-05T18:15:13.593Z"
   },
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
@@ -11601,9 +11601,9 @@
   "alexdrone-render": {
     "name": "Render",
     "officialUrl": "https://github.com/alexdrone/Render",
-    "lastChecked": "2026-11-03T17:45:42.594Z",
+    "lastChecked": "2026-11-05T18:15:16.043Z",
     "revisionIdentifier": "0955baef",
-    "lastVerified": "2026-11-03T17:45:42.594Z"
+    "lastVerified": "2026-11-05T18:15:16.043Z"
   },
   "scrapinghub-dateparser": {
     "name": "scrapinghub/dateparser",

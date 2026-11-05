@@ -7751,3 +7751,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-05T18:00:52.151Z |
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-05T18:07:50.425Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `4661544e` | Multi-dimensional audit evidence | 2026-11-05T18:07:56.908Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `20d58d49` | Multi-dimensional audit evidence | 2026-11-05T18:15:18.224Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `73a365c0` | Multi-dimensional audit evidence | 2026-11-05T18:15:25.065Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `0c03d749` | Multi-dimensional audit evidence | 2026-11-05T18:15:31.621Z |
