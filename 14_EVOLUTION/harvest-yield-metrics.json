@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T19:52:52.896Z",
-  "total_cycles_completed": 7752,
-  "total_learnings_persisted": 7752,
-  "total_rules_promoted": 7397,
+  "last_updated": "2026-11-05T20:00:14.000Z",
+  "total_cycles_completed": 7754,
+  "total_learnings_persisted": 7754,
+  "total_rules_promoted": 7399,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:02:56.130Z",
-      "repository": "thebaselab/codeapp",
-      "learningId": "learn-github-thebaselab-codeapp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:03:34.126Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:03:43.135Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T19:52:52.896Z",
       "repository": "kube-rs/kube",
       "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T20:00:12.121Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T20:00:14.000Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

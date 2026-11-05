@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-IU83",
-    "timestamp": "2026-11-04T18:35:30.051Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "7ed17eed171b397e4eb17a2004eb24d14206a6077fa29d3ce746037b8a84986e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-J4W9",
-    "timestamp": "2026-11-04T18:35:43.881Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "bf84840f9823a3cbeed80dfc1cc52451df8c55d4949efc1b9c64c71c238cfef3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-J80L",
     "timestamp": "2026-11-04T18:35:47.925Z",
     "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "kube-rs/kube",
     "learningId": "learn-github-kube-rs-kube",
     "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ZM8E",
+    "timestamp": "2026-11-05T20:00:12.110Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-ZNOL",
+    "timestamp": "2026-11-05T20:00:13.989Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

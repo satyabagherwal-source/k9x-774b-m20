@@ -7784,3 +7784,5 @@ Every entry in this ledger must capture:
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `aa861529` | Multi-dimensional audit evidence | 2026-11-05T19:45:27.232Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3ea3f553` | Multi-dimensional audit evidence | 2026-11-05T19:45:34.733Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `660c438c` | Multi-dimensional audit evidence | 2026-11-05T19:52:52.890Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `9852feb1` | Multi-dimensional audit evidence | 2026-11-05T20:00:12.114Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `37d22916` | Multi-dimensional audit evidence | 2026-11-05T20:00:13.993Z |

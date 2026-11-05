@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "a8e47203",
+    "sourceVersion": "37d22916",
     "license": "Apache-2.0",
-    "contentHash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
-    "lastHarvestedAt": "2026-11-05T05:23:56.521Z",
+    "contentHash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
+    "lastHarvestedAt": "2026-11-05T20:00:13.993Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "bff57fd2",
+    "sourceVersion": "9852feb1",
     "license": "GPL-3.0",
-    "contentHash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
-    "lastHarvestedAt": "2026-11-03T20:13:01.473Z",
+    "contentHash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
+    "lastHarvestedAt": "2026-11-05T20:00:12.114Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

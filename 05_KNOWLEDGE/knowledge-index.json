@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T19:52:52.786Z",
+  "last_updated": "2026-11-05T20:00:13.886Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15014,11 +15014,16 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "a8e47203",
-      "content_hash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
+      "source_version": "37d22916",
+      "content_hash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "duplicate label for node name (#15971)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2267,
           "title": "[GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)",
@@ -15130,7 +15135,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:23:56.411Z",
+      "verified_at": "2026-11-05T20:00:13.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60302,11 +60307,16 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "bff57fd2",
-      "content_hash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
+      "source_version": "9852feb1",
+      "content_hash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "(bug) Keep input responsive when key events queue up behind a slow main thread (",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3012,
           "title": "Build CI and releases with Xcode 27.1 (#1636)",
@@ -60338,7 +60348,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T20:13:01.364Z",
+      "verified_at": "2026-11-05T20:00:11.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

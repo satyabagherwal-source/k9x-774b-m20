@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T19:52:55.479Z",
-    "lastVerified": "2026-11-05T19:52:55.479Z",
+    "lastChecked": "2026-11-05T20:00:16.583Z",
+    "lastVerified": "2026-11-05T20:00:16.583Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -218,9 +218,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-05T15:52:08.601Z",
+    "lastChecked": "2026-11-05T20:00:07.619Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-05T15:52:08.601Z"
+    "lastVerified": "2026-11-05T20:00:07.619Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T19:29:39.131Z",
+    "lastChecked": "2026-11-05T20:00:12.688Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T19:29:39.131Z"
+    "lastVerified": "2026-11-05T20:00:12.688Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -904,14 +904,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T05:23:49.516Z",
-    "lastVerified": "2026-11-05T05:23:49.516Z",
+    "lastChecked": "2026-11-05T20:00:12.451Z",
+    "lastVerified": "2026-11-05T20:00:12.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
+    "contentHash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1111,9 +1111,9 @@
   "burntsushi-ripgrep": {
     "name": "ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
-    "lastChecked": "2026-11-05T00:36:32.654Z",
+    "lastChecked": "2026-11-05T19:59:57.780Z",
     "revisionIdentifier": "91f5d22e",
-    "lastVerified": "2026-11-05T00:36:32.654Z"
+    "lastVerified": "2026-11-05T19:59:57.780Z"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "name": "meta-llama/Llama-3.1-8B-Instruct",
@@ -5222,9 +5222,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-05T04:36:11.287Z",
+    "lastChecked": "2026-11-05T20:00:10.061Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-05T04:36:11.287Z"
+    "lastVerified": "2026-11-05T20:00:10.061Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo",
@@ -9440,9 +9440,9 @@
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
-    "lastChecked": "2026-11-02T16:04:44.389Z",
+    "lastChecked": "2026-11-05T20:00:00.082Z",
     "revisionIdentifier": "fac4b75f20",
-    "lastVerified": "2026-11-02T16:04:44.389Z"
+    "lastVerified": "2026-11-05T20:00:00.082Z"
   },
   "vanniktech-gradle-maven-publish-plugin": {
     "name": "gradle-maven-publish-plugin",
@@ -11967,14 +11967,14 @@
     "officialUrl": "https://github.com/TypeWhisper/typewhisper-mac",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T20:11:07.571Z",
-    "lastVerified": "2026-11-03T20:11:07.571Z",
+    "lastChecked": "2026-11-05T20:00:08.977Z",
+    "lastVerified": "2026-11-05T20:00:08.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
+    "contentHash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

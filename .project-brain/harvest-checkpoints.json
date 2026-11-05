@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T19:52:52.900Z",
+  "last_updated": "2026-11-05T20:00:14.005Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
-      "verified_at": "2026-11-05T05:23:56.530Z",
+      "content_hash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
+      "verified_at": "2026-11-05T20:00:14.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:23:56.530Z"
+      "last_updated": "2026-11-05T20:00:14.004Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "fbfffc63d4f9d6af3de201c6bd49ee6a0a6ff262de341b0f8319a5ad35688a95",
-      "verified_at": "2026-11-03T20:13:01.482Z",
+      "content_hash": "01bab7f13cf2d01547d247b5a9b57764f9714bb595d5c02431177982990b3641",
+      "verified_at": "2026-11-05T20:00:12.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:13:01.482Z"
+      "last_updated": "2026-11-05T20:00:12.125Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",
