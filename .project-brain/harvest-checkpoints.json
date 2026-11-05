@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T19:22:23.812Z",
+  "last_updated": "2026-11-05T19:29:30.836Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
-      "verified_at": "2026-11-05T00:14:52.487Z",
+      "content_hash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
+      "verified_at": "2026-11-05T19:29:30.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:14:52.487Z"
+      "last_updated": "2026-11-05T19:29:30.835Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "562a38083d163e79584c84e02eacd1919cc087a3729a7680fb8fb46c63576140",
-      "verified_at": "2026-11-02T15:29:37.082Z",
+      "content_hash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
+      "verified_at": "2026-11-05T19:29:28.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:29:37.082Z"
+      "last_updated": "2026-11-05T19:29:28.268Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

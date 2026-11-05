@@ -7766,3 +7766,5 @@
 | `CYCLE-20261105-DWJU` | `2026-11-05T19:15:19.434Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fd76a1aa...`) |
 | `CYCLE-20261105-MSVW` | `2026-11-05T19:22:14.588Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb19e8d5...`) |
 | `CYCLE-20261105-MZZT` | `2026-11-05T19:22:23.801Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59cb5008...`) |
+| `CYCLE-20261105-W3I7` | `2026-11-05T19:29:28.255Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`8b890944...`) |
+| `CYCLE-20261105-W5HJ` | `2026-11-05T19:29:30.823Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7a6f5ab...`) |

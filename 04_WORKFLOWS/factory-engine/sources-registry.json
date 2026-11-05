@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T19:22:26.395Z",
-    "lastVerified": "2026-11-05T19:22:26.395Z",
+    "lastChecked": "2026-11-05T19:29:39.142Z",
+    "lastVerified": "2026-11-05T19:29:39.142Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T19:00:21.500Z",
+    "lastChecked": "2026-11-05T19:29:39.131Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T19:00:21.500Z"
+    "lastVerified": "2026-11-05T19:29:39.131Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -510,8 +510,8 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T04:50:37.110Z",
-    "lastVerified": "2026-11-05T04:50:37.110Z",
+    "lastChecked": "2026-11-05T19:29:31.681Z",
+    "lastVerified": "2026-11-05T19:29:31.681Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -856,12 +856,12 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T00:14:51.541Z",
-    "lastVerified": "2026-11-05T00:14:51.541Z",
+    "lastChecked": "2026-11-05T19:29:29.503Z",
+    "lastVerified": "2026-11-05T19:29:29.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
+    "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -2306,8 +2306,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T15:20:38.886Z",
-    "lastVerified": "2026-11-05T15:20:38.886Z",
+    "lastChecked": "2026-11-05T19:29:34.179Z",
+    "lastVerified": "2026-11-05T19:29:34.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4960,9 +4960,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-05T04:07:19.813Z",
+    "lastChecked": "2026-11-05T19:29:36.646Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-05T04:07:19.813Z"
+    "lastVerified": "2026-11-05T19:29:36.646Z"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -9399,12 +9399,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-02T15:29:30.976Z",
-    "lastVerified": "2026-11-02T15:29:30.976Z",
+    "lastChecked": "2026-11-05T19:29:27.030Z",
+    "lastVerified": "2026-11-05T19:29:27.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "562a38083d163e79584c84e02eacd1919cc087a3729a7680fb8fb46c63576140",
+    "contentHash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11860,9 +11860,9 @@
   "rafsoh-dimeapp": {
     "name": "dimeApp",
     "officialUrl": "https://github.com/rafsoh/dimeApp",
-    "lastChecked": "2026-11-03T19:24:10.268Z",
+    "lastChecked": "2026-11-05T19:29:29.180Z",
     "revisionIdentifier": "0463cb8c",
-    "lastVerified": "2026-11-03T19:24:10.268Z"
+    "lastVerified": "2026-11-05T19:29:29.180Z"
   },
   "preactjs-preact": {
     "name": "preactjs/preact",

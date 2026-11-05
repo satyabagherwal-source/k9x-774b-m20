@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "6bdbadfd",
+    "sourceVersion": "f7683239",
     "license": "Apache-2.0",
-    "contentHash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
-    "lastHarvestedAt": "2026-11-05T00:14:52.471Z",
+    "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
+    "lastHarvestedAt": "2026-11-05T19:29:30.826Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -11455,8 +11455,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceVersion": "hf-liquidai-lfm3-vl-2b",
     "license": "Open-Source",
-    "contentHash": "562a38083d163e79584c84e02eacd1919cc087a3729a7680fb8fb46c63576140",
-    "lastHarvestedAt": "2026-11-02T15:29:37.073Z",
+    "contentHash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
+    "lastHarvestedAt": "2026-11-05T19:29:28.259Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {

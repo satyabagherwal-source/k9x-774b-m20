@@ -7775,3 +7775,5 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `f8221ca5` | Multi-dimensional audit evidence | 2026-11-05T19:15:19.438Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9846078c` | Multi-dimensional audit evidence | 2026-11-05T19:22:14.591Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8aa18b51` | Multi-dimensional audit evidence | 2026-11-05T19:22:23.804Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T19:29:28.259Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `f7683239` | Multi-dimensional audit evidence | 2026-11-05T19:29:30.826Z |

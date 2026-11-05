@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T19:22:23.809Z",
-  "total_cycles_completed": 7743,
-  "total_learnings_persisted": 7743,
-  "total_rules_promoted": 7387,
+  "last_updated": "2026-11-05T19:29:30.832Z",
+  "total_cycles_completed": 7745,
+  "total_learnings_persisted": 7745,
+  "total_rules_promoted": 7388,
   "history": [
-    {
-      "timestamp": "2026-11-05T07:27:55.284Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T07:34:40.067Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T07:34:50.067Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T19:22:23.809Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:29:28.264Z",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T19:29:30.832Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-QYFS",
-    "timestamp": "2026-11-04T18:13:49.144Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "ceaaad5e1b953b20dc3f03a1fc0a699bcec104db7e724d0e1b55614af9075363",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-R3IP",
-    "timestamp": "2026-11-04T18:13:55.729Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "979a99bd4a8c408b5d4b768e97e37c880c9cda8362435916ca1e1d910d109a1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-0Z0W",
     "timestamp": "2026-11-04T18:21:36.464Z",
     "repository": "unsloth/flint-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "59cb5008ddd79869fe3f83fbb0b638adf795c90bce17902fcb58682c008a72d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-W3I7",
+    "timestamp": "2026-11-05T19:29:28.255Z",
+    "repository": "LiquidAI/LFM3-VL-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+    "contentHash": "8b890944eb7ad12f7fbee2a3f9a74826b99eaf5f2ca3726ccf0436850320c724",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-W5HJ",
+    "timestamp": "2026-11-05T19:29:30.823Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "b7a6f5ab671c7ec9796f2831b449490fefeabf3c47f30510db73b23e9c7a9aed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
