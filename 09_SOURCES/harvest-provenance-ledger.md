@@ -7636,3 +7636,5 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `a2cbf561` | Multi-dimensional audit evidence | 2026-11-05T11:08:28.808Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `c46b58f7` | Multi-dimensional audit evidence | 2026-11-05T11:08:37.156Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-05T11:09:32.410Z |
+| `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `86599b9d` | Multi-dimensional audit evidence | 2026-11-05T11:16:44.556Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-05T11:16:51.722Z |

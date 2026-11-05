@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "04faaac258ae8796487b67c6b1d1e9122613de6d9f55c462cfb7d54c186f8d58",
-    "lastHarvestedAt": "2026-10-31T20:31:54.094Z",
+    "contentHash": "f94fb6f14053168518408b820f46001cfada905b2c9fe5c4429fbc87e63a747d",
+    "lastHarvestedAt": "2026-11-05T11:16:51.722Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "4e7e4b1d",
+    "sourceVersion": "86599b9d",
     "license": "Apache-2.0",
-    "contentHash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
-    "lastHarvestedAt": "2026-11-02T16:18:45.707Z",
+    "contentHash": "12d2804ee3fcb38750be021f0070260aab45669afce25bfc85ecf13ae7202900",
+    "lastHarvestedAt": "2026-11-05T11:16:44.556Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {

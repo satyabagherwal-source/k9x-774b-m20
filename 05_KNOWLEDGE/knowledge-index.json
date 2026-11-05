@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T11:09:32.294Z",
+  "last_updated": "2026-11-05T11:16:51.632Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26005,7 +26005,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "04faaac258ae8796487b67c6b1d1e9122613de6d9f55c462cfb7d54c186f8d58",
+      "content_hash": "f94fb6f14053168518408b820f46001cfada905b2c9fe5c4429fbc87e63a747d",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -26083,6 +26083,21 @@
           "number": 5111,
           "title": "Custom Quantization Calibration for Low-Bit GGUF Export",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7200,
+          "title": "Strict Fact-Preservation in Generative Rewriting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7201,
+          "title": "Hybrid Sliding Window Attention for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7202,
+          "title": "Dual-Metric Evaluation for Stylistic Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26102,7 +26117,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-31T20:31:53.980Z",
+      "verified_at": "2026-11-05T11:16:51.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41824,8 +41839,8 @@
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "4e7e4b1d",
-      "content_hash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
+      "source_version": "86599b9d",
+      "content_hash": "12d2804ee3fcb38750be021f0070260aab45669afce25bfc85ecf13ae7202900",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "promoted_rules": [
@@ -41843,6 +41858,11 @@
           "number": 6450,
           "title": "deps): update dependency org.jetbrains:markdown to v0.7.18 (#660)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7199,
+          "title": "Merge pull request #661 from keta1/test/fix-detached-placement-test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41850,7 +41870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:18:45.598Z",
+      "verified_at": "2026-11-05T11:16:44.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181899,6 +181919,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T11:08:37.040Z"
+    },
+    "rule-7199": {
+      "learning_id": "rule-7199",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7199,
+      "title": "Merge pull request #661 from keta1/test/fix-detached-placement-test",
+      "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "source_version": "86599b9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:16:44.441Z"
+    },
+    "rule-7200": {
+      "learning_id": "rule-7200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7200,
+      "title": "Strict Fact-Preservation in Generative Rewriting",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:16:51.609Z"
+    },
+    "rule-7201": {
+      "learning_id": "rule-7201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7201,
+      "title": "Hybrid Sliding Window Attention for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:16:51.609Z"
+    },
+    "rule-7202": {
+      "learning_id": "rule-7202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7202,
+      "title": "Dual-Metric Evaluation for Stylistic Models",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T11:16:51.609Z"
     }
   },
   "aliases": {
