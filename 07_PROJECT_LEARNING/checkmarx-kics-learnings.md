@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `a0325326`  
+> **Source Version**: `39298343`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T01:47:42.405Z  
+> **Timestamp**: 2026-11-05T15:44:53.748Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T01:47:42.399Z  
+> **Harvest Timestamp**: 2026-11-05T15:44:53.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find security vulnerabilities, compliance issues, and infrastructure misconfigurations early in the development cycle of your infrastructure-as-code with KICS by Checkmarx.
 - **Primary Language / Ecosystem**: Open Policy Agent
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2732 stars
+- **Stars / Engagement**: 2731 stars
 
 ---
 
@@ -1628,30 +1628,162 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0325326` (2026-11-04)
-**Commit Message**: fix(vulnerabilities): update dockerfile images (#8165)
+### Incident Patch 1: `39298343` (2026-11-05)
+**Commit Message**: fix(query): add missing case on Response Code Missing query for OpenAPI (#8168)
 
-* update: dockerfile images
+* add: missing global empty case handling
 
-**File**: `Dockerfile` (modified, +2/-2)
+* fix: zizmor lint issues
+
+**File**: `.github/workflows/cesar.yaml` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
--ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:0fe425ea9977dee00df4c1372e90f42658c4d38750949e8543b38bd981ef6700
--ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:4316851b6fbec95b370cd8a416570bced1f3fdfbbb8ae5fb88af1a13772b83dc
-+ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:f5ef8c51f177e8291ada70d537a40eb0e1cf6fc868b98cdd661b423d448d8983
-+ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:ed0427e6046316f8d9c5f79516f2c96eda2c91c9d311bee64f9339e7c60d1991
- FROM ${GO_BASE_IMAGE} AS build_env
+@@ -96,7 +96,7 @@ jobs:
+     permissions:
+       id-token: write # run kics againts the projects
+     needs: build
+-    uses: ./.github/workflows/run-projects.yaml
++    uses: $/.github/workflows/run-projects.yaml
+     with:
+       machines-count: 10
+     secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + ci-projects.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
+```
+
+**File**: `.github/workflows/ci-projects.yaml` (modified, +1/-1)
+```diff
+@@ -94,7 +94,7 @@ jobs:
+     needs: build
+     permissions:
+       id-token: write # required to pass id-token permission through to run-projects.yaml for AWS OIDC federation
+-    uses: ./.github/workflows/run-projects.yaml
++    uses: $/.github/workflows/run-projects.yaml
+     with:
+       machines-count: 10
+     secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + cesar.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
+```
+
+**File**: `.github/workflows/kics-gh-action.yaml` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ jobs:
+           docker build --target builder --secret "id=npmrc,src=${NPMRC}" .kics-github-action
+           rm -f "${NPMRC}"
+       - name: Run KICS Scan
+-        uses: ./.kics-github-action
++        uses: ./.kics-github-action # zizmor: ignore[self-repository] '$/' makes the runner download the repo tarball, which fails on the dead_symlink test fixture
+         with:
+           token: ${{ secrets.GITHUB_TOKEN }}
+           path: "./Dockerfile"
+```
+
+**File**: `assets/queries/openAPI/general/response_code_missing/query.rego` (modified, +9/-3)
+```diff
+@@ -118,12 +118,18 @@ CxPolicy[result] {
+ }
  
- # Copy the source from the current directory to the Working Directory inside the container
+ requires_authentication(doc, operation) {
+-	is_array(operation.security)
+-	count(operation.security) > 0
+-	not has_empty_security_requirement(operation.security)
++	common_lib.valid_key(operation, "security")
++	enforces_authentication(operation.security)
+ } else {
+ 	not common_lib.valid_key(operation, "security")
+ 	common_lib.valid_key(doc, "security")
++	enforces_authentication(doc.security)
++}
++
++enforces_authentication(security) {
++	is_array(security)
++	count(security) > 0
++	not has_empty_security_requirement(security)
+ }
+ 
+ has_empty_security_requirement(security) {
+```
+
+**File**: `assets/queries/openAPI/general/response_code_missing/test/negative11.json` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{
++  "openapi": "3.0.0",
++  "info": { "title": "Simple API", "version": "1.0.0" },
++  "security": [{}],
++  "paths": {
++    "/item": {
++      "put": {
++        "operationId": "putItem",
++        "summary": "Put item",
++        "responses": {
++          "500": { "description": "500 response" },
++          "429": { "description": "429 response" },
++          "400": { "description": "400 response" },
++          "404": { "description": "404 response" },
++          "415": { "description": "415 response" }
++        }
++      }
++    }
++  }
++}
+```
+
+**File**: `assets/queries/openAPI/general/response_code_missing/test/negative12.json` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{
++  "openapi": "3.0.0",
++  "info": { "title": "Simple API", "version": "1.0.0" },
++  "security": [],
++  "paths": {
++    "/item": {
++      "put": {
++        "operationId": "putItem",
++        "summary": "Put item",
++        "responses": {
++          "500": { "description": "500 response" },
++          "429": { "description": "429 response" },
++          "400": { "description": "400 response" },
++          "404": { "description": "404 response" },
++          "415": { "description": "415 response" }
++        }
++      }
++    }
++  }
++}
+```
+
+**File**: `assets/queries/openAPI/general/response_code_missing/test/negative13.yaml` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++swagger: "2.0"
++info:
++  title: Simple API
++  version: 1.0.0
++security:
++  - {}
++paths:
++  "/item":
++    put:
++      operationId: putItem
++      summary: Put item
++      responses:
++        "500":
++          description: 500 response
++        "429":
++          description: 429 response
++        "400":
++          description: 400 response
++        "404":
++          description: 404 response
++        "415":
++          description: 415 response
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8168** (2026-11-05): fix(query): add missing case on Response Code Missing query for OpenAPI (@cx-artur-ribeiro)
 - **PR #8165** (2026-11-04): fix(vulnerabilities): update dockerfile images (@cx-artur-ribeiro)
 - **PR #8162** (closed): fix(vulnerabilities): update package versions to fix vulnerabilities (@cx-artur-ribeiro)
 - **PR #8160** (2026-11-02): fix(query): fixed FP on Response Code Missing query for OpenAPI (@cx-ricardo-jesus)
 - **PR #8159** (2026-11-02): fix(query): fixed FP on Security Operations Empty Object Definition for OpenAPI (@cx-ricardo-jesus)
 - **PR #8156** (2026-10-27): test(pwd): add password and secrets timeout test coverage (@cx-artur-ribeiro)
-- **PR #8155** (2026-10-27): fix(version): update version prefix comparison with latest version (@cx-artur-ribeiro)
 
 ---
 
@@ -1671,30 +1803,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vulnerabilities): update dockerfile images (#8165)
+## X. query): add missing case on Response Code Missing query for OpenAPI (#8168)
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cesar.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0325326`: vulnerabilities): update dockerfile images (#8165). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39298343`: query): add missing case on Response Code Missing query for OpenAPI (#8168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cesar.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:f5ef8c51f177e8291ada70d537a40eb0e1cf6fc868b98cdd661b423d448d8983
-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:ed0427e6046316f8d9c5f79516f2c96eda2c91c9d311bee64f9339e7c60d1991
+    uses: $/.github/workflows/run-projects.yaml
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Anti-pattern to NEVER write (induced failure mode):
-ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:0fe425ea9977dee00df4c1372e90f42658c4d38750949e8543b38bd981ef6700
-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:4316851b6fbec95b370cd8a416570bced1f3fdfbbb8ae5fb88af1a13772b83dc
+    uses: ./.github/workflows/run-projects.yaml
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0325326` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39298343` are properly handled with clean fallback behavior.

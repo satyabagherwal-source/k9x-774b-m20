@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "bdf88a0b14d4f7db083962bac9190d5498ba733edf3da9753bf8fff4e673f836",
-    "lastHarvestedAt": "2026-11-01T01:16:36.520Z",
+    "contentHash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
+    "lastHarvestedAt": "2026-11-05T15:44:44.332Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "a0325326",
+    "sourceVersion": "39298343",
     "license": "Apache-2.0",
-    "contentHash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
-    "lastHarvestedAt": "2026-11-05T01:47:43.063Z",
+    "contentHash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
+    "lastHarvestedAt": "2026-11-05T15:44:54.381Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {

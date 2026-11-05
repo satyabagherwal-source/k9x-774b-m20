@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-K3XT",
-    "timestamp": "2026-11-04T10:12:36.209Z",
-    "repository": "bee-san/Ciphey",
-    "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "3605c59669503808ff14909f593cd796381d82c8d265c53121699906d38c71fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-K64Q",
-    "timestamp": "2026-11-04T10:12:39.050Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "3c130a3170e5873012aa3ba8965d447c226a525352411cee578138bbf8f2e06d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-TWFL",
     "timestamp": "2026-11-04T10:20:13.041Z",
     "repository": "meta/docusaurus",
@@ -7492,6 +7462,36 @@
     "contentHash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-V38O",
+    "timestamp": "2026-11-05T15:44:44.328Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-VAZU",
+    "timestamp": "2026-11-05T15:44:54.378Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

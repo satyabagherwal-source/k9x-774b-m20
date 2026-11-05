@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:37:38.230Z",
+  "last_updated": "2026-11-05T15:44:54.396Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "bdf88a0b14d4f7db083962bac9190d5498ba733edf3da9753bf8fff4e673f836",
-      "verified_at": "2026-11-01T01:16:36.530Z",
+      "content_hash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
+      "verified_at": "2026-11-05T15:44:44.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:16:36.530Z"
+      "last_updated": "2026-11-05T15:44:44.340Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
-      "verified_at": "2026-11-05T01:47:43.078Z",
+      "content_hash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
+      "verified_at": "2026-11-05T15:44:54.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:47:43.078Z"
+      "last_updated": "2026-11-05T15:44:54.396Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",

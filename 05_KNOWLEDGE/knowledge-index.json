@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T15:37:38.109Z",
+  "last_updated": "2026-11-05T15:44:54.308Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6929,8 +6929,8 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "a0325326",
-      "content_hash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
+      "source_version": "39298343",
+      "content_hash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
@@ -6963,6 +6963,11 @@
           "number": 7065,
           "title": "vulnerabilities): update dockerfile images (#8165)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7270,
+          "title": "query): add missing case on Response Code Missing query for OpenAPI (#8168)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6970,7 +6975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:47:42.969Z",
+      "verified_at": "2026-11-05T15:44:54.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71784,7 +71789,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "bdf88a0b14d4f7db083962bac9190d5498ba733edf3da9753bf8fff4e673f836",
+      "content_hash": "f71280bbaad120c9ecab88acb18317ae214e313a1669758fe5d8ca17e771b8cb",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -71864,7 +71869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:16:36.411Z",
+      "verified_at": "2026-11-05T15:44:44.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183337,6 +183342,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T15:37:36.210Z"
+    },
+    "rule-7270": {
+      "learning_id": "rule-7270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7270,
+      "title": "query): add missing case on Response Code Missing query for OpenAPI (#8168)",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "39298343",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:44:54.288Z"
     }
   },
   "aliases": {
