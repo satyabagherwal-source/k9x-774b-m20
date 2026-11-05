@@ -7710,3 +7710,4 @@
 | `CYCLE-20261105-LYG7` | `2026-11-05T15:37:38.215Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`5da2dea5...`) |
 | `CYCLE-20261105-V38O` | `2026-11-05T15:44:44.328Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`f71280bb...`) |
 | `CYCLE-20261105-VAZU` | `2026-11-05T15:44:54.378Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7270` | Yes (`9154310c...`) |
+| `CYCLE-20261105-4H3V` | `2026-11-05T15:52:02.203Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`36a516ab...`) |

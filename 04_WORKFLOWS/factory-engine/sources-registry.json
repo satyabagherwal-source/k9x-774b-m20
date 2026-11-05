@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T15:44:56.938Z",
-    "lastVerified": "2026-11-05T15:44:56.938Z",
+    "lastChecked": "2026-11-05T15:52:13.634Z",
+    "lastVerified": "2026-11-05T15:52:13.634Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-05T12:21:52.390Z",
+    "lastChecked": "2026-11-05T15:52:08.601Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-05T12:21:52.390Z"
+    "lastVerified": "2026-11-05T15:52:08.601Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -449,8 +449,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T15:20:43.801Z",
-    "lastVerified": "2026-11-05T15:20:43.801Z",
+    "lastChecked": "2026-11-05T15:52:13.621Z",
+    "lastVerified": "2026-11-05T15:52:13.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3488,9 +3488,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-05T01:08:00.394Z",
+    "lastChecked": "2026-11-05T15:52:11.145Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-05T01:08:00.394Z"
+    "lastVerified": "2026-11-05T15:52:11.145Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -6322,9 +6322,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-05T01:54:43.713Z",
+    "lastChecked": "2026-11-05T15:52:06.164Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-05T01:54:43.713Z"
+    "lastVerified": "2026-11-05T15:52:06.164Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8248,9 +8248,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-04T21:26:04.589Z",
+    "lastChecked": "2026-11-05T15:51:58.603Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-04T21:26:04.589Z"
+    "lastVerified": "2026-11-05T15:51:58.603Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -9019,12 +9019,12 @@
     "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T01:26:42.274Z",
-    "lastVerified": "2026-11-01T01:26:42.274Z",
+    "lastChecked": "2026-11-05T15:52:01.260Z",
+    "lastVerified": "2026-11-05T15:52:01.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "da0c0287161954f3b934b140ff470452d7358e83c3d064fcaddbf9f0913d5bbf",
+    "contentHash": "36a516abb71a2ecf12006538529ea13b8d1a054f388c95fa603424af6689352f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11300,9 +11300,9 @@
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",
     "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
-    "lastChecked": "2026-11-03T16:01:17.006Z",
+    "lastChecked": "2026-11-05T15:52:03.674Z",
     "revisionIdentifier": "0d07d106",
-    "lastVerified": "2026-11-03T16:01:17.006Z"
+    "lastVerified": "2026-11-05T15:52:03.674Z"
   },
   "encode-httpx": {
     "name": "httpx",

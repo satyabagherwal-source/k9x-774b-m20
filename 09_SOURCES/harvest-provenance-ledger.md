@@ -7719,3 +7719,4 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `eff29b1f` | Multi-dimensional audit evidence | 2026-11-05T15:37:38.219Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-05T15:44:44.332Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `39298343` | Multi-dimensional audit evidence | 2026-11-05T15:44:54.381Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-05T15:52:02.207Z |
