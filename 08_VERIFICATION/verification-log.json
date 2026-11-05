@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-W1Y1",
-    "timestamp": "2026-11-03T20:50:04.633Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "ee08a730d0a2c5d1e1b33757db3b85b4fba4930afa43bfd6ef62a774ce86040d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-8X58",
-    "timestamp": "2026-11-03T21:00:04.940Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-8ZBX",
     "timestamp": "2026-11-03T21:00:07.773Z",
     "repository": "webrecorder/pywb",
@@ -7490,6 +7460,36 @@
     "repository": "prometheus/prometheus",
     "learningId": "learn-github-prometheus-prometheus",
     "contentHash": "460e853077b6ec17492757ff913bf404dd6d3467c8c3536b1be1d0ef59f7a820",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-GRVX",
+    "timestamp": "2026-11-05T04:21:45.645Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-GSMF",
+    "timestamp": "2026-11-05T04:21:46.599Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

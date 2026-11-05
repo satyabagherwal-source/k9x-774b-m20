@@ -7500,3 +7500,5 @@
 | `CYCLE-20261105-Y7NL` | `2026-11-05T04:07:19.617Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7100` | Yes (`843695b4...`) |
 | `CYCLE-20261105-7EAH` | `2026-11-05T04:14:28.121Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`c5d20032...`) |
 | `CYCLE-20261105-7LXM` | `2026-11-05T04:14:38.026Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7101` | Yes (`460e8530...`) |
+| `CYCLE-20261105-GRVX` | `2026-11-05T04:21:45.645Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`18057e3c...`) |
+| `CYCLE-20261105-GSMF` | `2026-11-05T04:21:46.599Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7102` | Yes (`e3f7bb5a...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:14:38.048Z",
+  "last_updated": "2026-11-05T04:21:46.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,14 +1070,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
-      "verified_at": "2026-10-31T13:40:35.355Z",
+      "content_hash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
+      "verified_at": "2026-11-05T04:21:45.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:40:35.355Z"
+      "last_updated": "2026-11-05T04:21:45.666Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
-      "verified_at": "2026-11-04T01:34:51.026Z",
+      "content_hash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+      "verified_at": "2026-11-05T04:21:46.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:34:51.026Z"
+      "last_updated": "2026-11-05T04:21:46.620Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",

@@ -7509,3 +7509,5 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `f5cba99a` | Multi-dimensional audit evidence | 2026-11-05T04:07:19.619Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-05T04:14:28.132Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3ba92575` | Multi-dimensional audit evidence | 2026-11-05T04:14:38.030Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-05T04:21:45.656Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `cc6facab` | Multi-dimensional audit evidence | 2026-11-05T04:21:46.602Z |

@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
-    "lastHarvestedAt": "2026-10-31T13:40:35.347Z",
+    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
+    "lastHarvestedAt": "2026-11-05T04:21:45.656Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "f637446f",
+    "sourceVersion": "cc6facab",
     "license": "MIT",
-    "contentHash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
-    "lastHarvestedAt": "2026-11-04T01:34:51.017Z",
+    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+    "lastHarvestedAt": "2026-11-05T04:21:46.602Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T04:14:40.599Z",
-    "lastVerified": "2026-11-05T04:14:40.599Z",
+    "lastChecked": "2026-11-05T04:21:56.800Z",
+    "lastVerified": "2026-11-05T04:21:56.800Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -100,9 +100,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-11-04T08:57:34.884Z",
+    "lastChecked": "2026-11-05T04:21:49.346Z",
     "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-11-04T08:57:34.884Z"
+    "lastVerified": "2026-11-05T04:21:49.346Z"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T03:53:33.492Z",
+    "lastChecked": "2026-11-05T04:21:56.788Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T03:53:33.492Z"
+    "lastVerified": "2026-11-05T04:21:56.788Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2286,12 +2286,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T00:48:50.855Z",
-    "lastVerified": "2026-11-05T00:48:50.855Z",
+    "lastChecked": "2026-11-05T04:21:51.825Z",
+    "lastVerified": "2026-11-05T04:21:51.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2300,7 +2300,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "992052ee"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3137,14 +3138,14 @@
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T01:34:48.220Z",
-    "lastVerified": "2026-11-04T01:34:48.220Z",
+    "lastChecked": "2026-11-05T04:21:45.776Z",
+    "lastVerified": "2026-11-05T04:21:45.776Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
+    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4293,12 +4294,12 @@
     "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T13:40:34.334Z",
-    "lastVerified": "2026-10-31T13:40:34.334Z",
+    "lastChecked": "2026-11-05T04:21:44.516Z",
+    "lastVerified": "2026-11-05T04:21:44.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
+    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5054,9 +5055,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-04T08:02:55.221Z",
+    "lastChecked": "2026-11-05T04:21:54.264Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-04T08:02:55.221Z"
+    "lastVerified": "2026-11-05T04:21:54.264Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -9373,9 +9374,9 @@
   "react-native-maps-react-native-maps": {
     "name": "react-native-maps",
     "officialUrl": "https://github.com/react-native-maps/react-native-maps",
-    "lastChecked": "2026-10-31T21:46:02.402Z",
+    "lastChecked": "2026-11-05T04:21:46.935Z",
     "revisionIdentifier": "39c6fd17",
-    "lastVerified": "2026-10-31T21:46:02.402Z"
+    "lastVerified": "2026-11-05T04:21:46.935Z"
   },
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",

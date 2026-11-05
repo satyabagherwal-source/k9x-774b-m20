@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:14:37.935Z",
+  "last_updated": "2026-11-05T04:21:46.510Z",
   "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7588,8 +7588,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "f637446f",
-      "content_hash": "d180e3a6b4b612e57c75fbb09b8ec154e157ac5c6a9df110fd267765bcacf3fc",
+      "source_version": "cc6facab",
+      "content_hash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -7622,6 +7622,11 @@
           "number": 6703,
           "title": "fix dialogs not blocking certain events (#2300)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7102,
+          "title": "other: fix the windows gnullvm aarch64 build (#2302)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7629,7 +7634,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:34:50.910Z",
+      "verified_at": "2026-11-05T04:21:46.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25208,7 +25213,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "1cf75a7c29124a812adf25683b2825004c00c5eb408ec83f9f02dd0575c3c6e9",
+      "content_hash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "promoted_rules": [
@@ -25241,7 +25246,7 @@
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
       ],
-      "verified_at": "2026-10-31T13:40:35.248Z",
+      "verified_at": "2026-11-05T04:21:45.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179986,6 +179991,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:14:37.911Z"
+    },
+    "rule-7102": {
+      "learning_id": "rule-7102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7102,
+      "title": "other: fix the windows gnullvm aarch64 build (#2302)",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "cc6facab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:21:46.485Z"
     }
   },
   "aliases": {

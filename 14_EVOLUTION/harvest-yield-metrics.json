@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T04:14:38.036Z",
-  "total_cycles_completed": 7477,
-  "total_learnings_persisted": 7477,
-  "total_rules_promoted": 7156,
+  "last_updated": "2026-11-05T04:21:46.608Z",
+  "total_cycles_completed": 7479,
+  "total_learnings_persisted": 7479,
+  "total_rules_promoted": 7157,
   "history": [
-    {
-      "timestamp": "2026-11-04T19:33:52.813Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T19:33:58.065Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T19:41:24.419Z",
       "repository": "briaai/Fibo-2.0-dev",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T04:14:38.036Z",
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:21:45.662Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:21:46.608Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
