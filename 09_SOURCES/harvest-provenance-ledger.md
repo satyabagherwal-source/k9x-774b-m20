@@ -7502,3 +7502,6 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `bcf3dc11` | Multi-dimensional audit evidence | 2026-11-05T03:46:35.870Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `1193f14b` | Multi-dimensional audit evidence | 2026-11-05T03:53:31.265Z |
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-05T03:53:34.140Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-05T04:00:33.468Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `42758592` | Multi-dimensional audit evidence | 2026-11-05T04:00:35.174Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `da11df74` | Multi-dimensional audit evidence | 2026-11-05T04:00:44.018Z |

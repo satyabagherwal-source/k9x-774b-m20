@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `1e2e354e`  
+> **Source Version**: `da11df74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:28:35.217Z  
+> **Timestamp**: 2026-11-05T04:00:43.266Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:28:34.919Z  
+> **Harvest Timestamp**: 2026-11-05T04:00:43.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29179 stars
+- **Stars / Engagement**: 29181 stars
 
 ---
 
@@ -82,6 +82,18 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   // OpenSSL's libcrypto.so, and therefore shouldn't be loaded yet.
   if (dlsym(RTLD_DEFAULT, "OPENSSL_version_major") != NULL) {
     bssl_compat_error("libcrypto.so is already linked in\n");
+    exit(ELIBACC);
+  }
+
+  // Another sanity check to confirm that the dynamic loader cannot resolve the
+  // BoringSSL API symbols that we have implemented in the compatibility layer,
+  // such as SSL_read(). If such symbols are visible in the dynamic symbol
+  // table, then the OpenSSL code will get linked against them, when we load it,
+  // which is not what we want! Since there are many ways of achieving this with
+  // various different compile & link options, and such options can easily get
+  // modified or deleted over time, this check acts as a runtime safety net.
+  if (dlsym(RTLD_DEFAULT, "SSL_read") != NULL) {
+    bssl_compat_error("SSL_read() is visible prior to loading OpenSSL\n");
     exit(ELIBACC);
   }
 
@@ -142,7 +154,7 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   }
 
   // Load libcrypto.so first, because libssl.so depends on it.
-  if ((libcrypto = dlopen(libcrypto_path, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND)) == NULL) {
+  if ((libcrypto = dlopen(libcrypto_path, RTLD_NOW | RTLD_LOCAL)) == NULL) {
     bssl_compat_error("dlopen(%s) : %s\n", libcrypto_path, dlerror());
     exit(ELIBACC);
   }
@@ -172,10 +184,9 @@ void ossl_dlopen(int expected_major, int expected_minor) {
   }
 
   // Tell OpenSSL to use the tcmalloc malloc/realloc/free functions from the
-  // main executable. Without this, RTLD_DEEPBIND causes OpenSSL's allocations
-  // to resolve to glibc's malloc/realloc/free instead, resulting in OpenSSL
-  // using a completely separate heap. This defeats tcmalloc's performance
-  // benefits on the TLS hot path, and also makes all OpenSSL allocations
+  // main executable. OpenSSL uses its own allocator wrappers internally, so
+  // without this, OpenSSL allocations bypass tcmalloc, defeating its
+  // performance benefits on the TLS hot path and making OpenSSL allocations
   // invisible to tcmalloc's heap dumps.
   typedef int (*CRYPTO_set_mem_functions_fn)(
       void *(*malloc_fn)(size_t, const char *, int),
@@ -195,7 +206,7 @@ void ossl_dlopen(int expected_major, int expected_minor) {
 
   // Load libssl.so *after* calling CRYPTO_set_mem_functions() just in case
   // libssl.so has any library constructors that call OPENSSL_malloc().
-  if ((libssl = dlopen(libssl_path, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND)) == NULL) {
+  if ((libssl = dlopen(libssl_path, RTLD_NOW | RTLD_LOCAL)) == NULL) {
     bssl_compat_error("dlopen(%s) : %s\n", libssl_path, dlerror());
     exit(ELIBACC);
   }
@@ -1065,595 +1076,588 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0295a21` (2026-11-03)
-**Commit Message**: build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)
+### Incident Patch 1: `f54520db` (2026-11-04)
+**Commit Message**: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611)
 
-Bumps [actions/checkout](https://github.com/actions/checkout) from 7.0.0
-to 7.0.1.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/actions/checkout/releases">actions/checkout's
-releases</a>.</em></p>
-<blockquote>
-<h2>v7.0.1</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>skip running unsafe pr check if input is default by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2518">actions/checkout#2518</a></li>
-<li>trim only ascii whitespace for branch by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2521">actions/checkout#2521</a></li>
-<li>escape values passed to --unset by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2530">actions/checkout#2530</a></li>
-<li>Various dependency updates</li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/actions/checkout/compare/v7...v7.0.1">https://github.com/actions/checkout/compare/v7...v7.0.1</a></
+Commit Message: composite: fix use-after-free when an ECDS update
+replaces the filter while a stream is paused
 
-**File**: `.github/workflows/_codeql.yml` (modified, +1/-1)
+When `envoy.filters.http.composite` is delivered through ECDS
+(`config_discovery`), the dynamic filter config provider owns the only
+copies of the composite filter factory callback. The filter manager
+calls the provider's current callback when it creates a stream's filter
+chain, but it does not keep a copy. If an earlier filter pauses the
+stream, an ECDS update can destroy the callback before
+`Composite::Filter::decodeHeaders()` runs.
+
+* `Filter` stored a `FilterStats&` that pointed into the stats owned by
+the callback, so `handleAction()` incremented
+`filter_delegation_success` / `filter_delegation_error` through a
+dangling reference when the paused stream resumed. Filters now share
+ownership of the stats (`FilterStatsSharedPtr`).
+* Once the callback was gone, the filter could drop the last reference
+to the match tree and named filter chains on a worker thread. That
+destroyed the delegated filter factories there, including
+`dynamic_config` providers and their TLS slot
+
+**File**: `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst` (added, +7/-0)
 ```diff
-@@ -44,7 +44,7 @@ jobs:
-           /usr/local/lib/android
+@@ -0,0 +1,7 @@
++Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
++filter when it is configured through
++:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
++and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
++filter instances created from the previous configuration now share ownership of the filter stats,
++and the match tree and named filter chains they hold are released on the main thread, so that the
++delegated filter configurations are not destroyed on a worker thread.
+```
+
+**File**: `source/extensions/filters/http/composite/BUILD` (modified, +1/-0)
+```diff
+@@ -50,6 +50,7 @@ envoy_cc_extension(
+     srcs = ["config.cc"],
+     hdrs = ["config.h"],
+     deps = [
++        "//envoy/event:dispatcher_interface",
+         "//envoy/registry",
+         "//envoy/server:filter_config_interface",
+         "//source/extensions/filters/http/common:factory_base_lib",
+```
+
+**File**: `source/extensions/filters/http/composite/config.cc` (modified, +33/-5)
+```diff
+@@ -1,6 +1,7 @@
+ #include "source/extensions/filters/http/composite/config.h"
  
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+ #include "envoy/common/exception.h"
++#include "envoy/event/dispatcher.h"
+ #include "envoy/registry/registry.h"
+ #include "envoy/server/filter_config.h"
  
-     - name: Initialize CodeQL
-       uses: github/codeql-action/init@87557b9c84dde89fdd9b10e88954ac2f4248e463  # codeql-bundle-v4.36.1
-```
-
-**File**: `.github/workflows/_cve_fetch.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-     runs-on: ubuntu-24.04
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-     - name: Set vars
-       id: vars
-       run: |
-```
-
-**File**: `.github/workflows/_cve_scan.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-     runs-on: ubuntu-24.04
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-     - name: Set vars
-       id: vars
-       run: |
-```
-
-**File**: `.github/workflows/codeql-push.yml` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-       cpp_changed: ${{ steps.detect.outputs.cpp_changed }}
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-       with:
-         fetch-depth: 2
+@@ -12,6 +13,30 @@ namespace Extensions {
+ namespace HttpFilters {
+ namespace Composite {
  
-@@ -95,7 +95,7 @@ jobs:
-     runs-on: ubuntu-22.04
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
++namespace {
++
++// Returns a pointer that shares ownership of `ptr` and releases it on the main thread once the
++// last reference is dropped. The filter factory callback owns the match tree and the named filter
++// chains, but the filters it creates hold references to them too. When the callback is destroyed
++// first, e.g. by an ECDS update, the last reference is dropped by a filter on a worker thread,
++// whereas the delegated filter factories they own must be destroyed on the main thread.
++template <class T>
++std::shared_ptr<T> releaseOnMainThread(std::shared_ptr<T> ptr, Event::Dispatcher& main_dispatcher) {
++  if (ptr == nullptr) {
++    return nullptr;
++  }
++  T* raw = ptr.get();
++  return {raw, [owned = std::move(ptr), &main_dispatcher](T*) mutable {
++            if (main_dispatcher.isThreadSafe()) {
++              owned.reset();
++              return;
++            }
++            main_dispatcher.post([owned = std::move(owned)]() mutable { owned.reset(); });
++          }};
++}
++
++} // namespace
++
+ class MatchTreeValidationVisitor
+     : public Matcher::MatchTreeValidationVisitor<Envoy::Http::HttpMatchingData> {
+ public:
+@@ -89,7 +114,9 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
+   // Compile named filter chains with FactoryContext access.
+   auto named_chains_or_error = compileNamedFilterChains(proto_config, stats_prefix, context);
+   RETURN_IF_NOT_OK(named_chains_or_error.status());
+-  auto named_chains = std::move(named_chains_or_error.value());
++  Event::Dispatcher& main_dispatcher = context.serverFactoryContext().mainThreadDispatcher();
++  auto named_chains =
++      releaseOnMainThread(std::move(named_chains_or_error.value()), main_dispatcher);
  
-     # No-op analysis satisfies Scorecard SAST when no C++ changes are present.
-     - name: Initialize CodeQL (noop)
+   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr;
+   if (proto_config.has_matcher()) {
+@@ -101,15 +128,15 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
+         .server_factory_context_ = context.serverFactoryContext()};
+     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
+     RETURN_IF_NOT_OK(match_tree_or_error.status());
+-    match_tree = std::move(match_tree_or_error.value());
++    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()), main_dispatcher);
+   }
+ 
+   const auto& prefix = stats_prefix + "composite.";
+   auto stats = std::make_shared<FilterStats>(
+       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
+ 
+   return [stats, named_chains, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+-    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), false /* is_upstream */,
++    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), false /* is_upstream */,
+                                            match_tree, named_chains);
+     callbacks.addStreamFilter(filter);
+     callbacks.addAccessLogHandler(filter);
+@@ -134,7 +161,8 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
+ 
+     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
+     RETURN_IF_NOT_OK(match_tree_or_error.status());
+-    match_tree = std::move(match_tree_or_error.value());
++    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()),
++                                     context.serverFactoryContext().mainThreadDispatcher());
+   }
+ 
+   // This method is called for upstream filters.
+@@ -144,7 +172,7 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
+       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
+ 
+   return [stats, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
+-    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), true /* is_upstream */,
++    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), true /* is_upstream */,
+                                            match_tree, nullptr);
+     callbacks.addStreamFilter(filter);
+     callbacks.addAccessLogHandler(filter);
 ```
 
-**File**: `.github/workflows/copilot-setup-steps.yml` (modified, +1/-1)
+**File**: `source/extensions/filters/http/composite/filter.cc` (modified, +4/-4)
 ```diff
-@@ -21,7 +21,7 @@ jobs:
-         sudo rm -rf /usr/local/lib/android &
-         sudo rm -rf /usr/share/dotnet &
-     - name: Checkout code
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-     - name: Install deps
-       shell: bash
-       run: |
+@@ -165,7 +165,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+     }
+ 
+     if (!wrapper.filters_to_inject_.empty()) {
+-      stats_.filter_delegation_success_.inc();
++      stats_->filter_delegation_success_.inc();
+       delegated_filter_ =
+           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
+       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
+@@ -184,7 +184,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+   composite_action.createFilters(wrapper);
+ 
+   if (!wrapper.errors_.empty()) {
+-    stats_.filter_delegation_error_.inc();
++    stats_->filter_delegation_error_.inc();
+     ENVOY_LOG(debug, "failed to create delegated filter {}",
+               accumulateToString<absl::Status>(
+                   wrapper.errors_, [](const auto& status) { return status.ToString(); }));
+@@ -196,7 +196,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+   // Handle filter chain mode.
+   if (is_filter_chain) {
+     if (!wrapper.filters_to_inject_.empty()) {
+-      stats_.filter_delegation_success_.inc();
++      stats_->filter_delegation_success_.inc();
+       delegated_filter_ =
+           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
+       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
+@@ -211,7 +211,7 @@ void Filter::handleAction(const Matcher::Action& action) {
+ 
+   // Handle single filter mode.
+   if (wrapper.filter_to_inject_.has_value()) {
+-    stats_.filter_delegation_success_.inc();
++    stats_->filter_delegation_success_.inc();
+ 
+     auto createDelegatedFilterFn = Overloaded{
+         [this, action_name](Http::StreamDecoderFilterSharedPtr filter) {
 ```
 
-**File**: `.github/workflows/envoy-dependency.yml` (modified, +2/-2)
+**File**: `source/extensions/filters/http/composite/filter.h` (modified, +5/-3)
 ```diff
-@@ -183,7 +183,7 @@ jobs:
-     runs-on: ubuntu-24.04
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-     - name: Generate report
-       run: |
-         ./ci/run_envoy_docker.sh './ci/do_ci.sh deps.report' \
-@@ -355,7 +355,7 @@ jobs:
-       issues: write
-     steps:
-     - name: Checkout repository
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-     - name: Run dependency checker
-       run: |
-         TODAY_DATE=$(date -u -I"date")
+@@ -46,6 +46,7 @@ struct FactoryCallbacksWrapper;
+ struct FilterStats {
+   ALL_COMPOSITE_FILTER_STATS(GENERATE_COUNTER_STRUCT)
+ };
++using FilterStatsSharedPtr = std::shared_ptr<FilterStats>;
+ 
+ class MatchedActionInfo : public StreamInfo::FilterState::Object {
+ public:
+@@ -108,10 +109,10 @@ class Filter : public Http::StreamFilter,
+                public AccessLog::Instance,
+                Logger::Loggable<Logger::Id::filter> {
+ public:
+-  Filter(FilterStats& stats, Event::Dispatcher& dispatcher, bool is_upstream,
++  Filter(FilterStatsSharedPtr stats, Event::Dispatcher& dispatcher, bool is_upstream,
+          Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr,
+          NamedFilterChainFactoryMapSharedPtr named_filter_chains = nullptr)
+-      : dispatcher_(dispatcher), stats_(stats), is_upstream_(is_upstream),
++      : dispatcher_(dispatcher), stats_(std::move(stats)), is_upstream_(is_upstream),
+         match_tree_(std::move(match_tree)), named_filter_chains_(std::move(named_filter_chains)) {}
+ 
+   // Http::StreamDecoderFilter
+@@ -218,7 +219,8 @@ class Filter : public Http::StreamFilter,
+   Http::StreamFilterSharedPtr delegated_filter_;
+   Http::StreamEncoderFilterCallbacks* encoder_callbacks_{};
+   Http::StreamDecoderFilterCallbacks* decoder_callbacks_{};
+-  FilterStats& stats_;
++  // Shared with the filter factory callback, which an ECDS update may destroy before this filter.
++  const FilterStatsSharedPtr stats_;
+   // Filter in the upstream filter chain.
+   bool is_upstream_{false};
+   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree_;
 ```
 
-**File**: `.github/workflows/envoy-security-check.yml` (modified, +1/-1)
+**File**: `test/extensions/filters/http/composite/BUILD` (modified, +3/-0)
 ```diff
-@@ -101,7 +101,7 @@ jobs:
-     # SLACK
-     - name: Checkout repository (secure branch)
-       if: matrix.action == 'slack'
--      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-       with:
-         # Explicitly checkout main to avoid malicious code
-         ref: main
+@@ -17,6 +17,7 @@ envoy_extension_cc_test(
+     extension_names = ["envoy.filters.http.composite"],
+     rbe_pool = "linux_x64_small",
+     deps = [
++        "//source/common/common:cleanup_lib",
+         "//source/common/http:header_map_lib",
+         "//source/common/http/matching:data_impl_lib",
+         "//source/common/matcher:matcher_lib",
+@@ -56,7 +57,9 @@ envoy_extension_cc_test(
+         "//test/integration/filters:server_factory_context_filter_lib",
+         "//test/integration/filters:set_response_code_filter_config_proto_cc_proto",
+         "//test/integration/filters:set_response_code_filter_lib",
++        "//test/integration/filters:stop_in_headers_continue_in_data_filter_lib",
+         "//test/proto:helloworld_proto_cc_proto",
++        "@envoy_api//envoy/config/core/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/common/matching/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/filters/http/composite/v3:pkg_cc_proto",
+         "@envoy_api//envoy/extensions/filters/network/http_connection_manager/v3:pkg_cc_proto",
 ```
 
-**File**: `.github/workflows/mobile-release.yml` (modified, +1/-1)
+**File**: `test/extensions/filters/http/composite/composite_filter_integration_test.cc` (modified, +177/-0)
 ```diff
-@@ -109,7 +109,7 @@ jobs:
-         include:
-         - output: envoy
-     steps:
--    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-       with:
-         fetch-depth: 0
-     - name: Add safe directory
+@@ -1,6 +1,8 @@
+ #include <optional>
+ #include <string>
++#include <tuple>
+ 
++#include "envoy/config/core/v3/extension.pb.h"
+ #include "envoy/extensions/common/matching/v3/extension_matcher.pb.validate.h"
+ #include "envoy/extensions/filters/http/composite/v3/composite.pb.h"
+ #include "envoy/extensions/filters/network/http_connection_manager/v3/http_connection_manager.pb.h"
+@@ -1337,5 +1339,180 @@ TEST_P(NamedFilterChainIntegrationTest, TestMultipleNamedFilterChains) {
+   }
+ }
+ 
++// Delivers the composite filter itself through ECDS, behind a filter that pauses decoding until the
++// request body arrives. This allows replacing the composite filter configuration while a stream
++// that was created from the previous configuration is paused before the composite filter runs.
++class CompositeFilterEcdsIntegrationTest
++    : public testing::TestWithParam<Network::Address::IpVersion>,
++      public HttpIntegrationTest {
++public:
++  CompositeFilterEcdsIntegrationTest() : HttpIntegrationTest(Http::CodecType::HTTP1, GetParam()) {}
++
++  void TearDown() override { cleanUpXdsConnection(); }
++
++  void createUpstreams() override {
++    HttpIntegrationTest::createUpstreams();
++    // The ECDS upstream.
++    addFakeUpstream(Http::CodecType::HTTP2);
++  }
++
++  void initialize() override {
++    // The initial configuration delegates to a filter that is itself discovered dynamically, whose
++    // configuration provider must be destroyed on the main thread.
++    TestEnvironment::writeStringToFileForTest("set_response_code.yaml", R"EOF(
++resources:
++  - "@type": type.googleapis.com/envoy.config.core.v3.TypedExtensionConfig
++    name: set-response-code
++    typed_config:
++      "@type": type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
++      code: 403)EOF",
++                                              false);
++    const auto initial_config = compositeConfig(TestEnvironment::substitute(R"EOF(
++                    dynamic_config:
++                      name: set-response-code
++                      config_discovery:
++                        config_source:
++                          path_config_source:
++                            path: "{{ test_tmpdir }}/set_response_code.yaml"
++                        type_urls:
++                        - type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
++)EOF"));
++
++    config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
++      auto* ecds_cluster = bootstrap.mutable_static_resources()->add_clusters();
++      ecds_cluster->MergeFrom(bootstrap.static_resources().clusters()[0]);
++      ecds_cluster->set_name("ecds_cluster");
++      ecds_cluster->mutable_load_assignment()->set_cluster_name("ecds_cluster");
++      ConfigHelper::setHttp2(*ecds_cluster);
++    });
++    config_helper_.addConfigModifier([initial_config](ConfigHelper::HttpConnectionManager& hcm) {
++      auto* filter = hcm.add_http_filters();
++      filter->set_name("composite");
++      auto* discovery = filter->mutable_config_discovery();
++      discovery->add_type_urls(
++          "type.googleapis.com/envoy.extensions.filters.http.composite.v3.Composite");
++      // Serve the initial configuration as the default configuration, so that the listener
++      // does not have to wait for ECDS.
++      std::ignore = discovery->mutable_default_config()->PackFrom(initial_config);
++      discovery->set_apply_default_config_without_warming(true);
++      auto* config_source = discovery->mutable_config_source();
++      config_source->set_resource_api_version(envoy::config::core::v3::ApiVersion::V3);
++      auto* api_config_source = config_source->mutable_api_config_source();
++      api_config_source->set_api_type(envoy::config::core::v3::ApiConfigSource::GRPC);
++      api_config_source->set_transport_api_version(envoy::config::core::v3::ApiVersion::V3);
++      api_config_source->add_grpc_services()->mutable_envoy_grpc()->set_cluster_name(
++          "ecds_cluster");
++      // Keep the router last.
++      const int size = hcm.http_filters_size();
++      hcm.mutable_http_filters()->SwapElements(size - 2, size - 1);
++    });
++    // This is applied right away, ahead of the config modifiers, so it lands before the composite
++    // filter.
++    config_helper_.prependFilter(R"EOF(
++      name: stop-in-headers-continue-in-body-filter
++      typed_config:
++        "@type": type.googleapis.com/test.integration.filters.StopInHeadersContinueInBodyFilterConfig
++    )EOF");
++    HttpIntegrationTest::initialize();
++
++    AssertionResult result =
++        fake_upstreams_[1]->waitForHttpConnection(*dispatcher_, xds_connection_);
++    RELEASE_ASSERT(result, result.message());
++    result = xds_connection_->waitForNewStream(*dispatcher_, xds_stream_);
++    RELEASE_ASSERT(result, result.message());
++    xds_stream_->startGrpcStream();
++  }
++
++  // Returns a composite filter configuration that runs the given action for requests carrying the
++  // match header.
++  static envoy::extensions
+```
+
+**File**: `test/extensions/filters/http/composite/filter_test.cc` (modified, +179/-3)
+```diff
+@@ -4,6 +4,7 @@
+ #include "envoy/registry/registry.h"
+ #include "envoy/server/filter_config.h"
+ 
++#include "source/common/common/cleanup.h"
+ #include "source/common/http/matching/data_impl.h"
+ #include "source/common/matcher/matcher.h"
+ #include "source/extensions/filters/http/common/factory_base.h"
+@@ -103,7 +104,8 @@ class CompositeFilterTest : public ::testing::Test {
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks_;
+   Stats::MockCounter error_counter_;
+   Stats::MockCounter success_counter_;
+-  FilterStats stats_{error_counter_, success_counter_};
++  FilterStatsSharedPtr stats_{
++      std::make_shared<FilterStats>(FilterStats{error_counter_, success_counter_})};
+   Filter filter_;
+ 
+   Http::TestRequestHeaderMapImpl default_request_headers_{
+@@ -1761,7 +1763,7 @@ TEST(ConfigTest, CompileNamedFilterChainsFailsOnFactoryError) {
+ TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispatcher) {
+   Stats::MockCounter error_counter;
+   Stats::MockCounter success_counter;
+-  FilterStats stats{error_counter, success_counter};
++  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
+   testing::NiceMock<Event::MockDispatcher> dispatcher;
+   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
+@@ -1792,7 +1794,7 @@ TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispa
+ TEST(FilterCallbacksWrapperTest, ChainModeAcceptsMultipleFilters) {
+   Stats::MockCounter error_counter;
+   Stats::MockCounter success_counter;
+-  FilterStats stats{error_counter, success_counter};
++  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
+   testing::NiceMock<Event::MockDispatcher> dispatcher;
+   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
+   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
+@@ -2222,6 +2224,180 @@ TEST(CompositePerRouteConfigTest, ReleasedOnMainThreadIsDestroyedInPlace) {
+   config.reset();
+ }
+ 
++// A filter factory used to observe how a composite filter configuration uses, and releases, the
++// delegated filter factories it owns. Every callback it creates adds `filter_count` (default 1)
++// pass-through filters, and `live_callbacks_` counts the callbacks that are still alive.
++class TrackingFilterFactory : public Server::Configuration::NamedHttpFilterConfigFactory {
++public:
++  std::string name() const override { return "envoy.filters.http.test.tracking"; }
++  ProtobufTypes::MessagePtr createEmptyConfigProto() override {
++    return std::make_unique<Protobuf::Struct>();
++  }
++  bool isUnifiedFilter() override { return true; }
++  absl::StatusOr<Http::FilterFactoryCb>
++  createHttpFilterFactoryFromProto(const Protobuf::Message& config,
++                                   Server::Configuration::ServerFactoryContext&,
++                                   Server::Configuration::ExtraFactoryContext&) override {
++    const auto& fields = dynamic_cast<const Protobuf::Struct&>(config).fields();
++    const auto it = fields.find("filter_count");
++    const int filter_count = it == fields.end() ? 1 : static_cast<int>(it->second.number_value());
++    ++live_callbacks_;
++    auto cleanup = std::make_shared<Cleanup>([this]() { --live_callbacks_; });
++    return [cleanup, filter_count](Http::FilterChainFactoryCallbacks& callbacks) {
++      for (int i = 0; i < filter_count; ++i) {
++        callbacks.addStreamFilter(std::make_shared<Http::PassThroughFilter>());
++      }
++    };
++  }
++
++  int live_callbacks_{};
++};
++
++// When the composite filter is delivered through ECDS, its factory callback is owned by the
++// dynamic filter config provider only. The filter manager creates the composite filter together
++// with the rest of the stream's filter chain, but the composite filter evaluates its match tree
++// only once decodeHeaders() runs. An ECDS update can destroy the factory callback in between, for
++// instance while an earlier filter has paused the stream, so the filter must not depend on state
++// that the callback owns.
++class CompositeFilterFactoryLifetimeTest : public ::testing::Test {
++public:
++  CompositeFilterFactoryLifetimeTest() {
++    ON_CALL(filter_chain_callbacks_, dispatcher())
++        .WillByDefault(testing::ReturnRef(worker_dispatcher_));
++  }
++
++  // Creates a composite filter factory callback whose inline matcher always delegates to
++  // `filter_count` tracking filters, and which also has a named filter chain of a tracking filter.
++  Http::FilterFactoryCb createFactoryCallback(int filter_count) {
++    const std::string yaml = fmt::format(R"EOF(
++      named_filter_chains:
++        tracking-chain:
++          typed_config:
++          - name: envoy.filters.http.test.tracking
++            typed_config:
++              "@type": type.googleapis.com/google.protobuf.Struct
++      matcher:
++        on_no_match:
 ```
 
 ---
 
-### Incident Patch 2: `a75fcc5c` (2026-11-03)
-**Commit Message**: build(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (#48423)
+### Incident Patch 2: `035297c4` (2026-11-05)
+**Commit Message**: quic: Fix `envoy.restart_features.defer_worker_routing_init` in validate mode (#48982)
 
-Bumps
-[actions/download-artifact](https://github.com/actions/download-artifact)
-from 8.0.1 to 8.0.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/actions/download-artifact/releases">actions/download-artifact's
-releases</a>.</em></p>
-<blockquote>
-<h2>v8.0.2</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Update the readme by <a
-href="https://github.com/danwkennedy"><code>@​danwkennedy</code></a> in
-<a
-href="https://redirect.github.com/actions/download-artifact/pull/473">actions/download-artifact#473</a></li>
-<li>Improves artifact download retries when the service returns HTTP 429
-(rate limiting), including honoring valid Retry-After headers.</li>
-<li>Update <code>@​actions/artifact</code> to 6.3.1 by <a
-href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
-href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li>
-<li>Prepare download-artifact v8.0.2 by <a
-href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
-href="https://redirect.github.com/actions/download-artifact/pull/493">actions/download-artifact#
+Commit Message: quic: Fix
+`envoy.restart_features.defer_worker_routing_init` in config validation
+mode
+Additional Description:
 
-**File**: `.github/workflows/_upload_gcs.yml` (modified, +1/-1)
+`envoy.restart_features.defer_worker_routing_init` moves creation and
+application of quic worker routing sockopt to
+`ActiveQuicListenerFactory::initializeWorkerRouting`, which also runs in
+`--mode validate`, where listeners have no sockets. Debug builds assert,
+opt builds dereference a null socket at concurrency > 1. Return before
+touching sockets in validation mode.
+
+Risk Level: Low
+Testing: Added unit test
+Docs Changes: N/A
+Release Notes: N/A
+Platform Specific Features: N/A
+Fixes commit #45504
+
+Signed-off-by: Filip Cacky <[REDACTED_EMAIL]>
+
+**File**: `source/common/quic/active_quic_listener.cc` (modified, +5/-0)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-       matrix:
-         artifact: ${{ fromJSON(inputs.artifacts) }}
-     steps:
--    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
-+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
-       with:
-         name: ${{ matrix.artifact }}
-         path: ${{ matrix.artifact }}
+@@ -413,6 +413,11 @@ absl::Status ActiveQuicListenerFactory::initializeWorkerRouting(
+ 
+   RETURN_IF_NOT_OK(initializeCidGeneratorAndWorkerRouting());
+ 
++  // Server validation creates no sockets.
++  if (context_.serverFactoryContext().options().mode() == Server::Mode::Validate) {
++    return absl::OkStatus();
++  }
++
+   for (const auto& factory : socket_factories) {
+     for (uint32_t i = 0; i < concurrency_; i++) {
+       auto socket = factory->getListenSocket(i);
 ```
 
-**File**: `.github/workflows/mobile-release.yml` (modified, +2/-2)
+**File**: `test/common/quic/active_quic_listener_test.cc` (modified, +12/-0)
 ```diff
-@@ -114,7 +114,7 @@ jobs:
-         fetch-depth: 0
-     - name: Add safe directory
-       run: git config --global --add safe.directory /__w/envoy/envoy
--    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
-+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
-       with:
-         name: ${{ matrix.output }}_android_aar_sources
-         path: .
-@@ -235,7 +235,7 @@ jobs:
-       name: pypi
-       url: https://pypi.org/p/envoy-mobile-client
-     steps:
--    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
-+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
-       with:
-         name: python-wheel
-         path: dist/
+@@ -948,6 +948,18 @@ TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, PostsSocketOptionsF
+                           sockets.back()->connectionInfoProvider().localAddress()->asString())));
+ }
+ 
++TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, ValidateModeSkipsSockets) {
++  ON_CALL(listener_context_.server_factory_context_.options_, mode())
++      .WillByDefault(Return(Server::Mode::Validate));
++
++  const auto mock_option = std::make_shared<StrictMock<Network::MockSocketOption>>();
++  makeCidGeneratorFactory(mock_option);
++  std::ignore = makeListenSocketFactory({});
++
++  EXPECT_OK(factory_->initializeWorkerRouting(socket_factories_));
++  EXPECT_EQ(ActiveQuicListenerFactoryPeer::cidGeneratorFactory(*factory_), cid_generator_factory_);
++}
++
+ TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, InitInCtorWhenFlagOff) {
+   TestScopedRuntime scoped_runtime;
+   scoped_runtime.mergeValues({{"envoy.restart_features.defer_worker_routing_init", "false"}});
 ```
 
 ---
 
-### Incident Patch 3: `be15c6a4` (2026-11-03)
-**Commit Message**: reverse_tunnel: fix upstream acceptor TLS and extension teardown lifecycle (#48441)
+### Incident Patch 3: `1dc66470` (2026-11-04)
+**Commit Message**: [quic] Reduce false ENVOY_BUG reports (#48785)
 
-- Allocate `ReverseTunnelAcceptorExtension::tls_slot_`
-(`UpstreamSocketThreadLocal`) in `onWorkerThreadInitialized()` (matching
-`ReverseTunnelInitiatorExtension`), with a fallback in
-`onServerInitialized()` for unit tests. Since TLS slots are destroyed in
-reverse allocation order during `tls_.shutdownThread()`, allocating the
-slot in `onWorkerThreadInitialized()` (before `ClusterManagerImpl`
-allocates its TLS slot) ensures `ThreadLocalClusterManagerImpl` closes
-pooled `UpstreamReverseConnectionIOHandle` sockets before
-`UpstreamSocketThreadLocal` and `UpstreamSocketManager` are destroyed.
-- Clear `socket_interface_->extension_` in
-`~ReverseTunnelAcceptorExtension()` so the `ReverseTunnelAcceptor`
-singleton does not retain a dangling pointer after extension teardown.
-- Change `UpstreamSocketThreadLocal`'s constructor parameter from a
-nullable pointer (`ReverseTunnelAcceptorExtension* = nullptr`) to a
-reference (`ReverseTunnelAcceptorExtension&`) so
-`cx_post_upgrade_lifetime_` is guaranteed to be non-null when
-dereferenced by `UpstreamReverseConnectionIOHandle`.
+Commit Message: [quic] Reduce false ENVOY_BUG reports
+Additional Description: Rarely but significantly, we get ENVOY_BUG in
+logs and metrics like
+```
+encodeData is called on write-closed stream. QUIC stream state: local_end_stream_ false, rst_received false, rst_sent true, fin_received true, fin_sent false, fin_buffered false, fin_outstanding false, stream_error QUIC_STREAM_CONNECTION_ERROR, connection_error QUIC_PACKET_WRITE_ERROR, connection connected: false.
+```
+It appears this is not actually a bug, just a race that is ~fine to play
+out this way.
+Risk Level: Negligible, only changes a path that was previously
+ENVOY_BUG, to no longer report.
+Testing: Covered.
+Docs Changes: n/a
+Release Notes: n/a
+Platform Specific Features: n/a
 
-*(Note: AI assistance was used in draf
+---------
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_extension.cc` (modified, +41/-41)
+Signed-off-by: Raven Black <[REDACTED_EMAIL]>
+
+**File**: `source/common/quic/envoy_quic_stream.cc` (modified, +7/-0)
 ```diff
-@@ -64,33 +64,31 @@ absl::string_view socketStateForEvent(absl::string_view event,
- 
- // UpstreamSocketThreadLocal implementation
- UpstreamSocketThreadLocal::UpstreamSocketThreadLocal(Event::Dispatcher& dispatcher,
--                                                     ReverseTunnelAcceptorExtension* extension)
-+                                                     ReverseTunnelAcceptorExtension& extension)
-     : dispatcher_(dispatcher),
--      socket_manager_(std::make_unique<UpstreamSocketManager>(dispatcher, extension)) {
-+      socket_manager_(std::make_unique<UpstreamSocketManager>(dispatcher, &extension)) {
-   // Initialize per-worker aggregate metrics.
--  if (extension != nullptr) {
--    auto& stats_store = extension->getStatsScope();
--    std::string dispatcher_name = dispatcher.name();
--    std::string stat_prefix = extension->statPrefix();
--
--    std::string total_clusters_stat_name =
--        fmt::format("{}.{}.total_clusters", stat_prefix, dispatcher_name);
--    Stats::StatNameManagedStorage total_clusters_stat_name_storage(total_clusters_stat_name,
--                                                                   stats_store.symbolTable());
--    total_clusters_gauge_ = &stats_store.gaugeFromStatName(
--        total_clusters_stat_name_storage.statName(), Stats::Gauge::ImportMode::NeverImport);
--
--    std::string total_nodes_stat_name =
--        fmt::format("{}.{}.total_nodes", stat_prefix, dispatcher_name);
--    Stats::StatNameManagedStorage total_nodes_stat_name_storage(total_nodes_stat_name,
--                                                                stats_store.symbolTable());
--    total_nodes_gauge_ = &stats_store.gaugeFromStatName(total_nodes_stat_name_storage.statName(),
--                                                        Stats::Gauge::ImportMode::NeverImport);
--
--    cx_idle_expire_time_ = getHistogram("cx_idle_expire_time", stats_store, stat_prefix);
--    cx_upgrade_time_ = getHistogram("cx_upgrade_time", stats_store, stat_prefix);
--    cx_post_upgrade_lifetime_ = getHistogram("cx_post_upgrade_lifetime", stats_store, stat_prefix);
--  }
-+  auto& stats_store = extension.getStatsScope();
-+  std::string dispatcher_name = dispatcher.name();
-+  std::string stat_prefix = extension.statPrefix();
-+
-+  std::string total_clusters_stat_name =
-+      fmt::format("{}.{}.total_clusters", stat_prefix, dispatcher_name);
-+  Stats::StatNameManagedStorage total_clusters_stat_name_storage(total_clusters_stat_name,
-+                                                                 stats_store.symbolTable());
-+  total_clusters_gauge_ = &stats_store.gaugeFromStatName(
-+      total_clusters_stat_name_storage.statName(), Stats::Gauge::ImportMode::NeverImport);
-+
-+  std::string total_nodes_stat_name =
-+      fmt::format("{}.{}.total_nodes", stat_prefix, dispatcher_name);
-+  Stats::StatNameManagedStorage total_nodes_stat_name_storage(total_nodes_stat_name,
-+                                                              stats_store.symbolTable());
-+  total_nodes_gauge_ = &stats_store.gaugeFromStatName(total_nodes_stat_name_storage.statName(),
-+                                                      Stats::Gauge::ImportMode::NeverImport);
-+
-+  cx_idle_expire_time_ = getHistogram("cx_idle_expire_time", stats_store, stat_prefix);
-+  cx_upgrade_time_ = getHistogram("cx_upgrade_time", stats_store, stat_prefix);
-+  cx_post_upgrade_lifetime_ = getHistogram("cx_post_upgrade_lifetime", stats_store, stat_prefix);
- }
- 
- Stats::Histogram* UpstreamSocketThreadLocal::getHistogram(absl::string_view name,
-@@ -109,6 +107,10 @@ ReverseTunnelAcceptorExtension::~ReverseTunnelAcceptorExtension() {
-   // emitSyntheticLifecycleLog() which accesses the already-destroyed access_logs_, causing a
-   // segfault under GCC.
-   tls_slot_.reset();
-+
-+  if (socket_interface_ != nullptr && socket_interface_->extension_ == this) {
-+    socket_interface_->extension_ = nullptr;
-+  }
- }
- 
- ReverseTunnelAcceptorExtension::ReverseTunnelAcceptorExtension(
-@@ -156,7 +158,7 @@ void ReverseTunnelAcceptorExtension::emitSyntheticLifecycleLog(
-     absl::string_view event, const ReverseTunnelLifecycleInfo& lifecycle, TimeSource& time_source,
-     AccessLog::AccessLogType access_log_type, absl::string_view handoff_kind,
-     absl::string_view close_reason, const LifecycleLogMetadata& extra_metadata) const {
--  if (access_logs_.empty()) {
-+  if (access_logs_.empty() || context_.threadLocal().isShutdown()) {
+@@ -17,6 +17,13 @@ void EnvoyQuicStream::encodeData(Buffer::Instance& data, bool end_stream) {
      return;
    }
- 
-@@ -176,7 +178,7 @@ void ReverseTunnelAcceptorExtension::emitConnectionLifecycleLog(
-     const ReverseTunnelLifecycleInfo& lifecycle, AccessLog::AccessLogType access_log_type,
-     absl::string_view handoff_kind, absl::string_view close_reason,
-     const LifecycleLogMetadata& extra_metadata) const {
--  if (access_logs_.empty()) {
-+  if (access_logs_.empty() || context_.threadLocal().isShutdown()) {
+   if (quic_stream_.write_side_closed()) {
++    if (quic_stream_.rst_sent() || quic_stream_.rst_received() ||
++        !quic_session_.connection()->connected()) {
++      // A callback can already be in flight when a reset or connection close tears down
++      // the stream. Drop the data in that case; it can no longer be delivered to the peer.
++      data.drain(data.length());
++      return;
++    }
+     IS_ENVOY_BUG(fmt::format("encodeData is called on write-closed stream. {}", quicStreamState()));
      return;
    }
- 
-@@ -239,19 +241,10 @@ void ReverseTunnelAcceptorExtension::populateLifecycleStreamInfo(
+```
+
+**File**: `test/common/quic/envoy_quic_client_stream_test.cc` (modified, +2/-2)
+```diff
+@@ -752,8 +752,8 @@ TEST_F(EnvoyQuicClientStreamTest, EncodeDataOnClosedStream) {
+   // messed up.
+   std::string body2(1024, 'a');
+   Buffer::OwnedImpl buffer2(body2);
+-  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
+-                   "encodeData is called on write-closed stream");
++  quic_stream_->encodeData(buffer2, true);
++  EXPECT_EQ(0u, buffer2.length());
+   EXPECT_EQ(0u, quic_session_.bytesToSend());
  }
  
- // ReverseTunnelAccep
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_extension.h` (modified, +2/-2)
+**File**: `test/common/quic/envoy_quic_server_stream_test.cc` (modified, +2/-2)
 ```diff
-@@ -51,7 +51,7 @@ class UpstreamSocketThreadLocal : public ThreadLocal::ThreadLocalObject {
-    * @param extension the upstream extension for stats integration.
-    */
-   UpstreamSocketThreadLocal(Event::Dispatcher& dispatcher,
--                            ReverseTunnelAcceptorExtension* extension = nullptr);
-+                            ReverseTunnelAcceptorExtension& extension);
- 
-   /**
-    * @return reference to the thread-local dispatcher.
-@@ -116,7 +116,7 @@ class ReverseTunnelAcceptorExtension
-   /**
-    * Called when a worker thread is initialized.
-    */
--  void onWorkerThreadInitialized() override {}
-+  void onWorkerThreadInitialized() override;
- 
-   /**
-    * @return pointer to the thread-local registry, or nullptr if not available.
-```
-
-**File**: `source/extensions/clusters/reverse_connection/reverse_connection.cc` (modified, +2/-2)
-```diff
-@@ -229,11 +229,11 @@ BootstrapReverseConnection::UpstreamSocketManager* RevConCluster::getUpstreamSoc
-   ASSERT(upstream_socket_interface != nullptr,
-          "Socket interface type should be validated during cluster creation");
- 
--  // TLS is initialized in onServerInitialized() which is called after cluster creation but before
-+  // TLS is initialized in onWorkerThreadInitialized() which is called before
-   // request handling, so it should always be available when this method is called.
-   auto* tls_registry = upstream_socket_interface->getLocalRegistry();
-   ASSERT(tls_registry != nullptr,
--         "TLS should be initialized by onServerInitialized() before request handling");
-+         "TLS should be initialized by onWorkerThreadInitialized() before request handling");
- 
-   return tls_registry->socketManager();
- }
-```
-
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_extension_test.cc` (modified, +19/-5)
-```diff
-@@ -51,8 +51,7 @@ class ReverseTunnelAcceptorExtensionTest : public testing::Test {
-   }
- 
-   void setupThreadLocalSlot() {
--    thread_local_registry_ =
--        std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, extension_.get());
-+    thread_local_registry_ = std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, *extension_);
-     tls_slot_ = ThreadLocal::TypedSlot<UpstreamSocketThreadLocal>::makeUnique(thread_local_);
-     thread_local_.setDispatcher(&dispatcher_);
-     tls_slot_->set([registry = thread_local_registry_](Event::Dispatcher&) { return registry; });
-@@ -62,7 +61,7 @@ class ReverseTunnelAcceptorExtensionTest : public testing::Test {
- 
-   void setupAnotherThreadLocalSlot() {
-     another_thread_local_registry_ =
--        std::make_shared<UpstreamSocketThreadLocal>(another_dispatcher_, extension_.get());
-+        std::make_shared<UpstreamSocketThreadLocal>(another_dispatcher_, *extension_);
-   }
- 
-   ReverseTunnelAcceptor& globalAcceptor() {
-@@ -137,6 +136,21 @@ TEST_F(ReverseTunnelAcceptorExtensionTest, GetStatsScope) {
- 
- TEST_F(ReverseTunnelAcceptorExtensionTest, OnWorkerThreadInitialized) {
-   extension_->onWorkerThreadInitialized();
-+  auto* registry = extension_->getLocalRegistry();
-+  EXPECT_NE(registry, nullptr);
-+
-+  extension_->onServerInitialized(server_);
-+  EXPECT_EQ(extension_->getLocalRegistry(), registry);
-+  EXPECT_EQ(socket_interface_->getExtension(), extension_.get());
-+}
-+
-+TEST_F(ReverseTunnelAcceptorExtensionTest, DestructorClearsSocketInterfaceExtension) {
-+  auto socket_interface = std::make_unique<ReverseTunnelAcceptor>(context_);
-+  auto extension =
-+      std::make_unique<ReverseTunnelAcceptorExtension>(*socket_interface, context_, config_);
-+  EXPECT_EQ(socket_interface->getExtension(), extension.get());
-+  extension.reset();
-+  EXPECT_EQ(socket_interface->getExtension(), nullptr);
+@@ -376,8 +376,8 @@ TEST_F(EnvoyQuicServerStreamTest, EncodeDataOnClosedStream) {
+   // messed up.
+   std::string response2(1024, 'a');
+   Buffer::OwnedImpl buffer2(response2);
+-  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
+-                   "encodeData is called on write-closed stream");
++  quic_stream_->encodeData(buffer2, true);
++  EXPECT_EQ(0u, buffer2.length());
+   EXPECT_EQ(0u, quic_session_.bytesToSend());
  }
  
- TEST_F(ReverseTunnelAcceptorExtensionTest, OnServerInitializedSetsExtensionReference) {
-@@ -221,7 +235,7 @@ TEST_F(ReverseTunnelAcceptorExtensionTest, UpdateConnectionStatsWithDetailedStat
- 
-   // Set up thread local slot so aggregate metrics can be initialized.
-   auto no_stats_registry =
--      std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, no_stats_extension.get());
-+      std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, *no_stats_extension);
-   auto no_stats_tls_slot =
-       ThreadLocal::TypedSlot<UpstreamSocketThreadLocal>::makeUnique(thread_local_);
-   thread_local_.setDispatcher(&dispatcher_);
-@@ -863,7 +877,7 @@ TEST_F(ReverseTunnelAcceptorExtensionTest, ExtensionTenantIsolationPropagatedToS
-   extension_ =
-       std::make_unique<ReverseTunnelAcceptorExtension>(*socket_interface_, context_, config_);
- 
--  extension_->onServerInitialized(server_);
-+  extension_->onWorkerThreadInitialized();
- 
-   auto* registry = extension_->getLocalRegistry();
-   ASSERT_NE(registry, nullptr);
-```
-
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_test.cc` (modified, +1/-2)
-```diff
-@@ -51,8 +51,7 @@ class TestReverseTunnelAcceptor : public testing::Test {
- 
-   void setupThreadLocalSlot() {
-     extension_->onServerInitialized(server_);
--    thread_local_registry_ =
--        std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, extension_.get());
-+    thread_local_registry_ = std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, *extension_);
-     tls_slot_ = ThreadLocal::TypedSlot<UpstreamSocketThreadLocal>::makeUnique(thread_local_);
-     thread_local_.setDispatcher(&dispatcher_);
-     tls_slot_->set([registry = thread_local_registry_](Event::Dispatcher&) { return registry; });
-```
-
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_upstream_lifecycle_test.cc` (modified, +38/-2)
-```diff
-@@ -63,8 +63,7 @@ class ReverseTunnelUpstreamLifecycleFilterTest : public testing::Test {
-     ASSERT_NE(registered_acceptor, nullptr);
-     registered_acceptor->extension_ = extension_.get();
- 
--    thread_local_registry_ =
--        std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, extension_.get());
-+    thread_local_registry_ = std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, *extension_);
-     socket_manager_ = thread_local_registry_->socketManager();
-     ASSERT_NE(socket_manager_, nullptr);
- 
-@@ -82,6 +81,12 @@ class ReverseTunnelUpstreamLifecycleFilterTest : public testing::Test {
-             [this]() -> absl::string_view { return callbacks_.connection_.local_close_reason_; });
-   }
- 
-+  void TearDown() override {
-+    thread_local_.shutdownThread();
-+    thread_local_registry_.reset();
-+    extension_.reset();
-+  }
-+
-   Network::ConnectionSocketPtr createMockSocket(int fd = 123,
-                                                 const std::string& local_addr = "127.0.0.1:8080",
-                                                 const std::string& remote_addr = "127.0.0.1:9090") {
-@@ -184,6 +189,37 @@ TEST_F(ReverseTunnelUpstreamLifecycleFilterTest,
-   extension_->setTestOnlyAccessLogs({});
- }
- 
-+TEST_F(ReverseTunnelUpstreamLifecycleFilterTest,
-+       ConnectionLifecycleLogSkippedWhenThreadLocalShutdown) {
-+  const int fd = 321;
-+  auto socket = createMockSocket(fd);
-+  socket_manager_->addConnectionSocket("node-c", "cluster-c", std::move(socket),
-+                                       std::chrono::seconds(30), false, "tenant-c",
-+                                       /*initiator_worker_id=*/"worker_5",
-+                                       /*initiator_connection_id=*/"42");
-+  handed_off_socket_ = socket_manager_->getConnectionSocket("node-c");
-+  ASSERT_NE(handed_off_socket_, nullptr);
-+
-+  EXPECT_CALL(callbacks_.connection_, getSocket()).WillRepeatedly(ReturnRef(handed_off_socket_));
-+  EXPECT_CALL(callbacks_.connection_, addConnectionCallbacks(_));
-+
-+  ReverseTunnelUpstreamLifecycleFilter filter;
-+  filter.initializeReadFilterCallbacks(callbacks_);
-+  EXPECT_EQ(filter.onNewConnection(), Network::FilterStatus::Continue);
-+
-+  auto access_log = std::make_shared<NiceMock<AccessLog::MockInstance>>();
-+  extension_->setTestOnlyAccessLogs({access_log});
-+  callbacks_.connection_.local_close_reason_ =
-+      std::string(StreamInfo::LocalCloseReasons::get().Http2PingTimeout);
-+
-+  thread_local_.shutdownGlobalThreading();
-+
-+  EXPECT_CALL(*access_log, log(_, _)).Times(0);
-+  filter.onEvent(Network::ConnectionEvent::LocalClose);
-+
-+  extension_->setTestOnlyAccessLogs({});
-+}
-+
- TEST_F(ReverseTunnelUpstreamLifecycleFilterTest,
-        LocalCloseAfterSocketDeathReusesHttp2PingTimeoutForTunnelClosed) {
-   const int fd = 654;
-```
-
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_reverse_connection_io_handle_test.cc` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ class UpstreamReverseConnectionIOHandleTest : public testing::Test {
-     socket_interface_ = std::make_unique<ReverseTunnelAcceptor>(server_context_);
-     extension_ = std::make_unique<ReverseTunnelAcceptorExtension>(*socket_interface_,
-                                                                   server_context_, config_);
--    tls_registry_ = std::make_unique<UpstreamSocketThreadLocal>(dispatcher_, extension_.get());
-+    tls_registry_ = std::make_unique<UpstreamSocketThreadLocal>(dispatcher_, *extension_);
-   }
- 
-   void TearDown() override {
-```
-
-**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager_test.cc` (modified, +34/-1)
-```diff
-@@ -214,7 +214,7 @@ class TestUpstreamSocketManager : public testing::Test {
-   // Wire up TLS so extension_->getLocalRegistry() returns a real registry,
-   // then swap in mock histograms for recording verification.
-   void setupTLSWithMockHistograms() {
--    tls_registry_ = std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, extension_.get());
-+    tls_registry_ = std::make_shared<UpstreamSocketThreadLocal>(dispatcher_, *extension_);
-     auto tls_slot = ThreadLocal::TypedSlot<UpstreamSocketThreadLocal>::makeUnique(thread_local_);
-     thread_local_.setDispatcher(&dispatcher_);
-     tls_slot->set([registry = tls_registry_](Event::Dispatcher&) { return registry; });
-@@ -2143,6 +2143,39 @@ TEST_F(TestUpstreamSocketManager, DestructorEmitsDeferredCloseLogs) {
-   extension_->setTestOnlyAccessLogs({});
- }
- 
-+TEST_F(TestUpstreamSocketManager, DestructorSkipsDeferredCloseLogsWhenThreadLocalShutdown) {
-+  auto access_log = std::make_shared<NiceMock<AccessLog::MockInstance>>();
-+  extension_->setTestOnlyAccessLogs({access_log});
-+
-+  const int fd = 555;
-+  auto socket = createMockSocket(fd);
-+
-+  // Expect tunnel_setup on add, then socket_handoff on get.
-+  EXPECT_CALL(*access_log, log(_, _)).Times(2).RetiresOnSaturation();
-+  socket_manager_->addConnectionSocket("node-x", "cluster-x", std::move(socket),
-+                                       std::chrono::seconds(30), false, "tenant-x");
-+  auto handed_off = socket_manager_->getConnectionSocket("node-x");
-+  ASSERT_NE(handed_off, nullptr);
-+  testing::Mock::VerifyAndClearExpectations(access_log.get());
-+
-+  // Attach the lifecycle filter flag so markSocketDead defers the close log.
-+  socket_manager_->markUpstreamLifecycleFilterAttached(fd);
-+
-+  // markSocketDead with empty close reason + filter attached = deferred.
-+  // This should NOT emit the close log yet.
-+  EXPECT_CALL(*access_log, log(_, _)).Times(0);
-+  socket_manager_->markSocketDead(fd);
-+  testing::Mock::VerifyAndClearExpectations(access_log.get());
-+
-+  thread_local_.shutdownGlobalThreading();
-+
-+  // Destructor should skip emitting the deferred tunnel_closed log when thread-local is shutdown.
-+  EXPECT_CALL(*access_log, log(_, _)).Times(0);
-+
-+  socket_manager_.reset(); // Triggers destructor.
-+  extension_->setTestOnlyAccessLogs({});
-+}
-+
- TEST_F(TestUpstreamSocketManager, FindStartTimeReturnsNulloptIfNotFound) {
-   EXPECT_EQ(findStartTime(123).has_value(), false);
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48970** (2026-11-03): test: Close the mcp_router backend connections before destroying them (@phlax)
-- **PR #48969** (2026-11-03): dependabot: Assign update PRs to phlax (@phlax)
-- **PR #48968** (closed): Revert "build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)" (@krinkinmu)
-- **PR #48966** (2026-11-03): ci: Allow the request job to fetch fork PR merge commits (@phlax)
-- **PR #48965** (2026-11-03): ci: Disable the Mobile/Perf run (@phlax)
-- **PR #48964** (2026-11-03): test: Give the ext_proc integration fixture a message timeout above s… (@phlax)
+- **PR #49013** (2026-11-05): dynamic_modules: add a bootstrap cluster writer and run_on_all_worker (@agrawroh)
+- **PR #49004** (2026-11-04): deps: Bump `bazel-compdb` -> 0.0.0-20220906-4086479.envoy.1 (@dependency-envoy[bot])
+- **PR #49001** (closed): network/udp_proxy: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #49000** (closed): dubbo/thrift/sip: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #48998** (2026-11-04): deps: Bump `bazel-registry` -> b21ef77 (@dependency-envoy[bot])
+- **PR #48995** (2026-11-04): codeowners: add wbpcode as adaptive_concurrency owner (@wbpcode)
 
 ---
 
@@ -1673,28 +1677,34 @@ dereferenced by `UpstreamReverseConnectionIOHandle`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393)
+## X. composite: fix use-after-free when an ECDS update replaces the filter while a st
 
 **RULE**:
-When implementing operations in `.github/workflows/_codeql.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0295a21`: build(deps): bump actions/checkout from 7.0.0 to 7.0.1 (#48393). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f54520db`: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_codeql.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
+filter when it is configured through
+:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
+and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
+filter instances created from the previous configuration now share ownership of the filter stats,
+and the match tree and named filter chains they hold are released on the main thread, so that the
+delegated filter configurations are not destroyed on a worker thread.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0295a21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f54520db` are properly handled with clean fallback behavior.

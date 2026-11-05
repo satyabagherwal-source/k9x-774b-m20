@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "0670f865bf2f00ccaf0f0aa95b0144ef9ecc311843e60e622fdc67a6cadb4f01",
-    "lastHarvestedAt": "2026-10-31T13:20:51.654Z",
+    "contentHash": "76da92800a845eaaa016af5656d578b0636c00baacad7d78e48f040c2d50c007",
+    "lastHarvestedAt": "2026-11-05T04:00:33.468Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "4253603a",
+    "sourceVersion": "42758592",
     "license": "Apache-2.0",
-    "contentHash": "d88e3a3d6f9e9e1a79af8296bc0f5c7e3f22491fd319db2f139becf44c85a40e",
-    "lastHarvestedAt": "2026-11-04T01:14:01.756Z",
+    "contentHash": "f41be11f267b7ee2ecadb96da7314f818bd2fce5de179ed39e2659e150bffe31",
+    "lastHarvestedAt": "2026-11-05T04:00:35.174Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "1e2e354e",
+    "sourceVersion": "da11df74",
     "license": "Apache-2.0",
-    "contentHash": "5b2917a2a5fe709047fa92750c50682e58372ee4e04e8ce5d63a8dd421397207",
-    "lastHarvestedAt": "2026-11-04T08:28:35.669Z",
+    "contentHash": "befef0e0065ea0ff02d6629b3b3ba3320646f3bbd39a5922a0bb67953cc9ac53",
+    "lastHarvestedAt": "2026-11-05T04:00:44.018Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

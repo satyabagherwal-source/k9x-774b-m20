@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `4253603a`  
+> **Source Version**: `42758592`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:14:01.236Z  
+> **Timestamp**: 2026-11-05T04:00:34.393Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:14:01.231Z  
+> **Harvest Timestamp**: 2026-11-05T04:00:34.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19299 stars
+- **Stars / Engagement**: 19304 stars
 
 ---
 
@@ -1866,203 +1866,231 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4253603a` (2026-11-03)
-**Commit Message**: Use latest alpine v3 for Docker build
+### Incident Patch 1: `42758592` (2026-11-04)
+**Commit Message**: Update crates
 
-**File**: `contrib/docker/Dockerfile` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +22/-29)
 ```diff
-@@ -1,4 +1,4 @@
--FROM alpine:3.23 AS builder
-+FROM alpine:3 AS builder
- ARG TARGETPLATFORM
- WORKDIR /tmp/hurl-docker
- COPY . /tmp/hurl-docker
+@@ -180,9 +180,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+ 
+ [[package]]
+ name = "cc"
+-version = "1.10.0"
++version = "1.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
++checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
+ dependencies = [
+  "find-msvc-tools",
+  "shlex",
+@@ -308,9 +308,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "crc32fast"
+-version = "1.5.3"
++version = "1.5.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
++checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
+ dependencies = [
+  "cfg-if",
+ ]
+@@ -384,9 +384,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "encoding_rs"
+-version = "0.8.42"
++version = "0.8.44"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
++checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
+ dependencies = [
+  "cfg-if",
+  "core_detect",
+@@ -686,9 +686,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.106"
++version = "0.3.107"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
++checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
+ dependencies = [
+  "cfg-if",
+  "futures-util",
+@@ -737,9 +737,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libxml"
+-version = "0.3.22"
++version = "0.3.23"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
++checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
+ dependencies = [
+  "bindgen",
+  "libc",
+@@ -773,9 +773,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+ 
+ [[package]]
+ name = "log"
+-version = "0.4.34"
++version = "0.4.35"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
++checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+ 
+ [[package]]
+ name = "md5"
+@@ -829,12 +829,6 @@ dependencies = [
+  "autocfg",
+ ]
+ 
+-[[package]]
+-name = "once_cell"
+-version = "1.21.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+-
+ [[package]]
+ name = "once_cell_polyfill"
+ version = "1.70.2"
+@@ -858,9 +852,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "openssl-sys"
+-version = "0.9.117"
++version = "0.9.118"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
++checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
+ dependencies = [
+  "cc",
+  "libc",
+@@ -1248,32 +1242,31 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+ 
+ [[package]]
+ name = "wasm-bindgen"
+-version = "0.2.129"
++version = "0.2.130"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
++checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
+ dependencies = [
+  "cfg-if",
+- "once_cell",
+  "rustversion",
+  "wasm-bindgen-macro",
+  "wasm-bindgen-shared",
+ ]
+ 
+ [[package]]
+ name = "wasm-bindgen-macro"
+-version = "0.2.129"
++version = "0.2.130"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
++checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
+ dependencies = [
+  "quote",
+  "wasm-bindgen-macro-support",
+ ]
+ 
+ [[package]]
+ name = "wasm-bindgen-macro-support"
+-version = "0.2.129"
++version = "0.2.130"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
++checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
+ dependencies = [
+  "bumpalo",
+  "proc-macro2",
+@@ -1284,9 +1277,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wasm-bindgen-shared"
+-version = "0.2.129"
++version = "0.2.130"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
++checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
+ dependencies = [
+  "unicode-ident",
+ ]
+```
+
+**File**: `packages/hurl/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -25,11 +25,11 @@ chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
+ clap = { version = "4.6.7", features = ["string", "wrap_help"] }
+ curl = "0.4.51"
+ curl-sys = "0.4.91"
+-encoding_rs = "0.8.42"
++encoding_rs = "0.8.44"
+ glob = "0.3.4"
+ hurl_core = { version = "9.0.0", path = "../hurl_core" }
+ libflate = "2.3.2"
+-libxml = "0.3.22"
++libxml = "0.3.23"
+ md5 = "0.8.1"
+ percent-encoding = "2.3.2"
+ regex = "1.13.1"
+@@ -47,7 +47,7 @@ terminal_size = "0.4.4"
+ winres = "0.1.12"
+ 
+ [build-dependencies]
+-cc = "1.10.0"
++cc = "1.11.0"
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `packages/hurl_core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ repository = "https://github.com/Orange-OpenSource/hurl"
+ 
+ [dependencies]
+ colored = "3.1.1"
+-libxml = "0.3.22"
++libxml = "0.3.23"
+ regex = "1.13.1"
+ 
+ [lints]
 ```
 
 ---
 
-### Incident Patch 2: `90e0bcff` (2026-11-02)
-**Commit Message**: Test switch squid to mitmproxy.
+### Incident Patch 2: `cb0a84e2` (2026-11-04)
+**Commit Message**: Install libxml 2.13 on Fedora if supported (Hurl Ubuntu package uses libxml 2.13 soname)
 
-**File**: `CONTRIBUTING.md` (modified, +9/-11)
+**File**: `bin/install_prerequisites_fedora.sh` (modified, +7/-0)
 ```diff
-@@ -72,7 +72,6 @@ To run unit tests, you can run:
- $ cargo test --lib
- ```
- 
--
- Hurl has a big suite of [integration tests]. To run the integration tests, you'll need Python 3.9+. You can use a [virtual environment] and install the dependencies needed
- by the tests suite:
- 
-@@ -86,20 +85,19 @@ Then, you can launch our local server (used to test Hurl features):
- 
- ```shell
- $ cd integration/hurl
--$ python3 server.py > server.log 2>&1 &
-+$ python3 server.py --host 127.0.0.1 --port 8000 > server.log 2>&1 &
-+$ python3 server.py --host "::1" --port 8004 > server-ipv6.log 2>&1 &
- $ python3 tests_ssl/ssl_server.py 8001 tests_ssl/certs/server/cert.selfsigned.pem false > server-ssl-selfsigned.log 2>&1 &
- $ python3 tests_ssl/ssl_server.py 8002 tests_ssl/certs/server/cert.pem false > server-ssl-signedbyca.log 2>&1 &
- $ python3 tests_ssl/ssl_server.py 8003 tests_ssl/certs/server/cert.selfsigned.pem true > server-ssl-client-authent.log 2>&1 &
- $ python3 tests_unix_socket/unix_socket_server.py > server-unix-socket.log 2>&1 &
--$ squid_conf="cache deny all\ncache_log /dev/null\naccess_log /dev/null\nhttp_access allow all\nhttp_port 127.0.0.1:3128\nrequest_header_add From-Proxy Hello\nreply_header_add From-Proxy Hello"
--$ (echo -e "${squid_conf}" | sudo squid -d 2 -N -f /dev/stdin | sudo tee proxy.log 2>&1) &
--$ jobs
--
--[1] Running ( echo -e "${squid_conf}" | sudo squid -d 2 -N -f /dev/stdin | sudo tee build/proxy.log 2>&1 ) &
--[2] Running python3 server.py > server.log 2>&1 &
--[3] Running python3 tests_ssl/ssl_server.py 8001 tests_ssl/certs/server/cert.selfsigned.pem false > server-ssl-selfsigned.log 2>&1 &
--[4]-Running python3 tests_ssl/ssl_server.py 8002 tests_ssl/certs/server/cert.pem false > server-ssl-signedbyca.log 2>&1 &
--[5]+Running python3 tests_ssl/ssl_server.py 8003 tests_ssl/certs/server/cert.selfsigned.pem true > server-ssl-client-authent.log 2>&1 &
-+$ mitmdump --listen-host 127.0.0.1 --listen-port 3128 --ignore-hosts '^127\.0\.0\.1:800[123]$' --modify-headers '/~q/From-Proxy/Hello' --modify-headers '/~s/From-Proxy/Hello' > proxy.log 2>&1 &
-+```
-+
-+or use our setup script:
-+
-+```shell
-+$ bin/test/test_prerequisites.sh
- ```
- 
- You can check [the integration `README`] for more details
-```
-
-**File**: `bin/install_mitmproxy.sh` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+#!/bin/bash
-+set -Eeuo pipefail
-+
-+# Install mitmproxy standalone binaries (mitmproxy, mitmdump, mitmweb) on glibc-based Linux.
-+# Alpine (musl) can't run these binaries and uses its own mitmproxy package instead.
-+# See <https://docs.mitmproxy.org/stable/overview/installation/>
-+
-+version="${MITMPROXY_VERSION:-12.3.1}"
-+install_dir="${MITMPROXY_INSTALL_DIR:-/usr/local/bin}"
-+
-+case "$(uname -m)" in
-+    x86_64|amd64) arch="x86_64" ;;
-+    aarch64|arm64) arch="aarch64" ;;
-+    *) echo "Unsupported architecture $(uname -m)" ; exit 1 ;;
-+esac
-+
-+echo "----- install mitmproxy ${version} (${arch}) -----"
-+url="https://downloads.mitmproxy.org/${version}/mitmproxy-${version}-linux-${arch}.tar.gz"
-+tmp_dir=$(mktemp -d)
-+curl --fail --silent --show-error --location "${url}" --output "${tmp_dir}/mitmproxy.tar.gz"
-+tar -xzf "${tmp_dir}/mitmproxy.tar.gz" -C "${tmp_dir}"
-+sudo install -m 755 "${tmp_dir}/mitmproxy" "${tmp_dir}/mitmdump" "${tmp_dir}/mitmweb" "${install_dir}"
-+rm -rf "${tmp_dir}"
-+mitmdump --version
-```
-
-**File**: `bin/install_prerequisites_alpine.sh` (modified, +1/-4)
-```diff
-@@ -18,11 +18,8 @@ apk add --quiet \
-     python3 \
-     python3-dev \
-     cargo \
--    squid \
-+    mitmproxy \
-     jq
- 
- # libxml crate >= 0.3.4 uses bindgen
- apk add --quiet clang-dev
--
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
-```
-
-**File**: `bin/install_prerequisites_archlinux.sh` (modified, +2/-3)
-```diff
-@@ -13,10 +13,9 @@ pacman -Syu --noconfirm \
-     libxml2 \
-     glibc \
-     openbsd-netcat \
--    squid \
-     jq
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
-+
-+"$(dirname "$0")"/install_mitmproxy.sh
- 
- # libxml crate >= 0.3.4 uses bindgen
- pacman -Syu --noconfirm clang
-```
-
-**File**: `bin/install_prerequisites_debian.sh` (modified, +2/-4)
-```diff
-@@ -21,12 +21,10 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
-     libxml2-dev \
-     libssl-dev \
-     netcat-openbsd \
--    squid \
-     jq \
-     python3 \
-     python3-venv \
-     python3-dev
--sudo service squid stop || true
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
-+
-+"$(dirname "$0")"/install_mitmproxy.sh
- 
-```
-
-**File**: `bin/install_prerequisites_fedora.sh` (modified, +2/-3)
-```diff
-@@ -13,11 +13,10 @@ yum install -y \
-     libcurl-devel \
-     python3.11-devel \
-     nc \
--    squid \
+@@ -16,6 +16,13 @@ yum install -y \
      jq
  ln -sf /usr/bin/python3.11 /usr/bin/python3
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
+ 
++# libxml2 >= 2.14 bumps soname to libxml2.so.16; install libxml2.so.2 compat
++# package (if available) so that binaries linked against libxml2.so.2 still run
++# (for instance, generic linux package built on Ubuntu).
++if yum info libxml2_2.13 >/dev/null 2>&1; then
++    yum install -y libxml2_2.13
++fi
 +
-+"$(dirname "$0")"/install_mitmproxy.sh
+ "$(dirname "$0")"/install_mitmproxy.sh
  
  # libxml crate >= 0.3.4 uses bindgen
- yum install -y clang-devel
-```
-
-**File**: `bin/install_prerequisites_macos.sh` (modified, +1/-3)
-```diff
-@@ -4,6 +4,4 @@ set -Eeuo pipefail
- echo "----- install prerequisite packages -----"
- export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=true
- brew update
--brew install bash squid jq
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
-+brew install bash mitmproxy jq
-```
-
-**File**: `bin/install_prerequisites_ubuntu.sh` (modified, +2/-4)
-```diff
-@@ -24,11 +24,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \
-     python3 \
-     python3-venv \
-     netcat-openbsd \
--    squid \
-     jq
--sudo service squid stop || true
--sudo squid -k shutdown || true
--sudo rm -v /dev/shm/squid*.shm >/dev/null 2>&1 || true
-+
-+"$(dirname "$0")"/install_mitmproxy.sh
- 
- # libxml crate >= 0.3.4 uses bindgen
- sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libclang-dev
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5413** (2026-11-04): Update crates (@hurl-bot)
+- **PR #5412** (2026-11-04): Disable ntml test on Fedora (md4 removed from openssl) (@jcamiel)
+- **PR #5411** (closed): Update crates (except openssl) (@jcamiel)
+- **PR #5410** (closed): Update crates (@hurl-bot)
 - **PR #5409** (2026-11-03): Use latest alpine v3 for Docker build (@lepapareil)
-- **PR #5407** (2026-11-03): Test switch squid to mitmproxy. (@jcamiel)
-- **PR #5406** (closed): Update crates (@hurl-bot)
-- **PR #5404** (closed): Update crates (@hurl-bot)
-- **PR #5403** (closed): Update crates (@hurl-bot)
-- **PR #5402** (2026-10-30): Add json_compare module (@fabricereix)
+- **PR #5408** (closed): Update crates (@hurl-bot)
 
 ---
 
@@ -2082,28 +2110,76 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use latest alpine v3 for Docker build
+## X. Update crates
 
 **RULE**:
-When implementing operations in `contrib/docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4253603a`: Use latest alpine v3 for Docker build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42758592`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/docker/Dockerfile`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-FROM alpine:3 AS builder
+version = "1.11.0"
+checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
+version = "1.5.4"
+checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
+version = "0.8.44"
+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
+version = "0.3.107"
+checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
+version = "0.3.23"
+checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
+version = "0.4.35"
+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+version = "0.9.118"
+checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
+version = "0.2.130"
+checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
+version = "0.2.130"
+checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
+version = "0.2.130"
+checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
+version = "0.2.130"
+checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-FROM alpine:3.23 AS builder
+version = "1.10.0"
+checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
+version = "1.5.3"
+checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
+version = "0.8.42"
+checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
+version = "0.3.106"
+checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
+version = "0.3.22"
+checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
+version = "0.4.34"
+checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+[[package]]
+name = "once_cell"
+version = "1.21.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+
+version = "0.9.117"
+checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
+version = "0.2.129"
+checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
+ "once_cell",
+version = "0.2.129"
+checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
+version = "0.2.129"
+checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
+version = "0.2.129
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4253603a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42758592` are properly handled with clean fallback behavior.

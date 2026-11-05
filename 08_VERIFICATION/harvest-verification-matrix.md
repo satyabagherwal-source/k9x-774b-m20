@@ -7493,3 +7493,6 @@
 | `CYCLE-20261105-7JYR` | `2026-11-05T03:46:35.860Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7093` | Yes (`99d9dd56...`) |
 | `CYCLE-20261105-GGHP` | `2026-11-05T03:53:31.261Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7094` | Yes (`5d4fce60...`) |
 | `CYCLE-20261105-GIPL` | `2026-11-05T03:53:34.137Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7095, Rule 7096, Rule 7097` | Yes (`fd809f99...`) |
+| `CYCLE-20261105-PI9E` | `2026-11-05T04:00:33.458Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`76da9280...`) |
+| `CYCLE-20261105-PJKY` | `2026-11-05T04:00:35.170Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`f41be11f...`) |
+| `CYCLE-20261105-PQEM` | `2026-11-05T04:00:44.014Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7099` | Yes (`befef0e0...`) |

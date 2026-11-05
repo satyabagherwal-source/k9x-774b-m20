@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T03:53:34.145Z",
-  "total_cycles_completed": 7470,
-  "total_learnings_persisted": 7470,
-  "total_rules_promoted": 7152,
+  "last_updated": "2026-11-05T04:00:44.023Z",
+  "total_cycles_completed": 7473,
+  "total_learnings_persisted": 7473,
+  "total_rules_promoted": 7154,
   "history": [
-    {
-      "timestamp": "2026-11-04T19:15:37.704Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T19:22:52.853Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T19:22:54.651Z",
-      "repository": "gkd-kit/gkd",
-      "learningId": "learn-github-gkd-kit-gkd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T19:22:57.293Z",
       "repository": "bee-san/Ciphey",
@@ -1403,6 +1382,27 @@
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:00:33.474Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:00:35.180Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T04:00:44.023Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
