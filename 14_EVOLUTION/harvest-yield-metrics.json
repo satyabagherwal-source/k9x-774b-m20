@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T06:51:09.747Z",
-  "total_cycles_completed": 7531,
-  "total_learnings_persisted": 7531,
-  "total_rules_promoted": 7200,
+  "last_updated": "2026-11-05T06:58:32.382Z",
+  "total_cycles_completed": 7536,
+  "total_learnings_persisted": 7536,
+  "total_rules_promoted": 7204,
   "history": [
-    {
-      "timestamp": "2026-11-04T21:42:55.269Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:50:01.360Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:50:16.145Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:57:16.201Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T21:57:20.156Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T21:58:20.603Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-05T06:51:09.747Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:58:16.086Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:58:22.385Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:58:25.369Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:58:31.826Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T06:58:32.382Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

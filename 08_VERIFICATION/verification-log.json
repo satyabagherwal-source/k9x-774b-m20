@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-99EX",
-    "timestamp": "2026-11-03T23:20:18.921Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "41a528581ddf3bea71d3451f237932007f7ca3da78076c880b374b0e3331e672",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-OKE4",
-    "timestamp": "2026-11-03T23:32:12.988Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "44a8daa36310118ea67df550d1f664ed7a6f4848b2606d4deff11e14275404f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-OO11",
-    "timestamp": "2026-11-03T23:32:17.701Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "3f760147ca7782b826487f29aec76ca9c5fdbc82e7a9c7494c6475f05befda05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-OPMD",
-    "timestamp": "2026-11-03T23:32:19.765Z",
-    "repository": "krakend/krakend-ce",
-    "learningId": "learn-github-krakend-krakend-ce",
-    "contentHash": "8b5a6c837d561870a5e95bb0b7f402e7984403555cb7f01e3e7f8a6d61227ff1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-OR7T",
-    "timestamp": "2026-11-03T23:32:21.833Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "93b372f4fbee7e930f25b74c5e8054352077354d4388d9cda2ec89dd67819299",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-OSZO",
     "timestamp": "2026-11-03T23:32:24.132Z",
     "repository": "lancedb/lancedb",
@@ -7490,6 +7415,81 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "d31ed1f07fbf484b121a8433ec52486adf715a39013f3ec25ca5e66da1ad8b7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-21L8",
+    "timestamp": "2026-11-05T06:58:16.076Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "02116a10b0be1f322a929cfd9cebea2a3a581e580ebca783ff2787e1b84cc7c7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-26G7",
+    "timestamp": "2026-11-05T06:58:22.375Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-28QW",
+    "timestamp": "2026-11-05T06:58:25.352Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-2DQG",
+    "timestamp": "2026-11-05T06:58:31.816Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-2E5W",
+    "timestamp": "2026-11-05T06:58:32.372Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7554,3 +7554,8 @@
 | `CYCLE-20261105-SLXZ` | `2026-11-05T06:50:55.895Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`0468a447...`) |
 | `CYCLE-20261105-SS96` | `2026-11-05T06:51:04.074Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7141` | Yes (`614b2899...`) |
 | `CYCLE-20261105-SWMJ` | `2026-11-05T06:51:09.739Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7142` | Yes (`d31ed1f0...`) |
+| `CYCLE-20261105-21L8` | `2026-11-05T06:58:16.076Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`02116a10...`) |
+| `CYCLE-20261105-26G7` | `2026-11-05T06:58:22.375Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7143` | Yes (`608e96e3...`) |
+| `CYCLE-20261105-28QW` | `2026-11-05T06:58:25.352Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7144` | Yes (`b2266d56...`) |
+| `CYCLE-20261105-2DQG` | `2026-11-05T06:58:31.816Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7145` | Yes (`4682c966...`) |
+| `CYCLE-20261105-2E5W` | `2026-11-05T06:58:32.372Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7146` | Yes (`bc34831a...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T06:51:09.759Z",
+  "last_updated": "2026-11-05T06:58:32.393Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
-      "verified_at": "2026-10-31T16:20:20.276Z",
+      "content_hash": "02116a10b0be1f322a929cfd9cebea2a3a581e580ebca783ff2787e1b84cc7c7",
+      "verified_at": "2026-11-05T06:58:16.089Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T16:20:20.276Z"
+      "last_updated": "2026-11-05T06:58:16.089Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "7a0a7526dd41cf2ddb1210e860c1dc6251fd1e8048eb3818325d59bd1b47a6f0",
-      "verified_at": "2026-11-04T17:30:43.247Z",
+      "content_hash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
+      "verified_at": "2026-11-05T06:58:25.382Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:30:43.247Z"
+      "last_updated": "2026-11-05T06:58:25.382Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
-      "verified_at": "2026-11-05T06:28:59.430Z",
+      "content_hash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
+      "verified_at": "2026-11-05T06:58:32.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:28:59.430Z"
+      "last_updated": "2026-11-05T06:58:32.392Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "e56391651f9d5300cb48f1542c0d284a0f4e3edec070332e37678f5b0e981320",
-      "verified_at": "2026-11-04T16:34:39.135Z",
+      "content_hash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
+      "verified_at": "2026-11-05T06:58:31.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:34:39.135Z"
+      "last_updated": "2026-11-05T06:58:31.840Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
-      "verified_at": "2026-11-01T00:36:20.450Z",
+      "content_hash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
+      "verified_at": "2026-11-05T06:58:22.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:36:20.450Z"
+      "last_updated": "2026-11-05T06:58:22.395Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

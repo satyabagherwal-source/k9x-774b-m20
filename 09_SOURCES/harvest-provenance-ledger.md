@@ -7563,3 +7563,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-05T06:50:55.898Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f6e5ac35` | Multi-dimensional audit evidence | 2026-11-05T06:51:04.077Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2cb47360` | Multi-dimensional audit evidence | 2026-11-05T06:51:09.742Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-05T06:58:16.080Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `ecb615e5` | Multi-dimensional audit evidence | 2026-11-05T06:58:22.380Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `b9d02e6e` | Multi-dimensional audit evidence | 2026-11-05T06:58:25.362Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `1dda9d96` | Multi-dimensional audit evidence | 2026-11-05T06:58:31.821Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `72945925` | Multi-dimensional audit evidence | 2026-11-05T06:58:32.376Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `36e7c1fb`  
+> **Source Version**: `b9d02e6e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:30:42.502Z  
+> **Timestamp**: 2026-11-05T06:58:24.515Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:30:41.573Z  
+> **Harvest Timestamp**: 2026-11-05T06:58:24.508Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10362 stars
+- **Stars / Engagement**: 10368 stars
 
 ---
 
@@ -1051,6 +1051,7 @@ import (
 	cerrdefs "github.com/containerd/errdefs"
 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
 	"github.com/moby/buildkit/solver"
+	"github.com/moby/buildkit/util/bklog"
 	"github.com/moby/buildkit/util/compression"
 	digest "github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
@@ -1177,48 +1178,40 @@ func marshalRemote(ctx context.Context, r *solver.Remote, state *marshalState) s
 
 	if r.Provider != nil {
 		for _, d := range r.Descriptors {
-			if _, err := r.Provider.Info(ctx, d.Digest); err != nil {
-				if !cerrdefs.IsNotImplemented(err) {
-					return ""
-				}
+			if _, err := r.Provider.Info(ctx, d.Digest); err != nil && !cerrdefs.IsNotImplemented(err) {
+				bklog.G(ctx).WithError(err).Warnf("skipping cache result: blob %s is not available", d.Digest)
+				return ""
 			}
 		}
 	}
 
 	var parentID string
-	if len(r.Descriptors) > 1 {
-		r2 := &solver.Remote{
-			Descriptors: r.Descriptors[:len(r.Descriptors)-1],
-			Provider:    r.Provider,
+	for _, desc := range r.Descriptors {
+		if desc.MediaType != "" {
+			desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
 		}
-		parentID = marshalRemote(ctx, r2, state)
-	}
-	desc := r.Descriptors[len(r.Descriptors)-1]
-	if desc.MediaType != "" {
-		desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
-	}
 
-	state.descriptors[desc.Digest] = DescriptorProviderPair{
-		Descriptor: desc,
-		Provider:   r.Provider,
-	}
+		state.descriptors[desc.Digest] = DescriptorProviderPair{
+			Descriptor: desc,
+			Provider:   r.Provider,
+		}
 
-	id := desc.Digest.String() + parentID
+		id := desc.Digest.String() + parentID
 
-	if _, ok := state.chainsByID[id]; ok {
-		return id
+		if _, ok := state.chainsByID[id]; !ok {
+			state.chainsByID[id] = len(state.layers)
+			l := cacheimporttypes.CacheLayer{
+				Blob:        desc.Digest,
+				ParentIndex: -1,
+			}
+			if parentID != "" {
+				l.ParentIndex = state.chainsByID[parentID]
+			}
+			state.layers = append(state.layers, l)
+		}
+		parentID = id
 	}
-
-	state.chainsByID[id] = len(state.layers)
-	l := cacheimporttypes.CacheLayer{
-		Blob:        desc.Digest,
-		ParentIndex: -1,
-	}
-	if parentID != "" {
-		l.ParentIndex = state.chainsByID[parentID]
-	}
-	state.layers = append(state.layers, l)
-	return id
+	return parentID
 }
 
 func marshalItem(ctx context.Context, it *item, state *marshalState) error {
@@ -1756,6 +1749,12 @@ func (s State) AddEnvf(key, value string, v ...any) State {
 	return AddEnvf(key, value, v...)(s)
 }
 
+// DelEnv returns a new [State] with the provided environment variable removed.
+// See [DelEnv]
+func (s State) DelEnv(key string) State {
+	return DelEnv(key)(s)
+}
+
 // Dir returns a new [State] with the provided working directory set.
 // See [Dir]
 func (s State) Dir(str string) State {
@@ -1808,10 +1807,7 @@ func (s State) GetArgs(ctx context.Context, co ...ConstraintsOpt) ([]string, err
 }
 
 // Reset is used to return a new [State] with all of the current state and the
-// provided [State] as the parent. In effect you can think of this as creating
-// a new state with all the output from the current state but reparented to the
-// provided state.  See [Reset] for more details.
-func (
+// provided [State] as the parent. In effect you ca
 ```
 
 ### Core Architecture Module: `client/workers.go`
@@ -2299,11 +2295,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7366** (2026-11-04): **deps updates for v0.35**
+- **Issue #7372** (2026-11-05): **client: skip testImageCacheRejectsUnverifiedDiffIDs on dockerd graphdriver**
   *Symptoms*: 
 
-- **Issue #7364** (2026-11-04): **imagerefchecker: don't match chains with missing blobs**
-  *Symptoms*: supersedes #7353
+- **Issue #7367** (2026-11-04): **source/http: add retry jitter and Retry-After handling**
+  *Symptoms*: follow-up https://github.com/moby/buildkit/pull/7258  This adds jitter to the shared exponential backoff so concurrent HTTP and registry requests are less likely to retry together after a failure. The existing attempt limit and cancellation behavior are preserved.  HTTP source downloads also retry 429 and 503 responses, honoring `Retry-After`. Server-requested delays have a separate, configurable limit of 30 seconds by default, allowing longer waits without changing the exponential backoff budget. Delays above that limit fail immediately rather than triggering an early retry. Failed response bodies are closed before waiting, and the cached HEAD probe remains best-effort and falls back to GET.  cc @astokes-docker
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,1039 +2316,547 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fb98cee` (2026-11-04)
-**Commit Message**: Merge pull request #7300 from Zaczero/fix-exec-stream-failure
+### Incident Patch 1: `9fab8633` (2026-11-04)
+**Commit Message**: Merge pull request #7355 from tonistiigi/solver-ref-fixes
 
-grpcclient: unblock processes when exec stream ends
+solver: fix ref counting issues on cancellation cases
 
-**File**: `frontend/gateway/grpcclient/client.go` (modified, +36/-25)
+**File**: `client/client_test.go` (modified, +1/-0)
 ```diff
-@@ -822,12 +822,14 @@ func (c *grpcClient) Inputs(ctx context.Context) (map[string]llb.State, error) {
- // communication channel between the process and the ExecProcess message
- // stream.
- type procMessageForwarder struct {
-+	ctx  context.Context
- 	done chan struct{}
- 	msgs chan *pb.ExecMessage
- }
+@@ -285,6 +285,7 @@ func TestClientGatewayIntegration(t *testing.T) {
+ 		testClientGatewayRepeatedExecError,
+ 		testClientBuildOpExecErrorReleased,
+ 		testClientGatewayExecErrorReleasedDuringLoad,
++		testClientGatewaySolveReleasedAfterDiscard,
+ 		testClientGatewayExecFileActionError,
+ 		testClientGatewaySlowCacheExecError,
  
--func newProcMessageForwarder() *procMessageForwarder {
-+func newProcMessageForwarder(ctx context.Context) *procMessageForwarder {
- 	return &procMessageForwarder{
-+		ctx:  ctx,
- 		done: make(chan struct{}),
- 		msgs: make(chan *pb.ExecMessage),
- 	}
-@@ -841,14 +843,16 @@ func (b *procMessageForwarder) Send(ctx context.Context, m *pb.ExecMessage) {
- 	}
- }
- 
--func (b *procMessageForwarder) Recv(ctx context.Context) (m *pb.ExecMessage, ok bool) {
-+func (b *procMessageForwarder) Recv(ctx context.Context) (*pb.ExecMessage, error) {
- 	select {
- 	case <-ctx.Done():
--		return nil, true
-+		return nil, context.Cause(ctx)
-+	case <-b.ctx.Done():
-+		return nil, context.Cause(b.ctx)
- 	case <-b.done:
--		return nil, false
--	case m = <-b.msgs:
--		return m, true
-+		return nil, nil
-+	case m := <-b.msgs:
-+		return m, nil
- 	}
- }
- 
-@@ -909,6 +913,11 @@ func (m *messageForwarder) Start() (err error) {
- 		m.eg.Go(func() error {
- 			for {
- 				msg, err := m.stream.Recv()
-+				if err != nil {
-+					// EOF and cancellation also end delivery to every process,
-+					// even though they are not errors for Release.
-+					m.cancel(errors.Wrap(err, "remote exec stream closed"))
-+				}
- 				if errors.Is(err, io.EOF) || grpcerrors.Code(err) == codes.Canceled {
- 					return nil
- 				}
-@@ -977,7 +986,7 @@ func (m *messageForwarder) Release() error {
- func (m *messageForwarder) Register(pid string) *procMessageForwarder {
- 	m.mu.Lock()
- 	defer m.mu.Unlock()
--	sender := newProcMessageForwarder()
-+	sender := newProcMessageForwarder(m.ctx)
- 	m.pids[pid] = sender
- 	return sender
- }
-@@ -1121,7 +1130,11 @@ func (ctr *container) Start(ctx context.Context, req client.StartRequest) (clien
- 		return nil, err
- 	}
- 
--	msg, _ := msgs.Recv(ctx)
-+	msg, err := msgs.Recv(ctx)
-+	if err != nil {
-+		ctr.execMsgs.Deregister(pid)
-+		return nil, err
-+	}
- 	if msg == nil {
- 		return nil, errors.New("failed to receive started message")
- 	}
-@@ -1166,13 +1179,11 @@ func (ctr *container) Start(ctx context.Context, req client.StartRequest) (clien
- 				processID: pid,
- 				fd:        0,
- 			}
--			_, err := io.Copy(m, stdinReader)
--			// ignore ErrClosedPipe, it is EOF for our usage.
--			if err != nil && !errors.Is(err, io.ErrClosedPipe) {
--				return err
-+			_, copyErr := io.Copy(m, stdinReader)
-+			if copyErr != nil && !errors.Is(copyErr, io.ErrClosedPipe) {
-+				return copyErr
- 			}
--			// not an error so must be eof
--			return ctr.execMsgs.Send(&pb.ExecMessage{
-+			err := ctr.execMsgs.Send(&pb.ExecMessage{
- 				ProcessID: pid,
- 				Input: &pb.ExecMessage_File{
- 					File: &pb.FdMessage{
-@@ -1181,6 +1192,12 @@ func (ctr *container) Start(ctx context.Context, req client.StartRequest) (clien
- 					},
- 				},
- 			})
-+			// Cleanup still sends EOF to unblock remote stdin, but a failed send
-+			// must not replace the process result that triggered cleanup.
-+			if errors.Is(copyErr, io.ErrClosedPipe) {
-+				return nil
-+			}
-+			return err
- 		})
- 	}
- 
-@@ -1189,19 +1206,13 @@ func (ctr *container) Start(ctx context.Context, req client.StartRequest) (clien
- 		defer closeDoneOnce.Do(func() { close(done) })
- 		var exitError error
- 		for {
--			msg, ok := msgs.Recv(ctx)
--			if !ok {
--				// no more messages, return
--				return exitError
-+			msg, err := msgs.Recv(ctx)
-+			if err != nil {
-+				return err
- 			}
--
- 			if msg == nil {
--				// empty message from ctx cancel, so just start shutting down
--				// input
--				closeDoneOnce.Do(func() {
--					close(done)
--				})
--				return context.Cause(ctx)
-+				// no more messages, return
-+				return exitError
- 			}
- 
- 			if file := msg.GetFile(); file != nil {
 ```
 
-**File**: `frontend/gateway/grpcclient/client_test.go` (modified, +2/-2)
+**File**: `client/gateway_shared_error_test.go` (modified, +67/-0)
 ```diff
-@@ -84,8 +84,8 @@ func TestMessageForwarderSendDoesNotBlockReceive(t *testing.T) {
- 		ProcessID: "process",
- 		Input:     &pb.ExecMessage_File{File: &pb.FdMessage{Fd: 1, Data: []byte("stdout")}},
- 	}
--	msg, ok := process.Recv(ctx)
--	require.True(t, ok)
-+	msg, err := process.Recv(ctx)
-+	require.NoError(t, err)
- 	require.NotNil(t, msg, "process output stalled behind a blocked stdin send")
- 	require.Equal(t, "stdout", string(msg.GetFile().GetData()))
+@@ -249,3 +249,70 @@ func testClientBuildOpExecErrorReleased(t *testing.T, sb integration.Sandbox) {
+ 	require.NoError(t, err)
+ 	checkAllReleasable(t, c, sb, true)
  }
-```
-
-**File**: `frontend/gateway/grpcclient/container_test.go` (modified, +274/-1)
-```diff
-@@ -3,21 +3,193 @@ package grpcclient
- import (
- 	"context"
- 	"io"
-+	"net"
- 	"testing"
- 	"time"
- 
- 	"github.com/moby/buildkit/frontend/gateway/client"
- 	pb "github.com/moby/buildkit/frontend/gateway/pb"
- 	"github.com/pkg/errors"
- 	"github.com/stretchr/testify/require"
-+	spb "google.golang.org/genproto/googleapis/rpc/status"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/credentials/insecure"
-+	"google.golang.org/grpc/status"
- )
- 
-+type execStreamServer struct {
-+	pb.UnimplementedLLBBridgeServer
-+	init    chan string
-+	failure chan error
-+	start   bool
-+	exit    bool
-+	finish  bool
-+}
 +
-+func (s *execStreamServer) ExecProcess(stream pb.LLBBridge_ExecProcessServer) error {
-+	var pids []string
-+	received := make(chan *pb.ExecMessage)
-+	go func() {
-+		for {
-+			msg, err := stream.Recv()
-+			if err != nil {
-+				return
-+			}
-+			select {
-+			case received <- msg:
-+			case <-stream.Context().Done():
-+				return
-+			}
-+		}
-+	}()
-+	for {
-+		select {
-+		case err := <-s.failure:
-+			if s.exit {
-+				for _, pid := range pids {
-+					messages := []*pb.ExecMessage{
-+						{ProcessID: pid, Input: &pb.ExecMessage_Exit{Exit: &pb.ExitMessage{}}},
-+					}
-+					if s.finish {
-+						messages = append(messages, &pb.ExecMessage{ProcessID: pid, Input: &pb.ExecMessage_Done{Done: &pb.DoneMessage{}}})
-+					}
-+					for _, msg := range messages {
-+						if err := stream.Send(msg); err != nil {
-+							return err
-+						}
-+					}
-+				}
-+			}
-+			return err
-+		case <-stream.Context().Done():
-+			return stream.Context().Err()
-+		case msg := <-received:
-+			if msg.GetInit() != nil {
-+				pids = append(pids, msg.ProcessID)
-+				s.init <- msg.ProcessID
-+				if s.start {
-+					if err := stream.Send(&pb.ExecMessage{
-+						ProcessID: msg.ProcessID,
-+						Input:     &pb.ExecMessage_Started{Started: &pb.StartedMessage{}},
-+					}); err != nil {
-+						return err
-+					}
-+				}
-+			}
-+		}
-+	}
-+}
-+
-+func TestExecStreamFailureReleasesProcesses(t *testing.T) {
-+	for _, transport := range []struct {
-+		name string
-+		err  error
-+	}{
-+		{name: "EOF"},
-+		{name: "unavailable", err: status.Error(codes.Unavailable, "connection lost")},
-+		{name: "canceled", err: status.Error(codes.Canceled, "remote session ended")},
-+		{name: "deadline", err: status.Error(codes.DeadlineExceeded, "remote exec deadline exceeded")},
-+	} {
-+		for _, phase := range []string{"starting", "waiting", "exited", "completed"} {
-+			t.Run(transport.name+"/"+phase, func(t *testing.T) {
-+				ctx, cancel := context.WithTimeoutCause(t.Context(), 10*time.Second, errors.New("exec stream failure test timed out"))
-+				defer cancel()
-+				server := &execStreamServer{
-+					init:    make(chan string, 2),
-+					failure: make(chan error, 1),
-+					start:   phase != "starting",
-+					exit:    phase == "exited" || phase == "completed",
-+					finish:  phase == "completed",
-+				}
-+				var lc net.ListenConfig
-+				listener, err := lc.Listen(ctx, "tcp", "127.0.0.1:0")
-+				require.NoError(t, err)
-+				t.Cleanup(func() { listener.Close() })
-+				srv := grpc.NewServer()
-+				pb.RegisterLLBBridgeServer(srv, server)
-+				t.Cleanup(srv.Stop)
-+				go srv.Serve(listener)
-+				conn, err := grpc.NewClient(listener.Addr().String(),
-+					grpc.WithTransportCredentials(insecure.NewCredentials()),
-+				)
-+				require.NoError(t, err)
-+				t.Cleanup(func() { conn.Close() })
-+				forwarder := newMessageForwarder(ctx, pb.NewLLBBridgeClient(conn))
-+				require.NoError(t, forwarder.Start())
-+				t.Cleanup(func() {
-+					err := forwarder.Release()
-+					if code := status.Code(transport.err); transport.err == nil || code == codes.Canceled {
-+						require.NoError(t, err)
-+					} else {
-+						require.Equal(t, code, status.Code(err))
-+						require.ErrorContains(t, err, status.Convert(transport.err).Message())
-+					}
-+				})
-+				ctr := &container{id: "stream-failure", execMsgs: forwarder}
-+				done := make(chan error, 2)
-+				ready := make(chan struct{}, 2)
-+				for range 2 {
-+					input, writer := io.Pipe()
-+					t.Cleanup(func() {
-+						input.Close()
-+						writer.Close()
-+					})
-+					req := client.StartRequest{Stdin: input}
-+					go func() {
-+						process, err := ctr.Start(ctx, req)
-+						if err == nil {
-+							ready <- struct{}{}
-+							err = process.Wait()
-+						}
-+						done <- err
-+					}()
-+					select {
-+					case <-server.init:
-+					case <-ctx.Done():
-+						t.Fatal(context.Cause(ctx))
-+					}
-+					if server.start {
-+						select {
-+						case <-ready:
-+						case <-ctx.Done():
-+							t.Fatal(context.Cause(ctx))
-+						}
-+					}
-+				}
-+				server.failure <- transport.err
-+				for range 2 {
-+					select {
-+					case err := <-done:
-+						require.NoError(t, context.Cause(ctx), "caller context must remain live")
-+						if server.finish {
-+							require.NoError(t, err)
-+						} else if transport.err == nil {
-+							require.ErrorIs(t, err, io.EOF)
-+						} else {
-+							require.Equal(t, status.Code(transport.err), status.Code(err))
-+							require.ErrorCon
-```
-
----
-
-### Incident Patch 2: `37e92c77` (2026-11-03)
-**Commit Message**: Merge pull request #7187 from crazy-max/fix-local-cache-ingest-locking
-
-solve: lock local cache ingests across clients
-
-**File**: `client/client_cache_test.go` (modified, +143/-0)
-```diff
-@@ -21,16 +21,20 @@ import (
- 	"github.com/aws/aws-sdk-go-v2/credentials"
- 	"github.com/aws/aws-sdk-go-v2/service/s3"
- 	ctd "github.com/containerd/containerd/v2/client"
-+	"github.com/containerd/containerd/v2/core/content"
- 	"github.com/containerd/containerd/v2/core/images"
- 	ctdcompression "github.com/containerd/containerd/v2/pkg/archive/compression"
- 	"github.com/containerd/containerd/v2/pkg/namespaces"
-+	contentlocal "github.com/containerd/containerd/v2/plugins/content/local"
- 	cerrdefs "github.com/containerd/errdefs"
- 	"github.com/gofrs/flock"
- 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
- 	"github.com/moby/buildkit/client/llb"
- 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
- 	gateway "github.com/moby/buildkit/frontend/gateway/client"
- 	"github.com/moby/buildkit/identity"
-+	"github.com/moby/buildkit/session"
-+	sessioncontent "github.com/moby/buildkit/session/content"
- 	"github.com/moby/buildkit/util/compression"
- 	"github.com/moby/buildkit/util/testutil"
- 	"github.com/moby/buildkit/util/testutil/helpers"
-@@ -40,8 +44,147 @@ import (
- 	"github.com/pkg/errors"
- 	"github.com/stretchr/testify/require"
- 	"github.com/tonistiigi/fsutil"
-+	"golang.org/x/sync/errgroup"
- )
- 
-+func testConcurrentLocalCacheExport(t *testing.T, sb integration.Sandbox) {
-+	integration.SkipOnPlatform(t, "windows")
-+	workers.CheckFeatureCompat(t, sb, workers.FeatureCacheExport, workers.FeatureCacheBackendLocal)
-+
-+	ctx, cancel := context.WithTimeoutCause(sb.Context(), time.Minute, errors.New("concurrent local cache export timed out"))
++// testClientGatewaySolveReleasedAfterDiscard checks that the refs of a solve
++// that finishes after the gateway is discarded are released.
++func testClientGatewaySolveReleasedAfterDiscard(t *testing.T, sb integration.Sandbox) {
++	requiresLinux(t)
++	ctx, cancel := context.WithTimeoutCause(sb.Context(), time.Minute, errors.New("released late solve test timed out"))
 +	defer cancel()
 +
 +	c, err := New(ctx, sb.Address())
 +	require.NoError(t, err)
 +	defer c.Close()
 +
-+	// Export a single scratch-mounted layer in the default min mode so both
-+	// exports contend on the same ref before either writes config or manifest.
-+	st := llb.Image("busybox:latest").Run(llb.Shlex("sh -c 'echo shared > /out/payload'")).AddMount("/out", llb.Scratch())
-+	def, err := st.Marshal(ctx)
++	id := identity.NewID()
++	// The exec succeeds only after a marker appears in a shared cache mount.
++	// The marker is written once the first build has returned, so the solve
++	// always finishes after the gateway is discarded.
++	cache := llb.AsPersistentCacheDir(id, llb.CacheMountShared)
++	def, err := llb.Image("busybox:latest").Run(
++		llb.Shlexf("sh -c 'echo %s; i=0; while [ ! -e /cache/go ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done'", id),
++		llb.AddMount("/cache", llb.Scratch(), cache),
++	).Root().Marshal(ctx)
++	require.NoError(t, err)
++	markerDef, err := llb.Image("busybox:latest").Run(
++		llb.Shlexf("sh -c 'echo %s; touch /cache/go'", id),
++		llb.AddMount("/cache", llb.Scratch(), cache),
++	).Root().Marshal(ctx)
 +	require.NoError(t, err)
 +
-+	dir := t.TempDir()
-+	opened := make(chan struct{}, 2)
-+	blocked := make(chan struct{}, 1)
-+	releases := [2]chan struct{}{make(chan struct{}), make(chan struct{})}
-+	completed := make(chan error, 2)
-+	eg, ctx := errgroup.WithContext(ctx)
-+	for i := range 2 {
-+		store, err := newLocalCacheStore(dir)
-+		require.NoError(t, err)
-+		s, err := session.NewSession(ctx, "")
-+		require.NoError(t, err)
-+		t.Cleanup(func() { require.NoError(t, s.Close()) })
-+		s.Allow(sessioncontent.NewAttachable(map[string]content.Store{
-+			"local:" + dir: &gatedCacheStore{Store: store, opened: opened, blocked: blocked, release: releases[i]},
-+		}))
-+		eg.Go(func() error { return s.Run(ctx, c.Dialer()) })
-+		eg.Go(func() error {
-+			defer s.Close()
-+			_, err := c.Solve(ctx, def, SolveOpt{
-+				SharedSession:         s,
-+				SessionPreInitialized: true,
-+				CacheExports: []CacheOptionsEntry{{Type: "local", Attrs: map[string]string{
-+					"dest": dir,
-+					"tag":  fmt.Sprintf("export-%d", i),
-+				}}},
-+			}, nil)
-+			completed <- err
-+			return err
-+		})
-+		if i == 0 {
-+			select {
-+			case <-opened:
-+			case <-ctx.Done():
-+				t.Fatal(context.Cause(ctx))
++	started := make(chan struct{})
++	statusCh := make(chan *SolveStatus)
++	statusDone := make(chan struct{})
++	go func() {
++		defer close(statusDone)
++		var once sync.Once
++		for st := range statusCh {
++			for _, v := range st.Vertexes {
++				if v.Started != nil && strings.Contains(v.Name, id) {
++					once.Do(func() { close(started) })
++				}
 +			}
 +		}
-+	}
-+	done := make(chan error, 1)
-+	go func() { done <- eg.Wait() }()
++	}()
 +
-+	// The first export owns the ingest. The second must retry rather than
-+	// opening and modifying the same temporary files.
-+	select {
-+	case <-blocked:
-+	case <-opened:
-+		t.Fatal("second export opened an active ingest")
-+	case <-ctx.Done():
-+		t.Fatal(context.Cause(ctx))
-+	}
-+
-+	entries, err := os.ReadDir(filepath.Join(dir, "ingest"))
-+	require.NoError(t, err)
-+	require.Len(t, entries, 1, "exports of the same reference must reuse its ingest")
-+	// Index updates use a non-blocking lock. Delay the second export's retry
-+	// until the first has published its index entry.
-+	for _, release := range releases {
-+		close(release)
-+		require.NoError(t, <-completed)
-+	}
-+	require.NoError(t, <-done)
-+
-+	dt, err := os.ReadFile(filepath.Join(dir, "index.json"))
-+	require.NoError(t, err)
-+	var index ocispecs.Index
-+	require.NoError(t, json.Unmarshal(dt, &index))
-+	require.Len(t, index.Manifests, 2)
-+
-+	store, err := contentlocal.NewStore(dir)
-+	require.NoError(t, err)
-+
-+	for _, desc := range index.Manifests {
-+		dt, err := content.ReadBlob(sb.Context(), store, desc)
-+		require.NoError(t, err)
-+		var manifest ocispecs.Manifest
-+		require.NoError(t, json.Unmarshal(dt, &manifest))
-+		for _, blob := range append(manifest.Layers, manifest.Config) {
-+			dt, err := content.ReadBlob(sb.Context(), store, blob)
-+			require.NoError(t, err)
-+			require.Equal(t, blob.Digest, blob.Digest.Algorithm().FromBytes(dt))
++	solveErr := make(chan error, 1)
++	_, err = c.Build(ctx, SolveOpt{}, "buildkit_test", func(ctx context.Context, gc gwclient.Client) (*gwclient.Result, error) {
++		go func() {
++			_, err := gc.Solve(ctx, gwclient.SolveRequest{Definition: def.ToPB(), Evaluate: true})
++			solveErr <- err
++		}()
++		// return while the exec is running so the gateway is discarded
++		select {
++		case <-started:
++		case <-ctx.Done():
++			return nil, errors.WithStack(context.Cause(ctx))
 +		}
++		return gwclient.NewResult(), nil
++	}, statusCh)
++	require.NoError(t, err)
++	<-statusDone
++
++	// the gateway has been discarded, let the exec finish
++	_, err = c.Solve(ctx, markerDef, SolveOpt{}, nil)
++	require.NoError(t, err)
++	require.ErrorContains(t, <-solveErr, "gateway forwarder is closing")
++
++	checkAllReleasable(t, c, sb, true)
++}
+```
+
+**File**: `frontend/gateway/gateway.go` (modified, +10/-0)
+```diff
+@@ -838,6 +838,16 @@ func (lbf *llbBridgeForwarder) Solve(ctx context.Context, req *pb.SolveRequest)
+ 
+ 	lbf.mu.Lock()
+ 
++	if lbf.discarded {
++		// A solve that finished after Discard has no one to release its refs.
++		lbf.mu.Unlock()
++		res.EachRef(func(r solver.ResultProxy) error {
++			r.Release(context.TODO())
++			return nil
++		})
++		return nil, stack.Enable(status.Error(codes.Unavailable, "gateway forwarder is closing"))
 +	}
-+}
 +
-+// gatedCacheStore pauses the first writer so two exports can overlap without
-+// relying on scheduling or a large payload to keep an ingest active.
-+type gatedCacheStore struct {
-+	content.Store
-+	opened  chan<- struct{}
-+	blocked chan<- struct{}
-+	release <-chan struct{}
-+	paused  atomic.Bool
-+}
-+
-+func (s *gatedCacheStore) Write
+ 	if res.Refs != nil {
+ 		ids := make(map[string]string, len(res.Refs))
+ 		defs := make(map[string]*opspb.Definition, len(res.Refs))
 ```
 
-**File**: `client/client_test.go` (modified, +1/-0)
+**File**: `solver/edge.go` (modified, +14/-6)
 ```diff
-@@ -22,6 +22,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testBasicInlineCacheImportExport,
- 	testBasicLocalCacheImportExport,
- 	testAlternativeInputKeysCacheImport,
-+	testConcurrentLocalCacheExport,
- 	testBasicRegistryCacheImportExport,
- 	testBasicS3CacheImportExport,
- 	testCacheExportCacheDeletedContent,
-```
-
-**File**: `client/solve.go` (modified, +92/-2)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"github.com/containerd/containerd/v2/core/content"
- 	"github.com/containerd/containerd/v2/core/images"
- 	contentlocal "github.com/containerd/containerd/v2/plugins/content/local"
-+	cerrdefs "github.com/containerd/errdefs"
- 	"github.com/gofrs/flock"
- 	controlapi "github.com/moby/buildkit/api/services/control"
- 	"github.com/moby/buildkit/client/llb"
-@@ -640,7 +641,7 @@ func parseCacheOptions(ctx context.Context, isGateway bool, opt SolveOpt) (*cach
- 			if err := os.MkdirAll(csDir, 0755); err != nil {
- 				return nil, err
+@@ -732,6 +732,14 @@ func (e *edge) processDepSlowCacheReq(index int, dep *dep) {
+ // respondToIncoming responds to all incoming requests. completing or
+ // updating them when possible
+ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver) (edgeStatusType, bool) {
++	// Requests can be canceled concurrently. Decide on one snapshot so a late
++	// cancel cannot finish the last request while outgoing work is active; it
++	// is handled on the next dispatch.
++	canceled := make([]bool, len(incoming))
++	for i, req := range incoming {
++		canceled[i] = req.Request().Canceled
++	}
++
+ 	// detect the result state for the requests
+ 	allIncomingCanComplete := true
+ 	desiredState := e.state
+@@ -740,8 +748,8 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
+ 	// check incoming requests
+ 	// check if all requests can be either answered or canceled
+ 	if !e.isComplete() {
+-		for _, req := range incoming {
+-			if !req.Request().Canceled {
++		for i, req := range incoming {
++			if !canceled[i] {
+ 				allCanceled = false
+ 				if r := req.Request().Payload; desiredState < r.desiredState {
+ 					desiredState = r.desiredState
+@@ -768,8 +776,8 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
+ 
+ 		// can close all but one requests
+ 		var leaveOpen pipeSender
+-		for _, req := range incoming {
+-			if !req.Request().Canceled {
++		for i, req := range incoming {
++			if !canceled[i] {
+ 				leaveOpen = req
+ 				break
  			}
--			cs, err := contentlocal.NewStore(csDir)
-+			cs, err := newLocalCacheStore(csDir)
- 			if err != nil {
- 				return nil, err
- 			}
-@@ -686,7 +687,7 @@ func parseCacheOptions(ctx context.Context, isGateway bool, opt SolveOpt) (*cach
- 			if csDir == "" {
- 				return nil, errors.New("local cache importer requires src")
- 			}
--			cs, err := contentlocal.NewStore(csDir)
-+			cs, err := newLocalCacheStore(csDir)
- 			if err != nil {
- 				bklog.G(ctx).Warning("local cache import at " + csDir + " not found due to err: " + err.Error())
- 				continue
-@@ -752,3 +753,92 @@ func parseCacheOptions(ctx context.Context, isGateway bool, opt SolveOpt) (*cach
+@@ -793,9 +801,9 @@ func (e *edge) respondToIncoming(incoming []pipeSender, allPipes []pipeReceiver)
  	}
- 	return &res, nil
- }
+ 
+ 	// update incoming based on current state
+-	for _, req := range incoming {
++	for i, req := range incoming {
+ 		r := req.Request().Payload
+-		if req.Request().Canceled {
++		if canceled[i] {
+ 			e.finishIncoming(req)
+ 		} else if !e.hasActiveOutgoing && e.state >= r.desiredState {
+ 			e.finishIncoming(req)
+```
+
+**File**: `solver/edge_test.go` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++package solver
 +
-+// localCacheStore coordinates ingests across clients sharing a cache directory.
-+// The underlying local store only locks references within one store instance.
-+type localCacheStore struct {
-+	content.Store
-+	dir string
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// cancelOnRead cancels the request the first time the edge reads it, after
++// respondToIncoming has started deciding on its incoming requests.
++type cancelOnRead struct {
++	pipeSender
++	cancel func()
++	reads  int
 +}
 +
-+func newLocalCacheStore(dir string) (content.Store, error) {
-+	store, err := contentlocal.NewStore(dir)
-+	if err != nil {
-+		return nil, err
++func (p *cancelOnRead) Request() pipeRequest {
++	r := p.pipeSender.Request()
++	p.reads++
++	if p.reads == 1 {
++		p.cancel()
 +	}
-+	return &localCacheStore{Store: store, dir: dir}, nil
++	return r
 +}
 +
-+func (s *localCacheStore) lock(ref string) (*flock.Flock, error) {
-+	dir := filepath.Join(s.dir, "ingest-locks")
-+	if err := os.MkdirAll(dir, 0755); err != nil {
-+		return nil, err
-+	}
-+	// Keep lock files after unlocking: deleting one could let another client
-+	// lock a different inode while an existing waiter still uses the old one.
-+	// This retains one empty file per ref, even after cache reset. The reset
-+	// lock cannot protect their removal: not all users of this store hold it.
-+	lock := flock.New(filepath.Join(dir, digest.FromString(ref).Encoded()))
-+	locked, err := lock.TryLock()
-+	if err != nil {
-+		return nil, err
-+	}
-+	if !locked {
-+		return nil, errors.Wrapf(cerrdefs.ErrUnavailable, "ingest ref %q is locked", ref)
-+	}
-+	return lock, nil
-+}
++func TestCancelDuringRespondKeepsIncomingUntilOutgoingDrains(t *testing.T) {
++	p := newPipe(pipeRequest{Payload: &edgeRequest{desiredState: edgeStatusComplete}})
++	req := &cancelOnRead{pipeSender: p.Sender, cancel: p.Receiver.Cancel}
++	e := &edge{hasActiveOutgoing: true}
 +
-+func (s *localCacheStore) Writer(ctx context.Context, opts ...content.WriterOpt) (content.Writer, error) {
-+	var wo content.WriterOpts
-+	for _, opt := range opts {
-+		if err := opt(&wo); err != nil {
-+			return nil, err
-+		}
-+	}
-+	if wo.Ref == "" {
-+		return nil, errors.Wrap(cerrdefs.ErrInvalidArgument, "ref must not be empty")
-+	}
-+	lock, err := s.lock(wo.Ref)
-+	if err != nil {
-+		return nil, err
-+	}
-+	w, err := s.Store.Writer(ctx, content.WithRef(wo.Ref), content.WithDescriptor(wo.Desc))
-+	if err != nil {
-+		lock.Close()
-+		return nil, err
-+	}
-+	return &localCacheWriter{Writer: w, lock: lock}, nil
-+}
++	e.respondToIncoming([]pipeSender{req}, nil)
++	require.False(t, p.Sender.Status().Completed, "last incoming request completed with active outgoing")
 +
-+func (s *localCacheStore) Abort(ctx context.Context, ref string) error {
-+	lock, err := s.lock(ref)
-+	if err != nil {
-+		return err
-+	}
-+	defer lock.Close()
-+	return s.Store.Abort(ctx, ref)
-+}
++	// The next dispatch sees the cancel and asks outgoing work to drain.
++	_, done := e.respondToIncoming([]pipeSender{req}, nil)
++	require.True(t, done)
++	require.False(t, p.Sender.Status().Completed)
 +
-+type localCacheWriter struct {
-+	content.Writer
-+	lock *flock.Flock
-+}
-+
-+func (w *localCacheWriter) Commit(ctx context.Context, size int64, expected digest.Digest, opts ...content.Opt) error {
-+	err := w.Writer.Commit(ctx, size, expected, opts...)
-+	closeErr := w.Close()
-+	if err != nil {
-+		return err
-+	}
-+	return closeErr
-+}
-+
-+func (w *localCacheWriter) Close() error {
-+	err := w.Writer.Close()
-+	lockErr := w.lock.Close()
-+	if err != nil {
-+		return err
-+	}
-+	return lockErr
++	e.hasActiveOutgoing = false
++	e.respondToIncoming([]pipeSender{req}, nil)
++	require.True(t, p.Sender.Status().Completed)
 +}
 ```
 
-**File**: `client/solve_test.go` (modified, +88/-0)
+**File**: `solver/jobs.go` (modified, +36/-3)
 ```diff
-@@ -1,12 +1,100 @@
- package client
+@@ -434,7 +434,9 @@ func (sb *subBuilder) EachValue(ctx context.Context, key string, fn func(any) er
+ }
  
- import (
-+	"context"
-+	"os"
-+	"path/filepath"
- 	"testing"
+ type Job struct {
+-	mu            sync.Mutex // protects completedTime, pw, span
++	mu            sync.Mutex // protects completedTime, pw, span, builds, discarded
++	builds        int
++	discarded     bool
+ 	list          *Solver
+ 	pr            *progress.MultiReader
+ 	pw            progress.Writer
+@@ -846,11 +848,17 @@ func (jl *Solver) deleteIfUnreferenced(k digest.Digest, st *state) {
+ }
  
-+	"github.com/containerd/containerd/v2/core/content"
-+	cerrdefs "github.com/containerd/errdefs"
- 	"github.com/moby/buildkit/client/llb"
-+	digest "github.com/opencontainers/go-digest"
-+	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
-+	"github.com/pkg/errors"
- 	"github.com/stretchr/testify/require"
- )
+ func (j *Job) Build(ctx context.Context, e Edge) (CachedResultWithProvenance, error) {
++	j.mu.Lock()
++	if j.discarded {
++		j.mu.Unlock()
++		return nil, errors.Errorf("build on discarded job %s", j.id)
++	}
++	j.builds++
+ 	if span := trace.SpanFromContext(ctx); span.SpanContext().IsValid() {
+-		j.mu.Lock()
+ 		j.span = span
+-		j.mu.Unlock()
+ 	}
++	j.mu.Unlock()
++	defer j.buildDone()
  
-+func TestLocalCacheStoreLockAndResume(t *testing.T) {
-+	ctx := t.Context()
-+	dir := t.TempDir()
-+	first, err := newLocalCacheStore(dir)
-+	require.NoError(t, err)
-+	second, err := newLocalCacheStore(dir)
-+	require.NoError(t, err)
-+	data := []byte("resumable cache layer")
-+	desc := ocispecs.Descriptor{Digest: digest.FromBytes(data), Size: int64(len(data))}
-+	opts := []content.WriterOpt{content.WithRef("layer"), content.WithDescriptor(desc)}
-+	w, err := first.Writer(ctx, opts...)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, w.Close()) })
-+	_, err = w.Write(data[:5])
-+	require.NoError(t, err)
-+
-+	_, err = second.Writer(ctx, opts...)
-+	require.ErrorIs(t, err, cerrdefs.ErrUnavailable)
-+	require.ErrorIs(t, second.Abort(ctx, "layer"), cerrdefs.ErrUnavailable)
-+	// Cancellation of OpenWriter's retry must not disturb the active writer.
-+	cancelled, cancel := context.WithCancelCause(ctx)
-+	cancel(errors.New("cancel retry"))
-+	_, err = content.OpenWriter(cancelled, second, opts...)
-+	require.ErrorIs(t, err, cerrdefs.ErrUnavailable)
-+
-+	// Independent references can still be written concurrently.
-+	other, err := second.Writer(ctx, content.WithRef("other"))
-+	require.NoError(t, err)
-+	require.NoError(t, other.Close())
-+	require.NoError(t, second.Abort(ctx, "other"))
-+	require.NoError(t, w.Close())
-+
-+	resumed, err := second.Writer(ctx, opts...)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, resumed.Close()) })
-+	status, err := resumed.Status()
-+	require.NoError(t, err)
-+	require.EqualValues(t, 5, status.Offset)
-+	_, err = resumed.Write(data[5:])
-+	require.NoError(t, err)
-+	require.NoError(t, resumed.Commit(ctx, desc.Size, desc.Digest))
-+	blob, err := content.ReadBlob(ctx, first, desc)
-+	require.NoError(t, err)
-+	require.Equal(t, data, blob)
-+	entries, err := os.ReadDir(filepath.Join(dir, "ingest"))
-+	require.NoError(t, err)
-+	require.Empty(t, entries, "resuming an interrupted export must reclaim its ingest")
-+
-+	// An already-existing blob must not leave its reference locked.
-+	_, err = first.Writer(ctx, opts...)
-+	require.ErrorIs(t, err, cerrdefs.ErrAlreadyExists)
-+	require.NoError(t, second.Abort(ctx, "layer"))
-+}
-+
-+func TestLocalCacheStoreCommitError(t *testing.T) {
-+	for _, failure := range []string{"size", "option"} {
-+		t.Run(failure, func(t *testing.T) {
-+			ctx := t.Context()
-+			dir := t.TempDir()
-+			first, err := newLocalCacheStore(dir)
-+			require.NoError(t, err)
-+			second, err := newLocalCacheStore(dir)
-+			require.NoError(t, err)
-+			w, err := first.Writer(ctx, content.WithRef("layer"))
-+			require.NoError(t, err)
-+			t.Cleanup(func() { require.NoError(t, w.Close()) })
-+			if failure == "size" {
-+				err = w.Commit(ctx, 1, "")
-+				require.ErrorIs(t, err, cerrdefs.ErrFailedPrecondition)
-+			} else {
-+				sentinel := errors.New("invalid commit option")
-+				err = w.Commit(ctx, 0, "", func(*content.Info) error { return sentinel })
-+				require.ErrorIs(t, err, sentinel)
-+			}
-+			// Commit closes the writer even on failure, including the file lock.
-+			require.NoError(t, second.Abort(ctx, "layer"))
-+		})
+ 	v, err := j.list.load(ctx, e.Vertex, nil, j)
+ 	if err != nil {
+@@ -919,7 +927,32 @@ func (j *Job) CloseProgress() {
+ 	j.pw.Close()
+ }
+ 
++// buildDone finishes a pending Discard when the last running build returns.
++func (j *Job) buildDone() {
++	j.mu.Lock()
++	j.builds--
++	last := j.discarded && j.builds == 0
++	j.mu.Unlock()
++	if last {
++		j.discard()
 +	}
 +}
 +
- func TestSolveRejectsInvalidLocalExporterMode(t *testing.T) {
- 	st := llb.Scratch().File(
- 		llb.Mkfile("fresh.txt", 0600, []byte("fresh")),
++// Discard releases the job's states. While builds are still running the states
++// are released when the last one returns, so results that complete after
++// Discard are released with their state.
+ func (j *Job) Discard() error {
++	j.mu.Lock()
++	j.discarded = true
++	running := j.builds > 0
++	j.mu.Unlock()
++	if running {
++		return nil
++	}
++	return j.discard()
++}
++
++func (j *Job) discard() error {
+ 	j.list.mu.Lock()
+ 	defer j.list.mu.Unlock()
+ 
+```
+
+**File**: `solver/scheduler_test.go` (modified, +5/-3)
+```diff
+@@ -1297,6 +1297,8 @@ func TestExecErrorRefsReleasedAfterJobDiscard(t *testing.T) {
+ 
+ 	// A failed exec can finish after its job has released the vertex.
+ 	require.NoError(t, j.Discard())
++	_, err = j.Build(ctx, g)
++	require.ErrorContains(t, err, "build on discarded job")
+ 	resumeExec()
+ 	select {
+ 	case err := <-done:
+@@ -1608,15 +1610,15 @@ func TestMultipleCacheSources(t *testing.T) {
+ 		}),
+ 	}
+ 
+-	res, err = j1.Build(ctx, g2)
++	res, err = j2.Build(ctx, g2)
+ 	require.NoError(t, err)
+ 	require.Equal(t, "result2", unwrap(res))
+ 
+ 	require.Equal(t, int64(2), cacheManager.loadCounter)
+ 	require.Equal(t, int64(0), cacheManager2.loadCounter)
+ 
+-	require.NoError(t, j1.Discard())
+-	j1 = nil
++	require.NoError(t, j2.Discard())
++	j2 = nil
+ }
+ 
+ func TestRepeatBuildWithIgnoreCache(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 3: `72de76a4` (2026-11-04)
-**Commit Message**: Merge pull request #7334 from crazy-max/fix-image-cache-attestation-changes
+### Incident Patch 2: `56eec589` (2026-11-04)
+**Commit Message**: Merge pull request #7323 from thaJeztah/grpcnotrace
 
-source: preserve image cache across attestation changes
+build: disable gRPC tracing to reduce binary size
 
-**File**: `client/client_cache_test.go` (modified, +247/-0)
+**File**: `Dockerfile` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,8 @@
- package client
+@@ -99,7 +99,7 @@ RUN --mount=target=. --mount=target=/root/.cache,type=cache \
+   --mount=target=/go/pkg/mod,type=cache \
+   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
+   set -ex
+-  xx-go build ${GOBUILDFLAGS} -ldflags "$(cat /tmp/.ldflags)" -o /usr/bin/buildctl ./cmd/buildctl
++  xx-go build ${GOBUILDFLAGS} -tags 'grpcnotrace' -ldflags "$(cat /tmp/.ldflags)" -o /usr/bin/buildctl ./cmd/buildctl
+   xx-verify --static /usr/bin/buildctl
+   if [ "$(xx-info os)" = "linux" ] && ! xx-info is-cross; then /usr/bin/buildctl --version; fi
+ EOT
+@@ -118,7 +118,7 @@ RUN --mount=target=. --mount=target=/root/.cache,type=cache \
+   --mount=target=/go/pkg/mod,type=cache \
+   --mount=source=/tmp/.ldflags,target=/tmp/.ldflags,from=buildkit-version <<EOT
+   set -ex
+-  xx-go build ${GOBUILDFLAGS} -gcflags="${GOGCFLAGS}" -ldflags "$(cat /tmp/.ldflags) -extldflags '-static'" -tags "osusergo netgo static_build seccomp ${BUILDKITD_TAGS}" -o /usr/bin/buildkitd ./cmd/buildkitd
++  xx-go build ${GOBUILDFLAGS} -gcflags="${GOGCFLAGS}" -ldflags "$(cat /tmp/.ldflags) -extldflags '-static'" -tags "osusergo netgo static_build seccomp grpcnotrace ${BUILDKITD_TAGS}" -o /usr/bin/buildkitd ./cmd/buildkitd
+   xx-verify ${VERIFYFLAGS} /usr/bin/buildkitd
+ 
+   # buildkitd --version can be flaky when running through emulation related to
+```
+
+---
+
+### Incident Patch 3: `85a6674b` (2026-11-04)
+**Commit Message**: Merge pull request #7351 from ggjulio/fix-cache-export-partial-chain
+
+remotecache: never export a partial layer chain
+
+**File**: `cache/remotecache/v1/chains_test.go` (modified, +77/-0)
+```diff
+@@ -1,14 +1,19 @@
+ package cacheimport
  
  import (
-+	"archive/tar"
-+	"bytes"
- 	"context"
- 	"encoding/base64"
++	"context"
  	"encoding/json"
-@@ -27,6 +29,7 @@ import (
- 	"github.com/containerd/containerd/v2/pkg/namespaces"
- 	contentlocal "github.com/containerd/containerd/v2/plugins/content/local"
- 	cerrdefs "github.com/containerd/errdefs"
-+	"github.com/containerd/platforms"
- 	"github.com/gofrs/flock"
- 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
- 	"github.com/moby/buildkit/client/llb"
-@@ -36,10 +39,13 @@ import (
- 	"github.com/moby/buildkit/session"
- 	sessioncontent "github.com/moby/buildkit/session/content"
- 	"github.com/moby/buildkit/util/compression"
-+	"github.com/moby/buildkit/util/contentutil"
- 	"github.com/moby/buildkit/util/testutil"
- 	"github.com/moby/buildkit/util/testutil/helpers"
- 	"github.com/moby/buildkit/util/testutil/integration"
- 	"github.com/moby/buildkit/util/testutil/workers"
-+	digest "github.com/opencontainers/go-digest"
-+	"github.com/opencontainers/image-spec/specs-go"
+ 	"testing"
+ 	"time"
+ 
++	"github.com/containerd/containerd/v2/core/content"
+ 	"github.com/containerd/containerd/v2/core/images"
++	cerrdefs "github.com/containerd/errdefs"
++	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
+ 	"github.com/moby/buildkit/solver"
+ 	digest "github.com/opencontainers/go-digest"
  	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
- 	"github.com/pkg/errors"
++	"github.com/pkg/errors"
  	"github.com/stretchr/testify/require"
-@@ -573,6 +579,247 @@ func testAlternativeInputKeysCacheImport(t *testing.T, sb integration.Sandbox) {
- 	require.NoError(t, err)
- }
+ )
  
-+func testImageCacheAcrossAttestationChanges(t *testing.T, sb integration.Sandbox) {
-+	requiresLinux(t)
-+	workers.CheckFeatureCompat(t, sb, workers.FeatureDirectPush, workers.FeatureProvenance)
-+	registry, err := sb.NewRegistry()
-+	if errors.Is(err, integration.ErrRequirements) {
-+		t.Skip(err.Error())
-+	}
-+	require.NoError(t, err)
-+	c, err := New(sb.Context(), sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
+@@ -162,3 +167,75 @@ func TestMarshalLayerMediaTypes(t *testing.T) {
+ func dgst(s string) digest.Digest {
+ 	return digest.FromBytes([]byte(s))
+ }
 +
-+	dir := t.TempDir()
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "Dockerfile"), []byte("FROM busybox:latest\nRUN echo hello world\n"), 0600))
-+	fs, err := fsutil.NewFS(dir)
-+	require.NoError(t, err)
-+	target := registry + "/buildkit/attestation-cache:latest"
-+	var previousIndex, previousManifest string
-+	var previousOutput []byte
-+	for _, tc := range []struct {
-+		name     string
-+		nested   bool
-+		embedded bool
-+		changed  bool
-+	}{
-+		{
-+			name: "initial build",
-+		},
-+		{
-+			name: "attestation-only rebuild",
-+		},
-+		{
-+			name:   "nested index",
-+			nested: true,
-+		},
-+		{
-+			name:     "nested index with embedded manifests",
-+			nested:   true,
-+			embedded: true,
-+		},
-+		{
-+			name:    "changed base layers",
-+			changed: true,
-+		},
-+	} {
-+		t.Log(tc.name)
-+		if tc.changed {
-+			require.NoError(t, os.WriteFile(filepath.Join(dir, "Dockerfile"), []byte("FROM busybox:latest\nRUN echo changed > /marker\n"), 0600))
-+		}
-+		resp, err := c.Solve(sb.Context(), nil, SolveOpt{
-+			Frontend:      "dockerfile.v0",
-+			FrontendAttrs: map[string]string{"attest:provenance": "mode=min"},
-+			LocalMounts:   map[string]fsutil.FS{"context": fs, "dockerfile": fs},
-+			Exports: []ExportEntry{{
-+				Type:  ExporterImage,
-+				Attrs: map[string]string{"name": target, "push": "true"},
-+			}},
-+		}, nil)
-+		require.NoError(t, err)
-+		indexDigest := resp.ExporterResponse[exptypes.ExporterImageDigestKey]
-+		desc, provider, err := contentutil.ProviderFromRef(sb.Context(), target+"@"+indexDigest)
-+		require.NoError(t, err)
-+		require.True(t, images.IsIndexType(desc.MediaType))
-+		dt, err := content.ReadBlob(sb.Context(), provider, desc)
-+		require.NoError(t, err)
-+		var idx ocispecs.Index
-+		require.NoError(t, json.Unmarshal(dt, &idx))
-+		require.Len(t, idx.Manifests, 2)
-+		manifestDigest := idx.Manifests[0].Digest.String()
-+		if tc.nested {
-+			ingester, err := contentutil.IngesterFromRef(sb.Context(), target)
-+			require.NoError(t, err)
-+			pushIndex := func(idx ocispecs.Index) ocispecs.Descriptor {
-+				dt, err := json.Marshal(idx)
-+				require.NoError(t, err)
-+				desc := ocispecs.Descriptor{
-+					MediaType: ocispecs.MediaTypeImageIndex,
-+					Digest:    digest.FromBytes(dt),
-+					Size:      int64(len(dt)),
-+				}
-+				require.NoError(t, content.WriteBlob(sb.Context(), ingester, desc.Digest.String(), bytes.NewReader(dt), desc))
-+				if tc.embedded {
-+					desc.Data = dt
-+				}
-+				return desc
-+			}
-+			if tc.embedded {
-+				dt, err := content.ReadBlob(sb.Context(), provider, idx.Manifests[0])
-+				require.NoError(t, err)
-+				idx.Manifests[0].Data = dt
-+				desc = pushIndex(idx)
-+			}
-+			desc = pushIndex(ocispecs.Index{
-+				Versioned: specs.Versioned{SchemaVersion: 2},
-+				MediaType: ocispecs.MediaTypeImageIndex,
-+				Manifests: []ocispecs.Descriptor{desc},
-+			})
-+			indexDigest = desc.Digest.String()
-+		}
++// countingProvider fails Info for a blob once it has been checked more than failAfter times, modelling a blob
++// that becomes unavailable while the config is being marshaled.
++type countingProvider struct {
++	failAfter map[digest.Digest]int
++	calls     map[digest.Digest]int
++}
 +
-+		// Pin each solve to its new index so resolver caching cannot hide the
-+		// change. Random output proves the downstream RUN reused its result.
-+		st := llb.Image(target+"@"+indexDigest).
-+			Run(llb.Shlex("sh -c 'head -c 100 /dev/urandom > /out/unique'")).
-+			AddMount("/out", llb.Scratch())
-+		def, err := st.Marshal(sb.Context())
-+		require.NoError(t, err)
-+		out := t.TempDir()
-+		_, err = c.Solve(sb.Context(), def, SolveOpt{
-+			Ex
-```
-
-**File**: `client/client_test.go` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testBasicLocalCacheImportExport,
- 	testAlternativeInputKeysCacheImport,
- 	testConcurrentLocalCacheExport,
-+	testImageCacheAcrossAttestationChanges,
-+	testImageCacheRejectsUnverifiedDiffIDs,
- 	testBasicRegistryCacheImportExport,
- 	testBasicS3CacheImportExport,
- 	testCacheExportCacheDeletedContent,
-```
-
-**File**: `source/containerimage/pull.go` (modified, +24/-11)
-```diff
-@@ -49,13 +49,14 @@ type puller struct {
- 	ResolverType
- 	store sourceresolver.ResolveImageConfigOptStore
- 
--	g                flightcontrol.Group[struct{}]
--	cacheKeyErr      error
--	cacheKeyDone     bool
--	releaseTmpLeases func(context.Context) error
--	descHandlers     cache.DescHandlers
--	manifest         *pull.PulledManifests
--	manifestKey      string
-+	g                   flightcontrol.Group[struct{}]
-+	cacheKeyErr         error
-+	cacheKeyDone        bool
-+	releaseTmpLeases    func(context.Context) error
-+	descHandlers        cache.DescHandlers
-+	manifest            *pull.PulledManifests
-+	manifestKey         string
-+	platformManifestKey string
- 	*pull.Puller
- }
- 
-@@ -132,8 +133,8 @@ func (p *puller) CacheKey(ctx context.Context, jobCtx solver.JobContext, index i
- 			return struct{}{}, err
- 		}
- 
--		if p.checksum != "" && p.manifest.MainManifestDesc.Digest != p.checksum {
--			return struct{}{}, errors.Errorf("image digest %s for %s does not match expected checksum %s", p.manifest.MainManifestDesc.Digest, p.Ref, p.checksum)
-+		if p.checksum != "" && p.manifest.RootManifestDesc.Digest != p.checksum {
-+			return struct{}{}, errors.Errorf("image digest %s for %s does not match expected checksum %s", p.manifest.RootManifestDesc.Digest, p.Ref, p.checksum)
- 		}
- 
- 		if ll := p.layerLimit; ll != nil {
-@@ -172,12 +173,17 @@ func (p *puller) CacheKey(ctx context.Context, jobCtx solver.JobContext, index i
- 			}
- 		}
- 
--		desc := p.manifest.MainManifestDesc
-+		desc := p.manifest.RootManifestDesc
- 		k, err := mainManifestKey(desc, p.Platform, p.layerLimit)
- 		if err != nil {
- 			return struct{}{}, err
- 		}
- 		p.manifestKey = k.String()
-+		k, err = mainManifestKey(p.manifest.ImageManifestDesc, p.Platform, p.layerLimit)
-+		if err != nil {
-+			return struct{}{}, err
-+		}
-+		p.platformManifestKey = k.String()
- 		// Do not use RootFS DiffIDs from the image config as an alternate
- 		// cache key. They are verified only when layers are applied, and a
- 		// failed malicious pull must not poison another image source.
-@@ -193,7 +199,14 @@ func (p *puller) CacheKey(ctx context.Context, jobCtx solver.JobContext, index i
- 		cacheOpts[cache.DescHandlerKey(dgst)] = descHandler
- 	}
- 
--	return p.manifestKey, p.manifest.MainManifestDesc.Digest.String(), cacheOpts, true, nil
-+	// Keep the index key for existing caches, but also match the selected
-+	// manifest so changes to attestations or other platforms do not invalidate
-+	// this source. Both keys identify verified manifest content, not DiffIDs
-+	// advertised by an unverified image config.
-+	if index == 0 {
-+		return p.manifestKey, p.manifest.RootManifestDesc.Digest.String(), cacheOpts, p.manifestKey == p.platformManifestKey, nil
++func (p *countingProvider) Info(_ context.Context, dgst digest.Digest) (content.Info, error) {
++	p.calls[dgst]++
++	if n, ok := p.failAfter[dgst]; ok && p.calls[dgst] > n {
++		return content.Info{}, errors.Wrapf(cerrdefs.ErrNotFound, "blob %s", dgst)
 +	}
-+	return p.platformManifestKey, p.manifest.RootManifestDesc.Digest.String(), cacheOpts, true, nil
- }
- 
- func (p *puller) Snapshot(ctx context.Context, jobCtx solver.JobContext) (ir cache.ImmutableRef, err error) {
-```
-
-**File**: `util/pull/pull.go` (modified, +26/-11)
-```diff
-@@ -45,12 +45,13 @@ type Puller struct {
- var _ content.Provider = &provider{}
- 
- type PulledManifests struct {
--	Ref              string
--	MainManifestDesc ocispecs.Descriptor
--	ConfigDesc       ocispecs.Descriptor
--	Nonlayers        []ocispecs.Descriptor
--	Descriptors      []ocispecs.Descriptor
--	Provider         func(session.Group) content.Provider
-+	Ref               string
-+	RootManifestDesc  ocispecs.Descriptor
-+	ImageManifestDesc ocispecs.Descriptor // Platform-specific manifest selected from RootManifestDesc.
-+	ConfigDesc        ocispecs.Descriptor
-+	Nonlayers         []ocispecs.Descriptor
-+	Descriptors       []ocispecs.Descriptor
-+	Provider          func(session.Group) content.Provider
- }
- 
- func (p *Puller) resolve(ctx context.Context, resolver remotes.Resolver) error {
-@@ -144,6 +145,18 @@ func (p *Puller) PullManifests(ctx context.Context, getResolver SessionResolver)
- 	// Limit manifests pulled to the best match in an index
- 	childrenHandler = images.LimitManifests(childrenHandler, platform, 1)
- 
-+	var manifestDesc ocispecs.Descriptor
-+	var manifestOnce sync.Once
-+	manifestHandler := images.HandlerFunc(func(ctx context.Context, desc ocispecs.Descriptor) ([]ocispecs.Descriptor, error) {
-+		if images.IsManifestType(desc.MediaType) {
-+			// Each index yields one child, so the first manifest is the
-+			// selected image, including through nested indexes. Do not let
-+			// malformed config or layer descriptors replace it later.
-+			manifestOnce.Do(func() { manifestDesc = desc })
++	return content.Info{Digest: dgst}, nil
++}
++
++func (p *countingProvider) ReaderAt(context.Context, ocispecs.Descriptor) (content.ReaderAt, error) {
++	return nil, cerrdefs.ErrNotImplemented
++}
++
++func TestMarshalUnavailableBlob(t *testing.T) {
++	chain := []ocispecs.Descriptor{{Digest: dgst("d0")}, {Digest: dgst("d1")}, {Digest: dgst("d2")}}
++
++	marshal := func(t *testing.T, p *countingProvider) *cacheimporttypes.CacheConfig {
++		cc := NewCacheChains()
++		base, ok, err := cc.Add(outputKey(dgst("base"), 0), nil, nil)
++		require.NoError(t, err)
++		require.True(t, ok)
++		// built with append: a one-element literal makes gosec report G602 on deps[i][j] in Add
++		var deps [][]solver.CacheLink
++		deps = append(deps, []solver.CacheLink{{Src: base}})
++		_, ok, err = cc.Add(outputKey(dgst("run"), 0), deps, []solver.CacheExportResult{{
++			CreatedAt: time.Now(),
++			Result:    &solver.Remote{Descriptors: chain, Provider: p},
++		}})
++		require.NoError(t, err)
++		require.True(t, ok)
++		cfg, _, err := cc.Marshal(t.Context())
++		require.NoError(t, err)
++		return cfg
++	}
++
++	t.Run("unavailable", func(t *testing.T) {
++		// the bottom blob is gone: the result is dropped, nothing of its chain is exported
++		cfg := marshal(t, &countingProvider{failAfter: map[digest.Digest]int{dgst("d0"): 0}, calls: map[digest.Digest]int{}})
++		require.Empty(t, cfg.Layers)
++		for _, r := range cfg.Records {
++			require.Empty(t, r.Results)
 +		}
-+		return nil, nil
 +	})
 +
- 	dslHandler, err := docker.AppendDistributionSourceLabel(p.ContentStore, p.ref)
- 	if err != nil {
- 		return nil, err
-@@ -152,6 +165,7 @@ func (p *Puller) PullManifests(ctx context.Context, getResolver SessionResolver)
- 		filterLayerBlobs(metadata, &mu),
- 		retryhandler.New(limited.FetchHandler(p.ContentStore, fetcher, p.ref), logs.LoggerFromContext(ctx)),
- 		childrenHandler,
-+		manifestHandler,
- 		dslHandler,
- 	)
++	t.Run("becomes unavailable", func(t *testing.T) {
++		// the bottom blob passes the first check and fails afterwards: the chain is exported whole or not at all,
++		// never rooted on d1 or d2
++		cfg := marshal(t, &countingProvider{failAfter: map[digest.Digest]int{dgst("d0"): 1}, calls: map[digest.Digest]int{}})
++		for _, l := range cfg.Layers {
++			for l.ParentIndex != -1 {
++				l = cfg.Layers[l.ParentIndex]
++			}
++			require.Equal(t, dgst("d0"), l.Blob, "layer chain rooted on %s instead of the image root", l.Blob)
++		}
++		for _, r := range cfg.Records {
++			for _, res := range r.Results {
++				n, l := 1, cfg.Layers[res.LayerIndex]
++				for l.ParentIndex != -1 {
++					l, n = cfg.Layers[l.ParentIndex], n+1
++				}
++				require.Equal(t, len(chain), n)
++			}
++		}
++	})
++}
+```
+
+**File**: `cache/remotecache/v1/utils.go` (modified, +25/-32)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	cerrdefs "github.com/containerd/errdefs"
+ 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
+ 	"github.com/moby/buildkit/solver"
++	"github.com/moby/buildkit/util/bklog"
+ 	"github.com/moby/buildkit/util/compression"
+ 	digest "github.com/opencontainers/go-digest"
+ 	"github.com/pkg/errors"
+@@ -136,48 +137,40 @@ func marshalRemote(ctx context.Context, r *solver.Remote, state *marshalState) s
  
-@@ -174,11 +188,12 @@ func (p *Puller) PullManifests(ctx context.Context, getResolver SessionResolver)
+ 	if r.Provider != nil {
+ 		for _, d := range r.Descriptors {
+-			if _, err := r.Provider.Info(ctx, d.Digest); err != nil {
+-				if !cerrdefs.IsNotImplemented(err) {
+-					return ""
+-				}
++			if _, err := r.Provider.Info(ctx, d.Digest); err != nil && !cerrdefs.IsNotImplemented(err) {
++				bklog.G(ctx).WithError(err).Warnf("skipping cache result: blob %s is not available", d.Digest)
++				return ""
+ 			}
+ 		}
  	}
  
- 	return &PulledManifests{
--		Ref:              p.ref,
--		MainManifestDesc: p.desc,
--		ConfigDesc:       p.configDesc,
--		Nonlayers:        p.nonlayers,
--		Descriptors:      p.layers,
-+		Ref:               p.ref,
-+		RootManifestDesc:  p.desc,
-+		ImageManifestDesc: manifestDesc,
-+		ConfigDesc:        p.configDesc,
-+		Nonlayers:         p.nonlayers,
-+		Descriptors:       p.layers,
- 		Provider: func(g session.Group) content.Provider {
- 			return &provider{puller: p, resolver: getResolver(g)}
- 		},
+ 	var parentID string
+-	if len(r.Descriptors) > 1 {
+-		r2 := &solver.Remote{
+-			Descriptors: r.Descriptors[:len(r.Descriptors)-1],
+-			Provider:    r.Provider,
++	for _, desc := range r.Descriptors {
++		if desc.MediaType != "" {
++			desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
+ 		}
+-		parentID = marshalRemote(ctx, r2, state)
+-	}
+-	desc := r.Descriptors[len(r.Descriptors)-1]
+-	if desc.MediaType != "" {
+-		desc = compression.ConvertAllLayerMediaTypes(ctx, true, desc)[0]
+-	}
+ 
+-	state.descriptors[desc.Digest] = DescriptorProviderPair{
+-		Descriptor: desc,
+-		Provider:   r.Provider,
+-	}
++		state.descriptors[desc.Digest] = DescriptorProviderPair{
++			Descriptor: desc,
++			Provider:   r.Provider,
++		}
+ 
+-	id := desc.Digest.String() + parentID
++		id := desc.Digest.String() + parentID
+ 
+-	if _, ok := state.chainsByID[id]; ok {
+-		return id
+-	}
+-
+-	state.chainsByID[id] = len(state.layers)
+-	l := cacheimporttypes.CacheLayer{
+-		Blob:        desc.Digest,
+-		ParentIndex: -1,
+-	}
+-	if parentID != "" {
+-		l.ParentIndex = state.chainsByID[parentID]
++		if _, ok := state.chainsByID[id]; !ok {
++			state.chainsByID[id] = len(state.layers)
++			l := cacheimporttypes.CacheLayer{
++				Blob:        desc.Digest,
++				ParentIndex: -1,
++			}
++			if parentID != "" {
++				l.ParentIndex = state.chainsByID[parentID]
++			}
++			state.layers = append(state.layers, l)
++		}
++		parentID = id
+ 	}
+-	state.layers = append(state.layers, l)
+-	return id
++	return parentID
+ }
+ 
+ func marshalItem(ctx context.Context, it *item, state *marshalState) error {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7372** (2026-11-05): client: skip testImageCacheRejectsUnverifiedDiffIDs on dockerd graphdriver (@tonistiigi)
+- **PR #7367** (2026-11-04): source/http: add retry jitter and Retry-After handling (@crazy-max)
 - **PR #7366** (2026-11-04): deps updates for v0.35 (@tonistiigi)
 - **PR #7364** (2026-11-04): imagerefchecker: don't match chains with missing blobs (@tonistiigi)
 - **PR #7363** (2026-11-04): s3: fix partial reads in the cache reader (@crazy-max)
 - **PR #7361** (2026-11-04): s3: fix resuming interrupted cache downloads (@gajohnson)
-- **PR #7359** (2026-11-03): forward v0.34.2 patches (@crazy-max)
-- **PR #7358** (2026-11-03): source/git: test rejection of file-backed submodules (@crazy-max)
 
 ---
 
@@ -3372,87 +2876,28 @@ source: preserve image cache across attestation changes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7300 from Zaczero/fix-exec-stream-failure
+## X. Merge pull request #7355 from tonistiigi/solver-ref-fixes
 
 **RULE**:
-When implementing operations in `frontend/gateway/grpcclient/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/client_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fb98cee`: Merge pull request #7300 from Zaczero/fix-exec-stream-failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fab8633`: Merge pull request #7355 from tonistiigi/solver-ref-fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/gateway/grpcclient/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ctx  context.Context
-func newProcMessageForwarder(ctx context.Context) *procMessageForwarder {
-		ctx:  ctx,
-func (b *procMessageForwarder) Recv(ctx context.Context) (*pb.ExecMessage, error) {
-		return nil, context.Cause(ctx)
-	case <-b.ctx.Done():
-		return nil, context.Cause(b.ctx)
-		return nil, nil
-	case m := <-b.msgs:
-		return m, nil
-				if err != nil {
-					// EOF and cancellation also end delivery to every process,
-					// even though they are not errors for Release.
-					m.cancel(errors.Wrap(err, "remote exec stream closed"))
-				}
-	sender := newProcMessageForwarder(m.ctx)
-	msg, err := msgs.Recv(ctx)
-	if err != nil {
-		ctr.execMsgs.Deregister(pid)
-		return nil, err
-	}
-			_, copyErr := io.Copy(m, stdinReader)
-			if copyErr != nil && !errors.Is(copyErr, io.ErrClosedPipe) {
-				return copyErr
-			err := ctr.execMsgs.Send(&pb.ExecMessage{
-			// Cleanup still sends EOF to unblock remote stdin, but a failed send
-			// must not replace the process result that triggered cleanup.
-			if errors.Is(copyErr, io.ErrClosedPipe) {
-				return nil
-			}
-			return err
-			msg, err := msgs.Recv(ctx)
-			if err != nil {
-				return err
-				// no more messages, return
-				return exitError
+		testClientGatewaySolveReleasedAfterDiscard,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func newProcMessageForwarder() *procMessageForwarder {
-func (b *procMessageForwarder) Recv(ctx context.Context) (m *pb.ExecMessage, ok bool) {
-		return nil, true
-		return nil, false
-	case m = <-b.msgs:
-		return m, true
-	sender := newProcMessageForwarder()
-	msg, _ := msgs.Recv(ctx)
-			_, err := io.Copy(m, stdinReader)
-			// ignore ErrClosedPipe, it is EOF for our usage.
-			if err != nil && !errors.Is(err, io.ErrClosedPipe) {
-				return err
-			// not an error so must be eof
-			return ctr.execMsgs.Send(&pb.ExecMessage{
-			msg, ok := msgs.Recv(ctx)
-			if !ok {
-				// no more messages, return
-				return exitError
-
-				// empty message from ctx cancel, so just start shutting down
-				// input
-				closeDoneOnce.Do(func() {
-					close(done)
-				})
-				return context.Cause(ctx)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fb98cee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fab8633` are properly handled with clean fallback behavior.

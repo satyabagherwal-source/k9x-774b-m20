@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "137775d699e12cdc451d4b04159c60227c9645a5b5cc15d09fb3bf9267424a09",
-    "lastHarvestedAt": "2026-10-31T16:20:20.266Z",
+    "contentHash": "02116a10b0be1f322a929cfd9cebea2a3a581e580ebca783ff2787e1b84cc7c7",
+    "lastHarvestedAt": "2026-11-05T06:58:16.080Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "36e7c1fb",
+    "sourceVersion": "b9d02e6e",
     "license": "Apache-2.0",
-    "contentHash": "7a0a7526dd41cf2ddb1210e860c1dc6251fd1e8048eb3818325d59bd1b47a6f0",
-    "lastHarvestedAt": "2026-11-04T17:30:43.237Z",
+    "contentHash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
+    "lastHarvestedAt": "2026-11-05T06:58:25.362Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "9318a957",
+    "sourceVersion": "72945925",
     "license": "Apache-2.0",
-    "contentHash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
-    "lastHarvestedAt": "2026-11-05T06:28:59.413Z",
+    "contentHash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
+    "lastHarvestedAt": "2026-11-05T06:58:32.376Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "b24a3efb",
+    "sourceVersion": "1dda9d96",
     "license": "Apache-2.0",
-    "contentHash": "e56391651f9d5300cb48f1542c0d284a0f4e3edec070332e37678f5b0e981320",
-    "lastHarvestedAt": "2026-11-04T16:34:39.125Z",
+    "contentHash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
+    "lastHarvestedAt": "2026-11-05T06:58:31.821Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "8ac23970",
+    "sourceVersion": "ecb615e5",
     "license": "MPL-2.0",
-    "contentHash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
-    "lastHarvestedAt": "2026-11-01T00:36:20.445Z",
+    "contentHash": "608e96e3fe9f44c7f05755dadf14c52c90c80e567e231d882ca890dc5ff82218",
+    "lastHarvestedAt": "2026-11-05T06:58:22.380Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
