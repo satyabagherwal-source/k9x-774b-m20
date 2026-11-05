@@ -7443,3 +7443,6 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `b47e6865` | Multi-dimensional audit evidence | 2026-11-05T00:51:30.760Z |
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `193d0df1` | Multi-dimensional audit evidence | 2026-11-05T01:00:36.125Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T01:00:46.252Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-05T01:07:51.349Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `cbb7380f` | Multi-dimensional audit evidence | 2026-11-05T01:07:54.277Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `9ea8d718` | Multi-dimensional audit evidence | 2026-11-05T01:07:58.120Z |

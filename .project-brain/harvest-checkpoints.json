@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T01:00:46.266Z",
+  "last_updated": "2026-11-05T01:07:58.137Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
-      "verified_at": "2026-11-04T21:33:00.943Z",
+      "content_hash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
+      "verified_at": "2026-11-05T01:07:54.293Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:33:00.943Z"
+      "last_updated": "2026-11-05T01:07:54.293Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "a7ffcdc25316083cd828f2ef4bf11d945323fe4e316aa6c5461668d0451a761b",
-      "verified_at": "2026-10-31T18:01:39.407Z",
+      "content_hash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
+      "verified_at": "2026-11-05T01:07:58.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T18:01:39.407Z"
+      "last_updated": "2026-11-05T01:07:58.136Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
@@ -17526,14 +17526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
-      "verified_at": "2026-10-31T10:40:28.611Z",
+      "content_hash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
+      "verified_at": "2026-11-05T01:07:51.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:40:28.611Z"
+      "last_updated": "2026-11-05T01:07:51.358Z"
     },
     "AtomicChat/LFM3-1.7B-Uncensored-GGUF": {
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",

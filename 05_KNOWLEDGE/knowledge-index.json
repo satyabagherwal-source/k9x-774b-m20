@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:00:46.170Z",
+  "last_updated": "2026-11-05T01:07:58.032Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8186,13 +8186,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "cbb7380f",
-      "content_hash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -8297,7 +8297,7 @@
         {
           "number": 6979,
           "title": "app-server): project thread/read onto the pinned ThreadReadResponse",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8305,7 +8305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:33:00.872Z",
+      "verified_at": "2026-11-05T01:07:54.150Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40461,8 +40461,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "1709a9ce",
-      "content_hash": "a7ffcdc25316083cd828f2ef4bf11d945323fe4e316aa6c5461668d0451a761b",
+      "source_version": "9ea8d718",
+      "content_hash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -40490,6 +40490,11 @@
           "number": 6272,
           "title": "admin): accept admin responses only for requests the app sent (#7847)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7057,
+          "title": "debug): run the log search off the main thread (#7891)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40497,7 +40502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T18:01:39.334Z",
+      "verified_at": "2026-11-05T01:07:58.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165746,7 +165751,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
+      "content_hash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
       "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "promoted_rules": [
@@ -165771,7 +165776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:40:28.520Z",
+      "verified_at": "2026-11-05T01:07:51.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177977,14 +177982,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6979,
       "title": "app-server): project thread/read onto the pinned ThreadReadResponse",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "cbb7380f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T21:33:00.872Z"
+      "verified_at": "2026-11-05T01:07:54.150Z"
     },
     "rule-6980": {
       "learning_id": "rule-6980",
@@ -179063,6 +179068,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:00:46.155Z"
+    },
+    "rule-7057": {
+      "learning_id": "rule-7057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7057,
+      "title": "debug): run the log search off the main thread (#7891)",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "9ea8d718",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:07:58.005Z"
     }
   },
   "aliases": {

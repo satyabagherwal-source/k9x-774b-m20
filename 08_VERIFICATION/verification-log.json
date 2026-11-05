@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-CBNB",
-    "timestamp": "2026-11-03T16:50:47.159Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "88219c9313c62d498845ac8965fbb96d55613f5de2a50ee08f87b94a7f61fa1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-MTOX",
-    "timestamp": "2026-11-03T16:58:57.105Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "88a8eed001fd3bc651cdcbcd2c382d21d4f76187cb73dc2d91d3c707e2c33602",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-WGLA",
-    "timestamp": "2026-11-03T17:06:26.686Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "399267baaffe6962e23438904e1514a08b5c85604d518ffdb4a5e1c54495c3e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-WJ2P",
     "timestamp": "2026-11-03T17:06:29.905Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7447,51 @@
     "contentHash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-JESS",
+    "timestamp": "2026-11-05T01:07:51.340Z",
+    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-JH29",
+    "timestamp": "2026-11-05T01:07:54.273Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-JK10",
+    "timestamp": "2026-11-05T01:07:58.116Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

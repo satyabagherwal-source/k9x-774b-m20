@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "f4978e8f",
+    "sourceVersion": "cbb7380f",
     "license": "MIT",
-    "contentHash": "b0fa7d904b29c8a23fa2439232bf194b2528955f8d3e79e5697d730516d46233",
-    "lastHarvestedAt": "2026-11-03T22:23:36.955Z",
+    "contentHash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
+    "lastHarvestedAt": "2026-11-05T01:07:54.277Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "1709a9ce",
+    "sourceVersion": "9ea8d718",
     "license": "GPL-3.0",
-    "contentHash": "a7ffcdc25316083cd828f2ef4bf11d945323fe4e316aa6c5461668d0451a761b",
-    "lastHarvestedAt": "2026-10-31T18:01:39.400Z",
+    "contentHash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
+    "lastHarvestedAt": "2026-11-05T01:07:58.120Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {
@@ -11645,8 +11645,8 @@
     "sourceUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceVersion": "hf-efficient-large-model-open-h3-regenerate-2k",
     "license": "Open-Source",
-    "contentHash": "1e11819b7551b7f8667248084a0d0ff692f06bd2b8bd53020ad353712b1919da",
-    "lastHarvestedAt": "2026-10-31T10:40:28.604Z",
+    "contentHash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
+    "lastHarvestedAt": "2026-11-05T01:07:51.349Z",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k"
   },
   "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {
