@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:40:19.288Z",
-  "total_cycles_completed": 7761,
-  "total_learnings_persisted": 7761,
-  "total_rules_promoted": 7404,
+  "last_updated": "2026-11-05T21:47:43.127Z",
+  "total_cycles_completed": 7763,
+  "total_learnings_persisted": 7763,
+  "total_rules_promoted": 7405,
   "history": [
-    {
-      "timestamp": "2026-11-05T08:42:43.688Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T08:50:19.511Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T08:50:21.681Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T21:40:19.288Z",
       "repository": "sfu-db/connector-x",
       "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:47:38.627Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T21:47:43.127Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

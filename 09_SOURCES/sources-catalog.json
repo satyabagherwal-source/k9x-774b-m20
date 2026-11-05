@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "36aa86f4",
+    "sourceVersion": "491512db",
     "license": "Apache-2.0",
-    "contentHash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
-    "lastHarvestedAt": "2026-11-05T17:29:11.401Z",
+    "contentHash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
+    "lastHarvestedAt": "2026-11-05T21:47:43.117Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "47dc1214",
+    "sourceVersion": "49d87f99",
     "license": "Apache-2.0",
-    "contentHash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
-    "lastHarvestedAt": "2026-11-05T06:00:29.262Z",
+    "contentHash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
+    "lastHarvestedAt": "2026-11-05T21:47:38.621Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

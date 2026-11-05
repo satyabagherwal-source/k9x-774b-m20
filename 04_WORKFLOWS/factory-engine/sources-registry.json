@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T21:40:21.825Z",
-    "lastVerified": "2026-11-05T21:40:21.825Z",
+    "lastChecked": "2026-11-05T21:47:45.663Z",
+    "lastVerified": "2026-11-05T21:47:45.663Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -445,22 +445,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T20:06:48.365Z",
-    "lastVerified": "2026-11-05T20:06:48.365Z",
+    "lastChecked": "2026-11-05T21:47:42.794Z",
+    "lastVerified": "2026-11-05T21:47:42.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
+    "contentHash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "36aa86f4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -732,9 +731,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-05T17:07:22.749Z",
+    "lastChecked": "2026-11-05T21:47:33.785Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-05T17:07:22.749Z"
+    "lastVerified": "2026-11-05T21:47:33.785Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1340,14 +1339,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T06:00:28.313Z",
-    "lastVerified": "2026-11-05T06:00:28.313Z",
+    "lastChecked": "2026-11-05T21:47:36.411Z",
+    "lastVerified": "2026-11-05T21:47:36.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
+    "contentHash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1463,9 +1462,9 @@
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
     "officialUrl": "https://github.com/ajeetdsouza/zoxide",
-    "lastChecked": "2026-11-05T01:15:03.149Z",
+    "lastChecked": "2026-11-05T21:47:23.751Z",
     "revisionIdentifier": "f0b31631",
-    "lastVerified": "2026-11-05T01:15:03.149Z"
+    "lastVerified": "2026-11-05T21:47:23.751Z"
   },
   "hf-nvidia-nemotron-3-diarization": {
     "name": "nvidia/Nemotron-3-Diarization",
@@ -5565,8 +5564,8 @@
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T05:13:39.983Z",
-    "lastVerified": "2026-11-05T05:13:39.983Z",
+    "lastChecked": "2026-11-05T21:47:36.243Z",
+    "lastVerified": "2026-11-05T21:47:36.243Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -9526,9 +9525,9 @@
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
     "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
-    "lastChecked": "2026-11-02T16:40:13.147Z",
+    "lastChecked": "2026-11-05T21:47:26.213Z",
     "revisionIdentifier": "cdbf66bf55",
-    "lastVerified": "2026-11-02T16:40:13.147Z"
+    "lastVerified": "2026-11-05T21:47:26.213Z"
   },
   "vanniktech-emoji": {
     "name": "Emoji",
@@ -12077,12 +12076,12 @@
     "lastVerified": "2026-11-04T07:18:41.259Z"
   },
   "sweetpad-dev-sweetpad": {
-    "name": "sweetpad-dev/sweetpad",
+    "name": "sweetpad",
     "officialUrl": "https://github.com/sweetpad-dev/sweetpad",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T21:17:22.765Z",
-    "lastVerified": "2026-11-03T21:17:22.765Z",
+    "lastChecked": "2026-11-05T21:47:28.794Z",
+    "lastVerified": "2026-11-05T21:47:28.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sweetpad-dev-sweetpad",
@@ -12091,7 +12090,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ffb3b68"
   },
   "jestjs-jest": {
     "name": "jestjs/jest",

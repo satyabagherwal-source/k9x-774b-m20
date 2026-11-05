@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `36aa86f4`  
+> **Source Version**: `491512db`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:29:11.108Z  
+> **Timestamp**: 2026-11-05T21:47:42.801Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:29:11.103Z  
+> **Harvest Timestamp**: 2026-11-05T21:47:42.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1011,64 +1011,65 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36aa86f4` (2026-11-05)
-**Commit Message**: NUC 83 Hypothetical Difference Selections
+### Incident Patch 1: `491512db` (2026-11-05)
+**Commit Message**: NUC 84 List and Population Medians
 
 Accepted. The independent evaluator accepted the proposal in continuous
-mode against 8f122c9 and its 959-case baseline, the 948 accepted cases
+mode against 36aa86f and its 970-case baseline, the 959 accepted cases
 plus 11 extra baselines, which it re-recorded byte-identically. The
-required token comparison ran (Reasoning enhancement): 11 cases use
-fewer lexer tokens, 948 the same and none more. Every counterpart is
-fair, and no policy check failed.
+required token comparison ran (Utility enhancement): 11 cases use fewer
+lexer tokens, 959 the same and none more. Every counterpart is fair, no
+defect was found, and no policy check failed.
 
 Hard criteria, checked independently and again on the integrated tree:
 cargo build --all-targets, warning-denied Clippy and cargo fmt --check
-pass; the full cargo test passes (95 suites, 2,515 passed, 0 failed,
-25 ignored) with all 2,509 accepted test identities present and 31
-added; all 948 pinned accepted programs and the 11 extra baselines
-replay; of 29,656 differential programs, the 19,804 that the accepted
-parser accepts are unchanged apart from clock readings, and each of the
-4,465 changed programs was a parse error at the accepted revision.
+pass; the full cargo test passes (96 suites, 2,559 passed, 0 failed,
+25 ignored) with all 2,540 accepted test identities present and 44
+added; all 959 pinned accepted programs and the 11 extra baselines
+replay; in 3,061 corpus programs and an 8,167-program grid, each
+changed program raised TypeError("<receiver>.median is not a
+function") at the accepted revision, and every other program is
+unchanged apart from clock readings.
 
-NUC 83 adds the reasoning stage SELECTION |> diff. Inside the innermost
-running suppose block it keeps the steps whose node did not exist when
-the block began, or whose value differs from the one it held then, as a
-writ
+NUC 84 adds the read-only list query median to lists and class
+instance lists: RECEIVER.median() and RECEIVER.median(selector). It
+shares sum's and average's receivers, numeric conversion, 
 
-**File**: `README.md` (modified, +29/-0)
+**File**: `README.md` (modified, +30/-0)
 ```diff
-@@ -1792,6 +1792,35 @@ assert: causes.map(step -> step.holds), [true, false, true, false]
-   changes. See the
-   [root contract](nucleoid.spec.md#depth-limited-reasoning-selections).
+@@ -1821,6 +1821,36 @@ assert: [heating, cost], [true, 4]
+   `TypeError("Cannot use 'diff' outside suppose")`. See the
+   [root contract](nucleoid.spec.md#hypothetical-differences).
  
-+## Hypothetical differences
++## List and population medians
 +
-+**Diff lists what a warmer room would change in a heating plan**
++**Medians keep typical delivery times live as orders arrive**
 +
 +```nuc
-+temperature = 18
-+target = 21
-+heating = temperature < target
-+fan = temperature > 30
-+cost = heating ? 4 : 0
-+suppose temperature = 24:
-+    changes = model |> diff
-+    assert: changes.map(step -> step.node), ["temperature", "heating", "cost"]
-+    target = 26
-+    assert: changes.map(step -> step.node), ["temperature", "target"]
-+assert: [heating, cost], [true, 4]
++class Order(city, minutes):
++    this.city = city
++    this.minutes = minutes
++Order("oslo", 30)
++Order("oslo", 25)
++Order("bergen", 90)
++late = Order("bergen", 105)
++typical = Order.median(order -> order.minutes)
++local = Order.filter(order -> order.city == "oslo").median(order -> order.minutes)
++assert: [typical, local], [60, 27.5]
++Order("oslo", 8)
++late.minutes = 40
++assert: [typical, local], [30, 25]
 +```
 +
-+- [NUC 83](docs/nuc-0083.md) adds the reasoning stage `|> diff`. Inside a
-+  `suppose` block it keeps the steps of a selection that the block added or
-+  changed, so `model |> diff` answers what a hypothetical would do without
-+  naming any node: warming the room to 24 turns the heating off and drops its
-+  cost, while the fan, which also reads the temperature, keeps its value.
-+- The selection stays live inside the block: with the target raised to 26
-+  the heating is back on, so only the temperature and the target still
-+  differ. Outside a block the stage raises
-+  `TypeError("Cannot use 'diff' outside suppose")`. See the
-+  [root contract](nucleoid.spec.md#hypothetical-differences).
++- [NUC 84](docs/nuc-0084.md) adds `median()` and `median(selector)` to lists
++  and class instance lists. `Order.median(order -> order.minutes)` is the
++  middle delivery time of every order, and with an even number of orders the
++  mean of the two middle times.
++- `typical` and `local` are live declarations: a new order or a changed time
++  re-evaluates them. Once the late order takes 40 minutes, the 90-minute order
++  is the slowest, so however slow it is, `typical` stays 30, while the mean of
++  the five orders is 38.6. See the
++  [root contract](nucleoid.spec.md#list-and-population-medians).
 +
  ## Benchmark
  
@@ -1077,156 +1078,145 @@ writ
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
 ```diff
-@@ -649,3 +649,11 @@
- {"id":"spec-0649","description":"Nucleoid waits for unknown depth limits","code":"cause = 4\neffect = cause * 2\nclass Plan\nplan = Plan()\nknown = null\npending = effect |> why |> depth(plan.depth)\nwaiting = effect |> why |> depth(known)\nready = all s in waiting: s.holds > 0\nassert(pending, null)\nassert(waiting, null)\nassert(ready, null)\nplan.depth = 0\nknown = 1\nassert(pending.map(s -> s.node), [\"effect\"])\nassert(waiting.map(s -> s.node), [\"effect\", \"cause\"])\nassert(ready, true)\ncause = -1\nassert(ready, false)","return":null}
- {"id":"spec-0650","description":"Nucleoid applies depth in class level rules methods and quantifiers","code":"class Order(qty, price):\n    this.qty = qty\n    this.price = price\n    def direct() => this.total |> why |> depth(1)\n$Order.units = $Order.qty * 10\n$Order.total = $Order.units * $Order.price\n$Order.causes = $Order.total |> why |> depth(1)\npen = Order(2, 3)\nok = all s in pen.total |> why |> depth(1): s.holds > 5\nassert(pen.causes.map(s -> s.node), [\"pen.total\", \"pen.units\", \"pen.price\"])\nassert(pen.direct().map(s -> s.holds), [60, 20, 3])\nassert(ok, false)\npen.price = 7\nassert(pen.causes[0].holds, 140)\nassert(ok, true)\ncup = Order(1, 9)\nassert(cup.causes.map(s -> s.holds), [90, 10, 9])","return":null}
- {"id":"spec-0651","description":"Nucleoid restores depth selections after failed changes","code":"seed = 1\nmid = seed + 1\ntop = mid * 2\nlimit = 1\nnear = top |> why |> depth(limit)\nfrozen = near.value\ntry:\n    limit = 2\n    mid = 5\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(near.map(s -> s.node), [\"top\", \"mid\"])\nplan = suppose:\n    limit = 2\n    near.length\nassert(plan, 3)\nassert(near.length, 2)\nlimit = 2\nseed = 4\nassert(near.map(s -> s.holds), [10, 5, 4])\nassert(frozen.map(s -> s.holds), [4, 2])","return":null}
-+{"id":"spec-0652","description":"Nucleoid lists what a supposed premise changes","code":"threshold = 90\nreading = 40\nalarm = reading > threshold\nlevel = reading > 10\nsuppose reading = 95:\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"reading\", \"alarm\"])\n    assert(moved.map(s -> s.holds), [95, true])\n    assert(moved[1].from, [\"reading\", \"threshold\"])\n    threshold = 99\n    assert(moved.map(s -> s.node), [\"threshold\", \"reading\"])\nassert(alarm, false)","return":null}
-+{"id":"spec-0653","description":"Nucleoid lists what changed in an explanation or an impact","code":"base = 10\nrate = 2\nfee = 3\ncost = base * rate\ntotal = cost + fee\nlabel = total > 40\ncharge = fee * 2\nsuppose rate = 3:\n    causes = total |> why |> diff\n    effects = base |> affects |> diff\n    reach = model |> diff |> affects\n    assert(causes.map(s -> s.node), [\"total\", \"cost\", \"rate\"])\n    assert(effects.map(s -> s.node), [\"cost\", \"total\"])\n    assert(reach.map(s -> s.node).sort(), [\"cost\", \"label\", \"total\"])\n    fee = 30\n    assert(causes.map(s -> s.node), [\"total\", \"cost\", \"fee\", \"rate\"])\n    assert(effects.map(s -> s.node), [\"cost\", \"total\", \"label\"])\n    assert(reach.map(s -> s.node).sort(), [\"charge\", \"cost\", \"label\", \"total\"])","return":null}
-+{"id":"spec-0654","description":"Nucleoid compares instances and class level rules in a hypothetical","code":"class Item\n$Item.premium = $Item.price > 10\npen = Item()\npen.price = 5\nbook = Item()\nbook.price = 20\nsuppose pen.price = 20:\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"pen.premium\", \"pen.price\"])\n    cup = Item()\n    cup.price = 3\n    assert(moved.map(s -> s.node), [\"pen.premium\", \"pen.price\", \"cup\", \"cup.premium\", \"cup.price\"])\n    $Item.premium = $Item.price > 25\n    assert(book.premium, false)\n    assert(moved.map(s -> s.node), [\"pen.price\", \"book.premium\", \"cup\", \"cup.premium\", \"cup.price\"])\nassert(book.premium, true)","return":null}
-+{"id":"spec-0655","description":"Nucleoid compares lists and objects in a hypothetical","code":"tags = [\"pen\"]\ncount = tags.length\nlimits = {max: 3}\nfull = count >= limits.max\nsuppose tags.push(\"ink\"):\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"tags\", \"count\"])\n    assert(moved[0].holds, [\"pen\", \"ink\"])\n    tags.pop()\n    assert(moved, [])\n    limits = {max: 3}\n    assert(moved.map(s -> s.node), [\"limits\"])\nassert(tags, [\"pen\"])","return":null}
-+{"id":"spec-0656","description":"Nucleoid leaves equal values and undone writes out of a diff","code":"a = 1\nb = a + 1\nc = b * 2\nsuppose a = 1:\n    moved = model |> diff\n    assert(moved, [])\n    b = 1 + a\n    delete c\n    c = b * 2\n    assert(moved, [])\n    try:\n        a = 5\n        throw \"UNDO\"\n    catch error:\n        assert(error, \"UNDO\")\n    assert(moved, [])\n    a = 3\n    assert(moved.map(s -> s.node), [\"a\", \"b\", \"c\"])\n    assert(moved[1].rule, \"b = 1+a\")","return":null}
-+{"id":"spec-0657","description":"Nucleoid compares nested hypo
+@@ -657,3 +657,11 @@
+ {"id":"spec-0657","description":"Nucleoid compares nested hypotheticals with the innermost block","code":"price = 10\nqty = 2\ntotal = price * qty\nsuppose price = 12:\n    outer = model |> diff\n    assert(outer.map(s -> s.node), [\"price\", \"total\"])\n    inner = suppose qty = 3:\n        nested = model |> diff\n        assert(nested.map(s -> s.node), [\"qty\", \"total\"])\n        price = 10\n        assert(nested.map(s -> s.node), [\"price\", \"qty\", \"total\"])\n        nested.map(s -> s.holds)\n    assert(inner, [10, 3, 30])\n    assert(outer.map(s -> s.node), [\"price\", \"total\", \"inner\"])\nassert(total, 20)","return":null}
+ {"id":"spec-0658","description":"Nucleoid finds hypothetical changes in functions methods and quantifiers","code":"class Tank(level):\n    this.level = level\n    def changed() => (model |> diff).map(s -> s.node)\nlow = 10\ntank = Tank(5)\nempty = tank.level < low\ndef touches(name) => any s in model |> diff: s.node == name\nsuppose tank.level = 20:\n    stable = all s in model |> diff: s.node != \"low\"\n    assert(tank.changed(), [\"tank.level\", \"empty\"])\n    assert(touches(\"empty\"), true)\n    assert(stable, true)\n    low = 30\n    assert(stable, false)\n    assert(touches(\"empty\"), false)\n    assert(tank.changed(), [\"low\", \"tank.level\"])","return":null}
+ {"id":"spec-0659","description":"Nucleoid composes hypothetical differences with state filters","code":"price = 10\ndiscount = 0\nnet = price - discount\ntaxed = net * 2\nsuppose discount = 3:\n    facts = model |> diff |> stated\n    effects = model |> derived |> diff\n    assert(facts.map(s -> s.node), [\"discount\"])\n    assert(effects.map(s -> s.node), [\"net\", \"taxed\"])\n    assert(effects[0].from, [\"price\", \"discount\"])\n    price = 13\n    assert(facts.map(s -> s.node), [\"price\", \"discount\"])\n    assert(effects, [])","return":null}
++{"id":"spec-0660","description":"Nucleoid finds the middle values of lists with median","code":"waits = [12, 3, 45]\ntypical = waits.median()\nassert: [typical, waits, (why typical)[0].from], [12, [12, 3, 45], [\"waits\"]]\nwaits.push(7)\nassert: typical, 9.5\nwaits.push(300)\nassert: [typical, waits.average()], [12, 73.4]\nwaits.pop()\nwaits.shift()\nassert: typical, 7\ncourier = {stops: [12, 2, 45, 31]}\nusual = courier.stops.median()\nshort = courier.stops.filter(stop -> stop < 30).median()\nassert: [usual, short], [21.5, 7]\ncourier.stops.push(5)\nassert: [usual, short], [12, 5]","return":null}
++{"id":"spec-0661","description":"Nucleoid finds the medians of class instance populations","code":"class Listing(area, price):\n    this.area = area\n    this.price = price\ndef perMeter listing => listing.price / listing.area\nListing(50, 200000)\nloft = Listing(40, 400000)\ntypical = Listing.median(perMeter)\nroomy = Listing.filter(listing -> listing.area > 45).median(perMeter)\nrecent = Listing[-3:].median(listing -> listing.area)\nassert: [typical, roomy, recent], [7000, 4000, 45]\nListing(80, 72000)\nassert: [typical, roomy, recent], [4000, 2450, 50]\nListing(100, 450000)\nassert: [typical, roomy, recent], [4250, 4000, 80]\nloft.price = 120000\nassert: [typical, roomy], [3500, 4000]","return":null}
++{"id":"spec-0662","description":"Nucleoid orders values as numbers to find medians","code":"north = [21, 9]\nsouth = [-3, 7.5]\nmiddle = north.concat(south).median()\nwarm = north.filter(temp -> temp > 0).median()\nassert: [middle, warm], [8.25, 15]\nnorth.push(-8)\nassert: [middle, warm, north], [7.5, 15, [21, 9, -8]]\nnorth.push(4)\nassert: [middle, warm], [5.75, 9]","return":null}
++{"id":"spec-0663","description":"Nucleoid calls the median selector once per item with only the item","code":"seen = []\ndef weigh(item, position):\n    seen.push(position ?? item)\n    return item * item\nitems = [4, 1]\ndef spread() => items.median(weigh)\nassert: [spread(), seen], [8.5, [4, 1]]\nfloor = 2\ndef price item => Math.max(item, floor)\ncost = items.median(price)\nassert: cost, 3\nfloor = 3\nitems.push(12)\nassert: [cost, spread(), seen], [4, 16, [4, 1, 4, 1, 12]]\nmissing = null\nskipped = missing.median(weigh(9))\nassert: [skipped, seen], [null, [4, 1, 4, 1, 12]]","return":null}
++{"id":"spec-0664","description":"Nucleoid keeps medians live in class level rules","code":"class Room(name): this.name = name\nclass Sensor(room, temp):\n    this.room = room\n    this.temp = temp\n$Room.mid = Sensor.filter(sensor -> sensor.room == $Room).median(sensor -> sensor.temp)\n$Room.warm = $Room.mid > 21\nlab = Room(\"lab\")\nhall = Room(\"hall\")\nSensor(lab, 8)\nprobe = Sensor(lab, 25)\nSensor(lab, 30)\nSensor(hall, 18)\nSensor(hall, 23)\nspread = Room.median(room -> room.mid)\nassert: [lab.mid, lab.warm, hall.mid, hall.warm, spread], [25, true, 20.5, false, 22.75]\nprobe.temp = 21\nassert: [lab.mid, lab.warm, spread], [21, false, 20.75]\nprobe.room = hall\nporch = Room(\"porch\")\nSensor(porch, 5)\nassert: [lab.mid, hall.mid, porch.mid, spread], [19, 21, 5, 
 ```
 
-**File**: `dataset/nucleoid.synth.58.jsonl` (added, +8/-0)
+**File**: `dataset/nucleoid.synth.59.jsonl` (added, +8/-0)
 ```diff
 @@ -0,0 +1,8 @@
-+{"id":"synth-58-0001","description":"A diff stage inside a suppose block lists the nodes its premise changed and leaves out a node that reads the premise but keeps its value","code":"threshold = 90\nreading = 40\nalarm = reading > threshold\nlevel = reading > 10\nsuppose reading = 95: (model |> diff).map(step -> step.node)","return":"[\"reading\",\"alarm\"]"}
-+{"id":"synth-58-0002","description":"Diff after why keeps the changed facts behind a value, and diff after affects the changed nodes that rest on an input","code":"base = 10\nrate = 2\nfee = 3\ncost = base * rate\ntotal = cost + fee\nlabel = total > 40\nsuppose rate = 3: [(total |> why |> diff).map(step -> step.node), (base |> affects |> diff).map(step -> step.node)]","return":"[[\"total\",\"cost\",\"rate\"],[\"cost\",\"total\"]]"}
-+{"id":"synth-58-0003","description":"An instance whose property changes is not itself listed, while its changed properties and the instances a block creates are","code":"class Item\n$Item.premium = $Item.price > 10\npen = Item()\npen.price = 5\nsuppose:\n    pen.price = 20\n    cup = Item()\n    cup.price = 3\n    (model |> diff).map(step -> step.node)","return":"[\"pen.premium\",\"pen.price\",\"cup\",\"cup.premium\",\"cup.price\"]"}
-+{"id":"synth-58-0004","description":"Values compare as writes compare them, so an equal value, a list restored by pop and a write undone by a caught failure are not differences while -0 differs from 0","code":"n = 1\nz = 0\ntags = [\"a\"]\nsuppose:\n    n = 1\n    tags.push(\"b\")\n    tags.pop()\n    try:\n        n = 5\n        throw \"UNDO\"\n    catch error:\n        pass\n    z = -0\n    (model |> diff).map(step -> step.node)","return":"[\"z\"]"}
-+{"id":"synth-58-0005","description":"A nested suppose block compares with its own start, and the outer block sees the inner block's value as a new node","code":"price = 10\nqty = 2\ntotal = price * qty\nsuppose price = 12:\n    inner = suppose qty = 3: (model |> diff).map(step -> step.node)\n    [inner, (model |> diff).map(step -> step.node)]","return":"[[\"qty\",\"total\"],[\"price\",\"total\",\"inner\"]]"}
-+{"id":"synth-58-0006","description":"A function that asks for a diff compares with whichever suppose block calls it","code":"price = 10\nqty = 3\nsubtotal = price * qty\nfree = subtotal > 50\ndef impact() => (model |> diff).map(step -> step.node)\nsmall = suppose qty = 4: impact()\nlarge = suppose qty = 6: impact()\n[small, large]","return":"[[\"qty\",\"subtotal\"],[\"qty\",\"subtotal\",\"free\"]]"}
-+{"id":"synth-58-0007","description":"Outside every suppose block the diff stage raises a TypeError","code":"a = 1\nb = a + 1\ntry:\n    b |> diff\ncatch error:\n    out = error\nout","return":"\"TypeError: Cannot use 'diff' outside suppose\""}
-+{"id":"synth-58-0008","description":"A binding named diff shadows the stage, as bindings shadow the stated and derived filters","code":"a = 1\nb = a + 1\ndiff = b - a\ntry:\n    suppose a = 2: b |> diff\ncatch error:\n    out = error\nout","return":"\"TypeError: diff is not an operation\""}
++{"id":"synth-59-0001","description":"A list median follows pushes and pops","code":"waits = [12, 3, 45]\ntypical = waits.median()\nwaits.push(7)\nassert(typical, 9.5)\nwaits.pop()\ntypical","return":"12"}
++{"id":"synth-59-0002","description":"A selector takes the median of a property over every instance of a class","code":"class Order(total):\n    this.total = total\nOrder(20)\nOrder(45)\nOrder(300)\ntypical = Order.median(.total)\nOrder(35)\ntypical","return":"40"}
++{"id":"synth-59-0003","description":"An even count takes the mean of the two middle values in numeric order, and the receiver keeps its order","code":"xs = [10, 9, 1, 4]\n[xs.median(), xs]","return":"[6.5,[10,9,1,4]]"}
++{"id":"synth-59-0004","description":"The median stays at the middle however extreme an outlier is, unlike the mean","code":"times = [12, 3, 45, 7, 3000]\n[times.median(), times.average()]","return":"[12,613.4]"}
++{"id":"synth-59-0005","description":"An empty list, a class without instances and a value that is not a number give NaN, which Number.isNaN tells apart from null","code":"class Refund\npending = []\n[Number.isNaN(pending.median()), Number.isNaN(Refund.median(refund -> refund.amount)), Number.isNaN([1, \"x\", 3].median()), pending.median() == null]","return":"[true,true,true,false]"}
++{"id":"synth-59-0006","description":"A class-level rule keeps the median rent of each district","code":"class District(name): this.name = name\nclass Flat(district, rent):\n    this.district = district\n    this.rent = rent\n$District.typical = Flat.filter(flat -> flat.district == $District).median(flat -> flat.rent)\nnorth = District(\"north\")\nFlat(north, 1200)\nFlat(north, 4000)\nFlat(north, 1400)\nnorth.typical","return":"1400"}
++{"id":"synth-59-0007","description":"Values convert to numbers as sum converts them before they are ordered","code":"[[\"3\", 10, true].median(), [null, \" 4 \", [7]].median()]","return":"[3,4]"}
++{"id":"synth-59-0008","description":"On a class name the population median runs even beside an instance method named median","code":"class Bag(items):\n    this.items = items\n    def median(): return this.items.median()\nBag([1, 9, 2])\nBag([4, 6])\n[Bag.median(bag -> bag.median()), Bag([3]).median()]","return":"[3.5,3]"}
 ```
 
-**File**: `docs/README.md` (modified, +58/-2)
+**File**: `docs/README.md` (modified, +55/-1)
 ```diff
-@@ -3168,8 +3168,10 @@ c = b * 2
-   `model`, `why`, and `affects`; the NUC 48 candidate adds only the two
-   state filters, [NUC 62](nuc-0062.md) adds NUC 11's `all` and `any`
-   quantifiers, [NUC 65](nuc-0065.md) adds its `suppose` hypotheticals
--  without `diff`, and the [NUC 82](nuc-0082.md) candidate adds its `depth`
--  stage without the `depth(x, n)` call form. Other NUC 11 operations remain
-+  without `diff`, the [NUC 82](nuc-0082.md) candidate adds its `depth` stage
-+  without the `depth(x, n)` call form, and the [NUC 83](nuc-0083.md)
-+  candidate adds its `diff` as the `|> diff` stage, without the bare `diff`
-+  and its `before` and `after` fields. Other NUC 11 operations remain
-   proposals, not dependencies.
+@@ -1954,7 +1954,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), and `average` ([NUC 80](nuc-0080.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), and `median` ([NUC 84](nuc-0084.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
  
- ### Quantifiers
-@@ -3271,6 +3273,56 @@ suppose book.price = 5: premium
- - The authoritative contract is the
-   [hypotheticals](../nucleoid.spec.md#hypotheticals) section.
+ ```
+@@ -3015,6 +3015,58 @@ grade
+   [list and population averages](../nucleoid.spec.md#list-and-population-averages)
+   section.
  
-+### Hypothetical differences
++### List and population medians
 +
 +```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+free = total > 100
-+def impact() => (model |> diff).map(step => step.node)
-+bulk = suppose qty = 4: impact()
-+assert(bulk, ["qty", "subtotal", "total"])
-+price = 30
-+bulk = suppose qty = 4: impact()
-+assert(free, false)
-+bulk
++times = [42, 120]
++typical = times.median()
++class Runner(name, laps):
++    this.name = name
++    this.laps = laps
++Runner("ana", [61, 58, 102])
++bo = Runner("bo", [66, 64])
++pace = Runner.median(runner -> runner.laps.median())
++assert(typical, 81)
++assert(pace, 63)
++times.push(35)
++bo.laps.push(59)
++Runner("cy", [110])
++assert(typical, 42)
++assert(pace, 64)
++pace
 +```
 +
-+- This is the complete `Nucleoid lists what a hypothetical changes with diff`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `["qty","subtotal","total","free"]`.
-+- [NUC 83](nuc-0083.md) adds the stage `selection |> diff`. Inside a
-+  `suppose` block it keeps the steps whose node the model did not hold when
-+  the innermost running block began, its premise included, or whose value
-+  differs from the value the node held then, in their order and with their
-+  fields unchanged. `model |> diff` therefore lists what a hypothetical
-+  added or changed without naming any node: a fourth unit changes the
-+  quantity, the subtotal and the total, and also `free` once the price is 30.
-+- Values compare as a write compares the value it stores with the one it
-+  replaces: numbers by value and sign with `NaN` equal to `NaN`, lists item
-+  by item, and objects, instances and function values by identity. Classes,
-+  named functions, conditions and blocks hold `null` in a step, so only
-+  their appearance counts. An equal-valued write, a restored value and a
-+  write undone by a caught failure are not differences.
-+- The running block is dynamic: a function, method or lambda called inside a
-+  block compares with that block, and a nested block with its own start.
-+  Outside every block the stage raises
-+  `TypeError("Cannot use 'diff' outside suppose")`.
-+- Only `|>` followed by `diff` is the stage; `diff` stays an ordinary name
-+  everywhere else, so a bare `diff` is still a reference. A local or
-+  parameter, variable, function or class named `diff` shadows the stage, as
-+  bindings shadow the state filters and `depth`: the stage then raises
-+  `TypeError("diff is not an operation")` before selecting its source.
-+- The selection stays live through every observation its source made,
-+  composes with `why`, `affects`, `stated`, `derived` and `depth` in any
-+  order, and renders as `selection|>diff`.
++- This is the complete
++  `Nucleoid finds the medians of lists and populations with median` program
++  in `tests/reference.md`, without its title and expected-return metadata;
++  it returns `64`.
++- [NUC 84](nuc-0084.md) adds `median()` and `median(selector)` to lists and
++  class instance lists. The values are ordered as numbers by a stable sort of
++  a private copy: an odd count gives the middle value itself and an even count
++  `(lower + upper) / 2`, so `[4, 1, 3, 2].median()` is `2.5`. The receiver is
++  never sorted or written.
++- Values convert as `sum` converts them. An empty list or class and any value
++  that converts to NaN give NaN. An undefined value makes the median
++  undefined, stored as `null`, and wins over a NaN value, as in `average`. A
++  `null` item counts `0` without settling a declaration to `null`, while the
++  reads inside a selector follow the existing rules.
++- `0` and `-0` keep their receiver order, an odd count keeps the middle
++  value's sign, and `[-0, -0].median()` is `-0` where `average()` gives `0`.
++  `[1e308, 1e308].median()` overflows to `Infinity`, and `-Infinity` beside
++  `Infinity` gives NaN.
++- The selector is called once per item, in order, with only the item. A
++  supplied selector that is not a function, including `null`, raises
++  `TypeError("median expects a function")`, even on an empty receiver.
++- Medians are read-only and live: a declaration follows the list or
++  population, the arguments and what the selector reads, in class-level rules
++  too. On a class name, `Name.median(...)` is the population query even when
++  the class declares an instance method `median`; instances keep calling the
++  method. `median` is not a noun query, so `median of xs` stays a syntax
++  error.
 +- The authoritative contract is the
-+  [hypothetical differences](../nucleoid.spec.md#hypothetical-differences)
++  [list and population medians](../nucleoid.spec.md#list-and-population-medians)
 +  section.
 +
- Implemented semantic basis: the [root specification](../nucleoid.spec.md).
- Proposal context: [NUC 11](nuc-0011.md), [NUC 48](nuc-0048.md),
- [NUC 62](nuc-0062.md) and [NUC 65](nuc-0065.md).
-@@ -3318,6 +3370,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
- | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
- | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
-+| Evaluating a `diff` stage while no `suppose` block is running | `Cannot use 'diff' outside suppose` |
- | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
- | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
- | Explaining something that is not a reference, such as the power in `why x ** 2` | `Cannot explain <expression>`, for example `Cannot explain x**2` |
-@@ -3527,6 +3580,9 @@ any name in collection: condition     true when the condition holds for some mem
- suppose premise: suite                run premise and suite, then roll both back (NUC 65)
- suppose: suite                        a hypothetical without a premise (NUC 65)
- name = suppose premise: suite         keep the block's last expression value (NUC 65)
-+model |> diff                         what the running suppose block added or changed (NUC 83)
-+reference |> why |> diff              the changed steps of an explanation (NUC 83)
-+selec
+ ---
+ 
+ ## 12. Reasoning Operations
+@@ -3360,6 +3412,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Missing or non-function `find`, `findIndex`, `findLast` or `findLastIndex` callback, even on an empty receiver | `<name> expects a function` |
+ | A supplied `sum` selector that is not a fun
 ```
 
-**File**: `docs/examples.md` (modified, +31/-0)
+**File**: `docs/examples.md` (modified, +35/-0)
 ```diff
-@@ -3360,6 +3360,37 @@ bolt.cost = 3
-   [NUC 82](nuc-0082.md) and the
-   [root contract](../nucleoid.spec.md#depth-limited-reasoning-selections).
+@@ -3391,6 +3391,41 @@ suppose lamp.days = 3: changes()
+   [NUC 83](nuc-0083.md) and the
+   [root contract](../nucleoid.spec.md#hypothetical-differences).
  
-+## Hypothetical differences
++## List and population medians
 +
-+**Diff shows which orders a delayed shipment would make late**
++**Medians keep the typical rent of every district live as listings change**
 +
 +```nuc
-+class Order(item, days):
-+    this.item = item
-+    this.days = days
-+$Order.late = $Order.days > 3
-+overdue = Order.filter(order -> order.late).map(order -> order.item)
-+desk = Order("desk", 2)
-+lamp = Order("lamp", 5)
-+def changes() => (model |> diff).map(step -> step.node)
-+delay = suppose desk.days = 6: changes()
-+rush = suppose lamp.days = 1: changes()
-+assert: delay, ["overdue", "desk.days", "desk.late"]
-+assert: rush, ["overdue", "lamp.days", "lamp.late"]
-+lamp.days = 2
-+suppose lamp.days = 3: changes()
-+# return: ["lamp.days"]
++class District(name): this.name = name
++class Flat(district, rent):
++    this.district = district
++    this.rent = rent
++$District.typical = Flat.filter(flat -> flat.district == $District).median(flat -> flat.rent)
++$District.affordable = $District.typical < 1500
++north = District("north")
++south = District("south")
++Flat(north, 1200)
++Flat(north, 1400)
++penthouse = Flat(north, 4000)
++Flat(south, 1600)
++Flat(south, 1700)
++assert: [north.typical, north.affordable, south.typical, south.affordable], [1400, true, 1650, false]
++penthouse.district = south
++Flat(north, 950)
++assert: [north.typical, south.typical, south.affordable], [1200, 1700, false]
++[north.affordable, south.affordable]
++# return: [true,false]
 +```
 +
-+- `changes()` evaluates `model |> diff` inside each `suppose` block that
-+  calls it, so one function reports what each plan would change: a six-day
-+  delay makes the desk late and adds it to `overdue`, and rushing the lamp
-+  takes the lamp off it.
-+- The answer follows the model: once the lamp ships in two days, a third day
-+  would change only its `days`, because it stays on time. See
-+  [NUC 83](nuc-0083.md) and the
-+  [root contract](../nucleoid.spec.md#hypothetical-differences).
++- `$District.typical` is the median rent of each district's flats, and
++  `$District.affordable` follows it. The penthouse leaves the north
++  affordable: however high its rent, the north's median is the middle flat's
++  1,400, while the mean of the three northern rents is 2,200.
++- Moving the penthouse to the south and adding a cheaper northern flat
++  re-evaluates both districts: the north's median falls to 1,200 and the
++  south's rises to 1,700. See [NUC 84](nuc-0084.md) and the
++  [root contract](../nucleoid.spec.md#list-and-population-medians).
 +
  ## Copyright
  
@@ -1235,194 +1225,222 @@ writ
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -118,6 +118,7 @@ Created: 31-Jul-2026
- | [62](nuc-0062.md) | Universal and Existential Quantifiers | Accepted |
- | [65](nuc-0065.md) | Hypothetical Suppose Blocks | Accepted |
- | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Accepted |
-+| [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
+@@ -107,6 +107,7 @@ Created: 31-Jul-2026
+ | [75](nuc-0075.md) | List and Population Modes | Accepted |
+ | [77](nuc-0077.md) | List and Population Extreme Items | Accepted |
+ | [80](nuc-0080.md) | List and Population Averages | Accepted |
++| [84](nuc-0084.md) | List and Population Medians | Accepted |
  
- ### Language compatibility
+ ### Reasoning enhancement
  
-@@ -219,6 +220,7 @@ Created: 31-Jul-2026
- | [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
+@@ -221,6 +222,7 @@ Created: 31-Jul-2026
  | [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
  | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [83](nuc-0083.md) | Hypothetical Difference Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [83](nuc-0083.md) | Hypothetical Difference Selections | Standards Track | Reasoning enhancement | Accepted |
++| [84](nuc-0084.md) | List and Population Medians | Standards Track | Utility enhancement | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0083.md` (added, +1007/-0)
+**File**: `docs/nuc-0084.md` (added, +962/-0)
 ```diff
-@@ -0,0 +1,1007 @@
-+# NUC 83 -- Hypothetical Difference Selections
+@@ -0,0 +1,962 @@
++# NUC 84 -- List and Population Medians
 +
 +```
-+NUC: 83
-+Title: Hypothetical Difference Selections
++NUC: 84
++Title: List and Population Medians
 +Author: Claude <noreply@anthropic.com>
 +Status: Accepted
 +Type: Standards Track
-+Category: Reasoning enhancement
++Category: Utility enhancement
 +Created: 05-Nov-2026
-+Requires: 8, 12, 14, 45, 48, 57, 59, 62, 65, 82
++Requires: 8, 18, 45, 57, 58, 59, 60, 61, 65, 68, 69, 75, 79, 80
 +```
 +
 +## Abstract
 +
-+- Add the pipeline stage `SELECTION |> diff`. Inside a `suppose` block it
-+  keeps the steps of `SELECTION` whose node did not exist when the innermost
-+  running block began, its premise included, or whose value differs from the
-+  value the node held then. It keeps them in their order with every field
-+  unchanged, so `suppose reading = 95: model |> diff` lists the reading and
-+  the alarm it trips, and `alarm |> why |> diff` the changed facts behind the
-+  alarm.
-+- Values compare as a write compares the value it stores with the one it
-+  replaces, the rule that decides whether the write propagates: numbers by
-+  value and sign with `NaN` equal to `NaN`; strings, booleans, `null`, dates,
-+  regular expressions and class values by value; lists item by item; and
-+  objects, instances and function values by identity. Classes, named
-+  functions, conditions and blocks hold `null` in a step, so only their
-+  appearance counts.
-+- The values a block began with are read from the undo records the
-+  transaction already keeps since the block's savepoint, which hold the first
-+  value of every slot the block wrote. No snapshot, copy or per-write work is
-+  added: a block only pushes its savepoint mark when it starts and pops it
-+  when it ends.
-+- Evaluating the stage when no block is running raises
-+  `TypeError("Cannot use 'diff' outside suppose")` at the running statement.
-+  Running is dynamic: a function, method or lambda called inside a block may
-+  use the stage, and a nested block compares with its own start. A binding
-+  named `diff` shadows the stage, as bindings shadow NUC 48's `stated` and
-+  `derived` and NUC 82's `depth`.
-+- No keyword, token or error type is added. Every accepted program keeps its
-+  parse and behavior; only inputs that were errors at the accepted revision
-+  change. The public `Stage` enum gains `Stage::Diff`, which needs human
-+  SemVer review. No project version is changed. The authoritative contract is
-+  [Hypothetical differences](../nucleoid.spec.md#hypothetical-differences).
++- Lists and class instance lists gain the read-only query `median`.
++  `RECEIVER.median()` returns the middle value of the items in ascending
++  numeric order and `RECEIVER.median(selector)` the middle value of
++  `selector(item)`.
++- With an odd number of values the median is the middle value itself,
++  unchanged. With an even number it is the mean of the two middle values,
++  `(lower + upper) / 2` in 64-bit floating point, so `[4, 1, 3, 2].median()`
++  is `2.5`.
++- The values are converted with the numeric conversion of
++  [NUC 68](nuc-0068.md)'s `sum` and ordered by a stable ascending sort of a
++  private list of numbers. The receiver is never sorted or written.
++- An empty receiver and any value that converts to NaN give NaN. An
++  undefined value makes the result undefined, which a declaration stores as
++  `null`.
++- The selector is called once for every item, in order, with only the item,
++  as `sum` and `average` call theirs. A supplied first argument that is not a
++  function raises `TypeError("median expects a function")`, even on an empty
++  receiver.
++- `median` follows [NUC 61](nuc-0061.md)'s shared query rules beside `sum`
++  and [NUC 80](nuc-0080.md)'s `average`. It accepts every receiver they
++  accept, reads the receiver before its arguments, never writes it, and stays
++  live in declarations and class-level rules.
++- At the accepted revision these calls raise
++  `TypeError("<receiver>.median is not a function")`. No syntax, keyword,
++  token, error type or public Rust API is added, and `median` is not a noun
++  query, so `median of xs` keeps raising
++  `SyntaxError("Unexpected keyword 'of'")`. The authoritative contract is
++  [List and population medians](../nucleoid.spec.md#list-and-population-medians).
 +- **Outcome: Accepted.** The independent evaluation and the caller's
 +  integrated-tree checks passed all three hard criteria, and the independent
 +  evaluator decided Accepted. The required token comparison ran in
-+  continuous mode: 11 cases use fewer tokens, 948 the same and none more. No
-+  policy check failed. The evaluation adds one cost that the Cost section
-+  does not state: a standing selection that holds `model |> diff` re-derives
-+  on every write in its block and rereads the block's growing undo records
-+  each time, so such a block grows about 6 to 15 times per doubling of its
-+  writes, while a single question stays linear.
++  continuous mode: 11 cases use fewer tokens, 959 the same and none more. No
++  policy check failed.
 +
 +## Motivation
 +
-+- Draft [NUC 11](nuc-0011.md) motivates its hypotheticals with "An LLM
-+  proposing a change needs to know what the change would do before committing
-+  it". [NUC 65](nuc-0065.md) accepted `suppose`, which answers that only for
-+  the nodes a question names: `suppose price = 20: total` reports the total
-+  and nothing else.
-+- What a change would do is the set of nodes it moves. A model that an LLM
-+  maintains holds many more nodes than any question names, and a changed
-+  premise reaches some of them through rules nobody remembers writing: a
-+  class-level rule, a population count, a derived label. Naming them in
-+  advance means knowing the answer before asking.
-+- Accepted Nucleoid can only spell the answer with a snapshot taken before
-+  every block and a comparison inside it,
-+  `snap = (model |> why).value` followed by
-+  `(model |> why).filter(s -> all b in snap: b.node != s.node or b.holds != s.holds)`,
-+  38 lexer tokens more than `model |> diff` for one question, and one more
-+  snapshot for each block. The spelling is also wrong in ways a model cannot
-+  see:
-+  - loose `!=` coerces, so `1` and `"1"`, `0` and `false`, or `[5]` and `5`
-+    count as unchanged, and it never equates `NaN` or a function value with
-+    itself, so an unchanged lambda is always listed;
-+  - `!==` counts `0` turning into `-0` as unchanged, although the runtime
-+    propagates that write as a change;
-+  - in a standing declaration, any step that holds `null`, as every class and
-+    named function does, makes the whole selection `null` by the accepted
-+    null-read rule, unless every read of `holds` is wrapped in `.value`;
-+  - `model |> diff |> affects`, what rests on anything the change moved, has
-+    no general accepted spelling, because `affects` takes references and a
-+    filtered list is not one.
-+- NUC 11's roadmap plans "Hypotheticals -- `suppose`, `diff` and freezing" as
-+  its sixth stage. NUC 65 accepted `suppose` and fre
++- World models keep typical values: the usual wait of a delivery route, the
++  typical rent of a district, the middle lap time of a runner, the normal
++  reading of a room's sensors. A mean answers the question only when no value
++  is extreme; one stuck sensor, one penthouse or one lost parcel drags it far
++  from every other value. The median is the standard robust answer:
++  `[12, 3, 45, 7, 300].median()` is `12` while `average()` is `73.4`, and
++  `[12, 3, 45, 7, 3000].median()` is still `12`.
++- At the accepted revision a median has to be assembled from a sorted copy,
++  an index computed from the length and a branch or an average for even
++  counts. The shortest general accepted spelling found,
++  `typical = waits[:].sort(lambda a, b: a - b)[waits.length / 2 - 0.5 : waits.length / 2 + 1].average()`,
++  is 39 lexer tokens and names its receiver three times, where
++  `typical = waits.median()` is 7. The spelling familiar from other
++  languages,
++  `s = waits.slice().sort((a, b) -> a - b)` followed by
++  `typical = (s[Math.floor((s.length - 1) / 2)] + s[Math.floor(s.length / 2)]) / 2`,
++  is 58.
++- Over a population the selector has to be mapped first:
++  `pace = Trip.map(.minutes).sort(lambda a, b: a - b)[Trip.length / 2 - 0.5 : Trip.length / 2 + 1].average()`
++  is 42 tokens where `pace = Trip.median(.minutes)` is 9. In a class-level
++  rule the accepted spelling repeats the filtered list to measure its length:
++  `$Room.mid = Sensor.filter(sensor -> sensor.room == $Room).median(.temp)` is
++  22 tokens and states its filter once, while the accepted spelling states it
++  three times in 77.
++- Two traps make the hand-written median easy to get wrong. `sort()` without
++  a comparator orders by text, so `[12, 3, 45, 7].sort()` is
++  `[12, 3, 45, 7]`, and `sort` on a variable or a property sorts in place and
++  writes the list back ([NUC 58](nuc-0058.md)), so a declaration that sorts
++  its own receiver rewrites the model it reads.
++- Python's `statistics.median`, NumPy's `numpy.median`, pandas'
++  `Series.median`, R's `median`, Excel's `MEDIAN` and SQL's
++  `PERCENTILE_CONT(0.5)` name the operation, and all of them average the two
++  middle values of an even count. JavaScript has none, and LLM-written code
++  such as `orders.median(o => o.total)` raises
++  `TypeError("orders.median is not a function")` at the accepted revision.
++
++## Rationale
++
++- **Category and mode.** The caller selected the Utility enhancement category
++  by one tool-backed uniform draw over the five categories that NUC 1's
++  registry marks eligible for autom
 ```
 
-**File**: `nucleoid.spec.md` (modified, +240/-0)
+**File**: `nucleoid.spec.md` (modified, +212/-0)
 ```diff
-@@ -3239,6 +3239,100 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid supposes a changed class level rule` specify the executable
+@@ -3868,6 +3868,57 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed average updates` specify the executable
    behavior.
  
-+## Hypothetical differences
++## List and population medians
 +
-+- [NUC 83](docs/nuc-0083.md) adds the pipeline stage `SELECTION |> diff`.
-+  Inside a `suppose` block it keeps the steps of `SELECTION` whose node did
-+  not exist when the innermost running block began, its premise included, or
-+  whose value differs from the value the node held then. It keeps them in
-+  their order, with their `node`, `holds`, `rule`, `state` and `from` fields
-+  unchanged, and drops the others.
-+- `model |> diff` therefore lists every node that the hypothetical added or
-+  changed, `alarm |> why |> diff` the changed facts behind an alarm,
-+  `price |> affects |> diff` what changed among the nodes a price reaches,
-+  and `model |> diff |> affects` everything that rests on a change. A node
-+  removed inside the block cannot appear, because the stage only keeps steps
-+  that exist.
-+- A node existed when the block began if the model held it then. The
-+  placeholder of a name read before its definition and a reasoning observer,
-+  which no selection lists, did not exist, so a property first defined in the
-+  block under a rule that already read it is new, and so is a former
-+  reasoning declaration redeclared there as an ordinary one. A property that a
-+  statement declares inside the block is new, even when an object literal
-+  already held that value.
-+- The value a node held is what its step holds: the value of a variable or
-+  an instance, the value of a property, and `null` for classes, named
-+  functions, conditions and blocks, which therefore count only when they are
-+  new. Values compare as a write compares the value it stores with the one it
-+  replaces, which is what decides whether the write propagates:
-+  - numbers are the same when they are equal and have the same sign, and
-+    `NaN` is the same as `NaN`, so `-0` differs from `0`;
-+  - strings, booleans, `null`, dates and class values compare by value, and
-+    regular expressions by their pattern;
-+  - lists are the same when they have the same length and the same items in
-+    order under this rule, so a list mutated in place, as by `push`, differs
-+    and a list restored, as by `pop`, does not;
-+  - objects, instances and function values are the same only when they are
-+    the same object or function. An instance whose properties change is not
-+    listed, while each changed property is, and a new object with equal
-+    entries differs.
-+- An equal-valued write, a value restored before the stage runs, a rule
-+  rewritten to give the same value, a node deleted and declared again with
-+  the value it had, and a write undone by a caught failure are not
-+  differences.
-+- The innermost running block is the one whose premise or suite is running
-+  when the stage is evaluated: directly, in a function, method or lambda
-+  called there, or in a rule that propagation evaluates there. `try`
-+  savepoints inside the block do not change it, and a nested block compares
-+  with its own start. Each evaluation compares with the block running when it
-+  happens, so a standing selection declared in an outer block that
-+  re-derives inside a nested block compares with the nested block's start
-+  until that block rolls back.
-+- Evaluating the stage when no `suppose` block is running raises
-+  `TypeError("Cannot use 'diff' outside suppose")`, positioned at the running
-+  top-level statement, and rolls back its transaction. The error is raised
-+  when the stage applies, after its source is selected and the stages before
-+  it have applied. A declaration, class-level rule or function that holds the
-+  stage can therefore only be evaluated inside a block; outside one, its
-+  evaluation raises and rolls back the statement that triggered it.
-+- The stage keeps the distances of the steps it keeps, so it composes with
-+  `depth`, `stated`, `derived`, `why` and `affects` in any order:
-+  `c |> why |> diff |> depth(1)` and `c |> why |> depth(1) |> diff` select
-+  the same steps.
-+- Only `|>` followed by the name `diff` is the stage, without an argument,
-+  and further stages may follow it. `diff` remains an ordinary lexer
-+  identifier: variables, parameters, properties, keys, functions and methods
-+  named `diff` keep their accepted meanings, there is no prefix form, so
-+  `diff c` stays two juxtaposed statements, and `diff(c)` is an ordinary
-+  call. A bare `diff` stays a name, so `suppose a = 2: diff` still raises
-+  `ReferenceError("diff is not defined")`. `c |> diff(1)` is the stage
-+  followed by the juxtaposed statement `(1)`, as `c |> why(1)` is.
-+- A local or parameter, state variable, function or class named `diff`
-+  shadows the stage, as for `stated`, `derived` and `depth`: the stage then
-+  raises `TypeError("diff is not an operation")` before selecting its source.
-+  A binding declared after a standing selection makes its 
++- [NUC 84](docs/nuc-0084.md) adds the read-only list query `median` to lists
++  and class instance lists. No syntax, keyword or error type is added.
++- `RECEIVER.median()` returns the middle value of the receiver's items in
++  ascending numeric order and `RECEIVER.median(selector)` the middle value of
++  `selector(item)` for every item. With an odd number of values it is the
++  middle value itself, unchanged. With an even number it is the mean of the
++  two middle values, `(lower + upper) / 2` in 64-bit floating point, so
++  `[4, 1, 3, 2].median()` is `2.5`.
++- The values are converted to numbers and ordered by a stable ascending sort,
++  so equal values such as `0` and `-0` keep their receiver order. The receiver
++  is never sorted or written: after `waits = [12, 3, 45]`, `waits.median()` is
++  `12` and `waits` keeps its order.
++- An empty receiver gives NaN. A value that converts to NaN makes the median
++  NaN, so `[1, "a", 3].median()` is NaN. An undefined value makes the median
++  undefined, which a declaration stores as `null`; every item is still visited.
++- The receivers, the numeric conversion and the selector are those of `sum`
++  and `average`: a list however it is reached, or a class's instance list in
++  population order, named by the class or by a variable that holds the class;
++  `null`, `false`, empty strings and empty lists are `0`, `true` is `1`,
++  numeric strings and one-item lists are their number, and objects, other
++  strings and longer lists are NaN. On a class name, `median` is the
++  population query even when the class declares an instance method `median`;
++  its instances keep calling that method.
++- A selector is called once for every item, in order, with only the item;
++  further parameters are `null`. A supplied first argument that is not a
++  function, including `null`, raises `TypeError("median expects a function")`,
++  even on an empty receiver.
++- `median` follows the shared rules of the list queries: it reads its receiver
++  before its arguments, evaluates every supplied argument once, left to right,
++  including unused extras, and never writes the receiver. A declaration that
++  uses it depends on the list or population, on its argument expressions and
++  on whatever the selector reads, so list mutations, new and deleted instances
++  and property changes re-evaluate it, in class-level rules too. Selector
++  errors roll back through the existing transaction. A null or undefined
++  receiver yields undefined without evaluating the arguments.
++- A call converts every value once and sorts one list of numbers, in
++  O(n log n) time, without recursion.
++- The call keeps its ordinary rendering, so `typical = waits.median()`
++  explains as `typical = waits.median()`, and `why` lists the receiver among
++  the declaration's dependencies.
++- `median of xs` stays `SyntaxError("Unexpected keyword 'of'")`: `median` is
++  not one of the noun queries. Property reads such as `xs.median`, bindings
++  and object properties named `median`, `median(...)` without a definition,
++  `Math.median` and instance methods named `median` called on an instance
++  keep their accepted results. The eight appended entries beginning
++  `Nucleoid finds the middle values of lists with median` through
++  `Nucleoid rolls back failed median updates` specify the executable
++  behavior.
++
+ ## Object entry loops with ordered rollback
+ 
+ - [NUC 72](docs/nuc-0072.md) adds loops over an object's entries:
+@@ -20719,4 +20770,165 @@ suppose discount = 3:
+     price = 13
+     assert(facts.map(s -> s.node), ["price", "discount"])
+     assert(effects, [])
++---
++# Nucleoid finds the middle values of lists with median
++
++waits = [12, 3, 45]
++typical = waits.median()
++assert: [typical, waits, (why typical)[0].from], [12, [12, 3, 45], ["waits"]]
++waits.push(7)
++assert: typical, 9.5
++waits.push(300)
++assert: [typical, waits.average()], [12, 73.4]
++waits.pop()
++waits.shift()
++assert: typical, 7
++courier = {stops: [12, 2, 45, 31]}
++usual = courier.stops.median()
++short = courier.stops.filter(stop -> stop < 30).median()
++assert: [usual, short], [21.5, 7]
++courier.stops.push(5)
++assert: [usual, short], [12, 5]
++---
++# Nucleoid finds the medians of class instance populations
++
++class Listing(area, price):
++    this.area = area
++    this.price = price
++def perMeter listing => listing.price / listing.area
++Listing(50, 200000)
++loft = Listing(40, 400000)
++typical = Listing.median(perMeter)
++roomy = Listing.filter(listing -> listing.area > 45).median(perMeter)
++recent = Listing[-3:].median(listing -> listing.area)
++assert: [typical, roomy, recent], [7000, 4000, 45]
++Listing(80, 72000)
++assert: [typical, roomy, recent], [4000, 2450, 50]
++Listing(100, 450000)
++assert: [typical, roomy, recent], [4250, 4000, 80]
++loft.price = 12
 ```
 
 #### Recent Merged Pull Requests:
@@ -1451,13 +1469,13 @@ writ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 83 Hypothetical Difference Selections
+## X. NUC 84 List and Population Medians
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36aa86f4`: NUC 83 Hypothetical Difference Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `491512db`: NUC 84 List and Population Medians. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1465,34 +1483,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Hypothetical differences
+## List and population medians
 
-**Diff lists what a warmer room would change in a heating plan**
+**Medians keep typical delivery times live as orders arrive**
 
 ```nuc
-temperature = 18
-target = 21
-heating = temperature < target
-fan = temperature > 30
-cost = heating ? 4 : 0
-suppose temperature = 24:
-    changes = model |> diff
-    assert: changes.map(step -> step.node), ["temperature", "heating", "cost"]
-    target = 26
-    assert: changes.map(step -> step.node), ["temperature", "target"]
-assert: [heating, cost], [true, 4]
+class Order(city, minutes):
+    this.city = city
+    this.minutes = minutes
+Order("oslo", 30)
+Order("oslo", 25)
+Order("bergen", 90)
+late = Order("bergen", 105)
+typical = Order.median(order -> order.minutes)
+local = Order.filter(order -> order.city == "oslo").median(order -> order.minutes)
+assert: [typical, local], [60, 27.5]
+Order("oslo", 8)
+late.minutes = 40
+assert: [typical, local], [30, 25]
 ```
 
-- [NUC 83](docs/nuc-0083.md) adds the reasoning stage `|> diff`. Inside a
-  `suppose` block it keeps the steps of a selection that the block added or
-  changed, so `model |> diff` answers what a hypothetical would do without
-  naming any node: warming the room to 24 turns the heating off and drops its
-  cost, while the fan, which also reads the temperature, keeps its value.
-- The selection stays live inside the block: with the target raised to 26
-  the heating is back on, so only the temperature and the target still
-  differ. Outside a block the stage raises
-  `TypeError("Cannot use 'diff' outside suppose")`. See the
-  [root contract](nucleoid.spec.md#hypothetical-differences).
+- [NUC 84](docs/nuc-0084.md) adds `median()` and `median(selector)` to lists
+  and class instance lists. `Order.median(order -> order.minutes)` is the
+  middle delivery time of every order, and with an even number of orders the
+  mean of the two middle times.
+- `typical` and `local` are live declarations: a new order or a changed time
+  re-evaluates them. Once the late order takes 40 minutes, the 90-minute order
+  is the slowest, so however slow it is, `typical` stays 30, while the mean of
+  the five orders is 38.6. See the
+  [root contract](nucleoid.spec.md#list-and-population-medians).
 
 ```
 
@@ -1503,4 +1522,4 @@ assert: [heating, cost], [true, 4]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36aa86f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `491512db` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `47dc1214`  
+> **Source Version**: `49d87f99`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:00:28.493Z  
+> **Timestamp**: 2026-11-05T21:47:37.238Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:00:28.313Z  
+> **Harvest Timestamp**: 2026-11-05T21:47:36.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40711 stars
+- **Stars / Engagement**: 40712 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72692** (2026-11-05): **ddl, executor: guard table and cluster flashback for MV objects**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  `FLASHBACK TABLE` skips materialized-object DROP jobs, producing generic errors or selecting an older ordinary table with the same name. Cluster flashback can restore materialized-object data without matching maintenance state, and its object checks also need to cover refresh shadow tables.  ### What changed and how does it work?  Cover `FLASHBACK TABLE` and `FLASHBACK CLUSTER` for materialized views (MVs), materialized view logs (MLogs), and protected out-of-place refresh shadow tables:  - Table flashback returns error 8200 with an object-specific unsupported message for current objects and matching dropped historical objects. The `TO` form validates the original object before renaming. - Inspect MV/MLog/shadow DROP jobs in their original history order, so a newer materialized-object drop blocks fallback to an older ordinary table. A newer ordinary-table drop still takes precedence and recovers its own data. - Make the extra history candidate types opt-in for table flashba
+- **Issue #72744** (2026-11-05): **parser: new ADDDATE interval view cannot be read by v8.5.8 TiDB during mixed-version upgrade**
+  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  Use two TiDB frontends sharing one cluster: an old v8.5.8 reader and a newer v8.5.9 writer. Direct each connection to the intended frontend.  On the old frontend: ```sql CREATE DATABASE view_interval_repro; CREATE TABLE view_interval_repro.t (d DATE NOT NULL, q INT NOT NULL); INSERT INTO view_interval_repro.t VALUES ('2026-01-15', 2); ```  On the new frontend: ```sql CREATE VIEW view_interval_repro.v_add AS SELECT ADDDATE(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t;  CREATE VIEW view_interval_repro.v_control AS SELECT DATE_ADD(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t; ```  On each frontend: ```sql SELECT @@hostname, VERSION(), TIDB_VERSION(); SHOW CREATE VIEW view_interval_repro.v_add; SELECT * FROM view_interval_repro.t; SELECT x FROM view_interval_repro.v_control; SELECT x FROM view_interval_repro.v_add; ```  Cleanup: ```sql DROP DATABASE view_interval_repro; ```  ### 2. What did you expect to see? (Required)  Reads of the persisted view should remain compatible while old and new frontends coexist during rolling upgrade, or creation of incompatible persisted definitions should be guarded during that phase. Both view reads should return 2026-04-15.  ### 3. What did you see instead (Required)  The new frontend creates and reads the ADDDATE view successfully. The old frontend sees the identical stored definition and reads the base table and DATE_ADD control successfully, but reading t
 
-- **Issue #72682** (2026-11-04): **statistics: report sync load failure regardless of result arrival order (#70316)**
-  *Symptoms*: This is an automated cherry-pick of #70316  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #67629  Problem Summary:  A timed-out sync stats load races two timers with the same timeout. If the waiter's timer in `SyncWaitStatsLoad` fires first, the statement is marked as sync-load failed; if the errored result arrives first, the failure is only logged and swallowed, so a plan built on pseudo stats can enter the plan cache (defeating #67411). The scheduling-dependent ordering is why `TestPreparedPlanCacheInvalidatedAfterSyncLoadTimeoutFallback` is flaky.  ### What changed and how does it work?  `SyncWaitStatsLoad` now returns an error whenever needed items were not delivered within the wait window, so both orderings report the failure. Commit 1 pins the buggy behavior in a deterministic test; commit 2 fixes it and flips the expectation.  With `tidb_stats_load_pseudo_timeout = OFF`, a timed-out load now fails the statement in both orderings.  Verification: `GOMAXPROCS=1 go test -run TestPreparedPlanCacheInvalidatedAfterSyncLoadTimeoutFallback -count=30` — 4/30 failures before, 0/30 after.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit
+- **Issue #72735** (2026-11-05): **util: fix incorrect statement summary Others rows (#69914)**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69913  Problem Summary:  Backport #69914 to release-8.5. The current v1 statement summary can include the evicted `Others` row from a previous interval. Reapplying `tidb_stmt_summary_internal_query=OFF` also changes the LRU order and can evict hot statements in both v1 and persistent v2.  ### What changed and how does it work?  - Apply the current interval boundary to the v1 evicted row. Initialize the internal-only flag from the first execution and retain mixed internal/external digests. - Use a non-promoting LRU lookup when removing internal entries in v1 and v2. Lock each v2 record while reading its mutable internal flag. - Carry the original regressions. The Domain test uses the 8.5 factory and sysvar APIs, and the v1 tests use this branch's column layout. Regenerate the affected 8.5 Bazel targets.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,627 +1940,451 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47dc1214` (2026-11-05)
-**Commit Message**: session, lightning: enable log redaction by default (#72666)
+### Incident Patch 1: `adee1920` (2026-11-05)
+**Commit Message**: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
 
-close pingcap/tidb#72665
+close pingcap/tidb#71286
 
-**File**: `lightning/tests/run.sh` (modified, +11/-0)
+**File**: `pkg/ddl/index.go` (modified, +42/-26)
 ```diff
-@@ -43,6 +43,13 @@ SELECTED_TEST_NAME="${TEST_NAME-$(find tests -mindepth 2 -maxdepth 2 -name run.s
- trap stop_services EXIT
- start_services $@
+@@ -4047,16 +4047,25 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
+ 		loc, ec := evalCtx.Location(), evalCtx.ErrCtx()
+ 		n := len(w.indexes)
+ 		globalIndexKeys := make([]kv.Key, 0, len(idxRecords))
+-		allKeys := make([]kv.Key, 0, len(idxRecords))
++		// Keep the fetched records intact: i%n identifies the index even when an
++		// array expands to zero or multiple entries, and progress is per record.
++		recordValues := make([][][]types.Datum, len(idxRecords))
++		recordKeys := make([][]kv.Key, len(idxRecords))
+ 		for i, idxRecord := range idxRecords {
+-			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
+-			if err != nil {
+-				return errors.Trace(err)
+-			}
+-			if distinct {
+-				globalIndexKeys = append(globalIndexKeys, key)
++			index := w.indexes[i%n]
++			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
++			for iter.Valid() {
++				values := iter.PeekIndexedValues()
++				key, _, distinct, err := iter.Next(nil, nil)
++				if err != nil {
++					return errors.Trace(err)
++				}
++				recordValues[i] = append(recordValues[i], values)
++				if distinct {
++					globalIndexKeys = append(globalIndexKeys, key)
++				}
++				recordKeys[i] = append(recordKeys[i], key)
+ 			}
+-			allKeys = append(allKeys, key)
+ 		}
  
-+WITH_TIDB=true
-+for arg in "$@"; do
-+    if [ "$arg" = '--no-tidb' ]; then
-+        WITH_TIDB=false
-+    fi
-+done
-+
- # Intermediate file needed because read can be used as a pipe target.
- # https://stackoverflow.com/q/2746553/
- run_curl "https://$PD_ADDR/pd/api/v1/version" | grep -o 'v[0-9.]\+' > "$TEST_DIR/cluster_version.txt"
-@@ -59,6 +66,10 @@ run_case() {
-     local case=$1
-     local script=$2
-     echo "*===== Running test $script... =====*"
-+    # Tests inspect error values, including after earlier cases restart the cluster.
-+    if $WITH_TIDB; then
-+        TEST_NAME="$case" run_sql "SET GLOBAL tidb_redact_log = OFF"
-+    fi
-     INTEGRATION_TEST=1 \
-     TEST_DIR="$TEST_DIR" \
-     TEST_NAME="$case" \
+ 		var found map[string][]byte
+@@ -4067,31 +4076,38 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
+ 
+ 		for i, idxRecord := range idxRecords {
+ 			taskCtx.scanCount++
+-			if val, ok := found[string(allKeys[i])]; ok {
+-				// Only delete if it is from the partition it was read from.
+-				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
+-				if errPart != nil {
+-					return errors.Trace(errPart)
+-				}
+-				if partHandle, ok := handle.(kv.PartitionHandle); ok {
+-					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
+-						continue
++			// Count records with empty arrays as processed even though they have no index keys to delete.
++			cleaned := len(recordKeys[i]) == 0
++			for j, key := range recordKeys[i] {
++				if val, ok := found[string(key)]; ok {
++					// Only delete if it is from the partition it was read from.
++					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
++					if errPart != nil {
++						return errors.Trace(errPart)
++					}
++					if partHandle, ok := handle.(kv.PartitionHandle); ok {
++						if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
++							continue
++						}
++					}
++					// Mark the entry for transactional conflict checking. A concurrent
++					// takeover causes the optimistic transaction to conflict and retry.
++					err = txn.LockKeys(ctx, lockCtx, key)
++					if err != nil {
++						return errors.Trace(err)
+ 					}
+ 				}
+-				// Lock the global index entry, to prevent deleting something that is concurrently added.
+-				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
++				// Delete only the checked element, not the original array: another
++				// element of the same row may now belong to a surviving partition.
++				err = w.indexes[i%n].Delete(w.tblCtx, txn, recordValues[i][j], idxRecord.handle)
+ 				if err != nil {
+ 					return errors.Trace(err)
+ 				}
++				cleaned = true
+ 			}
+-			// we fetch records row by row, so records will belong to
+-			// index[0], index[1] ... index[n-1], index[0], index[1] ...
+-			// respectively. So indexes[i%n] is the index of idxRecords[i].
+-			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
+-			if err != nil {
+-				return errors.Trace(err)
++			if cleaned {
++				taskCtx.addedCount++
+ 			}
+-			taskCtx.addedCount++
+ 		}
+ 		taskCtx.writtenBytes = txn.Size()
+ 		return nil
 ```
 
-**File**: `lightning/tidb-lightning.toml` (modified, +2/-2)
+**File**: `pkg/ddl/tests/partition/global_index_version_test.go` (modified, +84/-0)
 ```diff
-@@ -63,8 +63,8 @@ max-backups = 14
- # cert-path = "/path/to/lightning.pem"
- # private key of this service.
- # key-path = "/path/to/lightning.key"
--# If set to true, lightning will redact sensitive infomation in log.
--# redact-info-log = false
-+# Whether Lightning redacts sensitive information in logs. Enabled by default.
-+# redact-info-log = true
+@@ -17,14 +17,17 @@ package partition
+ import (
+ 	"context"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
  
- [checkpoint]
- # Whether to enable checkpoints.
-```
-
-**File**: `pkg/bindinfo/binding_auto.go` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ func (ba *bindingAuto) ExplorePlansForSQL(stmtSCtx base.PlanContext, sqlOrDigest
- 		return nil, err
- 	}
- 
--	generatedPlans, err := ba.planGenerator.Generate(currentDB, sqlOrDigest, charset, collation)
-+	generatedPlans, err := ba.planGenerator.Generate(currentDB, sqlOrDigest, charset, collation, stmtSCtx.GetSessionVars().EnableRedactLog)
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `pkg/bindinfo/binding_plan_generation.go` (modified, +10/-2)
-```diff
-@@ -33,7 +33,7 @@ import (
- 
- // PlanGenerator is used to generate new Plan Candidates for this specified query.
- type PlanGenerator interface {
--	Generate(defaultSchema, sql, charset, collation string) (plans []*BindingPlanInfo, err error)
-+	Generate(defaultSchema, sql, charset, collation, redactLog string) (plans []*BindingPlanInfo, err error)
- }
- 
- // planGenerator implements PlanGenerator.
-@@ -43,7 +43,10 @@ type planGenerator struct {
- }
- 
- // Generate generates new plans for the given SQL statement.
--func (g *planGenerator) Generate(defaultSchema, sql, charset, collation string) (plans []*BindingPlanInfo, err error) {
-+// redactLog is the caller's tidb_redact_log value. Plan text must follow it:
-+// pooled sessions otherwise keep the process default, which does not match the
-+// session that issued EXPLAIN EXPLORE.
-+func (g *planGenerator) Generate(defaultSchema, sql, charset, collation, redactLog string) (plans []*BindingPlanInfo, err error) {
- 	// TODO: only support SQL starting with SELECT for now, support other types of SQLs later.
- 	// TODO: make this check more strict.
- 	sql = strings.TrimSpace(sql)
-@@ -53,6 +56,11 @@ func (g *planGenerator) Generate(defaultSchema, sql, charset, collation string)
- 	}
- 
- 	err = callWithSCtx(g.sPool, false, func(sctx sessionctx.Context) error {
-+		vars := sctx.GetSessionVars()
-+		origRedactLog := vars.EnableRedactLog
-+		vars.EnableRedactLog = redactLog
-+		defer func() { vars.EnableRedactLog = origRedactLog }()
-+
- 		genedPlans, err := generatePlanWithSCtx(sctx, defaultSchema, sql, charset, collation)
- 		if err != nil {
- 			return err
-```
-
-**File**: `pkg/executor/materialized_view_refresh_internal_test.go` (modified, +31/-0)
-```diff
-@@ -25,7 +25,9 @@ import (
+ 	"github.com/pingcap/failpoint"
+ 	"github.com/pingcap/tidb/pkg/config/kerneltype"
++	"github.com/pingcap/tidb/pkg/ddl"
+ 	"github.com/pingcap/tidb/pkg/domain"
  	"github.com/pingcap/tidb/pkg/meta/model"
  	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
-+	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
-+	"github.com/pingcap/tidb/pkg/util/mock"
+ 	"github.com/pingcap/tidb/pkg/testkit"
++	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/require"
  )
  
-@@ -120,6 +122,35 @@ func TestInitRefreshMaterializedViewSessionAppliesDefinitionDivPrecisionIncremen
- 	require.Equal(t, 2, sessVars.DivPrecisionIncrement)
+@@ -509,6 +512,87 @@ func TestGlobalIndexTruncateAndDropPartition(t *testing.T) {
+ 	tk.MustExec("ADMIN CHECK TABLE tp_null")
  }
  
-+func TestPrepareMVRefreshObserveInternalSessionRedaction(t *testing.T) {
-+	for _, mode := range []string{vardef.Off, vardef.On, vardef.Marker} {
-+		t.Run(mode, func(t *testing.T) {
-+			caller := mock.NewContext()
-+			caller.GetSessionVars().EnableRedactLog = mode
-+			internal := mock.NewContext()
-+			originalMode := vardef.On
-+			if mode == vardef.On {
-+				originalMode = vardef.Off
-+			}
-+			internal.GetSessionVars().EnableRedactLog = originalMode
-+			e := &RefreshMaterializedViewDryRunExec{
-+				BaseExecutor: exec.NewBaseExecutor(caller, nil, 0),
-+			}
++// TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry reproduces issue #71286.
++//
++// While a partition is being truncated, a concurrent write may legitimately take over an
++// element key that the truncated partition used to own, and then `Delete` must not remove it.
++// The cleanup used to derive its check key with `GenIndexKey`, which encodes a multi-valued
++// index column as the whole array instead of one key per element. `BatchGet` therefore never
++// found the entry, the partition-owner check was skipped, and `Delete` removed the element key
++// that the new row owns. A second element of the same old row, which nobody took over, still
++// has to be cleaned up, so the decision must be made per element rather than per row.
++func TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry(t *testing.T) {
++	store := testkit.CreateMockStore(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec(`CREATE TABLE t (
++		p INT PRIMARY KEY,
++		j JSON,
++		UNIQUE KEY m ((CAST(j AS UNSIGNED ARRAY))) GLOBAL
++	) PARTITION BY RANGE (p) (
++		PARTITION p0 VALUES LESS THAN (10),
++		PARTITION p1 VALUES LESS THAN (20),
++		PARTITION p2 VALUES LESS THAN MAXVALUE
++	)`)
++	tk.MustExec("INSERT INTO t VALUES (1, '[100]')")   // p0, only here to give p0 a row to clean first
++	tk.MustExec("INSERT INTO t VALUES (11, '[7, 8]')") // p1, owns elements 7 and 8
 +
-+			func() {
-+				restore, err := e.prepareMVRefreshObserveInternalSession(internal)
++	tk1 := testkit.NewTestKit(t, store)
++	tk1.MustExec("use test")
++	// `MockDMLExecution` runs between the cleanup of p0 and the cleanup of p1, which is the
++	// window in which a real concurrent write can take over element 7. Element 8 is left
++	// alone on purpose so that the cleanup still has to remove it.
++	var hookRan atomic.Bool
++	ddl.MockDMLExecution = func() {
++		hookRan.Store(true)
++		_, err := tk1.Exec("INSERT INTO t VALUES (21, '[7]')")
++		assert.NoError(t, err)
++	}
++	t.Cleanup(func() {
++		assert.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
++		ddl.MockDMLExecution = nil
++	})
++	require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution", "1*return(true)->return(false)"))
++	tk.MustExec("ALTER TABLE t TRUNCATE PARTITION p0, p1")
++	require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
++	ddl.MockDMLExecution = nil
++	require.True(t, hookRan.Load(), "mockDMLExecution never fired, the test premise is broken")
++
++	// The row inserted during the DDL must keep its global index entry.
++	tk.MustQuery("SELECT p FROM t ORDER BY p").Check(testkit.Rows("21"))
++	tk.MustExec("ADMIN CHECK TABLE t")
++	tk.MustQuery("SELECT p FROM t WHERE 7 MEMBER OF (j)").Check(testkit.Rows("21"))
++
++	// The UNIQUE constraint must still hold for the taken-over element.
++	err := tk.ExecToErr("INSERT INTO t VALUES (22, '[7]')")
++	require.Error(t, err)
++	require.Contains(t, err.Error(), "Duplicate entry")
++
++	// Element 8 was owned only by the truncated partition, so it must be reusable.
++	tk.MustExec("INSERT INTO t VALUES (23, '[8]')")
++	tk.MustQuery("SELECT p FROM t WHERE 8 MEMBER OF (j)").Check(testkit.Rows("23"))
++	tk.MustExec("ADMIN CHECK TABLE t")
++
++	// Empty arrays must not shift the record-to-index mapping. Exercise a
++	// composite MV index alongside another global index, including NULL and
++	// repeated elements, whose expansion must match ordinary index writes.
++	tk.MustExec(`CREATE TABLE t_cleanup (
++		p INT PRIMARY KEY, c INT, j JSON,
++		UNIQUE KEY m (c, (CAST(j AS UNSIGNED ARRAY))) GLOBAL,
++		UNIQUE KEY g (c) GLOBAL
++	) PARTITION BY RANGE (p) (
++		PARTITION p0 VALUES LESS THAN (10),
++		PARTITION p1 VALUES LESS THAN MAXVALUE
++	)`)
++	tk.MustExec("INSERT INTO t_cleanup VALUES (1, 1, '[]'), (2, 2, NULL), (3, 3, '[7, 7, 8]'), (11, 4, '[9]')")
++	tk.MustExec("ALTER TABLE t_cleanup TRUNCATE PARTITION p0")
++	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
++	tk.MustQuery("SELECT p FROM t_cleanup USE INDEX(g)").Check(testkit.Rows("11"))
++	tk.MustExec("INSERT INTO t_cleanup VALUES (12, 1, '[]'), (13, 2, NULL), (14, 3, '[7, 8]')")
++	tk.MustQuery("SELECT p FROM t_cleanup WHERE c = 3 AND 7 MEMBER OF (j)").Check(testkit.Rows("14"))
++	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
++}
++
+ // TestUpdateIndexesResetsGlobalIndexVersion verifies that UPDATE INDEXES resets
+ // GlobalIndexVersion to 0 when switching an index from GLOBAL to local.
+ // Without this fix, the stale GlobalIndexVersion=V1 on a local in
+```
+
+**File**: `pkg/table/index.go` (modified, +15/-7)
+```diff
+@@ -174,15 +174,23 @@ func NewPlainIndexKVGenerator(
+ 	}
+ }
+ 
+-// Next returns the next index key and value.
+-// For non multi-value indexes, there is only one index kv.
+-func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
+-	var val []types.Datum
++// PeekIndexedValues returns the scalar indexed values for the next entry without advancing.
++// It must only be called while Valid returns true. After a successful Next,
++// it refers to the following entry. The returned slice is borrowed and must not be
++// modified by the caller. Key generation may normalize the values in place, but
++// advancing to subsequent entries does not reuse the slice.
++func (iter *IndexKVGenerator) PeekIndexedValues() []types.Datum {
+ 	if iter.isMultiValue {
+-		val = iter.allIdxVals[iter.i]
+-	} else {
+-		val = iter.idxVals
++		return iter.allIdxVals[iter.i]
+ 	}
++	return iter.idxVals
++}
++
++// Next returns the next index key and value, advancing only on success.
++// It must only be called while Valid returns true.
++// For non multi-value indexes, there is only one index kv.
++func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
++	val := iter.PeekIndexedValues()
+ 	key, distinct, err := iter.index.GenIndexKey(iter.ec, iter.loc, val, iter.handle, keyBuf)
+ 	if err != nil {
+ 		return nil, nil, false, err
+```
+
+**File**: `pkg/table/tables/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ go_test(
+     ],
+     embed = [":tables"],
+     flaky = True,
+-    shard_count = 44,
++    shard_count = 46,
+     deps = [
+         "//pkg/ddl",
+         "//pkg/domain",
+```
+
+**File**: `pkg/table/tables/index_test.go` (modified, +83/-0)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/pingcap/tidb/pkg/ddl"
++	"github.com/pingcap/tidb/pkg/errctx"
+ 	"github.com/pingcap/tidb/pkg/errno"
+ 	"github.com/pingcap/tidb/pkg/expression/exprstatic"
+ 	"github.com/pingcap/tidb/pkg/kv"
+@@ -183,6 +184,88 @@ func buildTableInfo(t *testing.T, sql string) *model.TableInfo {
+ 	return tblInfo
+ }
+ 
++func TestIndexKVGenerator(t *testing.T) {
++	sc := mock.NewContext().GetSessionVars().StmtCtx
++	for _, tc := range []struct {
++		name   string
++		sql    string
++		values []types.Datum
++		want   [][]types.Datum
++	}{
++		{"plain", "create table t (a int, unique index i(a))", types.MakeDatums(7), [][]types.Datum{types.MakeDatums(7)}},
++		{"plain null", "create table t (a int, unique index i(a))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
++		{"multi", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(7), types.MakeDatums(8)}},
++		{"empty", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{})), nil},
++		{"null", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
++		{"composite", "create table t (a json, b int, unique index i(b, (cast(a as signed array))))", types.MakeDatums(3, types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(3, 7), types.MakeDatums(3, 8)}},
++		{"composite prefix", "create table t (a json, b varchar(8), unique index i(b(2), (cast(a as signed array))))", types.MakeDatums("abcd", types.CreateBinaryJSON([]any{int64(7), int64(8)})), [][]types.Datum{types.MakeDatums("abcd", 7), types.MakeDatums("abcd", 8)}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			tblInfo := buildTableInfo(t, tc.sql)
++			idx, err := tables.NewIndex(tblInfo.ID, tblInfo, tblInfo.Indices[0])
++			require.NoError(t, err)
++			iter := idx.GenIndexKVIter(sc.ErrCtx(), sc.TimeZone(), tc.values, kv.IntHandle(1), nil)
++			var retained [][]types.Datum
++			for _, want := range tc.want {
++				require.True(t, iter.Valid())
++				values := iter.PeekIndexedValues()
++				require.Equal(t, want, values)
++				require.Equal(t, values, iter.PeekIndexedValues()) // Access does not advance.
++				retained = append(retained, values)
++				wantKey, wantDistinct, err := idx.GenIndexKey(sc.ErrCtx(), sc.TimeZone(), want, kv.IntHandle(1), nil)
 +				require.NoError(t, err)
-+				defer restore()
-+				require.Equal(t, mode, internal.GetSessionVars().EnableRedactLog)
-+				require.Equal(t, mode, internal.GetPlanCtx().GetSessionVars().EnableRedactLog)
-+			}()
-+			require.Equal(t, originalMode, internal.GetSessionVars().EnableRedactLog)
-+			require.Equal(t, originalMode, internal.GetPlanCtx().GetSessionVars().EnableRedactLog)
-+			require.Equal(t, mode, caller.GetSessionVars().EnableRedactLog)
++				key, value, distinct, err := iter.Next(nil, nil)
++				require.NoError(t, err)
++				require.Equal(t, wantKey, key)
++				require.Equal(t, wantDistinct, distinct)
++				wantValue, err := idx.GenIndexValue(sc.ErrCtx(), sc.TimeZone(), distinct, false, want, kv.IntHandle(1), nil, nil)
++				require.NoError(t, err)
++				require.Equal(t, wantValue, value)
++			}
++			require.False(t, iter.Valid())
++			require.Equal(t, tc.want, retained) // Advancing does not reuse entry slices.
 +		})
 +	}
 +}
 +
- func TestBuildMVRefreshOutOfPlaceBuildSQLImportOptions(t *testing.T) {
- 	tblInfo := &model.TableInfo{
- 		Name: ast.NewCIStr("mv"),
-```
-
-**File**: `pkg/executor/mv_refresh_observability.go` (modified, +15/-0)
-```diff
-@@ -769,6 +769,19 @@ func enableInternalSQLScanUserTableForPlan(sctx sessionctx.Context) func() {
- 	}
- }
- 
-+func setMVRefreshObserveRedaction(sctx sessionctx.Context, mode string) func() {
-+	// Plans use the borrowed session's context, so follow the caller's redaction mode.
-+	sessVars := sctx.GetSessionVars()
-+	planVars := sctx.GetPlanCtx().GetSessionVars()
-+	origRedactLog, origPlanRedactLog := sessVars.EnableRedactLog, planVars.EnableRedactLog
-+	sessVars.EnableRedactLog = mode
-+	planVars.EnableRedactLog = mode
-+	return func() {
-+		planVars.EnableRedactLog = origPlanRedactLog
-+		sessVars.EnableRedactLog = origRedactLog
-+	}
++type failingGeneratorIndex struct {
++	table.Index
++	keyErr, valueErr error
 +}
 +
- func (e *RefreshMaterializedViewDryRunExec) prepareMVRefreshObserveInternalSession(sctx sessionctx.Context) (func(), error) {
- 	sessVars := sctx.GetSessionVars()
- 	restoreExecutionVars, err := applyRefreshExecutionSessionVars(
-@@ -785,7 +798,9 @@ func (e *RefreshMaterializedViewDryRunExec) prepareMVRefreshObserveInternalSessi
- 		return nil, errors.Annotate(err, "dry run refresh materialized view: failed to enable materialized view support")
- 	}
- 	restoreObserve := enableMVRefreshObserveMaintenanceFlags(sctx)
-+	restoreRedaction := setMVRefreshObserveRedaction(sctx, e.Ctx().GetSessionVars().EnableRedactLog)
- 	return func() {
-+		restoreRedaction()
- 		restoreObserve()
- 		if err := sessVars.SetSystemVar(vardef.TiDBMViewEnable, variable.BoolToOnOff(origEnableMView)); err != nil {
- 			logutil.BgLogger().Warn("dry run refresh materialized view: failed to restore materialized view enablement", zap.Error(err))
-```
-
-**File**: `pkg/executor/mview_refresh.go` (modified, +6/-0)
-```diff
-@@ -431,6 +431,9 @@ func (e *RefreshMaterializedViewExec) executeRefreshMaterializedView(kctx contex
- 		return err
- 	}
- 	defer e.ReleaseSysSession(releaseCtx, refreshSctx)
-+	if e.stepObserver != nil {
-+		defer setMVRefreshObserveRedaction(refreshSctx, e.Ctx().GetSessionVars().EnableRedactLog)()
-+	}
- 	if collectorAware, ok := refreshSctx.(interface{ AttachStatsCollectorForInternalSession() func() }); ok {
- 		// REFRESH MATERIALIZED VIEW runs real maintenance reads/writes against user tables, so
- 		// reuse the full session collectors here, including index usage collection when enabled.
-@@ -1009,6 +1012,9 @@ func (e *RefreshMaterializedViewExec) executeRefreshMaterializedViewCompleteOutO
- 		return 0, err
- 	}
- 	defer e.ReleaseSysSession(releaseCtx, buildSctx)
-+	if e.stepObserver != nil {
-+		defer setMVRefreshObserveRedaction(buildSctx, e.Ctx().GetSessionVars().EnableRedactLog)()
-+	}
- 
- 	buildSessVars := buildSctx.GetSessionVars()
- 	restoreBuildExecutionVars, err := applyRefreshExecutionSessionVars(buildSessVars, targetExecutionVars, isInternalSQL)
-```
-
-**File**: `pkg/executor/test/materializedview/materialized_view_refresh_test.go` (modified, +69/-32)
-```diff
-@@ -218,38 +218,75 @@ func TestMaterializedViewRefreshCompleteOutOfPlacePreservesPreviousCommitTSOSnap
- }
- 
- func TestProfileMaterializedViewRefreshStepRuntime(t *testing.T) {
--	store, _ := testkit.CreateMockStoreAndDomain(t)
--	tk := newMViewTestKit(t, store)
--	tk.MustExec("use test")
--	tk.MustExec("create table t_mv_explain_analyze (a int not null, b int not null)")
--	tk.MustExec("insert into t_mv_explain_analyze values (1, 10), (1, 5), (2, 7)")
--	tk.MustExec("create materialized view log on t_mv_explain_analyze (a, b) purge next date_add(now(), interval 1 hour)")
--	tk.MustExec("create materialized view mv_mv_explain_analyze (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t_mv_explain_analyze group by a")
--
--	tk.MustExec("insert into t_mv_explain_analyze values (2, 3), (3, 4)")
--	fastRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze fast with profile").Rows()
--	requireRowsContainPrefix(t, fastRows, "[S01 TXN_BEGIN]")
--	requireRowsContainPrefix(t, fastRows, "[S04 DATA_CHANGE_FAST_MERGE]")
--	requireRowsContainPrefix(t, fastRows, "  MViewDeltaMerge")
--	requireRowsContainPrefix(t, fastRows, "[S07 FINALIZE_HIST]")
--
--	tk.MustExec("insert into t_mv_explain_analyze values (4, 8)")
--	inPlaceRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete in place with profile").Rows()
--	requireRowsContainPrefix(t, inPlaceRows, "[S04 DATA_CHANGE_COMPLETE_DELETE]")
--	requireRowsContainPrefix(t, inPlaceRows, "[S05 DATA_CHANGE_COMPLETE_INSERT]")
--	requireRowsContainPrefix(t, inPlaceRows, "[S08 FINALIZE_HIST]")
--
--	tk.MustExec("update t_mv_explain_analyze set b = 11 where a = 1 and b = 10")
--	deltaApplyDryRunRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply dry run").Rows()
--	requireRowsContainPrefix(t, deltaApplyDryRunRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
--	requireRowsContainPrefix(t, deltaApplyDryRunRows, "  MViewCompleteDeltaApply")
--
--	deltaApplyProfileRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply with profile").Rows()
--	requireRowsContainPrefix(t, deltaApplyProfileRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
--	requireRowsContainPrefix(t, deltaApplyProfileRows, "  MViewCompleteDeltaApply")
--	require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "mview_complete_delta_apply:{writer:{")
--	require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "rows:{insert:")
--	requireRowsContainPrefix(t, deltaApplyProfileRows, "[S07 FINALIZE_HIST]")
-+	t.Run("step_runtime", func(t *testing.T) {
-+		store, _ := testkit.CreateMockStoreAndDomain(t)
-+		tk := newMViewTestKit(t, store)
-+		tk.MustExec("use test")
-+		tk.MustExec("create table t_mv_explain_analyze (a int not null, b int not null)")
-+		tk.MustExec("insert into t_mv_explain_analyze values (1, 10), (1, 5), (2, 7)")
-+		tk.MustExec("create materialized view log on t_mv_explain_analyze (a, b) purge next date_add(now(), interval 1 hour)")
-+		tk.MustExec("create materialized view mv_mv_explain_analyze (a, s, cnt) refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t_mv_explain_analyze group by a")
++func (idx *failingGeneratorIndex) GenIndexKey(_ errctx.Context, _ *time.Location, _ []types.Datum, _ kv.Handle, _ []byte) ([]byte, bool, error) {
++	return []byte("key"), true, idx.keyErr
++}
 +
-+		tk.MustExec("insert into t_mv_explain_analyze values (2, 3), (3, 4)")
-+		fastRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze fast with profile").Rows()
-+		requireRowsContainPrefix(t, fastRows, "[S01 TXN_BEGIN]")
-+		requireRowsContainPrefix(t, fastRows, "[S04 DATA_CHANGE_FAST_MERGE]")
-+		requireRowsContainPrefix(t, fastRows, "  MViewDeltaMerge")
-+		requireRowsContainPrefix(t, fastRows, "[S07 FINALIZE_HIST]")
++func (idx *failingGeneratorIndex) GenIndexValue(_ errctx.Context, _ *time.Location, _, _ bool, _ []types.Datum, _ kv.Handle, _ []types.Datum, _ []byte) ([]byte, error) {
++	return nil, idx.valueErr
++}
 +
-+		tk.MustExec("insert into t_mv_explain_analyze values (4, 8)")
-+		inPlaceRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete in place with profile").Rows()
-+		requireRowsContainPrefix(t, inPlaceRows, "[S04 DATA_CHANGE_COMPLETE_DELETE]")
-+		requireRowsContainPrefix(t, inPlaceRows, "[S05 DATA_CHANGE_COMPLETE_INSERT]")
-+		requireRowsContainPrefix(t, inPlaceRows, "[S08 FINALIZE_HIST]")
++func TestIndexKVGeneratorErrors(t *testing.T) {
++	sc := mock.NewContext().GetSessionVars().StmtCtx
++	keyErr, valueErr := fmt.Errorf("key error"), fmt.Errorf("value error")
++	idx := &failingGeneratorIndex{keyErr: keyErr, valueErr: valueErr}
++	values := types.MakeDatums(7)
++	iter := table.NewPlainIndexKVGenerator(idx, sc.ErrCtx(), sc.TimeZone(), kv.IntHandle(1), nil, values)
++	_, _, _, err := iter.Next(nil, nil)
++	require.ErrorIs(t, err, keyErr)
++	require.True(t, iter.Valid())
++	require.Equal(t, values, iter.PeekIndexedValues())
 +
-+		tk.MustExec("update t_mv_explain_analyze set b = 11 where a = 1 and b = 10")
-+		deltaApplyDryRunRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply dry run").Rows()
-+		requireRowsContainPrefix(t, deltaApplyDryRunRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
-+		requireRowsContainPrefix(t, deltaApplyDryRunRows, "  MViewCompleteDeltaApply")
++	idx.keyErr = nil
++	_, _, _, err = iter.Next(nil, nil)
++	require.ErrorIs(t, err, valueErr)
++	require.True(t, iter.Valid())
++	require.Equal(t, values, iter.PeekIndexedValues())
 +
-+		deltaApplyProfileRows := tk.MustQuery("refresh materialized view mv_mv_explain_analyze complete delta apply with profile").Rows()
-+		requireRowsContainPrefix(t, deltaApplyProfileRows, "[S04 DATA_CHANGE_COMPLETE_DELTA_APPLY]")
-+		requireRowsContainPrefix(t, deltaApplyProfileRows, "  MViewCompleteDeltaApply")
-+		require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "mview_complete_delta_apply:{writer:{")
-+		require.Contains(t, joinRowsAsText(deltaApplyProfileRows), "rows:{insert:")
-+		requireRowsContainPrefix(t, deltaApplyProfileRows, "[S07 FINALI
++	idx.valueErr = nil
++	key, _, distinct, err := iter.Next(nil, nil)
++	require.NoError(t, err)
++	require.Equal(t, []byte("key"), key)
++	require.True(t, distinct)
++	require.False(t, iter.Valid())
++}
++
+ func TestGenIndexValueFromIndex(t *testing.T) {
+ 	tblInfo := buildTableInfo(t, "create table a (a int primary key, b int not null, c text, unique key key_b(b));")
+ 	tblInfo.State = model.StatePublic
 ```
 
 ---
 
-### Incident Patch 2: `8c6cb106` (2026-11-04)
-**Commit Message**: types, statistics: handle zero timestamp stats scalarization (#69448)
+### Incident Patch 2: `4c0b274a` (2026-11-05)
+**Commit Message**: test: stabilize flaky TestSubscriptionIdleTimeoutWhileSendingEvents (#72456)
 
-close pingcap/tidb#69440
+close pingcap/tidb#70687
 
-**File**: `pkg/statistics/BUILD.bazel` (modified, +3/-0)
+**File**: `br/pkg/streamhelper/subscription_test.go` (modified, +31/-23)
 ```diff
-@@ -118,8 +118,11 @@ go_test(
-         "//pkg/util/sqlkiller",
-         "@com_github_pingcap_errors//:errors",
-         "@com_github_pingcap_failpoint//:failpoint",
-+        "@com_github_pingcap_log//:log",
-         "@com_github_pingcap_tipb//go-tipb",
-         "@com_github_stretchr_testify//require",
-         "@org_uber_go_goleak//:goleak",
-+        "@org_uber_go_zap//:zap",
-+        "@org_uber_go_zap//zaptest/observer",
-     ],
- )
-```
-
-**File**: `pkg/statistics/scalar.go` (modified, +41/-11)
-```diff
-@@ -68,17 +68,7 @@ func convertDatumToScalar(value *types.Datum, commonPfxLen int) float64 {
- 		}
- 		return scalar
- 	case types.KindMysqlTime:
--		valueTime := value.GetMysqlTime()
--		var minTime types.Time
--		switch valueTime.Type() {
--		case mysql.TypeDate:
--			minTime = types.NewTime(types.MinDatetime, mysql.TypeDate, types.DefaultFsp)
--		case mysql.TypeDatetime:
--			minTime = types.NewTime(types.MinDatetime, mysql.TypeDatetime, types.DefaultFsp)
--		case mysql.TypeTimestamp:
--			minTime = types.MinTimestamp
--		}
--		return float64(valueTime.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
-+		return convertMysqlTimeToScalar(value.GetMysqlTime())
- 	case types.KindString, types.KindBytes:
- 		bytes := value.GetBytes()
- 		if len(bytes) <= commonPfxLen {
-@@ -95,6 +85,46 @@ func convertDatumToScalar(value *types.Datum, commonPfxLen int) float64 {
- 	}
- }
- 
-+// convertMysqlTimeToScalar maps a types.Time to the float64 scalar used for
-+// histogram fraction and out-of-range estimation. The scalar is the duration
-+// from the type's minimum bound (MinDatetime for date/datetime, MinTimestamp
-+// for timestamp). TIMESTAMP values outside the legal range are clamped just
-+// outside the valid scalar range so estimates stay finite and ordered.
-+func convertMysqlTimeToScalar(valueTime types.Time) float64 {
-+	var minTime types.Time
-+	switch valueTime.Type() {
-+	case mysql.TypeDate:
-+		minTime = types.NewTime(types.MinDatetime, mysql.TypeDate, types.DefaultFsp)
-+	case mysql.TypeDatetime:
-+		minTime = types.NewTime(types.MinDatetime, mysql.TypeDatetime, types.DefaultFsp)
-+	case mysql.TypeTimestamp:
-+		minTime = types.MinTimestamp
-+		if valueTime.Compare(types.MinTimestamp) < 0 {
-+			// Relaxed SQL modes can leave zero TIMESTAMP values in stats. If we
-+			// subtract MinTimestamp (1970-01-01 00:00:01) from such a value
-+			// directly, GoTime normalizes zero TIMESTAMP to -0001-11-30 and the
-+			// subtraction saturates to math.MinInt64 ns. That artificial huge
-+			// distance from normal TIMESTAMP values would skew fraction and
-+			// out-of-range estimates, so keep before-min values finite and just
-+			// before the legal TIMESTAMP range. All before-min values collapse to
-+			// the same -1; this is acceptable since they are invalid/zero values
-+			// and calcFraction treats value <= lower as 0.
-+			return -1
-+		}
-+		if valueTime.Compare(types.MaxTimestamp) > 0 {
-+			// Historical stats may also contain above-max TIMESTAMP bounds. Put
-+			// them just after the legal maximum. maxScalar + 1 is not enough here:
-+			// at this magnitude float64 rounds it back to maxScalar, collapsing a
-+			// [MaxTimestamp, after-max] bucket into a zero-width interval, so use
-+			// Nextafter to advance by a single ULP.
-+			maxTimestamp := types.MaxTimestamp
-+			maxScalar := float64(maxTimestamp.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
-+			return math.Nextafter(maxScalar, math.Inf(1))
-+		}
-+	}
-+	return float64(valueTime.Sub(UTCWithAllowInvalidDateCtx, &minTime).Duration)
-+}
-+
- // PreCalculateScalar converts the lower and upper to scalar. When the datum type is KindString or KindBytes, we also
- // calculate their common prefix length, because when a value falls between lower and upper, the common prefix
- // of lower and upper equals to the common prefix of the lower, upper and the value. For some simple types like `Int64`,
-```
-
-**File**: `pkg/statistics/scalar_test.go` (modified, +64/-0)
-```diff
-@@ -18,9 +18,13 @@ import (
- 	"math"
+@@ -8,6 +8,7 @@ import (
+ 	"strings"
+ 	"sync"
  	"testing"
++	"testing/synctest"
+ 	"time"
  
-+	"github.com/pingcap/log"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/types"
-+	"github.com/pingcap/tidb/pkg/util/mock"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zaptest/observer"
- )
- 
- const eps = 1e-9
-@@ -138,6 +142,20 @@ func TestCalcFraction(t *testing.T) {
- 			fraction: 0.34444444444444444,
- 			tp:       types.NewFieldType(mysql.TypeTimestamp),
- 		},
-+		{
-+			lower:    types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp)),
-+			upper:    types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 3, 0), mysql.TypeTimestamp, types.DefaultFsp)),
-+			value:    types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 2, 0), mysql.TypeTimestamp, types.DefaultFsp)),
-+			fraction: 0.5,
-+			tp:       types.NewFieldType(mysql.TypeTimestamp),
-+		},
-+		{
-+			lower:    types.NewTimeDatum(types.MaxTimestamp),
-+			upper:    types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp)),
-+			value:    types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp)),
-+			fraction: 1.0,
-+			tp:       types.NewFieldType(mysql.TypeTimestamp),
-+		},
- 		{
- 			lower:    types.NewTimeDatum(getTime(2017, 1, 1, mysql.TypeDatetime)),
- 			upper:    types.NewTimeDatum(getTime(2017, 4, 1, mysql.TypeDatetime)),
-@@ -176,6 +194,52 @@ func TestCalcFraction(t *testing.T) {
- 	}
+ 	"github.com/pingcap/failpoint"
+@@ -329,29 +330,36 @@ func TestSubscriptionIdleTimeoutClearsCacheBeforeRetry(t *testing.T) {
  }
  
-+// TestConvertMysqlTimeToScalarTimestampBounds verifies that zero/before-min and
-+// above-max TIMESTAMP values are clamped to finite, ordered scalars and that
-+// the zero-TIMESTAMP path does not emit tolerated GoTime error logs.
-+func TestConvertMysqlTimeToScalarTimestampBounds(t *testing.T) {
-+	core, recorded := observer.New(zap.ErrorLevel)
-+	restore := log.ReplaceGlobals(
-+		zap.New(core),
-+		&log.ZapProperties{Core: core, Level: zap.NewAtomicLevelAt(zap.InfoLevel)},
-+	)
-+	defer restore()
+ func TestSubscriptionIdleTimeoutWhileSendingEvents(t *testing.T) {
+-	req := require.New(t)
+-	ctx := context.Background()
+-	c := createFakeCluster(t, 4, true)
+-	c.splitAndScatter(manyRegions(0, 1500)...)
+-	installSubscribeSupport(c)
+-
+-	sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
+-	defer sub.Drop()
+-	req.NoError(sub.UpdateStoreTopology(ctx))
+-
+-	c.advanceCheckpoints()
+-	c.flushAll()
++	// Advance idle time only after setup and event forwarding have blocked,
++	// so scheduler delays cannot expire subscriptions before the output fills.
++	synctest.Test(t, func(t *testing.T) {
++		req := require.New(t)
++		ctx := context.Background()
++		c := createFakeCluster(t, 4, true)
++		c.splitAndScatter(manyRegions(0, 1500)...)
++		installSubscribeSupport(c)
 +
-+	datum := types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp))
-+	scalar := convertDatumToScalar(&datum, 0)
++		sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
++		defer sub.Drop()
++		req.NoError(sub.UpdateStoreTopology(ctx))
 +
-+	require.Empty(t, recorded.FilterMessage("encountered error").All())
-+	require.Equal(t, float64(-1), scalar)
-+
-+	minTimestamp := types.NewTimeDatum(types.MinTimestamp)
-+	require.Equal(t, float64(0), convertDatumToScalar(&minTimestamp, 0))
-+
-+	maxTimestamp := types.NewTimeDatum(types.MaxTimestamp)
-+	maxTimestampScalar := convertDatumToScalar(&maxTimestamp, 0)
-+	afterMaxTimestamp := types.NewTimeDatum(types.NewTime(types.FromDate(9999, 12, 31, 23, 59, 59, 0), mysql.TypeTimestamp, types.DefaultFsp))
-+	afterMaxTimestampScalar := convertDatumToScalar(&afterMaxTimestamp, 0)
-+	require.Greater(t, afterMaxTimestampScalar, maxTimestampScalar)
-+}
-+
-+// TestOutOfRangeRowCountZeroTimestampLowerBound verifies the end-to-end
-+// out-of-range estimate when a histogram bucket has a zero TIMESTAMP (clamped
-+// to scalar -1) as its lower bound.
-+func TestOutOfRangeRowCountZeroTimestampLowerBound(t *testing.T) {
-+	datum := types.NewTimeDatum(types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp))
-+
-+	hg := NewHistogram(0, 0, 0, 0, types.NewFieldType(mysql.TypeTimestamp), 1, 0)
-+	upper := types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 3, 0), mysql.TypeTimestamp, types.DefaultFsp))
-+	hg.AppendBucket(&datum, &upper, 2, 1)
-+
-+	ctx := mock.NewContext()
-+	ctx.GetSessionVars().RiskRangeSkewRatio = 0.5
-+	right := types.NewTimeDatum(types.NewTime(types.FromDate(1970, 1, 1, 0, 0, 4, 0), mysql.TypeTimestamp, types.DefaultFsp))
-+	estimate := hg.OutOfRangeRowCount(ctx, &upper, &right, 100, 100, 2)
-+	require.InDelta(t, 45.937499984687506, estimate.Est, eps)
-+	require.InDelta(t, 18.374999993875, estimate.MinEst, eps)
-+	require.InDelta(t, 73.4999999755, estimate.MaxEst, eps)
-+}
-+
- func TestEnumRangeValues(t *testing.T) {
- 	tests := []struct {
- 		low         types.Datum
-```
-
-**File**: `pkg/types/BUILD.bazel` (modified, +3/-0)
-```diff
-@@ -116,8 +116,11 @@ go_test(
-         "//pkg/util/hack",
-         "@com_github_go_sql_driver_mysql//:mysql",
-         "@com_github_pingcap_errors//:errors",
-+        "@com_github_pingcap_log//:log",
-         "@com_github_stretchr_testify//assert",
-         "@com_github_stretchr_testify//require",
-         "@org_uber_go_goleak//:goleak",
-+        "@org_uber_go_zap//:zap",
-+        "@org_uber_go_zap//zaptest/observer",
-     ],
- )
-```
-
-**File**: `pkg/types/time.go` (modified, +18/-2)
-```diff
-@@ -702,9 +702,9 @@ func (t *Time) Sub(ctx Context, t1 *Time) Duration {
- 	var duration gotime.Duration
- 	if t.Type() == mysql.TypeTimestamp && t1.Type() == mysql.TypeTimestamp {
- 		a, err := t.GoTime(ctx.Location())
--		terror.Log(errors.Trace(err))
-+		logTimeSubGoTimeErr(ctx, err)
- 		b, err := t1.GoTime(ctx.Location())
--		terror.Log(errors.Trace(err))
-+		logTimeSubGoTimeErr(ctx, err)
- 		duration = a.Sub(b)
- 	} else {
- 		seconds, microseconds, neg := calcTimeTimeDiff(t.coreTime, t1.coreTime, 1)
-@@ -725,6 +725,22 @@ func (t *Time) Sub(ctx Context, t1 *Time) Duration {
- 	}
++		c.advanceCheckpoints()
++		c.flushAll()
++		synctest.Wait()
++		req.Len(sub.Events(), cap(sub.Events()))
++		req.NoError(sub.PendingErrors())
+ 
+-	deadline := time.Now().Add(3 * time.Second)
+-	var lastErr error
+-	for {
+-		lastErr = sub.PendingErrors()
+-		if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
+-			break
+-		}
+-		if time.Now().After(deadline) {
+-			t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
++		deadline := time.Now().Add(3 * time.Second)
++		var lastErr error
++		for {
++			lastErr = sub.PendingErrors()
++			if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
++				break
++			}
++			if time.Now().After(deadline) {
++				t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
++			}
++			time.Sleep(10 * time.Millisecond)
+ 		}
+-		time.Sleep(10 * time.Millisecond)
+-	}
++	})
  }
- 
-+// logTimeSubGoTimeErr logs a GoTime conversion error produced by Time.Sub for
-+// TIMESTAMP operands. Such errors are expected when the context tolerates
-+// invalid/zero dates (e.g. zero TIMESTAMP values read from stats under relaxed
-+// SQL modes), and are suppressed there to avoid log noise; in strict contexts
-+// the original terror.Log behavior is preserved.
-+func logTimeSubGoTimeErr(ctx Context, err error) {
-+	if err == nil {
-+		return
-+	}
-+	flags := ctx.Flags()
-+	if flags.IgnoreInvalidDateErr() || flags.IgnoreZeroInDate() {
-+		return
-+	}
-+	terror.Log(errors.Trace(err))
-+}
-+
- // Add adds d to t, returns the result time value.
- func (t *Time) Add(ctx Context, d Duration) (Time, error) {
- 	seconds, microseconds, _ := calcTimeDurationDiff(t.coreTime, d)
-```
-
-**File**: `pkg/types/time_test.go` (modified, +71/-0)
-```diff
-@@ -23,11 +23,14 @@ import (
- 	"unsafe"
- 
- 	"github.com/pingcap/errors"
-+	"github.com/pingcap/log"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/parser/terror"
- 	"github.com/pingcap/tidb/pkg/types"
- 	contextutil "github.com/pingcap/tidb/pkg/util/context"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zaptest/observer"
- )
- 
- func TestTimeEncoding(t *testing.T) {
-@@ -1988,6 +1991,74 @@ func TestTimeSub(t *testing.T) {
- 	}
- }
- 
-+func TestTimeSubTimestampGoTimeErrorLogRespectsContextFlags(t *testing.T) {
-+	zeroTimestamp := types.NewTime(types.ZeroCoreTime, mysql.TypeTimestamp, types.DefaultFsp)
-+	minTimestamp := types.MinTimestamp
-+
-+	testCases := []struct {
-+		name              string
-+		ctx               types.Context
-+		expectedErrorLogs int
-+	}{
-+		{
-+			name:              "strict context logs GoTime error",
-+			ctx:               types.StrictContext,
-+			expectedErrorLogs: 1,
-+		},
-+		{
-+			name: "ignore invalid date error suppresses GoTime error log",
-+			ctx: types.NewContext(
-+				types.DefaultStmtFlags|types.FlagIgnoreInvalidDateErr,
-+				time.UTC,
-+				contextutil.IgnoreWarn,
-+			),
-+			expectedErrorLogs: 0,
-+		},
-+		{
-+			name: "ignore zero in date suppresses GoTime error log",
-+			ctx: types.NewContext(
-+				types.DefaultStmtFlags|types.FlagIgnoreZeroInDateErr,
-+				time.UTC,
-+				contextutil.IgnoreWarn,
-+			),
-+			expectedErrorLogs: 0,
-+		},
-+		{
-+			name: "ignore invalid date error and zero in date suppress GoTime error log",
-+			ctx: types.NewContext(
-+				types.DefaultStmtFlags|types.FlagIgnoreInvalidDateErr|types.FlagIgnoreZeroInDateErr,
-+				time.UTC,
-+				contextutil.IgnoreWarn,
-+			),
-+			expectedErrorLogs: 0,
-+		},
-+	}
-+
-+	var strictDuration types.Duration
-+	for i, tc := range testCases {
-+		duration, logs := timeSubWithObservedErrorLogs(t, tc.ctx, &zeroTimestamp, &minTimestamp)
-+		require.Lenf(t, logs.FilterMessage("encountered error").All(), tc.expectedErrorLogs, "%s", tc.name)
-+		if i == 0 {
-+			strictDuration = duration
-+			continue
-+		}
-+		require.Equalf(t, strictDuration, duration, "%s", tc.name)
-+	}
-+}
-+
-+func timeSubWithObservedErrorLogs(t *testing.T, ctx types.Context, left, right *types.Time) (types.Duration, *observer.ObservedLogs) {
-+	t.Helper()
-+
-+	core, recorded := observer.New(zap.ErrorLevel)
-+	restore := log.ReplaceGlobals(
-+		zap.New(core),
-+		&log.ZapProperties{Core: core, Level: zap.NewAtomicLevelAt(zap.InfoLevel)},
-+	)
-+	defer restore()
-+
-+	return left.Sub(ctx, right), recorded
-+}
-+
- func TestCheckMonthDay(t *testing.T) {
- 	dates := []struct {
- 		date        types.CoreTime
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72692** (2026-11-05): ddl, executor: guard table and cluster flashback for MV objects (@windtalker)
-- **PR #72682** (2026-11-04): statistics: report sync load failure regardless of result arrival order (#70316) (@ti-chi-bot)
-- **PR #72681** (2026-11-05): bindinfo: save bindinfo into stmtctx to avoid calling NormalizeStmtForBinding and getbindcache repeatedly (#65484) (@ti-chi-bot)
-- **PR #72675** (2026-11-04): executor: port extra commit TS metadata fallback for old rows (@windtalker)
-- **PR #72667** (closed): server: restore session on change user auth failure (@lcwangchao)
-- **PR #72666** (2026-11-05): session, lightning: enable log redaction by default | tidb-test=pr/2809 (@D3Hunter)
+- **PR #72735** (closed): util: fix incorrect statement summary Others rows (#69914) (@jiong-nba)
+- **PR #72734** (closed): stmtsummary: fix DOUBLE metric values (#69708) (release-8.5) (@jiong-nba)
+- **PR #72733** (closed): stmtsummary: fix AVG_ROCKSDB_* columns returning subnormal floats (#69708) (@jiong-nba)
+- **PR #72730** (2026-11-05): executor, planner: prevent SQL injection in plan replayer capture (@qw4990)
+- **PR #72723** (2026-11-05): ddl, executor: allow dropping expired MV shadow tables (@windtalker)
+- **PR #72722** (2026-11-05): session, lightning: enable log redaction by default (#72666) | tidb-test=pr/2810 (@ti-chi-bot)
 
 ---
 
@@ -2580,38 +2404,80 @@ close pingcap/tidb#69440
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. session, lightning: enable log redaction by default (#72666)
+## X. ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
 
 **RULE**:
-When implementing operations in `lightning/tests/run.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47dc1214`: session, lightning: enable log redaction by default (#72666). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `adee1920`: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `lightning/tests/run.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/index.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-WITH_TIDB=true
-for arg in "$@"; do
-    if [ "$arg" = '--no-tidb' ]; then
-        WITH_TIDB=false
-    fi
-done
+		// Keep the fetched records intact: i%n identifies the index even when an
+		// array expands to zero or multiple entries, and progress is per record.
+		recordValues := make([][][]types.Datum, len(idxRecords))
+		recordKeys := make([][]kv.Key, len(idxRecords))
+			index := w.indexes[i%n]
+			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
+			for iter.Valid() {
+				values := iter.PeekIndexedValues()
+				key, _, distinct, err := iter.Next(nil, nil)
+				if err != nil {
+					return errors.Trace(err)
+				}
+				recordValues[i] = append(recordValues[i], values)
+				if distinct {
+					globalIndexKeys = append(globalIndexKeys, key)
+				}
+				recordKeys[i] = append(recordKeys[i], key)
+			// Count records with empty arrays as processed even though they have no index keys to delete.
+			cleaned := len(recordKeys[i]) == 0
+			for j, key := range recordKeys[i] {
+				if val, ok := found[string(key)]; ok {
+					// Only delete if it is from the partition it was read from.
+					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
+					if errPart != nil {
+						return errors.Trace(errPart)
+					}
+					if partHandle, ok := handle.(kv.PartitionHandle); ok {
 
-    # Tests inspect error values, including after earlier cases restart the cluster.
-    if $WITH_TIDB; then
-        TEST_NAME="$case" run_sql "SET GLOBAL tidb_redact_log = OFF"
-    fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		allKeys := make([]kv.Key, 0, len(idxRecords))
+			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
+			if err != nil {
+				return errors.Trace(err)
+			}
+			if distinct {
+				globalIndexKeys = append(globalIndexKeys, key)
+			allKeys = append(allKeys, key)
+			if val, ok := found[string(allKeys[i])]; ok {
+				// Only delete if it is from the partition it was read from.
+				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
+				if errPart != nil {
+					return errors.Trace(errPart)
+				}
+				if partHandle, ok := handle.(kv.PartitionHandle); ok {
+					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
+						continue
+				// Lock the global index entry, to prevent deleting something that is concurrently added.
+				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
+			// we fetch records row by row, so records will belong to
+			// index[0], index[1] ... index[n-1], index[0], index[1] ...
+			// respectively. So indexes[i%n] is the index of idxRecords[i].
+			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
+			if err != nil {
+				return errors.Trace(err)
+			taskCtx.addedCount++
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47dc1214` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `adee1920` are properly handled with clean fallback behavior.

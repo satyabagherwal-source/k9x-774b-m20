@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T21:40:19.166Z",
+  "last_updated": "2026-11-05T21:47:43.005Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45323,8 +45323,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "36aa86f4",
-      "content_hash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
+      "source_version": "491512db",
+      "content_hash": "479ccb9b4c313d24f1b11db71d1af0eb654c6f14413eb69a973784d878a07083",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45619,7 +45619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:29:11.255Z",
+      "verified_at": "2026-11-05T21:47:42.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48714,11 +48714,16 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "47dc1214",
-      "content_hash": "6f95a05342ba059b15ffd285091dc2f2e84f4e0f6a12b8bc6fe7be7a0da0eea3",
+      "source_version": "49d87f99",
+      "content_hash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2338,
           "title": "Atomic Buffer Compaction via Non-Allocating Memory Overlap",
@@ -48815,7 +48820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:00:29.149Z",
+      "verified_at": "2026-11-05T21:47:38.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
