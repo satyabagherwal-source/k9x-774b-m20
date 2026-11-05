@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "344b79af70e304fdd9ce55c75c420c1b0af0069a9b5c33283f744887b57082e9",
-    "lastHarvestedAt": "2026-10-31T14:59:29.609Z",
+    "contentHash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
+    "lastHarvestedAt": "2026-11-05T05:53:05.601Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "a647b2f2",
+    "sourceVersion": "34019fa3",
     "license": "Apache-2.0",
-    "contentHash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
-    "lastHarvestedAt": "2026-11-04T09:57:54.546Z",
+    "contentHash": "aeca0a90f448b60bc0ba4fd97c866acc171ce3faab122d42082bdd38322b915b",
+    "lastHarvestedAt": "2026-11-05T05:53:19.416Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "84367eb5",
+    "sourceVersion": "57c1f71e",
     "license": "MIT",
-    "contentHash": "1efdf81bdebbab0a15666716b51fb755321adcb8cf09d6b9540c202799c9ee74",
-    "lastHarvestedAt": "2026-11-04T10:45:26.334Z",
+    "contentHash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
+    "lastHarvestedAt": "2026-11-05T05:53:13.590Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "4a3b5899",
+    "sourceVersion": "29ffa700",
     "license": "Apache-2.0",
-    "contentHash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
-    "lastHarvestedAt": "2026-10-31T23:22:27.849Z",
+    "contentHash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
+    "lastHarvestedAt": "2026-11-05T05:53:13.497Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

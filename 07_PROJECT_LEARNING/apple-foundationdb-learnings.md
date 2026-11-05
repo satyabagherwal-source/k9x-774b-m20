@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `a647b2f2`  
+> **Source Version**: `34019fa3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:57:53.794Z  
+> **Timestamp**: 2026-11-05T05:53:18.900Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:57:53.232Z  
+> **Harvest Timestamp**: 2026-11-05T05:53:18.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16840 stars
+- **Stars / Engagement**: 16842 stars
 
 ---
 
@@ -1956,183 +1956,52 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16783380` (2026-11-03)
-**Commit Message**: Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-incremental-log-prefix
+### Incident Patch 1: `34019fa3` (2026-11-04)
+**Commit Message**: Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
 
-Validate the requested start of incremental restores
-
-**File**: `fdbbackup/backup.cpp` (modified, +1/-1)
+**File**: `fdbserver/worker/worker.cpp` (modified, +1/-6)
 ```diff
-@@ -2345,7 +2345,7 @@ Future<Void> runRestore(Database db,
- 			}
- 		} else {
- 			Optional<RestorableFileSet> rset = co_await bc->getRestoreSet(
--			    targetVersion, ranges, false, invalidVersion, restoreMode == RestoreMode::BULKLOAD);
-+			    targetVersion, ranges, onlyApplyMutationLogs, beginVersion, restoreMode == RestoreMode::BULKLOAD);
+@@ -1090,12 +1090,7 @@ UpdateWorkerHealthRequest doPeerHealthCheck(const WorkerInterface& interf,
+ 		// If peer->lastLoggedTime == 0, we just started monitor this peer and haven't logged it once yet.
+ 		double lastLoggedTime = peer->lastLoggedTime <= 0.0 ? peer->lastConnectTime : peer->lastLoggedTime;
  
- 			if (!rset.present()) {
- 				fmt::print(stderr,
+-		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
+-		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
+-		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
+-		// does not help: suppression is applied when the event is logged, not when it is built.
+-		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
+-		if (peerHealthEvent.isEnabled()) {
++		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
+ 			peerHealthEvent.suppressFor(5.0)
+ 			    .detail("Peer", address)
+ 			    .detail("PeerAddress", address)
 ```
 
-**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +67/-28)
-```diff
-@@ -1440,6 +1440,24 @@ class BackupContainerFileSystemImpl {
- 		return filtered;
- 	}
- 
-+	static Optional<RestorableFileSet> getRestoreSetFromPartitionedLogs(std::vector<LogFile> logs,
-+	                                                                    Version begin,
-+	                                                                    RestorableFileSet restorable) {
-+		std::erase_if(logs, [&](const LogFile& file) { return file.beginVersion > restorable.targetVersion; });
-+		// A retried upload can leave duplicate files within a tag.
-+		std::sort(logs.begin(), logs.end(), [](const LogFile& a, const LogFile& b) {
-+			return std::tie(a.tagId, a.beginVersion, a.endVersion) < std::tie(b.tagId, b.beginVersion, b.endVersion);
-+		});
-+		restorable.logs = filterDuplicates(logs);
-+		std::sort(restorable.logs.begin(), restorable.logs.end());
-+		if (!isPartitionedLogsContinuous(restorable.logs, begin, restorable.targetVersion)) {
-+			return {};
-+		}
-+		restorable.continuousBeginVersion = begin;
-+		restorable.continuousEndVersion = restorable.targetVersion + 1;
-+		return restorable;
-+	}
-+
- 	static Optional<RestorableFileSet> getRestoreSetFromLogs(const std::vector<LogFile>& logs,
- 	                                                         Version targetVersion,
- 	                                                         RestorableFileSet restorable) {
-@@ -1473,15 +1491,24 @@ class BackupContainerFileSystemImpl {
- 		}
- 
- 		if (logsOnly) {
-+			if (beginVersion != invalidVersion && beginVersion > targetVersion) {
-+				co_return Optional<RestorableFileSet>();
-+			}
- 			RestorableFileSet restorableSet;
- 			restorableSet.targetVersion = targetVersion;
--			std::vector<LogFile> logFiles;
- 			Version begin = beginVersion == invalidVersion ? 0 : beginVersion;
--			logFiles = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::DEFAULT);
--			// List logs in version order so log continuity can be analyzed
-+			auto logFiles = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::DEFAULT);
- 			std::sort(logFiles.begin(), logFiles.end());
--			if (!logFiles.empty()) {
--				co_return getRestoreSetFromLogs(logFiles, targetVersion, restorableSet);
-+			if (!logFiles.empty() &&
-+			    (beginVersion == invalidVersion || logFiles.front().beginVersion <= beginVersion)) {
-+				auto result = getRestoreSetFromLogs(logFiles, targetVersion, restorableSet);
-+				if (result.present() || beginVersion == invalidVersion) {
-+					co_return result;
-+				}
-+			}
-+			if (beginVersion != invalidVersion) {
-+				auto partitioned = co_await bc->listLogFiles(begin, targetVersion, MutationLogType::PARTITIONED_LOG);
-+				co_return getRestoreSetFromPartitionedLogs(std::move(partitioned), begin, std::move(restorableSet));
- 			}
- 		}
- 
-@@ -1633,32 +1660,16 @@ class BackupContainerFileSystemImpl {
- 			}
- 
- 			if (!plogs.empty()) {
--				logs.swap(plogs);
--				std::erase_if(logs, [&](const LogFile& file) { return file.beginVersion > restorable.targetVersion; });
--				// sort by tag ID so that filterDuplicates works.
--				std::sort(logs.begin(), logs.end(), [](const LogFile& a, const LogFile& b) {
--					return std::tie(a.tagId, a.beginVersion, a.endVersion) <
--					       std::tie(b.tagId, b.beginVersion, b.endVersion);
--				});
--
--				// Remove duplicated log files that can happen for old epochs.
--				std::vector<LogFile> filtered = filterDuplicates(logs);
--				restorable.logs.swap(filtered);
--				// sort by version order again for continuous analysis
--				std::sort(restorable.logs.begin(), restorable.logs.end());
--				if (isPartitionedLogsContinuous(restorable.logs, minKeyRangeVersion, restorable.targetVersion)) {
--					restorable.continuousBeginVersion = minKeyRangeVersion;
--					restorable.continuousEndVersion = restorable.targetVersion + 1; // not inclusive
--					if (latestBulkDump) {
--						best = std::move(restorable);
--						continue;
--					}
--					co_return Optional<RestorableFileSet>(restorable);
-+				auto result =
-+				    getRestoreSetFromPartitionedLogs(std::move(plogs), minKeyRangeVersion, std::move(restorable));
-+				if (result.present() && latestBulkDump) {
-+					best = std::move(result);
-+					continue;
- 				}
--				if (useBulkDump) {
-+				if (!result.present() && useBulkDump) {
- 					continue;
- 				}
--				co_return Optional<RestorableFileSet>();
-+				co_return result;
- 			}
- 
- 			// List logs in version order so log continuity can be analyzed
-@@ -3113,6 +3124,34 @@ Future<Void> testBackupContainerWithMissingLogRanges(std::string url, Optional<s
- 	printf("BackupContainerTest URL=%s PASSED.\n", url.c_str());
- }
- 
-+TEST_CASE("/backup/containers/localdir/incrementalBeginVersion") {
-+	std::string url = format("file://%s/fdb_backups/%llx", params.getDataDir().c_str(), timer_int());
-+	auto container = IBackupContainer::openContainer(url, {}, {}, 0);
-+	co_await container->create();
-+	auto getLogs = [&](Version begin) { return container->getRestoreSet(190, {}, true, begin); };
-+
-+	auto log = co_await container->writeLogFile(150, 200, 1024);
-```
+---
 
-**File**: `fdbclient/FileBackupAgent.cpp` (modified, +13/-4)
+### Incident Patch 2: `76ca8878` (2026-11-04)
+**Commit Message**: AGENTS.md: document apple/ branch naming rule (#14443)
+
+**File**: `AGENTS.md` (modified, +2/-0)
 ```diff
-@@ -7296,9 +7296,6 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
- 		}
+@@ -151,6 +151,8 @@ When reviewing, state explicitly: what the change is for, whether it is correct,
  
- 		Version firstConsistentVersion = invalidVersion;
--		if (beginVersion == invalidVersion) {
--			beginVersion = 0;
--		}
- 		Standalone<VectorRef<KeyRangeRef>> keyRangesFilter;
- 		for (auto const& r : ranges) {
- 			keyRangesFilter.push_back_deep(keyRangesFilter.arena(), KeyRangeRef(r));
-@@ -7339,7 +7336,9 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
- 				}
- 			}
- 		} else {
--			// In logs-only (incremental) mode, the firstConsistentVersion should just be restore.beginVersion().
-+			if (beginVersion == invalidVersion) {
-+				beginVersion = 0;
-+			}
- 			firstConsistentVersion = beginVersion;
- 		}
- 		if (!inconsistentSnapshotOnly) {
-@@ -7393,6 +7392,16 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
- 			try {
- 				tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
- 				tr->setOption(FDBTransactionOptions::LOCK_AWARE);
-+				if (logsOnly && !restorable.get().logs.empty()) {
-+					// A container-wide description can reflect a different log layout from this interval.
-+					const bool partitioned = restorable.get().logs.front().isPartitionedLog();
-+					const auto layout =
-+					    co_await restore.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT);
-+					if (partitioned != (layout == MutationLogType::PARTITIONED_LOG)) {
-+						restore.mutationLogType().set(
-+						    tr, partitioned ? MutationLogType::PARTITIONED_LOG : MutationLogType::DEFAULT);
-+					}
-+				}
- 				restore.firstConsistentVersion().set(tr, firstConsistentVersion);
- 				if (!useRangeFileRestore) {
- 					co_await taskBucket->keepRunning(tr, task);
+ PRs target `main`. Release branches receive cherry-picks rather than direct PRs — don't open backport PRs without confirming first.
+ 
++Branches created on apple/foundationdb must start with `apple/` (convention: `apple/<github-username>/<topic>`); a repository ruleset blocks creating any other branch. Branches on personal forks can still be named anything. Stacked PRs (`gh stack`) require their branches to be on apple/foundationdb rather than a fork.
++
+ ## Design Docs
+ 
+ Before a design doc is considered finished (not at the start), reconcile it against `design/design-doc-template.md`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14421** (2026-11-03): [release-8.0] Reject path traversal in backup, S3, bulk load, profiler, and checkpoint paths (#14341, #14347) (@ShreeChaturvedi)
+- **PR #14450** (closed): Reject starting a backup at a location used by another running backup (@shreechaturvedi)
+- **PR #14447** (2026-11-04): Scope PeerHealthMonitor trace event to its guard (@saintstack)
+- **PR #14443** (2026-11-04): AGENTS.md: document apple/ branch naming rule (@shreechaturvedi)
+- **PR #14421** (2026-11-03): [release-8.0] Reject path traversal in backup, S3, bulk load, profiler, and checkpoint paths (#14341, #14347) (@shreechaturvedi)
+- **PR #14418** (2026-11-05): Allow fdbcli to have dedicated audit trace files and directory (@spraza)
 - **PR #14417** (2026-11-04): [release-8.0] Extend MVC test-suite to catch client version mismatched loading (#14383) (@akshay-v-kaushik)
-- **PR #14415** (2026-11-03): Validate the requested start of incremental restores (@tclinkenbeard-oai)
-- **PR #14405** (2026-11-03): Preserve checksum fields when decoding bulkload manifests (@tclinkenbeard-oai)
-- **PR #14403** (2026-11-03): Accept HTTP field values without whitespace after the colon (@tclinkenbeard-oai)
-- **PR #14400** (2026-11-03): Honor locality selectors in the gRPC Include command (@tclinkenbeard-oai)
 
 ---
 
@@ -2152,28 +2021,33 @@ Validate the requested start of incremental restores
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-increme
+## X. Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
 
 **RULE**:
-When implementing operations in `fdbbackup/backup.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/worker/worker.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16783380`: Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-incremental-log-prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34019fa3`: Scope PeerHealthMonitor event to the if statement and drop comment (#14447). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbbackup/backup.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/worker/worker.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			    targetVersion, ranges, onlyApplyMutationLogs, beginVersion, restoreMode == RestoreMode::BULKLOAD);
+		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-			    targetVersion, ranges, false, invalidVersion, restoreMode == RestoreMode::BULKLOAD);
+		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
+		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
+		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
+		// does not help: suppression is applied when the event is logged, not when it is built.
+		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
+		if (peerHealthEvent.isEnabled()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16783380` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34019fa3` are properly handled with clean fallback behavior.

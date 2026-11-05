@@ -7526,3 +7526,7 @@
 | `CYCLE-20261105-87BA` | `2026-11-05T05:39:04.582Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7118` | Yes (`c2a767d3...`) |
 | `CYCLE-20261105-8H8V` | `2026-11-05T05:39:17.455Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7119` | Yes (`de983435...`) |
 | `CYCLE-20261105-HYS5` | `2026-11-05T05:46:40.085Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`4f81ebc5...`) |
+| `CYCLE-20261105-Q88P` | `2026-11-05T05:53:05.593Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`0ea95747...`) |
+| `CYCLE-20261105-QEC6` | `2026-11-05T05:53:13.494Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7120` | Yes (`b65be452...`) |
+| `CYCLE-20261105-QEER` | `2026-11-05T05:53:13.587Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7121` | Yes (`f0ac7cdb...`) |
+| `CYCLE-20261105-QIWL` | `2026-11-05T05:53:19.413Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7122` | Yes (`aeca0a90...`) |

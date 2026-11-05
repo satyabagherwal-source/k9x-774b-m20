@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T05:46:39.991Z",
+  "last_updated": "2026-11-05T05:53:19.359Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2682,8 +2682,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "a647b2f2",
-      "content_hash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
+      "source_version": "34019fa3",
+      "content_hash": "aeca0a90f448b60bc0ba4fd97c866acc171ce3faab122d42082bdd38322b915b",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2741,6 +2741,11 @@
           "number": 6801,
           "title": "Merge pull request #14415 from tclinkenbeard-oai/dev/tclinkenbeard/audit-increme",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7122,
+          "title": "Scope PeerHealthMonitor event to the if statement and drop comment (#14447)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2748,7 +2753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:57:54.433Z",
+      "verified_at": "2026-11-05T05:53:19.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12181,8 +12186,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "84367eb5",
-      "content_hash": "1efdf81bdebbab0a15666716b51fb755321adcb8cf09d6b9540c202799c9ee74",
+      "source_version": "57c1f71e",
+      "content_hash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -12245,6 +12250,11 @@
           "number": 6820,
           "title": "Bump the all-dependencies group with 5 updates (#725)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7121,
+          "title": "Bump the all-dependencies group with 5 updates (#727)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12252,7 +12262,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:45:26.205Z",
+      "verified_at": "2026-11-05T05:53:13.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28236,7 +28246,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "344b79af70e304fdd9ce55c75c420c1b0af0069a9b5c33283f744887b57082e9",
+      "content_hash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [],
@@ -28257,7 +28267,7 @@
         "learn-huggingface-hf-openai-gpt-oss-20b-mv3woskc",
         "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp"
       ],
-      "verified_at": "2026-10-31T14:59:29.490Z",
+      "verified_at": "2026-11-05T05:53:05.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40029,8 +40039,8 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "4a3b5899",
-      "content_hash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
+      "source_version": "29ffa700",
+      "content_hash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
@@ -40058,6 +40068,11 @@
           "number": 6359,
           "title": "Qualify fixed-option decision backends offline",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7120,
+          "title": "add edge-VLM memory planning (#3633)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40065,7 +40080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:22:27.785Z",
+      "verified_at": "2026-11-05T05:53:13.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180360,6 +180375,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T05:39:17.390Z"
+    },
+    "rule-7120": {
+      "learning_id": "rule-7120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7120,
+      "title": "add edge-VLM memory planning (#3633)",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "29ffa700",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:53:13.420Z"
+    },
+    "rule-7121": {
+      "learning_id": "rule-7121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7121,
+      "title": "Bump the all-dependencies group with 5 updates (#727)",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "57c1f71e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:53:13.523Z"
+    },
+    "rule-7122": {
+      "learning_id": "rule-7122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7122,
+      "title": "Scope PeerHealthMonitor event to the if statement and drop comment (#14447)",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "34019fa3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:53:19.344Z"
     }
   },
   "aliases": {

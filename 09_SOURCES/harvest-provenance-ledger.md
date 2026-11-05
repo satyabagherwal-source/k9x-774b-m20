@@ -7535,3 +7535,7 @@ Every entry in this ledger must capture:
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `bb069c2f` | Multi-dimensional audit evidence | 2026-11-05T05:39:04.590Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `a5c8b104` | Multi-dimensional audit evidence | 2026-11-05T05:39:17.457Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-05T05:46:40.094Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T05:53:05.601Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `29ffa700` | Multi-dimensional audit evidence | 2026-11-05T05:53:13.497Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `57c1f71e` | Multi-dimensional audit evidence | 2026-11-05T05:53:13.590Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `34019fa3` | Multi-dimensional audit evidence | 2026-11-05T05:53:19.416Z |

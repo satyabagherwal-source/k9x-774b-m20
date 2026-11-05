@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T05:46:40.100Z",
-  "total_cycles_completed": 7503,
-  "total_learnings_persisted": 7503,
-  "total_rules_promoted": 7176,
+  "last_updated": "2026-11-05T05:53:19.420Z",
+  "total_cycles_completed": 7507,
+  "total_learnings_persisted": 7507,
+  "total_rules_promoted": 7179,
   "history": [
-    {
-      "timestamp": "2026-11-04T20:39:33.593Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T20:46:39.872Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T20:46:41.457Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T20:46:42.890Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T20:46:46.776Z",
       "repository": "koderover/zadig",
@@ -1403,6 +1375,34 @@
       "repository": "zai-org/GLM-5.2",
       "learningId": "learn-huggingface-zai-org-glm-5-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:53:05.605Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:53:13.501Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:53:13.594Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:53:19.420Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

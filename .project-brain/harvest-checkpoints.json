@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T05:46:40.104Z",
+  "last_updated": "2026-11-05T05:53:19.430Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "344b79af70e304fdd9ce55c75c420c1b0af0069a9b5c33283f744887b57082e9",
-      "verified_at": "2026-10-31T14:59:29.618Z",
+      "content_hash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
+      "verified_at": "2026-11-05T05:53:05.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:59:29.618Z"
+      "last_updated": "2026-11-05T05:53:05.607Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "e87047cb7be46ffe56212f3c19bac48244aeaa1f78705dfa7308023377737d19",
-      "verified_at": "2026-11-04T09:57:54.555Z",
+      "content_hash": "aeca0a90f448b60bc0ba4fd97c866acc171ce3faab122d42082bdd38322b915b",
+      "verified_at": "2026-11-05T05:53:19.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:57:54.555Z"
+      "last_updated": "2026-11-05T05:53:19.429Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "1efdf81bdebbab0a15666716b51fb755321adcb8cf09d6b9540c202799c9ee74",
-      "verified_at": "2026-11-04T10:45:26.343Z",
+      "content_hash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
+      "verified_at": "2026-11-05T05:53:13.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:45:26.343Z"
+      "last_updated": "2026-11-05T05:53:13.603Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "db274c46852bd99b603bfb771840749b3d979a66dbb77e81d6335d9cdf2ac01d",
-      "verified_at": "2026-10-31T23:22:27.855Z",
+      "content_hash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
+      "verified_at": "2026-11-05T05:53:13.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:22:27.855Z"
+      "last_updated": "2026-11-05T05:53:13.512Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",
