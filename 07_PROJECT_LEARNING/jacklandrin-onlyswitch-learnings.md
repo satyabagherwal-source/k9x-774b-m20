@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `1daf9e74`  
+> **Source Version**: `5366e006`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T20:59:38.040Z  
+> **Timestamp**: 2026-11-05T03:46:28.126Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T20:59:38.036Z  
+> **Harvest Timestamp**: 2026-11-05T03:46:28.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6025 stars
+- **Stars / Engagement**: 6035 stars
 
 ---
 
@@ -869,488 +869,171 @@ public struct RemoteControlDescriptor: Codable, Equatable, Identifiable, Sendabl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1daf9e74` (2026-10-31)
-**Commit Message**: Bump build numbers and refresh remote string catalog
-
-OnlySwitch build 304, OnlySwitchRemote build 16. Xcode re-sorted the
-remote string catalog and marked "Back" as stale; no translations changed.
+### Incident Patch 1: `759b88f5` (2026-11-04)
+**Commit Message**: Clamp overflowing schedule intervals instead of trapping
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Modules/Sources/Scheduler/ScheduleCalendar.swift` (modified, +5/-1)
+```diff
+@@ -8,7 +8,11 @@ public enum ScheduleCalendar {
+     public static func nextFireDate(for trigger: ScheduleTrigger, after date: Date, calendar: Calendar) -> Date? {
+         switch trigger {
+         case let .interval(value, unit):
+-            let seconds = min(max(value * unit.seconds, minimumIntervalSeconds), maximumIntervalSeconds)
++            // Stored data is decoded without validation, so an oversized value must clamp rather than trap.
++            let (product, overflow) = value.multipliedReportingOverflow(by: unit.seconds)
++            let seconds = overflow
++                ? (value < 0 ? minimumIntervalSeconds : maximumIntervalSeconds)
++                : min(max(product, minimumIntervalSeconds), maximumIntervalSeconds)
+             return date.addingTimeInterval(TimeInterval(seconds))
+         case let .hourly(minute):
+             return calendar.nextDate(
+```
+
+**File**: `Modules/Tests/SchedulerTests/ScheduleCalendarTests.swift` (modified, +8/-0)
+```diff
+@@ -59,6 +59,14 @@ struct ScheduleCalendarTests {
+         #expect(next == t.addingTimeInterval(604_800))
+     }
+ 
++    @Test func overflowingStoredIntervalClampsInsteadOfTrapping() {
++        let t = date(2026, 11, 4, 10, 0)
++        let huge = ScheduleCalendar.nextFireDate(for: .interval(value: .max, unit: .hours), after: t, calendar: calendar)
++        let negative = ScheduleCalendar.nextFireDate(for: .interval(value: .min, unit: .hours), after: t, calendar: calendar)
++        #expect(huge == t.addingTimeInterval(604_800))
++        #expect(negative == t.addingTimeInterval(10))
++    }
++
+     @Test func intervalLimits() {
+         #expect(ScheduleCalendar.minimumIntervalSeconds == 10)
+         #expect(ScheduleCalendar.maximumIntervalSeconds == 604_800)
+```
+
+---
+
+### Incident Patch 2: `bcc36458` (2026-11-02)
+**Commit Message**: change Authenticator UI
 
 **File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1,2 +1,2 @@
  // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 302
-+CURRENT_PROJECT_VERSION = 304
+-CURRENT_PROJECT_VERSION = 305
++CURRENT_PROJECT_VERSION = 306
 ```
 
-**File**: `Config/Versions/OnlySwitchRemote.xcconfig` (modified, +1/-1)
+**File**: `Modules/Sources/Authenticator/AuthenticatorPanelView.swift` (modified, +5/-26)
+```diff
+@@ -13,11 +13,9 @@ public struct AuthenticatorPanelView: View {
+     @ObservedObject private var store = AuthenticatorStore.shared
+     @ObservedObject private var languageManager = LanguageManager.sharedManager
+     @State private var showImport = false
+-    @State private var isExpanded: Bool
+     private let onCodeCopied: () -> Void
+ 
+-    public init(initiallyExpanded: Bool = false, onCodeCopied: @escaping () -> Void = {}) {
+-        _isExpanded = State(initialValue: initiallyExpanded)
++    public init(onCodeCopied: @escaping () -> Void = {}) {
+         self.onCodeCopied = onCodeCopied
+     }
+ 
+@@ -28,19 +26,14 @@ public struct AuthenticatorPanelView: View {
+                 .opacity(0.25)
+                 .frame(height: 1)
+ 
+-            if store.enabled && isExpanded {
++            if store.enabled {
+                 if store.accounts.isEmpty {
+                     emptyRow
+                 } else {
+                     TimelineView(.periodic(from: .now, by: 1)) { context in
+                         VStack(spacing: 0) {
+                             ForEach(store.accounts) { account in
+-                                AuthenticatorCodeRow(account: account, now: context.date) {
+-                                    withAnimation(.spring()) {
+-                                        isExpanded = false
+-                                    }
+-                                    onCodeCopied()
+-                                }
++                                AuthenticatorCodeRow(account: account, now: context.date, onCopied: onCodeCopied)
+                                 Divider()
+                                     .opacity(0.25)
+                                     .frame(height: 1)
+@@ -63,18 +56,8 @@ public struct AuthenticatorPanelView: View {
+                 .foregroundColor(.accentColor)
+                 .padding(.trailing, 8)
+ 
+-            Button {
+-                withAnimation(.spring()) { isExpanded.toggle() }
+-            } label: {
+-                HStack(spacing: 6) {
+-                    Text("Authenticator".localized())
+-                        .font(.system(size: 14))
+-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+-                        .font(.system(size: 12, weight: .semibold))
+-                        .foregroundColor(.secondary)
+-                }
+-            }
+-            .buttonStyle(.plain)
++            Text("Authenticator".localized())
++                .font(.system(size: 14))
+ 
+             Text(accountSummary)
+                 .foregroundColor(.gray)
+@@ -85,10 +68,6 @@ public struct AuthenticatorPanelView: View {
+         }
+         .padding(.horizontal, 15)
+         .padding(.top, 8)
+-        .contentShape(Rectangle())
+-        .onTapGesture {
+-            withAnimation(.spring()) { isExpanded.toggle() }
+-        }
+         .frame(height: 45)
+     }
+ 
+```
+
+**File**: `Modules/Sources/OnlyControl/AuthenticatorControlPopover.swift` (modified, +1/-4)
+```diff
+@@ -5,10 +5,7 @@ struct AuthenticatorControlPopover: View {
+     let onCodeCopied: () -> Void
+ 
+     var body: some View {
+-        AuthenticatorPanelView(
+-            initiallyExpanded: true,
+-            onCodeCopied: onCodeCopied
+-        )
++        AuthenticatorPanelView(onCodeCopied: onCodeCopied)
+         .frame(width: 360)
+     }
+ }
+```
+
+**File**: `OnlySwitch/Features/OnlyControl/OnlyControlView.swift` (modified, +1/-1)
+```diff
+@@ -154,7 +154,7 @@ struct OnlyControlView: View {
+ 
+     private var authenticatorPage: some View {
+         VStack(spacing: 0) {
+-            AuthenticatorPanelView(initiallyExpanded: true).padding(.vertical, 8)
++            AuthenticatorPanelView().padding(.vertical, 8)
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `5366e006` (2026-11-04)
+**Commit Message**: bump build version
+
+**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1,2 +1,2 @@
- // Independent build number for the iOS remote app.
--CURRENT_PROJECT_VERSION = 15
-+CURRENT_PROJECT_VERSION = 16
-```
-
-**File**: `OnlySwitchRemote/Localizable.xcstrings` (modified, +376/-375)
-```diff
-@@ -1,381 +1,6 @@
- {
-   "sourceLanguage" : "en",
-   "strings" : {
--    "Select up to 16 output devices" : {
--      "extractionState" : "manual",
--      "localizations" : {
--        "cs" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Vyberte až 16 výstupních zařízení"
--          }
--        },
--        "de" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Bis zu 16 Ausgabegeräte auswählen"
--          }
--        },
--        "en" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Select up to 16 output devices"
--          }
--        },
--        "es" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Selecciona hasta 16 dispositivos de salida"
--          }
--        },
--        "fil" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Pumili ng hanggang 16 na output device"
--          }
--        },
--        "fr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Sélectionnez jusqu’à 16 appareils de sortie"
--          }
--        },
--        "hr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Odaberite do 16 izlaznih uređaja"
--          }
--        },
--        "it" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Seleziona fino a 16 dispositivi di uscita"
--          }
--        },
--        "ja" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "出力デバイスは最大16台まで選択できます"
--          }
--        },
--        "ko" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "출력 기기를 최대 16개 선택하세요"
--          }
--        },
--        "nl" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Selecteer maximaal 16 uitvoerapparaten"
--          }
--        },
--        "pl" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Wybierz do 16 urządzeń wyjściowych"
--          }
--        },
--        "pt-BR" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Selecione até 16 dispositivos de saída"
--          }
--        },
--        "ru" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Выберите до 16 устройств вывода"
--          }
--        },
--        "sk" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Vyberte až 16 výstupných zariadení"
--          }
--        },
--        "so" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Dooro ilaa 16 qalab oo cod-bixin ah"
--          }
--        },
--        "tr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "En fazla 16 çıkış aygıtı seçin"
--          }
--        },
--        "uk" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Виберіть до 16 пристроїв виводу"
--          }
--        },
--        "zh-Hans" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "最多可同时选择 16 个输出设备"
--          }
--        },
--        "zh-Hant" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "最多可同時選擇 16 個輸出裝置"
--          }
--        }
--      }
--    },
--    "Choose Devices" : {
--      "extractionState" : "manual",
--      "localizations" : {
--        "cs" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Vybrat zařízení"
--          }
--        },
--        "de" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Geräte wählen"
--          }
--        },
--        "en" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Choose Devices"
--          }
--        },
--        "es" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Elegir dispositivos"
--          }
--        },
--        "fil" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Pumili ng mga device"
--          }
--        },
--        "fr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Choisir les appareils"
--          }
--        },
--        "hr" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Odaberi uređaje"
--          }
--        },
--        "it" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "Scegli dispositivi"
--          }
--        },
--        "ja" : {
--          "stringUnit" : {
--            "state" : "translated",
--            "value" : "デバイスを選択"
--          }
--        },
--        "ko" : {
--          "stringUnit" : {
-```
-
----
-
-### Incident Patch 2: `6bf235f8` (2026-10-29)
-**Commit Message**: fix: stop repeated keychain prompts for remote credentials
-
-Store remote pairing credentials in the Data Protection keychain when the
-app has a keychain access group, so changing code signatures no longer
-triggers per-item login keychain password prompts. Builds without the
-entitlement fall back to the legacy keychain.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `OnlySwitch/Features/RemoteAccess/Host/RemoteCredentialStore.swift` (modified, +26/-0)
-```diff
-@@ -586,13 +586,39 @@ actor RemoteCredentialStore {
-         RemoteProtocolError(code: .authenticationFailed, message: "Pairing transaction is unavailable")
-     }
- 
-+    // The legacy file-based keychain guards each item with an ACL bound to the creating code
-+    // signature, so every rebuild or signing-identity change re-prompts for the login password.
-+    // Signed builds carry a keychain access group and can use the Data Protection keychain,
-+    // which has no per-item ACL prompts; unsigned builds fall back to the legacy keychain.
-+    private static let usesDataProtectionKeychain: Bool = {
-+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
-+        return SecTaskCopyValueForEntitlement(
-+            task,
-+            "keychain-access-groups" as CFString,
-+            nil
-+        ) != nil
-+    }()
-+
-     private static func baseQuery(service: String, account: String? = nil) -> [CFString: Any] {
-+        keychainQuery(
-+            service: service,
-+            account: account,
-+            usesDataProtectionKeychain: usesDataProtectionKeychain
-+        )
-+    }
-+
-+    static func keychainQuery(
-+        service: String,
-+        account: String? = nil,
-+        usesDataProtectionKeychain: Bool
-+    ) -> [CFString: Any] {
-         var query: [CFString: Any] = [
-             kSecClass: kSecClassGenericPassword,
-             kSecAttrService: service,
-             kSecAttrSynchronizable: kCFBooleanFalse as Any
-         ]
-         if let account { query[kSecAttrAccount] = account }
-+        if usesDataProtectionKeychain { query[kSecUseDataProtectionKeychain] = true }
-         return query
-     }
- 
-```
-
-**File**: `OnlySwitch/OnlySwitch.entitlements` (modified, +4/-0)
-```diff
-@@ -18,6 +18,10 @@
- 	<true/>
- 	<key>com.apple.security.personal-information.photos-library</key>
- 	<true/>
-+	<key>keychain-access-groups</key>
-+	<array>
-+		<string>$(AppIdentifierPrefix)jacklandrin.OnlySwitch</string>
-+	</array>
- 	<key>com.apple.security.temporary-exception.apple-events</key>
- 	<array>
- 		<string>com.apple.systemevents</string>
-```
-
-**File**: `OnlySwitchTests/RemoteAccess/RemoteCredentialStoreTests.swift` (modified, +20/-0)
-```diff
-@@ -1,4 +1,5 @@
- import Foundation
-+import Security
- import RemoteTransport
- import Testing
- @testable import OnlySwitch
-@@ -26,6 +27,25 @@ struct RemoteCredentialStoreTests {
-         try await store.delete(device.id)
-     }
- 
-+    @Test
-+    func keychainQueryOptsIntoDataProtectionKeychainWhenEntitled() {
-+        let entitled = RemoteCredentialStore.keychainQuery(
-+            service: "service",
-+            account: "account",
-+            usesDataProtectionKeychain: true
-+        )
-+        #expect(entitled[kSecUseDataProtectionKeychain] as? Bool == true)
-+        #expect(entitled[kSecAttrService] as? String == "service")
-+        #expect(entitled[kSecAttrAccount] as? String == "account")
-+
-+        let legacy = RemoteCredentialStore.keychainQuery(
-+            service: "service",
-+            usesDataProtectionKeychain: false
-+        )
-+        #expect(legacy[kSecUseDataProtectionKeychain] == nil)
-+        #expect(legacy[kSecAttrAccount] == nil)
-+    }
-+
-     @Test
-     func emptyLiveStoreRecoversPairingTransactions() async throws {
-         let store = RemoteCredentialStore.live(
-```
-
----
-
-### Incident Patch 3: `7739fcc0` (2026-10-29)
-**Commit Message**: UI changes
-
-**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +31/-31)
-```diff
-@@ -7,7 +7,6 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
--		F3A9000000000000000000B1 /* DesktopPetPlaybackLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A9000000000000000000B2 /* DesktopPetPlaybackLive.swift */; };
- 		0406E0222CA09F930007AFC2 /* OnlyControlClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406E0212CA09F8C0007AFC2 /* OnlyControlClient.swift */; };
- 		0406E0242CA0BC460007AFC2 /* RefreshNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406E0232CA0BC460007AFC2 /* RefreshNotification.swift */; };
- 		0406EDC42ACB3EE80015F4D0 /* EvolutionMarket.json in Resources */ = {isa = PBXBuildFile; fileRef = 0406EDC32ACB3EE80015F4D0 /* EvolutionMarket.json */; };
-@@ -282,6 +281,7 @@
- 		2B346BE56384C700F4046FC4 /* SystemAudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AD1FCF5024EAC8DC9C8E5E /* SystemAudioMixer.swift */; };
- 		6EC8A6CD714CA458603A0C05 /* SoundMixerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643A9AC4ED24AE501343396D /* SoundMixerModel.swift */; };
- 		732FB599FA7E3F9BEEF45DD9 /* SoundMixerPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3552BA772DD63DAD7EE8CF2 /* SoundMixerPanelView.swift */; };
-+		A0D100010000000000000001 /* AudioStreamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D100020000000000000001 /* AudioStreamingTests.swift */; };
- 		A1D0E1092F0A000100BEEF01 /* AuthenticatorSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D0E00A2F0A000100BEEF01 /* AuthenticatorSwitch.swift */; };
- 		A1D0E10A2F0A000100BEEF01 /* SoundMixerSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D0E00B2F0A000100BEEF01 /* SoundMixerSwitch.swift */; };
- 		A1D0E10D2F0A000100BEEF01 /* DesktopPetSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D0E00C2F0A000100BEEF01 /* DesktopPetSwitch.swift */; };
-@@ -297,17 +297,7 @@
- 		A9AD00050000000000000001 /* Ads in Resources */ = {isa = PBXBuildFile; fileRef = A9AD00060000000000000001 /* Ads */; };
- 		A9C70D062EE490B3000A2367 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A9C70D052EE490B3000A2367 /* GoogleService-Info.plist */; };
- 		A9F007CA2EC3D9BD002D9AB0 /* Design in Frameworks */ = {isa = PBXBuildFile; productRef = A9F007C92EC3D9BD002D9AB0 /* Design */; };
--		CD2100010000000000000001 /* XcodeCleaner in Frameworks */ = {isa = PBXBuildFile; productRef = CD2100020000000000000001 /* XcodeCleaner */; };
--		CD3100010000000000000001 /* AppUninstaller in Frameworks */ = {isa = PBXBuildFile; productRef = CD3100020000000000000001 /* AppUninstaller */; };
--		CD4100010000000000000001 /* Tailscale in Frameworks */ = {isa = PBXBuildFile; productRef = CD4100020000000000000001 /* Tailscale */; };
- 		AF1000010000000000000001 /* Aphrodite in Frameworks */ = {isa = PBXBuildFile; productRef = AF1000020000000000000001 /* Aphrodite */; };
--		CD2200010000000000000001 /* XcodeCleanerSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2200020000000000000001 /* XcodeCleanerSwitch.swift */; };
--		CD3200010000000000000001 /* AppUninstallerSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3200020000000000000001 /* AppUninstallerSwitch.swift */; };
--		CD4200010000000000000001 /* TailscaleSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4200020000000000000001 /* TailscaleSwitch.swift */; };
--		CD2200030000000000000001 /* XcodeCleanerSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2200040000000000000001 /* XcodeCleanerSwitchTests.swift */; };
--		A0D100010000000000000001 /* AudioStreamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D100020000000000000001 /* AudioStreamingTests.swift */; };
--		CD3200030000000000000001 /* AppUninstallerSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3200040000000000000001 /* AppUninstallerSwitchTests.swift */; };
--		CD4200030000000000000001 /* TailscaleSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4200040000000000000001 /* TailscaleSwitchTests.swift */; };
- 		AF1000050000000000000001 /* AphroditeSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000040000000000000001 /* AphroditeSwitch.swift */; };
- 		B1C100000000000000000002 /* BuiltInSwitchCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */; };
- 		B1C100000000000000000005 /* BuiltInSwitchCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */; };
-@@ -394,6 +384,15 @@
- 		CBDF00000000000000000005 /* RemoteClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDE00000000000000000005 /* RemoteClaudeUsageProviderTests.swift */; };
- 		CC1A00000000000000000001 /* ClaudeUsageIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1A00000000000000000002 /* ClaudeUsageIntegrationTests.swift */; };
- 		CC1A00000000000000000003 /* RemoteClaudeUsageFeatureTes
-```
-
-**File**: `OnlySwitch/Features/Settings/Customize/CustomizeView.swift` (modified, +6/-9)
-```diff
-@@ -26,15 +26,6 @@ struct CustomizeView: View {
-         VStack(alignment: .leading) {
-             Text("To add or remove any switches on list".localized())
-                 .padding(10)
--            TextField(
--                "Search Built-In Switches".localized(),
--                text: $searchText
--            )
--            .textFieldStyle(.roundedBorder)
--            .accessibilityLabel(Text("Search Built-In Switches".localized()))
--            .environment(\.locale, Locale(identifier: currentLanguage))
--            .padding(.horizontal, 10)
--
-             ScrollView {
-                 LazyVStack(alignment: .leading, spacing: 16) {
-                     if sections.isEmpty {
-@@ -74,6 +65,12 @@ struct CustomizeView: View {
-             Divider()
-                 .padding(.bottom, 10)
-         }
-+        .searchable(
-+            text: $searchText,
-+            placement: .toolbar,
-+            prompt: Text("Search Built-In Switches".localized())
-+        )
-+        .environment(\.locale, Locale(identifier: currentLanguage))
-         .toast(isPresenting: $customizeVM.showErrorToast) {
-             AlertToast(displayMode: .alert,
-                        type: .error(.red),
-```
-
-**File**: `OnlySwitch/Features/Settings/SettingsView/SettingsView.swift` (modified, +41/-16)
-```diff
-@@ -18,6 +18,7 @@ import Extensions
- struct SettingsView: View {
-     @StateObject var settingVM = SettingsVM.shared
-     @ObservedObject var langManager = LanguageManager.sharedManager
-+    @Environment(\.colorScheme) private var colorScheme
-     @AppStorage(UserDefaults.Key.showXcodeCleanerTab) private var showXcodeCleanerTab = true
-     @AppStorage(UserDefaults.Key.showAppUninstallerTab) private var showAppUninstallerTab = true
- 
-@@ -90,28 +91,52 @@ struct SettingsView: View {
-                 AuthenticatorSettingsView()
- 
-             case .XcodeCleaner:
--                VStack(spacing: 0) {
--                    Toggle("Xcode Cleaner Show Tab".localized(), isOn: $showXcodeCleanerTab)
--                        .toggleStyle(.switch)
--                        .padding(.horizontal, 24).padding(.top, 18).padding(.bottom, 6)
--                        .onChange(of: showXcodeCleanerTab) { _ in
--                            NotificationCenter.default.post(name: .changeSettings, object: nil)
-+                ScrollView {
-+                    VStack(spacing: 0) {
-+                        Form {
-+                            Section {
-+                                Toggle("Xcode Cleaner Show Tab".localized(), isOn: $showXcodeCleanerTab)
-+                                    .onChange(of: showXcodeCleanerTab) { _ in
-+                                        NotificationCenter.default.post(name: .changeSettings, object: nil)
-+                                    }
-+                            }
-                         }
--                    XcodeCleanerView(store: settingVM.xcodeCleanerStore)
--                        .id(langManager.currentLang)
-+                        .formStyle(.grouped)
-+                        .contentMargins(.horizontal, 24, for: .scrollContent)
-+                        .tint(colorScheme == .dark ? .mint : .accentColor)
-+                        .scrollDisabled(true)
-+                        .frame(height: 76)
-+                        .frame(maxWidth: 900)
-+                        .frame(maxWidth: .infinity)
-+                        XcodeCleanerView(store: settingVM.xcodeCleanerStore, managesScrolling: false)
-+                            .id(langManager.currentLang)
-+                    }
-                 }
-+                .background(.background)
- 
-             case .AppUninstaller:
--                VStack(spacing: 0) {
--                    Toggle("App Uninstaller Show Tab".localized(), isOn: $showAppUninstallerTab)
--                        .toggleStyle(.switch)
--                        .padding(.horizontal, 24).padding(.top, 18).padding(.bottom, 6)
--                        .onChange(of: showAppUninstallerTab) { _ in
--                            NotificationCenter.default.post(name: .changeSettings, object: nil)
-+                ScrollView {
-+                    VStack(spacing: 0) {
-+                        Form {
-+                            Section {
-+                                Toggle("App Uninstaller Show Tab".localized(), isOn: $showAppUninstallerTab)
-+                                    .onChange(of: showAppUninstallerTab) { _ in
-+                                        NotificationCenter.default.post(name: .changeSettings, object: nil)
-+                                    }
-+                            }
-                         }
--                    AppUninstallerView(store: settingVM.appUninstallerStore)
--                        .id(langManager.currentLang)
-+                        .formStyle(.grouped)
-+                        .contentMargins(.horizontal, 24, for: .scrollContent)
-+                        .tint(colorScheme == .dark ? .mint : .accentColor)
-+                        .scrollDisabled(true)
-+                        .frame(height: 76)
-+                        .frame(maxWidth: 900)
-+                        .frame(maxWidth: .infinity)
-+                        AppUninstallerView(store: settingVM.appUninstallerStore, managesScrolling: false)
-+                            .id(langManager.currentLang)
-+                    }
-                 }
-+                .background(.background)
- 
-             case .Tailscale:
-                 TailscaleSettingsView(store: settingVM.tailscaleStore)
+ // Shared build number for the macOS app and its embedded components.
+-CURRENT_PROJECT_VERSION = 307
++CURRENT_PROJECT_VERSION = 308
 ```
 
 #### Recent Merged Pull Requests:
@@ -1379,28 +1062,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump build numbers and refresh remote string catalog
+## X. Clamp overflowing schedule intervals instead of trapping
 
 **RULE**:
-When implementing operations in `Config/Versions/OnlySwitch.xcconfig`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Sources/Scheduler/ScheduleCalendar.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1daf9e74`: Bump build numbers and refresh remote string catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `759b88f5`: Clamp overflowing schedule intervals instead of trapping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Config/Versions/OnlySwitch.xcconfig`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/Scheduler/ScheduleCalendar.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-CURRENT_PROJECT_VERSION = 304
+            // Stored data is decoded without validation, so an oversized value must clamp rather than trap.
+            let (product, overflow) = value.multipliedReportingOverflow(by: unit.seconds)
+            let seconds = overflow
+                ? (value < 0 ? minimumIntervalSeconds : maximumIntervalSeconds)
+                : min(max(product, minimumIntervalSeconds), maximumIntervalSeconds)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-CURRENT_PROJECT_VERSION = 302
+            let seconds = min(max(value * unit.seconds, minimumIntervalSeconds), maximumIntervalSeconds)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1daf9e74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `759b88f5` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T03:40:00.810Z",
-  "total_verified_learnings": 1212,
+  "last_updated": "2026-11-05T03:46:35.806Z",
+  "total_verified_learnings": 1213,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -25012,7 +25012,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "adefac1508ef34c12533536a8c2078fade8f5b084958b5f4053bd326da5d28bc",
+      "content_hash": "b1ced98aba699cc367f3544a3afb40647187c390303b5fd739ee404cd64bff92",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -25090,7 +25090,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-31T13:06:48.426Z",
+      "verified_at": "2026-11-05T03:46:21.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34284,8 +34284,8 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "1daf9e74",
-      "content_hash": "249941a30d96b3210d7cdac1fd7c171623f89eea02ae15af87094587c5615074",
+      "source_version": "5366e006",
+      "content_hash": "2124b75464d19edf2d80d3906aaddae9b5f713993244ba49784a7a2a0475aea0",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
@@ -34313,6 +34313,11 @@
           "number": 6317,
           "title": "Bump build numbers and refresh remote string catalog",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7090,
+          "title": "Clamp overflowing schedule intervals instead of trapping",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34320,7 +34325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:59:38.442Z",
+      "verified_at": "2026-11-05T03:46:28.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46497,8 +46502,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "c570669d",
-      "content_hash": "084e88395639a4075252bd5da762d6a401105a16e9b3567a4981071327a7c55c",
+      "source_version": "9f21216f",
+      "content_hash": "307cabcc2089c45e4fb6b62205cebbcd3ad85a831d3f796b8742562a56122455",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -46561,6 +46566,11 @@
           "number": 6772,
           "title": "existing paths that should generate action reasons",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7091,
+          "title": "release and nightly workflows",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46568,7 +46578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:14:13.633Z",
+      "verified_at": "2026-11-05T03:46:30.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53460,8 +53470,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "60d048f6",
-      "content_hash": "968e4be5df0801ad7530864b1154fcc59cdb1e984272fc200bc4914aabada2b7",
+      "source_version": "92514f9f",
+      "content_hash": "6846630146a1eb52233962545c2c44cc06d9663db265454c9191877c36d4a2a6",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -53534,6 +53544,11 @@
           "number": 6848,
           "title": "deps): bump github.com/buildkite/agent/v3 from 3.130.0 to 3.138.2 (#5191)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7092,
+          "title": "Require new bundle format for sign-blob (#5083)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53541,7 +53556,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:59:20.723Z",
+      "verified_at": "2026-11-05T03:46:32.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59281,8 +59296,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "77d1bd0e",
-      "content_hash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+      "source_version": "bcf3dc11",
+      "content_hash": "99d9dd5643e0ff71914b23a4644909cd3bbd929fcbfc34d2da5614c0416eebc2",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -59330,6 +59345,11 @@
           "number": 5554,
           "title": "Don't let transaction services excessively hold query manager refs (#8040)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7093,
+          "title": "Prepare release 3.14.2 (#8046)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59337,7 +59357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:28:42.379Z",
+      "verified_at": "2026-11-05T03:46:35.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179731,6 +179751,89 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T03:40:00.786Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "slug": "hf-nvidia-nvidia-nemotronlabs-re-use",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
+      "content_hash": "cf5270dded6d39d0b643c2148f30a944369134c882e01283db776eac03c1fae9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T03:46:19.543Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7090": {
+      "learning_id": "rule-7090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7090,
+      "title": "Clamp overflowing schedule intervals instead of trapping",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "5366e006",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:46:28.603Z"
+    },
+    "rule-7091": {
+      "learning_id": "rule-7091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7091,
+      "title": "release and nightly workflows",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "9f21216f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:46:30.255Z"
+    },
+    "rule-7092": {
+      "learning_id": "rule-7092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7092,
+      "title": "Require new bundle format for sign-blob (#5083)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "92514f9f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:46:32.548Z"
+    },
+    "rule-7093": {
+      "learning_id": "rule-7093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7093,
+      "title": "Prepare release 3.14.2 (#8046)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "bcf3dc11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:46:35.792Z"
     }
   },
   "aliases": {

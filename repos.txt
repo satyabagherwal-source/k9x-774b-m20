@@ -4852,3 +4852,7 @@ https://huggingface.co/PrunaAI/P-H3-Image-Comfy
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T03:39:39.646Z] ---
 # [MOBILE-CROSS-PLATFORM] Jarvis322/macos-sysdata (1220 score) - See what is really inside macOS System Data and delete it item by item. A free m
 https://github.com/Jarvis322/macos-sysdata
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-05T03:46:12.860Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-NemotronLabs-RE-USE (3810 score) - Verified Hugging Face Model: nvidia/NVIDIA-NemotronLabs-RE-USE (181 likes, 32309
+https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE

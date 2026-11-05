@@ -20326,5 +20326,17 @@
     "qualityScore": 1220,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T03:37:35.799Z"
+  },
+  {
+    "name": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "fullName": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/NVIDIA-NemotronLabs-RE-USE (181 likes, 32309 downloads)",
+    "likes": 181,
+    "downloads": 32309,
+    "qualityScore": 3810,
+    "discoveredAt": "2026-11-05T03:44:04.778Z"
   }
 ]

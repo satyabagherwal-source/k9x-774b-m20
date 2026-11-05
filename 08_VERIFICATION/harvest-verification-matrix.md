@@ -7485,3 +7485,9 @@
 | `CYCLE-20261105-YTZA` | `2026-11-05T03:39:48.934Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`2221b75f...`) |
 | `CYCLE-20261105-YVYN` | `2026-11-05T03:39:51.503Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7088` | Yes (`1da88a08...`) |
 | `CYCLE-20261105-Z37L` | `2026-11-05T03:40:00.897Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7089` | Yes (`8a863012...`) |
+| `CYCLE-20261105-77G0` | `2026-11-05T03:46:19.632Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`cf5270dd...`) |
+| `CYCLE-20261105-78TQ` | `2026-11-05T03:46:21.422Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`b1ced98a...`) |
+| `CYCLE-20261105-7EF0` | `2026-11-05T03:46:28.668Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7090` | Yes (`2124b754...`) |
+| `CYCLE-20261105-7FOT` | `2026-11-05T03:46:30.317Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7091` | Yes (`307cabcc...`) |
+| `CYCLE-20261105-7HGO` | `2026-11-05T03:46:32.616Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7092` | Yes (`68466301...`) |
+| `CYCLE-20261105-7JYR` | `2026-11-05T03:46:35.860Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7093` | Yes (`99d9dd56...`) |

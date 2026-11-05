@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `c570669d`  
+> **Source Version**: `9f21216f`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:14:13.204Z  
+> **Timestamp**: 2026-11-05T03:46:29.838Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:14:10.226Z  
+> **Harvest Timestamp**: 2026-11-05T03:46:29.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -26,15 +26,15 @@
 - **Repository / Resource**: `opentofu/opentofu`
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30717 stars
+- **Discovered Manifests / Configurations**: go.mod, README.md
+- **Stars / Engagement**: 30723 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
+- Entry configurations inspected via direct stream: go.mod, README.md.
 - Evaluated system abstractions and modular contracts.
 
 ### Core Architecture Module: `internal/backend/local/hook_state.go`
@@ -1419,289 +1419,656 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `170d7317` (2026-10-27)
-**Commit Message**: Fix existing paths that should generate action reasons
+### Incident Patch 1: `9f21216f` (2026-11-03)
+**Commit Message**: Refactor release and nightly workflows
+
+Summary:
+* Upgraded some dependencies, goreleaser being the big one
+* Split process between build and release
+  - 40 minutes to 4 minutes
+  - don't need large runners
+* Split release channels where possible
+  - snap is unstable these days and re-running independently is good
+  - snap no longer blocks / messes up the rest of the release builds
+* Added guide for running from your own github account / org
+
+Disadvantages:
+* Duplicated more logic between nightly.yml and release.yml
+
+Next steps:
+* Upgrade all release tools/dependencies
 
 Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/engine/internal/exec/resource.go` (modified, +7/-0)
+**File**: `.github/actions/release-cache/action.yml` (added, +18/-0)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/opentofu/opentofu/internal/addrs"
- 	"github.com/opentofu/opentofu/internal/lang/eval"
- 	"github.com/opentofu/opentofu/internal/lang/exprs"
-+	"github.com/opentofu/opentofu/internal/plans"
- 	"github.com/opentofu/opentofu/internal/resources"
- 	"github.com/opentofu/opentofu/internal/states"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
-@@ -303,6 +304,8 @@ type ResourceInstanceObjectMeta struct {
- 	// more convenient, finalized form.
- 
- 	Status states.ObjectStatus
+@@ -0,0 +1,18 @@
++name: 'Release Cache'
++inputs:
++  goos:
++    required: true
++  goarch:
++    required: true
++  tag:
++    required: true
 +
-+	OrphanActionReason plans.ResourceInstanceChangeActionReason
- }
- 
- // BuildResourceInstanceObjectMeta constructs a [ResourceInstanceObjectMeta]
-@@ -383,6 +386,10 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
- 		// and let it be nil for module instances where that isn't true.
- 		ret.DeclRange = fromModule.DeclRange
- 
-+		if fromModule.OrphanActionReason != plans.ResourceInstanceChangeNoReason {
-+			ret.OrphanActionReason = fromModule.OrphanActionReason
-+		}
-+
- 		ret.PostCreateProvisioners = append(ret.PostCreateProvisioners, fromModule.PostCreateProvisioners...)
- 		ret.PreDeleteProvisioners = append(ret.PreDeleteProvisioners, fromModule.PreDeleteProvisioners...)
- 		if fromModule.ReplaceOrder != nil {
++runs:
++  using: 'composite'
++  steps:
++      - id: cache
++        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
++        with:
++          path: dist/${{ inputs.goos }}_${{ inputs.goarch }}/
++          key: ${{ inputs.goos }}-${{ inputs.goarch }}-${{ inputs.tag }}
++          enableCrossOsArchive: ${{ inputs.goos == 'windows' }}
 ```
 
-**File**: `internal/engine/planning/plan_managed.go` (modified, +9/-1)
+**File**: `.github/scripts/compare-release-version.sh` (removed, +0/-29)
 ```diff
-@@ -420,6 +420,11 @@ func (p *planGlue) planDesiredManagedResourceInstance(
- 		// prevent us from getting here in that case.
- 	}
- 
-+	if !planResp.RequiresReplace.Empty() {
-+		forceReplace = true
-+		actionReason = plans.ResourceInstanceReplaceBecauseCannotUpdate
-+	}
-+
- 	if meta.Status == states.ObjectTainted {
- 		forceReplace = true
- 		actionReason = plans.ResourceInstanceReplaceBecauseTainted
-@@ -435,7 +440,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
- 	plannedAction := plans.Update
- 	if current.Value.IsNull() {
- 		plannedAction = plans.Create
--	} else if !planResp.RequiresReplace.Empty() || forceReplace {
-+	} else if forceReplace {
- 		// For "replace" actions the execution graph will include two separate
- 		// plan and apply operations, where one handles deletion and the other
- 		// handles creation. There is therefore an implicit third intermediate
-@@ -719,6 +724,8 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
- 		return ret, diags
- 	}
- 
-+	reason := meta.OrphanActionReason
-+
- 	ret.PlannedChange = &plans.ResourceInstanceChange{
- 		Addr:        currentRunAddr,
- 		PrevRunAddr: addr.InstanceAddr,
-@@ -745,6 +752,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
- 		// should just pass in a reason as an additonal argument to this
- 		// function, since it presumably already knows how it concluded that
- 		// this address is "orphaned".
-+		ActionReason: reason,
- 	}
- 
- 	diags = diags.Append(checkPreventDestroy(ctx, meta, ret))
-```
-
-**File**: `internal/lang/eval/internal/configgraph/instances.go` (modified, +30/-0)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	"github.com/opentofu/opentofu/internal/addrs"
- 	"github.com/opentofu/opentofu/internal/instances"
- 	"github.com/opentofu/opentofu/internal/lang/exprs"
-+	"github.com/opentofu/opentofu/internal/plans"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
- )
- 
-@@ -288,3 +289,32 @@ func staticCheckTraversalForInstances(selector InstanceSelector, traversal hcl.T
- 	}
- 	return diags
- }
-+
-+func OrphanActionForInstanceKey(selector InstanceSelector, key addrs.InstanceKey) plans.ResourceInstanceChangeActionReason {
-+	// Ported from tofu/orphan nodes
-+	switch key.(type) {
-+	case nil: // no instance key at all
-+		if selector.InstanceKeyType() != addrs.NoKeyType {
-+			return plans.ResourceInstanceDeleteBecauseWrongRepetition
-+		}
-+		return plans.ResourceInstanceDeleteBecauseEnabledFalse
-+	case addrs.IntKey:
-+		if selector.InstanceKeyType() != addrs.IntKeyType {
-+			// This resource isn't using "count" at all, then
-+			return plans.ResourceInstanceDeleteBecauseWrongRepetition
-+		} else {
-+			// This instance key is outside of the configured range
-+			return plans.ResourceInstanceDeleteBecauseCountIndex
-+		}
-+	case addrs.StringKey:
-+		if selector.InstanceKeyType() != addrs.StringKeyType {
-+			// This resource isn't using "for_each" at all, then
-+			return plans.ResourceInstanceDeleteBecauseWrongRepetition
-+		} else {
-+			// This instance key is outside of the configured range
-+			return plans.ResourceInstanceDeleteBecauseEachKey
-+		}
-+	}
-+	// Wildcard?
-+	return plans.ResourceInstanceChangeNoReason
-+}
-```
-
-**File**: `internal/lang/eval/internal/evalglue/resource.go` (modified, +3/-0)
-```diff
-@@ -12,6 +12,7 @@ import (
- 
- 	"github.com/opentofu/opentofu/internal/addrs"
- 	"github.com/opentofu/opentofu/internal/lang/exprs"
-+	"github.com/opentofu/opentofu/internal/plans"
- 	"github.com/opentofu/opentofu/internal/refactoring"
- 	"github.com/opentofu/opentofu/internal/resources"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
-@@ -98,6 +99,8 @@ type ConfiguredResourceInstanceObjectMeta struct {
- 	MoveStatements []refactoring.MoveStatement
- 
- 	ImportStatement *ImportStatement
-+
-+	OrphanActionReason plans.ResourceInstanceChangeActionReason
- }
- 
- // ResourceInstanceObjectProvider describes the provider-related metadata
-```
-
-**File**: `internal/lang/eval/internal/tofu2024/module_instance.go` (modified, +9/-5)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"github.com/opentofu/opentofu/internal/lang/eval/internal/evalglue"
- 	"github.com/opentofu/opentofu/internal/lang/exprs"
- 	"github.com/opentofu/opentofu/internal/lang/grapheval"
-+	"github.com/opentofu/opentofu/internal/plans"
- 	"github.com/opentofu/opentofu/internal/refactoring"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
- )
-@@ -169,19 +170,20 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
- 		return ret
- 	}
- 
-+	// Ensure that ret exists, regarless of module statements
-+	if ret == nil {
-+		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
-+	}
-+
- 	rsrc, ok := c.resourceNodes[addr.InstanceAddr.Resource.Resource]
- 	if !ok {
- 		// If there's no mention of this resource in this module at all then
- 		// we have nothing to say about it, and so any metadata will need to
- 		// come either from an ancestor module or from the previous run state.
-+		ret.OrphanActionReason = plans.ResourceInstanceDeleteBecauseNoResourceConfig
- 		return ret
- 	}
- 
--	// Ensure that ret exists, regarless of module statements
--	if ret == nil {
--		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
--	}
+@@ -1,29 +0,0 @@
+-#!/usr/bin/env bash
+-# SPDX-License-Identifier: MPL-2.0
 -
- 	// We'll start with a suitable placeholder to use if there's no mention
- 	// of this object in the configuration at all, and then improve it gradually
- 	// as we find relevant information in the configuration.
-@@ -213,6 +215,8 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
- 	if !ok {
- 		// Only the resource-level settings are used when we're dealing with
- 		// a resource instance that is not currently declared in the configuration.
-+		ret.OrphanActionReason = configgraph.OrphanActionForInstanceKey(rsrc.InstanceSelector, addr.InstanceAddr.Resource.Key)
+-# Compare the semver tag against the current release in the VERSION file
+-
+-set -uo pipefail
+-
+-# Bail if VERSION cannot be found
+-if [[ ! -f version/VERSION ]]; then
+-    echo "The VERSION file could not be found. Please create a VERSION file in the version/ directory. The contents of version should match the tag without the v prefix."
+-    exit 1
+-fi
+-
+-if [ -z "$TARGET_VERSION" ]; then
+-    echo "The TARGET_VERSION environment variable is not set."
+-    exit 1
+-fi
+-
+-# Create a clean semver tag without the v prefix
+-CLEAN_TAG=$(echo "$TARGET_VERSION" | sed 's/^v//')
+-
+-VERSION=$(cat version/VERSION)
+-if [[ "$VERSION" != "$CLEAN_TAG" ]]; then
+-    echo "The VERSION file does not match the tag. Please update the version/VERSION file to match the tag without the v prefix."
+-    echo "The VERSION file contains: $VERSION but the tag is: $CLEAN_TAG."
+-    exit 1
+-fi
+-
+-echo "The VERSION file matches the tag. Proceeding with the release of $VERSION."
+```
+
+**File**: `.github/workflows/build.yml` (modified, +9/-9)
+```diff
+@@ -17,15 +17,15 @@ jobs:
+     strategy:
+       matrix:
+         include:
+-          - {goos: "freebsd", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "linux", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "linux", goarch: "arm64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "openbsd", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "solaris", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "windows", goarch: "amd64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "windows", goarch: "arm64", runson: "ubuntu-latest", cgo-enabled: "0"}
+-          - {goos: "darwin", goarch: "amd64", runson: "macos-latest", cgo-enabled: "1"}
+-          - {goos: "darwin", goarch: "arm64", runson: "macos-latest", cgo-enabled: "1"}
++          - {goos: "freebsd", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "linux", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "linux", goarch: "arm64", runson: "ubuntu-latest"}
++          - {goos: "openbsd", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "solaris", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "windows", goarch: "amd64", runson: "ubuntu-latest"}
++          - {goos: "windows", goarch: "arm64", runson: "ubuntu-latest"}
++          - {goos: "darwin", goarch: "amd64", runson: "macos-latest"}
++          - {goos: "darwin", goarch: "arm64", runson: "macos-latest"}
+       fail-fast: false
+ 
+     name: Build for ${{ matrix.goos }}_${{ matrix.goarch }}
+```
+
+**File**: `.github/workflows/nightly.yml` (modified, +95/-27)
+```diff
+@@ -6,52 +6,118 @@ on:
+   workflow_dispatch:
+ 
+ jobs:
+-  nightly:
+-    runs-on: larger-runners
+-    permissions:
+-      contents: read
+-      id-token: write
+-      packages: write
++  build:
++    strategy:
++      fail-fast: false
++      matrix:
++        include: # NOTE: Ensure this list EXACTLY matches the cache steps below and the release action 
++          - {goos: "linux",   goarch: "amd64"}
++          - {goos: "linux",   goarch: "arm64"}
++          - {goos: "freebsd", goarch: "amd64"}
++          - {goos: "openbsd", goarch: "amd64"}
++          - {goos: "solaris", goarch: "amd64"}
++          - {goos: "darwin",  goarch: "amd64"}
++          - {goos: "darwin",  goarch: "arm64"}
++          - {goos: "windows", goarch: "amd64"}
++          - {goos: "windows", goarch: "arm64"}
++    
++    name: Build for ${{ matrix.goos }}_${{ matrix.goarch }}
++    runs-on: ubuntu-latest
++    environment: gpg
++    env:
++      GOOS: ${{ matrix.goos }}
++      GOARCH: ${{ matrix.goarch }}
 +
- 		return ret
- 	}
+     steps:
+-      - name: Checkout
++      - name: "Fetch source code"
+         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         with:
+-          ref: main
+           fetch-depth: 0
++          ref: main 
  
-```
-
-**File**: `internal/lang/eval/resource_instance.go` (modified, +8/-0)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/opentofu/opentofu/internal/addrs"
- 	"github.com/opentofu/opentofu/internal/lang/eval/internal/configgraph"
- 	"github.com/opentofu/opentofu/internal/lang/eval/internal/evalglue"
-+	"github.com/opentofu/opentofu/internal/plans"
- )
+       - name: "Configure Go toolchain"
+         uses: ./.github/actions/go-toolchain
  
- // ConfiguredResourceInstanceObjectMeta represents the subset of metadata
-@@ -200,6 +201,13 @@ func collectResourceInstanceObjectMeta(ctx context.Context, addr addrs.AbsResour
- 			// the configuration, so any info we didn't already learn about
- 			// this object will need to come from the previous run state, and
- 			// that's the caller's responsibility to deal with.
-+			ret = append(ret, ModuleConfiguredResourceInstanceObjectMeta{
-+				ModuleInstance: moduleInstAddr,
-+				ConfiguredResourceInstanceObjectMeta: &ConfiguredResourceInstanceObjectMeta{
-+					OrphanActionReason: plans.ResourceInstanceDeleteBecauseNoModule,
-+				},
-+			})
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "${{ matrix.goos }}", goarch: "${{ matrix.goarch }}", tag: "${{ github.sha }}" }
 +
- 			break
- 		}
- 		relativeModuleInst := []addrs.ModuleInstanceStep(leafModuleInstAddr[len(moduleInstAddr):])
+       # Prepare the nightly version to be able to have it returned correctly when running `tofu --version`.
+       - name: Prepare version file
+         run: |
+           commit_created_at=`git show --no-patch --format=%cd --date=format:%Y%m%d%H%M%S ${GITHUB_SHA}`
+           short_commit=`git rev-parse --short=12 ${GITHUB_SHA}`
+           sed -i "s/-dev/-nightly${commit_created_at}-${short_commit}/" version/VERSION
+ 
+-      - name: Run GoReleaser
+-        uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
++
++      - name: Run GoReleaser (Build)
++        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+         with:
+-          version: v1.21.2
++          version: v2.19.0
+           distribution: goreleaser-pro
+-          args: release --nightly --clean --timeout=60m --skip=sign,docker
++          # Without single-target, only GOOS is used as a filter, not GOARCH
++          args: release --nightly --skip=docker,sign --split --clean --single-target --timeout=60m --config=release/.goreleaser.yaml
+         env:
+-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+-          RELEASE_FLAG_LATEST: "false"
+-          RELEASE_FLAG_PRERELEASE: "true"
++          RELEASE_FLAG_LATEST: "false" 
++          RELEASE_FLAG_PRERELEASE: "true" 
++
++  release:
++    needs: [build]
++    runs-on: "ubuntu-latest"
++    name: "Nightly Release"
++    environment: gpg
+ 
+-      # The step before goreleaser one updated version/VERSION to have it stored in the binary, but we want to bring the
+-      # repo to a clean state now.
+-      - name: Restore version
+-        run: git restore version/VERSION
++    steps:
++      - name: Checkout
++        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
++        with:
++          fetch-depth: 0
++          ref: main 
++
++      - name: Fetch tags
++        run: git fetch --force --tags
++
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "linux", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "linux", goarch: "arm64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "freebsd", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "openbsd", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "solaris", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "darwin", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "darwin", goarch: "arm64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "windows", goarch: "amd64", tag: "${{ github.sha }}"}
++      - name: Cache
++        uses: ./.github/actions/release-cache
++        with: { goos: "windows", goarch: "arm64", tag: "${{ github.sha }}"}
+ 
+-      - name: Upload artifacts
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++      - name: Run GoReleaser
++        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+     
 ```
 
-**File**: `internal/tofu/context_apply2_test.go` (modified, +3/-5)
+**File**: `.github/workflows/release.yml` (modified, +241/-86)
 ```diff
-@@ -6911,11 +6911,9 @@ func TestContext2Apply_enabledForResource(t *testing.T) {
- 			t.Fatalf("plan for %s has wrong action %s; want %s", resourceInstAddr, got, want)
- 		}
+@@ -3,101 +3,110 @@ name: release
+ on:
+   workflow_dispatch:
+     inputs:
+-      tag:
+-        description: "Git tag (leave empty for dry run)"
+-        required: false
+       latest:
+         description: "Release as latest?"
+         required: true
+         type: boolean
+-      prerelease:
+-        description: "Release as prerelease?"
+-        required: true
+-        type: boolean
++      tag:
++        description: "Override tag? (vM.N.P)"
++        required: false
  
--		if !experimentalRuntimeEnabled() {
--			SkipExperimental(t, ExperimentalFeatureActionReason)
--			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseEnabledFalse; got != want {
--				t.Errorf("wrong action reason for %s %s; want %s", resourceInstAddr, got, want)
--			}
-+		SkipExperimental(t, ExperimentalFeatureActionReason)
-+		if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseEnabledFalse; got != want {
-+			t.Errorf("wrong action reason for %s %s; want %s", resourceInstAddr, got, want)
- 		}
+ jobs:
+-  release:
+-    name: Release
+-    runs-on: larger-runners
+-    environment: gpg
+-    permissions:
+-      contents: write
+-      id-token: write
+-      packages: write
++  info:
++    name: Information
++    runs-on: ubuntu-latest
  
- 		newState, diags := tfCtx.Apply(context.Background(), plan, m, nil)
+     steps:
+-      - name: Set up QEMU cross build support
+-        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a # v3.3.0
+-      - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 # v3.8.0
+-
+-      - name: Login to Github Container Registry
+-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+-        if: startsWith(inputs.tag, 'v')
+-        with:
+-          registry: ghcr.io
+-          username: ${{ github.repository_owner }}
+-          password: ${{ secrets.GITHUB_TOKEN }}
+-
+       - name: Checkout
+         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+         with:
+           fetch-depth: 0
+-          ref: ${{ inputs.tag }}
+ 
+-      - name: Fetch tags
+-        run: git fetch --force --tags
++      - name: "Determine tag"
++        id: tag
++        run: echo "value=${{ inputs.tag == '' && 'v$(cat version/VERSION)' || inputs.tag }}" | tee -a "${GITHUB_OUTPUT}"
+ 
+-      - name: Compare versions
+-        if: startsWith(inputs.tag, 'v')
+-        run: ./.github/scripts/compare-release-version.sh
+-        env:
+-          TARGET_VERSION: ${{inputs.tag}}
++      # NOTE: Historically, we have not been great about running the beta workflow on the main branch.
++      # This has implications on how we run cosign.
++      # Practically, this means that certain tools like tenv and tofudl don't install betas correctly.
++      # We should pick one (main vs branch) and stick to it here.
++      - name: "Determine Prerelease Status"
++        id: prerelease
++        run: echo "value=$(echo "${{ steps.tag.outputs.value }}" | grep -c "-")" | tee -a "${GITHUB_OUTPUT}"
+ 
+-      - name: Check if tag is on main branch or version branch
+-        id: validate_tag
+-        env:
+-          INPUT_TAG: ${{ inputs.tag }}
+-        run: |
+-          IS_TAG_ON_MAIN=$(git branch -a --contains "$INPUT_TAG" | grep -q "main" && echo true || echo false)
+-          IS_TAG_ON_VERSION=$(git branch -a --contains "$INPUT_TAG" | grep -E "^v[0-9]+\.[0-9]+" && echo true || echo false)
+-          echo "IS_TAG_ON_MAIN=${IS_TAG_ON_MAIN}" >> $GITHUB_OUTPUT
+-          echo "IS_TAG_ON_VERSION=${IS_TAG_ON_VERSION}" >> $GITHUB_OUTPUT
++      - name: "Ensure tag matches branch"
++        if: ${{ !startsWith(steps.tag.outputs.value, github.ref_name) }}
++        run: echo "Version tag ${{ steps.tag.outputs.value }} does not match branch ${{ github.ref_name }}!" && exit 1
+ 
+-      - name: Check if release is allowed or not
+-        id: validate_release
+-        env:
+-          IS_PRERELEASE: ${{ inputs.prerelease }}
+-          IS_TAG_ON_MAIN: ${{ steps.validate_tag.outputs.IS_TAG_ON_MAIN }}
++      - name: "Ensure prerelease is not latest"
++        if: ${{ inputs.latest && steps.prerelease.outputs.value == 1 }}
++        run: echo "Latest and Prerelease conflict" && exit 1
++
++      - name: "Summary"
+         run: |
+-          if [[ "$IS_PRERELEASE" == "false" && "$IS_TAG_ON_MAIN" == "true" ]]; then
+-            echo "ERROR: Creating stable release from a tag on main is not allowed."
+-            exit 1
+-          fi
++          echo "Branch: ${{ github.ref_name }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Tag: ${{ steps.tag.outputs.value }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Latest: ${{ inputs.latest }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++          echo "Prerelease: ${{ steps.prerelease.outputs.value }}" | tee -a "${GITHUB_STEP_SUMMARY}"
++    outputs:
++      branch: ${{ github.ref_name }}
++      tag: ${{ steps.tag.outputs.value }}
++      latest: ${{ inputs.latest }}
++      prerelease: ${{ steps.prerelease.outputs.value == 1 && 'true' || 'false' }}
++
++  build:
++    needs: [info]
++    strategy:
++      fail-fast: false
++      matrix:
++        include: # NOTE: Ensure this list EXACTLY matches the cache steps below and the nightly action 
++          - {goos: "linux",   goarch: "amd64"}
++          - {goos: "linux",   goarch: "arm64"}
++          - {goos: "freebsd", goarch: "amd64"}
++          - {goos: "openbsd", goarch: "amd64"}
++          - {goos: "solaris", goarch: "amd64"}
++          - {goos: "darwin",  goarch: "amd64"}
++          - {goos: "darwin",  goarch: "arm64"}
++          - {goos: "windows", goarch: "am
 ```
 
-**File**: `internal/tofu/context_apply_test.go` (modified, +11/-10)
+**File**: `.goreleaser.yaml` (removed, +0/-273)
 ```diff
-@@ -2424,11 +2424,9 @@ func TestContext2Apply_countDecreaseToOneCorrupted(t *testing.T) {
- 		if got, want := change.Action, plans.Delete; got != want {
- 			t.Errorf("wrong action for instance zero %s; want %s", got, want)
- 		}
--		if !experimentalRuntimeEnabled() {
--			SkipExperimental(t, ExperimentalFeatureActionReason)
--			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseWrongRepetition; got != want {
--				t.Errorf("wrong action reason for instance zero %s; want %s", got, want)
--			}
-+		SkipExperimental(t, ExperimentalFeatureActionReason)
-+		if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseWrongRepetition; got != want {
-+			t.Errorf("wrong action reason for instance zero %s; want %s", got, want)
- 		}
- 	}
- 	{
-@@ -3039,11 +3037,14 @@ func TestContext2Apply_moduleOrphanInheritAlias(t *testing.T) {
- 		// This should ideally be ResourceInstanceDeleteBecauseNoModule, but
- 		// the codepath deciding this doesn't currently have enough information
- 		// to differentiate, and so this is a compromise.
--		if !experimentalRuntimeEnabled() {
--			SkipExperimental(t, ExperimentalFeatureActionReason)
--			if got, want := change.ActionReason, plans.ResourceInstanceDeleteBecauseNoResourceConfig; got != want {
--				t.Errorf("wrong action for %s %s; want %s", addr, got, want)
--			}
-+		SkipExperimental(t, ExperimentalFeatureActionReason)
-+		expected := plans.ResourceInstanceDeleteBecauseNoResourceConfig
-+		if experimentalRuntimeEnabled() {
-+			// Fixed in the new runtime
-+			expected = plans.ResourceInstanceDeleteBecauseNoModule
-+		}
-+		if got, want := change.ActionReason, expected; got != want {
-+			t.Errorf("wrong action for %s %s; want %s", addr, got, want)
- 		}
- 	}
- 
+@@ -1,273 +0,0 @@
+-# Copyright (c) The OpenTofu Authors
+-# SPDX-License-Identifier: MPL-2.0
+-# Copyright (c) 2023 HashiCorp, Inc.
+-# SPDX-License-Identifier: MPL-2.0
+-
+-project_name: tofu
+-
+-before:
+-  hooks:
+-    - go mod tidy
+-    - go generate ./...
+-    - make protobuf
+-
+-builds:
+-  - env:
+-      - CGO_ENABLED=0
+-
+-    main: ./cmd/tofu
+-
+-    flags:
+-      - "-mod=readonly"
+-      - "-trimpath"
+-
+-    ldflags:
+-      - "-s -w"
+-      - "-X 'github.com/opentofu/opentofu/version.dev=no'"
+-      # BUILD_OPENTOFU_OFFICIAL is set by the OpenTofu project's main release
+-      # process. It should typically _not_ be set for builds produced by
+-      # third-parties such as Linux distribution maintainers, because in that
+-      # case the resulting executable might generate irrelevant warnings that
+-      # are intended only for users of the official release builds.
+-      - "-X 'github.com/opentofu/opentofu/version.officialBuild={{if index .Env \"BUILD_OPENTOFU_OFFICIAL\" }}{{ .Env.BUILD_OPENTOFU_OFFICIAL }}{{end}}'"
+-
+-    goos:
+-      - linux
+-      - windows
+-      - darwin
+-      - freebsd
+-      - openbsd
+-      - solaris
+-
+-    goarch:
+-      - amd64
+-      - arm64
+-
+-    ignore:
+-      - goos: freebsd
+-        goarch: arm64
+-      - goos: openbsd
+-        goarch: arm64
+-      - goos: solaris
+-        goarch: arm64
+-
+-archives:
+-  - format: tar.gz
+-    id: targz
+-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
+-  
+-  - format: zip
+-    id: zip 
+-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
+-
+-dockers:
+-  - use: buildx
+-    goarch: amd64
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/amd64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-amd64"
+-
+-  - use: buildx
+-    goarch: amd64
+-    dockerfile: Dockerfile.minimal
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/amd64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-minimal-amd64"
+-
+-  - use: buildx
+-    goarch: arm64
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/arm64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.url=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.documentation=https://github.com/opentofu/opentofu/blob/main/README.md"
+-      - "--label=org.opencontainers.image.source=https://github.com/opentofu/opentofu"
+-      - "--label=org.opencontainers.image.licenses=MPL-2.0"
+-      - "--label=org.opencontainers.image.version={{ .Version }}"
+-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+-      - "--label=org.opencontainers.image.created={{ time \"2006-01-02T15:04:05Z07:00\" }}"
+-    image_templates:
+-      - "ghcr.io/opentofu/opentofu:{{ .Version }}-arm64"
+-
+-  - use: buildx
+-    goarch: arm64
+-    dockerfile: Dockerfile.minimal
+-    build_flag_templates:
+-      - "--pull"
+-      - "--platform=linux/arm64"
+-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+-      - "--label=org.opencontainers.image.vendor=OpenTofu"
+-      - "--label=org.opencontainers.image.description=OpenTofu {{ .Version }}"
+-      - "--label=org.opencontainers.image.
+```
+
+**File**: `.tfdev` (removed, +0/-7)
+```diff
+@@ -1,7 +0,0 @@
+-version_info {
+-  version_var =    "github.com/opentofu/opentofu/version.Version"
+-  prerelease_var = "github.com/opentofu/opentofu/version.Prerelease"
+-}
+-
+-version_exec = false
+-disable_provider_requirements = true
+```
+
+**File**: `release/.goreleaser.yaml` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
++# Copyright (c) The OpenTofu Authors
++# SPDX-License-Identifier: MPL-2.0
++# Copyright (c) 2023 HashiCorp, Inc.
++# SPDX-License-Identifier: MPL-2.0
++
++project_name: tofu
++version: 2
++builds:
++  - env:
++      - CGO_ENABLED=0
++
++    main: ./cmd/tofu
++
++    flags:
++      - "-mod=readonly"
++      - "-trimpath"
++
++    ldflags:
++      - "-s -w"
++      - "-X 'github.com/opentofu/opentofu/version.dev=no'"
++      # BUILD_OPENTOFU_OFFICIAL is set by the OpenTofu project's main release
++      # process. It should typically _not_ be set for builds produced by
++      # third-parties such as Linux distribution maintainers, because in that
++      # case the resulting executable might generate irrelevant warnings that
++      # are intended only for users of the official release builds.
++      - "-X 'github.com/opentofu/opentofu/version.officialBuild={{if index .Env \"BUILD_OPENTOFU_OFFICIAL\" }}{{ .Env.BUILD_OPENTOFU_OFFICIAL }}{{end}}'"
++
++archives:
++  - formats: ["zip", "tar.gz"]
++    name_template: "{{ .ProjectName }}_{{ .Version }}_{{- .Os }}_{{- .Arch }}"
++
++dockers_v2:
++  - images:
++      - "ghcr.io/opentofu/opentofu"
++    id: tofu-minimal
++    dockerfile: "release/Dockerfile.minimal"
++    platforms:
++      - linux/amd64
++      - linux/arm64
++    tags:
++      - "{{ .Version }}-minimal"
++      - '{{ if eq .Env.RELEASE_FLAG_PRERELEASE "false" }}{{ .Major }}.{{ .Minor }}-minimal{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}{{ .Major }}-minimal{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}minimal{{ end }}'
++    annotations:
++      "org.opencontainers.image.title": "{{ .ProjectName }}"
++      "org.opencontainers.image.vendor": "OpenTofu"
++      "org.opencontainers.image.description": "OpenTofu {{ .Version }}"
++      "org.opencontainers.image.url": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.documentation": "https://github.com/opentofu/opentofu/blob/main/README.md"
++      "org.opencontainers.image.source": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.licenses": "MPL-2.0"
++      "org.opencontainers.image.version": "{{ .Version }}"
++      "org.opencontainers.image.revision": "{{ .FullCommit }}"
++      "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
++
++  - images:
++      - "ghcr.io/opentofu/opentofu"
++    id: tofu
++    dockerfile: "release/Dockerfile"
++    platforms:
++      - linux/amd64
++      - linux/arm64
++    tags:
++      - "{{ .Version }}"
++      - '{{ if eq .Env.RELEASE_FLAG_PRERELEASE "false" }}{{ .Major }}.{{ .Minor }}{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}{{ .Major }}{{ end }}'
++      - '{{ if eq .Env.RELEASE_FLAG_LATEST "true" }}latest{{ end }}'
++    annotations:
++      "org.opencontainers.image.title": "{{ .ProjectName }}"
++      "org.opencontainers.image.vendor": "OpenTofu"
++      "org.opencontainers.image.description": "OpenTofu {{ .Version }}"
++      "org.opencontainers.image.url": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.documentation": "https://github.com/opentofu/opentofu/blob/main/README.md"
++      "org.opencontainers.image.source": "https://github.com/opentofu/opentofu"
++      "org.opencontainers.image.licenses": "MPL-2.0"
++      "org.opencontainers.image.version": "{{ .Version }}"
++      "org.opencontainers.image.revision": "{{ .FullCommit }}"
++      "org.opencontainers.image.created": "{{ time \"2006-01-02T15:04:05Z07:00\" }}"
++
++nfpms:
++  - file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'
++    maintainer: 'https://github.com/orgs/opentofu/teams/opentofu-core-team'
++    homepage: https://opentofu.org
++    description: >-
++      OpenTofu lets you declaratively manage your cloud infrastructure.
++    license: "MPL-2.0"
++    formats:
++      - deb
++      - rpm
++      - apk
++    bindir: /usr/bin
++    section: default
++    contents:
++      - src: ./LICENSE
++        dst: /usr/share/doc/opentofu/copyright
++        file_info:
++          mode: 0444
++    rpm:
++      signature:
++        key_file: "{{ if index .Env \"GPG_KEY_FILE\"  }}{{.Env.GPG_KEY_FILE}}{{ end }}"
++    deb:
++      signature:
++        key_file: "{{ if index .Env \"GPG_KEY_FILE\"  }}{{.Env.GPG_KEY_FILE}}{{ end }}"
++
++snapcrafts:
++  - name: opentofu
++    publish: false 
++    summary: OpenTofu lets you declaratively manage your cloud infrastructure.
++    description: |
++      OpenTofu is an OSS tool for building, changing, and versioning infrastructure
++      safely and efficiently. OpenTofu can manage existing and popular service
++      providers as well as custom in-house solutions.
++    disable: '{{ if eq .Env.RELEASE_FLAG_LATEST "false" }}true{{ else }}false{{ end }}'
++    channel_templates:
++      - 'latest/stable'
++    grade: 'stable'
++    confinement: classic
++    license: MPL-2.0
++    base: core22
++    apps:
++      tofu:
++        command: tofu
++        aliases: [tofu]
++
++checksum:
++  name_template: "{{ .ProjectName }}_{{ .Version }}_SH
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4808** (2026-11-04): [backport] .github/workflows: Use preinstalled Go from worker tool cache (@cam72cam)
+- **PR #4807** (2026-11-04): Prepare 1.13.6 release (@lbordowitz)
+- **PR #4805** (2026-11-04): [v1.13] Refactor release and nightly workflows (@lbordowitz)
+- **PR #4803** (2026-11-04): Refactor release and nightly workflows (@cam72cam)
 - **PR #4800** (2026-11-02): Fully qualify the docs/diagnostics.md (@yottta)
 - **PR #4794** (2026-10-29): Prepare 1.13.5 release (@lbordowitz)
-- **PR #4793** (2026-10-29): [v1.12] Update cosign (@lbordowitz)
-- **PR #4792** (2026-10-29): [v1.13] Update cosign (@lbordowitz)
-- **PR #4791** (2026-10-29): Update cosign (@lbordowitz)
-- **PR #4790** (2026-11-03): Compute RelevantAttributes in the new runtime (@cam72cam)
 
 ---
 
@@ -1721,27 +2088,38 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. existing paths that should generate action reasons
+## X. release and nightly workflows
 
 **RULE**:
-When implementing operations in `internal/engine/internal/exec/resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/release-cache/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `170d7317`: existing paths that should generate action reasons. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f21216f`: release and nightly workflows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/internal/exec/resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/release-cache/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/opentofu/opentofu/internal/plans"
+name: 'Release Cache'
+inputs:
+  goos:
+    required: true
+  goarch:
+    required: true
+  tag:
+    required: true
 
-	OrphanActionReason plans.ResourceInstanceChangeActionReason
-		if fromModule.OrphanActionReason != plans.ResourceInstanceChangeNoReason {
-			ret.OrphanActionReason = fromModule.OrphanActionReason
-		}
-
+runs:
+  using: 'composite'
+  steps:
+      - id: cache
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
+        with:
+          path: dist/${{ inputs.goos }}_${{ inputs.goarch }}/
+          key: ${{ inputs.goos }}-${{ inputs.goarch }}-${{ inputs.tag }}
+          enableCrossOsArchive: ${{ inputs.goos == 'windows' }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1751,4 +2129,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `170d7317` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f21216f` are properly handled with clean fallback behavior.

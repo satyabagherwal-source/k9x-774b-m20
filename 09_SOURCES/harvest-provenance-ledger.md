@@ -7494,3 +7494,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T03:39:48.945Z |
 | `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `ebb7a5f7` | Multi-dimensional audit evidence | 2026-11-05T03:39:51.507Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `59d4d4ca` | Multi-dimensional audit evidence | 2026-11-05T03:40:00.901Z |
+| `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-05T03:46:19.634Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T03:46:21.429Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `5366e006` | Multi-dimensional audit evidence | 2026-11-05T03:46:28.670Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `9f21216f` | Multi-dimensional audit evidence | 2026-11-05T03:46:30.322Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `92514f9f` | Multi-dimensional audit evidence | 2026-11-05T03:46:32.619Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `bcf3dc11` | Multi-dimensional audit evidence | 2026-11-05T03:46:35.870Z |
