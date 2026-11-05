@@ -7789,3 +7789,5 @@
 | `CYCLE-20261105-2SJM` | `2026-11-05T21:54:38.722Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5667b5e3...`) |
 | `CYCLE-20261105-2WKQ` | `2026-11-05T21:54:43.946Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`04c705da...`) |
 | `CYCLE-20261105-30U4` | `2026-11-05T21:54:49.468Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e17b1517...`) |
+| `CYCLE-20261105-BGKA` | `2026-11-05T22:01:23.098Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`164f31f3...`) |
+| `CYCLE-20261105-BHVJ` | `2026-11-05T22:01:24.799Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e30c53cb...`) |

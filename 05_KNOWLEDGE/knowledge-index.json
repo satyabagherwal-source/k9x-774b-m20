@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T21:54:49.389Z",
+  "last_updated": "2026-11-05T22:01:24.734Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16133,11 +16133,16 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "487b46aa",
-      "content_hash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
+      "source_version": "a0016873",
+      "content_hash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2363,
           "title": "Verification of Temporal Reachability for Disjoint Cron Specifications",
@@ -16214,7 +16219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:15:05.950Z",
+      "verified_at": "2026-11-05T22:01:22.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157284,10 +157289,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
+      "content_hash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Selective Quantization Boundary Enforcement for Multimodal MoE Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hierarchical Indexer Configuration for Long-Context Sparse Attention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5516,
           "title": "Precision-Island Quantization Boundary",
@@ -157324,7 +157339,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:54:57.796Z",
+      "verified_at": "2026-11-05T22:01:24.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

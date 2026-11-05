@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T21:54:49.476Z",
-  "total_cycles_completed": 7766,
-  "total_learnings_persisted": 7766,
-  "total_rules_promoted": 7408,
+  "last_updated": "2026-11-05T22:01:24.807Z",
+  "total_cycles_completed": 7768,
+  "total_learnings_persisted": 7768,
+  "total_rules_promoted": 7411,
   "history": [
-    {
-      "timestamp": "2026-11-05T09:04:52.885Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T09:05:02.999Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T09:12:17.856Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1403,6 +1389,20 @@
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:01:23.106Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T22:01:24.807Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

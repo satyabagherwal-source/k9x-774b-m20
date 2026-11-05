@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "487b46aa",
+    "sourceVersion": "a0016873",
     "license": "Apache-2.0",
-    "contentHash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
-    "lastHarvestedAt": "2026-11-05T06:15:06.067Z",
+    "contentHash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
+    "lastHarvestedAt": "2026-11-05T22:01:23.101Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -11485,8 +11485,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
     "license": "Open-Source",
-    "contentHash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
-    "lastHarvestedAt": "2026-11-02T16:54:57.907Z",
+    "contentHash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
+    "lastHarvestedAt": "2026-11-05T22:01:24.802Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   },
   "jakeschincariol-arena-skill": {

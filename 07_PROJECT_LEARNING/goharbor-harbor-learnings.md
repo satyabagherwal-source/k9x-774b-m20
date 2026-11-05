@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `487b46aa`  
+> **Source Version**: `a0016873`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:15:05.253Z  
+> **Timestamp**: 2026-11-05T22:01:22.052Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:15:05.245Z  
+> **Harvest Timestamp**: 2026-11-05T22:01:21.651Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29672 stars
+- **Stars / Engagement**: 29680 stars
 
 ---
 
@@ -656,11 +656,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24313** (2026-11-05): **Bump up harbor version**
+- **Issue #24316** (2026-11-05): **Bump up trivy adapter and distribution**
   *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24302** (2026-11-05): **(cherry-pick)fix: restore robot member role assignment compatibility**
-  *Symptoms*: Allow authenticated robots with project member create or update permission to assign built-in and custom roles while preserving human escalation checks.  Restrict human delegation of member-management robots to project or system administrators, enforce permission scope on robot updates, and add regression coverage.  (cherry picked from commit c1eb3c8acf3a5e6812224d5b030edaf1261f9c74)  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24313** (2026-11-05): **Bump up harbor version**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,178 +677,77 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `487b46aa` (2026-11-05)
-**Commit Message**: fix(registry): redact the upload Location in rejection errors (#24068)
+### Incident Patch 1: `46d05cbf` (2026-11-05)
+**Commit Message**: fix(http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
 
-* fix(registry): redact the upload Location in rejection errors
+SameOrigin folded case on the whole host name, zone identifier
+included. A zone names a network interface and interface names are
+case-sensitive, so fe80::a%eth0 and fe80::a%ETH0 are different
+destinations. Keep the address comparison case-insensitive and require
+the zone to match exactly.
 
-When the registry client rejects a chunked-upload Location (userinfo
-present, not absolute, or a different origin than the request), the
-error quotes the Location verbatim, and so does Go's URL parse error
-for a malformed one. Replication logs that error. A registry can put
-credentials in the userinfo or a signed upload token in the query, and
-both end up in the job log.
-
-Render the rejected URL without userinfo, query and fragment, and drop
-the input from parse errors. Scheme, host and path stay, which is all an
-operator needs to see why it was refused.
+Follow-up to GHSA-xgp2-5vxg-rgh2.
 
 Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
+Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 
-* fix(registry): redact the upload origin in cross-origin rejection errors
-
-The cross-origin errors printed the origin with URL.Redacted(), which
-only masks the userinfo password. For chunked uploads the origin is the
-previous registry Location, so its signed query token still leaked.
-
-Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/registry/client.go` (modified, +28/-8)
+**File**: `src/common/http/client.go` (modified, +9/-1)
 ```diff
-@@ -540,7 +540,7 @@ func (c *client) uploadLocation(req *http.Request, resp *http.Response) (string,
- 	origin := req.URL
- 	if resp.Request != nil && resp.Request.URL != nil {
- 		if !sameRegistryOrigin(origin, resp.Request.URL) {
--			return "", fmt.Errorf("registry upload response redirected to a different origin than %q", origin.Redacted())
-+			return "", fmt.Errorf("registry upload response redirected to a different origin than %q", redactUploadLocation(origin))
- 		}
- 		origin = resp.Request.URL
- 	}
-@@ -842,13 +842,13 @@ func parseUploadLocation(location string) (*url.URL, error) {
- 	}
- 	u, err := url.Parse(location)
- 	if err != nil {
--		return nil, err
-+		return nil, uploadLocationParseError(err)
- 	}
- 	if u.User != nil {
--		return nil, fmt.Errorf("registry upload Location must not contain userinfo: %q", location)
-+		return nil, fmt.Errorf("registry upload Location must not contain userinfo: %q", redactUploadLocation(u))
- 	}
- 	if !u.IsAbs() || u.Host == "" {
--		return nil, fmt.Errorf("registry upload Location must be an absolute URL: %q", location)
-+		return nil, fmt.Errorf("registry upload Location must be an absolute URL: %q", redactUploadLocation(u))
- 	}
- 	return u, nil
- }
-@@ -865,17 +865,17 @@ func parseUploadLocation(location string) (*url.URL, error) {
- func resolveUploadLocation(endpoint string, origin *url.URL, location string) (string, error) {
- 	ref, err := url.Parse(location)
- 	if err != nil {
--		return "", err
-+		return "", uploadLocationParseError(err)
- 	}
- 	// userinfo has no legitimate use in an upload Location and makes the host ambiguous.
- 	if ref.User != nil {
--		return "", fmt.Errorf("registry upload Location must not contain userinfo: %q", location)
-+		return "", fmt.Errorf("registry upload Location must not contain userinfo: %q", redactUploadLocation(ref))
- 	}
- 	// "//host/..." is a network-path reference and is resolved against origin below.
- 	if ref.Scheme == "" && ref.Host == "" && strings.HasPrefix(location, "/") && !strings.HasPrefix(location, "//") {
- 		u, err := url.Parse(endpoint + location)
- 		if err != nil {
--			return "", err
-+			return "", uploadLocationParseError(err)
- 		}
- 		return u.String(), nil
- 	}
-@@ -886,11 +886,31 @@ func resolveUploadLocation(endpoint string, origin *url.URL, location string) (s
- 	}
- 	next := origin.ResolveReference(ref)
- 	if !sameRegistryOrigin(origin, next) {
--		return "", fmt.Errorf("registry upload Location %q resolves to a different origin than %q", location, origin.Redacted())
-+		return "", fmt.Errorf("registry upload Location %q resolves to a different origin than %q", redactUploadLocation(next), redactUploadLocation(origin))
- 	}
- 	return next.String(), nil
+@@ -275,10 +275,18 @@ func resolveNextLink(base *url.URL, link string) (*url.URL, error) {
+ // SameOrigin reports whether a and b share scheme, host and effective port.
+ func SameOrigin(a, b *url.URL) bool {
+ 	return strings.EqualFold(a.Scheme, b.Scheme) &&
+-		strings.EqualFold(a.Hostname(), b.Hostname()) &&
++		sameHost(a.Hostname(), b.Hostname()) &&
+ 		effectivePort(a) == effectivePort(b)
  }
  
-+// redactUploadLocation renders a Location for error messages without userinfo, query or fragment,
-+// since registries may put credentials or signed upload tokens there and callers log these errors.
-+func redactUploadLocation(u *url.URL) string {
-+	r := *u
-+	r.User = nil
-+	r.RawQuery = ""
-+	r.ForceQuery = false
-+	r.Fragment = ""
-+	r.RawFragment = ""
-+	return r.String()
++// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
++// which names a network interface and must match exactly.
++func sameHost(a, b string) bool {
++	aHost, aZone, _ := strings.Cut(a, "%")
++	bHost, bZone, _ := strings.Cut(b, "%")
++	return strings.EqualFold(aHost, bHost) && aZone == bZone
 +}
 +
-+// uploadLocationParseError drops the Location from a parse error, which quotes it verbatim.
-+func uploadLocationParseError(err error) error {
-+	if urlErr, ok := err.(*url.Error); ok {
-+		err = urlErr.Err
-+	}
-+	return fmt.Errorf("registry upload Location is not a valid URL: %w", err)
-+}
-+
- func sameRegistryOrigin(a, b *url.URL) bool {
- 	return strings.EqualFold(a.Scheme, b.Scheme) &&
- 		strings.EqualFold(a.Hostname(), b.Hostname()) &&
+ // effectivePort returns the URL's port, substituting the scheme's default when none is set,
+ // so that an alternate-port target is treated as a different origin.
+ func effectivePort(u *url.URL) string {
 ```
 
-**File**: `src/pkg/registry/client_chunk_location_test.go` (modified, +43/-0)
+**File**: `src/common/http/client_test.go` (modified, +18/-0)
 ```diff
-@@ -291,3 +291,46 @@ func TestBuildBlobUploadURL(t *testing.T) {
- 		}
+@@ -174,3 +174,21 @@ func mustHost(t *testing.T, raw string) string {
  	}
+ 	return u.Host
  }
 +
-+// TestUploadLocationErrorsRedactSecrets keeps credentials and signed upload tokens carried in a
-+// rejected Location out of the returned error, which replication logs verbatim. Go's URL parse
-+// error quotes the whole input, so malformed Locations are covered too.
-+func TestUploadLocationErrorsRedactSecrets(t *testing.T) {
-+	const endpoint = "http://good-registry.example:5000"
-+	origin, _ := url.Parse(endpoint + "/v2/repo/blobs/uploads/")
-+	for _, location := range []string{
-+		"http://evil.attacker.com/steal?token=s3cr3t-token",
-+		"http://user:s3cr3t-pass@evil.attacker.com/steal",
-+		"http://good-registry.example:5000@evil.attacker.com/steal?token=s3cr3t-token",
-+		"http://evil.attacker.com/%zz?token=s3cr3t-token",
-+		"/v2/repo/%zz?token=s3cr3t-token",
-+	} {
-+		_, err := resolveUploadLocation(endpoint, origin, location)
-+		if err == nil {
-+			t.Fatalf("resolve: expected rejection for %q", location)
++// TestSameOriginIPv6Zone treats the IPv6 zone identifier as case-sensitive, since it names
++// a network interface, while the address itself still compares case-insensitively.
++func TestSameOriginIPv6Zone(t *testing.T) {
++	parse := func(raw string) *url.URL {
++		u, err := url.Parse(raw)
++		if err != nil {
++			t.Fatal(err)
 +		}
-+		if msg := err.Error(); strings.Contains(msg, "s3cr3t") {
-+			t.Fatalf("resolve: error leaks secret from Location %q: %s", location, msg)
-+		}
++		return u
 +	}
-+	// chunked uploads resolve against the previous Location, which can carry a signed token
-+	tokenOrigin, _ := url.Parse(endpoint + "/v2/repo/blobs/uploads/uuid?_state=s3cr3t-state")
-+	if _, err := resolveUploadLocation(endpoint, tokenOrigin, "http://evil.attacker.com/steal"); err == nil {
-+		t.Fatal("resolve: expected cross-origin rejection")
-+	} else if strings.Contains(err.Error(), "s3cr3t") {
-+		t.Fatalf("resolve: error leaks secret from origin: %s", err)
++	if !SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[FE80::A%25eth0]:5000/x")) {
++		t.Fatal("address case must not matter")
 +	}
-+	for _, location := range []string{
-+		"/v2/relative?token=s3cr3t-token",
-+		"https://user:s3cr3t-pass@evil.attacker.com/steal",
-+		"https://evil.attacker.com/%zz?token=s3cr3t-token",
-+	} {
-+		_, err := parseUploadLocation(location)
-+		if err == nil {
-+			t.Fatalf("parse: expected rejection for %q", location)
-+		}
-+		if msg := err.Error(); strings.Contains(msg, "s3cr3t") {
-+			t.Fatalf("parse: error leaks secret from Location %q: %s", location, msg)
-+		}
++	if SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[fe80::a%25ETH0]:5000/x")) {
++		t.Fatal("zone identifiers differing in case must not be the same origin")
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24316** (2026-11-05): Bump up trivy adapter and distribution (@stonezdj)
 - **PR #24313** (2026-11-05): Bump up harbor version (@stonezdj)
 - **PR #24302** (2026-11-05): (cherry-pick)fix: restore robot member role assignment compatibility (@stonezdj)
 - **PR #24300** (2026-11-04): fix: restore robot member role assignment compatibility (@stonezdj)
 - **PR #24299** (closed):  fix: restore robot member role assignment compatibility (@stonezdj)
 - **PR #24286** (2026-11-04): Bump up go mod (@stonezdj)
-- **PR #24285** (2026-11-03): (cherry-pick) fix(portal): prevent resource names from wrapping in permissions panel (@stonezdj)
 
 ---
 
@@ -868,56 +767,36 @@ Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. registry): redact the upload Location in rejection errors (#24068)
+## X. http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
 
 **RULE**:
-When implementing operations in `src/pkg/registry/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/http/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `487b46aa`: registry): redact the upload Location in rejection errors (#24068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46d05cbf`: http): compare the IPv6 zone identifier exactly in SameOrigin (#24071). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/registry/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/http/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			return "", fmt.Errorf("registry upload response redirected to a different origin than %q", redactUploadLocation(origin))
-		return nil, uploadLocationParseError(err)
-		return nil, fmt.Errorf("registry upload Location must not contain userinfo: %q", redactUploadLocation(u))
-		return nil, fmt.Errorf("registry upload Location must be an absolute URL: %q", redactUploadLocation(u))
-		return "", uploadLocationParseError(err)
-		return "", fmt.Errorf("registry upload Location must not contain userinfo: %q", redactUploadLocation(ref))
-			return "", uploadLocationParseError(err)
-		return "", fmt.Errorf("registry upload Location %q resolves to a different origin than %q", redactUploadLocation(next), redactUploadLocation(origin))
-// redactUploadLocation renders a Location for error messages without userinfo, query or fragment,
-// since registries may put credentials or signed upload tokens there and callers log these errors.
-func redactUploadLocation(u *url.URL) string {
-	r := *u
-	r.User = nil
-	r.RawQuery = ""
-	r.ForceQuery = false
-	r.Fragment = ""
-	r.RawFragment = ""
-	return r.String()
+		sameHost(a.Hostname(), b.Hostname()) &&
+// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
+// which names a network interface and must match exactly.
+func sameHost(a, b string) bool {
+	aHost, aZone, _ := strings.Cut(a, "%")
+	bHost, bZone, _ := strings.Cut(b, "%")
+	return strings.EqualFold(aHost, bHost) && aZone == bZone
 }
 
-// uploadLocationParseError drops the Location from a parse error, which quotes it verbatim.
-func uploa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			return "", fmt.Errorf("registry upload response redirected to a different origin than %q", origin.Redacted())
-		return nil, err
-		return nil, fmt.Errorf("registry upload Location must not contain userinfo: %q", location)
-		return nil, fmt.Errorf("registry upload Location must be an absolute URL: %q", location)
-		return "", err
-		return "", fmt.Errorf("registry upload Location must not contain userinfo: %q", location)
-			return "", err
-		return "", fmt.Errorf("registry upload Location %q resolves to a different origin than %q", location, origin.Redacted())
+		strings.EqualFold(a.Hostname(), b.Hostname()) &&
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `487b46aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46d05cbf` are properly handled with clean fallback behavior.

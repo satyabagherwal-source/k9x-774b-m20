@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-PXTW",
-    "timestamp": "2026-11-04T19:09:00.932Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-PZ7F",
-    "timestamp": "2026-11-04T19:09:02.715Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a84fdf10d1ae97c8172898785e48bf3feef2ce2d74343e6052628bdb82f1b38f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-Y7DM",
     "timestamp": "2026-11-04T19:15:26.554Z",
     "repository": "restatedev/restate",
@@ -7492,6 +7462,36 @@
     "contentHash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BGKA",
+    "timestamp": "2026-11-05T22:01:23.098Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-BHVJ",
+    "timestamp": "2026-11-05T22:01:24.799Z",
+    "repository": "mistralai/Mistral-Large-4-1T-A52B",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+    "contentHash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
