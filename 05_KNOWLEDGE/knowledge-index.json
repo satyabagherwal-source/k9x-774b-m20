@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T14:58:43.320Z",
+  "last_updated": "2026-11-05T15:06:11.894Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -59462,8 +59462,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "93633ac7",
-      "content_hash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
+      "source_version": "6ced18b7",
+      "content_hash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -59561,6 +59561,11 @@
           "number": 6770,
           "title": "Clean up Jenkins source logging for per-source debug (#5520)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7262,
+          "title": "Time detector_execution_duration per detector run (#5526)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59568,7 +59573,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:06:05.964Z",
+      "verified_at": "2026-11-05T15:06:11.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72512,7 +72517,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
+      "content_hash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -72521,7 +72526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:36:14.886Z",
+      "verified_at": "2026-11-05T15:05:59.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183185,6 +183190,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T14:50:59.825Z"
+    },
+    "rule-7262": {
+      "learning_id": "rule-7262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7262,
+      "title": "Time detector_execution_duration per detector run (#5526)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "6ced18b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T15:06:11.860Z"
     }
   },
   "aliases": {

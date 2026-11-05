@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T14:58:43.460Z",
+  "last_updated": "2026-11-05T15:06:12.006Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
-      "verified_at": "2026-11-01T00:36:14.964Z",
+      "content_hash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
+      "verified_at": "2026-11-05T15:05:59.181Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:36:14.964Z"
+      "last_updated": "2026-11-05T15:05:59.181Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
-      "verified_at": "2026-11-04T08:06:06.091Z",
+      "content_hash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
+      "verified_at": "2026-11-05T15:06:12.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:06:06.091Z"
+      "last_updated": "2026-11-05T15:06:12.005Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",

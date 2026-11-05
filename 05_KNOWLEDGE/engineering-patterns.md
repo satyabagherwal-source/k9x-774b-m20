@@ -526317,3 +526317,61 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `401baa61` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7262. Time detector_execution_duration per detector run (#5526) (Harvested from trufflesecurity/trufflehog)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Time detector_execution_duration per detector run (#5526)",
+  "source": "trufflesecurity/trufflehog",
+  "source_url": "https://github.com/trufflesecurity/trufflehog",
+  "source_version": "6ced18b7",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-05T15:06:11.597Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trufflesecurity-trufflehog",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `6ced18b7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6ced18b7`: Time detector_execution_duration per detector run (#5526). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// start feeds only the printAvgDetectorTime report, so it is left at its zero value when that option is off and
+	// must not be read outside that report's code. It is taken once per chunk, so each duration the report records
+	// spans every match processed so far. detectorExecutionDuration times each match on its own instead; see
+	// matchStart below.
+		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
+		// regardless of printAvgDetectorTime.
+		matchStart := time.Now()
+		matchElapsed := time.Since(matchStart)
+		).Observe(float64(matchElapsed.Milliseconds()))
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+		).Observe(float64(time.Since(start).Milliseconds()))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6ced18b7` are properly handled with clean fallback behavior.

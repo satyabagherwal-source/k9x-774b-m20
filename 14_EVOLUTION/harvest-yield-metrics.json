@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T14:58:43.456Z",
-  "total_cycles_completed": 7675,
-  "total_learnings_persisted": 7675,
-  "total_rules_promoted": 7326,
+  "last_updated": "2026-11-05T15:06:11.993Z",
+  "total_cycles_completed": 7677,
+  "total_learnings_persisted": 7677,
+  "total_rules_promoted": 7327,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:14:28.138Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T04:14:38.036Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:21:45.662Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1403,6 +1389,20 @@
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:05:59.178Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:06:11.993Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

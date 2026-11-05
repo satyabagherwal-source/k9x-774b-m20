@@ -7707,3 +7707,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.547Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `83db4fd8` | Multi-dimensional audit evidence | 2026-11-05T14:50:59.943Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-05T14:58:43.451Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-05T15:05:59.172Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `6ced18b7` | Multi-dimensional audit evidence | 2026-11-05T15:06:11.987Z |

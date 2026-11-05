@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
-    "lastHarvestedAt": "2026-11-01T00:36:14.959Z",
+    "contentHash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
+    "lastHarvestedAt": "2026-11-05T15:05:59.172Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "93633ac7",
+    "sourceVersion": "6ced18b7",
     "license": "AGPL-3.0",
-    "contentHash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
-    "lastHarvestedAt": "2026-11-04T08:06:06.082Z",
+    "contentHash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
+    "lastHarvestedAt": "2026-11-05T15:06:11.987Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {

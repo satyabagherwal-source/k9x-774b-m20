@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T14:58:45.993Z",
-    "lastVerified": "2026-11-05T14:58:45.993Z",
+    "lastChecked": "2026-11-05T15:06:14.543Z",
+    "lastVerified": "2026-11-05T15:06:14.543Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T14:30:11.439Z",
-    "lastVerified": "2026-11-05T14:30:11.439Z",
+    "lastChecked": "2026-11-05T15:06:10.612Z",
+    "lastVerified": "2026-11-05T15:06:10.612Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2146,22 +2146,21 @@
     "revisionIdentifier": "a89b18dc"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:38:04.208Z",
-    "lastVerified": "2026-11-05T11:38:04.208Z",
+    "lastChecked": "2026-11-05T15:06:11.122Z",
+    "lastVerified": "2026-11-05T15:06:11.122Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "f5439ff5fe459ef65ccec9fb740bc5927f62d62c4be7d9d2efc282c1080ad15f",
+    "contentHash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "93633ac7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -3097,9 +3096,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-05T00:14:59.900Z",
+    "lastChecked": "2026-11-05T15:06:08.024Z",
     "revisionIdentifier": "c4cb19d8",
-    "lastVerified": "2026-11-05T00:14:59.900Z"
+    "lastVerified": "2026-11-05T15:06:08.024Z"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
     "name": "prithivMLmods/Gender-Classifier-Mini",
@@ -5898,8 +5897,8 @@
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T01:07:55.455Z",
-    "lastVerified": "2026-11-05T01:07:55.455Z",
+    "lastChecked": "2026-11-05T15:06:03.083Z",
+    "lastVerified": "2026-11-05T15:06:03.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -7959,9 +7958,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-04T20:38:45.906Z",
+    "lastChecked": "2026-11-05T15:05:55.542Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-04T20:38:45.906Z"
+    "lastVerified": "2026-11-05T15:05:55.542Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -8849,12 +8848,12 @@
     "officialUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T00:36:14.028Z",
-    "lastVerified": "2026-11-01T00:36:14.028Z",
+    "lastChecked": "2026-11-05T15:05:58.137Z",
+    "lastVerified": "2026-11-05T15:05:58.137Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
+    "contentHash": "348b49659f2cab860d23e6bace9e05cb1cd5d0f7bf1c3a9e0121dfa948900e4b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11140,9 +11139,9 @@
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
     "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
-    "lastChecked": "2026-11-03T12:32:10.070Z",
+    "lastChecked": "2026-11-05T15:06:00.599Z",
     "revisionIdentifier": "c7c08652",
-    "lastVerified": "2026-11-03T12:32:10.070Z"
+    "lastVerified": "2026-11-05T15:06:00.599Z"
   },
   "wooorm-parse-entities": {
     "name": "parse-entities",

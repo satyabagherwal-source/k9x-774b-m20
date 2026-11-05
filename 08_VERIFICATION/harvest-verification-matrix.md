@@ -7698,3 +7698,5 @@
 | `CYCLE-20261105-XYZB` | `2026-11-05T14:50:59.543Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7258, Rule 7259, Rule 7260` | Yes (`2d64e54d...`) |
 | `CYCLE-20261105-XZAB` | `2026-11-05T14:50:59.939Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7261` | Yes (`25510fa6...`) |
 | `CYCLE-20261105-7WXJ` | `2026-11-05T14:58:43.447Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`42de5eed...`) |
+| `CYCLE-20261105-H94V` | `2026-11-05T15:05:59.167Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`348b4965...`) |
+| `CYCLE-20261105-HJ0V` | `2026-11-05T15:06:11.983Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7262` | Yes (`17b00c6c...`) |

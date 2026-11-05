@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `93633ac7`  
+> **Source Version**: `6ced18b7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:06:05.283Z  
+> **Timestamp**: 2026-11-05T15:06:11.130Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:02:57.276Z  
+> **Harvest Timestamp**: 2026-11-05T15:06:11.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28845 stars
+- **Stars / Engagement**: 28875 stars
 
 ---
 
@@ -1140,556 +1140,204 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93633ac7` (2026-11-04)
-**Commit Message**: Clean up Jenkins source logging for per-source debug (#5520)
+### Incident Patch 1: `6ced18b7` (2026-11-05)
+**Commit Message**: Time detector_execution_duration per detector run (#5526)
 
-* Clean up Jenkins source logging for per-source debug
+detectChunk observed the histogram with time.Since(start), but start is
+only set when --print-avg-detector-time is on. With the option off, start
+is the zero time, so every observation saturated to roughly 292 years and
+landed in the +Inf bucket. With it on, start is taken once per chunk, so
+each match's observation also included every earlier match in the chunk.
 
-The Jenkins HTTP client now logs with each request's context, and retry
-waits stop on cancel. Fix levels, redact endpoint URLs, fail Init on an
-empty endpoint, and add log tests with the logtest helpers
+Time each FromData call with its own start and observe the histogram from
+that. The --print-avg-detector-time report keeps its existing timing.
 
-* Return the cancel error when a retry wait is cut short
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-* Find the ctx logger in wrapped contexts, close retry bodies
-
-**File**: `pkg/context/context.go` (modified, +15/-4)
+**File**: `pkg/engine/engine.go` (modified, +9/-1)
 ```diff
-@@ -198,15 +198,26 @@ func AddLogger(parent context.Context) Context {
- 	}
- 	// If the logger exists in the grab bag (and is the correct type),
- 	// return that.
--	if logEntryVal := parent.Value(logEntryKey); logEntryVal != nil {
--		if logger, ok := logEntryVal.(logr.Logger); ok {
--			return WithLogger(parent, logger)
--		}
-+	if logger, ok := LoggerFromContext(parent); ok {
-+		return WithLogger(parent, logger)
- 	}
- 	// Otherwise, add the default logger.
- 	return WithLogger(parent, defaultLogger)
+@@ -1215,6 +1215,10 @@ func (e *Engine) detectorWorker(ctx context.Context) {
  }
  
-+// LoggerFromContext returns the logger carried by ctx, and false if it has none.
-+// Unlike AddLogger, it tells the caller when there is no logger, so the caller can
-+// fall back to its own logger instead of the default one. It also finds the logger
-+// when ctx is a Context wrapped in a plain context.Context, for example by net/http
-+// when a client has a Timeout.
-+func LoggerFromContext(ctx context.Context) (logr.Logger, bool) {
-+	if loggerCtx, ok := ctx.(Context); ok {
-+		return loggerCtx.Logger(), true
-+	}
-+	logger, ok := ctx.Value(logEntryKey).(logr.Logger)
-+	return logger, ok
-+}
-+
- // SetDefaultLogger sets the package-level global default logger that will be
- // used for Background and TODO contexts. On startup, the default logger will
- // be configured to output logs to stderr. Use logr.Discard() to disable all
-```
-
-**File**: `pkg/context/context_test.go` (modified, +23/-0)
-```diff
-@@ -274,3 +274,26 @@ func TestWithLogLevel_Clamped(t *testing.T) {
+ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
++	// start feeds only the printAvgDetectorTime report, so it is left at its zero value when that option is off and
++	// must not be read outside that report's code. It is taken once per chunk, so each duration the report records
++	// spans every match processed so far. detectorExecutionDuration times each match on its own instead; see
++	// matchStart below.
+ 	var start time.Time
+ 	if e.printAvgDetectorTime {
+ 		start = time.Now()
+@@ -1251,12 +1255,16 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
+ 		t := time.AfterFunc(detectionTimeout+1*time.Second, func() {
+ 			ctx.Logger().Error(nil, "a detector ignored the context timeout")
  		})
- 	}
- }
-+
-+func TestLoggerFromContext(t *testing.T) {
-+	logger := logr.Discard().WithName("test")
-+
-+	t.Run("Context", func(t *testing.T) {
-+		got, ok := LoggerFromContext(WithLogger(context.Background(), logger))
-+		assert.True(t, ok)
-+		assert.Equal(t, logger, got)
-+	})
-+
-+	t.Run("Context wrapped in a plain context", func(t *testing.T) {
-+		wrapped, cancel := context.WithTimeout(WithLogger(context.Background(), logger), time.Minute)
-+		defer cancel()
-+		got, ok := LoggerFromContext(wrapped)
-+		assert.True(t, ok)
-+		assert.Equal(t, logger, got)
-+	})
-+
-+	t.Run("plain context without a logger", func(t *testing.T) {
-+		_, ok := LoggerFromContext(context.Background())
-+		assert.False(t, ok)
-+	})
-+}
++		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
++		// regardless of printAvgDetectorTime.
++		matchStart := time.Now()
+ 		results, err := e.verificationCache.FromData(
+ 			ctx,
+ 			data.detector.Detector,
+ 			data.verify,
+ 			data.chunk.SecretID != 0,
+ 			matchBytes)
++		matchElapsed := time.Since(matchStart)
+ 		t.Stop()
+ 		cancel()
+ 		if err != nil {
+@@ -1285,7 +1293,7 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
+ 		).Inc()
+ 		detectorExecutionDuration.WithLabelValues(
+ 			detectorNameStr,
+-		).Observe(float64(time.Since(start).Milliseconds()))
++		).Observe(float64(matchElapsed.Milliseconds()))
+ 
+ 		if e.printAvgDetectorTime && len(results) > 0 {
+ 			elapsed := time.Since(start)
 ```
 
-**File**: `pkg/roundtripper/roundtripper.go` (modified, +25/-14)
+**File**: `pkg/engine/engine_test.go` (modified, +93/-0)
 ```diff
-@@ -2,7 +2,6 @@ package roundtripper
- 
- import (
- 	"crypto/tls"
--	"fmt"
- 	"net/http"
- 	"strconv"
- 	"strings"
-@@ -65,10 +64,17 @@ func NewRoundTripper(original http.RoundTripper, opts ...func(*RoundTripper)) *R
- }
- 
- func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-+	// Log with the request's context when it has a logger, so the lines get the caller's fields and log level
-+	// (including per-source debug). r.logger is the fallback for requests made without one.
-+	baseLogger := r.logger
-+	if logger, ok := context.LoggerFromContext(req.Context()); ok {
-+		baseLogger = logger
-+	}
-+
- 	retries := 0
- 	for {
- 		// Use the redacted URL so a password in it (user:pass@host) is never logged.
--		logger := r.logger.WithValues(
-+		logger := baseLogger.WithValues(
- 			"method", req.Method,
- 			"url", req.URL.Redacted(),
- 		)
-@@ -77,17 +83,11 @@ func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
- 			req.SetBasicAuth(r.username, r.password)
- 		}
- 
--		authMethod := determineAuth(req)
- 		if r.LoggingRoundtripper != nil {
--			logger.V(5).Info(fmt.Sprintf("sending request with %s", authMethod))
-+			logger.V(5).Info("sending request", "auth", determineAuth(req))
- 		}
- 
- 		response, err := r.original.RoundTrip(req)
--		if err != nil {
--			logger.V(5).Info("got error while sending request",
--				"error", err,
--			)
--		}
- 
- 		if r.LoggingRoundtripper != nil && response != nil {
- 			logger.V(5).Info("got response",
-@@ -98,21 +98,32 @@ func (r *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
- 		reason, shouldRetry, duration := r.shouldRetryRequest(response, err)
- 		if shouldRetry {
- 			if retries >= int(r.maxRetries) {
--				r.logger.V(2).Info("max retries reached",
--					"host", req.Host,
-+				logger.V(4).Info("max retries reached",
- 					"reason", reason,
- 					"retries", retries,
- 				)
- 				return response, err
- 			}
--			r.logger.V(2).Info("retrying request",
--				"host", req.Host,
-+			logger.V(4).Info("retrying request",
- 				"reason", reason,
- 				"retries", retries,
-+				"wait", duration,
- 			)
- 
- 			retries++
--			time.Sleep(duration)
-+			// This response is dropped for the retry or the cancel below, so close it here or the
-+			// connection leaks.
-+			if response != nil {
-+				_ = response.Body.Close()
-+			}
-+			// Stop waiting if the caller gives up, a retry wait can be 30 seconds or more.
-+			select {
-+			case <-req.Context().Done():
-+				// Return the cancel, not the last attempt's result, so the caller sees an interrupt
-+				// rather than an HTTP failure.
-+				return nil, req.Context().Err()
-+			case <-time.After(duration):
-+			}
- 			continue
- 		}
- 
-```
-
-**File**: `pkg/roundtripper/roundtripper_test.go` (modified, +100/-0)
-```diff
-@@ -1,12 +1,17 @@
- package roundtripper
- 
- import (
-+	"context"
- 	"fmt"
-+	"io"
- 	"net/http"
+@@ -9,19 +9,22 @@ import (
  	"net/http/httptest"
- 	"strings"
-+	"sync/atomic"
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ 	"sync"
+ 	"sync/atomic"
  	"testing"
-+	"time"
+ 	"time"
  
-+	"github.com/go-logr/logr"
+ 	"github.com/google/go-cmp/cmp"
+ 	lru "github.com/hashicorp/golang-lru/v2"
++	"github.com/prometheus/client_golang/prometheus"
  	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/require"
+ 	"google.golang.org/protobuf/testing/protocmp"
+ 	"pgregory.net/rapid"
  
-@@ -34,3 +39,98 @@ func TestRoundTripper_DebugLogsHidePasswordInURL(t *testing.T) {
- 		assert.NotContains(t, fields, "hunter2")
- 	}
- }
-+
-+func TestRoundTripper_CancelDuringRetryWait(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.WriteHeader(http.StatusInternalServerError)
-+	}))
-+	defer server.Close()
-+
-+	client := &http.Client{Transport: NewRoundTripper(nil,
-+		WithRetryable(WithShouldRetry5XXDuration(30*time.Second)),
-+	)}
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
-+	defer cancel()
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-+	require.NoError(t, err)
-+
-+	start := time.Now()
-+	resp, err := client.Do(req)
-+	if resp != nil {
-+		_ = resp.Body.Close()
-+	}
-+
-+	assert.Nil(t, resp)
-+	assert.ErrorIs(t, err, context.DeadlineExceeded)
-+	assert.Less(t, time.Since(start), 5*time.Second)
-+}
-+
-+func TestRoundTripper_LogsWithWrappedRequestContext(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
-+	defer server.Close()
-+
-+	// A client Timeout makes net/http wrap the request ctx in a plain context.
-+	// The lines must still use the ctx logger, not the discarding fallback.
-+	ctx, logs := logtest.SourceContext(true)
-+	client := &http.Client{
-+		Timeout:   5 * time.Second,
-+		Transport: NewRoundTripper(nil, WithLogger(logr.Discard()), WithLogging()),
-+	}
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-+	require.NoError(t, err)
-+
-+	resp, err := client.Do(req)
-+	require.NoError(t, err)
-+	require.NoError(t, resp.Body.Close())
-+
-+	logtest.CheckSourceLines(t, logs.All())
-+}
-+
-+// closeTracker counts how many response bodies were closed.
-+type closeTracker struct {
-+	original http.RoundTripper
-+	closed   atomic.Int32
-+}
-+
-+func (c *closeTracker) RoundTrip(req *http.Request) (*http.Response, error) {
-+	resp, err := c.original.RoundTrip(req)
-+	if resp != nil {
-+		resp.Body = &trackedBody{ReadCloser: resp.Body, closed: &c.closed}
-+	}
-+	return resp, err
-+}
-+
-+type trackedBody struct {
-+	io.ReadCloser
-+	closed *atomic.Int32
-+}
-+
-+func (b *trackedBody) Close() error {
-+	b.closed.Add(1)
-+	return b.ReadCloser.Close()
-+}
-+
-+func TestRoundTripper_ClosesBodyBeforeRetry(t *testing.T) {
-+	var calls atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if calls.Add(1) == 1 {
-+			w.WriteHeader(http.StatusInternalServerError)
-+		}
-+	}))
-+	defer server.Close()
-+
-+	tracker := &closeTracker{original: http.DefaultTransport}
-+	client := &http.Client{Transport: NewRoundTripper(tracker,
-+		WithRetryable(WithShouldRetry5XXDuration(time.Millisecond)),
-+	)}
-+
-+	resp, err := client.Get(server.URL)
-+	require.NoError(t, err)
-+	assert.Equal(t, http.StatusOK, resp.StatusCode)
-+
-+	// The 500 was closed before the retry. The 200 is still open for the caller.
-+	assert.EqualValues(t, 1, tracker.closed.Load())
-+	require.NoError(t, resp.Body.Close())
-+	assert.EqualValues(t, 2, tracker.closed.Load())
-+}
-```
-
-**File**: `pkg/sources/jenkins/README.md` (modified, +13/-1)
-```diff
-@@ -149,6 +149,18 @@ trufflehog jenkins --url https://jenkins.example.com
- trufflehog jenkins --url https://jenkins.example.com --username my-username --password my-password --insecure-skip-verify-tls
- ```
- 
-+## Debug Logs
-+
-+With debug on for this source (`debug: true` in the config), the scan logs:
-+
-+- `V(1)`: `initialized Jenkins source` with the auth method (never the credentials), the endpoint with any password redacted, and whether TLS verification is skipped, then the number of jobs found.
-+- `V(2)`: `got builds` for each job, with its build count.
-+- `V(3)`: the objects listed in each folder, each object as it is processed, and `chunking build` for each build.
-+- `V(4)`: each Jenkins API page request, `Skipping object` with a `reason` for objects that are not a supported job type, and each retry of a request.
-+- `V(5)`: each HTTP request with its auth type, and each response status code.
-+
-+Lines carry `job_name`, `build_number` and the other job and build fields where they apply. Failures to get a job's builds or a build log are logged as errors at the default level.
-+
- ## Troubleshooting
- 
- ### Common Issues
-@@ -174,4 +186,4 @@ trufflehog jenkins --url https://jenkins.example.com --username my-username --pa
- ---
- 
- **Issue**: Some jobs are missing from the scan
--**Solution**: TruffleHog only scans Freestyle projects and Pipeline jobs, and only recurses into the plain Jenkins folder type. A job of another type, or one nested inside a different kind of container, is silently skipped.
-+**Solution**: TruffleHog only scans Freestyle projects and Pipeline jobs, and only recurses into the plain Jenkins folder type. A job of another type, or one nested inside a different kind of container, is skipped. With debug on, the scan logs `Skipping object` for each one.
-```
-
-**File**: `pkg/sources/jenkins/jenkins.go` (modified, +23/-21)
-```diff
-@@ -93,7 +93,6 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
- 
- 	const retryDelay = time.Second * 30
- 	opts = append(opts,
--		roundtripper.WithLogger(aCtx.Logger()),
- 		roundtripper.WithLogging(),
- 		roundtripper.WithRetryable(
- 			roundtripper.WithShouldRetry5XXDuration(retryDelay),
-@@ -134,21 +133,29 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
- 		return errors.Errorf("unknown or unspecified authentication method provided for Jenkins source %q (unauthenticated scans must be explicitly configured)", name)
- 	}
- 
-+	if unparsedURL == "" {
-+		return errors.New("Jenkins source requires an endpoint URL")
-+	}
- 	s.url, err = url.Parse(unparsedURL)
--	if err != nil || unparsedURL == "" {
--		return errors.WrapPrefix(err, fmt.Sprintf("Invalid endpoint URL given for Jenkins source: %s", unparsedURL), 0)
-+	if err != nil {
-+		// A *url.Error repeats the raw URL, which can hold a password, so keep only the cause.
-+		var urlErr *url.Error
-+		if errors.As(err, &urlErr) {
-+			err = urlErr.Err
-+		}
-+		return errors.WrapPrefix(err, "Invalid endpoint URL given for Jenkins source", 0)
- 	}
- 
- 	aCtx.Logger().V(1).Info("initialized Jenkins source",
- 		"auth_method", authMethod,
--		"url_raw", unparsedURL,
--		"url_parsed", s.url.String())
-+		"endpoint", s.url.Redacted(),
-+		"insecure_skip_verify_tls", conn.GetInsecureSkipVerifyTls())
- 
- 	return nil
- }
- 
--func (s *Source) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
--	request, err := http.NewRequest(method, url, body)
-+func (s *Source) NewRequest(ctx context.Context, method, url string, body io.Reader) (*http.Request, error) {
-+	request, err := http.NewRequestWithContext(ctx, method, url, body)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -231,9 +238,6 @@ func (c *jobCollector) UnitErr(_ context.Context, err error) error { return err
- // the reporter returns an error, which aborts the walk and is returned to the
- // caller.
- func (s *Source) walkJobs(ctx context.Context, absolutePath string, reporter sources.UnitReporter) error {
--	ctx.Logger().V(3).Info("getting objects",
--		"path", absolutePath)
--
- 	objects, err := s.GetJenkinsObjectsForPath(ctx, absolutePath)
- 	if err != nil {
- 		return reporter.UnitErr(ctx, errors.WrapPrefix(err, fmt.Sprintf("failed to get Jenkins objects for path %q", absolutePath), 0))
-@@ -269,6 +273,7 @@ func (s *Source) walkJobs(ctx context.Context, absolutePath string, reporter sou
- 
- 		if job.Class != "hudson.model.FreeStyleProject" &&
- 			job.Class != "org.jenkinsci.plugins.workflow.job.WorkflowJob" {
-+			ctx.Logger().V(4).Info("Skipping object", "reason", "unsupported class")
- 			continue
- 		}
- 
-@@ -300,7 +305,7 @@ func (s *Source) GetJenkinsObjectsForPath(ctx context.Context, absolutePath stri
- 
- 		// The endpoint URL can hold a password, so log the redacted form.
- 		ctx.Logger().V(4).Info("executing query", "query_url", baseUrl.Redacted())
--		req, err := s.NewRequest(http.MethodGet, baseUrl.String(), nil)
-+		req, err := s.NewRequest(ctx, http.MethodGet, baseUrl.String(), nil)
- 		if err != nil {
- 			return res, errors.WrapPrefix(err, "Failed to create new request to get jenkins jobs", 0)
- 		}
-@@ -337,16 +342,14 @@ func (s *Source) GetJenkinsBuilds(ctx context.Context, jobAbsolutePath string) (
- 	ctx = context.WithValues(ctx,
- 		"job_path", jobAbsolutePath)
- 
--	ctx.Logger().V(2).Info("getting builds")
--
- 	builds := JenkinsBuildResponse{}
- 	buildsUrl := *s.url
- 	for i := 0; true; i += 100 {
- 		buildsUrl.Path = path.Join(jobAbsolutePath, "api/json")
- 		params := url.Values{}
- 		params.Set("tree", fmt.Sprintf("builds[number,url]{%d,%d}", i, i+100))
- 		buildsUrl.RawQuery = params.Encode()
--		req, err := s.NewRequest(http.MethodGet, buildsUrl.String(), nil)
-+		req, err := s.NewRequest(ctx, http.MethodGet, buildsUrl.String(), nil)
- 		if err != nil {
- 			return builds, errors.WrapPrefix(err, "Failed to create new request to get jenkins builds", 0)
- 		}
-@@ -440,7 +443,7 @@ func (s *Source) chunkBuild(
- 	projectName string,
- 	chunksChan chan *sources.Chunk,
- ) error {
--	ctx.Logger().V(2).Info("chunking build")
-+	ctx.Logger().V(3).Info("chunking build")
- 
- 	parsedUrl, err := url.Parse(build.Url)
- 	if err != nil {
-@@ -449,23 +452,23 @@ func (s *Source) chunkBuild(
- 	buildLogURL := *s.url
- 	buildLogURL.Path = path.Join(parsedUrl.Path, "consoleText")
- 	ctx = context.WithValues(ctx,
--		"build_log_url", buildLogURL.String())
-+		"build_log_url", buildLogURL.Redacted())
- 
--	req, err := s.NewRequest(http.MethodGet, buildLogURL.String(), nil)
-+	req, err := s.NewRequest(ctx, http.MethodGet, buildLogURL.String(), nil)
- 	if err != nil {
--		return fmt.Errorf("failed to create HTTP request to %q: %w", buildLogURL.String(), err)
-+		return fmt.Errorf("failed to create HTTP request to %q: %w", buildLogURL.Redacted(), err)
- 	}
- 
- 	resp, err := s.client.Do(req)
- 	if err != nil {
--		return fmt.Errorf("could not retrieve build log from %q: %w", buildLogURL.String(), err)
-+		return fmt.
-```
-
-**File**: `pkg/sources/jenkins/jenkins_test.go` (modified, +88/-0)
-```diff
-@@ -11,9 +11,11 @@ import (
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap/zaptest/observer"
- 	"google.golang.org/protobuf/types/known/anypb"
- 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/cache/simple"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/config"
  	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-@@ -297,3 +299,89 @@ func TestJenkinsChunkBuildDirect(t *testing.T) {
- 	expectedLink := server.URL + "/job/test-project/123/consoleText"
- 	assert.Equal(t, expectedLink, jenkinsMetadata.Link)
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/custom_detectors"
+@@ -2040,6 +2043,96 @@ func TestEngine_DetectChunk_CacheHitIsNotVerificationSkipped(t *testing.T) {
+ 	}
  }
+ 
++// slowDetectorType is used only by slowDetector, so its detectorExecutionDuration series isn't shared with other tests.
++const slowDetectorType = detector_typepb.DetectorType(-1001)
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const (
-+		testSecret  = "jenkinsdebuglogtestsecret"
-+		urlPassword = "jenkinsdebuglogurlpassword"
-+		password    = "jenkinsdebuglogpassword"
-+	)
-+
-+	mux := http.NewServeMux()
-+	server := httptest.NewServer(mux)
-+	defer server.Close()
-+
-+	mux.HandleFunc("/api/json", func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = fmt.Fprintf(w, `{"jobs":[`+
-+			`{"_class":"org.jenkinsci.plugins.workflow.job.WorkflowJob","name":"good","url":"%[1]s/job/good/"},`+
-+			`{"_class":"hudson.model.ExternalJob","name":"external","url":"%[1]s/job/external/"},`+
-+			`{"_class":"hudson.model.FreeStyleProject","name":"missing","url":"%[1]s/job/missing/"}]}`, server.URL)
-+	})
-+	mux.HandleFunc("/job/good/api/json", func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = fmt.Fprintf(w, `{"builds":[{"number":1,"url":"%s/job/good/1/"}]}`, server.URL)
-+	})
-+	mux.HandleFunc("/job/good/1/consoleText", func(w http.ResponseWriter, r *http.Request) {
-+		_, _ = fmt.Fprint(w, "token = "+testSecret)
-+	})
-+	// Builds for "missing" are not handled, so the mux returns 404 and the source logs an error.
-+
-+	endpoint := strings.Replace(server.URL, "http://", "http://user:"+urlPassword+"@", 1)
-+	conn, err := anypb.New(&sourcespb.Jenkins{
-+		Endpoint: endpoint,
-+		Credential: &sourcespb.Jenkins_BasicAuth{
-+			BasicAuth: &credentialspb.BasicAuth{Username: "user", Password: password},
-+		},
-+	})
-+	require.NoError(t, err)
-+
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		ctx, logs := logtest.SourceContext(debug)
-+		s := new(Source)
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
-+
-+		chunksCh := make(chan *sources.Chunk, 10)
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+		require.NotEmpty(t, chunksCh)
-+		return logs.All()
-+	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret, urlPassword, password)
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
++// slowDetector takes a fixed time on every FromData call and returns no results, so tests can check what
++// detectorExecutionDuration records for each detector run.
++type slowDetector struct {
++	delay time.Duration
 +}
 +
-+func TestInit_EndpointErrors(t *testing.T) {
-+	const urlPassword = "jenkinsinittesturlpassword"
++func (d slowDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
++	time.Sleep(d.delay)
++	return nil, nil
++}
++func (d slowDetector) Keywords() []string                 { return []string{"keyword"} }
++func (d slowDetector) Type() detector_typepb.DetectorType { return slowDetectorType }
++func (d slowDetector) Description() string                { return "slow detector for testing" }
 +
-+	tests := []struct {
-+		name     string
-+		endpoint string
-+	}{
-+		{name: "empty endpoint", endpoint: ""},
-+		{name: "invalid endpoint", endpoint: "http://user:" + urlPassword + "@host:badport"},
++// detectorExecutionDurationSnapshot reads one detector's detectorExecutionDuration series from the default gatherer.
++// It returns the observation count and the cumulative count for each bucket upper bound.
++func detectorExecutionDurationSnapshot(t *testing.T, detectorName string) (uint64, map[float64]uint64) {
++	t.Helper()
++
++	families, err := prometheus.DefaultGatherer.Gather()
++	require.NoError(t, err)
++
++	name := prometheus.BuildFQName(common.MetricsNamespace, common.MetricsSubsystem, "detector_execution_duration")
++	buckets := map[float64]uint64{}
++	for _, family := range families {
++		if family.GetName() != name {
++			continue
++		}
++		for _, metric := range family.GetMetric() {
++			for _, label := range metric.GetLabel() {
++				if label.GetName() != "detector_name" || label.GetValue() != detectorName {
++					continue
++				}
++				for _, bucket := range metric.GetHistogram().GetBucket() {
++					buckets[bucket.GetUpperBound()] = bucket.GetCumulativeCount()
++				}
++				return metric.GetHistogram().GetSampleCount(), buckets
++			}
++		}
 +	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			conn, err := anypb.New(&sourcespb.Jenkins{
-+				Endpoint:   tc.endpoint,
-+				Credential: &sourcespb.Jenkins_Unauthenticated{},
-+			})
-+			require.NoError(t, err)
++	return 0, buckets
++}
 +
-+			err = new(Source).Init(context.Background(), "test source", 1, 1, false, conn, 1)
-+			require.Error(t, err)
-+			assert.NotContains(t, err.Error(), urlPassword)
++// TestEngine_DetectChunk_RecordsDurationPerDetectorRun validates that detectorExecutionDuration records one
++// observation per keyword match, each timing only that match's FromData call, whether or not the
++// printAvgDetectorTime report is enabled.
++func TestEngine_DetectChunk_RecordsDurationPerDetectorRun(t *testing.T) {
++	ctx := context.Background()
++	const delay = 80 * time.Millisecond
++
++	for _, printAvgDetectorTime := range []bool{false, true} {
++		t.Run(fmt.Sprintf("printAvgDetectorTime=%v", printAvgDetectorTime), func(t *testing.T) {
++			// Arrange: Create a minimal engine with a passthrough verification cache.
++			e := &Engine{
++				verificationCache:    verificationcache.New(nil, &verificationcache.InMemoryMetrics{}),
++				printAvgDetectorTime: printAvgDetectorTime,
++			}
++
++			// Arrange: Place two keywords far enough apart that their match windows don't merge, so the detector runs
++			// twice on one chunk.
++			data := []byte("keyword" + strings.Repeat(" ", 4096) + "keyword")
++			ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{slowDetector{delay: delay}})
++			detectorMatches := ahcore.FindDetectorMatches(data)
++			require.Len(t, detectorMatches, 1)
++			require.Len(t, detectorMatches[0].Matches(), 2)
++
++			detectorName := slowDetectorType.String()
++			countBefore, bucketsBefore := detectorExecutionDurationSnapshot(t, detectorName)
++
++			// Act
++			e.detectChunk(ctx, detectableChunk{
++				detector: detectorMatches[0],
++				verify:   true,
++				wgDoneFn: func() {},
++			})
++
++			// Assert: Each run takes about 80ms, so per-run timing puts both observations above the 25ms bound and at
++			// or below the 125ms bound. Timing from the start of the chunk would put the second run near 160ms, and
++			// an unset start time would put both past the largest bound.
++			countAfter, bucketsAfter := detectorExecutionDurationSnapshot(t, detectorName)
++			assert.Equal(t, uint64(2), countAfter-countBefore)
++			assert.Equal(t, uint64(0), bucketsAfter[25]-bucketsBefore[25])
++			assert.Equal(t, uint64(2), bucketsAfter[125]-bucketsBefore[125])
 +		})
 +	}
 +}
++
+ // TestEngine_ScannerWorker_DetectableChunkHasCorrectVerifyFlag validates that scannerWorker generates detectableChunk
+ // structs that have the correct verify flag set. I
+```
+
+**File**: `pkg/engine/metrics.go` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ var (
+ 		[]string{"detector_name", "source_type", "source_name"},
+ 	)
+ 
+-	// Note this is the time taken to call FromData on each detector, not necessarily the time taken
++	// Note this is the time taken by one FromData call, made once per keyword match, not necessarily the time taken
+ 	// to verify a credential via an API call. If the regex match within FromData does not match, the
+ 	// detector will return early. For now this is a good proxy for the time taken to verify a credential.
+ 	// TODO (ahrav)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5526** (2026-11-05): Time detector_execution_duration per detector run (@unsmith)
 - **PR #5520** (2026-11-04): Clean up Jenkins source logging for per-source debug (@kashifkhan0771)
 - **PR #5519** (2026-11-03): Use shared logtest helpers in source debug logging tests (@kashifkhan0771)
 - **PR #5510** (2026-11-03): Clean up Postman source logging for per-source debug (@kashifkhan0771)
 - **PR #5509** (2026-11-03): Clean up GCS source logging for per-source debug (@kashifkhan0771)
 - **PR #5505** (2026-11-03): Update module go.mongodb.org/mongo-driver to v1.17.10 (@renovate[bot])
-- **PR #5504** (2026-11-03): Update module github.com/ulikunitz/xz to v0.5.17 (@renovate[bot])
 
 ---
 
@@ -1709,45 +1357,36 @@ empty endpoint, and add log tests with the logtest helpers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Jenkins source logging for per-source debug (#5520)
+## X. Time detector_execution_duration per detector run (#5526)
 
 **RULE**:
-When implementing operations in `pkg/context/context.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93633ac7`: Clean up Jenkins source logging for per-source debug (#5520). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ced18b7`: Time detector_execution_duration per detector run (#5526). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/context/context.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if logger, ok := LoggerFromContext(parent); ok {
-		return WithLogger(parent, logger)
-// LoggerFromContext returns the logger carried by ctx, and false if it has none.
-// Unlike AddLogger, it tells the caller when there is no logger, so the caller can
-// fall back to its own logger instead of the default one. It also finds the logger
-// when ctx is a Context wrapped in a plain context.Context, for example by net/http
-// when a client has a Timeout.
-func LoggerFromContext(ctx context.Context) (logr.Logger, bool) {
-	if loggerCtx, ok := ctx.(Context); ok {
-		return loggerCtx.Logger(), true
-	}
-	logger, ok := ctx.Value(logEntryKey).(logr.Logger)
-	return logger, ok
-}
-
+	// start feeds only the printAvgDetectorTime report, so it is left at its zero value when that option is off and
+	// must not be read outside that report's code. It is taken once per chunk, so each duration the report records
+	// spans every match processed so far. detectorExecutionDuration times each match on its own instead; see
+	// matchStart below.
+		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
+		// regardless of printAvgDetectorTime.
+		matchStart := time.Now()
+		matchElapsed := time.Since(matchStart)
+		).Observe(float64(matchElapsed.Milliseconds()))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if logEntryVal := parent.Value(logEntryKey); logEntryVal != nil {
-		if logger, ok := logEntryVal.(logr.Logger); ok {
-			return WithLogger(parent, logger)
-		}
+		).Observe(float64(time.Since(start).Milliseconds()))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93633ac7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ced18b7` are properly handled with clean fallback behavior.
