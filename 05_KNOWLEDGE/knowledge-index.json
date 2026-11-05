@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T19:38:11.605Z",
+  "last_updated": "2026-11-05T19:45:34.639Z",
   "total_verified_learnings": 1220,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5270,11 +5270,16 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "eca2269a",
-      "content_hash": "67cdcc23e38250e1b214b8576268fc7ea4b9971bf32f4556e62111fd15205e5e",
+      "source_version": "3ea3f553",
+      "content_hash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "add learning strategy lab and benchmark evidence (#363)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1712,
           "title": "pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri",
@@ -5481,7 +5486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T21:43:41.999Z",
+      "verified_at": "2026-11-05T19:45:34.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40306,11 +40311,16 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "3bf9166a",
-      "content_hash": "de31ed6397295f67889824fd45f56ca561a7a19df95035426938a1e1af601d37",
+      "source_version": "79f19f64",
+      "content_hash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "picker): keep a superseded refresh from overwriting the alt-x layout (#4708)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1714,
           "title": "deps): declare dirs as a Windows-only dependency (#4465)",
@@ -40387,7 +40397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:22:31.195Z",
+      "verified_at": "2026-11-05T19:45:20.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49430,11 +49440,16 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "7514fb8b",
-      "content_hash": "084be519e71d01763c8ec7e614e97d20aeddce41a3420d36a40a263f53d9f290",
+      "source_version": "aa861529",
+      "content_hash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "internal/timeout: reject negative durations (#7799)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2254,
           "title": "build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)",
@@ -49501,7 +49516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:57:50.821Z",
+      "verified_at": "2026-11-05T19:45:27.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

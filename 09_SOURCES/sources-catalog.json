@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "eca2269a",
+    "sourceVersion": "3ea3f553",
     "license": "MIT",
-    "contentHash": "67cdcc23e38250e1b214b8576268fc7ea4b9971bf32f4556e62111fd15205e5e",
-    "lastHarvestedAt": "2026-11-02T21:43:42.109Z",
+    "contentHash": "719eee9fc41f7823806f66fe2d7406a1be95ad286cf00f5a9a941af03acecc86",
+    "lastHarvestedAt": "2026-11-05T19:45:34.733Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "3bf9166a",
+    "sourceVersion": "79f19f64",
     "license": "NOASSERTION",
-    "contentHash": "de31ed6397295f67889824fd45f56ca561a7a19df95035426938a1e1af601d37",
-    "lastHarvestedAt": "2026-11-05T00:22:31.314Z",
+    "contentHash": "2361acfc09cd2f5c7a2e38caa8c63991934732ffadf4454e19d2d1905f84b301",
+    "lastHarvestedAt": "2026-11-05T19:45:20.795Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "7514fb8b",
+    "sourceVersion": "aa861529",
     "license": "Apache-2.0",
-    "contentHash": "084be519e71d01763c8ec7e614e97d20aeddce41a3420d36a40a263f53d9f290",
-    "lastHarvestedAt": "2026-11-04T09:57:50.935Z",
+    "contentHash": "9d22f65d8a6c28812a3391d050c2c1ce654ccc7aefa2e35a75d326ed79e714c8",
+    "lastHarvestedAt": "2026-11-05T19:45:27.232Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {

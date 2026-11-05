@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `3bf9166a`  
+> **Source Version**: `79f19f64`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:22:30.547Z  
+> **Timestamp**: 2026-11-05T19:45:19.402Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:22:29.963Z  
+> **Harvest Timestamp**: 2026-11-05T19:45:18.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11014 stars
+- **Stars / Engagement**: 11434 stars
 
 ---
 
@@ -2018,414 +2018,431 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3bf9166a` (2026-11-04)
-**Commit Message**: fix(plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698)
+### Incident Patch 1: `8d46d6b3` (2026-11-05)
+**Commit Message**: fix(picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
 
-The pi, oh-my-pi, and OpenCode plugins ran a bare `wt`. On Windows that
-name usually resolves to Windows Terminal's app-execution alias in
-`%LOCALAPPDATA%\Microsoft\WindowsApps`. The alias exits 0 and reports
-the unknown program in a popup, so every activity-marker update opened
-an error window. OpenCode's worktree `switch`/`remove` strategy also
-never reached worktrunk. The Claude Code and Codex hooks didn't have
-this problem because they run through `plugins/worktrunk/hooks/wt.sh`,
-which already handles this case.
+After two quick `alt-r` refreshes in the `wt switch` picker, a
+superseded refresh whose skeleton lands last could overwrite the layout
+that `alt-x` uses, so a later `alt-x` rendered its `/ branch` row on the
+old column grid. `provide_layout` wrote the session-shared `layout_slot`
+unconditionally. `on_skeleton` already guards the other session-shared
+writes (`shared_items` and the shortcut table) with
+`spawn_gen.is_current()`. This change applies the same check inside the
+lock and updates the module summary, which still described three sinks.
 
-Each plugin now has a small `worktrunkBin()` that follows `wt.sh`'s
-policy: use `WORKTRUNK_BIN` if set, otherwise use `wt` off Windows. On
-Windows, it walks `PATH` in order and prefers `git-wt.exe`, then accepts
-a `wt.exe` only if the first one found isn't under `WindowsApps`. When
-nothing usable is found, marker updates are skipped, and OpenCode's
-strategy throws an error naming `git-wt.exe` and `WORKTRUNK_BIN`. The
-helper is copied into all three files because each one is installed as a
-standalone file.
+`superseded_skeleton_leaves_shared_state_alone` now also checks that a
+live spawn publishes its layout and that a superseded one leaves the
+slot empty. The new assertion fails without the guard.
 
-Verification: dev/*.ts has no test harness, so I checked locally with
-Node 22'
+The nightly sweep (run
+[41980394445](https://github.com/max-sixty/worktrunk/actions/runs/41980394445))
+prepared this fix, but its PR was refused twice because the bot had
+reached its creation allowance (#4706). The daily run review opened it
+from the pushed branch without changes.
 
-**File**: `dev/omp-hook.ts` (modified, +33/-1)
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+
+**File**: `src/commands/picker/progressive_handler.rs` (modified, +54/-8)
 ```diff
-@@ -10,15 +10,47 @@
- // earendil-works Pi is a different agent with a different loader and API —
- // see `dev/pi-extension.ts` and `wt config plugins pi install`.
+@@ -1,9 +1,11 @@
+ //! Progressive-rendering glue between `collect::collect` and the skim picker.
+ //!
+-//! Each event funnels into three places: skim's item stream (`tx`, consumed
+-//! by the skeleton batch — the handler's only send), each item's shared
+-//! `rendered` mutex (in-place redraws), and `shared_items` used by
+-//! `PickerCollector` for alt-x.
++//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
++//! batch — the handler's only send) and each item's shared `rendered` mutex
++//! (in-place redraws). The skeleton also publishes session-shared state that
++//! outlives this spawn — `shared_items`, the shortcut table, and the layout
++//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
++//! superseded skeleton landing after a rapid second alt-r leaves it alone.
+ //!
+ //! # Why updates poke a render
+ //!
+@@ -639,8 +641,13 @@ impl PickerProgressHandler for PickerHandler {
  
-+import { lstatSync } from "node:fs";
-+import { delimiter, join } from "node:path";
-+
- import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
- 
-+// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
-+// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
-+// accepts any arguments, exits 0, and reports the unknown program in a popup
-+// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
-+// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
-+// seen for the lookup to stop where Windows' own PATH search would.
-+// `undefined` means no worktrunk binary was found.
-+function worktrunkBin(): string | undefined {
-+  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
-+  if (process.platform !== "win32") return "wt";
-+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
-+  const find = (name: string) =>
-+    dirs
-+      .map((dir) => join(dir, name))
-+      .find((path) => {
-+        try {
-+          lstatSync(path);
-+          return true;
-+        } catch {
-+          return false;
+     fn provide_layout(&self, layout: &crate::commands::list::layout::LayoutConfig) {
+         // Stow a clone for `PickerCollector` to render the `alt-x` `/ branch`
+-        // row on this grid. Overwritten each skeleton (a refresh re-collects).
+-        *self.layout_slot.lock().unwrap() = Some(layout.clone());
++        // row on this grid. Overwritten each skeleton (a refresh re-collects),
++        // but only by the live spawn — a superseded skeleton's grid would
++        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
++        let mut slot = self.layout_slot.lock().unwrap();
++        if self.spawn_gen.is_current() {
++            *slot = Some(layout.clone());
 +        }
-+      });
-+  if (find("git-wt.exe")) return "git-wt.exe";
-+  const wt = find("wt.exe");
-+  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
-+}
-+
- export default function worktrunkActivity(pi: HookAPI): void {
-   const run = async (
-     ctx: { cwd: string },
-     args: ["set", string] | ["clear"],
-   ): Promise<void> => {
-+    const bin = worktrunkBin();
-+    if (!bin) return;
-     try {
--      await pi.exec("wt", ["config", "state", "marker", ...args], {
-+      await pi.exec(bin, ["config", "state", "marker", ...args], {
-         cwd: ctx.cwd,
-       });
-     } catch {
-```
-
-**File**: `dev/opencode-plugin.ts` (modified, +39/-4)
-```diff
-@@ -23,24 +23,53 @@
- // versions, and a lone file in the config directory has no package to resolve.
- 
- import { execFile } from "node:child_process";
--import { existsSync } from "node:fs";
--import { basename, join } from "node:path";
-+import { existsSync, lstatSync } from "node:fs";
-+import { basename, delimiter, join } from "node:path";
- import { promisify } from "node:util";
- 
- const execute = promisify(execFile);
- 
- const WORKING = "🤖";
- const WAITING = "💬";
- 
-+// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
-+// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
-+// accepts any arguments, exits 0, and reports the unknown program in a popup
-+// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
-+// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
-+// seen for the lookup to stop where Windows' own PATH search would.
-+// `undefined` means no worktrunk binary was found.
-+function worktrunkBin(): string | undefined {
-+  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
-+  if (process.platform !== "win32") return "wt";
-+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
-+  const find = (name: string) =>
-+    dirs
-+      .map((dir) => join(dir, name))
-+      .find((path) => {
-+        try {
-+          lstatSync(path);
-+          return true;
-+        } catch {
-+          return false;
-+        }
-+      });
-+  if (find("git-wt.exe")) return "git-wt.exe";
-+  const wt = find("wt.exe");
-+  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
-+}
-+
- /**
-  * Run `wt config state marker …` in this plugin instance's worktree.
-  *
-  * `cwd` is load-bearing: the marker belongs to the worktree the session is in,
-  * not to whatever directory the host process happens to sit in.
-  */
- async function marker(directory: string, args: string[]): Promise<void> {
-+  const bin = worktrunkBin();
-+  if (!bin) return;
-   try {
--    await execute("wt", ["config", "state", "marker", ...args], { cwd: directory });
-+    await execute(bin, ["config", "state", "marker", ...args], { cwd: directory });
-   } catch {
-     // `wt` may be off PATH, or the directory may no longer be a worktree. An
-     // activity marker is not worth raising an error into the session over.
-@@ -85,8 +114,14 @@ type SetupContext = {
-  * dirty worktree, a branch that already exists) says more than the exit code.
-  */
- async function wt(args: string[], { signal }: Signal): Promise<string> {
-+  const bin = worktrunkBin();
-+  if (!bin) {
-+    throw new Error(
-+      "worktrunk not found on PATH: install it as git-wt.exe, or set WORKTRUNK_BIN; a `wt` from WindowsApps is Windows Terminal",
-+    );
-+  }
-   try {
--    const { stdout } = await execute("wt", args, { signal, maxBuffer: 16 * 1024 * 1024 });
-+    const { stdout } = await execute(bin, args, { signal, maxBuffer: 16 * 1024 * 1024 });
-     return stdout;
-   } catch (error) {
-     const stderr = (error as { stderr?: string }).stderr?.trim();
-```
-
-**File**: `dev/pi-extension.ts` (modified, +33/-1)
-```diff
-@@ -11,15 +11,47 @@
- // `ExtensionAPI`. oh-my-pi is a different agent with a different loader and
- // API — see `dev/omp-hook.ts` and `wt config plugins omp install`.
- 
-+import { lstatSync } from "node:fs";
-+import { delimiter, join } from "node:path";
-+
- import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
- 
-+// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
-+// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
-+// accepts any arguments, exits 0, and reports the unknown program in a popup
-+// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
-+// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
-+// seen for the lookup to stop where Windows' own PATH search would.
-+// `undefined` means no worktrunk binary was found.
-+function worktrunkBin(): string | undefined {
-+  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
-+  if (process.platform !== "win32") return "wt";
-+  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
-+  const find = (name: string) =>
-+    dirs
-+      .map((dir) => join(dir, name))
-+      .find((path) => {
-+        try {
-+          lstatSync(path);
-+          return true;
-+        } catch {
-+          return false;
-+        }
-+      });
-+  if (find("git-wt.exe")) return "git-wt.exe";
-+  const wt = find("wt.exe");
-+  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : undefined;
-+}
-+
- export default function worktrunkActivity(pi: ExtensionAPI): void {
-   const run = async (
-     cwd: string,
-     args: ["set", string] | ["clear"],
-   ): Promise<void> => {
-+    const bin = worktrunkBin();
-+    if (!bin) return;
-     try {
--      await pi.exec("wt", ["config", "state", "marker", ...args], { cwd });
-+      await pi.exec(bin, ["config", "state", "marker", ...args], { cwd });
-     } catch {
-       // Activity tracking must never interrupt the host Pi session.
      }
+ 
+     fn on_collect_complete(&self) {
+@@ -747,6 +754,28 @@ mod tests {
+         crate::commands::list::layout::ColumnGrid::default()
+     }
+ 
++    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
++        use crate::commands::list::layout;
++        layout::calculate_layout_with_width(
++            items,
++            &crate::commands::list::columns::all_tasks(),
++            layout::Destination {
++                width: 80,
++                link_style: layout::LinkStyle::Expanded,
++            },
++            std::path::Path::new("/test"),
++            layout::ColumnSelection {
++                custom: &[],
++                selected: None,
++            },
++            layout::RepoFacts {
++                has_remote: true,
++                url_template: None,
++                max_pr_number: None,
++            },
++        )
++    }
++
+     /// `on_skeleton` reads the worktree/branch inventory through the handler's
+     /// own per-spawn `repo`, NOT the orchestrator's startup-cloned repo. `spawn`
+     /// rebuilds `repo` fresh each refresh; reading inventory through the
+@@ -1755,23 +1784,36 @@ mod tests {
+     }
+ 
+     /// A handler superseded by a refresh must not publish its skeleton into
+-    /// the session-shared row list / shortcut table, nor seed summary hints:
++    /// the session-shared row list / shortcut table / alt-x layout, nor seed
++    /// summary hints:
+     /// a rapid second `alt-r` can schedule the new spawn's skeleton before a
+     /// slow prior spawn's, and the stale skeleton landing second would
+     /// otherwise overwrite the live rows (feeding a later `alt-x` resync and
+     /// the `alt-y`/`alt-o` lookups) and write stale-row hint keys into the
+     /// refreshed cache.
+     #[test]
+     fn superseded_skeleton_leaves_shared_state_alone() {
++        // The live spawn publishes its layout for `alt-x`'s morph row.
++        let (live, _live_test, _live_rx) = make_handler();
++        let live_items = vec![ListItem::new_branch("abc".into(), "live".into())];
++        live.provide_layout(&layout(&live_items));
++        assert!(
++            live.layout_slot.lock().unwrap().is_some(),
++            "live skeleton publishes its layout"
++        );
++
+         let (handler, test, rx) = make_handler();
+         handler.orchestrator.refresh(test.repo.clone());
+ 
++        let stale_items = vec![ListItem::new_branch("abc".into(), "stale".into())];
+         handler.on_skeleton(
+-            vec![ListItem::new_branch("abc".into(), "stale".into())],
++            stale_items.clone(),
+             vec!["skel".into()],
+             header("hdr"),
+             grid(),
+         );
++        // `collect` hands over the layout right after the skeleton.
++        handler.provide_layout(&layout(&stale_items));
+         handler.orchestrator.wait_for_idle();
+ 
+         // The rows still stream to this spawn's (dead) skim channel...
+@@ -1790,6 +1832,10 @@ mod tests {
+             handler.preview_cache.is_empty(),
+             "superseded skeleton must not seed hints into the refreshed cache"
+         );
++        assert!(
++            handler.layout_slot.lock().unwrap().is_none(),
++            "superseded skeleton must not overwrite the alt-x layout"
++        );
+     }
+ 
+     /// A superseded handler's `maybe_spawn_comments` is fully inert. Its
 ```
 
 ---
 
-### Incident Patch 2: `c60d061c` (2026-11-04)
-**Commit Message**: fix(alias): show project aliases with retired template variables migrated (#4690)
+### Incident Patch 2: `f7735f2e` (2026-11-05)
+**Commit Message**: fix(shell): treat PowerShell directive paths literally (#4680)
 
-`wt config alias show` now displays project aliases with retired
-template variables rewritten, matching what the alias actually runs.
-Previously a project alias written as `code {{ repo_root }}` showed `{{
-repo_root }}`, while execution (via `ProjectConfig::load`) ran the
-migrated `{{ repo_path }}` — and user aliases, loaded through
-`UserConfig::load`, already showed migrated text, so the two sources
-disagreed in one listing.
+When the PowerShell temporary directory contains wildcard characters
+such as `temp[1]`, `wt switch` can finish without changing the parent
+shell's directory. The directive file is written, but the wrapper treats
+its path as a wildcard during lookup and cleanup, leaving the file
+behind.
 
-The cause was `load_project_aliases_silent` parsing `.config/wt.toml`
-with a bare `toml::from_str`, on the stated premise that the `aliases`
-table has no deprecated forms. The first `DEPRECATION_RULES` row
-(`migrate_template_vars_doc`) rewrites retired variables in every string
-value, aliases included. The fix runs the file through the same silent
-`migrate_content` that `wt config show` and the user-config loader use
-before deserializing, and corrects that docstring. The same listing
-feeds the `Aliases:` section of `wt --help`, which shows names only, so
-only `show` changes visibly.
+Use `-LiteralPath` for all four directive-file operations. Add a
+regression that checks both the directory change and removal of the
+temporary file, and refresh the generated PowerShell snapshot.
 
-`test_config_alias_show_migrates_retired_template_vars` configures a
-project alias with `{{ rep
+Validation: all 4 PowerShell integration tests pass with all features
+enabled, including the new regression. The shell-generation snapshot
+test, pre-commit checks (including clippy), doctests and rustdoc also
+pass. The original template reproduced the failure on Windows PowerShell
+5; the corrected template switches directories and leaves no directive
+file on both Windows PowerShell 5 and PowerShell 7.6.9.
 
-**File**: `src/commands/alias.rs` (modified, +8/-6)
+The full `hook pre-merge --yes` gate did not pass on this Windows host:
+4,693 passed, 74 failed, 40 skipped. Failures include
+configuration/statusline snapshots, switch tests and the performance
+helper CLI; those failures and snapshots are o
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_powershell.snap` (modified, +3/-3)
 ```diff
-@@ -885,14 +885,15 @@ fn render_aliases_help_section(
- /// Callers (`augment_help`, `wt config alias show`) latch
- /// `suppress_warnings()` before reaching here so the standard `UserConfig::load()`
- /// stays quiet: no deprecation warnings, no `.new` file writes, no
--/// approved-commands copy. Project config is parsed directly from TOML rather
--/// than via `ProjectConfig::load` because the `aliases` table has no deprecated
--/// forms — skipping the migration avoids the unrelated warnings entirely.
-+/// approved-commands copy. Project config is migrated and parsed directly
-+/// rather than via `ProjectConfig::load`, avoiding its diagnostic side
-+/// effects; the migration rewrites retired template variables, so both
-+/// sources show the template that runs.
- ///
- /// Tolerates missing or unloadable config: this is a discovery surface, not
- /// an execution surface, so we'd rather show the built-in commands than
- /// error out when a repo isn't detected or a config file is malformed.
--/// `step_alias` surfaces those errors at execution time.
-+/// Running the alias surfaces those errors.
- pub(crate) fn load_aliases_for_listing() -> Vec<(String, CommandConfig, HookSource)> {
-     let repo = Repository::current().ok();
-     let project_id = repo.as_ref().and_then(|r| r.project_identifier().ok());
-@@ -923,7 +924,7 @@ pub(crate) fn load_aliases_for_listing() -> Vec<(String, CommandConfig, HookSour
-     entries
- }
+@@ -44,8 +44,8 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
+         # Process the directive and clean it up even if cd throws.
+         try {
+             # cd file holds a raw path (no shell escaping needed)
+-            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
+-                $target = Get-Content -Path $cdFile -Raw
++            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
++                $target = Get-Content -LiteralPath $cdFile -Raw
+                 if ($target) {
+                     Set-Location -LiteralPath $target
+                     if ($exitCode -eq 0) {
+@@ -56,7 +56,7 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
  
--/// Parse `.config/wt.toml` directly, extracting just `aliases`, without
-+/// Migrate and parse `.config/wt.toml`, extracting just `aliases`, without
- /// triggering `ProjectConfig::load`'s deprecation warning and hint-writing
- /// side effects. See `load_aliases_for_listing` for why.
- fn load_project_aliases_silent(repo: &Repository) -> Option<BTreeMap<String, CommandConfig>> {
-@@ -932,7 +933,8 @@ fn load_project_aliases_silent(repo: &Repository) -> Option<BTreeMap<String, Com
-         return None;
-     }
-     let contents = std::fs::read_to_string(&path).ok()?;
--    let config: ProjectConfig = toml::from_str(&contents).ok()?;
-+    let migrated = worktrunk::config::migrate_content(&contents);
-+    let config: ProjectConfig = toml::from_str(&migrated).ok()?;
-     Some(config.aliases)
- }
+         }
+         finally {
+-            Remove-Item $cdFile -ErrorAction SilentlyContinue
++            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
+         }
  
+         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
 ```
 
-**File**: `tests/integration_tests/step_alias.rs` (modified, +25/-0)
+**File**: `templates/powershell.ps1` (modified, +3/-3)
 ```diff
-@@ -1970,6 +1970,31 @@ command = "echo message"
+@@ -40,8 +40,8 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
+         # Process the directive and clean it up even if cd throws.
+         try {
+             # cd file holds a raw path (no shell escaping needed)
+-            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
+-                $target = Get-Content -Path $cdFile -Raw
++            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
++                $target = Get-Content -LiteralPath $cdFile -Raw
+                 if ($target) {
+                     Set-Location -LiteralPath $target
+                     if ($exitCode -eq 0) {
+@@ -52,7 +52,7 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
+ 
+         }
+         finally {
+-            Remove-Item $cdFile -ErrorAction SilentlyContinue
++            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
+         }
+ 
+         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
+```
+
+**File**: `tests/integration_tests/shell_powershell.rs` (modified, +55/-0)
+```diff
+@@ -181,6 +181,61 @@ wt list
+     );
+ }
+ 
++/// A temp directory containing brackets must not turn directive-file operations
++/// into wildcard lookups, which silently skips the directory change and cleanup.
++#[test]
++fn test_powershell_wrapper_handles_literal_temp_paths() {
++    let temp_dir = worktrunk::testing::test_tempdir();
++    let temp_path = temp_dir.path().join("temp[1]");
++    let target_path = temp_dir.path().join("target");
++    std::fs::create_dir(&temp_path).unwrap();
++    std::fs::create_dir(&target_path).unwrap();
++    let target_path = dunce::canonicalize(target_path).unwrap();
++
++    let mock_bin = temp_dir.path().join("mock-wt.ps1");
++    std::fs::write(
++        &mock_bin,
++        r#"
++if ($env:COMPLETE) { exit 0 }
++[IO.File]::WriteAllText($env:WORKTRUNK_DIRECTIVE_CD_FILE, $env:WORKTRUNK_TEST_TARGET)
++exit 0
++"#,
++    )
++    .unwrap();
++
++    let wrapper = ShellInit::with_prefix(Shell::PowerShell, "wt".to_string())
++        .generate()
++        .unwrap();
++    let mock_bin_escaped = mock_bin.display().to_string().replace('\'', "''");
++    let script = format!(
++        r#"
++$ErrorActionPreference = 'Stop'
++$env:WORKTRUNK_BIN = '{mock_bin_escaped}'
++{wrapper}
++wt switch feature
++Write-Output (Get-Location).Path
++exit $LASTEXITCODE
++"#
++    );
++
++    let output = Command::new("pwsh")
++        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
++        .env("TMP", &temp_path)
++        .env("TEMP", &temp_path)
++        .env("TMPDIR", &temp_path)
++        .env("WORKTRUNK_TEST_TARGET", &target_path)
++        .output()
++        .expect("Failed to run pwsh");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(
++        output.status.success(),
++        "pwsh command failed.\nstdout: {stdout}\nstderr: {stderr}",
++    );
++    assert_eq!(stdout.trim(), target_path.to_str().unwrap());
++    assert_eq!(std::fs::read_dir(&temp_path).unwrap().count(), 0);
++}
++
+ /// The installed `pwsh` decides where install writes on Unix: with
+ /// `XDG_CONFIG_HOME` pointing away from `~/.config`, the profile lands where
+ /// PowerShell loads it.
+```
+
+---
+
+### Incident Patch 3: `79f19f64` (2026-11-05)
+**Commit Message**: fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (#4710)
+
+`gh api` doesn't take its host from the repository. Without `--hostname`
+it uses gh's default host, which is github.com once more than one host
+is logged in. `fetch_pr_info` passed `--hostname` only when
+`forge.hostname` was set, so on a GitHub Enterprise remote `wt switch
+pr:N` and `wt switch <PR URL>` asked github.com for the PR and got a
+404. With no `forge.hostname`, the lookup now passes the GitHub remote's
+host as `--hostname` if `gh auth token --hostname <host>` succeeds (a
+local check, no network; `choose_pr_forge` already uses the same check).
+An SSH alias such as `github-personal` has no gh login, so it still goes
+to gh's default host. That keeps the #1790 fix in place, the one #1826
+made by removing host detection. A configured `forge.hostname` still
+takes priority. github.com remotes skip the check, so they behave as
+before.
+
+`test_switch_pr_enterprise_remote_passes_hostname` uses an
+`https://github.example.com/...` remote and a mock `gh`. When `gh` is
+logged in to that host, the test expects `--hostname github.example.com`
+on the `api` call; it failed before this change an
+
+**File**: `src/git/remote_ref/github.rs` (modified, +11/-2)
+```diff
+@@ -107,8 +107,17 @@ pub(super) fn fetch_pr_info(pr_number: u32, repo: &Repository) -> anyhow::Result
+ 
+     let api_path = format!("repos/{}/{}/pulls/{}", owner, repo_name, pr_number);
+ 
+-    // Only pass --hostname when explicitly configured (for GHE / self-hosted).
+-    let hostname = repo.forge_hostname();
++    // `gh api` doesn't infer the host from the repository: without
++    // `--hostname` it asks gh's default host, which is github.com once several
++    // hosts are logged in. A configured `forge.hostname` wins; otherwise a
++    // GitHub Enterprise remote's host is the API host when gh holds a login
++    // for it. An SSH alias (`git@github-personal:…`) has no login, so it keeps
++    // gh's default (#1790).
++    let hostname = repo.forge_hostname().or_else(|| {
++        repo.forge_remote_parsed_url(|u| u.is_github())
++            .map(|u| u.host().to_string())
++            .filter(|host| !host.eq_ignore_ascii_case("github.com") && is_authed_for(host))
++    });
+ 
+     let mut args = vec!["api", api_path.as_str()];
+     if let Some(h) = &hostname {
+```
+
+**File**: `tests/integration_tests/switch.rs` (modified, +79/-0)
+```diff
+@@ -6575,6 +6575,85 @@ fn test_switch_pr_self_hosted_defaults_to_github(
      }
  }
  
-+/// Project and user aliases display the templates that run: a retired
-+/// template variable shows as its replacement in both sources, matching the
-+/// migration execution applies.
++/// A GitHub Enterprise remote with no `forge.hostname`: `gh api` sends a
++/// request without `--hostname` to gh's default host, so the PR lookup must
++/// name the remote's host when gh holds a login for it, and leave gh's default
++/// alone when it doesn't (an SSH alias such as `github-personal`, #1790).
 +#[rstest]
-+fn test_config_alias_show_migrates_retired_template_vars(repo: TestRepo) {
-+    repo.write_project_config(
-+        r#"
-+[aliases]
-+open = "code {{ repo_root }}"
-+"#,
-+    );
-+    repo.commit("Add alias config");
-+    repo.write_test_config(
-+        r#"
-+[aliases]
-+here = "echo {{ worktree }}"
-+"#,
++#[case::authed_host(true)]
++#[case::unauthed_host(false)]
++fn test_switch_pr_enterprise_remote_passes_hostname(
++    #[from(repo_with_remote)] mut repo: TestRepo,
++    #[case] gh_authed: bool,
++) {
++    repo.add_worktree("feature-auth");
++    repo.run_git(&["push", "origin", "feature-auth"]);
++
++    let bare_url = String::from_utf8_lossy(
++        &repo
++            .git_command()
++            .args(["config", "remote.origin.url"])
++            .run()
++            .unwrap()
++            .stdout,
++    )
++    .trim()
++    .to_string();
++    let ghe_url = "https://github.example.com/owner/test-repo.git";
++    repo.run_git(&["remote", "set-url", "origin", ghe_url]);
++    repo.run_git(&["config", &format!("url.{bare_url}.insteadOf"), ghe_url]);
++
++    let gh_response = r#"{
++        "title": "Enterprise PR",
++        "user": {"login": "alice"},
++        "state": "open",
++        "draft": false,
++        "head": {
++            "ref": "feature-auth",
++            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
++        },
++        "base": {
++            "ref": "main",
++            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
++        },
++        "html_url": "https://github.example.com/owner/test-repo/pull/101"
++    }"#;
++    let mock_bin = repo.root_path().join("mock-bin");
++    fs::create_dir_all(&mock_bin).unwrap();
++    fs::write(mock_bin.join("pr_response.json"), gh_response).unwrap();
++    let mut gh = MockConfig::new("gh").command("api", MockResponse::file("pr_response.json"));
++    if gh_authed {
++        gh = gh.command("auth token --hostname", MockResponse::output("gho_mock"));
++    }
++    gh.command("_default", MockResponse::exit(1))
++        .write(&mock_bin);
++    let call_log = worktrunk::testing::tempdir().unwrap();
++
++    let mut cmd = repo.wt_command();
++    configure_mock_cli_env(&mut cmd, &mock_bin);
++    let output = cmd
++        .args(["switch", "pr:101"])
++        .env("WORKTRUNK_TEST_MOCK_CALL_LOG_DIR", call_log.path())
++        .output()
++        .unwrap();
++    assert!(
++        output.status.success(),
++        "{}",
++        String::from_utf8_lossy(&output.stderr)
 +    );
 +
-+    let settings = setup_snapshot_settings(&repo);
-+    let _guard = settings.bind_to_scope();
-+
-+    assert_cmd_snapshot!(make_snapshot_cmd(&repo, "config", &["alias", "show"], None));
++    let calls = fs::read_to_string(call_log.path().join("gh.calls")).unwrap();
++    let api_call = calls.lines().find(|line| line.starts_with("api ")).unwrap();
++    if gh_authed {
++        assert_eq!(
++            api_call,
++            "api repos/owner/test-repo/pulls/101 --hostname github.example.com"
++        );
++    } else {
++        assert_eq!(api_call, "api repos/owner/test-repo/pulls/101");
++    }
 +}
 +
- /// `wt config alias show` with no name and no aliases configured prints a note
- /// rather than empty output.
+ /// A configured SSH hostname can differ from the web hostname. tea's login
+ /// list supplies both, so an SSH remote must route to the same Gitea account.
  #[rstest]
 ```
 
-**File**: `tests/snapshots/integration__integration_tests__step_alias__config_alias_show_migrates_retired_template_vars.snap` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+---
-+source: tests/integration_tests/step_alias.rs
-+info:
-+  program: wt
-+  args:
-+    - config
-+    - alias
-+    - show
-+  env:
-+    APPDATA: "[TEST_CONFIG_HOME]"
-+    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
-+    CLICOLOR_FORCE: "1"
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    HOME: "[TEST_HOME]"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
-+    PATH: "[PATH]"
-+    TERM: alacritty
-+    USERPROFILE: "[TEST_HOME]"
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
-+---
-+success: true
-+exit_code: 0
-+----- stdout -----
-+[2m○[22m Alias [1mhere[22m (user):
-+[107m [0m [2m[0m[2m[34mecho[0m[2m [0m[2m[32m{{[0m[2m worktree_path [0m[2m[32m}}[0m
-+[2m○[22m Alias [1mopen[22m (project):
-+[107m [0m [2m[0m[2m[34mcode[0m[2m [0m[2m[32m{{[0m[2m repo_path [0m[2m[32m}}[0m
-+
-+----- stderr -----
-```
-
----
-
-### Incident Patch 3: `0807dc3d` (2026-11-04)
-**Commit Message**: fix(deps): raise the fastrand floor so minimal-versions resolves (#4695)
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -274,7 +274,7 @@ petname-macros = "=3.2.0"
- tempfile = "3.27"
- # The generator tempfile names come from; the test helpers seed it per
- # process (`testing::temp_builder`, #4692).
--fastrand = "2.1.1"
-+fastrand = "2.5"
- 
- # Timed waits on child processes (`Cmd::timeout`, `Cmd::delayed_stream`, the
- # picker's pager). Replaced `wait-timeout`, whose SIGCHLD handler aborts the
-```
-
 #### Recent Merged Pull Requests:
-- **PR #4698** (2026-11-04): fix(plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (@worktrunk-bot)
-- **PR #4695** (2026-11-04): fix(deps): raise the fastrand floor so minimal-versions resolves (@worktrunk-bot)
-- **PR #4693** (2026-11-04): fix(tests): seed tempfile's name generator per process (@worktrunk-bot)
-- **PR #4690** (2026-11-04): fix(alias): show project aliases with retired template variables migrated (@worktrunk-bot)
-- **PR #4686** (2026-11-04): chore: bump taiki-e/install-action from 2.88.1 to 2.89.0 (@dependabot[bot])
-- **PR #4684** (2026-11-04): fix(remove): clear a branch's marker when wt deletes the branch (@worktrunk-bot)
+- **PR #4710** (2026-11-05): fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (@worktrunk-bot)
+- **PR #4708** (2026-11-05): fix(picker): keep a superseded refresh from overwriting the alt-x layout (@worktrunk-bot)
+- **PR #4707** (2026-11-05): Ship Codex activity-marker hooks as a separate hooks-only plugin (@worktrunk-bot)
+- **PR #4704** (2026-11-05): fix(switch): clear a stale marker when --create makes the branch (@worktrunk-bot)
+- **PR #4703** (2026-11-05): docs(remove): mention the wt switch picker's Alt-x in wt remove help (@worktrunk-bot)
+- **PR #4701** (2026-11-05): chore: bump taiki-e/install-action from 2.89.0 to 2.89.1 (@dependabot[bot])
 
 ---
 
@@ -2445,55 +2462,55 @@ project alias with `{{ rep
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698
+## X. picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
 
 **RULE**:
-When implementing operations in `dev/omp-hook.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/picker/progressive_handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3bf9166a`: plugins): skip Windows Terminal's wt in the pi, omp, and OpenCode plugins (#4698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d46d6b3`: picker): keep a superseded refresh from overwriting the alt-x layout (#4708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/omp-hook.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/picker/progressive_handler.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import { lstatSync } from "node:fs";
-import { delimiter, join } from "node:path";
-
-// The worktrunk binary, chosen as `plugins/worktrunk/hooks/wt.sh` chooses it.
-// On Windows, `wt` is usually Windows Terminal's app-execution alias, which
-// accepts any arguments, exits 0, and reports the unknown program in a popup
-// window. So prefer `git-wt.exe` there, and never run a `wt` from WindowsApps.
-// `lstat` rather than `exists`: the alias is a reparse point, and it has to be
-// seen for the lookup to stop where Windows' own PATH search would.
-// `undefined` means no worktrunk binary was found.
-function worktrunkBin(): string | undefined {
-  if (process.env.WORKTRUNK_BIN) return process.env.WORKTRUNK_BIN;
-  if (process.platform !== "win32") return "wt";
-  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean);
-  const find = (name: string) =>
-    dirs
-      .map((dir) => join(dir, name))
-      .find((path) => {
-        try {
-          lstatSync(path);
-          return true;
-        } catch {
-          return false;
+//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
+//! batch — the handler's only send) and each item's shared `rendered` mutex
+//! (in-place redraws). The skeleton also publishes session-shared state that
+//! outlives this spawn — `shared_items`, the shortcut table, and the layout
+//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
+//! superseded skeleton landing after a rapid second alt-r leaves it alone.
+        // row on this grid. Overwritten each skeleton (a refresh re-collects),
+        // but only by the live spawn — a superseded skeleton's grid would
+        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
+        let mut slot = self.layout_slot.lock().unwrap();
+        if self.spawn_gen.is_current() {
+            *slot = Some(layout.clone());
         }
-      });
-  if (find("git-wt.exe")) return "git-wt.exe";
-  const wt = find("wt.exe");
-  return wt && !/[\\/]WindowsApps[\\/]/i.test(wt) ? "wt" : un
+    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
+        use crate::commands::list::layout;
+        layout::calculate_layout_with_width(
+            items,
+            &crate::commands::list::columns::all_tasks(),
+            layout::Destination {
+                width: 80,
+                link_style: layout::LinkStyle::Expa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      await pi.exec("wt", ["config", "state", "marker", ...args], {
+//! Each event funnels into three places: skim's item stream (`tx`, consumed
+//! by the skeleton batch — the handler's only send), each item's shared
+//! `rendered` mutex (in-place redraws), and `shared_items` used by
+//! `PickerCollector` for alt-x.
+        // row on this grid. Overwritten each skeleton (a refresh re-collects).
+        *self.layout_slot.lock().unwrap() = Some(layout.clone());
+    /// the session-shared row list / shortcut table, nor seed summary hints:
+            vec![ListItem::new_branch("abc".into(), "stale".into())],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3bf9166a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d46d6b3` are properly handled with clean fallback behavior.
