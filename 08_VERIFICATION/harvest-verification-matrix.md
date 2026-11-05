@@ -7542,3 +7542,4 @@
 | `CYCLE-20261105-IJ4F` | `2026-11-05T06:15:06.063Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7130` | Yes (`35e4b92b...`) |
 | `CYCLE-20261105-IKOU` | `2026-11-05T06:15:08.094Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7131` | Yes (`e1184c9f...`) |
 | `CYCLE-20261105-INFQ` | `2026-11-05T06:15:11.654Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7132` | Yes (`7ae8f317...`) |
+| `CYCLE-20261105-QVHV` | `2026-11-05T06:21:35.347Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`4df4459b...`) |

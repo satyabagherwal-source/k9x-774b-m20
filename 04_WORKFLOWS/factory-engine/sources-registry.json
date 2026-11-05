@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T06:15:14.225Z",
-    "lastVerified": "2026-11-05T06:15:14.225Z",
+    "lastChecked": "2026-11-05T06:21:46.934Z",
+    "lastVerified": "2026-11-05T06:21:46.934Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T05:53:17.130Z",
+    "lastChecked": "2026-11-05T06:21:46.924Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T05:53:17.130Z"
+    "lastVerified": "2026-11-05T06:21:46.924Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1354,8 +1354,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T02:55:16.335Z",
-    "lastVerified": "2026-11-05T02:55:16.335Z",
+    "lastChecked": "2026-11-05T06:21:41.925Z",
+    "lastVerified": "2026-11-05T06:21:41.925Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1584,9 +1584,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-04T16:43:05.846Z",
+    "lastChecked": "2026-11-05T06:21:39.469Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-04T16:43:05.846Z"
+    "lastVerified": "2026-11-05T06:21:39.469Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -4080,9 +4080,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-04T03:30:26.839Z",
+    "lastChecked": "2026-11-05T06:21:31.909Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-04T03:30:26.839Z"
+    "lastVerified": "2026-11-05T06:21:31.909Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -5291,12 +5291,12 @@
     "officialUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T15:42:39.757Z",
-    "lastVerified": "2026-10-31T15:42:39.757Z",
+    "lastChecked": "2026-11-05T06:21:34.490Z",
+    "lastVerified": "2026-11-05T06:21:34.490Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "94cc5a24c2705b956f4688d2c9577893c96a1a6cf85ed0e09890e1262bd41772",
+    "contentHash": "4df4459b8dbe5f074d61ac96f78ae296d7ddd469bb15f169626a2381279e8e68",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6152,8 +6152,8 @@
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-04T10:29:55.815Z",
-    "lastVerified": "2026-11-04T10:29:55.815Z",
+    "lastChecked": "2026-11-05T06:21:44.458Z",
+    "lastVerified": "2026-11-05T06:21:44.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -9767,9 +9767,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-10-31T23:56:31.874Z",
+    "lastChecked": "2026-11-05T06:21:36.927Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-10-31T23:56:31.874Z"
+    "lastVerified": "2026-11-05T06:21:36.927Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
