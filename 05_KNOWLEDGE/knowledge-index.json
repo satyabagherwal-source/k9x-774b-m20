@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T00:00:13.628Z",
+  "last_updated": "2026-11-05T00:07:40.166Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28135,7 +28135,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
+      "content_hash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [
@@ -28198,7 +28198,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-31T09:47:08.198Z",
+      "verified_at": "2026-11-05T00:07:39.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33302,8 +33302,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "d1dd672e",
-      "content_hash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
+      "source_version": "d67b85fd",
+      "content_hash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -33366,6 +33366,11 @@
           "number": 6607,
           "title": "lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#242",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7037,
+          "title": "website): point worker registry links to iii.dev/registry (#2462)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33373,7 +33378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:00:04.838Z",
+      "verified_at": "2026-11-05T00:07:40.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -178678,6 +178683,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T00:00:13.609Z"
+    },
+    "rule-7037": {
+      "learning_id": "rule-7037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7037,
+      "title": "website): point worker registry links to iii.dev/registry (#2462)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "d67b85fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T00:07:40.132Z"
     }
   },
   "aliases": {

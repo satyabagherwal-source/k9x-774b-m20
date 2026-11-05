@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-3S8X",
-    "timestamp": "2026-11-03T12:32:12.225Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "12dce603748b214626daeeb9c9c16a81fee8a644f08ba2e51e843b007f2b8258",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-SPG8",
-    "timestamp": "2026-11-03T12:51:35.000Z",
-    "repository": "nduckmink/arkon",
-    "learningId": "learn-github-nduckmink-arkon",
-    "contentHash": "fac3a4f88bffc2b2ce5d47dcac2f0d76be833a41579222e6d2b7269f1765240a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-SVLZ",
     "timestamp": "2026-11-03T12:51:42.983Z",
     "repository": "sparrowcode/AlertKit",
@@ -7492,6 +7462,36 @@
     "contentHash": "deba39c6732dce8c12936a86c8c70ae89b8b0ee202469eb1598019d100de1a74",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-E00W",
+    "timestamp": "2026-11-05T00:07:39.680Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-E0H0",
+    "timestamp": "2026-11-05T00:07:40.260Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

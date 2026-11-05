@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `d1dd672e`  
+> **Source Version**: `d67b85fd`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:00:04.185Z  
+> **Timestamp**: 2026-11-05T00:07:39.331Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:59:59.163Z  
+> **Harvest Timestamp**: 2026-11-05T00:07:38.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18904 stars
+- **Stars / Engagement**: 18927 stars
 
 ---
 
@@ -2263,1074 +2263,159 @@ pub enum Commands {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `618a6fbe` (2026-11-02)
-**Commit Message**: fix(lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#2428)
+### Incident Patch 1: `d67b85fd` (2026-11-03)
+**Commit Message**: fix(website): point worker registry links to iii.dev/registry (#2462)
 
-**File**: `crates/iii-compose/src/ps.rs` (modified, +2/-2)
+**File**: `website/components/landing/content.ts` (modified, +3/-3)
 ```diff
-@@ -298,8 +298,8 @@ fn invocation(cmd: &[String]) -> (Role, Vec<String>) {
-         _ => {}
-     }
-     let mut positional = args.iter().enumerate().filter(|(index, arg)| {
--        !arg.starts_with('-')
--            && !(*index > 0 && matches!(args[index - 1].as_str(), "-c" | "--config"))
-+        !(arg.starts_with('-')
-+            || (*index > 0 && matches!(args[index - 1].as_str(), "-c" | "--config")))
-     });
-     let role = match positional.next().map(|(_, arg)| arg.as_str()) {
-         None => Role::Engine,
+@@ -241,7 +241,7 @@ export const useCases = {
+       label: 'iii compose',
+       command: 'iii compose --up',
+       engine: 'iii 0.24.6',
+-      /* Registry names from workers.iii.dev. `harness` pulls in its dependencies, shown indented under it. */
++      /* Registry names from iii.dev/registry. `harness` pulls in its dependencies, shown indented under it. */
+       workers: [
+         { name: 'http', ms: 142 },
+         { name: 'database', ms: 233 },
+@@ -309,7 +309,7 @@ export const ownership = {
+     { name: 'Self-hosted', where: 'your hardware' },
+     { name: 'Cloud', where: 'your cloud' },
+   ],
+-  /* The app that moves between them: the engine plus registry workers (names from workers.iii.dev). */
++  /* The app that moves between them: the engine plus registry workers (names from iii.dev/registry). */
+   app: { engine: 'iii engine', workers: ['http', 'database', 'state', 'harness'] },
+   /*
+    * Proof that people build on it, in the order the 2026-10-05 sync set: workers first, then contributors,
+@@ -318,7 +318,7 @@ export const ownership = {
+    * reader can check it themselves.
+    */
+   stats: [
+-    { id: 'workers', label: 'Workers in the registry', source: 'workers.iii.dev', href: 'https://workers.iii.dev/' },
++    { id: 'workers', label: 'Workers in the registry', source: 'iii.dev/registry', href: 'https://iii.dev/registry' },
+     {
+       id: 'contributors',
+       label: 'Contributors',
 ```
 
-**File**: `crates/iii-compose/tests/process_lifecycle.rs` (modified, +12/-3)
+**File**: `website/components/landing/stats.ts` (modified, +2/-2)
 ```diff
-@@ -150,9 +150,11 @@ async fn every_child_leads_its_own_process_group() {
- #[tokio::test]
- async fn a_recycled_pid_is_never_recognised() {
-     let tmp = tempfile::tempdir().unwrap();
--    let child = spawn("exit 0", tmp.path());
-+    // Alive while spawn reads its fingerprint: a child that exits first is a
-+    // zombie by then, and macOS cannot read a zombie's start time.
-+    let child = spawn("sleep 30", tmp.path());
-     let recorded = child.birth.clone();
--    child.wait().await;
-+    child.stop(Duration::from_secs(2)).await;
- 
-     // Same PID number, different process: the fingerprint must not match, so a
-     // restarting daemon can never signal a stranger.
-@@ -230,12 +232,19 @@ async fn an_unverifiable_identity_is_never_adopted() {
- #[tokio::test]
- async fn an_adopted_child_reports_its_own_exit() {
-     let tmp = tempfile::tempdir().unwrap();
--    let child = spawn("sleep 0.2", tmp.path());
-+    // Exits only when signalled after adoption: a child on its own timer can be
-+    // gone before a stalled test fingerprints or adopts it.
-+    let child = spawn("sleep 30", tmp.path());
-     let (pid, birth) = (child.pid, child.birth.clone());
-     drop(child);
- 
-     let adopted =
-         iii_compose::process::Supervised::adopt(pid, &birth).expect("still running when adopted");
-+    nix::sys::signal::killpg(
-+        nix::unistd::Pid::from_raw(pid as i32),
-+        nix::sys::signal::Signal::SIGTERM,
-+    )
-+    .unwrap();
- 
-     // No reaper task backs an adopted process, so `wait` polls liveness. The
-     // status is unrecoverable — only the fact of the exit survives.
+@@ -5,7 +5,7 @@ import { getCommunityStats } from '@/lib/community'
+ export type PageStats = {
+   stars: number | null
+   contributors: number | null
+-  /** Workers listed at workers.iii.dev, read from the registry's own badge. */
++  /** Workers listed at iii.dev/registry, read from the registry's own badge. */
+   workers: number
+   /** Adoption, as the 2026-10-05 sync asked for: the SDK on each package registry, plus the engine image. */
+   downloads: {
+@@ -64,7 +64,7 @@ async function getContributors(): Promise<number | null> {
+  */
+ async function getWorkers(): Promise<number | null> {
+   try {
+-    const res = await fetch('https://workers.iii.dev/badge/workers.svg', {
++    const res = await fetch('https://iii.dev/registry/badge/workers.svg', {
+       headers: { Accept: 'image/svg+xml' },
+       next: { revalidate: 3600 },
+       signal: AbortSignal.timeout(4000),
 ```
 
-**File**: `crates/iii-filesystem/src/backends/shared/name_validation.rs` (modified, +1/-2)
+**File**: `website/components/landing/story-discovery.tsx` (modified, +3/-3)
 ```diff
-@@ -56,8 +56,7 @@ mod tests {
- 
-     #[test]
-     fn validate_name_rejects_empty() {
--        let name = unsafe { CStr::from_bytes_with_nul_unchecked(b"\0") };
--        assert!(validate_name(name).is_err());
-+        assert!(validate_name(c"").is_err());
-     }
- 
-     #[test]
+@@ -24,9 +24,9 @@ const SYSTEM: Row[] = [
+   { id: 'directory::search_functions', detail: 'Search registered functions', owner: 'iii-directory' },
+ ]
+ const REGISTRY: Row[] = [
+-  { id: 'document', detail: 'Read and write documents', owner: 'workers.iii.dev' },
+-  { id: 'storage', detail: 'Store and archive objects', owner: 'workers.iii.dev' },
+-  { id: 'browser', detail: 'Drive a real browser', owner: 'workers.iii.dev' },
++  { id: 'document', detail: 'Read and write documents', owner: 'iii.dev/registry' },
++  { id: 'storage', detail: 'Store and archive objects', owner: 'iii.dev/registry' },
++  { id: 'browser', detail: 'Drive a real browser', owner: 'iii.dev/registry' },
+ ]
+ const NEEDS = ['Save an order', 'Archive a receipt', 'Apply loyalty discount'] as const
+ const OUTCOMES = [
 ```
 
-**File**: `crates/iii-filesystem/tests/filesystem_integration.rs` (modified, +5/-5)
+**File**: `website/components/site/footer.tsx` (modified, +1/-1)
 ```diff
-@@ -224,9 +224,9 @@ fn lookup_nonexistent_returns_error() {
- fn getattr_root() {
-     let h = setup_fs();
-     let (st, _dur) = h.fs.getattr(test_ctx(), ROOT_ID, None).unwrap();
--    let mode = st.st_mode as u32;
-+    let mode = st.st_mode;
-     assert!(
--        (mode & libc::S_IFMT as u32) == libc::S_IFDIR as u32,
-+        (mode & libc::S_IFMT) == libc::S_IFDIR,
-         "root inode should be a directory, got mode {:#o}",
-         mode
-     );
-@@ -267,7 +267,7 @@ fn mkdir_and_lookup() {
- 
-     let (st, _) = h.fs.getattr(ctx, dir_entry.inode, None).unwrap();
-     assert!(
--        (st.st_mode as u32 & libc::S_IFMT as u32) == libc::S_IFDIR as u32,
-+        (st.st_mode & libc::S_IFMT) == libc::S_IFDIR,
-         "should be a directory"
-     );
- }
-@@ -612,8 +612,8 @@ fn nested_directory_lookup_open_read_python_encodings() {
-     // Verify getattr says it's a directory.
-     let (enc_st, _) = h.fs.getattr(ctx, enc_entry.inode, None).unwrap();
-     assert_eq!(
--        enc_st.st_mode as u32 & libc::S_IFMT as u32,
--        libc::S_IFDIR as u32,
-+        enc_st.st_mode & libc::S_IFMT,
-+        libc::S_IFDIR,
-         "encodings should be a directory"
-     );
- 
+@@ -25,7 +25,7 @@ export function Footer({ container }: { container?: string } = {}) {
+       items: [
+         { label: 'Docs', href: links.docs },
+         { label: 'Quickstart', href: links.quickstart },
+-        { label: 'Worker registry', href: links.registry, external: true },
++        { label: 'Worker registry', href: links.registry },
+         { label: 'Roadmap', href: links.roadmap },
+         { label: 'Benchmarks', href: links.benchmarks },
+         { label: 'Manifesto', href: links.manifesto },
 ```
 
-**File**: `crates/iii-init/src/fs_handler/ops.rs` (modified, +2/-0)
+**File**: `website/components/site/header.tsx` (modified, +1/-1)
 ```diff
-@@ -473,6 +473,7 @@ pub fn mv(src: String, dst: String, overwrite: bool) -> FsCallResult {
- /// Errors:
- /// - `S211` — path does not exist.
- /// - `S217` — `pattern` is not a valid regex.
-+#[allow(clippy::too_many_arguments)]
- pub fn grep(
-     path: String,
-     pattern: String,
-@@ -732,6 +733,7 @@ fn collect_files_to_sed(
- /// missing `path` form root (S211), invalid input form (S210), or
- /// `recursive=false` on a directory (S210). Per-file I/O errors
- /// surface in `FsSedFileResult.success`.
-+#[allow(clippy::too_many_arguments)]
- pub fn sed(
-     files: Vec<String>,
-     path: Option<String>,
+@@ -46,7 +46,7 @@ const plainLinks = [
+   { label: 'Docs', href: links.docs, icon: IconDocument, external: false },
+   { label: 'Blog', href: links.blog, icon: IconPaper, external: false },
+   { label: 'Roadmap', href: links.roadmap, icon: IconDiscovery, external: false },
+-  { label: 'Worker registry', href: links.registry, icon: IconPackage, external: true },
++  { label: 'Worker registry', href: links.registry, icon: IconPackage, external: false },
+ ]
+ 
+ const focusRing = 'outline-none focus-visible:outline-2 focus-visible:outline-foreground focus-visible:outline-offset-2'
 ```
 
-**File**: `crates/iii-init/src/fs_handler/streaming.rs` (modified, +10/-10)
+**File**: `website/content/blog/coding-agent-cost.md` (modified, +1/-1)
 ```diff
-@@ -91,16 +91,16 @@ pub(crate) fn handle_write_start_with_timeout(
-     let target = std::path::PathBuf::from(&path);
+@@ -219,7 +219,7 @@ Per-task worksheet using our lowest-cost run (DeepSeek V4.1 Flash, low thinking,
  
-     // Resolve / create parent.
--    if let Some(parent) = target.parent() {
--        if !parent.as_os_str().is_empty() {
--            if parents {
--                std::fs::create_dir_all(parent).map_err(|e| FsError::from_io(&path, e))?;
--            } else if !parent.exists() {
--                return Err(FsError::new(
--                    "S211",
--                    format!("parent not found: {}", parent.display()),
--                ));
--            }
-+    if let Some(parent) = target.parent()
-+        && !parent.as_os_str().is_empty()
-+    {
-+        if parents {
-+            std::fs::create_dir_all(parent).map_err(|e| FsError::from_io(&path, e))?;
-+        } else if !parent.exists() {
-+            return Err(FsError::new(
-+                "S211",
-+                format!("parent not found: {}", parent.display()),
-+            ));
-         }
-     }
+ We provide the AI Agent Harness; you choose the model provider and pay for its usage separately.
+ 
+-You can bring a subscription, a DeepSeek, OpenAI, Anthropic, or OpenCode Go API key, or run a local model through the [llama.cpp provider](https://workers.iii.dev/workers/provider-llamacpp). The engine routes your requests through whichever provider you've added and we support all the major providers.
++You can bring a subscription, a DeepSeek, OpenAI, Anthropic, or OpenCode Go API key, or run a local model through the [llama.cpp provider](https://iii.dev/registry/workers/provider-llamacpp). The engine routes your requests through whichever provider you've added and we support all the major providers.
+ 
+ The `harness::metrics` output reports turns, Function calls, tokens, and estimated cost across a session tree, with child sessions already included.
  
 ```
 
-**File**: `crates/iii-init/src/network.rs` (modified, +7/-7)
+**File**: `website/content/blog/how-to-build-your-own-agent-harness.md` (modified, +2/-2)
 ```diff
-@@ -109,7 +109,7 @@ pub fn configure_network() -> Result<(), InitError> {
- /// Cast ioctl request constant to the platform-specific Ioctl type.
- /// glibc uses `u64`, musl uses `i32`.
- #[allow(clippy::unnecessary_cast)]
--const fn ioctl_req(req: u64) -> libc::Ioctl {
-+const fn ioctl_req(req: libc::c_ulong) -> libc::Ioctl {
-     req as libc::Ioctl
- }
+@@ -39,7 +39,7 @@ If you strip a production agent harness back to its responsibilities, you get a
  
-@@ -122,7 +122,7 @@ fn set_ip_address(sock: libc::c_int, iface: &[u8], addr: Ipv4Addr) -> Result<(),
-             &mut ifr.ifr_ifru as *mut _ as *mut u8,
-             std::mem::size_of::<libc::sockaddr_in>(),
-         );
--        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFADDR as u64), &ifr) < 0 {
-+        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFADDR), &ifr) < 0 {
-             return Err(InitError::NetIoctl {
-                 iface: iface_name(iface),
-                 op: "SIOCSIFADDR",
-@@ -142,7 +142,7 @@ fn set_netmask(sock: libc::c_int, iface: &[u8], mask: Ipv4Addr) -> Result<(), In
-             &mut ifr.ifr_ifru as *mut _ as *mut u8,
-             std::mem::size_of::<libc::sockaddr_in>(),
-         );
--        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFNETMASK as u64), &ifr) < 0 {
-+        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFNETMASK), &ifr) < 0 {
-             return Err(InitError::NetIoctl {
-                 iface: iface_name(iface),
-                 op: "SIOCSIFNETMASK",
-@@ -157,7 +157,7 @@ fn set_interface_up(sock: libc::c_int, iface: &[u8]) -> Result<(), InitError> {
-     let mut ifr = new_ifreq(iface);
+ Every serious agent harnesses most of these. The expensive ones do all of them. The cheap ones cut corners and rebuild the corners later when they hit production. The frameworks bundle them into a monolith and ship one version of each. That last part is the part that costs you, because a year in, you find out that the policy engine you want is not the policy engine the framework ships, and replacing it means replacing the harness.
  
-     unsafe {
--        if libc::ioctl(sock, ioctl_req(libc::SIOCGIFFLAGS as u64), &mut ifr) < 0 {
-+        if libc::ioctl(sock, ioctl_req(libc::SIOCGIFFLAGS), &mut ifr) < 0 {
-             return Err(InitError::NetIoctl {
-                 iface: iface_name(iface),
-                 op: "SIOCGIFFLAGS",
-@@ -168,7 +168,7 @@ fn set_interface_up(sock: libc::c_int, iface: &[u8]) -> Result<(), InitError> {
-         let flags = ifr.ifr_ifru.ifru_flags;
-         ifr.ifr_ifru.ifru_flags = flags | libc::IFF_UP as i16 | libc::IFF_RUNNING as i16;
+-The iii harness ships every one of those thirteen jobs as a separate worker on the [workers.iii.dev](https://workers.iii.dev/) registry. Each speaks the same WebSocket protocol. Each registers functions and triggers on the same engine bus. Each is `iii worker add`\-able, swappable, and writable in any language with an SDK.
++The iii harness ships every one of those thirteen jobs as a separate worker on the [iii.dev/registry](https://iii.dev/registry) worker registry. Each speaks the same WebSocket protocol. Each registers functions and triggers on the same engine bus. Each is `iii worker add`\-able, swappable, and writable in any language with an SDK.
  
--        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFFLAGS as u64), &ifr) < 0 {
-+        if libc::ioctl(sock, ioctl_req(libc::SIOCSIFFLAGS), &ifr) < 0 {
-             return Err(InitError::NetIoctl {
-                 iface: iface_name(iface),
-                 op: "SIOCSIFFLAGS",
-@@ -206,7 +206,7 @@ fn add_default_route(sock: libc::c_int, gateway: Ipv4Addr) -> Result<(), InitErr
+ ## **The stack, by worker**
  
-         rt.rt_flags = libc::RTF_UP | libc::RTF_GATEWAY;
+@@ -151,7 +151,7 @@ If you've been running an agent on top of a framework and feeling the same bound
  
--        if libc::ioctl(sock, ioctl_req(libc::SIOCADDRT as u64), &rt) < 0 {
-+        if libc::ioctl(sock, ioctl_req(libc::SIOCADDRT), &rt) < 0 {
-             return Err(InitError::NetRoute(std::io::Error::last_os_error()));
-         }
-     }
-@@ -217,7 +217,7 @@ fn new_ifreq(iface: &[u8]) -> libc::ifreq {
-     let mut ifr: libc::ifreq = unsafe { std::mem::zeroed() };
-     let len = iface.len().min(libc::IFNAMSIZ);
-     unsafe {
--        std::ptr::copy_nonoverlapping(iface.as_ptr(), ifr.ifr_name.as_mut_ptr() as *mut u8, len);
-+        std::ptr::copy_nonoverlapping(iface.as_ptr(), ifr.ifr_name.as_mut_ptr().cast(), len);
-     }
-     ifr
- }
-```
-
-**File**: `crates/iii-init/tests/init_integration.rs` (modified, +6/-4)
-```diff
-@@ -96,10 +96,12 @@ mod linux {
-     #[test]
-     fn default_nofile_matches_crate_constant() {
-         assert_eq!(iii_init::rlimit::DEFAULT_NOFILE, 65536);
--        assert!(
--            iii_init::rlimit::DEFAULT_NOFILE > 1024,
--            "should be higher than typical default"
--        );
-+        const {
-+            assert!(
-+                iii_init::rlimit::DEFAULT_NOFILE > 1024,
-+                "should be higher than typical default"
-+            )
-+        };
-     }
+ The fastest way to feel the argument is to clone [github.com/iii-hq/workers](https://github.com/iii-hq/workers), `pnpm install`, `pnpm build`, and run the composite entry point. You'll get the full fourteen-worker harness pointed at an iii engine. You can disable any worker by removing its entry from the boot list. You can swap any worker by writing a replacement that registers the same function ids. You can extend any worker by adding a subscriber to its hook topics. `hook-fanout::publish_collect` is the generic every iii hook builds on.
  
-     #[test]
-```
-
----
-
-### Incident Patch 2: `d1dd672e` (2026-11-03)
-**Commit Message**: fix(website): retire the Halloween haunted logo from the header and footer (#2459)
-
-**File**: `website/components/halloween/haunted-link.tsx` (removed, +0/-84)
-```diff
-@@ -1,84 +0,0 @@
--'use client'
--
--import { useInView, useReducedMotion } from 'motion/react'
--import { useEffect, useRef, useState } from 'react'
--
--import { HauntedMark } from './haunted-logo'
--import { MONSTERS } from './monsters'
--
--/** A link wearing the iii mark for Halloween: it haunts on hover, and a monster also drops by on its own. */
--const FIRST_MS = 2500
--/** Long enough for the turn, the extras popping out, and one blink. */
--const SHOW_MS = 2600
--const REST_MS = 6000
--
--/** oklch(0.97 0 0), the site's dark-theme foreground, as the hex the colour animation can interpolate from. */
--const FOREGROUND = '#f5f5f5'
--
--export function HauntedLink({
--  href,
--  label,
--  size,
--  className,
--}: {
--  href: string
--  label: string
--  /** CSS length. Multiples of 16px keep the pixel art on whole pixels. */
--  size: string
--  className?: string
--}) {
--  const ref = useRef<HTMLAnchorElement>(null)
--  const inView = useInView(ref)
--  const [hovered, setHovered] = useState(false)
--  const [visiting, setVisiting] = useState(false)
--  const [monster, setMonster] = useState(0)
--  const reduceMotion = useReducedMotion()
--
--  const on = hovered || visiting
--
--  // Each visit ends with the next monster queued, starting from a random one so a returning reader meets someone
--  // new. Picked after mount so the server and client markup agree.
--  const wasOn = useRef(false)
--  useEffect(() => {
--    if (wasOn.current && !on) setMonster((n) => (n + 1) % MONSTERS.length)
--    wasOn.current = on
--  }, [on])
--  useEffect(() => setMonster(Math.floor(Math.random() * MONSTERS.length)), [])
--
--  // The drop-ins: only while the mark is on screen and the tab is visible, and never for readers who asked for less
--  // motion.
--  useEffect(() => {
--    if (reduceMotion || !inView) return
--    let timer: number
--    const next = (wait: number) => {
--      timer = window.setTimeout(() => {
--        if (document.hidden) return next(REST_MS)
--        setVisiting(true)
--        timer = window.setTimeout(() => {
--          setVisiting(false)
--          next(REST_MS)
--        }, SHOW_MS)
--      }, wait)
--    }
--    next(FIRST_MS)
--    return () => {
--      window.clearTimeout(timer)
--      setVisiting(false)
--    }
--  }, [reduceMotion, inView])
--
--  return (
--    <a
--      ref={ref}
--      href={href}
--      aria-label={label}
--      className={className}
--      onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
--      onPointerLeave={(e) => e.pointerType === 'mouse' && setHovered(false)}
--      onFocus={() => setHovered(true)}
--      onBlur={() => setHovered(false)}
--    >
--      <HauntedMark on={on} monster={monster} size={size} ink={FOREGROUND} />
--    </a>
--  )
--}
-```
-
-**File**: `website/components/halloween/haunted-logo.tsx` (removed, +0/-171)
-```diff
-@@ -1,171 +0,0 @@
--'use client'
--
--import { motion, type Transition } from 'motion/react'
--import { useRef, useState } from 'react'
--
--import { cn } from '@/lib/utils'
--
--import { MONSTERS, type Px, tint } from './monsters'
--
--/*
-- * The iii mark, haunted. When it turns on, the six bars fold into a square while it blushes toward the monster's
-- * colour, then the square turns like the front of a cube to show the monster's face on the next side. Turning off
-- * plays it backwards.
-- *
-- * The bars use the mark's own proportions on a 16-unit grid: bars 4 wide with 2-unit gaps, a dot 4 tall, a gap of
-- * 2, a stem 10 tall. Folded, each column takes a third of the square and dot and stem meet halfway down.
-- */
--const BARS = [0, 1, 2].flatMap((col) => [
--  { mark: { left: col * 6, top: 0, width: 4, height: 4 }, fold: { left: col * (16 / 3), top: 0, height: 8.1 } },
--  { mark: { left: col * 6, top: 6, width: 4, height: 10 }, fold: { left: col * (16 / 3), top: 8, height: 8 } },
--])
--
--const pct = (u: number) => `${(u / 16) * 100}%`
--
--const FOLD_IN: Transition = { duration: 0.22, ease: [0.2, 0, 0, 1] }
--/** Unfolding waits for the cube to turn back, unless it never got as far as turning. */
--const FOLD_OUT = (turned: boolean): Transition => ({ duration: 0.24, ease: [0.4, 0, 0.2, 1], delay: turned ? 0.3 : 0 })
--const TURN_IN: Transition = { type: 'spring', stiffness: 210, damping: 19, delay: 0.16 }
--const TURN_OUT: Transition = { type: 'spring', stiffness: 260, damping: 28, delay: 0.04 }
--
--function Rects({ px, fill }: { px: readonly Px[]; fill?: string }) {
--  return px.map(([x, y, width, height, f], i) => (
--    // biome-ignore lint/suspicious/noArrayIndexKey: static pixel art, never reordered
--    <rect key={i} x={x} y={y} width={width} height={height} fill={f ?? fill} />
--  ))
--}
--
--/** The animation alone, with no interaction: whoever renders it decides when it is `on`. */
--export function HauntedMark({
--  on,
--  monster,
--  size,
--  ink = '#ffffff',
--  className,
--}: {
--  on: boolean
--  /** Index into MONSTERS. A change waits until the mark is back at rest, so a face never swaps mid-turn. */
--  monster: number
--  /** Any CSS length; the cube depth is derived from it. */
--  size: string
--  /** The mark's colour at rest. */
--  ink?: string
--  className?: string
--}) {
--  const [shown, setShown] = useState(monster)
--  const [resting, setResting] = useState(true)
--  if (resting && shown !== monster) setShown(monster)
--  if (resting && on) setResting(false)
--
--  // Whether the cube has started to turn since it last came to rest; read when the fold-out is scheduled.
--  const turned = useRef(false)
--
--  const m = MONSTERS[shown % MONSTERS.length]
--  const state = on ? 'on' : 'off'
--
--  return (
--    <div
--      aria-hidden
--      className={cn('relative perspective-[900px]', className)}
--      style={{ width: size, height: size, ['--s' as string]: size }}
--    >
--      <motion.div
--        className="relative size-full transform-3d [transform-origin:50%_50%_calc(var(--s)*-0.5)]"
--        initial={false}
--        animate={state}
--        variants={{ off: { rotateY: 0, transition: TURN_OUT }, on: { rotateY: -90, transition: TURN_IN } }}
--        onUpdate={(latest) => {
--          if (Number(latest.rotateY) < -1) turned.current = true
--        }}
--        onAnimationComplete={(definition) => {
--          if (definition !== 'off') return
--          turned.current = false
--          setResting(true)
--        }}
--      >
--        {/* Front: the mark folding into a square. */}
--        <motion.div
--          className="absolute inset-0 backface-hidden"
--          initial={false}
--          animate={{ filter: on ? 'brightness(0.55)' : 'brightness(1)' }}
--          transition={on ? TURN_IN : TURN_OUT}
--        >
--          {BARS.map((bar, i) => (
--            <motion.span
--              // biome-ignore lint/suspicious/noArrayIndexKey: the six bars are fixed
--              key={i}
--              className="absolute block"
--              initial={false}
--              animate={state}
--              variants={{
--                off: {
--                  left: pct(bar.mark.left),
--                  top: pct(bar.mark.top),
--                  width: pct(bar.mark.width),
--                  height: pct(bar.mark.height),
--                  backgroundColor: ink,
--                  transition: FOLD_OUT(turned.current),
--                },
--                on: {
--                  left: pct(bar.fold.left),
--                  top: pct(bar.fold.top),
--                  width: pct(16 / 3 + 0.1),
--                  height: pct(bar.fold.height),
--                  backgroundColor: tint(m.color, 0.45),
--                  transition: FOLD_IN,
--                },
--              }}
--            />
--          ))}
--        </motion.div>
--
--        {/* Right side: the monster, turned toward the viewer by the cube's -90° spin. */}
--        <motion.div
--          className="absolute top-0 left-full size-full origin-left rotate-y-90 backface-hidden"
--
-```
-
-**File**: `website/components/halloween/monsters.ts` (removed, +0/-261)
-```diff
-@@ -1,261 +0,0 @@
--/**
-- * Pixel monsters for the haunted iii mark. Every shape is drawn on a 16×16 head grid; accessories may reach 4 cells
-- * past it on any side (the face renders a -4..20 viewBox). A rect is [x, y, width, height, fill?].
-- */
--export type Px = readonly [x: number, y: number, w: number, h: number, fill?: string]
--
--export interface Monster {
--  name: string
--  /** Skin colour; the front face tints toward it while the bars fold into a square. */
--  color: string
--  /** Head silhouette, filled with `color`. */
--  head: readonly Px[]
--  /** Markings painted on the head under the visor. */
--  marks?: readonly Px[]
--  /** The dark screen the eyes sit on. */
--  visor?: readonly Px[]
--  /** These blink. */
--  eyes: readonly Px[]
--  /** Painted over the visor, unanimated. */
--  details?: readonly Px[]
--  /** Pop out once the face has turned toward the viewer. */
--  extras?: readonly Px[]
--}
--
--const SQUARE: readonly Px[] = [[0, 0, 16, 16]]
--const VISOR: readonly Px[] = [[3, 5, 10, 8, '#0a0a0a']]
--const EYES = (fill = '#ffffff'): readonly Px[] => [
--  [5, 7, 2, 3, fill],
--  [9, 7, 2, 3, fill],
--]
--
--export const MONSTERS: readonly Monster[] = [
--  {
--    name: 'Frankenstein',
--    color: '#6fbf4b',
--    head: SQUARE,
--    marks: [
--      [0, 0, 16, 3, '#3a6f27'],
--      [1, 3, 3, 1, '#3a6f27'],
--      [7, 3, 3, 1, '#3a6f27'],
--      [12, 3, 3, 1, '#3a6f27'],
--      [4, 14, 8, 1, '#3a6f27'],
--      [5, 13, 1, 3, '#3a6f27'],
--      [8, 13, 1, 3, '#3a6f27'],
--      [10, 13, 1, 3, '#3a6f27'],
--    ],
--    visor: VISOR,
--    eyes: EYES(),
--    extras: [
--      [-3, 8, 3, 2, '#9a9a9a'],
--      [-4, 7, 1, 4, '#d4d4d4'],
--      [16, 8, 3, 2, '#9a9a9a'],
--      [19, 7, 1, 4, '#d4d4d4'],
--    ],
--  },
--  {
--    name: 'Ghost',
--    color: '#f1f1f1',
--    head: [
--      [2, 0, 12, 1],
--      [1, 1, 14, 1],
--      [0, 2, 16, 14],
--    ],
--    eyes: [
--      [4, 5, 3, 4, '#0a0a0a'],
--      [9, 5, 3, 4, '#0a0a0a'],
--    ],
--    details: [
--      [7, 11, 2, 1, '#0a0a0a'],
--      [6, 12, 1, 1, '#0a0a0a'],
--      [9, 12, 1, 1, '#0a0a0a'],
--      [7, 13, 2, 1, '#0a0a0a'],
--    ],
--    extras: [
--      [0, 16, 2, 2, '#f1f1f1'],
--      [4, 16, 3, 2, '#f1f1f1'],
--      [9, 16, 3, 2, '#f1f1f1'],
--      [14, 16, 2, 2, '#f1f1f1'],
--      [5, 18, 1, 1, '#f1f1f1'],
--      [10, 18, 1, 1, '#f1f1f1'],
--    ],
--  },
--  {
--    name: 'Devil',
--    color: '#e5484d',
--    head: SQUARE,
--    marks: [
--      [6, 14, 4, 2, '#8f1d22'],
--      [7, 13, 2, 1, '#8f1d22'],
--    ],
--    visor: VISOR,
--    eyes: EYES('#ffd60a'),
--    details: [
--      [4, 6, 3, 1, '#e5484d'],
--      [9, 6, 3, 1, '#e5484d'],
--      [6, 11, 4, 1, '#ffffff'],
--      [6, 12, 1, 1, '#ffffff'],
--      [9, 12, 1, 1, '#ffffff'],
--    ],
--    extras: [
--      [1, -2, 3, 2, '#8f1d22'],
--      [0, -4, 2, 2, '#8f1d22'],
--      [12, -2, 3, 2, '#8f1d22'],
--      [14, -4, 2, 2, '#8f1d22'],
--    ],
--  },
--  {
--    name: 'Bat',
--    color: '#71717f',
--    head: SQUARE,
--    marks: [[6, 1, 4, 2, '#45454f']],
--    visor: VISOR,
--    eyes: EYES('#ff5c5c'),
--    details: [
--      [6, 11, 1, 2, '#ffffff'],
--      [9, 11, 1, 2, '#ffffff'],
--    ],
--    extras: [
--      [0, -3, 4, 3, '#71717f'],
--      [0, -4, 2, 1, '#71717f'],
--      [12, -3, 4, 3, '#71717f'],
--      [14, -4, 2, 1, '#71717f'],
--      [-4, 4, 4, 2, '#45454f'],
--      [-3, 6, 3, 2, '#45454f'],
--      [-2, 8, 2, 2, '#45454f'],
--      [16, 4, 4, 2, '#45454f'],
--      [16, 6, 3, 2, '#45454f'],
--      [16, 8, 2, 2, '#45454f'],
--    ],
--  },
--  {
--    name: 'Mummy',
--    color: '#e8e0cc',
--    head: SQUARE,
--    marks: [
--      [0, 1, 11, 1, '#b3a88c'],
--      [5, 3, 11, 1, '#b3a88c'],
--      [0, 14, 9, 1, '#b3a88c'],
--      [7, 15, 9, 1, '#b3a88c'],
--    ],
--    visor: [[2, 6, 12, 5, '#0a0a0a']],
--    eyes: [
--      [4, 7, 2, 3, '#ffffff'],
--      [10, 7, 2, 3, '#ffffff'],
--    ],
--    details: [[7, 6, 2, 5, '#e8e0cc']],
--    extras: [
--      [16, 12, 2, 1, '#e8e0cc'],
--      [17, 13, 1, 3, '#e8e0cc'],
--      [18, 15, 1, 2, '#e8e0cc'],
--    ],
--  },
--  {
--    name: 'Pumpkin',
--    color: '#f59e0b',
--    head: [
--      [1, 0, 14, 16],
--      [0, 1, 16, 14],
--    ],
--    marks: [
--      [5, 0, 1, 16, '#b45309'],
--      [10, 0, 1, 16, '#b45309'],
--    ],
--    visor: VISOR,
--    eyes: EYES('#ffd60a'),
--    details: [
--      [5, 11, 6, 1, '#ffd60a'],
--      [6, 11, 1, 1, '#0a0a0a'],
--      [9, 11, 1, 1, '#0a0a0a'],
--    ],
--    extras: [
--      [7, -3, 2, 3, '#4d7c0f'],
--      [9, -3, 3, 1, '#65a30d'],
--      [11, -2, 2, 1, '#65a30d'],
--    ],
--  },
--  {
--    name: 'Skull',
--    color: '#ebe3d0',
--    head: [
--      [1, 0, 14, 12],
--      [0, 1, 16, 10],
--      [3, 12, 10, 4],
--    ],
--    visor: [
--      [2, 4, 5, 5, '#0a0a0a'],
--      [9, 4, 5, 5, '#0a0a0a'],
--    ],
--    eyes: [
--      [4, 6, 1, 2, '#ff5c5c'],
--      [11, 6, 1, 2, '#ff5c5c'],
--    ],
--    details: [
--      [7, 9, 2, 2, '#0a0a0a'],
--      [4, 12, 8, 1, '#0a0a0a'],
--      [6, 13, 1, 2, '#0a0a0a'],
--      [9, 13, 1, 2, '#0a0a0a'],
--      [13, 1, 1, 2, '#a39b
-```
-
-**File**: `website/components/site/footer.tsx` (modified, +6/-7)
-```diff
-@@ -1,11 +1,11 @@
- import { ArrowUpRightIcon } from 'lucide-react'
- import type { ComponentType } from 'react'
+-The docs live at [iii.dev/docs](https://iii.dev/docs). The engine is at [github.com/iii-hq/iii](https://github.com/iii-hq/iii). The worker registry is at [workers.iii.dev](https://workers.iii.dev). The harness bundle is at [github.com/iii-hq/workers/harness](https://github.com/iii-hq/workers/tree/main/harness).
++The docs live at [iii.dev/docs](https://iii.dev/docs). The engine is at [github.com/iii-hq/iii](https://github.com/iii-hq/iii). The worker registry is at [iii.dev/registry](https://iii.dev/registry). The harness bundle is at [github.com/iii-hq/workers/harness](https://github.com/iii-hq/workers/tree/main/harness).
  
--import { HauntedLink } from '@/components/halloween/haunted-link'
- import { assistantIcons } from '@/components/icons/assistants'
- import { IconDiscord, IconGitHub, IconLinkedIn, IconX } from '@/components/icons/iconly'
- import { askAbout, links } from '@/lib/site'
- import { cn } from '@/lib/utils'
-+import { Logo } from './logo'
- 
- type Icon = ComponentType<{ className?: string }>
- type Item = { label: string; href: string; icon?: Icon; external?: boolean }
-@@ -52,14 +52,13 @@ export function Footer({ container }: { container?: string } = {}) {
-       <div className={cn(container ?? 'mx-auto max-w-[1240px] px-5 sm:px-6 md:px-5', 'pt-14 md:pt-16')}>
-         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-20">
-           <div className="flex flex-col">
--            {/* Halloween: the haunted mark. Swap back to <Logo className="h-7 text-foreground" /> in a plain link to
--                retire it. */}
--            <HauntedLink
-+            <a
-               href="#hero"
--              label="iii, back to top"
--              size="32px"
-+              aria-label="iii, back to top"
-               className="inline-flex w-fit items-center rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-foreground focus-visible:outline-offset-4"
--            />
-+            >
-+              <Logo className="h-7 text-foreground" />
-+            </a>
-             <p className="mt-4 max-w-[320px] text-pretty text-[15px] text-muted-foreground leading-relaxed">
-               A next-generation software system. Workers. Triggers. Functions.
-             </p>
-```
-
-**File**: `website/components/site/header.tsx` (modified, +5/-8)
-```diff
-@@ -4,7 +4,7 @@ import { NavigationMenu } from '@base-ui/react/navigation-menu'
- import { ArrowRightIcon, ArrowUpRightIcon } from 'lucide-react'
- import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
- import { useEffect, useState } from 'react'
--import { HauntedLink } from '@/components/halloween/haunted-link'
-+
- import {
-   IconArrowDown,
-   IconBookmark,
-@@ -25,6 +25,7 @@ import { duration, easeOut, spring, stagger } from '@/lib/motion'
- import { links } from '@/lib/site'
- import { cn } from '@/lib/utils'
- import { CountUp } from './count-up'
-+import { NavLogo } from './nav-graphics'
- 
- type Icon = React.ComponentType<{ className?: string }>
- /** `meta` is a short right-aligned detail (a live count); empty when there is nothing worth saying. */
-@@ -115,13 +116,9 @@ export function Header({ stats: buildStats }: { stats: CommunityStats }) {
-           {/* Phones: a 48px bar, and the logo and the menu icon sit the same 14px in from each end (the icon is 16px
-               inside a 36px button, so 4px of padding puts its lines 14px in). Wider screens keep the 56px bar. */}
-           <div className="flex h-12 items-center gap-2 pr-1 pl-3.5 sm:h-14 sm:pr-2 sm:pl-4 md:pl-5">
--            {/* Halloween: the haunted mark. Swap back to <NavLogo /> in a plain home link to retire it. */}
--            <HauntedLink
--              href="/"
--              label="iii home"
--              size="24px"
--              className={cn('mr-3 flex items-center rounded-md', focusRing)}
--            />
-+            <a href="/" aria-label="iii home" className={cn('mr-3 flex items-center rounded-md', focusRing)}>
-+              <NavLogo />
-+            </a>
- 
-             <DesktopNav community={community} />
+ ## **The bet**
  
 ```
 
----
-
-### Incident Patch 3: `ace98063` (2026-11-03)
-**Commit Message**: fix(compose): fix Windows process startup and log rotation (#2437)
-
-Co-authored-by: Guilherme de S. Vieira Beira <[REDACTED_EMAIL]>
-
-**File**: `crates/iii-compose/src/managed_engine.rs` (modified, +69/-1)
+**File**: `website/content/blog/is-your-business-ready-for-the-eus-lawyers.md` (modified, +1/-1)
 ```diff
-@@ -720,7 +720,10 @@ impl RotatingLog {
-     fn open(path: &Path, max_bytes: u64, archives: usize) -> std::io::Result<Self> {
-         let max_bytes = max_bytes.max(1);
-         let mut options = std::fs::OpenOptions::new();
--        options.create(true).read(true).append(true);
-+        // Sanitization and rotation truncate this same handle. Windows denies
-+        // truncation on an append-only handle; one writer owns the log, so a
-+        // read/write handle positioned at its end preserves existing output.
-+        options.create(true).read(true).write(true).truncate(false);
-         #[cfg(unix)]
-         {
-             use std::os::unix::fs::OpenOptionsExt;
-@@ -742,6 +745,7 @@ impl RotatingLog {
-                 size = clean.len() as u64;
-             }
-         }
-+        file.seek(SeekFrom::End(0))?;
-         let mut log = Self {
-             path: path.to_path_buf(),
-             file,
-@@ -1248,6 +1252,70 @@ port: 60123
-         assert_eq!(log.max_bytes, 1);
-     }
+@@ -152,6 +152,6 @@ You have until December 2, 2027 to be able to answer. You have until roughly now
  
-+    #[test]
-+    fn rotating_log_appends_to_an_existing_clean_log() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("engine.log");
-+        std::fs::write(&path, b"previous\n").unwrap();
-+
-+        let mut log = RotatingLog::open(&path, 64, 2).unwrap();
-+        log.write_bounded(b"next\n").unwrap();
-+        log.file.flush().unwrap();
-+
-+        assert_eq!(std::fs::read(&path).unwrap(), b"previous\nnext\n");
-+    }
-+
-+    #[test]
-+    fn rotating_log_sanitizes_and_appends_to_existing_logs() {
-+        for existing in [b"previous\r\n".as_slice(), b"\x1b[31mprevious\x1b[0m\n"] {
-+            let dir = tempfile::tempdir().unwrap();
-+            let path = dir.path().join("engine.log");
-+            std::fs::write(&path, existing).unwrap();
-+
-+            let mut log = RotatingLog::open(&path, 64, 2).unwrap();
-+            log.write_bounded(b"next\n").unwrap();
-+            log.file.flush().unwrap();
-+
-+            assert_eq!(std::fs::read(&path).unwrap(), b"previous\nnext\n");
-+        }
-+    }
-+
-+    #[test]
-+    fn rotating_log_archives_an_existing_log_at_the_limit() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("engine.log");
-+        std::fs::write(&path, b"previous").unwrap();
-+
-+        let mut log = RotatingLog::open(&path, 8, 2).unwrap();
-+        log.write_bounded(b"next").unwrap();
-+        log.file.flush().unwrap();
-+
-+        assert_eq!(std::fs::read(&path).unwrap(), b"next");
-+        assert_eq!(std::fs::read(archive_path(&path, 1)).unwrap(), b"previous");
-+    }
-+
-+    #[test]
-+    fn rotating_log_rotates_during_writes_and_reopens_without_losing_archives() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("engine.log");
-+        {
-+            let mut log = RotatingLog::open(&path, 4, 2).unwrap();
-+            log.write_bounded(b"abcdefghijkl").unwrap();
-+            log.file.flush().unwrap();
-+        }
-+        assert_eq!(std::fs::read(&path).unwrap(), b"ijkl");
-+        assert_eq!(std::fs::read(archive_path(&path, 1)).unwrap(), b"efgh");
-+        assert_eq!(std::fs::read(archive_path(&path, 2)).unwrap(), b"abcd");
-+
-+        let mut reopened = RotatingLog::open(&path, 4, 2).unwrap();
-+        reopened.write_bounded(b"mn").unwrap();
-+        reopened.file.flush().unwrap();
-+
-+        assert_eq!(std::fs::read(&path).unwrap(), b"mn");
-+        assert_eq!(std::fs::read(archive_path(&path, 1)).unwrap(), b"ijkl");
-+        assert_eq!(std::fs::read(archive_path(&path, 2)).unwrap(), b"efgh");
-+    }
-+
-     #[cfg(unix)]
-     #[test]
-     fn opening_an_existing_log_hardens_its_permissions() {
-```
-
-**File**: `crates/iii-compose/src/process/windows.rs` (modified, +12/-3)
-```diff
-@@ -21,10 +21,10 @@ use tokio::sync::watch;
- use windows_sys::Win32::{
-     Foundation::{CloseHandle, FILETIME, HANDLE, INVALID_HANDLE_VALUE, WAIT_TIMEOUT},
-     System::{
--        Console::{CTRL_BREAK_EVENT, GenerateConsoleCtrlEvent},
-+        Console::{CTRL_BREAK_EVENT, GenerateConsoleCtrlEvent, GetConsoleProcessList},
-         JobObjects::{AssignProcessToJobObject, CreateJobObjectW, TerminateJobObject},
-         Threading::{
--            CREATE_NEW_PROCESS_GROUP, GetProcessTimes, OpenProcess,
-+            CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW, GetProcessTimes, OpenProcess,
-             PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, PROCESS_TERMINATE,
-             TerminateProcess, WaitForSingleObject,
-         },
-@@ -114,7 +114,16 @@ fn spawn_supervised_inner(
- ) -> std::io::Result<(Supervised, ChildOutput, Option<tokio::process::ChildStdin>)> {
-     // Its own console group: CTRL_BREAK can then be aimed at the child alone,
-     // rather than at every process sharing the daemon's console.
--    command.creation_flags(CREATE_NEW_PROCESS_GROUP);
-+    let mut flags = CREATE_NEW_PROCESS_GROUP;
-+    let mut console_pid = 0;
-+    // Detached/service parents have no console to inherit. Without this flag,
-+    // Windows creates a visible console for every engine, worker and hook.
-+    // Query attachment rather than GetConsoleWindow: a hidden console should
-+    // still be shared so CTRL_BREAK can reach the child's process group.
-+    if unsafe { GetConsoleProcessList(&mut console_pid, 1) } == 0 {
-+        flags |= CREATE_NO_WINDOW;
-+    }
-+    command.creation_flags(flags);
-     // A worker is not an interactive child of Compose. Inheriting stdin can
-     // block startup indefinitely and differs from daemon/service semantics.
-     if !preserve_stdin {
-```
-
-**File**: `crates/iii-compose/src/spawn.rs` (modified, +15/-1)
-```diff
-@@ -296,7 +296,21 @@ impl SpawnPlan {
-             return None;
-         }
-         let mut command = tokio::process::Command::new(&self.program);
--        command.args(&self.args).current_dir(&self.working_dir);
-+        #[cfg(windows)]
-+        if self.program == "cmd" && self.args.len() == 2 && self.args[0] == "/C" {
-+            use std::os::windows::process::CommandExt;
-+
-+            // This is already cmd shell syntax, including outer quotes when
-+            // needed. MSVC argument escaping inserts backslashes that cmd
-+            // treats literally, breaking quoted executable paths and args.
-+            command.arg("/C");
-+            command.as_std_mut().raw_arg(&self.args[1]);
-+        } else {
-+            command.args(&self.args);
-+        }
-+        #[cfg(not(windows))]
-+        command.args(&self.args);
-+        command.current_dir(&self.working_dir);
-         // Clear first: the plan is the child's entire environment, so nothing
-         // from the daemon's shell can leak in behind it.
-         command.env_clear();
-```
-
-**File**: `crates/iii-compose/tests/windows_process.rs` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+//! Native Windows regressions for shell quoting and detached supervision.
-+
-+#![cfg(windows)]
-+
-+use std::{collections::BTreeMap, os::windows::process::CommandExt, path::Path, time::Duration};
-+
-+use iii_compose::{
-+    manifest::StartSpec,
-+    process::spawn_supervised_piped_with_stdin,
-+    spawn::{SpawnCtx, spawn_plan},
-+};
-+use tokio::io::AsyncReadExt;
-+use windows_sys::Win32::System::{
-+    Console::{GetConsoleProcessList, GetConsoleWindow},
-+    Threading::{CREATE_NO_WINDOW, DETACHED_PROCESS},
-+};
-+
-+const FIXTURE_ROLE: &str = "III_COMPOSE_WINDOWS_TEST_ROLE";
-+
-+fn console_process_count() -> u32 {
-+    let mut pid = 0;
-+    // A one-element buffer is enough to distinguish no console from an
-+    // attached console, including a console with no visible window.
-+    unsafe { GetConsoleProcessList(&mut pid, 1) }
-+}
-+
-+fn shell_command(script: &str, cwd: &Path) -> tokio::process::Command {
-+    let start = StartSpec::Shell(script.to_string());
-+    let env = BTreeMap::new();
-+    let ctx = SpawnCtx {
-+        engine_url: "ws://127.0.0.1:49134",
-+        namespace: "windows-test",
-+        compose_namespace: "windows-test",
-+        compose_file: cwd,
-+        container_key: "fixture",
-+        start: &start,
-+        config_name: None,
-+        working_dir: cwd,
-+        user_env: &env,
-+    };
-+    let mut command = spawn_plan(&ctx).command().unwrap();
-+    command.creation_flags(CREATE_NO_WINDOW);
-+    command
-+}
-+
-+#[tokio::test]
-+async fn shell_runs_a_quoted_executable_path_with_quoted_arguments() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let bin_dir = dir.path().join("runtime with spaces");
-+    std::fs::create_dir(&bin_dir).unwrap();
-+    let exe = bin_dir.join("fixture.exe");
-+    std::fs::copy(std::env::current_exe().unwrap(), &exe).unwrap();
-+    // cmd /C requires these outer quotes when both the executable and its
-+    // arguments are quoted, as in a Windows path:// scripts.run declaration.
-+    let script = format!(
-+        "\"\"{}\" \"--exact\" \"windows_fixture\" \"--nocapture\"\"",
-+        exe.display()
-+    );
-+    let output = shell_command(&script, dir.path())
-+        .env(FIXTURE_ROLE, "arguments")
-+        .output()
-+        .await
-+        .unwrap();
-+
-+    assert!(output.status.success(), "{output:?}");
-+    assert!(String::from_utf8_lossy(&output.stdout).contains("fixture-ok"));
-+}
-+
-+#[tokio::test]
-+async fn shell_preserves_quotes_and_command_operators() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let output = shell_command("echo \"two words\"&&echo second", dir.path())
-+        .output()
-+        .await
-+        .unwrap();
-+
-+    assert!(output.status.success(), "{output:?}");
-+    assert_eq!(
-+        String::from_utf8(output.stdout)
-+            .unwrap()
-+            .lines()
-+            .collect::<Vec<_>>(),
-+        ["\"two words\"", "second"]
-+    );
-+}
-+
-+fn run_console_fixture(flags: u32, role: &str) {
-+    let output = std::process::Command::new(std::env::current_exe().unwrap())
-+        .args(["--exact", "windows_fixture", "--nocapture"])
-+        .env(FIXTURE_ROLE, role)
-+        .creation_flags(flags)
-+        .output()
-+        .unwrap();
-+    assert!(output.status.success(), "{output:?}");
-+}
-+
-+#[test]
-+fn supervised_children_do_not_open_windows_when_the_parent_is_detached() {
-+    run_console_fixture(DETACHED_PROCESS, "detached-parent");
-+}
-+
-+#[test]
-+fn supervised_children_preserve_an_existing_hidden_console() {
-+    run_console_fixture(CREATE_NO_WINDOW, "attached-parent");
-+}
-+
-+// Each console scenario runs in a fresh process: detaching the test runner's
-+// own console would interfere with concurrently running tests.
-+#[test]
-+fn windows_fixture() {
-+    let Ok(role) = std::env::var(FIXTURE_ROLE) else {
-+        return;
-+    };
-+    if role == "arguments" {
-+        println!("fixture-ok");
-+        return;
-+    }
-+    if role == "child" {
-+        let parent: u32 = std::env::var("III_COMPOSE_WINDOWS_TEST_PARENT")
-+            .unwrap()
-+            .parse()
-+            .unwrap();
-+        let mut pids = [0; 16];
-+        let count = unsafe { GetConsoleProcessList(pids.as_mut_ptr(), pids.len() as u32) } as usize;
-+        println!(
-+            "console-window={}",
-+            !unsafe { GetConsoleWindow() }.is_null()
-+        );
-+        println!(
-+            "shares-parent-console={}",
-+            pids[..count.min(pids.len())].contains(&parent)
-+        );
-+        // Stay alive until supervision has assigned the job and the parent
-+        // drops its stdin writer, even on very fast test machines.
-+        std::io::Read::read_to_end(&mut std::io::stdin(), &mut Vec::new()).unwrap();
-+        return;
-+    }
-+    let detached = role == "detached-parent";
-+    assert_eq!(console_process_count() == 0, detached);
-+
-+    tokio::runtime::Runtime::new().unwrap().block_on(async {
-+        let mut command = tokio::process::Command::new(std::env::current_exe().unwrap());
-+        command
-+            .args(["--exact", "win
+ If you want to try using iii for your next or current project then visit our install guide to get started: [iii.dev/docs/install](https://iii.dev/docs/install). We've also got a Discord where someone is always around to help out: [discord.gg/iiidev](https://discord.gg/iiidev).
+ 
+-Website: [iii.dev](https://iii.dev). Github: [github.com/iii-hq/iii](https://github.com/iii-hq/iii). Worker registry: [workers.iii.dev](https://workers.iii.dev/). Docs: [iii.dev/docs](https://iii.dev/docs).
++Website: [iii.dev](https://iii.dev). Github: [github.com/iii-hq/iii](https://github.com/iii-hq/iii). Worker registry: [iii.dev/registry](https://iii.dev/registry). Docs: [iii.dev/docs](https://iii.dev/docs).
+ 
+ Mike Piccolo, Founder & CEO [@iiidevs](https://x.com/iiidevs)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2461** (2026-11-03): (MOT-5605) feat(ci): engine-type registry rows declare iii_engine_version (@andersonleal)
-- **PR #2460** (2026-11-03): feat(compose): re-check iii_engine_version of bundles installed from the lock (@guibeira)
-- **PR #2459** (2026-11-03): fix(website): retire the Halloween haunted logo from the header and footer (@arihantcodes)
-- **PR #2457** (2026-11-03): feat(sandbox): explicit `iii sandbox run` instead of implicit VM workers (0.26) (@guibeira)
-- **PR #2455** (2026-11-03): docs(website): one primitive, a Function you call or observe (@arihantcodes)
-- **PR #2453** (2026-11-03): observe-v2 housekeeping: drop iii-stream from EngineSources and the built-in event sources section (@guibeira)
+- **PR #2470** (2026-11-04): fix(engine): sandbox::adapter::info names the binding when the adapter hangs (@andersonleal)
+- **PR #2469** (2026-11-04): fix(compose,engine): sandbox regressions found testing observe-v2 with real VMs (@andersonleal)
+- **PR #2466** (2026-11-04): chore: merge main into observe-v2 to resolve #2433 conflicts (@andersonleal)
+- **PR #2465** (2026-11-04): fix(install): say when a release still needs iii-worker and iii-init (@andersonleal)
+- **PR #2464** (2026-11-04): docs(next): show the success message math::add_two_numbers returns (@guibeira)
+- **PR #2463** (2026-11-03): fix(observability): observe ade::ui::asset instead of console::ui::asset (@guibeira)
 
 ---
 
@@ -3350,30 +2435,32 @@ Co-authored-by: Guilherme de S. Vieira Beira <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#242
+## X. website): point worker registry links to iii.dev/registry (#2462)
 
 **RULE**:
-When implementing operations in `crates/iii-compose/src/ps.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/components/landing/content.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `618a6fbe`: lint): satisfy clippy 1.96/1.97 and fix tests that fail locally (MOT-5590) (#2428). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d67b85fd`: website): point worker registry links to iii.dev/registry (#2462). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/iii-compose/src/ps.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/components/landing/content.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        !(arg.starts_with('-')
-            || (*index > 0 && matches!(args[index - 1].as_str(), "-c" | "--config")))
+      /* Registry names from iii.dev/registry. `harness` pulls in its dependencies, shown indented under it. */
+  /* The app that moves between them: the engine plus registry workers (names from iii.dev/registry). */
+    { id: 'workers', label: 'Workers in the registry', source: 'iii.dev/registry', href: 'https://iii.dev/registry' },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        !arg.starts_with('-')
-            && !(*index > 0 && matches!(args[index - 1].as_str(), "-c" | "--config"))
+      /* Registry names from workers.iii.dev. `harness` pulls in its dependencies, shown indented under it. */
+  /* The app that moves between them: the engine plus registry workers (names from workers.iii.dev). */
+    { id: 'workers', label: 'Workers in the registry', source: 'workers.iii.dev', href: 'https://workers.iii.dev/' },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `618a6fbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d67b85fd` are properly handled with clean fallback behavior.

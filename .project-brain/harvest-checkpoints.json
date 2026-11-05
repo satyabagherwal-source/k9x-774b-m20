@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T00:00:13.717Z",
+  "last_updated": "2026-11-05T00:07:40.285Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
-      "verified_at": "2026-10-31T09:47:08.312Z",
+      "content_hash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
+      "verified_at": "2026-11-05T00:07:39.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:47:08.312Z"
+      "last_updated": "2026-11-05T00:07:39.701Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
-      "verified_at": "2026-11-03T21:00:04.953Z",
+      "content_hash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
+      "verified_at": "2026-11-05T00:07:40.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:00:04.953Z"
+      "last_updated": "2026-11-05T00:07:40.284Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",

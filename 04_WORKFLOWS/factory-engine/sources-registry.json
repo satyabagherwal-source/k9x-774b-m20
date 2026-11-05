@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T00:00:16.245Z",
-    "lastVerified": "2026-11-05T00:00:16.245Z",
+    "lastChecked": "2026-11-05T00:07:50.214Z",
+    "lastVerified": "2026-11-05T00:07:50.214Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-04T23:34:46.436Z",
+    "lastChecked": "2026-11-05T00:07:50.202Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-04T23:34:46.436Z"
+    "lastVerified": "2026-11-05T00:07:50.202Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -653,14 +653,14 @@
     "officialUrl": "https://github.com/iii-hq/iii",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T20:59:59.163Z",
-    "lastVerified": "2026-11-03T20:59:59.163Z",
+    "lastChecked": "2026-11-05T00:07:38.795Z",
+    "lastVerified": "2026-11-05T00:07:38.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
+    "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1831,8 +1831,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T20:38:56.001Z",
-    "lastVerified": "2026-11-04T20:38:56.001Z",
+    "lastChecked": "2026-11-05T00:07:45.289Z",
+    "lastVerified": "2026-11-05T00:07:45.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2328,13 +2328,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T09:46:55.402Z",
-    "lastVerified": "2026-10-31T09:46:55.402Z",
+    "lastChecked": "2026-11-05T00:07:37.807Z",
+    "lastVerified": "2026-11-05T00:07:37.807Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
-    "promotedRulesCount": 3,
+    "contentHash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -3003,9 +3003,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-04T01:07:38.905Z",
+    "lastChecked": "2026-11-05T00:07:47.768Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-04T01:07:38.905Z"
+    "lastVerified": "2026-11-05T00:07:47.768Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -5346,12 +5346,12 @@
     "lastVerified": "2026-11-04T17:37:18.058Z"
   },
   "encoredev-encore": {
-    "name": "encoredev/encore",
+    "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T01:51:19.840Z",
-    "lastVerified": "2026-11-04T01:51:19.840Z",
+    "lastChecked": "2026-11-05T00:07:42.811Z",
+    "lastVerified": "2026-11-05T00:07:42.811Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
@@ -5360,7 +5360,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e755a8b6"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -8391,9 +8392,9 @@
   "kotlin-kmp-production-sample": {
     "name": "kmp-production-sample",
     "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
-    "lastChecked": "2026-10-31T17:03:44.738Z",
+    "lastChecked": "2026-11-05T00:07:40.303Z",
     "revisionIdentifier": "b0bed628",
-    "lastVerified": "2026-10-31T17:03:44.738Z"
+    "lastVerified": "2026-11-05T00:07:40.303Z"
   },
   "astral-sh-ruff": {
     "name": "astral-sh/ruff",

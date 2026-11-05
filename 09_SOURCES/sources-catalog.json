@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "88e684c181d4464be8ca9e5fa13330adf090b997965edd763bb50f4f40438db3",
-    "lastHarvestedAt": "2026-10-31T09:47:08.303Z",
+    "contentHash": "e01c961aa66b6fa6d0193f89d4f4a6775dc527e84faedbce8c1435dd4578feeb",
+    "lastHarvestedAt": "2026-11-05T00:07:39.691Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "d1dd672e",
+    "sourceVersion": "d67b85fd",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "9711ea4819cff334b2256388af56a892459ee5e4710c86c2e40d17e2086c1486",
-    "lastHarvestedAt": "2026-11-03T21:00:04.944Z",
+    "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
+    "lastHarvestedAt": "2026-11-05T00:07:40.264Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {

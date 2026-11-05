@@ -7411,3 +7411,5 @@
 | `CYCLE-20261104-VMZ6` | `2026-11-04T23:53:22.962Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7031, Rule 7032, Rule 7033` | Yes (`07110e8a...`) |
 | `CYCLE-20261105-4ERM` | `2026-11-05T00:00:12.226Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7034` | Yes (`5ba56753...`) |
 | `CYCLE-20261105-4FWJ` | `2026-11-05T00:00:13.699Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7035, Rule 7036` | Yes (`deba39c6...`) |
+| `CYCLE-20261105-E00W` | `2026-11-05T00:07:39.680Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`e01c961a...`) |
+| `CYCLE-20261105-E0H0` | `2026-11-05T00:07:40.260Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7037` | Yes (`92f99417...`) |
