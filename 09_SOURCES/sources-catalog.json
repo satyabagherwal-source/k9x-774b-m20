@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "e50ae7c1",
+    "sourceVersion": "05b25923",
     "license": "GPL-3.0",
-    "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
-    "lastHarvestedAt": "2026-11-04T23:13:29.703Z",
+    "contentHash": "91bd071ae5125a5f95dea4328e096181d043eeabd51eb14012a954c3af9ecf94",
+    "lastHarvestedAt": "2026-11-05T18:31:28.735Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "1193f14b",
+    "sourceVersion": "fd11e5d5",
     "license": "MIT",
-    "contentHash": "5d4fce6025ee35dbd6c5cd1f09d7e86f2850daa02082d1a2b455efed0e122654",
-    "lastHarvestedAt": "2026-11-05T03:53:31.265Z",
+    "contentHash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
+    "lastHarvestedAt": "2026-11-05T18:31:36.763Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -11735,8 +11735,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-2B",
     "sourceVersion": "hf-liquidai-d1-2b",
     "license": "Open-Source",
-    "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
-    "lastHarvestedAt": "2026-11-02T14:53:46.888Z",
+    "contentHash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
+    "lastHarvestedAt": "2026-11-05T18:31:38.902Z",
     "learningId": "learn-huggingface-liquidai-d1-2b"
   },
   "hf-sensenova-sensenova-loop-9b-preview": {

@@ -7747,3 +7747,6 @@
 | `CYCLE-20261105-9069` | `2026-11-05T18:15:31.617Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16ef2f9d...`) |
 | `CYCLE-20261105-J0W9` | `2026-11-05T18:23:19.113Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`33b2f57d...`) |
 | `CYCLE-20261105-KNU2` | `2026-11-05T18:24:35.498Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c6bf03a8...`) |
+| `CYCLE-20261105-TIOS` | `2026-11-05T18:31:28.732Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`91bd071a...`) |
+| `CYCLE-20261105-TOVR` | `2026-11-05T18:31:36.759Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eaf16f48...`) |
+| `CYCLE-20261105-TQIW` | `2026-11-05T18:31:38.888Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`eaa3c4fd...`) |

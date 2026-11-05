@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T18:24:35.508Z",
-  "total_cycles_completed": 7724,
-  "total_learnings_persisted": 7724,
-  "total_rules_promoted": 7366,
+  "last_updated": "2026-11-05T18:31:38.907Z",
+  "total_cycles_completed": 7727,
+  "total_learnings_persisted": 7727,
+  "total_rules_promoted": 7371,
   "history": [
-    {
-      "timestamp": "2026-11-05T06:36:23.294Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:43:58.358Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:44:02.461Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:44:11.273Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1403,6 +1382,27 @@
       "repository": "nguyenphutrong/quotio",
       "learningId": "learn-github-nguyenphutrong-quotio",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:31:28.740Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:31:36.767Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T18:31:38.907Z",
+      "repository": "LiquidAI/d1-2B",
+      "learningId": "learn-huggingface-liquidai-d1-2b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

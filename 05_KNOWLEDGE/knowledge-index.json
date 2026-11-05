@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T18:24:35.409Z",
+  "last_updated": "2026-11-05T18:31:38.802Z",
   "total_verified_learnings": 1219,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -57913,11 +57913,16 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "1193f14b",
-      "content_hash": "5d4fce6025ee35dbd6c5cd1f09d7e86f2850daa02082d1a2b455efed0e122654",
+      "source_version": "fd11e5d5",
+      "content_hash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add poller targets to worker metrics events (#12939)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2213,
           "title": "timeskipping clock mismatch (#12609)",
@@ -57999,7 +58004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:53:31.148Z",
+      "verified_at": "2026-11-05T18:31:36.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73815,11 +73820,16 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "e50ae7c1",
-      "content_hash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
+      "source_version": "05b25923",
+      "content_hash": "91bd071ae5125a5f95dea4328e096181d043eeabd51eb14012a954c3af9ecf94",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "gallery): use colored icons for the dark-tile apps",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1452,
           "title": "play the Windows default sound for notifications unless silent (#1417)",
@@ -73886,7 +73896,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:13:29.590Z",
+      "verified_at": "2026-11-05T18:31:28.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170775,10 +170785,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+      "content_hash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Attention-Convolution Layer Periodicity Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "BFloat16 Precision Mandate for Hybrid Conv-Attention Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Vision-Text Projector Dimensional Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6420,
           "title": "Hybrid Attention Layer Interleaving for Latency-Cost Optimization",
@@ -170800,7 +170825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:53:46.783Z",
+      "verified_at": "2026-11-05T18:31:38.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

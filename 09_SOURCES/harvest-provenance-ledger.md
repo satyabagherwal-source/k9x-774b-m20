@@ -7756,3 +7756,6 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `0c03d749` | Multi-dimensional audit evidence | 2026-11-05T18:15:31.621Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `588cf353` | Multi-dimensional audit evidence | 2026-11-05T18:23:19.116Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `469ff28e` | Multi-dimensional audit evidence | 2026-11-05T18:24:35.502Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `05b25923` | Multi-dimensional audit evidence | 2026-11-05T18:31:28.735Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `fd11e5d5` | Multi-dimensional audit evidence | 2026-11-05T18:31:36.763Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-05T18:31:38.902Z |

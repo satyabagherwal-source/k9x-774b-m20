@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-R6RU",
-    "timestamp": "2026-11-04T17:18:00.714Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "6d4a0aec7fbaa5c757520d2a1697736c354ffffdc99de519193398e6e93a9e19",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-R7HB",
-    "timestamp": "2026-11-04T17:18:01.631Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "663c0d0f6f87ea2fe0bd3f73744b3d7c8e6fe4458ba151becfc32bb03d124ba5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-R95W",
-    "timestamp": "2026-11-04T17:18:03.812Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "92b0850f14df71e6955180daa7085deea4ecbaa7e5ad5294aa378337203fb5ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-7J4W",
     "timestamp": "2026-11-04T17:30:43.232Z",
     "repository": "moby/buildkit",
@@ -7492,6 +7447,51 @@
     "contentHash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-TIOS",
+    "timestamp": "2026-11-05T18:31:28.732Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "91bd071ae5125a5f95dea4328e096181d043eeabd51eb14012a954c3af9ecf94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-TOVR",
+    "timestamp": "2026-11-05T18:31:36.759Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-TQIW",
+    "timestamp": "2026-11-05T18:31:38.888Z",
+    "repository": "LiquidAI/d1-2B",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "eaa3c4fdbf895a0ba626e82982d4b5275f2fdfee18c5e8d098c15e4996ac7b1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

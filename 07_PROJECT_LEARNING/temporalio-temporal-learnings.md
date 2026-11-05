@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `1193f14b`  
+> **Source Version**: `fd11e5d5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:53:30.583Z  
+> **Timestamp**: 2026-11-05T18:31:35.236Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:53:30.448Z  
+> **Harvest Timestamp**: 2026-11-05T18:31:35.230Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24193 stars
+- **Stars / Engagement**: 24202 stars
 
 ---
 
@@ -2121,52 +2121,424 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4687e189` (2026-11-04)
-**Commit Message**: Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)
+### Incident Patch 1: `fd11e5d5` (2026-11-05)
+**Commit Message**: Add poller targets to worker metrics events (#12939)
 
 ## What changed?
-Updated the description of the `history.TaskDLQEnabled` dynamic config
-setting (`HistoryTaskDLQEnabled` in
-`common/dynamicconfig/constants.go`).
 
-Removed the stale second description line: "Do not turn this on if you
-aren't using Cassandra as the history task DLQ is not implemented for
-other databases."
+Export poller targets alongside current poller counts in worker metrics
+events.
+
+Note: For now, the target value is set to the current pollers. Once SDK
+starts sending it we will switch to it.
 
 ## Why?
-The old text says the history task DLQ (QueueV2) only exists for
-Cassandra, which is no longer true. QueueV2 has a SQL implementation
-wired into the SQL persistence factory and covered by tests on every SQL
-backend.
+
+Avoid another schema change when SDK heartbeats report poller targets.
 
 ## How did you test it?
-- [x] built (`go build ./common/dynamicconfig/...`)
-- [ ] run locally and tested manually
-- [x] covered by existing tests
-- [ ] added new unit test(s)
-- [ ] added new functional test(s)
 
-**File**: `common/dynamicconfig/constants.go` (modified, +1/-2)
+- Unit tests
+
+**File**: `common/wideevents/worker_events.go` (modified, +13/-5)
 ```diff
-@@ -3115,8 +3115,7 @@ a low priority workflow lock before subsequent stream sender conversion attempts
- 	HistoryTaskDLQEnabled = NewGlobalBoolSetting(
- 		"history.TaskDLQEnabled",
- 		true,
--		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.
--Do not turn this on if you aren't using Cassandra as the history task DLQ is not implemented for other databases.`,
-+		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.`,
- 	)
- 	HistoryTaskDLQUnexpectedErrorAttempts = NewGlobalIntSetting(
- 		"history.TaskDLQUnexpectedErrorAttempts",
+@@ -73,12 +73,18 @@ func (p WorkerConfigPayload) Attributes() []log.KeyValue {
+ // omitted when the source message is absent, distinguishing "not reported"
+ // from an actual zero value.
+ type WorkerTaskTypeStats struct {
+-	TotalSlots           *int32
+-	UsedSlots            *int32
+-	CurrentPollers       *int32
++	TotalSlots *int32
++	UsedSlots  *int32
++	// Current number of in-flight pollers.
++	CurrentPollers *int32
++	// Desired number of pollers.
++	TargetPollers *int32
++	// Current number of in-flight sticky pollers.
+ 	CurrentStickyPollers *int32
+-	TotalProcessedTasks  *int32
+-	TotalFailedTasks     *int32
++	// Desired number of sticky pollers.
++	TargetStickyPollers *int32
++	TotalProcessedTasks *int32
++	TotalFailedTasks    *int32
+ }
+ 
+ // appendAttributes adds one attribute per reported stat, prefixed with the
+@@ -92,7 +98,9 @@ func (s WorkerTaskTypeStats) appendAttributes(attrs []log.KeyValue, taskType str
+ 	appendStat("total_slots", s.TotalSlots)
+ 	appendStat("used_slots", s.UsedSlots)
+ 	appendStat("current_pollers", s.CurrentPollers)
++	appendStat("target_pollers", s.TargetPollers)
+ 	appendStat("current_sticky_pollers", s.CurrentStickyPollers)
++	appendStat("target_sticky_pollers", s.TargetStickyPollers)
+ 	appendStat("total_processed_tasks", s.TotalProcessedTasks)
+ 	appendStat("total_failed_tasks", s.TotalFailedTasks)
+ 	return attrs
+```
+
+**File**: `service/matching/workers/worker_metrics_emitter.go` (modified, +4/-0)
+```diff
+@@ -168,9 +168,13 @@ func (e *workerMetricsEmitter) emitWorkerMetricsEvent(nsName namespace.Name, hb
+ 		s := wideevents.WorkerTaskTypeStats{}
+ 		if pollerInfo != nil {
+ 			s.CurrentPollers = new(pollerInfo.GetCurrentPollers())
++			// TODO: Use the SDK-reported poller target when available.
++			s.TargetPollers = s.CurrentPollers
+ 		}
+ 		if stickyInfo != nil {
+ 			s.CurrentStickyPollers = new(stickyInfo.GetCurrentPollers())
++			// TODO: Use the SDK-reported sticky poller target when available.
++			s.TargetStickyPollers = s.CurrentStickyPollers
+ 		}
+ 		if slots != nil {
+ 			totalSlots := slots.GetCurrentAvailableSlots() + slots.GetCurrentUsedSlots()
+```
+
+**File**: `service/matching/workers/worker_metrics_emitter_test.go` (modified, +14/-0)
+```diff
+@@ -545,6 +545,12 @@ func TestEmitWorkerMetricsEvent(t *testing.T) {
+ 		WorkflowStickyPollerInfo: &workerpb.WorkerPollerInfo{
+ 			CurrentPollers: 2,
+ 		},
++		ActivityPollerInfo: &workerpb.WorkerPollerInfo{
++			CurrentPollers: 0,
++		},
++		NexusPollerInfo: &workerpb.WorkerPollerInfo{
++			CurrentPollers: 4,
++		},
+ 		CurrentStickyCacheSize: 100,
+ 		TotalStickyCacheHit:    500,
+ 		TotalStickyCacheMiss:   20,
+@@ -553,14 +559,21 @@ func TestEmitWorkerMetricsEvent(t *testing.T) {
+ 
+ 	require.Equal(t, "worker_metrics", eventLogger.records[0].EventName())
+ 	// The last-interval task counts are not exported.
++	// Targets mirror current pollers, including a reported zero.
+ 	require.Equal(t, map[string]any{
+ 		"namespace":                       "ns",
+ 		"task_queue":                      "my-queue",
+ 		"worker_instance_key":             "w1",
+ 		"workflow_total_slots":            int64(10),
+ 		"workflow_used_slots":             int64(2),
+ 		"workflow_current_pollers":        int64(3),
++		"workflow_target_pollers":         int64(3),
+ 		"workflow_current_sticky_pollers": int64(2),
++		"workflow_target_sticky_pollers":  int64(2),
++		"activity_current_pollers":        int64(0),
++		"activity_target_pollers":         int64(0),
++		"nexus_current_pollers":           int64(4),
++		"nexus_target_pollers":            int64(4),
+ 		"workflow_total_processed_tasks":  int64(1000),
+ 		"workflow_total_failed_tasks":     int64(10),
+ 		"sticky_cache_size":               int64(100),
+@@ -636,6 +649,7 @@ func TestEmitWorkerMetricsEventPollersWithoutSlots(t *testing.T) {
+ 		"task_queue":               "",
+ 		"worker_instance_key":      "w1",
+ 		"activity_current_pollers": int64(5),
++		"activity_target_pollers":  int64(5),
+ 		"sticky_cache_size":        int64(0),
+ 		"sticky_cache_hit":         int64(0),
+ 		"sticky_cache_miss":        int64(0),
+```
+
+---
+
+### Incident Patch 2: `898bdce4` (2026-11-05)
+**Commit Message**: Include task events in eventless state replication payloads (#12897)
+
+## What changed?
+
+When a non-first `SyncVersionedTransitionTask` converts to a state-sync
+artifact without event batches, attach the events from the task's
+persisted `[FirstEventID, NextEventID)` range. Read the range from the
+XDC event-blob cache when available, otherwise use the existing
+paginated raw-history reader after releasing the workflow lock.
+
+Preserve event batches already selected by the sync-state retriever,
+first-sync handling, eventless transitions, and verify/backfill
+conversion paths. No protobuf changes are needed.
+
+Cached batches are attached only when their version history agrees with
+the snapshot through the last event in the returned cache range, which
+can extend beyond the task range. On a branch mismatch or a cached
+history with no common ancestor, omit the cached batches and preserve
+the receiver's existing history-fetch recovery. Compatible shared
+prefixes are accepted even when the histories diverge later.
+
+## Why?
+
+The sender's replication-progress cache is an in-memory hint that can be
+lost through eviction, TTL expiry, or a history-process restart. On a
+cache miss, conversion current
+
+**File**: `service/history/replication/raw_task_converter.go` (modified, +49/-7)
+```diff
+@@ -475,13 +475,14 @@ func getVersionHistoryAndEvents(
+ 	logger log.Logger,
+ ) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, error) {
+ 	if eventBlobCache != nil {
+-		if versionHistory, eventBatches, baseWorkflowInfo, ok := getEventsFromCache(
++		versionHistory, eventBatches, baseWorkflowInfo, _, ok := getEventsFromCache(
+ 			eventBlobCache,
+ 			workflowKey,
+ 			eventVersion,
+ 			firstEventID,
+ 			nextEventID,
+-		); ok {
++		)
++		if ok {
+ 			return versionHistory, eventBatches, baseWorkflowInfo, nil
+ 		}
+ 	}
+@@ -509,25 +510,26 @@ func getVersionHistoryAndEvents(
+ // getEventsFromCache returns the event batches in the range [firstEventID, nextEventID) from eventBlobCache. A
+ // transaction can be split across several batches (history.maximumEventBatchSizeInBytes), while a cache
+ // entry holds a single batch, so it follows each entry's NextEventID to the next batch. It returns false
+-// unless every batch in the range is cached.
++// unless every batch in the range is cached. The returned exclusive end covers all cached batches,
++// which may extend beyond nextEventID.
+ func getEventsFromCache(
+ 	eventBlobCache persistence.XDCCache,
+ 	workflowKey definition.WorkflowKey,
+ 	eventVersion int64,
+ 	firstEventID int64,
+ 	nextEventID int64,
+-) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, bool) {
++) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, int64, bool) {
+ 	var eventBatches []*commonpb.DataBlob
+ 	startEventID := firstEventID
+ 	startEventVersion := eventVersion
+ 	for {
+ 		xdcCacheValue, ok := eventBlobCache.Get(persistence.NewXDCCacheKey(workflowKey, startEventID, startEventVersion))
+ 		if !ok {
+-			return nil, nil, nil, false
++			return nil, nil, nil, 0, false
+ 		}
+ 		eventBatches = append(eventBatches, xdcCacheValue.EventBlobs...)
+ 		if xdcCacheValue.NextEventID >= nextEventID {
+-			return xdcCacheValue.VersionHistoryItems, eventBatches, xdcCacheValue.BaseWorkflowInfo, true
++			return xdcCacheValue.VersionHistoryItems, eventBatches, xdcCacheValue.BaseWorkflowInfo, xdcCacheValue.NextEventID, true
+ 		}
+ 		startEventID = xdcCacheValue.NextEventID
+ 		var err error
+@@ -536,7 +538,7 @@ func getEventsFromCache(
+ 			startEventID,
+ 		)
+ 		if err != nil {
+-			return nil, nil, nil, false
++			return nil, nil, nil, 0, false
+ 		}
+ 	}
+ }
+@@ -828,6 +830,46 @@ func (c *syncVersionedTransitionTaskConverter) convert(
+ 	// you use mutable state after the releaseFunc has been called, you will be accessing mutable state without holding the lock.
+ 	// Deep copy what you need.
+ 
++	// A cold progress cache must not suppress the events produced by this task.
++	// The receiver can fetch any gaps if the serialized state has advanced further.
++	if !taskInfo.IsFirstTask && len(syncStateResult.VersionedTransitionArtifact.EventBatches) == 0 &&
++		taskInfo.FirstEventID >= common.FirstEventID && taskInfo.NextEventID > taskInfo.FirstEventID {
++		var eventBatches []*commonpb.DataBlob
++		var cached bool
++		if c.eventBlobCache != nil {
++			var cachedVersionHistory []*historyspb.VersionHistoryItem
++			var cachedNextEventID int64
++			cachedVersionHistory, eventBatches, _, cachedNextEventID, cached = getEventsFromCache(
++				c.eventBlobCache,
++				taskInfo.WorkflowKey,
++				taskInfo.FirstEventVersion,
++				taskInfo.FirstEventID,
++				taskInfo.NextEventID,
++			)
++			if cached {
++				// Cache entries may outlive an event-based rebuild or extend beyond the task's range.
++				lca, err := versionhistory.FindLCAVersionHistoryItemFromItemSlice(currentHistoryCopy.Items, cachedVersionHistory)
++				if err != nil || lca.EventId < cachedNextEventID-1 {
++					eventBatches = nil
++				}
++			}
++		}
++		if !cached {
++			eventBatches, err = getEventsBlob(
++				ctx,
++				c.shardID,
++				currentHistoryCopy.BranchToken,
++				taskInfo.FirstEventID,
++				taskInfo.NextEventID,
++				c.executionManager,
++			)
++			if err != nil {
++				return nil, err
++			}
++		}
++		syncStateResult.VersionedTransitionArtifact.EventBatches = eventBatches
++	}
++
+ 	syncStateResult.VersionedTransitionArtifact.IsCloseTransferTaskAcked = c.isCloseTransferTaskAcked(closeTransferTask)
+ 	syncStateResult.VersionedTransitionArtifact.IsForceReplication = taskInfo.IsForceReplication
+ 
+```
+
+**File**: `service/history/replication/raw_task_converter_events_test.go` (added, +225/-0)
+```diff
+@@ -0,0 +1,225 @@
++package replication
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	commonpb "go.temporal.io/api/common/v1"
++	"go.temporal.io/api/serviceerror"
++	enumsspb "go.temporal.io/server/api/enums/v1"
++	historyspb "go.temporal.io/server/api/history/v1"
++	persistencespb "go.temporal.io/server/api/persistence/v1"
++	replicationspb "go.temporal.io/server/api/replication/v1"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/common/definition"
++	"go.temporal.io/server/common/log"
++	"go.temporal.io/server/common/persistence"
++	"go.temporal.io/server/common/testing/protorequire"
++	historyi "go.temporal.io/server/service/history/interfaces"
++	"go.temporal.io/server/service/history/tasks"
++	"go.uber.org/mock/gomock"
++	"google.golang.org/protobuf/types/known/timestamppb"
++)
++
++func TestSyncTaskIncludesPersistedEvents(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		name              string
++		cached            bool
++		stateOnly         bool
++		existingEvents    bool
++		forceReplication  bool
++		readError         error
++		snapshotHistory   []*historyspb.VersionHistoryItem
++		cachedHistory     []*historyspb.VersionHistoryItem
++		cachedNextEventID int64
++		omitEvents        bool
++	}{
++		{name: "cold progress with cached batches", cached: true},
++		{name: "cold progress with paginated persistence read"},
++		{name: "history read failure", readError: serviceerror.NewUnavailable("history unavailable")},
++		{name: "state only transition", stateOnly: true},
++		{name: "preserve events selected by target progress", existingEvents: true},
++		{name: "force replication retains task range", cached: true, forceReplication: true},
++		{
++			name: "rebuilt snapshot rejects discarded cached branch", cached: true, omitEvents: true,
++			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 6, Version: 100}, {EventId: 18, Version: 200}},
++			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
++		},
++		{
++			name: "shared prefix remains valid before divergence", cached: true,
++			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}, {EventId: 18, Version: 200}},
++			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
++		},
++		{
++			name: "validate cached batch beyond requested end", cached: true, omitEvents: true, cachedNextEventID: 11,
++			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}, {EventId: 18, Version: 200}},
++			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
++		},
++		{
++			name: "cached batch extends beyond snapshot tip", cached: true, omitEvents: true, cachedNextEventID: 11,
++			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}},
++			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
++		},
++		{
++			name: "unrelated cached history is omitted without failing task", cached: true, omitEvents: true,
++			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 18, Version: 200}},
++			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			ctrl := gomock.NewController(t)
++			ctx := t.Context()
++			key := definition.NewWorkflowKey("namespace", "workflow", "run")
++			versionHistory := &historyspb.VersionHistory{
++				BranchToken: []byte("branch"),
++				Items: []*historyspb.VersionHistoryItem{
++					{EventId: 18, Version: 100},
++				},
++			}
++			if tc.snapshotHistory != nil {
++				versionHistory.Items = tc.snapshotHistory
++			}
++			transitionHistory := []*persistencespb.VersionedTransition{
++				{NamespaceFailoverVersion: 100, TransitionCount: 10},
++			}
++			executionInfo := &persistencespb.WorkflowExecutionInfo{
++				TransitionHistory: transitionHistory,
++				VersionHistories: &historyspb.VersionHistories{
++					Histories: []*historyspb.VersionHistory{versionHistory},
++				},
++			}
++			task := &tasks.SyncVersionedTransitionTask{
++				WorkflowKey:         key,
++				ArchetypeID:         chasm.WorkflowArchetypeID,
++				TaskID:              42,
++				VisibilityTimestamp: time.Unix(100, 0).UTC(),
++				VersionedTransition: &persistencespb.VersionedTransition{
++					NamespaceFailoverVersion: 100, TransitionCount: 4,
++				},
++				FirstEventVersion:  100,
++				FirstEventID:       7,
++				NextEventID:        9,
++				IsForceReplication: tc.forceReplication,
++			}
++			if tc.stateOnly {
++				task.FirstEventID = 0
++				task.NextEventID = 0
++			}
++			batches := []*commonpb.DataBlob{{Data: []byte("batch 7")}, {Data: []byte("batch 8")}}
++			artifact := &replicationspb.VersionedTransitionArtifact{
++				StateAttributes: &replicationspb.VersionedTransitionArtifact_SyncWorkflowStateSnapshotAttributes{
++					SyncWorkflowStateSnapshotAttributes: &replicationspb.SyncWorkflowStateSnapshotAttributes{
++						State: &persistencespb.WorkflowMutableState{ExecutionInfo: executionInfo},
++					},
++		
+```
+
+**File**: `service/history/replication/raw_task_converter_test.go` (modified, +9/-0)
+```diff
+@@ -1881,6 +1881,14 @@ func (s *rawTaskConverterSuite) TestConvertSyncVersionedTransitionTask_Mutation(
+ 		nil,
+ 		gomock.Any(),
+ 	).Return(syncResult, nil)
++	eventBatches := []*commonpb.DataBlob{{Data: []byte("task events")}}
++	s.executionManager.EXPECT().ReadRawHistoryBranch(ctx, &persistence.ReadHistoryBranchRequest{
++		BranchToken: versionHistory.BranchToken,
++		MinEventID:  firstEventID,
++		MaxEventID:  nextEventID,
++		PageSize:    1,
++		ShardID:     s.shardContext.GetShardID(),
++	}).Return(&persistence.ReadRawHistoryBranchResponse{HistoryEventBlobs: eventBatches}, nil)
+ 	converter := newSyncVersionedTransitionTaskConverter(s.shardContext, s.workflowCache, nil, s.progressCache, s.executionManager, s.syncStateRetriever, s.logger)
+ 	result, err := convertSyncVersionedTransitionTask(ctx, task, targetClusterID, converter)
+ 	s.NoError(err)
+@@ -1890,6 +1898,7 @@ func (s *rawTaskConverterSuite) TestConvertSyncVersionedTransitionTask_Mutation(
+ 		Attributes: &replicationspb.ReplicationTask_SyncVersionedTransitionTaskAttributes{
+ 			SyncVersionedTransitionTaskAttributes: &replicationspb.SyncVersionedTransitionTaskAttributes{
+ 				VersionedTransitionArtifact: &replicationspb.VersionedTransitionArtifact{
++					EventBatches: eventBatches,
+ 					StateAttributes: &replicationspb.VersionedTransitionArtifact_SyncWorkflowStateSnapshotAttributes{
+ 						SyncWorkflowStateSnapshotAttributes: &replicationspb.SyncWorkflowStateSnapshotAttributes{
+ 							State: syncResult.VersionedTransitionArtifact.GetSyncWorkflowStateSnapshotAttributes().State,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12942** (2026-11-05): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12939** (2026-11-05): Add poller targets to worker metrics events (@rkannan82)
 - **PR #12925** (2026-11-04): add functional testing for chasm time skipping in passive clusters (@feiyang3cat)
 - **PR #12922** (closed): Add MySQL and PostgreSQL build tags for minimal server builds (@stephanos)
 - **PR #12921** (2026-11-04): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12919** (2026-11-04): Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (@prathyushpv)
-- **PR #12910** (closed): Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (@claude[bot])
-- **PR #12907** (2026-11-04): [cloud 165] Clean up timed-out Nexus operations (@tekkaya)
 
 ---
 
@@ -2186,29 +2558,44 @@ backend.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919)
+## X. Add poller targets to worker metrics events (#12939)
 
 **RULE**:
-When implementing operations in `common/dynamicconfig/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/wideevents/worker_events.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4687e189`: stale Cassandra-only wording on HistoryTaskDLQEnabled (#12919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd11e5d5`: Add poller targets to worker metrics events (#12939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/dynamicconfig/constants.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/wideevents/worker_events.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.`,
+	TotalSlots *int32
+	UsedSlots  *int32
+	// Current number of in-flight pollers.
+	CurrentPollers *int32
+	// Desired number of pollers.
+	TargetPollers *int32
+	// Current number of in-flight sticky pollers.
+	// Desired number of sticky pollers.
+	TargetStickyPollers *int32
+	TotalProcessedTasks *int32
+	TotalFailedTasks    *int32
+	appendStat("target_pollers", s.TargetPollers)
+	appendStat("target_sticky_pollers", s.TargetStickyPollers)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		`HistoryTaskDLQEnabled enables the history task DLQ. This applies to internal tasks like transfer and timer tasks.
-Do not turn this on if you aren't using Cassandra as the history task DLQ is not implemented for other databases.`,
+	TotalSlots           *int32
+	UsedSlots            *int32
+	CurrentPollers       *int32
+	TotalProcessedTasks  *int32
+	TotalFailedTasks     *int32
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4687e189` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd11e5d5` are properly handled with clean fallback behavior.
