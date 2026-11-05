@@ -7736,3 +7736,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-05T17:21:50.886Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `b1007f11` | Multi-dimensional audit evidence | 2026-11-05T17:21:54.646Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `611c91b4` | Multi-dimensional audit evidence | 2026-11-05T17:22:01.249Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-05T17:28:54.884Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `ec8b029e` | Multi-dimensional audit evidence | 2026-11-05T17:28:57.931Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `97b70a05` | Multi-dimensional audit evidence | 2026-11-05T17:29:05.990Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `36aa86f4` | Multi-dimensional audit evidence | 2026-11-05T17:29:11.401Z |

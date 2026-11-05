@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T17:22:01.257Z",
+  "last_updated": "2026-11-05T17:29:11.412Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2751,14 +2751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "content_hash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
-      "verified_at": "2026-11-01T02:22:44.567Z",
+      "content_hash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
+      "verified_at": "2026-11-05T17:28:54.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:22:44.567Z"
+      "last_updated": "2026-11-05T17:28:54.892Z"
     },
     "Addy0-com/free-open-technical-SEO-crawler": {
       "repository": "Addy0-com/free-open-technical-SEO-crawler",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
-      "verified_at": "2026-11-05T14:13:48.505Z",
+      "content_hash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
+      "verified_at": "2026-11-05T17:29:11.411Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:13:48.505Z"
+      "last_updated": "2026-11-05T17:29:11.411Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "23c1c0a001215e1fdb3cf20c6b48f7b602771edd2095ea1b2da9de4ca507724f",
-      "verified_at": "2026-11-05T02:55:17.699Z",
+      "content_hash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
+      "verified_at": "2026-11-05T17:29:05.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:55:17.699Z"
+      "last_updated": "2026-11-05T17:29:05.998Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
-      "verified_at": "2026-11-04T22:27:29.046Z",
+      "content_hash": "5a3b7b3db66ec7135df081b5dfd2d794d60f1f9897baab497f9f1496caf04de9",
+      "verified_at": "2026-11-05T17:28:57.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:27:29.046Z"
+      "last_updated": "2026-11-05T17:28:57.939Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

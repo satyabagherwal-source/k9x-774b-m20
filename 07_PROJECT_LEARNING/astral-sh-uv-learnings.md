@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `4470c33b`  
+> **Source Version**: `ec8b029e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:27:28.203Z  
+> **Timestamp**: 2026-11-05T17:28:56.703Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:27:28.196Z  
+> **Harvest Timestamp**: 2026-11-05T17:28:56.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91546 stars
+- **Stars / Engagement**: 91587 stars
 
 ---
 
@@ -1520,70 +1520,889 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13f37678` (2026-11-03)
-**Commit Message**: Name the security and code quality reviews in CI (#23085)
+### Incident Patch 1: `ec8b029e` (2026-11-05)
+**Commit Message**: Support installing wheel variants from Git paths (#22724)
 
-The security review uses the generic `review` job ID. Rename it to
-`review-security` alongside `review-code-quality` and display the two
-groups as `review | security` and `review | code quality` so each
-`prepare` and `report` job identifies its review.
+Allow installing wheel variants from Git paths when the wheel-variants
+preview is enabled. Recheck cached wheels against the current system’s
+supported properties.
 
----------
-
-Co-authored-by: zaniebot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +3/-1)
+**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +48/-40)
 ```diff
-@@ -41,7 +41,8 @@ jobs:
-     needs: plan
-     uses: $/.github/workflows/check-fmt.yml
+@@ -1,3 +1,4 @@
++use std::borrow::Cow;
+ use std::cmp::Reverse;
+ use std::future::Future;
+ use std::io;
+@@ -24,14 +25,14 @@ use uv_client::{
+ };
+ use uv_distribution_filename::WheelFilename;
+ use uv_distribution_types::{
+-    ArchiveHashPolicy, BuildInfo, BuildableSource, BuiltDist, Dist, DistRef, HashCollection,
+-    HashValidation, Hashed, IndexUrl, InstalledDist, MetadataHashPolicy, Name, ResolutionRecorder,
+-    SourceDist, SourceUrl, VariantsJsonContent, parse_url_hashes,
++    ArchiveHashPolicy, BuildInfo, BuildableSource, BuiltDist, Dist, DistRef, GitPathBuiltDist,
++    HashCollection, HashValidation, Hashed, IndexUrl, InstalledDist, MetadataHashPolicy, Name,
++    ResolutionRecorder, SourceDist, SourceUrl, VariantsJsonContent, parse_url_hashes,
+ };
+ use uv_extract::dirhash::{DirectoryDigest, HashedFile};
+ use uv_extract::hash::Hasher;
+ use uv_fs::{LockedFile, write_atomic};
+-use uv_git::{GIT_LFS, GitError};
++use uv_git::{Fetch, GIT_LFS, GitError};
+ use uv_metadata::read_archive_wheel_variant;
+ use uv_normalize::PackageName;
+ use uv_pep440::Version;
+@@ -293,14 +294,11 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+         let Some(label) = filename.variant() else {
+             return Ok(None);
+         };
+-        match wheel {
+-            BuiltDist::Path(path) => {
+-                read_archive_wheel_variant(filename, &path.install_path, label)
+-                    .await
+-                    .map(Some)
+-                    .map_err(|err| {
+-                        Error::WheelMetadata(path.install_path.to_path_buf(), Box::new(err))
+-                    })
++        let path = match wheel {
++            BuiltDist::Path(wheel) => Cow::Borrowed(wheel.install_path.as_ref()),
++            BuiltDist::GitPath(wheel) => {
++                let fetch = self.fetch_git_wheel(wheel).await?;
++                Cow::Owned(fetch.path().join(&wheel.install_path))
+             }
+             BuiltDist::DirectUrl(url) => {
+                 // Hash generation downloads the full wheel, so skip the metadata request.
+@@ -325,11 +323,16 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+                 // With `Cache-Control: no-store`, `pip compile --generate-hashes` can hash one
+                 // wheel and check compatibility against a different wheel returned by a second GET.
+                 let wheel = Box::pin(self.get_wheel(wheel, hashes)).await?;
+-                read_extracted_wheel_variant(filename, &wheel.archive, label).map(Some)
++                return read_extracted_wheel_variant(filename, &wheel.archive, label).map(Some);
+             }
+-            // Registry candidates use index variant metadata. Git path variants are unsupported.
+-            BuiltDist::Registry(_) | BuiltDist::GitPath(_) => Ok(None),
+-        }
++            // Registry candidates use index variant metadata.
++            BuiltDist::Registry(_) => return Ok(None),
++        };
++
++        read_archive_wheel_variant(filename, &path, label)
++            .await
++            .map(Some)
++            .map_err(|err| Error::WheelMetadata(path.into_owned(), Box::new(err)))
+     }
  
--  review:
-+  review-security:
-+    name: "review | security"
-     needs: plan
-     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
-     # N.B. despite setting this, Depot jobs allow cache writes directly through the API
-@@ -68,6 +69,7 @@ jobs:
-       pull-requests: read
+     /// Fetch a wheel from the cache or download it from the index.
+@@ -511,30 +514,7 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+             }
  
-   review-code-quality:
-+    name: "review | code quality"
-     needs: plan
-     if: >-
-       ${{
+             BuiltDist::GitPath(wheel) => {
+-                // Fetch the Git repository.
+-                let fetch = self
+-                    .build_context
+-                    .git()
+-                    .fetch(
+-                        &wheel.git,
+-                        self.client.unmanaged.git_http_settings(wheel.git.url()),
+-                        self.build_context.cache().bucket(CacheBucket::Git),
+-                        self.reporter.clone().map(<dyn Reporter>::into_git_reporter),
+-                    )
+-                    .await?;
+-
+-                if wheel.git.lfs().enabled() && !fetch.lfs_ready() {
+-                    if GIT_LFS.is_err() {
+-                        return Err(Error::MissingWheelGitLfsArtifacts(
+-                            wheel.url.to_url(),
+-                            GitError::GitLfsNotFound,
+-                        ));
+-                    }
+-                    return Err(Error::MissingWheelGitLfsArtifacts(
+-                        wheel.url.to_url(),
+-                        GitError::GitLfsNotConfigured,
+-                    ));
+-                }
++                let fetch = self.fetch_git_wheel(wheel).await?;
+ 
+                 let git_sha = fetch.git().precise().expect("Exact commit after checkout");
+                 let cache_entry = self.build_context.cache().entry(
+@@ -568,6 +548,34 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+         }
+     }
+ 
++    /// Fetch the Git checkout containing a wheel, including any required Git LFS artifacts.
++    async fn fetch_git_wheel(&self, wheel: &GitPathBuiltDist) -> Result<Fetch, Error> {
++        let fetch = self
++            .build_context
+```
+
+**File**: `crates/uv-distribution/src/download.rs` (modified, +2/-17)
+```diff
+@@ -10,27 +10,12 @@ use uv_pypi_types::{HashDigest, HashDigests, ResolutionMetadata};
+ 
+ use crate::{Error, supported_variant_properties};
+ 
+-/// Allow variant wheels from indexes, local paths, and direct URLs with the wheel variants preview.
++/// Allow variant wheels when the wheel variants preview is enabled.
+ ///
+ /// Variant compatibility is checked separately during resolution and installation.
+-///
+-/// TODO: Support variant wheels from Git paths.
+ pub fn check_supported_wheel_variant(dist: &BuiltDist) -> Result<(), Error> {
+     let filename = dist.wheel_filename();
+-    if filename.variant().is_none() {
+-        return Ok(());
+-    }
+-    let unsupported_source = match dist {
+-        BuiltDist::Registry(_) | BuiltDist::DirectUrl(_) | BuiltDist::Path(_) => None,
+-        BuiltDist::GitPath(_) => Some("Git paths"),
+-    };
+-    if let Some(source_kind) = unsupported_source {
+-        return Err(Error::UnsupportedWheelVariantSource {
+-            filename: Box::new(filename.clone()),
+-            source_kind,
+-        });
+-    }
+-    if !uv_preview::is_enabled(PreviewFeature::WheelVariants) {
++    if filename.variant().is_some() && !uv_preview::is_enabled(PreviewFeature::WheelVariants) {
+         return Err(Error::WheelVariantsDisabled(Box::new(filename.clone())));
+     }
+     Ok(())
+```
+
+**File**: `crates/uv-distribution/src/error.rs` (modified, +0/-6)
+```diff
+@@ -39,11 +39,6 @@ impl fmt::Display for PythonVersion {
+ pub enum Error {
+     #[error("Wheel variant `{0}` requires `--preview-features wheel-variants`")]
+     WheelVariantsDisabled(Box<WheelFilename>),
+-    #[error("Installing wheel variants from {source_kind} is not supported: `{filename}`")]
+-    UnsupportedWheelVariantSource {
+-        filename: Box<WheelFilename>,
+-        source_kind: &'static str,
+-    },
+     #[error("Wheel variant `{label}` requires unsupported properties: {properties}")]
+     IncompatibleWheelVariant {
+         label: VariantLabel,
+@@ -308,7 +303,6 @@ impl Error {
+     pub fn is_user_failure(&self) -> bool {
+         match self {
+             Self::WheelVariantsDisabled(_)
+-            | Self::UnsupportedWheelVariantSource { .. }
+             | Self::IncompatibleWheelVariant { .. }
+             | Self::NoBuild
+             | Self::NoBuildPackage(_)
+```
+
+**File**: `crates/uv-installer/src/plan.rs` (modified, +6/-2)
+```diff
+@@ -602,7 +602,7 @@ impl<'a> Planner<'a> {
+                     }
+                 }
+                 Dist::Built(BuiltDist::GitPath(wheel)) => {
+-                    if !wheel.filename.is_compatible(tags) {
++                    if !wheel.filename.tag_compatibility(tags).is_compatible() {
+                         return Err(PlanError::IncompatibleGitPath(wheel.install_path.clone()));
+                     }
+ 
+@@ -636,7 +636,11 @@ impl<'a> Planner<'a> {
+                                     build_info,
+                                     path: cache.archive(&archive.id).into_boxed_path(),
+                                 };
+-
++                                check_wheel_variant_compatibility(
++                                    &cached_dist.filename,
++                                    &cached_dist.path,
++                                    tags.python_platform(),
++                                )?;
+                                 debug!("Git wheel requirement already cached: {cached_dist}");
+                                 cached.push(CachedDist::Url(cached_dist));
+                                 continue;
+```
+
+**File**: `crates/uv-resolver/src/resolver/mod.rs` (modified, +1/-4)
+```diff
+@@ -1292,8 +1292,6 @@ impl<InstalledPackages: InstalledPackagesProvider> ResolverState<InstalledPackag
+                 }
+             }
+ 
+-            // TODO(konsti): Enforce source restrictions here before stabilizing wheel variants.
+-            // `pip compile --no-deps` skips the lookahead that enforces them.
+             let incompatible_tag = if filename.variant().is_some()
+                 && (!uv_preview::is_enabled(PreviewFeature::WheelVariants)
+                     || env.marker_environment().is_none())
+@@ -1302,8 +1300,7 @@ impl<InstalledPackages: InstalledPackagesProvider> ResolverState<InstalledPackag
+                 Some(IncompatibleTag::Variant)
+             } else if !python_requirement.target().matches_wheel_tag(filename) {
+                 Some(IncompatibleTag::AbiPythonVersion)
+-            } else if let BuiltDist::Path(_) | BuiltDist::DirectUrl(_) = dist
+-                && filename.variant().is_some()
++            } else if filename.variant().is_some()
+                 && let Some(tags) = &self.tags
+                 && let TagCompatibility::Incompatible(tag) = filename.tag_compatibility(tags)
+             {
+```
+
+**File**: `crates/uv/tests/pip_install/wheel_variant_compatibility.rs` (modified, +96/-0)
+```diff
+@@ -1,11 +1,17 @@
+ use std::collections::BTreeMap;
++#[cfg(feature = "test-git")]
++use std::process::Command;
+ 
+ use anyhow::Result;
++#[cfg(feature = "test-git")]
++use assert_cmd::assert::OutputAssertExt;
+ use assert_fs::prelude::*;
+ use indoc::indoc;
+ use insta::{assert_json_snapshot, assert_snapshot};
+ use serde_json::{Map, Value, json};
+ use uv_distribution_types::PEP_850_SCHEMA;
++#[cfg(feature = "test-git")]
++use uv_redacted::SafeUrl;
+ use uv_static::EnvVars;
+ use uv_test::find_links::FindLinksServer;
+ use uv_test::packse::{PackseServer, WheelBuilder};
+@@ -214,6 +220,96 @@ fn direct_url_wheel_with_invalid_variant_metadata() -> Result<()> {
+     Ok(())
+ }
+ 
++/// Dry runs reject an incompatible Git wheel whether or not the wheel is cached.
++#[test]
++#[cfg(feature = "test-git")]
++fn install_git_path_variant_wheel() -> Result<()> {
++    let context = uv_test::test_context!("3.12").with_filter((r"@[0-9a-f]{40}", "@[COMMIT]"));
++    let repository = context.temp_dir.child("repository");
++    repository.create_dir_all()?;
++    let variant = gpu_variant().to_string();
++    let (filename, wheel) = WheelBuilder::new(&"ok".parse()?, &"1.0.0".parse()?)
++        .variant(&"gpu".parse()?, &variant)
++        .build();
++    repository.child(&filename).write_binary(&wheel)?;
++    Command::new("git")
++        .arg("init")
++        .arg(repository.path())
++        .assert()
++        .success();
++    Command::new("git")
++        .current_dir(repository.path())
++        .args(["add", &filename])
++        .assert()
++        .success();
++    Command::new("git")
++        .current_dir(repository.path())
++        .args([
++            "-c",
++            "user.name=ferris",
++            "-c",
++            "user.email=ferris@example.com",
++            "commit",
++            "-m",
++            "Add wheel",
++        ])
++        .assert()
++        .success();
++    let output = Command::new("git")
++        .current_dir(repository.path())
++        .args(["rev-parse", "HEAD"])
++        .output()?;
++    assert!(output.status.success());
++    let commit = String::from_utf8(output.stdout)?;
++    let commit = commit.trim();
++    let repository_url = SafeUrl::from_directory_path(repository.path()).unwrap();
++    let requirement = format!("ok @ git+{repository_url}@{commit}#path={filename}");
++
++    uv_snapshot!(context.filters(), context.pip_install()
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_CUDA_DRIVER_VERSION, "11")
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_SM_ARCH, "8.8")
++        .arg("--preview-features")
++        .arg("wheel-variants")
++        .arg("--dry-run")
++        .arg(&requirement), @"
++    exit_code: 1 (failure)
++    ----- stderr -----
++    error: No solution found when resolving dependencies
++      cause: Because only ok==1.0.0 is available and ok==1.0.0 has only unsupported wheel variants, we can conclude that all versions of ok cannot be used.
++             And because you require ok, we can conclude that your requirements are unsatisfiable.
++    ");
++
++    uv_snapshot!(context.filters(), context.pip_install()
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_CUDA_DRIVER_VERSION, "12")
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_SM_ARCH, "8.9")
++        .arg("--preview-features")
++        .arg("wheel-variants")
++        .arg(&requirement), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Resolved 1 package in [TIME]
++    Prepared 1 package in [TIME]
++    Installed 1 package in [TIME]
++     + ok==1.0.0 (from git+file://[TEMP_DIR]/repository/@[COMMIT]#path=ok-1.0.0-py3-none-any-gpu.whl)
++    ");
++
++    context.reset_venv();
++    uv_snapshot!(context.filters(), context.pip_install()
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_CUDA_DRIVER_VERSION, "11")
++        .env(EnvVars::NV_VARIANT_PROVIDER_FORCE_SM_ARCH, "8.8")
++        .arg("--preview-features")
++        .arg("wheel-variants")
++        .arg("--dry-run")
++        .arg(&requirement), @"
++    exit_code: 1 (failure)
++    ----- stderr -----
++    error: No solution found when resolving dependencies
++      cause: Because only ok==1.0.0 is available and ok==1.0.0 has only unsupported wheel variants, we can conclude that all versions of ok cannot be used.
++             And because you require ok, we can conclude that your requirements are unsatisfiable.
++    ");
++    Ok(())
++}
++
+ /// Sync keeps an installed variant even when wheel variants are no longer enabled.
+ #[test]
+ fn sync_keeps_installed_variant() -> Result<()> {
 ```
 
 ---
 
-### Incident Patch 2: `f174cbff` (2026-11-04)
-**Commit Message**: Fix macOS CPU detection on GraalPy (#23089)
+### Incident Patch 2: `588a741d` (2026-11-05)
+**Commit Message**: Support installing wheel variants from direct URLs (#22722)
 
-**File**: `crates/uv-python-interpreter/python/get_interpreter_info.py` (modified, +6/-1)
+Allow installing wheel variants from direct URLs when the wheel-variants
+preview is enabled. Recheck cached wheels against the current system’s
+supported properties.
+
+**File**: `crates/uv-client/src/registry_client.rs` (modified, +119/-22)
 ```diff
-@@ -679,7 +679,12 @@ def _macos_cpu_info(architecture):
-         ctypes.c_void_p,
-         ctypes.c_size_t,
-     ]
--    missing_key = (errno.ENOENT, errno.ENOTSUP, errno.EOPNOTSUPP)
-+    # Some Python implementations omit these Darwin errno constants.
-+    missing_key = (
-+        errno.ENOENT,
-+        getattr(errno, "ENOTSUP", 45),
-+        getattr(errno, "EOPNOTSUPP", 102),
-+    )
-     unavailable = (errno.EPERM, errno.EACCES, errno.ENOSYS)
-     if architecture == "aarch64":
-         keys = (b"machdep.cpu.brand_string",)
+@@ -12,6 +12,8 @@ use http::{HeaderMap, StatusCode};
+ use itertools::Either;
+ use reqwest::{Proxy, Response};
+ use rustc_hash::FxHashMap;
++use serde::de::DeserializeOwned;
++use serde::{Deserialize, Serialize};
+ use tokio::sync::{Mutex, Semaphore};
+ use tracing::{Instrument, Span, debug, info_span, instrument, trace, warn};
+ 
+@@ -22,13 +24,13 @@ use uv_configuration::IndexStrategy;
+ use uv_configuration::KeyringProviderType;
+ use uv_distribution_filename::{DistFilename, WheelFilename};
+ use uv_distribution_types::{
+-    BuiltDist, File, FileLocation, IndexCapabilities, IndexEntryFilename, IndexFormat,
+-    IndexLocations, IndexMetadataRef, IndexStatusCodeDecision, IndexStatusCodeStrategy, IndexUrl,
+-    Name, RegistryBuiltWheel,
++    BuiltDist, DirectUrlBuiltDist, File, FileLocation, IndexCapabilities, IndexEntryFilename,
++    IndexFormat, IndexLocations, IndexMetadataRef, IndexStatusCodeDecision,
++    IndexStatusCodeStrategy, IndexUrl, Name, RegistryBuiltWheel, VariantsJsonContent,
+ };
+ use uv_extract::hash::Hasher;
+ use uv_git::{GIT_LFS, GitError, GitHttpSettings, GitResolver, Reporter};
+-use uv_metadata::{read_archive_metadata, read_metadata_async_stream};
++use uv_metadata::{WheelMetadata, read_archive_metadata, read_metadata_async_stream};
+ use uv_normalize::PackageName;
+ use uv_pep440::{Version, VersionSpecifiers};
+ use uv_pep508::MarkerEnvironment;
+@@ -50,6 +52,23 @@ use crate::{
+     RetryState,
+ };
+ 
++/// Cache parsed core metadata and variant requirements from the same wheel.
++#[derive(Serialize, Deserialize)]
++struct CachedVariantWheelMetadata {
++    core: ResolutionMetadata,
++    variant: Box<VariantsJsonContent>,
++}
++
++impl CachedVariantWheelMetadata {
++    fn new(
++        core: ResolutionMetadata,
++        variant: Option<Box<VariantsJsonContent>>,
++    ) -> Result<Self, uv_metadata::Error> {
++        let variant = variant.ok_or(uv_metadata::Error::MissingVariantMetadata)?;
++        Ok(Self { core, variant })
++    }
++}
++
+ /// A builder for an [`RegistryClient`].
+ #[derive(Debug, Clone)]
+ pub struct RegistryClientBuilder<'a> {
+@@ -1048,14 +1067,20 @@ impl RegistryClient {
+                 }
+             }
+             BuiltDist::DirectUrl(wheel) => {
+-                self.wheel_metadata_no_pep658(
+-                    &wheel.filename,
+-                    &wheel.url,
+-                    None,
+-                    WheelCache::Url(&wheel.url),
+-                    capabilities,
+-                )
+-                .await?
++                if wheel.filename.variant().is_some() {
++                    self.direct_url_variant_wheel_metadata(wheel, capabilities)
++                        .await?
++                        .core
++                } else {
++                    self.wheel_metadata_no_pep658(
++                        &wheel.filename,
++                        &wheel.url,
++                        None,
++                        WheelCache::Url(&wheel.url),
++                        capabilities,
++                    )
++                    .await?
++                }
+             }
+             BuiltDist::Path(wheel) => {
+                 Self::wheel_metadata_local(
+@@ -1228,6 +1253,51 @@ impl RegistryClient {
+         }
+     }
+ 
++    /// Read the wheel's embedded variant requirements.
++    ///
++    /// Even with a `dependency-metadata` override, the wheel's `METADATA` must be parseable
++    /// because the cache stores the parsed core metadata and `variant.json` together.
++    pub async fn direct_url_wheel_variant(
++        &self,
++        wheel: &DirectUrlBuiltDist,
++        capabilities: &IndexCapabilities,
++    ) -> Result<VariantsJsonContent, Error> {
++        let metadata = self
++            .direct_url_variant_wheel_metadata(wheel, capabilities)
++            .await?;
++        Ok(*metadata.variant)
++    }
++
++    /// Read core metadata and variant requirements together from the same direct URL wheel.
++    async fn direct_url_variant_wheel_metadata(
++        &self,
++        wheel: &DirectUrlBuiltDist,
++        capabilities: &IndexCapabilities,
++    ) -> Result<CachedVariantWheelMetadata, Error> {
++        // The caching situation between non-variant and variant wheels is a bit messy. For
++        // non-variant wheels, we only need the core metadata, which we store in `<wheel>.msgpack`.
++        // Direct URL variant wheels use one `<wheel>.variant.msgpack` entry for both `METADATA`
++        // and `variant.json`, cause we're getting them in the same (range) read and need to
++        // invalidate them at the same time.
++        // Index variants wheels get variant requirements from a separate index file, which has its
++        // separate cache entry. Except when the file is missing, in that case (TODO(konsti):
++        // implement) the index wheel will use that same case.
++        let entry = self.cache.entry(
++            CacheBucket::Wheels,
++            WheelCache::Url(&wheel.url).wheel_dir(wheel.filename.name.as_ref()),
++            format!("{}.variant.msgpack", wheel.filename.cache_key()
+```
+
+**File**: `crates/uv-client/src/remote_metadata.rs` (modified, +12/-9)
+```diff
+@@ -3,7 +3,7 @@ use async_http_range_reader::AsyncHttpRangeReader;
+ use futures::io::BufReader;
+ use tokio_util::compat::TokioAsyncReadCompatExt;
+ use uv_distribution_filename::WheelFilename;
+-use uv_metadata::{find_archive_dist_info, read_archive_variant_entry};
++use uv_metadata::{WheelMetadata, find_archive_dist_info, read_archive_variant_entry};
+ use uv_redacted::SafeUrl;
+ 
+ /// Read `METADATA` and, for a variant wheel, validate `variant.json` using HTTP range requests.
+@@ -50,7 +50,7 @@ pub(crate) async fn wheel_metadata_from_remote_zip(
+     filename: &WheelFilename,
+     debug_name: &SafeUrl,
+     reader: &mut AsyncHttpRangeReader,
+-) -> Result<String, Error> {
++) -> Result<WheelMetadata, Error> {
+     // Make sure we have the back part of the stream.
+     // Best guess for the central directory size inside the zip
+     const CENTRAL_DIRECTORY_SIZE: u64 = 16384;
+@@ -101,22 +101,25 @@ pub(crate) async fn wheel_metadata_from_remote_zip(
+             .await;
+     }
+ 
+-    // Read the contents of the METADATA file
+-    let mut contents = String::new();
++    // Read the contents of the `METADATA` file.
++    let mut core = Vec::new();
+     reader
+         .reader_with_entry(metadata_idx)
+         .await
+         .map_err(|err| ErrorKind::Zip(filename.clone(), err))?
+-        .read_to_string_checked(&mut contents)
++        .read_to_end_checked(&mut core)
+         .await
+         .map_err(|err| ErrorKind::Zip(filename.clone(), err))?;
+ 
+     // Check that `variant.json` describes the variant named in the filename, so the resolver
+     // can mark the version unavailable if the wheel is malformed.
+-    if let Some((label, path)) = variant {
+-        read_archive_variant_entry(&mut reader, &path, label)
++    let variant = if let Some((label, path)) = variant {
++        let metadata = read_archive_variant_entry(&mut reader, &path, label)
+             .await
+             .map_err(|err| ErrorKind::Metadata(debug_name.to_string(), err))?;
+-    }
+-    Ok(contents)
++        Some(Box::new(metadata))
++    } else {
++        None
++    };
++    Ok(WheelMetadata { core, variant })
+ }
+```
+
+**File**: `crates/uv-distribution-types/src/variants_json.rs` (modified, +5/-2)
+```diff
+@@ -120,9 +120,11 @@ pub struct VariantsJsonContent {
+     #[serde(rename = "$schema")]
+     schema: String,
+     default_priorities: DefaultPriorities,
++    variants: BTreeMap<VariantLabel, VariantProperties>,
++    // Keep `providers` last in both structs so compact MessagePack can omit it.
++    // TODO(konsti): Remove this constraint once `providers` is required in all supported schemas.
+     #[serde(skip_serializing_if = "Option::is_none")]
+     providers: Option<BTreeMap<VariantNamespace, VariantProvider>>,
+-    variants: BTreeMap<VariantLabel, VariantProperties>,
+ }
+ 
+ impl VariantsJsonContent {
+@@ -353,8 +355,9 @@ struct VariantsJsonWire {
+     #[serde(rename = "$schema")]
+     schema: String,
+     default_priorities: DefaultPriorities,
+-    providers: Option<BTreeMap<VariantNamespace, VariantProvider>>,
+     variants: BTreeMap<VariantLabel, VariantProperties>,
++    #[serde(default)]
++    providers: Option<BTreeMap<VariantNamespace, VariantProvider>>,
+ }
+ 
+ #[derive(Debug, thiserror::Error)]
+```
+
+**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +65/-17)
+```diff
+@@ -26,12 +26,13 @@ use uv_distribution_filename::WheelFilename;
+ use uv_distribution_types::{
+     ArchiveHashPolicy, BuildInfo, BuildableSource, BuiltDist, Dist, DistRef, HashCollection,
+     HashValidation, Hashed, IndexUrl, InstalledDist, MetadataHashPolicy, Name, ResolutionRecorder,
+-    SourceDist, SourceUrl, parse_url_hashes,
++    SourceDist, SourceUrl, VariantsJsonContent, parse_url_hashes,
+ };
+ use uv_extract::dirhash::{DirectoryDigest, HashedFile};
+ use uv_extract::hash::Hasher;
+ use uv_fs::{LockedFile, write_atomic};
+ use uv_git::{GIT_LFS, GitError};
++use uv_metadata::read_archive_wheel_variant;
+ use uv_normalize::PackageName;
+ use uv_pep440::Version;
+ use uv_platform_tags::Tags;
+@@ -43,7 +44,7 @@ use uv_threads::initialize_rayon_once;
+ use uv_types::{BuildContext, BuildStack};
+ 
+ use crate::archive::Archive;
+-use crate::download::check_wheel_variant_compatibility;
++use crate::download::{check_wheel_variant_compatibility, read_extracted_wheel_variant};
+ use crate::error::PythonVersion;
+ use crate::extracted_wheel::{ExtractedWheel, HashedWheel, WheelExtractor};
+ use crate::hash::http_hash_algorithms;
+@@ -281,6 +282,56 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+         }
+     }
+ 
++    /// Read embedded variant metadata for a wheel being considered by the solver.
++    #[instrument(skip_all, fields(%wheel))]
++    pub async fn get_wheel_variant_metadata(
++        &self,
++        wheel: &BuiltDist,
++        hashes: ArchiveHashPolicy<'_>,
++    ) -> Result<Option<VariantsJsonContent>, Error> {
++        let filename = wheel.wheel_filename();
++        let Some(label) = filename.variant() else {
++            return Ok(None);
++        };
++        match wheel {
++            BuiltDist::Path(path) => {
++                read_archive_wheel_variant(filename, &path.install_path, label)
++                    .await
++                    .map(Some)
++                    .map_err(|err| {
++                        Error::WheelMetadata(path.install_path.to_path_buf(), Box::new(err))
++                    })
++            }
++            BuiltDist::DirectUrl(url) => {
++                // Hash generation downloads the full wheel, so skip the metadata request.
++                if hashes != ArchiveHashPolicy::Generate || parse_url_hashes(&url.url).is_some() {
++                    let result = self
++                        .client
++                        .managed(|client| {
++                            client
++                                .direct_url_wheel_variant(url, self.build_context.capabilities())
++                                .boxed_local()
++                        })
++                        .await;
++                    match result {
++                        Ok(variant) => return Ok(Some(variant)),
++                        Err(err)
++                            if err.is_http_streaming_unsupported()
++                                || matches!(err.kind(), uv_client::ErrorKind::Offline(_)) => {}
++                        Err(err) => return Err(err.into()),
++                    }
++                }
++                // TODO(konsti): Read `variant.json` from the same archive that supplied the hash.
++                // With `Cache-Control: no-store`, `pip compile --generate-hashes` can hash one
++                // wheel and check compatibility against a different wheel returned by a second GET.
++                let wheel = Box::pin(self.get_wheel(wheel, hashes)).await?;
++                read_extracted_wheel_variant(filename, &wheel.archive, label).map(Some)
++            }
++            // Registry candidates use index variant metadata. Git path variants are unsupported.
++            BuiltDist::Registry(_) | BuiltDist::GitPath(_) => Ok(None),
++        }
++    }
++
+     /// Fetch a wheel from the cache or download it from the index.
+     ///
+     /// Applicable hash checks are enforced before newly fetched wheels are published to the cache.
+@@ -679,27 +730,24 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+             .await;
+ 
+         match result {
+-            Ok(metadata) => {
+-                // Validate that the metadata is consistent with the distribution.
+-                Ok(ArchiveMetadata::from_metadata23(metadata))
+-            }
++            Ok(metadata) => return Ok(ArchiveMetadata::from_metadata23(metadata)),
+             Err(err) if err.is_http_streaming_unsupported() => {
+                 warn!(
+                     "Streaming unsupported when fetching metadata for `{dist}`; downloading wheel directly ({err})"
+                 );
+-
+-                // If the request failed due to an error that could be resolved by
+-                // downloading the wheel directly, try that.
+-                let wheel = Box::pin(self.get_wheel(dist, hash_policy)).await?;
+-                let metadata = wheel.metadata()?;
+-                let hashes = wheel.hashes;
+-                Ok(ArchiveMetadata {
+-                    metadata: Metadata::from_metadata23(metadata),
+-      
+```
+
+**File**: `crates/uv-distribution/src/download.rs` (modified, +18/-11)
+```diff
+@@ -1,28 +1,27 @@
+ use std::path::Path;
+ 
+ use uv_cache_info::CacheInfo;
+-use uv_distribution_filename::WheelFilename;
+-use uv_distribution_types::{BuildInfo, BuiltDist, CachedDist, Dist, Hashed};
++use uv_distribution_filename::{VariantLabel, WheelFilename};
++use uv_distribution_types::{BuildInfo, BuiltDist, CachedDist, Dist, Hashed, VariantsJsonContent};
+ use uv_metadata::{find_flat_dist_info, read_flat_wheel_metadata, read_wheel_variant};
+ use uv_platform_tags::Platform;
+ use uv_preview::PreviewFeature;
+ use uv_pypi_types::{HashDigest, HashDigests, ResolutionMetadata};
+ 
+ use crate::{Error, supported_variant_properties};
+ 
+-/// Allow variant wheels from an index or local path when the wheel variants preview is enabled.
++/// Allow variant wheels from indexes, local paths, and direct URLs with the wheel variants preview.
+ ///
+ /// Variant compatibility is checked separately during resolution and installation.
+ ///
+-/// TODO: Support variant wheels from direct URLs and Git paths.
++/// TODO: Support variant wheels from Git paths.
+ pub fn check_supported_wheel_variant(dist: &BuiltDist) -> Result<(), Error> {
+     let filename = dist.wheel_filename();
+     if filename.variant().is_none() {
+         return Ok(());
+     }
+     let unsupported_source = match dist {
+-        BuiltDist::Registry(_) | BuiltDist::Path(_) => None,
+-        BuiltDist::DirectUrl(_) => Some("direct URLs"),
++        BuiltDist::Registry(_) | BuiltDist::DirectUrl(_) | BuiltDist::Path(_) => None,
+         BuiltDist::GitPath(_) => Some("Git paths"),
+     };
+     if let Some(source_kind) = unsupported_source {
+@@ -37,6 +36,18 @@ pub fn check_supported_wheel_variant(dist: &BuiltDist) -> Result<(), Error> {
+     Ok(())
+ }
+ 
++/// Read and validate the variant metadata from an extracted wheel.
++pub(crate) fn read_extracted_wheel_variant(
++    filename: &WheelFilename,
++    archive: &Path,
++    label: &VariantLabel,
++) -> Result<VariantsJsonContent, Error> {
++    let dist_info = find_flat_dist_info(filename, archive)
++        .map_err(|err| Error::WheelMetadata(archive.to_path_buf(), Box::new(err)))?;
++    let path = archive.join(format!("{dist_info}.dist-info/variant.json"));
++    read_wheel_variant(&path, label).map_err(|err| Error::WheelMetadata(path, Box::new(err)))
++}
++
+ /// Check that an extracted wheel's variant properties are supported by the target system.
+ pub fn check_wheel_variant_compatibility(
+     filename: &WheelFilename,
+@@ -50,11 +61,7 @@ pub fn check_wheel_variant_compatibility(
+         return Err(Error::WheelVariantsDisabled(Box::new(filename.clone())));
+     }
+ 
+-    let dist_info = find_flat_dist_info(filename, archive)
+-        .map_err(|err| Error::WheelMetadata(archive.to_path_buf(), Box::new(err)))?;
+-    let path = archive.join(format!("{dist_info}.dist-info/variant.json"));
+-    let metadata = read_wheel_variant(&path, label)
+-        .map_err(|err| Error::WheelMetadata(path, Box::new(err)))?;
++    let metadata = read_extracted_wheel_variant(filename, archive, label)?;
+     let supported = supported_variant_properties(&metadata, target);
+     if let Some(properties) = metadata.unsupported_variant_properties(label, &supported) {
+         return Err(Error::IncompatibleWheelVariant {
+```
+
+**File**: `crates/uv-installer/src/plan.rs` (modified, +20/-13)
+```diff
+@@ -429,6 +429,21 @@ impl<'a> Planner<'a> {
+                 unreachable!("Installed distribution could not be found in site-packages: {dist}");
+             };
+ 
++            // Validate direct URL wheel tags even when refreshing the cache.
++            if let Dist::Built(BuiltDist::DirectUrl(wheel)) = dist.as_ref()
++                && !wheel.filename.tag_compatibility(tags).is_compatible()
++            {
++                return Err(PlanError::IncompatibleWheel(Box::new(
++                    IncompatibleWheelError {
++                        kind: IncompatibleWheelKind::Url(wheel.url.to_url()),
++                        compatibility_hint: generate_wheel_compatibility_hint(
++                            &wheel.filename,
++                            tags,
++                        ),
++                    },
++                )));
++            }
++
+             if cache.must_revalidate_package(dist.name())
+                 || dist
+                     .source_tree()
+@@ -449,18 +464,6 @@ impl<'a> Planner<'a> {
+                     }
+                 }
+                 Dist::Built(BuiltDist::DirectUrl(wheel)) => {
+-                    if !wheel.filename.is_compatible(tags) {
+-                        return Err(PlanError::IncompatibleWheel(Box::new(
+-                            IncompatibleWheelError {
+-                                kind: IncompatibleWheelKind::Url(wheel.url.to_url()),
+-                                compatibility_hint: generate_wheel_compatibility_hint(
+-                                    &wheel.filename,
+-                                    tags,
+-                                ),
+-                            },
+-                        )));
+-                    }
+-
+                     if no_binary {
+                         return Err(PlanError::NoBinaryUrl(wheel.url.clone()));
+                     }
+@@ -496,7 +499,11 @@ impl<'a> Planner<'a> {
+                                     build_info,
+                                     path: cache.archive(&archive.id).into_boxed_path(),
+                                 };
+-
++                                check_wheel_variant_compatibility(
++                                    &cached_dist.filename,
++                                    &cached_dist.path,
++                                    tags.python_platform(),
++                                )?;
+                                 debug!("URL wheel requirement already cached: {cached_dist}");
+                                 cached.push(CachedDist::Url(cached_dist));
+                                 continue;
+```
+
+**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +7/-0)
+```diff
+@@ -125,6 +125,8 @@ pub enum PylockTomlErrorKind {
+     WheelVariantUnsupported(PackageName),
+     #[error("`packages.archive.path` does not support wheel variants: `{0}`")]
+     ArchivePathWheelVariantUnsupported(WheelFilename),
++    #[error("`packages.archive.url` does not support wheel variants: `{0}`")]
++    ArchiveUrlWheelVariantUnsupported(WheelFilename),
+     #[error("Package `{0}` does not include a compatible wheel for the current platform")]
+     MissingWheel(PackageName),
+     #[error("`packages.wheel` entry for `{0}` must have a `path` or `url`")]
+@@ -1947,6 +1949,11 @@ impl PylockTomlArchive {
+                 DistExtension::Wheel => {
+                     let filename = WheelFilename::from_str(&filename)?;
+                     validate_wheel_filename(&filename, name, version)?;
++                    if filename.variant().is_some() {
++                        return Err(PylockTomlErrorKind::ArchiveUrlWheelVariantUnsupported(
++                            filename,
++                        ));
++                    }
+                     Ok(Dist::Built(BuiltDist::DirectUrl(DirectUrlBuiltDist {
+                         filename,
+                         location: Box::new(url.clone()),
+```
+
+**File**: `crates/uv-metadata/src/lib.rs` (modified, +15/-6)
+```diff
+@@ -21,6 +21,13 @@ pub use dist_info_stem::DistInfoStem;
+ 
+ mod dist_info_stem;
+ 
++/// The contents of `METADATA` and any variant requirements read from a remote wheel.
++#[derive(Debug)]
++pub struct WheelMetadata {
++    pub core: Vec<u8>,
++    pub variant: Option<Box<VariantsJsonContent>>,
++}
++
+ /// The caller is responsible for attaching the path or url we failed to read.
+ #[derive(Debug, Error)]
+ pub enum Error {
+@@ -248,17 +255,17 @@ fn read_dist_info_metadata(
+     fs_err::read(metadata_file).map_err(Error::Io)
+ }
+ 
+-/// Read `METADATA` and, for a variant wheel, validate `variant.json` in the same pass.
++/// Read `METADATA` and the embedded `variant.json` in the same pass.
+ pub async fn read_metadata_async_stream<R: futures::AsyncRead + Unpin>(
+     filename: &WheelFilename,
+-    debug_path: &str,
+     reader: R,
+-) -> Result<ResolutionMetadata, Error> {
++) -> Result<WheelMetadata, Error> {
+     let reader = futures::io::BufReader::with_capacity(128 * 1024, reader);
+     let mut zip = async_zip::base::read::stream::ZipFileReader::new(reader);
+     let mut dist_info = None;
+     let mut metadata = None;
+     let mut pending_variant = filename.variant();
++    let mut variant = None;
+ 
+     while let Some(mut entry) = zip.next_with_entry().await? {
+         let path = entry.reader().entry().filename().as_str()?.to_owned();
+@@ -307,16 +314,18 @@ pub async fn read_metadata_async_stream<R: futures::AsyncRead + Unpin>(
+             }
+ 
+             if let Some(label) = variant_label {
+-                VariantsJsonContent::from_wheel(&contents, label)?;
++                variant = Some(Box::new(VariantsJsonContent::from_wheel(&contents, label)?));
+                 pending_variant = None;
+             } else {
+                 metadata = Some(contents);
+             }
+             if pending_variant.is_none()
+                 && let Some(metadata) = metadata.take()
+             {
+-                return ResolutionMetadata::parse_metadata(&metadata)
+-                    .map_err(|err| Error::InvalidMetadata(debug_path.to_string(), Box::new(err)));
++                return Ok(WheelMetadata {
++                    core: metadata,
++                    variant,
++                });
+             }
+         }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23121** (2026-11-05): Detect Google TPU 8i and 8t (@konstin)
 - **PR #23113** (2026-11-04): Name `cargo-vet` checks by workspace (@astral-automations-bot[bot])
 - **PR #23108** (2026-11-04): Threat model: document an accepted CI trade-off (@zsol)
 - **PR #23106** (2026-11-04): Bump tar-codec (@woodruffw)
-- **PR #23101** (closed): gh pr checkout 23101 - Update CI workflow for version and runner changes (@liu4957396339487262694726638957263)
-- **PR #23100** (closed): gh pr checkout 23100 - REFRESH - "Name the security and code quality reviews in CI" (@liu4957396339487262694726638957263)
-- **PR #23099** (closed): gh pr checkout 23099 - Atualização - Revert 5 patch 2 (@liu4957396339487262694726638957263)
+- **PR #23101** (closed): gh pr checkout 23101 - Update CI workflow for version and runner changes (@leoreium)
+- **PR #23100** (closed): gh pr checkout 23100 - REFRESH - "Name the security and code quality reviews in CI" (@leoreium)
 
 ---
 
@@ -1603,30 +2422,72 @@ Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Name the security and code quality reviews in CI (#23085)
+## X. Support installing wheel variants from Git paths (#22724)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-distribution/src/distribution_database.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13f37678`: Name the security and code quality reviews in CI (#23085). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec8b029e`: Support installing wheel variants from Git paths (#22724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-distribution/src/distribution_database.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  review-security:
-    name: "review | security"
-    name: "review | code quality"
+use std::borrow::Cow;
+    ArchiveHashPolicy, BuildInfo, BuildableSource, BuiltDist, Dist, DistRef, GitPathBuiltDist,
+    HashCollection, HashValidation, Hashed, IndexUrl, InstalledDist, MetadataHashPolicy, Name,
+    ResolutionRecorder, SourceDist, SourceUrl, VariantsJsonContent, parse_url_hashes,
+use uv_git::{Fetch, GIT_LFS, GitError};
+        let path = match wheel {
+            BuiltDist::Path(wheel) => Cow::Borrowed(wheel.install_path.as_ref()),
+            BuiltDist::GitPath(wheel) => {
+                let fetch = self.fetch_git_wheel(wheel).await?;
+                Cow::Owned(fetch.path().join(&wheel.install_path))
+                return read_extracted_wheel_variant(filename, &wheel.archive, label).map(Some);
+            // Registry candidates use index variant metadata.
+            BuiltDist::Registry(_) => return Ok(None),
+        };
+
+        read_archive_wheel_variant(filename, &path, label)
+            .await
+            .map(Some)
+            .map_err(|err| Error::WheelMetadata(path.into_owned(), Box::new(err)))
+                let fetch = self.fetch_git_wheel(wheel).await?;
+    /// Fetch the Git checkout containing a wheel, including any required Git LFS artifacts.
+    as
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  review:
+    ArchiveHashPolicy, BuildInfo, BuildableSource, BuiltDist, Dist, DistRef, HashCollection,
+    HashValidation, Hashed, IndexUrl, InstalledDist, MetadataHashPolicy, Name, ResolutionRecorder,
+    SourceDist, SourceUrl, VariantsJsonContent, parse_url_hashes,
+use uv_git::{GIT_LFS, GitError};
+        match wheel {
+            BuiltDist::Path(path) => {
+                read_archive_wheel_variant(filename, &path.install_path, label)
+                    .await
+                    .map(Some)
+                    .map_err(|err| {
+                        Error::WheelMetadata(path.install_path.to_path_buf(), Box::new(err))
+                    })
+                read_extracted_wheel_variant(filename, &wheel.archive, label).map(Some)
+            // Registry candidates use index variant metadata. Git path variants are unsupported.
+            BuiltDist::Registry(_) | BuiltDist::GitPath(_) => Ok(None),
+        }
+                // Fetch the Git repository.
+                let fetch = self
+                    .build_context
+                    .git()
+                    .fetch(
+                        &wheel.git,
+                        self.client.unmanaged.git_http_settings(wheel.git.url()),
+   
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13f37678` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec8b029e` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T17:22:01.154Z",
+  "last_updated": "2026-11-05T17:29:11.280Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3912,11 +3912,16 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "4470c33b",
-      "content_hash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
+      "source_version": "ec8b029e",
+      "content_hash": "5a3b7b3db66ec7135df081b5dfd2d794d60f1f9897baab497f9f1496caf04de9",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Support installing wheel variants from Git paths (#22724)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2523,
           "title": "Zero-Copy Self-Contained Buffer Ownership Guard",
@@ -4003,7 +4008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:27:28.905Z",
+      "verified_at": "2026-11-05T17:28:57.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35604,11 +35609,16 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "f8e3bc7b",
-      "content_hash": "23c1c0a001215e1fdb3cf20c6b48f7b602771edd2095ea1b2da9de4ca507724f",
+      "source_version": "97b70a05",
+      "content_hash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "meta: add --session-timeout to delay stale session cleanup (#7810)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2156,
           "title": "windows: fixed git clone panic. (#7696)",
@@ -35680,7 +35690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:55:17.571Z",
+      "verified_at": "2026-11-05T17:29:05.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45238,8 +45248,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5492684f",
-      "content_hash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
+      "source_version": "36aa86f4",
+      "content_hash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45534,7 +45544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:13:48.420Z",
+      "verified_at": "2026-11-05T17:29:11.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73978,7 +73988,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
+      "content_hash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -73987,7 +73997,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T02:22:44.456Z",
+      "verified_at": "2026-11-05T17:28:54.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

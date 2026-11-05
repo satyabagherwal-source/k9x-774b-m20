@@ -7727,3 +7727,7 @@
 | `CYCLE-20261105-BZ1F` | `2026-11-05T17:21:50.883Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`ba6182b8...`) |
 | `CYCLE-20261105-C1XV` | `2026-11-05T17:21:54.643Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f82bc675...`) |
 | `CYCLE-20261105-C719` | `2026-11-05T17:22:01.245Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`68ef25a8...`) |
+| `CYCLE-20261105-L275` | `2026-11-05T17:28:54.881Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`f7db2f97...`) |
+| `CYCLE-20261105-L4JS` | `2026-11-05T17:28:57.928Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5a3b7b3d...`) |
+| `CYCLE-20261105-LARN` | `2026-11-05T17:29:05.987Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4390e90e...`) |
+| `CYCLE-20261105-LEXX` | `2026-11-05T17:29:11.397Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`87bc7d29...`) |

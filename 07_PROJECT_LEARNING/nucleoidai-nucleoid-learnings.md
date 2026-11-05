@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5492684f`  
+> **Source Version**: `36aa86f4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:13:47.995Z  
+> **Timestamp**: 2026-11-05T17:29:11.108Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:13:47.906Z  
+> **Harvest Timestamp**: 2026-11-05T17:29:11.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1011,22 +1011,418 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5492684f` (2026-11-05)
-**Commit Message**: Rename debug input_instances key
+### Incident Patch 1: `36aa86f4` (2026-11-05)
+**Commit Message**: NUC 83 Hypothetical Difference Selections
 
-In the debug output of start(), rename the `input_instances` key to `test_input_instances` so it is clearly distinguished from the training data. The value is unchanged.
+Accepted. The independent evaluator accepted the proposal in continuous
+mode against 8f122c9 and its 959-case baseline, the 948 accepted cases
+plus 11 extra baselines, which it re-recorded byte-identically. The
+required token comparison ran (Reasoning enhancement): 11 cases use
+fewer lexer tokens, 948 the same and none more. Every counterpart is
+fair, and no policy check failed.
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+Hard criteria, checked independently and again on the integrated tree:
+cargo build --all-targets, warning-denied Clippy and cargo fmt --check
+pass; the full cargo test passes (95 suites, 2,515 passed, 0 failed,
+25 ignored) with all 2,509 accepted test identities present and 31
+added; all 948 pinned accepted programs and the 11 extra baselines
+replay; of 29,656 differential programs, the 19,804 that the accepted
+parser accepts are unchanged apart from clock readings, and each of the
+4,465 changed programs was a parse error at the accepted revision.
+
+NUC 83 adds the reasoning stage SELECTION |> diff. Inside the innermost
+running suppose block it keeps the steps whose node did not exist when
+the block began, or whose value differs from the one it held then, as a
+writ
+
+**File**: `README.md` (modified, +29/-0)
 ```diff
-@@ -154,7 +154,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
-   const debug = {
-     puzzle_id,
-     train_dataset,
--    input_instances,
-+    test_input_instances: input_instances,
-     test_input_matrix,
-     test_output_matrix,
-     result_matrix,
+@@ -1792,6 +1792,35 @@ assert: causes.map(step -> step.holds), [true, false, true, false]
+   changes. See the
+   [root contract](nucleoid.spec.md#depth-limited-reasoning-selections).
+ 
++## Hypothetical differences
++
++**Diff lists what a warmer room would change in a heating plan**
++
++```nuc
++temperature = 18
++target = 21
++heating = temperature < target
++fan = temperature > 30
++cost = heating ? 4 : 0
++suppose temperature = 24:
++    changes = model |> diff
++    assert: changes.map(step -> step.node), ["temperature", "heating", "cost"]
++    target = 26
++    assert: changes.map(step -> step.node), ["temperature", "target"]
++assert: [heating, cost], [true, 4]
++```
++
++- [NUC 83](docs/nuc-0083.md) adds the reasoning stage `|> diff`. Inside a
++  `suppose` block it keeps the steps of a selection that the block added or
++  changed, so `model |> diff` answers what a hypothetical would do without
++  naming any node: warming the room to 24 turns the heating off and drops its
++  cost, while the fan, which also reads the temperature, keeps its value.
++- The selection stays live inside the block: with the target raised to 26
++  the heating is back on, so only the temperature and the target still
++  differ. Outside a block the stage raises
++  `TypeError("Cannot use 'diff' outside suppose")`. See the
++  [root contract](nucleoid.spec.md#hypothetical-differences).
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +8/-0)
+```diff
+@@ -649,3 +649,11 @@
+ {"id":"spec-0649","description":"Nucleoid waits for unknown depth limits","code":"cause = 4\neffect = cause * 2\nclass Plan\nplan = Plan()\nknown = null\npending = effect |> why |> depth(plan.depth)\nwaiting = effect |> why |> depth(known)\nready = all s in waiting: s.holds > 0\nassert(pending, null)\nassert(waiting, null)\nassert(ready, null)\nplan.depth = 0\nknown = 1\nassert(pending.map(s -> s.node), [\"effect\"])\nassert(waiting.map(s -> s.node), [\"effect\", \"cause\"])\nassert(ready, true)\ncause = -1\nassert(ready, false)","return":null}
+ {"id":"spec-0650","description":"Nucleoid applies depth in class level rules methods and quantifiers","code":"class Order(qty, price):\n    this.qty = qty\n    this.price = price\n    def direct() => this.total |> why |> depth(1)\n$Order.units = $Order.qty * 10\n$Order.total = $Order.units * $Order.price\n$Order.causes = $Order.total |> why |> depth(1)\npen = Order(2, 3)\nok = all s in pen.total |> why |> depth(1): s.holds > 5\nassert(pen.causes.map(s -> s.node), [\"pen.total\", \"pen.units\", \"pen.price\"])\nassert(pen.direct().map(s -> s.holds), [60, 20, 3])\nassert(ok, false)\npen.price = 7\nassert(pen.causes[0].holds, 140)\nassert(ok, true)\ncup = Order(1, 9)\nassert(cup.causes.map(s -> s.holds), [90, 10, 9])","return":null}
+ {"id":"spec-0651","description":"Nucleoid restores depth selections after failed changes","code":"seed = 1\nmid = seed + 1\ntop = mid * 2\nlimit = 1\nnear = top |> why |> depth(limit)\nfrozen = near.value\ntry:\n    limit = 2\n    mid = 5\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(near.map(s -> s.node), [\"top\", \"mid\"])\nplan = suppose:\n    limit = 2\n    near.length\nassert(plan, 3)\nassert(near.length, 2)\nlimit = 2\nseed = 4\nassert(near.map(s -> s.holds), [10, 5, 4])\nassert(frozen.map(s -> s.holds), [4, 2])","return":null}
++{"id":"spec-0652","description":"Nucleoid lists what a supposed premise changes","code":"threshold = 90\nreading = 40\nalarm = reading > threshold\nlevel = reading > 10\nsuppose reading = 95:\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"reading\", \"alarm\"])\n    assert(moved.map(s -> s.holds), [95, true])\n    assert(moved[1].from, [\"reading\", \"threshold\"])\n    threshold = 99\n    assert(moved.map(s -> s.node), [\"threshold\", \"reading\"])\nassert(alarm, false)","return":null}
++{"id":"spec-0653","description":"Nucleoid lists what changed in an explanation or an impact","code":"base = 10\nrate = 2\nfee = 3\ncost = base * rate\ntotal = cost + fee\nlabel = total > 40\ncharge = fee * 2\nsuppose rate = 3:\n    causes = total |> why |> diff\n    effects = base |> affects |> diff\n    reach = model |> diff |> affects\n    assert(causes.map(s -> s.node), [\"total\", \"cost\", \"rate\"])\n    assert(effects.map(s -> s.node), [\"cost\", \"total\"])\n    assert(reach.map(s -> s.node).sort(), [\"cost\", \"label\", \"total\"])\n    fee = 30\n    assert(causes.map(s -> s.node), [\"total\", \"cost\", \"fee\", \"rate\"])\n    assert(effects.map(s -> s.node), [\"cost\", \"total\", \"label\"])\n    assert(reach.map(s -> s.node).sort(), [\"charge\", \"cost\", \"label\", \"total\"])","return":null}
++{"id":"spec-0654","description":"Nucleoid compares instances and class level rules in a hypothetical","code":"class Item\n$Item.premium = $Item.price > 10\npen = Item()\npen.price = 5\nbook = Item()\nbook.price = 20\nsuppose pen.price = 20:\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"pen.premium\", \"pen.price\"])\n    cup = Item()\n    cup.price = 3\n    assert(moved.map(s -> s.node), [\"pen.premium\", \"pen.price\", \"cup\", \"cup.premium\", \"cup.price\"])\n    $Item.premium = $Item.price > 25\n    assert(book.premium, false)\n    assert(moved.map(s -> s.node), [\"pen.price\", \"book.premium\", \"cup\", \"cup.premium\", \"cup.price\"])\nassert(book.premium, true)","return":null}
++{"id":"spec-0655","description":"Nucleoid compares lists and objects in a hypothetical","code":"tags = [\"pen\"]\ncount = tags.length\nlimits = {max: 3}\nfull = count >= limits.max\nsuppose tags.push(\"ink\"):\n    moved = model |> diff\n    assert(moved.map(s -> s.node), [\"tags\", \"count\"])\n    assert(moved[0].holds, [\"pen\", \"ink\"])\n    tags.pop()\n    assert(moved, [])\n    limits = {max: 3}\n    assert(moved.map(s -> s.node), [\"limits\"])\nassert(tags, [\"pen\"])","return":null}
++{"id":"spec-0656","description":"Nucleoid leaves equal values and undone writes out of a diff","code":"a = 1\nb = a + 1\nc = b * 2\nsuppose a = 1:\n    moved = model |> diff\n    assert(moved, [])\n    b = 1 + a\n    delete c\n    c = b * 2\n    assert(moved, [])\n    try:\n        a = 5\n        throw \"UNDO\"\n    catch error:\n        assert(error, \"UNDO\")\n    assert(moved, [])\n    a = 3\n    assert(moved.map(s -> s.node), [\"a\", \"b\", \"c\"])\n    assert(moved[1].rule, \"b = 1+a\")","return":null}
++{"id":"spec-0657","description":"Nucleoid compares nested hypo
+```
+
+**File**: `dataset/nucleoid.synth.58.jsonl` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{"id":"synth-58-0001","description":"A diff stage inside a suppose block lists the nodes its premise changed and leaves out a node that reads the premise but keeps its value","code":"threshold = 90\nreading = 40\nalarm = reading > threshold\nlevel = reading > 10\nsuppose reading = 95: (model |> diff).map(step -> step.node)","return":"[\"reading\",\"alarm\"]"}
++{"id":"synth-58-0002","description":"Diff after why keeps the changed facts behind a value, and diff after affects the changed nodes that rest on an input","code":"base = 10\nrate = 2\nfee = 3\ncost = base * rate\ntotal = cost + fee\nlabel = total > 40\nsuppose rate = 3: [(total |> why |> diff).map(step -> step.node), (base |> affects |> diff).map(step -> step.node)]","return":"[[\"total\",\"cost\",\"rate\"],[\"cost\",\"total\"]]"}
++{"id":"synth-58-0003","description":"An instance whose property changes is not itself listed, while its changed properties and the instances a block creates are","code":"class Item\n$Item.premium = $Item.price > 10\npen = Item()\npen.price = 5\nsuppose:\n    pen.price = 20\n    cup = Item()\n    cup.price = 3\n    (model |> diff).map(step -> step.node)","return":"[\"pen.premium\",\"pen.price\",\"cup\",\"cup.premium\",\"cup.price\"]"}
++{"id":"synth-58-0004","description":"Values compare as writes compare them, so an equal value, a list restored by pop and a write undone by a caught failure are not differences while -0 differs from 0","code":"n = 1\nz = 0\ntags = [\"a\"]\nsuppose:\n    n = 1\n    tags.push(\"b\")\n    tags.pop()\n    try:\n        n = 5\n        throw \"UNDO\"\n    catch error:\n        pass\n    z = -0\n    (model |> diff).map(step -> step.node)","return":"[\"z\"]"}
++{"id":"synth-58-0005","description":"A nested suppose block compares with its own start, and the outer block sees the inner block's value as a new node","code":"price = 10\nqty = 2\ntotal = price * qty\nsuppose price = 12:\n    inner = suppose qty = 3: (model |> diff).map(step -> step.node)\n    [inner, (model |> diff).map(step -> step.node)]","return":"[[\"qty\",\"total\"],[\"price\",\"total\",\"inner\"]]"}
++{"id":"synth-58-0006","description":"A function that asks for a diff compares with whichever suppose block calls it","code":"price = 10\nqty = 3\nsubtotal = price * qty\nfree = subtotal > 50\ndef impact() => (model |> diff).map(step -> step.node)\nsmall = suppose qty = 4: impact()\nlarge = suppose qty = 6: impact()\n[small, large]","return":"[[\"qty\",\"subtotal\"],[\"qty\",\"subtotal\",\"free\"]]"}
++{"id":"synth-58-0007","description":"Outside every suppose block the diff stage raises a TypeError","code":"a = 1\nb = a + 1\ntry:\n    b |> diff\ncatch error:\n    out = error\nout","return":"\"TypeError: Cannot use 'diff' outside suppose\""}
++{"id":"synth-58-0008","description":"A binding named diff shadows the stage, as bindings shadow the stated and derived filters","code":"a = 1\nb = a + 1\ndiff = b - a\ntry:\n    suppose a = 2: b |> diff\ncatch error:\n    out = error\nout","return":"\"TypeError: diff is not an operation\""}
+```
+
+**File**: `docs/README.md` (modified, +58/-2)
+```diff
+@@ -3168,8 +3168,10 @@ c = b * 2
+   `model`, `why`, and `affects`; the NUC 48 candidate adds only the two
+   state filters, [NUC 62](nuc-0062.md) adds NUC 11's `all` and `any`
+   quantifiers, [NUC 65](nuc-0065.md) adds its `suppose` hypotheticals
+-  without `diff`, and the [NUC 82](nuc-0082.md) candidate adds its `depth`
+-  stage without the `depth(x, n)` call form. Other NUC 11 operations remain
++  without `diff`, the [NUC 82](nuc-0082.md) candidate adds its `depth` stage
++  without the `depth(x, n)` call form, and the [NUC 83](nuc-0083.md)
++  candidate adds its `diff` as the `|> diff` stage, without the bare `diff`
++  and its `before` and `after` fields. Other NUC 11 operations remain
+   proposals, not dependencies.
+ 
+ ### Quantifiers
+@@ -3271,6 +3273,56 @@ suppose book.price = 5: premium
+ - The authoritative contract is the
+   [hypotheticals](../nucleoid.spec.md#hypotheticals) section.
+ 
++### Hypothetical differences
++
++```
++price = 10
++qty = 3
++shipping = 5
++subtotal = price * qty
++total = subtotal + shipping
++free = total > 100
++def impact() => (model |> diff).map(step => step.node)
++bulk = suppose qty = 4: impact()
++assert(bulk, ["qty", "subtotal", "total"])
++price = 30
++bulk = suppose qty = 4: impact()
++assert(free, false)
++bulk
++```
++
++- This is the complete `Nucleoid lists what a hypothetical changes with diff`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `["qty","subtotal","total","free"]`.
++- [NUC 83](nuc-0083.md) adds the stage `selection |> diff`. Inside a
++  `suppose` block it keeps the steps whose node the model did not hold when
++  the innermost running block began, its premise included, or whose value
++  differs from the value the node held then, in their order and with their
++  fields unchanged. `model |> diff` therefore lists what a hypothetical
++  added or changed without naming any node: a fourth unit changes the
++  quantity, the subtotal and the total, and also `free` once the price is 30.
++- Values compare as a write compares the value it stores with the one it
++  replaces: numbers by value and sign with `NaN` equal to `NaN`, lists item
++  by item, and objects, instances and function values by identity. Classes,
++  named functions, conditions and blocks hold `null` in a step, so only
++  their appearance counts. An equal-valued write, a restored value and a
++  write undone by a caught failure are not differences.
++- The running block is dynamic: a function, method or lambda called inside a
++  block compares with that block, and a nested block with its own start.
++  Outside every block the stage raises
++  `TypeError("Cannot use 'diff' outside suppose")`.
++- Only `|>` followed by `diff` is the stage; `diff` stays an ordinary name
++  everywhere else, so a bare `diff` is still a reference. A local or
++  parameter, variable, function or class named `diff` shadows the stage, as
++  bindings shadow the state filters and `depth`: the stage then raises
++  `TypeError("diff is not an operation")` before selecting its source.
++- The selection stays live through every observation its source made,
++  composes with `why`, `affects`, `stated`, `derived` and `depth` in any
++  order, and renders as `selection|>diff`.
++- The authoritative contract is the
++  [hypothetical differences](../nucleoid.spec.md#hypothetical-differences)
++  section.
++
+ Implemented semantic basis: the [root specification](../nucleoid.spec.md).
+ Proposal context: [NUC 11](nuc-0011.md), [NUC 48](nuc-0048.md),
+ [NUC 62](nuc-0062.md) and [NUC 65](nuc-0065.md).
+@@ -3318,6 +3370,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
+ | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+ | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
++| Evaluating a `diff` stage while no `suppose` block is running | `Cannot use 'diff' outside suppose` |
+ | `:=` on a class-level property outside a class-level rule | `Cannot use ':=' on a class-level property` |
+ | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
+ | Explaining something that is not a reference, such as the power in `why x ** 2` | `Cannot explain <expression>`, for example `Cannot explain x**2` |
+@@ -3527,6 +3580,9 @@ any name in collection: condition     true when the condition holds for some mem
+ suppose premise: suite                run premise and suite, then roll both back (NUC 65)
+ suppose: suite                        a hypothetical without a premise (NUC 65)
+ name = suppose premise: suite         keep the block's last expression value (NUC 65)
++model |> diff                         what the running suppose block added or changed (NUC 83)
++reference |> why |> diff              the changed steps of an explanation (NUC 83)
++selec
+```
+
+**File**: `docs/examples.md` (modified, +31/-0)
+```diff
+@@ -3360,6 +3360,37 @@ bolt.cost = 3
+   [NUC 82](nuc-0082.md) and the
+   [root contract](../nucleoid.spec.md#depth-limited-reasoning-selections).
+ 
++## Hypothetical differences
++
++**Diff shows which orders a delayed shipment would make late**
++
++```nuc
++class Order(item, days):
++    this.item = item
++    this.days = days
++$Order.late = $Order.days > 3
++overdue = Order.filter(order -> order.late).map(order -> order.item)
++desk = Order("desk", 2)
++lamp = Order("lamp", 5)
++def changes() => (model |> diff).map(step -> step.node)
++delay = suppose desk.days = 6: changes()
++rush = suppose lamp.days = 1: changes()
++assert: delay, ["overdue", "desk.days", "desk.late"]
++assert: rush, ["overdue", "lamp.days", "lamp.late"]
++lamp.days = 2
++suppose lamp.days = 3: changes()
++# return: ["lamp.days"]
++```
++
++- `changes()` evaluates `model |> diff` inside each `suppose` block that
++  calls it, so one function reports what each plan would change: a six-day
++  delay makes the desk late and adds it to `overdue`, and rushing the lamp
++  takes the lamp off it.
++- The answer follows the model: once the lamp ships in two days, a third day
++  would change only its `days`, because it stays on time. See
++  [NUC 83](nuc-0083.md) and the
++  [root contract](../nucleoid.spec.md#hypothetical-differences).
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -118,6 +118,7 @@ Created: 31-Jul-2026
+ | [62](nuc-0062.md) | Universal and Existential Quantifiers | Accepted |
+ | [65](nuc-0065.md) | Hypothetical Suppose Blocks | Accepted |
+ | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Accepted |
++| [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
+ 
+ ### Language compatibility
+ 
+@@ -219,6 +220,7 @@ Created: 31-Jul-2026
+ | [80](nuc-0080.md) | List and Population Averages | Standards Track | Utility enhancement | Accepted |
+ | [81](nuc-0081.md) | Object Spread Entries | Standards Track | Runtime features | Accepted |
+ | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [83](nuc-0083.md) | Hypothetical Difference Selections | Standards Track | Reasoning enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0083.md` (added, +1007/-0)
+```diff
+@@ -0,0 +1,1007 @@
++# NUC 83 -- Hypothetical Difference Selections
++
++```
++NUC: 83
++Title: Hypothetical Difference Selections
++Author: Claude <noreply@anthropic.com>
++Status: Accepted
++Type: Standards Track
++Category: Reasoning enhancement
++Created: 05-Nov-2026
++Requires: 8, 12, 14, 45, 48, 57, 59, 62, 65, 82
++```
++
++## Abstract
++
++- Add the pipeline stage `SELECTION |> diff`. Inside a `suppose` block it
++  keeps the steps of `SELECTION` whose node did not exist when the innermost
++  running block began, its premise included, or whose value differs from the
++  value the node held then. It keeps them in their order with every field
++  unchanged, so `suppose reading = 95: model |> diff` lists the reading and
++  the alarm it trips, and `alarm |> why |> diff` the changed facts behind the
++  alarm.
++- Values compare as a write compares the value it stores with the one it
++  replaces, the rule that decides whether the write propagates: numbers by
++  value and sign with `NaN` equal to `NaN`; strings, booleans, `null`, dates,
++  regular expressions and class values by value; lists item by item; and
++  objects, instances and function values by identity. Classes, named
++  functions, conditions and blocks hold `null` in a step, so only their
++  appearance counts.
++- The values a block began with are read from the undo records the
++  transaction already keeps since the block's savepoint, which hold the first
++  value of every slot the block wrote. No snapshot, copy or per-write work is
++  added: a block only pushes its savepoint mark when it starts and pops it
++  when it ends.
++- Evaluating the stage when no block is running raises
++  `TypeError("Cannot use 'diff' outside suppose")` at the running statement.
++  Running is dynamic: a function, method or lambda called inside a block may
++  use the stage, and a nested block compares with its own start. A binding
++  named `diff` shadows the stage, as bindings shadow NUC 48's `stated` and
++  `derived` and NUC 82's `depth`.
++- No keyword, token or error type is added. Every accepted program keeps its
++  parse and behavior; only inputs that were errors at the accepted revision
++  change. The public `Stage` enum gains `Stage::Diff`, which needs human
++  SemVer review. No project version is changed. The authoritative contract is
++  [Hypothetical differences](../nucleoid.spec.md#hypothetical-differences).
++- **Outcome: Accepted.** The independent evaluation and the caller's
++  integrated-tree checks passed all three hard criteria, and the independent
++  evaluator decided Accepted. The required token comparison ran in
++  continuous mode: 11 cases use fewer tokens, 948 the same and none more. No
++  policy check failed. The evaluation adds one cost that the Cost section
++  does not state: a standing selection that holds `model |> diff` re-derives
++  on every write in its block and rereads the block's growing undo records
++  each time, so such a block grows about 6 to 15 times per doubling of its
++  writes, while a single question stays linear.
++
++## Motivation
++
++- Draft [NUC 11](nuc-0011.md) motivates its hypotheticals with "An LLM
++  proposing a change needs to know what the change would do before committing
++  it". [NUC 65](nuc-0065.md) accepted `suppose`, which answers that only for
++  the nodes a question names: `suppose price = 20: total` reports the total
++  and nothing else.
++- What a change would do is the set of nodes it moves. A model that an LLM
++  maintains holds many more nodes than any question names, and a changed
++  premise reaches some of them through rules nobody remembers writing: a
++  class-level rule, a population count, a derived label. Naming them in
++  advance means knowing the answer before asking.
++- Accepted Nucleoid can only spell the answer with a snapshot taken before
++  every block and a comparison inside it,
++  `snap = (model |> why).value` followed by
++  `(model |> why).filter(s -> all b in snap: b.node != s.node or b.holds != s.holds)`,
++  38 lexer tokens more than `model |> diff` for one question, and one more
++  snapshot for each block. The spelling is also wrong in ways a model cannot
++  see:
++  - loose `!=` coerces, so `1` and `"1"`, `0` and `false`, or `[5]` and `5`
++    count as unchanged, and it never equates `NaN` or a function value with
++    itself, so an unchanged lambda is always listed;
++  - `!==` counts `0` turning into `-0` as unchanged, although the runtime
++    propagates that write as a change;
++  - in a standing declaration, any step that holds `null`, as every class and
++    named function does, makes the whole selection `null` by the accepted
++    null-read rule, unless every read of `holds` is wrapped in `.value`;
++  - `model |> diff |> affects`, what rests on anything the change moved, has
++    no general accepted spelling, because `affects` takes references and a
++    filtered list is not one.
++- NUC 11's roadmap plans "Hypotheticals -- `suppose`, `diff` and freezing" as
++  its sixth stage. NUC 65 accepted `suppose` and fre
+```
+
+**File**: `nucleoid.spec.md` (modified, +240/-0)
+```diff
+@@ -3239,6 +3239,100 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid supposes a changed class level rule` specify the executable
+   behavior.
+ 
++## Hypothetical differences
++
++- [NUC 83](docs/nuc-0083.md) adds the pipeline stage `SELECTION |> diff`.
++  Inside a `suppose` block it keeps the steps of `SELECTION` whose node did
++  not exist when the innermost running block began, its premise included, or
++  whose value differs from the value the node held then. It keeps them in
++  their order, with their `node`, `holds`, `rule`, `state` and `from` fields
++  unchanged, and drops the others.
++- `model |> diff` therefore lists every node that the hypothetical added or
++  changed, `alarm |> why |> diff` the changed facts behind an alarm,
++  `price |> affects |> diff` what changed among the nodes a price reaches,
++  and `model |> diff |> affects` everything that rests on a change. A node
++  removed inside the block cannot appear, because the stage only keeps steps
++  that exist.
++- A node existed when the block began if the model held it then. The
++  placeholder of a name read before its definition and a reasoning observer,
++  which no selection lists, did not exist, so a property first defined in the
++  block under a rule that already read it is new, and so is a former
++  reasoning declaration redeclared there as an ordinary one. A property that a
++  statement declares inside the block is new, even when an object literal
++  already held that value.
++- The value a node held is what its step holds: the value of a variable or
++  an instance, the value of a property, and `null` for classes, named
++  functions, conditions and blocks, which therefore count only when they are
++  new. Values compare as a write compares the value it stores with the one it
++  replaces, which is what decides whether the write propagates:
++  - numbers are the same when they are equal and have the same sign, and
++    `NaN` is the same as `NaN`, so `-0` differs from `0`;
++  - strings, booleans, `null`, dates and class values compare by value, and
++    regular expressions by their pattern;
++  - lists are the same when they have the same length and the same items in
++    order under this rule, so a list mutated in place, as by `push`, differs
++    and a list restored, as by `pop`, does not;
++  - objects, instances and function values are the same only when they are
++    the same object or function. An instance whose properties change is not
++    listed, while each changed property is, and a new object with equal
++    entries differs.
++- An equal-valued write, a value restored before the stage runs, a rule
++  rewritten to give the same value, a node deleted and declared again with
++  the value it had, and a write undone by a caught failure are not
++  differences.
++- The innermost running block is the one whose premise or suite is running
++  when the stage is evaluated: directly, in a function, method or lambda
++  called there, or in a rule that propagation evaluates there. `try`
++  savepoints inside the block do not change it, and a nested block compares
++  with its own start. Each evaluation compares with the block running when it
++  happens, so a standing selection declared in an outer block that
++  re-derives inside a nested block compares with the nested block's start
++  until that block rolls back.
++- Evaluating the stage when no `suppose` block is running raises
++  `TypeError("Cannot use 'diff' outside suppose")`, positioned at the running
++  top-level statement, and rolls back its transaction. The error is raised
++  when the stage applies, after its source is selected and the stages before
++  it have applied. A declaration, class-level rule or function that holds the
++  stage can therefore only be evaluated inside a block; outside one, its
++  evaluation raises and rolls back the statement that triggered it.
++- The stage keeps the distances of the steps it keeps, so it composes with
++  `depth`, `stated`, `derived`, `why` and `affects` in any order:
++  `c |> why |> diff |> depth(1)` and `c |> why |> depth(1) |> diff` select
++  the same steps.
++- Only `|>` followed by the name `diff` is the stage, without an argument,
++  and further stages may follow it. `diff` remains an ordinary lexer
++  identifier: variables, parameters, properties, keys, functions and methods
++  named `diff` keep their accepted meanings, there is no prefix form, so
++  `diff c` stays two juxtaposed statements, and `diff(c)` is an ordinary
++  call. A bare `diff` stays a name, so `suppose a = 2: diff` still raises
++  `ReferenceError("diff is not defined")`. `c |> diff(1)` is the stage
++  followed by the juxtaposed statement `(1)`, as `c |> why(1)` is.
++- A local or parameter, state variable, function or class named `diff`
++  shadows the stage, as for `stated`, `derived` and `depth`: the stage then
++  raises `TypeError("diff is not an operation")` before selecting its source.
++  A binding declared after a standing selection makes its 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1055,28 +1451,56 @@ In the debug output of start(), rename the `input_instances` key to `test_input_
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename debug input_instances key
+## X. NUC 83 Hypothetical Difference Selections
 
 **RULE**:
-When implementing operations in `arc/src/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5492684f`: Rename debug input_instances key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36aa86f4`: NUC 83 Hypothetical Difference Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/app.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    test_input_instances: input_instances,
+## Hypothetical differences
+
+**Diff lists what a warmer room would change in a heating plan**
+
+```nuc
+temperature = 18
+target = 21
+heating = temperature < target
+fan = temperature > 30
+cost = heating ? 4 : 0
+suppose temperature = 24:
+    changes = model |> diff
+    assert: changes.map(step -> step.node), ["temperature", "heating", "cost"]
+    target = 26
+    assert: changes.map(step -> step.node), ["temperature", "target"]
+assert: [heating, cost], [true, 4]
+```
+
+- [NUC 83](docs/nuc-0083.md) adds the reasoning stage `|> diff`. Inside a
+  `suppose` block it keeps the steps of a selection that the block added or
+  changed, so `model |> diff` answers what a hypothetical would do without
+  naming any node: warming the room to 24 turns the heating off and drops its
+  cost, while the fan, which also reads the temperature, keeps its value.
+- The selection stays live inside the block: with the target raised to 26
+  the heating is back on, so only the temperature and the target still
+  differ. Outside a block the stage raises
+  `TypeError("Cannot use 'diff' outside suppose")`. See the
+  [root contract](nucleoid.spec.md#hypothetical-differences).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    input_instances,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5492684f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36aa86f4` are properly handled with clean fallback behavior.

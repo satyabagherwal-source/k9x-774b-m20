@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "861c20f098be6a620a22eb7816694c3a3fd9a77d1293e862903131ea83d069b5",
-    "lastHarvestedAt": "2026-11-01T02:22:44.560Z",
+    "contentHash": "f7db2f9702ffe000ed66af63400b2b31ac15648959c5b7bb64b913c93f918956",
+    "lastHarvestedAt": "2026-11-05T17:28:54.884Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5492684f",
+    "sourceVersion": "36aa86f4",
     "license": "Apache-2.0",
-    "contentHash": "ffcce9031feb6f30a5e8d0531b9a031abb8c35dbab039c438fc1fdd98bfefcf6",
-    "lastHarvestedAt": "2026-11-05T14:13:48.488Z",
+    "contentHash": "87bc7d2922e697a7218587b5cdae59f2847a68a2ac4e01cb09fac811fdaa8946",
+    "lastHarvestedAt": "2026-11-05T17:29:11.401Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "f8e3bc7b",
+    "sourceVersion": "97b70a05",
     "license": "Apache-2.0",
-    "contentHash": "23c1c0a001215e1fdb3cf20c6b48f7b602771edd2095ea1b2da9de4ca507724f",
-    "lastHarvestedAt": "2026-11-05T02:55:17.682Z",
+    "contentHash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
+    "lastHarvestedAt": "2026-11-05T17:29:05.990Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "4470c33b",
+    "sourceVersion": "ec8b029e",
     "license": "Apache-2.0",
-    "contentHash": "aa5f1a4fd51efecf2fb6684f488156dafed1650e10f86be34f98228404fc0840",
-    "lastHarvestedAt": "2026-11-04T22:27:29.028Z",
+    "contentHash": "5a3b7b3db66ec7135df081b5dfd2d794d60f1f9897baab497f9f1496caf04de9",
+    "lastHarvestedAt": "2026-11-05T17:28:57.931Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

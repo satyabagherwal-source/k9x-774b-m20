@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T17:22:01.254Z",
-  "total_cycles_completed": 7704,
-  "total_learnings_persisted": 7704,
-  "total_rules_promoted": 7349,
+  "last_updated": "2026-11-05T17:29:11.408Z",
+  "total_cycles_completed": 7708,
+  "total_learnings_persisted": 7708,
+  "total_rules_promoted": 7351,
   "history": [
-    {
-      "timestamp": "2026-11-05T05:53:13.501Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T05:53:13.594Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T05:53:19.420Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T06:00:29.268Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T06:00:30.938Z",
       "repository": "bigscience/bloom",
@@ -1403,6 +1375,34 @@
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T17:28:54.889Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T17:28:57.936Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T17:29:05.995Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T17:29:11.408Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
