@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:47:48.078Z",
+  "last_updated": "2026-11-05T02:55:59.079Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "b775a2fb711cd2750201d2feb5090161d430ca0e79f3bb039eb68fe7f49d6556",
-      "verified_at": "2026-10-31T12:22:45.661Z",
+      "content_hash": "1883a2649f21a5e6db224b99ef0ccfa09806990385e164b58014f1360a9d7a84",
+      "verified_at": "2026-11-05T02:55:59.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:22:45.661Z"
+      "last_updated": "2026-11-05T02:55:59.078Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "5babd041b2484177b661a83ed5dfc955c55093595e03b56b89ff7186c046a8c5",
-      "verified_at": "2026-11-04T00:24:20.604Z",
+      "content_hash": "2f35cd1fd8c82792c5cf3acc00adcaddd695e5b836ec1379933b9ac333615142",
+      "verified_at": "2026-11-05T02:55:10.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:24:20.604Z"
+      "last_updated": "2026-11-05T02:55:10.511Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "05e28f75da32dac122812d2c8a46b30ee0ecd62dc297d55500896ae2b9ada113",
-      "verified_at": "2026-11-04T07:25:58.121Z",
+      "content_hash": "23c1c0a001215e1fdb3cf20c6b48f7b602771edd2095ea1b2da9de4ca507724f",
+      "verified_at": "2026-11-05T02:55:17.699Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:25:58.121Z"
+      "last_updated": "2026-11-05T02:55:17.699Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
-      "verified_at": "2026-10-31T20:11:52.119Z",
+      "content_hash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
+      "verified_at": "2026-11-05T02:55:14.653Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:11:52.119Z"
+      "last_updated": "2026-11-05T02:55:14.653Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",

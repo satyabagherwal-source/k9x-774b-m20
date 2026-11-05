@@ -7467,3 +7467,7 @@
 | `CYCLE-20261105-3Q2W` | `2026-11-05T02:47:37.928Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1279, Rule 7076, Rule 7077` | Yes (`9063e9b6...`) |
 | `CYCLE-20261105-3TVG` | `2026-11-05T02:47:42.844Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md` | Yes (`cf605227...`) |
 | `CYCLE-20261105-3XW8` | `2026-11-05T02:47:48.056Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7078` | Yes (`7f1e8a2c...`) |
+| `CYCLE-20261105-DFA7` | `2026-11-05T02:55:10.495Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`2f35cd1f...`) |
+| `CYCLE-20261105-DIHD` | `2026-11-05T02:55:14.641Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`c5ea1e88...`) |
+| `CYCLE-20261105-DKTR` | `2026-11-05T02:55:17.679Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7079` | Yes (`23c1c0a0...`) |
+| `CYCLE-20261105-EGR6` | `2026-11-05T02:55:59.058Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`1883a264...`) |

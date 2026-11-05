@@ -7476,3 +7476,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-05T02:47:37.932Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `4440cc62` | Multi-dimensional audit evidence | 2026-11-05T02:47:42.853Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c407b590` | Multi-dimensional audit evidence | 2026-11-05T02:47:48.060Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `97d3bfe5` | Multi-dimensional audit evidence | 2026-11-05T02:55:10.499Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `03606271` | Multi-dimensional audit evidence | 2026-11-05T02:55:14.644Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `f8e3bc7b` | Multi-dimensional audit evidence | 2026-11-05T02:55:17.682Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-05T02:55:59.067Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:47:42.860Z",
+  "last_updated": "2026-11-05T02:55:10.505Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3885,6 +3885,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-argoproj-argo-workflows"
+    },
+    {
+      "id": "CD-DFAH",
+      "directive_title": "Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "97d3bfe5",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

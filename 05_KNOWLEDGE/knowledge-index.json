@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:47:47.969Z",
+  "last_updated": "2026-11-05T02:55:58.953Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21304,7 +21304,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "b775a2fb711cd2750201d2feb5090161d430ca0e79f3bb039eb68fe7f49d6556",
+      "content_hash": "1883a2649f21a5e6db224b99ef0ccfa09806990385e164b58014f1360a9d7a84",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -21544,7 +21544,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-31T12:22:45.544Z",
+      "verified_at": "2026-11-05T02:55:58.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35129,8 +35129,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "ef423267",
-      "content_hash": "05e28f75da32dac122812d2c8a46b30ee0ecd62dc297d55500896ae2b9ada113",
+      "source_version": "f8e3bc7b",
+      "content_hash": "23c1c0a001215e1fdb3cf20c6b48f7b602771edd2095ea1b2da9de4ca507724f",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -35193,6 +35193,11 @@
           "number": 6758,
           "title": "cmd/mount: simplify setFuseOption and GenFuseOpt (#7803)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7079,
+          "title": "sdk: prevent root group membership from granting superuser access (#7805)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35200,7 +35205,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:25:58.000Z",
+      "verified_at": "2026-11-05T02:55:17.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37210,8 +37215,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "937b7ae6",
-      "content_hash": "5babd041b2484177b661a83ed5dfc955c55093595e03b56b89ff7186c046a8c5",
+      "source_version": "97d3bfe5",
+      "content_hash": "2f35cd1fd8c82792c5cf3acc00adcaddd695e5b836ec1379933b9ac333615142",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -37251,7 +37256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:24:20.481Z",
+      "verified_at": "2026-11-05T02:55:10.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42611,8 +42616,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "8872099c",
-      "content_hash": "a35d38628bfaab2455114ee88a874a08dd78b31fd8504313d0c56cf7c252addf",
+      "source_version": "03606271",
+      "content_hash": "c5ea1e8860e6cc7348b23147c70b277cb9a8a00e829ebc8bccae093187cb1584",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -42637,7 +42642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:11:51.981Z",
+      "verified_at": "2026-11-05T02:55:14.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179513,6 +179518,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:47:47.946Z"
+    },
+    "rule-7079": {
+      "learning_id": "rule-7079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7079,
+      "title": "sdk: prevent root group membership from granting superuser access (#7805)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "f8e3bc7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:55:17.571Z"
     }
   },
   "aliases": {

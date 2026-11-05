@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `ef423267`  
+> **Source Version**: `f8e3bc7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:25:57.363Z  
+> **Timestamp**: 2026-11-05T02:55:16.911Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:25:56.820Z  
+> **Harvest Timestamp**: 2026-11-05T02:55:16.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14656 stars
+- **Stars / Engagement**: 14675 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7803** (2026-11-04): **cmd/mount: simplify setFuseOption and GenFuseOpt**
-  *Symptoms*: Simplify how FUSE mount options are generated. No behavior change.  - Inline `genFuseOptExt` (single caller, six return values) into `setFuseOption`. - `GenFuseOpt`:   - drop `mt` (always `1`, so `SingleThreaded` stays `false`);   - take the volume name instead of `*vfs.Config` (only `Format.Name` was used);   - use positive booleans: `enableXattr`, `enableACL`, `readDirPlusAuto`.  xattr/ACL values still come from `format`, and ACL still implies xattr in the caller. The resulting `FuseOpts` are identical, so graceful restart option comparison is unaffected. 
+- **Issue #7805** (2026-11-05): **sdk: prevent root group membership from granting superuser access**
+  *Symptoms*: The Python SDK passed root's group names (concatenated) to libjfs as `supergroup`. When root belongs only to the `root` group, every member of `root` was treated as superuser and could read root-only files.  Changes: - Python passes the same legacy string as `rootGroup` (used only to map that group to GID 0) and an empty `supergroup`. Existing file GIDs are unchanged; non-root members of `root` only get normal group permissions. - libjfs: `isSuperuser` ignores an empty supergroup; `lookupGid`/`gid2name` use `rootGroup`, falling back to `supergroup` so Java behavior is unchanged; `rootGroup` is excluded from the filesystem cache key.  Compatibility: libjfs is bundled with the Python SDK. If mixed manually, new Python with old libjfs loses the GID 0 mapping for `root`, and old Python with new libjfs keeps the old elevation. 
 
-- **Issue #7802** (2026-11-04): **fuse: add --no-readdirplus-auto mount option**
-  *Symptoms*: ### What Add a `--no-readdirplus-auto` mount flag that turns off `FUSE_READDIRPLUS_AUTO`, so the kernel uses READDIRPLUS for every readdir page. Default behaviour is unchanged.  ### Why Fixes #7801. Since #6299 adaptive READDIRPLUS is always on. Directory walks that stat every entry then send a LOOKUP for about every other entry (plain READDIR pages alternate with READDIRPLUS pages advised by those lookups): `find -newerct` over 151k files took 5.7 s → 371 s and 4 → 75,205 lookups with a MySQL metadata engine. Numbers are in the issue.  ### How - `cmd/mount_unix.go`: new BoolFlag in `fuseFlags()`, passed through `genFuseOptExt` like `noxattr`/`noacl`. - `pkg/fuse/fuse.go`: `GenFuseOpt` sets `opt.EnableReadDirPlusAuto = !noReadDirPlusAuto`. `Serve` already   takes the persisted `FuseOpts.EnableReadDirPlusAuto`. - Docs: command reference (en/zh_cn) and the ReadDirPlusAuto section of `fuse_mount_options.md` (en/zh_cn)   now describe the trade-off instead of "does not require any user configuration".  ### Test - `go test ./pkg/fuse/ -run TestGenFuseOptReadDirPlusAuto` (new: default true, flag → false). - `go vet ./pkg/fuse/ ./cmd/`, `go build .`. - Production A/B in the issue (patched 1.4.1 on a 151k-file subtree: 5.7 s, 4 lookups).  Questions for maintainers: OK with a `--no-*` bool (vs an `-o` option)? Which `VersionAdd` (1.4.3 is a placeholder)? Backport to release-1.4?  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #7804** (2026-11-04): **meta: resolve quota and forced paths relative to the subdir root**
+  *Symptoms*: After `Chroot`, `HandleQuota` resolves directory paths from the volume root, but `Mkdir`, `GetSummary` and `GetPaths` in the same flow are relative to the mounted root. With a client chrooted to `/sub`:  - Setting a quota on `/` stores it on the volume root, but usage is computed for `/sub`. - `--create /x` creates `/sub/x` but looks it up under the volume root, so a second run fails with EEXIST. - Paths returned by list cannot be used to get the quota back.  `Resolve(force=true)` also ignores both `parent` and the mounted root.  Fix: - `resolve` starts from `m.root`. - The forced `Resolve` starts from `checkRoot(parent)`. - Quota list reports the mounted root as `/` and skips quotas outside it.  Processes that do not chroot (`m.root == 1`), such as `juicefs quota`, `juicefs config` and tier, are unaffected. Tests are added in `pkg/meta/subdir_test.go`, and existing tests that used volume-root paths under chroot are updated. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,209 +1176,166 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef423267` (2026-11-04)
-**Commit Message**: cmd/mount: simplify setFuseOption and GenFuseOpt (#7803)
+### Incident Patch 1: `f8e3bc7b` (2026-11-05)
+**Commit Message**: sdk: prevent root group membership from granting superuser access (#7805)
 
-**File**: `cmd/mount_unix.go` (modified, +3/-10)
-```diff
-@@ -561,8 +561,9 @@ func getFuserMountVersion() string {
- }
- 
- func setFuseOption(c *cli.Context, format *meta.Format, vfsConf *vfs.Config) {
--	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
--	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
-+	enableXattr := c.Bool("enable-xattr") || format.EnableACL
-+	options := vfs.FuseOptions(fuse.GenFuseOpt(format.Name, genFuseOpt(c, format.Name), enableXattr, format.EnableACL,
-+		int(utils.ParseBytes(c, "max-fuse-io", 'B')), !c.Bool("no-readdirplus-auto")))
- 	vfsConf.FuseOpts = &options
- }
- 
-@@ -649,14 +650,6 @@ func prepareMp(mp string) {
- 	}
- }
- 
--func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
--	enableXattr := c.Bool("enable-xattr")
--	if format.EnableACL {
--		enableXattr = true
--	}
--	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
--}
--
- func shutdownGraceful(mp string) {
- 	_, conf, err := loadConfig(mp)
- 	if err != nil {
-```
-
-**File**: `pkg/fuse/fuse.go` (modified, +6/-7)
-```diff
-@@ -557,23 +557,22 @@ func Serve(v *vfs.VFS, options string, xattrs, ioctl bool) error {
- 	return nil
- }
- 
--func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) fuse.MountOptions {
-+func GenFuseOpt(name, options string, enableXattr, enableACL bool, maxWrite int, readDirPlusAuto bool) fuse.MountOptions {
- 	var opt fuse.MountOptions
--	opt.FsName = "JuiceFS:" + conf.Format.Name
-+	opt.FsName = "JuiceFS:" + name
- 	opt.Name = "juicefs"
--	opt.SingleThreaded = mt == 0
- 	opt.MaxBackground = 200
- 	opt.EnableLocks = true
- 	opt.EnableSymlinkCaching = true
--	opt.DisableXAttrs = noxattr
--	opt.EnableAcl = !noacl
-+	opt.DisableXAttrs = !enableXattr
-+	opt.EnableAcl = enableACL
- 	opt.IgnoreSecurityLabels = false
- 	opt.MaxWrite = maxWrite
- 	opt.MaxReadAhead = 1 << 20
- 	opt.DirectMount = true
- 	opt.DontUmask = true
- 	opt.Timeout = time.Minute * 15
--	opt.EnableReadDirPlusAuto = !noReadDirPlusAuto
-+	opt.EnableReadDirPlusAuto = readDirPlusAuto
- 	for _, n := range strings.Split(options, ",") {
- 		// TODO allow_root
- 		if n == "allow_other" {
-@@ -591,7 +590,7 @@ func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, m
- 	}
- 	opt.Options = append(opt.Options, "default_permissions")
- 	if runtime.GOOS == "darwin" {
--		opt.Options = append(opt.Options, "fssubtype=juicefs", "volname="+conf.Format.Name)
-+		opt.Options = append(opt.Options, "fssubtype=juicefs", "volname="+name)
- 		opt.Options = append(opt.Options, "daemon_timeout=60", "iosize=65536", "novncache")
- 	}
- 	return opt
-```
-
----
-
-### Incident Patch 2: `40060fe7` (2026-11-04)
-**Commit Message**: fuse: add --no-readdirplus-auto mount option (#7802)
-
+Signed-off-by: miyang <[REDACTED_EMAIL]>
 Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
-**File**: `cmd/mount_unix.go` (modified, +8/-4)
+**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +37/-1)
 ```diff
-@@ -422,6 +422,10 @@ func fuseFlags() []cli.Flag {
- 			Name:  "enable-ioctl",
- 			Usage: "enable ioctl (support GETFLAGS/SETFLAGS only)",
- 		},
-+		&cli.BoolFlag{
-+			Name:  "no-readdirplus-auto",
-+			Usage: "always use READDIRPLUS instead of adaptive mode",
-+		},
- 		&cli.StringFlag{
- 			Name:  "root-squash",
- 			Usage: "mapping local root user (uid = 0) to another one specified as <uid>:<gid>",
-@@ -557,8 +561,8 @@ func getFuserMountVersion() string {
- }
+@@ -1,8 +1,10 @@
+ import errno
+ from array import array
+ import fractions
++import grp
+ import io
+ import unittest
++from unittest.mock import patch
+ import os
+ import pwd
+ import stat
+@@ -20,8 +22,11 @@
  
- func setFuseOption(c *cli.Context, format *meta.Format, vfsConf *vfs.Config) {
--	rawOpts, mt, noxattr, noacl, maxWrite := genFuseOptExt(c, format)
--	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite))
-+	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
-+	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
- 	vfsConf.FuseOpts = &options
- }
  
-@@ -645,12 +649,12 @@ func prepareMp(mp string) {
+ class FileTests(unittest.TestCase):
++    def open_client(self):
++        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
++
+     def setUp(self):
+-        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
++        self.v = self.open_client()
+         if not self.v.exists(TESTFN):
+             self.v.mkdir(TESTFN)
+ 
+@@ -130,6 +135,37 @@ def test_makedir(self):
+ 
+ 
+ class ChownFileTests(FileTests):
++    def test_root_group_read_permissions(self):
++        self.v.chmod(TESTFN, 0o755)
++        self.create_file(TESTFILE)
++        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
++                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
++        groups = {gid: grp.struct_group((name, "x", gid, []))
++                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
++        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
++        legacy_gid = 2730912965
++        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
++            legacy_gid &= 0x7fffffff
++        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
++            with self.subTest(root_groups=root_groups):
++                self.v.chown(TESTFILE, 0, file_gid)
++                self.v.chmod(TESTFILE, denied_mode)
++                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
++                with patch.object(os, "geteuid", return_value=1001), \
++                        patch.object(pwd, "getpwuid", side_effect=users.__getitem__), \
++                        patch.object(grp, "getgrgid", side_effect=groups.__getitem__), \
++                        patch.object(os, "getgrouplist", side_effect=lambda name, gid: memberships[name]):
++                    member = self.open_client()
++                self.addCleanup(member.close)
++                with self.assertRaises(OSError) as denied:
++                    with member.open(TESTFILE, "rb") as f:
++                        f.read()
++                self.assertEqual(denied.exception.errno, errno.EACCES)
++
++                self.v.chmod(TESTFILE, 0o440)
++                with member.open(TESTFILE, "rb") as f:
++                    self.assertEqual(f.read(), b"content")
++
+     def test_chown_uid_gid_arguments_must_be_index(self):
+         stat = self.v.stat(TESTFN)
+         uid = stat.st_uid
+```
+
+**File**: `sdk/java/libjfs/main.go` (modified, +8/-3)
+```diff
+@@ -270,7 +270,7 @@ func (w *wrapper) isSuperuser(name string, groups []string) bool {
  	}
- }
- 
--func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int) {
-+func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
- 	enableXattr := c.Bool("enable-xattr")
- 	if format.EnableACL {
- 		enableXattr = true
+ 	sg := w.getSuperGroup()
+ 	for _, g := range groups {
+-		if g == sg {
++		if sg != "" && g == sg {
+ 			return true
+ 		}
  	}
--	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B'))
-+	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
+@@ -285,7 +285,7 @@ func (w *wrapper) lookupUid(name string) uint32 {
  }
  
- func shutdownGraceful(mp string) {
-```
-
-**File**: `docs/en/reference/command_reference.mdx` (modified, +1/-0)
-```diff
-@@ -696,6 +696,7 @@ juicefs mount redis://localhost /mnt/jfs --backup-meta 0
- |`--enable-cap` <VersionAdd>1.3</VersionAdd>|enable security.capability xattr (default: false)|
- |`--enable-selinux` <VersionAdd>1.3</VersionAdd>|enable security.selinux xattr (default: false)|
- |`--enable-ioctl` <VersionAdd>1.1</VersionAdd> |enable ioctl (support GETFLAGS/SETFLAGS only) (default: false)|
-+|`--no-readdirplus-auto` <VersionAdd>1.4.3</VersionAdd>|always use READDIRPLUS instead of adaptive mode (default: false)|
- |`--root-squash value` <VersionAdd>1.1</VersionAdd> |mapping local root user (UID = 0) to another one specified as UID:GID|
- |`--all-squash value` <VersionAdd>1.3</VersionAdd> |mapping all users to another one specified as UID:GID|
- |`--umask value` <VersionAdd>1.3</VersionAdd> |umask for new file and directory in octal|
-```
-
-**File**: `docs/en/reference/fuse_mount_options.md` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ These options are used to specify the owner ID and owner group ID of the file sy
- 
- Starting from JuiceFS v1.4, `ReadDirPlusAuto` is automatically enabled. This feature allows the FUSE kernel module to automatically decide whether to use the `ReadDirPlus` operation (which returns directory entries along with file attributes) instead of plain `ReadDir`. This reduces the number of subsequent `getattr` calls when listing directories, significantly improving performance for large directory listings.
- 
--This is an internal optimization and does not require any user configuration.
-+When stat-ing every entry of a large directory (e.g. `ls -l`, `find`, `rsync`), adaptive mode may cause many extra `lookup` requests, which is slow when metadata latency is high. Mount with `--no-readdirplus-auto` to always use `ReadDirPlus`, at the cost of fetching attributes that may not be needed (e.g. plain `ls`).
- 
- ## debug
- 
-```
-
-**File**: `docs/zh_cn/reference/command_reference.mdx` (modified, +1/-0)
-```diff
-@@ -692,6 +692,7 @@ juicefs mount redis://localhost /mnt/jfs --backup-meta 0
- |`--enable-cap` <VersionAdd>1.3</VersionAdd>|启用 security.capability 扩展属性 (xattr) ，默认为 false。|
- |`--enable-selinux` <VersionAdd>1.3</VersionAdd>|启用 security.selinux 扩展属性 (xattr) ，默认为 false。|
- |`--enable-ioctl` <VersionAdd>1.1</VersionAdd>|启用 ioctl (仅支持 GETFLAGS/SETFLAGS) (默认：false)|
-+|`--no-readdirplus-auto` <VersionAdd>1.4.3</VersionAdd>|始终使用 READDIRPLUS，而非自适应模式 (默认：false)|
- |`--root-squash value` <VersionAdd>1.1</VersionAdd>|将本地 root 用户 (UID=0) 映射到一个指定用户，如 UID:GID|
- |`--all-squash value` <VersionAdd>1.3</VersionAdd>|将所有用户映射到一个指定用户，如 UID:GID|
- |`--umask value` <VersionAdd>1.3</VersionAdd> |新文件和新目录的 umask 的八进制格式|
-```
-
-**File**: `docs/zh_cn/reference/fuse_mount_options.md` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ FUSE 支持[「writeback-cache 模式」](https://www.kernel.org/doc/Documentati
- 
- 从 JuiceFS v1.4 开始，`ReadDirPlusAuto` 已自动启用。该特性允许 FUSE 内核模块自动决定是否使用 `ReadDirPlus` 操作（在返回目录条目的同时返回文件属性），而非仅使用普通的 `ReadDir`。这减少了目录列表时后续的 `getattr` 调用次数，显著提升了大目录的列举性能。
- 
--这是一项内部优化，用户无需进行任何配置。
-+对大目录中每个条目执行 stat 时（如 `ls -l`、`find`、`rsync`），自适应模式可能产生大量额外的 `lookup` 请求，在元数据延迟较高时会比较慢。此时可使用 `--no-readdirplus-auto` 挂载，始终使用 `ReadDirPlus`，代价是可能获取不需要的属性（如普通的 `ls`）。
- 
- ## debug
- 
-```
-
-**File**: `pkg/fuse/fuse.go` (modified, +2/-2)
-```diff
-@@ -557,7 +557,7 @@ func Serve(v *vfs.VFS, options string, xattrs, ioctl bool) error {
- 	return nil
+ func (w *wrapper) lookupGid(group string) uint32 {
+-	if group == w.supergroup {
++	if group == w.conf.RootGroup {
+ 		return 0
+ 	}
+ 	return uint32(w.m.lookupGroup(group))
+@@ -308,7 +308,7 @@ func (w *wrapper) uid2name(uid uint32) string {
  }
  
--func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int) fuse.MountOptions {
-+func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) fuse.MountOptions {
- 	var opt fuse.MountOptions
- 	opt.FsName = "JuiceFS:" + conf.Format.Name
- 	opt.Name = "juicefs"
-@@ -573,7 +573,7 @@ func GenFuseOpt(conf *vfs.Config, options string, mt int, noxattr, noacl bool, m
- 	opt.DirectMount = true
- 	opt.DontUmask = true
- 	opt.Timeout = time.Minute * 15
--	opt.EnableReadDirPlusAuto = true
-+	opt.EnableReadDirPlusAuto = !noReadDirPlusAuto
- 	for _, n := range strings.Split(options, ",") {
- 		// TODO allow_root
- 		if n == "allow_other" {
+ func (w *wrapper) gid2name(gid uint32) string {
+-	group := w.supergroup
++	group := w.conf.RootGroup
+ 	if gid > 0 {
+ 		group = w.m.lookupGroupID(gid)
+ 	}
+@@ -392,6 +392,7 @@ type javaConf struct {
+ 	PushRemoteWriteAuth string `json:"pushRemoteWriteAuth"`
+ 	GuidMask            string `json:"guidMask"`
+ 	Caller              int    `json:"caller"`
++	RootGroup           string `json:"rootGroup"` // Group name mapped to GID 0.
+ 	Subdir              string `json:"subdir"`
+ 
+ 	AuthMethod string `json:"authMethod,omitempty"`
+@@ -404,6 +405,7 @@ func cleanConf(conf javaConf) javaConf {
+ 	conf.AuthMethod = ""
+ 	conf.RealUser = ""
+ 	conf.SuperFS = false
++	conf.RootGroup = ""
+ 	return conf
+ }
+ 
+@@ -431,6 +433,9 @@ func getOrCreate(name, user, groups, superuser, supergroup string, conf javaConf
+ 		}
+ 		logger.Infof("JuiceFileSystem created for user:%s groups:%s", user, groups)
+ 	}
++	if conf.RootGroup == "" {
++		conf.RootGroup = supergroup
++	}
+ 	w := &wrapper{jfs, name, nil, m, user, superuser, supergroup, conf}
+ 	if formats[name] != nil && formats[name].KerbConf != "" {
+ 		if _, ok := superuserChangedCb[name]; !ok {
+```
+
+**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +5/-3)
+```diff
+@@ -161,14 +161,16 @@ def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False,
+         kwargs["pushRemoteWriteAuth"] = push_remote_write_auth
+         kwargs["caller"] = 1
+ 
+-        jsonConf = json.dumps(kwargs, sort_keys=True)
+         self.umask = os.umask(0)
+         os.umask(self.umask)
+         user = pwd.getpwuid(os.geteuid())
+         groups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(user.pw_name, user.pw_gid)]
+         superuser = pwd.getpwuid(0)
+-        supergroups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(superuser.pw_name, superuser.pw_gid)]
+-        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), ''.join(supergroups).encode())
++        # Preserve the legacy GID mapping without granting superuser access to the group.
++        supergids = os.getgrouplist(superuser.pw_name, superuser.pw_gid)
++        kwargs["rootGroup"] = ''.join(grp.getgrgid(gid).gr_name for gid in supergids)
++        jsonConf = json.dumps(kwargs, sort_keys=True)
++        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), b'')
+ 
+     def __del__(self):
+         self.close(terminate=False)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
+- **PR #7804** (closed): meta: resolve quota and forced paths relative to the subdir root (@jiefenghuang)
 - **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
 - **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
 - **PR #7800** (2026-11-04): meta: keep dumped nextInode and nextChunk when loading JSON dump (@jiefenghuang)
 - **PR #7799** (2026-11-04): meta: keep only subtree directory quotas in subdir dump (@jiefenghuang)
-- **PR #7798** (2026-11-03): cmd/dump: warn when flags are ignored with --binary or --subdir (@jiefenghuang)
-- **PR #7797** (2026-11-03): meta: treat .trash as an ordinary name under subdir mounts (@jiefenghuang)
 
 ---
 
@@ -1398,39 +1355,50 @@ Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/mount: simplify setFuseOption and GenFuseOpt (#7803)
+## X. sdk: prevent root group membership from granting superuser access (#7805)
 
 **RULE**:
-When implementing operations in `cmd/mount_unix.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef423267`: cmd/mount: simplify setFuseOption and GenFuseOpt (#7803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8e3bc7b`: sdk: prevent root group membership from granting superuser access (#7805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/mount_unix.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	enableXattr := c.Bool("enable-xattr") || format.EnableACL
-	options := vfs.FuseOptions(fuse.GenFuseOpt(format.Name, genFuseOpt(c, format.Name), enableXattr, format.EnableACL,
-		int(utils.ParseBytes(c, "max-fuse-io", 'B')), !c.Bool("no-readdirplus-auto")))
+import grp
+from unittest.mock import patch
+    def open_client(self):
+        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
+
+        self.v = self.open_client()
+    def test_root_group_read_permissions(self):
+        self.v.chmod(TESTFN, 0o755)
+        self.create_file(TESTFILE)
+        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
+                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
+        groups = {gid: grp.struct_group((name, "x", gid, []))
+                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
+        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
+        legacy_gid = 2730912965
+        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
+            legacy_gid &= 0x7fffffff
+        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
+            with self.subTest(root_groups=root_groups):
+                self.v.chown(TESTFILE, 0, file_gid)
+                self.v.chmod(TESTFILE, denied_mode)
+                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
+                w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto := genFuseOptExt(c, format)
-	options := vfs.FuseOptions(fuse.GenFuseOpt(vfsConf, rawOpts, mt, noxattr, noacl, maxWrite, noReadDirPlusAuto))
-func genFuseOptExt(c *cli.Context, format *meta.Format) (fuseOpt string, mt int, noxattr, noacl bool, maxWrite int, noReadDirPlusAuto bool) {
-	enableXattr := c.Bool("enable-xattr")
-	if format.EnableACL {
-		enableXattr = true
-	}
-	return genFuseOpt(c, format.Name), 1, !enableXattr, !format.EnableACL, int(utils.ParseBytes(c, "max-fuse-io", 'B')), c.Bool("no-readdirplus-auto")
-}
-
+        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef423267` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8e3bc7b` are properly handled with clean fallback behavior.
