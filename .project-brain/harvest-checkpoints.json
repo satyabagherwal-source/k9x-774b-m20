@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:50:32.774Z",
+  "last_updated": "2026-11-05T04:57:38.832Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
-      "verified_at": "2026-10-31T14:08:08.597Z",
+      "content_hash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
+      "verified_at": "2026-11-05T04:57:38.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:08:08.597Z"
+      "last_updated": "2026-11-05T04:57:38.831Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
-      "verified_at": "2026-10-25T03:14:19.351Z",
+      "content_hash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+      "verified_at": "2026-11-05T04:57:38.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:14:19.351Z"
+      "last_updated": "2026-11-05T04:57:38.147Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",

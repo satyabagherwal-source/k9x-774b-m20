@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:50:32.670Z",
+  "last_updated": "2026-11-05T04:57:38.741Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27457,7 +27457,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
+      "content_hash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -27469,6 +27469,21 @@
         {
           "number": 1587,
           "title": "Spatio-Temporal 3D-VAE Latent Chunking with Boundary Weight Harmonization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7109,
+          "title": "Omni-Modal Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7111,
+          "title": "High-Resolution Video Memory Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7112,
+          "title": "Multimodal Input Validation & Sanitization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27490,7 +27505,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-31T14:08:08.472Z",
+      "verified_at": "2026-11-05T04:57:38.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46065,8 +46080,8 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "e492e24c",
-      "content_hash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
+      "source_version": "f253de70",
+      "content_hash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
@@ -46084,6 +46099,11 @@
           "number": 4006,
           "title": "separate Config process exclusions from validation data sync (#4784)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7110,
+          "title": "abort incomplete disk audit runs after write failures (#4894)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46091,7 +46111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:14:19.279Z",
+      "verified_at": "2026-11-05T04:57:38.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180151,6 +180171,62 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-7110": {
+      "learning_id": "rule-7110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7110,
+      "title": "abort incomplete disk audit runs after write failures (#4894)",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "f253de70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:57:38.032Z"
+    },
+    "rule-7109": {
+      "learning_id": "rule-7109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7109,
+      "title": "Omni-Modal Synchronization Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "source_version": "hf-minimaxai-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:57:38.721Z"
+    },
+    "rule-7111": {
+      "learning_id": "rule-7111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7111,
+      "title": "High-Resolution Video Memory Management Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "source_version": "hf-minimaxai-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:57:38.721Z"
+    },
+    "rule-7112": {
+      "learning_id": "rule-7112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7112,
+      "title": "Multimodal Input Validation & Sanitization Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "source_version": "hf-minimaxai-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T04:57:38.721Z"
     }
   },
   "aliases": {

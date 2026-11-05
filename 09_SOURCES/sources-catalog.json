@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
-    "lastHarvestedAt": "2026-10-31T14:08:08.588Z",
+    "contentHash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
+    "lastHarvestedAt": "2026-11-05T04:57:38.816Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "e492e24c",
+    "sourceVersion": "f253de70",
     "license": "Apache-2.0",
-    "contentHash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
-    "lastHarvestedAt": "2026-10-25T03:14:19.343Z",
+    "contentHash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+    "lastHarvestedAt": "2026-11-05T04:57:38.129Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {

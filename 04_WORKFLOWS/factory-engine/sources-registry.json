@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T04:50:44.624Z",
-    "lastVerified": "2026-11-05T04:50:44.624Z",
+    "lastChecked": "2026-11-05T04:57:41.376Z",
+    "lastVerified": "2026-11-05T04:57:41.376Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -322,8 +322,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T01:33:21.848Z",
-    "lastVerified": "2026-11-05T01:33:21.848Z",
+    "lastChecked": "2026-11-05T04:57:35.345Z",
+    "lastVerified": "2026-11-05T04:57:35.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:28:52.414Z",
-    "lastVerified": "2026-11-05T04:28:52.414Z",
+    "lastChecked": "2026-11-05T04:57:40.398Z",
+    "lastVerified": "2026-11-05T04:57:40.398Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -608,11 +608,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-policy-agent-gatekeeper": {
-    "name": "gatekeeper",
+    "name": "open-policy-agent/gatekeeper",
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "lastChecked": "2026-11-04T09:39:59.344Z",
-    "revisionIdentifier": "e492e24c",
-    "lastVerified": "2026-11-04T09:39:59.344Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-05T04:57:37.273Z",
+    "lastVerified": "2026-11-05T04:57:37.273Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -3389,9 +3399,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-04T02:11:54.336Z",
+    "lastChecked": "2026-11-05T04:57:25.407Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-04T02:11:54.336Z"
+    "lastVerified": "2026-11-05T04:57:25.407Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -4546,13 +4556,13 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T14:08:07.531Z",
-    "lastVerified": "2026-10-31T14:08:07.531Z",
+    "lastChecked": "2026-11-05T04:57:28.347Z",
+    "lastVerified": "2026-11-05T04:57:28.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
-    "promotedRulesCount": 0,
+    "contentHash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5375,9 +5385,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-04T08:46:04.263Z",
+    "lastChecked": "2026-11-05T04:57:37.912Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-04T08:46:04.263Z"
+    "lastVerified": "2026-11-05T04:57:37.912Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -9474,9 +9484,9 @@
   "vanniktech-emoji": {
     "name": "Emoji",
     "officialUrl": "https://github.com/vanniktech/Emoji",
-    "lastChecked": "2026-10-31T22:31:12.862Z",
+    "lastChecked": "2026-11-05T04:57:30.448Z",
     "revisionIdentifier": "69e998da",
-    "lastVerified": "2026-10-31T22:31:12.862Z"
+    "lastVerified": "2026-11-05T04:57:30.448Z"
   },
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",

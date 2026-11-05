@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-9J42",
-    "timestamp": "2026-11-03T21:28:33.026Z",
-    "repository": "ArchiveBox/ArchiveBox",
-    "learningId": "learn-github-archivebox-archivebox",
-    "contentHash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-9L13",
-    "timestamp": "2026-11-03T21:28:35.511Z",
-    "repository": "NirDiamant/RAG_Techniques",
-    "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "566ab5aea10a753592125ea39902e2f26b0fd9a13f5da3031428d726f7cbc32f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-9LB6",
     "timestamp": "2026-11-03T21:28:35.874Z",
     "repository": "max-sixty/worktrunk",
@@ -7492,6 +7462,36 @@
     "contentHash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-QWR2",
+    "timestamp": "2026-11-05T04:57:38.126Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "7cb5f799c15d61ee4372e5938929689bcf9b444b9904df85c47cfbf2e6448526",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-QXA4",
+    "timestamp": "2026-11-05T04:57:38.812Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "357a97dd8430e82f32c93415da06065f7e9e1788dbee2d782a07d4318d36c0ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
