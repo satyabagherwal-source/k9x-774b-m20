@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
-    "lastHarvestedAt": "2026-10-31T17:43:51.263Z",
+    "contentHash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
+    "lastHarvestedAt": "2026-11-05T08:31:51.691Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2743,10 +2743,10 @@
     "repository": "easegress-io/easegress",
     "platform": "github",
     "sourceUrl": "https://github.com/easegress-io/easegress",
-    "sourceVersion": "48bacc2e",
+    "sourceVersion": "b8d95290",
     "license": "Apache-2.0",
-    "contentHash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
-    "lastHarvestedAt": "2026-10-18T22:04:20.699Z",
+    "contentHash": "6b485ff75094ce7d3eed0e72e7c0666b4f077a1af3d131114b513e50db5f1502",
+    "lastHarvestedAt": "2026-11-05T08:32:48.614Z",
     "learningId": "learn-github-easegress-io-easegress"
   },
   "mimblewimble-grin": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "242bfe58",
+    "sourceVersion": "d736617d",
     "license": "GPL-3.0",
-    "contentHash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
-    "lastHarvestedAt": "2026-11-01T01:54:06.461Z",
+    "contentHash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
+    "lastHarvestedAt": "2026-11-05T08:31:50.793Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

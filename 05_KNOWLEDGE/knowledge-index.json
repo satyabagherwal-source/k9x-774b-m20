@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T08:15:33.457Z",
+  "last_updated": "2026-11-05T08:32:48.522Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11692,14 +11692,19 @@
       "slug": "easegress-io-easegress",
       "platform": "github",
       "source_url": "https://github.com/easegress-io/easegress",
-      "source_version": "48bacc2e",
-      "content_hash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
+      "source_version": "b8d95290",
+      "content_hash": "6b485ff75094ce7d3eed0e72e7c0666b4f077a1af3d131114b513e50db5f1502",
       "dossier_path": "07_PROJECT_LEARNING/easegress-io-easegress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/easegress-io-easegress-learnings.md",
       "promoted_rules": [
         {
           "number": 1760,
           "title": "grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7169,
+          "title": "build/package/Dockerfile.builder to reduce vulnerabilities (#1530)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11708,7 +11713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:04:20.652Z",
+      "verified_at": "2026-11-05T08:32:48.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26055,7 +26060,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "f0fde997a9f9237bbc3b81ee1ee979662fb46c213c6e77796f5d333618168327",
+      "content_hash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -26083,6 +26088,21 @@
           "number": 1604,
           "title": "Vocabulary Size & Tokenizer Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7165,
+          "title": "Audio Downsampling Factor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7167,
+          "title": "CTC Decoding Padding Mask Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7168,
+          "title": "Japanese Text Normalization for Evaluation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26102,7 +26122,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-31T17:43:51.147Z",
+      "verified_at": "2026-11-05T08:31:51.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49908,8 +49928,8 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "242bfe58",
-      "content_hash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
+      "source_version": "d736617d",
+      "content_hash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
@@ -49937,6 +49957,11 @@
           "number": 6397,
           "title": "spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7166,
+          "title": "spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49944,7 +49969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:54:06.356Z",
+      "verified_at": "2026-11-05T08:31:50.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181248,6 +181273,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T08:15:33.434Z"
+    },
+    "rule-7166": {
+      "learning_id": "rule-7166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7166,
+      "title": "spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "d736617d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:31:50.674Z"
+    },
+    "rule-7165": {
+      "learning_id": "rule-7165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7165,
+      "title": "Audio Downsampling Factor Alignment Invariant",
+      "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:31:51.576Z"
+    },
+    "rule-7167": {
+      "learning_id": "rule-7167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7167,
+      "title": "CTC Decoding Padding Mask Integrity",
+      "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:31:51.576Z"
+    },
+    "rule-7168": {
+      "learning_id": "rule-7168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7168,
+      "title": "Japanese Text Normalization for Evaluation",
+      "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:31:51.576Z"
+    },
+    "rule-7169": {
+      "learning_id": "rule-7169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7169,
+      "title": "build/package/Dockerfile.builder to reduce vulnerabilities (#1530)",
+      "source_url": "https://github.com/easegress-io/easegress",
+      "source_version": "b8d95290",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T08:32:48.499Z"
     }
   },
   "aliases": {

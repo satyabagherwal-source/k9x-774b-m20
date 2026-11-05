@@ -7580,3 +7580,6 @@
 | `CYCLE-20261105-E7PX` | `2026-11-05T08:03:43.125Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`a77b1df8...`) |
 | `CYCLE-20261105-STJF` | `2026-11-05T08:15:04.587Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`197559f4...`) |
 | `CYCLE-20261105-TFVU` | `2026-11-05T08:15:33.546Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7164` | Yes (`ac4acbd4...`) |
+| `CYCLE-20261105-EDXH` | `2026-11-05T08:31:50.789Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7166` | Yes (`2023ae52...`) |
+| `CYCLE-20261105-EEMF` | `2026-11-05T08:31:51.687Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7165, Rule 7167, Rule 7168` | Yes (`38eefabb...`) |
+| `CYCLE-20261105-FMJN` | `2026-11-05T08:32:48.611Z` | `easegress-io/easegress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7169` | Yes (`6b485ff7...`) |

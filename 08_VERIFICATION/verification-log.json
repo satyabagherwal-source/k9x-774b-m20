@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-1UUR",
-    "timestamp": "2026-11-04T00:38:32.307Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-20TV",
-    "timestamp": "2026-11-04T00:38:40.051Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "67a9c68bc017c3266f4d5784fa5fed6d89168e050d945171c0ca58358926e739",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-BZ9K",
-    "timestamp": "2026-11-04T00:46:24.584Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "bfc3b13537ab23f173ff6972d1cbf8b6be473188a389ae3817dddf097339fc7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-BZWL",
     "timestamp": "2026-11-04T00:46:25.413Z",
     "repository": "RDFLib/rdflib",
@@ -7490,6 +7445,51 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-EDXH",
+    "timestamp": "2026-11-05T08:31:50.789Z",
+    "repository": "rainbow-me/rainbow",
+    "learningId": "learn-github-rainbow-me-rainbow",
+    "contentHash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-EEMF",
+    "timestamp": "2026-11-05T08:31:51.687Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-FMJN",
+    "timestamp": "2026-11-05T08:32:48.611Z",
+    "repository": "easegress-io/easegress",
+    "learningId": "learn-github-easegress-io-easegress",
+    "contentHash": "6b485ff75094ce7d3eed0e72e7c0666b4f077a1af3d131114b513e50db5f1502",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7589,3 +7589,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T08:03:43.129Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T08:15:04.591Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `776b9266` | Multi-dimensional audit evidence | 2026-11-05T08:15:33.550Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `d736617d` | Multi-dimensional audit evidence | 2026-11-05T08:31:50.793Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-05T08:31:51.691Z |
+| `learn-github-easegress-io-easegress` | `https://github.com/easegress-io/easegress` | `b8d95290` | Multi-dimensional audit evidence | 2026-11-05T08:32:48.614Z |

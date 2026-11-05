@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `242bfe58`  
+> **Source Version**: `d736617d`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T01:54:05.752Z  
+> **Timestamp**: 2026-11-05T08:31:49.963Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T01:54:05.745Z  
+> **Harvest Timestamp**: 2026-11-05T08:30:21.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -620,14 +620,11 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7908** (2026-10-30): **feat(spot-pnl): analytics for P&L sheet, P&L pill and Top Holders**
-  *Symptoms*: Fixes APP-4173  ## What changed (plus any additional context for devs)  Product wants to know whether P&L and Top Holders deserve more investment (tappable wallets, share images, more name sources). That needs to know how often each component actually appears, where people open the P&L sheet from, and what kind of position they look at.  **`spot_pnl.sheet.viewed`** (unreleased, extended): sent once per P&L sheet open, after it finishes loading. - Adds `chainName`, `entryPoint` (`pill`, or the Top Holders tab the row was tapped in: `topHoldersHolding` / `topHoldersUnrealized` / `topHoldersRealized`), `isOwnWallet` (the position belongs to the selected wallet) and `hasEnsName` (the wallet chip shows an ENS name). - The single `pnlUsd` headline is replaced by `unrealizedPnlUsd` (null when nothing purchased is held) and `realizedPnlUsd` (null when nothing was sold). Partially realized positions send both; total return is not sent. - A sheet that settles on "No PnL to show" now sends the event too, with `variant`, both amounts and `lastTradeAt` null. A failed trades load or a missing price is not reported as "nothing to show", since it says nothing about the position. - Price ticks never send another event. No wallet address is sent.  **`spot_pnl.pill.shown`** `{ tokenAddress, chainId, variant }` and **`top_holders.shown`** `{ tokenAddress, chainId }`: at most once per expanded sheet open, when the component actually renders (not for the Top Holders skeleton, never when hidden by 
+- **Issue #7930** (2026-11-04): **feat(discover): search tokens through token search v2 behind its flag**
+  *Symptoms*: Fixes APP-4185  ## What changed (plus any additional context for devs)  With the token search v2 flag on (remote config `token_search_v2_enabled`, or the experimental "Token Search V2" toggle), Discover's typed search and pasted-address search use the backend token search (`/v1/search/Search`) instead of the `token-search` worker.  The backend ranks the results and looks up pasted addresses on every chain. So on this path the app no longer: - re-sorts results by its own relevance score; - drops results that have no icon; - reads an unknown pasted address on-chain (that read only ever checked mainnet).  The list looks as it does today: the backend groups each asset's deployments, and the app shows each deployment as its own row on its chain, in the order the backend lists them. Favorites still hide the matching mainnet row. The order and the set of results can differ from today's, because the backend ranks and filters them.  Results are split by verification into the existing sections: - verified results under Verified; - everything else under Unverified, still capped at 6 rows; - the Low liquidity section stays empty.  A pasted address the backend can't find shows the existing empty state.  Not changed: - **Flag off:** Discover search behaves exactly as today. - **Before typing:** the default list stays on the old endpoint, because the new search returns nothing for an empty query. - **Errors:** a failed request shows the empty state, as it does today. Discover's list can't s
 
-- **Issue #7907** (2026-10-30): **fix(graphql): keep ENS enum value names so codegen output type-checks**
-  *Symptoms*: ## What changed (plus any additional context for devs)  CI's Lint job now fails on every branch with 12 `TS2300: Duplicate identifier` errors in `src/graphql/__generated__/ens.ts`. That file isn't committed: `yarn setup` generates it in each CI job from the live ENS subgraph schema.  The subgraph recently added ENSv2 entities (e.g. `ENSv2NameSlot`, `ENSv2NamespaceLink`). Their generated `orderBy` enums contain values that differ only by underscores, such as `resolverAddress` (a plain field) and `resolver__address` (the `address` field of the related `resolver`). Codegen's default naming turns enum values into PascalCase member names and drops underscores, so both become `ResolverAddress` and TypeScript rejects the duplicate.  The ENS client now keeps enum value names as the schema spells them (`namingConvention.enumValues: 'keep'`), so these members stay distinct. Only the ENS client changes: the metadata and arc clients generate exactly as before. App code doesn't reference any ENS enum (only the `BaseEnsDomainFragment` type), so nothing else needs updating, and runtime behaviour is unchanged.  ## What to test  - CI's Lint job passes. - Locally, `yarn graphql-codegen` followed by `yarn lint:ts` reports no errors in `src/graphql/__generated__/ens.ts`. 
-  **Post-Mortem & Fix Analysis**:
-  > @cubic-dev-ai review
-  > > @cubic-dev-ai review  @i1skn I have started the AI code review. It will take a few minutes to complete.
+- **Issue #7929** (2026-11-04): **feat(token-search): v2 search data layer behind a flag**
+  *Symptoms*: Fixes APP-4184  ## What changed (plus any additional context for devs)  Token search is moving to a backend endpoint, `GET /v1/search/Search` on the platform gateway. The backend now owns ranking, cross-chain grouping, chain filtering and address lookup. Today that logic is split between the `token-search` worker and the app. This PR adds the app's client for it in `src/features/token-search/`. No screen uses it yet.  - **Flag:** remote config `token_search_v2_enabled` or the experimental "Token Search V2" toggle, read through `useTokenSearchV2EnabledStore`. Both default to off. - **Fetcher:** `fetchTokenSearch` sends chain ids in the gateway's CAIP-2 form (`eip155:8453`). It lets errors reach the caller's query store. - **Mapping into the existing `SearchAsset`:** each result is one asset with a deployment per chain. It is opened on the requested chain when the asset is deployed there, otherwise on the first deployment the backend lists. Every deployment fills `networks`. - **Swap results:**   - `toChainSearchResults` returns the assets deployed on the output chain, split into verified and unverified.   - `toCrosschainSearchResults` keeps today's "other networks" rule: verified assets not on the output chain whose symbol or name exactly matches the query, or whose deployment matches a pasted address.  The response is treated as untrusted input, because the mapped address and decimals decide which token a swap buys: - A deployment is kept only on a chain the app supports. The
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -644,485 +641,754 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74ec8e94` (2026-10-30)
-**Commit Message**: fix(spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906)
+### Incident Patch 1: `3b80d6ef` (2026-11-02)
+**Commit Message**: fix(spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the P&L sheet (#7913)
+
+Fixes APP-4175
 
 ## What changed (plus any additional context for devs)
 
-Opening the spot P&L sheet from a Top Holders row showed a spinner while
-the sheet fetched that wallet's trades, and then sprang up to a taller
-body. From the Realized tab every wallet has sold some of the token, so
-the body is always taller than the spinner, which reserves the height of
-a held, nothing-sold position.
+Design feedback on P&L in 2.0.47 (18), from the ticket and Andrei's
+comment on it:
 
-The Top Holders request already returns those trades for every
-Unrealized and Realized row. Rows now keep the trades and pass them to
-the sheet, so it opens with the final figures at the final height and
-makes no request of its own. That saves one Codex call per open. A
-Holding row gets the same treatment when its wallet also appears in the
-response's trader lists. Other Holding rows load as before.
+- **Top Holders → Unrealized** now follows the P&L sheet's rule for
+tokens priced under $1: a row shows the holder's average entry market
+cap, e.g. `Avg Entry MC $82.7K`, instead of a subscript price like `Avg.
+Entry $0.0₆8416`. The row uses the same rule and the same circulating
+supply as the sheet it opens, so the two agree. Tokens at or above $1
+keep `Avg Entry $10.61`.
+- **P&L sheet market caps are always abbreviated** from $1K up, so Avg
+Entry MC reads like Current MC and Avg Exit MC: `$82,699` → `$82.7K`
+next to `$402.9K`. Below $1K, market caps format like any other amount.
+Prices are unchanged.
+- **Labels drop the period:** `Avg. Entry` → `Avg Entry`. `Avg. Exit` →
+`Avg Exit` as well, to match `Avg Entry MC` / `Avg Exit MC` on the same
+sheet.
 
-For the user's own wallet the sheet keeps reading the shared trades
-store, which the P&L pill also reads, so the cost basis always matches
-the wallet's own balance. Trades from a Top Holders row are not used for
-the user's own wallet, because the cached list can predate a recent
-trade. The shared store follows the token on the expanded
+The under-$1 decision (live price and market cap, converted with the USD
+rate) moved from the sheet into `useCirculatingSupply`, and both screens
+use it. Top Holders calls it onl
 
-**File**: `src/features/spot-pnl/ui/SpotPnlSheet.tsx` (modified, +52/-20)
+**File**: `src/features/spot-pnl/core/marketCapSupply.test.ts` (added, +19/-0)
 ```diff
-@@ -38,7 +38,7 @@ import isLowerCaseMatch from '@/utils/isLowerCaseMatch';
- 
- import { calculateSpotPnl, type PnlReturn, type SpotPnl, type WalletTokenTrades } from '../core/spotPnl';
- import { type UnrealizedPnl } from '../core/unrealizedPnl';
--import { createTokenTradesStore, useTokenTradesStore } from '../data/tokenTradesStore';
-+import { createTokenTradesStore, useSpotPnlTokenId, useTokenTradesStore } from '../data/tokenTradesStore';
- import { PnlArrow, pnlColor } from './pnlDisplay';
- import { formatCompactTokenAmount, formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from './pnlFormat';
- 
-@@ -54,47 +54,79 @@ const PANEL_LAYOUT = LinearTransition.springify()
- 
- export const SpotPnlSheet = memo(function SpotPnlSheet() {
-   const {
--    params: { address, chainId, ensName, walletAddress: routeWalletAddress },
-+    params: { address, chainId, ensName, trades, walletAddress: routeWalletAddress },
-   } = useRoute<typeof Routes.SPOT_PNL_SHEET>();
-   const selectedWalletAddress = userAssetsStoreManager(state => state.address);
-   const walletAddress = routeWalletAddress ?? selectedWalletAddress;
-+  // Codex returns lowercased addresses, so a Top Holders row for the selected wallet differs in case
-+  const isSelectedWallet = !!walletAddress && isLowerCaseMatch(walletAddress, selectedWalletAddress ?? undefined);
-+  // The shared store follows the token on the expanded sheet and is off with the Spot P&L flag. Route trades are not used
-+  // for the selected wallet: they come from a cached list, which can predate the wallet's own balance.
-+  const isOwnTradesToken = useSpotPnlTokenId(tokenId => tokenId === getCodexTokenId(address, chainId));
+@@ -0,0 +1,19 @@
++import { describe, expect, it } from 'vitest';
 +
-+  const position = walletAddress ? { tokenAddress: address, chainId, walletAddress, ensName, isSelectedWallet } : null;
- 
-   return (
-     <PanelSheet borderRadius={SHEET_BORDER_RADIUS} innerBorderWidth={1} layoutAnimation={PANEL_LAYOUT}>
--      {walletAddress && <SpotPnlSheetContent tokenAddress={address} chainId={chainId} walletAddress={walletAddress} ensName={ensName} />}
-+      {position &&
-+        (isSelectedWallet && isOwnTradesToken ? (
-+          <StoredTradesContent position={position} tradesStore={useTokenTradesStore} />
-+        ) : !isSelectedWallet && trades ? (
-+          <SpotPnlSheetContent position={position} trades={trades} isSuccess isSettled />
-+        ) : (
-+          <FetchedTradesContent position={position} />
-+        ))}
-     </PanelSheet>
-   );
- });
- 
--function SpotPnlSheetContent({
--  tokenAddress,
--  chainId,
--  walletAddress,
--  ensName,
--}: {
-+type SheetPosition = {
-   tokenAddress: string;
-   chainId: ChainId;
-   walletAddress: string;
-   ensName: string | undefined;
-+  isSelectedWallet: boolean;
-+};
++import { resolveCirculatingSupply } from './marketCapSupply';
 +
-+function FetchedTradesContent({ position }: { position: SheetPosition }) {
-+  const tradesStore = useStableValue(() =>
-+    createTokenTradesStore({
-+      params: {
-+        walletAddress: position.walletAddress,
-+        codexTokenId: getCodexTokenId(position.tokenAddress, position.chainId),
-+        heldBalance: null,
-+      },
-+    })
-+  );
-+  return <StoredTradesContent position={position} tradesStore={tradesStore} />;
-+}
++describe('resolveCirculatingSupply', () => {
++  it.each<{ name: string; price: string; marketCap: string; usdToNativeRate: number | undefined; expected: string | null }>([
++    { name: 'under $1 with a market cap', price: '0.5', marketCap: '1000', usdToNativeRate: 1, expected: '2000' },
++    { name: 'exactly $1', price: '1', marketCap: '1000', usdToNativeRate: 1, expected: null },
++    { name: 'over $1', price: '2', marketCap: '1000', usdToNativeRate: 1, expected: null },
++    { name: 'under $1 though over 1 in the native currency', price: '150', marketCap: '3000', usdToNativeRate: 300, expected: '20' },
++    { name: 'over $1 though under 1 in the native currency', price: '0.5', marketCap: '1000', usdToNativeRate: 0.25, expected: null },
++    { name: 'no conversion rate', price: '0.5', marketCap: '1000', usdToNativeRate: undefined, expected: null },
++    { name: 'no price', price: '', marketCap: '1000', usdToNativeRate: 1, expected: null },
++    { name: 'zero price', price: '0', marketCap: '1000', usdToNativeRate: 1, expected: null },
++    { name: 'no market cap', price: '0.5', marketCap: '0', usdToNativeRate: 1, expected: null },
++  ])('$name', ({ price, marketCap, usdToNativeRate, expected }) => {
++    expect(resolveCirculatingSupply({ price, marketCap, usdToNativeRate })).toBe(expected);
++  });
++});
+```
+
+**File**: `src/features/spot-pnl/core/marketCapSupply.ts` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { divWorklet, greaterThanWorklet, lessThanWorklet } from '@/framework/core/safeMath';
 +
-+function StoredTradesContent({ position, tradesStore }: { position: SheetPosition; tradesStore: typeof useTokenTradesStore }) {
-+  const trades = tradesStore(state => state.getData());
-+  const isSuccess = tradesStore(state => state.getStatus('isSuccess'));
-+  const isError = tradesStore(state => state.getStatus('isError'));
-+  return <SpotPnlSheetContent position={position} trades={trades} isSuccess={isSuccess} isSettled={isSuccess || isError} />;
-+}
-+
-+function SpotPnlSheetContent({
-+  position: { tokenAddress, chainId, walletAddress, ensName, isSelectedWallet },
-+  trades,
-+  isSuccess,
-+  isSettled,
++/**
++ * The supply that turns per-token figures into market caps, set for a token priced under $1 whose market cap is known.
++ * `price` and `marketCap` are in the native currency; `null` keeps the figures as prices.
++ */
++export function resolveCirculatingSupply({
++  marketCap,
++  price,
++  usdToNativeRate,
 +}: {
-+  position: SheetPosition;
-+  trades: WalletTokenTrades | null;
-+  isSuccess: boolean;
-+  isSettled: boolean;
- }) {
-   const nativeCurrency = userAssetsStoreManager(state => state.currency);
-   const uniqueId = getUniqueId(tokenAddress, chainId);
-   const accountAsset = useAccountAsset(uniqueId, nativeCurrency);
-   const { data: externalToken } = useExternalToken({ address: tokenAddress, chainId, currency: nativeCurrency });
-   const symbol = accountAsset?.symbol ?? externalToken?.symbol ?? '';
- 
--  // Codex returns lowercased addresses, so a Top Holders row for the selected wallet differs in case
--  const isSelectedWallet = userAssetsStoreManager(state => isLowerCaseMatch(walletAddress, state.address ?? undefined));
--  const otherWalletTradesStore = useStableValue(() =>
--    createTokenTradesStore({ params: { walletAddress, codexTokenId: getCodexTokenId(tokenAddress, chainId), heldBalance: null } })
--  );
--  const tradesStore = isSelectedWallet ? useTokenTradesStore : otherWalletTradesStore;
--  const trades = tradesStore(state => state.getData());
--  const isSettled = tradesStore(state => state.getStatus('isSuccess') || state.getStatus('isError'));
-   // Codex lists only a token's traders, s
++  marketCap: string;
++  price: string;
++  usdToNativeRate: number | undefined;
++}): string | null {
++  if (!usdToNativeRate || !greaterThanWorklet(price || '0', 0) || !greaterThanWorklet(marketCap, 0)) return null;
++  return lessThanWorklet(divWorklet(price, usdToNativeRate), 1) ? divWorklet(marketCap, price) : null;
++}
 ```
 
-**File**: `src/features/top-holders/core/topHolders.test.ts` (modified, +12/-6)
+**File**: `src/features/spot-pnl/ui/SpotPnlSheet.tsx` (modified, +14/-41)
 ```diff
-@@ -18,7 +18,8 @@ function bought(address: string, purchasedTokenBalance: string, tokenAcquisition
- }
- 
- describe('rankHolding', () => {
--  it('lists real users by balance with their value and share of supply', () => {
-+  it('lists real users by balance with their value, share of supply, and trades when they traded', () => {
-+    const midTrades = bought('mid', '50', '25');
-     const rows = rankHolding(
-       {
-         holders: [
-@@ -30,19 +31,20 @@ describe('rankHolding', () => {
-         ],
-         priceUsd: '2',
-         totalSupply: '2000',
-+        traders: [bought('exchange', '1000', '500'), midTrades],
-       },
-       FILTER
-     );
- 
-     expect(rows).toEqual([
--      { address: 'whale', valueUsd: '200', supplyPercentage: '5' },
--      { address: 'mid', valueUsd: '100', supplyPercentage: '2.5' },
-+      { address: 'whale', valueUsd: '200', supplyPercentage: '5', trades: undefined },
-+      { address: 'mid', valueUsd: '100', supplyPercentage: '2.5', trades: midTrades },
-     ]);
-   });
- 
-   it('caps the list at ten holders and reads a missing supply as 0%', () => {
-     const holders = Array.from({ length: 12 }, (_, index) => holder(`0x${index}`, String(100 - index)));
--    const rows = rankHolding({ holders, priceUsd: '2', totalSupply: '0' }, FILTER);
-+    const rows = rankHolding({ holders, priceUsd: '2', totalSupply: '0', traders: [] }, FILTER);
- 
-     expect(rows).toHaveLength(10);
-     expect(rows[0].supplyPercentage).toBe('0');
-@@ -51,14 +53,15 @@ describe('rankHolding', () => {
- 
- describe('rankUnrealized', () => {
-   it('ranks positions worth $1 or more by P&L in USD on the live balance, losses last', () => {
-+    const mid = bought('mid', '100', '20');
-     const rows = rankUnrealized(
-       [
-         // Largest position, smallest gain
-         bought('whale', '1000', '990'),
-         // Largest percentage gain
-         bought('degen', '10', '1'),
-         // Largest P&L in USD
--        bought('mid', '100', '20'),
-+        mid,
-         // Sent half away: only the 50 still held count, at half the cost
-         bought('sender', '100', '40', '50'),
-         bought('underwater', '50', '100'),
-@@ -80,6 +83,7 @@ describe('rankUnrealized', () => {
-       ['underwater', '-50'],
-     ]);
-     expect(rows[0].avgEntryUsd).toBe('0.2');
-+    expect(rows[0].trades).toBe(mid);
-   });
- 
-   it('keeps the ten best of more traders, in any input order', () => {
-@@ -96,13 +100,15 @@ describe('rankRealized', () => {
-   it("keeps Codex's ranking and relates profit to the cost of the tokens sold", () => {
-     const sold = (address: string, amountSoldUsd1y: string, realizedProfitUsd1y: string) =>
-       trader(address, { tokenAmountSold1y: '1', amountSoldUsd1y, realizedProfitUsd1y });
--    const rows = rankRealized([sold('first', '10', '5'), sold('second', '150', '50'), sold('gifted', '20', '20')]);
-+    const first = sold('first', '10', '5');
-+    const rows = rankRealized([first, sold('second', '150', '50'), sold('gifted', '20', '20')]);
- 
-     expect(rows.map(row => [row.address, row.realized.amount, row.realized.percentage])).toEqual([
-       ['first', '5', '100'],
-       ['second', '50', '50'],
-       ['gifted', '20', null],
-     ]);
-+    expect(rows[0].trades).toBe(first);
-   });
- });
- 
-```
-
-**File**: `src/features/top-holders/core/topHolders.ts` (modified, +12/-3)
-```diff
-@@ -31,6 +31,8 @@ export type HoldingRow = {
-   valueUsd: string;
-   /** Where 1 is 1%. */
-   supplyPercentage: string;
-+  /** Absent when the holder is not among the traders fetched with it. */
-+  trades: WalletTokenTrades | undefined;
- };
- 
- export type UnrealizedRow = {
-@@ -39,11 +41,13 @@ export type UnrealizedRow = {
-   pnl: UnrealizedPnl;
-   /** USD per token. */
-   avgEntryUsd: string;
-+  trades: WalletTokenTrades;
- };
- 
- export type RealizedRow = {
-   address: string;
-   realized: RealizedReturnUsd;
-+  trades: WalletTokenTrades;
- };
- 
- export type TopHolders = {
-@@ -70,19 +74,21 @@ export function isRealUser(holder: TokenHolder, filter: HolderWalletFilter): boo
-   );
- }
- 
--/** The largest real-user holders. `holders` is ordered by balance, descending. */
-+/** The largest real-user holders, with their trades when they are among `traders`. `holders` is ordered by balance, descending. */
- export function rankHolding(
--  { holders, priceUsd, totalSupply }: { holders: TokenHolder[]; priceUsd: string; totalSupply: string },
-+  { holders, priceUsd, totalSupply, traders }: { holders: TokenHolder[]; priceUsd: string; totalSupply: string; traders: TokenTrader[] },
-   filter: HolderWalletFilter
- ): HoldingRow[] {
-   const hasSupply = greaterThanWorklet(totalSupply, 0);
-+  const tradesByAddress = new Map(traders.map(trader => [trader.address, trader]));
-   return holders
-     .filter(holder => isRealUser(holder, filter))
-     .slice(0, TOP_HOLDERS_LIMIT)
-     .map(holder => ({
-       address: holder.address,
-       valueUsd: mulWorklet(holder.balance, priceUsd),
-       supplyPercentage: hasSupply ? mulWorklet(divWorklet(holder.balance, totalSupply), 100) : '0',
-+      trades: tradesByAddress.get(holder.address),
-     }));
- }
- 
-@@ -99,6 +105,7 @@ export function rankUnrealized(traders: TokenTrader[], priceUsd: string): Unreal
-         address: trader.address,
-         pnl,
-         avgEntryUsd: divWorklet(trader.tokenAcquisitionCostUsd, trader.purchasedTokenBalance),
-+        trades: trader,
-       });
-     }
-   }
-@@ -108,5 +115,7 @@ export function rankUnrealized(traders: TokenTrader[], priceUsd: string): Unreal
- 
- /** `traders` is already ranked by realized profit in USD. */
- export function rankRealized(traders: TokenTrader[]): RealizedRow[] {
--  return traders.slice(0, TOP_HOLDERS_LIMIT).map(trader => ({ address: trader.address, realized: calculateRealizedReturn(trader) }));
-+  return traders
-+    .slice(0, TOP_HOLDERS_LIMIT)
-+    .map(trader => ({ address: trader.address, realized: calculateRealizedReturn(trader), trades: trader }));
- }
-```
-
-**File**: `src/features/top-holders/data/topHoldersStore.test.ts` (modified, +24/-16)
-```diff
-@@ -23,9 +23,11 @@ vi.mock('@/features/config/stores/remoteConfig', async () => {
-   return import('@/features/config/stores/__mocks__/remoteConfig');
- });
- 
--const WHALE = '0xAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAa';
-+const WHALE = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
- const EXCHANGE = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
--const TRADER = '0xCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCc';
-+// Codex returns lowercase addresses
-+const TRADER = '0xcccccccccccccccccccccccccccccccccccccccc';
-+const SELLER = '0xdddddddddddddddddddddddddddddddddddddddd';
- 
- const NO_HOLDERS = { holders: { status: 'DISABLED', items: [] }, token: null };
- const NO_TRADERS = { unrealized: { results: [] }, realized: { results: [] } };
-@@ -105,28 +107,29 @@ describe('useTopHoldersStore', () => {
- 
-   it('ranks holders and traders from one request, at the token price, in token units', async () => {
-     useExperimentalConfigStore.getState().setFlag(TOP_HOLDERS, true);
-+    const traderTrades = {
-+      address: TRADER,
-+      ...trades({ purchasedTokenBalance: '10', tokenAcquisitionCostUsd: '5', tokenBalanceLive: '4' }),
-+    };
-+    const sellerTrades = {
-+      address: SELLER,
-+      ...trades({ tokenBalanceLive: '2', tokenAmountSold1y: '6', amountSoldUsd1y: '12', realizedProfitUsd1y: '9' }),
-+    };
-     respondWith({
-       data: {
-         holders: {
-           status: 'ENABLED',
-           items: [
-             { address: EXCHANGE, balance: '5000000000000000000000', wallet: { category: 'EXCHANGE', identityLabels: null } },
-             { address: WHALE, balance: '100000000000000000000', wallet: { category: 'NORMIE', identityLabels: null } },
-+            { address: TRADER, balance: '4000000000000000000', wallet: { category: 'NORMIE', identityLabels: null } },
-+            { address: SELLER, balance: '2000000000000000000', wallet: { category: 'NORMIE', identityLabels: null } },
-           ],
-         },
-         token: { decimals: 18, info: { totalSupply: '1000' } },
-         prices: [{ priceUsd: 2 }],
--        unrealized: {
--          results: [
--            {
--              address: TRADER.toLowerCase(),
--              ...trades({ purchasedTokenBalance: '10', tokenAcquisitionCostUsd: '5', tokenBalanceLive: '4' }),
--            },
--          ],
--        },
--        realized: {
--          results: [{ address: TRADER, ...trades({ tokenAmountSold1y: '6', amountSoldUsd1y: '12', realizedProfitUsd1y: '9' }) }],
--        },
-+        unrealized: { results: [traderTrades] },
-+        realized: { results: [sellerTrades] },
-       },
-     });
- 
-@@ -136,15 +139,20 @@ describe('useTopHoldersStore', () => {
-     expect(fetch).toHaveBeenCalledTimes(1);
-     expect(variables).toEqual({ tokenId: '0xtoken:8453', address: '0xtoken', networkId: 8453, excludeLabels: ['BOT'] });
-     expect(getData()).toEqual({
--      holding: [{ address: WHALE, valueUsd: '200', supplyPercentage: '10' }],
-+      holding: [
-+        { address: WHALE, valueUsd: '200', supplyPercentage: '10', trades: undefined },
-+        { address: TRADER, valueUsd: '8', supplyPercentage: '0.4', trades: traderTrades },
-+        { address: SELLER, valueUsd: '4', supplyPercentage: '0.2', trades: sellerTrades },
-+      ],
-       unrealized: [
-         {
--          address: TRADER.toLowerCase(),
-+          address: TRADER,
-           avgEntryUsd: '0.5',
-           pnl: { heldBalance: '4', cost: '2', value: '8', amount: '6', percentage: '300' },
-+          trades: traderTrades,
-         },
-       ],
--      realized: [{ address: TRADER, realized: { amount: '9', percentage: '300', cost: '3' } }],
-+      realized: [{ address: SELLER, realized: { amount: '9', percentage: '300', cost: '3' }, trades: sellerTrades }],
-     });
-   });
- 
-```
-
-**File**: `src/features/top-holders/data/topHoldersStore.ts` (modified, +1/-0)
-```diff
-@@ -166,6 +166,7 @@ function rankTopHolders({ holders, token, prices, unrealized, realized }: TopHol
-               ),
-               priceUsd: String(priceUsd),
-               totalSupply: token.info?.totalSupply ?? '0',
-+              traders: [...unrealized.results, ...realized.results],
-             },
-             filter
-           )
-```
-
-**File**: `src/features/top-holders/ui/TopHolders.tsx` (modified, +7/-1)
-```diff
-@@ -11,6 +11,7 @@ import { useCurrencyConversionStore } from '@/features/currency/stores/currencyC
- import type { NativeCurrencyKey } from '@/features/currency/types';
+@@ -8,7 +8,6 @@ import { analytics } from '@/analytics';
+ import { SPRING_CONFIGS } from '@/components/animations/animationConfigs';
+ import { ButtonPressAnimation } from '@/components/animations/ButtonPressAnimation';
+ import RainbowCoinIcon from '@/components/coin-icon/RainbowCoinIcon';
+-import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
+ import { PanelSheet } from '@/components/PanelSheet/PanelSheet';
+ import { Box, Separator, Text, TextShadow } from '@/design-system';
+ import { type TextProps } from '@/design-system/components/Text/Text';
+@@ -18,10 +17,8 @@ import type { NativeCurrencyKey } from '@/features/currency/types';
  import useENSAvatar from '@/features/ens/hooks/useENSAvatar';
- import { type ChainId } from '@/features/network/types/backendNetworks';
-+import { type WalletTokenTrades } from '@/features/spot-pnl/core/spotPnl';
- import { PnlArrow, pnlColor } from '@/features/spot-pnl/ui/pnlDisplay';
- import { formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from '@/features/spot-pnl/ui/pnlFormat';
- import { lessThanWorklet, mulWorklet, toFixedWorklet } from '@/framework/core/safeMath';
-@@ -194,6 +195,7 @@ const HoldingHolderRow = memo(function HoldingHolderRow({ nativeCurrency, rank,
-         </Box>
-       }
-       token={token}
-+      trades={row.trades}
-     >
-       <Text color="label" size="17pt" weight="semibold">
-         {formatNativeAmount(mulWorklet(row.valueUsd, usdToNativeRate), nativeCurrency)}
-@@ -224,6 +226,7 @@ const UnrealizedHolderRow = memo(function UnrealizedHolderRow({
-         </Box>
-       }
-       token={token}
-+      trades={row.trades}
-     >
-       <PnlFigures
-         amountUsd={row.pnl.amount}
-@@ -237,7 +240,7 @@ const UnrealizedHolderRow = memo(function UnrealizedHolderRow({
+ import { useBackendNetworksStore } from '@/features/network/stores/backendNetworksStore';
+ import type { ChainId } from '@/features/network/types/backendNetworks';
+-import { divWorklet, greaterThanWorklet, lessThanWorklet, mulWorklet } from '@/framework/core/safeMath';
+-import { formatAssetPrice } from '@/helpers/formatAssetPrice';
++import { greaterThanWorklet } from '@/framework/core/safeMath';
+ import useAccountAsset from '@/hooks/useAccountAsset';
+-import useAdditionalAssetData from '@/hooks/useAdditionalAssetData';
+ import { useStableValue } from '@/hooks/useStableValue';
+ import * as i18n from '@/languages';
+ import Navigation from '@/navigation/Navigation';
+@@ -31,7 +28,6 @@ import { useExternalToken } from '@/resources/assets/externalAssetsQuery';
+ import { getCodexTokenId } from '@/resources/platform/codex';
+ import { AddressAvatar } from '@/screens/change-wallet/components/AddressAvatar';
+ import { userAssetsStoreManager } from '@/state/assets/userAssetsStoreManager';
+-import { type TokenData } from '@/state/liveTokens/types';
+ import { useAccountProfileInfo } from '@/state/wallets/walletsStore';
+ import { useTheme } from '@/theme/ThemeContext';
+ import { address as abbreviateAddress, abbreviateEnsForDisplay } from '@/utils/abbreviations';
+@@ -48,7 +44,16 @@ import {
+ import { type UnrealizedPnl } from '../core/unrealizedPnl';
+ import { createTokenTradesStore, useSpotPnlTokenId, useTokenTradesStore } from '../data/tokenTradesStore';
+ import { PnlArrow, pnlColor } from './pnlDisplay';
+-import { formatCompactTokenAmount, formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from './pnlFormat';
++import {
++  formatCompactTokenAmount,
++  formatNativeAmount,
++  formatPerTokenFigure,
++  formatPnlAmount,
++  formatPnlPercentage,
++  pnlSign,
++} from './pnlFormat';
++import { useCirculatingSupply } from './useCirculatingSupply';
++import { useTokenPrice } from './useTokenPrice';
  
- const RealizedHolderRow = memo(function RealizedHolderRow({ nativeCurrency, rank, row, token, usdToNativeRate }: RowProps<RealizedRow>) {
-   return (
--    <HolderRow address={row.address} rank={rank} token={token}>
-+    <HolderRow address={row.address} rank={rank} token={token} trades={row.trades}>
-       <PnlFigures
-         amountUsd={row.realized.amount}
-         nativeCurrency={nativeCurrency}
-@@ -287,12 +290,14 @@ function HolderRow({
-   rank,
-   subtitle,
-   token,
-+  trades,
+ const SHEET_BORDER_RADIUS = 38;
+ const CARD_BORDER_RADIUS = 22;
+@@ -163,8 +168,6 @@ function SpotPnlSheetContent({
+         balance={balance}
+         chainId={chainId}
+         decimals={accountAsset?.decimals ?? externalToken?.decimals ?? 18}
+-        initialPrice={accountAsset?.native?.price?.amount ?? externalToken?.native?.price?.amount ?? ''}
+-        initialPriceUpdatedAt={accountAsset?.price?.changed_at ?? 0}
+         isReceivedOnly={isReceivedOnly}
+         isSettled={isSettled}
+         isSuccess={isSuccess}
+@@ -173,7 +176,6 @@ function SpotPnlSheetContent({
+         tokenAddress={tokenAddress}
+         tokenName={accountAsset?.name ?? externalToken?.name}
+         trades={trades}
+-        uniqueId={uniqueId}
+         viewContext={{ entryPoint, hasEnsName: !!displayEns, isOwnWallet: isSelectedWallet }}
+       />
+     </Box>
+@@ -184,8 +186,6 @@ function SpotPnlSection({
+   balance,
+   chainId,
+   decimals,
+-  initialPrice,
+-  initialPriceUpdatedAt,
+   isReceivedOnly,
+   isSettled,
+   isSuccess,
+@@ -194,14 +194,11 @@ function SpotPnlSection({
+   tokenAddress,
+   tokenName,
+   trades,
+-  uniqueId,
+   viewContext,
  }: {
-   address: string;
-   children: React.ReactNode;
-   rank: number;
-   subtitle?: React.ReactNode;
-   token: { address: string; chainId: ChainId };
-+  trades: WalletTokenTrades | undefined;
+   balance: string;
+   chainId: ChainId;
+   decimals: number;
+-  initialPrice: string;
+-  initialPriceUpdatedAt: number;
+   isReceivedOnly: boolean;
+   isSettled: boolean;
+   isSuccess: boolean;
+@@ -210,31 +207,12 @@ function SpotPnlSection({
+   tokenAddress: string;
+   tokenName: string | undefined;
+   trades: WalletTokenTrades | null;
+-  uniqueId: string;
+   /** Sent with the view event. */
+   viewContext: { entryPoint: SpotPnlSheetEntryPoint; hasEnsName: boolean; isOwnWallet: boolean };
  }) {
-   const ensName = useTopHolderNamesStore(state => state.getData()?.[address.toLowerCase()] ?? null);
- 
-@@ -302,6 +307,7 @@ function HolderRow({
-       chainId: token.chainId,
-       walletAddress: address,
-       ensName: ensName ?? undefined,
-+      trades,
-     });
- 
-   return (
+   const usdToNativeRate = useCurrencyConversionStore(state => state.getData()?.usdToNativeCurrencyConversionRate);
+-  const { data: metadata } = useAdditionalAssetData({ address: tokenAddress, chainId, currency: nativeCurrency });
+-  const price = useLiveTokenValue({
+-    tokenId: uniqueId,
+-    fallback: initialPrice,
+-    fallbackUpdatedAt: initialPriceUpdatedAt,
+-  });
+-  const liveMarketCap = useLiveTokenValue({
+-    tokenId: uniqueId,
+-    fallback: '0',
+-    selector: selectCirculatingMarketCap,
+-  });
+-  const marketCap = greaterThanWorklet(liveMarketCap, 0) ? liveMarketCap : String(metadata?.marketCap ?? 0);
+-  // Tokens priced under $1 show entry and current market caps in place
 ```
 
-**File**: `src/navigation/types.ts` (modified, +3/-0)
+**File**: `src/features/spot-pnl/ui/pnlFormat.test.ts` (modified, +24/-1)
 ```diff
-@@ -29,6 +29,7 @@ import { type PolymarketPosition } from '@/features/polymarket/types';
- import { type PolymarketEvent, type PolymarketMarket, type PolymarketMarketEvent } from '@/features/polymarket/types/polymarket-event';
- import { type RainbowPosition } from '@/features/positions/types';
- import { type PolymarketOutcome } from '@/features/sports/core/generated/external/sports/payload';
-+import { type WalletTokenTrades } from '@/features/spot-pnl/core/spotPnl';
- import { type Checkbox } from '@/features/transfer/screens/SendConfirmationSheet';
- import { type WalletconnectApprovalSheetRouteParams, type WalletconnectResultType } from '@/features/wallet-connect/types';
- import { type RainbowWallet } from '@/features/wallet/types';
-@@ -734,6 +735,8 @@ type ParamsByRoute = {
-     walletAddress?: string;
-     /** The wallet's ENS name when already resolved, shown for wallets that are not the user's. */
-     ensName?: string;
-+    /** The wallet's trades when already fetched, shown instead of fetching them. Ignored for the selected wallet, whose balance they could predate. */
-+    trades?: WalletTokenTrades;
-   };
-   [Routes.REVOKE_DELEGATION_PANEL]: {
-     address: Address;
+@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
+ 
+ import type { NativeCurrencyKey } from '@/features/currency/types';
+ 
+-import { formatNativeAmount, formatPnlAmount, formatPnlPercentage } from './pnlFormat';
++import { formatNativeAmount, formatPerTokenFigure, formatPnlAmount, formatPnlPercentage } from './pnlFormat';
+ 
+ describe('formatNativeAmount', () => {
+   it.each<{ amount: string; currency: NativeCurrencyKey; expected: string }>([
+@@ -46,6 +46,29 @@ describe('formatNativeAmount', () => {
+   });
+ });
+ 
++describe('formatPerTokenFigure', () => {
++  it.each<{ marketCap: string; currency: NativeCurrencyKey; expected: string }>([
++    { marketCap: '999.4', currency: 'USD', expected: '$999' },
++    { marketCap: '999.5', currency: 'USD', expected: '$1.0K' },
++    { marketCap: '1000', currency: 'USD', expected: '$1.0K' },
++    { marketCap: '82699', currency: 'USD', expected: '$82.7K' },
++
++    { marketCap: '82699', currency: 'JPY', expected: '¥82.7K' },
++    { marketCap: '82699', currency: 'EUR', expected: '€82.7K' },
++    { marketCap: '1.4567', currency: 'ETH', expected: 'Ξ1.457' },
++  ])('market cap $currency $marketCap → $expected', ({ marketCap, currency, expected }) => {
++    expect(formatPerTokenFigure(marketCap, '1', currency)).toBe(expected);
++  });
++
++  it('shows the market cap at the price when a circulating supply is given', () => {
++    expect(formatPerTokenFigure('0.0000827', '1000000000', 'USD')).toBe('$82.7K');
++  });
++
++  it('shows the price without a circulating supply', () => {
++    expect(formatPerTokenFigure('0.0000827', null, 'USD')).toBe('$0.0₄827');
++  });
++});
++
+ describe('formatPnlAmount', () => {
+   it.each<{ amount: string; currency: NativeCurrencyKey; expected: ReturnType<typeof formatPnlAmount> }>([
+     { amount: '-6178.32', currency: 'USD', expected: { direction: 'loss', display: '$6,178' } },
+```
+
+**File**: `src/features/spot-pnl/ui/pnlFormat.ts` (modified, +33/-6)
+```diff
+@@ -1,13 +1,22 @@
+ import { supportedCurrencies } from '@/features/currency/supportedCurrencies';
+ import type { NativeCurrencyKey } from '@/features/currency/types';
+ import { convertAmountToNativeDisplay } from '@/features/currency/utils/nativeDisplay';
+-import { divWorklet, equalWorklet, greaterThanOrEqualToWorklet, lessThanWorklet, toFixedWorklet } from '@/framework/core/safeMath';
++import {
++  divWorklet,
++  equalWorklet,
++  greaterThanOrEqualToWorklet,
++  lessThanWorklet,
++  mulWorklet,
++  toFixedWorklet,
++} from '@/framework/core/safeMath';
+ import { addCommasToNumber } from '@/framework/ui/utils/addCommasToNumber';
++import { formatAssetPrice } from '@/helpers/formatAssetPrice';
+ import { convertAmountToBalanceDisplay, handleSignificantDecimals } from '@/helpers/utilities';
+ 
+ export type PnlDirection = 'profit' | 'loss' | 'flat';
+ 
+ const COMPACT_AMOUNT_FROM = 100_000;
++const COMPACT_MARKET_CAP_FROM = 1_000;
+ const COMPACT_PERCENTAGE_FROM = 1_000;
+ const COMPACT_TOKEN_AMOUNT_FROM = 10_000;
+ const SUFFIXES = [
+@@ -51,20 +60,38 @@ export function formatPnlAmount(amount: string, nativeCurrency: NativeCurrencyKe
+  */
+ export function formatNativeAmount(amount: string, nativeCurrency: NativeCurrencyKey): string {
+   const magnitude = amount.replace('-', '');
+-  const { alignment, decimals, symbol } = supportedCurrencies[nativeCurrency];
++  const { decimals } = supportedCurrencies[nativeCurrency];
+   const minorUnit = decimals === 0 ? '1' : `0.${'1'.padStart(decimals, '0')}`;
+   if (lessThanWorklet(magnitude, minorUnit)) return convertAmountToNativeDisplay(magnitude, nativeCurrency);
+ 
+-  if (greaterThanOrEqualToWorklet(toFixedWorklet(magnitude, 0), COMPACT_AMOUNT_FROM)) {
+-    const display = abbreviate(magnitude);
+-    return alignment === 'left' ? `${symbol}${display}` : `${display} ${symbol}`;
+-  }
++  if (greaterThanOrEqualToWorklet(toFixedWorklet(magnitude, 0), COMPACT_AMOUNT_FROM)) return abbreviateNative(magnitude, nativeCurrency);
+ 
+   const rounded = toFixedWorklet(magnitude, decimals);
+   if (decimals > 2 || lessThanWorklet(rounded, 1)) return convertAmountToNativeDisplay(rounded, nativeCurrency);
+   return convertAmountToNativeDisplay(toFixedWorklet(magnitude, 0), nativeCurrency, undefined, true);
+ }
+ 
++/**
++ * A per-token native price, or the market cap at that price when a circulating supply is given. A market cap shows as
++ * {@link formatNativeAmount} does, but abbreviated from a thousand, e.g. `$82.7K`.
++ */
++export function formatPerTokenFigure(price: string, circulatingSupply: string | null, nativeCurrency: NativeCurrencyKey): string {
++  return circulatingSupply
++    ? formatMarketCap(mulWorklet(price, circulatingSupply), nativeCurrency)
++    : formatAssetPrice({ value: price, currency: nativeCurrency });
++}
++
++function formatMarketCap(amount: string, nativeCurrency: NativeCurrencyKey): string {
++  if (lessThanWorklet(toFixedWorklet(amount, 0), COMPACT_MARKET_CAP_FROM)) return formatNativeAmount(amount, nativeCurrency);
++  return abbreviateNative(amount, nativeCurrency);
++}
++
++function abbreviateNative(magnitude: string, nativeCurrency: NativeCurrencyKey): string {
++  const { alignment, symbol } = supportedCurrencies[nativeCurrency];
++  const display = abbreviate(magnitude);
++  return alignment === 'left' ? `${symbol}${display}` : `${display} ${symbol}`;
++}
++
+ /** A token amount with its symbol, abbreviated from ten thousand up, e.g. `86.2M HABS`. */
+ export function formatCompactTokenAmount(amount: string, asset: { decimals: number; symbol: string }) {
+   if (lessThanWorklet(amount, COMPACT_TOKEN_AMOUNT_FROM)) return convertAmountToBalanceDisplay(amount, asset);
+```
+
+**File**: `src/features/spot-pnl/ui/useCirculatingSupply.ts` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
++import { getUniqueId } from '@/entities/assetId';
++import { useCurrencyConversionStore } from '@/features/currency/stores/currencyConversionStore';
++import type { NativeCurrencyKey } from '@/features/currency/types';
++import type { ChainId } from '@/features/network/types/backendNetworks';
++import { greaterThanWorklet } from '@/framework/core/safeMath';
++import useAdditionalAssetData from '@/hooks/useAdditionalAssetData';
++import { type TokenData } from '@/state/liveTokens/types';
++
++import { resolveCirculatingSupply } from '../core/marketCapSupply';
++
++/** The token's circulating supply while its per-token figures show as market caps, from its live or fetched market cap. */
++export function useCirculatingSupply({
++  chainId,
++  nativeCurrency,
++  price,
++  tokenAddress,
++}: {
++  chainId: ChainId;
++  nativeCurrency: NativeCurrencyKey;
++  /** Native, live. */
++  price: string;
++  tokenAddress: string;
++}): string | null {
++  const usdToNativeRate = useCurrencyConversionStore(state => state.getData()?.usdToNativeCurrencyConversionRate);
++  const { data: metadata } = useAdditionalAssetData({ address: tokenAddress, chainId, currency: nativeCurrency });
++  const liveMarketCap = useLiveTokenValue({
++    tokenId: getUniqueId(tokenAddress, chainId),
++    fallback: '0',
++    selector: selectCirculatingMarketCap,
++  });
++  const marketCap = greaterThanWorklet(liveMarketCap, 0) ? liveMarketCap : String(metadata?.marketCap ?? 0);
++  return resolveCirculatingSupply({ marketCap, price, usdToNativeRate });
++}
++
++function selectCirculatingMarketCap(token: TokenData): string {
++  return token.marketData.circulatingMarketCap;
++}
+```
+
+**File**: `src/features/spot-pnl/ui/useTokenPrice.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++import { useLiveTokenValue } from '@/components/live-token-text/useLiveTokenValue';
++import { getUniqueId } from '@/entities/assetId';
++import type { NativeCurrencyKey } from '@/features/currency/types';
++import type { ChainId } from '@/features/network/types/backendNetworks';
++import useAccountAsset from '@/hooks/useAccountAsset';
++import { useExternalToken } from '@/resources/assets/externalAssetsQuery';
++
++/** The token's live native price, until a quote arrives the selected wallet's or the fetched token's price; `''` without either. */
++export function useTokenPrice({
++  chainId,
++  nativeCurrency,
++  tokenAddress,
++}: {
++  chainId: ChainId;
++  nativeCurrency: NativeCurrencyKey;
++  tokenAddress: string;
++}): string {
++  const uniqueId = getUniqueId(tokenAddress, chainId);
++  const accountAsset = useAccountAsset(uniqueId, nativeCurrency);
++  const { data: externalToken } = useExternalToken({ address: tokenAddress, chainId, currency: nativeCurrency });
++  return useLiveTokenValue({
++    tokenId: uniqueId,
++    fallback: accountAsset?.native?.price?.amount ?? externalToken?.native?.price?.amount ?? '',
++    fallbackUpdatedAt: accountAsset?.price?.changed_at ?? 0,
++  });
++}
+```
+
+**File**: `src/features/top-holders/ui/TopHolders.tsx` (modified, +77/-32)
+```diff
+@@ -13,9 +13,10 @@ import useENSAvatar from '@/features/ens/hooks/useENSAvatar';
+ import { type ChainId } from '@/features/network/types/backendNetworks';
+ import { type SpotPnlSheetEntryPoint, type WalletTokenTrades } from '@/features/spot-pnl/core/spotPnl';
+ import { PnlArrow, pnlColor } from '@/features/spot-pnl/ui/pnlDisplay';
+-import { formatNativeAmount, formatPnlAmount, formatPnlPercentage, pnlSign } from '@/features/spot-pnl/ui/pnlFormat';
++import { formatNativeAmount, formatPerTokenFigure, formatPnlAmount, formatPnlPercentage, pnlSign } from '@/features/spot-pnl/ui/pnlFormat';
++import { useCirculatingSupply } from '@/features/spot-pnl/ui/useCirculatingSupply';
++import { useTokenPrice } from '@/features/spot-pnl/ui/useTokenPrice';
+ import { lessThanWorklet, mulWorklet, toFixedWorklet } from '@/framework/core/safeMath';
+-import { formatAssetPrice } from '@/helpers/formatAssetPrice';
+ import * as i18n from '@/languages';
+ import Navigation from '@/navigation/Navigation';
+ import Routes from '@/navigation/routesNames';
+@@ -129,22 +130,14 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
+   if (!topHolders) return null;
+ 
+   const entryPoint = TAB_ENTRY_POINTS[tab];
+-  const rows =
+-    tab === 'holding'
+-      ? topHolders.holding.map((row, index) => (
+-          <HoldingHolderRow
+-            key={row.address}
+-            entryPoint={entryPoint}
+-            nativeCurrency={nativeCurrency}
+-            rank={index + 1}
+-            row={row}
+-            token={token}
+-            usdToNativeRate={usdToNativeRate}
+-          />
+-        ))
+-      : tab === 'unrealized'
+-        ? topHolders.unrealized.map((row, index) => (
+-            <UnrealizedHolderRow
++
++  return (
++    // Clipped so a longer list is revealed as the height grows instead of overlapping the sections below
++    <Box as={Animated.View} layout={LAYOUT_ANIMATION} style={{ overflow: 'hidden' }}>
++      {tab === 'holding' && (
++        <SeparatedRows
++          rows={topHolders.holding.map((row, index) => (
++            <HoldingHolderRow
+               key={row.address}
+               entryPoint={entryPoint}
+               nativeCurrency={nativeCurrency}
+@@ -153,8 +146,21 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
+               token={token}
+               usdToNativeRate={usdToNativeRate}
+             />
+-          ))
+-        : topHolders.realized.map((row, index) => (
++          ))}
++        />
++      )}
++      {tab === 'unrealized' && (
++        <UnrealizedHolderRows
++          entryPoint={entryPoint}
++          nativeCurrency={nativeCurrency}
++          rows={topHolders.unrealized}
++          token={token}
++          usdToNativeRate={usdToNativeRate}
++        />
++      )}
++      {tab === 'realized' && (
++        <SeparatedRows
++          rows={topHolders.realized.map((row, index) => (
+             <RealizedHolderRow
+               key={row.address}
+               entryPoint={entryPoint}
+@@ -164,18 +170,55 @@ function HolderList({ tab, token }: { tab: Tab; token: { address: string; chainI
+               token={token}
+               usdToNativeRate={usdToNativeRate}
+             />
+-          ));
++          ))}
++        />
++      )}
++    </Box>
++  );
++}
++
++function SeparatedRows({ rows }: { rows: React.ReactElement[] }) {
++  return rows.map((row, index) => (
++    <React.Fragment key={row.key}>
++      {index > 0 && <RowSeparator />}
++      {row}
++    </React.Fragment>
++  ));
++}
++
++/** Holds the price and market-cap subscriptions that only the Unrealized rows need; rows get display strings so a tick re-renders only rows whose text changes. */
++function UnrealizedHolderRows({
++  entryPoint,
++  nativeCurrency,
++  rows,
++  token,
++  usdToNativeRate,
++}: {
++  entryPoint: SpotPnlSheetEntryPoint;
++  nativeCurrency: NativeCurrencyKey;
++  rows: UnrealizedRow[];
++  token: { address: string; chainId: ChainId };
++  usdToNativeRate: number;
++}) {
++  const price = useTokenPrice({ chainId: token.chainId, nativeCurrency, tokenAddress: token.address });
++  const circulatingSupply = useCirculatingSupply({ chainId: token.chainId, nativeCurrency, price, tokenAddress: token.address });
+ 
+   return (
+-    // Clipped so a longer list is revealed as the height grows instead of overlapping the sections below
+-    <Box as={Animated.View} layout={LAYOUT_ANIMATION} style={{ overflow: 'hidden' }}>
+-      {rows.map((row, index) => (
+-        <React.Fragment key={row.key}>
+-          {index > 0 && <RowSeparator />}
+-          {row}
+-        </React.Fragment>
++    <SeparatedRows
++      rows={rows.map((row, index) => (
++        <UnrealizedHolderRow
++          key={row.address}
++          avgEntry={formatPerTokenFigure(mulWorklet(row.avgEntryUsd, usdToNativeRate), circulatingSupply, nativeCurrency)}
++          entryPoint={entryPoint}
++          isMarketCap={!!circulatingSupply}
++          nativeCurrency={nativeCurrency}
++          rank={index + 1}
++          row={row}
++          token={token}
+
 ```
 
 ---
 
-### Incident Patch 2: `36dee2db` (2026-10-30)
-**Commit Message**: fix(graphql): keep ENS enum value names so codegen output type-checks (#7907)
+### Incident Patch 2: `5b798f69` (2026-11-03)
+**Commit Message**: fix(polymarket): migrate to Data API v2 (#7916)
 
-**File**: `src/graphql/codegen.config.js` (modified, +3/-0)
+**File**: `src/features/polymarket/constants.ts` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,9 @@ module.exports = {
-         documents: [value.document],
-         plugins: ['typescript', 'typescript-operations', 'typescript-generic-sdk'],
-         schema: [{ [value.schema.url]: { method: value.schema.method } }],
-+        // The ENS subgraph has enum values that differ only by underscores (`resolverAddress`, `resolver__address`),
-+        // which the default PascalCase member names collapse into duplicates
-+        ...(key === 'ens' && { config: { namingConvention: { enumValues: 'keep' } } }),
-       },
-     };
-   }, {}),
+@@ -41,8 +41,8 @@ export const POLYMARKET_SIGNING_PROXY_URL = `${RAINBOW_POLYMARKET_PROXY_URL}/sig
+ // const POLYMARKET_CLOB_URL_PREPROD = 'https://clob-preprod-int-v2.polymarket.com';
+ const POLYMARKET_CLOB_URL_PROD = 'https://clob.polymarket.com';
+ 
+-//  const POLYMARKET_DATA_API_URL_PREPROD = 'https://data-api-preprod-int.polymarket.com';
+-const POLYMARKET_DATA_API_URL_PROD = 'https://data-api.polymarket.com';
++//  const POLYMARKET_DATA_API_URL_PREPROD = 'https://data-api-preprod-int.polymarket.com/v2';
++const POLYMARKET_DATA_API_URL_PROD = 'https://data-api.polymarket.com/v2';
+ 
+ //  const POLYMARKET_GAMMA_API_URL_PREPROD = 'https://gamma-api-preprod-int.polymarket.com';
+ const POLYMARKET_GAMMA_API_URL_PROD = 'https://gamma-api.polymarket.com';
+```
+
+**File**: `src/features/polymarket/stores/polymarketPositionsStore.test.ts` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import '../../../../config/test/storeEnvironment';
++
++import { predictionEvent } from '../../../../config/test/predictionEvent';
++import { polymarketPositionsActions } from './polymarketPositionsStore';
++
++vi.mock('@/features/polymarket/stores/derived/usePolymarketClients', async () => {
++  const { createBaseStore } = await import('@storesjs/stores');
++  return { usePolymarketClients: createBaseStore(() => ({ proxyAddress: null })) };
++});
++
++afterEach(() => vi.restoreAllMocks());
++
++it('reads a v2 position using entry cost and unrealized P&L for the open holding', async () => {
++  const address = '0x0000000000000000000000000000000000000001';
++  const event = predictionEvent('1');
++  const market = { ...event.markets[0], events: [event] };
++  const holding = {
++    proxy_wallet: address,
++    token_id: '101',
++    redeemable: false,
++    slug: market.slug,
++    event_id: event.id,
++    current_size: 11.7727,
++    current_value: 4.7091,
++    entry_cost_usdc: 5.1799,
++    total_cost_usdc: 5.2669,
++    unrealized_pnl: -0.4708,
++    total_pnl: -0.5578,
++  };
++  const fetch = vi
++    .spyOn(global, 'fetch')
++    .mockResolvedValueOnce(Response.json({ data: [holding] }))
++    .mockResolvedValueOnce(Response.json([market]));
++
++  const result = await polymarketPositionsActions.fetch({ address }, { force: true, throwOnError: true });
++
++  const url = new URL(String(fetch.mock.calls[0][0]));
++  expect(url.origin + url.pathname).toBe('https://data-api.polymarket.com/v2/positions');
++  expect(Object.fromEntries(url.searchParams)).toMatchObject({ user: address, filter_amount: '1' });
++  expect(result?.positions).toMatchObject([
++    {
++      proxyWallet: address,
++      asset: '101',
++      size: 11.7727,
++      currentValue: 4.7091,
++      initialValue: 5.1799,
++      cashPnl: -0.4708,
++    },
++  ]);
++});
+```
+
+**File**: `src/features/polymarket/stores/polymarketPositionsStore.ts` (modified, +3/-6)
+```diff
+@@ -69,16 +69,13 @@ async function fetchPolymarketPositions(
+ ): Promise<FetchPolymarketPositionsResponse> {
+   if (!address) throw new RainbowError('[PolymarketPositionsStore] Address is required');
+ 
+-  const url = new URL(`${POLYMARKET_DATA_API_URL}/positions`);
+-  url.searchParams.set('sortBy', 'CURRENT');
+-  url.searchParams.set('sortDirection', 'DESC');
+-  url.searchParams.set('user', address);
+-
+-  const { data: rawPositions } = await rainbowFetch<RawPolymarketPosition[]>(url.toString(), {
++  const { data: page } = await rainbowFetch<{ data: RawPolymarketPosition[] }>(`${POLYMARKET_DATA_API_URL}/positions`, {
++    params: { user: address, filter_amount: '1' },
+     abortController,
+     timeout: time.seconds(15),
+   });
+ 
++  const rawPositions = page.data;
+   if (!rawPositions.length) return { positions: [] };
+ 
+   const rawMarkets = await fetchPolymarketMarkets(rawPositions, abortController);
+```
+
+**File**: `src/features/polymarket/types.ts` (modified, +20/-22)
+```diff
+@@ -5,44 +5,42 @@ import { type PolymarketMarket } from '@/features/polymarket/types/polymarket-ev
+ import { type PolymarketTeamInfo } from '@/features/polymarket/types/team-info';
+ 
+ export type RawPolymarketPosition = {
+-  proxyWallet: string;
++  proxy_wallet: string;
++  token_id: string;
++  condition_id: string;
++  current_size: number;
++  entry_cost_usdc: number;
++  current_value: number;
++  unrealized_pnl: number;
++  current_price: number;
++  redeemable: boolean;
++  slug: string;
++  icon: string;
++  event_id: string;
++  event_slug: string;
++  outcome: string;
++  outcome_index: number;
++  negative_risk: boolean;
++};
++
++export type PolymarketPosition = {
++  proxyWallet: Address;
+   asset: string;
+   conditionId: string;
+   size: number;
+-  avgPrice: number;
+   initialValue: number;
+   currentValue: number;
+   cashPnl: number;
+-  percentPnl: number;
+-  totalBought: number;
+-  realizedPnl: number;
+-  percentRealizedPnl: number;
+   curPrice: number;
+   redeemable: boolean;
+-  mergeable: boolean;
+-  title: string;
+   slug: string;
+   icon: string;
+   eventId: string;
+   eventSlug: string;
+   outcome: string;
+   outcomeIndex: number;
+-  oppositeOutcome: string;
+-  oppositeAsset: string;
+-  endDate: string;
+   negativeRisk: boolean;
+-};
+-
+-export type PolymarketPosition = Omit<RawPolymarketPosition, 'proxyWallet'> & {
+-  proxyWallet: Address;
+-  // These are returned in the response as stringified JSON arrays
+-  clobTokenIds: string[];
+   outcomes: string[];
+-  outcomePrices: string[];
+-  nativeCurrency: {
+-    currentValue: number;
+-    cashPnl: number;
+-  };
+   market: PolymarketMarket;
+   /**
+    * Some events have a unique image for each market, such as "Who will win the 2028 presidential election?"
+```
+
+**File**: `src/features/polymarket/utils/processRawPolymarketPosition.ts` (modified, +16/-11)
+```diff
+@@ -1,6 +1,5 @@
+ import { getAddress } from 'viem';
+ 
+-import { useCurrencyConversionStore } from '@/features/currency/stores/currencyConversionStore';
+ import { type PolymarketPosition, type PolymarketTeamInfo, type RawPolymarketPosition } from '@/features/polymarket/types';
+ import { type PolymarketMarket } from '@/features/polymarket/types/polymarket-event';
+ 
+@@ -9,18 +8,24 @@ export function processRawPolymarketPosition(
+   market: PolymarketMarket,
+   teams?: PolymarketTeamInfo[]
+ ): PolymarketPosition {
+-  const { convertToNativeCurrency } = useCurrencyConversionStore.getState();
+-
+   return {
+-    ...position,
+-    proxyWallet: getAddress(position.proxyWallet),
+-    clobTokenIds: market.clobTokenIds,
++    proxyWallet: getAddress(position.proxy_wallet),
++    asset: position.token_id,
++    conditionId: position.condition_id,
++    size: position.current_size,
++    initialValue: position.entry_cost_usdc,
++    currentValue: position.current_value,
++    cashPnl: position.unrealized_pnl,
++    curPrice: position.current_price,
++    redeemable: position.redeemable,
++    slug: position.slug,
++    icon: position.icon,
++    eventId: position.event_id,
++    eventSlug: position.event_slug,
++    outcome: position.outcome,
++    outcomeIndex: position.outcome_index,
++    negativeRisk: position.negative_risk,
+     outcomes: market.outcomes,
+-    outcomePrices: market.outcomePrices,
+-    nativeCurrency: {
+-      currentValue: convertToNativeCurrency(position.currentValue),
+-      cashPnl: convertToNativeCurrency(position.cashPnl),
+-    },
+     market,
+     marketHasUniqueImage: market.icon !== market.events[0].icon,
+     teams,
+```
+
+---
+
+### Incident Patch 3: `238ff18d` (2026-11-03)
+**Commit Message**: fix(e2e): replace expired ENS name (#7915)
+
+**File**: `e2e/flows/onboarding/WatchedWallet.yaml` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ tags:
+ - tapOn:
+     id: watch-address-button
+ - tapOn: 'Enter an Ethereum address or ENS name'
+-- inputText: 'rainbowtestwallet.eth'
++- inputText: 'rainbowwallet.eth'
+ - tapOn: 'Continue'
+ - tapOn: 'Import Wallet'
+ - runFlow: ../../utils/MaybeSetupPin.yaml
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7908** (2026-10-30): feat(spot-pnl): analytics for P&L sheet, P&L pill and Top Holders (@i1skn)
-- **PR #7907** (2026-10-30): fix(graphql): keep ENS enum value names so codegen output type-checks (@i1skn)
-- **PR #7906** (2026-10-30): fix(spot-pnl): open the P&L sheet from Top Holders with the row's trades (@i1skn)
-- **PR #7905** (2026-10-30): fix(spot-pnl): open the P&L sheet at full height and match the no-P&L state to design (@i1skn)
-- **PR #7904** (2026-10-31): chore(ci): configure Cubic auto-approval criteria and exclusions (@i1skn)
-- **PR #7902** (2026-10-29): fix(spot-pnl): match the excluded-tokens info sheet to design (@i1skn)
+- **PR #7930** (2026-11-04): feat(discover): search tokens through token search v2 behind its flag (@i1skn)
+- **PR #7929** (2026-11-04): feat(token-search): v2 search data layer behind a flag (@i1skn)
+- **PR #7928** (2026-11-03): Bump iOS and Android to v2.0.48 (@jinchung)
+- **PR #7919** (2026-11-03): Bump Android version code to 327 (@jinchung)
+- **PR #7918** (closed): fix(fonts): remove bundled SF Mono (@christianbaroni)
+- **PR #7916** (2026-11-03): fix(polymarket): migrate to Data API v2 (@christianbaroni)
 
 ---
 
@@ -1142,59 +1408,42 @@ trade. The shared store follows the token on the expanded
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906)
+## X. spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the
 
 **RULE**:
-When implementing operations in `src/features/spot-pnl/ui/SpotPnlSheet.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/features/spot-pnl/core/marketCapSupply.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74ec8e94`: spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b80d6ef`: spot-pnl): market caps for sub-$1 entries in Top Holders, abbreviated MCs on the P&L sheet (#7913). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/spot-pnl/ui/SpotPnlSheet.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/spot-pnl/core/marketCapSupply.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { createTokenTradesStore, useSpotPnlTokenId, useTokenTradesStore } from '../data/tokenTradesStore';
-    params: { address, chainId, ensName, trades, walletAddress: routeWalletAddress },
-  // Codex returns lowercased addresses, so a Top Holders row for the selected wallet differs in case
-  const isSelectedWallet = !!walletAddress && isLowerCaseMatch(walletAddress, selectedWalletAddress ?? undefined);
-  // The shared store follows the token on the expanded sheet and is off with the Spot P&L flag. Route trades are not used
-  // for the selected wallet: they come from a cached list, which can predate the wallet's own balance.
-  const isOwnTradesToken = useSpotPnlTokenId(tokenId => tokenId === getCodexTokenId(address, chainId));
+import { describe, expect, it } from 'vitest';
 
-  const position = walletAddress ? { tokenAddress: address, chainId, walletAddress, ensName, isSelectedWallet } : null;
-      {position &&
-        (isSelectedWallet && isOwnTradesToken ? (
-          <StoredTradesContent position={position} tradesStore={useTokenTradesStore} />
-        ) : !isSelectedWallet && trades ? (
-          <SpotPnlSheetContent position={position} trades={trades} isSuccess isSettled />
-        ) : (
-          <FetchedTradesContent p
+import { resolveCirculatingSupply } from './marketCapSupply';
+
+describe('resolveCirculatingSupply', () => {
+  it.each<{ name: string; price: string; marketCap: string; usdToNativeRate: number | undefined; expected: string | null }>([
+    { name: 'under $1 with a market cap', price: '0.5', marketCap: '1000', usdToNativeRate: 1, expected: '2000' },
+    { name: 'exactly $1', price: '1', marketCap: '1000', usdToNativeRate: 1, expected: null },
+    { name: 'over $1', price: '2', marketCap: '1000', usdToNativeRate: 1, expected: null },
+    { name: 'under $1 though over 1 in the native currency', price: '150', marketCap: '3000', usdToNativeRate: 300, expected: '20' },
+    { name: 'over $1 though under 1 in the native currency', price: '0.5', marketCap: '1000', usdToNativeRate: 0.25, expected: null },
+    { name: 'no conversion rate', price: '0.5', marketCap: '1000', usdToNativeRate: undefined, expected: null },
+    { name: 'no price', price: '', marketCap: '1000', usdToNativeRate: 1, expected: null },
+    { name: 'zero price', price: '0', marketCap: '1000', usdToNativeRate: 1, expected: null },
+    { name: 'no market cap', price: '0.5', mark
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { createTokenTradesStore, useTokenTradesStore } from '../data/tokenTradesStore';
-    params: { address, chainId, ensName, walletAddress: routeWalletAddress },
-      {walletAddress && <SpotPnlSheetContent tokenAddress={address} chainId={chainId} walletAddress={walletAddress} ensName={ensName} />}
-function SpotPnlSheetContent({
-  tokenAddress,
-  chainId,
-  walletAddress,
-  ensName,
-}: {
-  // Codex returns lowercased addresses, so a Top Holders row for the selected wallet differs in case
-  const isSelectedWallet = userAssetsStoreManager(state => isLowerCaseMatch(walletAddress, state.address ?? undefined));
-  const otherWalletTradesStore = useStableValue(() =>
-    createTokenTradesStore({ params: { walletAddress, codexTokenId: getCodexTokenId(tokenAddress, chainId), heldBalance: null } })
-  );
-  const tradesStore = isSelectedWallet ? useTokenTradesStore : otherWalletTradesStore;
-  const trades = tradesStore(state => state.getData());
-  const isSettled = tradesStore(state => state.getStatus('isSuccess') || state.getStatus('isError'));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74ec8e94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b80d6ef` are properly handled with clean fallback behavior.
