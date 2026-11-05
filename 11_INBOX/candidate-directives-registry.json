@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:25:57.178Z",
+  "last_updated": "2026-11-05T02:47:42.860Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3874,6 +3874,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-3TVW",
+      "directive_title": "docs: update sidecar-injection.md following guidelines (#17405)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "4440cc62",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-argoproj-argo-workflows"
     }
   ]
 }

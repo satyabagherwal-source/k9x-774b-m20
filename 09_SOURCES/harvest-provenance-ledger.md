@@ -7473,3 +7473,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T02:33:00.430Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `c310e5dc` | Multi-dimensional audit evidence | 2026-11-05T02:40:19.698Z |
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-05T02:40:23.969Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-05T02:47:37.932Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `4440cc62` | Multi-dimensional audit evidence | 2026-11-05T02:47:42.853Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c407b590` | Multi-dimensional audit evidence | 2026-11-05T02:47:48.060Z |

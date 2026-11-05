@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
-    "lastHarvestedAt": "2026-10-31T12:15:45.836Z",
+    "contentHash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
+    "lastHarvestedAt": "2026-11-05T02:47:37.932Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "171d005b",
+    "sourceVersion": "c407b590",
     "license": "Apache-2.0",
-    "contentHash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
-    "lastHarvestedAt": "2026-11-04T03:30:44.785Z",
+    "contentHash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
+    "lastHarvestedAt": "2026-11-05T02:47:48.060Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "bcd916ca",
+    "sourceVersion": "4440cc62",
     "license": "Apache-2.0",
-    "contentHash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
-    "lastHarvestedAt": "2026-11-04T07:18:52.542Z",
+    "contentHash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
+    "lastHarvestedAt": "2026-11-05T02:47:42.853Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

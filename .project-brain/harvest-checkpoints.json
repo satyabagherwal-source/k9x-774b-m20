@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:40:23.986Z",
+  "last_updated": "2026-11-05T02:47:48.078Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
-      "verified_at": "2026-10-31T12:15:45.845Z",
+      "content_hash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
+      "verified_at": "2026-11-05T02:47:37.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:15:45.845Z"
+      "last_updated": "2026-11-05T02:47:37.948Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
-      "verified_at": "2026-11-04T03:30:44.793Z",
+      "content_hash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
+      "verified_at": "2026-11-05T02:47:48.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:30:44.793Z"
+      "last_updated": "2026-11-05T02:47:48.077Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
-      "verified_at": "2026-11-04T07:18:52.552Z",
+      "content_hash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
+      "verified_at": "2026-11-05T02:47:42.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:18:52.552Z"
+      "last_updated": "2026-11-05T02:47:42.865Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",

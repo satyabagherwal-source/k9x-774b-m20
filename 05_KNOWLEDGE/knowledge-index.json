@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:40:23.884Z",
+  "last_updated": "2026-11-05T02:47:47.969Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3354,8 +3354,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "bcd916ca",
-      "content_hash": "8889df3d70543cfdedaa0249ff53706339fa3695889371e6e57509c62ff9b593",
+      "source_version": "4440cc62",
+      "content_hash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3425,7 +3425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:18:52.426Z",
+      "verified_at": "2026-11-05T02:47:42.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21562,7 +21562,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "54247053fccdbdfdcc93271a24a767135d44a771cdd56af52c366dbf0d037c84",
+      "content_hash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -21656,7 +21656,7 @@
         {
           "number": 1279,
           "title": "**Tokenization Integrity Rule**",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1280,
@@ -21782,6 +21782,16 @@
           "number": 6189,
           "title": "**Safe Inference Mode Enforcement**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7076,
+          "title": "**Joint‑Head Output Shape Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7077,
+          "title": "**Inference Mode Guard Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21802,7 +21812,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-31T12:15:45.733Z",
+      "verified_at": "2026-11-05T02:47:37.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50942,8 +50952,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "171d005b",
-      "content_hash": "7c6e0b9b44aa9176767a01d8cdccb53c8902dbd2c52d8cb1f9bb3e36d881dd7e",
+      "source_version": "c407b590",
+      "content_hash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -51016,6 +51026,11 @@
           "number": 6742,
           "title": "storage): reduce SST metadata and block decode overhead (#27761)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7078,
+          "title": "deps): bump dependencies with security advisories (#27706)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51023,7 +51038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:30:44.695Z",
+      "verified_at": "2026-11-05T02:47:47.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -90972,15 +90987,15 @@
       "learning_id": "rule-1279",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1279,
-      "title": "**Tokenization Integrity Rule** (Harvested from Cloudflare/clef)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "**Tokenization Integrity Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-11-05T02:47:37.818Z"
     },
     "rule-1280": {
       "learning_id": "rule-1280",
@@ -179456,6 +179471,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:40:23.864Z"
+    },
+    "rule-7076": {
+      "learning_id": "rule-7076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7076,
+      "title": "**Joint‑Head Output Shape Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:47:37.818Z"
+    },
+    "rule-7077": {
+      "learning_id": "rule-7077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7077,
+      "title": "**Inference Mode Guard Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:47:37.818Z"
+    },
+    "rule-7078": {
+      "learning_id": "rule-7078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7078,
+      "title": "deps): bump dependencies with security advisories (#27706)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "c407b590",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:47:47.946Z"
     }
   },
   "aliases": {

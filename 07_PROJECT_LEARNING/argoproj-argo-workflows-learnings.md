@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `bcd916ca`  
+> **Source Version**: `4440cc62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:18:51.757Z  
+> **Timestamp**: 2026-11-05T02:47:42.545Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:18:50.584Z  
+> **Harvest Timestamp**: 2026-11-05T02:47:42.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17079 stars
+- **Stars / Engagement**: 17082 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17397** (2026-11-03): **Action Required: Fix Renovate Configuration**
-  *Symptoms*: There is an error with this repository's Renovate configuration that needs to be fixed. As a precaution, Renovate will stop PRs until it is resolved.  Location: `renovate.json` Error type: Duplicate keys in JSON Message: "Syntax error: duplicated keys \"customManagers\" near gers\": [\n " 
+- **Issue #17439** (2026-11-04): **docs: update offloading-large-workflows.md following guidelines (cherry-pick #17403 for 4.1)**
+  *Symptoms*: Cherry-picked docs: update offloading-large-workflows.md following guidelines (#17403)
 
-- **Issue #17386** (2026-11-02): **test(cron): load scheduledWf from testdata in the workflow defaults tests**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  `main` does not compile `workflow/cron`'s tests, so Lint fails on `main` and on every open PR:  ```text workflow/cron/operator_test.go:557:32: undefined: scheduledWf workflow/cron/operator_test.go:589:32: undefined: scheduledWf (typecheck) ```  #17108 moved the cron test fixtures into `testdata/` and removed the `scheduledWf` constant. #17069, written before that, added `TestCronWorkflowDefaultsResolvedPerNamespace` and `TestCronWorkflowDefaultsErrorSurfacesOnValidate`, which still use the constant. Each PR passed CI alone, but `main` broke once both had merged.  ### Modifications  Those two tests now load the fixture with `v1alpha1.MustUnmarshal("@testdata/scheduled-wf.yaml", &cronWf)`, as #17108 changed the other tests to do.  ### Verification  - `KUBECONFIG=/dev/null go test ./workflow/cron/...`: pass. - `
+- **Issue #17432** (2026-11-04): **chore(deps): update dependency semver to v7.8.6 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [semver](https://redirect.github.com/npm/node-semver) | [`7.8.5` → `7.8.6`](https://renovatebot.com/diffs/npm/semver/7.8.5/7.8.6) | ![age](https://developer.mend.io/api/mc/badges/age/npm/semver/7.8.6?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/semver/7.8.6?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/semver/7.8.5/7.8.6?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/semver/7.8.5/7.8.6?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>npm/node-semver (semver)</summary>  ### [`v7.8.6`](https://redirect.github.com/npm/node-semver/blob/HEAD/CHANGELOG.md#786-2026-11-02)  [Compare Source](https://redirect.github.com/npm/node-semver/compare/v7.8.5...v7.8.6)  ##### Bug Fixes  - [`69b305d`](https://redirect.github.com/npm/node-semver/commit/69b305d8a243c1ae9e0982dbe67217ab2bb9474b) [#&#8203;918](https://redirect.github.com/npm/node-semver/pull/918) improve range parsing performance ([#&#8203;918](https://redirect.githu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,59 +788,200 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcd916ca` (2026-11-04)
-**Commit Message**: fix(artifacts): reject S3 caSecret without a valid PEM certificate (#17373)
+### Incident Patch 1: `31dbddc4` (2026-11-04)
+**Commit Message**: docs: update sidecar-injection.md following guidelines (#17405)
 
-Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
 
-**File**: `workflow/artifacts/s3/s3.go` (modified, +3/-1)
+**File**: `docs/sidecar-injection.md` (modified, +19/-17)
 ```diff
-@@ -174,7 +174,9 @@ func (s3Driver *ArtifactDriver) newClient(ctx context.Context) (Client, error) {
- 		if s3Driver.Secure && s3Driver.TrustedCA != "" {
- 			// Trust only the provided root CA
- 			pool := x509.NewCertPool()
--			pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA))
-+			if !pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA)) {
-+				return nil, errors.New("no valid PEM certificate found in the S3 caSecret")
-+			}
- 			tr.TLSClientConfig.RootCAs = pool
- 		}
- 		// Wrap transport with OpenTelemetry tracing
+@@ -1,48 +1,50 @@
+ # Sidecar Injection
+ 
+-Automatic (i.e. mutating webhook based) sidecar injection systems, including service meshes such as Anthos and Istio
+-Proxy, create a unique problem for Kubernetes workloads that run to completion.
++Automatic (that is, mutating webhook based) sidecar injection systems, including service meshes such as Anthos and Istio Proxy, create a unique problem for Kubernetes workloads that run to completion.
+ 
+-Because sidecars are injected outside of the view of the workflow controller, the controller has no awareness of them.
+-It has no opportunity to rewrite the containers command and as the sidecar's process will run as PID 1, which is protected.
+-It can be impossible for the wait container to terminate the sidecar.
++Because the webhook injects sidecars outside of the view of the workflow controller, the controller has no awareness of them.
++The controller has no opportunity to rewrite the container's command.
++The sidecar's process runs as PID 1, which can prevent signals from terminating it.
++This can make it impossible for the workflow controller to terminate the sidecar.
+ 
+-You will minimize problems by not using Istio with Argo Workflows.
++You can minimize problems by not using Istio with Argo Workflows.
+ 
+ See [#1282](https://github.com/argoproj/argo-workflows/issues/1282).
+ 
+ ## Support Matrix
+ 
+ Key:
+ 
+-* Any - we can kill any image
+-* KubectlExec - we kill images by running `kubectl exec`
++* Any - Argo can kill any image
++* KubectlExec - Argo kills images by running `kubectl exec`
+ 
+ | Executor | Sidecar | Injected Sidecar |
+ |---|---|---|
+ | `emissary` | Any | KubectlExec |
+ 
+-## How We Kill Sidecars Using `kubectl exec`
++## How Argo Kills Sidecars Using `kubectl exec`
+ 
+-Kubernetes does not provide a way to kill a single container. You can delete a pod, but this kills all containers, and loses all information
+-and logs of that pod.
++Kubernetes does not provide a way to kill a single container.
++You can delete a pod, but this kills all containers, and loses all information and logs of that pod.
+ 
+-Instead, try to mimic the Kubernetes termination behavior, which is:
++Instead, Argo mimics the Kubernetes termination behavior, which is:
+ 
+ 1. SIGTERM PID 1
+-1. Wait for the pod's `terminateGracePeriodSeconds` (30s by default).
++1. Wait for the pod's `terminationGracePeriodSeconds` (30s by default).
+ 1. SIGKILL PID 1
+ 
+-The following are not supported:
++Argo doesn't support the following:
+ 
+ * `preStop`
+ * `STOPSIGNAL`
+ 
+-To do this, it must be possible to run a `kubectl exec` command that kills the injected sidecar. By default it runs `/bin/sh -c 'kill 1'`. This can fail:
++To do this, Argo runs a `kubectl exec` command that kills the injected sidecar.
++By default it runs `/bin/sh -c 'kill -<signal> 1'`.
++This can fail:
+ 
+ 1. No `/bin/sh`.
+-2. Process is not running as PID 1 (which is becoming the default these days due to `runAsNonRoot`).
+-3. Process does not correctly respond to `kill 1` (e.g. some shell script weirdness).
++2. Process is not running as PID 1.
++3. Process does not correctly respond to the signal (for example, some shell script weirdness).
+ 
+ You can override the kill command by using a pod annotation (where `%d` is the signal number), for example:
+ 
 ```
 
-**File**: `workflow/artifacts/s3/s3_test.go` (modified, +18/-0)
+---
+
+### Incident Patch 2: `facdf2d3` (2026-11-04)
+**Commit Message**: chore(deps): update dependency buildx to v0.38.2 (main) (#17431)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/release.yaml` (modified, +1/-1)
 ```diff
-@@ -782,3 +782,21 @@ func TestParseAddressingStyle(t *testing.T) {
- 		})
- 	}
- }
+@@ -62,7 +62,7 @@ jobs:
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+         with:
+-          version: v0.38.1
++          version: v0.38.2
+ 
+       - name: Cache Docker layers
+         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+```
+
+---
+
+### Incident Patch 3: `b0b7835c` (2026-11-04)
+**Commit Message**: docs: update async-pattern.md following guidelines (#17406)
+
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
+
+**File**: `docs/async-pattern.md` (modified, +19/-14)
+```diff
+@@ -2,18 +2,21 @@
+ 
+ ## Introduction
+ 
+-If triggering an external job (e.g. an Amazon EMR job) from Argo that does not run to completion in a container, there are two options:
++To trigger an external job (for example, an Amazon EMR job) from Argo that does not run to completion in a container, you have two options:
+ 
+ - create a container that polls the external job completion status
+-- combine a trigger step that starts the job with a [`suspend`](walk-through/suspending.md) step that is resumed by an API call to Argo when the external job is complete.
++- combine a trigger step that starts the job with a [`suspend`](walk-through/suspending.md) step that an API call to Argo resumes when the external job is complete.
+ 
+ This document describes the second option in more detail.
+ 
+ ## The pattern
+ 
+-The pattern involves two steps - the first step is a short-running step that triggers a long-running job outside Argo (e.g. an HTTP submission), and the second step is a `suspend` step that suspends workflow execution and is ultimately either resumed or stopped (i.e. failed) via a call to the Argo API when the job outside Argo succeeds or fails.
++The pattern involves two steps.
++The first step is a short-running step that triggers a long-running job outside Argo (for example, an HTTP submission).
++The second step is a `suspend` step that suspends workflow execution.
++When the job outside Argo succeeds or fails, a call to the Argo API either resumes or stops (that is, fails) the `suspend` step.
+ 
+-When implemented as a `WorkflowTemplate` it can look something like this:
++A WorkflowTemplate that implements this pattern can look like this:
+ 
+ ```yaml
+ apiVersion: argoproj.io/v1alpha1
+@@ -61,15 +64,14 @@ spec:
+       suspend: { }
+ ```
+ 
+-In this case the ```job-cmd``` parameter can be a command that makes an HTTP call via curl to an endpoint that returns a job UUID. More sophisticated submission and parsing of submission output could be done with something like a Python script step.
++In this case, the `job-cmd` parameter can be a command that uses `curl` to make an HTTP call to an endpoint that returns a job UUID.
++For more sophisticated submission and parsing of submission output, you can use a Python script step.
+ 
+-On job completion the external job would need to call either resume if successful:
+-
+-You may need  an [access token](access-token.md).
++When the job completes, the external job must call either `resume` if successful:
+ 
+ ```bash
+ curl --request PUT \
+-  --url https://localhost:2746/api/v1/workflows/<NAMESPACE>/<WORKFLOWNAME>/resume
++  --url https://localhost:2746/api/v1/workflows/<NAMESPACE>/<WORKFLOWNAME>/resume \
+   --header 'content-type: application/json' \
+   --header "Authorization: $ARGO_TOKEN" \
+   --data '{
+@@ -79,11 +81,11 @@ curl --request PUT \
+     }'
+ ```
+ 
+-or stop if unsuccessful:
++or `stop` if unsuccessful:
+ 
+ ```bash
+ curl --request PUT \
+-  --url https://localhost:2746/api/v1/workflows/<NAMESPACE>/<WORKFLOWNAME>/stop
++  --url https://localhost:2746/api/v1/workflows/<NAMESPACE>/<WORKFLOWNAME>/stop \
+   --header 'content-type: application/json' \
+   --header "Authorization: $ARGO_TOKEN" \
+   --data '{
+@@ -94,12 +96,15 @@ curl --request PUT \
+     }'
+ ```
+ 
++To perform the API call you may need an [access token](access-token.md).
 +
-+func TestNewClientInvalidTrustedCA(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	driver := &ArtifactDriver{
-+		Endpoint:  "foo.com",
-+		Region:    "us-south-3",
-+		Secure:    true,
-+		AccessKey: "key",
-+		SecretKey: "secret",
-+		TrustedCA: "not a certificate",
-+	}
-+	_, err := driver.newClient(ctx)
-+	require.EqualError(t, err, "no valid PEM certificate found in the S3 caSecret")
-+
-+	driver.TrustedCA = ""
-+	_, err = driver.newClient(ctx)
-+	require.NoError(t, err)
-+}
+ ## Retrying failed jobs
+ 
+-Using `argo retry` on failed jobs that follow this pattern will cause Argo to re-attempt the `suspend` step without re-triggering the job.
++If you use `argo retry` on failed workflows that follow this pattern, Argo re-attempts the `suspend` step without re-triggering the job.
+ 
+-Instead you need to use the `--restart-successful` option, e.g. if using the template from above:
++Instead, use the `--restart-successful` option.
++For example, with the template above:
+ 
+ ```bash
+-argo retry <WORKFLOWNAME> --restart-successful --node-field-selector templateRef.template=run-external-job,phase=Failed
++argo retry <WORKFLOWNAME> --restart-successful --node-field-selector templateName=run-external-job,phase=Failed
+ ```
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17386** (2026-11-02): test(cron): load scheduledWf from testdata in the workflow defaults tests (@Joibel)
-- **PR #17383** (2026-11-02): chore(deps): update dependency minimatch to v11 [security] (main) (@renovate[bot])
-- **PR #17373** (2026-11-04): fix(artifacts): reject S3 caSecret without a valid PEM certificate (@sarankumar1325)
-- **PR #17372** (2026-10-30): chore(deps): update dependency sass to v1.107.0 (main) (@renovate[bot])
-- **PR #17371** (2026-10-30): chore(deps): update dependency python to 3.15 (main) (@renovate[bot])
-- **PR #17370** (2026-10-30): chore(deps): update dependency markdownlint-cli to v0.50.0 (main) (@renovate[bot])
+- **PR #17439** (2026-11-04): docs: update offloading-large-workflows.md following guidelines (cherry-pick #17403 for 4.1) (@Joibel)
+- **PR #17432** (2026-11-04): chore(deps): update dependency semver to v7.8.6 (main) (@renovate[bot])
+- **PR #17431** (2026-11-04): chore(deps): update dependency buildx to v0.38.2 (main) (@renovate[bot])
+- **PR #17429** (closed): chore(deps): update module k8s.io/apiextensions-apiserver to v0.37.2 (main) (@renovate[bot])
+- **PR #17428** (2026-11-04): chore(deps): update module google.golang.org/api to v0.310.0 (main) (@renovate[bot])
+- **PR #17426** (2026-11-04): chore(deps): update module github.com/go-jose/go-jose/v4 to v4.1.8 (main) (@renovate[bot])
 
 ---
 
@@ -860,30 +1001,58 @@ Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. artifacts): reject S3 caSecret without a valid PEM certificate (#17373)
+## X. docs: update sidecar-injection.md following guidelines (#17405)
 
 **RULE**:
-When implementing operations in `workflow/artifacts/s3/s3.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/sidecar-injection.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcd916ca`: artifacts): reject S3 caSecret without a valid PEM certificate (#17373). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31dbddc4`: docs: update sidecar-injection.md following guidelines (#17405). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/artifacts/s3/s3.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/sidecar-injection.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if !pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA)) {
-				return nil, errors.New("no valid PEM certificate found in the S3 caSecret")
-			}
+Automatic (that is, mutating webhook based) sidecar injection systems, including service meshes such as Anthos and Istio Proxy, create a unique problem for Kubernetes workloads that run to completion.
+Because the webhook injects sidecars outside of the view of the workflow controller, the controller has no awareness of them.
+The controller has no opportunity to rewrite the container's command.
+The sidecar's process runs as PID 1, which can prevent signals from terminating it.
+This can make it impossible for the workflow controller to terminate the sidecar.
+You can minimize problems by not using Istio with Argo Workflows.
+* Any - Argo can kill any image
+* KubectlExec - Argo kills images by running `kubectl exec`
+## How Argo Kills Sidecars Using `kubectl exec`
+Kubernetes does not provide a way to kill a single container.
+You can delete a pod, but this kills all containers, and loses all information and logs of that pod.
+Instead, Argo mimics the Kubernetes termination behavior, which is:
+1. Wait for the pod's `terminationGracePeriodSeconds` (30s by default).
+Argo doesn't support the following:
+To do this, Argo runs a `kubectl exec` command that kills the injected sidecar.
+By default i
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			pool.AppendCertsFromPEM([]byte(s3Driver.TrustedCA))
+Automatic (i.e. mutating webhook based) sidecar injection systems, including service meshes such as Anthos and Istio
+Proxy, create a unique problem for Kubernetes workloads that run to completion.
+Because sidecars are injected outside of the view of the workflow controller, the controller has no awareness of them.
+It has no opportunity to rewrite the containers command and as the sidecar's process will run as PID 1, which is protected.
+It can be impossible for the wait container to terminate the sidecar.
+You will minimize problems by not using Istio with Argo Workflows.
+* Any - we can kill any image
+* KubectlExec - we kill images by running `kubectl exec`
+## How We Kill Sidecars Using `kubectl exec`
+Kubernetes does not provide a way to kill a single container. You can delete a pod, but this kills all containers, and loses all information
+and logs of that pod.
+Instead, try to mimic the Kubernetes termination behavior, which is:
+1. Wait for the pod's `terminateGracePeriodSeconds` (30s by default).
+The following are not supported:
+To do this, it must be possible to run a `kubectl exec` command that kills the injected sidecar. By default it runs `/bin/sh -c 'kill 1'`. This can fail:
+2.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcd916ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31dbddc4` are properly handled with clean fallback behavior.

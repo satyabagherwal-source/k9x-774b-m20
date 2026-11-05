@@ -7464,3 +7464,6 @@
 | `CYCLE-20261105-KWZO` | `2026-11-05T02:33:00.420Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`cefe03a3...`) |
 | `CYCLE-20261105-UBXQ` | `2026-11-05T02:40:19.695Z` | `flox/flox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flox-flox-learnings.md` | Yes (`d38967e8...`) |
 | `CYCLE-20261105-UF8E` | `2026-11-05T02:40:23.966Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7074, Rule 7075, Rule 820` | Yes (`06d11286...`) |
+| `CYCLE-20261105-3Q2W` | `2026-11-05T02:47:37.928Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1279, Rule 7076, Rule 7077` | Yes (`9063e9b6...`) |
+| `CYCLE-20261105-3TVG` | `2026-11-05T02:47:42.844Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md` | Yes (`cf605227...`) |
+| `CYCLE-20261105-3XW8` | `2026-11-05T02:47:48.056Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7078` | Yes (`7f1e8a2c...`) |
