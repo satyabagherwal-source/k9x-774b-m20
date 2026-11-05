@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:40:49.401Z",
+  "last_updated": "2026-11-05T01:47:47.433Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6864,8 +6864,8 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "d9c53b01",
-      "content_hash": "8360bc9a832feb375402b5487460d2f5c42b617a8a9e853699c0a98abe12c985",
+      "source_version": "a0325326",
+      "content_hash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
@@ -6893,6 +6893,11 @@
           "number": 6472,
           "title": "query security_operations_empty_object_definition (#8159)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7065,
+          "title": "vulnerabilities): update dockerfile images (#8165)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6900,7 +6905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:39:15.743Z",
+      "verified_at": "2026-11-05T01:47:42.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10960,8 +10965,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "d3e6b5aa",
-      "content_hash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
+      "source_version": "a2ee57d3",
+      "content_hash": "7230afd9e8ba8e939a27be96f7f13bc21a9ae2a28daa77f62a26c8d0b7f58dbc",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -11039,6 +11044,11 @@
           "number": 6727,
           "title": "dashboard): translate the Settings tabs, Environment, System Info and Backup (#1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7066,
+          "title": "oauth): enforce foreign keys in the SQLite OAuth store (#1862)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11046,7 +11056,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:33:22.233Z",
+      "verified_at": "2026-11-05T01:47:47.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13355,8 +13365,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "1ff68d53",
-      "content_hash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
+      "source_version": "43936bab",
+      "content_hash": "e1a5ffc8f0450e0746df9e0829539b670da2ccffa74ce89079db2b8e633308e9",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -13409,6 +13419,11 @@
           "number": 6651,
           "title": "test: give the bulk loader in test12 an explicit socket timeout (#3590)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7064,
+          "title": "Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13416,7 +13431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:06:09.385Z",
+      "verified_at": "2026-11-05T01:47:34.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28256,7 +28271,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "385c45f8af732383eb73ff89340cbb2859612b572087a158898c5d611cd5cc11",
+      "content_hash": "7bc19e0f7119b93d1422dfb97844e9f3061225c7e823757797f8c7d8267ee5bf",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -28412,7 +28427,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-31T11:19:12.710Z",
+      "verified_at": "2026-11-05T01:47:33.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179196,6 +179211,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:40:49.379Z"
+    },
+    "rule-7064": {
+      "learning_id": "rule-7064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7064,
+      "title": "Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "43936bab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:47:34.740Z"
+    },
+    "rule-7065": {
+      "learning_id": "rule-7065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7065,
+      "title": "vulnerabilities): update dockerfile images (#8165)",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "a0325326",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:47:42.969Z"
+    },
+    "rule-7066": {
+      "learning_id": "rule-7066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7066,
+      "title": "oauth): enforce foreign keys in the SQLite OAuth store (#1862)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "a2ee57d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:47:47.413Z"
     }
   },
   "aliases": {

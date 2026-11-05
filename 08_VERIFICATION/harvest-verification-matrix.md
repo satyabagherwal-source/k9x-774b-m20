@@ -7445,3 +7445,7 @@
 | `CYCLE-20261105-G93D` | `2026-11-05T01:33:23.593Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7059` | Yes (`bad63c99...`) |
 | `CYCLE-20261105-GFM2` | `2026-11-05T01:33:32.042Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7060` | Yes (`66061551...`) |
 | `CYCLE-20261105-PT59` | `2026-11-05T01:40:49.485Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7061, Rule 7062, Rule 7063` | Yes (`8c916d7f...`) |
+| `CYCLE-20261105-YH6R` | `2026-11-05T01:47:33.891Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`7bc19e0f...`) |
+| `CYCLE-20261105-YHWW` | `2026-11-05T01:47:34.832Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7064` | Yes (`e1a5ffc8...`) |
+| `CYCLE-20261105-YO9G` | `2026-11-05T01:47:43.060Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7065` | Yes (`1bd7d2f2...`) |
+| `CYCLE-20261105-YROW` | `2026-11-05T01:47:47.504Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7066` | Yes (`7230afd9...`) |

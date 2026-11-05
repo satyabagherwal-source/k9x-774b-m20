@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T01:40:49.495Z",
-  "total_cycles_completed": 7422,
-  "total_learnings_persisted": 7422,
-  "total_rules_promoted": 7114,
+  "last_updated": "2026-11-05T01:47:47.512Z",
+  "total_cycles_completed": 7426,
+  "total_learnings_persisted": 7426,
+  "total_rules_promoted": 7117,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:17:52.657Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:17:57.046Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:18:00.724Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:18:01.641Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T17:18:03.821Z",
       "repository": "lodestones/Kromoss",
@@ -1403,6 +1375,34 @@
       "repository": "prithivMLmods/Gender-Classifier-Mini",
       "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:47:33.904Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:47:34.840Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:47:43.068Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T01:47:47.512Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "385c45f8af732383eb73ff89340cbb2859612b572087a158898c5d611cd5cc11",
-    "lastHarvestedAt": "2026-10-31T11:19:12.827Z",
+    "contentHash": "7bc19e0f7119b93d1422dfb97844e9f3061225c7e823757797f8c7d8267ee5bf",
+    "lastHarvestedAt": "2026-11-05T01:47:33.900Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "1ff68d53",
+    "sourceVersion": "43936bab",
     "license": "NOASSERTION",
-    "contentHash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
-    "lastHarvestedAt": "2026-11-03T23:06:09.494Z",
+    "contentHash": "e1a5ffc8f0450e0746df9e0829539b670da2ccffa74ce89079db2b8e633308e9",
+    "lastHarvestedAt": "2026-11-05T01:47:34.836Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "d3e6b5aa",
+    "sourceVersion": "a2ee57d3",
     "license": "Apache-2.0",
-    "contentHash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
-    "lastHarvestedAt": "2026-11-04T02:33:22.346Z",
+    "contentHash": "7230afd9e8ba8e939a27be96f7f13bc21a9ae2a28daa77f62a26c8d0b7f58dbc",
+    "lastHarvestedAt": "2026-11-05T01:47:47.508Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "d9c53b01",
+    "sourceVersion": "a0325326",
     "license": "Apache-2.0",
-    "contentHash": "8360bc9a832feb375402b5487460d2f5c42b617a8a9e853699c0a98abe12c985",
-    "lastHarvestedAt": "2026-11-02T17:39:15.860Z",
+    "contentHash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
+    "lastHarvestedAt": "2026-11-05T01:47:43.063Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {

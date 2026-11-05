@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T01:40:49.508Z",
+  "last_updated": "2026-11-05T01:47:47.522Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -695,14 +695,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "385c45f8af732383eb73ff89340cbb2859612b572087a158898c5d611cd5cc11",
-      "verified_at": "2026-10-31T11:19:12.835Z",
+      "content_hash": "7bc19e0f7119b93d1422dfb97844e9f3061225c7e823757797f8c7d8267ee5bf",
+      "verified_at": "2026-11-05T01:47:33.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:19:12.835Z"
+      "last_updated": "2026-11-05T01:47:33.907Z"
     },
     "Alissonerdx/BFS-Best-Face-Swap": {
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "1541f4ae8b0acc5e40dc0c594e903253232d3dd1fefd20428867456aa1f45fb8",
-      "verified_at": "2026-11-03T23:06:09.503Z",
+      "content_hash": "e1a5ffc8f0450e0746df9e0829539b670da2ccffa74ce89079db2b8e633308e9",
+      "verified_at": "2026-11-05T01:47:34.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:06:09.503Z"
+      "last_updated": "2026-11-05T01:47:34.850Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "c6560a99f78e68d0ceeb2fbca8a27a51d07f00a87d68eba8230aaf9f2cc3baa7",
-      "verified_at": "2026-11-04T02:33:22.356Z",
+      "content_hash": "7230afd9e8ba8e939a27be96f7f13bc21a9ae2a28daa77f62a26c8d0b7f58dbc",
+      "verified_at": "2026-11-05T01:47:47.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:33:22.356Z"
+      "last_updated": "2026-11-05T01:47:47.522Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "8360bc9a832feb375402b5487460d2f5c42b617a8a9e853699c0a98abe12c985",
-      "verified_at": "2026-11-02T17:39:15.868Z",
+      "content_hash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
+      "verified_at": "2026-11-05T01:47:43.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:39:15.868Z"
+      "last_updated": "2026-11-05T01:47:43.078Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",

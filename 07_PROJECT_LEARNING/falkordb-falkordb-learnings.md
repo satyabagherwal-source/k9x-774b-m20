@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `1ff68d53`  
+> **Source Version**: `43936bab`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:06:08.759Z  
+> **Timestamp**: 2026-11-05T01:47:34.171Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:06:07.083Z  
+> **Harvest Timestamp**: 2026-11-05T01:47:34.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10501 stars
+- **Stars / Engagement**: 10504 stars
 
 ---
 
@@ -2328,403 +2328,581 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a33eb28` (2026-11-01)
-**Commit Message**: test: give the bulk loader in test12 an explicit socket timeout (#3590)
+### Incident Patch 1: `b891775c` (2026-11-04)
+**Commit Message**: Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)
 
-The loader builds its own redis client, which gets redis-py's 5s default;
-one 64MB GRAPH.BULK batch exceeds that on the coverage build and the loader
-aborts mid-load. Pass the module's SOCKET_TIMEOUT in the URL and surface the
-loader exception in the assertion message.
+CCH-specific test support on top of the graph test kit (crate::testkit, which
+it re-exports, so cch::testkit::{grid, dijkstra, ...} keeps working), written
+from the CchInput contract and the C implementation's tests rather than from
+any Rust CCH code.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- to_input, the CchInput a weight matrix stands for, built with the GraphBLAS
+  calls cch.c makes rather than through CchInput::build, the code under test:
+  GrB_select OFFDIAG drops the self-loops, and the skeleton is the pattern of
+  W + W^T. Matrix::drop_diagonal comes with it, test-only for now. And
+  assert_input_invariants over any CchInput.
+- lower_rank_distances, the exact customization oracle, checked against a brute
+  force over every generator; valley, the graph of C's test01_create_query_drop.
+- EditGraph, Edit, apply_edit and random_edit_batch: seeded weight and structure
+  edits for the maintenance tests. An EditGraph keeps every parallel edge of a
+  pair (an edit can add one); its oracle is the matrix of each pair's cheapest,
+  and removing that edge reveals the next. A NaN weight panics there, since
+  f64::min would drop it before any ora
 
-**File**: `tests/flow/test_bulk_insertion.py` (modified, +11/-2)
+**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +26/-1)
 ```diff
-@@ -797,7 +797,16 @@ def test12_load_large_graph(self):
+@@ -103,7 +103,8 @@ use super::{
+     GxB_unload_Matrix_into_Container,
+ };
+ use super::{
+-    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_setElement_FP64,
++    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_select_INT64,
++    GrB_Matrix_setElement_FP64, GrB_OFFDIAG,
+ };
+ use super::{
+     GrB_GT_UINT64, GrB_Matrix_eWiseMult_BinaryOp, GrB_Matrix_select_BOOL, GrB_VALUEEQ_BOOL,
+@@ -972,6 +973,30 @@ impl<T> Matrix<T> {
+         self.has_pending.store(true, Ordering::Relaxed);
+     }
  
-         # start bulk-insert
-         start_time = time.perf_counter()
--        res = runner.invoke(bulk_insert, ['--server-url', f"redis://{self.env.host}:{self.port}",
-+        # The loader builds its own redis client from the URL, and redis-py
-+        # (>= 6) gives such a client a 5s socket timeout. A single GRAPH.BULK
-+        # batch here is up to 64MB (millions of edges) and takes longer than
-+        # that on an instrumented (coverage / ASAN) build: the loader then
-+        # aborts with TimeoutError while the server is still applying the
-+        # batch, leaving a partial graph (e.g. 2874998 of 4000000 edges).
-+        # State the deadline in the URL instead.
-+        url = (f"redis://{self.env.host}:{self.port}"
-+               f"?socket_timeout={SOCKET_TIMEOUT}&socket_connect_timeout={SOCKET_TIMEOUT}")
-+        res = runner.invoke(bulk_insert, ['--server-url', url,
-                                           *nodes_args, *edges_args, graphname])
-         # calculate the execution time
-         execution_time = time.perf_counter() - start_time
-@@ -811,7 +820,7 @@ def test12_load_large_graph(self):
-         self.env.assertGreaterEqual(ping_count, execution_time / 2)
++    /// Remove every entry on the main diagonal (`GrB_select` with
++    /// `GrB_OFFDIAG`, whose thunk 0 names the main diagonal), in place.
++    /// So far only the CCH test kit uses it, to drop a weight matrix's self-loops.
++    #[cfg(test)]
++    pub(crate) fn drop_diagonal(&mut self) {
++        let info = unsafe {
++            GrB_Matrix_select_INT64(
++                self.inner(),
++                null_mut(),
++                null_mut(),
++                GrB_OFFDIAG,
++                self.inner(),
++                0,
++                null_mut(),
++            )
++        };
++        assert_eq!(
++            info,
++            GrB_Info::GrB_SUCCESS,
++            "GrB_Matrix_select_INT64: {info:?}"
++        );
++        self.has_pending.store(true, Ordering::Relaxed);
++    }
++
+     pub fn select(
+         &mut self,
+         mask: &Matrix<bool>,
+```
+
+**File**: `graph/src/index/falkordb/cch/mod.rs` (modified, +2/-0)
+```diff
+@@ -20,6 +20,8 @@ mod customize;
+ mod input;
+ mod order;
+ mod query;
++#[cfg(test)]
++pub(crate) mod testkit;
  
-         # validate script results
--        self.env.assertEqual(res.exit_code, 0)
-+        self.env.assertEqual(res.exit_code, 0, message=repr(res.exception))
-         self.env.assertContains(f'{node_lbl_count} nodes created', res.output)
-         self.env.assertContains(f'{edge_count} relations created', res.output)
+ use std::sync::Arc;
  
+```
+
+**File**: `graph/src/index/falkordb/cch/testkit.rs` (added, +1116/-0)
+```diff
+@@ -0,0 +1,1116 @@
++//! Test fixtures for CCH (#3207), on top of the graph test kit ([`crate::testkit`], re-exported
++//! here, so `cch::testkit::{grid, dijkstra, ...}` keeps working).
++//!
++//! Written from the [`CchInput`] contract and the C reference on FalkorDB's
++//! `master` branch (`src/algorithms/cch.c`, `tests/flow/test_cch.py`) -- never
++//! from any Rust CCH implementation:
++//! - [`to_input`], the `CchInput` a weight matrix stands for, built with `cch.c`'s GraphBLAS
++//!   calls, and [`assert_input_invariants`], the contract any `CchInput` must meet;
++//! - [`lower_rank_distances`], the exact customization oracle, and [`valley`], the graph of C's
++//!   `test01_create_query_drop`;
++//! - [`EditGraph`], [`Edit`] and [`random_edit_batch`], the weight and structure edits the
++//!   maintenance tests replay, over a graph that keeps every parallel edge of a pair.
++
++pub(crate) use crate::testkit::*;
++
++use super::{CchInput, Csr, WeightCsr};
++use crate::graph::graphblas::matrix::{Descriptor, Dup, Matrix};
++use rand::rngs::SmallRng;
++use rand::{RngExt, SeedableRng};
++use std::collections::BTreeMap;
++use std::collections::HashSet;
++
++/// [`CchInput`] as its contract defines it, for the weight matrix `g`: a symmetric,
++/// self-loop-free skeleton for Phase 1, and directed weights, one per entry of `g`. Built with
++/// the GraphBLAS calls `cch.c` makes, not through `CchInput::build`, which is the code under
++/// test: the diagonal goes (`GrB_select` with `GrB_OFFDIAG`; a self-loop carries no
++/// shortest-path information, and `test14_parallel_selfloop_unreachable` treats one as a no-op),
++/// and the skeleton is the pattern of `W + Wᵀ`.
++///
++/// Weights are **not** validated here, on purpose: the tests of `Cch::build`'s
++/// `InvalidWeight` path build a deliberately invalid `CchInput` through this function.
++/// (The oracles, [`dijkstra`] and [`lower_rank_distances`], do reject them.)
++#[must_use]
++pub(crate) fn to_input(g: &Matrix<f64>) -> CchInput {
++    let n = node_count(g);
++    let mut w = g.dup();
++    w.drop_diagonal();
++    // A pattern: its values (1.0) are never read.
++    let mut skeleton = Matrix::<f64>::new(n as u64, n as u64);
++    skeleton.set_pattern(None, &w, None);
++    skeleton.set_pattern(None, &w, Some(Descriptor::T0));
++
++    let (rows, cols, w) = w.extract_tuples();
++    let (skeleton_rows, skeleton_cols, _) = skeleton.extract_tuples();
++    CchInput {
++        n,
++        skeleton: csr(n, &skeleton_rows, skeleton_cols),
++        weights: WeightCsr {
++            csr: csr(n, &rows, cols),
++            w,
++        },
++    }
++}
++
++/// The CSR of entries extracted row by row (`rows` sorted): row `r` starts where `rows` first
++/// reaches `r`.
++fn csr(
++    n: usize,
++    rows: &[u64],
++    i: Vec<u64>,
++) -> Csr {
++    let p = (0..=n as u64)
++        .map(|r| rows.partition_point(|&row| row < r) as u64)
++        .collect();
++    Csr { n, p, i }
++}
++
++/// C's `test01_create_query_drop` valley, both ways: `0 - 1` direct is 10, `0 - 2 - 1` is 2.
++#[must_use]
++pub(super) fn valley() -> Matrix<f64> {
++    weights(
++        3,
++        &[
++            (0, 1, 10.0),
++            (1, 0, 10.0),
++            (0, 2, 1.0),
++            (2, 0, 1.0),
++            (2, 1, 1.0),
++            (1, 2, 1.0),
++        ],
++    )
++}
++
++/// The exact CCH customization oracle. `perm[rank] = node` is the
++/// elimination order, exactly the convention a CCH's own `perm` array uses:
++/// processing nodes in increasing rank order corresponds to eliminating
++/// them one at a time, lowest rank first.
++///
++/// `result[a][b]` is the weight of the cheapest directed walk `a -> b`
++/// whose *intermediate* nodes -- everything but `a` and `b` themselves --
++/// all have strictly lower rank than BOTH `a` and `b`, i.e. `rank <
++/// min(rank(a), rank(b))`. `a` and `b` are themselves unrestricted: either
++/// may have any rank at all, including the highest in the graph.
++/// `result[a][a] == 0.0` always (the trivial empty walk). `f64::INFINITY`
++/// if no such walk exists. Self-loops are ignored entirely -- a diagonal entry
++/// contributes nothing.
++///
++/// This is precisely the quantity a correctly customized CCH must hold:
++/// for an arc `(a, b)` in the hierarchy with `rank(a) < rank(b)`, the
++/// **up** weight of that arc must equal `result[a][b]`, and the **down**
++/// weight of the reverse arc `(b, a)` must equal `result[b][a]` -- both
++/// bounded by the same `rank(a)` (the lower of the two ranks), just walked
++/// in opposite directions over a graph that need not be symmetric.
++///
++/// Computed by Floyd-Warshall, inserting nodes as allowed intermediates in
++/// rank order and recording `result[a][b]`/`result[b][a]` for every pair
++/// whose bound is exactly the rank about to be inserted -- the standard FW
++/// invariant that the matrix before inserting the `r`-th vertex (in a given
++/// order) holds shortest paths using only the first `r` as intermediates.
++///
++/// # Panics
++/// If `perm` is not a permutation 
 ```
 
 ---
 
-### Incident Patch 2: `b02266c2` (2026-11-01)
-**Commit Message**: fix: i64::MIN / -1 is an overflow error instead of wrapping (#3205, #3242) (#3603)
+### Incident Patch 2: `65654bc2` (2026-11-04)
+**Commit Message**: feat(index): GRAPH.MEMORY USAGE counts the native index (#3569)
 
-Integer / Integer stays exact (a deliberate divergence from C, which goes
-through double above 2^53). The one unrepresentable quotient, i64::MIN / -1,
-now raises 'ArgumentError: integer overflow in division' in both the scalar
-and vectorised paths. i64::MIN % -1 stays 0.
+* feat(index): GRAPH.MEMORY USAGE counts the native index
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+`indices_sz_mb` was RediSearch's own estimate of its indexes. Under
+`index-falkordb` Range fields no longer reach RediSearch, so a graph whose
+indexes are all Range reported no index memory while its native columns held
+it.
 
-**File**: `graph/src/runtime/value.rs` (modified, +3/-1)
+`VersionedIndex` gets `memory_usage()`, the heap bytes an index's own
+structure holds in a version. The tuple column answers with its tree's
+`heap_bytes()`, which had no caller. A page that versions share counts in each
+version that reaches it, so the sizes of two versions do not add up;
+`GRAPH.MEMORY USAGE` reads the published version. `IndexEntry::memory_usage()`
+adds, while the index is Building, the entities written since its last
+indexer batch, by their serialized size. `written_by_this_version` is always
+empty in a published version, so it is not counted.
+
+A build with the flag adds `FalkorDbIndex::memory_usage()`, the node and edge
+columns, to `indices_sz_mb`. There the native index holds the Range fields and
+RediSearch the rest, side by side until RediSearch goes, and the field counts
+both. The reply stays C's nine pairs on every b
+
+**File**: `.github/workflows/_ci-pipeline.yml` (modified, +3/-1)
 ```diff
-@@ -1160,7 +1160,9 @@ impl Div for Value {
-                 if b == 0 {
-                     Err(String::from("Division by zero"))
-                 } else {
--                    Ok(Self::Int(a.wrapping_div(b)))
-+                    a.checked_div(b)
-+                        .map(Self::Int)
-+                        .ok_or_else(|| String::from("ArgumentError: integer overflow in division"))
-                 }
-             }
-             (Self::Float(a), Self::Float(b)) => Ok(Self::Float(a / b)),
+@@ -478,6 +478,8 @@ jobs:
+         #
+         # `test_constraint` is here because under the flag a unique constraint looks up duplicates
+         # in the native index, and every class in that file creates or enforces constraints.
++        # `test_memory_usage` is here because only this build counts the native index in
++        # `indices_sz_mb`, and its test checks that size against what CREATE INDEX costs the server.
+         shell: bash
+         run: |
+           set +e
+@@ -486,7 +488,7 @@ jobs:
+           for t in tests/flow/test_index_create tests/flow/test_index_scans \
+                    tests/flow/test_index_updates tests/flow/test_index_delete \
+                    tests/flow/test_edge_index_scans tests/flow/test_edge_index_updates \
+-                   tests/flow/test_constraint; do
++                   tests/flow/test_constraint tests/flow/test_memory_usage; do
+             TEST="$t" ./flow.sh 2>&1 | tee -a /tmp/nextgen_flow.log
+             status=${PIPESTATUS[0]}
+             echo "SUITE_EXIT $t $status" | tee -a /tmp/nextgen_flow.log
 ```
 
-**File**: `graph/src/runtime/vector_expr.rs` (modified, +8/-1)
+**File**: `graph/src/graph/graph.rs` (modified, +7/-0)
 ```diff
-@@ -892,7 +892,14 @@ fn arithmetic(
-             ExprIR::Add => Some((0..len).map(|i| a[i].wrapping_add(b[i])).collect()),
-             ExprIR::Sub => Some((0..len).map(|i| a[i].wrapping_sub(b[i])).collect()),
-             ExprIR::Mul => Some((0..len).map(|i| a[i].wrapping_mul(b[i])).collect()),
--            ExprIR::Div | ExprIR::Modulo if (0..len).all(|i| b[i] != 0 || nulls.is_null(i)) => {
-+            // `i64::MIN / -1` is not representable: leave it to the scalar
-+            // path, which raises the overflow error.
-+            ExprIR::Div | ExprIR::Modulo
-+                if (0..len).all(|i| b[i] != 0 || nulls.is_null(i))
-+                    && (!matches!(op, ExprIR::Div)
-+                        || (0..len)
-+                            .all(|i| !(a[i] == i64::MIN && b[i] == -1) || nulls.is_null(i))) =>
-+            {
-                 let div = matches!(op, ExprIR::Div);
-                 Some(
-                     (0..len)
+@@ -291,6 +291,8 @@ pub struct MemoryUsageReport {
+     pub unlabeled_node_attr_sz: usize,
+     pub edge_block_storage_sz: usize,
+     pub edge_attr_by_type: Vec<(Arc<String>, usize)>,
++    /// RediSearch's own estimate of its indexes, and on a build with `index-falkordb` the native
++    /// index's columns as well.
+     pub indices_sz: usize,
+ }
+ 
+@@ -5067,7 +5069,12 @@ impl Graph {
+         }
+ 
+         // --- indices ---
++        // RediSearch's own estimate, as C reports it. Under the flag the native columns hold the
++        // Range fields and RediSearch the rest, so both count: this version's pages, including
++        // those it shares with another version.
+         let indices_sz = self.node_indexer.memory_usage() + self.edge_indexer.memory_usage();
++        #[cfg(feature = "index-falkordb")]
++        let indices_sz = indices_sz + self.falkordb_index.memory_usage();
+ 
+         MemoryUsageReport {
+             label_matrices_sz,
 ```
 
-**File**: `tests/flow/test_function_calls.py` (modified, +53/-0)
+**File**: `graph/src/index/falkordb/cch/mod.rs` (modified, +6/-0)
 ```diff
-@@ -2966,3 +2966,56 @@ def test98_exists_unbound_variables(self):
+@@ -405,6 +405,12 @@ impl VersionedIndex for CchIndex {
+     ) {
+         unreachable!("CCH is not dispatched through IndexId until the background build")
+     }
++
++    /// Never called: [`FalkorDbIndex::memory_usage`] counts the node and edge columns only, since
++    /// the hierarchy holds no arrays until #3208 and #3209.
++    fn memory_usage(&self) -> usize {
++        unreachable!("GRAPH.MEMORY USAGE counts no CCH index until the hierarchy holds arrays")
++    }
+ }
  
-         # the server is still responsive
-         self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
-+
-+    # Integer / Integer is exact (not routed through double as C does), and
-+    # i64::MIN / -1 is an overflow error instead of wrapping. Differences from
-+    # C above 2^53 are intentional (#3242); the overflow is #3205.
-+    def test99_integer_division_is_exact(self):
-+        cases = [
-+            ("9007199254740993 / 1", 9007199254740993),
-+            ("9007199254740993 / 3", 3002399751580331),
-+            ("123456789012345678 / 10", 12345678901234567),
-+            ("1000000000000000001 / 7", 142857142857142857),
-+            ("9223372036854775807 / 2", 4611686018427387903),
-+            ("-9223372036854775807 / 1", -9223372036854775807),
-+            ("4611686018427387903 / 4611686018427387904", 0),
-+            ("(9007199254740993 / 3) * 3 + 9007199254740993 % 3", 9007199254740993),
-+            ("-9007199254740993 / 2", -4503599627370496),
-+            ("-7 / 2", -3),
-+            ("7 / -2", -3),
-+            ("-7 % 2", -1),
-+            # not an overflow: the quotient fits
-+            ("-9223372036854775807 / -1", 9223372036854775807),
-+            ("(-9223372036854775807 - 1) / 1", -9223372036854775808),
-+            # the remainder is representable and stays 0
-+            ("(-9223372036854775807 - 1) % -1", 0),
-+        ]
-+        for expr, expected in cases:
-+            res = self.graph.query(f"RETURN {expr}")
-+            self.env.assertEqual(res.result_set, [[expected]], message=expr)
-+
-+        # the same values through the vectorised (per-row) path
-+        res = self.graph.query(
-+            "UNWIND [9007199254740993, 123456789012345678, 9223372036854775807] AS x "
-+            "RETURN x / 1, x / 10, x % 10")
-+        self.env.assertEqual(res.result_set, [
-+            [9007199254740993, 900719925474099, 3],
-+            [123456789012345678, 12345678901234567, 8],
-+            [9223372036854775807, 922337203685477580, 7]])
-+
-+        # i64::MIN / -1 does not fit in an Integer
-+        queries = [
-+            "RETURN -9223372036854775808 / -1",
-+            "RETURN (-9223372036854775807 - 1) / -1",
-+            "UNWIND [1, -9223372036854775807 - 1] AS x RETURN x / -1",
-+            "UNWIND [-9223372036854775807 - 1] AS x UNWIND [-1] AS y RETURN x / y",
-+        ]
-+        for q in queries:
-+            try:
-+                self.graph.query(q)
-+                self.env.assertTrue(False, message=q)
-+            except redis.ResponseError as e:
-+                self.env.assertContains("integer overflow in division", str(e))
-+
-+        # the server is still responsive
-+        self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
+ /// What a unit of work's writes touched that the graph's CCH indexes might care about. The
 ```
 
----
-
-### Incident Patch 3: `a477d9aa` (2026-11-02)
-**Commit Message**: fix: MERGE after SET/DELETE matches each live node exactly once (#3453) (#3467)
-
-* fix: MERGE after SET/DELETE matches each live node exactly once (#3453)
-
-`Pending::get_pending_nodes_with_labels`, Phase 2 of `IncludePendingOp`,
-returned every `set_labels` entry carrying all pattern labels: a deleted
-node too (`SET n:B DELETE n MERGE (m:B)` matched it), a node the committed
-scan had already yielded (`SET n:A MERGE (m:A)` returned it twice), and
-never a node whose labels were split between committed and staged
-(`SET n:B MERGE (m:A:B)` created a duplicate).
-
-Phase 2 now keeps a staged node when it is not pending-deleted, its
-effective labels ((committed \ remove_labels) ∪ set_labels) contain the
-pattern, and the committed scan would not already have yielded it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix: MERGE's pending-label candidates are taken from one source only (#3453)
-
-An indexed scan reads the committed index, which can omit a node whose
-indexed value changed in this query or already emit one whose secondary
-label was staged. Emit every label-staged node from IncludePending alone and
-skip those nodes in the wrapped scan, so each is enumerated exactly once.
-
-Co
-
-**File**: `graph/src/runtime/ops/include_pending.rs` (modified, +17/-5)
+**File**: `graph/src/index/falkordb/falkordb_index.rs` (modified, +151/-0)
 ```diff
-@@ -1,7 +1,8 @@
- //! Composable operator that augments a child scan with pending mutations.
- //!
- //! Wraps any scan operator (NodeByLabelScan, NodeByIndexScan, etc.) and:
--//! 1. Filters out pending-deleted nodes and nodes with pending label removals
-+//! 1. Filters out pending-deleted nodes, nodes with pending label removals and
-+//!    nodes the second step emits itself
- //! 2. After child exhaustion, emits pending-created nodes and nodes with
- //!    pending label additions
- //!
-@@ -31,6 +32,9 @@ pub struct IncludePendingOp<'a> {
-     /// Nodes to filter out of child results.
-     deleted_nodes: Option<RoaringTreemap>,
-     label_removed_nodes: Option<RoaringTreemap>,
-+    /// Nodes emitted from `pending_extra` instead of the child, so the child
-+    /// does not yield them a second time.
-+    extra_nodes: RoaringTreemap,
-     /// Whether we've finished pulling from the child.
-     child_exhausted: bool,
-     /// Correlated argument rows captured from the enclosing sub-plan's
-@@ -59,6 +63,7 @@ impl<'a> IncludePendingOp<'a> {
-             pending_extra: None,
-             deleted_nodes: None,
-             label_removed_nodes: None,
-+            extra_nodes: RoaringTreemap::new(),
-             child_exhausted: false,
-             argument_rows: Vec::new(),
-             cur_pending_node: None,
-@@ -88,22 +93,22 @@ impl<'a> IncludePendingOp<'a> {
-             .iter()
-             .filter_map(|l| g.get_label_id(l))
-             .collect();
--        drop(g);
+@@ -401,6 +401,12 @@ impl VersionedIndex for IndexColumn {
+     ) {
+         self.add_encoded(batch);
+     }
++
++    fn memory_usage(&self) -> usize {
++        match self {
++            Self::Numeric(idx) => idx.memory_usage(),
++        }
++    }
+ }
  
-         let pending = self.runtime.pending.borrow();
- 
-         self.deleted_nodes = Some(pending.deleted_nodes());
-         self.label_removed_nodes = Some(pending.nodes_with_pending_label_removes(&label_ids));
- 
-         let pending_nodes = if label_ids.len() == self.node_pattern.labels.len() {
--            pending.get_pending_nodes_with_labels(&label_ids)
-+            pending.get_pending_nodes_with_labels(&label_ids, &g)
-         } else {
-             RoaringTreemap::new()
-         };
- 
-         drop(pending);
-+        drop(g);
- 
--        self.pending_extra = Some(Box::new(pending_nodes.into_iter().map(NodeId::from)));
-+        self.extra_nodes = pending_nodes;
+ /// How to answer a query by scanning while its column is still building: keep the entities whose
+@@ -568,6 +574,19 @@ impl FalkorDbIndex {
+         self.node_columns.len() + self.edge_columns.len()
      }
  
-     /// Emit a batch from pending_extra nodes.
-@@ -179,7 +184,10 @@ impl<'a> Iterator for IncludePendingOp<'a> {
-                             let env = BatchRow::new(&batch, row).to_owned_row();
-                             if let Some(Value::Node(nid)) = env.get_by_id(alias.id) {
-                                 let raw: u64 = (*nid).into();
--                                if deleted.contains(raw) || removed.contains(raw) {
-+                                if deleted.contains(raw)
-+                                    || removed.contains(raw)
-+                                    || self.extra_nodes.contains(raw)
-+                                {
-                                     continue;
-                                 }
-                             } else {
-@@ -200,6 +208,10 @@ impl<'a> Iterator for IncludePendingOp<'a> {
-                     Some(Err(e)) => return Some(Err(e)),
-                     None => {
-                         self.child_exhausted = true;
-+                        // The child is done, so the skip-set becomes the
-+                        // emission queue without a second copy.
-+                        let extra = std::mem::take(&mut self.extra_nodes);
-+                        self.pending_extra = Some(Box::new(extra.into_iter().map(NodeId::from)));
-                         break;
-                     }
-                 }
-```
-
-**File**: `graph/src/runtime/pending.rs` (modified, +32/-5)
-```diff
-@@ -1097,20 +1097,47 @@ impl Pending {
-         self.created_nodes.contains(id.into())
++    /// Heap bytes every column holds in this version, node and edge
++    /// ([`VersionedIndex::memory_usage`]): what a build with `index-falkordb` adds to
++    /// `indices_sz_mb` in `GRAPH.MEMORY USAGE`. Walks every page of every column. The CCH
++    /// indexes are not counted: their hierarchy holds no arrays until #3208 and #3209.
++    #[must_use]
++    pub fn memory_usage(&self) -> usize {
++        self.node_columns
++            .values()
++            .chain(self.edge_columns.values())
++            .map(IndexEntry::memory_usage)
++            .sum()
++    }
++
+     /// The column map for `entity` — node labels and relationship types keep
+     /// separate keyspaces (a label and a type may share a name).
+     fn columns(
+@@ -1247,6 +1266,138 @@ mod tests {
+         assert_eq!(all(&v2), vec![1, 2]); // new version sees the write
      }
  
--    /// Returns pending-created node IDs that have ALL of the given labels.
--    /// When `label_ids` is empty, returns all pending-created nodes.
-+    /// The nodes that GAIN a pattern label in this query and carry ALL of
-+    /// `label_ids` once the pending changes apply: live (not pending-deleted),
-+    /// with every label in the node's effective set
-+    /// (`(committed \ remove_labels) ∪ set_labels`, `set_labels` alone for a
-+    /// created node), and with at least one of them only staged. A node whose
-+    /// pattern labels are all committed (and none pending removal) is left to
-+    /// the wrapped scan: re-setting a label it already has changes nothing.
++    /// Tuples for entities `0..n`, entity `i` holding `value(i)`.
++    fn tuples(
++        n: u64,
++        value: impl Fn(u64) -> i64,
++    ) -> EncodedTuples {
++        EncodedTuples::scalars(
++            (0..n)
++                .map(|i| (encode_numeric(&Value::Int(value(i))).unwrap(), i))
++                .collect(),
++        )
++    }
++
++    /// A column built from `tuples`, as an indexer batch builds one.
++    fn column_of(mut tuples: EncodedTuples) -> IndexColumn {
++        let mut column = IndexColumn::Numeric(NumericIndex::new());
++        column.indexer_add(&mut tuples);
++        column
++    }
++
++    /// A column reports its pages, at sizes from empty to several levels of branches.
 +    ///
-+    /// A returned node may also be emitted by an indexed scan, which checks
-+    /// secondary labels pending-aware. The caller therefore takes every
-+    /// returned node from here only, skipping them in the wrapped scan, so
-+    /// each is enumerated exactly once. When `label_ids` is empty, returns all
-+    /// pending-created nodes.
-     #[must_use]
-     pub fn get_pending_nodes_with_labels(
-         &self,
-         label_ids: &[LabelId],
-+        g: &Graph,
-     ) -> RoaringTreemap {
-         if label_ids.is_empty() {
-             return self.created_nodes.clone();
-         }
--        let label_ids_u64: Vec<u64> = label_ids.iter().map(|l| usize::from(*l) as u64).collect();
-         let mut result = RoaringTreemap::new();
--        for (&node_id, node_labels) in &self.set_labels {
--            if label_ids_u64.iter().all(|lid| node_labels.contains(lid)) {
-+        // A node that gains a pattern label must have it staged, so
-+        // `set_labels` holds every candidate.
-+        for (&node_id, staged) in &self.set_labels {
-+            if self.deleted_nodes.contains(node_id) {
-+                continue;
-+            }
-+            let created = self.created_nodes.contains(node_id);
-+            let removed = self.remove_labels.get(&node_id);
-+            let mut all_committed = !created;
-+            let matches = label_ids.iter().all(|&label| {
-+                let lid = usize::from(label) as u64;
-+                let committed = !created
-+                    && !removed.is_some_and(|r| r.contains(&lid))
-+                    && g.node_has_label_id(NodeId::from(node_id), label);
-+                all_committed &= committed;
-+                committed || staged.contains(&lid)
-+            });
-+            if matches && !all_committed {
-                 result.insert(node_id);
-             }
-         }
++    /// Distinct ints are far apart once encoded, so every leaf stays in the 16-byte
++    /// array-of-structs form: the tuples are a floor. Above each leaf a branch holds one child
++    /// and one 16-byte separator, under 64 bytes a leaf between them.
++    #[test]
++    fn a_column_reports_its_pages() {
++        let mut smaller = 0;
++        for n in [0, 1, 255, 256, 257, 10_000, 200_000] {
++            let size = VersionedIndex::memory_usage(&column_of(tuples(n, |i| i as i64)));
++            let floor = usize::try_from(n).unwrap() * 16;
++            let leaves = floor.div_ceil(256 * 16);
++            assert!(
++                (floor..=floor + 64 * leaves).contains(&size),
++                "{n} tuples reported {size} bytes, not {floor} plus at most {} for branches",
++                64 * leaves
++            );
++            assert!(
++                size > smaller || n == 0,
++                "{n} tuples reported no more than fewer did"
++            );
++            smaller = size;
++        }
++    }
++
++    /// The compact leaf form counts too: every entity holding one value packs a tuple into a
++    /// one-byte index entry plus its doc, well under the 16 bytes the other form takes.
++    #[test]
++    fn a_compact_column_reports_its_pages() {
++        for n in [256, 10_000, 200_000] {
++            let size = VersionedIndex::memory_usage(&column_of(tuples(n, |_| 7)));
++            let n = usize::try_from(n).unwrap();
++            assert!(
++                (n..=n * 8).contains(&size),
++                "{n} tuples of one value reported {size} bytes"
++            );
++        }
++    }
++
++    /// Versions that share pages each count them: a fork reports what its parent does, and
++    /// writing the fork changes only the fork's number.
++    #[test]
++    fn each_version_counts_the_pages_it_shares() {
++        let (label, attr) = (arc("Person"), arc("age"));
++        let adds = |ids: std::ops::Range<u64>| -> Vec<(i64, u64, bool)> {
++            ids.map(|id| (id as i64, id, true)).collect()
++        };
++        let mut v1 = FalkorDbIndex::new();
++        v1.create_numeric(Node, &label, &attr);
++        write(&mut v1, &label, &attr, &adds(0..10_000));
++        let before = v1.memory_usage();
++        assert!(before > 0);
++
++        let mut v2 = v1.clone();
++        assert_eq!(v2.memory_usage(), before);
++        write(&mut v2, &label, &attr, &adds(10_000..20_000));
++        assert_eq!(v1.memory_usage(), before);
++        assert!(v2.memory_usage() > before);
++    }
++
++    /// The index reports every column, node and edge, each by its own pages.
++    #[test]
++    fn the_index_counts_node_and_edge_columns() {
++        let (label, attr) = (arc("Rated"), arc("score")); // a node label and a relationship type
++        let with = |columns: &[(EntityType, u64)]| -> FalkorDbIndex {
++            let mut idx = FalkorDbIndex::new();
++            for &(entity, n) in columns {
++                idx.create_numeric(entity, &label, &attr);
++              
 ```
 
-**File**: `tests/flow/test_graph_merge.py` (modified, +63/-0)
+**File**: `graph/src/index/falkordb/numeric.rs` (modified, +7/-0)
 ```diff
-@@ -925,6 +925,69 @@ def test42_merge_edge_of_detach_deleted_node(self):
-                                          RETURN count(r)""")
-             self.env.assertEqual(actual.result_set, [[1]])
+@@ -290,6 +290,13 @@ impl NumericIndex {
+         self.tree.is_empty()
+     }
  
-+    def test43_merge_sees_labels_set_earlier_in_the_query(self):
-+        # #3453: MERGE's node scan pairs the committed graph with this query's
-+        # pending label changes. Each node it should see must come back exactly
-+        # once, and a deleted one not at all.
-+        g = self.db.select_graph("merge_pending_labels")
++    /// Heap bytes the tree holds ([`CowBTree::heap_bytes`]): every page this version reaches,
++    /// whether or not another version shares it. Walks every page.
++    #[must_use]
++    pub fn memory_usage(&self) -> usize {
++        self.tree.heap_bytes()
++    }
 +
-+        # A node given a label and then deleted is not a match: MERGE creates.
-+        g.query("CREATE (:A)")
-+        res = g.query("MATCH (n:A) SET n:B DELETE n MERGE (m:B) RETURN id(m) <> id(n)")
-+        self.env.assertEqual(res.result_set, [[True]])
-+        self.env.assertEqual(res.nodes_created, 1)
-+        self.env.assertEqual(g.query("MATCH (n) RETURN labels(n)").result_set, [[["B"]]])
+     /// Entity ids whose value equals `value`. Empty for a non-numeric value.
+     #[must_use]
+     pub fn point(
+```
+
+**File**: `graph/src/index/falkordb/versioned.rs` (modified, +20/-0)
+```diff
+@@ -300,6 +300,11 @@ pub(crate) trait VersionedIndex: Clone + Sized {
+         &mut self,
+         batch: &mut Self::Batch,
+     );
 +
-+        # Re-setting a label the node already has does not match it twice.
-+        g.delete()
-+        g.query("CREATE (:A)")
-+        res = g.query("""MATCH (n:A) SET n:A
-+                         MERGE (m:A) ON MATCH SET m.hits = coalesce(m.hits, 0) + 1
-+                         RETURN m.hits""")
-+        self.env.assertEqual(res.result_set, [[1]])
-+        self.env.assertEqual(res.nodes_created, 0)
++    /// Heap bytes this index's own structure holds in this version: every page it reaches,
++    /// counted once, whether or not another version shares it. So the sizes of two versions that
++    /// share pages do not add up; each says what that version would cost alone.
++    fn memory_usage(&self) -> usize;
+ }
+ 
+ impl<K: VersionedIndex> IndexEntry<K> {
+@@ -338,6 +343,21 @@ impl<K: VersionedIndex> IndexEntry<K> {
+             .writer_record(&mut self.state, changes, place, scratch);
+     }
+ 
++    /// Heap bytes this index holds in this version: its structure ([`VersionedIndex::memory_usage`])
++    /// and, while `Building`, the entities written since a batch last committed on it
++    /// ([`Written::since_last_indexer_step`]), by their serialized size.
++    /// [`Written::by_this_version`] is not counted: a published version, which is what
++    /// `GRAPH.MEMORY USAGE` reads, always has it empty ([`Self::publish`]).
++    pub(crate) fn memory_usage(&self) -> usize {
++        let written = match &self.state {
++            BuildState::Building { written, .. } if !written.since_last_indexer_step.is_empty() => {
++                written.since_last_indexer_step.serialized_size()
++            }
++            _ => 0,
++        };
++        self.index.memory_usage() + written
++    }
 +
-+        # A node whose pattern labels are split between committed (A) and
-+        # staged (B) matches.
-+        g.delete()
-+        g.query("CREATE (:A)")
-+        res = g.query("MATCH (n:A) SET n:B MERGE (m:A:B) RETURN id(m) = id(n)")
-+        self.env.assertEqual(res.result_set, [[True]])
-+        self.env.assertEqual(res.nodes_created, 0)
-+        self.env.assertEqual(g.query("MATCH (n) RETURN count(n)").result_set, [[1]])
+     /// Add an indexer batch's `work`, read from this same version, then move the cursor to `next`,
+     /// or flip the index `Ready` when it is `None`. `false`, changing nothing, if the index is not
+     /// `Building`.
+```
+
+**File**: `src/commands/memory.rs` (modified, +4/-0)
+```diff
+@@ -27,6 +27,10 @@
+ //!   "indices_sz_mb",                              <int> ]
+ //! ```
+ //!
++//! `indices_sz_mb` is RediSearch's own estimate of its indexes, as C reports it.
++//! A build with `index-falkordb` adds the native index's columns, which hold the
++//! Range fields there, so the reply is C's nine pairs on every build.
++//!
+ //! The `total_graph_sz_mb` value is the sum of all other MB-rounded
+ //! components, which avoids truncation discrepancies when clients verify
+ //! the total against the individual parts.
+```
+
+**File**: `tests/flow/test_index_updates.py` (modified, +22/-14)
+```diff
+@@ -305,10 +305,11 @@ def test11_failed_write_during_index_population(self):
+ class testNativeOnlyFeedFlow(FlowTestsBase):
+     # Under `index-falkordb` the native index is the only Range index, so nothing may also feed
+     # Range fields to RediSearch: not a write, not the build after CREATE INDEX, not the build
+-    # after an RDB load. `indices_sz_mb` in GRAPH.MEMORY USAGE is RediSearch's own memory, which
+-    # is what makes those feeds visible from a client. Without the flag RediSearch is the Range
+-    # index and all three must reach it; that half also shows the data is big enough for a
+-    # whole-MB counter to see.
++    # after an RDB load. `indices_sz_mb` in GRAPH.MEMORY USAGE is what makes those feeds visible
++    # from a client: RediSearch's own memory, plus under the flag the native columns, which cost
++    # several times less than a RediSearch copy of the same entries. Without the flag RediSearch
++    # is the Range index and all three must reach it; that half also shows the data is big enough
++    # for a whole-MB counter to see.
+     def __init__(self):
+         # enableDebugCommand: the test reloads via DEBUG RELOAD, which redis refuses by default.
+         self.env, self.db = Env(enableDebugCommand=True)
+@@ -317,7 +318,7 @@ def test01_native_only_build_feeds_no_range_fields_to_redisearch(self):
+         key = 'native_only_feed'
+         g = self.db.select_graph(key)
+ 
+-        def redisearch_mb():
++        def indices_mb():
+             res = self.env.getConnection().execute_command("GRAPH.MEMORY", "USAGE", key)
+             fields = [f.decode() if isinstance(f, bytes) else f for f in res[0::2]]
+             return res[2 * fields.index('indices_sz_mb') + 1]
+@@ -328,9 +329,9 @@ def redisearch_mb():
+         create_edge_range_index(g, 'RF', 'w', sync=True)
+ 
+         g.query("UNWIND range(1, 50000) AS i CREATE (:NF {v: i})")
+-        after_nodes = redisearch_mb()
++        after_nodes = indices_mb()
+         g.query("UNWIND range(1, 50000) AS i CREATE ()-[:RF {w: i}]->()")
+-        after_writes = redisearch_mb()
++        after_writes = indices_mb()
+ 
+         # The indexes the writes filled, and those a build fills below: each must still be one the
+         # planner uses and that answers.
+@@ -358,7 +359,7 @@ def answers(queries):
+         # The build after CREATE INDEX: the data exists before the indexes.
+         g.query("UNWIND range(1, 50000) AS i CREATE (:NB {v: i})")
+         g.query("UNWIND range(1, 50000) AS i CREATE ()-[:RB {w: i}]->()")
+-        before_build = redisearch_mb()
++        before_build = indices_mb()
+         create_node_range_index(g, 'NB', 'v')
+         create_edge_range_index(g, 'RB', 'w')
+         if native_only:
+@@ -370,17 +371,24 @@ def answers(queries):
+             self.env.assertEqual(res.result_set, [['NB', 'OPERATIONAL'], ['RB', 'OPERATIONAL']])
+         # A RediSearch build runs in the background; it has to finish before the reading shows it.
+         wait_for_indices_to_sync(g)
+-        after_build = redisearch_mb()
++        after_build = indices_mb()
+ 
+         # The build after an RDB load.
+         self.env.dumpAndReload()
+-        after_reload = redisearch_mb()
++        after_reload = indices_mb()
+ 
+         if native_only:
+-            self.env.assertEqual(after_nodes, 0)
+-            self.env.assertEqual(after_writes, 0)
+-            self.env.assertEqual(after_build, 0)
+-            self.env.assertEqual(after_reload, 0)
++            # Only the native columns: an entry takes at most 16 bytes in its page and the
++            # branches above it under one more, so 32 is a ceiling with room to spare; the fixed
++            # cost is under 1 MiB, and the reading truncates to whole MiB. A RediSearch copy is
++            # 3.5x to 5x this bound at each step (7, 18, 36 and 36 MiB against 2, 4, 7 and 7).
++            def native_mb(entries):
++                return entries * 32 // (1 << 20) + 1
 +
-+        # A label removed earlier in the query is not matched, even if another
-+        # pattern label was staged.
-+        g.delete()
-+        g.query("CREATE (:A)")
-+        res = g.query("MATCH (n:A) SET n:B REMOVE n:A MERGE (m:A:B) RETURN id(m) = id(n)")
-+        self.env.assertEqual(res.result_set, [[False]])
-+        self.env.assertEqual(res.nodes_created, 1)
-+
-+        # With an index on the pattern label, a node that gains a pattern label
-+        # is returned once, not by both the index scan and the pending
-+        # candidates.
-+        g.delete()
-+        create_node_range_index(g, "A", "v", sync=True)
-+        g.query("CREATE (:A {v: 1})")
-+        q = "MATCH (n:A) SET n:B MERGE (m:A:B {v: 1}) RETURN id(m) = id(n)"
-+        self.env.assertContains("Node By Index Scan", str(g.explain(q)))
-+        res = g.query(q)
-+        self.env.assertEqual(res.result_set, [[True]])
-+        self.env.assertEqual(res.nodes_created, 0)
-+
-+        # Re-setting labels a node already has leaves it on the indexed path:
-+        # one match per correlated row, not a candidate-by-row product.
-+        g.delete()
-+        create_node_range_index(g, "A", "v", sync=True)
-+        g.query("UNWIND range(1, 5) AS i CREATE (:A:B {v: i})")
-+        q = "MATCH (n:A:B) SET n:B MERGE (m:A:B {v: n.v}) RETURN count(*)"
-+        self.env.assertContains("Node By Index Scan", str(g.explain(q)))
-+        res = g.query(q)
-+        self.env.assertEqual(res.result_set, [[5]])
-+        self.env.assertEqual(res.nodes_created, 0)
-+        g.delete()
-+
-     def test40_merge_path_over_bound_endpoints_keeps_every_match(self):
-         # With every node bound and no named relationship, MERGE kept only the
-         # first match. A path variable still tells parallel edges apart (#3040).
++            self.env.assertLessEqual(after_nodes, native_mb(50000))
++            self.env.assertLessEqual(after_writes, native_mb(100000))
++            self.env.assertLessEqual(after_build, native_mb(200000))
++            self.env.assertLessEqual(after_reload, native_mb(200000))
+         else:
+             self.env.assertGreater(after_nodes, 0)
+             self.env.assertGreater(after_writes, after_nodes)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3666** (2026-11-04): ci: install Trivy 0.76.1 from its GitHub release (get.trivy.dev is down) (@AviAvni)
+- **PR #3665** (2026-11-04): ci: remove the unused gh-aw agentic workflow setup (@AviAvni)
 - **PR #3657** (2026-11-02): refactor(mvcc): writers fork and commit; drop the write slot (@DvirDukhan)
 - **PR #3655** (closed): Truncated shortestPath relationship filters can hang the parser (@gkorland)
 - **PR #3638** (2026-11-01): build(asan): make the symbolizer COPY robust to the toolchain's libLLVM layout (@AviAvni)
 - **PR #3636** (closed): fix(rdb): encode an empty tensor section as one zero, load legacy ones (@dudizimber)
-- **PR #3630** (2026-11-01): chore(deps): bump the bench-deps group in /bench with 3 updates (@dependabot[bot])
-- **PR #3629** (2026-11-01): chore(deps): bump the cargo-deps group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2744,39 +2922,53 @@ Co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: give the bulk loader in test12 an explicit socket timeout (#3590)
+## X. Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564)
 
 **RULE**:
-When implementing operations in `tests/flow/test_bulk_insertion.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/graph/graphblas/matrix.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a33eb28`: test: give the bulk loader in test12 an explicit socket timeout (#3590). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b891775c`: Add the CCH test kit: CchInput fixtures, invariants and edit generators (#3564). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/flow/test_bulk_insertion.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/graph/graphblas/matrix.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        # The loader builds its own redis client from the URL, and redis-py
-        # (>= 6) gives such a client a 5s socket timeout. A single GRAPH.BULK
-        # batch here is up to 64MB (millions of edges) and takes longer than
-        # that on an instrumented (coverage / ASAN) build: the loader then
-        # aborts with TimeoutError while the server is still applying the
-        # batch, leaving a partial graph (e.g. 2874998 of 4000000 edges).
-        # State the deadline in the URL instead.
-        url = (f"redis://{self.env.host}:{self.port}"
-               f"?socket_timeout={SOCKET_TIMEOUT}&socket_connect_timeout={SOCKET_TIMEOUT}")
-        res = runner.invoke(bulk_insert, ['--server-url', url,
-        self.env.assertEqual(res.exit_code, 0, message=repr(res.exception))
+    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_select_INT64,
+    GrB_Matrix_setElement_FP64, GrB_OFFDIAG,
+    /// Remove every entry on the main diagonal (`GrB_select` with
+    /// `GrB_OFFDIAG`, whose thunk 0 names the main diagonal), in place.
+    /// So far only the CCH test kit uses it, to drop a weight matrix's self-loops.
+    #[cfg(test)]
+    pub(crate) fn drop_diagonal(&mut self) {
+        let info = unsafe {
+            GrB_Matrix_select_INT64(
+                self.inner(),
+                null_mut(),
+                null_mut(),
+                GrB_OFFDIAG,
+                self.inner(),
+                0,
+                null_mut(),
+            )
+        };
+        assert_eq!(
+            info,
+            GrB_Info::GrB_SUCCESS,
+            "GrB_Matrix_select_INT64: {info:?}"
+        );
+        self.has_pending.store(true, Ordering::Relaxed);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        res = runner.invoke(bulk_insert, ['--server-url', f"redis://{self.env.host}:{self.port}",
-        self.env.assertEqual(res.exit_code, 0)
+    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_setElement_FP64,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a33eb28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b891775c` are properly handled with clean fallback behavior.

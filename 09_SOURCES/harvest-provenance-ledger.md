@@ -7454,3 +7454,7 @@ Every entry in this ledger must capture:
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `1a192aab` | Multi-dimensional audit evidence | 2026-11-05T01:33:23.597Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3d54f0c1` | Multi-dimensional audit evidence | 2026-11-05T01:33:32.046Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-05T01:40:49.489Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-05T01:47:33.900Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `43936bab` | Multi-dimensional audit evidence | 2026-11-05T01:47:34.836Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a0325326` | Multi-dimensional audit evidence | 2026-11-05T01:47:43.063Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a2ee57d3` | Multi-dimensional audit evidence | 2026-11-05T01:47:47.508Z |
