@@ -7516,3 +7516,6 @@
 | `CYCLE-20261105-ZOER` | `2026-11-05T05:04:27.219Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`e2f49090...`) |
 | `CYCLE-20261105-ZYAN` | `2026-11-05T05:04:40.031Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7113` | Yes (`5a744c58...`) |
 | `CYCLE-20261105-F2GE` | `2026-11-05T05:16:25.262Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`9a074774...`) |
+| `CYCLE-20261105-OPSR` | `2026-11-05T05:23:55.419Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7114` | Yes (`82c4d0a2...`) |
+| `CYCLE-20261105-OQN9` | `2026-11-05T05:23:56.517Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7115` | Yes (`21384324...`) |
+| `CYCLE-20261105-QMKR` | `2026-11-05T05:25:24.555Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1047, Rule 7116` | Yes (`039d58ce...`) |

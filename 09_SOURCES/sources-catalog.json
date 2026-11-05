@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
-    "lastHarvestedAt": "2026-10-31T14:32:40.979Z",
+    "contentHash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
+    "lastHarvestedAt": "2026-11-05T05:25:24.559Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "4b0b7450",
+    "sourceVersion": "65da6386",
     "license": "Apache-2.0",
-    "contentHash": "0b020a13268e4eb1d2d36000478da4c6ee1e728b50ab69dbe09d9dae944e826a",
-    "lastHarvestedAt": "2026-11-03T11:52:09.977Z",
+    "contentHash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
+    "lastHarvestedAt": "2026-11-05T05:23:55.423Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "a8da5a8a",
+    "sourceVersion": "a8e47203",
     "license": "Apache-2.0",
-    "contentHash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
-    "lastHarvestedAt": "2026-11-04T10:12:33.036Z",
+    "contentHash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
+    "lastHarvestedAt": "2026-11-05T05:23:56.521Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

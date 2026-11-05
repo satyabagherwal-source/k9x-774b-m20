@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T05:16:25.151Z",
+  "last_updated": "2026-11-05T05:25:24.469Z",
   "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12988,8 +12988,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "4b0b7450",
-      "content_hash": "0b020a13268e4eb1d2d36000478da4c6ee1e728b50ab69dbe09d9dae944e826a",
+      "source_version": "65da6386",
+      "content_hash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -13047,6 +13047,11 @@
           "number": 6515,
           "title": "CHANGELOG(3.5,3.6,3.7): add force-new-cluster commit-index fix entries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7114,
+          "title": "Merge pull request #22692 from etcd-io/dependabot/docker/distroless/static-debia",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13054,7 +13059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:52:09.868Z",
+      "verified_at": "2026-11-05T05:23:55.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14789,8 +14794,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "a8da5a8a",
-      "content_hash": "e16ed959b909239f5124f3cc5eec10d749ed7fe519dcb84f2b49223a29f9fe61",
+      "source_version": "a8e47203",
+      "content_hash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -14893,6 +14898,11 @@
           "number": 6805,
           "title": "Enable kube-api-linter `optionalorrequired` for `operations/v1alpha1` (#16133)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7115,
+          "title": "Update etcd-druid to v0.39.2 (#16216)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14900,7 +14910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:12:32.973Z",
+      "verified_at": "2026-11-05T05:23:56.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31356,7 +31366,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "60b50c194567eec1548e932db3c88b7ec271ef5321a33d156fb869a45f113521",
+      "content_hash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -31424,6 +31434,11 @@
           "number": 6224,
           "title": "Distilled Scheduler Step Size Invariance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7116,
+          "title": "Distilled Model NFE Calibration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31444,7 +31459,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-31T14:32:40.883Z",
+      "verified_at": "2026-11-05T05:25:24.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87917,7 +87932,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T14:32:40.883Z"
+      "verified_at": "2026-11-05T05:25:24.446Z"
     },
     "rule-1048": {
       "learning_id": "rule-1048",
@@ -180246,6 +180261,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T05:04:39.941Z"
+    },
+    "rule-7114": {
+      "learning_id": "rule-7114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7114,
+      "title": "Merge pull request #22692 from etcd-io/dependabot/docker/distroless/static-debia",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "65da6386",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:23:55.311Z"
+    },
+    "rule-7115": {
+      "learning_id": "rule-7115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7115,
+      "title": "Update etcd-druid to v0.39.2 (#16216)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "a8e47203",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:23:56.411Z"
+    },
+    "rule-7116": {
+      "learning_id": "rule-7116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7116,
+      "title": "Distilled Model NFE Calibration",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T05:25:24.446Z"
     }
   },
   "aliases": {

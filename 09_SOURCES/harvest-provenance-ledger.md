@@ -7525,3 +7525,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T05:04:27.227Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `8dcfc003` | Multi-dimensional audit evidence | 2026-11-05T05:04:40.035Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T05:16:25.271Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `65da6386` | Multi-dimensional audit evidence | 2026-11-05T05:23:55.423Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `a8e47203` | Multi-dimensional audit evidence | 2026-11-05T05:23:56.521Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-05T05:25:24.559Z |
