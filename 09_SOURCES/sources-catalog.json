@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
-    "lastHarvestedAt": "2026-10-31T12:29:47.550Z",
+    "contentHash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
+    "lastHarvestedAt": "2026-11-05T03:02:48.312Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "f587409b",
+    "sourceVersion": "35561ead",
     "license": "MIT",
-    "contentHash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
-    "lastHarvestedAt": "2026-11-04T00:31:55.868Z",
+    "contentHash": "cea4515cf2eaadf5e9fe324e576feb0e5fb4ddf7eee67dcef4e64ec170a245ab",
+    "lastHarvestedAt": "2026-11-05T03:02:49.754Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "a3780453",
+    "sourceVersion": "7c69f415",
     "license": "Apache-2.0",
-    "contentHash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
-    "lastHarvestedAt": "2026-11-04T07:33:22.858Z",
+    "contentHash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
+    "lastHarvestedAt": "2026-11-05T03:02:56.757Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:55:59.079Z",
+  "last_updated": "2026-11-05T03:02:56.773Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
-      "verified_at": "2026-10-31T12:29:47.559Z",
+      "content_hash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
+      "verified_at": "2026-11-05T03:02:48.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:29:47.559Z"
+      "last_updated": "2026-11-05T03:02:48.319Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
-      "verified_at": "2026-11-04T00:31:55.878Z",
+      "content_hash": "cea4515cf2eaadf5e9fe324e576feb0e5fb4ddf7eee67dcef4e64ec170a245ab",
+      "verified_at": "2026-11-05T03:02:49.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:31:55.878Z"
+      "last_updated": "2026-11-05T03:02:49.768Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
-      "verified_at": "2026-11-04T07:33:22.867Z",
+      "content_hash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
+      "verified_at": "2026-11-05T03:02:56.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:33:22.867Z"
+      "last_updated": "2026-11-05T03:02:56.772Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",

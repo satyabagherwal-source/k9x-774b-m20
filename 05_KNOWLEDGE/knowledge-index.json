@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:55:58.953Z",
+  "last_updated": "2026-11-05T03:02:56.665Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30259,7 +30259,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
+      "content_hash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -30356,7 +30356,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-31T12:29:47.443Z",
+      "verified_at": "2026-11-05T03:02:48.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51146,8 +51146,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "a3780453",
-      "content_hash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
+      "source_version": "7c69f415",
+      "content_hash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -51195,6 +51195,11 @@
           "number": 6761,
           "title": "build(deps): bump the github-dependencies group with 7 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7081,
+          "title": "Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51202,7 +51207,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:33:22.733Z",
+      "verified_at": "2026-11-05T03:02:56.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63097,8 +63102,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "f587409b",
-      "content_hash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
+      "source_version": "35561ead",
+      "content_hash": "cea4515cf2eaadf5e9fe324e576feb0e5fb4ddf7eee67dcef4e64ec170a245ab",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -63151,6 +63156,11 @@
           "number": 6678,
           "title": "Merge pull request #1132 from zeronsh/security/ci-secret-environments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7080,
+          "title": "zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63158,7 +63168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:31:55.755Z",
+      "verified_at": "2026-11-05T03:02:49.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179532,6 +179542,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:55:17.571Z"
+    },
+    "rule-7080": {
+      "learning_id": "rule-7080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7080,
+      "title": "zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "35561ead",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:02:49.647Z"
+    },
+    "rule-7081": {
+      "learning_id": "rule-7081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7081,
+      "title": "Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "7c69f415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:02:56.630Z"
     }
   },
   "aliases": {

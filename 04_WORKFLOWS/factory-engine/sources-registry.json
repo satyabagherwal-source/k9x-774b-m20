@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:56:01.612Z",
-    "lastVerified": "2026-11-05T02:56:01.612Z",
+    "lastChecked": "2026-11-05T03:02:59.529Z",
+    "lastVerified": "2026-11-05T03:02:59.529Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T02:33:12.308Z",
-    "lastVerified": "2026-11-05T02:33:12.308Z",
+    "lastChecked": "2026-11-05T03:02:59.519Z",
+    "lastVerified": "2026-11-05T03:02:59.519Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1435,9 +1435,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-04T23:27:32.520Z",
+    "lastChecked": "2026-11-05T03:02:54.493Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-04T23:27:32.520Z"
+    "lastVerified": "2026-11-05T03:02:54.493Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2558,14 +2558,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T00:31:53.475Z",
-    "lastVerified": "2026-11-04T00:31:53.475Z",
+    "lastChecked": "2026-11-05T03:02:48.997Z",
+    "lastVerified": "2026-11-05T03:02:48.997Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "d12aa7b34334795685bed1af0c29e838a258f87509f524b141faa8923fe267ae",
+    "contentHash": "cea4515cf2eaadf5e9fe324e576feb0e5fb4ddf7eee67dcef4e64ec170a245ab",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3654,13 +3654,13 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T12:29:37.451Z",
-    "lastVerified": "2026-10-31T12:29:37.451Z",
+    "lastChecked": "2026-11-05T03:02:47.273Z",
+    "lastVerified": "2026-11-05T03:02:47.273Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "d81ebe1484595df30ce94702aeb8573259eca65decc6f2156169df708c56655b",
-    "promotedRulesCount": 2,
+    "contentHash": "825560c27bb8d169b2317e94992354f034d7435fe013438f64787dcf49bde9d4",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4394,9 +4394,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-04T03:44:13.472Z",
+    "lastChecked": "2026-11-05T03:02:56.961Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-04T03:44:13.472Z"
+    "lastVerified": "2026-11-05T03:02:56.961Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -6848,14 +6848,14 @@
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T07:33:22.066Z",
-    "lastVerified": "2026-11-04T07:33:22.066Z",
+    "lastChecked": "2026-11-05T03:02:55.998Z",
+    "lastVerified": "2026-11-05T03:02:55.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "cf11bf5a370192bdca45277e76d5eeeb623f1deb28782b359567ecb042feb414",
+    "contentHash": "8b0009a9535ed6426f4593ee6f3d83195816886565dfc4a8e5041eada154713d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9177,9 +9177,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-10-31T20:23:04.970Z",
+    "lastChecked": "2026-11-05T03:02:49.526Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-10-31T20:23:04.970Z"
+    "lastVerified": "2026-11-05T03:02:49.527Z"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",

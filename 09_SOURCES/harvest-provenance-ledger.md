@@ -7480,3 +7480,6 @@ Every entry in this ledger must capture:
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `03606271` | Multi-dimensional audit evidence | 2026-11-05T02:55:14.644Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `f8e3bc7b` | Multi-dimensional audit evidence | 2026-11-05T02:55:17.682Z |
 | `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-05T02:55:59.067Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-05T03:02:48.312Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `35561ead` | Multi-dimensional audit evidence | 2026-11-05T03:02:49.754Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `7c69f415` | Multi-dimensional audit evidence | 2026-11-05T03:02:56.757Z |

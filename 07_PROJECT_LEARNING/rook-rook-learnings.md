@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `a3780453`  
+> **Source Version**: `7c69f415`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:33:22.073Z  
+> **Timestamp**: 2026-11-05T03:02:56.004Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:33:22.066Z  
+> **Harvest Timestamp**: 2026-11-05T03:02:55.998Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13704 stars
+- **Stars / Engagement**: 13702 stars
 
 ---
 
@@ -1427,472 +1427,124 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a8e642e` (2026-11-02)
-**Commit Message**: build(deps): bump the github-dependencies group with 7 updates
+### Incident Patch 1: `7c69f415` (2026-11-04)
+**Commit Message**: Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets
 
-Bumps the github-dependencies group with 7 updates:
+test: summarize most Secrets in collected logs instead of dumping them
 
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/IBM/keyprotect-go-client](https://github.com/IBM/keyprotect-go-client) | `0.17.3` | `1.1.0` |
-| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.4` | `1.47.5` |
-| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.10` | `1.33.12` |
-| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.10` | `1.20.12` |
-| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.5` | `1.114.6` |
-| [github.com/aws/aws-sdk-go-v2/service/sns](https://github.com/aws/aws-sdk-go-v2) | `1.47.6` | `1.47.7` |
-| [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.6` | `1.28.7` |
-
-Updates `github.com/IBM/keyprotect-go-client` from 0.17.3 to 1.1.0
-- [Release notes](https://github.com/IBM/keyprotect-go-client/releases)
-- [Changelog](https://github.com/IBM/keyprotect-go-client/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/IBM/keyprotect-go-client/compare/v0.17.3...v1.1.0)
-
-Updates `githu
-
-**File**: `go.mod` (modified, +19/-19)
+**File**: `tests/scripts/collect-logs.sh` (modified, +98/-3)
 ```diff
-@@ -12,12 +12,12 @@ replace (
- require (
- 	github.com/IBM/go-sdk-core/v5 v5.23.5
- 	github.com/IBM/keyprotect-go-client v1.0.1
--	github.com/aws/aws-sdk-go-v2 v1.47.4
--	github.com/aws/aws-sdk-go-v2/config v1.33.9
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
--	github.com/aws/aws-sdk-go-v2/service/sns v1.47.5
--	github.com/aws/smithy-go v1.28.6
-+	github.com/aws/aws-sdk-go-v2 v1.47.5
-+	github.com/aws/aws-sdk-go-v2/config v1.33.12
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
-+	github.com/aws/aws-sdk-go-v2/service/sns v1.47.7
-+	github.com/aws/smithy-go v1.28.7
- 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
- 	github.com/ceph/ceph-csi-operator/api v0.0.0-20261001132947-98eee8980fc6
- 	github.com/ceph/ceph-csi/api v0.0.0-20241216133622-88b7e0d6684f
-@@ -70,19 +70,19 @@ require (
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
- 	github.com/ansel1/merry v1.8.1 // indirect
- 	github.com/ansel1/merry/v2 v2.2.2 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.5 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.5 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.5 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-```
-
-**File**: `go.sum` (modified, +38/-38)
-```diff
-@@ -490,44 +490,44 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
- github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/aws/aws-sdk-go v1.44.164/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
--github.com/aws/aws-sdk-go-v2 v1.47.4 h1:bTvk6UdSSSvaQsfLVj1JRDEEqj/PDRwGf1KanaRzau0=
--github.com/aws/aws-sdk-go-v2 v1.47.4/go.mod h1:XkrjAZvr705Nytv6PkPUhoSB2W9+vVHBp5oAWpkh8Ak=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 h1:t7FxqJ5KHDeKceyD4HtGaG6z7hMSeVGjs5/4c+L5ArM=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24/go.mod h1:5XK6NRVlK8s8yj4zKcM43HLluGA/rAz+azLLvWDMRr0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4 h1:7ksj/zMap9+831SmNQZkcpmfuATp3DKr4BfLNnBdYXM=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4/go.mod h1:zhi8vDrD1dj76ysTWS6Ny1y6/EEW1Jrq2y8lzKeoqfs=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 h1:fSNAt6hs4qLjb9tMZc6vj3PHlOCYGXK2JjJZ7AW2tf4=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7/go.mod h1:TMav+EuXQu5kNpZZz/6rIC8xx4mCsW+6AKHrjvOSAsE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 h1:7NS6kqBjkWIN8P/AEdmtyq6eQGAhN1oHTZdzXclpH6Y=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7/go.mod h1:1PFqtAUsIgF1nEVojzRJSf/v88zjzqrGW+w+UAtkXyQ=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7 h1:wYu55QUHARwu9YzeuY5yEJUTsIu8ahkmp1l3QmbzHn8=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7/go.mod h1:OteEkhFAgFwQtZft/3myWo3tVWxdAo7cwV+7AbcpAtQ=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22 h1:qHfXn1Tm2Rh8kic/DvdKaiSVlHQRSr5C+rMuBR29D44=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22/go.mod h1:D4ytxJbGXu82l+2XF0q60bibysf+KkIbWfAOldAQwf8=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8 h1:Foai7RHOgCNikTS6shP7OxVi4XdgR1z5uiy9NN6tBZs=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8/go.mod h1:R/HyW81sfgXHPOnJRfQGzA6lnNDSJE7KknI7ArvboM4=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7 h1:6MSlRo7aiUVBftQ8XmW7XIh3EZqCbkN9zI0YlGW8nl0=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7/go.mod h1:OqapjZfp6VW4YJKKO4l68UdPvS4FIEYuEoq1JNkxCL0=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7 h1:6lQFbSJxvtqn19hbh+2+g5pRV8U4Etrq5x6sL6mD35U=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7/go.mod h1:WAsCkzxO1H7/m1uYtLymru0aDH23BR7CWUA+8MpuUFY=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.5 h1:oFsZ3u5PPFSO1YZDGKFgyDuwgpbv/sTmVShEZfRnyaE=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.5/go.mod h1:P+IzYJeldxO0mHt8fX4cglzexP3akO94C/UuEA2ojP0=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.5 h1:4EezYQsIY0xPbD6u7TbQLfnpicSMQgA8n9paomVV4Zo=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.5/go.mod h1:Yr4VqXnyoyjWnOWJck8BOidkJtleQ1c8ypgd2n0epxE=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.5 h1:EYD6E6CsgRQPazaOfZ6suyTgfZjg07HoT4S3qB9Exkg=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.5/go.mod h1:hHg7OZNN1/U62f3Q5mebJYKO4f97vZC+s0fNAsPLnMk=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.5 h1:v6V0AnJ0aDmivAIie/6iT7sGpjnNmzaAdxZwZ0dhwqI=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.5/go.mod h1:P2Lqn27Kph9z400MFOYIebFnKjZEwyUIAva6fFFMiRY=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.5 h1:OuyNaMncYP4ftrvcnOHJ9j3AxO3zsC5C/ewD0HoHdjQ=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.5/go.mod h1:Bhu66tgvf94uunUSiAc0Ew0avhnpSm0J8Hl1MYocRbo=
--github.com/aws/smithy-go v1.28.6 h1:Pj+/sUviNYjow8ELRtNwKHZ9ECeF+7pATX3+shjLIrw=
--github.com/aws/smithy-go v1.28.6/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
-+github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
-+github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
-+github.com/aws/aws-sdk-go-v2/config
-```
-
----
-
-### Incident Patch 2: `10e9f24f` (2026-11-03)
-**Commit Message**: Merge pull request #18557 from trukhinyuri/fix/disable-msgr1-on-osd-mgr-mds-when-msgr2-required
-
-operator: disable msgr1 on osd, mgr, and mds when msgr2 is required
-
-**File**: `pkg/operator/ceph/cluster/mgr/spec.go` (modified, +2/-0)
-```diff
-@@ -222,6 +222,8 @@ func (c *Cluster) makeMgrDaemonContainer(mgrConfig *mgrConfig) v1.Container {
- 			config.NewFlag("public-addr", controller.ContainerEnvVarReference(podIPEnvVar)))
- 	}
+@@ -18,6 +18,91 @@ $CEPH_CMD osd dump >"${LOG_DIR}"/ceph-osd-dump.txt
+ $CEPH_CMD report >"${LOG_DIR}"/ceph-report.txt
+ $CEPH_CMD auth ls >"${LOG_DIR}"/ceph-auth-ls.txt
  
-+	container.Args = append(container.Args, controller.Msgr1BindingFlags(c.clusterInfo, &c.spec)...)
-+
- 	return container
- }
- 
-```
-
-**File**: `pkg/operator/ceph/cluster/mgr/spec_test.go` (modified, +54/-0)
-```diff
-@@ -258,5 +258,59 @@ func TestMgrNetwork(t *testing.T) {
- 		assert.NotNil(t, d)
- 
- 		assert.Equal(t, true, d.Spec.Template.Spec.HostNetwork)
-+		assert.NotContains(t, d.Spec.Template.Spec.Containers[0].Args, "--ms-bind-msgr1=false")
-+	})
-+
-+	t.Run("requireMsgr2 true keeps msgr1 while a mon advertises v1", func(t *testing.T) {
-+		clusterSpec := cephv1.ClusterSpec{
-+			Network: cephv1.NetworkSpec{
-+				Connections: &cephv1.ConnectionsSpec{RequireMsgr2: true},
-+			},
-+		}
-+		clusterInfo.InternalMonitors = map[string]*cephclient.MonInfo{
-+			"a": cephclient.NewMonInfo("a", "10.0.0.1", 3300),
-+			"b": cephclient.NewMonInfo("b", "10.0.0.2", 6789),
-+		}
-+		c := New(&clusterd.Context{Clientset: clientset}, clusterInfo, clusterSpec, "myversion")
-+
-+		d, err := c.makeDeployment(&mgrTestConfig)
-+		assert.NoError(t, err)
-+		assert.NotNil(t, d)
-+		assert.NotContains(t, d.Spec.Template.Spec.Containers[0].Args, "--ms-bind-msgr1=false")
-+	})
-+
-+	clusterInfo.InternalMonitors = map[string]*cephclient.MonInfo{
-+		"a": cephclient.NewMonInfo("a", "10.0.0.1", 3300),
-+		"b": cephclient.NewMonInfo("b", "10.0.0.2", 3300),
-+	}
-+
-+	t.Run("requireMsgr2 true disables msgr1", func(t *testing.T) {
-+		clusterSpec := cephv1.ClusterSpec{
-+			Network: cephv1.NetworkSpec{
-+				Connections: &cephv1.ConnectionsSpec{RequireMsgr2: true},
-+			},
-+		}
-+		c := New(&clusterd.Context{Clientset: clientset}, clusterInfo, clusterSpec, "myversion")
-+
-+		d, err := c.makeDeployment(&mgrTestConfig)
-+		assert.NoError(t, err)
-+		assert.NotNil(t, d)
-+		assert.Contains(t, d.Spec.Template.Spec.Containers[0].Args, "--ms-bind-msgr1=false")
-+	})
-+
-+	t.Run("encryption enabled disables msgr1", func(t *testing.T) {
-+		clusterSpec := cephv1.ClusterSpec{
-+			Network: cephv1.NetworkSpec{
-+				Connections: &cephv1.ConnectionsSpec{
-+					Encryption: &cephv1.EncryptionSpec{Enabled: true},
-+				},
-+			},
-+		}
-+		c := New(&clusterd.Context{Clientset: clientset}, clusterInfo, clusterSpec, "myversion")
-+
-+		d, err := c.makeDeployment(&mgrTestConfig)
-+		assert.NoError(t, err)
-+		assert.NotNil(t, d)
-+		assert.Contains(t, d.Spec.Template.Spec.Containers[0].Args, "--ms-bind-msgr1=false")
- 	})
- }
-```
-
-**File**: `pkg/operator/ceph/cluster/mon/health_test.go` (modified, +24/-0)
-```diff
-@@ -1321,3 +1321,27 @@ func getCephCluster(name, namespace string) *cephv1.CephCluster {
- 		},
- 	}
- }
-+
-+func TestExternalMonAdvertisingMsgr1KeepsDaemonMsgr1(t *testing.T) {
-+	namespace := "ns"
-+	context, err := newTestStartCluster(t, namespace)
-+	require.NoError(t, err)
-+	c := newCluster(context, namespace, true, v1.ResourceRequirements{})
-+	c.ClusterInfo = clienttest.CreateTestClusterInfo(3)
-+	c.spec.Network.Connections = &cephv1.ConnectionsSpec{RequireMsgr2: true}
-+	c.spec.Mon.ExternalMonIDs = []string{"ext"}
-+	// every mon deployed by Rook is on the msgr2 port
-+	require.Equal(t, []string{"--ms-bind-msgr1=false"}, opcontroller.Msgr1BindingFlags(c.ClusterInfo, &c.spec))
-+
-+	ext := cephclient.MonMapEntry{Name: "ext", Rank: 3, PublicAddr: "10.0.0.9:6789/0"}
-+	ext.PublicAddrs.Addrvec = []cephclient.AddrvecEntry{{Type: "v2", Addr: "10.0.0.9:3300"}, {Type: "v1", Addr: "10.0.0.9:6789"}}
-+	status := cephclient.MonStatusResponse{Quorum: []int{3}}
-+	status.MonMap.Mons = []cephclient.MonMapEntry{ext}
-+	_, err = c.reconcileExternalMons(t.Context(), status)
-+	require.NoError(t, err)
-+
-+	// the external mon is recorded on the msgr2 port although it still advertises msgr1
-+	require.Contains(t, c.ClusterInfo.ExternalMons, "ext")
-+	assert.Equal(t, "10.0.0.9:3300", c.ClusterInfo.ExternalMons["ext"].Endpoint)
-+	assert.Empty(t, opcontroller.Msgr1BindingFlags(c.ClusterInfo, &c.spec))
-+}
-```
-
-**File**: `pkg/operator/ceph/cluster/osd/spec.go` (modified, +1/-0)
-```diff
-@@ -326,6 +326,7 @@ func (c *Cluster) makeDeployment(osdProps osdProperties, osd *OSDInfo, provision
- 	args = append(args, opconfig.LoggingFlags()...)
- 	args = append(args, osdOnSDNFlag(c.spec.Network)...)
- 	args = append(args, controller.NetworkBindingFlags(c.clusterInfo, &c.spec)...)
-+	args = append(args, controller.Msgr1BindingFlags(c.clusterInfo, &c.spec)...)
- 
- 	osdDataDirPath := activateOSDMountPath + osdID
- 	if osdProps.onPVC() {
-```
-
-**File**: `pkg/operator/ceph/cluster/osd/spec_test.go` (modified, +85/-0)
-```diff
-@@ -1279,3 +1279,88 @@ func TestMakeDeploymentAllowDeviceClassUpdateFalseLeavesClassAlone(t *testing.T)
- 		})
- 	}
- }
-+
-+func TestOSDDeploymentMsgr2Flags(t *testing.T) {
-+	msgr2OnlyMonPort := int32(3300)
-+	tests := []struct {
-+		name               string
-+		connections        *cephv1.ConnectionsSpec
-+		monPort            int32
-+		expectDisableMsgr1 bool
-+	}{
-+		{
-+			name:               "default connections leaves msgr1 untouched",
-+			connections:        nil,
-+			expectDisableMsgr1: false,
-+		},
-+		{
-+			name:               "requireMsgr2 false leaves msgr1 untouched",
-+			connections:        &cephv1.ConnectionsSpec{RequireMsgr2: false},
-+			expectDisableMsgr1: false,
-+		},
-+		{
-+			name:               "requireMsgr2 true disables msgr1 when all mons are on v2",
-+			connections:        &cephv1.ConnectionsSpec{RequireMsgr2: true},
-+			monPort:            msgr2OnlyMonPort,
-+			expectDisableMsgr1: true,
-+		},
-+		{
-+			name:               "requireMsgr2 true keeps msgr1 while mons advertise v1",
-+			connections:        &cephv1.ConnectionsSpec{RequireMsgr2: true},
-+			monPort:            6789,
-+			expectDisableMsgr1: false,
-+		},
-+		{
-+			name: "encryption enabled disables msgr1",
-+			connections: &cephv1.ConnectionsSpec{
-+				Encryption: &cephv1.EncryptionSpec{Enabled: true},
-+			},
-+			monPort:            msgr2OnlyMonPort,
-+			expectDisableMsgr1: true,
-+		},
-+		{
-+			name: "compression enabled disables msgr1",
-+			connections: &cephv1.ConnectionsSpec{
-+				Compression: &cephv1.CompressionSpec{Enabled: true},
-+			},
-+			monPort:            msgr2OnlyMonPort,
-+			expectDisableMsgr1: true,
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			clientset := fake.NewClientset()
-+			clusterInfo := &cephclient.ClusterInfo{Namespace: "ns", CephVersion: cephver.Squid}
-+			clusterInfo.SetName("testing")
-+			clusterInfo.OwnerInfo = cephclient.NewMinimumOwnerInfo(t)
-+			if tc.monPort != 0 {
-+				clusterInfo.InternalMonitors = map[string]*cephclient.MonInfo{
-+					"a": cephclient.NewMonInfo("a", "10.0.0.1", tc.monPort),
-+				}
-+			}
-+			ctx := &clusterd.Context{Clientset: clientset, ConfigDir: "/var/lib/rook", Executor: &exectest.MockExecutor{}}
-+			spec := cephv1.ClusterSpec{
-+				Network: cephv1.NetworkSpec{Connections: tc.connections},
-+			}
-+			c := New(ctx, clusterInfo, spec, "rook/rook:myversion")
-+			osdProps := osdProperties{
-+				crushHostname: "node1",
-+				devices:       []cephv1.Device{{Name: "vdb"}},
-+				storeConfig:   config.StoreConfig{StoreType: "bluestore"},
-+			}
-+			osd := &OSDInfo{ID: 0, UUID: "u", BlockPath: "/dev/vdb", CVMode: "raw", Store: "bluestore"}
-+			cfg := &provisionConfig{DataPathMap: opconfig.NewDatalessDaemonDataPathMap(c.clusterInfo.Namespace, "/var/lib/rook")}
-+
-+			d, err := c.makeDeployment(osdProps, osd, cfg)
-+			assert.NoError(t, err)
-+			cont, err := findOSDContainer(d.Spec.Template.Spec.Containers)
-+			assert.NoError(t, err)
-+			if tc.expectDisableMsgr1 {
-+				assert.Contains(t, cont.Args, "--ms-bind-msgr1=false")
-+			} else {
-+				assert.NotContains(t, cont.Args, "--ms-bind-msgr1=false")
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/operator/ceph/controller/spec.go` (modified, +28/-0)
-```diff
-@@ -33,6 +33,7 @@ import (
- 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
- 	"github.com/rook/rook/pkg/clusterd"
- 	"github.com/rook/rook/pkg/daemon/ceph/client"
-+	cephutil "github.com/rook/rook/pkg/daemon/ceph/util"
- 	opconfig "github.com/rook/rook/pkg/operator/ceph/config"
- 	"github.com/rook/rook/pkg/operator/ceph/config/keyring"
- 	"github.com/rook/rook/pkg/operator/k8sutil"
-@@ -411,6 +412,33 @@ func NetworkBindingFlags(cluster *client.ClusterInfo, spec *cephv1.ClusterSpec)
- 	return args
- }
- 
-+// Msgr1BindingFlags returns the flag that stops a daemon from binding the msgr1 port when msgr2 is
-+// required and every mon advertises only the msgr2 endpoint. Mons created before msgr2 was required
-+// keep advertising their msgr1 endpoint until they are failed over, so clients may still use msgr1
-+// until then and daemons must keep accepting it.
-+func Msgr1BindingFlags(cluster *client.ClusterInfo, spec *cephv1.ClusterSpec) []string {
-+	if !spec.RequireMsgr2() || !allMonsAdvertiseOnlyMsgr2(cluster, spec) {
-+		return []string{}
-+	}
-+	return []string{opconfig.NewFlag("ms-bind-msgr1", "false")}
++# collects_secret_content reports whether a Secret's values are collected in full. Everything
++# else is summarized, so a Secret appearing later under an unmatched name is withheld without
++# anyone deciding again. The two prefix patterns are open rather than anchored on -keyring, so
++# a new Secret named under them would be collected; every name they match today is a keyring.
++#
++# These are the keys a cephx rotation problem shows up in, and a cluster in that state may be
++# unreachable by other means: `ceph auth ls` is answered by the mon, so the mon Secret in
++# particular has to stay legible on its own. Within the cluster namespace they disclose nothing
++# further, since ceph-auth-ls.txt holds the same entities' keys -- but CEPH_CMD is bound to
++# CLUSTER_NAMESPACE, so a second cluster collected through ADDITIONAL_NAMESPACE, as the
++# multi-cluster-mirroring and rgw-multisite canaries do, has no auth dump of its own.
++function collects_secret_content() {
++  case "$1" in
++  rook-ceph-mon | rook-ceph-mgr-* | rook-ceph-mds-*) return 0 ;;
++  *) return 1 ;;
++  esac
 +}
 +
-+func allMonsAdvertiseOnlyMsgr2(cluster *client.ClusterInfo, spec *cephv1.ClusterSpec) bool {
-+	// Mons that Rook does not deploy (external cluster, or spec.mon.externalMonIDs) are recorded with
-+	// the msgr2 port whenever msgr2 is required, even if they still advertise msgr1, so their
-+	// endpoints can't show whether msgr1 is still in use.
-+	if spec.External.Enable || len(cluster.ExternalMons) > 0 || len(cluster.InternalMonitors) == 0 {
-+		return false
-+	}
-+	for _, mon := range cluster.InternalMonitors {
-+		// a mon on the msgr2 port binds and advertises only v2, see client.PopulateMonHostMembers()
-+		if cephutil.GetPortFromEndpoint(mon.Endpoint) != client.Msgr2port {
-+			return false
-+		}
-+	}
-+	return true
++# SECRET_SUMMARY_TEMPLATE describes a Secret without exposing it: one
++# "secret <name> <type> <number of data keys>" record, then one "key <name> <size in bytes>"
++# record per data key. The decoding happens inside kubectl's template engine, which provides
++# base64decode, and only the decoded length is ever printed, so no part of a value leaves
++# kubectl.
++# shellcheck disable=SC2016 # $key and $value are go-template variables, not shell expansions
++SECRET_SUMMARY_TEMPLATE='secret {{.metadata.name}} {{.type}} {{if .data}}{{len .data}}{{else}}0{{end}}{{"\n"}}'\
++'{{if .data}}{{range $key, $value := .data}}'\
++'key {{$key}} {{len (base64decode $value)}}{{"\n"}}'\
++'{{end}}{{end}}'
++
++# format_secret_summary admits a line only if it has the exact shape of one of those records:
++# the right number of fields, a name of the kind Kubernetes allows, and a size that is a number.
++# The shape is what is checked, not the leading word, because kubectl's output cannot be trusted
++# line by line. A template it cannot execute makes it write the error, the template text and the
++# object's raw JSON to this same stream, and any Secret field holding a newline makes whatever
++# follows look like the start of a record; either can begin with the word 'secret' or 'key'
++# while the rest of the line is something else entirely.
++#
++# Anything else is dropped, as is a run whose key records do not account for every data key, and
++# a single warning takes its place -- a summary that could not be produced must not be
++# indistinguishable from a Secret that holds nothing.
++function format_secret_summary() {
++  # The tests below expand their input, and this script runs under `set -x`, so without this
++  # the rejected lines -- which is where a payload would be -- reach the job log, which is
++  # where the warning then sends the reader. `local -` restores both options on return.
++  local -
++  set +x
++
++  local name_re='^[-._a-zA-Z0-9]+$' type_re='^[-._a-zA-Z0-9/]+$' size_re='^[0-9]+$'
++  local kind field1 field2 field3 extra
++  local named=0 keys=0 expected=-1 rejected=0
++
++  while read -r kind field1 field2 field3 extra; do
++    if [[ -n "$extra" ]] || [[ ! "$field1" =~ $name_re ]]; then
++      rejected=1
++      continue
++    fi
++    case "$kind" in
++    secret)
++      if [[ "$named" -ne 0 ]] || [[ ! "$field2" =~ $type_re ]] || [[ ! "$field3" =~ $size_re ]]; then
++        rejected=1
++        continue
++      fi
++      named=1
++      expected="$field3"
++      printf 'name: %s\ntype: %s\ndata:\n' "$field1" "$field2"
++      ;;
++    key)
++      if [[ "$named" -ne 1 ]] || [[ -n "$field3" ]] || [[ ! "$field2" =~ $size_re ]]; then
++        rejected=1
++        continue
++      fi
++      keys=$((keys + 1))
++      printf '  %s: %s bytes\n' "$field1" "$field2"
++      ;;
++    *)
++      rejected=1
++      ;;
++    esac
++  done
++
++  if [[ "$named" -ne 1 ]] || [[ "$keys" -ne "$expected" ]] || [[ "$rejected" -ne 0 ]]; then
++    printf 'WARNING: this summary is incomplete; see the job log for what kubectl reported\n'
++  fi
 +}
 +
- // ContainerEnvVarReference returns a reference to a Kubernetes container env var of the given name
- // which can be used in command or argument fields.
- func ContainerEnvVarReference(envVarName string) string {
-```
-
-**File**: `pkg/operator/ceph/controller/spec_test.go` (modified, +38/-0)
-```diff
-@@ -255,6 +255,44 @@ func TestNetworkBindingFlags(t *testing.T) {
- 	}
- }
+ NAMESPACES=("$CLUSTER_NAMESPACE")
+ if [[ "$OPERATOR_NAMESPACE" != "$CLUSTER_NAMESPACE" ]]; then
+   NAMESPACES+=("$OPERATOR_NAMESPACE")
+@@ -45,10 +130,20 @@ for NAMESPACE in "${NAMESPACES[@]}"; do
+     done
+   done
  
-+func TestMsgr1BindingFlags(t *testing.T) {
-+	requireMsgr2 := &cephv1.ClusterSpec{Network: cephv1.NetworkSpec{Connections: &cephv1.ConnectionsSpec{RequireMsgr2: true}}}
-+	encryption := &cephv1.ClusterSpec{Network: cephv1.NetworkSpec{Connections: &cephv1.ConnectionsSpec{Encryption: &cephv1.EncryptionSpec{Enabled: true}}}}
-+	compression := &cephv1.ClusterSpec{Network: cephv1.NetworkSpec{Connections: &cephv1.ConnectionsSpec{Compression: &cephv1.CompressionSpec{Enabled: true}}}}
-+	msgr2Only := map[string]*cephclient.MonInfo{
-+		"a": cephclient.NewMonInfo("a", "10.0.0.1", 3300),
-+		"b": cephclient.NewMonInfo("b", "10.0.0.2", 3300),
-+	}
-+	oneMsgr1 := map[string]*cephclient.MonInfo{
-+		"a": cephclient.NewMonInfo("a", "10.0.0.1", 3300),
-+		"b": cephclient.NewMonInfo("b", "10.0.0.2", 6789),
-+	}
-+	disable := []string{"--ms-bind-msgr1=false"}
-+
-+	tests := []struct {
-+		name         string
-+		spec         *cephv1.ClusterSpec
-+		internalMons map[string]*cephclient.MonInfo
-+		externalMons map[string]*cephclient.MonInfo
-+		want         []string
-+	}{
-+		{"msgr2 not required", &cephv1.ClusterSpec{}, msgr2Only, nil, []string{}},
-+		{"requireMsgr2 with all mons on v2", requireMsgr2, msgr2Only, nil, disable},
-+		{"encryption with all mons on v2", encryption, msgr2Only, nil, disable},
-+		{"compression with all mons on v2", compression, msgr2Only, nil, disable},
-+		{"a mon still advertises v1", requireMsgr2, oneMsgr1, nil, []string{}},
-+		{"an external mon is recorded on the v2 port", requireMsgr2, msgr2Only, map[string]*cephclient.MonInfo{"c": cephclient.NewMonInfo("c", "10.0.0.3", 3300)}, []string{}},
-+		{"external cluster", &cephv1.ClusterSpec{External: cephv1.ExternalSpec{Enable: true}, Network: requireMsgr2.Network}, msgr2Only, nil, []string{}},
-+		{"no mons known", requireMsgr2, map[string]*cephclient.MonInfo{}, nil, []string{}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			cluster := &cephclient.ClusterInfo{InternalMonitors: tt.internalMons, ExternalMons: tt.externalMons}
-+			assert.Equal(t, tt.want, Msgr1BindingFlags(cluster, tt.spec))
-+		})
-+	}
-+}
-+
- func TestExtractMgrIP(t *testing.T) {
- 	activeMgrRaw := "172.17.0.12:6801/2535462469"
- 	ip := extractMgrIP(activeMgrRaw)
-```
-
-**File**: `pkg/operator/ceph/file/mds/spec.go` (modified, +2/-0)
-```diff
-@@ -143,6 +143,8 @@ func (c *Cluster) makeMdsDaemonContainer(mdsConfig *mdsConfig, fsName string) v1
- 			cephconfig.NewFlag("public-addr", controller.ContainerEnvVarReference(podIPEnvVar)))
- 	}
- 
-+	args = append(args, controller.Msgr1BindingFlags(c.clusterInfo, c.clusterSpec)...)
-+
- 	container := v1.Container{
- 		Name: "mds",
- 		Command: []string{
+-  # secret need `-oyaml` to read the content instead of `describe` since secrets `describe` will be encrypted.
+-  # so keeping it in a different block.
++  # Secrets get a block of their own because no other kind needs this treatment. This directory
++  # is published as a workflow artifact, so everything written here is readable by anyone who
++  # can read the artifact, and base64 is encoding rather than protection. Most Secrets are
++  # therefore summarized instead of dumped: what th
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18685** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
+- **PR #18684** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
 - **PR #18680** (2026-11-03): operator: disable msgr1 on osd, mgr, and mds when msgr2 is required (backport #18557) (@mergify[bot])
+- **PR #18674** (2026-11-04): kms: migrate IBM Key Protect client to v1.0.1 (backport #18488) (@mergify[bot])
+- **PR #18668** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (@jhoblitt)
 - **PR #18667** (2026-11-03): ci: scan the shipped Go minor in govulncheck (backport #18615) (@mergify[bot])
-- **PR #18666** (2026-11-03): ci: scan the shipped Go minor in govulncheck (backport #18615) (@mergify[bot])
-- **PR #18664** (2026-11-03): object: refuse obc relink of a bucket owned by another user (backport #18660) (@mergify[bot])
-- **PR #18663** (2026-11-03): object: refuse obc relink of a bucket owned by another user (backport #18660) (@mergify[bot])
-- **PR #18660** (2026-11-02): object: refuse obc relink of a bucket owned by another user (@jhoblitt)
 
 ---
 
@@ -1912,64 +1564,48 @@ operator: disable msgr1 on osd, mgr, and mds when msgr2 is required
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the github-dependencies group with 7 updates
+## X. Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/scripts/collect-logs.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a8e642e`: build(deps): bump the github-dependencies group with 7 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c69f415`: Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/scripts/collect-logs.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2 v1.47.5
-	github.com/aws/aws-sdk-go-v2/config v1.33.12
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.7
-	github.com/aws/smithy-go v1.28.7
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
+# collects_secret_content reports whether a Secret's values are collected in full. Everything
+# else is summarized, so a Secret appearing later under an unmatched name is withheld without
+# anyone deciding again. The two prefix patterns are open rather than anchored on -keyring, so
+# a new Secret named under them would be collected; every name they match today is a keyring.
+#
+# These are the keys a cephx rotation problem shows up in, and a cluster in that state may be
+# unreachable by other means: `ceph auth ls` is answered by the mon, so the mon Secret in
+# particular has to stay legible on its own. Within the cluster namespace they disclose nothing
+# further, since ceph-auth-ls.txt holds the same entities' keys -- but CEPH_CMD is bound to
+# CLUSTER_NAMESPACE, so a second cluster collected through ADDITIONAL_NAMESPACE, as the
+# multi-cluster-mirroring and rgw-multisite canaries do, has no auth dump of its own.
+function collects_secret_content() {
+  case "$1" in
+  rook-ceph-mon | rook-ceph-mgr-* | rook-ceph-mds-*) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+# SECRET_SUMMARY_TEMPLATE describes a Secret without exposing it: one
+# "secret <name> <type> <number of data keys>" record, then o
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/aws/aws-sdk-go-v2 v1.47.4
-	github.com/aws/aws-sdk-go-v2/config v1.33.9
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.5
-	github.com/aws/smithy-go v1.28.6
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.38.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.5 // indirect
+  # secret need `-oyaml` to read the content instead of `describe` since secrets `describe` will be encrypted.
+  # so keeping it in a different block.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a8e642e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c69f415` are properly handled with clean fallback behavior.

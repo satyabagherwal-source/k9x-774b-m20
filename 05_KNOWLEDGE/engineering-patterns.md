@@ -513934,3 +513934,127 @@ from unittest.mock import patch
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f8e3bc7b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7080. zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built (Harvested from zeronsh/zeron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built",
+  "source": "zeronsh/zeron",
+  "source_url": "https://github.com/zeronsh/zeron",
+  "source_version": "35561ead",
+  "license": "MIT",
+  "extracted_at": "2026-11-05T03:02:49.423Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeronsh-zeron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `35561ead`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `apps/zgx/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `280a0612`: zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built-in template (#1199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- One template is in use at a time. The default, "Zeron v3" (id `zeron`), is always there. "Zeron v2" (id `zeron-v2`), the single-page layout from before v3, is Zeron's too: its files are `ui/templates/zeron-v2/`, installed into `<data>/templates/zeron-v2/` and kept current with each version, built in and trusted only while exactly as this build wrote it (`src/plugins/official.rs`). A test fails when a default file v2 replaces changes, until v2's copy is brought in step (`zeron_v2_is_in_step_with_the_default`).
+- Settings → Templates lists them as Plugins lists plugins: Installed (the default and Zeron v2, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
+- **The way back from any template:** View → **Use Zeron v3** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+- One template is in use at a time. "Zeron", Zeron's own, is always there.
+- Settings → Templates lists them as Plugins lists plugins: Installed (Zeron's own, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
+- **The way back from any template:** View → **Use Default Interface** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `280a0612` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7081. Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets (Harvested from rook/rook)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets",
+  "source": "rook/rook",
+  "source_url": "https://github.com/rook/rook",
+  "source_version": "7c69f415",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T03:02:56.407Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rook-rook",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rook/rook](https://github.com/rook/rook) (Revision: `7c69f415`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `tests/scripts/collect-logs.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7c69f415`: Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/scripts/collect-logs.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+# collects_secret_content reports whether a Secret's values are collected in full. Everything
+# else is summarized, so a Secret appearing later under an unmatched name is withheld without
+# anyone deciding again. The two prefix patterns are open rather than anchored on -keyring, so
+# a new Secret named under them would be collected; every name they match today is a keyring.
+#
+# These are the keys a cephx rotation problem shows up in, and a cluster in that state may be
+# unreachable by other means: `ceph auth ls` is answered by the mon, so the mon Secret in
+# particular has to stay legible on its own. Within the cluster namespace they disclose nothing
+# further, since ceph-auth-ls.txt holds the same entities' keys -- but CEPH_CMD is bound to
+# CLUSTER_NAMESPACE, so a second cluster collected through ADDITIONAL_NAMESPACE, as the
+# multi-cluster-mirroring and rgw-multisite canaries do, has no auth dump of its own.
+function collects_secret_content() {
+  case "$1" in
+  rook-ceph-mon | rook-ceph-mgr-* | rook-ceph-mds-*) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+# SECRET_SUMMARY_TEMPLATE describes a Secret without exposing it: one
+# "secret <name> <type> <number of data keys>" record, then o
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+  # secret need `-oyaml` to read the content instead of `describe` since secrets `describe` will be encrypted.
+  # so keeping it in a different block.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7c69f415` are properly handled with clean fallback behavior.

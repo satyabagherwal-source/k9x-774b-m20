@@ -7471,3 +7471,6 @@
 | `CYCLE-20261105-DIHD` | `2026-11-05T02:55:14.641Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`c5ea1e88...`) |
 | `CYCLE-20261105-DKTR` | `2026-11-05T02:55:17.679Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7079` | Yes (`23c1c0a0...`) |
 | `CYCLE-20261105-EGR6` | `2026-11-05T02:55:59.058Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`1883a264...`) |
+| `CYCLE-20261105-N8J3` | `2026-11-05T03:02:48.304Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`825560c2...`) |
+| `CYCLE-20261105-N9NA` | `2026-11-05T03:02:49.750Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7080` | Yes (`cea4515c...`) |
+| `CYCLE-20261105-NF1T` | `2026-11-05T03:02:56.753Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7081` | Yes (`8b0009a9...`) |
