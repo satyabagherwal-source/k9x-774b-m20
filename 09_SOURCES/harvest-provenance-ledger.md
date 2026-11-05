@@ -7513,3 +7513,4 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `cc6facab` | Multi-dimensional audit evidence | 2026-11-05T04:21:46.602Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d14c0804` | Multi-dimensional audit evidence | 2026-11-05T04:28:54.670Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T04:28:56.263Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-05T04:36:02.731Z |

@@ -7504,3 +7504,4 @@
 | `CYCLE-20261105-GSMF` | `2026-11-05T04:21:46.599Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7102` | Yes (`e3f7bb5a...`) |
 | `CYCLE-20261105-PYX7` | `2026-11-05T04:28:54.667Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7103` | Yes (`8f4cbfe1...`) |
 | `CYCLE-20261105-Q05G` | `2026-11-05T04:28:56.260Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7104, Rule 779, Rule 7105` | Yes (`1c7e369e...`) |
+| `CYCLE-20261105-Z57I` | `2026-11-05T04:36:02.718Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`322d92af...`) |

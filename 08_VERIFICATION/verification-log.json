@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-92LS",
-    "timestamp": "2026-11-03T21:00:12.016Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "440411bde5cf01d4896691816ae6f176f29cb63309e4c4b356248e55453cec83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-K8S2",
     "timestamp": "2026-11-03T21:08:53.234Z",
     "repository": "kortix-ai/CompanyOS",
@@ -7492,6 +7477,21 @@
     "contentHash": "1c7e369e61700631f435ec19df7b4ba57b6069463086b5e603714302a004bfc5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-Z57I",
+    "timestamp": "2026-11-05T04:36:02.718Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "322d92af2dedfdd448b30161abb59ae821c1f81e1ff1da7a53c426eb2562f6cf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
