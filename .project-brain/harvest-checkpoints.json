@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T02:25:57.183Z",
+  "last_updated": "2026-11-05T02:33:00.440Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "821790092f7b28c79ea35c7a64b81be86ca2d6d33d181a1e893fac2ac9d0ddd7",
-      "verified_at": "2026-10-31T12:00:25.243Z",
+      "content_hash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
+      "verified_at": "2026-11-05T02:33:00.439Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:00:25.243Z"
+      "last_updated": "2026-11-05T02:33:00.439Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -17939,6 +17939,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-04T19:55:21.518Z"
+    },
+    "PrunaAI/P-H3-Image-Comfy": {
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "content_hash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+      "verified_at": "2026-11-05T02:32:58.580Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T02:32:58.580Z"
     }
   },
   "repos": {

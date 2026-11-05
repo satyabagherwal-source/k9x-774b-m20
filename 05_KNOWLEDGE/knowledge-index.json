@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:25:57.085Z",
-  "total_verified_learnings": 1210,
+  "last_updated": "2026-11-05T02:33:00.327Z",
+  "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -31670,7 +31670,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "821790092f7b28c79ea35c7a64b81be86ca2d6d33d181a1e893fac2ac9d0ddd7",
+      "content_hash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -31733,7 +31733,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-31T12:00:25.121Z",
+      "verified_at": "2026-11-05T02:33:00.305Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179386,6 +179386,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T02:25:52.579Z"
+    },
+    "learn-huggingface-prunaai-p-h3-image-comfy": {
+      "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "PrunaAI/P-H3-Image-Comfy",
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "slug": "hf-prunaai-p-h3-image-comfy",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "content_hash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+      "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T02:32:58.422Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

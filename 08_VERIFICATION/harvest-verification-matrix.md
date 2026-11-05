@@ -7460,3 +7460,5 @@
 | `CYCLE-20261105-BI6S` | `2026-11-05T02:25:41.332Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`6b88376d...`) |
 | `CYCLE-20261105-BQXD` | `2026-11-05T02:25:52.657Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7073` | Yes (`71af2ccf...`) |
 | `CYCLE-20261105-BUEO` | `2026-11-05T02:25:57.168Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`69ce0805...`) |
+| `CYCLE-20261105-KVK5` | `2026-11-05T02:32:58.565Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`dce9b924...`) |
+| `CYCLE-20261105-KWZO` | `2026-11-05T02:33:00.420Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`cefe03a3...`) |

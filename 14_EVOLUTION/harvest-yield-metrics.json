@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:25:57.180Z",
-  "total_cycles_completed": 7437,
-  "total_learnings_persisted": 7437,
+  "last_updated": "2026-11-05T02:33:00.436Z",
+  "total_cycles_completed": 7439,
+  "total_learnings_persisted": 7439,
   "total_rules_promoted": 7124,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:52:34.574Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:59:23.887Z",
-      "repository": "alexpasmantier/television",
-      "learningId": "learn-github-alexpasmantier-television",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T17:59:34.043Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T02:25:57.180Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:32:58.577Z",
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:33:00.436Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

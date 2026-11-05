@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:25:59.708Z",
-    "lastVerified": "2026-11-05T02:25:59.708Z",
+    "lastChecked": "2026-11-05T02:33:12.320Z",
+    "lastVerified": "2026-11-05T02:33:12.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T02:02:02.307Z",
-    "lastVerified": "2026-11-05T02:02:02.307Z",
+    "lastChecked": "2026-11-05T02:33:12.308Z",
+    "lastVerified": "2026-11-05T02:33:12.308Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1081,9 +1081,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-04T22:58:58.140Z",
+    "lastChecked": "2026-11-05T02:33:07.325Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-04T22:58:58.140Z"
+    "lastVerified": "2026-11-05T02:33:07.325Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3391,12 +3391,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T12:00:24.096Z",
-    "lastVerified": "2026-10-31T12:00:24.096Z",
+    "lastChecked": "2026-11-05T02:33:00.119Z",
+    "lastVerified": "2026-11-05T02:33:00.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "821790092f7b28c79ea35c7a64b81be86ca2d6d33d181a1e893fac2ac9d0ddd7",
+    "contentHash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4120,9 +4120,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-04T03:16:28.048Z",
+    "lastChecked": "2026-11-05T02:33:09.793Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-04T03:16:28.048Z"
+    "lastVerified": "2026-11-05T02:33:09.793Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -6572,9 +6572,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-04T03:57:34.954Z",
+    "lastChecked": "2026-11-05T02:33:04.848Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-04T03:57:34.954Z"
+    "lastVerified": "2026-11-05T02:33:04.848Z"
   },
   "olric-data-olric": {
     "name": "olric-data/olric",
@@ -9052,9 +9052,9 @@
   "juanpe-about-swiftui": {
     "name": "About-SwiftUI",
     "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
-    "lastChecked": "2026-10-31T19:40:47.530Z",
+    "lastChecked": "2026-11-05T02:33:02.344Z",
     "revisionIdentifier": "59a740fc",
-    "lastVerified": "2026-10-31T19:40:47.530Z"
+    "lastVerified": "2026-11-05T02:33:02.344Z"
   },
   "hf-openmoss-team-moss-image-sft": {
     "name": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -13534,6 +13534,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-prunaai-p-h3-image-comfy": {
+    "name": "PrunaAI/P-H3-Image-Comfy",
+    "officialUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-05T02:32:57.438Z",
+    "lastVerified": "2026-11-05T02:32:57.438Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

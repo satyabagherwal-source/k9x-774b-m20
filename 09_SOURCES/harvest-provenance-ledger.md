@@ -7469,3 +7469,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-05T02:25:41.340Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `f7ad87dd` | Multi-dimensional audit evidence | 2026-11-05T02:25:52.660Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9bd304a7` | Multi-dimensional audit evidence | 2026-11-05T02:25:57.171Z |
+| `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-05T02:32:58.569Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-05T02:33:00.430Z |

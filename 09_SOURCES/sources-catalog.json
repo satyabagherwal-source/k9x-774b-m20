@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "821790092f7b28c79ea35c7a64b81be86ca2d6d33d181a1e893fac2ac9d0ddd7",
-    "lastHarvestedAt": "2026-10-31T12:00:25.234Z",
+    "contentHash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
+    "lastHarvestedAt": "2026-11-05T02:33:00.430Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -11918,5 +11918,15 @@
     "contentHash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
     "lastHarvestedAt": "2026-11-04T19:55:21.501Z",
     "learningId": "learn-github-matthart1983-netwatch"
+  },
+  "hf-prunaai-p-h3-image-comfy": {
+    "repository": "PrunaAI/P-H3-Image-Comfy",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+    "sourceVersion": "hf-prunaai-p-h3-image-comfy",
+    "license": "Open-Source",
+    "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+    "lastHarvestedAt": "2026-11-05T02:32:58.569Z",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
   }
 }

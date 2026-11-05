@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-WM0Z",
-    "timestamp": "2026-11-03T18:02:32.963Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "e407c70962643e51ecabd0e6e6ca4ba37803428856a404a7e36d201b3b0759fe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-WOVE",
-    "timestamp": "2026-11-03T18:02:36.650Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "bb61564137fc1dcb88f3b0ed3b9869e9d4bc10548accc696d7f6b709ff734e4b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-7VBG",
     "timestamp": "2026-11-03T18:11:18.220Z",
     "repository": "astral-sh/uv",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-KVK5",
+    "timestamp": "2026-11-05T02:32:58.565Z",
+    "repository": "PrunaAI/P-H3-Image-Comfy",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-KWZO",
+    "timestamp": "2026-11-05T02:33:00.420Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
