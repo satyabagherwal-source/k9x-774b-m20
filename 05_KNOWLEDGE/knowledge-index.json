@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T14:13:48.434Z",
+  "last_updated": "2026-11-05T14:22:52.601Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8693,8 +8693,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "a66a1f88",
-      "content_hash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
+      "source_version": "31875da1",
+      "content_hash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -8757,6 +8757,11 @@
           "number": 7028,
           "title": "typo in change entries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7254,
+          "title": "Add initial S3 support to parquet fdw via OpenDAL",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8764,7 +8769,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:34:47.155Z",
+      "verified_at": "2026-11-05T14:22:52.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40918,8 +40923,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "5eadb108",
-      "content_hash": "797008e51d6ef3289279f775feb6b9c34f05df4a4e5cb47804e9c398823161bf",
+      "source_version": "f5be64bb",
+      "content_hash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -40997,6 +41002,11 @@
           "number": 7045,
           "title": "[mesheryctl] Prevent nil pointer dereference panic and unhandled HTTP status in",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7253,
+          "title": "[Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41004,7 +41014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:22:41.022Z",
+      "verified_at": "2026-11-05T14:22:48.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72244,7 +72254,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
+      "content_hash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -72427,6 +72437,21 @@
           "number": 6371,
           "title": "Early‑Compression Token Count Bound",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7250,
+          "title": "Consistent Mixed‑Precision Policy",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7251,
+          "title": "MoE Router Load‑Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7252,
+          "title": "Early‑Compression Token Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72434,7 +72459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:56:35.640Z",
+      "verified_at": "2026-11-05T14:22:45.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182957,6 +182982,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T14:13:48.421Z"
+    },
+    "rule-7250": {
+      "learning_id": "rule-7250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7250,
+      "title": "Consistent Mixed‑Precision Policy",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:22:45.955Z"
+    },
+    "rule-7251": {
+      "learning_id": "rule-7251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7251,
+      "title": "MoE Router Load‑Balancing Invariant",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:22:45.955Z"
+    },
+    "rule-7252": {
+      "learning_id": "rule-7252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7252,
+      "title": "Early‑Compression Token Integrity Invariant",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:22:45.955Z"
+    },
+    "rule-7253": {
+      "learning_id": "rule-7253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7253,
+      "title": "[Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "f5be64bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:22:48.813Z"
+    },
+    "rule-7254": {
+      "learning_id": "rule-7254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7254,
+      "title": "Add initial S3 support to parquet fdw via OpenDAL",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "31875da1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T14:22:52.577Z"
     }
   },
   "aliases": {

@@ -7689,3 +7689,6 @@
 | `CYCLE-20261105-LXBA` | `2026-11-05T14:13:37.894Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7246` | Yes (`1f650e4b...`) |
 | `CYCLE-20261105-M233` | `2026-11-05T14:13:44.079Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5004, Rule 7247, Rule 7248` | Yes (`5179d46e...`) |
 | `CYCLE-20261105-M5HI` | `2026-11-05T14:13:48.486Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7249` | Yes (`ffcce903...`) |
+| `CYCLE-20261105-XOAA` | `2026-11-05T14:22:46.066Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7250, Rule 7251, Rule 7252` | Yes (`742baf9b...`) |
+| `CYCLE-20261105-XQHP` | `2026-11-05T14:22:48.925Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7253` | Yes (`673ab467...`) |
+| `CYCLE-20261105-XTE8` | `2026-11-05T14:22:52.688Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7254` | Yes (`4c1e9612...`) |

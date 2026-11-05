@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T14:13:48.505Z",
+  "last_updated": "2026-11-05T14:22:52.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
-      "verified_at": "2026-10-31T23:56:35.734Z",
+      "content_hash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
+      "verified_at": "2026-11-05T14:22:46.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T23:56:35.734Z"
+      "last_updated": "2026-11-05T14:22:46.087Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
-      "verified_at": "2026-11-04T23:34:47.283Z",
+      "content_hash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
+      "verified_at": "2026-11-05T14:22:52.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:34:47.283Z"
+      "last_updated": "2026-11-05T14:22:52.710Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "797008e51d6ef3289279f775feb6b9c34f05df4a4e5cb47804e9c398823161bf",
-      "verified_at": "2026-11-05T00:22:41.150Z",
+      "content_hash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
+      "verified_at": "2026-11-05T14:22:48.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:22:41.150Z"
+      "last_updated": "2026-11-05T14:22:48.946Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",

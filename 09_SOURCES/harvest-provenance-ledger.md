@@ -7698,3 +7698,6 @@ Every entry in this ledger must capture:
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `74363634` | Multi-dimensional audit evidence | 2026-11-05T14:13:37.897Z |
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-05T14:13:44.081Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5492684f` | Multi-dimensional audit evidence | 2026-11-05T14:13:48.488Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-05T14:22:46.070Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `f5be64bb` | Multi-dimensional audit evidence | 2026-11-05T14:22:48.929Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `31875da1` | Multi-dimensional audit evidence | 2026-11-05T14:22:52.692Z |

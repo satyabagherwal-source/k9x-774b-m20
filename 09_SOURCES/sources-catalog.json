@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
-    "lastHarvestedAt": "2026-10-31T23:56:35.726Z",
+    "contentHash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
+    "lastHarvestedAt": "2026-11-05T14:22:46.070Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "a66a1f88",
+    "sourceVersion": "31875da1",
     "license": "Apache-2.0",
-    "contentHash": "4a8d5e3d8d470283e4d8e408e423a6d3968a08e57f4b50c80564e4a2adc50e40",
-    "lastHarvestedAt": "2026-11-04T23:34:47.266Z",
+    "contentHash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
+    "lastHarvestedAt": "2026-11-05T14:22:52.692Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "5eadb108",
+    "sourceVersion": "f5be64bb",
     "license": "Apache-2.0",
-    "contentHash": "797008e51d6ef3289279f775feb6b9c34f05df4a4e5cb47804e9c398823161bf",
-    "lastHarvestedAt": "2026-11-05T00:22:41.133Z",
+    "contentHash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
+    "lastHarvestedAt": "2026-11-05T14:22:48.929Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
