@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T03:20:49.071Z",
-  "total_cycles_completed": 7456,
-  "total_learnings_persisted": 7456,
-  "total_rules_promoted": 7140,
+  "last_updated": "2026-11-05T03:32:38.610Z",
+  "total_cycles_completed": 7459,
+  "total_learnings_persisted": 7459,
+  "total_rules_promoted": 7142,
   "history": [
-    {
-      "timestamp": "2026-11-04T18:42:19.034Z",
-      "repository": "Comfy-Org/Fibo-2.0",
-      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T18:42:22.598Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T18:57:27.001Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T18:57:34.549Z",
       "repository": "callstack/agent-device",
@@ -1403,6 +1382,27 @@
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:27:39.853Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:27:44.440Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T03:32:38.610Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

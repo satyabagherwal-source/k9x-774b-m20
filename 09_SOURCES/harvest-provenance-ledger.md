@@ -7488,3 +7488,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T03:20:43.468Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `e1250f62` | Multi-dimensional audit evidence | 2026-11-05T03:20:43.538Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `6ab2eaff` | Multi-dimensional audit evidence | 2026-11-05T03:20:49.066Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f8a950c3` | Multi-dimensional audit evidence | 2026-11-05T03:27:39.848Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `ea1eb4c2` | Multi-dimensional audit evidence | 2026-11-05T03:27:44.435Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T03:32:38.605Z |

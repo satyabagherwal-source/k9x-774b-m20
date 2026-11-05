@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T03:20:49.085Z",
+  "last_updated": "2026-11-05T03:32:38.614Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -935,14 +935,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "93f4f9d43eda4636a1971b66c2257d168f083ae8254a77b43ff7bf231bc52574",
-      "verified_at": "2026-10-31T12:53:41.984Z",
+      "content_hash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
+      "verified_at": "2026-11-05T03:32:38.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:53:41.984Z"
+      "last_updated": "2026-11-05T03:32:38.613Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "0bba5f56313e9ad540130cbe49149a3b0e60593103c92ebbc62c02379319aa5c",
-      "verified_at": "2026-11-04T00:53:17.998Z",
+      "content_hash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
+      "verified_at": "2026-11-05T03:27:39.864Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:53:17.998Z"
+      "last_updated": "2026-11-05T03:27:39.864Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "30ac0aa83189ada986199a40531fcc2ab68308c8476655abf5bc01ed5801a9be",
-      "verified_at": "2026-10-31T20:46:44.120Z",
+      "content_hash": "06141b594a7c3b20b6a54e524e4c222acdbf8e9ff6f2ae1883af33f70a2bfe73",
+      "verified_at": "2026-11-05T03:27:44.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:46:44.120Z"
+      "last_updated": "2026-11-05T03:27:44.450Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",

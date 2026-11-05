@@ -7479,3 +7479,6 @@
 | `CYCLE-20261105-AA4O` | `2026-11-05T03:20:43.464Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7083, Rule 410, Rule 954` | Yes (`9d1cfbff...`) |
 | `CYCLE-20261105-AA6M` | `2026-11-05T03:20:43.534Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7084` | Yes (`89500084...`) |
 | `CYCLE-20261105-AEG6` | `2026-11-05T03:20:49.062Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7085` | Yes (`6abc583f...`) |
+| `CYCLE-20261105-J7ET` | `2026-11-05T03:27:39.845Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7086` | Yes (`4004b77c...`) |
+| `CYCLE-20261105-JAY8` | `2026-11-05T03:27:44.432Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7087` | Yes (`06141b59...`) |
+| `CYCLE-20261105-PLXH` | `2026-11-05T03:32:38.597Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`d597f841...`) |

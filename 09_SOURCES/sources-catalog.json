@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "93f4f9d43eda4636a1971b66c2257d168f083ae8254a77b43ff7bf231bc52574",
-    "lastHarvestedAt": "2026-10-31T12:53:41.975Z",
+    "contentHash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
+    "lastHarvestedAt": "2026-11-05T03:32:38.605Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "378f4494",
+    "sourceVersion": "f8a950c3",
     "license": "MIT",
-    "contentHash": "0bba5f56313e9ad540130cbe49149a3b0e60593103c92ebbc62c02379319aa5c",
-    "lastHarvestedAt": "2026-11-04T00:53:17.988Z",
+    "contentHash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
+    "lastHarvestedAt": "2026-11-05T03:27:39.848Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "4c77c2f7",
+    "sourceVersion": "ea1eb4c2",
     "license": "AGPL-3.0",
-    "contentHash": "30ac0aa83189ada986199a40531fcc2ab68308c8476655abf5bc01ed5801a9be",
-    "lastHarvestedAt": "2026-10-31T20:46:44.111Z",
+    "contentHash": "06141b594a7c3b20b6a54e524e4c222acdbf8e9ff6f2ae1883af33f70a2bfe73",
+    "lastHarvestedAt": "2026-11-05T03:27:44.435Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {
