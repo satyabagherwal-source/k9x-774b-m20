@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "7ec7c307fee253d1cfb2b4bb4aa6a84905aad37cd4ee82ff78a1fab642a16929",
-    "lastHarvestedAt": "2026-10-31T14:52:32.006Z",
+    "contentHash": "4f81ebc5f513cee917097ba2e7039dd49e3dcf5352f45b7633a58cde14db3470",
+    "lastHarvestedAt": "2026-11-05T05:46:40.094Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {

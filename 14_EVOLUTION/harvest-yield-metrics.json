@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T05:39:17.461Z",
-  "total_cycles_completed": 7502,
-  "total_learnings_persisted": 7502,
+  "last_updated": "2026-11-05T05:46:40.100Z",
+  "total_cycles_completed": 7503,
+  "total_learnings_persisted": 7503,
   "total_rules_promoted": 7176,
   "history": [
-    {
-      "timestamp": "2026-11-04T20:39:19.722Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T20:39:33.593Z",
       "repository": "PeerDB-io/peerdb",
@@ -1403,6 +1396,13 @@
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T05:46:40.100Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -7534,3 +7534,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-05T05:39:02.708Z |
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `bb069c2f` | Multi-dimensional audit evidence | 2026-11-05T05:39:04.590Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `a5c8b104` | Multi-dimensional audit evidence | 2026-11-05T05:39:17.457Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-05T05:46:40.094Z |

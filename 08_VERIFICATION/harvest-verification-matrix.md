@@ -7525,3 +7525,4 @@
 | `CYCLE-20261105-85V0` | `2026-11-05T05:39:02.700Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3343ba0b...`) |
 | `CYCLE-20261105-87BA` | `2026-11-05T05:39:04.582Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7118` | Yes (`c2a767d3...`) |
 | `CYCLE-20261105-8H8V` | `2026-11-05T05:39:17.455Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7119` | Yes (`de983435...`) |
+| `CYCLE-20261105-HYS5` | `2026-11-05T05:46:40.085Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`4f81ebc5...`) |

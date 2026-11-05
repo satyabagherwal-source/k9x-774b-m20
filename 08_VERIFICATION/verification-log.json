@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-MH4F",
-    "timestamp": "2026-11-03T22:06:36.591Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "490e9fe6c7768f6c80a1fe49f8c76968aa7bff74e9b8c72bb9d6aed8d3bcf339",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-MHL8",
     "timestamp": "2026-11-03T22:06:37.196Z",
     "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
@@ -7492,6 +7477,21 @@
     "contentHash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-HYS5",
+    "timestamp": "2026-11-05T05:46:40.085Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "4f81ebc5f513cee917097ba2e7039dd49e3dcf5352f45b7633a58cde14db3470",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
