@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-JYM0",
-    "timestamp": "2026-11-04T01:20:36.600Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-K0V0",
     "timestamp": "2026-11-04T01:20:39.516Z",
     "repository": "pulumi/pulumi",
@@ -7492,6 +7477,21 @@
     "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-PDBC",
+    "timestamp": "2026-11-05T09:36:22.440Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "8cf3e1810cea445c0319918ce941390501a6bf5be4bcf2b0968f7c9fe0f30060",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

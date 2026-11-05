@@ -7605,3 +7605,4 @@ Every entry in this ledger must capture:
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `e15e8959` | Multi-dimensional audit evidence | 2026-11-05T09:12:33.414Z |
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T09:21:00.248Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `39b9f2d5` | Multi-dimensional audit evidence | 2026-11-05T09:25:40.957Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-05T09:36:22.444Z |

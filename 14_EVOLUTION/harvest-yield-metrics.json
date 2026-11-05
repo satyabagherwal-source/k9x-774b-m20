@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T09:25:40.963Z",
-  "total_cycles_completed": 7573,
-  "total_learnings_persisted": 7573,
+  "last_updated": "2026-11-05T09:36:22.449Z",
+  "total_cycles_completed": 7574,
+  "total_learnings_persisted": 7574,
   "total_rules_promoted": 7238,
   "history": [
-    {
-      "timestamp": "2026-11-04T23:27:26.078Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T23:27:27.833Z",
       "repository": "rtk-ai/rtk",
@@ -1403,6 +1396,13 @@
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T09:36:22.449Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

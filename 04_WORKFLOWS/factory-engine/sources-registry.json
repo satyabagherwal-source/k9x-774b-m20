@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T09:25:43.513Z",
-    "lastVerified": "2026-11-05T09:25:43.513Z",
+    "lastChecked": "2026-11-05T09:36:24.989Z",
+    "lastVerified": "2026-11-05T09:36:24.989Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,12 +444,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T08:50:21.324Z",
-    "lastVerified": "2026-11-05T08:50:21.324Z",
+    "lastChecked": "2026-11-05T09:35:26.459Z",
+    "lastVerified": "2026-11-05T09:35:26.459Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -458,7 +458,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c57cbd6c"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -798,8 +799,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T05:39:09.396Z",
-    "lastVerified": "2026-11-05T05:39:09.396Z",
+    "lastChecked": "2026-11-05T09:35:21.484Z",
+    "lastVerified": "2026-11-05T09:35:21.484Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3215,8 +3216,8 @@
     "officialUrl": "https://github.com/taubyte/tau",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T19:41:23.592Z",
-    "lastVerified": "2026-11-04T19:41:23.592Z",
+    "lastChecked": "2026-11-05T09:35:18.985Z",
+    "lastVerified": "2026-11-05T09:35:18.985Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-taubyte-tau",
@@ -5422,9 +5423,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-04T09:32:50.262Z",
+    "lastChecked": "2026-11-05T09:35:11.459Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-04T09:32:50.262Z"
+    "lastVerified": "2026-11-05T09:35:11.459Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -6596,12 +6597,12 @@
     "officialUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T18:28:57.174Z",
-    "lastVerified": "2026-10-31T18:28:57.174Z",
+    "lastChecked": "2026-11-05T09:35:14.175Z",
+    "lastVerified": "2026-11-05T09:35:14.175Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "804a9566fc93c03a9b5414e8fcd12408ed1f69c96cf8d48e07964952445d4e9c",
+    "contentHash": "8cf3e1810cea445c0319918ce941390501a6bf5be4bcf2b0968f7c9fe0f30060",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7614,9 +7615,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-04T18:42:18.081Z",
+    "lastChecked": "2026-11-05T09:35:24.005Z",
     "revisionIdentifier": "d8bc862d",
-    "lastVerified": "2026-11-04T18:42:18.081Z"
+    "lastVerified": "2026-11-05T09:35:24.005Z"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-ai/zvec-grep",
@@ -10185,9 +10186,9 @@
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
     "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
-    "lastChecked": "2026-11-02T14:39:12.820Z",
+    "lastChecked": "2026-11-05T09:35:16.476Z",
     "revisionIdentifier": "7844c733",
-    "lastVerified": "2026-11-02T14:39:12.820Z"
+    "lastVerified": "2026-11-05T09:35:16.476Z"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
