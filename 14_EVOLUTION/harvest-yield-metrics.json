@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T10:43:47.285Z",
-  "total_cycles_completed": 7596,
-  "total_learnings_persisted": 7596,
-  "total_rules_promoted": 7256,
+  "last_updated": "2026-11-05T10:50:45.423Z",
+  "total_cycles_completed": 7598,
+  "total_learnings_persisted": 7598,
+  "total_rules_promoted": 7257,
   "history": [
-    {
-      "timestamp": "2026-11-05T00:22:40.603Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T00:22:41.139Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T00:29:38.107Z",
       "repository": "akhilaaa3/Jev-Omni",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T10:43:47.285Z",
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:50:38.938Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T10:50:45.423Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

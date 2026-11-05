@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:43:47.182Z",
+  "last_updated": "2026-11-05T10:50:45.344Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19911,7 +19911,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
+      "content_hash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -20003,7 +20003,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-31T20:04:07.114Z",
+      "verified_at": "2026-11-05T10:50:38.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36543,8 +36543,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "97df5a8b",
-      "content_hash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
+      "source_version": "47243e2f",
+      "content_hash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -36592,6 +36592,11 @@
           "number": 6965,
           "title": "support split image variables for CR workloads (#5037)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7194,
+          "title": "security): refine report serving and password recovery responses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36599,7 +36604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:46:46.659Z",
+      "verified_at": "2026-11-05T10:50:45.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181804,6 +181809,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:43:47.157Z"
+    },
+    "rule-7194": {
+      "learning_id": "rule-7194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7194,
+      "title": "security): refine report serving and password recovery responses",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "47243e2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:50:45.324Z"
     }
   },
   "aliases": {

@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
-    "lastHarvestedAt": "2026-10-31T20:04:07.215Z",
+    "contentHash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
+    "lastHarvestedAt": "2026-11-05T10:50:38.932Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "97df5a8b",
+    "sourceVersion": "47243e2f",
     "license": "NOASSERTION",
-    "contentHash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
-    "lastHarvestedAt": "2026-11-04T20:46:46.771Z",
+    "contentHash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
+    "lastHarvestedAt": "2026-11-05T10:50:45.418Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {

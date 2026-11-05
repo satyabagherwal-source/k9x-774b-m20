@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T10:43:49.851Z",
-    "lastVerified": "2026-11-05T10:43:49.851Z",
+    "lastChecked": "2026-11-05T10:50:47.977Z",
+    "lastVerified": "2026-11-05T10:50:47.977Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T10:16:09.972Z",
-    "lastVerified": "2026-11-05T10:16:09.972Z",
+    "lastChecked": "2026-11-05T10:50:47.523Z",
+    "lastVerified": "2026-11-05T10:50:47.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -428,12 +428,12 @@
     "revisionIdentifier": "fea58ae4"
   },
   "run-llama-llama_index": {
-    "name": "run-llama/llama_index",
+    "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T20:02:46.090Z",
-    "lastVerified": "2026-11-04T20:02:46.090Z",
+    "lastChecked": "2026-11-05T10:50:44.929Z",
+    "lastVerified": "2026-11-05T10:50:44.929Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
@@ -442,7 +442,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -1594,9 +1595,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-05T06:44:02.970Z",
+    "lastChecked": "2026-11-05T10:50:42.451Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-05T06:44:02.970Z"
+    "lastVerified": "2026-11-05T10:50:42.451Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3798,14 +3799,14 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T20:46:46.006Z",
-    "lastVerified": "2026-11-04T20:46:46.006Z",
+    "lastChecked": "2026-11-05T10:50:44.748Z",
+    "lastVerified": "2026-11-05T10:50:44.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
-    "contentHash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
+    "contentHash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6045,12 +6046,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "u-root-u-root": {
-    "name": "u-root/u-root",
+    "name": "u-root",
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T10:57:27.445Z",
-    "lastVerified": "2026-11-04T10:57:27.445Z",
+    "lastChecked": "2026-11-05T10:50:32.427Z",
+    "lastVerified": "2026-11-05T10:50:32.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
@@ -6059,7 +6060,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5e3bfe39"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "name": "sentence-transformers/all-mpnet-base-v2",
@@ -7199,13 +7201,13 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T20:02:10.171Z",
-    "lastVerified": "2026-10-31T20:02:10.171Z",
+    "lastChecked": "2026-11-05T10:50:35.442Z",
+    "lastVerified": "2026-11-05T10:50:35.442Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
-    "promotedRulesCount": 3,
+    "contentHash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10362,12 +10364,12 @@
     "lastVerified": "2026-11-03T17:22:34.592Z"
   },
   "juullabs-kable": {
-    "name": "JuulLabs/kable",
+    "name": "kable",
     "officialUrl": "https://github.com/JuulLabs/kable",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-02T15:57:20.379Z",
-    "lastVerified": "2026-11-02T15:57:20.379Z",
+    "lastChecked": "2026-11-05T10:50:37.443Z",
+    "lastVerified": "2026-11-05T10:50:37.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juullabs-kable",
@@ -10376,7 +10378,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e9a39099"
   },
   "nometria-sitemap-generator": {
     "name": "sitemap-generator",

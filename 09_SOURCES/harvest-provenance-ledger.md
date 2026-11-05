@@ -7628,3 +7628,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-05T10:36:37.459Z |
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-05T10:43:38.011Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `8a3660f9` | Multi-dimensional audit evidence | 2026-11-05T10:43:47.277Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T10:50:38.932Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `47243e2f` | Multi-dimensional audit evidence | 2026-11-05T10:50:45.418Z |

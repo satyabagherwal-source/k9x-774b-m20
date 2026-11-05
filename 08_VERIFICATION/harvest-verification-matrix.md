@@ -7619,3 +7619,5 @@
 | `CYCLE-20261105-UUOG` | `2026-11-05T10:36:37.456Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`f1c8b8f4...`) |
 | `CYCLE-20261105-3V6F` | `2026-11-05T10:43:38.007Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`4774c6f8...`) |
 | `CYCLE-20261105-42BT` | `2026-11-05T10:43:47.273Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7193` | Yes (`a03871e6...`) |
+| `CYCLE-20261105-CVYP` | `2026-11-05T10:50:38.929Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`d1c805b7...`) |
+| `CYCLE-20261105-D0YV` | `2026-11-05T10:50:45.415Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7194` | Yes (`fdadf2f9...`) |
