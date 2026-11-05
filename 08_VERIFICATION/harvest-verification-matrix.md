@@ -7720,3 +7720,6 @@
 | `CYCLE-20261105-AOSG` | `2026-11-05T16:52:51.328Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbd2089c...`) |
 | `CYCLE-20261105-JNYU` | `2026-11-05T16:59:50.166Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f867b11d...`) |
 | `CYCLE-20261105-JTF8` | `2026-11-05T16:59:57.236Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 6386, Rule null` | Yes (`8d62dec9...`) |
+| `CYCLE-20261105-T8FM` | `2026-11-05T17:07:16.594Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`d457e1df...`) |
+| `CYCLE-20261105-TALV` | `2026-11-05T17:07:19.411Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2e68b4fe...`) |
+| `CYCLE-20261105-TLEJ` | `2026-11-05T17:07:33.403Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d36bfc0...`) |

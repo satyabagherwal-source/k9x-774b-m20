@@ -7729,3 +7729,6 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `74efd351` | Multi-dimensional audit evidence | 2026-11-05T16:52:51.332Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `654efae4` | Multi-dimensional audit evidence | 2026-11-05T16:59:50.170Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-05T16:59:57.239Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T17:07:16.598Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `1dd3e9ec` | Multi-dimensional audit evidence | 2026-11-05T17:07:19.415Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `4ff3fcc6` | Multi-dimensional audit evidence | 2026-11-05T17:07:33.407Z |

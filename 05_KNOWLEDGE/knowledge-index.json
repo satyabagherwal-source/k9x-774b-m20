@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T16:59:57.134Z",
+  "last_updated": "2026-11-05T17:07:33.310Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3829,11 +3829,16 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "62852de1",
-      "content_hash": "e939f0f60d053ab814a15ee1aeec1f4fd837298346c7d32f6446a9484553ac5c",
+      "source_version": "1dd3e9ec",
+      "content_hash": "2e68b4feb6cf2d74bef683db89092b8b9fddb4c9bd194d173a8390cc2f717a67",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "panic on BOM-prefixed files in diagnostic renderer (#30017)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2482,
           "title": "[ty] Avoid crashes when negating recursive aliases (#29429)",
@@ -3885,7 +3890,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:05:12.649Z",
+      "verified_at": "2026-11-05T17:07:19.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11110,11 +11115,16 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "a2ee57d3",
-      "content_hash": "7230afd9e8ba8e939a27be96f7f13bc21a9ae2a28daa77f62a26c8d0b7f58dbc",
+      "source_version": "4ff3fcc6",
+      "content_hash": "9d36bfc04f5d6a72e967579ae2f1d244de09baa608159cf9dbc8fc36abea6e30",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "storage): mark beliefs/summaries stale when source memory deleted (#1865)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1821,
           "title": "discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577",
@@ -11201,7 +11211,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:47:47.413Z",
+      "verified_at": "2026-11-05T17:07:33.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73693,7 +73703,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
+      "content_hash": "d457e1df6229522eca0379cd8d08e0d64b42fed03e6e7359f31e5b92d4f80f01",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -73718,7 +73728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T02:00:43.574Z",
+      "verified_at": "2026-11-05T17:07:16.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
