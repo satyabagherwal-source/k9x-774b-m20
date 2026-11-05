@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
-    "lastHarvestedAt": "2026-10-31T12:46:45.597Z",
+    "contentHash": "9d1cfbff8eadf8c50f6af171b27eab37dc8e031245d4c3fb346986a4dd3fac6c",
+    "lastHarvestedAt": "2026-11-05T03:20:43.468Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "7f1923a3",
+    "sourceVersion": "6ab2eaff",
     "license": "Apache-2.0",
-    "contentHash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
-    "lastHarvestedAt": "2026-11-04T03:57:45.945Z",
+    "contentHash": "6abc583ff0a392f31294186fe68c00ed2c1e3d434f6cc4f488663e689ff7aabd",
+    "lastHarvestedAt": "2026-11-05T03:20:49.066Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "fcc0161f",
+    "sourceVersion": "e1250f62",
     "license": "Apache-2.0",
-    "contentHash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
-    "lastHarvestedAt": "2026-11-04T07:49:10.256Z",
+    "contentHash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
+    "lastHarvestedAt": "2026-11-05T03:20:43.538Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

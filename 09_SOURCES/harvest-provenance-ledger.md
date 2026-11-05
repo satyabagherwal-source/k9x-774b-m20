@@ -7485,3 +7485,6 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `7c69f415` | Multi-dimensional audit evidence | 2026-11-05T03:02:56.757Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `9b376dfd` | Multi-dimensional audit evidence | 2026-11-05T03:13:17.791Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T03:13:29.832Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T03:20:43.468Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `e1250f62` | Multi-dimensional audit evidence | 2026-11-05T03:20:43.538Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `6ab2eaff` | Multi-dimensional audit evidence | 2026-11-05T03:20:49.066Z |

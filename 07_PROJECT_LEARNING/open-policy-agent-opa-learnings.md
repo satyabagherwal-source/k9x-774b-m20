@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `fcc0161f`  
+> **Source Version**: `e1250f62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:49:09.494Z  
+> **Timestamp**: 2026-11-05T03:20:42.744Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:49:08.963Z  
+> **Harvest Timestamp**: 2026-11-05T03:20:42.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12426 stars
+- **Stars / Engagement**: 12430 stars
 
 ---
 
@@ -967,291 +967,698 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcfc1e84` (2026-11-03)
-**Commit Message**: build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (#9495)
+### Incident Patch 1: `e1250f62` (2026-11-05)
+**Commit Message**: eval: store and retrieve call operands from pool (#9501)
 
-Bumps the gha-dependencies group with 1 update:
-[jdx/mise-action](https://github.com/jdx/mise-action).
+This was now the number one source of allocations in Regal, but should
+be equally beneficial to pretty much all evaluations.
 
-Updates `jdx/mise-action` from 5.2.3 to 5.2.4
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/jdx/mise-action/releases">jdx/mise-action's
-releases</a>.</em></p>
-<blockquote>
-<h2>v5.2.4: Reuse cached signed checksums when restoring mise</h2>
-<p>Jobs that restore mise from the cache no longer have to download its
-signed checksums from GitHub on every run, so a network failure at that
-step no longer fails a job that otherwise restored correctly.</p>
-<h2>Fixed</h2>
-<ul>
-<li><strong>Restoring a cached mise no longer needs a network download
-of the checksums.</strong> The action checks the cached mise binary
-against the signed <code>SHASUMS256.txt</code> and its
-<code>.minisig</code>. Before this release it downloaded both files from
-GitHub on every run, even when the cache restored correctly. When that
-download failed, for example after repeated curl errors, the job failed.
-Now, once the signature checks out, the action saves both files as
-<code>SHASU
+Also took a deep-dive in CPU profiling to see if there's anything to
+move the needle a little on the wall-time metric. It's really not as
+easy but a few tricks together did improve this at least by a little:
 
-**File**: `.github/workflows/benchmarks-nightly.yaml` (modified, +1/-1)
-```diff
-@@ -236,7 +236,7 @@ jobs:
-           distribution: 'temurin'
-           java-version: '21'
-       - name: Setup Clojure
--        uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
-+        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           install: true
-           cache: true
+- Avoid interface comparison with `==` in favor of comparing actual
+values (20% cheaper!)
+- "Early exit" of unification of scalar values already in `biunify`
+avoiding excessive interface type checks (and stack growth) in
+`biunifyValues`
+- Change eval index type `int` -> `uint` to help Go compiler identify
+places where bounds checks can be eliminated
+- Throw out custom bindings slice growth as it's pretty much identical
+to what the stdlib does
+- Throw out `n` count of bindings in favor of standard `len`
+
+```
+348654292 ns/op	820025240 B/op	17454057 allocs/op // OPA v1.22.0
+342811472 ns/op	805012312 B/op	16824305 allocs/op // ObjectKeysIterator pool
+334947014 ns/op	771351845 B/op	15413130 allocs/op // Eval operands pool
 ```
 
-**File**: `.github/workflows/post-merge.yaml` (modified, +1/-1)
+Signed-off-by: Anders Eknert <[REDACTED_EMAIL]>
+
+**File**: `v1/ast/compare.go` (modified, +19/-9)
 ```diff
-@@ -103,7 +103,7 @@ jobs:
-       - name: Git Describe
-         run: git describe --tags
- 
--      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           install: true
-           cache: false
-```
-
-**File**: `.github/workflows/post-tag.yaml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-         with:
-           go-version-file: .go-version
-           cache: false
--      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
-+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-         with:
-           install: true
-           cache: false
-```
-
-**File**: `.github/workflows/pull-request.yaml` (modified, +1/-1)
-```diff
-@@ -150,7 +150,7 @@ jobs:
-       with:
-         go-version-file: .go-version
-       if: matrix.os != 'linux'
--    - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
-+    - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
-       with:
-         install: true
-         cache: true
-```
-
----
-
-### Incident Patch 2: `ffa002bb` (2026-11-03)
-**Commit Message**: build(deps): bump the dependencies group across 1 directory with 2 updates (#9494)
-
-Bumps the dependencies group with 2 updates in the / directory:
-[github.com/gobwas/glob](https://github.com/gobwas/glob) and
-[google.golang.org/grpc](https://github.com/grpc/grpc-go).
-
-Updates `github.com/gobwas/glob` from 1.0.0 to 1.1.0
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/gobwas/glob/releases">github.com/gobwas/glob's
-releases</a>.</em></p>
-<blockquote>
-<h2>v1.1.0</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>all: modernize source code; require go 1.24 by <a
-href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
-href="https://redirect.github.com/gobwas/glob/pull/75">gobwas/glob#75</a></li>
-<li>tail alternatives: match stateless tail alts with a plain loop by <a
-href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
-href="https://redirect.github.com/gobwas/glob/pull/74">gobwas/glob#74</a></li>
-<li>glob: introduce Compiler with added Globstar option by <a
-href="https://github.com/gobwas"><code>@​gobwas</code></a> in <a
-href="https://redirect.github.com/gobwas/glob/pull/82">gobwas/glob#82</a></li>
-</ul>
-<p><strong>Full Changelog</stron
-
-**File**: `e2e/go.mod` (modified, +2/-2)
-```diff
-@@ -50,7 +50,7 @@ require (
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
--	github.com/gobwas/glob v1.0.0 // indirect
-+	github.com/gobwas/glob v1.1.0 // indirect
- 	github.com/goccy/go-json v0.11.2 // indirect
- 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
- 	github.com/golang-sql/sqlexp v0.1.0 // indirect
-@@ -139,7 +139,7 @@ require (
- 	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
--	google.golang.org/grpc v1.84.0 // indirect
-+	google.golang.org/grpc v1.85.0 // indirect
- 	gopkg.in/ini.v1 v1.67.3 // indirect
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
- 	modernc.org/libc v1.79.0 // indirect
-```
-
-**File**: `e2e/go.sum` (modified, +4/-4)
-```diff
-@@ -94,8 +94,8 @@ github.com/go-ole/go-ole v1.3.0 h1:Dt6ye7+vXGIKZ7Xtk4s6/xVdGDQynvom7xCFEdWr6uE=
- github.com/go-ole/go-ole v1.3.0/go.mod h1:5LS6F96DhAwUc7C+1HLexzMXY1xGRSryjyPPKW6zv78=
- github.com/go-sql-driver/mysql v1.10.1 h1:arlSnNLq6a5yxGxV7qg9lF4j0C+KwD6NbQyKr9QL6ME=
- github.com/go-sql-driver/mysql v1.10.1/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
--github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
--github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
-+github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
-+github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
- github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
- github.com/goccy/go-json v0.11.2/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
- github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
-@@ -329,8 +329,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc h1:
- google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:K/n0XLazCJHjD73YuMyNJsN38BPPy1kfFnKxUXaThFU=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc h1:4bNTbnb44EqGVy9HaQxSY2jnafSUdgV3qHtedvNpDKg=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
--google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
--google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
-+google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
-+google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
- google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
- google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-```
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -10,7 +10,7 @@ require (
- 	github.com/foxcpp/go-mockdns v1.3.0
- 	github.com/fsnotify/fsnotify v1.10.1
- 	github.com/go-logr/logr v1.4.4
--	github.com/gobwas/glob v1.0.0
-+	github.com/gobwas/glob v1.1.0
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/uuid v1.6.0
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
-@@ -49,7 +49,7 @@ require (
- 	golang.org/x/term v0.47.0
- 	golang.org/x/text v0.43.0
- 	golang.org/x/time v0.16.0
--	google.golang.org/grpc v1.84.0
-+	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
- 	gopkg.in/ini.v1 v1.67.3
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -50,8 +50,8 @@ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
--github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
--github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
-+github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
-+github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
- github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
- github.com/goccy/go-json v0.11.2/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
-@@ -299,8 +299,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc h1:
- google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:K/n0XLazCJHjD73YuMyNJsN38BPPy1kfFnKxUXaThFU=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc h1:4bNTbnb44EqGVy9HaQxSY2jnafSUdgV3qHtedvNpDKg=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
--google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
--google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
-+google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
-+google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
- google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
- google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-```
-
----
-
-### Incident Patch 3: `db327b4b` (2026-11-03)
-**Commit Message**: build(deps-dev): bump baseline-browser-mapping from 2.11.32 to 2.11.33 in /docs in the website group (#9493)
-
-Bumps the website group in /docs with 1 update:
-[baseline-browser-mapping](https://github.com/web-platform-dx/baseline-browser-mapping).
-
-Updates `baseline-browser-mapping` from 2.11.32 to 2.11.33
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/47dde6e6b0119829e7f98308ebc43fd67ede56d0"><code>47dde6e</code></a>
-Patch to 2.11.33 because browser or feature data changed</li>
-<li><a
-href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/7d2362654097fe63f4c71faeba6ec5e1a7eca878"><code>7d23626</code></a>
-Browser or feature data changed</li>
-<li><a
-href="https://github.com/web-platform-dx/baseline-browser-mapping/commit/107852a6972b01dbc5dff85b98551ab0272caf27"><code>107852a</code></a>
-Updating static site</li>
-<li>See full diff in <a
-href="https://github.com/web-platform-dx/baseline-browser-mapping/compare/v2.11.32...v2.11.33">compare
-view</a></li>
-</ul>
-</details>
-<br />
-
-
-[![Dependabot compatibility
-score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=
-
-**File**: `docs/package-lock.json` (modified, +4/-4)
-```diff
-@@ -30,7 +30,7 @@
-         "turndown-plugin-gfm": "^1.0.2"
-       },
-       "devDependencies": {
--        "baseline-browser-mapping": "^2.11.32",
-+        "baseline-browser-mapping": "^2.11.33",
-         "pagefind": "^1.5.2"
-       },
-       "engines": {
-@@ -6930,9 +6930,9 @@
-       "license": "MIT"
-     },
-     "node_modules/baseline-browser-mapping": {
--      "version": "2.11.32",
--      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.32.tgz",
--      "integrity": "sha512-UvuxFU9P3hM29LrQdwu0cD6w6/+SFr+UlB9s/knI7+O2rK9xFxKUwSDWxGdbbqQ9/V7BJ5s0NI5nQAE4uJp3gQ==",
-+      "version": "2.11.33",
-+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.33.tgz",
-+      "integrity": "sha512-yiVKDX+qCMRKBE084lXvq9EcwFUhKZ2nU8TK1EQQuOgPNR/lmbGxXOeDdlGUqC2Zz11Cs9rk1d/8NfgBmlkt0w==",
-       "license": "Apache-2.0",
-       "bin": {
-         "baseline-browser-mapping": "dist/cli.cjs"
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@
-     "node": ">=24.0.0"
-   },
-   "devDependencies": {
--    "baseline-browser-mapping": "^2.11.32",
-+    "baseline-browser-mapping": "^2.11.33",
-     "pagefind": "^1.5.2"
-   }
+@@ -264,21 +264,31 @@ func TermValueCompare(a, b *Term) int {
  }
+ 
+ func ValueEqual(a, b Value) bool {
+-	switch v := a.(type) {
+-	case Null, Boolean, String, Var:
+-		return v == b
++	switch av := a.(type) {
++	case Null:
++		_, ok := b.(Null)
++		return ok
++	case Boolean:
++		bv, ok := b.(Boolean)
++		return ok && av == bv
++	case String:
++		bv, ok := b.(String)
++		return ok && av == bv
++	case Var:
++		bv, ok := b.(Var)
++		return ok && av == bv
+ 	case Number:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	case Ref:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	case *Array:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	case *object:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	case *Not:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	case *TemplateString:
+-		return v.Equal(b)
++		return av.Equal(b)
+ 	}
+ 
+ 	return a.Compare(b) == 0
+```
+
+**File**: `v1/ast/compare_test.go` (modified, +14/-0)
+```diff
+@@ -807,3 +807,17 @@ func TestCompareAnnotations(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func BenchmarkValueEqualScalars(b *testing.B) {
++	x, y := InternedTerm(499), InternedTerm(499)
++	s1, s2 := InternedTerm("some string not too short"), InternedTerm("some string not too short")
++	var v1 Value = Var("__local2304__")
++	var v2 Value = Var("__local2304__")
++	for b.Loop() {
++		_ = ValueEqual(x.Value, y.Value)
++		_ = ValueEqual(s1.Value, s2.Value)
++		_ = ValueEqual(s1.Value, y.Value)
++		_ = ValueEqual(v1, v2)
++		_ = ValueEqual(v1, x.Value)
++	}
++}
+```
+
+**File**: `v1/ast/policy.go` (modified, +5/-5)
+```diff
+@@ -1354,11 +1354,11 @@ func (expr *Expr) OperatorTerm() *Term {
+ // at least pos+1 terms, this function returns nil.
+ func (expr *Expr) Operand(pos int) *Term {
+ 	terms, ok := expr.Terms.([]*Term)
+-	if !ok {
++	if !ok || pos < 0 {
+ 		return nil
+ 	}
+-	idx := pos + 1
+-	if idx < len(terms) {
++	idx, len := uint(pos+1), uint(len(terms))
++	if idx < len {
+ 		return terms[idx]
+ 	}
+ 	return nil
+@@ -1367,7 +1367,7 @@ func (expr *Expr) Operand(pos int) *Term {
+ // Operands returns the built-in function operands.
+ func (expr *Expr) Operands() []*Term {
+ 	terms, ok := expr.Terms.([]*Term)
+-	if !ok {
++	if !ok || len(terms) == 0 {
+ 		return nil
+ 	}
+ 	return terms[1:]
+@@ -1904,7 +1904,7 @@ func validEqAssignArgCount(expr *Expr) bool {
+ // function like eq, gt, plus, etc.
+ func isGlobalBuiltin(expr *Expr, name Var) bool {
+ 	terms, ok := expr.Terms.([]*Term)
+-	if !ok {
++	if !ok || len(terms) == 0 {
+ 		return false
+ 	}
+ 
+```
+
+**File**: `v1/rego/rego_bench_test.go` (modified, +3/-2)
+```diff
+@@ -110,9 +110,10 @@ func BenchmarkAciTestBuildAndEval(b *testing.B) {
+ }
+ 
+ // BenchmarkAciTestOnlyEval-10    12752    92188 ns/op   50005 B/op    1062 allocs/op
+-// BenchmarkAciTestOnlyEval-10    13521	   86647 ns/op   47448 B/op     967 allocs/op // ground-aware Copy
+-// BenchmarkAciTestOnlyEval-16    24430	   48475 ns/op   32337 B/op     781 allocs/op
++// BenchmarkAciTestOnlyEval-10    13521    86647 ns/op   47448 B/op     967 allocs/op // ground-aware Copy
++// BenchmarkAciTestOnlyEval-16    24430    48475 ns/op   32337 B/op     781 allocs/op
+ // BenchmarkAciTestOnlyEval-16    24780    47997 ns/op   32241 B/op     770 allocs/op // reuse tr.unordered
++// BenchmarkAciTestOnlyEval-16    29727    40451 ns/op   25115 B/op     542 allocs/op
+ func BenchmarkAciTestOnlyEval(b *testing.B) {
+ 	ctx := b.Context()
+ 
+```
+
+**File**: `v1/topdown/bindings.go` (modified, +54/-50)
+```diff
+@@ -93,7 +93,7 @@ func (u *bindings) size() int {
+ func (u *bindings) plugNamespaced(a *ast.Term, caller *bindings) *ast.Term {
+ 	switch v := a.Value.(type) {
+ 	case ast.Var:
+-		b, next := u.apply(a)
++		b, next := u.applyVar(a)
+ 		if a != b || u != next {
+ 			return next.plugNamespaced(b, caller)
+ 		}
+@@ -172,6 +172,19 @@ func (u *bindings) apply(a *ast.Term) (*ast.Term, *bindings) {
+ 	return val.u.apply(val.v)
+ }
+ 
++// NOTE(anders):
++// applyVar does same thing apply does but for when a is known to carry
++// a Var and doesn't need an extra interface lookup. This is called so
++// frequently that this made a noticeable difference in my Regal benchmarks
++// CPU profiling(!)
++func (u *bindings) applyVar(a *ast.Term) (*ast.Term, *bindings) {
++	val, ok := u.get(a)
++	if !ok {
++		return a, u
++	}
++	return val.u.apply(val.v)
++}
++
+ func (u *bindings) delete(v *ast.Term) {
+ 	u.values.Delete(v)
+ }
+@@ -282,7 +295,8 @@ func (vis namespacingVisitor) namespaceTerm(a *ast.Term) *ast.Term {
+ 		}
+ 		cpy := *a
+ 		arr := make([]*ast.Term, v.Len())
+-		for i := range arr {
++		// silly double check to prevent bounds check
++		for i := 0; i < v.Len() && i < len(arr); i++ {
+ 			arr[i] = vis.namespaceTerm(v.Elem(i))
+ 		}
+ 		cpy.Value = ast.NewArray(arr...)
+@@ -327,7 +341,6 @@ const maxLinearScan = 16
+ // wasting memory when only a few bindings are used. This is critical for scenarios
+ // like comprehensions and functions with few arguments that are called thousands of times.
+ type bindingsArrayHashmap struct {
+-	n int // Entries in the slice.
+ 	a []bindingArrayKeyValue
+ 	m map[ast.Var]bindingArrayKeyValue
+ }
+@@ -375,88 +388,70 @@ func newBindingsArrayHashmapWithSize(sizeHint int) bindingsArrayHashmap {
+ func (b *bindingsArrayHashmap) Put(key *ast.Term, value value) {
+ 	if b.m == nil {
+ 		// Check if key already exists and update value
+-		if i := b.find(key); i >= 0 {
+-			b.a[i].value = value
++		if b.update(key, value) {
+ 			return
+ 		}
+ 
+ 		// Still room in slice mode (< maxLinearScan)
+-		if b.n < maxLinearScan {
+-			// Grow slice if needed using exponential growth strategy
+-			if b.n == cap(b.a) {
+-				newCap := cap(b.a) * 2
+-				if newCap == 0 {
+-					newCap = 2 // Start with 2 elements
+-				}
+-				if newCap > maxLinearScan {
+-					newCap = maxLinearScan
+-				}
+-				newA := make([]bindingArrayKeyValue, b.n, newCap)
+-				copy(newA, b.a)
+-				b.a = newA
+-			}
++		if len(b.a) < maxLinearScan {
+ 			b.a = append(b.a, bindingArrayKeyValue{key, value})
+-			b.n++
+ 			return
+ 		}
+ 
+ 		// Slice is full (reached maxLinearScan), transition to map mode.
+ 		b.m = make(map[ast.Var]bindingArrayKeyValue, maxLinearScan+1)
+ 		for _, kv := range b.a {
+-			b.m[kv.key.Value.(ast.Var)] = bindingArrayKeyValue{kv.key, kv.value}
++			b.m[kv.key.Value.(ast.Var)] = kv
+ 		}
+ 		b.m[key.Value.(ast.Var)] = bindingArrayKeyValue{key, value}
+ 
+ 		// Clear slice to allow GC
+ 		b.a = nil
+-		b.n = 0
+ 		return
+ 	}
+ 
+ 	b.m[key.Value.(ast.Var)] = bindingArrayKeyValue{key, value}
+ }
+ 
+ func (b *bindingsArrayHashmap) Get(key *ast.Term) (value, bool) {
++	v := key.Value.(ast.Var)
+ 	if b.m == nil {
+-		if i := b.find(key); i >= 0 {
+-			return b.a[i].value, true
++		for i := range b.a {
++			if b.a[i].key.Value.(ast.Var) == v {
++				return b.a[i].value, true
++			}
+ 		}
+-
+-		return value{}, false
+-	}
+-
+-	v, ok := b.m[key.Value.(ast.Var)]
+-	if ok {
+-		return v.value, true
++	} else if bv, ok := b.m[v]; ok {
++		return bv.value, true
+ 	}
+ 
+ 	return value{}, false
+ }
+ 
+ func (b *bindingsArrayHashmap) Delete(key *ast.Term) {
+ 	if b.m == nil {
+-		if i := b.find(key); i >= 0 {
+-			n := b.n - 1
+-			if i < n {
+-				b.a[i] = b.a[n]
++		if i, found := b.find(key); found {
++			aLen := uint(len(b.a))
++			lastIdx := aLen - 1
++			if i < aLen && i < lastIdx {
++				b.a[i] = b.a[lastIdx]
+ 			}
+ 			// Shrink slice to reflect deletion
+-			b.a = b.a[:n]
+-			b.n = n
++			b.a = b.a[:lastIdx]
++			clear(b.a[lastIdx:])
+ 		}
++
+ 		return
+ 	}
+ 
+ 	delete(b.m, key.Value.(ast.Var))
+ }
+ 
+-func (b *bindingsArrayHashmap) Iter(f func(k *ast.Term, v value) bool) {
++func (b *bindingsArrayHashmap) Iter(f func(*ast.Term, value) bool) {
+ 	if b.m == nil {
+-		if b.a != nil {
+-			for i := range b.n {
+-				if f(b.a[i].key, b.a[i].value) {
+-					return
+-				}
++		for _, v := range b.a {
++			if f(v.key, v.value) {
++				return
+ 			}
+ 		}
+ 		return
+@@ -471,21 +466,30 @@ func (b *bindingsArrayHashmap) Iter(f func(k *ast.Term, v value) bool) {
+ 
+ func (b *bindingsArrayHashmap) size() int {
+ 	if b.m == nil {
+-		return b.n
++		return len(b.a)
+ 	}
+ 	return len(b.m)
+ }
+ 
+-func (b *bindingsArrayHashmap) find(key *ast.Term) int {
+-	if b.a == nil || b.n == 0 {
+-		return -1
++func (b *bindingsArrayHashmap) find(key *ast.Term) (uint, bool) {
++	v := key.Value.(ast.Var)
++	for i := range b.a {
++		if b.a[i].key.Value.(ast.Var) == v {
++			return uint(i), true
++		}
+ 	}
++
++	return 0, false
++}
++
++func (b *bindingsArrayHashmap) update(key *ast.Term, value value) bool {
+ 	v := key.Value.(ast.Var)
+-	for i := range b.n {
++	for i := range b.a {
+ 		if b.a[i].key.
+```
+
+**File**: `v1/topdown/bindings_test.go` (modified, +1/-1)
+```diff
+@@ -113,7 +113,7 @@ func TestBindingsArrayHashmapDynamicGrowth(t *testing.T) {
+ 		expectedCap  int // Expected final capacity
+ 		shouldUseMap bool
+ 	}{
+-		{"1_binding", 1, 2, false},     // Should allocate cap=2
++		{"1_binding", 1, 1, false},     // Should allocate cap=1
+ 		{"2_bindings", 2, 2, false},    // Should use cap=2
+ 		{"3_bindings", 3, 4, false},    // Should grow to cap=4
+ 		{"4_bindings", 4, 4, false},    // Should use cap=4
+```
+
+**File**: `v1/topdown/eval.go` (modified, +234/-170)
+```diff
+@@ -130,7 +130,7 @@ type eval struct {
+ 	tracingOpts                 tracing.Options
+ 	queryID                     uint64
+ 	timeStart                   int64
+-	index                       int
++	index                       uint
+ 	genvarid                    int
+ 	everyUnrollDiv              int
+ 	indexing                    bool
+@@ -405,8 +405,8 @@ func (e *eval) traceEvent(op Op, x ast.Node, msg string, target *ast.Ref) {
+ 		})
+ 	}
+ 
+-	for i := range e.tracers {
+-		e.tracers[i].TraceEvent(evt)
++	for _, tracer := range e.tracers {
++		tracer.TraceEvent(evt)
+ 	}
+ }
+ 
+@@ -433,7 +433,7 @@ func (e *eval) evalExpr(iter evalIterator) error {
+ 		return cancelErr
+ 	}
+ 
+-	if e.index >= len(e.query) {
++	if e.index >= uint(len(e.query)) {
+ 		if err := iter(e); err != nil {
+ 			switch err := err.(type) {
+ 			case *deferredEarlyExitError, *earlyExitError:
+@@ -511,112 +511,7 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
+ 	// this, but do make sure that the common non-tracing case doesn't pay in allocations
+ 	// for something that is only needed when tracing is enabled.
+ 	if e.traceEnabled {
+-		var defined bool
+-		switch terms := expr.Terms.(type) {
+-		case []*ast.Term:
+-			switch {
+-			case expr.IsEquality():
+-				err = e.unify(terms[1], terms[2], func() error {
+-					defined = true
+-					err := e.cont(iter, advance)
+-					e.traceRedo(expr)
+-					return err
+-				})
+-			default:
+-				err = e.evalCall(terms, func() error {
+-					defined = true
+-					err := e.cont(iter, advance)
+-					e.traceRedo(expr)
+-					return err
+-				})
+-			}
+-		case *ast.Term:
+-			rterm := ast.VarTerm(e.fmtVar())
+-
+-			if e.partial() {
+-				e.inliningControl.PushDisable(rterm.Value, true)
+-			}
+-
+-			err = e.unify(terms, rterm, func() error {
+-				if e.saveSet.Contains(rterm, e.bindings) {
+-					return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
+-						return e.cont(iter, advance)
+-					})
+-				}
+-				if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
+-					defined = true
+-					err := e.cont(iter, advance)
+-					e.traceRedo(expr)
+-					return err
+-				}
+-				return nil
+-			})
+-
+-			if e.partial() {
+-				e.inliningControl.PopDisable()
+-			}
+-		case *ast.Every:
+-			eval := evalEvery{
+-				e:     e,
+-				every: terms,
+-				expr:  expr,
+-			}
+-			err = eval.eval(func() error {
+-				defined = true
+-				err := e.cont(iter, advance)
+-				e.traceRedo(expr)
+-				return err
+-			})
+-
+-		case *ast.Not:
+-			en := evalNot{
+-				e:   e,
+-				not: terms,
+-			}
+-			err = en.eval(func(e *eval) error {
+-				defined = true
+-				err := e.cont(iter, advance)
+-				e.traceRedo(expr)
+-				return err
+-			})
+-
+-		case *ast.LogicalAnd:
+-			ea := evalLogicalAnd{
+-				e:   e,
+-				and: terms,
+-			}
+-			err = ea.eval(func(e *eval) error {
+-				defined = true
+-				err := e.cont(iter, advance)
+-				e.traceRedo(expr)
+-				return err
+-			})
+-
+-		case *ast.LogicalOr:
+-			eo := evalLogicalOr{
+-				e:  e,
+-				or: terms,
+-			}
+-			err = eo.eval(func(e *eval) error {
+-				defined = true
+-				err := e.cont(iter, advance)
+-				e.traceRedo(expr)
+-				return err
+-			})
+-
+-		default: // guard-rail for adding extra (Expr).Terms types
+-			return fmt.Errorf("got %T terms: %[1]v", terms)
+-		}
+-
+-		if err != nil {
+-			return err
+-		}
+-
+-		if !defined {
+-			e.traceFail(expr)
+-		}
+-
+-		return nil
++		return e.evalStepTrace(iter, expr, advance)
+ 	}
+ 
+ 	switch terms := expr.Terms.(type) {
+@@ -628,7 +523,8 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
+ 		}
+ 
+ 		if expr.IsEquality() {
+-			err = e.unify(terms[1], terms[2], c.fn)
++			rhs, lhs := terms[2], terms[1]
++			err = e.unify(lhs, rhs, c.fn)
+ 		} else {
+ 			err = e.evalCall(terms, c.fn)
+ 		}
+@@ -662,9 +558,15 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
+ 			e:   e,
+ 			not: terms,
+ 		}
+-		err = en.eval(func(e *eval) error {
+-			return e.cont(iter, advance)
+-		})
++		if e.unknownBody(en.not.Body, e.bindings) {
++			err = en.evalPartial(func(e *eval) error {
++				return e.cont(iter, advance)
++			})
++		} else {
++			err = en.eval(func(e *eval) error {
++				return e.cont(iter, advance)
++			})
++		}
+ 
+ 	case *ast.LogicalAnd:
+ 		ea := evalLogicalAnd{
+@@ -691,10 +593,125 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
+ 	return err
+ }
+ 
++func (e *eval) evalStepTrace(iter evalIterator, expr *ast.Expr, advance bool) (err error) {
++	var defined bool
++	switch terms := expr.Terms.(type) {
++	case []*ast.Term:
++		switch {
++		case expr.IsEquality():
++			rhs, lhs := terms[2], terms[1]
++			err = e.unify(lhs, rhs, func() error {
++				defined = true
++				err := e.cont(iter, advance)
++				e.traceRedo(expr)
++				return err
++			})
++		default:
++			err = e.evalCall(terms, func() error {
++				defined = true
++				err := e.cont(iter, advance)
++				e.traceRedo(expr)
++				return err
++			})
++		}
++	case *ast.Term:
++		rterm := ast.VarTerm(e.fmtVar())
++
++		if e.partial() {
++			e.inliningControl.PushDisable(rterm.Value, true)
++		}
++
++		err = e.unify(terms, rt
+```
+
+**File**: `v1/topdown/stacktrace.go` (modified, +1/-1)
+```diff
+@@ -134,7 +134,7 @@ func (e *eval) currentExpr() *ast.Expr {
+ 	if len(e.query) == 0 {
+ 		return nil
+ 	}
+-	return e.query[min(e.index, len(e.query)-1)]
++	return e.query[min(e.index, uint(len(e.query)-1))]
+ }
+ 
+ // resolvedText renders the source of expr with the values its variables are
+```
+
+---
+
+### Incident Patch 2: `1b57f11c` (2026-11-04)
+**Commit Message**: topdown: cover time.date, clock, weekday and diff with small timestamps (#9498)
+
+The shared time cases only use timestamps of 1.5e18 ns and the like,
+never the epoch or anything near it. A timestamp that fits an int can be
+a different number representation than a large one in some
+implementations, and nothing checks that both are handled.
+
+Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
+
+**File**: `v1/test/cases/testdata/v1/time/test-time-epoch.yaml` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++---
++cases:
++  - note: "time/date: the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.date(0)
++    want_result:
++      - x: [1970, 1, 1]
++  - note: "time/date: one second after the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.date(1000000000)
++    want_result:
++      - x: [1970, 1, 1]
++  - note: "time/date: the epoch in a time zone"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.date([0, "America/New_York"])
++    want_result:
++      - x: [1969, 12, 31]
++  - note: "time/clock: the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.clock(0)
++    want_result:
++      - x: [0, 0, 0]
++  - note: "time/clock: one second after the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.clock(1000000000)
++    want_result:
++      - x: [0, 0, 1]
++  - note: "time/clock: the epoch in a time zone"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.clock([0, "America/New_York"])
++    want_result:
++      - x: [19, 0, 0]
++  - note: "time/weekday: the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.weekday(0)
++    want_result:
++      - x: Thursday
++  - note: "time/diff: equal timestamps at the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.diff(0, 0)
++    want_result:
++      - x: [0, 0, 0, 0, 0, 0]
++  - note: "time/diff: the epoch against one day later"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.diff(0, 86400000000000)
++    want_result:
++      - x: [0, 0, 1, 0, 0, 0]
++  - note: "time/diff: one second after the epoch against the epoch"
++    query: data.test.p = x
++    modules:
++      - |
++        package test
++
++        p := time.diff(1000000000, 0)
++    want_result:
++      - x: [0, 0, 0, 0, 0, 1]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9501** (2026-11-05): eval: store and retrieve call operands from pool (@anderseknert)
+- **PR #9500** (closed): build: Allow PR policy to comment on PRs (@charlieegan3)
+- **PR #9499** (2026-11-04): topdown: add compliance cases for empty and undefined inputs (@srenatus)
+- **PR #9498** (2026-11-04): topdown: cover time.date, clock, weekday and diff with small timestamps (@srenatus)
+- **PR #9496** (2026-11-04): cmd: replace --v2-compatible with --compatible=<version> (@sspaink)
 - **PR #9495** (2026-11-03): build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (@dependabot[bot])
-- **PR #9494** (2026-11-03): build(deps): bump the dependencies group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #9493** (2026-11-03): build(deps-dev): bump baseline-browser-mapping from 2.11.32 to 2.11.33 in /docs in the website group (@dependabot[bot])
-- **PR #9492** (2026-11-03): build: Edits to non pr workflows to skip checks (@charlieegan3)
-- **PR #9491** (2026-11-03): build: Clear bot comments when validating issues (@charlieegan3)
-- **PR #9490** (2026-11-03): chore: Remove some labels with little signal (@charlieegan3)
 
 ---
 
@@ -1271,28 +1678,54 @@ score](https://dependabot-badges.githubapp.com/badges/compatibility_score?depend
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies gr
+## X. eval: store and retrieve call operands from pool (#9501)
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmarks-nightly.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/ast/compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcfc1e84`: build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (#9495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1250f62`: eval: store and retrieve call operands from pool (#9501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks-nightly.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/compare.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+	switch av := a.(type) {
+	case Null:
+		_, ok := b.(Null)
+		return ok
+	case Boolean:
+		bv, ok := b.(Boolean)
+		return ok && av == bv
+	case String:
+		bv, ok := b.(String)
+		return ok && av == bv
+	case Var:
+		bv, ok := b.(Var)
+		return ok && av == bv
+		return av.Equal(b)
+		return av.Equal(b)
+		return av.Equal(b)
+		return av.Equal(b)
+		return av.Equal(b)
+		return av.Equal(b)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
+	switch v := a.(type) {
+	case Null, Boolean, String, Var:
+		return v == b
+		return v.Equal(b)
+		return v.Equal(b)
+		return v.Equal(b)
+		return v.Equal(b)
+		return v.Equal(b)
+		return v.Equal(b)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcfc1e84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1250f62` are properly handled with clean fallback behavior.

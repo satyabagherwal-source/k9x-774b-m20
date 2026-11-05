@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T03:13:29.752Z",
+  "last_updated": "2026-11-05T03:20:48.974Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17564,8 +17564,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "7f1923a3",
-      "content_hash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
+      "source_version": "6ab2eaff",
+      "content_hash": "6abc583ff0a392f31294186fe68c00ed2c1e3d434f6cc4f488663e689ff7aabd",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -17608,6 +17608,11 @@
           "number": 6751,
           "title": "Activate secondary index builds under sustained writes (#1215)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7085,
+          "title": "Pin the SlateDB fork with its v0.17 fixes and cleanups",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17615,7 +17620,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:57:45.867Z",
+      "verified_at": "2026-11-05T03:20:48.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46028,8 +46033,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "fcc0161f",
-      "content_hash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
+      "source_version": "e1250f62",
+      "content_hash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -46097,6 +46102,11 @@
           "number": 6765,
           "title": "build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies gr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7084,
+          "title": "eval: store and retrieve call operands from pool (#9501)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46104,7 +46114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:49:10.142Z",
+      "verified_at": "2026-11-05T03:20:43.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179589,6 +179599,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T03:13:17.709Z"
+    },
+    "rule-7084": {
+      "learning_id": "rule-7084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7084,
+      "title": "eval: store and retrieve call operands from pool (#9501)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "e1250f62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:20:43.414Z"
+    },
+    "rule-7085": {
+      "learning_id": "rule-7085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7085,
+      "title": "Pin the SlateDB fork with its v0.17 fixes and cleanups",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "6ab2eaff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T03:20:48.950Z"
     }
   },
   "aliases": {

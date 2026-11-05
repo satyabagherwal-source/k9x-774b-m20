@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T03:13:29.839Z",
+  "last_updated": "2026-11-05T03:20:49.085Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -905,14 +905,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
-      "content_hash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
-      "verified_at": "2026-10-31T12:46:45.606Z",
+      "content_hash": "9d1cfbff8eadf8c50f6af171b27eab37dc8e031245d4c3fb346986a4dd3fac6c",
+      "verified_at": "2026-11-05T03:20:43.487Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:46:45.606Z"
+      "last_updated": "2026-11-05T03:20:43.487Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "addd7a0c94c5945a8d3366f11e54df66cab7dec72b9314088fed7d509aa73f14",
-      "verified_at": "2026-11-04T03:57:45.950Z",
+      "content_hash": "6abc583ff0a392f31294186fe68c00ed2c1e3d434f6cc4f488663e689ff7aabd",
+      "verified_at": "2026-11-05T03:20:49.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:57:45.950Z"
+      "last_updated": "2026-11-05T03:20:49.084Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
-      "verified_at": "2026-11-04T07:49:10.266Z",
+      "content_hash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
+      "verified_at": "2026-11-05T03:20:43.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:49:10.266Z"
+      "last_updated": "2026-11-05T03:20:43.555Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

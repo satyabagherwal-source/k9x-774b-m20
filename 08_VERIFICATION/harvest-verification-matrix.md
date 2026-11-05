@@ -7476,3 +7476,6 @@
 | `CYCLE-20261105-NF1T` | `2026-11-05T03:02:56.753Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7081` | Yes (`8b0009a9...`) |
 | `CYCLE-20261105-0Q8S` | `2026-11-05T03:13:17.788Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7082` | Yes (`94b9feff...`) |
 | `CYCLE-20261105-0ZJ7` | `2026-11-05T03:13:29.827Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`7cd42a5b...`) |
+| `CYCLE-20261105-AA4O` | `2026-11-05T03:20:43.464Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7083, Rule 410, Rule 954` | Yes (`9d1cfbff...`) |
+| `CYCLE-20261105-AA6M` | `2026-11-05T03:20:43.534Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7084` | Yes (`89500084...`) |
+| `CYCLE-20261105-AEG6` | `2026-11-05T03:20:49.062Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7085` | Yes (`6abc583f...`) |

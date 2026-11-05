@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-69RF",
-    "timestamp": "2026-11-03T19:06:02.859Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "bbdaa56c0b509956d925f3ba7d6152397ed2e8df0a74892625150c5cb471db72",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-6DL2",
-    "timestamp": "2026-11-03T19:06:07.814Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "e0ea6d9f92dcbad4043c7ee4a36ced85e70dc747f563a8750ffd0c6e8b6221f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-HJVU",
-    "timestamp": "2026-11-03T19:14:49.194Z",
-    "repository": "Pika-Labs/Pika-H3-Flex",
-    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-    "contentHash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-HQ53",
     "timestamp": "2026-11-03T19:14:57.303Z",
     "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "7cd42a5b9df843c0bd3a8ca11b895ab39c1400b1dde7851b66bcec53a0ba842c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-AA4O",
+    "timestamp": "2026-11-05T03:20:43.464Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "9d1cfbff8eadf8c50f6af171b27eab37dc8e031245d4c3fb346986a4dd3fac6c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-AA6M",
+    "timestamp": "2026-11-05T03:20:43.534Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "895000840406161d5a5289572b7e013f1631e5047215fbc37df3ead823f526a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-AEG6",
+    "timestamp": "2026-11-05T03:20:49.062Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "6abc583ff0a392f31294186fe68c00ed2c1e3d434f6cc4f488663e689ff7aabd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
