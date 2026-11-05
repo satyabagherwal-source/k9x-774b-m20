@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-12S1",
-    "timestamp": "2026-11-04T09:57:48.241Z",
-    "repository": "nativewind/nativewind",
-    "learningId": "learn-github-nativewind-nativewind",
-    "contentHash": "183a548e4e9fed9c990dbe247de517257518561356b0517ae5647019887a9f4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-14UR",
     "timestamp": "2026-11-04T09:57:50.931Z",
     "repository": "projectcontour/contour",
@@ -7492,6 +7477,21 @@
     "contentHash": "17b00c6cd1bb8840cd83ef30fcb3cdc20dc00b196b05d028792c1598b19c02b3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-QBEE",
+    "timestamp": "2026-11-05T15:13:02.006Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

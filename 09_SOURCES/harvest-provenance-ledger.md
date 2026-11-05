@@ -7709,3 +7709,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-05T14:58:43.451Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-05T15:05:59.172Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `6ced18b7` | Multi-dimensional audit evidence | 2026-11-05T15:06:11.987Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-05T15:13:02.009Z |

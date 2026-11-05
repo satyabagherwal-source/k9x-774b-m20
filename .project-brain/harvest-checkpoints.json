@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T15:06:12.006Z",
+  "last_updated": "2026-11-05T15:13:02.018Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2301,14 +2301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "92016b53d3eb07d10c23eb4a9da284a5ce7d4321520a523da71c8bac28fbd46b",
-      "verified_at": "2026-11-01T00:42:32.676Z",
+      "content_hash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
+      "verified_at": "2026-11-05T15:13:02.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T00:42:32.676Z"
+      "last_updated": "2026-11-05T15:13:02.017Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:06:11.993Z",
-  "total_cycles_completed": 7677,
-  "total_learnings_persisted": 7677,
+  "last_updated": "2026-11-05T15:13:02.014Z",
+  "total_cycles_completed": 7678,
+  "total_learnings_persisted": 7678,
   "total_rules_promoted": 7327,
   "history": [
-    {
-      "timestamp": "2026-11-05T04:21:45.662Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T04:21:46.608Z",
       "repository": "ClementTsang/bottom",
@@ -1403,6 +1396,13 @@
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T15:13:02.014Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

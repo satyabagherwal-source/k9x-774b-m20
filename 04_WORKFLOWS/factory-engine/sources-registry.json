@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T15:06:14.543Z",
-    "lastVerified": "2026-11-05T15:06:14.543Z",
+    "lastChecked": "2026-11-05T15:13:12.911Z",
+    "lastVerified": "2026-11-05T15:13:12.911Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-05T14:43:35.074Z",
+    "lastChecked": "2026-11-05T15:13:12.900Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-05T14:43:35.074Z"
+    "lastVerified": "2026-11-05T15:13:12.900Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2228,12 +2228,12 @@
     "lastVerified": "2026-11-05T07:13:04.164Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:45:24.232Z",
-    "lastVerified": "2026-11-05T11:45:24.232Z",
+    "lastChecked": "2026-11-05T15:13:07.933Z",
+    "lastVerified": "2026-11-05T15:13:07.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2242,7 +2242,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2993b5e6"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3169,9 +3170,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-05T00:22:39.043Z",
+    "lastChecked": "2026-11-05T15:13:10.425Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-05T00:22:39.043Z"
+    "lastVerified": "2026-11-05T15:13:10.425Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -5961,9 +5962,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-05T01:15:10.664Z",
+    "lastChecked": "2026-11-05T15:13:05.725Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-05T01:15:10.664Z"
+    "lastVerified": "2026-11-05T15:13:05.725Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -7997,12 +7998,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bahdotsh-wrkflw": {
-    "name": "bahdotsh/wrkflw",
+    "name": "wrkflw",
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T20:46:38.637Z",
-    "lastVerified": "2026-11-04T20:46:38.637Z",
+    "lastChecked": "2026-11-05T15:12:57.964Z",
+    "lastVerified": "2026-11-05T15:12:57.964Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
@@ -8011,7 +8012,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c0299477"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
     "name": "autotrust/GEV-26B-Decide-NVFP4",
@@ -8889,12 +8891,12 @@
     "officialUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-01T00:42:31.753Z",
-    "lastVerified": "2026-11-01T00:42:31.753Z",
+    "lastChecked": "2026-11-05T15:13:00.876Z",
+    "lastVerified": "2026-11-05T15:13:00.876Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "92016b53d3eb07d10c23eb4a9da284a5ce7d4321520a523da71c8bac28fbd46b",
+    "contentHash": "2e18488a5e26ad0be314aaec4b39af0c0b9c9ac1e656b2b5f914dab9fe63e601",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11151,12 +11153,12 @@
     "lastVerified": "2026-11-03T23:20:09.349Z"
   },
   "sparrowcode-alertkit": {
-    "name": "sparrowcode/AlertKit",
+    "name": "AlertKit",
     "officialUrl": "https://github.com/sparrowcode/AlertKit",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-03T12:51:42.306Z",
-    "lastVerified": "2026-11-03T12:51:42.306Z",
+    "lastChecked": "2026-11-05T15:13:03.027Z",
+    "lastVerified": "2026-11-05T15:13:03.027Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sparrowcode-alertkit",
@@ -11165,7 +11167,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b8f3dff0"
   },
   "sindresorhus-got": {
     "name": "got",
