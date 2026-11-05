@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T22:31:53.909Z",
+  "last_updated": "2026-11-05T22:40:17.804Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2039,14 +2039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iliyami-macsai",
-      "content_hash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
-      "verified_at": "2026-11-03T22:23:39.004Z",
+      "content_hash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
+      "verified_at": "2026-11-05T22:40:09.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:23:39.004Z"
+      "last_updated": "2026-11-05T22:40:09.304Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "44a8daa36310118ea67df550d1f664ed7a6f4848b2606d4deff11e14275404f3",
-      "verified_at": "2026-11-03T23:32:13.001Z",
+      "content_hash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
+      "verified_at": "2026-11-05T22:40:05.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:32:13.001Z"
+      "last_updated": "2026-11-05T22:40:05.019Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "e2b3eb334f1c5673458b55aa52f59d8319f94aee67033f96d884b0e62e1c394e",
-      "verified_at": "2026-11-05T06:07:53.331Z",
+      "content_hash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
+      "verified_at": "2026-11-05T22:40:17.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:07:53.331Z"
+      "last_updated": "2026-11-05T22:40:17.803Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
-      "verified_at": "2026-11-05T06:51:04.092Z",
+      "content_hash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
+      "verified_at": "2026-11-05T22:40:13.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:51:04.092Z"
+      "last_updated": "2026-11-05T22:40:13.014Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

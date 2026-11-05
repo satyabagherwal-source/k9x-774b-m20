@@ -7811,3 +7811,7 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `a8ab30ea` | Multi-dimensional audit evidence | 2026-11-05T22:31:49.255Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `196263ba` | Multi-dimensional audit evidence | 2026-11-05T22:31:52.092Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `511a3044` | Multi-dimensional audit evidence | 2026-11-05T22:31:53.902Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `195ff5b6` | Multi-dimensional audit evidence | 2026-11-05T22:40:05.011Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `3ae87e70` | Multi-dimensional audit evidence | 2026-11-05T22:40:09.296Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `d04aa46b` | Multi-dimensional audit evidence | 2026-11-05T22:40:12.998Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `89d09f46` | Multi-dimensional audit evidence | 2026-11-05T22:40:17.795Z |

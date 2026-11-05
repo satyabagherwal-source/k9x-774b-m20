@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T22:31:53.827Z",
+  "last_updated": "2026-11-05T22:40:17.714Z",
   "total_verified_learnings": 1221,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54123,11 +54123,16 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "f6e5ac35",
-      "content_hash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
+      "source_version": "d04aa46b",
+      "content_hash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "avoid data race in block device inotify watcher",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2440,
           "title": "test: bound NUMA reconciliation triggers by suite lifetime",
@@ -54204,7 +54209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:51:03.982Z",
+      "verified_at": "2026-11-05T22:40:12.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59604,11 +59609,16 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "22d46121",
-      "content_hash": "e2b3eb334f1c5673458b55aa52f59d8319f94aee67033f96d884b0e62e1c394e",
+      "source_version": "89d09f46",
+      "content_hash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Block spatial join probe until its index is built",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2047,
           "title": "Bump the web-ui-dependencies group",
@@ -59685,7 +59695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:07:53.192Z",
+      "verified_at": "2026-11-05T22:40:17.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60574,11 +60584,16 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "5d33d8ea",
-      "content_hash": "44a8daa36310118ea67df550d1f664ed7a6f4848b2606d4deff11e14275404f3",
+      "source_version": "195ff5b6",
+      "content_hash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1794,
           "title": "test(ui): replace no-op step regression test with history navigation check",
@@ -60625,7 +60640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:32:12.886Z",
+      "verified_at": "2026-11-05T22:40:04.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70781,11 +70796,16 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "da2a26e8",
-      "content_hash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
+      "source_version": "3ae87e70",
+      "content_hash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add signed in-app updates with release notes and relaunch (#255)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 480,
           "title": "Lead release notes with the DMG and fix the changelog link (#219)",
@@ -70817,7 +70837,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:23:38.935Z",
+      "verified_at": "2026-11-05T22:40:09.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "da2a26e8",
+    "sourceVersion": "3ae87e70",
     "license": "BSD-3-Clause",
-    "contentHash": "3298b77be95731fc6646208116ade95b0940acdc8650e6aec12d1d29d6a64a0b",
-    "lastHarvestedAt": "2026-11-03T22:23:38.999Z",
+    "contentHash": "a61e1065f95484610c5d43ccb8c9b5180e9723c3365215d4b21b657db079637a",
+    "lastHarvestedAt": "2026-11-05T22:40:09.296Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "5d33d8ea",
+    "sourceVersion": "195ff5b6",
     "license": "ISC",
-    "contentHash": "44a8daa36310118ea67df550d1f664ed7a6f4848b2606d4deff11e14275404f3",
-    "lastHarvestedAt": "2026-11-03T23:32:12.992Z",
+    "contentHash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
+    "lastHarvestedAt": "2026-11-05T22:40:05.011Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "22d46121",
+    "sourceVersion": "89d09f46",
     "license": "Apache-2.0",
-    "contentHash": "e2b3eb334f1c5673458b55aa52f59d8319f94aee67033f96d884b0e62e1c394e",
-    "lastHarvestedAt": "2026-11-05T06:07:53.322Z",
+    "contentHash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
+    "lastHarvestedAt": "2026-11-05T22:40:17.795Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "f6e5ac35",
+    "sourceVersion": "d04aa46b",
     "license": "MPL-2.0",
-    "contentHash": "614b28997a1f0293782f7f768977355a232230bdd6e5c3854cffea74f74a03e2",
-    "lastHarvestedAt": "2026-11-05T06:51:04.077Z",
+    "contentHash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
+    "lastHarvestedAt": "2026-11-05T22:40:12.998Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

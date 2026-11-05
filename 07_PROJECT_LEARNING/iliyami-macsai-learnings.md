@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `da2a26e8`  
+> **Source Version**: `3ae87e70`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:23:38.509Z  
+> **Timestamp**: 2026-11-05T22:40:07.706Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:23:37.638Z  
+> **Harvest Timestamp**: 2026-11-05T22:40:07.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2073 stars
+- **Stars / Engagement**: 2092 stars
 
 ---
 
@@ -1510,6 +1510,26 @@ public struct SuperEllipseButtonStyle: ButtonStyle {
 
 ```
 
+### Core Architecture Module: `Sources/MacCleanKit/SelfUpdateInstallationState.swift`
+```
+/// A prepared installer can outlive the UI/check cycle that created it. A
+/// network error, declined background check or ordinary dismissal must not
+/// forget the need to stop the menu helper on the next normal Quit.
+public struct SelfUpdateInstallationState: Sendable, Equatable {
+    public private(set) var hasPreparedUpdate = false
+
+    public init() {}
+
+    public mutating func prepared() { hasPreparedUpdate = true }
+    public mutating func skipped() { hasPreparedUpdate = false }
+
+    public mutating func aborted(installationFailed: Bool) {
+        if installationFailed { hasPreparedUpdate = false }
+    }
+}
+
+```
+
 ### Core Architecture Module: `Sources/MacCleanKit/SharedAppState.swift`
 ```
 import Foundation
@@ -1657,141 +1677,6 @@ public enum SharedAppState {
 
 ```
 
-### Core Architecture Module: `Sources/MacCleanMenu/SystemStats/TipsEngine.swift`
-```
-import Foundation
-import AppKit
-import MacCleanKit
-
-/// Builds a short list of actionable suggestions for the popover.
-/// Each tip has a stable id so the user can dismiss it for 30 days
-/// (`SharedAppState.dismissTip`); the engine respects those dismissals.
-///
-/// MVP tips:
-///   * `trash_large` — Trash > 1 GB
-///   * `caches_large` — User caches > 2 GB
-///
-/// Future tips (separate phases): unused-apps, TM snapshot bloat,
-/// outdated app updates.
-public actor TipsEngine {
-    public struct Tip: Sendable, Identifiable, Equatable {
-        public let id: String
-        public let title: String
-        public let body: String
-        /// Bytes the tip estimates the user could reclaim. Used for
-        /// sorting (biggest payoff first) and the headline number.
-        public let estimatedSavings: UInt64
-        public let symbol: String
-
-        public init(id: String, title: String, body: String, estimatedSavings: UInt64, symbol: String) {
-            self.id = id
-            self.title = title
-            self.body = body
-            self.estimatedSavings = estimatedSavings
-            self.symbol = symbol
-        }
-    }
-
-    public init() {}
-
-    public func generateTips() async -> [Tip] {
-        async let trash = trashTip()
-        async let caches = cachesTip()
-
-        var tips: [Tip] = []
-        if let t = await trash { tips.append(t) }
-        if let c = await caches { tips.append(c) }
-
-        return tips
-            .filter { !SharedAppState.isTipDismissed(id: $0.id) }
-            .sorted { $0.estimatedSavings > $1.estimatedSavings }
-    }
-
-    private static let trashSizeMinimum: UInt64 = 1 * 1024 * 1024 * 1024  // 1 GB
-    private static let cachesSizeMinimum: UInt64 = 2 * 1024 * 1024 * 1024 // 2 GB
-
-    private func trashTip() async -> Tip? {
-        let size = await directorySize(MCConstants.userTrash)
-        guard size >= Self.trashSizeMinimum else { return nil }
-        return Tip(
-            id: "trash_large",
-            title: L10n.tr("废纸篓占用了 \(FileSizeFormatter.format(size))", "Trash is taking \(FileSizeFormatter.format(size))", "Корзина занимает \(FileSizeFormatter.format(size))"),
-            body: L10n.tr("通过 \(MCConstants.appName) 清空废纸篓以释放空间。", "Empty the Trash from \(MCConstants.appName) to reclaim space.", "Очистите Корзину в \(MCConstants.appName), чтобы освободить место."),
-            estimatedSavings: size,
-            symbol: "trash"
-        )
-    }
-
-    private func cachesTip() async -> Tip? {
-        let size = await directorySize(MCConstants.userCaches)
-        guard size >= Self.cachesSizeMinimum else { return nil }
-        return Tip(
-            id: "caches_large",
-            title: L10n.tr("用户缓存已增长到 \(FileSizeFormatter.format(size))", "User caches grew to \(FileSizeFormatter.format(size))", "Кэш пользователя занимает \(FileSizeFormatter.format(size))"),
-            body: L10n.tr("在 \(MCConstants.appName) 中运行“系统垃圾”以清理可再生成的缓存文件。", "Run System Junk in \(MCConstants.appName) to clear regenerable cache files.", "Запустите «Системный мусор» в \(MCConstants.appName), чтобы удалить временные файлы кэша."),
-            estimatedSavings: size,
-            symbol: "internaldrive"
-        )
-    }
-
-    /// Lightweight directory size — single `du -sk` equivalent via
-    /// FileManager. The user shouldn't pay a 30s scan for a tip; cap
-    /// to a shallow walk and fall back to 0 on errors.
-    private func directorySize(_ url: URL) async -> UInt64 {
-        let path = url.path(percentEncoded: false)
-        guard FileManager.default.fileExists(atPath: path) else { return 0 }
-        let enumerator = FileManager.default.enumerator(
-            at: url,
-            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isDirectoryKey],
-            options: [.skipsHiddenFiles],
-            errorHandler: nil
-        )
-        var total: UInt64 = 0
-        var sampled = 0
-        let cap = 50_000  // hard cap so a runaway dir can't stall the popover
-        while let next = enumerator?.nextObject() as? URL {
-            sampled += 1
-            if sampled > cap { break }
-            if let values = try? next.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .isDirectoryKey]),
-               values.isDirectory == false,
-               let size = values.totalFileAllocatedSize {
-                total += UInt64(size)
-            }
-            // Yield occasionally so we don't hog the actor.
-            if sampled % 5_000 == 0 { await Task.yield() }
-        }
-        return total
-    }
-}
-
-/// Click-to-act on a tip. `open()` brings the main Mac Sai app to the
-/// foreground; `open(moduleID:)` additionally deep-links straight to the
-/// relevant module via the `macclean://module/<id>` URL scheme.
-public enum TipAction {
-    @MainActor
-    public static func open() {
-        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: MCConstants.bundleIdentifier) {
-            NSWorkspace.shared.openApplication(at: url, configuration: .init())
-        }
-    }
-}
-
-public extension TipAction {
-    /// Foreground the main app and deep-link to a specific module via the
-    /// `macclean://module/<id>` URL scheme. Falls back to plainly opening
-    /// the app when no module id is available.
-    @MainActor
-    static func open(moduleID: String?) {
-        guard let moduleID, let url = URL(string: "macclean://module/\(moduleID)") else {
-            open()   // fallback: just foreground the app
-            return
-        }
-        NSWorkspace.shared.open(url)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1819,665 +1704,453 @@ public extension TipAction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da2a26e8` (2026-11-03)
-**Commit Message**: Add Turkish localization (#247)
+### Incident Patch 1: `3ae87e70` (2026-11-04)
+**Commit Message**: Add signed in-app updates with release notes and relaunch (#255)
 
-Adds Turkish as an interface language (part of #12): the full dictionary, locale mapping, kept tr.lproj folders, Info.plist localizations, cleanup counts, and test coverage. Includes the supporters strings and version 1.28.6.
+* Coordinate cleanup activity with update installation
 
-**File**: `Sources/MacCleanKit/CleanupStrings.swift` (modified, +3/-0)
+* Add signed in-app updates with Sparkle
+
+* Avoid isolated setter thunks in update settings
+
+* Fail closed when signed update artifacts do not verify
+
+* Address updater review with full binary audits and curated feeds
+
+* Remove trailing blank line in update gate tests
+
+* Fix staged-update termination and complete release checks
+
+* Complete updater review and add cancellable preparation
+
+**File**: `.github/workflows/ci.yml` (modified, +12/-1)
 ```diff
-@@ -22,6 +22,7 @@ public enum CleanupStrings {
-         case .ptBR: return "\(selectedText) de \(totalText) \(total == 1 ? "item" : "itens") \(selected == 1 ? "selecionado" : "selecionados")"
-         case .ja: return "\(selectedText) / \(totalText) 項目を選択済み"
-         case .ko: return "\(totalText)개 항목 중 \(selectedText)개 선택됨"
-+        case .tr: return "\(totalText) öğeden \(selectedText) öğe seçildi"
-         case .ru:
-             return "Выбрано \(selectedText) из \(totalText) \(L10n.russianPlural(total, one: "объекта", few: "объектов", many: "объектов"))"
-         case .zhHans: return "已选择 \(selectedText) / \(totalText) 项"
-@@ -40,6 +41,7 @@ public enum CleanupStrings {
-         case .ptBR: return "Limpar \(number) \(count == 1 ? "item" : "itens")?"
-         case .ja: return "\(number) 項目をクリーンアップしますか？"
-         case .ko: return "\(number)개 항목을 정리할까요?"
-+        case .tr: return "\(number) öğe temizlensin mi?"
-         case .ru:
-             return "Очистить \(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))?"
-         case .zhHans: return "清理 \(number) 项？"
-@@ -58,6 +60,7 @@ public enum CleanupStrings {
-         case .ptBR: return "\(number) \(count == 1 ? "item" : "itens")"
-         case .ja: return "\(number) 項目"
-         case .ko: return "\(number)개 항목"
-+        case .tr: return "\(number) öğe"
-         case .ru:
-             return "\(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))"
-         case .zhHans: return "\(number) 项"
-```
-
-**File**: `Sources/MacCleanKit/Constants.swift` (modified, +2/-1)
-```diff
-@@ -205,6 +205,7 @@ public enum MCConstants {
-         "ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj",
-         "it.lproj", "it-IT.lproj", "it_IT.lproj", "it-CH.lproj", "it_CH.lproj", "Italian.lproj",
-         "ja.lproj", "ja-JP.lproj", "ja_JP.lproj", "Japanese.lproj",
-+        "tr.lproj", "tr-TR.lproj", "tr_TR.lproj", "Turkish.lproj",
-     ]
+@@ -22,11 +22,22 @@ jobs:
+       - name: Verify VERSION ↔ MCConstants.appVersion sync
+         run: bash scripts/check-version-sync.sh
  
-     // MARK: - Log File Path
-@@ -239,5 +240,5 @@ public enum MCConstants {
-     // plugin was tried (commit history) but doesn't work under multi-arch
-     // `swift build --arch arm64 --arch x86_64` because xcbuild doesn't
-     // execute plugins.
--    public static let appVersion = "1.28.5"
-+    public static let appVersion = "1.28.6"
- }
-```
-
-**File**: `Sources/MacCleanKit/Localization.swift` (modified, +710/-1)
-```diff
-@@ -14,6 +14,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-     case it = "it"
-     case ja = "ja"
-     case ru = "ru"
-+    case tr = "tr"
-     case zhHans = "zh-Hans"
-     case zhHant = "zh-Hant"
-     case en = "en"
-@@ -45,6 +46,8 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-             "ja"
-         case .ru:
-             "ru"
-+        case .tr:
-+            "tr"
-         case .zhHans:
-             "zh-Hans"
-         case .zhHant:
-@@ -57,7 +60,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-     public var resolved: AppLanguage {
-         switch self {
-         case .system: Self.systemPreferred
--        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .zhHans, .zhHant, .en: self
-+        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .tr, .zhHans, .zhHant, .en: self
-         }
-     }
- 
-@@ -77,6 +80,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-         case "it": return .it
-         case "ja": return .ja
-         case "ru": return .ru
-+        case "tr": return .tr
-         case "zh":
-             // Traditional markers: Hant script, or Taiwan/Hong Kong/Macau regions.
-             if normalized.contains("hant") || normalized.contains("-tw")
-@@ -102,6 +106,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-         case .it: "Italiano"
-         case .ja: "日本語"
-         case .ru: "Русский"
-+        case .tr: "Türkçe"
-         case .zhHans: "简体中文"
-         case .zhHant: "繁體中文"
-         case .en: "English"
-@@ -159,6 +164,7 @@ public enum L10n {
-         case .it: italianFallbacks[zhHans] ?? english()
-         case .ja: japaneseFallbacks[zhHans] ?? english()
-         case .ru: russianFallbacks[zhHans] ?? english()
-+        case .tr: turkishFallbacks[zhHans] ?? english()
-         }
-     }
- 
-@@ -177,6 +183,7 @@ public enum L10n {
-         case .it: italianFallbacks[zhHans] ?? english()
-         case .ja: japaneseFallbacks[zhHans] ?? english()
-         case .ru: russian()
-+        case .tr: turkishFallbacks[zhHans] ?? english()
-         case .zhHans: zhHans
-         case .zhHant: traditionalChineseFallbacks[zhHans] ?? zhHans
-         }
-@@ -202,6 +209,8 @@ public enum L10n {
-             japaneseFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-         case .ru:
-             russianFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-+        case .tr:
-+            turkishFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-         case .zhHans:
-             zhHans
-         case .zhHant:
-@@ -5808,6 +5817,706 @@ public enum L10n {
-         "系统": "システム",
-     ]
- 
++      - name: Validate update build configuration
++        run: |
++          python3 scripts/test-update-configuration.py
++          bash -n scripts/build-dmg.sh scripts/generate-update-feed.sh
 +
-+    private static let turkishFallbacks: [String: String] = [
-+        "清理权限": "Temizleme İzinleri",
-+        "允许 Mac Sai 扫描邮件、浏览器数据和其他受保护的文件夹。在系统设置中添加 Mac Sai 并开启权限，然后重新启动应用并重新扫描。": "Mac Sai'nin Mail'i, tarayıcı verilerini ve diğer korumalı klasörleri taramasına izin verir. Sistem Ayarları'nda Mac Sai'yi ekleyip erişimi açın, ardından uygulamayı yeniden başlatıp tekrar tarayın.",
-+        "打开完全磁盘访问设置": "Tam Disk Erişimi Ayarlarını Aç",
-+        "管理员确认": "Yönetici onayı",
-+        "移动受保护的项目时，macOS 可能仍会要求密码或触控 ID。完全磁盘访问权限不能代替管理员确认。Mac Sai 不保存您的密码，也不能提前批准所有操作。": "macOS, korumalı öğeleri taşırken yine de parola veya Touch ID isteyebilir. Tam Disk Erişimi yönetici onayının yerini tutmaz. Mac Sai parolanızı kaydetmez ve tüm işlemleri önceden onaylayamaz.",
-+        "批量移到废纸篓": "Çöp Sepetine gruplar halinde taşı",
-+        "清理会将选中的项目分组交给 macOS，减少逐项请求。系统决定是否需要再次确认。取消后，当前组会先完成；已移动的项目仍会显示在清理历史中。": "Temizleme, tek tek istekleri azaltmak için seçilen öğeleri macOS'a gruplar halinde gönderir. Ek onay gerekip gerekmediğine sistem karar verir. İptal ederseniz önce geçerli grup tamamlanır; zaten taşınmış öğeler temizleme geçmişinde kalır.",
-+        "权限": "İzinler",
-+        "另一项清理仍在进行中。": "Başka bir temizleme hâlâ devam ediyor.",
-+        "准备清理时文件已更改，请重新扫描。": "Temizleme hazırlanırken öğe değişti. Yeniden tarayın.",
-+        "无法确认项目在废纸篓中的位置，请检查访达。": "Öğenin Çöp Sepetindeki konumu doğrulanamadı. Finder'da kontrol edin.",
-+        "macOS 未将此项目移到废纸篓。请检查权限并重新扫描。": "macOS bu öğeyi Çöp Sepetine taşımadı. İzinleri kontrol edip yeniden tarayın.",
-+        "符号链接改变了清理路径。请在访达中检查。": "Bir sembolik bağlantı bu temizleme yolunu değiştirdi. Finder'da inceleyin.",
-+        "符号链接已跳过。": "Sembolik bağlantı atlandı.",
-+        "取消后会先完成当前一组。": "İptal ederseniz önce geçerli grup tamamlanır.",
-+        "清理已停止": "Temizleme durduruldu",
-+        "已处理": "işlendi",
-+        "选中的文件夹与其内容计为一项。已经消失的文件会被跳过。": "Seçilen klasörler içerikleriyle birlikte tek öğe sayılır. Artık bulunmayan dosyalar atlanır.",
-+        "部分项目未能清理": "Bazı öğeler temizlenemedi",
-+        "以上仅显示已完成的操作。移到废纸篓的项目可从清理历史恢复。请重新扫描以查看剩余或重新生成的文件。": "Yukarıda yalnızca tamamlanan işlemler gösterilir. Çöp Sepetine taşınan öğeler temizleme geçmişinden geri yüklenebilir. Kalan veya yeniden oluşturulan dosyaları görmek için yeniden tarayın.",
-+        "请逐项检查并选择可能的威胁和社区报告的文件。此复选框只能取消该类别中
-```
-
-**File**: `Tests/MacCleanKitTests/BatchCleanupLocalizationTests.swift` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ final class BatchCleanupLocalizationTests: AppLanguageTestCase {
-         ]
-         // These phrases are written identically in both Chinese scripts.
-         let sameInTraditional: Set<String> = ["清理已停止", "完成", "清理完成"]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant] {
-             AppLanguage.current = language
-             for key in keys {
-                 let value = L10n.tr(key, "MISSING_CLEANUP_TRANSLATION", "RU")
-```
-
-**File**: `Tests/MacCleanKitTests/CleanupLocalizationTests.swift` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
-     ]
+       - name: Build
+         run: swift build
  
-     func testStaticCleanupCopyIsTranslatedForEveryDictionaryBackedLanguage() {
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant] {
-             AppLanguage.current = language
-             for key in staticKeys {
-                 let value = L10n.tr(key, "UNTRANSLATED", "Russian")
-@@ -29,7 +29,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
-         AppLanguage.current = .en
-         let english = [CleanupStrings.selectionSummary(selected: 2, total: 21),
-                        CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru, .zhHans, .zhHant] {
-             AppLanguage.current = language
-             let localized = [CleanupStrings.selectionSummary(selected: 2, total: 21),
-                              CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
-```
-
-**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (modified, +2/-2)
-```diff
-@@ -84,7 +84,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
-         let english = allStrings()
-         AppLanguage.current = .zhHans
-         let simplified = allStrings()
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
-             AppLanguage.current = language
-             for (index, translated) in allStrings().enumerated() where index != swapLine {
-                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
-@@ -97,7 +97,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
-     }
- 
-     func testPlaceholdersAreFilledInEveryLanguage() {
--        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
-+        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru, .zhHans, .zhHant] {
-             AppLanguage.current = language
-             let body = HealthAlertStrings.swapAlertBody(used: 6_800_000_000, threshold: 4_000_000_000)
-             XCTAssertFalse(body.contains("{"), "\(language): \(body)")
-```
-
-**File**: `Tests/MacCleanKitTests/LocalizationTests.swift` (modified, +41/-4)
-```diff
-@@ -301,7 +301,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             ("清除", "Clear", "Очистить"),
-             ("这只会忘掉恢复记录，废纸篓里的文件不会被动。之后就不能一键恢复这些清理了。", "This only forgets the restore list. Nothing in the Trash is touched, but these cleans can no longer be restored in one click.", "Это"),
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
-             AppLanguage.current = language
-             for (zh, en, ru) in strings {
-                 let value = L10n.tr(zh, en, ru)
-@@ -376,6 +376,36 @@ final class LocalizationTests: AppLanguageTestCase {
-         }
-     }
- 
-+    func testTurkishLanguageSelectionAndRegionalIdentifiers() {
-+        XCTAssertTrue(AppLanguage.allCases.contains(.tr))
-+        XCTAssertEqual(AppLanguage.tr.pickerLabel, "Türkçe")
-+        XCTAssertEqual(AppLanguage.tr.localeIdentifier, "tr")
-+        for identifier in ["tr", "tr-TR", "tr_TR", "TR-cy"] {
-+            XCTAssertEqual(AppLanguage.preferredLanguage(for: identifier), .tr)
-+        }
-+    }
++      - name: Verify signed update release failures
++        run: |
++          python3 scripts/test-update-feed.py
++          python3 scripts/test-publish-update-feed.py
++          python3 scripts/test-network-surface.py
 +
-+    func testTurkishUsesEveryTranslationOverload() {
-+        AppLanguage.current = .tr
-+        XCTAssertEqual(L10n.tr("设置", "Settings"), "Ayarlar")
-+        XCTAssertEqual(L10n.tr("设置", "Settings", "Настройки"), "Ayarlar")
-+        XCTAssertEqual(L10n.tr("设置"), "Ayarlar")
-+        XCTAssertEqual(MaintenanceTask.freeUpRAM.title, "RAM'i boşalt")
-+        XCTAssertEqual(ScanCategory.userCaches.displayName, "Kullanıcı Önbellek Dosyaları")
-+        XCTAssertEqual(FileListSort.sizeDescending.label, "Önce en büyük")
-+    }
+       - name: Verify network surface (inspect the built binary)
+-        run: bash scripts/check-network-surface.sh
++        run: bash scripts/check-network-surface.sh "$(swift build --show-bin-path)/MacClean"
+ 
+       - name: Run Tests (XCTest with code coverage)
+         run: swift test --enable-code-coverage
+```
+
+**File**: `.github/workflows/publish-update-feed.yml` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++name: Publish curated update feed
 +
-+    func testUntranslatedStringFallsBackToEnglishInTurkish() {
-+        AppLanguage.current = .tr
-+        XCTAssertEqual(L10n.tr("新功能", "New feature"), "New feature")
-+    }
++# Required maintainer step AFTER publishing a stable release and curating its
++# notes. Run again after editing those notes. Uses the existing signing secret;
++# no personal token or release event (which GITHUB_TOKEN may suppress) is needed.
++on:
++  workflow_dispatch:
++    inputs:
++      release_tag:
++        description: "Published latest stable tag with final curated notes (vX.Y.Z)"
++        required: true
++        type: string
 +
-+    func testTurkishLanguageResourcesCannotBeOfferedForCleanup() {
-+        for folder in ["tr.lproj", "tr-TR.lproj", "tr_TR.lproj", "Turkish.lproj"] {
-+            XCTAssertTrue(LanguagePreferences.alwaysKept.contains(folder), folder)
-+        }
-+    }
++permissions:
++  contents: write
 +
-     func testJapaneseLanguageSelectionAndRegionalIdentifiers() {
-         XCTAssertTrue(AppLanguage.allCases.contains(.ja))
-         XCTAssertEqual(AppLanguage.ja.rawValue, "ja")
-@@ -409,6 +439,12 @@ final class LocalizationTests: AppLanguageTestCase {
-         }
-     }
- 
-+    func testTurkishUsesAppleTrashTerminology() {
-+        AppLanguage.current = .tr
-+        XCTAssertEqual(L10n.tr("移到废纸篓", "Move to Trash", "?"), "Çöp Sepetine Taşı")
-+        XCTAssertEqual(L10n.tr("清空废纸篓", "Empty Trash", "?"), "Çöp Sepetini Boşalt")
-+    }
++concurrency:
++  group: publish-stable-update-feed
++  cancel-in-progress: false
 +
-     func testSupportCardIsTranslatedInEveryLanguage() {
-         let expected: [AppLanguage: String] = [
-             .de: "Spendier mir einen Kaffee",
-@@ -418,6 +454,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             .ptBR: "Me pague um café",
-             .ja: "コーヒーをおごる",
-             .ko: "커피 한 잔 후원하기",
-+            .tr: "Bana bir kahve ısmarla",
-             .zhHant: "請我喝杯咖啡",
-             .ru: "Угостить кофе",
-         ]
-@@ -439,7 +476,7 @@ final class LocalizationTests: AppLanguageTestCase {
-         let sameAsSimplified: Set<String> = [
-             "容器", "卷", "大小", "取消", "永久清理", "清理完成", "未能完成", "已停止",
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .ru] {
-             AppLanguage.current = language
-             for (index, value) in DiskHogsText.all.enumerated() where !sameAsEnglish.contains(english[index]) || language == .ru {
-                 XCTAssertNotEqual(value, english[index], "\(language) is missing: \(english[index])")
-@@ -469,7 +506,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             ("正在查找项目…", "Finding projects…", "Поиск проектов…"),
-             ("正在计算文件夹大小…", "Measuring folders…", "Подсчёт размера папок…"),
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant, .ru] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr, .zhHant, .ru] {
-             AppLanguage.current = language
-             for s in strings {
-                 let text = L10n.tr(s.zh, s.en, s.ru)
-@@ -513,7 +550,7 @@ final class LocalizationTests: AppLanguageTestCase {
-         let sameInTraditional: Set<String> = ["未知"]
- 
-         for (zh, english) in strings {
--            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-+            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .tr] {
-                 AppLanguage.current = language
-                 XCTAssertNotEqual(L10n.tr(zh, english), english, "\(language) is missing \"\(english)\"")
-             }
-```
-
-**File**: `Tests/MacCleanKitTests/SupportersTests.swift` (modified, +2/-2)
-```diff
-@@ -64,7 +64,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
-         let english = allStrings()
-         AppLanguage.current = .zhHans
-         let simplified = allStrings()
--        for language in [AppLanguage.de, .fr, .it, .ru, .ko, .ja, .ptBR, .es] {
-+        for language in [AppLanguage.de, .fr, .it, .ru, .tr, .ko, .ja, .ptBR, .es] {
-             AppLanguage.current = language
-             for (index, translated) in allStrings().enumerated() {
-                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
-@@ -77,7 +77,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
-     }
- 
-     func testPlaceholderIsFilledInEveryLanguage() {
--        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ko, .ja, .ptBR, .es] {
-+        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .tr, .ko, .ja, .ptBR, .es] {
-             AppLanguage.current = language
-             let caption = SupporterStrings.caption(for: ["Ada"])
-             XCTAssertTrue(caption.contains("Ada"), "\(language): \(caption)")
-```
-
----
-
-### Incident Patch 2: `15959085` (2026-11-03)
-**Commit Message**: Add Korean localization (#246)
-
-Adds Korean as an interface language (part of #12): the full dictionary, locale mapping, kept ko.lproj folders, Info.plist localizations, cleanup counts, and test coverage. Includes the supporters strings, a clearer wording for the adware name hint, and version 1.28.5.
-
-**File**: `Sources/MacCleanKit/CleanupStrings.swift` (modified, +3/-0)
-```diff
-@@ -21,6 +21,7 @@ public enum CleanupStrings {
-         case .es: return "\(selectedText) de \(totalText) \(total == 1 ? "elemento seleccionado" : "elementos seleccionados")"
-         case .ptBR: return "\(selectedText) de \(totalText) \(total == 1 ? "item" : "itens") \(selected == 1 ? "selecionado" : "selecionados")"
-         case .ja: return "\(selectedText) / \(totalText) 項目を選択済み"
-+        case .ko: return "\(totalText)개 항목 중 \(selectedText)개 선택됨"
-         case .ru:
-             return "Выбрано \(selectedText) из \(totalText) \(L10n.russianPlural(total, one: "объекта", few: "объектов", many: "объектов"))"
-         case .zhHans: return "已选择 \(selectedText) / \(totalText) 项"
-@@ -38,6 +39,7 @@ public enum CleanupStrings {
-         case .es: return "¿Limpiar \(number) \(count == 1 ? "elemento" : "elementos")?"
-         case .ptBR: return "Limpar \(number) \(count == 1 ? "item" : "itens")?"
-         case .ja: return "\(number) 項目をクリーンアップしますか？"
-+        case .ko: return "\(number)개 항목을 정리할까요?"
-         case .ru:
-             return "Очистить \(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))?"
-         case .zhHans: return "清理 \(number) 项？"
-@@ -55,6 +57,7 @@ public enum CleanupStrings {
-         case .es: return "\(number) \(count == 1 ? "elemento" : "elementos")"
-         case .ptBR: return "\(number) \(count == 1 ? "item" : "itens")"
-         case .ja: return "\(number) 項目"
-+        case .ko: return "\(number)개 항목"
-         case .ru:
-             return "\(number) \(L10n.russianPlural(count, one: "объект", few: "объекта", many: "объектов"))"
-         case .zhHans: return "\(number) 项"
-```
-
-**File**: `Sources/MacCleanKit/Constants.swift` (modified, +2/-1)
-```diff
-@@ -202,6 +202,7 @@ public enum MCConstants {
-         "es.lproj", "es-ES.lproj", "es_ES.lproj", "es-MX.lproj", "es_MX.lproj", "es-419.lproj", "es_419.lproj",
-         "es-US.lproj", "es_US.lproj", "Spanish.lproj",
-         "pt.lproj", "pt-BR.lproj", "pt_BR.lproj", "Portuguese.lproj", "Portuguese (Brazil).lproj", "Brazilian Portuguese.lproj",
-+        "ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj",
-         "it.lproj", "it-IT.lproj", "it_IT.lproj", "it-CH.lproj", "it_CH.lproj", "Italian.lproj",
-         "ja.lproj", "ja-JP.lproj", "ja_JP.lproj", "Japanese.lproj",
-     ]
-@@ -238,5 +239,5 @@ public enum MCConstants {
-     // plugin was tried (commit history) but doesn't work under multi-arch
-     // `swift build --arch arm64 --arch x86_64` because xcbuild doesn't
-     // execute plugins.
--    public static let appVersion = "1.28.4"
-+    public static let appVersion = "1.28.5"
- }
-```
-
-**File**: `Sources/MacCleanKit/Localization.swift` (modified, +709/-1)
-```diff
-@@ -9,6 +9,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-     case de = "de"
-     case es = "es"
-     case ptBR = "pt-BR"
-+    case ko = "ko"
-     case fr = "fr"
-     case it = "it"
-     case ja = "ja"
-@@ -34,6 +35,8 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-             "es"
-         case .ptBR:
-             "pt-BR"
-+        case .ko:
-+            "ko"
-         case .fr:
-             "fr"
-         case .it:
-@@ -54,7 +57,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-     public var resolved: AppLanguage {
-         switch self {
-         case .system: Self.systemPreferred
--        case .de, .es, .ptBR, .fr, .it, .ja, .ru, .zhHans, .zhHant, .en: self
-+        case .de, .es, .ptBR, .fr, .it, .ja, .ko, .ru, .zhHans, .zhHant, .en: self
-         }
-     }
- 
-@@ -69,6 +72,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-         case "de": return .de
-         case "es": return .es
-         case "pt": return .ptBR
-+        case "ko": return .ko
-         case "fr": return .fr
-         case "it": return .it
-         case "ja": return .ja
-@@ -93,6 +97,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
-         case .de: "Deutsch"
-         case .es: "Español"
-         case .ptBR: "Português (Brasil)"
-+        case .ko: "한국어"
-         case .fr: "Français"
-         case .it: "Italiano"
-         case .ja: "日本語"
-@@ -149,6 +154,7 @@ public enum L10n {
-         case .de: germanFallbacks[zhHans] ?? english()
-         case .es: spanishFallbacks[zhHans] ?? english()
-         case .ptBR: brazilianPortugueseFallbacks[zhHans] ?? english()
-+        case .ko: koreanFallbacks[zhHans] ?? english()
-         case .fr: frenchFallbacks[zhHans] ?? english()
-         case .it: italianFallbacks[zhHans] ?? english()
-         case .ja: japaneseFallbacks[zhHans] ?? english()
-@@ -166,6 +172,7 @@ public enum L10n {
-         case .de: germanFallbacks[zhHans] ?? english()
-         case .es: spanishFallbacks[zhHans] ?? english()
-         case .ptBR: brazilianPortugueseFallbacks[zhHans] ?? english()
-+        case .ko: koreanFallbacks[zhHans] ?? english()
-         case .fr: frenchFallbacks[zhHans] ?? english()
-         case .it: italianFallbacks[zhHans] ?? english()
-         case .ja: japaneseFallbacks[zhHans] ?? english()
-@@ -185,6 +192,8 @@ public enum L10n {
-             spanishFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-         case .ptBR:
-             brazilianPortugueseFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-+        case .ko:
-+            koreanFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-         case .fr:
-             frenchFallbacks[zhHans] ?? englishFallbacks[zhHans] ?? zhHans
-         case .it:
-@@ -916,6 +925,705 @@ public enum L10n {
-         "响应格式不正确": "resposta malformada",
-     ]
- 
-+    private static let koreanFallbacks: [String: String] = [
-+        "%ld 项": "%ld개 항목",
-+        "1 - 3 个月": "1~3개월",
-+        "12 个月": "12개월",
-+        "3 - 6 个月": "3~6개월",
-+        "3 个月": "3개월",
-+        "30 天内不再显示": "30일 동안 숨기기",
-+        "6 个月": "6개월",
-+        "6 个月 - 1 年": "6개월 - 1년",
-+        "AI 工具缓存": "AI 도구 캐시",
-+        "AI 编码工具的缓存（Claude、Codex）；不含历史与会话。": "AI 코딩 도구(Claude, Codex)의 캐시입니다. 기록 및 세션은 제외됩니다.",
-+        "CPU": "CPU",
-+        "Chrome 正在运行，因此未删除任何内容。请在 Chrome 中通过“窗口 > 扩展程序”移除此扩展。": "Chrome이 열려 있어 아무것도 삭제하지 않았습니다. Chrome에서 창 > 확장 프로그램으로 이동해 확장 프로그램을 제거하세요.",
-+        "Chrome、Brave、Edge、Arc、Firefox 和 Safari 的扩展。名称与已知广告软件家族相符的会标为可疑。": "Chrome, Brave, Edge, Arc, Firefox 및 Safari의 확장 프로그램입니다. 알려진 애드웨어 계열과 일치하는 이름은 의심됨으로 표시됩니다.",
-+        "DerivedData 和 Previews 会在下次构建时重建，Device Support 会在连接设备时重新复制。Archives 和模拟器数据无法重新生成；如需旧构建或崩溃符号请保留。": "DerivedData와 Previews는 다음 빌드 때 다시 생성되고 Device Support는 기기를 연결하면 다시 복사됩니다. 아카이브와 시뮬레이터 데이터는 다시 생성할 수 없으므로 이전 빌드나 충돌 분석용 심볼이 필요하면 보관하세요.",
-+        "Docker 和 Xcode 模拟器占用的空间。只显示在这台 Mac 上找到的工具，且不会自动勾选任何项目。": "Docker 및 Xcode 시뮬레이터가 사용하는 공간입니다. 이 Mac에 있는 도구만 표시되며 아무것도 미리 선택되지 않습니다.",
-+        "Firefox 正在运行，因此未删除任何内容。请在 Firefox 中通过“工具 > 附加组件和主题”移除此扩展。": "Firefox가 열려 있어 아무것도 삭제하지 않았습니다. Firefox에서 도구 > 부가 기능 및 테마로 이동해 확장 프로그램을 제거하세요.",
-+        "GPU 使用率": "GPU 사용량",
-+        "GitHub 返回了无法识别的响应。": "GitHub에서 예상치 못한 응답을 받았습니다.",
-+        "Homebrew 返回了无法识别的响应。": "Homebrew에서 예상치 못한 응답을 받았습니다.",
-+        "IDE 与编辑器缓存": "IDE 및 편집기 캐시",
-+        "Internet 插件": "인터넷 플러그인",
-+        "Mac Sai 无法确认此扩展的文件夹可以安全移除，因此未删除任何内容。": "Mac Sai가 이 확장 프로그램의 폴더를 안전하게 제거할 수 있는지 확인할 수 없어 아무것도 삭제하지 않았습니다.",
-+        "PDF": "PDF",
-+        "Safari 扩展": "Safari 확장 프로그램",
-+        "Safari 扩展不能在本应用内开启、关闭或删除，以免破坏宿主应用的签名。请在 Safari 设置中管理它们。": "여기에서는 Safari 확장 프로그램을 켜거나 끄거나 삭제할 수 없습니다. 그러면 호스트 앱의 서명이 손상될 수 있습니다. Safari 설정에서 관리하세요.",
-+        "Safari 扩展随 App 一起安装，由 macOS 管理，因此此列表只读。将改为打开“设置”。": "Safari 확장 프로그램은 앱과 함께 제공되고 macOS에서 관리되므로 이 목록은 읽기 전용입니다. 대신 설정이 열립니다.",
-+        "Spotlight 没有应用的使用记录": "Spotlight에 앱 사용 기록이 없습니다",
-+        "Spotlight 的整个搜索索引会被清除并重建。数小时内 Spot
-```
-
-**File**: `Tests/MacCleanKitTests/BatchCleanupLocalizationTests.swift` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ final class BatchCleanupLocalizationTests: AppLanguageTestCase {
-         ]
-         // These phrases are written identically in both Chinese scripts.
-         let sameInTraditional: Set<String> = ["清理已停止", "完成", "清理完成"]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
-             AppLanguage.current = language
-             for key in keys {
-                 let value = L10n.tr(key, "MISSING_CLEANUP_TRANSLATION", "RU")
-```
-
-**File**: `Tests/MacCleanKitTests/CleanupLocalizationTests.swift` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
-     ]
- 
-     func testStaticCleanupCopyIsTranslatedForEveryDictionaryBackedLanguage() {
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant] {
-             AppLanguage.current = language
-             for key in staticKeys {
-                 let value = L10n.tr(key, "UNTRANSLATED", "Russian")
-@@ -29,7 +29,7 @@ final class CleanupLocalizationTests: AppLanguageTestCase {
-         AppLanguage.current = .en
-         let english = [CleanupStrings.selectionSummary(selected: 2, total: 21),
-                        CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ru, .zhHans, .zhHant] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
-             AppLanguage.current = language
-             let localized = [CleanupStrings.selectionSummary(selected: 2, total: 21),
-                              CleanupStrings.confirmationTitle(count: 2), CleanupStrings.itemCount(2)]
-```
-
-**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (modified, +2/-2)
-```diff
-@@ -84,7 +84,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
-         let english = allStrings()
-         AppLanguage.current = .zhHans
-         let simplified = allStrings()
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-             AppLanguage.current = language
-             for (index, translated) in allStrings().enumerated() where index != swapLine {
-                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
-@@ -97,7 +97,7 @@ final class HealthAlertLocalizationTests: AppLanguageTestCase {
-     }
- 
-     func testPlaceholdersAreFilledInEveryLanguage() {
--        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ru, .zhHans, .zhHant] {
-+        for language in [AppLanguage.en, .de, .fr, .it, .es, .ptBR, .ja, .ko, .ru, .zhHans, .zhHant] {
-             AppLanguage.current = language
-             let body = HealthAlertStrings.swapAlertBody(used: 6_800_000_000, threshold: 4_000_000_000)
-             XCTAssertFalse(body.contains("{"), "\(language): \(body)")
-```
-
-**File**: `Tests/MacCleanKitTests/LocalizationTests.swift` (modified, +42/-4)
-```diff
-@@ -31,12 +31,49 @@ final class LocalizationTests: AppLanguageTestCase {
-         }
-     }
- 
-+    func testKoreanLanguageSelectionAndRegionalIdentifiers() {
-+        XCTAssertTrue(AppLanguage.allCases.contains(.ko))
-+        XCTAssertEqual(AppLanguage.ko.rawValue, "ko")
-+        XCTAssertEqual(AppLanguage.ko.pickerLabel, "한국어")
-+        XCTAssertEqual(AppLanguage.ko.localeIdentifier, "ko")
-+        for identifier in ["ko", "ko-KR", "ko_KR", "KO-kr"] {
-+            XCTAssertEqual(AppLanguage.preferredLanguage(for: identifier), .ko, identifier)
-+        }
-+    }
++jobs:
++  publish:
++    runs-on: macos-15
++    environment: sparkle-release
++    steps:
++      - uses: actions/checkout@v6
 +
-+    func testKoreanTranslationOverloadsAndFallbacks() {
-+        AppLanguage.current = .ko
-+        XCTAssertEqual(L10n.tr("设置", "Settings"), "설정")
-+        XCTAssertEqual(L10n.tr("设置", "Settings", "Настройки"), "설정")
-+        XCTAssertEqual(L10n.tr("设置"), "설정")
-+        XCTAssertEqual(MaintenanceTask.freeUpRAM.title, "RAM 확보")
-+        XCTAssertEqual(ScanCategory.userCaches.displayName, "사용자 캐시 파일")
-+        XCTAssertEqual(FileListSort.sizeDescending.label, "큰 파일 먼저")
-+        XCTAssertEqual(L10n.tr("未翻译", "New feature"), "New feature")
-+        XCTAssertEqual(L10n.tr("未翻译", "New feature", "Russian"), "New feature")
-+        XCTAssertEqual(L10n.tr("未翻译"), "未翻译")
-+        for count in [1, 2] {
-+            let english = "\(count) threat\(count == 1 ? "" : "s") found"
-+            XCTAssertEqual(L10n.tr("发现 \(count) 个威胁", english), english)
-+            XCTAssertEqual(L10n.tr("发现 \(count) 个威胁", english, "Russian"), english)
-+        }
-+    }
++      - name: Resolve pinned Sparkle tools
++        run: swift package resolve
 +
-     func testBrazilianPortugueseLanguageResourcesCannotBeOfferedForCleanup() {
-         for folder in ["pt.lproj", "pt-BR.lproj", "pt_BR.lproj", "Portuguese.lproj", "Portuguese (Brazil).lproj", "Brazilian Portuguese.lproj"] {
-             XCTAssertTrue(LanguagePreferences.alwaysKept.contains(folder), folder)
-         }
-     }
- 
-+    func testKoreanLanguageResourcesCannotBeOfferedForCleanup() {
-+        let original = LanguagePreferences.discoveredLproj
-+        defer { LanguagePreferences.discoveredLproj = original }
-+        let folders: Set<String> = ["ko.lproj", "ko-KR.lproj", "ko_KR.lproj", "Korean.lproj"]
-+        LanguagePreferences.discoveredLproj = folders
-+        XCTAssertTrue(folders.isSubset(of: LanguagePreferences.alwaysKept))
-+        XCTAssertTrue(LanguagePreferences.selectableLanguages().isEmpty)
-+    }
++      - name: Verify publication and signing fixtures
++        run: |
++          python3 scripts/test-update-feed.py
++          python3 scripts/test-publish-update-feed.py
 +
-     func testGermanLanguageSelectionAndRegionalIdentifiers() {
-         XCTAssertTrue(AppLanguage.allCases.contains(.de))
-         XCTAssertEqual(AppLanguage.de.pickerLabel, "Deutsch")
-@@ -264,7 +301,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             ("清除", "Clear", "Очистить"),
-             ("这只会忘掉恢复记录，废纸篓里的文件不会被动。之后就不能一键恢复这些清理了。", "This only forgets the restore list. Nothing in the Trash is touched, but these cleans can no longer be restored in one click.", "Это"),
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-             AppLanguage.current = language
-             for (zh, en, ru) in strings {
-                 let value = L10n.tr(zh, en, ru)
-@@ -380,6 +417,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             .es: "Invítame a un café",
-             .ptBR: "Me pague um café",
-             .ja: "コーヒーをおごる",
-+            .ko: "커피 한 잔 후원하기",
-             .zhHant: "請我喝杯咖啡",
-             .ru: "Угостить кофе",
-         ]
-@@ -401,7 +439,7 @@ final class LocalizationTests: AppLanguageTestCase {
-         let sameAsSimplified: Set<String> = [
-             "容器", "卷", "大小", "取消", "永久清理", "清理完成", "未能完成", "已停止",
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ru] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .ru] {
-             AppLanguage.current = language
-             for (index, value) in DiskHogsText.all.enumerated() where !sameAsEnglish.contains(english[index]) || language == .ru {
-                 XCTAssertNotEqual(value, english[index], "\(language) is missing: \(english[index])")
-@@ -431,7 +469,7 @@ final class LocalizationTests: AppLanguageTestCase {
-             ("正在查找项目…", "Finding projects…", "Поиск проектов…"),
-             ("正在计算文件夹大小…", "Measuring folders…", "Подсчёт размера папок…"),
-         ]
--        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .zhHant, .ru] {
-+        for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko, .zhHant, .ru] {
-             AppLanguage.current = language
-             for s in strings {
-                 let text = L10n.tr(s.zh, s.en, s.ru)
-@@ -475,7 +513,7 @@ final class LocalizationTests: AppLanguageTestCase {
-         let sameInTraditional: Set<String> = ["未知"]
- 
-         for (zh, english) in strings {
--            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja] {
-+            for language in [AppLanguage.de, .fr, .it, .es, .ptBR, .ja, .ko] {
-                 AppLanguage.current = language
-                 XCTA
++      - name: Publish from final release notes
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          RELEASE_TAG: ${{ inputs.release_tag }}
++          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
++          SPARKLE_PUBLIC_ED_KEY: ${{ vars.SPARKLE_PUBLIC_ED_KEY }}
++          SPARKLE_FEED_URL: ${{ vars.SPARKLE_FEED_URL }}
++        run: python3 scripts/publish-update-feed.py
 ```
 
-**File**: `Tests/MacCleanKitTests/SupportersTests.swift` (modified, +2/-2)
+**File**: `.github/workflows/release.yml` (modified, +17/-3)
 ```diff
-@@ -64,7 +64,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
-         let english = allStrings()
-         AppLanguage.current = .zhHans
-         let simplified = allStrings()
--        for language in [AppLanguage.de, .fr, .it, .ru, .ja, .ptBR, .es] {
-+        for language in [AppLanguage.de, .fr, .it, .ru, .ko, .ja, .ptBR, .es] {
-             AppLanguage.current = language
-             for (index, translated) in allStrings().enumerated() {
-                 XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
-@@ -77,7 +77,7 @@ final class SupporterStringsTests: AppLanguageTestCase {
-     }
+@@ -98,7 +98,11 @@ jobs:
+         run: swift build -c release
  
-     func testPlaceholderIsFilledInEveryLanguage() {
--        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ja, .ptBR, .es] {
-+        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant, .ko, .ja, .ptBR, .es] {
-             AppLanguage.current = language
-             let caption = SupporterStrings.caption(for: ["Ada"])
-             XCTAssertTrue(caption.contains("Ada"), "\(language): \(caption)")
+       - name: Run tests
+-        run: swift test
++        run: |
++          swift test
++          python3 scripts/test-update-feed.py
++          python3 scripts/test-publish-update-feed.py
++          python3 scripts/test-network-surface.py
+ 
+       # --- Signing & notarization ---------------------------------------------
+       # All secrets live in GitHub repo settings; nothing sensitive is committed.
+@@ -148,6 +152,9 @@ jobs:
+         env:
+           APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
+           NOTARY_PROFILE: MacSai
++          BUILD_NUMBER: ${{ github.run_number }}
++          SPARKLE_FEED_URL: ${{ vars.SPARKLE_FEED_URL }}
++          SPARKLE_PUBLIC_ED_KEY: ${{ vars.SPARKLE_PUBLIC_ED_KEY }}
+         run: |
+           # Export so build-dmg.sh names the DMG / Info.plist with this version
+           # (the beta tag's version, which differs from the committed VERSION).
+@@ -170,10 +177,11 @@ jobs:
+         run: |
+           VERSION="${{ steps.version.outputs.version }}"
+           TAG="${{ steps.version.outputs.tag }}"
++          ASSETS=(".build/MacSai-${VERSION}.dmg")
+ 
+           if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+             gh release create "$TAG" \
+-              ".build/MacSai-${VERSION}.dmg" \
++              "${ASSETS[@]}" \
+               --title "Mac Sai $TAG (beta)" \
+               --prerelease \
+               --notes "$(cat <<EOF
+@@ -197,7 +205,7 @@ jobs:
+             # this release itself, which produced "vX...vX" links.
+             PREV_TAG="$(git tag --sort=-creatordate | grep -vx "$TAG" | grep -v -e '-' | head -1 || true)"
+             gh release create "$TAG" \
+-              ".build/MacSai-${VERSION}.dmg" \
++              "${ASSETS[@]}" \
+               --title "Mac Sai $TAG" \
+               --generate-notes \
+               ${PREV_TAG:+--notes-start-tag "$PREV_TAG"} \
+@@ -229,6 +237,12 @@ jobs:
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
++      - name: Publish curated appcast reminder
++        if: steps.version.outputs.prerelease == 'false' && vars.SPARKLE_FEED_URL != ''
++        run: |
++          echo "Curate the published release notes, then run Publish curated update feed for this stable tag." >> "$GITHUB_STEP_SUMMARY"
++          echo "The new latest release has no appcast until that required step succeeds. Do not rerun Release to edit the feed." >> "$GITHUB_STEP_SUMMARY"
++
+       - name: Update Homebrew cask in tap repo
+         if: steps.version.outputs.prerelease != 'true'
+         run: |
+```
+
+**File**: `Package.swift` (modified, +4/-1)
+```diff
+@@ -14,15 +14,18 @@ let package = Package(
+     ],
+     dependencies: [
+         .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
++        .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.10.1"),
+     ],
+     targets: [
+         .executableTarget(
+             name: "MacClean",
+             dependencies: [
+                 "MacCleanKit",
+                 .product(name: "GRDB", package: "GRDB.swift"),
++                .product(name: "Sparkle", package: "Sparkle"),
+             ],
+-            path: "Sources/MacClean"
++            path: "Sources/MacClean",
++            linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
+         ),
+         .executableTarget(
+             name: "MacCleanMenu",
+```
+
+**File**: `README.de.md` (modified, +48/-13)
+```diff
+@@ -320,12 +320,13 @@ Glaub uns nicht einfach. Sowohl der Quellcode als auch der laufende Prozess sind
+ **1. Durchsuche den Quellcode nach Netzwerk-APIs**
+ 
+ ```bash
+-rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
++rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
+ ```
+ 
+-Du solltest nur je drei Netzwerkpfade sehen, alle optional und alle nur lesend:
++Die optionalen Netzwerkzugriffe sind unten aufgeführt. Die lokale Bereinigung überträgt weder Scanergebnisse noch Dateilisten:
+ 
+-- `Sources/MacCleanKit/UpdateChecker.swift`: die optionale Update-Prüfung von Mac Sai (in den Einstellungen abschaltbar)
++- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle prüft den im signierten Programm hinterlegten HTTPS-Feed und lädt signierte Versionshinweise und Update-Archive. Automatische Prüfungen und automatisches Laden/Installieren sind getrennte Einstellungen; Systemprofiling und JavaScript in Versionshinweisen sind deaktiviert. Siehe [Update-Einrichtung](docs/IN_APP_UPDATES.md). Bei konfigurierten Direktinstallationen sind automatische Update-Prüfungen standardmäßig aktiviert und laufen einmal täglich; jede Anfrage enthält die Versionen der App und von Sparkle im User-Agent, und die Prüfungen lassen sich in den Einstellungen abschalten.
++- `Sources/MacCleanKit/UpdateChecker.swift`: Homebrew-Update-Prüfungen und die Release-Seite als Rückfall für Builds ohne eingerichteten signierten Feed
+ - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: die vom Benutzer ausgelöste Prüfung der Sparkle-Feeds *anderer Apps*, wenn du den Updater öffnest
+ - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: der optionale Download von MalwareBazaar-Hashes. Er läuft nur, wenn du deinen eigenen abuse.ch-Auth-Key hinterlegst und unter Einstellungen > Malware-Datenbanken auf Jetzt aktualisieren klickst. Jede Anfrage sendet nur deinen Auth-Key und die Abfrage, niemals Datei-Hashes oder Pfade. Passt ein heruntergeladener Hash zu einer signierten Datei, fragt macOS bei Apple nach, ob ihr Signaturzertifikat widerrufen wurde, dieselbe Prüfung wie bei Gatekeeper; die Anfrage betrifft das Zertifikat, nicht deine Dateien
+ 
+@@ -334,28 +335,62 @@ Es gibt nirgends im Code Analytik, einen Crash-Reporter oder ein Tracker-SDK.
+ **2. Beobachte den laufenden Prozess**
+ 
+ ```bash
+-lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
++(
++MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
++MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
++  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
++    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
++if [ -n "$MACSAI_PIDS" ]; then
++  ps -p "$MACSAI_PIDS" -o pid=,comm=
++  lsof -nP -a -p "$MACSAI_PIDS" -i
++else
++  echo "No running executables from this Mac Sai bundle"
++fi
++)
+ ```
+ 
+-Erwartet: keine aufgebauten Verbindungen, solange du nur lokal bereinigst. Little Snitch oder LuLu machen dieselbe Prüfung sichtbar.
++Diese Momentaufnahme wählt PIDs anhand der ausführbaren Dateien im angegebenen App-Bundle aus und schließt fremde Installer-/Updater-Prozesse aus. An andere Orte kopierte Sparkle-Helfer und die macOS-Vertrauensdienste liegen außerhalb dieser Auswahl; beobachte sie mit einer prozessbezogenen Firewall. Führe den Befehl während einer Prüfung oder eines Downloads aus, um kurzlebige Verbindungen zu sehen.
++
++Wenn keine Update-Prüfung, kein Download und keine optionale Malware-Verifikation laufen, öffnet die lokale Bereinigung keine Netzwerkverbindung. Beobachte bei Updates auch die Sparkle-Unterprozesse; Apple-Zertifikatsprüfungen laufen über die Vertrauensdienste von macOS. Little Snitch oder LuLu zeigen diese Verbindungen ebenfalls.
+ 
+ **3. Untersuche die Binärdatei, die du tatsächlich installiert hast**
+ 
+-Der Quellcode und die signierte Binärdatei sind verschiedene Artefakte, die stärkste Prüfung läuft also gegen die App auf deiner Festplatte, nicht gegen dieses Repo. Nach `brew install --cask mac-sai`:
++Für eine Installation per DMG oder Homebrew braucht diese Schleife nur die macOS-Kommandozeilenwerkzeuge, keinen Quellcode-Checkout und kein Python. Sie liest alle sieben enthaltenen Binärdateien und zeigt häufige Netzwerkimporte, statische URLs und Tracker-Zeichenfolgen zur manuellen Prüfung:
+ 
+ ```bash
+-APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
++(
++MACSAI_APP="/Applications/Mac Sai.app"
++MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
++for MACSAI_BINARY in \
++  "$MACSAI_APP/Contents/MacOS/MacClean" \
++  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
++  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
++  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
++  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
++  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
++do
++  printf '\n%s\n' "$MACSAI_BINARY"
++  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BIN
+```
+
+**File**: `README.fr.md` (modified, +48/-13)
+```diff
+@@ -320,12 +320,13 @@ Ne nous croyez pas sur parole. Le code source comme le processus en cours d'exé
+ **1. Cherchez dans le code les API réseau**
+ 
+ ```bash
+-rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
++rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
+ ```
+ 
+-Vous ne devriez jamais voir que trois chemins réseau, tous optionnels et en lecture seule :
++Les accès réseau facultatifs sont indiqués ci-dessous. Le nettoyage local n’envoie ni résultats d’analyse ni listes de fichiers :
+ 
+-- `Sources/MacCleanKit/UpdateChecker.swift` : la vérification optionnelle des mises à jour de Mac Sai (désactivable dans les Réglages)
++- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle consulte le flux HTTPS inscrit dans l’application signée et télécharge les notes de version et les archives de mise à jour signées. La recherche automatique et le téléchargement/installation automatiques sont des réglages distincts ; le profilage système et JavaScript dans les notes sont désactivés. Voir la [configuration des mises à jour](docs/IN_APP_UPDATES.md). Pour les installations directes configurées, la recherche automatique des mises à jour est activée par défaut et a lieu une fois par jour ; chaque requête contient les versions de l’application et de Sparkle dans le User-Agent, et cette recherche peut être désactivée dans Réglages.
++- `Sources/MacCleanKit/UpdateChecker.swift`: les vérifications Homebrew et la page des versions en solution de repli pour les builds sans flux signé configuré
+ - `Sources/MacClean/Modules/Updater/UpdaterModule.swift` : la vérification, déclenchée par l'utilisateur, des flux Sparkle *d'autres apps* lorsque vous ouvrez l'Updater
+ - `Sources/MacCleanKit/MalwareBazaarFeed.swift` : le téléchargement optionnel des hachages MalwareBazaar. Il ne s'exécute que si vous ajoutez votre propre Auth-Key abuse.ch et cliquez sur Mettre à jour maintenant dans Réglages > Bases de logiciels malveillants. Chaque requête n'envoie que votre Auth-Key et la requête, jamais de hachages ni de chemins de fichiers. Lorsqu'un hachage téléchargé correspond à un fichier signé, macOS demande à Apple si son certificat de signature a été révoqué, la même vérification que celle de Gatekeeper ; cette requête porte sur le certificat, pas sur vos fichiers
+ 
+@@ -334,28 +335,62 @@ Il n'y a aucun SDK d'analytique, de rapport de plantage ou de traqueur nulle par
+ **2. Observez le processus en direct**
+ 
+ ```bash
+-lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
++(
++MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
++MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
++  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
++    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
++if [ -n "$MACSAI_PIDS" ]; then
++  ps -p "$MACSAI_PIDS" -o pid=,comm=
++  lsof -nP -a -p "$MACSAI_PIDS" -i
++else
++  echo "No running executables from this Mac Sai bundle"
++fi
++)
+ ```
+ 
+-Attendu : aucune connexion établie tant que vous ne faites que nettoyer localement. Little Snitch ou LuLu rendent la même vérification visuelle.
++Cet instantané sélectionne les PID selon le chemin des exécutables dans le paquet choisi, ce qui exclut les processus Installer/Updater sans rapport. Les assistants Sparkle copiés ailleurs et les services de confiance de macOS sont hors de cette sélection ; utilisez un pare-feu qui distingue les processus pour les observer. Exécutez la commande pendant une recherche ou un téléchargement pour voir les connexions brèves.
++
++Lorsque les vérifications/téléchargements de mises à jour et la vérification facultative des logiciels malveillants sont inactifs, le nettoyage local n’ouvre aucune connexion réseau. Pendant une mise à jour, observez aussi les sous-processus Sparkle ; les vérifications de certificats Apple passent par les services de confiance de macOS. Little Snitch ou LuLu permettent également de les visualiser.
+ 
+ **3. Inspectez le binaire que vous avez réellement installé**
+ 
+-Le code source et le binaire signé sont deux artefacts différents, la vérification la plus forte s'exécute donc contre l'app sur votre disque, pas contre ce dépôt. Après `brew install --cask mac-sai` :
++Pour une installation par DMG ou Homebrew, cette boucle ne demande que les outils en ligne de commande de macOS, sans copie du code ni Python. Elle lit les sept binaires fournis et affiche les imports réseau courants, les URL statiques et les chaînes de traceurs pour une inspection manuelle :
+ 
+ ```bash
+-APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
++(
++MACSAI_APP="/Applications/Mac Sai.app"
++MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
++for MACSAI_BINARY in \
++  "$MACSAI_APP/Contents/MacOS/MacClean" \
++  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
++  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
++  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Up
+```
+
+**File**: `README.md` (modified, +48/-13)
+```diff
+@@ -320,12 +320,13 @@ Do not take our word for it. Both the source and the running process are checkab
+ **1. Search the source for networking APIs**
+ 
+ ```bash
+-rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
++rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
+ ```
+ 
+-You should only ever see three network paths, all optional and all read-only:
++The optional network paths are disclosed below. Local cleaning does not upload scan results or file lists:
+ 
+-- `Sources/MacCleanKit/UpdateChecker.swift`: the optional Mac Sai update check (turn it off in Settings)
++- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle checks the HTTPS feed sealed into the signed app and downloads signed release notes and update archives. Automatic checks and automatic download/install are separate settings; system profiling and release-note JavaScript are disabled. See [update setup](docs/IN_APP_UPDATES.md). For configured direct installations, automatic update checks are on by default and run once a day; each request includes the app and Sparkle versions in the User-Agent, and checks can be turned off in Settings.
++- `Sources/MacCleanKit/UpdateChecker.swift`: Homebrew update checks and the release-page fallback for builds without a configured signed feed
+ - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: the user-driven check of *other apps'* Sparkle feeds when you open the Updater
+ - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: the opt-in MalwareBazaar hash download. It only runs when you add your own abuse.ch Auth-Key and press Update Now in Settings > Malware Databases. Each request sends only your Auth-Key and the query, never file hashes or paths. When a downloaded hash matches a signed file, macOS asks Apple whether its signing certificate was revoked, the same check Gatekeeper makes; that request is about the certificate, not your files
+ 
+@@ -334,28 +335,62 @@ There is no analytics, crash reporter, or tracker SDK anywhere in the codebase.
+ **2. Watch the live process**
+ 
+ ```bash
+-lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
++(
++MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
++MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
++  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
++    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
++if [ -n "$MACSAI_PIDS" ]; then
++  ps -p "$MACSAI_PIDS" -o pid=,comm=
++  lsof -nP -a -p "$MACSAI_PIDS" -i
++else
++  echo "No running executables from this Mac Sai bundle"
++fi
++)
+ ```
+ 
+-Expected: no established connections while you are only cleaning locally. Little Snitch or LuLu make the same check visual.
++This snapshot selects PIDs by executable paths inside the chosen app bundle, so unrelated Installer/Updater processes are excluded. Sparkle helpers copied elsewhere and macOS trust services are outside this snapshot; use a process-aware firewall to observe those. Run it while checking or downloading an update to catch short-lived connections.
++
++With update checks/downloads and optional malware verification inactive, local cleaning opens no network connection. Include Sparkle’s child processes when observing an update; Apple certificate checks run through macOS trust services. Little Snitch or LuLu can show these connections too.
+ 
+ **3. Inspect the binary you actually installed**
+ 
+-The source and the signed binary are different artifacts, so the strongest check runs against the app on your disk, not this repo. After `brew install --cask mac-sai`:
++For a DMG or Homebrew installation, this loop needs only macOS command-line tools, with no source checkout or Python. It reads all seven bundled binaries and lists common network imports, static URLs and tracker strings for manual inspection:
+ 
+ ```bash
+-APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
++(
++MACSAI_APP="/Applications/Mac Sai.app"
++MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
++for MACSAI_BINARY in \
++  "$MACSAI_APP/Contents/MacOS/MacClean" \
++  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
++  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
++  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
++  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
++  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
++do
++  printf '\n%s\n' "$MACSAI_BINARY"
++  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BINARY") || exit 1
++  printf '%s\n' "$MACSAI_IMPORTS" | grep -Ei \
++    'URLSession|URLConnection|CFNetwork|Network|nw_|DNSService|NetService|curl_|^_(socket|connect|connectx|send|recv)([$]|$)' || true
++  MACSAI_STRINGS=$(strings -a "$MACSAI_BINARY") || exit 1
++  printf '%s\n' "$MACSAI_STRINGS" | grep -Ei \
++    '://|sentry|firebase|mixpanel|amplitude|bugsnag|crashlytics|posthog|appsflyer' || true
++done
++)
++```
+ 
+-# Networking classes the binary imports (only URLSession appears):
+-nm
+```
+
+**File**: `README.ru.md` (modified, +48/-13)
+```diff
+@@ -316,12 +316,13 @@ Mac Sai подписан идентификатором Apple **Developer ID** 
+ **1. Поиск сетевых API в исходниках**
+ 
+ ```bash
+-rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
++rg -n 'URLSession|NSURLConnection|Sparkle|SecTrustEvaluate' Sources --glob '*.swift'
+ ```
+ 
+-Вы должны увидеть ровно три сетевых пути, все необязательные и только на чтение:
++Необязательные сетевые обращения перечислены ниже. Локальная очистка не передаёт результаты сканирования или списки файлов:
+ 
+-- `Sources/MacCleanKit/UpdateChecker.swift`: необязательная проверка обновлений Mac Sai (отключается в настройках)
++- `Sources/MacClean/Services/SelfUpdateController.swift`: Sparkle проверяет HTTPS-ленту, указанную в подписанном приложении, и загружает подписанные описания и архивы обновлений. Автоматическая проверка и автоматическая загрузка с установкой включаются отдельно; отправка системного профиля и JavaScript в описаниях отключены. См. [настройку обновлений](docs/IN_APP_UPDATES.md). В настроенных сборках для прямой установки автоматическая проверка обновлений включена по умолчанию и выполняется раз в сутки; каждый запрос содержит версии приложения и Sparkle в User-Agent, а проверки можно отключить в Настройках.
++- `Sources/MacCleanKit/UpdateChecker.swift`: проверка обновлений Homebrew и переход на страницу релизов в сборках без настроенной подписанной ленты
+ - `Sources/MacClean/Modules/Updater/UpdaterModule.swift`: запускаемая пользователем проверка лент Sparkle *других приложений* при открытии модуля «Обновления»
+ - `Sources/MacCleanKit/MalwareBazaarFeed.swift`: необязательная загрузка хешей MalwareBazaar. Она выполняется, только если вы добавили собственный Auth-Key abuse.ch и нажали «Обновить сейчас» в разделе «Настройки» > «Базы вредоносного ПО». Каждый запрос передаёт только ваш Auth-Key и сам запрос, но никогда не хеши файлов и не пути. Если загруженный хеш совпадает с подписанным файлом, macOS запрашивает у Apple, не отозван ли его сертификат подписи (та же проверка, что и у Gatekeeper); этот запрос касается сертификата, а не ваших файлов
+ 
+@@ -330,28 +331,62 @@ rg -n 'URLSession|NSURLConnection' Sources --glob '*.swift'
+ **2. Наблюдение за живым процессом**
+ 
+ ```bash
+-lsof -i -P -n | grep -i 'MacClean\|Mac Sai\|MacSai' || echo "no network sockets"
++(
++MACSAI_APP=$(cd "/Applications/Mac Sai.app" && pwd -P) || exit 1
++MACSAI_PIDS=$(ps -ww -axo pid=,comm= | awk -v bundle="$MACSAI_APP/" '
++  { pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, "")
++    if (index($0, bundle) == 1) print pid }' | paste -sd, -)
++if [ -n "$MACSAI_PIDS" ]; then
++  ps -p "$MACSAI_PIDS" -o pid=,comm=
++  lsof -nP -a -p "$MACSAI_PIDS" -i
++else
++  echo "No running executables from this Mac Sai bundle"
++fi
++)
+ ```
+ 
+-Ожидание: при обычной локальной очистке установленных соединений нет. Little Snitch или LuLu делают ту же проверку наглядной.
++Этот снимок выбирает PID по путям исполняемых файлов внутри указанного приложения, поэтому посторонние процессы Installer/Updater не попадают в выборку. Помощники Sparkle, скопированные в другие каталоги, и системные службы доверия macOS находятся за её пределами; для них используйте межсетевой экран с учётом процессов. Повторяйте команду во время проверки или загрузки обновления, чтобы увидеть короткие соединения.
++
++Если проверка и загрузка обновлений, а также необязательная проверка вредоносного ПО не выполняются, локальная очистка не открывает сетевые соединения. При обновлении учитывайте дочерние процессы Sparkle; проверка сертификатов Apple выполняется системными службами доверия macOS. Соединения также можно наблюдать в Little Snitch или LuLu.
+ 
+ **3. Проверьте бинарник, который вы на самом деле установили**
+ 
+-Исходный код и подписанный бинарник представляют собой два разных артефакта, поэтому самая надёжная проверка выполняется по приложению на вашем диске, а не по этому репозиторию. После `brew install --cask mac-sai`:
++Для установки из DMG или Homebrew достаточно средств командной строки macOS; исходники и Python не нужны. Этот цикл читает все семь бинарных компонентов и выводит распространённые сетевые импорты, статические URL и строки трекеров для ручной проверки:
+ 
+ ```bash
+-APP="/Applications/Mac Sai.app/Contents/MacOS/MacClean"
++(
++MACSAI_APP="/Applications/Mac Sai.app"
++MACSAI_SPARKLE="$MACSAI_APP/Contents/Frameworks/Sparkle.framework/Versions/B"
++for MACSAI_BINARY in \
++  "$MACSAI_APP/Contents/MacOS/MacClean" \
++  "$MACSAI_APP/Contents/Library/LoginItems/MacCleanMenu.app/Contents/MacOS/MacCleanMenu" \
++  "$MACSAI_SPARKLE/Sparkle" "$MACSAI_SPARKLE/Autoupdate" \
++  "$MACSAI_SPARKLE/Updater.app/Contents/MacOS/Updater" \
++  "$MACSAI_SPARKLE/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
++  "$MACSAI_SPARKLE/XPCServices/Installer.xpc/Contents/MacOS/Installer"
++do
++  printf '\n%s\n' "$MACSAI_BINARY"
++  MACSAI_IMPORTS=$(nm -uj "$MACSAI_BINARY") || exit 1
++  printf '%s\n' "$MACSAI_IMPORTS" | grep -Ei \
++    'URLSession|URLConnection|CFNetwork|Network|nw_|DNSService|NetService|curl_|^_(soc
 ```
 
 #### Recent Merged Pull Requests:
@@ -2506,30 +2179,39 @@ Adds Korean as an interface language (part of #12): the full dictionary, locale 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Turkish localization (#247)
+## X. Add signed in-app updates with release notes and relaunch (#255)
 
 **RULE**:
-When implementing operations in `Sources/MacCleanKit/CleanupStrings.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da2a26e8`: Add Turkish localization (#247). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ae87e70`: Add signed in-app updates with release notes and relaunch (#255). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/MacCleanKit/CleanupStrings.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        case .tr: return "\(totalText) öğeden \(selectedText) öğe seçildi"
-        case .tr: return "\(number) öğe temizlensin mi?"
-        case .tr: return "\(number) öğe"
+      - name: Validate update build configuration
+        run: |
+          python3 scripts/test-update-configuration.py
+          bash -n scripts/build-dmg.sh scripts/generate-update-feed.sh
+
+      - name: Verify signed update release failures
+        run: |
+          python3 scripts/test-update-feed.py
+          python3 scripts/test-publish-update-feed.py
+          python3 scripts/test-network-surface.py
+
+        run: bash scripts/check-network-surface.sh "$(swift build --show-bin-path)/MacClean"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        run: bash scripts/check-network-surface.sh
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da2a26e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ae87e70` are properly handled with clean fallback behavior.
