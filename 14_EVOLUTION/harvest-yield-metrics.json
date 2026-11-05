@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T00:29:52.224Z",
-  "total_cycles_completed": 7401,
-  "total_learnings_persisted": 7401,
-  "total_rules_promoted": 7095,
+  "last_updated": "2026-11-05T00:36:47.685Z",
+  "total_cycles_completed": 7403,
+  "total_learnings_persisted": 7403,
+  "total_rules_promoted": 7099,
   "history": [
-    {
-      "timestamp": "2026-11-04T11:02:39.496Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T11:09:27.849Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T11:09:31.236Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T00:29:52.224Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:36:46.081Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T00:36:47.685Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

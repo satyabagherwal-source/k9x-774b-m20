@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T00:29:52.235Z",
+  "last_updated": "2026-11-05T00:36:47.697Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
-      "verified_at": "2026-10-31T10:20:16.593Z",
+      "content_hash": "6393499a9134761677196d73507939948a8f21fbb488c842c96b8b6fd6feb39a",
+      "verified_at": "2026-11-05T00:36:46.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:20:16.593Z"
+      "last_updated": "2026-11-05T00:36:46.091Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "967912fcb4329ad0e2b5b74770721c43da9ffe1a8298d710353afcf7405f70b5",
-      "verified_at": "2026-11-04T21:11:29.334Z",
+      "content_hash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
+      "verified_at": "2026-11-05T00:36:47.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:11:29.334Z"
+      "last_updated": "2026-11-05T00:36:47.696Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

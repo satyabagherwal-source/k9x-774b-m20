@@ -7433,3 +7433,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-05T00:29:38.101Z |
 | `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `9ac5a9dc` | Multi-dimensional audit evidence | 2026-11-05T00:29:44.225Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `344a95f6` | Multi-dimensional audit evidence | 2026-11-05T00:29:52.219Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-05T00:36:46.076Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a967b7d8` | Multi-dimensional audit evidence | 2026-11-05T00:36:47.680Z |

@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "468c73a5974a235844fa993a459e29779cafcdd7d343a6e80d3fae76c0b998de",
-    "lastHarvestedAt": "2026-10-31T10:20:16.585Z",
+    "contentHash": "6393499a9134761677196d73507939948a8f21fbb488c842c96b8b6fd6feb39a",
+    "lastHarvestedAt": "2026-11-05T00:36:46.076Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "5455bf6a",
+    "sourceVersion": "a967b7d8",
     "license": "BSD-3-Clause",
-    "contentHash": "967912fcb4329ad0e2b5b74770721c43da9ffe1a8298d710353afcf7405f70b5",
-    "lastHarvestedAt": "2026-11-04T21:11:29.325Z",
+    "contentHash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
+    "lastHarvestedAt": "2026-11-05T00:36:47.680Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

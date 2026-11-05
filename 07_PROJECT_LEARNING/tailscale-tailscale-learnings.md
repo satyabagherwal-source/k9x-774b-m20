@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `5455bf6a`  
+> **Source Version**: `a967b7d8`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:11:28.533Z  
+> **Timestamp**: 2026-11-05T00:36:47.002Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:11:28.526Z  
+> **Harvest Timestamp**: 2026-11-05T00:36:46.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38632 stars
+- **Stars / Engagement**: 38636 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22154** (2026-11-04): **Subnet router on UGREEN NAS (UGOS) cannot route traffic to other LAN hosts**
+  *Symptoms*: ### What is the issue?  ### Description I am running Tailscale as a subnet router on a UGREEN NAS (UGOS). The subnet route is properly advertised and approved, and the remote client successfully installs the route. However, the client can only access the NAS itself, but cannot reach any other hosts on the local network (LAN). The NAS can reach all LAN hosts locally.  ### Technical Details - **Device:** UGREEN NAS (UGOS) - **Tailscale Version:** 1.96.4 - **Subnet Route:** 192.168.2.0/24 (Approved: yes, PrimaryRoute: yes) - **Remote Client Route Installed:** 192.168.2.0/24 -> 100.100.100.100  ### Diagnostics & Traceroute Traceroute from remote client to a LAN host (192.168.2.1): 1 mynas.trex-ph.ts.net 2 * * * (timeout)  ### Connectivity Test - **Accessible remotely:** 192.168.2.8 (NAS IP) - **Not accessible remotely:** 192.168.2.1, 192.168.2.111, 192.168.2.197  ### Bugreport ID BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89   ### Steps to reproduce  _No response_  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Android, Windows  ### OS version  _No response_  ### Tailscale version  1.96.4  ### Other software  NAS Ugreen DXP2800 system version 1.20.0.0124  ### Bug report  BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89
+
 - **Issue #22144** (2026-11-03): **iPadOS 27.2: "MagicSock function not running" after device restart, tunnel shows connected but passes no traffic or DNS**
   *Symptoms*: ### What is the issue?  On an iPad Air M4 (iPadOS 27.2), Tailscale repeatedly enters a state where the app shows "Connected" but displays the warning "MagicSock function not running". While in this state, no traffic passes through the tunnel: DNS (MagicDNS, global nameserver on a tailnet node) does not resolve, so Safari and all apps fail to load anything. Turning Tailscale off immediately restores internet access.  An iPhone (iOS 27.2) on the same Wi-Fi network, behind the same router and the same egress path, does not show the problem.  ### Steps to reproduce  Occurrences: - 2026-10-31: right after the iPadOS 27.2 update (which includes a restart). Fixed by deleting the VPN profile. - 2026-11-02: device fully powered off while away, powered on back at home; issue appeared immediately. Fixed by toggling Tailscale off and on. Bug report attached below (generated while the error was showing).  ### Are there any recent changes that introduced the issue?  Yes: the device was updated to iPadOS 27.2 on 2026-10-31, the same day the first occurrence happened.  ### OS  iOS  ### OS version  iPadOS 27.2  ### Tailscale version  1.104.4  ### Other software  Home router routes this device's traffic through a commercial OpenVPN tunnel (NordVPN). The admin console shows "Varies: Yes" (endpoint-dependent NAT) for this node, and its DERP home is New York. The iPhone that works correctly uses the same router tunnel.  ### Bug report  BUG-94caa859c8a9ae8eeb5f1189b7d83c8a95c44b839742f90c53a33a52f
-
-- **Issue #22135** (2026-11-04): **Disable Multipath TCP on listeners by default (CVE-2026-98432)**
-  *Symptoms*: ### What are you trying to do?  Since Go 1.24 the `multipathtcp` GODEBUG defaults to `2`, so on Linux every listener that doesn't call `SetMultipathTCP` explicitly is opened as `IPPROTO_MPTCP`. The official v1.104.4 binaries (go1.27.3) carry no `multipathtcp` entry in `DefaultGODEBUG`, and the tailscale/go fork keeps the upstream default. In `tailscaled` that covers the peerapi and serve listeners on the Tailscale IP, the SOCKS5/HTTP outbound proxy, and the `--debug` server. `tailscale web --listen` is affected too.  The publicly demonstrated unauthenticated remote root exploit for **CVE-2026-98432** (Linux IPv4 TCP use-after-free) needs the target to expose an MPTCP listener. Ubuntu, RHEL and their derivatives had no fixed kernel as of 2026-10-30.  ### How should we solve this?  Add `//go:debug multipathtcp=0` to the main packages that ship as binaries or images: `cmd/tailscaled`, `cmd/tailscale`, `cmd/derper`, `cmd/containerboot`, `cmd/k8s-operator`, `cmd/k8s-proxy` and `cmd/tsidp`. A `godebug` line in `go.mod` wouldn't be enough, because it is ignored when the binary is built as a versioned module, for example with `go install tailscale.com/cmd/derper@latest`. Users can opt back in with `GODEBUG=multipathtcp=2`.  This follows #15063, which already disabled MPTCP on the derper listeners because it's incompatible with `TCP_USER_TIMEOUT`.  ### What is the impact of not solving this?  Linux nodes expose MPTCP listeners they never use. Exposure is limited (peerapi and serve bin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,278 +821,214 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5455bf6a` (2026-11-04)
-**Commit Message**: cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157)
+### Incident Patch 1: `a967b7d8` (2026-10-15)
+**Commit Message**: tailcfg: add a nodecap to disable hybrid handshakes
 
-This commit changes the egress ProxyGroup readiness gate to mark a Pod
-ready only when, for each egress Service, the Pod is an endpoint in the
-EndpointSlice of every IP family that the proxy reports in its egress
-status. Before, the gate accepted a Pod that was in either family's
-EndpointSlice. On a dual-stack cluster, the StatefulSet rollout could
-then move to the next Pod before the other family routed to the new Pod.
+Updates tailscale/corp#50068
 
-The gate reads the families from the proxy's state Secret, because a
-proxy older than v1.102 does not report an IPv6 address. Such a proxy
-never joins the IPv6 EndpointSlice, so its Pod must not wait for it.
+Signed-off-by: David Anderson <[REDACTED_EMAIL]>
+Change-Id: I07fc56c2eff6ab54ac9eec8ce33ea1d16a6a6964
 
-Fixes #21077
-
-Signed-off-by: David Bond <[REDACTED_EMAIL]>
-
-**File**: `cmd/k8s-operator/egress-pod-readiness.go` (modified, +58/-7)
+**File**: `tailcfg/nodecap/nodecap.go` (modified, +9/-0)
 ```diff
-@@ -7,6 +7,7 @@ package main
+@@ -91,6 +91,15 @@ const (
+ 	// server, DERP servers, etc.)
+ 	DebugTSDNSResolution Cap = "https://tailscale.com/cap/debug-ts-dns-resolution"
  
- import (
- 	"context"
-+	"encoding/json"
- 	"fmt"
- 	"slices"
- 
-@@ -21,6 +22,7 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
- 
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/kube/egressservices"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tstime"
- 	"tailscale.com/util/set"
-@@ -48,8 +50,8 @@ type egressPodsReconciler struct {
- //
- // The endpoints for each egress service's ClusterIP Service are configured by the operator itself using custom
- // EndpointSlices (egress-eps-reconciler), which only adds a Pod once the Pod's state Secret shows that the proxy has
--// set up routing for that egress service. So a Pod is ready once it is an endpoint in an EndpointSlice of every
--// egress service for the ProxyGroup.
-+// set up routing for that egress service. So a Pod is ready once, for every egress service for the ProxyGroup, it is
-+// an endpoint in the EndpointSlice of each IP family that the proxy reports an address for in its state Secret.
- func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Request) (res reconcile.Result, err error) {
- 	lg := er.logger.With("Pod", req.NamespacedName)
- 	lg.Debugf("starting reconcile")
-@@ -116,19 +118,37 @@ func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Req
- 	if err := er.List(ctx, epsList, client.InNamespace(er.tsNamespace), client.MatchingLabels(lbls)); err != nil {
- 		return res, fmt.Errorf("failed to list EndpointSlices: %w", err)
- 	}
-+	// Each egress service has an EndpointSlice per IP family. A Pod must be an endpoint in the EndpointSlice of
-+	// every family that the proxy reports, else it can be marked ready while only one family routes to it. A proxy
-+	// older than v1.102 does not report an IPv6 address, so egress-eps-reconciler never adds it to an IPv6
-+	// EndpointSlice. Requiring the families that the Pod has addresses for would block such a Pod forever.
-+	families, err := er.reportedFamilies(ctx, pod)
-+	if err != nil {
-+		return res, fmt.Errorf("error determining IP families reported by proxy: %w", err)
-+	}
- 	routed := make(set.Set[string])
-+	missing := make(set.Set[string])
- 	for _, eps := range epsList.Items {
-+		svcName := eps.Labels[discoveryv1.LabelServiceName]
- 		// egress-eps-reconciler sets the endpoint's hostname to the Pod's UID.
- 		if slices.ContainsFunc(eps.Endpoints, func(ep discoveryv1.Endpoint) bool {
- 			return ep.Hostname != nil && *ep.Hostname == string(pod.UID)
- 		}) {
--			routed.Add(eps.Labels[discoveryv1.LabelServiceName])
-+			routed.Add(svcName)
-+			continue
-+		}
-+		if families.Contains(eps.AddressType) {
-+			missing.Add(svcName)
- 		}
- 	}
--	if slices.ContainsFunc(svcs.Items, func(svc corev1.Service) bool {
--		return !routed.Contains(svc.Name)
--	}) {
--		lg.Info("Pod is not yet added as an endpoint for all egress targets, waiting...")
-+	var waiting []string
-+	for _, svc := range svcs.Items {
-+		if !routed.Contains(svc.Name) || missing.Contains(svc.Name) {
-+			waiting = append(waiting, svc.Name)
-+		}
-+	}
-+	if len(waiting) > 0 {
-+		lg.Infof("Pod is not yet added as an endpoint for egress Services %q, waiting...", waiting)
- 		return reconcile.Result{RequeueAfter: shortRequeue}, nil
- 	}
- 	if err := er.setPodReady(ctx, pod, lg); err != nil {
-@@ -137,6 +157,37 @@ func (er *egressPodsReconciler) Reconcile(ctx context.Context, req reconcile.Req
- 	return res, nil
- }
- 
-+// reportedFamilies returns the IP families that the proxy reports addresses for in the egress services status in its
-+// state Secret. It returns an empty set if the proxy has not yet written the status.
-+func (er *egressPodsReconciler) reportedFamilies(ctx context.Context, pod *corev1.Pod) (set.Set[discoveryv1.AddressType], error) {
-+	families := make(set.Set[discoveryv1.AddressType])
-+	stateS := &corev1.Secret{}
-+	err := er.Get(ctx, types.NamespacedName{Namespace: pod.Namespace, Name: pod.Name}, stateS)
-+	switch {
-+	case apierrors.IsNotFound(err):
-+		return families, nil
-+	case err != nil:
-+		return nil, fmt.Errorf("error retrieving state Secret: %w", err)
-+	}
++	// DisableHybridHandshakes indicates that the node should not use hybrid
++	// PQ wireguard handshakes to communicate with peers that support hybrid
++	// handshakes.
++	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
++	// the risk of the initial rollout of hybrid handshakes. It will eventually
++	// be deleted to remove the control server's ability to downgrade hybrid
++	// handshakes.
++	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
 +
-+	svcStatusBS := stateS.Data[egressservices.KeyEgressServices]
-+	if len(svcStatusBS) == 0 {
-+		return families, nil
-+	}
-+
-+	svcStatus := &egressservices.Status{}
-+	if err := json.Unmarshal(svcStatusBS, svcStatus); err != nil {
-+		return nil, fmt.Errorf("error unmarshalling egress service status: %w", err)
-+	}
-+	if svcStatus.PodIPv4 != "" {
-+		families.Add(discoveryv1.AddressTypeIPv4)
-+	}
-+	if svcStatus.PodIPv6 != "" {
-+		families.Add(discoveryv1.AddressTypeIPv6)
-+	}
-+	return families, nil
-+}
-+
- func (er *egressPodsReconciler) setPodReady(ctx context.Context, pod *corev1.Pod, lg *zap.SugaredLogger) error {
- 	if slices.ContainsFunc(pod.Status.Conditions, func(c corev1.PodCondition) bool {
- 		return c.Type == tsEgressReadinessGate
+ 	// FunnelPorts specifies the ports that the Funnel is available on.
+ 	// The ports are specified as a comma-separated list of port numbers or port
+ 	// ranges (e.g. "80,443,8080-8090") in the ports query parameter.
 ```
 
-**File**: `cmd/k8s-operator/egress-pod-readiness_test.go` (modified, +74/-1)
+---
+
+### Incident Patch 2: `274a3f20` (2026-11-04)
+**Commit Message**: feature/conn25: roll back the address assignment when the send queue is full (#22165)
+
+reserveAddresses inserts the assignment into c.assignments before
+enqueueing it, and leaves it there when the enqueue fails. The connector
+never learns about such a mapping, and nothing tell it later.
+Add addrAssignments.remove and use it to undo the insert and return both
+addresses to their pools when enqueueAddressAssignment fails. The caller
+still gets a SERVFAIL, but the next DNS query starts from a clean slate.
+
+Fixes https://github.com/tailscale/corp/issues/50917
+
+Change-Id: I5a387bdcf5a5e87e2dca44867e88ed6149678729
+
+Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
+
+**File**: `feature/conn25/addrAssignments.go` (modified, +20/-4)
 ```diff
-@@ -6,6 +6,8 @@
- package main
- 
- import (
-+	"encoding/json"
-+	"net/netip"
- 	"testing"
- 	"time"
- 
-@@ -17,6 +19,7 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
- 
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/kube/egressservices"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tstest"
- )
-@@ -26,6 +29,8 @@ func TestEgressPodReadiness(t *testing.T) {
- 	tests := []struct {
- 		name      string
- 		objs      []client.Object
-+		podIPs    []string               // defaults to dual-stack
-+		status    *egressservices.Status // defaults to a status for podIPs
- 		wantReady bool
- 	}{
- 		{
-@@ -40,13 +45,52 @@ func TestEgressPodReadiness(t *testing.T) {
- 			},
- 			wantReady: true,
- 		},
-+		{
-+			name: "pod_is_endpoint_in_both_families",
-+			objs: []client.Object{
-+				newSvc("svc"),
-+				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
-+				newEps("svc", discoveryv1.AddressTypeIPv6, podUID),
-+			},
-+			wantReady: true,
-+		},
- 		{
- 			name: "pod_is_endpoint_in_one_family_only",
- 			objs: []client.Object{
- 				newSvc("svc"),
- 				newEps("svc", discoveryv1.AddressTypeIPv4),
- 				newEps("svc", discoveryv1.AddressTypeIPv6, podUID),
- 			},
-+		},
-+		{
-+			name: "single_stack_pod_is_endpoint_in_its_family",
-+			objs: []client.Object{
-+				newSvc("svc"),
-+				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
-+				newEps("svc", discoveryv1.AddressTypeIPv6),
-+			},
-+			podIPs:    []string{"10.0.0.2"},
-+			wantReady: true,
-+		},
-+		{
-+			name: "single_stack_pod_is_not_endpoint_in_its_family",
-+			objs: []client.Object{
-+				newSvc("svc"),
-+				newEps("svc", discoveryv1.AddressTypeIPv4),
-+				newEps("svc", discoveryv1.AddressTypeIPv6),
-+			},
-+			podIPs: []string{"fd00::2"},
-+		},
-+		{
-+			// A proxy older than v1.102 reports only PodIPv4, so egress-eps-reconciler never adds it to the IPv6
-+			// EndpointSlice.
-+			name: "dual_stack_pod_proxy_reports_ipv4_only",
-+			objs: []client.Object{
-+				newSvc("svc"),
-+				newEps("svc", discoveryv1.AddressTypeIPv4, podUID),
-+				newEps("svc", discoveryv1.AddressTypeIPv6),
-+			},
-+			status:    &egressservices.Status{PodIPv4: "10.0.0.2"},
- 			wantReady: true,
- 		},
- 		{
-@@ -63,6 +107,32 @@ func TestEgressPodReadiness(t *testing.T) {
+@@ -145,13 +145,29 @@ func (a *addrAssignments) popExpired(now time.Time) *addrs {
+ 		// TODO(mzb/fran): This is an expensive operation we could consider optimizing.
+ 		heap.Push(&a.byExpiresAt, candidate)
  	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
-+			podIPs := tt.podIPs
-+			if podIPs == nil {
-+				podIPs = []string{"10.0.0.2", "fd00::2"}
+-	delete(a.byMagicIP, v.magic)
+-	delete(a.byTransitIP, v.connectorAddr.transit)
+-	dd := domainDst{domain: v.domain, dst: v.dst}
+-	delete(a.byDomainDst, dd)
++	a.deleteFromNonHeapIndexes(v)
+ 	return v
+ }
+ 
++// remove removes the provided address assignment from all the indexes.
++func (a *addrAssignments) remove(as *addrs) {
++	a.deleteFromNonHeapIndexes(as)
++	for i, v := range a.byExpiresAt {
++		if v == as {
++			heap.Remove(&a.byExpiresAt, i)
++			break
++		}
++	}
++}
++
++// deleteFromNonHeapIndexes removes as from every index except byExpiresAt,
++// which the caller is responsible for.
++func (a *addrAssignments) deleteFromNonHeapIndexes(as *addrs) {
++	delete(a.byMagicIP, as.magic)
++	delete(a.byTransitIP, as.connectorAddr.transit)
++	delete(a.byDomainDst, domainDst{domain: as.domain, dst: as.dst})
++}
++
+ func (a *addrAssignments) updateExpiry(as *addrs, expiresIn time.Duration) {
+ 	now := a.clock.Now()
+ 	as.expiresAt = now.Add(expiresIn)
+```
+
+**File**: `feature/conn25/client.go` (modified, +4/-2)
+```diff
+@@ -200,8 +200,10 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 		transitPool.returnAddr(tip)
+ 		return nil, err
+ 	}
+-	err = c.enqueueAddressAssignment(as)
+-	if err != nil {
++	if err := c.enqueueAddressAssignment(as); err != nil {
++		c.assignments.remove(as)
++		magicPool.returnAddr(mip)
++		transitPool.returnAddr(tip)
+ 		return nil, err
+ 	}
+ 	return as, nil
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +89/-0)
+```diff
+@@ -212,6 +212,95 @@ func TestReserveAddressesNoLeakOnFailure(t *testing.T) {
+ 	}
+ }
+ 
++// TestReserveAddressesRollbackOnQueueFull checks that an assignment that
++// couldn't be enqueued isn't left behind. The connector never learns about such
++// an assignment, and nothing will tell it later, so keeping it would mean every
++// later lookup for the same domain/dst returns a mapping the connector can't
++// use.
++func TestReserveAddressesRollbackOnQueueFull(t *testing.T) {
++	for _, tt := range []struct {
++		name string
++		dst  netip.Addr
++	}{
++		{
++			name: "v4",
++			dst:  netip.MustParseAddr("0.0.0.1"),
++		},
++		{
++			name: "v6",
++			dst:  netip.MustParseAddr("::1"),
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			const appName = "a"
++			domain := must.Get(dnsname.ToFQDN("example.com."))
++			c := newConn25(t.Logf).client
++			c.v4MagicIPPool = newIPPool(mustIPSetFromPrefix("100.64.0.0/24"))
++			c.v6MagicIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0100::/80"))
++			c.v4TransitIPPool = newIPPool(mustIPSetFromPrefix("169.254.0.0/24"))
++			c.v6TransitIPPool = newIPPool(mustIPSetFromPrefix("fd7a:115c:a1e0:a99c:0200::/80"))
++
++			magicPool, transitPool := c.v4MagicIPPool, c.v4TransitIPPool
++			if tt.dst.Is6() {
++				magicPool, transitPool = c.v6MagicIPPool, c.v6TransitIPPool
 +			}
-+			status := tt.status
-+			if status == nil {
-+				status = &egressservices.Status{}
-+				for _, ip := range podIPs {
-+					if netip.MustParseAddr(ip).Is4() {
-+						status.PodIPv4 = ip
-+					} else {
-+						status.PodIPv6 = ip
-+					}
-+				}
++
++			// Nothing reads this channel, so the first enqueue fills it and the
++			// second one fails.
++			c.addrsCh = make(chan addrs, 1)
++			if _, err := c.reserveAddresses(appName, "filler.example.com.", tt.dst, 10, testConnectorPeer, ""); err != nil {
++				t.Fatal(err)
 +			}
-+			statusBS, err := json.Marshal(status)
++
++			_, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
++			if !errors.Is(err, errQueueFull) {
++				t.Fatalf("want errQueueFull, got %v", err)
++			}
++
++			// Only the filler assignment should remain, in every index.
++			if got := len(c.assignments.byMagicIP); got != 1 {
++				t.Errorf("want 1 entry in byMagicIP, got %d", got)
++			}
++			if got := len(c.assignments.byTransitIP); got != 1 {
++				t.Errorf("want 1 entry in byTransitIP, got %d", got)
++			}
++			if got := len(c.assignments.byDomainDst); got != 1 {
++				t.Errorf("want 1 entry in byDomainDst, got %d", got)
++			}
++			if got := c.assignments.byExpiresAt.Len(); got != 1 {
++				t.Errorf("want 1 entry in byExpiresAt, got %d", got)
++			}
++			if _, ok := c.assignments.lookupByDomainDst(domain, tt.dst); ok {
++				t.Error("dropped assignment is still reachable by domain/dst")
++			}
++
++			// Both addresses should be back in their pools.
++			if got := magicPool.inUseCount(); got != 1 {
++				t.Errorf("magic pool has %d addresses in use, want 1 (the filler)", got)
++			}
++			if got := transitPool.inUseCount(); got != 1 {
++				t.Errorf("transit pool has %d addresses in use, want 1 (the filler)", got)
++			}
++
++			// Once there's room again, the next attempt gets a fresh
++			// assignment and actually enqueues it.
++			<-c.addrsCh
++			as, err := c.reserveAddresses(appName, domain, tt.dst, 10, testConnectorPeer, "")
 +			if err != nil {
 +				t.Fatal(err)
 +			}
-+			stateS := &corev1.Secret{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Namespace: "operator-ns",
-+					Name:      "pod",
-+				},
-+				Data: map[string][]byte{egressservices.KeyEgressServices: statusBS},
++			select {
++			case queued := <-c.addrsCh:
++				if queued.connectorAddr.transit != as.connectorAddr.transit {
++					t.Errorf("queued transit IP %v, want %v", queued.connectorAddr.transit, as.connectorAddr.transit)
++				}
++			default:
++				t.Error("reservation after rollback didn't enqueue an assignment")
 +			}
- 			pod := &corev1.Pod{
- 				ObjectMeta: metav1.ObjectMeta{
- 					Namespace: "operator-ns",
-@@ -79,6 +149,9 @@ func TestEgressPodReadiness(t *testing.T) {
- 					}},
- 				},
- 			}
-+			for _, ip := range podIPs {
-+				pod.Status.PodIPs = append(pod.Status.PodIPs, corev1.PodIP{IP: ip})
-+			}
- 			pg := &tsapi.ProxyGroup{
- 				ObjectMeta: metav1.ObjectMeta{Name: "dev"},
- 				Spec: tsapi.ProxyGroupSpec{
-@@ -90,7 +163,7 @@ func TestEgressPodReadiness(t *testing.T) {
- 			// works. Without this code we would not be able to update Pod's status further down.
- 			fc := fake.NewClientBuilder().
- 				WithScheme(tsapi.GlobalScheme).
--				WithObjects(append(tt.objs, pod, pg)...).
-+				WithObjects(append(tt.objs, pod, pg, stateS)...).
- 				WithStatusSubresource(&corev1.Pod{}).
- 				Build()
- 			zl, _ := zap.NewDevelopment()
++		})
++	}
++}
++
+ func TestTransitIPConnMapping(t *testing.T) {
+ 	conn25 := newConn25(t.Logf)
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #22176** (2026-11-04): derp/derpserver: increase pool size to batch writer flushes (@mikeodr)
 - **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
+- **PR #22165** (2026-11-04): feature/conn25: roll back the address assignment when the send queue is full (@mazdakn)
 - **PR #22164** (closed): derp/derpserver,cmd/derper: batch writer flushes, arm the write deadline per write (@mikeodr)
 - **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
 - **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
-- **PR #22160** (2026-11-03): ssh/tailssh: accept an empty --groups= in the incubator (@philiptaron)
 
 ---
 
@@ -1112,56 +1048,36 @@ Signed-off-by: David Bond <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157
+## X. tailcfg: add a nodecap to disable hybrid handshakes
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/egress-pod-readiness.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tailcfg/nodecap/nodecap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5455bf6a`: cmd/k8s-operator: require egress Pods in every IP family's EndpointSlice (#22157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a967b7d8`: tailcfg: add a nodecap to disable hybrid handshakes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/egress-pod-readiness.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tailcfg/nodecap/nodecap.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/json"
-	"tailscale.com/kube/egressservices"
-// set up routing for that egress service. So a Pod is ready once, for every egress service for the ProxyGroup, it is
-// an endpoint in the EndpointSlice of each IP family that the proxy reports an address for in its state Secret.
-	// Each egress service has an EndpointSlice per IP family. A Pod must be an endpoint in the EndpointSlice of
-	// every family that the proxy reports, else it can be marked ready while only one family routes to it. A proxy
-	// older than v1.102 does not report an IPv6 address, so egress-eps-reconciler never adds it to an IPv6
-	// EndpointSlice. Requiring the families that the Pod has addresses for would block such a Pod forever.
-	families, err := er.reportedFamilies(ctx, pod)
-	if err != nil {
-		return res, fmt.Errorf("error determining IP families reported by proxy: %w", err)
-	}
-	missing := make(set.Set[string])
-		svcName := eps.Labels[discoveryv1.LabelServiceName]
-			routed.Add(svcName)
-			continue
-		}
-		if families.Contains(eps.AddressType) {
-			missing.Add(svcName)
-	var waiting []string
-	for _, svc := range svcs.Items {
-		if !routed.Contains(svc.Name) || missing.Contains(svc.Name) {
-			waiting = app
+	// DisableHybridHandshakes indicates that the node should not use hybrid
+	// PQ wireguard handshakes to communicate with peers that support hybrid
+	// handshakes.
+	// 2026-11-03: This is a temporary panic disable attribute intended to reduce
+	// the risk of the initial rollout of hybrid handshakes. It will eventually
+	// be deleted to remove the control server's ability to downgrade hybrid
+	// handshakes.
+	DisableHybridHandshakes Cap = "https://tailscale.com/cap/disable-hybrid-handshakes"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// set up routing for that egress service. So a Pod is ready once it is an endpoint in an EndpointSlice of every
-// egress service for the ProxyGroup.
-			routed.Add(eps.Labels[discoveryv1.LabelServiceName])
-	if slices.ContainsFunc(svcs.Items, func(svc corev1.Service) bool {
-		return !routed.Contains(svc.Name)
-	}) {
-		lg.Info("Pod is not yet added as an endpoint for all egress targets, waiting...")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5455bf6a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a967b7d8` are properly handled with clean fallback behavior.

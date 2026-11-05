@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-KZ0S",
-    "timestamp": "2026-11-03T16:01:31.468Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a81c402bc43f3ed678740fa41196780d2bcc857a25d8a2aca85748d01b882ea5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-L130",
-    "timestamp": "2026-11-03T16:01:34.140Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "f41b8be06489b34d2d2a5611709c06fcd078872cf92f02855ee10ce148d27689",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-US29",
     "timestamp": "2026-11-03T16:09:09.009Z",
     "repository": "zenbu-labs/terminal-browser",
@@ -7490,6 +7460,36 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "794b3a35d19621b5223f4d67f2c97206d9b7cf250db659ba540472f24713f624",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-FFJS",
+    "timestamp": "2026-11-05T00:36:46.072Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "6393499a9134761677196d73507939948a8f21fbb488c842c96b8b6fd6feb39a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-FGSC",
+    "timestamp": "2026-11-05T00:36:47.676Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "0475b716ec2990ed22a34396e700ebcba20a59e4f4cff7d502b86dcfee58fbf0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
