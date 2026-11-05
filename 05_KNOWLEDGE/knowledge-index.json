@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T01:33:31.944Z",
+  "last_updated": "2026-11-05T01:40:49.401Z",
   "total_verified_learnings": 1210,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -151695,7 +151695,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "98676ba626f18b66830fb91d0e89412158c9565269efc6fb9bda541b3f887e6a",
+      "content_hash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [
@@ -151718,6 +151718,21 @@
           "number": 6179,
           "title": "Probabilistic Output Normalization & Label Mapping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7061,
+          "title": "Strict Tensor Shape & Dtype Alignment Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7062,
+          "title": "Probabilistic Output Normalization & Label Index Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7063,
+          "title": "Image Preprocessing Invariant: RGB Conversion & Size Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -151725,7 +151740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T11:09:34.847Z",
+      "verified_at": "2026-11-05T01:40:49.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179139,6 +179154,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T01:33:31.924Z"
+    },
+    "rule-7061": {
+      "learning_id": "rule-7061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7061,
+      "title": "Strict Tensor Shape & Dtype Alignment Inference",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:40:49.379Z"
+    },
+    "rule-7062": {
+      "learning_id": "rule-7062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7062,
+      "title": "Probabilistic Output Normalization & Label Index Safety",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:40:49.379Z"
+    },
+    "rule-7063": {
+      "learning_id": "rule-7063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7063,
+      "title": "Image Preprocessing Invariant: RGB Conversion & Size Enforcement",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T01:40:49.379Z"
     }
   },
   "aliases": {

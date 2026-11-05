@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-R0LT",
-    "timestamp": "2026-11-03T17:30:12.305Z",
-    "repository": "sozercan/kaset",
-    "learningId": "learn-github-sozercan-kaset",
-    "contentHash": "3543663000c84a4454e8021aa52d3ba1ae40510aaf19fff0188b95cf38eff371",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-R4Q7",
     "timestamp": "2026-11-03T17:30:17.647Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7477,21 @@
     "contentHash": "66061551b49cf6c4a5af999b4a15e1a6a1f4580dde898a4c4fd9decdaf29820b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-PT59",
+    "timestamp": "2026-11-05T01:40:49.485Z",
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+    "contentHash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -7453,3 +7453,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-05T01:33:16.072Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `1a192aab` | Multi-dimensional audit evidence | 2026-11-05T01:33:23.597Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3d54f0c1` | Multi-dimensional audit evidence | 2026-11-05T01:33:32.046Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-05T01:40:49.489Z |
