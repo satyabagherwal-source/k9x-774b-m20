@@ -7683,3 +7683,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-05T13:27:11.097Z |
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-05T13:33:37.279Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `fe09a7ba` | Multi-dimensional audit evidence | 2026-11-05T13:33:48.042Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `3fe45f53` | Multi-dimensional audit evidence | 2026-11-05T13:40:19.448Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `75d69a0f` | Multi-dimensional audit evidence | 2026-11-05T13:40:25.445Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-05T13:40:25.662Z |

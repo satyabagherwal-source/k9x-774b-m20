@@ -7674,3 +7674,6 @@
 | `CYCLE-20261105-Y706` | `2026-11-05T13:27:11.094Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7235, Rule 7236` | Yes (`0a82d404...`) |
 | `CYCLE-20261105-6GZG` | `2026-11-05T13:33:37.276Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`716a55d1...`) |
 | `CYCLE-20261105-6PA4` | `2026-11-05T13:33:48.028Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7237` | Yes (`366b72e2...`) |
+| `CYCLE-20261105-F3AU` | `2026-11-05T13:40:19.446Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7238` | Yes (`f7129c4f...`) |
+| `CYCLE-20261105-F7XE` | `2026-11-05T13:40:25.442Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7239` | Yes (`0f1bb727...`) |
+| `CYCLE-20261105-F83F` | `2026-11-05T13:40:25.659Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`8eb09a74...`) |

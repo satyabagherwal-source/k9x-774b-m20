@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:33:47.978Z",
+  "last_updated": "2026-11-05T13:40:25.574Z",
   "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9364,8 +9364,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "75a200a3",
-      "content_hash": "1dcb8069dda091ba687238bab5dbda760c29c7c1a3c329b4d0ec229e990dd7d7",
+      "source_version": "75d69a0f",
+      "content_hash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -9423,6 +9423,11 @@
           "number": 7010,
           "title": "storage): prevent incomplete index refresh after writes (#20909)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7239,
+          "title": "query): allow create Materialized View with Table in different Database (#20906)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9430,7 +9435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:59:06.190Z",
+      "verified_at": "2026-11-05T13:40:25.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24464,7 +24469,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "0fda490d665a2de1fc60db337bb0bdf477949584ff270c2fe7b88b260626982b",
+      "content_hash": "8eb09a744d98b17aac2e1c2e78f9992d6cff39964b3bd2335d87dba7fa44ec69",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -24521,7 +24526,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-31T23:15:59.821Z",
+      "verified_at": "2026-11-05T13:40:25.558Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51404,8 +51409,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "8205ba61",
-      "content_hash": "68efc7cbef24df291afc3a90270414e606e562612c7722d45df7062c43378b16",
+      "source_version": "3fe45f53",
+      "content_hash": "f7129c4f03e72c06d5527458eb6e277fac48a29622fa8d1adc39b7d0cd071824",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -51433,6 +51438,11 @@
           "number": 6500,
           "title": "diagnostics timestamp overflow on 32-bit watchOS (#8170)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7238,
+          "title": "thread-safe sandbox environment detection (#8202)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51440,7 +51450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:59:46.922Z",
+      "verified_at": "2026-11-05T13:40:19.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182696,6 +182706,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:33:47.962Z"
+    },
+    "rule-7238": {
+      "learning_id": "rule-7238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7238,
+      "title": "thread-safe sandbox environment detection (#8202)",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "3fe45f53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:40:19.379Z"
+    },
+    "rule-7239": {
+      "learning_id": "rule-7239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7239,
+      "title": "query): allow create Materialized View with Table in different Database (#20906)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "75d69a0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:40:25.338Z"
     }
   },
   "aliases": {
