@@ -7548,3 +7548,6 @@
 | `CYCLE-20261105-0D8M` | `2026-11-05T06:28:58.246Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7137` | Yes (`29fe7e61...`) |
 | `CYCLE-20261105-0E4W` | `2026-11-05T06:28:59.408Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7138` | Yes (`37a63573...`) |
 | `CYCLE-20261105-9WML` | `2026-11-05T06:36:23.277Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`c44817b5...`) |
+| `CYCLE-20261105-JNRG` | `2026-11-05T06:43:58.348Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7139` | Yes (`2f9dc2e4...`) |
+| `CYCLE-20261105-JQX9` | `2026-11-05T06:44:02.445Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`9dd0d0cb...`) |
+| `CYCLE-20261105-JXQ7` | `2026-11-05T06:44:11.263Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7140` | Yes (`5fd1b874...`) |

@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "c5d0e262",
+    "sourceVersion": "539f7491",
     "license": "NOASSERTION",
-    "contentHash": "f395cd0bc584b5275209a56626782467562b394750aca6fd09c09dcbe8360a90",
-    "lastHarvestedAt": "2026-11-04T10:57:43.472Z",
+    "contentHash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
+    "lastHarvestedAt": "2026-11-05T06:44:11.267Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -11660,13 +11660,13 @@
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {
-    "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
     "license": "Open-Source",
-    "contentHash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
-    "lastHarvestedAt": "2026-10-31T16:08:35.133Z",
+    "contentHash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
+    "lastHarvestedAt": "2026-11-05T06:44:02.455Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   },
   "dagoste-squadra": {
@@ -11958,5 +11958,15 @@
     "contentHash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
     "lastHarvestedAt": "2026-11-05T04:50:31.336Z",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
+  },
+  "apache-pinot": {
+    "repository": "apache/pinot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apache/pinot",
+    "sourceVersion": "14b56442",
+    "license": "Apache-2.0",
+    "contentHash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
+    "lastHarvestedAt": "2026-11-05T06:43:58.352Z",
+    "learningId": "learn-github-apache-pinot"
   }
 }

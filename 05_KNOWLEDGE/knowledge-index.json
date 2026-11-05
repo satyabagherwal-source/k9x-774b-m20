@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T06:36:23.178Z",
-  "total_verified_learnings": 1214,
+  "last_updated": "2026-11-05T06:44:11.134Z",
+  "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -62686,8 +62686,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "c5d0e262",
-      "content_hash": "f395cd0bc584b5275209a56626782467562b394750aca6fd09c09dcbe8360a90",
+      "source_version": "539f7491",
+      "content_hash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -62760,6 +62760,11 @@
           "number": 6824,
           "title": "[#36659] YSQL: Fix a use-after-free in PgTxnTest.SelectForUpdateExclusiveRead (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7140,
+          "title": "[#36676] DocDB: Disable quiescent tablets by default (#36677)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62767,7 +62772,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:57:43.366Z",
+      "verified_at": "2026-11-05T06:44:11.101Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167244,13 +167249,13 @@
     "learn-huggingface-edge0-audio8-tts-realistic-0-6b": {
       "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "Edge0/Audio8-TTS-Realistic-0.6b",
-      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "source": "Edge0/Audio8-TTS-Realistic-Air",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
       "slug": "hf-edge0-audio8-tts-realistic-0.6b",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
       "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
-      "content_hash": "6b781a5ce917580059699d28808cc7c38a043ad98ac090b08c538fddf2dca82b",
+      "content_hash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
       "promoted_rules": [],
@@ -167259,7 +167264,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T16:08:34.999Z",
+      "verified_at": "2026-11-05T06:44:02.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180726,6 +180731,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T06:28:59.296Z"
+    },
+    "learn-github-apache-pinot": {
+      "learning_id": "learn-github-apache-pinot",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apache/pinot",
+      "repository": "apache/pinot",
+      "slug": "apache-pinot",
+      "platform": "github",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "14b56442",
+      "content_hash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
+      "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 7139,
+          "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T06:43:58.220Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-7139": {
+      "learning_id": "rule-7139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7139,
+      "title": "Add a README Docker quickstart and improve GitHub metadata (#20164)",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "14b56442",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:43:58.220Z"
+    },
+    "rule-7140": {
+      "learning_id": "rule-7140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7140,
+      "title": "[#36676] DocDB: Disable quiescent tablets by default (#36677)",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "539f7491",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T06:44:11.102Z"
     }
   },
   "aliases": {

@@ -7557,3 +7557,6 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `d0391e8c` | Multi-dimensional audit evidence | 2026-11-05T06:28:58.250Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9318a957` | Multi-dimensional audit evidence | 2026-11-05T06:28:59.413Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-05T06:36:23.288Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `14b56442` | Multi-dimensional audit evidence | 2026-11-05T06:43:58.352Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-05T06:44:02.455Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `539f7491` | Multi-dimensional audit evidence | 2026-11-05T06:44:11.267Z |

@@ -20350,5 +20350,20 @@
     "downloads": 0,
     "qualityScore": 1340,
     "discoveredAt": "2026-11-05T04:48:15.939Z"
+  },
+  {
+    "name": "pinot",
+    "fullName": "apache/pinot",
+    "url": "https://github.com/apache/pinot",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications",
+    "stars": 6172,
+    "forks": 1532,
+    "openIssues": 1280,
+    "language": "Java",
+    "qualityScore": 4996,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-11-05T06:43:24.205Z"
   }
 ]
