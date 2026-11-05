@@ -7656,3 +7656,4 @@
 | `CYCLE-20261105-4ZNY` | `2026-11-05T12:36:28.942Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`37b0b002...`) |
 | `CYCLE-20261105-58U3` | `2026-11-05T12:36:40.827Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7222` | Yes (`631644b5...`) |
 | `CYCLE-20261105-DZA6` | `2026-11-05T12:43:28.350Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`31a6a268...`) |
+| `CYCLE-20261105-NHHZ` | `2026-11-05T12:50:51.863Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7223, Rule 7224` | Yes (`cedca00f...`) |

@@ -7665,3 +7665,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-05T12:36:28.946Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `be6d4c52` | Multi-dimensional audit evidence | 2026-11-05T12:36:40.831Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T12:43:28.354Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-05T12:50:51.867Z |

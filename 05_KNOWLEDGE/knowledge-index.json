@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T12:43:28.265Z",
+  "last_updated": "2026-11-05T12:50:51.778Z",
   "total_verified_learnings": 1216,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22986,7 +22986,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
+      "content_hash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -23074,6 +23074,16 @@
           "number": 6347,
           "title": "Thinking Mode Toggle for Latency Optimization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7223,
+          "title": "The Agentic Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7224,
+          "title": "The Chat Template as Control Plane Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23092,7 +23102,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-31T22:23:53.993Z",
+      "verified_at": "2026-11-05T12:50:51.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182383,6 +182393,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T12:36:40.725Z"
+    },
+    "rule-7223": {
+      "learning_id": "rule-7223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7223,
+      "title": "The Agentic Quantization Fidelity Invariant",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:50:51.756Z"
+    },
+    "rule-7224": {
+      "learning_id": "rule-7224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7224,
+      "title": "The Chat Template as Control Plane Invariant",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T12:50:51.756Z"
     }
   },
   "aliases": {

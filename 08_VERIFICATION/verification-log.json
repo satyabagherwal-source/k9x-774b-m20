@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-LTCS",
-    "timestamp": "2026-11-04T07:25:58.108Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "05e28f75da32dac122812d2c8a46b30ee0ecd62dc297d55500896ae2b9ada113",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-LZ5S",
     "timestamp": "2026-11-04T07:26:05.632Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7477,21 @@
     "contentHash": "31a6a26819e9b47feb71f72fa4810281a835a6457a787cad63f7ce3bc425b98e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-NHHZ",
+    "timestamp": "2026-11-05T12:50:51.863Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:43:39.297Z",
-    "lastVerified": "2026-11-05T12:43:39.297Z",
+    "lastChecked": "2026-11-05T12:50:54.411Z",
+    "lastVerified": "2026-11-05T12:50:54.411Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T12:21:57.418Z",
-    "lastVerified": "2026-11-05T12:21:57.418Z",
+    "lastChecked": "2026-11-05T12:50:51.498Z",
+    "lastVerified": "2026-11-05T12:50:51.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -629,8 +629,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:12:23.786Z",
-    "lastVerified": "2026-11-05T09:12:23.786Z",
+    "lastChecked": "2026-11-05T12:50:46.499Z",
+    "lastVerified": "2026-11-05T12:50:46.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1779,9 +1779,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-04T22:05:18.596Z",
+    "lastChecked": "2026-11-05T12:50:48.970Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-04T22:05:18.596Z"
+    "lastVerified": "2026-11-05T12:50:48.970Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -4744,8 +4744,8 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T22:52:27.581Z",
-    "lastVerified": "2026-11-04T22:52:27.581Z",
+    "lastChecked": "2026-11-05T12:50:43.998Z",
+    "lastVerified": "2026-11-05T12:50:43.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -7053,9 +7053,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-04T18:28:29.280Z",
+    "lastChecked": "2026-11-05T12:50:36.496Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-04T18:28:29.280Z"
+    "lastVerified": "2026-11-05T12:50:36.496Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -8134,13 +8134,13 @@
     "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T22:23:42.570Z",
-    "lastVerified": "2026-10-31T22:23:42.570Z",
+    "lastChecked": "2026-11-05T12:50:39.075Z",
+    "lastVerified": "2026-11-05T12:50:39.075Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "f2c07409b39608a106d03ef29f2a3f06d3b92ea6399c972198e35bc7ca384776",
-    "promotedRulesCount": 3,
+    "contentHash": "cedca00f58d098d165bc70a6051aa9d4c249f9ff078a1202c3453f43040ecfc2",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -10723,9 +10723,9 @@
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",
     "officialUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
-    "lastChecked": "2026-11-02T21:30:02.611Z",
+    "lastChecked": "2026-11-05T12:50:41.516Z",
     "revisionIdentifier": "494a3635",
-    "lastVerified": "2026-11-02T21:30:02.611Z"
+    "lastVerified": "2026-11-05T12:50:41.516Z"
   },
   "scrapy-plugins-scrapy-zyte-api": {
     "name": "scrapy-zyte-api",
