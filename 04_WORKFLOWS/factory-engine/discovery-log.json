@@ -20338,5 +20338,17 @@
     "downloads": 32309,
     "qualityScore": 3810,
     "discoveredAt": "2026-11-05T03:44:04.778Z"
+  },
+  {
+    "name": "ricursiveAI/Ripple-65B-Preview",
+    "fullName": "ricursiveAI/Ripple-65B-Preview",
+    "url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ricursiveAI/Ripple-65B-Preview (134 likes, 0 downloads)",
+    "likes": 134,
+    "downloads": 0,
+    "qualityScore": 1340,
+    "discoveredAt": "2026-11-05T04:48:15.939Z"
   }
 ]

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261103-V0W9",
-    "timestamp": "2026-11-03T21:17:16.233Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "763c1567b491e322839ee4398a300f37dd71e8f4097d3656c018c6bd72dd112d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261103-V6B5",
-    "timestamp": "2026-11-03T21:17:23.249Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "cd0d50b3f8dc5c361bc8c08d586fb757fc1024d6b82127b0156a212b479f9a67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261103-9J42",
     "timestamp": "2026-11-03T21:28:33.026Z",
     "repository": "ArchiveBox/ArchiveBox",
@@ -7492,6 +7462,36 @@
     "contentHash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-HRFP",
+    "timestamp": "2026-11-05T04:50:31.333Z",
+    "repository": "ricursiveAI/Ripple-65B-Preview",
+    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+    "contentHash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-HSJ9",
+    "timestamp": "2026-11-05T04:50:32.757Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

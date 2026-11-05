@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T04:43:47.122Z",
-  "total_verified_learnings": 1213,
+  "last_updated": "2026-11-05T04:50:32.670Z",
+  "total_verified_learnings": 1214,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -20939,7 +20939,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
+      "content_hash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -21104,7 +21104,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-31T14:01:13.172Z",
+      "verified_at": "2026-11-05T04:50:32.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180124,6 +180124,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T04:43:47.091Z"
+    },
+    "learn-huggingface-ricursiveai-ripple-65b-preview": {
+      "learning_id": "learn-huggingface-ricursiveai-ripple-65b-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ricursiveAI/Ripple-65B-Preview",
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "slug": "hf-ricursiveai-ripple-65b-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+      "source_version": "hf-ricursiveai-ripple-65b-preview",
+      "content_hash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T04:50:31.217Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

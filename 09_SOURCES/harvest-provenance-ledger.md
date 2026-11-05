@@ -7518,3 +7518,5 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `641aca38` | Multi-dimensional audit evidence | 2026-11-05T04:43:35.775Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `4d69ce36` | Multi-dimensional audit evidence | 2026-11-05T04:43:41.840Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0daf9b82` | Multi-dimensional audit evidence | 2026-11-05T04:43:47.214Z |
+| `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-05T04:50:31.336Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-05T04:50:32.766Z |

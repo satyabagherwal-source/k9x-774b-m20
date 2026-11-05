@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
-    "lastHarvestedAt": "2026-10-31T14:01:13.286Z",
+    "contentHash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
+    "lastHarvestedAt": "2026-11-05T04:50:32.766Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -11948,5 +11948,15 @@
     "contentHash": "cf5270dded6d39d0b643c2148f30a944369134c882e01283db776eac03c1fae9",
     "lastHarvestedAt": "2026-11-05T03:46:19.634Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use"
+  },
+  "hf-ricursiveai-ripple-65b-preview": {
+    "repository": "ricursiveAI/Ripple-65B-Preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+    "sourceVersion": "hf-ricursiveai-ripple-65b-preview",
+    "license": "Open-Source",
+    "contentHash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+    "lastHarvestedAt": "2026-11-05T04:50:31.336Z",
+    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T04:43:47.231Z",
+  "last_updated": "2026-11-05T04:50:32.774Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1100,14 +1100,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "453fbfedd2538a28abcb3b84b2058550584995cb068bfbffede5f484d8ce767b",
-      "verified_at": "2026-10-31T14:01:13.295Z",
+      "content_hash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
+      "verified_at": "2026-11-05T04:50:32.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:01:13.295Z"
+      "last_updated": "2026-11-05T04:50:32.774Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -17984,6 +17984,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T03:46:19.640Z"
+    },
+    "ricursiveAI/Ripple-65B-Preview": {
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ricursiveai-ripple-65b-preview",
+      "content_hash": "6cd918f836635b69f5d934a6123ccfa015c1049570417e473d42f004d7e3e19b",
+      "verified_at": "2026-11-05T04:50:31.344Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-05T04:50:31.344Z"
     }
   },
   "repos": {
