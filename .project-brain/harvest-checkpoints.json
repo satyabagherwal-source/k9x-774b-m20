@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T13:13:43.015Z",
+  "last_updated": "2026-11-05T13:20:32.634Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
-      "verified_at": "2026-10-31T22:53:35.329Z",
+      "content_hash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
+      "verified_at": "2026-11-05T13:20:17.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T22:53:35.329Z"
+      "last_updated": "2026-11-05T13:20:17.655Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "dbdb02f70712865256f0a251b420150b954390f8cdfa9db7aa496225b9f8645c",
-      "verified_at": "2026-11-04T22:34:56.164Z",
+      "content_hash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
+      "verified_at": "2026-11-05T13:20:32.633Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:34:56.164Z"
+      "last_updated": "2026-11-05T13:20:32.633Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

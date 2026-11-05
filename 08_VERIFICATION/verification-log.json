@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-FR0J",
-    "timestamp": "2026-11-04T07:49:14.755Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "5f9777f1ec52f9a323d67d372329ee42de02bffc7255694db7f634b92feb1055",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-O51Y",
-    "timestamp": "2026-11-04T07:55:46.198Z",
-    "repository": "faker-js/faker",
-    "learningId": "learn-github-faker-js-faker",
-    "contentHash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-XW9D",
     "timestamp": "2026-11-04T08:03:21.361Z",
     "repository": "margelo/react-native-vision-camera",
@@ -7490,6 +7460,36 @@
     "repository": "openyurtio/openyurt",
     "learningId": "learn-github-openyurtio-openyurt",
     "contentHash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-PBZH",
+    "timestamp": "2026-11-05T13:20:17.645Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-PNJC",
+    "timestamp": "2026-11-05T13:20:32.616Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

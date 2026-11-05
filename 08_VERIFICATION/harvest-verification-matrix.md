@@ -7667,3 +7667,5 @@
 | `CYCLE-20261105-GNE3` | `2026-11-05T13:13:32.523Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`3465b2bb...`) |
 | `CYCLE-20261105-GOZK` | `2026-11-05T13:13:34.592Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7230` | Yes (`24c3a9ef...`) |
 | `CYCLE-20261105-GVH4` | `2026-11-05T13:13:43.000Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7231` | Yes (`695f2c26...`) |
+| `CYCLE-20261105-PBZH` | `2026-11-05T13:20:17.645Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`51f7c872...`) |
+| `CYCLE-20261105-PNJC` | `2026-11-05T13:20:32.616Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7232` | Yes (`b0deb395...`) |

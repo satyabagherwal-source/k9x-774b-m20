@@ -7676,3 +7676,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-05T13:13:32.526Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `94f3d94c` | Multi-dimensional audit evidence | 2026-11-05T13:13:34.595Z |
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `9a5a72ec` | Multi-dimensional audit evidence | 2026-11-05T13:13:43.003Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-05T13:20:17.648Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `5def2611` | Multi-dimensional audit evidence | 2026-11-05T13:20:32.619Z |

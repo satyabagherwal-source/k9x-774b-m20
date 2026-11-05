@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
-    "lastHarvestedAt": "2026-10-31T22:53:35.319Z",
+    "contentHash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
+    "lastHarvestedAt": "2026-11-05T13:20:17.648Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "2dedde9b",
+    "sourceVersion": "5def2611",
     "license": "Apache-2.0",
-    "contentHash": "dbdb02f70712865256f0a251b420150b954390f8cdfa9db7aa496225b9f8645c",
-    "lastHarvestedAt": "2026-11-04T22:34:56.146Z",
+    "contentHash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
+    "lastHarvestedAt": "2026-11-05T13:20:32.619Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

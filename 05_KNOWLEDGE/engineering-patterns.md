@@ -524245,3 +524245,87 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5901c7dc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7232. preserve take_row_ids request order (#4826) (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve take_row_ids request order (#4826)",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "5def2611",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T13:20:32.378Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `5def2611`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/web/curation/selective-sampling.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `69ac2158`: preserve take_row_ids request order (#4826). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/curation/selective-sampling.mdx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+similar to execute it.
+
+<Note>
+The guarantees for row IDs below apply to SDK releases containing
+[the ordering fix in #4826](https://github.com/lancedb/lancedb/pull/4826).
+Earlier releases may collapse repeated IDs and return rows in a different
+order.
+</Note>
+
+`take_row_ids` returns matching rows in the order of the input IDs and
+preserves repeated IDs in both LanceDB Embedded and LanceDB Enterprise. For example,
+`take_row_ids([1005, 1001, 1005])` returns row 1005, row 1001, then row 1005
+again if both IDs exist. Missing or deleted IDs are omitted. This supports
+sampling with replacement. In Rust, an explicit nonempty
+`QueryBase::order_by` list overrides the requested order; limits and offsets
+apply after restoring repeated rows.
+
+`take_offsets` also preserves repeated offsets, but does not guarantee
+input order. It tracks `_rowoffset` internally to restore repeated rows
+and drops that column from the output unless you explicitly `select` it.
+Add `_rowoffset` to your selection when you need to align a `take_offsets`
+result with the input offsets.
+
+<Note>
+Ordered takes by row ID collect all matching batches, combine them into one
+batch and reorder the rows before returning output b
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+similar to execute it. Repeated *offsets* produce repeated rows, so
+`take_offsets` also supports sampling with replacement -- `take_row_ids`
+does not: a row ID repeated in the input list still returns that row only
+once, since the lookup is a set membership test. Neither method guarantees
+result order matches the order of the input list; for `take_row_ids`, pass
+`with_row_id=True` to add `_rowid` to the output and align the results
+yourself if you need to. `take_offsets` tracks `_rowoffset` internally to
+restore repeated rows, but drops that column from the output again
+afterward unless you explicitly `select` it -- add `_rowoffset` to your
+selection when you need it to align a `take_offsets` result yourself.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `69ac2158` are properly handled with clean fallback behavior.

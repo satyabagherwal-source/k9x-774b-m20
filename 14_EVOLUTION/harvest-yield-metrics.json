@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T13:13:43.007Z",
-  "total_cycles_completed": 7644,
-  "total_learnings_persisted": 7644,
-  "total_rules_promoted": 7295,
+  "last_updated": "2026-11-05T13:20:32.623Z",
+  "total_cycles_completed": 7646,
+  "total_learnings_persisted": 7646,
+  "total_rules_promoted": 7296,
   "history": [
-    {
-      "timestamp": "2026-11-05T02:55:10.507Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T02:55:14.650Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T02:55:17.688Z",
       "repository": "juicedata/juicefs",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-05T13:13:43.007Z",
       "repository": "openyurtio/openyurt",
       "learningId": "learn-github-openyurtio-openyurt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:20:17.652Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T13:20:32.623Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:13:42.937Z",
+  "last_updated": "2026-11-05T13:20:32.554Z",
   "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27709,7 +27709,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "b8bef25fcbb91c25a0ea68e3528fa908992cd488b54d09d432119e003e4a7f82",
+      "content_hash": "51f7c8729cc54c72d8b29517aae04715575b7bc91555b83ea4d15a4c6f34c6ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
@@ -27729,7 +27729,7 @@
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
       ],
-      "verified_at": "2026-10-31T22:53:35.191Z",
+      "verified_at": "2026-11-05T13:20:17.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37804,8 +37804,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "2dedde9b",
-      "content_hash": "dbdb02f70712865256f0a251b420150b954390f8cdfa9db7aa496225b9f8645c",
+      "source_version": "5def2611",
+      "content_hash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -37883,6 +37883,11 @@
           "number": 7002,
           "title": "docs: overhaul curation, feature engineering, security and deployment guides (#4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7232,
+          "title": "preserve take_row_ids request order (#4826)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37890,7 +37895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:34:56.009Z",
+      "verified_at": "2026-11-05T13:20:32.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182582,6 +182587,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:13:42.919Z"
+    },
+    "rule-7232": {
+      "learning_id": "rule-7232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7232,
+      "title": "preserve take_row_ids request order (#4826)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "5def2611",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:20:32.539Z"
     }
   },
   "aliases": {
