@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T02:33:00.327Z",
+  "last_updated": "2026-11-05T02:40:23.884Z",
   "total_verified_learnings": 1211,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14151,8 +14151,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "da039c11",
-      "content_hash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
+      "source_version": "c310e5dc",
+      "content_hash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -14192,7 +14192,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T01:39:57.565Z",
+      "verified_at": "2026-11-05T02:40:19.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23288,10 +23288,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
+      "content_hash": "06d1128621a03a3a3225aad86ef42826c7f21f7656a6e0c198a54631b3844a78",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": 820,
+          "title": "Uncensored Model Safety Boundary",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1198,
           "title": "Quantization Precision vs. Inference Latency Trade-off",
@@ -23336,6 +23341,16 @@
           "number": 5262,
           "title": "GGUF Metadata Integrity Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7074,
+          "title": "Quantization Precision vs. Latency Trade-off Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7075,
+          "title": "MTP (Multi-Token Prediction) Inference Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23356,7 +23371,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-31T12:09:00.917Z",
+      "verified_at": "2026-11-05T02:40:23.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84531,15 +84546,15 @@
       "learning_id": "rule-820",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 820,
-      "title": "Uncensored Model Safety Boundary & Content Filtering (Harvested from orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Uncensored Model Safety Boundary",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.814Z"
+      "verified_at": "2026-11-05T02:40:23.864Z"
     },
     "rule-821": {
       "learning_id": "rule-821",
@@ -179413,6 +179428,34 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-7074": {
+      "learning_id": "rule-7074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7074,
+      "title": "Quantization Precision vs. Latency Trade-off Invariant",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:40:23.864Z"
+    },
+    "rule-7075": {
+      "learning_id": "rule-7075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7075,
+      "title": "MTP (Multi-Token Prediction) Inference Optimization",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T02:40:23.864Z"
     }
   },
   "aliases": {

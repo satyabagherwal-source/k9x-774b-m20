@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T02:33:12.320Z",
-    "lastVerified": "2026-11-05T02:33:12.320Z",
+    "lastChecked": "2026-11-05T02:40:28.121Z",
+    "lastVerified": "2026-11-05T02:40:28.121Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T02:11:40.295Z",
-    "lastVerified": "2026-11-05T02:11:40.295Z",
+    "lastChecked": "2026-11-05T02:40:28.109Z",
+    "lastVerified": "2026-11-05T02:40:28.109Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1152,12 +1152,12 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T23:06:27.076Z",
-    "lastVerified": "2026-11-04T23:06:27.076Z",
+    "lastChecked": "2026-11-05T02:40:23.163Z",
+    "lastVerified": "2026-11-05T02:40:23.163Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1166,7 +1166,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "66955b13"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2306,22 +2307,21 @@
     "lastVerified": "2026-11-04T22:52:32.525Z"
   },
   "flox-flox": {
-    "name": "flox",
+    "name": "flox/flox",
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-03T23:59:05.795Z",
-    "lastVerified": "2026-11-03T23:59:05.795Z",
+    "lastChecked": "2026-11-05T02:40:19.143Z",
+    "lastVerified": "2026-11-05T02:40:19.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
-    "contentHash": "f710c126a505a6952ad47b531c5a2b6f6bb53f3333dbc8c36b9f94003b3e12ca",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "contentHash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "da039c11"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-orcarouter-orcasaq-2-27b": {
     "name": "orcarouter/OrcaSAQ-2-27B",
@@ -3457,13 +3457,13 @@
     "officialUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T12:08:50.662Z",
-    "lastVerified": "2026-10-31T12:08:50.662Z",
+    "lastChecked": "2026-11-05T02:40:15.680Z",
+    "lastVerified": "2026-11-05T02:40:15.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "117ed8402a3c311b578825640b9f0b627ed38d4e0525e0b0cb528c114847e89a",
-    "promotedRulesCount": 0,
+    "contentHash": "06d1128621a03a3a3225aad86ef42826c7f21f7656a6e0c198a54631b3844a78",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4174,12 +4174,12 @@
     "revisionIdentifier": "74462690"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable/pixeltable",
+    "name": "pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T03:23:44.016Z",
-    "lastVerified": "2026-11-04T03:23:44.016Z",
+    "lastChecked": "2026-11-05T02:40:25.692Z",
+    "lastVerified": "2026-11-05T02:40:25.692Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -4188,7 +4188,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "87375562"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -6637,9 +6638,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-04T04:04:45.577Z",
+    "lastChecked": "2026-11-05T02:40:20.560Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-04T04:04:45.577Z"
+    "lastVerified": "2026-11-05T02:40:20.560Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -9076,9 +9077,9 @@
   "dimillian-icecubesapp": {
     "name": "IceCubesApp",
     "officialUrl": "https://github.com/Dimillian/IceCubesApp",
-    "lastChecked": "2026-10-31T19:49:41.990Z",
+    "lastChecked": "2026-11-05T02:40:18.053Z",
     "revisionIdentifier": "98098b9c",
-    "lastVerified": "2026-10-31T19:49:41.990Z"
+    "lastVerified": "2026-11-05T02:40:18.053Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",

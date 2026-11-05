@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T02:33:00.436Z",
-  "total_cycles_completed": 7439,
-  "total_learnings_persisted": 7439,
-  "total_rules_promoted": 7124,
+  "last_updated": "2026-11-05T02:40:23.974Z",
+  "total_cycles_completed": 7441,
+  "total_learnings_persisted": 7441,
+  "total_rules_promoted": 7127,
   "history": [
-    {
-      "timestamp": "2026-11-04T17:59:34.043Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-04T17:59:34.581Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-04T18:06:05.799Z",
       "repository": "Qwen/Qwen3-14B",
@@ -1403,6 +1389,20 @@
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:40:19.703Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T02:40:23.974Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
