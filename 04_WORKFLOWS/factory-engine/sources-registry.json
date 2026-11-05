@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T12:36:43.391Z",
-    "lastVerified": "2026-11-05T12:36:43.391Z",
+    "lastChecked": "2026-11-05T12:43:39.297Z",
+    "lastVerified": "2026-11-05T12:43:39.297Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -448,8 +448,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:14:36.596Z",
-    "lastVerified": "2026-11-05T12:14:36.596Z",
+    "lastChecked": "2026-11-05T12:43:39.267Z",
+    "lastVerified": "2026-11-05T12:43:39.267Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -525,8 +525,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T09:04:55.185Z",
-    "lastVerified": "2026-11-05T09:04:55.185Z",
+    "lastChecked": "2026-11-05T12:43:34.289Z",
+    "lastVerified": "2026-11-05T12:43:34.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1687,8 +1687,8 @@
     "officialUrl": "https://github.com/SeaQL/sea-orm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-04T21:57:22.887Z",
-    "lastVerified": "2026-11-04T21:57:22.887Z",
+    "lastChecked": "2026-11-05T12:43:36.798Z",
+    "lastVerified": "2026-11-05T12:43:36.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seaql-sea-orm",
@@ -4687,9 +4687,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-04T22:45:30.384Z",
+    "lastChecked": "2026-11-05T12:43:31.817Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-04T22:45:30.384Z"
+    "lastVerified": "2026-11-05T12:43:31.817Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -6978,9 +6978,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-04T18:21:24.942Z",
+    "lastChecked": "2026-11-05T12:43:24.320Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-04T18:21:24.942Z"
+    "lastVerified": "2026-11-05T12:43:24.320Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -8093,12 +8093,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-31T22:12:04.010Z",
-    "lastVerified": "2026-10-31T22:12:04.010Z",
+    "lastChecked": "2026-11-05T12:43:27.163Z",
+    "lastVerified": "2026-11-05T12:43:27.163Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "afa55b32a4acac42bfe5958befbae7679dae64ab59ade9a6a40ff39cd92e80f8",
+    "contentHash": "31a6a26819e9b47feb71f72fa4810281a835a6457a787cad63f7ce3bc425b98e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10709,9 +10709,9 @@
   "lessica-trollfools": {
     "name": "TrollFools",
     "officialUrl": "https://github.com/Lessica/TrollFools",
-    "lastChecked": "2026-11-02T21:22:55.359Z",
+    "lastChecked": "2026-11-05T12:43:29.339Z",
     "revisionIdentifier": "c5c87b85",
-    "lastVerified": "2026-11-02T21:22:55.359Z"
+    "lastVerified": "2026-11-05T12:43:29.339Z"
   },
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
