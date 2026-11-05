@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T13:06:34.556Z",
+  "last_updated": "2026-11-05T13:13:42.937Z",
   "total_verified_learnings": 1217,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29164,7 +29164,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "9dcca3e4f1b8645c97beca93aa6e98e3ff37735259097bce614db4d05f6cb1f9",
+      "content_hash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -29244,7 +29244,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-31T22:46:44.780Z",
+      "verified_at": "2026-11-05T13:13:32.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47100,14 +47100,19 @@
       "slug": "openyurtio-openyurt",
       "platform": "github",
       "source_url": "https://github.com/openyurtio/openyurt",
-      "source_version": "077652c5",
-      "content_hash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
+      "source_version": "9a5a72ec",
+      "content_hash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
       "dossier_path": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "promoted_rules": [
         {
           "number": 1978,
           "title": "data race on ek.file and ek.count between sync and compress goroutines (#2631)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7231,
+          "title": "build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47116,7 +47121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:00:52.915Z",
+      "verified_at": "2026-11-05T13:13:42.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58636,8 +58641,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "155a490a",
-      "content_hash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
+      "source_version": "94f3d94c",
+      "content_hash": "24c3a9ef6fe8f51d4fa108af3458070b6fe3571cb8fd69613fad7843a53bed51",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -58695,6 +58700,11 @@
           "number": 6904,
           "title": "antigravity): skip the 2.0 app, add the ide extensions step (#2465)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7230,
+          "title": "claude-code): don't fail with EOF on long output (#2062)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58702,7 +58712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:42:13.515Z",
+      "verified_at": "2026-11-05T13:13:34.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -182544,6 +182554,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T13:06:34.542Z"
+    },
+    "rule-7230": {
+      "learning_id": "rule-7230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7230,
+      "title": "claude-code): don't fail with EOF on long output (#2062)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "94f3d94c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:13:34.510Z"
+    },
+    "rule-7231": {
+      "learning_id": "rule-7231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7231,
+      "title": "build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)",
+      "source_url": "https://github.com/openyurtio/openyurt",
+      "source_version": "9a5a72ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T13:13:42.919Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-FJW2",
-    "timestamp": "2026-11-04T07:49:05.522Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-FL8P",
-    "timestamp": "2026-11-04T07:49:07.273Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-FNJF",
-    "timestamp": "2026-11-04T07:49:10.251Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "edea1d324cc711308c069e79265d52c104dde1e98e6bec654192d0b968a9e8a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-FR0J",
     "timestamp": "2026-11-04T07:49:14.755Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7445,51 @@
     "repository": "yikart/AiToEarn",
     "learningId": "learn-github-yikart-aitoearn",
     "contentHash": "68ffeefa52f3d64b35ada2fb7218ba41d27abbdf76d103e7e5b571cb3952104a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-GNE3",
+    "timestamp": "2026-11-05T13:13:32.523Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-GOZK",
+    "timestamp": "2026-11-05T13:13:34.592Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "24c3a9ef6fe8f51d4fa108af3458070b6fe3571cb8fd69613fad7843a53bed51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261105-GVH4",
+    "timestamp": "2026-11-05T13:13:43.000Z",
+    "repository": "openyurtio/openyurt",
+    "learningId": "learn-github-openyurtio-openyurt",
+    "contentHash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

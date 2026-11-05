@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "9dcca3e4f1b8645c97beca93aa6e98e3ff37735259097bce614db4d05f6cb1f9",
-    "lastHarvestedAt": "2026-10-31T22:46:44.906Z",
+    "contentHash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
+    "lastHarvestedAt": "2026-11-05T13:13:32.526Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -4563,10 +4563,10 @@
     "repository": "openyurtio/openyurt",
     "platform": "github",
     "sourceUrl": "https://github.com/openyurtio/openyurt",
-    "sourceVersion": "077652c5",
+    "sourceVersion": "9a5a72ec",
     "license": "Apache-2.0",
-    "contentHash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
-    "lastHarvestedAt": "2026-11-04T01:00:53.068Z",
+    "contentHash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
+    "lastHarvestedAt": "2026-11-05T13:13:43.003Z",
     "learningId": "learn-github-openyurtio-openyurt"
   },
   "slatedb-slatedb": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "155a490a",
+    "sourceVersion": "94f3d94c",
     "license": "GPL-3.0",
-    "contentHash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
-    "lastHarvestedAt": "2026-11-04T18:42:13.642Z",
+    "contentHash": "24c3a9ef6fe8f51d4fa108af3458070b6fe3571cb8fd69613fad7843a53bed51",
+    "lastHarvestedAt": "2026-11-05T13:13:34.595Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

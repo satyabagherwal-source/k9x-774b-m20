@@ -7673,3 +7673,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-05T13:05:08.316Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `4001574c` | Multi-dimensional audit evidence | 2026-11-05T13:05:22.328Z |
 | `learn-github-yikart-aitoearn` | `https://github.com/yikart/AiToEarn` | `153627da` | Multi-dimensional audit evidence | 2026-11-05T13:06:34.625Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-05T13:13:32.526Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `94f3d94c` | Multi-dimensional audit evidence | 2026-11-05T13:13:34.595Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `9a5a72ec` | Multi-dimensional audit evidence | 2026-11-05T13:13:43.003Z |

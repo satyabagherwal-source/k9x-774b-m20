@@ -7664,3 +7664,6 @@
 | `CYCLE-20261105-5UC9` | `2026-11-05T13:05:08.313Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`2d3b142b...`) |
 | `CYCLE-20261105-655A` | `2026-11-05T13:05:22.318Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7228` | Yes (`70cdea69...`) |
 | `CYCLE-20261105-7OXQ` | `2026-11-05T13:06:34.622Z` | `yikart/AiToEarn` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7229` | Yes (`68ffeefa...`) |
+| `CYCLE-20261105-GNE3` | `2026-11-05T13:13:32.523Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`3465b2bb...`) |
+| `CYCLE-20261105-GOZK` | `2026-11-05T13:13:34.592Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7230` | Yes (`24c3a9ef...`) |
+| `CYCLE-20261105-GVH4` | `2026-11-05T13:13:43.000Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7231` | Yes (`695f2c26...`) |

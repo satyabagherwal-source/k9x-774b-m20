@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T13:06:34.639Z",
+  "last_updated": "2026-11-05T13:13:43.015Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "9dcca3e4f1b8645c97beca93aa6e98e3ff37735259097bce614db4d05f6cb1f9",
-      "verified_at": "2026-10-31T22:46:44.919Z",
+      "content_hash": "3465b2bb1628da39c9e4a55e165938ffc9b731376686a1db21cdd77e3039b1f2",
+      "verified_at": "2026-11-05T13:13:32.533Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T22:46:44.919Z"
+      "last_updated": "2026-11-05T13:13:32.533Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -6966,14 +6966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openyurtio-openyurt",
-      "content_hash": "8386841e2dafbdbaaf4ec6e55e59c4b9fa446af5fbf06707c4d448f9bb872114",
-      "verified_at": "2026-11-04T01:00:53.079Z",
+      "content_hash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
+      "verified_at": "2026-11-05T13:13:43.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:00:53.079Z"
+      "last_updated": "2026-11-05T13:13:43.014Z"
     },
     "slatedb/slatedb": {
       "repository": "slatedb/slatedb",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "1338916b1b35c99c5d987b6f40b2fcf09268c3ca65f96e2fb446cb3fbb807d66",
-      "verified_at": "2026-11-04T18:42:13.648Z",
+      "content_hash": "24c3a9ef6fe8f51d4fa108af3458070b6fe3571cb8fd69613fad7843a53bed51",
+      "verified_at": "2026-11-05T13:13:34.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:42:13.648Z"
+      "last_updated": "2026-11-05T13:13:34.607Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",
