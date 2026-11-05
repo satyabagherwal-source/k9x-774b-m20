@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `830d63a8`  
+> **Source Version**: `36823919`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:18:12.765Z  
+> **Timestamp**: 2026-11-05T10:16:06.887Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:18:12.607Z  
+> **Harvest Timestamp**: 2026-11-05T10:16:06.881Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4034 stars
+- **Stars / Engagement**: 4044 stars
 
 ---
 
@@ -2370,425 +2370,164 @@ export function AdmissionCheckRow({ name, onFlavors, read, onNavigate }: { name:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7f1d502` (2026-11-04)
-**Commit Message**: Explain Kueue queues and trace Workload admission dependencies (#2512)
+### Incident Patch 1: `7e8307a8` (2026-11-04)
+**Commit Message**: fix(traffic): keep the Hubble connection error when the relay is reachable
 
-Queue detail should explain whether admission is intentionally stopped,
-blocked by configuration, or unknown because a dependency cannot be
-read. This adds that explanation and a navigable path from a Workload to
-its queues, reservation and assigned resources. RAD-813.
+With automatic port-forwarding off, a relay that accepts TCP but fails the
+gRPC or TLS check was reported as missing a network route. Report the
+connection error instead; keep the routing advice for an unreachable relay.
 
-### Background
-
-Kueue admits queued jobs against quota. A namespace’s LocalQueue points
-to a cluster-wide ClusterQueue; ResourceFlavors describe resource
-configurations, and AdmissionChecks are external readiness gates. Quota
-accounting describes requests, not physical capacity or measured usage.
-
-### What changes
-
-- Queue detail puts controller-reported state beside configured policy,
-including generation freshness, readable policy meanings and Pending /
-Reserving / Admitted counts. Counts are not additive; missing counts say
-“Not reported.” Related flavors, checks and cohort peers carry their own
-read state.
-- LocalQueue detail follows its parent and checks namespace eligibility.
-Header, report and Conditions use a neutral tone for a stopped parent
-only when both reports are current and stopping is its sole reported
-cause. Broken, stale or unr
-
-**File**: `docs/integrations.md` (modified, +19/-11)
+**File**: `internal/traffic/auto_port_forward_test.go` (modified, +12/-0)
 ```diff
-@@ -1725,17 +1725,25 @@ These integrations expose resource state and selected admission/execution relati
+@@ -2,6 +2,7 @@ package traffic
  
- Workload detail shows PodSet counts and controller-evaluated resource requests,
- quota reservations and assigned flavors, admission-check states and messages,
--and conditions. Links connect submission LocalQueues, reservation ClusterQueues,
--ResourceFlavors and AdmissionChecks. Reservation is distinguished from admission;
--resource totals are requests, not measured usage.
--
--LocalQueue and ClusterQueue detail distinguish reported state from configured stop
--policy, show pending/reserving/admitted counts, and link a LocalQueue to its
--ClusterQueue even before a Workload has a reservation. Per-flavor resource rows
--join quota reservations and admitted usage; ClusterQueues also show nominal quota,
--borrowing/lending limits, namespace eligibility and admission policies. These are
--controller-reported quota facts, not measured utilization or available physical
--capacity. Both v1beta1 and v1beta2 queue shapes are supported.
-+and conditions. Reservation is distinguished from admission; resource totals are
-+requests, not measured usage.
-+
-+Its **admission path** connects the owner, submission LocalQueue, its current
-+ClusterQueue, reservation ClusterQueue and assigned ResourceFlavors. Missing,
-+replaced and unreadable objects are distinguished. Per-flavor rejection reasons
-+are one controller report, not attempt order or history; unrecognized text stays
-+verbatim. Remote cluster names are reported without following them.
-+
-+LocalQueue and ClusterQueue detail separate Active state and freshness from
-+configured stop policy. Pending/reserving/admitted counts are not additive;
-+quota is requested capacity, not utilization or available hardware. Per-flavor
-+rows compare reservations, admitted usage, nominal quota and borrowing/lending
-+limits. Both v1beta1 and v1beta2 queue shapes are supported. Related flavors, AdmissionChecks and
-+cohort peers are read as the viewer; Cohort objects are not read. A LocalQueue
-+also shows namespace eligibility. Denied or incomplete reads never prove an
-+object missing. An intentionally stopped parent softens a LocalQueue's alert
-+only when fresh evidence establishes that the stop is its sole cause; table
-+status retains the LocalQueue's own report.
+ import (
+ 	"context"
++	"errors"
+ 	"strings"
+ 	"testing"
  
- AdmissionCheck detail distinguishes controller readiness from a Workload's check
- result and links the built-in provisioning configuration. ProvisioningRequest
+@@ -26,6 +27,17 @@ func TestHubbleConnectWithAutoPortForwardDisabled(t *testing.T) {
+ 	}
+ }
+ 
++func TestComposeConnectErrorWithAutoPortForwardDisabled(t *testing.T) {
++	route := composeConnectError("10.0.0.1:80", errDirectUnreachable, portforward.ErrAutoDisabled)
++	if !strings.Contains(route, "needs a network route") {
++		t.Errorf("unreachable relay = %q, want routing advice", route)
++	}
++	tlsFailed := composeConnectError("10.0.0.1:80", errors.New("TLS gRPC connection test failed"), portforward.ErrAutoDisabled)
++	if strings.Contains(tlsFailed, "network route") || !strings.Contains(tlsFailed, "TLS gRPC connection test failed") {
++		t.Errorf("reachable relay with a failed connection = %q, want the connection error, not routing advice", tlsFailed)
++	}
++}
++
+ func TestCarettaConnectWithAutoPortForwardDisabled(t *testing.T) {
+ 	portforward.SetAutoDisabled(true)
+ 	t.Cleanup(func() { portforward.SetAutoDisabled(false) })
 ```
 
-**File**: `package-lock.json` (modified, +1/-1)
+**File**: `internal/traffic/hubble.go` (modified, +5/-1)
 ```diff
-@@ -7050,7 +7050,7 @@
-         "vite": "^8.3.4"
-       },
-       "peerDependencies": {
--        "@skyhook-io/k8s-ui": ">=1.18.2",
-+        "@skyhook-io/k8s-ui": ">=1.19.1",
-         "@tanstack/react-query": ">=5",
-         "@xyflow/react": ">=12.0.0",
-         "clsx": ">=2",
+@@ -644,7 +644,11 @@ var errDirectUnreachable = errors.New("tcp dial failed (unreachable or blocked)"
+ // picture; an RBAC-denied port-forward additionally names the real fixes.
+ func composeConnectError(directAddr string, directErr, pfErr error) string {
+ 	if errors.Is(pfErr, portforward.ErrAutoDisabled) {
+-		return "Radar can't reach hubble-relay directly from this machine, and automatic port-forwarding is turned off. Live traffic needs a network route to the hubble-relay Service."
++		if errors.Is(directErr, errDirectUnreachable) {
++			return "Radar can't reach hubble-relay directly from this machine, and automatic port-forwarding is turned off. Live traffic needs a network route to the hubble-relay Service."
++		}
++		// The route works; the connection itself failed, so that is what to fix.
++		return fmt.Sprintf("Radar reached hubble-relay directly, but the connection failed: %v. Automatic port-forwarding is turned off, so there is no other way to connect.", directErr)
+ 	}
+ 	msg := fmt.Sprintf("direct connection to %s (%s) failed (%v); port-forward fallback failed: %v", hubbleRelayService, directAddr, directErr, pfErr)
+ 	if isForbiddenPortForward(pfErr) {
 ```
 
-**File**: `packages/k8s-ui/package.json` (modified, +6/-0)
+---
+
+### Incident Patch 2: `cc8ed1ba` (2026-11-03)
+**Commit Message**: fix(prometheus): retain config across context retirement
+
+**File**: `internal/prometheus/client.go` (modified, +18/-4)
 ```diff
-@@ -20,6 +20,12 @@
-       "./src/components/resources/*.tsx"
-     ],
-     "./components/resources/KueueAdmissionSection": "./src/components/resources/KueueAdmissionSection.tsx",
-+    "./components/kueue/AdmissionPath": "./src/components/kueue/AdmissionPath.tsx",
-+    "./components/kueue/QueueEvidence": "./src/components/kueue/QueueEvidence.tsx",
-+    "./components/kueue/*": [
-+      "./src/components/kueue/*.ts",
-+      "./src/components/kueue/*.tsx"
-+    ],
-     "./components/resources/renderers/*": [
-       "./src/components/resources/renderers/*.tsx",
-       "./src/components/resources/renderers/*.ts"
+@@ -140,8 +140,10 @@ func (c *Client) headersRequireURLLocked() bool {
+ 
+ // Global client instance
+ var (
+-	globalClient *Client
+-	clientMu     sync.RWMutex
++	globalClient     *Client
++	clientMu         sync.RWMutex
++	retiredManualURL string
++	retiredHeaders   map[string]string
+ )
+ 
+ // discoveryGate serializes Prometheus discovery across the whole process. Per-
+@@ -177,6 +179,11 @@ func discoveryDiagnosticsSuppressed(ctx context.Context) bool {
+ func Initialize(client kubernetes.Interface, config *rest.Config, contextName string) {
+ 	clientMu.Lock()
+ 	defer clientMu.Unlock()
++	// Initialize starts a fresh application client. Context-switch recovery uses
++	// Reinitialize instead, so settings retained by Retire must not leak into a
++	// new initialization.
++	retiredManualURL = ""
++	retiredHeaders = nil
+ 
+ 	globalClient = &Client{
+ 		k8sClient:     client,
+@@ -404,6 +411,11 @@ func Retire() {
+ 	defer clientMu.Unlock()
+ 	if globalClient != nil {
+ 		globalClient.mu.Lock()
++		// Retire removes the context-bound client, but the manual endpoint and
++		// headers are process configuration (for example --prometheus-url). Keep
++		// a detached copy so a later Reinitialize cannot fall back to discovery.
++		retiredManualURL = globalClient.manualURL
++		retiredHeaders = copyHeaders(globalClient.headers)
+ 		if globalClient.workloadScope != nil {
+ 			log.Print("[prometheus] Workload metrics scope cleared: connection retired; restart with a fresh scope assertion")
+ 		}
+@@ -423,8 +435,8 @@ func Reinitialize(client kubernetes.Interface, config *rest.Config, contextName
+ 	clientMu.Lock()
+ 	defer clientMu.Unlock()
+ 
+-	manualURL := ""
+-	var headers map[string]string
++	manualURL := retiredManualURL
++	headers := copyHeaders(retiredHeaders)
+ 	var workloadScope *prom.WorkloadMetricsScope
+ 	var connectedIdentity string
+ 	var workloadScopeEverSet bool
+@@ -455,6 +467,8 @@ func Reinitialize(client kubernetes.Interface, config *rest.Config, contextName
+ 		globalClient.cancelWorkloadAttributionsLocked()
+ 		globalClient.mu.Unlock()
+ 	}
++	retiredManualURL = ""
++	retiredHeaders = nil
+ 	if oldCancel != nil {
+ 		oldCancel() // stop the outgoing client's detached discovery, if any
+ 	}
 ```
 
-**File**: `packages/k8s-ui/src/components/kueue/AdmissionPath.tsx` (added, +223/-0)
+**File**: `internal/prometheus/retire_test.go` (added, +26/-0)
 ```diff
-@@ -0,0 +1,223 @@
-+import type { ReactNode } from 'react'
-+import { Route } from 'lucide-react'
-+import { ResourceLink, Section, ownerNote } from '../ui/drawer-components'
-+import { gapReasonText } from '../../utils/read-actions'
-+import { FactSource, FactValue } from '../facts'
-+import type { Relationships } from '../../types'
-+import { kindToPluralWithGroup } from '../../utils/navigation'
-+import { isKueueConditionStale } from '../resources/resource-utils-kueue'
-+import { localQueueStatusWithParent } from './queue-status'
-+import { isFlavorAssignmentMessage, parseFlavorAttempts, type FlavorAttempt, type FlavorAttemptKind } from './flavors-tried'
-+import { ClusterQueueReadSummary, ReadState, StatusPill, namespaceEligibilityFact, type Navigate } from './QueueEvidence'
-+import { KUEUE_GROUP } from './constants'
-+import type { RelatedRead } from './related-read'
+@@ -0,0 +1,26 @@
++package prometheus
 +
-+/** Objects on a Workload's admission path that a host read as the viewer. */
-+export interface KueueWorkloadReads {
-+  localQueue?: RelatedRead
-+  /** Keyed by ClusterQueue name: the LocalQueue's target and, when different, the one holding the reservation. */
-+  clusterQueues?: Record<string, RelatedRead>
-+  namespace?: RelatedRead
-+  /** Keyed by ResourceFlavor name: the flavors the reservation assigned. */
-+  flavors?: Record<string, RelatedRead>
-+}
++import (
++	"maps"
++	"testing"
++)
 +
-+function Step({ label, children }: { label: string; children: ReactNode }) {
-+  return (
-+    <li className="relative grid grid-cols-[7.5rem_minmax(0,1fr)] gap-3 py-2.5 text-sm first:pt-0 last:pb-0">
-+      <span className="text-theme-text-tertiary">{label}</span>
-+      <div className="min-w-0 space-y-1">{children}</div>
-+    </li>
-+  )
-+}
++func TestRetirePreservesManualConfigurationForReinitialize(t *testing.T) {
++	Initialize(nil, nil, "before")
++	t.Cleanup(func() { Initialize(nil, nil, "") })
 +
-+const muted = 'text-xs text-theme-text-secondary'
++	wantURL := "http://127.0.0.1:9"
++	wantHeaders := map[string]string{"Authorization": "Bearer test-token"}
++	Configure(wantURL, wantHeaders)
 +
-+function OwnerStep({ data, relationships, onNavigate }: { data: any; relationships?: Relationships; onNavigate?: Navigate }) {
-+  const coverage = relationships?.ownership
-+  // Without the ownership answer (a Radar that predates it), `owner` may come
-+  // from display edges that check neither group nor UID, so it isn't linked;
-+  // the Workload's own controller reference is named instead.
-+  const controllerRef = (data.metadata?.ownerReferences ?? []).find((ref: any) => ref?.controller)
-+  const owner = coverage ? relationships?.owner : undefined
-+  const clusterName: string | undefined = data.status?.clusterName
-+  let body: ReactNode
-+  if (owner) {
-+    body = <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
-+      <span className="text-xs text-theme-text-tertiary">{owner.kind}</span>
-+      <ResourceLink name={owner.name} namespace={owner.namespace} kind={kindToPluralWithGroup(owner.kind, owner.group ?? '')} group={owner.group} onNavigate={onNavigate} />
-+    </div>
-+  } else if (!relationships) {
-+    body = <p className={muted}>Owner not read here.</p>
-+  } else if (!coverage && controllerRef) {
-+    body = <p className={muted}>Controller reference: {controllerRef.kind} {controllerRef.name} (this Radar doesn't resolve owners).</p>
-+  } else if (coverage?.primaryOwnerState === 'several') {
-+    body = <p className={muted}>Several owner references; none is the controller.</p>
-+  } else {
-+    const reason = coverage?.unavailableReason
-+    const unanswered = !reason ? undefined
-+      : reason === 'user_forbidden' ? "The owner isn't shown: your access lets you open this Workload, but not list its kind here."
-+        : `The owner couldn't be read: ${gapReasonText(reason)}.`
-+    const note = ownerNote(coverage)
-+    body = <p className={muted}>{unanswered ?? note?.text ?? (data.metadata?.ownerReferences?.length ? 'Owner not resolved.' : 'No owner reference: this Workload was created directly.')}</p>
-+  }
-+  return <Step label="Owner">
-+    {body}
-+    {clusterName && <p className={muted}>Kueue reports cluster <code>{clusterName}</code> for this Workload (status.clusterName). Radar shows this cluster only and doesn't follow that name elsewhere.</p>}
-+  </Step>
-+}
++	Retire()
++	Reinitialize(nil, nil, "after")
 +
-+export function AdmissionPath({ data, reads, relationships, onNavigate }: { data: any; reads?: KueueWorkloadReads; relationships?: Relationships; onNavigate?: Navigate }) {
-+  const namespace: string = data.metadata?.namespace ?? ''
-+  const queueName: string | undefined = data.spec?.queueName
-+  const localQueue = reads?.localQueue
-+  const configured: string | undefined = localQueue?.state === 'found' ? localQueue.object?.spec?.clusterQueue : undefined
-+  const reserved: string | undefined = data.status?.admission?.clusterQueue
-+  const finished = (data.status?.conditions ?? []).some((condition: any) => condition?.type === 'Finished' && condition.status === 'True')
-+  const admitted = (data.status?.conditions ?? []).some((condition: any) => condition?.type === 'Admitted' && condition.status === 'True')
-+  const configuredRead = configured ? reads?.clusterQueues?.[configured] : undefined
-+  const eligibility = configured && reads ? namespaceEligibilityFact({ clusterQueue: configured, parent: configuredRe
-```
-
-**File**: `packages/k8s-ui/src/components/kueue/QueueEvidence.tsx` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+import type { ReactNode } from 'react'
-+import { Badge } from '../ui/Badge'
-+import { ResourceLink } from '../ui/drawer-components'
-+import { TimeValue } from '../ui/ScheduleValue'
-+import { FactGrid, FactRow, FactValue, type Fact } from '../facts'
-+import type { StatusBadge } from '../resources/resource-utils'
-+import { getAdmissionCheckStatus, getClusterQueueStatus, getKueueQueueCondition, isKueueConditionStale } from '../resources/resource-utils-kueue'
-+import { describeKueuePolicy } from './policy'
-+import { isDenied, unreadReason, type RelatedRead } from './related-read'
-+import { namespaceEligibility } from './eligibility'
-+import { KUEUE_GROUP } from './constants'
-+
-+export type Navigate = (ref: { kind: string; namespace: string; name: string; group?: string }) => void
-+
-+/** One related object's name with what Radar's read of it found. Without a read, the name alone. */
-+export function ReadState({ read, found }: { read?: RelatedRead; found?: ReactNode }) {
-+  if (!read) return null
-+  if (read.state === 'found') return <>{found ?? <Badge severity="neutral" size="sm">Found</Badge>}</>
-+  if (read.state === 'not_found') return <Badge severity="error" size="sm">Not found</Badge>
-+  if (read.state === 'unconfirmed') return <span className="text-xs text-theme-text-tertiary">This Radar can’t confirm whether it exists</span>
-+  return <span className={isDenied(read) ? 'text-xs text-theme-text-secondary' : 'text-xs text-theme-text-tertiary'}>{read.state === 'loading' ? 'Checking…' : `Not read: ${unreadReason(read)}`}</span>
-+}
-+
-+export function StatusPill({ status }: { status: StatusBadge }) {
-+  return <Badge colorClass={status.color} size="sm">{status.text}</Badge>
-+}
-+
-+export function ReportedActive({ data, status, children }: { data: any; status: StatusBadge; children?: ReactNode }) {
-+  const condition = getKueueQueueCondition(data)
-+  const generation = data?.metadata?.generation
-+  if (!condition) {
-+    return <div className="space-y-2 text-sm">
-+      <div className="flex flex-wrap items-center gap-2"><StatusPill status={status} /></div>
-+      <p className="text-theme-text-secondary">No Active condition reported.</p>
-+      {children}
-+    </div>
-+  }
-+  return <div className="space-y-2 text-sm">
-+    <div className="flex flex-wrap items-center gap-2">
-+      <StatusPill status={status} />
-+      {condition.reason && !status.text.startsWith(condition.reason) && <code className="break-all text-xs text-theme-text-secondary">{condition.reason}</code>}
-+    </div>
-+    {condition.message && <p className="whitespace-pre-wrap break-words text-theme-text-primary">{condition.message}</p>}
-+    <p className="text-xs text-theme-text-tertiary">
-+      Active={condition.status}
-+      {condition.lastTransitionTime && <> since <TimeValue timestamp={condition.lastTransitionTime} /></>}
-+      {' · '}
-+      {condition.observedGeneration ? `observed generation ${condition.observedGeneration} of ${generation ?? '?'}` : 'observed generation not reported'}
-+    </p>
-+    {children}
-+  </div>
-+}
-+
-+function count(value: unknown, source: string): Fact {
-+  return typeof value === 'number'
-+    ? { text: String(value), tone: 'neutral', source }
-+    : { text: 'Not reported', tone: 'unknown', source }
-+}
-+
-+/** Controller-reported Workload counts. Reserving includes admitted, so they never add up. */
-+export function QueueCounts({ data, kind }: { data: any; kind: 'ClusterQueue' | 'LocalQueue' }) {
-+  const source = `Reported in the ${kind}'s status`
-+  return <div className="space-y-2">
-+    <FactGrid>
-+      <FactRow label="Pending"><FactValue fact={count(data?.status?.pendingWorkloads, source)} /></FactRow>
-+      <FactRow label="Reserving quota"><FactValue fact={count(data?.status?.reservingWorkloads, source)} /></FactRow>
-+      <FactRow label="Admitted"><FactValue fact={count(data?.status?.admittedWorkloads, source)} /></FactRow>
-+    </FactGrid>
-+    <p className="text-xs text-theme-text-tertiary">Reserving includes admitted Workloads, so these counts are not additive. Admission does not establish that Pods are running.</p>
-+  </div>
-+}
-+
-+export function ConfiguredStop({ data }: { data: any }) {
-+  const raw = data?.spec?.stopPolicy
-+  const policy = describeKueuePolicy(data?.apiVersion, 'stopPolicy', raw ?? 'None')
-+  return <div className="space-y-1 text-sm">
-+    <div className="flex flex-wrap items-baseline gap-2">
-+      <span className="text-theme-text-tertiary">Stop policy</span>
-+      <code className="text-theme-text-primary">{policy.raw}</code>
-+      {raw == null && <span className="text-xs text-theme-text-tertiary">(not set)</span>}
-+    </div>
-+    <p className="text-theme-text-secondary">{policy.meaning ?? `Radar has no description of this value for ${data?.apiVersion ?? 'this API version'}.`}</p>
-+  </div>
-+}
-+
-+function ReportedMessage({ condition, generation }: { condition: any; generation?: number }) {
-+  return <p className="whitespace-pre-wrap break-words text-xs text-th
-```
-
-**File**: `packages/k8s-ui/src/components/kueue/constants.ts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+export const KUEUE_GROUP = 'kueue.x-k8s.io'
-```
-
-**File**: `packages/k8s-ui/src/components/kueue/eligibility.ts` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+// Whether a namespace may submit Workloads to a ClusterQueue, from the
-+// ClusterQueue's namespaceSelector. Kueue reads a null selector as "no
-+// namespace" and an empty one ({}) as "every namespace", so only a selector
-+// with terms needs the namespace's labels.
-+
-+export type NamespaceEligibility =
-+  | { state: 'eligible'; basis: 'all' | 'labels' }
-+  | { state: 'not_eligible'; basis: 'none' | 'labels' }
-+  /** The labels are needed and weren't read, or the selector can't be evaluated. */
-+  | { state: 'unknown'; why: 'labels_unread' | 'unsupported_operator'; operator?: string }
-+
-+interface Requirement { key?: string; operator?: string; values?: string[] }
-+export interface LabelSelector { matchLabels?: Record<string, string>; matchExpressions?: Requirement[] }
-+
-+function selectorHasTerms(selector: LabelSelector | null | undefined): boolean {
-+  return !!selector && (Object.keys(selector.matchLabels ?? {}).length > 0 || (selector.matchExpressions?.length ?? 0) > 0)
-+}
-+
-+/** Evaluating the selector would use the namespace's labels (it has terms, all with supported operators). */
-+export function needsNamespaceLabels(selector: LabelSelector | null | undefined): boolean {
-+  const result = namespaceEligibility(selector, undefined)
-+  return result.state === 'unknown' && result.why === 'labels_unread'
-+}
-+
-+/** labels is undefined when the namespace's labels weren't read. */
-+export function namespaceEligibility(selector: LabelSelector | null | undefined, labels: Record<string, string> | undefined): NamespaceEligibility {
-+  if (selector == null) return { state: 'not_eligible', basis: 'none' }
-+  if (!selectorHasTerms(selector)) return { state: 'eligible', basis: 'all' }
-+  const unsupported = (selector.matchExpressions ?? []).find(term => !['In', 'NotIn', 'Exists', 'DoesNotExist'].includes(term?.operator ?? ''))
-+  if (unsupported) return { state: 'unknown', why: 'unsupported_operator', operator: String(unsupported?.operator ?? '') }
-+  if (!labels) return { state: 'unknown', why: 'labels_unread' }
-+  const has = (key: string) => Object.prototype.hasOwnProperty.call(labels, key)
-+  const matches = Object.entries(selector.matchLabels ?? {}).every(([key, value]) => has(key) && labels[key] === value)
-+    && (selector.matchExpressions ?? []).every(({ key = '', operator, values = [] }) => {
-+      switch (operator) {
-+        case 'In': return has(key) && values.includes(labels[key])
-+        case 'NotIn': return !has(key) || !values.includes(labels[key])
-+        case 'Exists': return has(key)
-+        default: return !has(key)
-+      }
-+    })
-+  return matches ? { state: 'eligible', basis: 'labels' } : { state: 'not_eligible', basis: 'labels' }
-+}
-```
-
-**File**: `packages/k8s-ui/src/components/kueue/flavors-tried.ts` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+// Parses the flavor attempts out of a pending Workload's QuotaReserved
-+// message. Kueue builds it as "couldn't assign flavors to pod set <ps>: <reasons>"
-+// per failing pod set, joined by "; ", with each pod set's reasons sorted
-+// alphabetically and joined by ", " — so the order of the reasons is not the
-+// order flavors were tried. A message with any part this parser doesn't
-+// recognise yields null and is shown verbatim instead.
-+
-+export type FlavorAttemptKind =
-+  | 'insufficient_quota'
-+  | 'insufficient_unused_quota'
-+  | 'untolerated_taint'
-+  | 'node_affinity'
-+  | 'flavor_not_found'
-+  | 'resource_unavailable'
-+  | 'skipped_by_annotation'
-+  | 'pinned_by_original'
-+
-+export interface FlavorAttempt {
-+  kind: FlavorAttemptKind
-+  flavor?: string
-+  resource?: string
-+  /** The controller's own words for this reason. */
-+  text: string
-+}
-+
-+export interface PodSetAttempts {
-+  podSet: string
-+  attempts: FlavorAttempt[]
-+}
-+
-+const podSetPrefix = "couldn't assign flavors to pod set "
-+
-+/** The message is Kueue's per-flavor account of why quota wasn't assigned (parsed or not). Its error form isn't. */
-+export function isFlavorAssignmentMessage(message: string | undefined): boolean {
-+  return !!message && message.startsWith(podSetPrefix)
-+}
-+
-+const patterns: { kind: FlavorAttemptKind; re: RegExp; flavor?: number; resource?: number }[] = [
-+  { kind: 'insufficient_unused_quota', re: /^insufficient unused quota for (\S+) in flavor (\S+), \S+ more needed$/, resource: 1, flavor: 2 },
-+  { kind: 'insufficient_quota', re: /^insufficient quota for (\S+) in flavor (\S+), (?:previously considered podsets requests \(\S+\) \+ current podset request \(\S+\) > maximum capacity \(\S+\)|request > maximum capacity \(\S+ > \S+\))$/, resource: 1, flavor: 2 },
-+  { kind: 'untolerated_taint', re: /^untolerated taint .+ in flavor (\S+)$/, flavor: 1 },
-+  { kind: 'node_affinity', re: /^flavor (\S+) doesn't match node affinity$/, flavor: 1 },
-+  { kind: 'flavor_not_found', re: /^flavor (\S+) not found$/, flavor: 1 },
-+  { kind: 'resource_unavailable', re: /^resource (\S+) unavailable in ClusterQueue$/, resource: 1 },
-+  { kind: 'skipped_by_annotation', re: /^skipping flavor (\S+) due to WorkloadAllowedResourceFlavorAnnotation annotation$/, flavor: 1 },
-+  // Names the candidate flavor, then the flavor the original Workload holds.
-+  { kind: 'pinned_by_original', re: /^could not assign (\S+) flavor since the original workload is assigned: \S+$/, flavor: 1 },
-+]
-+
-+// A reason begins only at one of these; ", " inside a reason ("…, 2 more needed")
-+// is not a boundary.
-+const reasonStart = /, (?=insufficient (?:unused )?quota for |untolerated taint |flavor \S+ (?:doesn't match node affinity|not found)|resource \S+ unavailable in ClusterQueue|skipping flavor |could not assign )/
-+
-+function parseReason(text: string): FlavorAttempt | null {
-+  for (const { kind, re, flavor, resource } of patterns) {
-+    const match = re.exec(text)
-+    if (match) return { kind, text, ...(flavor ? { flavor: match[flavor] } : {}), ...(resource ? { resource: match[resource] } : {}) }
-+  }
-+  return null
-+}
-+
-+export function parseFlavorAttempts(message: string | undefined): PodSetAttempts[] | null {
-+  if (!message?.startsWith(podSetPrefix)) return null
-+  const result: PodSetAttempts[] = []
-+  for (const part of message.slice(podSetPrefix.length).split(`; ${podSetPrefix}`)) {
-+    const separator = part.indexOf(': ')
-+    if (separator <= 0) return null
-+    const podSet = part.slice(0, separator)
-+    const reasons = part.slice(separator + 2).split(reasonStart)
-+    const attempts: FlavorAttempt[] = []
-+    for (const reason of reasons) {
-+      const attempt = parseReason(reason)
-+      if (!attempt) return null
-+      attempts.push(attempt)
-+    }
-+    result.push({ podSet, attempts })
-+  }
-+  return result
++	gotURL, gotHeaders := CurrentConfig()
++	if gotURL != wantURL {
++		t.Fatalf("manual URL after Retire/Reinitialize = %q, want %q", gotURL, wantURL)
++	}
++	if !maps.Equal(gotHeaders, wantHeaders) {
++		t.Fatalf("headers after Retire/Reinitialize = %v, want %v", gotHeaders, wantHeaders)
++	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2535** (2026-11-04): Show CRD definitions with a searchable schema explorer and Schema tab (@nadaverell)
+- **PR #2534** (2026-11-04): feat: add --disable-auto-port-forward to stop automatic pods/portforward (@hisco)
 - **PR #2532** (2026-11-04): deps: batch eight vetted dependency updates (@nadaverell)
 - **PR #2531** (closed): deps(go): bump modernc.org/sqlite from 1.61.0 to 1.61.1 (@dependabot[bot])
 - **PR #2530** (closed): deps(go): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
 - **PR #2529** (closed): deps(go): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
-- **PR #2528** (closed): deps(go): bump golang.org/x/net from 0.61.0 to 0.62.0 (@dependabot[bot])
 
 ---
 
@@ -2808,55 +2547,39 @@ cause. Broken, stale or unr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Explain Kueue queues and trace Workload admission dependencies (#2512)
+## X. traffic): keep the Hubble connection error when the relay is reachable
 
 **RULE**:
-When implementing operations in `docs/integrations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/traffic/auto_port_forward_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7f1d502`: Explain Kueue queues and trace Workload admission dependencies (#2512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e8307a8`: traffic): keep the Hubble connection error when the relay is reachable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/integrations.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/traffic/auto_port_forward_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-and conditions. Reservation is distinguished from admission; resource totals are
-requests, not measured usage.
+	"errors"
+func TestComposeConnectErrorWithAutoPortForwardDisabled(t *testing.T) {
+	route := composeConnectError("10.0.0.1:80", errDirectUnreachable, portforward.ErrAutoDisabled)
+	if !strings.Contains(route, "needs a network route") {
+		t.Errorf("unreachable relay = %q, want routing advice", route)
+	}
+	tlsFailed := composeConnectError("10.0.0.1:80", errors.New("TLS gRPC connection test failed"), portforward.ErrAutoDisabled)
+	if strings.Contains(tlsFailed, "network route") || !strings.Contains(tlsFailed, "TLS gRPC connection test failed") {
+		t.Errorf("reachable relay with a failed connection = %q, want the connection error, not routing advice", tlsFailed)
+	}
+}
 
-Its **admission path** connects the owner, submission LocalQueue, its current
-ClusterQueue, reservation ClusterQueue and assigned ResourceFlavors. Missing,
-replaced and unreadable objects are distinguished. Per-flavor rejection reasons
-are one controller report, not attempt order or history; unrecognized text stays
-verbatim. Remote cluster names are reported without following them.
-
-LocalQueue and ClusterQueue detail separate Active state and freshness from
-configured stop policy. Pending/reserving/admitted counts are not additive;
-quota is requested capacity, not utilization or available hardware. Per-flavor
-rows compare reservations, admitted usage, nominal quota and borrowing/lending
-limits. Both v1beta1 and v1beta2 queue shapes are supported. Related flavors, AdmissionChecks and
-cohort peers are read as the viewer; Cohort objects are not read. A LocalQueue
-also shows namespace eligibility. Denied or incomplete reads never prove an
-object missing. An intentionally stopped parent softens a LocalQueue's alert
-only when fresh evidence establishes that the stop is its sole
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-and conditions. Links connect submission LocalQueues, reservation ClusterQueues,
-ResourceFlavors and AdmissionChecks. Reservation is distinguished from admission;
-resource totals are requests, not measured usage.
-
-LocalQueue and ClusterQueue detail distinguish reported state from configured stop
-policy, show pending/reserving/admitted counts, and link a LocalQueue to its
-ClusterQueue even before a Workload has a reservation. Per-flavor resource rows
-join quota reservations and admitted usage; ClusterQueues also show nominal quota,
-borrowing/lending limits, namespace eligibility and admission policies. These are
-controller-reported quota facts, not measured utilization or available physical
-capacity. Both v1beta1 and v1beta2 queue shapes are supported.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7f1d502` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e8307a8` are properly handled with clean fallback behavior.

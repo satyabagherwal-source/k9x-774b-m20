@@ -7616,3 +7616,9 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `0b7efd36` | Multi-dimensional audit evidence | 2026-11-05T10:09:01.088Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-05T10:09:01.276Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f122c9e` | Multi-dimensional audit evidence | 2026-11-05T10:09:09.896Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `9cc902be` | Multi-dimensional audit evidence | 2026-11-05T10:15:59.965Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `647ef264` | Multi-dimensional audit evidence | 2026-11-05T10:16:05.466Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-05T10:16:07.483Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `36823919` | Multi-dimensional audit evidence | 2026-11-05T10:16:07.609Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b94bef03` | Multi-dimensional audit evidence | 2026-11-05T10:16:09.828Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `739e17f9` | Multi-dimensional audit evidence | 2026-11-05T10:16:12.506Z |

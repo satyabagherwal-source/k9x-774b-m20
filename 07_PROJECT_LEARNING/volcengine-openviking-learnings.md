@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `3e0c9dcc`  
+> **Source Version**: `739e17f9`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:33:57.230Z  
+> **Timestamp**: 2026-11-05T10:16:11.844Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:33:56.697Z  
+> **Harvest Timestamp**: 2026-11-05T10:16:11.838Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41532 stars
+- **Stars / Engagement**: 41587 stars
 
 ---
 
@@ -1495,909 +1495,843 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e6437c93` (2026-11-04)
-**Commit Message**: feat(frontend): add shared React UI workspace and bilingual component docs (#6996)
+### Incident Patch 1: `739e17f9` (2026-11-05)
+**Commit Message**: fix(magpie): add opt-in sessionless capture and raise recall budget (#7073)
 
-* feat(ui): scaffold React library and Rspress component docs
+* fix(magpie): warn on missing capture sessions and raise recall budget
 
-* docs(ui): add agent development guidelines
+Log a fixed capture diagnostic once without replacing recall status. Default recall to 2000 ms and show editable 2000/3000 ms recall/host budgets, preserving saved settings.
 
-* refactor(ui): group StatusBadge files
+Validation: syntax checks and npm pack dry-run passed; 126 tests passed, 0 failed, 1 Bun-host test skipped (Bun unavailable). Refs #7007.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+* feat(magpie): add opt-in capture without host sessions
 
-* docs(ui): define module structure and navigation conventions
+Add captureWithoutSession (false by default). Derive capture identity from client scope and the shaped opening message without changing stateless recall. Preserve real session precedence and recheck file opt-in in queued delivery.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Validation: 131 tests passed, 0 failed, 1 actual Bun-host test skipped (runtime unavailable); syntax checks, npm pack dry-run and diff checks passed. Refs #7007.
 
-* feat(ui): add English and Chinese documentation locales
+* fix(magpie): retire derived capture queues on native takeover
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Resolve derived capture scope before checking native ownership. Parse native-marked history for capture cleanup while preserving recall's existing native-context exclusion. Persist ownership and remove pending snapshot
 
-* feat(ui): 使用 Rslib 构建并预留公共模块入口 (#6933)
-
-* refactor(ui): 明确视图组件与页面层边界 (#6945)
-
-* feat(frontend): migrate shared workspace and add file icons
-
-Move the shared workspace from ui to frontend and update CI and documentation paths. Rename the React package, add inline SVG file icons and bilingual interactive examples, and fix the migration and shared-source ignore rules.
-
-* feat(frontend): add component subpaths and scoped stylesheet entries (#6954)
-
-* ci(frontend): add React UI npm release workflow
-
-* chore(frontend): bump React UI to 0.1.1
-
-* chore(frontend): add Rslint checks and upgrade to TypeScript 7 (#6978)
-
-* docs(react): require justified useEffect usage (#6979)
-
-* feat(ui): define props and ship 
-
-**File**: `.github/actions/build-ui/action.yml` (added, +27/-0)
+**File**: `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
 ```diff
-@@ -0,0 +1,27 @@
-+name: Build UI
-+description: Install, lint, type-check, and build the UI library and documentation
-+runs:
-+  using: composite
-+  steps:
-+    - name: Set up Node.js for UI
-+      uses: actions/setup-node@v6
-+      with:
-+        node-version: 22
-+        cache: npm
-+        cache-dependency-path: frontend/package-lock.json
-+
-+    - name: Install UI dependencies
-+      shell: bash
-+      run: npm ci --prefix frontend
-+
-+    - name: Lint and type-check UI
-+      shell: bash
-+      run: npm run lint --prefix frontend
-+
-+    - name: Build UI library and docs
-+      shell: bash
-+      run: npm run build --prefix frontend
-+
-+    - name: Check UI docs output
-+      shell: bash
-+      run: test -f frontend/docs/doc_build/index.html
+@@ -138,6 +138,9 @@ export const KNOBS = [
+     workspace: "capture.enabled",
+     capability: "capture",
+   },
++  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
++  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
++  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
+   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
+   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
+   // Tool output is reported verbatim; the server owns truncation via
+@@ -280,9 +283,10 @@ export function harnessKey(harness) {
+ }
+ 
+ /** Both accepted spellings of every harness, for the `plugin` section. */
+-export const HARNESS_CONFIG_KEYS = new Set(
+-  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+-);
++export const HARNESS_CONFIG_KEYS = new Set([
++  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
++  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
++]);
+ 
+ export function knobDefault(knob, harness = "") {
+   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
 ```
 
-**File**: `.github/workflows/_docs-deploy.yml` (modified, +8/-0)
+**File**: `examples/codex-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
 ```diff
-@@ -40,6 +40,14 @@ jobs:
-           VITE_COUNTER_URL: ${{ vars.VITE_COUNTER_URL }}
-           VITE_DOCS_SEARCH_URL: ${{ vars.VITE_DOCS_SEARCH_URL }}
+@@ -138,6 +138,9 @@ export const KNOBS = [
+     workspace: "capture.enabled",
+     capability: "capture",
+   },
++  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
++  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
++  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
+   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
+   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
+   // Tool output is reported verbatim; the server owns truncation via
+@@ -280,9 +283,10 @@ export function harnessKey(harness) {
+ }
  
-+      - name: Build UI
-+        uses: ./.github/actions/build-ui
+ /** Both accepted spellings of every harness, for the `plugin` section. */
+-export const HARNESS_CONFIG_KEYS = new Set(
+-  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+-);
++export const HARNESS_CONFIG_KEYS = new Set([
++  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
++  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
++]);
+ 
+ export function knobDefault(knob, harness = "") {
+   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
+```
+
+**File**: `examples/magpie-memory-plugin/README.md` (modified, +69/-7)
+```diff
+@@ -50,7 +50,7 @@ environment; editing the file applies to the next operation without restarting.
+       "enabled": true,
+       "autoRecall": true,
+       "autoCapture": true,
+-      "recallContextTimeoutMs": 700,
++      "recallContextTimeoutMs": 2000,
+       "recallMaxTokens": 1600,
+       "recallPeerScope": "all",
+       "mcpEnabled": false
+@@ -85,7 +85,7 @@ to enabled; explicit `autoCapture: false` in host options or client settings is
+ preserved. Host options override scoped settings, which override shared settings.
+ 
+ Magpie's **Options** editor now accepts `autoRecall`, `autoCapture`, `mcpEnabled`,
+-`recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
++`captureWithoutSession`, `recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
+ options override the corresponding file settings for this plugin; connection
+ credentials and identity always remain file-owned. `gatewayTimeoutMs` controls
+ the host's hook budget. The package supplies an example, not saved defaults;
+@@ -94,6 +94,33 @@ options. Memory tools are disabled by default; set `mcpEnabled: true` to enable
+ them. Automatic capture is enabled by default and needs no additional setting;
+ set `autoCapture: false` to disable it.
+ 
++`captureWithoutSession` is a Magpie-only boolean, default `false`. If the client
++cannot send a stable session ID, opt in through Magpie's Options:
 +
-+      - name: Include UI docs in site
-+        run: |
-+          mkdir -p docs/.vitepress/dist/ui
-+          cp -a frontend/docs/doc_build/. docs/.vitepress/dist/ui/
++```json
++{
++  "autoCapture": true,
++  "captureWithoutSession": true
++}
++```
 +
-       - name: Build plugin downloads
-         run: bash .github/scripts/build-plugin-downloads.sh docs/.vitepress/dist/dl https://docs.openviking.ai/dl
++It can also be set in `ovcli.conf` under `plugin.magpie` (or shared `plugin`),
++with the same host → scoped → shared precedence. A real session ID always takes
++priority. Only capture uses the derived ID; recall remains stateless without a
++host session. The fallback hashes the agent, working directory, protocol and
++first user message after the existing capture shaping/filters. Model changes do
++not change this ID; existing connection/credential isolation still applies.
++
++This is approximate grouping: independent conversations with identical opening
++messages in the same client scope may merge. If their histories diverge, capture
++skips snapshots that conflict with the history already written. Rewriting or
++removing the opening message can split a conversation or skip unknown history.
++Start a new conversation after enabling it; existing histories are not backfilled.
++`autoCapture: false` still disables all automatic capture. For file settings without
++a host override, turning this option off pauses queued derived-session snapshots;
++turning it back on lets them resume. Queued snapshots retain their enqueue-time
++host overrides, just as they do for `autoCapture`.
++
+ File settings `plugin.magpie.bypassSession: true` or `bypassSessionPatterns`
+ matching the Magpie session ID or working directory skip automatic recall and
+ capture. Existing queued snapshots pause while bypass applies and can resume
+@@ -113,8 +140,17 @@ controlled by `mcpEnabled`.
+   turn. Retries and later turns replay the original snapshot.
+ - Only host-classified `local` and `magpie-key` origins receive memory. Shared
+   gateway keys, forwarded traffic and unknown origins are skipped. Without a
+-  session ID, new user requests use stateless recall: no persisted ledger, profile
+-  replay or conversation capture. Repeated requests may retrieve different context.
++  session ID, new user requests use stateless recall: no persisted recall ledger or
++  profile replay. Capture is also skipped unless `captureWithoutSession: true`.
++  Repeated requests may retrieve different context.
++  With capture enabled and the fallback off, the first eligible sessionless user request logs
++  `OpenViking capture: no-session` once per plugin-host process, explaining that
++  capture is unavailable and suggesting a stable session header or explicit
++  `captureWithoutSession` opt-in with its grouping limitation. Check Magpie's
++  plugin-host logs; this warning contains no message text or credentials and does
++  not replace the recall status. Current Magpie hosts ignore custom `report()`
++  codes, so a separate capture status in the UI requires host support.
++  Native-owned, disabled, bypassed and auxiliary requests do not trigger the warning.
+   The file's OV credentials remain the authority.
+ - Only a new textual user message triggers retrieval. Tool continuations replay
+   known context without retrieving. Magpie skips its own internal title/classifier
+@@ -141,12 +177,38 @@ controlled by `mcpEnabled`.
+   against every duplicate. Disabling `autoRecall` prevents new searches while
+   replaying known history; disabling the plugin entirely disables both.
+ - The shared context builder owns query settings, budgets and result relevance.
+-  Default recall timeout is 700 ms inside Magpie's default 1000 ms hook budget.
+-  Increasing it requires raising Magpie's `gatewayTimeoutMs` with I/O margin.
+-  Cancellation reaches the HTTP request. Query filters use the shared parser.
++  Default recall timeout is 2000 ms. Set
+```
+
+**File**: `examples/magpie-memory-plugin/README_CN.md` (modified, +51/-5)
+```diff
+@@ -45,7 +45,7 @@ magpie plugin add ./examples/magpie-memory-plugin
+     "enabled": true,
+     "autoRecall": true,
+     "autoCapture": true,
+-    "recallContextTimeoutMs": 700,
++    "recallContextTimeoutMs": 2000,
+     "recallMaxTokens": 1600,
+     "recallPeerScope": "all",
+     "mcpEnabled": false
+@@ -65,10 +65,31 @@ Magpie 的文件读取策略排除环境变量和 workspace 层。
+ 工具仍需 `plugin.magpie.mcpEnabled: true` 显式开启。采集默认开启；宿主选项或客户端配置中显式设置的 `autoCapture: false` 仍然生效。优先级为宿主选项、Magpie 专属配置、共享配置。
+ 
+ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`recallMaxTokens`、
+-`recallContextTimeoutMs`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
++`recallContextTimeoutMs`、`captureWithoutSession`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
+ 服务连接、凭据和身份仍只从文件读取。`gatewayTimeoutMs` 控制宿主 Hook 预算。
+ 包内示例不会自动保存；未填写的字段继续沿用文件设置或默认值。记忆工具默认关闭，设置 `mcpEnabled: true` 可开启。自动采集默认开启，无需额外配置；如需关闭，设置 `autoCapture: false`。
+ 
++`captureWithoutSession` 是 Magpie 专属的布尔配置，默认 `false`。客户端无法传递稳定会话 ID 时，
++可在 Magpie“选项”中显式开启：
++
++```json
++{
++  "autoCapture": true,
++  "captureWithoutSession": true
++}
++```
++
++也可在 `ovcli.conf` 的 `plugin.magpie` 或共享 `plugin` 中设置，优先级仍为宿主选项、专属配置、共享配置。
++有真实会话 ID 时优先使用真实 ID。派生 ID 仅用于采集，无宿主会话时召回仍然无状态。
++派生输入为 Agent、工作目录、协议和经过现有采集清洗/过滤的首条用户消息；切换模型不会改变 ID，
++OV 连接和凭据仍按现有规则隔离。
++
++同一客户端作用域内，相同开场的独立对话可能合并。如果两段历史出现分歧，采集会跳过与已写入历史
++冲突的快照。改写或删除开场消息可能拆分会话，或因历史无法识别而跳过采集。开启后请新建对话，
++不回填未知的已有历史。
++`autoCapture: false` 仍关闭所有自动采集。通过文件配置且无宿主覆盖时，关闭本开关会暂停派生会话的
++待同步队列，重新开启后可恢复。与 `autoCapture` 一样，已入队快照保留入队时的宿主选项覆盖。
++
+ 不会修改文件、合并环境变量中的凭据，或回退读取 `ov.conf`、Root Key、Gateway Token。
+ 配置缺失、损坏或服务不可用时，召回跳过，模型请求继续；不会沿用旧配置。
+ 
+@@ -83,7 +104,12 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
+   资料读取与检索在召回超时预算内并行执行；任一路失败时仍可使用另一路结果。
+   资料遵守 `profileTokenBudget`，且最多占 `recallMaxTokens` 的一半，使用共享的中日韩字符 token 估算器；
+   资料与检索结果合计不超过 `recallMaxTokens`，与首轮决策一起持久化；重试和后续轮次回放原始快照。
+-- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化账本、不重放 Profile 快照、不采集对话；重复请求可能获得不同的召回结果。
++- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化召回账本、不重放 Profile 快照；除非显式设置 `captureWithoutSession: true`，否则不采集对话。重复请求可能获得不同的召回结果。
++  开启采集但未开启哈希兼容时，首次符合条件却缺少会话 ID 的用户请求，会在 Magpie 插件宿主日志中输出
++  `OpenViking capture: no-session`，建议客户端传递稳定的会话 ID 请求头，或了解会话误合并限制后显式开启 `captureWithoutSession`。
++  每个插件宿主进程只提示一次，不含对话正文或凭据，也不覆盖召回状态。
++  当前 Magpie 会忽略自定义 `report()` 状态码，独立的 UI 采集状态仍需宿主支持。
++  原生插件接管、关闭、bypass、辅助请求不会触发此提示。
+   共享网关 Key、转发请求或身份缺失时跳过，始终使用文件中配置的 OV 身份。
+ - 只有新的文本用户消息触发检索。工具续轮只回放已有记忆；重试复用首次决策，
+   包括无结果和失败的决策。同样的问题出现在后续新轮次时仍可重新检索。
+@@ -99,8 +125,28 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
+   Magpie 自身跳过内部标题/分类请求；插件也跳过明确标记的辅助、压缩、标题和子 Agent 请求。
+ - `autoRecall: false` 关闭新检索，但仍回放已知历史；插件整体关闭则停止两者。
+   查询过滤、召回参数、预算和结果相关性使用共享模块。
+-- 默认 700ms 检索预算。提高超时时也应提高 Magpie 的 `gatewayTimeoutMs`，为状态读写留余量。
+-  请求取消会中止检索。Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
++- 默认 2000ms 检索预算，可在 Magpie“选项”或 `plugin.magpie` 中配置
++  `recallContextTimeoutMs`；已有显式配置继续生效。实际 HTTP 超时还受客户端 `timeout`、
++  9000ms 上限及宿主预算限制：从宿主预算扣除已耗费的准备时间，并预留 200ms 用于结果组装、
++  状态读写和序列化。检索与 Profile 共用内部截止信号，一路超时仍可使用另一路已完成的结果。
++  剩余不足 100ms 时不再发起 HTTP 请求；宿主取消时仍放弃本次注入。
++  宿主没有提供整个 Hook 链的剩余截止时间，因此预留时间不能保证避开更早的外部取消。
++  Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
++
++连接托管或远程服务时，请在 Magpie 的“选项”中同时保存两个预算（合并到已有选项）：
++
++```json
++{
++  "recallContextTimeoutMs": 2000,
++  "gatewayTimeoutMs": 3000
++}
++```
++
++包内选项示例包含这组值，但升级不会重写已保存的选项。未设置 `gatewayTimeoutMs` 时，
++Magpie 仍默认使用 1000ms 的宿主预算，插件会自动缩短 HTTP 等待以适配该预算。
++已有安装如需使用完整 2000ms 检索预算，仍须显式提高宿主预算。宿主预算应高于检索预算，
++为配置和状态读写留余量（Magpie 允许的上限为 10000ms）。如需继续增加检索预算，
++请同步调整两个值，并确保 `ovcli.conf` 顶层的 `timeout`（秒）足够。召回失败仍会放行模型请求。
+ 
+ ### 本机回放状态
  
 ```
 
-**File**: `.github/workflows/docs-tos.yml` (modified, +49/-1)
+**File**: `examples/magpie-memory-plugin/capture-worker.mjs` (modified, +6/-2)
 ```diff
-@@ -5,6 +5,8 @@ on:
-     branches: [ main ]
-     paths:
-       - 'docs/**'
-+      - 'frontend/**'
-+      - '.github/actions/build-ui/**'
-       - '.github/workflows/docs-tos.yml'
-       # The deploy also publishes the plugin downloads under /dl.
-       - 'examples/.claude-plugin/**'
-@@ -27,6 +29,7 @@ env:
- jobs:
-   deploy:
-     name: Build and Upload Docs to TOS
-+    if: github.repository == 'volcengine/OpenViking'
-     runs-on: ubuntu-24.04
-     steps:
-       - name: Checkout repository
-@@ -50,6 +53,14 @@ jobs:
-           VITE_COUNTER_URL: ${{ vars.VITE_COUNTER_URL }}
-           VITE_DOCS_SEARCH_URL: ${{ vars.VITE_DOCS_SEARCH_URL }}
- 
-+      - name: Build UI
-+        uses: ./.github/actions/build-ui
-+
-+      - name: Include UI docs in site
-+        run: |
-+          mkdir -p docs/.vitepress/dist/ui
-+          cp -a frontend/docs/doc_build/. docs/.vitepress/dist/ui/
-+
-       - name: Build plugin downloads
-         run: bash .github/scripts/build-plugin-downloads.sh docs/.vitepress/dist/dl https://docs.openviking.net/dl
- 
-@@ -123,19 +134,40 @@ jobs:
-             --cache-control "${STATIC_CACHE_CONTROL}" \
-             --only-show-errors
- 
-+          # UI assets may be nested outside the main site's assets directory.
-+          # Publish every non-HTML UI resource first. Revalidate their stable
-+          # URLs rather than assuming every file has a content hash.
-+          aws s3 cp "${DIST_DIR}/ui" "s3://${TOS_BUCKET}/ui/" \
-+            --endpoint-url "https://${TOS_S3_ENDPOINT}" \
-+            --recursive \
-+            --exclude "*.html" \
-+            --cache-control "${HTML_CACHE_CONTROL}" \
-+            --only-show-errors
-+
-           aws s3 cp "${DIST_DIR}" "s3://${TOS_BUCKET}/" \
-             --endpoint-url "https://${TOS_S3_ENDPOINT}" \
-             --recursive \
-             --exclude ".git/*" \
-             --exclude "assets/*" \
-             --exclude "dl/*" \
-+            --exclude "ui/*" \
-+            --cache-control "${HTML_CACHE_CONTROL}" \
-+            --only-show-errors
-+
-+          aws s3 cp "${DIST_DIR}/ui" "s3://${TOS_BUCKET}/ui/" \
-+            --endpoint-url "https://${TOS_S3_ENDPOINT}" \
-+            --recursive \
-+            --exclude "*" \
-+            --include "*.html" \
-             --cache-control "${HTML_CACHE_CONTROL}" \
-             --only-show-errors
- 
-           while IFS= read -r -d '' html_file; do
-             rel_path="${html_file#${DIST_DIR}/}"
-             case "${rel_path}" in
--              index.html|404.html) continue ;;
-+              # UI uses its own generated routes; don't create main-site
-+              # clean-URL aliases (especially an object at /ui).
-+              index.html|404.html|ui/*) continue ;;
-             esac
- 
-             clean_path="${rel_path%.html}"
-@@ -146,6 +178,22 @@ jobs:
-               --only-show-errors
-           done < <(find "${DIST_DIR}" -type f -name "*.html" -print0)
- 
-+          # Rspress may emit leaf.html for extensionless links. Keep those
-+          # aliases inside /ui; directory index pages retain their index route.
-+          # Never create an object at /ui that could shadow the site's prefix.
-+          while IFS= read -r -d '' html_file; do
-+            rel_path="${html_file#${DIST_DIR}/}"
-+            case "${rel_path}" in
-+              ui/index.html|ui/404.html|*/index.html) continue ;;
-+            esac
-+
-+            aws s3 cp "${html_file}" "s3://${TOS_BUCKET}/${rel_path%.html}" \
-+              --endpoint-url "https://${TOS_S3_ENDPOINT}" \
-+              --content-type "text/html; charset=utf-8" \
-+              --cache-control "${HTML_CACHE_CONTROL}" \
-+              --only-show-errors
-+          done < <(find "${DIST_DIR}/ui" -type f -name "*.html" -print0)
-+
-           if [ -d "${DIST_DIR}/agents" ]; then
-             aws s3 cp "${DIST_DIR}/agents" "s3://${TOS_BUCKET}/agents/" \
-               --endpoint-url "https://${TOS_S3_ENDPOINT}" \
+@@ -88,7 +88,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
+     // A worker may outlive file edits. Recheck identity and opt-in immediately
+     // before each non-idempotent operation, without changing its pinned identity.
+     const current = await loadConfig({ OPENVIKING_CLI_CONFIG_FILE: snapshot.configPath }, snapshot.options);
+-    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture || bypassedSession(current, context)) return "paused";
++    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture
++      || (context.derivedSession && !current.captureWithoutSession) || bypassedSession(current, context)) return "paused";
+     if (current.nativeAgents.includes(context.agent) || await exists(join(root, "native-owner"))) return "native";
+     return withCaptureDecisions(directory, scope, (state) => {
+       if (!Array.isArray(snapshot.turnAnchors) && state.rejected.length) return "rejected";
+@@ -110,7 +111,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
+     if (status !== "delivered") return status;
+     state = await update((s) => structuredClone(s));
+   }
+-  if (state.blocked) return "paused";
++  // Older workers may have blocked the entire derived scope on one conflict.
++  if (state.blocked && !(context.derivedSession && state.blocked === "history_changed")) return "paused";
+   let meta;
+   try { meta = await call(cfg, `/api/v1/sessions/${sessionId}`, { signal }); }
+   catch (error) {
+@@ -151,6 +153,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
+   }
+   if (incoming.length <= state.hashes.length && incoming.every((id, i) => id === state.hashes[i])) return commitCaptured(cfg, sessionId, update, call, signal, stopped);
+   if (!state.hashes.every((id, i) => id === incoming[i])) {
++    // Separate sessionless conversations can share an opening message.
++    if (context.derivedSession) return "rejected";
+     await update((s) => { s.blocked = "history_changed"; });
+     return "paused";
+   }
 ```
 
-**File**: `.github/workflows/docs.yml` (modified, +4/-0)
+**File**: `examples/magpie-memory-plugin/capture.mjs` (modified, +42/-10)
 ```diff
-@@ -4,13 +4,17 @@ on:
-   pull_request:
-     paths:
-       - 'docs/**'
-+      - 'frontend/**'
-+      - '.github/actions/build-ui/**'
-       - '.github/workflows/_docs.yml'
-       - '.github/workflows/_docs-deploy.yml'
-       - '.github/workflows/docs.yml'
-   push:
-     branches: [ main ]
-     paths:
-       - 'docs/**'
-+      - 'frontend/**'
-+      - '.github/actions/build-ui/**'
-       - '.github/workflows/_docs.yml'
-       - '.github/workflows/_docs-deploy.yml'
-       - '.github/workflows/docs.yml'
-```
-
-**File**: `.github/workflows/react-release.yml` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+name: React UI Release
-+
-+on:
-+  push:
-+    tags:
-+      - "react@*"
-+
-+permissions:
-+  contents: read
-+  id-token: write
-+
-+concurrency:
-+  group: react-release-${{ github.ref }}
-+  cancel-in-progress: false
-+
-+jobs:
-+  publish:
-+    if: github.repository == 'volcengine/OpenViking'
-+    runs-on: ubuntu-24.04
-+    defaults:
-+      run:
-+        working-directory: frontend
-+    steps:
-+      - uses: actions/checkout@v6
-+      - uses: actions/setup-node@v6
-+        with:
-+          node-version: "24"
-+          registry-url: https://registry.npmjs.org
-+          cache: npm
-+          cache-dependency-path: frontend/package-lock.json
-+      - name: Validate release tag
-+        env:
-+          RELEASE_TAG: ${{ github.ref_name }}
-+        run: |
-+          PACKAGE_VERSION="$(node -p "require('./packages/react/package.json').version")"
-+          test "$RELEASE_TAG" = "react@$PACKAGE_VERSION"
-+      - run: npm ci
-+      - run: npm run format:check
-+      - run: npm run check
-+      - run: npm run build:docs
-+      - run: npm pack --dry-run --workspace @openviking/react
-+      - name: Check whether version already exists
-+        id: published
-+        run: |
-+          PACKAGE_VERSION="$(node -p "require('./packages/react/package.json').version")"
-+          if npm view "@openviking/react@$PACKAGE_VERSION" version >/dev/null 2>&1; then
-+            echo "exists=true" >> "$GITHUB_OUTPUT"
-+            echo "@openviking/react@$PACKAGE_VERSION already exists; skipping."
-+          else
-+            echo "exists=false" >> "$GITHUB_OUTPUT"
-+          fi
-+      - name: Publish React UI
-+        if: steps.published.outputs.exists == 'false'
-+        env:
-+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-+        run: npm publish --workspace @openviking/react --access public --provenance
-```
-
-**File**: `.github/workflows/ui.yml` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+name: UI
-+
-+on:
-+  pull_request:
-+    paths:
-+      - 'frontend/**'
-+      - '.github/actions/build-ui/**'
-+      - '.github/workflows/ui.yml'
-+  push:
-+    paths:
-+      - 'frontend/**'
-+      - '.github/actions/build-ui/**'
-+      - '.github/workflows/ui.yml'
-+  workflow_dispatch:
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: ui-${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+jobs:
-+  check:
-+    name: Type-check and Build UI
-+    runs-on: ubuntu-24.04
-+    steps:
-+      - name: Checkout repository
-+        uses: actions/checkout@v6
-+        with:
-+          persist-credentials: false
-+
-+      - name: Build UI
-+        uses: ./.github/actions/build-ui
-```
-
-**File**: `.gitignore` (modified, +3/-0)
-```diff
-@@ -157,6 +157,9 @@ RAGbenchmark/*.log
- CLAUDE.md
- *.so
- AGENTS.md
-+!/frontend/AGENTS.md
-+!/frontend/packages/react/src/components/AGENTS.md
-+!/frontend/packages/react/src/pages/AGENTS.md
- AGENTS.md.local
+@@ -10,14 +10,21 @@ import { recallDigest } from "./recall-ledger.mjs";
  
- # Git worktrees
+ export const captureDirectory = (cfg, ctx) => join(dataDirectory(cfg), "capture", connectionScope(cfg, ctx));
+ const workers = new Map();
++let warnedMissingSession = false;
+ export async function nativeOwner(cfg, ctx, body) {
+   // Without a session, ownership is request-local: never share a marker
+   // between unrelated conversations from the same client.
+   if (!ctx.session?.trim()) return cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol);
+   const directory = captureDirectory(cfg, ctx);
+   const marker = join(directory, "native-owner");
+   if (cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol)) {
+-    await mkdir(directory, { recursive: true, mode: 0o700 });
++    if (ctx.derivedSession && !cfg.captureWithoutSession) {
++      // Take over an existing scope without creating state while capture is off.
++      try { await access(directory); }
++      catch (error) { if (error.code === "ENOENT") return true; throw error; }
++    } else {
++      await mkdir(directory, { recursive: true, mode: 0o700 });
++    }
+     await chmod(directory, 0o700);
+     const file = await open(marker, "a", 0o600);
+     await file.close();
+@@ -67,8 +74,12 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
+   const user = payloads.findLast((m) => m.message_kind === "user_query");
+   if (!user) return false;
+   const turnKey = user.source_message_ids[0].slice(7);
+-  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol },
+-    options: Object.hasOwn(ctx.options || {}, "autoCapture") ? { autoCapture: cfg.autoCapture } : {}, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
++  const options = {};
++  if (Object.hasOwn(ctx.options || {}, "autoCapture")) options.autoCapture = cfg.autoCapture;
++  if (typeof ctx.options?.captureWithoutSession === "boolean") options.captureWithoutSession = cfg.captureWithoutSession;
++  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol,
++    ...(ctx.derivedSession ? { derivedSession: true } : {}) },
++    options, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
+   const encoded = JSON.stringify(snapshot);
+   if (Buffer.byteLength(encoded) > 3 * 1024 * 1024) return false;
+   const path = join(pending, `${turnKey}.json`);
+@@ -94,20 +105,35 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
+ }
+ 
+ export async function prepareCapture(body, ctx, cfg, options) {
+-  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin) || !ctx.session?.trim()) return;
++  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin)) return;
+   if (isAuxiliaryRequest(body, ctx)) return;
++  const conversation = describeConversation(body, ctx.protocol, { allowNativeContext: true });
++  const first = conversation && captureMessages([conversation.messages[conversation.users[0]]], ctx.protocol, cfg)?.[0]?.source_message_ids[0];
++  if (!ctx.session?.trim() && first && (cfg.captureWithoutSession
++    || cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol))) {
++    // Keep the host context unchanged: fallback identity belongs only to capture.
++    ctx = { ...ctx, derivedSession: true, session: `derived-${recallDigest(JSON.stringify([ctx.agent || "", ctx.cwd || "", ctx.protocol, first]))}` };
++  }
++  // Resolve the capture scope before yielding so native takeover also retires
++  // derived queues and remains effective when later requests lose the marker.
++  if (ctx.derivedSession && bypassedSession(cfg, ctx)) return;
+   if (await nativeOwner(cfg, ctx, body)) { ctx.state && (ctx.state.nativeOwner = true); return; }
+-  if (!cfg.autoCapture) return;
+-  const conversation = describeConversation(body, ctx.protocol);
+-  if (!conversation) return;
++  if (!cfg.autoCapture || !conversation || !first) return;
++  if (!ctx.session?.trim()) {
++    if (conversation.fresh && !warnedMissingSession) {
++      warnedMissingSession = true;
++      // Magpie's report() accepts recall codes only; log separately so a
++      // successful recall cannot overwrite the capture diagnostic.
++      console.warn("OpenViking capture: no-session — automatic capture unavailable: the host did not provide a session ID. Configure the client to send a stable session header (for example x-session-id), or opt into captureWithoutSession: true (identical opening messages may merge conversations). Stateless recall remains available.");
++    }
++    return;
++  }
+   // Never bind across an earlier assistant/tool exchange, even if only one
+   // human user remains after client-side trimming or an identity s
 ```
 
-**File**: `frontend/.gitignore` (added, +10/-0)
+**File**: `examples/magpie-memory-plugin/config.mjs` (modified, +7/-1)
 ```diff
-@@ -0,0 +1,10 @@
-+# Shared source, not a Python build artifact.
-+!/packages/lib/
-+
-+node_modules/
-+dist/
-+doc_build/
-+.rspress/
-+.rspress-cache/
-+*.tsbuildinfo
-+*.tgz
+@@ -70,14 +70,20 @@ export async function loadConfig(env = process.env, options = {}) {
+   if (!Array.isArray(nativeAgents) || nativeAgents.some((agent) => typeof agent !== "string" || !agent.trim())) {
+     throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
+   }
++  const captureWithoutSession = options.captureWithoutSession ?? scoped?.captureWithoutSession ?? file.plugin?.captureWithoutSession;
++  if (captureWithoutSession != null && typeof captureWithoutSession !== "boolean") {
++    throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
++  }
+   // Host options may tune behavior, never connection credentials or identity.
+   const allowed = ["autoRecall", "autoCapture", "mcpEnabled", "recallMaxTokens", "recallContextTimeoutMs"];
+   const overrides = Object.fromEntries(Object.entries(options || {}).filter(([key]) => allowed.includes(key)));
++  // Preserve Magpie's strict boolean validation and nullish fallback before resolving the schema default.
++  if (captureWithoutSession != null) overrides.captureWithoutSession = captureWithoutSession;
+   const settingsFile = { ...file, plugin: { ...file.plugin, magpie: { ...scoped, ...overrides } } };
+   const { settings, configured, sources } = resolveSettings("magpie", { env: {}, cliFile: settingsFile });
+   if (!configured.has("mcpEnabled")) settings.mcpEnabled = false;
+   if (!configured.has("autoCapture")) settings.autoCapture = true;
+-  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 700;
++  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 2000;
+   const connection = resolveConnection("magpie", { env: { OPENVIKING_CREDENTIAL_SOURCE: "cli" }, files });
+   const peerId = resolvePluginPeerId({ settings, configured, sources, credentials: connection, env: {} });
+   const authorization = clientAuthorization(file);
+```
+
+**File**: `examples/magpie-memory-plugin/conversation.mjs` (modified, +3/-2)
+```diff
+@@ -104,7 +104,7 @@ export function memoryBlock(memory) {
+ }
+ 
+ /** Only full, client-owned histories have replayable message positions. */
+-export function describeConversation(body, protocol) {
++export function describeConversation(body, protocol, { allowNativeContext = false } = {}) {
+   if (!object(body)) return null;
+   const encoded = JSON.stringify(body);
+   if (Buffer.byteLength(encoded) > 2 * 1024 * 1024) return null;
+@@ -122,7 +122,8 @@ export function describeConversation(body, protocol) {
+   if (!Array.isArray(messages) || !messages.length || messages.length > 2000 || !messages.every(object)) return null;
+   // Tool results and assistant quotations may contain docs describing these
+   // markers. They are data, not evidence of an installed memory plugin.
+-  if (hasNativeContext(body, protocol)) return null;
++  // Capture may parse native-owned history solely to resolve its cleanup scope.
++  if (!allowNativeContext && hasNativeContext(body, protocol)) return null;
+   const exchanges = conversationExchanges(messages, protocol);
+   const users = exchanges.filter((exchange) => !exchange.auxiliary).map((exchange) => exchange.start);
+   if (!users.length) return null;
 ```
 
 ---
 
-### Incident Patch 2: `3e0c9dcc` (2026-11-04)
-**Commit Message**: feat(ui): restore the reviewed ScopeSwitcher API and package entry (#7051)
+### Incident Patch 2: `2fc2f725` (2026-11-05)
+**Commit Message**: refactor(ui): give every public directory an index.ts entry and narrow the root exports (#7066)
 
-* feat(ui): restore the reviewed ScopeSwitcher API and package entry
+* refactor(ui): give every public directory an index.ts entry and narrow the root exports
 
-Restore the scope-switcher component removed together with the other
-placeholder APIs, on top of the current reviewed contract:
+Each component and module directory now exposes a single `index.ts`
+barrel, and the build, the package exports and the root entry all point
+at it instead of at the same-named implementation file. This makes the
+directory the unit of the public API: renaming an implementation file no
+longer changes the published entry, and the declaration output is
+`dist/<分类>/<目录>/index.d.ts`.
 
-- two level shapes discriminated by `kind`: a fixed level that only shows
-  the current value, and a selectable level that renders a trigger and panel
-- a controlled `visible` / `onVisibleChange` pair, so each host decides when
-  the panel closes instead of the component closing it on select
-- `renderPanel` receives the rendered `search` and `list` blocks and owns
-  everything else in the panel; `renderOption` receives the default row
-  content first, so hosts can append without rebuilding the row
-- search visibility is decided internally by the loaded count or `total`
-  against `SCOPE_SWITCHER_SEARCH_THRESHOLD`; no switch is exposed
-- paging is left to the host through `onScroll` metrics
+Narrow the root entry at the same time. `@openviking/react` now exports
+each component and its main Props type only — `FileTreeProps`,
+`ScopeSwitcherProps` and so on. Row types, option types, handles and
+label bags are reachable from the `components/<component>` and
+`modules/<module>` subpaths, not from the root, so the root stays a short
+list of the things most consumers reach for.
 
-Ship the original placeholder, scoped and aggregate styles, package and
-build entries, the shared demo and bilingual documentation.
+Record the rule in the package agent guide and in the package README, and
+restate it in both quick-start pages.
 
-The view is still a placeholder; real rendering is future implementation
-work.
+* fix(ui): keep FilePreview out of the root entry so the optional peer stays optional
 
-* docs(ui): a
+Review follow-up. Adding `FilePreview` to the
 
-**File**: `frontend/docs/docs/_demos/scope-switcher-basic.tsx` (added, +6/-0)
+**File**: `frontend/AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+import { ScopeSwitcher } from '@openviking/react/components/scope-switcher';
-+import '@openviking/react/components/scope-switcher/style.css';
+@@ -50,6 +50,7 @@
+ 
+ - JS/TS 文件（含 JSX、TSX）每个文件最多 200 行，不计空行和纯注释行，由 lint 的 `max-lines` 规则检查。
+ - 按变更选择验证：纯文字改动检查格式、链接和差异；类型、实现或构建配置改动运行 workspace 的格式检查、类型检查和完整构建。命令见 README，CI 环境见 [公共构建 action](../.github/actions/build-ui/action.yml)。
++- 格式化与检查只针对本次改动的文件：在 `frontend/` 下执行 `npm run lint -- <改动文件>` 或 `npx prettier --write <改动文件>`，不要用 `--write .`、`--check .` 等扫描整个目录的写法。仓库根与 `frontend/` 存在同名目录（`docs/`、`README.md`、`AGENTS.md`），从错误的工作目录用相对路径会改到本仓库无关的产品文档；格式化前确认工作目录，并检查 `git status` 里没有出现预期之外的文件。
+ - 用户可见的行为或样式改动，在浏览器中运行构建后的文档并实际操作示例，检查相关的主题、窄屏和失败状态；截图后查看图片，构建成功本身不能证明页面可用。
+ - 修改包导出、peer dependencies、资源或打包策略时，从真实打包产物验证消费者，包括声明支持的 React 版本，并检查声明、CSS 与 SVG 能在 workspace 外解析；文档开发模式不能代替独立消费验证。
+ - 修改部署时，验证合并后主站页面仍存在，并检查 UI 深链及静态资源。线上尚未发布或外部检查尚未结束时，报告实际状态。
+```
+
+**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ Keep application-specific workflows and authentication in the application layer.
+ 
+ ## Public entries
+ 
+-The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
++The root `@openviking/react` entry currently exports `FileTree`, `Tui`, `ScopeSwitcher`, `AgentConnect`, and the four business module placeholders with their main Props types. `FilePreview` is available from the `components/file-preview` subpath only, because its types depend on the optional `@ark-design/ui`. Subtypes — row types, option types, handles and label bags — always come from the subpaths. `@openviking/react/icons` provides five file-type icons.
+ 
+ There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
+ 
+```
+
+**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ This example uses the public module entries and the aggregate module stylesheet.
+ 
+ ## Import and styles
+ 
+-Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies, their Props and their Labels types are also exported from `@openviking/react`.
++Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies and their main Props types are also exported from `@openviking/react`; subtypes such as Labels come from the subpath only.
+ 
+ JavaScript does not load CSS. Import `@openviking/react/modules/<module>/style.css` for one module, `@openviking/react/modules/style.css` for all modules, or `@openviking/react/style.css` for the full library. Each stylesheet works independently. There is no aggregate `@openviking/react/modules` JavaScript entry.
+ 
+```
+
+**File**: `frontend/docs/docs/zh/guide/getting-started.mdx` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ workspace 开发插件会在文档服务器启动前运行 Rslib watch。文档
+ 
+ ## 公开入口
+ 
+-根入口 `@openviking/react` 当前导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。`@openviking/react/icons` 提供五种文件类型图标。
++根入口 `@openviking/react` 当前导出 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件及其主 Props 类型；`FilePreview` 只从 `components/file-preview` 子路径导出，因为它的类型依赖可选的 `@ark-design/ui`。行类型、选项类型、句柄与文案包等子类型一律从子路径导入。`@openviking/react/icons` 提供五种文件类型图标。
+ 
+ 没有 `components` 或 `modules` 分类聚合 JavaScript 入口。业务占位组件使用独立的 `modules/<模块>` 入口：
+ 
+```
+
+**File**: `frontend/docs/docs/zh/modules/index.mdx` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@
+ 
+ ## 导入与样式
+ 
+-从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体、Props 与 Labels 类型也一并从根入口 `@openviking/react` 导出。
++从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体与主 Props 类型也从根入口 `@openviking/react` 导出；Labels 等子类型只从子路径导入。
+ 
+ JavaScript 不加载 CSS。单模块使用 `@openviking/react/modules/<模块>/style.css`，全部模块使用 `@openviking/react/modules/style.css`，整库使用 `@openviking/react/style.css`，每个样式入口均可独立消费。没有 `@openviking/react/modules` 分类聚合 JavaScript 入口。
+ 
+```
+
+**File**: `frontend/packages/react/AGENTS.md` (modified, +8/-0)
+```diff
+@@ -2,6 +2,14 @@
+ 
+ 适用于 `frontend/packages/react/**`，同时遵循 [Frontend Agent Guide](../../AGENTS.md) 和更深目录的规则。
+ 
++## 公开导出
 +
-+export default function ScopeSwitcherBasic() {
-+  return <ScopeSwitcher />;
++- 目录以 `index.ts` 作为唯一出口，包根入口 `src/index.ts` 只从这里取。
++- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），作为最常用的快捷方式。
++- 子类型、回调参数类型、行与选项等数据结构、句柄与文案包，一律只从 `components/<组件>`、`modules/<模块>` 子路径导出。根入口不聚合它们。
++- 依赖可选 peer 的组件不进入根入口：`FilePreview` 的类型引用 `@ark-design/ui`，放进根声明会让该可选 peer 对只用其他根导出的消费者变成必需。
++- 新增或调整导出时，同步维护 `package.json` 的 `exports`、Rslib 入口与声明路径，并从真实打包产物验证根入口与各子路径都能解析。
++
+ ## useEffect 使用门槛
+ 
+ - 新增或修改组件、自定义 Hook 时，非必要不使用 `useEffect`。只有需要在渲染提交后，将组件与明确的外部系统保持同步，且更直接的声明式 API、事件处理或已有专用 Hook 无法满足时，才允许使用。
+```
+
+**File**: `frontend/packages/react/README.md` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯
+ 
+ ## 公开入口与样式
+ 
+-- 根入口导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件及其公开类型；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。具体组件使用 `components/<组件>` 子路径；业务模块使用 `modules/<模块>` 子路径，当前导出占位组件与类型，真实能力迁入后再导出 Hook。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
++- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），当前为 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件；行类型、选项类型、句柄与文案包等子类型只从 `components/<组件>`、`modules/<模块>` 子路径导出。`FilePreview` 不在根入口：它的类型依赖可选的 `@ark-design/ui`，放进根声明会让该 peer 变成必需。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
+ - 组件只提供明确列出的分层子路径，不保留旧路径别名。
+ - JS 入口共享实现，不隐式加载 CSS。整包、组件集合与单模块样式由同一份源码构建，选择所需范围导入即可。
+ 
+```
+
+**File**: `frontend/packages/react/package.json` (modified, +9/-9)
+```diff
+@@ -26,49 +26,49 @@
+       "import": "./dist/index.js"
+     },
+     "./components/file-tree": {
+-      "types": "./dist/components/file-tree/file-tree.d.ts",
++      "types": "./dist/components/file-tree/index.d.ts",
+       "import": "./dist/components/file-tree.js"
+     },
+     "./components/file-tree/style.css": "./dist/components/file-tree/style.css",
+     "./components/file-preview": {
+-      "types": "./dist/components/file-preview/file-preview.d.ts",
++      "types": "./dist/components/file-preview/index.d.ts",
+       "import": "./dist/components/file-preview.js"
+     },
+     "./components/file-preview/style.css": "./dist/components/file-preview/style.css",
+     "./components/tui": {
+-      "types": "./dist/components/tui/tui.d.ts",
++      "types": "./dist/components/tui/index.d.ts",
+       "import": "./dist/components/tui.js"
+     },
+     "./components/tui/style.css": "./dist/components/tui/style.css",
+     "./components/scope-switcher": {
+-      "types": "./dist/components/scope-switcher/scope-switcher.d.ts",
++      "types": "./dist/components/scope-switcher/index.d.ts",
+       "import": "./dist/components/scope-switcher.js"
+     },
+     "./components/scope-switcher/style.css": "./dist/components/scope-switcher/style.css",
+     "./components/agent-connect": {
+-      "types": "./dist/components/agent-connect/agent-connect.d.ts",
++      "types": "./dist/components/agent-connect/index.d.ts",
+       "import": "./dist/components/agent-connect.js"
+     },
+     "./components/agent-connect/style.css": "./dist/components/agent-connect/style.css",
+     "./style.css": "./dist/style.css",
+     "./components/style.css": "./dist/components/style.css",
+     "./modules/file-browser": {
+-      "types": "./dist/modules/file-browser/file-browser.d.ts",
++      "types": "./dist/modules/file-browser/index.d.ts",
+       "import": "./dist/modules/file-browser.js"
+     },
+     "./modules/file-browser/style.css": "./dist/modules/file-browser/style.css",
+     "./modules/console": {
+-      "types": "./dist/modules/console/console.d.ts",
++      "types": "./dist/modules/console/index.d.ts",
+       "import": "./dist/modules/console.js"
+     },
+     "./modules/console/style.css": "./dist/modules/console/style.css",
+     "./modules/task-center": {
+-      "types": "./dist/modules/task-center/task-center.d.ts",
++      "types": "./dist/modules/task-center/index.d.ts",
+       "import": "./dist/modules/task-center.js"
+     },
+     "./modules/task-center/style.css": "./dist/modules/task-center/style.css",
+     "./modules/user-usage": {
+-      "types": "./dist/modules/user-usage/user-usage.d.ts",
++      "types": "./dist/modules/user-usage/index.d.ts",
+       "import": "./dist/modules/user-usage.js"
+     },
+     "./modules/user-usage/style.css": "./dist/modules/user-usage/style.css",
+```
+
+---
+
+### Incident Patch 3: `425b0d76` (2026-11-05)
+**Commit Message**: refactor(ui): move AgentConnect into components (#7065)
+
+* refactor(ui): move AgentConnect into components
+
+AgentConnect is a pure view: the design has tabs, a list and a detail
+pane, with no input, no form and no data of its own. It belongs with the
+other reusable views rather than with the business modules, which are
+defined as Hook plus composed view that loads its own data.
+
+Move the directory from modules/ to components/ and give it a real
+contract in place of the shared module placeholder:
+
+- `tabs` / `activeTabId` for the top tabs
+- `items` / `selectedId` for the left list
+- `detail` for the right pane: title, description, tags, content and the
+  text the copy control writes
+- `labels` for the instructions heading, copy control and empty state
+- `onTabChange` / `onSelect` / `onCopy` report intent only
+
+Everything the old module owned stays with the host: where the catalog
+comes from, how the body is rendered, permissions, analytics and routing.
+
+Update the package and build entries, the aggregate stylesheets, the
+navigation, the component indexes and the bilingual documentation to the
+new path. The placeholder view is unchanged.
+
+`AgentConnectProps` omits `onCopy` from the d
+
+**File**: `frontend/AGENTS.md` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@
+ - 按 [README 的目标目录](./README.md#target-layout) 放置资产。React 包发布名为 `@openviking/react`，Vue 落地后独立交付为 `@openviking/vue`。源码边界可以先在 workspace 内共享，通过子路径提供消费入口。有独立安装、依赖隔离或独立发布节奏的需求时再拆包。
+ - 跨框架纯函数、资源类型和数据转换放在 `packages/lib/`。OpenViking 请求与服务适配器放在 `packages/client/`。仅供单个模块使用的工具留在模块内。仅随 React 使用的共享能力随 React 包交付。跨模块公共 Hook 有真实实现后再从 `@openviking/react/hooks` 开放，组件不能使用取数或缓存 Hook。出现独立于框架的消费需求时，再为 `lib` 定义框架无关的公开包入口，并在未安装 React 或 Vue 的项目中验证。
+ - 图标的 SVG 源文件、来源与授权放在 `packages/icons/`。React 图标组件放在 `packages/react/src/icons/`，随 React 包从 `@openviking/react/icons` 交付。各框架的封装直接消费同一份 SVG 源文件。构建产物包含图标实现和类型声明，消费者通过 React 包一次安装。
+-- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供五个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
++- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供四个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
+ - 每个组件、业务模块或区块独占一个 kebab-case 目录，入口文件与目录同名。实现、CSS Modules、测试及私有子组件就近放置，例如 `components/<模块>/<模块>.tsx` 和同目录的 `<模块>.module.css`。模块私有的 Hook、类型和工具留在模块内，不提前提升到公共目录。
+ - 根入口与子路径分别维护公开导出；组件子路径为 `@openviking/react/components/<组件>`，业务模块为 `@openviking/react/modules/<模块>`，从模块入口分别导出 Hook 与组合视图。不提供 `components`、`modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放；各入口共享实现，避免重复创建 Provider、Context 或状态对象。同步维护 Rslib 入口和声明路径。
+ - 目录按实际内容创建，不预建空目录，也不为单个简单模块增加不必要的转发层。
+```
+
+**File**: `frontend/README.md` (modified, +2/-2)
+```diff
+@@ -30,8 +30,8 @@ npm run preview        # Serve the built documentation at /ui/
+ ## Layout
+ 
+ - `packages/react`: `@openviking/react` package, Rslib library build with declaration generation, CSS Modules, and React peer dependencies.
+-- `packages/react/src/components/{file-tree,file-preview}`: file-tree interaction and tabbed file-preview views with public props types. See the [module map](./packages/react/README.md#模块目录).
+-- `packages/react/src/modules/{file-browser,console,agent-connect,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
++- `packages/react/src/components/{file-tree,file-preview,tui,scope-switcher,agent-connect}`: reusable views with public props types. file-tree and file-preview are implemented; tui, scope-switcher and agent-connect publish their reviewed contracts with a placeholder view. See the [module map](./packages/react/README.md#模块目录).
++- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
+ - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
+ - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
+ - `docs/docs/en` and `docs/docs/zh`: matching English and Simplified Chinese pages, with localized navigation.
+```
+
+**File**: `frontend/docs/docs/_demos/agent-connect-basic.tsx` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++import { AgentConnect } from '@openviking/react/components/agent-connect';
++import '@openviking/react/components/agent-connect/style.css';
++
++export default function AgentConnectBasic() {
++  return (
++    <AgentConnect
++      tabs={[{ id: 'mainstream', label: 'Mainstream agents' }]}
++      activeTabId="mainstream"
++      items={[]}
++    />
++  );
 +}
+```
+
+**File**: `frontend/docs/docs/_demos/agent-connect-placeholder.tsx` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-import { AgentConnect } from '@openviking/react/modules/agent-connect';
+-import '@openviking/react/modules/agent-connect/style.css';
+-
+-export default function AgentConnectPlaceholder() {
+-  return (
+-    <div lang="en">
+-      <AgentConnect />
+-    </div>
+-  );
+-}
+```
+
+**File**: `frontend/docs/docs/_demos/modules-basic.tsx` (modified, +0/-2)
+```diff
+@@ -1,6 +1,5 @@
+ import { FileBrowser } from '@openviking/react/modules/file-browser';
+ import { Console } from '@openviking/react/modules/console';
+-import { AgentConnect } from '@openviking/react/modules/agent-connect';
+ import { TaskCenter } from '@openviking/react/modules/task-center';
+ import { UserUsage } from '@openviking/react/modules/user-usage';
+ import '@openviking/react/modules/style.css';
+@@ -10,7 +9,6 @@ export default function ModulesBasic() {
+     <div className="ov-demo-modules" lang="en">
+       <FileBrowser />
+       <Console />
+-      <AgentConnect />
+       <TaskCenter />
+       <UserUsage />
+     </div>
+```
+
+**File**: `frontend/docs/docs/en/components/agent-connect.mdx` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++# AgentConnect
++
++An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and the detail, and reports switch and copy intent.
++
++This is a placeholder component: it renders a fixed-size empty shell and consumes no props, so hosts can integrate against the published package before the view is migrated. The props contract below is the agreed shape; the placeholder implementation will be replaced.
++
++## Basic usage
++
++```tsx file="../../_demos/agent-connect-basic.tsx" preview
++
++```
++
++The placeholder is 960 × 640, matching the full-page view.
++
++## Structure
++
++The view has three parts:
++
++- **Tabs** across the top, declared by the host through `tabs` and `activeTabId`.
++- **List** on the left, the items of the active tab through `items`.
++- **Detail** on the right, the selected item's body through `detail`.
++
++The component holds no catalog and no body content. Where the items come from, how the body is rendered and what a copy means all belong to the host.
++
++## Props
++
++### AgentConnectProps
++
++| Property      | Type                             | Default  | Description                                                                                                                                 |
++| ------------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
++| `tabs`        | `readonly AgentConnectTab[]`     | Required | Tabs at the top.                                                                                                                            |
++| `activeTabId` | `string`                         | Required | Active tab id, owned by the host.                                                                                                           |
++| `items`       | `readonly AgentConnectItem[]`    | Required | Items of the active tab.                                                                                                                    |
++| `selectedId`  | `string`                         | —        | Selected item id, owned by the host.                                                                                                        |
++| `detail`      | `AgentConnectDetail`             | —        | Detail of the selected item; no body when omitted.                                                                                          |
++| `labels`      | `AgentConnectLabels`             | English  | Replaceable copy.                                                                                                                           |
++| `onTabChange` | `(tabId: string) => void`        | —        | Invoked when a tab is selected.                                                                                                             |
++| `onSelect`    | `(item) => void`                 | —        | Invoked when an item is selected.                                                                                                           |
++| `onCopy`      | `(text: string) => void`         | —        | Invoked after a successful copy, for analytics or extra feedback; the component performs the write. The control still renders when omitted. |
++| Other props   | `HTMLAttributes<HTMLDivElement>` | —        | Standard div attributes; `children` is excluded.                                                                                            |
++
++### AgentConnectTab
++
++| Property | Type     | Description     |
++| -------- | -------- | --------------- |
++| `id`     | `string` | Unique tab key. |
++| `label`  | `string` | Tab label.      |
++
++### AgentConnectItem
++
++| Property      | Type        | Description                               |
++| ------------- | ----------- | ----------------------------------------- |
++| `id`          | `string`    | Unique item key.                          |
++| `name`        | `string`    | Item name.                                |
++| `description` | `string`    | One-line summary shown in the list.       |
++| `icon`        | `ReactNode` | Item icon, which can be an image or node. |
++
++### AgentConnectDetail
++
++| Property      | Type                | Description                                                     |
++| ------------- | ------------------- | --------------------------------------------------------------- |
++| `title`       | `string`            | Detail title, usually the selected item's name.                 |
++| `icon`        | `ReactNode`         | Icon shown next to the title.                                   |
++| `description` | `string`            | Description under the title.                                    |
++| `tags`        | `readonly string[]` | Tags under the title, for example "SDK" or "Overseas".          |
++| `content`     | `ReactNode`         | Body content, 
 ```
 
 **File**: `frontend/docs/docs/en/components/index.mdx` (modified, +4/-0)
 ```diff
-@@ -16,6 +16,10 @@ A tabbed file-preview view with header actions, tab switching, and plain-text pr
+@@ -20,6 +20,10 @@ The reviewed API for command records, results and input. The current view is a p
  
- The reviewed API for command records, results and input. The current view is a placeholder; command completion, shared CLI metadata and result rendering will be implemented later.
+ A header scope breadcrumb. The host declares the levels and their options; the component renders the triggers, dropdown panels, option list and search, and reports switch intent.
  
-+### [ScopeSwitcher](./scope-switcher)
++### [AgentConnect](./agent-connect)
 +
-+A header scope breadcrumb. The host declares the levels and their options; the component renders the triggers, dropdown panels, option list and search, and reports switch intent.
++An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and detail, and reports switch and copy intent.
 +
  ### [Icons](./icons)
  
  Five file-type icons with configurable image dimensions and accessible labels: audio, PDF, presentation, video, and word-processing files.
 ```
 
-**File**: `frontend/docs/docs/en/components/scope-switcher.mdx` (added, +213/-0)
+**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,213 @@
-+# ScopeSwitcher
-+
-+A scope breadcrumb for the header. The host declares how many levels exist, what they are called and where the options come from; the component renders the breadcrumb triggers and dropdown panels, and reports search, switch and action intent.
-+
-+This is a placeholder component: it renders a fixed-size empty shell and consumes no props, so hosts can integrate against the published package before the view is migrated. The props contract below is final; the placeholder implementation will be replaced.
-+
-+## Basic usage
-+
-+```tsx file="../../_demos/scope-switcher-basic.tsx" preview
-+
-+```
-+
-+The placeholder is 640 × 40, matching the header scope bar.
-+
-+## Levels
-+
-+The component knows nothing about "library / data space / user". It renders the `levels` array left to right, joined by `/`. One level is a single picker; three levels are a full breadcrumb:
-+
-+```tsx
-+<ScopeSwitcher
-+  levels={[
-+    {
-+      kind: 'selectable',
-+      key: 'library',
-+      ariaLabel: 'Switch library',
-+      selectedLabel: library.name,
-+      options,
-+      selectedId,
-+      visible: libraryOpen,
-+      onVisibleChange: setLibraryOpen,
-+      onSelect,
-+    },
-+    {
-+      kind: 'selectable',
-+      key: 'account',
-+      ariaLabel: 'Switch data space',
-+      selectedLabel: accountId,
-+      options,
-+      selectedId,
-+      visible: accountOpen,
-+      onVisibleChange: setAccountOpen,
-+      onSelect,
-+    },
-+    {
-+      kind: 'selectable',
-+      key: 'user',
-+      ariaLabel: 'Switch user',
-+      selectedLabel: userId,
-+      options,
-+      selectedId,
-+      visible: userOpen,
-+      onVisibleChange: setUserOpen,
-+      onSelect,
-+    },
-+  ]}
-+/>
-+```
-+
-+Each level's search keyword, paging and selection are owned by the host; the component only renders them and reports intent. It has no built-in paging rule: the first screen is prepared when `onVisibleChange` reports the panel opening, and whether to load the next page is the host's call inside `onScroll`.
-+
-+### Fixed and selectable levels
-+
-+`kind` splits a level into two forms, and both can be mixed in one row:
-+
-+- `kind: 'selectable'` — renders an expandable trigger and a dropdown panel; needs `options` and `onSelect`.
-+- `kind: 'fixed'` — shows the current value only, with no expand affordance and no click target, and takes no option or panel fields.
-+
-+The host picks the form from whether the current scope can be switched, without fabricating an empty option list to say "not switchable":
-+
-+```tsx
-+// Personal terminal: library and data space follow the sign-in, only the user switches
-+levels={[
-+  { kind: 'fixed', key: 'library', ariaLabel: 'Library', selectedLabel: library.name },
-+  { kind: 'fixed', key: 'account', ariaLabel: 'Data space', selectedLabel: accountId },
-+  { kind: 'selectable', key: 'user', ariaLabel: 'Switch user', selectedLabel: userId, options, selectedId, visible: userOpen, onVisibleChange: setUserOpen, onSelect },
-+]}
-+```
-+
-+On a `kind: 'selectable'` level, `disabled` means something else: it could be switched but currently cannot, so the trigger renders dimmed instead of dropping its expand affordance.
-+
-+The level count can also vary with the sign-in method. When the host cannot resolve a level yet, it simply leaves it out: the component neither renders nor reserves space for it:
-+
-+```tsx
-+// Only the data space is available, so declare two levels
-+levels={[dataSpaceLevel, userLevel]}
-+```
-+
-+## Panels
-+
-+Each level maps to one dropdown panel. The component owns three things only: the search box, the option list and the loading, empty and failed states. Everything else is implemented by the host's `renderPanel`.
-+
-+`renderPanel` receives `{ search, list }`: `search` is the search box and `list` is the list with its states. The host can place them separately or use only one. Panel visibility is controlled by the host through `visible`, so after an in-panel action the host simply sets `visible` to `false`:
-+
-+```tsx
-+{
-+  kind: 'selectable',
-+  key: 'library',
-+  selectedLabel: library.name,
-+  options,
-+  selectedId: library.id,
-+  visible,
-+  onVisibleChange: setVisible,
-+  onSelect,
-+  renderPanel: ({ search, list }) => (
-+    <>
-+      <header>
-+        <span>All libraries</span>
-+        <Button onClick={() => { setVisible(false); onCreate(); }}>Create</Button>
-+      </header>
-+      {search}
-+      {list}
-+      <footer>
-+        <Link to={settingsPath} onClick={() => setVisible(false)}>Library settings</Link>
-+        <a href={billingUrl}>Billing</a>
-+        <button onClick={onUnsubscribe}>Unsubscribe</button>
-+      </footer>
-+    </>
-+  ),
-+  renderOption: (content, option) => <>{content}<LibraryRowMenu option={option} /></>,
-+}
-+```
-+
-+The data space and user panels work the same way, each rendering its own "Select …" heading and "Manage spaces / Manage users" entry. A host that wants to turn the typed value into a new option can append such an entry under `list`.
-+
-+Why these entries 
-```
-
-**File**: `frontend/docs/docs/zh/components/index.mdx` (modified, +4/-0)
-```diff
-@@ -16,6 +16,10 @@
+@@ -2,7 +2,7 @@
  
- 已确认的命令记录、结果与输入区 API。当前视图仍为占位实现；命令补全、CLI 共享元数据与结果渲染后续实现。
+ OpenViking UI provides React foundations for building AI application interfaces on OpenViking, the context database for AI agents. The workspace includes Rslib builds, bilingual documentation, layered directory conventions, and scoped styles. Applications provide business UI, data, authentication, and workflow orchestration.
  
-+### [ScopeSwitcher 作用域选择](./scope-switcher)
-+
-+头部作用域面包屑。宿主声明层级与选项；组件渲染触发器、下拉面板、选项列表与搜索，并上报切换意图。
-+
- ### [图标](./icons)
+-The package provides FileTree, FilePreview, five file-type icons, and five business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
++The package provides FileTree, FilePreview, Tui, ScopeSwitcher, AgentConnect, five file-type icons, and four business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
  
- 提供音频、PDF、演示文稿、视频与文字文档五种文件类型图标，支持自定义图片尺寸与无障碍描述。
-```
-
-**File**: `frontend/docs/docs/zh/components/scope-switcher.mdx` (added, +213/-0)
-```diff
-@@ -0,0 +1,213 @@
-+# ScopeSwitcher 作用域选择
-+
-+头部作用域面包屑。宿主声明有几个层级、各自叫什么、选项从哪来；组件渲染面包屑触发器与下拉面板，并上报搜索、切换与动作意图。
-+
-+当前是占位组件：只渲染一个固定尺寸的空壳，不消费 props，宿主可先对着已发布的包开发，真实视图后续迁入。下方的 props 契约是最终形态，占位实现会被替换。
-+
-+## 基础用法
-+
-+```tsx file="../../_demos/scope-switcher-basic.tsx" preview
-+
-+```
-+
-+占位尺寸为 640 × 40，对齐头部作用域条。
-+
-+## 层级
-+
-+组件不知道「库 / 数据空间 / 用户」这些语义，只按 `levels` 数组顺序从左到右渲染，用 `/` 分隔。声明一层就是单个选择器，声明三层就是完整面包屑：
-+
-+```tsx
-+<ScopeSwitcher
-+  levels={[
-+    {
-+      kind: 'selectable',
-+      key: 'library',
-+      ariaLabel: '切换库',
-+      selectedLabel: library.name,
-+      options,
-+      selectedId,
-+      visible: libraryOpen,
-+      onVisibleChange: setLibraryOpen,
-+      onSelect,
-+    },
-+    {
-+      kind: 'selectable',
-+      key: 'account',
-+      ariaLabel: '切换数据空间',
-+      selectedLabel: accountId,
-+      options,
-+      selectedId,
-+      visible: accountOpen,
-+      onVisibleChange: setAccountOpen,
-+      onSelect,
-+    },
-+    {
-+      kind: 'selectable',
-+      key: 'user',
-+      ariaLabel: '切换用户',
-+      selectedLabel: userId,
-+      options,
-+      selectedId,
-+      visible: userOpen,
-+      onVisibleChange: setUserOpen,
-+      onSelect,
-+    },
-+  ]}
-+/>
-+```
-+
-+每个层级的搜索关键字、分页与选中项都由宿主持有，组件只负责渲染并上报意图。组件不内置分页规则：首屏由 `onVisibleChange` 通知宿主准备，是否加载下一页由宿主的 `onScroll` 自己判断。
-+
-+### 固定层级与可切换层级
-+
-+每个层级按 `kind` 分两种形态，同一行里可以混用：
-+
-+- `kind: 'selectable'` —— 渲染可展开的触发器与下拉面板，需要 `options` 与 `onSelect`。
-+- `kind: 'fixed'` —— 只展示当前值，没有展开箭头、不可点击，不接收任何选项或面板字段。
-+
-+宿主按当前作用域是否可切换来选择形态，不需要伪造空选项列表来表达「不可切换」：
-+
-+```tsx
-+// 个人终端：库与数据空间跟随登录态固定，只有用户可切换
-+levels={[
-+  { kind: 'fixed', key: 'library', ariaLabel: '库', selectedLabel: library.name },
-+  { kind: 'fixed', key: 'account', ariaLabel: '数据空间', selectedLabel: accountId },
-+  { kind: 'selectable', key: 'user', ariaLabel: '切换用户', selectedLabel: userId, options, selectedId, visible: userOpen, onVisibleChange: setUserOpen, onSelect },
-+]}
-+```
-+
-+`kind: 'selectable'` 上的 `disabled` 表达的是另一种语义：本可以切换，只是当前不可用，因此渲染置灰的触发器而不是省略展开箭头。
-+
-+层数也可以随登录方式变化。宿主暂时解析不到某一层时直接不声明它，组件既不渲染也不占位：
-+
-+```tsx
-+// 只能拿到数据空间时，只声明两层
-+levels={[dataSpaceLevel, userLevel]}
-+```
-+
-+## 面板
-+
-+每个层级对应一个下拉面板。组件只负责三样：搜索框、选项列表、加载/空/失败三态。其余内容全部由宿主的 `renderPanel` 实现。
-+
-+`renderPanel` 收到 `{ search, list }`：`search` 是搜索框，`list` 是列表与三态。宿主可以分别摆放、也可以只放其中一块。面板何时关闭由宿主控制（`visible` 受控），所以在面板里执行完动作后，宿主自己把 `visible` 置为 `false` 即可：
-+
-+```tsx
-+{
-+  kind: 'selectable',
-+  key: 'library',
-+  selectedLabel: library.name,
-+  options,
-+  selectedId: library.id,
-+  visible,
-+  onVisibleChange: setVisible,
-+  onSelect,
-+  renderPanel: ({ search, list }) => (
-+    <>
-+      <header>
-+        <span>全部库</span>
-+        <Button onClick={() => { setVisible(false); onCreate(); }}>创建</Button>
-+      </header>
-+      {search}
-+      {list}
-+      <footer>
-+        <Link to={settingsPath} onClick={() => setVisible(false)}>库设置</Link>
-+        <a href={billingUrl}>查看账单</a>
-+        <button onClick={onUnsubscribe}>退订</button>
-+      </footer>
-+    </>
-+  ),
-+  renderOption: (content, option) => <>{content}<LibraryRowMenu option={option} /></>,
-+}
-+```
-+
-+数据空间与用户面板同理，各自渲染自己的「选择 XXX」标题与「管理空间 / 管理 User」入口。需要把当前输入直接当作新选项的宿主，也可以在 `list` 下方追加这样的入口。
-+
-+为什么不在组件里定义这些入口：三个宿主的「库设置」「查看账单」「退订」「管理空间」在跳转目标、权限与可用性上完全不同，结构化字段只能不断长出新属性（`href`、`trailingIcon`、`destructive`、`disabled`……）来逼近，最终把页面职责搬进组件。而且三者的底部形态本身就不一样——库是三条纯文字，数据空间和用户是一个带边框的整宽按钮，组件无法用同一个容器表达。
-+
-+- `emptyFallback` / `errorFallback` —— 替换空态与失败态，不传时用内置文案。
-+- `renderOption(content, option)` —— 在默认行内容 `content` 上追加或替换，例如行尾「更多」菜单、失效态标记。
-+
-+面板可见性受控：宿主用 `visible` 决定开合，`onVisibleChange` 回调时写回。这样「打开面板才取数」「异步切换成功后才关」都能由宿主决定，不必在挂载时就请求所有层级的选项。
-+
-+## 内部推导
-+
-+- 搜索框可见性由组件判断：已加载条数或 `total` 超过 `SCOPE_SWITCHER_SEARCH_THRESHOLD`（10），或 `searchKeyword` 非空时显示。
-+- 命中高亮按 `searchKeyword` 在组件内部计算。
-+- 选中项统一用 `role="listbox"` + `role="option"` + `aria-selected`，触发器带 `aria-haspopup="listbox"` 与 `aria-expanded`。
-+
-+## 属性
-+
-+### ScopeSwitcherProps
-+
-+| 属性     | 类型                             | 默认值 | 说明                               |
-+| -------- | -------------------------------- | ------ | ---------------------------------- |
-+| `levels` | `readonly ScopeSwitcherLevel[]`  | 必填   | 从左到右渲染的层级。               |
-+| `labels` | `ScopeSwitcherLabels`            | 英文   | 可替换文案。                       |
-+| 其余属性 | `HTMLAttributes<HTMLDivElement>` | —      | 标准 div 属性，`children` 已排除。 |
-+
-+### ScopeSwitcherLevel
-+
-+`ScopeSwitcherLevel = ScopeSwitcherFixedLevel | ScopeSwitcherSelectableLevel`，按 `kind` 判别。
-+
-+公共字段（`ScopeSwitcherLevelBase`）：
-+
-+| 属性            | 类型                      | 说明                                                                  |
-+| --------------- | ------------------------- | --------------------------------------------------------------------- |
-+| `kind`          | `'fixed' \| 'selectable'` | `'fixed'` 只展示值、不渲染下拉；`'selectable'` 渲染触发器与面板。     |
-+| `key`           | `string`                  | 稳定标识，例如 `library`、`account`、`user`。                         |
-+| `ariaLabel`     | `string`                  | 触发器的无障碍名称，只写入 `aria-label`，不出现在界面上；不传则不
-```
-
-**File**: `frontend/docs/rspress.config.ts` (modified, +5/-0)
-```diff
-@@ -56,6 +56,7 @@ export default defineConfig({
-                 { text: 'FileTree', link: '/components/file-tree' },
-                 { text: 'FilePreview', link: '/components/file-preview' },
-                 { text: 'Tui', link: '/components/tui' },
-+                { text: 'ScopeSwitcher', link: '/components/scope-switcher' },
-               ],
-             },
-           ],
-@@ -112,6 +113,10 @@ export default defineConfig({
-                   link: '/zh/components/file-preview',
-                 },
-                 { text: 'Tui 命令控制台', link: '/zh/components/tui' },
-+                {
-+                  text: 'ScopeSwitcher 作用域选择',
-+                  link: '/zh/components/scope-switcher',
-+                },
-               ],
-             },
-           ],
-```
-
-**File**: `frontend/packages/react/README.md` (modified, +10/-9)
-```diff
-@@ -6,15 +6,16 @@ This package inherits the repository's AGPL-3.0-only license. The release workfl
+ ## Run locally
  
- ## 模块目录
+@@ -21,15 +21,15 @@ The workspace development plugin starts Rslib watch before the documentation ser
+ ## Organize application code
  
--| 源码目录                                                           | 公开入口                                    | 职责                                                 |
--| ------------------------------------------------------------------ | ------------------------------------------- | ---------------------------------------------------- |
--| [components/file-tree](./src/components/file-tree/README.md)       | `@openviking/react/components/file-tree`    | 目录树渲染、展开、选中与事件回传                     |
--| [components/file-preview](./src/components/file-preview/README.md) | `@openviking/react/components/file-preview` | 只读预览状态与扩展页签                               |
--| [components/tui](./src/components/tui/README.md)                   | `@openviking/react/components/tui`          | 已确认的命令记录、结果与输入区类型；视图仍为占位实现 |
--| [modules](./src/modules/README.md)                                 | `@openviking/react/modules/<模块>`          | 五个业务模块的占位组件与类型                         |
--| [hooks](./src/hooks/README.md)、[utils](./src/utils/README.md)     | 仅包内使用                                  | 跨模块 Hook 与纯工具                                 |
--
--FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯文本预览、编辑基础；具体限制见各自文档。包还提供五种文件类型图标。
-+| 源码目录                                                               | 公开入口                                      | 职责                                                       |
-+| ---------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
-+| [components/file-tree](./src/components/file-tree/README.md)           | `@openviking/react/components/file-tree`      | 目录树渲染、展开、选中与事件回传                           |
-+| [components/file-preview](./src/components/file-preview/README.md)     | `@openviking/react/components/file-preview`   | 只读预览状态与扩展页签                                     |
-+| [components/tui](./src/components/tui/README.md)                       | `@openviking/react/components/tui`            | 已确认的命令记录、结果与输入区类型；视图仍为占位实现       |
-+| [components/scope-switcher](./src/components/scope-switcher/README.md) | `@openviking/react/components/scope-switcher` | 作用域面包屑的层级、选项、面板与搜索契约；视图仍为占位实现 |
-+| [modules](./src/modules/README.md)                                     | `@openviking/react/modules/<模块>`            | 五个业务模块的占位组件与类型                               |
-+| [hooks](./src/hooks/README.md)、[utils](./src/utils/README.md)         | 仅包内使用                                    | 跨模块 Hook 与纯工具                                       |
-+
-+FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯文本预览、编辑基础；具体限制见各自文档。Tui 与 ScopeSwitcher 已确认公开 API，视图仍为占位实现。包还提供五种文件类型图标。
- 组件通过 props 接收视图数据与状态，通过回调表达用户意图，遵循 [组件目录约定](./src/components/AGENTS.md)。[modules](./src/modules/README.md) 按业务能力规划 Hook 与视图：Hook 负责取数、状态和操作，组合视图将其接入组件。完整页面与产品专属流程由宿主负责，管理后台不在本期范围内。当前 `file-browser`、`console`、`agent-connect`、`task-center` 与 `user-usage` 已提供占位组件、基础 Props / Labels 类型与样式，可先接入布局；业务 Hook、数据加载和联动尚未实现。
+ - `packages/react/src/components/`: reusable views that receive prepared data through props and report intent through callbacks.
+-- `packages/react/src/modules/`: five importable placeholder components; business Hooks and composed interactions will follow.
++- `packages/react/src/modules/`: four importable placeholder components; business Hooks and composed interactions will follow.
+ - `packages/react/src/hooks/` and `utils/`: internal shared logic, without public subpaths.
+ - `docs/docs/en/` and `docs/docs/zh/`: corresponding documentation pages; shared runnable examples belong in `docs/docs/_demos/`.
  
- 模块默认通过共享 Client 消费 OpenViking 原生 API，由 Provider 下发 `baseURL`、headers 等配置，模块或独立 Hook 可通过 `requestOptions` 局部覆盖。标准接入无需逐模块实现 Adapter；非标准网关集中在宿主请求接入层适配。详见[请求约定](./src/modules/README.md#请求契约与默认配置)；Client 与 Provider 当前也尚未实现或导出。
-```
-
-**File**: `frontend/packages/react/package.json` (modified, +5/-0)
-```diff
-@@ -40,6 +40,11 @@
-       "import": "./dist/components/tui.js"
-     },
-     "./components/tui/style.css": "./dist/components/tui/style.css",
-+    "./components/scope-switcher": {
-+      "types": "./dist/components/scope-switcher/scope-switcher.d.ts",
-+      "import": "./dist/components/scope-switcher.js"
-+    },
-+    "./components/scope-switcher/style.css": "./dist/components/scope-switcher/style.css",
-     "./style.css": "./dist/style.css",
-     "./components/style.css": "./dist/components/style.css",
-     "./modules/file-browser": {
-```
-
----
-
-### Incident Patch 3: `7a0ad748` (2026-11-04)
-**Commit Message**: fix(pathlock): 修复账户根锁文件的上下文冲突 (#6972)
-
-Co-authored-by: zhanghe.1216 <@bytedance.com>
-
-**File**: `crates/ragfs/src/core/mountable.rs` (modified, +75/-0)
-```diff
-@@ -1750,6 +1750,81 @@ mod tests {
-         );
-     }
+ Keep application-specific workflows and authentication in the application layer. Module Hooks load data through the shared Client; components do not fetch business data or depend on application routing.
  
-+    #[tokio::test]
-+    async fn account_root_pathlock_sidecar_bypasses_multiwrite_account_resolution() {
-+        use crate::core::{FsContextInner, FS_CTX};
-+        use crate::lock::{
-+            FilesystemPathLockProvider, PathLockConfig, PathLockManager, PathLockProvider,
-+        };
-+        use crate::plugins::LocalFSPlugin;
-+
-+        let primary = tempfile::tempdir().unwrap();
-+        let backup = tempfile::tempdir().unwrap();
-+        let mfs = Arc::new(MountableFS::new());
-+        mfs.register_plugin(LocalFSPlugin::new()).await;
-+        let lock_fs: Arc<dyn FileSystem> = mfs.clone();
-+        let lock_provider: Arc<dyn PathLockProvider> =
-+            Arc::new(FilesystemPathLockProvider::new(lock_fs.clone(), 30.0));
-+        let manager = Arc::new(PathLockManager::new(
-+            lock_fs,
-+            lock_provider,
-+            PathLockConfig::default(),
-+        ));
-+        mfs.set_pathlock_manager(manager.clone()).await;
-+
-+        let mut config = multiwrite_test_config("localfs", "localfs", "/local");
-+        config.params.insert(
-+            "local_dir".to_string(),
-+            ConfigValue::String(primary.path().to_string_lossy().into_owned()),
-+        );
-+        config.backups.as_mut().unwrap().items[0].params = serde_json::json!({
-+            "local_dir": backup.path().to_string_lossy(),
-+        });
-+        mfs.mount(config).await.unwrap();
-+        mfs.mkdir("/local/accountzhanghe", 0o755).await.unwrap();
-+        mfs.mkdir("/local/other", 0o755).await.unwrap();
-+
-+        let account_ctx = Arc::new(FsContextInner::new("accountzhanghe"));
-+        let lease = FS_CTX
-+            .scope(account_ctx.clone(), async {
-+                manager
-+                    .acquire_tree("/local/accountzhanghe", Duration::ZERO, None)
-+                    .await
-+            })
-+            .await
-+            .unwrap();
-+
-+        let primary_has_sidecar = std::fs::read_dir(primary.path()).unwrap().any(|entry| {
-+            entry
-+                .unwrap()
-+                .file_name()
-+                .to_string_lossy()
-+                .starts_with(".exact.ovlock.accountzhanghe.")
-+        });
-+        let backup_has_sidecar = std::fs::read_dir(backup.path()).unwrap().any(|entry| {
-+            entry
-+                .unwrap()
-+                .file_name()
-+                .to_string_lossy()
-+                .starts_with(".exact.ovlock.accountzhanghe.")
-+        });
-+        assert!(primary_has_sidecar);
-+        assert!(!backup_has_sidecar);
-+
-+        let error = FS_CTX
-+            .scope(
-+                account_ctx,
-+                mfs.write("/local/other/file.md", b"must fail", 0, WriteFlag::Create),
-+            )
-+            .await
-+            .unwrap_err();
-+        assert!(error
-+            .to_string()
-+            .contains("conflicts with context account 'accountzhanghe'"));
-+
-+        manager.release(&lease).await.unwrap();
-+    }
-+
-     #[cfg(feature = "cache")]
-     #[tokio::test]
-     async fn shutdown_reaches_cache_queuefs_through_stats_wrapper() {
-```
-
-**File**: `crates/ragfs/src/core/multibackend_wrapper.rs` (modified, +10/-1)
-```diff
-@@ -15,7 +15,7 @@ use super::types::{
-     BackendRole, FileInfo, GlobPage, GrepOptions, GrepResult, ListSortBy, SortOrder, TreeEntry,
-     WriteFlag,
- };
--use crate::core::internal_names::is_multiwrite_internal_path;
-+use crate::core::internal_names::{is_hidden_runtime_lock_name, is_multiwrite_internal_path};
- use crate::metrics::{RagfsMetric, RagfsMetricValue};
- use crate::multibackend::catch_up::CatchUpTarget;
- use crate::multibackend::meta::{
-@@ -373,6 +373,15 @@ impl MultiWriteWrappedFS {
-         kind: SegmentEventType,
-         destination_path: Option<&str>,
-     ) -> Result<Option<PendingEvent>> {
-+        // Runtime lock files are primary-only and may sit outside an account root.
-+        if destination_path.is_none()
-+            && path
-+                .rsplit('/')
-+                .next()
-+                .is_some_and(is_hidden_runtime_lock_name)
-+        {
-+            return Ok(None);
-+        }
-         let ctx = self.resolve_context(path)?;
-         let account_id = ctx.account_id().to_string();
-         let mut path = logical_path(&account_id, path)?;
+ ## Public entries
+ 
+-The root `@openviking/react` entry exports FileTree, the five business module placeholders, and their public types. FileTree and FilePreview are also available through their `components/<module>` subpaths. `@openviking/react/icons` provides five file-type icons.
++The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
+ 
+ There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
+ 
+@@ -40,7 +40,7 @@ import '@openviking/react/modules/file-browser/style.css';
+ <FileBrowser />;
+ ```
+ 
+-The five placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
++The four placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
+ 
+ Business modules will combine data-loading Hooks with composed views around focused capabilities. Each module entry will export its Hooks separately from its composed view, so hosts can reuse the logic with their own UI. The shared Client will follow the native OpenViking API paths, parameters, and response types. Authentication, account scope, routing, permissions, and complete page flows remain with the host. Business Hooks and cross-module public Hooks have no implementation or exports yet.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7056** (2026-11-04): fix(reindex): restore ReindexExecutor resolver init on v0.5.2-hotfix (@ZaynJarvis)
-- **PR #7051** (2026-11-04): feat(ui): restore the reviewed ScopeSwitcher API and package entry (@LaamGinghong)
-- **PR #7044** (2026-11-04): feat(tui): restore reviewed public API and package entry (@LaamGinghong)
-- **PR #7033** (2026-11-04): fix(ui)!: separate file operations from success notifications (@LaamGinghong)
-- **PR #7032** (2026-11-04): docs(ui): 精简公开组件 Props 注释 (@LaamGinghong)
-- **PR #7031** (2026-11-04): fix(ui)!: notify file preview copy success (@LaamGinghong)
+- **PR #7081** (closed): feat(compile): 支持编译产物关系图增量构建与查询 (@hezhang-1216)
+- **PR #7073** (2026-11-05): fix(magpie): add opt-in sessionless capture and raise recall budget (@yufeng201)
+- **PR #7071** (closed): fix(retrieve): use the general VLM for context rewrite, not the intent query planner (@umeGe)
+- **PR #7068** (closed): feat(compile): 保证产物关系图与编译完成及实时编辑一致 (@hezhang-1216)
+- **PR #7067** (2026-11-05): docs(ui): split package and module READMEs into English and Chinese files (@LaamGinghong)
+- **PR #7066** (2026-11-05): refactor(ui): give every public directory an index.ts entry and narrow the root exports (@LaamGinghong)
 
 ---
 
@@ -2417,54 +2351,36 @@ Co-authored-by: zhanghe.1216 <@bytedance.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. frontend): add shared React UI workspace and bilingual component docs (#6996)
+## X. magpie): add opt-in sessionless capture and raise recall budget (#7073)
 
 **RULE**:
-When implementing operations in `.github/actions/build-ui/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e6437c93`: frontend): add shared React UI workspace and bilingual component docs (#6996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `739e17f9`: magpie): add opt-in sessionless capture and raise recall budget (#7073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/build-ui/action.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-name: Build UI
-description: Install, lint, type-check, and build the UI library and documentation
-runs:
-  using: composite
-  steps:
-    - name: Set up Node.js for UI
-      uses: actions/setup-node@v6
-      with:
-        node-version: 22
-        cache: npm
-        cache-dependency-path: frontend/package-lock.json
-
-    - name: Install UI dependencies
-      shell: bash
-      run: npm ci --prefix frontend
-
-    - name: Lint and type-check UI
-      shell: bash
-      run: npm run lint --prefix frontend
-
-    - name: Build UI library and docs
-      shell: bash
-      run: npm run build --prefix frontend
-
-    - name: Check UI docs output
-      shell: bash
-      run: test -f frontend/docs/doc_build/index.html
+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
+export const HARNESS_CONFIG_KEYS = new Set([
+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
+]);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+export const HARNESS_CONFIG_KEYS = new Set(
+  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e6437c93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `739e17f9` are properly handled with clean fallback behavior.

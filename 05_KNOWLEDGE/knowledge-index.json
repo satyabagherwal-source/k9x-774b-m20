@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T10:09:09.787Z",
+  "last_updated": "2026-11-05T10:16:12.430Z",
   "total_verified_learnings": 1215,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14498,8 +14498,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "27b1b0c4",
-      "content_hash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
+      "source_version": "b94bef03",
+      "content_hash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14707,6 +14707,11 @@
           "number": 7131,
           "title": "transport): attribute QUIC fallbacks to session churn (#6110)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7189,
+          "title": "test(transport): pin the QUIC fair share where it holds and record the default-m",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14714,7 +14719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:15:07.979Z",
+      "verified_at": "2026-11-05T10:16:09.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25112,7 +25117,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
+      "content_hash": "35905d2b72e515569588a50659110e8c186204320f2a9e6966c09ab4df796944",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -25174,7 +25179,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-31T19:23:42.381Z",
+      "verified_at": "2026-11-05T10:16:07.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49037,8 +49042,8 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "c2f17694",
-      "content_hash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
+      "source_version": "647ef264",
+      "content_hash": "7b3b2e3cc49c0b6b6b7a435594e2c4cd3a085cd00a2272324294b81fe584042e",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
@@ -49056,6 +49061,11 @@
           "number": 5612,
           "title": "Show and save the real error when the desktop app crashes during startup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7187,
+          "title": "Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49063,7 +49073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:22:25.025Z",
+      "verified_at": "2026-11-05T10:16:05.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54331,8 +54341,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "830d63a8",
-      "content_hash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
+      "source_version": "36823919",
+      "content_hash": "0c99b35dc2d45685d08333f50849089e7e5534360cb54f001f440b7d093a2481",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -54415,6 +54425,11 @@
           "number": 6952,
           "title": "Explain Kueue queues and trace Workload admission dependencies (#2512)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7188,
+          "title": "traffic): keep the Hubble connection error when the relay is reachable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54422,7 +54437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:18:13.420Z",
+      "verified_at": "2026-11-05T10:16:07.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62345,8 +62360,8 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "1a717549",
-      "content_hash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
+      "source_version": "9cc902be",
+      "content_hash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
@@ -62359,6 +62374,11 @@
           "number": 5334,
           "title": "spsc: add Receiver::recv_timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7186,
+          "title": ":bug: fix CoIo - deregister fd from selector before closing it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62366,7 +62386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:58:18.376Z",
+      "verified_at": "2026-11-05T10:15:59.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72698,8 +72718,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "3e0c9dcc",
-      "content_hash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
+      "source_version": "739e17f9",
+      "content_hash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -72792,6 +72812,11 @@
           "number": 6933,
           "title": "frontend): add shared React UI workspace and bilingual component docs (#6996)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 7190,
+          "title": "magpie): add opt-in sessionless capture and raise recall budget (#7073)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72799,7 +72824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:33:57.935Z",
+      "verified_at": "2026-11-05T10:16:12.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -181652,6 +181677,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-05T10:09:09.767Z"
+    },
+    "rule-7186": {
+      "learning_id": "rule-7186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7186,
+      "title": ":bug: fix CoIo - deregister fd from selector before closing it",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "9cc902be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:15:59.867Z"
+    },
+    "rule-7187": {
+      "learning_id": "rule-7187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7187,
+      "title": "Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "647ef264",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:16:05.360Z"
+    },
+    "rule-7188": {
+      "learning_id": "rule-7188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7188,
+      "title": "traffic): keep the Hubble connection error when the relay is reachable",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "36823919",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:16:07.494Z"
+    },
+    "rule-7189": {
+      "learning_id": "rule-7189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7189,
+      "title": "test(transport): pin the QUIC fair share where it holds and record the default-m",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "b94bef03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:16:09.724Z"
+    },
+    "rule-7190": {
+      "learning_id": "rule-7190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7190,
+      "title": "magpie): add opt-in sessionless capture and raise recall budget (#7073)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "739e17f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-05T10:16:12.411Z"
     }
   },
   "aliases": {

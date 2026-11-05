@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
-    "lastHarvestedAt": "2026-10-31T19:23:42.498Z",
+    "contentHash": "35905d2b72e515569588a50659110e8c186204320f2a9e6966c09ab4df796944",
+    "lastHarvestedAt": "2026-11-05T10:16:07.483Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "3e0c9dcc",
+    "sourceVersion": "739e17f9",
     "license": "AGPL-3.0",
-    "contentHash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
-    "lastHarvestedAt": "2026-11-04T19:33:58.060Z",
+    "contentHash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
+    "lastHarvestedAt": "2026-11-05T10:16:12.506Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "27b1b0c4",
+    "sourceVersion": "b94bef03",
     "license": "NOASSERTION",
-    "contentHash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
-    "lastHarvestedAt": "2026-11-05T06:15:08.098Z",
+    "contentHash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
+    "lastHarvestedAt": "2026-11-05T10:16:09.828Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "830d63a8",
+    "sourceVersion": "36823919",
     "license": "Apache-2.0",
-    "contentHash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
-    "lastHarvestedAt": "2026-11-04T20:18:13.537Z",
+    "contentHash": "0c99b35dc2d45685d08333f50849089e7e5534360cb54f001f440b7d093a2481",
+    "lastHarvestedAt": "2026-11-05T10:16:07.609Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "1a717549",
+    "sourceVersion": "9cc902be",
     "license": "Apache-2.0",
-    "contentHash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
-    "lastHarvestedAt": "2026-10-28T15:58:18.453Z",
+    "contentHash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
+    "lastHarvestedAt": "2026-11-05T10:15:59.965Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "c2f17694",
+    "sourceVersion": "647ef264",
     "license": "Apache-2.0",
-    "contentHash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
-    "lastHarvestedAt": "2026-11-02T15:22:25.144Z",
+    "contentHash": "7b3b2e3cc49c0b6b6b7a435594e2c4cd3a085cd00a2272324294b81fe584042e",
+    "lastHarvestedAt": "2026-11-05T10:16:05.466Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

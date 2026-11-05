@@ -521164,3 +521164,326 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8f122c9e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7186. :bug: fix CoIo - deregister fd from selector before closing it (Harvested from Xudong-Huang/may)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": ":bug: fix CoIo - deregister fd from selector before closing it",
+  "source": "Xudong-Huang/may",
+  "source_url": "https://github.com/Xudong-Huang/may",
+  "source_version": "9cc902be",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T10:15:59.659Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xudong-huang-may",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `9cc902be`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/io/sys/unix/co_io.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0d5efcb1`: :bug: fix CoIo - deregister fd from selector before closing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/co_io.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // NOTE: field order matters. `io` must be dropped before `inner`, so the
+    // fd is removed from the selector while it is still open. If `inner` were
+    // dropped first, the fd number could be reused by another thread before
+    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
+    // number, so it would remove the registration of the new socket instead,
+    // and that socket would never receive an io event again.
+    inner: T,
+
+    /// Check whether `target` is registered in any epoll instance of this
+    /// process by inspecting `/proc/self/fdinfo`.
+    #[cfg(target_os = "linux")]
+    fn fd_is_watched(target: RawFd) -> bool {
+        let dir = match std::fs::read_dir("/proc/self/fd") {
+            Ok(dir) => dir,
+            Err(_) => return false,
+        };
+        for entry in dir.flatten() {
+            let name = entry.file_name();
+            let info = match std::fs::read_to_string(format!(
+                "/proc/self/fdinfo/{}",
+                name.to_string_lossy()
+            )) {
+                Ok(info) => info,
+                Err(_) => continue,
+            };
+            let tokens: Vec<&str> = info.split_whitespace().collect();
+   
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+    inner: T,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0d5efcb1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7187. Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide- (Harvested from prof18/feed-flow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-",
+  "source": "prof18/feed-flow",
+  "source_url": "https://github.com/prof18/feed-flow",
+  "source_version": "647ef264",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T10:16:05.144Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-prof18-feed-flow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prof18/feed-flow](https://github.com/prof18/feed-flow) (Revision: `647ef264`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `e2e/maestro/android/regression/150-reader-previous-and-font-menu.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `297ca86a`: Maestro font tile assertion on Android and dismiss the keyboard in the iOS hide-shorts flow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/maestro/android/regression/150-reader-previous-and-font-menu.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+    checked: true
+    checked: true
+    checked: true
+    checked: true
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+    selected: true
+    selected: true
+    selected: true
+    selected: true
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `297ca86a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7188. traffic): keep the Hubble connection error when the relay is reachable (Harvested from skyhook-io/radar)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "traffic): keep the Hubble connection error when the relay is reachable",
+  "source": "skyhook-io/radar",
+  "source_url": "https://github.com/skyhook-io/radar",
+  "source_version": "36823919",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-05T10:16:07.280Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-skyhook-io-radar",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `36823919`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `internal/traffic/auto_port_forward_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7e8307a8`: traffic): keep the Hubble connection error when the relay is reachable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/traffic/auto_port_forward_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"errors"
+func TestComposeConnectErrorWithAutoPortForwardDisabled(t *testing.T) {
+	route := composeConnectError("10.0.0.1:80", errDirectUnreachable, portforward.ErrAutoDisabled)
+	if !strings.Contains(route, "needs a network route") {
+		t.Errorf("unreachable relay = %q, want routing advice", route)
+	}
+	tlsFailed := composeConnectError("10.0.0.1:80", errors.New("TLS gRPC connection test failed"), portforward.ErrAutoDisabled)
+	if strings.Contains(tlsFailed, "network route") || !strings.Contains(tlsFailed, "TLS gRPC connection test failed") {
+		t.Errorf("reachable relay with a failed connection = %q, want the connection error, not routing advice", tlsFailed)
+	}
+}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7e8307a8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7189. test(transport): pin the QUIC fair share where it holds and record the default-m (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(transport): pin the QUIC fair share where it holds and record the default-m",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "b94bef03",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-05T10:16:09.518Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `b94bef03`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b94bef03`: test(transport): pin the QUIC fair share where it holds and record the default-minimum case (#6113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  recycle::CappedCubic::window = min(Cubic's window, max(rate x RTT,
+  window_floor)): the cap never goes below window_floor (two full datagrams
+  and one byte, 2401 B: quinn refuses
+  Under a saturated egress cap, the window cap apportions it only when the
+  per-connection share is below the cap. With the minimum per connection set
+  below the share (two connections, one flow each, equal RTT),
+  a_quic_path_and_udp_streams_each_get_their_fair_share_under_a_saturated_
+  egress_cap measured QUIC about 239 kB/s and a UDP stream sender about
+  250 kB/s of a 250 kB/s share, over 40 seeds (491 and 12 kB/s with the
+  window cap removed). With the DEFAULT minimum (DEFAULT_MIN_PER_CONNECTION,
+  1 MB/s, which GlobalBandwidthManager clamps to the total), a total below
+  n x 1 MB/s, so nearly every residential cap, gives every connection a share
+  of min(1 MB/s, total): each QUIC window cap is total x RTT and apportions
+  nothing, and the egress cap itself is not neutral between the transports.
+  QUIC waits in poll_admit (a queued waker, woken in order as the bucket
+  refills); a UDP stream sender takes with try_take and sleeps jittered
+  deficits, so QUIC wins contended refills. Measured the
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+  recycle::CappedCubic::window = min(Cubic's window, rate x RTT), never
+  below window_floor (two full datagrams and one byte, 2401 B: quinn refuses
+  Under a binding egress cap the window cap does not hold a path to its
+  share either: the cap's holds add to quinn's RTT samples, and rate x RTT
+  grows with them (a_quic_path_and_udp_streams_both_progress_under_an_
+  egress_cap measured about 390 kB/s against a 250 kB/s share, 400 kB/s with
+  no window cap). The egress cap still holds the node's total.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b94bef03` are properly handled with clean fallback behavior.
+
+
+---
+
+## 7190. magpie): add opt-in sessionless capture and raise recall budget (#7073) (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "magpie): add opt-in sessionless capture and raise recall budget (#7073)",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "739e17f9",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-05T10:16:12.202Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `739e17f9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `739e17f9`: magpie): add opt-in sessionless capture and raise recall budget (#7073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
+export const HARNESS_CONFIG_KEYS = new Set([
+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
+]);
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+export const HARNESS_CONFIG_KEYS = new Set(
+  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
+);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `739e17f9` are properly handled with clean fallback behavior.

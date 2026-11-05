@@ -7607,3 +7607,9 @@
 | `CYCLE-20261105-VCM4` | `2026-11-05T10:09:01.084Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7184` | Yes (`593a6042...`) |
 | `CYCLE-20261105-VCRD` | `2026-11-05T10:09:01.273Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`bdbf6ac3...`) |
 | `CYCLE-20261105-VJES` | `2026-11-05T10:09:09.892Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7185` | Yes (`89bbd2a2...`) |
+| `CYCLE-20261105-4BTL` | `2026-11-05T10:15:59.961Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7186` | Yes (`d531bc4b...`) |
+| `CYCLE-20261105-4G2E` | `2026-11-05T10:16:05.462Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7187` | Yes (`7b3b2e3c...`) |
+| `CYCLE-20261105-4HKF` | `2026-11-05T10:16:07.407Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`35905d2b...`) |
+| `CYCLE-20261105-4HPY` | `2026-11-05T10:16:07.606Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7188` | Yes (`0c99b35d...`) |
+| `CYCLE-20261105-4JFK` | `2026-11-05T10:16:09.824Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7189` | Yes (`54555d51...`) |
+| `CYCLE-20261105-4LHY` | `2026-11-05T10:16:12.502Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7190` | Yes (`fea3cef9...`) |

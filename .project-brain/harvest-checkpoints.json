@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T10:09:09.911Z",
+  "last_updated": "2026-11-05T10:16:12.522Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "793a6e330640d45df5db18bbd3f55b484cfd18c28258bf3696da81f2079d9497",
-      "verified_at": "2026-10-31T19:23:42.508Z",
+      "content_hash": "35905d2b72e515569588a50659110e8c186204320f2a9e6966c09ab4df796944",
+      "verified_at": "2026-11-05T10:16:07.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T19:23:42.508Z"
+      "last_updated": "2026-11-05T10:16:07.566Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "0a089e86484bca094f0f7a791cdaa544b50a74da72747912642a2e8defc0f565",
-      "verified_at": "2026-11-04T19:33:58.076Z",
+      "content_hash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
+      "verified_at": "2026-11-05T10:16:12.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:33:58.076Z"
+      "last_updated": "2026-11-05T10:16:12.521Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
-      "verified_at": "2026-11-05T06:15:08.117Z",
+      "content_hash": "54555d517938de33ab98eeb7d08d701eeac6bdfc2319f10e3d6c70f58df47c8f",
+      "verified_at": "2026-11-05T10:16:09.844Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T06:15:08.117Z"
+      "last_updated": "2026-11-05T10:16:09.844Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "aef741d42793c2e59f278d2167341fb2e01ae82cde9b5ec40bdead79914054c3",
-      "verified_at": "2026-11-04T20:18:13.556Z",
+      "content_hash": "0c99b35dc2d45685d08333f50849089e7e5534360cb54f001f440b7d093a2481",
+      "verified_at": "2026-11-05T10:16:07.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:18:13.556Z"
+      "last_updated": "2026-11-05T10:16:07.624Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
-      "verified_at": "2026-10-28T15:58:18.460Z",
+      "content_hash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
+      "verified_at": "2026-11-05T10:15:59.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:58:18.460Z"
+      "last_updated": "2026-11-05T10:15:59.982Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "e0555e30912ead0b51924f68bd9e9a45de4edf4dee8e6fe48413bc648d1887fa",
-      "verified_at": "2026-11-02T15:22:25.152Z",
+      "content_hash": "7b3b2e3cc49c0b6b6b7a435594e2c4cd3a085cd00a2272324294b81fe584042e",
+      "verified_at": "2026-11-05T10:16:05.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T15:22:25.152Z"
+      "last_updated": "2026-11-05T10:16:05.481Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",
