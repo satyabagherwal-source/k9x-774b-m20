@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `c7bea343`  
+> **Source Version**: `654efae4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:57:15.415Z  
+> **Timestamp**: 2026-11-05T16:59:48.979Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:57:14.586Z  
+> **Harvest Timestamp**: 2026-11-05T16:59:48.720Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92691 stars
+- **Stars / Engagement**: 92827 stars
 
 ---
 
@@ -2334,736 +2334,457 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e21ff1b3` (2026-11-04)
-**Commit Message**: Fix opening `path:line` in a running Zed on Windows (#66501)
+### Incident Patch 1: `635026fa` (2026-11-05)
+**Commit Message**: gpui: Support animated WebP in `Image::to_image_data` (#66459)
 
 ## Summary
 
-On Windows, `Zed.exe path:line` and `Zed.exe path:line:column` now open
-the file at that position when Zed is already running. Before this
-change, the argument was dropped and nothing opened. Closes #66498.
+When opening an animated `.webp` file in Zed's image viewer, only the
+first frame was rendered statically.
 
-**Before:** with Zed 1.26.2 (stable) running, `Zed.exe
-"E:\zed-demo\demo.py:2"` does nothing. `Zed.log` shows:
+`ImageAssetLoader` in `crates/gpui/src/elements/img.rs` already
+supported animated WebP via `WebPDecoder`, but `Image::to_image_data` in
+`crates/gpui/src/platform.rs` (which is used when opening image files in
+a project tab or loading clipboard images) still called
+`decode_static_image` for `ImageFormat::Webp`.
 
-```
-ERROR [zed::zed::windows_only_instance] error parsing path argument: The system cannot find the file specified. (os error 2)
-```
+This PR updates `Image::to_image_data` to decode animated WebP frames
+and moves the GIF and WebP decoding logic into shared `decode_gif_image`
+and `decode_webp_image` helpers in `platform.rs` so both paths stay in
+sync.
 
-<img width="760" alt="Zed 1.26.2: Zed.exe demo.py:2 followed by the
-ERROR line from Zed.log"
-src="https://github.com/user-attachments/assets/bde230fd-d231-4415-993c-44dba9e840ba"
-/>
+## Testing
 
-**After:** with a build of this branch running, `zed.exe
-"E:\zed-demo\greet.py:2"` opens `greet.py` in the existing window, with
-the cursor at 2:1.
+- Added a unit test
+(`test_animated_webp_image_to_image_data_decodes_frames`) in
+`crates/gpui/src/platform.rs`.
+- Tested manually on Linux by opening both static and animated `.webp`
+files in Zed.
 
-<img width="760" alt="This branch: greet.py open in the running window,
-cursor at 2:1"
-src="https://github.com/user-attachments/assets/b040a366-84d9-42e8-b444-e060239ab2f0"
-/>
+## Self-review
 
-A relative path also works. Running `zed.exe "demo.py:5:7"` from
-`E:\zed-demo` opens `E:\zed-demo\demo.py` at 5:7.
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
 
-<img width="760" alt="This branch: demo.py open
+Release Notes:
 
-**File**: `crates/cli/src/main.rs` (modified, +1/-48)
+- Fixed animated WebP 
+
+**File**: `crates/gpui/src/elements/img.rs` (modified, +7/-72)
 ```diff
-@@ -26,7 +26,7 @@ use std::{
-     thread::{self, JoinHandle},
+@@ -2,22 +2,18 @@ use crate::{
+     AnyElement, AnyImageCache, App, Asset, AssetLogger, Bounds, DefiniteLength, Element, ElementId,
+     Entity, GlobalElementId, Hitbox, Image, ImageCache, InspectorElementId, InteractiveElement,
+     Interactivity, IntoElement, LayoutId, Length, ObjectFit, Pixels, RenderImage, Resource,
+-    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
+-    decode_static_image_from_decoder, px,
++    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
++    decode_static_image, decode_webp_image, px,
  };
- use tempfile::{NamedTempFile, TempDir};
--use util::paths::PathWithPosition;
-+use util::paths::{PathWithPosition, parse_path_with_position};
- use walkdir::WalkDir;
+ use anyhow::Result;
  
- use std::io::IsTerminal;
-@@ -155,53 +155,6 @@ struct Args {
-     askpass: Option<String>,
- }
+ use futures::Future;
+ use gpui_util::ResultExt;
+-use image::{
+-    AnimationDecoder, ImageError, ImageFormat, Rgba,
+-    codecs::{gif::GifDecoder, webp::WebPDecoder},
+-};
++use image::{ImageError, ImageFormat};
+ use scheduler::Instant;
+-use smallvec::SmallVec;
+ use std::{
+     fs,
+-    io::{self, Cursor},
++    io::{self},
+     ops::{Deref, DerefMut},
+     path::{Path, PathBuf},
+     str::FromStr,
+@@ -668,70 +664,8 @@ impl Asset for ImageAssetLoader {
  
--/// Parses a path containing a position (e.g. `path:line:column`)
--/// and returns its canonicalized string representation.
--///
--/// If a part of path doesn't exist, it will canonicalize the
--/// existing part and append the non-existing part.
--///
--/// This method must return an absolute path, as many zed
--/// crates assume absolute paths.
--fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
--    match Path::new(argument_str).canonicalize() {
--        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
--        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
--            let curdir = env::current_dir().context("retrieving current directory")?;
--            let mut children = Vec::new();
--            let root;
--            loop {
--                // canonicalize handles './', and '/'.
--                if let Ok(canonicalized) = fs::canonicalize(&path) {
--                    root = canonicalized;
--                    break;
--                }
--                // The comparison to `curdir` is just a shortcut
--                // since we know it is canonical. The other one
--                // is if `argument_str` is a string that starts
--                // with a name (e.g. "foo/bar").
--                if path == curdir || path == Path::new("") {
--                    root = curdir;
--                    break;
--                }
--                children.push(
--                    path.file_name()
--                        .with_context(|| format!("parsing as path with position {argument_str}"))?
--                        .to_owned(),
--                );
--                if !path.pop() {
--                    unreachable!("parsing as path with position {argument_str}");
--                }
--            }
--            Ok(children.iter().rev().fold(root, |mut path, child| {
--                path.push(child);
--                path
--            }))
--        }),
--    }
--    .map(|path_with_pos| path_with_pos.to_string(&|path| path.to_string_lossy().into_owned()))
--}
+             if let Ok(format) = image::guess_format(&bytes) {
+                 let data = match format {
+-                    ImageFormat::Gif => {
+-                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
+-                        let mut frames = SmallVec::new();
 -
- /// Returns whether a `--diff` argument refers to an existing path, allowing a
- /// trailing `:line:column` suffix (parsed later by the Zed side, matching how
- /// regular `zed path:line:column` arguments are handled).
+-                        for frame in decoder.into_frames() {
+-                            match frame {
+-                                Ok(mut frame) => {
+-                                    // Convert from RGBA to BGRA.
+-                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
+-                                        pixel.swap(0, 2);
+-                                    }
+-                                    frames.push(frame);
+-                                }
+-                                Err(err) => {
+-                                    log::debug!(
+-                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
+-                                    );
+-                                }
+-                            }
+-                        }
+-
+-                        if frames.is_empty() {
+-                            return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
+-                                "GIF could not be decoded: all frames failed ({source:?})"
+-                            ))));
+-                        }
+-
+-                        frames
+-                    }
+-                    ImageFormat::WebP => {
+-                        let mut decoder = WebPDecoder::new(Cursor::new(&bytes))?;
+-
+-                        if decoder.has_animation() {
+-                            let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
+-                            let mut frames = SmallVec::new();
+-
+-                            for frame in decoder.into_frames() {
+-                                match frame {
+-                                    Ok(mut frame) => {
+-                                        // Convert from RGBA to BGRA.
+-                                        for pixel in frame.buffer_mut().chunks_exact_mut(4) {
+-                                            pixel.swap(0, 2);
+-                                        }
+-                                        frames.push(frame);
+-                                    }
+-                                    Err(err) => {
+-                                        log::debug!(
+-                                            "Skipping WebP frame in {source:?} due to decode error: {err}"
+-                                        );
+-                                    }
+-                                }
+-                            }
+-
+-                            if frames.is_empty() {
+-                                return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
+-                                    "WebP could not be decoded: all frames failed ({source:?})"
+-                                ))));
+-                            }
+-
+-                            frames
+-                        } else {
+-                            decode_static_image_from_decoder(decoder)?
+-                        }
+-                    }
++                    ImageFormat::Gif => decode_gif_image(&bytes)?,
++                    ImageFormat::WebP => decode_webp_image(&bytes)?,
+                     _ => decode_static_image(&bytes, format)?,
+                 };
+ 
+@@ -804,6 +738,7 @@ mod tests {
+     use super::*;
+     use crate::{ParentElement as _, TestAppContext, canvas, div, point, px, size};
+     use image::{Frame, ImageBuffer, Rgba};
++    use smallvec::SmallVec;
+ 
+     const TEST_IMG_ID: &str = "test-img";
+ 
 ```
 
-**File**: `crates/util/src/paths.rs` (modified, +49/-0)
+**File**: `crates/gpui/src/platform.rs` (modified, +78/-28)
 ```diff
-@@ -751,6 +751,55 @@ impl PathWithPosition {
-     }
+@@ -53,8 +53,8 @@ use collections::FxHashMap;
+ use futures::channel::oneshot;
+ #[cfg(any(test, feature = "test-support", feature = "bench-support"))]
+ use image::RgbaImage;
+-use image::codecs::gif::GifDecoder;
+-use image::{AnimationDecoder as _, DynamicImage, Frame};
++use image::codecs::{gif::GifDecoder, webp::WebPDecoder};
++use image::{DynamicImage, Frame, Rgba};
+ use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
+ use scheduler::Instant;
+ pub use scheduler::RunnableMeta;
+@@ -3387,6 +3387,50 @@ pub(crate) fn decode_static_image_from_decoder(
+     Ok(SmallVec::from_elem(Frame::new(data), 1))
  }
  
-+/// Parses a path containing a position (e.g. `path:line:column`)
-+/// and returns its canonicalized string representation.
-+///
-+/// If a part of path doesn't exist, it will canonicalize the
-+/// existing part and append the non-existing part.
-+///
-+/// This method must return an absolute path, as many zed
-+/// crates assume absolute paths.
-+pub fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
-+    use anyhow::Context as _;
++fn decode_animated_frames<'a>(
++    decoder: impl image::AnimationDecoder<'a>,
++    format_name: &str,
++) -> Result<SmallVec<[Frame; 1]>> {
++    let mut frames = SmallVec::new();
 +
-+    match Path::new(argument_str).canonicalize() {
-+        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
-+        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
-+            let curdir = std::env::current_dir().context("retrieving current directory")?;
-+            let mut children = Vec::new();
-+            let root;
-+            loop {
-+                // canonicalize handles './', and '/'.
-+                if let Ok(canonicalized) = std::fs::canonicalize(&path) {
-+                    root = canonicalized;
-+                    break;
++    for frame in decoder.into_frames() {
++        match frame {
++            Ok(mut frame) => {
++                // Convert from RGBA to BGRA.
++                for pixel in frame.buffer_mut().chunks_exact_mut(4) {
++                    pixel.swap(0, 2);
 +                }
-+                // The comparison to `curdir` is just a shortcut
-+                // since we know it is canonical. The other one
-+                // is if `argument_str` is a string that starts
-+                // with a name (e.g. "foo/bar").
-+                if path == curdir || path == Path::new("") {
-+                    root = curdir;
-+                    break;
-+                }
-+                children.push(
-+                    path.file_name()
-+                        .with_context(|| format!("parsing as path with position {argument_str}"))?
-+                        .to_owned(),
-+                );
-+                if !path.pop() {
-+                    unreachable!("parsing as path with position {argument_str}");
-+                }
++                frames.push(frame);
 +            }
-+            Ok(children.iter().rev().fold(root, |mut path, child| {
-+                path.push(child);
-+                path
-+            }))
-+        }),
-+    }
-+    .map(|path_with_pos| path_with_pos.to_string(&|path| path.to_string_lossy().into_owned()))
-+}
-+
- #[derive(Clone)]
- pub struct PathMatcher {
-     sources: Vec<(String, RelPathBuf, /*trailing separator*/ bool)>,
-```
-
-**File**: `crates/zed/src/zed/windows_only_instance.rs` (modified, +40/-21)
-```diff
-@@ -4,7 +4,7 @@ use anyhow::Context;
- use cli::{CliRequest, CliResponse, IpcHandshake, ipc::IpcOneShotServer};
- use parking_lot::Mutex;
- use release_channel::app_identifier;
--use util::ResultExt;
-+use util::{ResultExt, paths::parse_path_with_position};
- use windows::{
-     Win32::{
-         Foundation::{CloseHandle, ERROR_ALREADY_EXISTS, GENERIC_WRITE, GetLastError, HANDLE},
-@@ -107,6 +107,27 @@ fn retrieve_message_from_pipe_inner(pipe: HANDLE) -> anyhow::Result<String> {
-     Ok(message.to_string_lossy().into_owned())
- }
- 
-+fn split_paths_and_urls(paths_or_urls: &[String]) -> (Vec<String>, Vec<String>) {
-+    let mut paths = vec![];
-+    let mut urls = vec![];
-+    for path in paths_or_urls {
-+        if path.starts_with("zed://")
-+            || path.starts_with("http://")
-+            || path.starts_with("https://")
-+            || path.starts_with("file://")
-+            || path.starts_with("ssh://")
-+        {
-+            urls.push(path.clone());
-+        } else {
-+            match parse_path_with_position(path) {
-+                Ok(path) => paths.push(path),
-+                Err(error) => log::error!("error parsing path argument: {}", error),
++            Err(err) => {
++                log::debug!("Skipping {format_name} frame due to decode error: {err}");
 +            }
 +        }
 +    }
-+    (paths, urls)
++
++    if frames.is_empty() {
++        anyhow::bail!("{format_name} could not be decoded: all frames failed");
++    }
++
++    Ok(frames)
 +}
 +
- // This part of code is mostly from crates/cli/src/main.rs
- fn send_args_to_instance(args: &Args) -> anyhow::Result<()> {
-     if let Some(dock_menu_action_idx) = args.dock_action {
-@@ -119,27 +140,8 @@ fn send_args_to_instance(args: &Args) -> anyhow::Result<()> {
-     let url = format!("zed-cli://{server_name}");
- 
-     let request = {
--        let mut paths = vec![];
--        let mut urls = vec![];
-+        let (paths, urls) = split_paths_and_urls(&args.paths_or_urls);
-         let mut diff_paths = vec![];
--        for path in args.paths_or_urls.iter() {
--            match std::fs::canonicalize(&path) {
--                Ok(path) => paths.push(path.to_string_lossy().into_owned()),
--                Err(error) => {
--                    if path.starts_with("zed://")
--                        || path.starts_with("http://")
--                        || path.starts_with("https://")
--                        || path.starts_with("file://")
--                        || path.starts_with("ssh://")
--                    {
--                        urls.push(path.clone());
--                    } else {
--                        log::error!("error parsing path argument: {}", error);
++pub(crate) fn decode_gif_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
++    let decoder = GifDecoder::new(Cursor::new(bytes))?;
++    decode_animated_frames(decoder, "GIF")
++}
++
++pub(crate) fn decode_webp_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
++    let mut decoder = WebPDecoder::new(Cursor::new(bytes))?;
++
++    if decoder.has_animation() {
++        let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
++        decode_animated_frames(decoder, "WebP")
++    } else {
++        decode_static_image_from_decoder(decoder)
++    }
++}
++
+ impl Hash for Image {
+     fn hash<H: Hasher>(&self, state: &mut H) {
+         state.write_u64(self.id);
+@@ -3450,34 +3494,10 @@ impl Image {
+     /// Convert the clipboard image to an `ImageData` object.
+     pub fn to_image_data(&self, svg_renderer: SvgRenderer) -> Result<Arc<RenderImage>> {
+         let frames = match self.format {
+-            ImageFormat::Gif => {
+-                let decoder = GifDecoder::new(Cursor::new(&self.bytes))?;
+-                let mut frames = SmallVec::new();
+-
+-                for frame in decoder.into_frames() {
+-                    match frame {
+-                        Ok(mut frame) => {
+-                            // Convert from RGBA to BGRA.
+-                            for pixel in frame.buffer_mut().chunks_exact_mut(4) {
+-                                pixel.swap(0, 2);
+-                            }
+-                            frames.push(frame);
+-                        }
+-                        Err(err) => {
+-                            log::debug!("Skipping GIF frame due to decode error: {err}");
+-                        }
 -                    }
 -                }
--            }
--        }
 -
-         for path in args.diff.chunks(2) {
-             let old = std::fs::canonicalize(&path[0]).log_err();
-             let new = std::fs::canonicalize(&path[1]).log_err();
-@@ -222,3 +224,20 @@ fn write_message_to_instance_pipe(message: &[u8]) -> anyhow::Result<()> {
+-                if frames.is_empty() {
+-                    anyhow::bail!("GIF could not be decoded: all frames failed");
+-                }
+-
+-                frames
+-            }
++            ImageFormat::Gif => decode_gif_image(&self.bytes)?,
+             ImageFormat::Png => decode_static_image(&self.bytes, image::ImageFormat::Png)?,
+             ImageFormat::Jpeg => decode_static_image(&self.bytes, image::ImageFormat::Jpeg)?,
+-            ImageFormat::Webp => decode_static_image(&self.bytes, image::ImageFormat::WebP)?,
++            ImageFormat::Webp => decode_webp_image(&self.bytes)?,
+             ImageFormat::Bmp => decode_static_image(&self.bytes, image::ImageFormat::Bmp)?,
+             ImageFormat::Tiff => decode_static_image(&self.bytes, image::ImageFormat::Tiff)?,
+             ImageFormat::Ico => decode_static_image(&self.bytes, image::ImageFormat::Ico)?,
+@@ -3604,6 +3624,36 @@ mod image_tests {
+             assert_eq!(pixel, &[0xF8, 0xBD, 0x38, 0xFF]);
+         }
      }
-     Ok(())
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::split_paths_and_urls;
 +
 +    #[test]
-+    fn test_split_paths_and_urls() {
-+        let file = concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.toml");
-+        let canonical = std::fs::canonicalize(file).unwrap();
-+        let url = "zed://file/C:/project/main.rs:3";
-+
-+        let (paths, urls) = split_paths_and_urls(&[format!("{file}:2:5"), url.to_string()]);
-+
-+        assert_eq!(paths, [format!("{}:2:5", canonical.display())]);
-+        assert_eq!(urls, [url]);
-+    }
-+}
++    fn test_animated_webp_image_to_image_data_decodes_frames() {
++        // 1x1 2-frame animated WebP (frame 0: red, frame 1: blue, 100ms delay each).
++        const ANIMATED_WEBP: &[u8] = &[
++            82, 73, 70, 70, 192, 0, 0, 0, 87, 69, 66, 80, 86, 80, 56, 88, 10, 0, 0, 0, 2, 0, 0, 0,
++            0, 0, 0, 0, 0, 0, 65, 78, 73, 77, 6, 0, 0, 0, 255, 255, 255, 255, 0, 0, 65, 78, 77, 70,
++            72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 2, 86, 80, 56, 32, 48, 0,
++            0, 0, 208, 1, 0, 157, 1, 42, 1, 0, 1, 0, 2, 0, 52, 37, 160, 2, 116, 186, 1, 248, 0, 3,
++            176, 0, 254, 240, 196, 11, 255, 32, 185, 97, 117, 200, 215, 255, 32, 63, 228, 7, 252,
++            128, 255, 248, 242, 0, 0, 0, 65, 78, 77, 70, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
++            0, 0, 100, 0, 0, 0, 86, 80, 56, 32, 44, 0, 0, 0, 148, 1, 0, 157, 1, 42, 1, 0, 
 ```
 
 ---
 
-### Incident Patch 2: `c7bea343` (2026-11-04)
-**Commit Message**: gpui: Fix cursor reverting when a drag starts (#66540)
+### Incident Patch 2: `4ba7d82f` (2026-11-05)
+**Commit Message**: keymap: Fix cmd-o in macOS JetBrains keymap opening file dialog instead of project symbols (#66137)
 
 ## Summary
 
-Dragging an element with a cursor style, such as a narrow resize handle,
-could briefly show the wrong cursor as the drag began.
+Closes #66136
 
-**The problem.** GPUI starts a drag once the pointer moves more than 2
-px from the press. On a narrow handle, that same move can take the
-pointer off the handle. `dispatch_mouse_event` then:
+With the JetBrains keymap on macOS, cmd-o opens the file dialog instead
+of expected symbol search.
 
-1. Re-ran the hit test, saw the pointer had left the handle, and picked
-the cursor from the last painted frame, which gave whatever was
-underneath.
-2. Ran the mouse listeners, where `on_drag` started the drag and
-requested a repaint.
-3. Only applied the drag's cursor at the end of the next draw.
+The fix: unbind the inherited Open with zed::Unbind, like
+linux/emacs.json does for ctrl-n/ctrl-p. so after fix File > Open no
+longer shows cmd-o
 
-So the drag was running under the wrong cursor until that paint. A
-native X11 trace measured this at about 51 ms. On macOS, 3 of 4 drags
-sampled at drag start read `Arrow` in a real app on an older GPUI
-revision.
+## Testing
 
-**The fix.**
+- added test_jetbrains_project_symbol_shortcuts_override_open. Also
+added shared helped in tests for similar case with emacs.
+- manually tested on macOS. ran cargo run, choose jetbrains keymap on
+startup, and voila cmd-o opens symbols.
 
-- `dispatch_mouse_event` updates the cursor after the listeners run, so
-a drag started by the current event takes effect in that event.
-- `reset_cursor_style` checks the active drag's cursor before the
-painted frame, because that frame predates the drag.
+## Self-review
 
-**Behavior to review.**
+- [x] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [x] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [x] Tests cover the new or changed behavior.
 
-- An
+Release Notes:
 
-**File**: `crates/gpui/src/platform/test/platform.rs` (modified, +5/-0)
+- Fixed `cmd-o` opening the file dialog instead of project symbol search
+when using the JetBrains keymap on macOS.
+
+---------
+
+Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
+
+**File**: `assets/keymaps/default-macos.json` (modified, +1/-1)
 ```diff
-@@ -126,6 +126,11 @@ pub(crate) struct TestPrompts {
- }
- 
- impl TestPlatform {
-+    #[cfg(test)]
-+    pub(crate) fn cursor_style(&self) -> CursorStyle {
-+        *self.active_cursor.lock()
-+    }
-+
-     #[cfg(any(test, feature = "test-support"))]
-     pub fn new(executor: BackgroundExecutor, foreground_executor: ForegroundExecutor) -> Rc<Self> {
-         Self::with_platform(
+@@ -28,7 +28,6 @@
+       "alt-shift-enter": "menu::Restart",
+       "cmd-shift-w": "workspace::CloseWindow",
+       "shift-escape": "workspace::ToggleZoom",
+-      "cmd-o": "workspace::Open",
+       "cmd-=": ["zed::IncreaseBufferFontSize", { "persist": false }],
+       "cmd-+": ["zed::IncreaseBufferFontSize", { "persist": false }],
+       "cmd--": ["zed::DecreaseBufferFontSize", { "persist": false }],
+@@ -696,6 +695,7 @@
+     "context": "Workspace",
+     "use_key_equivalents": true,
+     "bindings": {
++      "cmd-o": "workspace::Open",
+       "alt-/": "which_key::ShowPendingBindings",
+       // Move focus between the major regions of the window (editor, open
+       // panels, status bar). Accessibility navigation; mirrors VS Code's
 ```
 
-**File**: `crates/gpui/src/window.rs` (modified, +99/-15)
+**File**: `assets/keymaps/macos/jetbrains.json` (modified, +7/-0)
 ```diff
-@@ -5810,9 +5810,10 @@ impl Window {
-     fn reset_cursor_style(&self, cx: &mut App) {
-         // Set the cursor only if we're the active window.
-         if self.is_window_hovered() {
--            let style = self
--                .rendered_frame
--                .cursor_style(self)
-+            // A drag can start before the next paint records its cursor in the frame.
-+            let style = cx
-+                .active_drag_cursor_style()
-+                .or_else(|| self.rendered_frame.cursor_style(self))
-                 .unwrap_or(CursorStyle::Arrow);
-             cx.platform.set_cursor_style(style);
-         }
-@@ -6210,14 +6211,11 @@ impl Window {
-     }
- 
-     fn dispatch_mouse_event(&mut self, event: &dyn Any, cx: &mut App) {
--        let hit_test = self.rendered_frame.hit_test(self.mouse_position());
--        if hit_test != self.mouse_hit_test {
--            self.mouse_hit_test = hit_test;
--            self.reset_cursor_style(cx);
--        }
-+        self.mouse_hit_test = self.rendered_frame.hit_test(self.mouse_position());
- 
-         #[cfg(any(feature = "inspector", debug_assertions))]
-         if self.is_inspector_picking(cx) {
-+            self.reset_cursor_style(cx);
-             self.handle_inspector_mouse_event(event, cx);
-             // When inspector is picking, all other mouse handling is skipped.
-             return;
-@@ -6265,6 +6263,10 @@ impl Window {
-         if event.is::<MouseUpEvent>() && self.captured_hitbox.is_some() {
-             self.captured_hitbox = None;
-         }
-+
-+        // Runs after the listeners so that a drag they start takes effect in this event. Resolving
-+        // the cursor any earlier would briefly select whatever is under the pointer instead.
-+        self.reset_cursor_style(cx);
-     }
- 
-     // If modifiers are not excessive (e.g. AltGr), and the input handler is accepting text input,
-@@ -8172,13 +8174,14 @@ mod tests {
- 
-     use crate::{
-         AnyWindowHandle, AppContext as _, BackGestureEvent, BackGesturePhase, Bounds, ContentMask,
--        Context, DispatchPhase, DragMoveEvent, Empty, ExternalDragPayload, ExternalPaths,
--        FileDragPaths, FileDropEvent, FocusHandle, InputEvent as _, InteractiveElement as _,
--        IntoElement, KeyDownEvent, Keystroke, LongPressEvent, MouseButton, MouseDownEvent,
--        MouseMoveEvent, ParentElement, Pixels, PlatformInput, Point, Render, RequestFrameOptions,
--        ScaledPixels, StatefulInteractiveElement as _, Styled, TestAppContext, ThermalState,
--        TouchDragEvent, TouchEvent, TouchId, TouchPhase, Underline, UnderlineStyle, Window,
--        WindowAppearance, WindowOptions, canvas, div, hsla, point, px, size,
-+        Context, CursorStyle, DispatchPhase, DragMoveEvent, Empty, ExternalDragPayload,
-+        ExternalPaths, FileDragPaths, FileDropEvent, FocusHandle, InputEvent as _,
-+        InteractiveElement as _, IntoElement, KeyDownEvent, Keystroke, LongPressEvent, MouseButton,
-+        MouseDownEvent, MouseMoveEvent, MouseUpEvent, ParentElement, Pixels, PlatformInput, Point,
-+        Render, RequestFrameOptions, ScaledPixels, StatefulInteractiveElement as _, Styled,
-+        TestAppContext, ThermalState, TouchDragEvent, TouchEvent, TouchId, TouchPhase, Underline,
-+        UnderlineStyle, Window, WindowAppearance, WindowOptions, canvas, div, hsla, point, px,
-+        size,
-     };
- 
-     #[gpui::test]
-@@ -10431,6 +10434,87 @@ mod tests {
-         let widen = |root: &mut Root, _: &mut Window, _: &mut Context<Root>| root.width = px(300.);
-         assert_eq!(update_and_draw(window, &child, cx, widen).0, 1.);
-     }
-+
-+    #[gpui::test]
-+    fn test_drag_cursor_applies_before_next_paint(cx: &mut TestAppContext) {
-+        struct ResizeHandle;
-+
-+        impl Render for ResizeHandle {
-+            fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-+                div().size_full().cursor_text().child(
-+                    div()
-+                        .id("resize-handle")
-+                        .w(px(4.))
-+                        .h_full()
-+                        .cursor_col_resize()
-+                        .on_drag((), |_, _, _, cx| cx.new(|_| Empty)),
-+                )
-+            }
-+        }
-+
-+        let window = cx.add_window(|_, _| ResizeHandle);
-+        let handle_position = point(px(1.), px(10.));
-+        let drag_position = point(px(20.), px(10.));
-+        let cursor_observer = cx.clone();
-+
-+        let update_result = cx.update_window(window.into(), |_, window, cx| {
-+            window.hovered.set(true);
-+            window.active.set(true);
-+            window.draw(cx).clear(cx);
-+            window.dispatch_event(
-+                MouseMoveEvent {
-+                    position: handle_position,
-+                    ..Default::default()
-+                }
-+                .to_platform_input(),
-+                cx,
-+            );
-+            window.dispatch_event(
-+                MouseDownEvent {
-+                    position: handle_position
+@@ -1,4 +1,11 @@
+ [
++  {
++    "context": "Workspace",
++    "use_key_equivalents": true,
++    "bindings": {
++      "cmd-o": null,
++    },
++  },
+   {
+     "bindings": {
+       "cmd-{": "pane::ActivatePreviousItem",
 ```
 
 ---
 
-### Incident Patch 3: `d71ff734` (2026-11-04)
-**Commit Message**: tasks_ui: Fix tasks with file variables missing for single-file worktrees (#66195)
+### Incident Patch 3: `d01f1258` (2026-11-05)
+**Commit Message**: gpui: Fix key equivalents for 'backspace' and 'delete' on macOS (#65744)
 
 ## Summary
 
-When a single file is opened without a folder (e.g. via `ctrl-o`), it
-gets a worktree whose root is the file itself. `task_contexts` only
-built the editor context for items from worktrees rooted at a directory,
-so variables like `ZED_FILE` were never set. Tasks referencing them,
-including global tasks from `~/.config/zed/tasks.json`, failed to
-resolve and were silently dropped from `task: spawn`. Tasks without
-variables were still listed, which made the bug look inconsistent.
+In GPUI, 'delete' refers to the 'delete forward' key.
 
-This PR:
+It looks like the mapped key equivalents for 'backspace' and 'delete'
+(that is, 'delete forward') are not right on macOS. When native menus
+are rendered using the 'backspace' key, the glyph is mirrored because
+the 'delete forward' glyph is incorrectly used instead.
 
-- builds the editor context for any active item with a project path,
-while keeping the worktree context limited to directory worktrees (as
-introduced in #25605);
-- makes `BasicContextProvider` set `ZED_WORKTREE_ROOT`, the relative
-path variables and the default cwd only for visible directory worktrees,
-so they don't point at the file itself or at an unrelated directory such
-as the Zed config directory;
-- moves the task picker's source-aware context selection into
-`TaskContexts` and uses it when spawning tasks by name or tag, so
-worktree tasks are resolved against their own worktree even when an
-external f
+Due to what I can only guess to be historical accident, the key
+equivalents for AppKit menus [are not the
+same](https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion)
+as the characters yielded by NSEvent key-down events.
 
-**File**: `Cargo.lock` (modified, +3/-0)
+## Testing
+
+I manually tested these changes in Zed.
+
+## Self-review
+
+- [X] I've reviewed my diff for quality, security, reliability, and
+performance.
+- [X] UI changes follow the
+[checklist](https://zed.dev/docs/development/ui-checklist).
+- [ ] Tests cover the new or changed behavior.
+
+Release Notes:
+
+- [GPUI] Fixed menus on macOS using an incorrect glyph for the
+'backspace' character.
+
+---------
+
+Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
+
+**File**: `crates/gpui_macos/src/events.rs` (modified, +10/-3)
 ```diff
-@@ -17876,10 +17876,13 @@ dependencies = [
-  "gpui",
-  "itertools 0.14.0",
-  "language",
-+ "languages",
-  "menu",
-+ "node_runtime",
-  "picker",
-  "project",
-  "serde_json",
-+ "settings",
-  "task",
-  "tree-sitter",
-  "tree-sitter-json",
+@@ -36,10 +36,17 @@ const NUMPAD_ENTER_KEY: u32 = 0x03;
+ const TAB_KEY: u32 = 0x09;
+ const SHIFT_TAB_KEY: u32 = 0x19;
+ 
+-pub fn key_to_native(key: &str) -> Cow<'_, str> {
++// Menu key equivalents use different character values than the ones NSEvent
++// reports for the same physical keys.
++//
++// See https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion
++const BACKSPACE_KEY_EQUIVALENT: u32 = 0x08;
++const DELETE_KEY_EQUIVALENT: u32 = 0x7f;
++
++pub(crate) fn key_to_menu_equivalent(key: &str) -> Cow<'_, str> {
+     let code = match key {
+         "space" => SPACE_KEY,
+-        "backspace" => BACKSPACE_KEY,
++        "backspace" => BACKSPACE_KEY_EQUIVALENT,
+         "escape" => u32::from(ESCAPE_KEY),
+         "up" => NSUpArrowFunctionKey,
+         "down" => NSDownArrowFunctionKey,
+@@ -49,7 +56,7 @@ pub fn key_to_native(key: &str) -> Cow<'_, str> {
+         "pagedown" => NSPageDownFunctionKey,
+         "home" => NSHomeFunctionKey,
+         "end" => NSEndFunctionKey,
+-        "delete" => NSDeleteFunctionKey,
++        "delete" => DELETE_KEY_EQUIVALENT,
+         "insert" => NSHelpFunctionKey,
+         "f1" => NSF1FunctionKey,
+         "f2" => NSF2FunctionKey,
 ```
 
-**File**: `crates/project/src/task_inventory.rs` (modified, +57/-82)
+**File**: `crates/gpui_macos/src/platform.rs` (modified, +5/-3)
 ```diff
-@@ -194,6 +194,54 @@ impl TaskContexts {
-             })
-     }
- 
-+    /// Returns the first context, in the task picker's order of preference, in which the task resolves.
-+    pub fn context_for_task(
-+        &self,
-+        kind: &TaskSourceKind,
-+        template: &TaskTemplate,
-+    ) -> Option<&TaskContext> {
-+        let id_base = kind.to_id_base();
-+        self.contexts_for_source(kind)
-+            .find(|&context| template.resolve_task(&id_base, context).is_some())
-+    }
-+
-+    pub fn resolve_task(
-+        &self,
-+        kind: &TaskSourceKind,
-+        template: &TaskTemplate,
-+    ) -> Option<ResolvedTask> {
-+        let id_base = kind.to_id_base();
-+        self.contexts_for_source(kind)
-+            .find_map(|context| template.resolve_task(&id_base, context))
-+            .or_else(|| template.resolve_task(&id_base, &TaskContext::default()))
-+    }
-+
-+    /// Worktree tasks are only resolved with contexts of their own worktree, so that an active item
-+    /// from an unrelated (e.g. invisible or single-file) worktree does not affect their variables.
-+    fn contexts_for_source(&self, kind: &TaskSourceKind) -> impl Iterator<Item = &TaskContext> {
-+        let source_worktree = match kind {
-+            TaskSourceKind::Worktree { id, .. } => Some(*id),
-+            _ => None,
-+        };
-+
-+        let item_context = self
-+            .active_item_context
-+            .as_ref()
-+            .filter(|(worktree_id, _, _)| {
-+                source_worktree.is_none() || *worktree_id == source_worktree
-+            })
-+            .map(|(_, _, context)| context);
-+
-+        let worktree_context = match source_worktree {
-+            Some(worktree_id) => self.task_context_for_worktree_id(worktree_id),
-+            None => self
-+                .active_worktree_context
-+                .as_ref()
-+                .map(|(_, context)| context),
-+        };
-+        item_context.into_iter().chain(worktree_context)
-+    }
-+
-     pub fn location(&self) -> Option<&Location> {
-         self.active_item_context
-             .as_ref()
-@@ -230,44 +278,9 @@ impl TaskContexts {
-     /// Re-resolves a previously resolved task against the current contexts, so that
-     /// any context-dependent variables (e.g. the active file or selection) reflect the
-     /// editor's current state rather than the state from when the task was first run.
--    ///
--    /// For worktree tasks the search is scoped to the task's own worktree; other tasks
--    /// fall back through the active item, active worktree, and finally an empty context.
-     /// If none of the contexts resolve, the original `resolved_task` is returned unchanged.
-     fn reresolve_task(&self, kind: &TaskSourceKind, resolved_task: &ResolvedTask) -> ResolvedTask {
--        let id_base = kind.to_id_base();
--        let task = resolved_task.original_task();
--
--        let candidate_contexts: Vec<Option<&TaskContext>> = match kind {
--            TaskSourceKind::Worktree { id, .. } => vec![
--                self.active_item_context
--                    .as_ref()
--                    .filter(|(worktree_id, _, _)| worktree_id.as_ref() == Some(id))
--                    .map(|(_, _, context)| context),
--                self.active_worktree_context
--                    .as_ref()
--                    .filter(|(worktree_id, _)| worktree_id == id)
--                    .map(|(_, context)| context),
--                self.other_worktree_contexts
--                    .iter()
--                    .find(|(worktree_id, _)| worktree_id == id)
--                    .map(|(_, context)| context),
--            ],
--            _ => vec![
--                self.active_item_context
--                    .as_ref()
--                    .map(|(_, _, context)| context),
--                self.active_worktree_context
--                    .as_ref()
--                    .map(|(_, context)| context),
--            ],
--        };
--
--        candidate_contexts
--            .into_iter()
--            .flatten()
--            .find_map(|context| task.resolve_task(&id_base, context))
--            .or_else(|| task.resolve_task(&id_base, &TaskContext::default()))
-+        self.resolve_task(kind, resolved_task.original_task())
-             .unwrap_or_else(|| resolved_task.clone())
-     }
- }
-@@ -592,50 +605,10 @@ impl Inventory {
-                 .chain(global_tasks);
- 
-             let new_resolved_tasks = worktree_tasks
--                .flat_map(|(kind, task)| {
--                    let id_base = kind.to_id_base();
--
--                    if let TaskSourceKind::Worktree { id, .. } = &kind {
--                        None.or_else(|| {
--                            let (_, _, item_context) =
--                                task_contexts.active_item_context.as_ref().filter(
--                                    |(worktree_id, _, _)| Some(id) == worktree_id.as_ref(),
--                                )?;
--                            task.resolve_task(&id_base, item_context)
--                        })
--               
-```
-
-**File**: `crates/task/src/task.rs` (modified, +4/-0)
-```diff
-@@ -303,6 +303,10 @@ impl TaskVariables {
-     pub fn get(&self, key: &VariableName) -> Option<&str> {
-         self.0.get(key).map(|s| s.as_str())
-     }
-+    /// Removes the variable from the container, returning its value if it was present.
-+    pub fn remove(&mut self, key: &VariableName) -> Option<String> {
-+        self.0.remove(key)
-+    }
-     /// Clear out variables obtained from tree-sitter queries, which are prefixed with '_' character
-     pub fn sweep(&mut self) {
-         self.0.retain(|name, _| {
-```
-
-**File**: `crates/tasks_ui/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -36,8 +36,11 @@ zed_actions.workspace = true
- editor = { workspace = true, features = ["test-support"] }
- gpui = { workspace = true, features = ["test-support"] }
- language = { workspace = true, features = ["test-support"] }
-+languages = { workspace = true, features = ["test-support"] }
-+node_runtime.workspace = true
- project = { workspace = true, features = ["test-support"] }
- serde_json.workspace = true
-+settings = { workspace = true, features = ["test-support"] }
- tree-sitter-rust.workspace = true
- tree-sitter-typescript.workspace = true
- workspace = { workspace = true, features = ["test-support"] }
-```
-
-**File**: `crates/tasks_ui/src/tasks_ui.rs` (modified, +665/-18)
-```diff
-@@ -134,20 +134,21 @@ pub fn init(cx: &mut App) {
-                                 let default_context = TaskContext::default();
-                                 workspace
-                                     .update_in(cx, |workspace, window, cx| {
-+                                        let task_context = task_contexts
-+                                            .context_for_task(&task_source_kind, &original_task)
-+                                            .unwrap_or(&default_context);
-                                         workspace.schedule_task(
-                                             task_source_kind,
-                                             &original_task,
--                                            task_contexts
--                                                .active_context()
--                                                .unwrap_or(&default_context),
-+                                            task_context,
-                                             false,
-                                             window,
-                                             cx,
--                                        )
-+                                        );
-                                     })
-                                     .ok()
-                             })
--                            .detach()
-+                            .detach();
-                         } else {
-                             let resolved = &mut last_scheduled_task.resolved;
- 
-@@ -310,7 +311,6 @@ where
-         let did_spawn = workspace
-             .update_in(cx, |workspace, window, cx| {
-                 let default_context = TaskContext::default();
--                let active_context = task_contexts.active_context().unwrap_or(&default_context);
- 
-                 tasks.retain_mut(|(task_source_kind, target_task)| {
-                     if predicate((task_source_kind, target_task)) {
-@@ -319,10 +319,14 @@ where
-                         {
-                             target_task.reveal_target = target_override;
-                         }
-+                        let task_context = task_contexts
-+                            .context_for_task(task_source_kind, target_task)
-+                            .unwrap_or(&default_context);
-+
-                         workspace.schedule_task(
-                             task_source_kind.clone(),
-                             target_task,
--                            active_context,
-+                            task_context,
-                             false,
-                             window,
-                             cx,
-@@ -361,9 +365,9 @@ pub fn task_contexts(
-     cx: &mut App,
- ) -> Task<TaskContexts> {
-     let active_item = workspace.active_item(cx);
--    let active_item_worktree = active_item
-+    let active_item_project_path = active_item.as_ref().and_then(|item| item.project_path(cx));
-+    let active_item_worktree = active_item_project_path
-         .as_ref()
--        .and_then(|item| item.project_path(cx))
-         .map(|project_path| project_path.worktree_id)
-         .filter(|worktree_id| {
-             workspace
-@@ -375,12 +379,14 @@ pub fn task_contexts(
-     let active_worktree = active_item_worktree.or_else(|| {
-         workspace
-             .visible_worktrees(cx)
--            .next()
-+            .find(|worktree| is_visible_directory(worktree, cx))
-             .map(|tree| tree.read(cx).id())
-     });
- 
-     let active_editor = active_item.and_then(|item| item.act_as::<Editor>(cx));
--    let active_project_editor = active_item_worktree
-+    // Files from single-file worktrees provide no worktree context, but their editors
-+    // must still provide file variables such as `ZED_FILE`.
-+    let active_project_editor = active_item_project_path
-         .is_some()
-         .then(|| active_editor.clone())
-         .flatten();
-@@ -435,8 +441,14 @@ pub fn task_contexts(
-         task_contexts.latest_selection = latest_selection;
- 
-         if let Some(editor_context_task) = editor_context_task
--            && let Some(editor_context) = editor_context_task.await
-+            && let Some(mut editor_context) = editor_context_task.await
-         {
-+            if active_item_worktree.is_none()
-+                && let Some(project_root) =
-+                    active_worktree.and_then(|worktree_id| worktree_abs_paths.get(&worktree_id))
-+            {
-+                use_project_root_for_external_item(&mut editor_context, project_root);
-+            }
-             task_contexts.active_item_context =
-                 Some((active_item_worktree, location, editor_context));
-         }
-@@ -462,6 +474,41 @@ pub fn task_contexts(
-     })
- }
- 
-+/// Items outside of visible directory worktrees (e.g. the global `tasks.json` opened via
-+/// `zed: open tasks`) keep their file variables, but use the visible project's root and cwd.
-+/// Everything else is dropped, as it is derived from their own worktree: relative paths, its git
-+/// repository and language-specific var
+@@ -1,7 +1,7 @@
+ use crate::{
+     AppleActivity, AppleDispatcher, BoolExt, MacDisplay, MacKeyboardLayout, MacKeyboardMapper,
+-    MacWindow, events::key_to_native, main_thread_marker, ns_string, pasteboard::Pasteboard,
+-    renderer, set_active_window_cursor_style,
++    MacWindow, events::key_to_menu_equivalent, main_thread_marker, ns_string,
++    pasteboard::Pasteboard, renderer, set_active_window_cursor_style,
+ };
+ use anyhow::{Context as _, anyhow};
+ use block2::RcBlock;
+@@ -401,7 +401,9 @@ impl MacPlatform {
+                                 NSMenuItem::alloc(self.1),
+                                 &NSString::from_str(name),
+                                 Some(selector),
+-                                &NSString::from_str(key_to_native(keystroke.key()).as_ref()),
++                                &NSString::from_str(
++                                    key_to_menu_equivalent(keystroke.key()).as_ref(),
++                                ),
+                             );
+                             if Self::os_version() >= Version::new(12, 0, 0) {
+                                 item.setAllowsAutomaticKeyEquivalentLocalization(false);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #66569** (2026-11-05): extension: Simplify on_main_thread to not box the returned future (@osiewicz)
+- **PR #66547** (closed): Fix project panel startup for new SSH projects (@0bkevin)
 - **PR #66540** (2026-11-04): gpui: Fix cursor reverting when a drag starts (@probably-neb)
+- **PR #66534** (2026-11-05): Document how preferred_line_length affects Rewrap (@chrisknsmn)
 - **PR #66532** (2026-11-04): Bump Zed to v1.29.0 (@zed-zippy[bot])
 - **PR #66531** (2026-11-04): ui: Allow for custom submenu triggers (@danilo-leal)
-- **PR #66527** (2026-11-04): openai_subscribed: Preserve cached prefix during compaction (@smitbarmase)
-- **PR #66517** (2026-11-04): Revert "Reduce waits for navigation, suggestions, and file comparisons (#66487)" (@osiewicz)
-- **PR #66515** (2026-11-04): vim: Support `\+` and `\{n\}` in substitute patterns (@akramcodez)
 
 ---
 
@@ -3083,52 +2804,58 @@ external f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opening `path:line` in a running Zed on Windows (#66501)
+## X. gpui: Support animated WebP in `Image::to_image_data` (#66459)
 
 **RULE**:
-When implementing operations in `crates/cli/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/gpui/src/elements/img.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e21ff1b3`: opening `path:line` in a running Zed on Windows (#66501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `635026fa`: gpui: Support animated WebP in `Image::to_image_data` (#66459). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/img.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use util::paths::{PathWithPosition, parse_path_with_position};
+    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
+    decode_static_image, decode_webp_image, px,
+use image::{ImageError, ImageFormat};
+    io::{self},
+                    ImageFormat::Gif => decode_gif_image(&bytes)?,
+                    ImageFormat::WebP => decode_webp_image(&bytes)?,
+    use smallvec::SmallVec;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use util::paths::PathWithPosition;
-/// Parses a path containing a position (e.g. `path:line:column`)
-/// and returns its canonicalized string representation.
-///
-/// If a part of path doesn't exist, it will canonicalize the
-/// existing part and append the non-existing part.
-///
-/// This method must return an absolute path, as many zed
-/// crates assume absolute paths.
-fn parse_path_with_position(argument_str: &str) -> anyhow::Result<String> {
-    match Path::new(argument_str).canonicalize() {
-        Ok(existing_path) => Ok(PathWithPosition::from_path(existing_path)),
-        Err(_) => PathWithPosition::parse_str(argument_str).map_path(|mut path| {
-            let curdir = env::current_dir().context("retrieving current directory")?;
-            let mut children = Vec::new();
-            let root;
-            loop {
-                // canonicalize handles './', and '/'.
-                if let Ok(canonicalized) = fs::canonicalize(&path) {
-                    root = canonicalized;
-                    break;
-                }
-                // The comparison to `curdir` is just a shortcut
-                // since we know it is canonical. The other one
-                // is if `argume
+    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
+    decode_static_image_from_decoder, px,
+use image::{
+    AnimationDecoder, ImageError, ImageFormat, Rgba,
+    codecs::{gif::GifDecoder, webp::WebPDecoder},
+};
+use smallvec::SmallVec;
+    io::{self, Cursor},
+                    ImageFormat::Gif => {
+                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
+                        let mut frames = SmallVec::new();
+
+                        for frame in decoder.into_frames() {
+                            match frame {
+                                Ok(mut frame) => {
+                                    // Convert from RGBA to BGRA.
+                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
+                                        pixel.swap(0, 2);
+                                    }
+                                    frames.push(frame);
+                                }
+                                Err(err) => {
+                                    log::debug!(
+                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
+                               
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e21ff1b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `635026fa` are properly handled with clean fallback behavior.

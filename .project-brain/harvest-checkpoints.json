@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T16:52:51.342Z",
+  "last_updated": "2026-11-05T16:59:57.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2661,14 +2661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
-      "verified_at": "2026-11-01T01:53:59.166Z",
+      "content_hash": "8d62dec9f4b9ef2ec3fd0ca8433b3a01d44b166852bb83df116f233e68ea6e86",
+      "verified_at": "2026-11-05T16:59:57.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T01:53:59.166Z"
+      "last_updated": "2026-11-05T16:59:57.258Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
-      "verified_at": "2026-11-04T21:57:16.214Z",
+      "content_hash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
+      "verified_at": "2026-11-05T16:59:50.178Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:57:16.214Z"
+      "last_updated": "2026-11-05T16:59:50.178Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

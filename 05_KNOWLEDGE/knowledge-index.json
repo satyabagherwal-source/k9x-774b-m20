@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T16:52:51.238Z",
+  "last_updated": "2026-11-05T16:59:57.134Z",
   "total_verified_learnings": 1218,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63656,11 +63656,16 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "c7bea343",
-      "content_hash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
+      "source_version": "654efae4",
+      "content_hash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "gpui: Support animated WebP in `Image::to_image_data` (#66459)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2514,
           "title": "agent_ui: Keep queued message text readable in narrow panels (#65638)",
@@ -63737,7 +63742,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:57:16.088Z",
+      "verified_at": "2026-11-05T16:59:50.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73590,10 +73595,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
+      "content_hash": "8d62dec9f4b9ef2ec3fd0ca8433b3a01d44b166852bb83df116f233e68ea6e86",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Artifact Immutability & Versioning Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Memory Safety & Precision Casting Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1465,
           "title": "Model Lineage Integrity & Configuration Drift Prevention",
@@ -73648,6 +73663,11 @@
           "number": 5476,
           "title": "Deterministic Inference Reproducibility via Seed & Scheduler Locking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6386,
+          "title": "Deterministic Inference & Seed Management Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73655,7 +73675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T01:53:59.038Z",
+      "verified_at": "2026-11-05T16:59:57.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170002,14 +170022,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6386,
       "title": "Deterministic Inference & Seed Management Invariant",
-      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
-      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-01T00:56:06.727Z"
+      "verified_at": "2026-11-05T16:59:57.114Z"
     },
     "rule-6387": {
       "learning_id": "rule-6387",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T16:52:51.338Z",
-  "total_cycles_completed": 7695,
-  "total_learnings_persisted": 7695,
-  "total_rules_promoted": 7341,
+  "last_updated": "2026-11-05T16:59:57.255Z",
+  "total_cycles_completed": 7697,
+  "total_learnings_persisted": 7697,
+  "total_rules_promoted": 7345,
   "history": [
-    {
-      "timestamp": "2026-11-05T05:25:24.565Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T05:32:14.870Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T05:32:21.414Z",
       "repository": "modelcontextprotocol/kotlin-sdk",
@@ -1403,6 +1389,20 @@
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T16:59:50.175Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-05T16:59:57.255Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

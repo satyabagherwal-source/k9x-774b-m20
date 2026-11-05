@@ -7727,3 +7727,5 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `c6ec50b6` | Multi-dimensional audit evidence | 2026-11-05T16:52:37.517Z |
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-05T16:52:45.598Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `74efd351` | Multi-dimensional audit evidence | 2026-11-05T16:52:51.332Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `654efae4` | Multi-dimensional audit evidence | 2026-11-05T16:59:50.170Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-05T16:59:57.239Z |

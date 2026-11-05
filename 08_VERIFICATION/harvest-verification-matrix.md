@@ -7718,3 +7718,5 @@
 | `CYCLE-20261105-AE4G` | `2026-11-05T16:52:37.504Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bb22ccc4...`) |
 | `CYCLE-20261105-AKD6` | `2026-11-05T16:52:45.594Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`974bae64...`) |
 | `CYCLE-20261105-AOSG` | `2026-11-05T16:52:51.328Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbd2089c...`) |
+| `CYCLE-20261105-JNYU` | `2026-11-05T16:59:50.166Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f867b11d...`) |
+| `CYCLE-20261105-JTF8` | `2026-11-05T16:59:57.236Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 6386, Rule null` | Yes (`8d62dec9...`) |
