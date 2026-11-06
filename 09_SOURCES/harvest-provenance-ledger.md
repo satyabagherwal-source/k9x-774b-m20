@@ -7908,3 +7908,5 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `487676ec` | Multi-dimensional audit evidence | 2026-11-06T15:27:36.818Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `4194a203` | Multi-dimensional audit evidence | 2026-11-06T15:27:39.593Z |
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `bb1c0fbf` | Multi-dimensional audit evidence | 2026-11-06T18:54:46.734Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d3413e65` | Multi-dimensional audit evidence | 2026-11-06T19:02:20.483Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `b8e88959` | Multi-dimensional audit evidence | 2026-11-06T19:02:22.858Z |

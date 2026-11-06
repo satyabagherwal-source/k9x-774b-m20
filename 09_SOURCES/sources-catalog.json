@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "739e17f9",
+    "sourceVersion": "b8e88959",
     "license": "AGPL-3.0",
-    "contentHash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
-    "lastHarvestedAt": "2026-11-05T10:16:12.506Z",
+    "contentHash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
+    "lastHarvestedAt": "2026-11-06T19:02:22.858Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "9771c244",
+    "sourceVersion": "d3413e65",
     "license": "Apache-2.0",
-    "contentHash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
-    "lastHarvestedAt": "2026-11-06T15:13:20.965Z",
+    "contentHash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
+    "lastHarvestedAt": "2026-11-06T19:02:20.483Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

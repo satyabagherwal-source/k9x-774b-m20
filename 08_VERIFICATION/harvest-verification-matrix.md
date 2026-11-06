@@ -7899,3 +7899,5 @@
 | `CYCLE-20261106-OX2M` | `2026-11-06T15:27:36.814Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`88901350...`) |
 | `CYCLE-20261106-OZ7Q` | `2026-11-06T15:27:39.590Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cc553ade...`) |
 | `CYCLE-20261106-3C22` | `2026-11-06T18:54:46.730Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`acec04fc...`) |
+| `CYCLE-20261106-D267` | `2026-11-06T19:02:20.479Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fa535438...`) |
+| `CYCLE-20261106-D406` | `2026-11-06T19:02:22.854Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26a2a333...`) |

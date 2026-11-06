@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T18:54:46.741Z",
-  "total_cycles_completed": 7864,
-  "total_learnings_persisted": 7864,
-  "total_rules_promoted": 7513,
+  "last_updated": "2026-11-06T19:02:22.864Z",
+  "total_cycles_completed": 7866,
+  "total_learnings_persisted": 7866,
+  "total_rules_promoted": 7515,
   "history": [
-    {
-      "timestamp": "2026-11-05T14:13:44.085Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T14:13:48.492Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:22:46.076Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T18:54:46.741Z",
       "repository": "dosco/graphjin",
       "learningId": "learn-github-dosco-graphjin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:02:20.489Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:02:22.864Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

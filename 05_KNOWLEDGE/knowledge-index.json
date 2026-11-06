@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T18:54:46.640Z",
+  "last_updated": "2026-11-06T19:02:22.755Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45558,8 +45558,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "9771c244",
-      "content_hash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
+      "source_version": "d3413e65",
+      "content_hash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45581,6 +45581,11 @@
         {
           "number": null,
           "title": "Use NUC 86 `is` comparisons in ARC datasets",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Remove output matrices from analyzer prompts",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45874,7 +45879,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:13:20.841Z",
+      "verified_at": "2026-11-06T19:02:20.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73738,11 +73743,16 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "739e17f9",
-      "content_hash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
+      "source_version": "b8e88959",
+      "content_hash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ui): settle the module props and drop the user-usage module (#7126)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1125,
           "title": "resource): report a queued reason commit as accepted (#6157)",
@@ -73844,7 +73854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:16:12.411Z",
+      "verified_at": "2026-11-06T19:02:22.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

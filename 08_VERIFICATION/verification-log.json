@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-6ZMQ",
-    "timestamp": "2026-11-04T23:06:13.346Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "e82de935d52b700c6133650b6802d6f88d449896a6768235511eb6cb37073b15",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-74G3",
-    "timestamp": "2026-11-04T23:06:19.587Z",
-    "repository": "NativeScript/NativeScript",
-    "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-7AN2",
     "timestamp": "2026-11-04T23:06:27.614Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7460,36 @@
     "repository": "dosco/graphjin",
     "learningId": "learn-github-dosco-graphjin",
     "contentHash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-D267",
+    "timestamp": "2026-11-06T19:02:20.479Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-D406",
+    "timestamp": "2026-11-06T19:02:22.854Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

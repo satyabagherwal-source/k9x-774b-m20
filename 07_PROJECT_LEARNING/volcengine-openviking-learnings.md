@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `739e17f9`  
+> **Source Version**: `b8e88959`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:16:11.844Z  
+> **Timestamp**: 2026-11-06T19:02:20.943Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:16:11.838Z  
+> **Harvest Timestamp**: 2026-11-06T19:02:15.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41587 stars
+- **Stars / Engagement**: 41697 stars
 
 ---
 
@@ -1495,843 +1495,1773 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `739e17f9` (2026-11-05)
-**Commit Message**: fix(magpie): add opt-in sessionless capture and raise recall budget (#7073)
+### Incident Patch 1: `756e27fd` (2026-11-06)
+**Commit Message**: feat(ui): settle the module props and drop the user-usage module (#7126)
 
-* fix(magpie): warn on missing capture sessions and raise recall budget
+* refactor(ui): remove the user-usage module
 
-Log a fixed capture diagnostic once without replacing recall status. Default recall to 2000 ms and show editable 2000/3000 ms recall/host budgets, preserving saved settings.
+The current design has no usage page under the personal terminal: every
+usage-related frame lives under the ROOT Key or Admin Key groups, and the
+普通 user group contains none. An earlier review had concluded the
+opposite, but that was against an older design; the current one does not
+support it.
 
-Validation: syntax checks and npm pack dry-run passed; 126 tests passed, 0 failed, 1 Bun-host test skipped (Bun unavailable). Refs #7007.
+Removing it the way resource-import was removed: the directory, the
+package and Rslib entries, the stylesheet aggregation, the root exports,
+the docs pages in both locales, the sidebar entries, the demo and the
+index rows.
 
-* feat(magpie): add opt-in capture without host sessions
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-Add captureWithoutSession (false by default). Derive capture identity from client scope and the shaped opening message without changing stateless recall. Preserve real session precedence and recheck file opt-in in queued delivery.
+* refactor(ui): inline the module placeholders
 
-Validation: 131 tests passed, 0 failed, 1 actual Bun-host test skipped (runtime unavailable); syntax checks, npm pack dry-run and diff checks passed. Refs #7007.
+`modules/shared/` existed so four modules could share one placeholder
+component and stylesheet. With one module gone and the remaining three
+each about to grow their own view, the shared layer cost a directory and
+an indirection without saving anything: each module now renders its own
+container and owns its stylesheet.
 
-* fix(magpie): retire derived capture queues on native takeover
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-Resolve derived capture scope before checking native ownership. Parse native-marked history for capture cleanup while preserving recall's existing native-context exclusion. Persist ownership and remove pending snapshot
+* feat(ui): settle the file-browser props
 
-**File**: `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
-```diff
-@@ -138,6 +138,9 @@ export const KNOBS = [
-     workspace: "capture.enabled",
-     capability: "capture",
-   },
-+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
-   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
-   // Tool output is reported verbatim; the server owns truncation via
-@@ -280,9 +283,10 @@ export function harnessKey(harness) {
- }
- 
- /** Both accepted spellings of every harness, for the `plugin` section. */
--export const HARNESS_CONFIG_KEYS = new Set(
--  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
--);
-+export const HARNESS_CONFIG_KEYS = new Set([
-+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-+]);
- 
- export function knobDefault(knob, harness = "") {
-   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
-```
+Three decisions from the design review:
 
-**File**: `examples/codex-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
-```diff
-@@ -138,6 +138,9 @@ export const KNOBS = [
-     workspace: "capture.enabled",
-     capability: "capture",
-   },
-+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
-   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
-   // Tool output is reported verbatim; the server owns truncation via
-@@ -280,9 +283,10 @@ export function harnessKey(harness) {
- }
- 
- /** Both accepted spellings of every harness, for the `plugin` section. */
--export const HARNESS_CONFIG_KEYS = new Set(
--  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
--);
-+export const HARNESS_CONFIG_KEYS = new Set([
-+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-+]);
- 
- export function knobDefault(knob, harness = "") {
-   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
-```
-
-**File**: `examples/magpie-memory-plugin/README.md` (modified, +69/-7)
-```diff
-@@ -50,7 +50,7 @@ environment; editing the file applies to the next operation without restarting.
-       "enabled": true,
-       "autoRecall": true,
-       "autoCapture": true,
--      "recallContextTimeoutMs": 700,
-+      "recallContextTimeoutMs": 2000,
-       "recallMaxTokens": 1600,
-       "recallPeerScope": "all",
-       "mcpEnabled": false
-@@ -85,7 +85,7 @@ to enabled; explicit `autoCapture: false` in host options or client settings is
- preserved. Host options override scoped settings, which override shared settings.
- 
- Magpie's **Options** editor now accepts `autoRecall`, `autoCapture`, `mcpEnabled`,
--`recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
-+`captureWithoutSession`, `recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
- options override the corresponding file settings for this plugin; connection
- credentials and identity always remain file-owned. `gatewayTimeoutMs` controls
- the host's hook budget. The package supplies an example, not saved defaults;
-@@ -94,6 +94,33 @@ options. Memory tools are disabled by default; set `mcpEnabled: true` to enable
- them. Automatic capture is enabled by default and needs no additional setting;
- set `autoCapture: false` to disable it.
- 
-+`captureWithoutSession` is a Magpie-only boolean, default `false`. If the client
-+cannot send a stable session ID, opt in through Magpie's Options:
-+
-+```json
-+{
-+  "autoCapture": true,
-+  "captureWithoutSession": true
-+}
-+```
-+
-+It can also be set in `ovcli.conf` under `plugin.magpie` (or shared `plugin`),
-+with the same host → scoped → shared precedence. A real session ID always takes
-+priority. Only capture uses the derived ID; recall remains stateless without a
-+host session. The fallback hashes the agent, working directory, protocol and
-+first user message after the existing capture shaping/filters. Model changes do
-+not change this ID; existing connection/credential isolation still applies.
-+
-+This is approximate grouping: independent conversations with identical opening
-+messages in the same client scope may merge. If their histories diverge, capture
-+skips snapshots that conflict with the history already written. Rewriting or
-+removing the opening message can split a conversation or skip unknown history.
-+Start a new conversation after enabling it; existing histories are not backfilled.
-+`autoCapture: false` still disables all automatic capture. For file settings without
-+a host override, turning this option off pauses queued derived-session snapshots;
-+turning it back on lets them resume. Queued snapshots retain their enqueue-time
-+host overrides, just as they do for `autoCapture`.
-+
- File settings `plugin.magpie.bypassSession: true` or `bypassSessionPatterns`
- matching the Magpie session ID or working directory skip automatic recall and
- capture. Existing queued snapshots pause while bypass applies and can resume
-@@ -113,8 +140,17 @@ controlled by `mcpEnabled`.
-   turn. Retries and later turns replay the original snapshot.
- - Only host-classified `local` and `magpie-key` origins receive memory. Shared
-   gateway keys, forwarded traffic and unknown origins are skipped. Without a
--  session ID, new user requests use stateless recall: no persisted ledger, profile
--  replay or conversation capture. Repeated requests may retrieve different context.
-+  session ID, new user requests use stateless recall: no persisted recall ledger or
-+  profile replay. Capture is also skipped unless `captureWithoutSession: true`.
-+  Repeated requests may retrieve different context.
-+  With capture enabled and the fallback off, the first eligible sessionless user request logs
-+  `OpenViking capture: no-session` once per plugin-host process, explaining that
-+  capture is unavailable and suggesting a stable session header or explicit
-+  `captureWithoutSession` opt-in with its grouping limitation. Check Magpie's
-+  plugin-host logs; this warning contains no message text or credentials and does
-+  not replace the recall status. Current Magpie hosts ignore custom `report()`
-+  codes, so a separate capture status in the UI requires host support.
-+  Native-owned, disabled, bypassed and auxiliary requests do not trigger the warning.
-   The file's OV credentials remain the authority.
- - Only a new textual user message triggers retrieval. Tool continuations replay
-   known context without retrieving. Magpie skips its own internal title/classifier
-@@ -141,12 +177,38 @@ controlled by `mcpEnabled`.
-   against every duplicate. Disabling `autoRecall` prevents new searches while
-   replaying known history; disabling the plugin entirely disables both.
- - The shared context builder owns query settings, budgets and result relevance.
--  Default recall timeout is 700 ms inside Magpie's default 1000 ms hook budget.
--  Increasing it requires raising Magpie's `gatewayTimeoutMs` with I/O margin.
--  Cancellation reaches the HTTP request. Query filters use the shared parser.
-+  Default recall timeout is 2000 ms. Set
-```
-
-**File**: `examples/magpie-memory-plugin/README_CN.md` (modified, +51/-5)
-```diff
-@@ -45,7 +45,7 @@ magpie plugin add ./examples/magpie-memory-plugin
-     "enabled": true,
-     "autoRecall": true,
-     "autoCapture": true,
--    "recallContextTimeoutMs": 700,
-+    "recallContextTimeoutMs": 2000,
-     "recallMaxTokens": 1600,
-     "recallPeerScope": "all",
-     "mcpEnabled": false
-@@ -65,10 +65,31 @@ Magpie 的文件读取策略排除环境变量和 workspace 层。
- 工具仍需 `plugin.magpie.mcpEnabled: true` 显式开启。采集默认开启；宿主选项或客户端配置中显式设置的 `autoCapture: false` 仍然生效。优先级为宿主选项、Magpie 专属配置、共享配置。
- 
- Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`recallMaxTokens`、
--`recallContextTimeoutMs`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
-+`recallContextTimeoutMs`、`captureWithoutSession`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
- 服务连接、凭据和身份仍只从文件读取。`gatewayTimeoutMs` 控制宿主 Hook 预算。
- 包内示例不会自动保存；未填写的字段继续沿用文件设置或默认值。记忆工具默认关闭，设置 `mcpEnabled: true` 可开启。自动采集默认开启，无需额外配置；如需关闭，设置 `autoCapture: false`。
- 
-+`captureWithoutSession` 是 Magpie 专属的布尔配置，默认 `false`。客户端无法传递稳定会话 ID 时，
-+可在 Magpie“选项”中显式开启：
-+
-+```json
-+{
-+  "autoCapture": true,
-+  "captureWithoutSession": true
-+}
-+```
-+
-+也可在 `ovcli.conf` 的 `plugin.magpie` 或共享 `plugin` 中设置，优先级仍为宿主选项、专属配置、共享配置。
-+有真实会话 ID 时优先使用真实 ID。派生 ID 仅用于采集，无宿主会话时召回仍然无状态。
-+派生输入为 Agent、工作目录、协议和经过现有采集清洗/过滤的首条用户消息；切换模型不会改变 ID，
-+OV 连接和凭据仍按现有规则隔离。
-+
-+同一客户端作用域内，相同开场的独立对话可能合并。如果两段历史出现分歧，采集会跳过与已写入历史
-+冲突的快照。改写或删除开场消息可能拆分会话，或因历史无法识别而跳过采集。开启后请新建对话，
-+不回填未知的已有历史。
-+`autoCapture: false` 仍关闭所有自动采集。通过文件配置且无宿主覆盖时，关闭本开关会暂停派生会话的
-+待同步队列，重新开启后可恢复。与 `autoCapture` 一样，已入队快照保留入队时的宿主选项覆盖。
-+
- 不会修改文件、合并环境变量中的凭据，或回退读取 `ov.conf`、Root Key、Gateway Token。
- 配置缺失、损坏或服务不可用时，召回跳过，模型请求继续；不会沿用旧配置。
- 
-@@ -83,7 +104,12 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
-   资料读取与检索在召回超时预算内并行执行；任一路失败时仍可使用另一路结果。
-   资料遵守 `profileTokenBudget`，且最多占 `recallMaxTokens` 的一半，使用共享的中日韩字符 token 估算器；
-   资料与检索结果合计不超过 `recallMaxTokens`，与首轮决策一起持久化；重试和后续轮次回放原始快照。
--- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化账本、不重放 Profile 快照、不采集对话；重复请求可能获得不同的召回结果。
-+- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化召回账本、不重放 Profile 快照；除非显式设置 `captureWithoutSession: true`，否则不采集对话。重复请求可能获得不同的召回结果。
-+  开启采集但未开启哈希兼容时，首次符合条件却缺少会话 ID 的用户请求，会在 Magpie 插件宿主日志中输出
-+  `OpenViking capture: no-session`，建议客户端传递稳定的会话 ID 请求头，或了解会话误合并限制后显式开启 `captureWithoutSession`。
-+  每个插件宿主进程只提示一次，不含对话正文或凭据，也不覆盖召回状态。
-+  当前 Magpie 会忽略自定义 `report()` 状态码，独立的 UI 采集状态仍需宿主支持。
-+  原生插件接管、关闭、bypass、辅助请求不会触发此提示。
-   共享网关 Key、转发请求或身份缺失时跳过，始终使用文件中配置的 OV 身份。
- - 只有新的文本用户消息触发检索。工具续轮只回放已有记忆；重试复用首次决策，
-   包括无结果和失败的决策。同样的问题出现在后续新轮次时仍可重新检索。
-@@ -99,8 +125,28 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
-   Magpie 自身跳过内部标题/分类请求；插件也跳过明确标记的辅助、压缩、标题和子 Agent 请求。
- - `autoRecall: false` 关闭新检索，但仍回放已知历史；插件整体关闭则停止两者。
-   查询过滤、召回参数、预算和结果相关性使用共享模块。
--- 默认 700ms 检索预算。提高超时时也应提高 Magpie 的 `gatewayTimeoutMs`，为状态读写留余量。
--  请求取消会中止检索。Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
-+- 默认 2000ms 检索预算，可在 Magpie“选项”或 `plugin.magpie` 中配置
-+  `recallContextTimeoutMs`；已有显式配置继续生效。实际 HTTP 超时还受客户端 `timeout`、
-+  9000ms 上限及宿主预算限制：从宿主预算扣除已耗费的准备时间，并预留 200ms 用于结果组装、
-+  状态读写和序列化。检索与 Profile 共用内部截止信号，一路超时仍可使用另一路已完成的结果。
-+  剩余不足 100ms 时不再发起 HTTP 请求；宿主取消时仍放弃本次注入。
-+  宿主没有提供整个 Hook 链的剩余截止时间，因此预留时间不能保证避开更早的外部取消。
-+  Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
-+
-+连接托管或远程服务时，请在 Magpie 的“选项”中同时保存两个预算（合并到已有选项）：
-+
-+```json
-+{
-+  "recallContextTimeoutMs": 2000,
-+  "gatewayTimeoutMs": 3000
-+}
-+```
-+
-+包内选项示例包含这组值，但升级不会重写已保存的选项。未设置 `gatewayTimeoutMs` 时，
-+Magpie 仍默认使用 1000ms 的宿主预算，插件会自动缩短 HTTP 等待以适配该预算。
-+已有安装如需使用完整 2000ms 检索预算，仍须显式提高宿主预算。宿主预算应高于检索预算，
-+为配置和状态读写留余量（Magpie 允许的上限为 10000ms）。如需继续增加检索预算，
-+请同步调整两个值，并确保 `ovcli.conf` 顶层的 `timeout`（秒）足够。召回失败仍会放行模型请求。
- 
- ### 本机回放状态
- 
-```
-
-**File**: `examples/magpie-memory-plugin/capture-worker.mjs` (modified, +6/-2)
-```diff
-@@ -88,7 +88,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-     // A worker may outlive file edits. Recheck identity and opt-in immediately
-     // before each non-idempotent operation, without changing its pinned identity.
-     const current = await loadConfig({ OPENVIKING_CLI_CONFIG_FILE: snapshot.configPath }, snapshot.options);
--    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture || bypassedSession(current, context)) return "paused";
-+    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture
-+      || (context.derivedSession && !current.captureWithoutSession) || bypassedSession(current, context)) return "paused";
-     if (current.nativeAgents.includes(context.agent) || await exists(join(root, "native-owner"))) return "native";
-     return withCaptureDecisions(directory, scope, (state) => {
-       if (!Array.isArray(snapshot.turnAnchors) && state.rejected.length) return "rejected";
-@@ -110,7 +111,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-     if (status !== "delivered") return status;
-     state = await update((s) => structuredClone(s));
-   }
--  if (state.blocked) return "paused";
-+  // Older workers may have blocked the entire derived scope on one conflict.
-+  if (state.blocked && !(context.derivedSession && state.blocked === "history_changed")) return "paused";
-   let meta;
-   try { meta = await call(cfg, `/api/v1/sessions/${sessionId}`, { signal }); }
-   catch (error) {
-@@ -151,6 +153,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-   }
-   if (incoming.length <= state.hashes.length && incoming.every((id, i) => id === state.hashes[i])) return commitCaptured(cfg, sessionId, update, call, signal, stopped);
-   if (!state.hashes.every((id, i) => id === incoming[i])) {
-+    // Separate sessionless conversations can share an opening message.
-+    if (context.derivedSession) return "rejected";
-     await update((s) => { s.blocked = "history_changed"; });
-     return "paused";
-   }
-```
-
-**File**: `examples/magpie-memory-plugin/capture.mjs` (modified, +42/-10)
-```diff
-@@ -10,14 +10,21 @@ import { recallDigest } from "./recall-ledger.mjs";
- 
- export const captureDirectory = (cfg, ctx) => join(dataDirectory(cfg), "capture", connectionScope(cfg, ctx));
- const workers = new Map();
-+let warnedMissingSession = false;
- export async function nativeOwner(cfg, ctx, body) {
-   // Without a session, ownership is request-local: never share a marker
-   // between unrelated conversations from the same client.
-   if (!ctx.session?.trim()) return cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol);
-   const directory = captureDirectory(cfg, ctx);
-   const marker = join(directory, "native-owner");
-   if (cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol)) {
--    await mkdir(directory, { recursive: true, mode: 0o700 });
-+    if (ctx.derivedSession && !cfg.captureWithoutSession) {
-+      // Take over an existing scope without creating state while capture is off.
-+      try { await access(directory); }
-+      catch (error) { if (error.code === "ENOENT") return true; throw error; }
-+    } else {
-+      await mkdir(directory, { recursive: true, mode: 0o700 });
-+    }
-     await chmod(directory, 0o700);
-     const file = await open(marker, "a", 0o600);
-     await file.close();
-@@ -67,8 +74,12 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
-   const user = payloads.findLast((m) => m.message_kind === "user_query");
-   if (!user) return false;
-   const turnKey = user.source_message_ids[0].slice(7);
--  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol },
--    options: Object.hasOwn(ctx.options || {}, "autoCapture") ? { autoCapture: cfg.autoCapture } : {}, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
-+  const options = {};
-+  if (Object.hasOwn(ctx.options || {}, "autoCapture")) options.autoCapture = cfg.autoCapture;
-+  if (typeof ctx.options?.captureWithoutSession === "boolean") options.captureWithoutSession = cfg.captureWithoutSession;
-+  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol,
-+    ...(ctx.derivedSession ? { derivedSession: true } : {}) },
-+    options, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
-   const encoded = JSON.stringify(snapshot);
-   if (Buffer.byteLength(encoded) > 3 * 1024 * 1024) return false;
-   const path = join(pending, `${turnKey}.json`);
-@@ -94,20 +105,35 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
- }
- 
- export async function prepareCapture(body, ctx, cfg, options) {
--  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin) || !ctx.session?.trim()) return;
-+  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin)) return;
-   if (isAuxiliaryRequest(body, ctx)) return;
-+  const conversation = describeConversation(body, ctx.protocol, { allowNativeContext: true });
-+  const first = conversation && captureMessages([conversation.messages[conversation.users[0]]], ctx.protocol, cfg)?.[0]?.source_message_ids[0];
-+  if (!ctx.session?.trim() && first && (cfg.captureWithoutSession
-+    || cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol))) {
-+    // Keep the host context unchanged: fallback identity belongs only to capture.
-+    ctx = { ...ctx, derivedSession: true, session: `derived-${recallDigest(JSON.stringify([ctx.agent || "", ctx.cwd || "", ctx.protocol, first]))}` };
-+  }
-+  // Resolve the capture scope before yielding so native takeover also retires
-+  // derived queues and remains effective when later requests lose the marker.
-+  if (ctx.derivedSession && bypassedSession(cfg, ctx)) return;
-   if (await nativeOwner(cfg, ctx, body)) { ctx.state && (ctx.state.nativeOwner = true); return; }
--  if (!cfg.autoCapture) return;
--  const conversation = describeConversation(body, ctx.protocol);
--  if (!conversation) return;
-+  if (!cfg.autoCapture || !conversation || !first) return;
-+  if (!ctx.session?.trim()) {
-+    if (conversation.fresh && !warnedMissingSession) {
-+      warnedMissingSession = true;
-+      // Magpie's report() accepts recall codes only; log separately so a
-+      // successful recall cannot overwrite the capture diagnostic.
-+      console.warn("OpenViking capture: no-session — automatic capture unavailable: the host did not provide a session ID. Configure the client to send a stable session header (for example x-session-id), or opt into captureWithoutSession: true (identical opening messages may merge conversations). Stateless recall remains available.");
-+    }
-+    return;
-+  }
-   // Never bind across an earlier assistant/tool exchange, even if only one
-   // human user remains after client-side trimming or an identity s
-```
-
-**File**: `examples/magpie-memory-plugin/config.mjs` (modified, +7/-1)
-```diff
-@@ -70,14 +70,20 @@ export async function loadConfig(env = process.env, options = {}) {
-   if (!Array.isArray(nativeAgents) || nativeAgents.some((agent) => typeof agent !== "string" || !agent.trim())) {
-     throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
-   }
-+  const captureWithoutSession = options.captureWithoutSession ?? scoped?.captureWithoutSession ?? file.plugin?.captureWithoutSession;
-+  if (captureWithoutSession != null && typeof captureWithoutSession !== "boolean") {
-+    throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
-+  }
-   // Host options may tune behavior, never connection credentials or identity.
-   const allowed = ["autoRecall", "autoCapture", "mcpEnabled", "recallMaxTokens", "recallContextTimeoutMs"];
-   const overrides = Object.fromEntries(Object.entries(options || {}).filter(([key]) => allowed.includes(key)));
-+  // Preserve Magpie's strict boolean validation and nullish fallback before resolving the schema default.
-+  if (captureWithoutSession != null) overrides.captureWithoutSession = captureWithoutSession;
-   const settingsFile = { ...file, plugin: { ...file.plugin, magpie: { ...scoped, ...overrides } } };
-   const { settings, configured, sources } = resolveSettings("magpie", { env: {}, cliFile: settingsFile });
-   if (!configured.has("mcpEnabled")) settings.mcpEnabled = false;
-   if (!configured.has("autoCapture")) settings.autoCapture = true;
--  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 700;
-+  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 2000;
-   const connection = resolveConnection("magpie", { env: { OPENVIKING_CREDENTIAL_SOURCE: "cli" }, files });
-   const peerId = resolvePluginPeerId({ settings, configured, sources, credentials: connection, env: {} });
-   const authorization = clientAuthorization(file);
-```
-
-**File**: `examples/magpie-memory-plugin/conversation.mjs` (modified, +3/-2)
-```diff
-@@ -104,7 +104,7 @@ export function memoryBlock(memory) {
- }
- 
- /** Only full, client-owned histories have replayable message positions. */
--export function describeConversation(body, protocol) {
-+export function describeConversation(body, protocol, { allowNativeContext = false } = {}) {
-   if (!object(body)) return null;
-   const encoded = JSON.stringify(body);
-   if (Buffer.byteLength(encoded) > 2 * 1024 * 1024) return null;
-@@ -122,7 +122,8 @@ export function describeConversation(body, protocol) {
-   if (!Array.isArray(messages) || !messages.length || messages.length > 2000 || !messages.every(object)) return null;
-   // Tool results and assistant quotations may contain docs describing these
-   // markers. They are data, not evidence of an installed memory plugin.
--  if (hasNativeContext(body, protocol)) return null;
-+  // Capture may parse native-owned history solely to resolve its cleanup scope.
-+  if (!allowNativeContext && hasNativeContext(body, protocol)) return null;
-   const exchanges = conversationExchanges(messages, protocol);
-   const users = exchanges.filter((exchange) => !exchange.auxiliary).map((exchange) => exchange.start);
-   if (!users.length) return null;
-```
-
----
-
-### Incident Patch 2: `2fc2f725` (2026-11-05)
-**Commit Message**: refactor(ui): give every public directory an index.ts entry and narrow the root exports (#7066)
-
-* refactor(ui): give every public directory an index.ts entry and narrow the root exports
-
-Each component and module directory now exposes a single `index.ts`
-barrel, and the build, the package exports and the root entry all point
-at it instead of at the same-named implementation file. This makes the
-directory the unit of the public API: renaming an implementation file no
-longer changes the published entry, and the declaration output is
-`dist/<分类>/<目录>/index.d.ts`.
-
-Narrow the root entry at the same time. `@openviking/react` now exports
-each component and its main Props type only — `FileTreeProps`,
-`ScopeSwitcherProps` and so on. Row types, option types, handles and
-label bags are reachable from the `components/<component>` and
-`modules/<module>` subpaths, not from the root, so the root stays a short
-list of the things most consumers reach for.
-
-Record the rule in the package agent guide and in the package README, and
-restate it in both quick-start pages.
-
-* fix(ui): keep FilePreview out of the root entry so the optional peer stays optional
-
-Review follow-up. Adding `FilePreview` to the
-
-**File**: `frontend/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -50,6 +50,7 @@
- 
- - JS/TS 文件（含 JSX、TSX）每个文件最多 200 行，不计空行和纯注释行，由 lint 的 `max-lines` 规则检查。
- - 按变更选择验证：纯文字改动检查格式、链接和差异；类型、实现或构建配置改动运行 workspace 的格式检查、类型检查和完整构建。命令见 README，CI 环境见 [公共构建 action](../.github/actions/build-ui/action.yml)。
-+- 格式化与检查只针对本次改动的文件：在 `frontend/` 下执行 `npm run lint -- <改动文件>` 或 `npx prettier --write <改动文件>`，不要用 `--write .`、`--check .` 等扫描整个目录的写法。仓库根与 `frontend/` 存在同名目录（`docs/`、`README.md`、`AGENTS.md`），从错误的工作目录用相对路径会改到本仓库无关的产品文档；格式化前确认工作目录，并检查 `git status` 里没有出现预期之外的文件。
- - 用户可见的行为或样式改动，在浏览器中运行构建后的文档并实际操作示例，检查相关的主题、窄屏和失败状态；截图后查看图片，构建成功本身不能证明页面可用。
- - 修改包导出、peer dependencies、资源或打包策略时，从真实打包产物验证消费者，包括声明支持的 React 版本，并检查声明、CSS 与 SVG 能在 workspace 外解析；文档开发模式不能代替独立消费验证。
- - 修改部署时，验证合并后主站页面仍存在，并检查 UI 深链及静态资源。线上尚未发布或外部检查尚未结束时，报告实际状态。
-```
-
-**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ Keep application-specific workflows and authentication in the application layer.
- 
- ## Public entries
- 
--The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
-+The root `@openviking/react` entry currently exports `FileTree`, `Tui`, `ScopeSwitcher`, `AgentConnect`, and the four business module placeholders with their main Props types. `FilePreview` is available from the `components/file-preview` subpath only, because its types depend on the optional `@ark-design/ui`. Subtypes — row types, option types, handles and label bags — always come from the subpaths. `@openviking/react/icons` provides five file-type icons.
- 
- There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
- 
-```
-
-**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ This example uses the public module entries and the aggregate module stylesheet.
- 
- ## Import and styles
- 
--Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies, their Props and their Labels types are also exported from `@openviking/react`.
-+Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies and their main Props types are also exported from `@openviking/react`; subtypes such as Labels come from the subpath only.
- 
- JavaScript does not load CSS. Import `@openviking/react/modules/<module>/style.css` for one module, `@openviking/react/modules/style.css` for all modules, or `@openviking/react/style.css` for the full library. Each stylesheet works independently. There is no aggregate `@openviking/react/modules` JavaScript entry.
- 
-```
-
-**File**: `frontend/docs/docs/zh/guide/getting-started.mdx` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ workspace 开发插件会在文档服务器启动前运行 Rslib watch。文档
- 
- ## 公开入口
- 
--根入口 `@openviking/react` 当前导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。`@openviking/react/icons` 提供五种文件类型图标。
-+根入口 `@openviking/react` 当前导出 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件及其主 Props 类型；`FilePreview` 只从 `components/file-preview` 子路径导出，因为它的类型依赖可选的 `@ark-design/ui`。行类型、选项类型、句柄与文案包等子类型一律从子路径导入。`@openviking/react/icons` 提供五种文件类型图标。
- 
- 没有 `components` 或 `modules` 分类聚合 JavaScript 入口。业务占位组件使用独立的 `modules/<模块>` 入口：
- 
-```
-
-**File**: `frontend/docs/docs/zh/modules/index.mdx` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
- 
- ## 导入与样式
- 
--从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体、Props 与 Labels 类型也一并从根入口 `@openviking/react` 导出。
-+从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体与主 Props 类型也从根入口 `@openviking/react` 导出；Labels 等子类型只从子路径导入。
- 
- JavaScript 不加载 CSS。单模块使用 `@openviking/react/modules/<模块>/style.css`，全部模块使用 `@openviking/react/modules/style.css`，整库使用 `@openviking/react/style.css`，每个样式入口均可独立消费。没有 `@openviking/react/modules` 分类聚合 JavaScript 入口。
- 
-```
-
-**File**: `frontend/packages/react/AGENTS.md` (modified, +8/-0)
-```diff
-@@ -2,6 +2,14 @@
- 
- 适用于 `frontend/packages/react/**`，同时遵循 [Frontend Agent Guide](../../AGENTS.md) 和更深目录的规则。
- 
-+## 公开导出
-+
-+- 目录以 `index.ts` 作为唯一出口，包根入口 `src/index.ts` 只从这里取。
-+- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），作为最常用的快捷方式。
-+- 子类型、回调参数类型、行与选项等数据结构、句柄与文案包，一律只从 `components/<组件>`、`modules/<模块>` 子路径导出。根入口不聚合它们。
-+- 依赖可选 peer 的组件不进入根入口：`FilePreview` 的类型引用 `@ark-design/ui`，放进根声明会让该可选 peer 对只用其他根导出的消费者变成必需。
-+- 新增或调整导出时，同步维护 `package.json` 的 `exports`、Rslib 入口与声明路径，并从真实打包产物验证根入口与各子路径都能解析。
-+
- ## useEffect 使用门槛
- 
- - 新增或修改组件、自定义 Hook 时，非必要不使用 `useEffect`。只有需要在渲染提交后，将组件与明确的外部系统保持同步，且更直接的声明式 API、事件处理或已有专用 Hook 无法满足时，才允许使用。
-```
-
-**File**: `frontend/packages/react/README.md` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯
- 
- ## 公开入口与样式
- 
--- 根入口导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件及其公开类型；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。具体组件使用 `components/<组件>` 子路径；业务模块使用 `modules/<模块>` 子路径，当前导出占位组件与类型，真实能力迁入后再导出 Hook。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
-+- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），当前为 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件；行类型、选项类型、句柄与文案包等子类型只从 `components/<组件>`、`modules/<模块>` 子路径导出。`FilePreview` 不在根入口：它的类型依赖可选的 `@ark-design/ui`，放进根声明会让该 peer 变成必需。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
- - 组件只提供明确列出的分层子路径，不保留旧路径别名。
- - JS 入口共享实现，不隐式加载 CSS。整包、组件集合与单模块样式由同一份源码构建，选择所需范围导入即可。
- 
-```
-
-**File**: `frontend/packages/react/package.json` (modified, +9/-9)
-```diff
-@@ -26,49 +26,49 @@
-       "import": "./dist/index.js"
-     },
-     "./components/file-tree": {
--      "types": "./dist/components/file-tree/file-tree.d.ts",
-+      "types": "./dist/components/file-tree/index.d.ts",
-       "import": "./dist/components/file-tree.js"
-     },
-     "./components/file-tree/style.css": "./dist/components/file-tree/style.css",
-     "./components/file-preview": {
--      "types": "./dist/components/file-preview/file-preview.d.ts",
-+      "types": "./dist/components/file-preview/index.d.ts",
-       "import": "./dist/components/file-preview.js"
-     },
-     "./components/file-preview/style.css": "./dist/components/file-preview/style.css",
-     "./components/tui": {
--      "types": "./dist/components/tui/tui.d.ts",
-+      "types": "./dist/components/tui/index.d.ts",
-       "import": "./dist/components/tui.js"
-     },
-     "./components/tui/style.css": "./dist/components/tui/style.css",
-     "./components/scope-switcher": {
--      "types": "./dist/components/scope-switcher/scope-switcher.d.ts",
-+      "types": "./dist/components/scope-switcher/index.d.ts",
-       "import": "./dist/components/scope-switcher.js"
-     },
-     "./components/scope-switcher/style.css": "./dist/components/scope-switcher/style.css",
-     "./components/agent-connect": {
--      "types": "./dist/components/agent-connect/agent-connect.d.ts",
-+      "types": "./dist/components/agent-connect/index.d.ts",
-       "import": "./dist/components/agent-connect.js"
-     },
-     "./components/agent-connect/style.css": "./dist/components/agent-connect/style.css",
-     "./style.css": "./dist/style.css",
-     "./components/style.css": "./dist/components/style.css",
-     "./modules/file-browser": {
--      "types": "./dist/modules/file-browser/file-browser.d.ts",
-+      "types": "./dist/modules/file-browser/index.d.ts",
-       "import": "./dist/modules/file-browser.js"
-     },
-     "./modules/file-browser/style.css": "./dist/modules/file-browser/style.css",
-     "./modules/console": {
--      "types": "./dist/modules/console/console.d.ts",
-+      "types": "./dist/modules/console/index.d.ts",
-       "import": "./dist/modules/console.js"
-     },
-     "./modules/console/style.css": "./dist/modules/console/style.css",
-     "./modules/task-center": {
--      "types": "./dist/modules/task-center/task-center.d.ts",
-+      "types": "./dist/modules/task-center/index.d.ts",
-       "import": "./dist/modules/task-center.js"
-     },
-     "./modules/task-center/style.css": "./dist/modules/task-center/style.css",
-     "./modules/user-usage": {
--      "types": "./dist/modules/user-usage/user-usage.d.ts",
-+      "types": "./dist/modules/user-usage/index.d.ts",
-       "import": "./dist/modules/user-usage.js"
-     },
-     "./modules/user-usage/style.css": "./dist/modules/user-usage/style.css",
-```
-
----
-
-### Incident Patch 3: `425b0d76` (2026-11-05)
-**Commit Message**: refactor(ui): move AgentConnect into components (#7065)
-
-* refactor(ui): move AgentConnect into components
-
-AgentConnect is a pure view: the design has tabs, a list and a detail
-pane, with no input, no form and no data of its own. It belongs with the
-other reusable views rather than with the business modules, which are
-defined as Hook plus composed view that loads its own data.
-
-Move the directory from modules/ to components/ and give it a real
-contract in place of the shared module placeholder:
-
-- `tabs` / `activeTabId` for the top tabs
-- `items` / `selectedId` for the left list
-- `detail` for the right pane: title, description, tags, content and the
-  text the copy control writes
-- `labels` for the instructions heading, copy control and empty state
-- `onTabChange` / `onSelect` / `onCopy` report intent only
-
-Everything the old module owned stays with the host: where the catalog
-comes from, how the body is rendered, permissions, analytics and routing.
-
-Update the package and build entries, the aggregate stylesheets, the
-navigation, the component indexes and the bilingual documentation to the
-new path. The placeholder view is unchanged.
-
-`AgentConnectProps` omits `onCopy` from the d
-
-**File**: `frontend/AGENTS.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- - 按 [README 的目标目录](./README.md#target-layout) 放置资产。React 包发布名为 `@openviking/react`，Vue 落地后独立交付为 `@openviking/vue`。源码边界可以先在 workspace 内共享，通过子路径提供消费入口。有独立安装、依赖隔离或独立发布节奏的需求时再拆包。
- - 跨框架纯函数、资源类型和数据转换放在 `packages/lib/`。OpenViking 请求与服务适配器放在 `packages/client/`。仅供单个模块使用的工具留在模块内。仅随 React 使用的共享能力随 React 包交付。跨模块公共 Hook 有真实实现后再从 `@openviking/react/hooks` 开放，组件不能使用取数或缓存 Hook。出现独立于框架的消费需求时，再为 `lib` 定义框架无关的公开包入口，并在未安装 React 或 Vue 的项目中验证。
- - 图标的 SVG 源文件、来源与授权放在 `packages/icons/`。React 图标组件放在 `packages/react/src/icons/`，随 React 包从 `@openviking/react/icons` 交付。各框架的封装直接消费同一份 SVG 源文件。构建产物包含图标实现和类型声明，消费者通过 React 包一次安装。
--- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供五个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
-+- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供四个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
- - 每个组件、业务模块或区块独占一个 kebab-case 目录，入口文件与目录同名。实现、CSS Modules、测试及私有子组件就近放置，例如 `components/<模块>/<模块>.tsx` 和同目录的 `<模块>.module.css`。模块私有的 Hook、类型和工具留在模块内，不提前提升到公共目录。
- - 根入口与子路径分别维护公开导出；组件子路径为 `@openviking/react/components/<组件>`，业务模块为 `@openviking/react/modules/<模块>`，从模块入口分别导出 Hook 与组合视图。不提供 `components`、`modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放；各入口共享实现，避免重复创建 Provider、Context 或状态对象。同步维护 Rslib 入口和声明路径。
- - 目录按实际内容创建，不预建空目录，也不为单个简单模块增加不必要的转发层。
-```
+- The too
 
 **File**: `frontend/README.md` (modified, +2/-2)
 ```diff
-@@ -30,8 +30,8 @@ npm run preview        # Serve the built documentation at /ui/
- ## Layout
+@@ -31,7 +31,7 @@ npm run preview        # Serve the built documentation at /ui/
  
- - `packages/react`: `@openviking/react` package, Rslib library build with declaration generation, CSS Modules, and React peer dependencies.
--- `packages/react/src/components/{file-tree,file-preview}`: file-tree interaction and tabbed file-preview views with public props types. See the [module map](./packages/react/README.md#模块目录).
--- `packages/react/src/modules/{file-browser,console,agent-connect,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
-+- `packages/react/src/components/{file-tree,file-preview,tui,scope-switcher,agent-connect}`: reusable views with public props types. file-tree and file-preview are implemented; tui, scope-switcher and agent-connect publish their reviewed contracts with a placeholder view. See the [module map](./packages/react/README.md#模块目录).
-+- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
+ - `packages/react`: `@openviking/react` package, Rslib library build with declaration generation, `ov-` prefixed BEM class names, and React peer dependencies.
+ - `packages/react/src/components/{file-tree,file-preview,tui,scope-switcher,agent-connect}`: reusable views with public props types. All five ship placeholder views and will be rewritten against their reviewed contracts; file-tree and file-preview have their shell and interaction in place, while tui, scope-switcher and agent-connect render a fixed-size shell only. See the [module map](./packages/react/README.md#module-map).
+-- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
++- `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
+ - `packages/react/src/client`: the framework-neutral request client, exported from `@openviking/react/client` — a `fetch`-based `createOvClient` plus the contract modules depend on (`OvClient`, `OvRequestOptions`, `OvClientError`).
  - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
  - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
- - `docs/docs/en` and `docs/docs/zh`: matching English and Simplified Chinese pages, with localized navigation.
+@@ -54,7 +54,7 @@ Library output is `packages/react/dist/`; documentation output is `docs/doc_buil
+ 
+ ## Target layout
+ 
+-The workspace currently contains React components, shared SVGs, four business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
++The workspace currently contains React components, shared SVGs, three business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
+ 
+ ```text
+ frontend/
 ```
 
-**File**: `frontend/docs/docs/_demos/agent-connect-basic.tsx` (added, +12/-0)
+**File**: `frontend/docs/docs/_demos/modules-basic.tsx` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,12 @@
-+import { AgentConnect } from '@openviking/react/components/agent-connect';
-+import '@openviking/react/components/agent-connect/style.css';
-+
-+export default function AgentConnectBasic() {
-+  return (
-+    <AgentConnect
-+      tabs={[{ id: 'mainstream', label: 'Mainstream agents' }]}
-+      activeTabId="mainstream"
-+      items={[]}
-+    />
-+  );
-+}
+@@ -1,7 +1,6 @@
+ import { FileBrowser } from '@openviking/react/modules/file-browser';
+ import { Console } from '@openviking/react/modules/console';
+ import { TaskCenter } from '@openviking/react/modules/task-center';
+-import { UserUsage } from '@openviking/react/modules/user-usage';
+ import '@openviking/react/modules/style.css';
+ 
+ export default function ModulesBasic() {
+@@ -10,7 +9,6 @@ export default function ModulesBasic() {
+       <FileBrowser />
+       <Console />
+       <TaskCenter />
+-      <UserUsage />
+     </div>
+   );
+ }
 ```
 
-**File**: `frontend/docs/docs/_demos/agent-connect-placeholder.tsx` (removed, +0/-10)
+**File**: `frontend/docs/docs/_demos/user-usage-placeholder.tsx` (removed, +0/-10)
 ```diff
 @@ -1,10 +0,0 @@
--import { AgentConnect } from '@openviking/react/modules/agent-connect';
--import '@openviking/react/modules/agent-connect/style.css';
+-import { UserUsage } from '@openviking/react/modules/user-usage';
+-import '@openviking/react/modules/user-usage/style.css';
 -
--export default function AgentConnectPlaceholder() {
+-export default function UserUsagePlaceholder() {
 -  return (
 -    <div lang="en">
--      <AgentConnect />
+-      <UserUsage />
 -    </div>
 -  );
 -}
 ```
 
-**File**: `frontend/docs/docs/_demos/modules-basic.tsx` (modified, +0/-2)
+**File**: `frontend/docs/docs/en/modules/console.mdx` (modified, +13/-14)
 ```diff
-@@ -1,6 +1,5 @@
- import { FileBrowser } from '@openviking/react/modules/file-browser';
- import { Console } from '@openviking/react/modules/console';
--import { AgentConnect } from '@openviking/react/modules/agent-connect';
- import { TaskCenter } from '@openviking/react/modules/task-center';
- import { UserUsage } from '@openviking/react/modules/user-usage';
- import '@openviking/react/modules/style.css';
-@@ -10,7 +9,6 @@ export default function ModulesBasic() {
-     <div className="ov-demo-modules" lang="en">
-       <FileBrowser />
-       <Console />
--      <AgentConnect />
-       <TaskCenter />
-       <UserUsage />
-     </div>
+@@ -20,26 +20,25 @@ The component is a placeholder: it renders the module name and a placeholder mes
+ 
+ - Request configuration through the Provider, overridable per module through `requestOptions`.
+ - Sign-in, identity switching, routing and permissions.
+-- Opening a resource or locating an artifact: the module reports it through `onOpenUri` and `onResourceChange`, and never reaches into another module's private state.
++- Opening a resource: the module reports it through `onOpenUri`, and never reaches into another module's private state.
+ - Entries above the composer and in the toolbar, injected through `slots`.
+ 
+ ## Props
+ 
+ The module exports `ConsoleProps` from the subpath and the root entry, and `ConsoleMode`, `ConsoleLabels` and `ConsoleSlots` from the subpath only.
+ 
+-| Property           | Type                          | Default        | Description                                                                                                      |
+-| ------------------ | ----------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
+-| `requestOptions`   | `OvRequestOptions`            | —              | Request configuration override, applied field by field over the nearest Provider.                                |
+-| `mode`             | `'conversation' \| 'command'` | —              | The controlled mode. When given, the host owns the mode and the module only reports switch intent.               |
+-| `defaultMode`      | `'conversation' \| 'command'` | `conversation` | Initial mode when uncontrolled.                                                                                  |
+-| `onModeChange`     | `(mode: ConsoleMode) => void` | —              | Called after the mode changes.                                                                                   |
+-| `onOpenUri`        | `(uri: string) => void`       | —              | Called after a resource opens successfully; not called on failure.                                               |
+-| `onResourceChange` | `(uri: string) => void`       | —              | Called when the module produces a task or a resource change, so the host can refresh or locate it.               |
+-| `slots`            | `ConsoleSlots`                | —              | `toolbar`, `conversationContext` and `commandHelp`.                                                              |
+-| `labels`           | `ConsoleLabels`               | —              | Replaceable copy: `conversation`, `command`, `error` and `retry`. An omitted label inherits its English default. |
+-| `className`        | `string`                      | —              | Additional container class.                                                                                      |
+-| `style`            | `CSSProperties`               | —              | Container style overrides.                                                                                       |
++| Property         | Type                          | Default        | Description                                                                                                                                     |
++| ---------------- | ----------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
++| `requestOptions` | `OvRequestOptions`            | —              | Request configuration override, applied field by field over the nearest Provider.                                                               |
++| `mode`           | `'conversation' \| 'command'` | —              | The controlled mode. When given, the host owns the mode and the module only reports switch intent.                                              |
++| `defaultMode`    | `'conversation' \| 'command'` | `conversation` | Initial mode when uncontrolled.                                                                                                                 |
++| `onModeChange`   | `(mode: ConsoleMode) => void` | —              | Called after the mode changes.                                                                                                                  |
++| `onOpenUri`      | `(uri: string) => void`       | —              | Called after a resource opens successfully; not called on failure.                                                                              |
++| `slots`          | `ConsoleSlots`                | —              | `toolbar`, `conversationContext` and `commandHelp`.                                                                                             |
++| `labels`         | `ConsoleLabels`               | —              | Replaceable copy: `conversation`, `command`, `error`, `retry` and the placeholder `description`. An omitted label inherits its English default. |
++| `c
 ```
 
-**File**: `frontend/docs/docs/en/components/agent-connect.mdx` (added, +85/-0)
+**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +58/-15)
 ```diff
-@@ -0,0 +1,85 @@
-+# AgentConnect
-+
-+An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and the detail, and reports switch and copy intent.
-+
-+This is a placeholder component: it renders a fixed-size empty shell and consumes no props, so hosts can integrate against the published package before the view is migrated. The props contract below is the agreed shape; the placeholder implementation will be replaced.
-+
-+## Basic usage
-+
-+```tsx file="../../_demos/agent-connect-basic.tsx" preview
-+
-+```
-+
-+The placeholder is 960 × 640, matching the full-page view.
-+
-+## Structure
-+
-+The view has three parts:
-+
-+- **Tabs** across the top, declared by the host through `tabs` and `activeTabId`.
-+- **List** on the left, the items of the active tab through `items`.
-+- **Detail** on the right, the selected item's body through `detail`.
-+
-+The component holds no catalog and no body content. Where the items come from, how the body is rendered and what a copy means all belong to the host.
-+
-+## Props
-+
-+### AgentConnectProps
-+
-+| Property      | Type                             | Default  | Description                                                                                                                                 |
-+| ------------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-+| `tabs`        | `readonly AgentConnectTab[]`     | Required | Tabs at the top.                                                                                                                            |
-+| `activeTabId` | `string`                         | Required | Active tab id, owned by the host.                                                                                                           |
-+| `items`       | `readonly AgentConnectItem[]`    | Required | Items of the active tab.                                                                                                                    |
-+| `selectedId`  | `string`                         | —        | Selected item id, owned by the host.                                                                                                        |
-+| `detail`      | `AgentConnectDetail`             | —        | Detail of the selected item; no body when omitted.                                                                                          |
-+| `labels`      | `AgentConnectLabels`             | English  | Replaceable copy.                                                                                                                           |
-+| `onTabChange` | `(tabId: string) => void`        | —        | Invoked when a tab is selected.                                                                                                             |
-+| `onSelect`    | `(item) => void`                 | —        | Invoked when an item is selected.                                                                                                           |
-+| `onCopy`      | `(text: string) => void`         | —        | Invoked after a successful copy, for analytics or extra feedback; the component performs the write. The control still renders when omitted. |
-+| Other props   | `HTMLAttributes<HTMLDivElement>` | —        | Standard div attributes; `children` is excluded.                                                                                            |
-+
-+### AgentConnectTab
-+
-+| Property | Type     | Description     |
-+| -------- | -------- | --------------- |
-+| `id`     | `string` | Unique tab key. |
-+| `label`  | `string` | Tab label.      |
-+
-+### AgentConnectItem
-+
-+| Property      | Type        | Description                               |
-+| ------------- | ----------- | ----------------------------------------- |
-+| `id`          | `string`    | Unique item key.                          |
-+| `name`        | `string`    | Item name.                                |
-+| `description` | `string`    | One-line summary shown in the list.       |
-+| `icon`        | `ReactNode` | Item icon, which can be an image or node. |
-+
-+### AgentConnectDetail
-+
-+| Property      | Type                | Description                                                     |
-+| ------------- | ------------------- | --------------------------------------------------------------- |
-+| `title`       | `string`            | Detail title, usually the selected item's name.                 |
-+| `icon`        | `ReactNode`         | Icon shown next to the title.                                   |
-+| `description` | `string`            | Description under the title.                                    |
-+| `tags`        | `readonly string[]` | Tags under the title, for example "SDK" or "Overseas".          |
-+| `content`     | `ReactNode`         | Body content, 
-```
-
-**File**: `frontend/docs/docs/en/components/index.mdx` (modified, +4/-0)
-```diff
-@@ -20,6 +20,10 @@ The reviewed API for command records, results and input. The current view is a p
+@@ -1,6 +1,6 @@
+ # FileBrowser
  
- A header scope breadcrumb. The host declares the levels and their options; the component renders the triggers, dropdown panels, option list and search, and reports switch intent.
+-Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, slots and copy.
++Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, the toolbar entries and copy.
  
-+### [AgentConnect](./agent-connect)
-+
-+An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and detail, and reports switch and copy intent.
-+
- ### [Icons](./icons)
+ The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useFileBrowser` follow.
  
- Five file-type icons with configurable image dimensions and accessible labels: audio, PDF, presentation, video, and word-processing files.
-```
-
-**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +4/-4)
-```diff
-@@ -2,7 +2,7 @@
+@@ -10,34 +10,77 @@ The component is a placeholder: it renders the module name and a placeholder mes
  
- OpenViking UI provides React foundations for building AI application interfaces on OpenViking, the context database for AI agents. The workspace includes Rslib builds, bilingual documentation, layered directory conventions, and scoped styles. Applications provide business UI, data, authentication, and workflow orchestration.
- 
--The package provides FileTree, FilePreview, five file-type icons, and five business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
-+The package provides FileTree, FilePreview, Tui, ScopeSwitcher, AgentConnect, five file-type icons, and four business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
- 
- ## Run locally
- 
-@@ -21,15 +21,15 @@ The workspace development plugin starts Rslib watch before the documentation ser
- ## Organize application code
- 
- - `packages/react/src/components/`: reusable views that receive prepared data through props and report intent through callbacks.
--- `packages/react/src/modules/`: five importable placeholder components; business Hooks and composed interactions will follow.
-+- `packages/react/src/modules/`: four importable placeholder components; business Hooks and composed interactions will follow.
- - `packages/react/src/hooks/` and `utils/`: internal shared logic, without public subpaths.
- - `docs/docs/en/` and `docs/docs/zh/`: corresponding documentation pages; shared runnable examples belong in `docs/docs/_demos/`.
- 
- Keep application-specific workflows and authentication in the application layer. Module Hooks load data through the shared Client; components do not fetch business data or depend on application routing.
- 
- ## Public entries
- 
--The root `@openviking/react` entry exports FileTree, the five business module placeholders, and their public types. FileTree and FilePreview are also available through their `components/<module>` subpaths. `@openviking/react/icons` provides five file-type icons.
-+The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
- 
- There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
- 
-@@ -40,7 +40,7 @@ import '@openviking/react/modules/file-browser/style.css';
- <FileBrowser />;
  ```
  
--The five placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
-+The four placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
++## Scope
++
++The module covers the file tree and the file preview only. The command panel belongs to `console`.
++
+ ## What the module owns
  
- Business modules will combine data-loading Hooks with composed views around focused capabilities. Each module entry will export its Hooks separately from its composed view, so hosts can reuse the logic with their own UI. The shared Client will follow the native OpenViking API paths, parameters, and response types. Authentication, account scope, routing, permissions, and complete page flows remain with the host. Business Hooks and cross-module public Hooks have no implementation or exports yet.
+ - Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests.
+ - Refreshing the affected directory, search results and preview after a save, rename or delete.
+ - The layout of the search, directory and preview area.
++- The search box and refresh control in the toolbar, plus per-row state such as uploading progress, conflicts and retention settings.
++- The preview tabs. Which tabs a resource has follows from the resource itself, so the host does not supply them.
++- The search view. Search is a private view inside this module, not a published component or module: it opens from the toolbar or ⌘K, and picking a result moves the tree and loads the preview. Nothing about it is exported, because leaving the tree leaves it without a destination. `console` has its own `@` picker over the same kind of API; that is a separate view, not this one.
  
+ ## What the host owns
+ 
+ - Request configuration through the Provider, overridable per module through `requestOptions`.
+ - Sign-in, account scope, routing and permissions.
+-- Entries such as connecting an agent or importing resources, injected through `slots.toolbar`. The module embeds no connection dialog, import flow or onboarding.
+-- Views with their own loading logic, such as experience dashboards, injected through `slots.previewTabs`.
++- The toolbar entries: connect an agent, import resources. Compose them with `FileBrowserToolbarButton` inside `toolbarActions` so they match the module's own buttons. Entries can nest inside a popover or dropdown when a click alone is not enough.
++- Connection dialogs, import flows and onboarding. The module embeds none of them.
++
++## Toolbar entries
++
++The module renders the search box, the refresh button and the dividers. The host adds its own entries through `toolbarActions` and uses `FileBrowserToolbarButton` so the styling matches:
++
++```tsx
++import {
++  FileBrowser,
++  FileBrowserToolbarButton,
++} from '@openviking/react/modules/file-browser';
++
++<FileBrowser
++  toolbarActions={
++    <>
++      <FileBrowserToolbarButton icon={<ConnectIcon />} onClick={connect}>
++        Connect agent
++      </FileBrowserToolbarButton>
++      <FileBrowserToolbarButton icon={<UploadIcon />} onClick={openImport}>
++        Import resources
++      </FileBrowserToolbarButton>
++    </>
++  }
++/>;
++```
++
++Because `toolbarActions` is a node, an entry that needs a menu wraps its button instead of asking for another prop:
++
++```tsx
++<Popover content={<ResourceMenu />} trigger="hover">
++  <FileBrowserToolbarButton icon={<UploadIcon />}>
++    Import resources
++  </FileBrowserToolbarButton>
++</Popover>
++```
++
++Dividers between entries come from a CSS adjacent-sibling rule, so how many entries the host passes and how they nest makes no difference.
+ 
+ ## Props
+ 
+-The module exports `FileBrowserProps` from the subpath and the root entry, and `FileBrowserLabels` and `FileBrowserSlots` from the subpath only.
++The module exports `FileBrowserProps` from the subpath and the root entry. `FileBrowserToolbarButton`, `FileBrowserToolbarButtonProps` and `FileBrowserLabels` come from the subpath only.
+ 
+-| Property         | Type                            | Default | Description                                                                                                                                 |
+-| ---------------- | ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+-| `requestOptions` | `OvRequestOptions`              | —       | Request configuration override, applied field by field over the nearest Provider.                                                           |
+-| `uri`            | `string`                        | —       | The controlled current resource URI. When given, the host owns the current resource and the module only reports switch intent.              |
+-| `defaultUri`     | `strin
+```
+
+**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-2)
+```diff
+@@ -9,7 +9,6 @@ No prop carries data. A module loads its own data through a Hook, so the host su
+ | [`file-browser`](./file-browser) | `FileBrowser` | File browser.     |
+ | [`console`](./console)           | `Console`     | Console.          |
+ | [`task-center`](./task-center)   | `TaskCenter`  | Task center.      |
+-| [`user-usage`](./user-usage)     | `UserUsage`   | My usage.         |
+ 
+ ## Preview
+ 
+@@ -21,7 +20,7 @@ This example uses the public module entries and the aggregate module stylesheet.
+ 
+ ## Import and styles
+ 
+-Import a component and its Props / Labels / Slots types from `@openviking/react/modules/<module>`. The four component bodies and their main Props types are also exported from `@openviking/react`; Labels, Slots and the enum types come from the subpath only.
++Import a component and its Props / Labels / Slots types from `@openviking/react/modules/<module>`. The three component bodies and their main Props types are also exported from `@openviking/react`; Labels, Slots and the enum types come from the subpath only.
+ 
+ JavaScript does not load CSS. Import `@openviking/react/modules/<module>/style.css` for one module, `@openviking/react/modules/style.css` for all modules, or `@openviking/react/style.css` for the full library. Each stylesheet works independently. There is no aggregate `@openviking/react/modules` JavaScript entry.
+ 
+```
+
+**File**: `frontend/docs/docs/en/modules/task-center.mdx` (modified, +67/-20)
+```diff
+@@ -1,6 +1,6 @@
+ # TaskCenter
+ 
+-Tasks visible to the current identity, their details and execution records. The module loads its own data; the host supplies configuration, the controlled selection, filters, slots and copy.
++Two task lists in one module: data-source import tasks and knowledge-compile tasks. Each tab has its own data source, columns and schedule semantics. The module loads its own data; the host supplies configuration, the controlled state, column configuration, slots and copy.
+ 
+ The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useTaskCenter` follow.
+ 
+@@ -10,35 +10,82 @@ The component is a placeholder: it renders the module name and a placeholder mes
+ 
+ ```
+ 
++## The two tabs
++
++| Tab                | Data source       | Schedule meaning                                                         |
++| ------------------ | ----------------- | ------------------------------------------------------------------------ |
++| Data-source import | Scheduled watches | A fixed interval in minutes; the resource is re-imported on that cadence |
++| Knowledge compile  | Compile targets   | A daily or weekly clock time; the target is recompiled then              |
++
++They are different concepts, not one field shown twice. A watch re-imports on an interval; a compile target reruns at a wall-clock time.
++
+ ## What the module owns
+ 
+-- The task list, its paging, loading and failure states, and the detail of the selected task.
+-- Requesting by the status and type filters the host gives.
++- Each tab's list, its loading, empty and failure states, and the header filters inside that tab.
++- The schedule column, including its edit control.
++- Deciding whether the "others' tasks" scope is available, from the current identity.
+ 
+ ## What the host owns
+ 
+ - Request configuration through the Provider, overridable per module through `requestOptions`.
+ - Sign-in, account scope and permissions.
+-- Filter controls and the toolbar, injected through `slots.toolbar`; the host decides which filters exist and passes the resulting `statuses` and `taskTypes`.
+-- Extra detail content such as artifacts, injected through `slots.detailExtra`.
++- Task details: shown by the module in a drawer. The host takes no part in opening a task.
++- Writing a schedule change. `onSaveScheduleInterval` and `onSaveCompileSchedule` return a Promise: resolve once the write succeeded and the module reloads, reject and the module keeps the edit and shows `labels.saveFailed`. The two are separate because an import task schedules on an interval while a compile target schedules on a daily or weekly clock time.
++- The toolbar, injected through `slots.toolbar`. Row actions are built in: the detail entry and the schedule edit control.
++
++## Columns
++
++Omitting `columns` uses each tab's built-in columns in their default order:
++
++| Tab                | Built-in columns                                                           |
++| ------------------ | -------------------------------------------------------------------------- |
++| Data-source import | name, schedule, source, last execution, created at, path                   |
++| Knowledge compile  | name, status, conflicts, task type, schedule, updated at, created at, path |
++
++Pass `columns.import` or `columns.compile` to reorder, hide or override a column, or to add one:
++
++```tsx
++<TaskCenter
++  columns={{
++    compile: [
++      { key: 'name', width: 280 },
++      { key: 'schedule' },
++      { key: 'conflicts', title: 'Conflicts' },
++      {
++        key: 'artifacts',
++        title: 'Artifacts',
++        render: (row) => <Artifacts uri={row.toUri} />,
++      },
++    ],
++  }}
++/>
++```
++
++A custom key needs its own `render`; a built-in key falls back to the default cell.
+ 
+ ## Props
+ 
+-The module exports `TaskCenterProps` from the subpath and the root entry, and `TaskCenterStatus`, `TaskCenterLabels` and `TaskCenterSlots` from the subpath only.
+-
+-| Property                | Type                               | Default | Description                                                                                                            |
+-| ----------------------- | ---------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+-| `requestOptions`        | `OvRequestOptions`                 | —       | Request configuration override, applied field by field over the nearest Provider.                                      |
+-| `selectedTaskId`        | `string`                           | —       | The controlled selected task id. When given, the host owns the selection and the module only reports select intent.    |
+-| `defaultSelectedTaskId` | `string`                           | —       | Initial selected task id when uncontrolled. Nothing is selecte
+```
+
+**File**: `frontend/docs/docs/en/modules/user-usage.mdx` (removed, +0/-44)
+```diff
+@@ -1,44 +0,0 @@
+-# UserUsage
+-
+-Context counts, token usage, retrievals and submissions for the current user. The module loads its own data; the host supplies configuration, the time range, which metrics to show, slots and copy.
+-
+-The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useUserUsage` follow.
+-
+-## Basic usage
+-
+-```tsx file="../../_demos/user-usage-placeholder.tsx" preview
+-
+-```
+-
+-## What the module owns
+-
+-- Querying statistics for the current user over the given range and bucket.
+-- Loading, empty and failure states.
+-
+-## What the host owns
+-
+-- Request configuration through the Provider, overridable per module through `requestOptions`.
+-- Sign-in, account scope and the current user.
+-- The date-range picker and any other controls, injected through `slots.controls`; the host passes the resulting `startDate`, `endDate` and `bucket`.
+-
+-Account-wide statistics, member comparisons and billing costs belong to administration, not this module.
+-
+-## Props
+-
+-The module exports `UserUsageProps` from the subpath and the root entry, and `UserUsageMetric`, `UserUsageBucket`, `UserUsageLabels` and `UserUsageSlots` from the subpath only.
+-
+-| Property         | Type                         | Default | Description                                                                                                                    |
+-| ---------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+-| `requestOptions` | `OvRequestOptions`           | —       | Request configuration override, applied field by field over the nearest Provider.                                              |
+-| `startDate`      | `string`                     | —       | Start date as `YYYY-MM-DD` in the host's local time zone. The module takes the last seven days when omitted.                   |
+-| `endDate`        | `string`                     | —       | End date as `YYYY-MM-DD` in the host's local time zone. The module takes today when omitted.                                   |
+-| `bucket`         | `'hour' \| 'day' \| 'week'`  | `day`   | Time bucket of the statistics.                                                                                                 |
+-| `metrics`        | `readonly UserUsageMetric[]` | —       | Metrics to show: `contexts`, `tokens`, `retrievals` and `submissions`. All four show when omitted.                             |
+-| `slots`          | `UserUsageSlots`             | —       | `controls`, `extra` and `emptyState`.                                                                                          |
+-| `labels`         | `UserUsageLabels`            | —       | Replaceable copy: `title`, the four metric names, `empty`, `error` and `retry`. An omitted label inherits its English default. |
+-| `className`      | `string`                     | —       | Additional container class.                                                                                                    |
+-| `style`          | `CSSProperties`              | —       | Container style overrides.                                                                                                     |
+-
+-Labels are plain text; the host maps its own translation system into these props. No prop carries data — the module loads it.
+-
+-The placeholder component itself consumes `className`, `style` and `labels.title` only.
+```
+
+---
+
+### Incident Patch 2: `46a5d9d9` (2026-11-06)
+**Commit Message**: fix: tree-sitter process() is a synchronous native call that can stall for… (#7059)
+
+* tree-sitter process() is a synchronous native call that can stall for the
+grammar download timeout. Running it on the SEMANTIC event-loop thread froze
+all concurrent semantic tasks. Wrap extract_skeleton_result in asyncio.to_thread
+so blocking parse/download work executes off the event loop.
+
+* feat(parse): preload tree-sitter grammars in image and bundle proxy manifest
+
+Production containers usually cannot reach GitHub, while the image build
+network can. Avoid on-demand grammar downloads (which block on a 60s
+timeout) by preloading all grammars at build time, and keep on-demand
+downloads working for non-Docker users via an optional proxy manifest.
+
+- Dockerfile: download_all() at build time with a completeness check that
+  fails the image if any language is missing; copy the populated cache into
+  the runtime image and pin OPENVIKING_TREE_SITTER_CACHE_DIR.
+- process_engine: lazily point tree-sitter-language-pack at
+  OPENVIKING_TREE_SITTER_CACHE_DIR before process(); without this the pack
+  looks under <cache>/v<version>/libs and misses the preloaded files.
+- aider_repomap: apply the same cache-
+
+**File**: `Dockerfile` (modified, +33/-0)
+```diff
+@@ -48,6 +48,7 @@ ENV CARGO_TARGET_DIR=/cargo-target
+ ENV UV_COMPILE_BYTECODE=1
+ ENV UV_LINK_MODE=copy
+ ENV UV_NO_DEV=1
++ENV OPENVIKING_TREE_SITTER_CACHE_DIR=/app/.cache/tree-sitter-language-pack
+ WORKDIR /app
+ 
+ # Copy source required for setup.py artifact builds and native extension build.
+@@ -97,6 +98,35 @@ RUN --mount=type=cache,target=/root/.cache/uv,id=uv-${TARGETPLATFORM} \
+             ;; \
+     esac
+ 
++# Preload every tree-sitter grammar at build time. The build network can reach
++# GitHub, while production usually cannot, so the populated cache is copied into
++# the runtime image and the first code parse never blocks on a download. Fail the
++# build if any language is missing instead of shipping an incomplete cache.
++RUN rm -rf "${OPENVIKING_TREE_SITTER_CACHE_DIR}" \
++ && mkdir -p "${OPENVIKING_TREE_SITTER_CACHE_DIR}" \
++ && /app/.venv/bin/python - <<'PY'
++import os
++from typing import get_args
++
++from tree_sitter_language_pack import (
++    PackConfig,
++    SupportedLanguage,
++    configure,
++    download_all,
++    downloaded_languages,
++)
++
++cache_dir = os.environ["OPENVIKING_TREE_SITTER_CACHE_DIR"]
++configure(PackConfig(cache_dir=cache_dir))
++download_all()
++missing = sorted(set(get_args(SupportedLanguage)) - set(downloaded_languages()))
++if missing:
++    raise SystemExit(
++        "tree-sitter parser preload incomplete; missing "
++        f"{len(missing)} languages: {', '.join(missing[:20])}"
++    )
++PY
++
+ # Stage 4: runtime
+ FROM python:3.13-slim-trixie
+ 
+@@ -112,6 +142,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
+ WORKDIR /app/.openviking
+ 
+ COPY --from=py-builder /app/.venv /app/.venv
++# Grammar cache preloaded in the builder stage; read directly at runtime.
++COPY --from=py-builder /app/.cache/tree-sitter-language-pack /app/.cache/tree-sitter-language-pack
+ # Exercise SVG rendering so missing Python or Cairo runtime dependencies fail the build.
+ RUN /app/.venv/bin/python -I - <<'PYCODE'
+ import cairosvg
+@@ -132,6 +164,7 @@ RUN mkdir -p /app/.openviking \
+  && chmod +x /usr/local/bin/openviking-entrypoint /usr/local/bin/openviking-pending-health
+ ENV HOME="/app" \
+     PATH="/app/.venv/bin:$PATH" \
++    OPENVIKING_TREE_SITTER_CACHE_DIR="/app/.cache/tree-sitter-language-pack" \
+     OPENVIKING_CONFIG_FILE="/app/.openviking/ov.conf" \
+     OPENVIKING_CLI_CONFIG_FILE="/app/.openviking/ovcli.conf"
+ 
+```
+
+**File**: `MANIFEST.in` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@ graft crates/ragfs
+ graft crates/ragfs-python
+ recursive-include openviking *.yaml
+ recursive-include openviking/scheduling/expiry *.lua
++recursive-include openviking/parse/parsers/code/ast *.json
+ recursive-include openviking_gateway *.json
+ 
+ # sdist should be source-only: never ship runtime binaries from working tree
+```
+
+**File**: `docs/zh/guides/01-configuration.md` (modified, +26/-0)
+```diff
+@@ -1073,6 +1073,32 @@ ollama pull guoxuter/ov_intent_analysis_sft:v7_q8
+ 需要 GitHub、GitLab 或 Azure DevOps 专属 URL 语义时，应配置到对应的平台字段；
+ 其他 Git 主机统一添加到 `code_hosting_domains`。
+ 
++#### 语法包下载与镜像（网络受限 / 离线）
++
++`tree-sitter-language-pack.process()` 首次解析某种语言时，会按需从 GitHub Releases 下载语法整包（单个平台包内含全部语言，约 20MB），下载后缓存在本地，之后的解析直接读缓存、不再联网。
++
++- **Docker 部署**：镜像在构建阶段已执行 `download_all()` 预热全部语法，并校验所有语言就绪（缺失则镜像构建失败）；生产环境直接命中镜像内缓存，无需也不会访问 GitHub。
++- **个人本地使用（非 Docker）**：默认仍按需从 GitHub 下载，不会强制预取。如果你的网络无法访问 GitHub，可把环境变量指向 OpenViking 随包内置的代理清单（下载地址已改写为公共代理 `gh-proxy.com`）：
++
++```bash
++# 1. 找到随包安装的代理清单路径
++python -c "import openviking.parse.parsers.code.ast as m, os; print(os.path.join(os.path.dirname(m.__file__), 'assets', 'parsers.ghproxy.json'))"
++
++# 2. 指向它（建议写入 ~/.zshrc / ~/.bashrc）
++export TREE_SITTER_LANGUAGE_PACK_MANIFEST_URL="file://<上一步输出的绝对路径>"
++```
++
++说明：
++
++- 该环境变量只替换**清单文件**地址；清单内各平台整包 URL 已改写为代理地址，整包也会走代理，`sha256` 保持不变。
++- 想彻底离线，可在能联网时手动预热一次，之后全程使用本地缓存：
++
++```bash
++python -c "from tree_sitter_language_pack import download_all; download_all()"
++```
++
++- 如需使用自建镜像，把环境变量指向你自己的 `parsers.json`（同步改写其中的整包 URL）即可，支持 `http(s)://` 与 `file://`。
++
+ ### pdf
+ 
+ PDF 解析配置。支持三种策略：`local`（本地 pdfplumber）、`mineru`（远程 MinerU API）、`auto`（先本地、失败回退 MinerU）。
+```
+
+**File**: `openviking/parse/parsers/code/ast/aider_repomap.py` (modified, +14/-0)
+```diff
+@@ -7,6 +7,10 @@
+ from pathlib import Path
+ from typing import Optional
+ 
++from openviking.parse.parsers.code.ast.process_engine import (
++    _configure_tree_sitter_cache_dir,
++)
++
+ logger = logging.getLogger(__name__)
+ 
+ _QUERY_DIR = Path(__file__).with_name("queries") / "tree-sitter-language-pack"
+@@ -127,6 +131,16 @@ def _query_captures(rel_name: str, content: str):
+         raise ValueError(f"missing tags query for language: {lang}")
+ 
+     query_lang = _query_language_name(lang)
++    _configure_tree_sitter_cache_dir()
++    # get_parser() downloads with the GIL held in the native extension, which
++    # would freeze the whole process even inside asyncio.to_thread. prefetch()
++    # performs the same on-demand download without holding the GIL, so run it
++    # first in this worker thread. Do not swallow failures: the caller
++    # (_extract_with_grep_ast) catches and falls back to LLM, and catching here
++    # would make get_parser() retry the same download a second time.
++    from tree_sitter_language_pack import prefetch
++
++    prefetch([query_lang])
+     parser = get_parser(query_lang)
+     language = get_language(query_lang)
+     tree = parser.parse(content.encode("utf-8"))
+```
+
+**File**: `openviking/parse/parsers/code/ast/assets/parsers.ghproxy.json` (added, +1571/-0)
+```diff
+@@ -0,0 +1,1571 @@
++{
++  "version": "1.13.3",
++  "platforms": {
++    "linux-aarch64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-linux-aarch64.tar.zst",
++      "sha256": "e4c45c5804c9deb6bc4353962f5478160ca1abb219a745f455a8f56d04b0c1b6",
++      "size": 18245391
++    },
++    "linux-x86_64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-linux-x86_64.tar.zst",
++      "sha256": "30ffd923ed139943b0ccc60c0451f79ca232467f246372d84d88b2dba4e79122",
++      "size": 18678016
++    },
++    "macos-arm64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-macos-arm64.tar.zst",
++      "sha256": "d982fa3ab89d9d710e2c002a7cd5a8bf8c8d6a6143ee27c4495e6a0ee70af387",
++      "size": 20912159
++    },
++    "macos-x86_64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-macos-x86_64.tar.zst",
++      "sha256": "40fd0957a236df1c0d32a1e410b66f6affd71d09146021f1f035f99cc4ee8303",
++      "size": 18276060
++    },
++    "windows-aarch64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-windows-aarch64.tar.zst",
++      "sha256": "2fc29f7a8ede2e6084b3c20d3a08d0b3e615c92e859b7a014b141b123c24dc5f",
++      "size": 17671433
++    },
++    "windows-x86_64": {
++      "url": "https://gh-proxy.com/https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.13.3/parsers-windows-x86_64.tar.zst",
++      "sha256": "142433cbeb0176b37414fc23b6203cc60c85fe1df455e44b95a93772a0e6023a",
++      "size": 18054899
++    }
++  },
++  "languages": {
++    "abl": {
++      "group": "all",
++      "size": 0
++    },
++    "actionscript": {
++      "group": "all",
++      "size": 0
++    },
++    "ada": {
++      "group": "all",
++      "size": 0
++    },
++    "agda": {
++      "group": "all",
++      "size": 0
++    },
++    "al": {
++      "group": "all",
++      "size": 0
++    },
++    "angular": {
++      "group": "all",
++      "size": 0
++    },
++    "apex": {
++      "group": "all",
++      "size": 0
++    },
++    "arduino": {
++      "group": "all",
++      "size": 0
++    },
++    "asciidoc": {
++      "group": "all",
++      "size": 0
++    },
++    "asm": {
++      "group": "all",
++      "size": 0
++    },
++    "astro": {
++      "group": "all",
++      "size": 0
++    },
++    "awk": {
++      "group": "all",
++      "size": 0
++    },
++    "bash": {
++      "group": "all",
++      "size": 0
++    },
++    "bass": {
++      "group": "all",
++      "size": 0
++    },
++    "batch": {
++      "group": "all",
++      "size": 0
++    },
++    "beancount": {
++      "group": "all",
++      "size": 0
++    },
++    "bibtex": {
++      "group": "all",
++      "size": 0
++    },
++    "bicep": {
++      "group": "all",
++      "size": 0
++    },
++    "bitbake": {
++      "group": "all",
++      "size": 0
++    },
++    "blade": {
++      "group": "all",
++      "size": 0
++    },
++    "brightscript": {
++      "group": "all",
++      "size": 0
++    },
++    "bsl": {
++      "group": "all",
++      "size": 0
++    },
++    "c": {
++      "group": "all",
++      "size": 0
++    },
++    "c3": {
++      "group": "all",
++      "size": 0
++    },
++    "caddy": {
++      "group": "all",
++      "size": 0
++    },
++    "cairo": {
++      "group": "all",
++      "size": 0
++    },
++    "capnp": {
++      "group": "all",
++      "size": 0
++    },
++    "cedar": {
++      "group": "all",
++      "size": 0
++    },
++    "cedarschema": {
++      "group": "all",
++      "size": 0
++    },
++    "cel": {
++      "group": "all",
++      "size": 0
++    },
++    "cfml": {
++      "group": "all",
++      "size": 0
++    },
++    "chatito": {
++      "group": "all",
++      "size": 0
++    },
++    "chuck": {
++      "group": "all",
++      "size": 0
++    },
++    "circom": {
++      "group": "all",
++      "size": 0
++    },
++    "clarity": {
++      "group": "all",
++      "size": 0
++    },
++    "clojure": {
++      "group": "all",
++      "size": 0
++    },
++    "cmake": {
++      "group": "all",
++      "size": 0
++    },
++    "cobol": {
++      "group": "all",
++      "size": 0
++    },
++    "comment": {
++      "group": "all",
++      "size": 0
++    },
++    "commonlisp": {
++      "group": "all",
++      "size": 0
++    },
++    "cooklang": {
++      "group": "all",
++      "size": 0
++    },
++    "corn": {
++      "group": "all",
++      "size": 0
++    },
++    "cpon": {
++      "group": "all",
++      "size": 0
++    },
++    "cpp": {
++      "group": "all",
++      "size": 0
++    },
++    "crystal": {
++      "group": "all",
++      "size": 0
++    },
++    "csharp": {
++      "group": "all",
++      "size": 0
++    },
++    "css": {
++      "group": "all",
++      "size": 0
++    },
++    "cst": {
++      "group": "all",
++      "size": 0
++    },
++    "csv": {
++      "group": "all",
++      "size": 0
++    },
++    "cuda": {
++      "group
+```
+
+**File**: `openviking/parse/parsers/code/ast/process_engine.py` (modified, +29/-0)
+```diff
+@@ -2,12 +2,16 @@
+ # SPDX-License-Identifier: AGPL-3.0
+ """Code skeleton extraction via tree-sitter-language-pack.process()."""
+ 
++import os
++from functools import lru_cache
+ from pathlib import Path
+ from typing import Optional
+ 
+ from tree_sitter_language_pack import (
++    PackConfig,
+     ProcessConfig,
+     SupportedLanguage,
++    configure,
+     detect_language_from_path,
+     process,
+ )
+@@ -16,6 +20,30 @@
+ 
+ logger = get_logger(__name__)
+ 
++
++@lru_cache(maxsize=1)
++def _configure_tree_sitter_cache_dir() -> None:
++    """Point tree-sitter-language-pack at the Docker-preloaded grammar cache.
++
++    The Docker image preloads grammars into OPENVIKING_TREE_SITTER_CACHE_DIR
++    (see Dockerfile). Without this, the pack looks under its default
++    ``<cache>/v<version>/libs`` path and misses the preloaded files, which are
++    laid out at the configured directory root. This only selects the directory;
++    a cache miss still downloads on demand, so non-Docker and not-yet-cached
++    language cases keep working.
++    """
++    cache_dir = os.environ.get("OPENVIKING_TREE_SITTER_CACHE_DIR")
++    if not cache_dir:
++        return
++    if not Path(cache_dir).is_dir():
++        logger.warning("Configured tree-sitter parser cache does not exist: %s", cache_dir)
++        return
++    try:
++        configure(PackConfig(cache_dir=cache_dir))
++    except Exception as exc:  # pragma: no cover - defensive only
++        logger.warning("Failed to configure tree-sitter parser cache '%s': %s", cache_dir, exc)
++
++
+ _CLASS_KINDS = {"class", "struct", "interface", "enum", "trait", "impl", "namespace"}
+ _FUNC_KINDS = {"function", "method"}
+ 
+@@ -139,6 +167,7 @@ def _detect_process_language(file_name: str) -> Optional[str]:
+ 
+ 
+ def _extract_process_skeleton(file_name: str, content: str, lang: str) -> str:
++    _configure_tree_sitter_cache_dir()
+     result = process(
+         content,
+         ProcessConfig(language=lang, structure=True, imports=True),
+```
+
+**File**: `openviking/storage/queuefs/semantic_processor.py` (modified, +1/-1)
+```diff
+@@ -1344,7 +1344,7 @@ def result(summary: str) -> Dict[str, Any]:
+         elif file_type == FILE_TYPE_CODE:
+             from openviking.parse.parsers.code.ast import extract_skeleton_result
+ 
+-            extraction = extract_skeleton_result(file_name, content)
++            extraction = await asyncio.to_thread(extract_skeleton_result, file_name, content)
+             if extraction.text:
+                 skeleton_text = extraction.text
+                 max_skeleton_chars = config.semantic.max_skeleton_chars
+```
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -249,6 +249,7 @@ exclude = ["tests*", "docs*", "examples*"]
+ openviking_gateway = ["client-rules.json", "lua/*.lua"]
+ "openviking.scheduling.expiry" = ["lua/*.lua"]
+ "vikingbot.studio.providers.feishu" = ["icon.png"]
++"openviking.parse.parsers.code.ast" = ["assets/parsers.ghproxy.json"]
+ openviking = [
+     "prompts/templates/**/*.yaml",
+     "system_assets/**/*",
+```
+
+---
+
+### Incident Patch 3: `2dffcee2` (2026-11-06)
+**Commit Message**: fix(pathlock): use Redis time to prevent clock-skew takeovers (#6718)
+
+* fix(pathlock): use Redis time to prevent clock-skew takeovers
+
+* chore(pathlock): keep server-time fix focused on code and tests
+
+* test(pathlock): benchmark Redis server-clock lease overhead
+
+Add an opt-in A/B performance test and document local results to quantify server-time acquisition and renewal costs across batch sizes and concurrency levels.
+
+* fix(pathlock): preserve live holders during failed Redis handoff
+
+Use Redis time for atomic handoff rollback so client clock skew cannot remove live sibling locks. Add regressions for delayed adoption, expired sources, and concurrent renewals.
+
+**File**: `crates/ragfs/benches/redis_clock_perf.md` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++# Redis PathLock server-clock perf test
++
++Run against a local standalone Redis:
++
++```bash
++REDIS_URL=redis://127.0.0.1:6379 \
++PATHLOCK_CLOCK_PERF_OUTPUT=/tmp/redis-clock-samples.csv \
++cargo test --release --locked -p ragfs --features cache --lib \
++  perf_server_clock -- --ignored --nocapture
++```
++
++The test is ignored during normal test runs. It uses UUID-prefixed scopes and
++deletes only its own keys after each cycle. It does not change Redis configuration
++or flush the database. Failed runs may leave test keys with a two-hour TTL.
++Do not use a production Redis for this manual load test.
++
++| Environment variable | Default | Meaning |
++| --- | ---: | --- |
++| `REDIS_URL` | required | Redis endpoint |
++| `PATHLOCK_CLOCK_PERF_ITERATIONS` | 1000 | Measured cycles per worker, phase and round |
++| `PATHLOCK_CLOCK_PERF_WARMUP` | 100 | Warmup cycles per worker and phase |
++| `PATHLOCK_CLOCK_PERF_ROUNDS` | 3 | A/B rounds; execution order alternates |
++| `PATHLOCK_CLOCK_PERF_CONCURRENCY` | 16 | Additional concurrency level besides 1 |
++| `PATHLOCK_CLOCK_PERF_OUTPUT` | unset | Optional raw sample CSV path |
++
++Each cycle acquires fresh holder tokens, refreshes them, then deletes its test
++scope. Workloads cover one Exact lock, a batch of 20 Exact locks, and one Tree
++lock, at concurrency 1 and the configured additional level. Concurrent workers
++use independent account scopes; this measures Redis contention, not logical
++conflict retries. Scopes have no unrelated tokens or descendants.
++All workers share one cache runtime and its default `pool_size=32` in-flight
++command limit, using the same production Redis client configuration.
++
++`fixed` runs the production acquisition/refresh Lua with only `server_now_ns()`
++replaced by a frozen valid timestamp. `server` runs the actual production scripts.
++Raw CSV uses clock `0` for fixed and `1` for server. Both variants use the same
++lease, holder encoding, time subtraction, response validation and network calls.
++The frozen clock is suitable only for this short, isolated benchmark.
++This comparison isolates Redis TIME and its formatting/normalization; it is
++**not** a full comparison with the old client-clock implementation.
++
++Latency includes the cache runtime, EVALSHA round trip and script-result decoding;
++request construction, fixture validation and scope deletion are outside the
++individual acquisition/refresh timers. Warmup excludes connection setup and
++initial script loading. No manager lifecycle or acquisition metrics are measured.
++Each phase starts after all workers finish warmup. Summary percentiles use
++nearest-rank over samples pooled across rounds.
++
++`cycle_per_sec` counts complete acquire + refresh + cleanup cycles over phase
++wall time, including validation and the DEL round trip. It is repeated for the
++acquire and refresh rows and should not be interpreted as standalone command QPS.
++No fixed performance thresholds are asserted; Redis errors and malformed or
++unexpected lock results fail the test.
++Warmup synchronization has a 60-second deadline so a failed worker cannot leave
++the test waiting indefinitely. Use reasonable settings for the local endpoint.
++
++## Local results (2026-11-05)
++
++Apple M5 Pro, macOS 26.5.1 arm64, Rust 1.99.1, Redis 8.10.3 standalone at
++`127.0.0.1:6379`, DB 0. Existing Redis configuration was retained: AOF disabled,
++RDB `save = 3600 1 300 100 60 10000`. No control of other local activity was made.
++Release build, 100 warmup cycles and 1,000 measured cycles per worker per phase,
++3 rounds, concurrency 1/16. The test passed in 83.10 seconds. Raw CSV contained
++612,000 validated acquisition/refresh samples: 3,000 per single-worker group and
++48,000 per 16-worker group. An earlier exploratory run used 30 warmups and 300
++cycles and had substantially greater between-phase drift.
++
++Values below are **fixed → server**, in milliseconds.
++
++| Workers | Batch | Kind | Operation | p50 | p99 |
++| ---: | ---: | --- | --- | --- | --- |
++| 1 | 1 | Exact | acquire | 0.123958 → 0.126167 | 0.395750 → 0.324417 |
++| 1 | 1 | Exact | refresh | 0.116708 → 0.119916 | 0.382750 → 0.312917 |
++| 1 | 20 | Exact | acquire | 0.220958 → 0.220833 | 0.549416 → 0.523916 |
++| 1 | 20 | Exact | refresh | 0.210917 → 0.208959 | 0.519375 → 0.508625 |
++| 1 | 1 | Tree | acquire | 0.122833 → 0.123167 | 0.348208 → 0.318542 |
++| 1 | 1 | Tree | refresh | 0.116500 → 0.118167 | 0.347667 → 0.305458 |
++| 16 | 1 | Exact | acquire | 0.341208 → 0.358958 | 0.880000 → 0.958084 |
++| 16 | 1 | Exact | refresh | 0.332667 → 0.351417 | 0.872958 → 0.939709 |
++| 16 | 20 | Exact | acquire | 1.247542 → 1.306750 | 2.489625 → 2.893625 |
++| 16 | 20 | Exact | refresh | 1.236708 → 1.293750 | 2.501166 → 2.921958 |
++| 16 | 1 | Tree | acquire | 0.329667 → 0.342125 | 0.828125 → 0.744916 |
++| 16 | 1 | Tree | refresh | 0.323333 → 0.336042 | 0.812958 → 0.735250 |
++
++At concurrency 16, Exact single-lock cycle throughput was 14,742 → 13,892 cycles/s;
++Exact batch-20 was 4,239 →
+```
+
+**File**: `crates/ragfs/src/lock/cache_clock_perf_tests.rs` (added, +228/-0)
+```diff
+@@ -0,0 +1,228 @@
++//! Manual A/B benchmark: production holder Lua vs the same Lua with frozen time.
++//! No latency assertions: results depend on the host and Redis configuration.
++
++use super::*;
++use crate::cache_runtime::RedisProviderConfig;
++use std::io::Write;
++use tokio::sync::Barrier;
++
++fn setting(name: &str, default: usize) -> usize {
++    let value = std::env::var(name)
++        .map(|raw| raw.parse().expect("invalid perf setting"))
++        .unwrap_or(default);
++    assert!(value > 0, "{name} must be positive");
++    value
++}
++
++fn clock_variant(script: &'static str, now: u128) -> &'static str {
++    let start = script.find("local function server_now_ns()").unwrap();
++    let end = start + script[start..].find("\nend").unwrap() + "\nend".len();
++    let mut variant = script.to_string();
++    variant.replace_range(
++        start..end,
++        &format!("local function server_now_ns()\n    return \"{now}\"\nend"),
++    );
++    assert!(!variant.contains("redis.call(\"TIME\")"));
++    // ScriptDefinition owns static references; register only two test variants.
++    Box::leak(variant.into_boxed_str())
++}
++
++#[derive(Default)]
++struct Samples {
++    acquire: Vec<f64>,
++    refresh: Vec<f64>,
++    seconds: f64,
++}
++
++async fn cycle(
++    provider: &RedisPathLockProvider,
++    key: &str,
++    paths: &[String],
++    kind: &str,
++    acquire_id: &str,
++    refresh_id: &str,
++) -> (f64, f64) {
++    let mut args = vec![Bytes::from("v2|perf-owner|holder|"), Bytes::from("3600000")];
++    for path in paths {
++        args.extend([Bytes::from(path.clone()), Bytes::from(kind.to_string())]);
++    }
++    let start = Instant::now();
++    let acquired = provider
++        .execute_array(acquire_id, key.into(), args)
++        .await
++        .expect("perf acquire failed");
++    let acquire_ms = start.elapsed().as_secs_f64() * 1_000.0;
++    assert_eq!(
++        RedisPathLockProvider::result_status(&acquired, "perf").unwrap(),
++        "ok"
++    );
++    assert_eq!(acquired.len(), 2 + 4 * paths.len());
++    for result in acquired[2..].chunks_exact(4) {
++        assert_eq!(
++            RedisPathLockProvider::result_string(&result[1], "perf").unwrap(),
++            "created"
++        );
++        let raw = RedisPathLockProvider::result_string(&result[3], "perf").unwrap();
++        let token = LockTokenCodec::decode(raw).expect("valid acquired token");
++        assert_eq!(token.holders.len(), 1);
++    }
++    let mut args = vec![
++        Bytes::from("v2|perf-owner|holder|0"),
++        Bytes::from("3600000"),
++    ];
++    args.extend(paths.iter().cloned().map(Bytes::from));
++    let start = Instant::now();
++    let refreshed = provider
++        .execute_array(refresh_id, key.into(), args)
++        .await
++        .expect("perf refresh failed");
++    let refresh_ms = start.elapsed().as_secs_f64() * 1_000.0;
++    assert_eq!(refreshed.len(), paths.len());
++    for value in refreshed {
++        let ScriptValue::Array(result) = value else {
++            panic!("invalid refresh response");
++        };
++        assert_eq!(
++            RedisPathLockProvider::result_status(&result, "perf").unwrap(),
++            "ok"
++        );
++    }
++    // Only this test's UUID scope is removed; never FLUSHDB or touch user keys.
++    provider.runtime.del(&[key.into()]).await.unwrap();
++    (acquire_ms, refresh_ms)
++}
++
++/// REDIS_URL=redis://127.0.0.1:6379 cargo test --release --locked -p ragfs
++/// --features cache --lib perf_server_clock -- --ignored --nocapture
++#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++#[ignore = "manual real Redis server-clock performance comparison"]
++async fn perf_server_clock() {
++    let endpoint = std::env::var("REDIS_URL").expect("set REDIS_URL");
++    let iterations = setting("PATHLOCK_CLOCK_PERF_ITERATIONS", 1_000);
++    let warmup = setting("PATHLOCK_CLOCK_PERF_WARMUP", 100);
++    let rounds = setting("PATHLOCK_CLOCK_PERF_ROUNDS", 3);
++    let concurrency = setting("PATHLOCK_CLOCK_PERF_CONCURRENCY", 16);
++    let runtime = CacheRuntime::redis(RedisProviderConfig {
++        endpoints: vec![endpoint],
++        command_timeout_ms: 10_000,
++        ..RedisProviderConfig::default()
++    })
++    .await
++    .unwrap();
++    let service = format!("clock-perf-{}", uuid::Uuid::new_v4());
++    let provider =
++        Arc::new(RedisPathLockProvider::new(runtime.clone(), &service, 3_600.0).unwrap());
++    let now = super::time_tests::now(&provider).await;
++    assert_eq!(
++        ACQUIRE_BATCH_SCRIPT
++            .matches("local now_ns = server_now_ns()")
++            .count(),
++        1
++    );
++    assert_eq!(
++        REFRESH_BATCH_SCRIPT
++            .matches("local time_ns = server_now_ns()")
++            .count(),
++        1
++    );
++    const FIXED_ACQUIRE: &str = "pathlock.perf.fixed_acquire.v1";
++    const FIXED_REFRESH: &str = "pathlock.perf.fixed_refresh.v1";
++    for (id, script) in [
++        (FIXED_ACQUIRE, ACQUIRE_BATCH_SCRIPT),
++        (FIXED_REFRESH, REFRESH_BATCH_SCRIPT),
++    ] {
++     
+```
+
+**File**: `crates/ragfs/src/lock/cache_handoff_tests.rs` (added, +413/-0)
+```diff
+@@ -0,0 +1,413 @@
++//! Failed handoff rollback must use Redis time and preserve other live holders.
++
++use super::*;
++use crate::cache_runtime::RedisProviderConfig;
++use crate::core::{FileSystem, FsContextInner, PathLockContext, WriteFlag, FS_CTX};
++use crate::lock::manager::{PathLockConfig, PathLockManager};
++use crate::lock::wrapper::PathLockWrappedFS;
++use crate::plugins::memfs::MemFileSystem;
++use std::sync::atomic::AtomicUsize;
++
++const PATH: &str = "/local/account/handoff";
++const CLOCK_SKEW_NS: u128 = 31_000_000_000;
++
++async fn fixture() -> Option<(Arc<CacheRuntime>, Arc<RedisPathLockProvider>)> {
++    let endpoint = std::env::var("REDIS_URL").ok()?;
++    let runtime = CacheRuntime::redis(RedisProviderConfig {
++        endpoints: vec![endpoint],
++        command_timeout_ms: 2_000,
++        ..RedisProviderConfig::default()
++    })
++    .await
++    .unwrap();
++    let provider = Arc::new(
++        RedisPathLockProvider::new(
++            runtime.clone(),
++            &format!("pathlock-handoff-{}", uuid::Uuid::new_v4()),
++            1.0,
++        )
++        .unwrap(),
++    );
++    Some((runtime, provider))
++}
++
++fn request() -> PathLockRequest {
++    PathLockRequest {
++        path: PATH.into(),
++        kind: PathLockKind::Tree,
++    }
++}
++
++async fn cleanup(runtime: &CacheRuntime, provider: &RedisPathLockProvider) {
++    runtime
++        .del(&[provider.tokens_key_for_path(PATH).unwrap()])
++        .await
++        .unwrap();
++    runtime.close().await.unwrap();
++}
++
++#[tokio::test]
++async fn rollback_ignores_client_clock_and_preserves_renewed_sibling() {
++    let Some((runtime, provider)) = fixture().await else {
++        return;
++    };
++    // The same owner has a sibling and a transferable source at one directory.
++    for holder in ["sibling", "source"] {
++        provider
++            .try_acquire_holders_atomic(&[request()], "a", holder, 0, 0, None)
++            .await
++            .unwrap();
++    }
++    let source = provider
++        .read_token(PATH)
++        .await
++        .unwrap()
++        .unwrap()
++        .holders
++        .into_iter()
++        .find(|h| h.id == "source")
++        .unwrap();
++    provider
++        .try_acquire_holders_atomic(&[request()], "a", "consumer", 0, 0, Some("source"))
++        .await
++        .unwrap();
++    assert!(provider
++        .mutate_holder(PATH, "a", "sibling", 0, 0, false)
++        .await
++        .unwrap());
++    let renewed = provider
++        .read_token(PATH)
++        .await
++        .unwrap()
++        .unwrap()
++        .holders
++        .into_iter()
++        .find(|h| h.id == "sibling")
++        .unwrap();
++
++    // A client clock 31 seconds ahead would consider both holders expired.
++    let server_now = time_tests::now(&provider).await;
++    provider
++        .replace_holder(
++            PATH,
++            "a",
++            "consumer",
++            source.clone(),
++            server_now + CLOCK_SKEW_NS - 1_000_000_000,
++        )
++        .await
++        .unwrap();
++    let token = provider.read_token(PATH).await.unwrap().unwrap();
++    assert_eq!(token.holders.len(), 2);
++    assert!(token.holders.contains(&renewed));
++    assert!(token.holders.contains(&source));
++    assert!(matches!(
++        provider
++            .try_acquire_holders_atomic(&[request()], "c", "contender", 0, 0, None)
++            .await,
++        Err(PathLockError::Conflict { .. })
++    ));
++    // Repeating rollback after the consumer disappeared must be a no-op.
++    provider
++        .replace_holder(PATH, "a", "consumer", source, u128::MAX)
++        .await
++        .unwrap();
++    assert_eq!(provider.read_token(PATH).await.unwrap(), Some(token));
++    cleanup(&runtime, &provider).await;
++}
++
++#[tokio::test]
++async fn rollback_does_not_revive_expired_source_or_touch_new_owner() {
++    let Some((runtime, provider)) = fixture().await else {
++        return;
++    };
++    let now = time_tests::now(&provider).await;
++    let expired_source = LockHolder {
++        id: "source".into(),
++        kind: PathLockKind::Tree,
++        time_ns: now - CLOCK_SKEW_NS,
++    };
++    for sibling in [true, false] {
++        let mut current = LockToken::held("a", "consumer", PathLockKind::Exact, now);
++        if sibling {
++            current.holders.push(
++                LockToken::held("a", "sibling", PathLockKind::Exact, now)
++                    .holders
++                    .remove(0),
++            );
++        }
++        current.recompute();
++        time_tests::seed(&provider, PATH, &current).await;
++        // A slow client clock must not revive an expired Redis source.
++        provider
++            .replace_holder(PATH, "a", "consumer", expired_source.clone(), 0)
++            .await
++            .unwrap();
++        let remaining = provider.read_token(PATH).await.unwrap();
++        if sibling {
++            let remaining = remaining.unwrap();
++            assert_eq!(remaining.holders.len(), 1);
++            assert_eq!(remaining.holders[0].id, "sibling");
++            assert_eq
+```
+
+**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +482/-102)
+```diff
+@@ -22,21 +22,26 @@ use super::provider::{
+     PathLockProvider,
+ };
+ use super::types::{
+-    HandoffRecoveryReason, LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult,
++    HandoffRecoveryReason, LockHolder, LockToken, PathLockError, PathLockKind, PathLockRequest,
++    PathLockResult,
+ };
+ 
+-const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v4";
+-const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v1";
+-const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v1";
+-const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v1";
+-const REFRESH_ID: &str = "pathlock.refresh.v1";
+-const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v2";
++const ACQUIRE_BATCH_ID: &str = "pathlock.acquire_batch.v5";
++const ROLLBACK_BATCH_ID: &str = "pathlock.rollback_batch.v2";
++const COMPARE_WRITE_ID: &str = "pathlock.compare_write.v3";
++const COMPARE_REMOVE_ID: &str = "pathlock.compare_remove.v2";
++const REFRESH_ID: &str = "pathlock.refresh.v2";
++const REFRESH_BATCH_ID: &str = "pathlock.refresh_batch.v3";
++const MUTATE_HOLDER_ID: &str = "pathlock.mutate_holder.v1";
++const REPLACE_HOLDER_ID: &str = "pathlock.replace_holder.v1";
+ // Bound each Lua execution so large leases do not monopolize Redis.
+ const REFRESH_BATCH_SIZE: usize = 256;
+-const IS_LOCKED_ID: &str = "pathlock.is_locked.v1";
++const IS_LOCKED_ID: &str = "pathlock.is_locked.v3";
+ const SCAN_DESCENDANTS_ID: &str = "pathlock.scan_descendants.v1";
+ const READ_MANY_ID: &str = "pathlock.read_many.v1";
+-const CREATE_ID: &str = "pathlock.create.v1";
++const CREATE_ID: &str = "pathlock.create.v3";
++// Keep both lease_ms and 2 * lease_ms exactly representable by Lua numbers.
++const MAX_LEASE_MS: u64 = (1_u64 << 52) - 1;
+ // Observe requests approaching the default 20ms Redis command timeout.
+ const SLOW_ACQUIRE_THRESHOLD: Duration = Duration::from_millis(10);
+ 
+@@ -76,6 +81,56 @@ local function decimal_less(left, right)
+     end
+     return left < right
+ end
++
++-- Subtract decimal strings without converting nanosecond epochs to doubles.
++-- Match the manager's previous saturating subtraction near the epoch.
++local function decimal_subtract(left, right)
++    left = normalize_decimal(left)
++    right = normalize_decimal(right)
++    if not left or not right then
++        return nil
++    end
++    if decimal_less(left, right) then
++        return "0"
++    end
++    local digits = {}
++    local borrow = 0
++    local j = string.len(right)
++    for i = string.len(left), 1, -1 do
++        local digit = tonumber(string.sub(left, i, i)) - borrow
++        if j > 0 then
++            digit = digit - tonumber(string.sub(right, j, j))
++        end
++        borrow = 0
++        if digit < 0 then
++            digit = digit + 10
++            borrow = 1
++        end
++        table.insert(digits, 1, tostring(digit))
++        j = j - 1
++    end
++    return normalize_decimal(table.concat(digits))
++end
++
++local function lease_values(raw)
++    local normalized = normalize_decimal(raw)
++    local lease_ms = normalized and tonumber(normalized)
++    if not lease_ms or lease_ms < 1000 or lease_ms > 4503599627370495 then
++        return nil
++    end
++    -- String arguments avoid Redis/Lua's scientific notation for large values.
++    return normalized .. "000000", string.format("%.0f", 2 * lease_ms)
++end
++
++local function server_now_ns()
++    local time = redis.call("TIME")
++    return normalize_decimal(time[1] .. string.rep("0", 6 - string.len(time[2]))
++        .. time[2] .. "000")
++end
++
++local function valid_owner(owner)
++    return owner and owner ~= "" and not string.find(owner, ":", 1, true)
++end
+ local function decode_token(raw, stale_before)
+     if string.sub(raw, 1, 3) == "v2|" then
+         local owner, body = string.match(raw, "^v2|([^|:,]+)|(.+)$")
+@@ -157,9 +212,7 @@ const ACQUIRE_BATCH_SCRIPT: &str = token_script!(
+     r#"
+ local key = KEYS[1]
+ local owner = ARGV[1]
+-local now_ns = ARGV[2]
+-local stale_before_ns = ARGV[3]
+-local ttl_ms = tonumber(ARGV[4])
++local lease_ns, ttl_ms = lease_values(ARGV[2])
+ -- The holder entrypoint supplies a versioned identity envelope. The legacy
+ -- entrypoint remains available for reading/testing drained v1 deployments.
+ local holder, source
+@@ -174,15 +227,14 @@ local function is_descendant(path, root)
+     return string.sub(path, 1, string.len(root) + 1) == root .. "/"
+ end
+ 
+-if not owner or owner == "" or string.find(owner, ":", 1, true)
+-    or not normalize_decimal(now_ns) or not normalize_decimal(stale_before_ns)
+-    or not ttl_ms or ttl_ms <= 0 or (#ARGV - 4) % 2 ~= 0 or #ARGV == 4 then
++if not valid_owner(owner) or not lease_ns
++    or (#ARGV - 2) % 2 ~= 0 or #ARGV == 2 then
+     return { "invalid_request", "invalid acquire arguments" }
+ end
+ 
+ local requests = {}
+ local includes_tree = false
+-for index = 5, #ARGV, 2 do
++for index = 3, #ARGV, 2 do
+     local path = ARGV[index]
+     local kind = ARGV[index + 1]
+     if not is_normalized_path(path) or (kind ~= "E" and kind ~= "T") then
+@@ -194,6 +246,12 @@ for index = 5
+```
+
+**File**: `crates/ragfs/src/lock/cache_refresh_tests.rs` (modified, +26/-16)
+```diff
+@@ -31,9 +31,8 @@ async fn same_scope_refresh_uses_one_script_for_twenty_paths() {
+         assert_eq!(request.script_id, REFRESH_BATCH_ID);
+         assert_eq!(request.keys.len(), 1);
+         assert_eq!(request.args[0], Bytes::from("owner"));
+-        assert_eq!(request.args[1], Bytes::from("200"));
+-        assert_eq!(request.args[2], Bytes::from("60000"));
+-        assert_eq!(request.args.len(), 23);
++        assert_eq!(request.args[1], Bytes::from("30000"));
++        assert_eq!(request.args.len(), 22);
+         observed.fetch_add(1, Ordering::SeqCst);
+         Ok(ScriptValue::Array(vec![status("ok"); 20]))
+     });
+@@ -54,7 +53,7 @@ async fn refresh_groups_scopes_and_preserves_mixed_result_order() {
+     let (runtime, provider) = mock_provider(move |request| {
+         assert_eq!(request.script_id, REFRESH_BATCH_ID);
+         observed.fetch_add(1, Ordering::SeqCst);
+-        let results = request.args[3..]
++        let results = request.args[2..]
+             .iter()
+             .map(|path| {
+                 let path = std::str::from_utf8(path).unwrap();
+@@ -107,7 +106,7 @@ async fn failed_scope_does_not_prevent_other_scopes_refreshing() {
+         }
+         Ok(ScriptValue::Array(vec![
+             status("ok");
+-            request.args.len() - 3
++            request.args.len() - 2
+         ]))
+     });
+     let paths = [
+@@ -128,7 +127,7 @@ async fn large_refresh_is_split_into_bounded_scripts() {
+     let sizes = Arc::new(Mutex::new(Vec::new()));
+     let observed = sizes.clone();
+     let (runtime, provider) = mock_provider(move |request| {
+-        let size = request.args.len() - 3;
++        let size = request.args.len() - 2;
+         observed.lock().unwrap().push(size);
+         Ok(ScriptValue::Array(vec![status("ok"); size]))
+     });
+@@ -156,12 +155,12 @@ async fn malformed_batch_response_never_reports_refresh_success() {
+ 
+ #[tokio::test]
+ async fn batch_invalid_request_is_preserved_for_every_path() {
+-    // Inject Lua's early-return shape; every u128 supplied by Rust is a valid time_ns.
++    // Inject Lua's early-return shape for invalid lease/owner arguments.
+     let (runtime, provider) = mock_provider(|request| {
+         assert_eq!(request.script_id, REFRESH_BATCH_ID);
+         Ok(ScriptValue::Array(vec![
+             ScriptValue::Bytes(b"invalid_request".to_vec()),
+-            ScriptValue::Bytes(b"invalid time_ns".to_vec()),
++            ScriptValue::Bytes(b"invalid refresh arguments".to_vec()),
+         ]))
+     });
+     for size in [2, 1, 3, 20, REFRESH_BATCH_SIZE + 1] {
+@@ -171,7 +170,7 @@ async fn batch_invalid_request_is_preserved_for_every_path() {
+         assert!(
+             results.iter().all(|result| matches!(
+                 result,
+-                Err(PathLockError::InvalidRequest(message)) if message == "invalid time_ns"
++                Err(PathLockError::InvalidRequest(message)) if message == "invalid refresh arguments"
+             )),
+             "batch size {size}: {results:?}"
+         );
+@@ -188,12 +187,12 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
+             let identity = std::str::from_utf8(&request.args[0]).unwrap();
+             let mut identity = identity.strip_prefix("v2|").unwrap().split('|');
+             let (owner, holder) = (identity.next().unwrap(), identity.next().unwrap());
+-            let time = std::str::from_utf8(&request.args[1]).unwrap();
++            let time = "100"; // Mock server confirmation time, independent of args.
+             let mut results = vec![
+                 ScriptValue::Bytes(b"ok".to_vec()),
+                 ScriptValue::Bytes(b"0".to_vec()),
+             ];
+-            for pair in request.args[4..].chunks_exact(2) {
++            for pair in request.args[2..].chunks_exact(2) {
+                 let kind = std::str::from_utf8(&pair[1]).unwrap();
+                 results.extend([
+                     ScriptValue::Bytes(pair[0].to_vec()),
+@@ -205,7 +204,7 @@ async fn manager_uses_batch_for_manual_and_background_refresh() {
+             Ok(ScriptValue::Array(results))
+         }
+         REFRESH_BATCH_ID => {
+-            assert_eq!(request.args.len(), 23);
++            assert_eq!(request.args.len(), 22);
+             observed.fetch_add(1, Ordering::SeqCst);
+             Ok(ScriptValue::Array(vec![status("ok"); 20]))
+         }
+@@ -309,6 +308,10 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
+             .await
+             .unwrap();
+     }
++    let originals = [
++        provider.read_token(&paths[3]).await.unwrap().unwrap(),
++        provider.read_token(&paths[6]).await.unwrap().unwrap(),
++    ];
+     let results = provider.refresh_tokens(&paths, "owner", u128::MAX).await;
+     assert_eq!(results.len(), paths.len());
+     assert!(matches!(results[0], Err(PathLockError::InvalidToken(_))));
+@@ -321,12 +324,18 @@ async fn redis_batch_preserves_kind_ownership_errors_and_hash_ttl() {
+     for (index, kind) in [(1, PathLockKind::Exact), (4, PathLockKind::Tree)] {
+         
+```
+
+**File**: `crates/ragfs/src/lock/cache_time_tests.rs` (added, +534/-0)
+```diff
+@@ -0,0 +1,534 @@
++//! Redis server-clock, legacy-token and fixed-TTL regression coverage.
++
++use super::*;
++use crate::cache_runtime::RedisProviderConfig;
++
++const TIME_ID: &str = "pathlock.test.server_time.v1";
++const TTL_ID: &str = "pathlock.test.clock_ttl.v1";
++const SEED_ID: &str = "pathlock.test.legacy_time.v1";
++const MATH_ID: &str = "pathlock.test.decimal_time.v1";
++const MATH_SCRIPT: &str = token_script!(
++    r#"
++local difference = decimal_subtract(ARGV[1], ARGV[2])
++local lease_ns, ttl_ms = lease_values(ARGV[3])
++return { difference or false, lease_ns or false, ttl_ms or false,
++    decimal_less(ARGV[1], ARGV[2]) }
++"#
++);
++
++async fn fixture() -> Option<(Arc<CacheRuntime>, RedisPathLockProvider)> {
++    let endpoint = std::env::var("REDIS_URL").ok()?;
++    let runtime = CacheRuntime::redis(RedisProviderConfig {
++        endpoints: vec![endpoint],
++        command_timeout_ms: 1_000,
++        ..RedisProviderConfig::default()
++    })
++    .await
++    .unwrap();
++    for (id, redis_lua) in [
++        (TIME_ID, "return redis.call('TIME')"),
++        (TTL_ID, "return redis.call('PTTL', KEYS[1])"),
++        (
++            SEED_ID,
++            "return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])",
++        ),
++        (MATH_ID, MATH_SCRIPT),
++    ] {
++        runtime
++            .register_script(ScriptDefinition { id, redis_lua })
++            .unwrap();
++    }
++    let provider = RedisPathLockProvider::new(
++        runtime.clone(),
++        &format!("pathlock-time-{}", uuid::Uuid::new_v4()),
++        30.0,
++    )
++    .unwrap();
++    Some((runtime, provider))
++}
++
++fn request(path: &str, kind: PathLockKind) -> PathLockRequest {
++    PathLockRequest {
++        path: path.into(),
++        kind,
++    }
++}
++
++fn token(owner: &str, time_ns: u128, kind: PathLockKind) -> LockToken {
++    LockToken {
++        owner_id: owner.into(),
++        time_ns,
++        lock_type: kind,
++        holders: Vec::new(),
++    }
++}
++
++pub(super) async fn now(provider: &RedisPathLockProvider) -> u128 {
++    provider
++        .runtime
++        .register_script(ScriptDefinition {
++            id: TIME_ID,
++            redis_lua: "return redis.call('TIME')",
++        })
++        .unwrap();
++    let time = provider
++        .execute_array(TIME_ID, provider.tokens_key_for_path("/").unwrap(), vec![])
++        .await
++        .unwrap();
++    let seconds: u128 = RedisPathLockProvider::result_string(&time[0], "TIME")
++        .unwrap()
++        .parse()
++        .unwrap();
++    let micros: u128 = RedisPathLockProvider::result_string(&time[1], "TIME")
++        .unwrap()
++        .parse()
++        .unwrap();
++    seconds * 1_000_000_000 + micros * 1_000
++}
++
++pub(super) async fn seed(provider: &RedisPathLockProvider, path: &str, token: &LockToken) {
++    provider
++        .runtime
++        .register_script(ScriptDefinition {
++            id: SEED_ID,
++            redis_lua: "return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])",
++        })
++        .unwrap();
++    provider
++        .execute_integer(
++            SEED_ID,
++            provider.tokens_key_for_path(path).unwrap(),
++            vec![
++                RedisPathLockProvider::bytes(path),
++                RedisPathLockProvider::bytes(LockTokenCodec::encode(token)),
++            ],
++        )
++        .await
++        .unwrap();
++}
++
++async fn ttl(provider: &RedisPathLockProvider, path: &str) -> i64 {
++    provider
++        .execute_integer(TTL_ID, provider.tokens_key_for_path(path).unwrap(), vec![])
++        .await
++        .unwrap()
++}
++
++fn assert_server_time(token: &LockToken, before: u128, after: u128) {
++    assert!(
++        (before..=after).contains(&token.time_ns),
++        "token time {} outside Redis TIME [{before}, {after}]",
++        token.time_ns
++    );
++    assert_eq!(token.time_ns % 1_000, 0);
++}
++
++// Bracket both mutation and PTTL using Redis TIME, accounting for TTL decay
++// without requiring a scheduler-dependent sleep or identical PTTL values.
++async fn assert_fixed_ttl(provider: &RedisPathLockProvider, path: &str, before: u128) {
++    let remaining = ttl(provider, path).await;
++    let after = now(provider).await;
++    let target = 2 * provider.lease_ms as i64;
++    let elapsed_ms = ((after - before).div_ceil(1_000_000)) as i64;
++    assert!(
++        remaining > 0 && remaining <= target && remaining >= target - elapsed_ms - 1,
++        "TTL {remaining}, expected {target} minus at most {elapsed_ms}ms"
++    );
++}
++
++#[test]
++fn lease_rounding_and_lua_integer_bound_are_checked_before_access() {
++    let mock = crate::cache_runtime::MemoryMockProvider::new()
++        .with_script_handler(|_| panic!("configuration validation must not execute scripts"));
++    let runtime = CacheRuntime::memory_with_provider(Arc::new(mock));
++    let provider = RedisPathLockProvider::new(runtime.clone(), "rounding", 1.0001).unwrap();
++    assert_eq!(provider.lease_ms, 1_001);
++    for lease in [
++        0.999,
++        f64::NAN,
++        f64::INFINITY,
++        f64::MAX,
++
+```
+
+**File**: `crates/ragfs/src/lock/lost_lease_tests.rs` (modified, +5/-0)
+```diff
+@@ -1112,6 +1112,11 @@ async fn redis_takeover_denies_writes_and_cleanup_preserves_new_owner() {
+         .compare_and_write_token(path, &old, &replacement)
+         .await
+         .unwrap());
++    // Redis assigns the takeover confirmation time; cleanup must preserve the
++    // actual server-written snapshot rather than the requested client token.
++    let replacement = provider.read_token(path).await.unwrap().unwrap();
++    assert_eq!(replacement.owner_id, "new-owner");
++    assert_eq!(replacement.lock_type, old.lock_type);
+     assert_eq!(manager.refresh(&lease).await.unwrap(), "lost");
+     let wrapped = PathLockWrappedFS::new(manager.clone(), fs.clone());
+     let context = Arc::new(FsContextInner::with_pathlock(
+```
+
+**File**: `crates/ragfs/src/lock/manager.rs` (modified, +12/-51)
+```diff
+@@ -24,9 +24,9 @@ use super::provider::{
+ };
+ use super::resolver::{LockPathResolver, ResolvedExactPaths};
+ use super::types::{
+-    BorrowedPathLockLease, HandoffRecoveryReason, LockHolder, LockToken, OwnedPathLockLease,
+-    PathLockConflict, PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease,
+-    PathLockObserveSnapshot, PathLockRequest, PathLockResult,
++    BorrowedPathLockLease, HandoffRecoveryReason, LockToken, OwnedPathLockLease, PathLockConflict,
++    PathLockError, PathLockHandoffRef, PathLockKind, PathLockLease, PathLockObserveSnapshot,
++    PathLockRequest, PathLockResult,
+ };
+ 
+ /// Configuration for the PathLockManager.
+@@ -1251,17 +1251,20 @@ impl PathLockManager {
+                 (AcquisitionChange::Upgraded { previous, .. }, Some(source))
+                     if previous.owner_id == owner =>
+                 {
+-                    previous
+-                        .holders
+-                        .iter()
+-                        .find(|h| h.id == source)
+-                        .cloned()
++                    previous.holders.iter().find(|h| h.id == source).cloned()
+                 }
+                 _ => None,
+             };
+             let result = match restored {
+                 Some(restored) => {
+-                    self.replace_holder(&item.handle, owner, holder, restored)
++                    self.provider
++                        .replace_holder(
++                            &item.handle,
++                            owner,
++                            holder,
++                            restored,
++                            Self::now_ns().saturating_sub(self.lock_expire_ns()),
++                        )
+                         .await
+                 }
+                 None => self
+@@ -1277,48 +1280,6 @@ impl PathLockManager {
+         first_error.map_or(Ok(()), Err)
+     }
+ 
+-    /// Swap `holder` back to `restored` unless the source has since expired.
+-    async fn replace_holder(
+-        &self,
+-        path: &str,
+-        owner: &str,
+-        holder: &str,
+-        restored: LockHolder,
+-    ) -> PathLockResult<()> {
+-        for _ in 0..HOLDER_CAS_ATTEMPTS {
+-            let Some(current) = self.provider.read_token(path).await? else {
+-                return Ok(());
+-            };
+-            if current.owner_id != owner || !current.holders.iter().any(|h| h.id == holder) {
+-                return Ok(());
+-            }
+-            let stale_before = Self::now_ns().saturating_sub(self.lock_expire_ns());
+-            let mut next = current.clone();
+-            next.holders
+-                .retain(|h| h.id != holder && h.id != restored.id && h.time_ns >= stale_before);
+-            if restored.time_ns >= stale_before {
+-                next.holders.push(restored.clone());
+-            }
+-            next.recompute();
+-            let changed = if next.holders.is_empty() {
+-                self.provider
+-                    .compare_and_remove_token(path, &current)
+-                    .await?
+-            } else {
+-                self.provider
+-                    .compare_and_write_token(path, &current, &next)
+-                    .await?
+-            };
+-            if changed {
+-                return Ok(());
+-            }
+-        }
+-        Err(PathLockError::Busy {
+-            lock_path: path.into(),
+-            operation: "holder rollback".into(),
+-        })
+-    }
+-
+     /// Add one holder with CAS. Lost races re-read the token, so a concurrent
+     /// same-owner refresh or release never fails acquisition.
+     async fn try_acquire_holder(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7081** (closed): feat(compile): 支持编译产物关系图增量构建与查询 (@hezhang-1216)
-- **PR #7073** (2026-11-05): fix(magpie): add opt-in sessionless capture and raise recall budget (@yufeng201)
-- **PR #7071** (closed): fix(retrieve): use the general VLM for context rewrite, not the intent query planner (@umeGe)
-- **PR #7068** (closed): feat(compile): 保证产物关系图与编译完成及实时编辑一致 (@hezhang-1216)
-- **PR #7067** (2026-11-05): docs(ui): split package and module READMEs into English and Chinese files (@LaamGinghong)
-- **PR #7066** (2026-11-05): refactor(ui): give every public directory an index.ts entry and narrow the root exports (@LaamGinghong)
+- **PR #7149** (2026-11-06): feat(vika): let a Feishu bot read only the chats it is in (@krsish)
+- **PR #7148** (2026-11-06): feat(vika): discover IMAP folders with hierarchy-aware exclusions (@openviking-superagent)
+- **PR #7145** (2026-11-06): feat(vika): monitor multiple IMAP folders with independent cursors (@openviking-superagent)
+- **PR #7144** (2026-11-06): feat(vika): configure email mailbox with compatible identities (@openviking-superagent)
+- **PR #7141** (closed): fix: [Bug]: Upstream connection test reads only 16 KB of /v1/models - truncated 2xx misreported as upstream_key_rejected (@xixi-box)
+- **PR #7140** (2026-11-06): fix(config): 兼容旧添加位置配置，避免升级后启动失败 (@qin-ptr)
 
 ---
 
@@ -2351,36 +3281,30 @@ new path. The placeholder view is unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. magpie): add opt-in sessionless capture and raise recall budget (#7073)
+## X. ui): settle the module props and drop the user-usage module (#7126)
 
 **RULE**:
-When implementing operations in `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `739e17f9`: magpie): add opt-in sessionless capture and raise recall budget (#7073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `756e27fd`: ui): settle the module props and drop the user-usage module (#7126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-export const HARNESS_CONFIG_KEYS = new Set([
-  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-]);
+- `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
+The workspace currently contains React components, shared SVGs, three business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-export const HARNESS_CONFIG_KEYS = new Set(
-  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-);
+- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
+The workspace currently contains React components, shared SVGs, four business module placeholders, the request client, and documentation. The target also includes framework-neutral libraries, the Client transport, Vue bindings, and deployable micro-apps. Add each planned directory with its first implementation.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `739e17f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `756e27fd` are properly handled with clean fallback behavior.

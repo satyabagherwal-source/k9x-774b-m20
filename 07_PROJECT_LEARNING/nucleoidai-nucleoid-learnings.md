@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9771c244`  
+> **Source Version**: `d3413e65`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:13:18.821Z  
+> **Timestamp**: 2026-11-06T19:02:19.113Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:13:17.526Z  
+> **Harvest Timestamp**: 2026-11-06T19:02:18.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -424,6 +424,7 @@ main()
 import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as milestone from "./lib/milestone.ts";
+import * as Matrix from "./lib/Matrix.ts";
 
 export async function declarations({
   puzzle_id,
@@ -435,6 +436,7 @@ export async function declarations({
   const { declarations, output_canvas } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
+    crop_instances: false,
     messages: [
       {
         role: "user",
@@ -470,6 +472,7 @@ export async function instances({
   const { instances } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
+    crop_instances: false,
     messages: [
       {
         role: "user",
@@ -509,39 +512,44 @@ export async function value({
 }) {
   milestone.constructing_instance({ instance_name });
 
+  const { x, y } = Matrix.locate(input_instance_matrix);
+
   const { implementation } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
+    crop_instances: true,
     messages: [
       {
-        role: "user",
+        role: "assistant",
         content: `
-          instance_name:
-          ${instance_name}
           declarations:
           ${JSON.stringify(declarations)}
           input_instances:
           ${JSON.stringify(
             input_instances.map(
-              ({
+              ({ instance_name, input_instance_matrix, implementation }) => ({
                 instance_name,
-                input_instance_matrix,
-                output_instance_matrix,
-                implementation,
-              }) => ({
-                instance_name,
-                input_instance_matrix,
-                output_instance_matrix,
+                input_instance_matrix: Matrix.crop(input_instance_matrix),
                 implementation,
               })
             )
           )}
+          `,
+      },
+      {
+        role: "user",
+        content: `
+          instance_name:
+          ${instance_name}
           input_instance_matrix:
-          ${JSON.stringify(input_instance_matrix)}
-          output_instance_matrix:
-          ${JSON.stringify(output_instance_matrix)}
+          ${JSON.stringify(Matrix.crop(input_instance_matrix))}
+          input_x: ${x}
+          input_y: ${y}
           json_format:
-          { "implementation": <IMPLEMENTATION> }
+          {
+            "orientation": <ORIENTATION>,
+            "implementation": <IMPLEMENTATION>
+          }
         `,
       },
     ],
@@ -572,7 +580,8 @@ export async function value({
 }
 
 export async function state(train_dataset) {
-  const objects: Record<string, unknown>[] = [];
+  const objects = [];
+
   for (const dataset of train_dataset.dataset) {
     const implementations = dataset.instances.map(
       ({ implementation }) => implementation
@@ -617,7 +626,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "c8f0f002",
+  puzzle_id: string = "3aa6fb7a",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -1080,554 +1089,246 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9771c244` (2026-11-06)
-**Commit Message**: Use NUC 86 `is` comparisons in ARC datasets
+### Incident Patch 1: `d3413e65` (2026-11-06)
+**Commit Message**: Remove output matrices from analyzer prompts
 
-Respell the equality comparisons of nine ARC instruction datasets with
-NUC 86's `is` and `is not`, at the user's request to apply NUC 86 to the
-existing datasets where it fits:
+Exclude output instance matrices from both shared instance context and individual instance prompts.
 
-- 0ca9ddb6: `if $Obj.vertex_color is 1:` and `is 2:`
-- 0d3d703e: `.find(partner => partner is not $Obj.color@first)`
-- 25d8a9c8: `5 if $Obj.parts.distinct().length is 1 else 0`
-- 6e02f1e3: `if $Obj.orientation is 90:`
-- c8f0f002: `if $Obj.color@first is 7:`
-- genesis puzzle 3aa6fb7a, which the user chose to include with bare
-  words: core, extension and curve match their colors with `is`, and line
-  matches its endpoint sides with bare words, as in
-  `if $Obj.orientation is 90 and $Obj.endpoint_position is left:`
-
-Only the comparisons in `declarations` changed. Every world model, pair
-grid, mask, instance name, implementation and snapshot is as before. All
-snapshots regenerated with the accepted runtime at 34d0b19 are
-byte-identical, the caller's offline check passed all 331 checks, and
-`document()` loads all 29 datasets. Replaying the rules now needs a
-runtime at 7096171, the NUC 86 commit, or later.
-
-Update the README paragraphs of the five puzzles and the gene
-
-**File**: `arc/README.md` (modified, +30/-11)
+**File**: `arc/src/analyzer.ts` (modified, +1/-9)
 ```diff
-@@ -268,7 +268,16 @@ one column wider when horizontal and one row taller when vertical. An
- extension corner keeps its 3 by 3 size, because its inside marker fills a
- cell of its own box. Every native output snapshot therefore carries its
- shape's output bounding box, so `output_value.x` and `output_value.y` equal
--`output_x` and `output_y`.
-+`output_x` and `output_y`. The genesis rules match categorical colors,
-+orientations, and endpoint sides with `is`, the spelling of `==` that
-+[NUC 86](../docs/nuc-0086.md) adds, as in the line header
-+`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
-+such as `left` compares with its own text while nothing defines that name,
-+and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
-+and implementations keep their quoted strings, as in
-+`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
-+right operand of `is` reads as a word, and a bare name elsewhere would be
-+undefined.
- 
- Instance `implementation` snippets use named constructor arguments whose names
- match the parameters in their class declarations. The canvas size is not one
-@@ -356,8 +365,11 @@ The declarative rules introduce `marker_color`, which is absent before the
- rules run, and, in the same branches that shift the origin, grow each cross
- to 3 by 3 with `$Obj.width = $Obj.width@first + 2` and
- `$Obj.height = $Obj.height@first + 2`; color-6 and color-8 points keep their
--1 by 1 size. Tags identify the geometry: `l1707` is an orthogonal cross,
--`l2404` is a diagonal cross, and `l7544` remains a single point.
-+1 by 1 size. The two branches are guarded by `if $Obj.vertex_color is 1:`
-+and `if $Obj.vertex_color is 2:`, with `is`, the spelling of `==` that
-+[NUC 86](../docs/nuc-0086.md) adds. Tags identify the geometry: `l1707` is an
-+orthogonal cross, `l2404` is a diagonal cross, and `l7544` remains a single
-+point.
- Every instance mask retains the complete 9 by 9 canvas. The x/y metadata
- records each mask's nonzero bounding-box origin. Native output snapshots carry
- the shifted pattern origin, derived from the original point coordinates with
-@@ -388,10 +400,12 @@ The class takes the standard entries `x`, `y`, `width`, `height`, and
- with no partner color, canvas size, or matrix of cells. `width` and
- `height`, the column and row counts of the stripe's bounding box, are
- 1 and 3 for every stripe. One class-level rule rewrites `color` as
--`[[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner != $Obj.color@first)`:
-+`[[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)`:
- the list states each pair once, the first `find` selects the pair that
- includes the stripe's input color, and the second `find` takes the other color
--of that pair. The `@first` anchors read the input color because the rule
-+of that pair: the comparison `is not` of [NUC 86](../docs/nuc-0086.md), the
-+spelling of `!=`, holds only for the color that differs from the input color.
-+The `@first` anchors read the input color because the rule
- rewrites `color` itself; a dictionary from every color to its partner would
- state each pair twice. The two callbacks are chained rather than nested, so
- each reads only its own parameter and the stripe. The rules create no
-@@ -438,7 +452,9 @@ input, as its only descriptive property, with no color, color count, canvas
- size, or matrix of cells, so no input property states whether the row is
- uniform. One unconditional class-level rule introduces `fill_color`, which is
- absent before the rules run, as
--`5 if $Obj.parts.distinct().length == 1 else 0`: the list query `distinct` of
-+`5 if $Obj.parts.distinct().length is 1 else 0`, whose condition uses the
-+comparison `is` of [NUC 86](../docs/nuc-0086.md), the spelling of `==`: the
-+list query `distinct` of
- [NUC 71](../docs/nuc-0071.md) keeps each of the row's colors once, so exactly
- one kept color means the row is a single color, and the conditional
- expression of [NUC 59](../docs/nuc-0059.md) gives such a row color 5 and
-@@ -843,8 +859,9 @@ other diagonal 45, as `dataset.74dd1130.json` names its mirror axis. No
- arithmetic relates the counts to the axes, so the rule looks the axis up, as
- `dataset.27a28665.json` looks up its code by tag, and it reads no
- orientation, so it rewrites `orientation` without an `@first` anchor. The
--conditional rule `if $Obj.orientation == 90:` sets `height` to 1, guarding on
--a horizontal line as `dataset.line.json` does: the line along the top row is
-+conditional rule `if $Obj.orientation is 90:` uses `is`, the spelling of `==`
-+that [NUC 86](../docs/nuc-0086.md) adds, and sets `height` to 1, guarding on a
-+horizontal line as `dataset.line.json` does: the line along the top row is
- one row tall, the one change in the shape's size, while a diagonal crosses the
- mosaic's whole 3 by 3 box and keeps its input `height`. The rule reads the
- ori
+@@ -104,15 +104,9 @@ export async function value({
+           input_instances:
+           ${JSON.stringify(
+             input_instances.map(
+-              ({
+-                instance_name,
+-                input_instance_matrix,
+-                output_instance_matrix,
+-                implementation,
+-              }) => ({
++              ({ instance_name, input_instance_matrix, implementation }) => ({
+                 instance_name,
+                 input_instance_matrix: Matrix.crop(input_instance_matrix),
+-                output_instance_matrix: Matrix.crop(output_instance_matrix),
+                 implementation,
+               })
+             )
+@@ -126,8 +120,6 @@ export async function value({
+           ${instance_name}
+           input_instance_matrix:
+           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
+-          output_instance_matrix:
+-          ${JSON.stringify(Matrix.crop(output_instance_matrix))}
+           input_x: ${x}
+           input_y: ${y}
+           json_format:
 ```
 
-**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +65/-3)
+---
+
+### Incident Patch 2: `9920531e` (2026-11-06)
+**Commit Message**: Improve ARC visualization milestones
+
+Show input crops and oriented state panels during visualization, and remove dimensions from grid headers. Clarify few-shot dataset cropping behavior in the README.
+
+**File**: `arc/README.md` (modified, +26/-6)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
--| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances |
-+| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026 |
- | Output canvas | `EXACT` |
--| Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted |
-+| Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
- | Solver changes | None specific to this puzzle |
--| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0 |
-+| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -160,11 +160,25 @@ panels keep the same full number. The declarations header includes the
+ output canvas instead of adding a separate milestone. Segmented-object panels
+ use `Input` and `Output` without object-number labels. Model token usage remains
+ attached to its active milestone. Instance-specific steps, crop and
+-implementation headers, and input-state headers include the instance name.
++implementation headers, and input- and output-state headers include the
++instance name. In the visualization, each test object's synthesis shows its
++`Input crop` right before its `Implementation`, as in
++`2.6.1 Input crop · <instance>` and
++`2.7.1 Implementation · <instance>`. Its composition shows the same
++`Input crop` again before its `Output crop`, under its own number, such as
++`2.12.1`, rather than continuing the synthesis count, and an `Output state`
++panel right after the `Output crop`: the object's row of the
++`Visualization · State` table, before its `Placed output`.
+ The visualization's output-crop header also shows the object's output
+ orientation as an arrow emoji and its degrees, such as
+-`2.11.1 Output crop · <instance> · ➡️ 90° · 6 × 3`; an orientation that is
+-not a multiple of 45 degrees shows `🧭` instead of an arrow.
++`2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
++output-state header, in both stages, shows the orientation of the state it
++displays the same way, such as `2.9.1 Input state · <instance> · ⬆️ 0°`. An
++orientation that is not a multiple of 45 degrees shows `🧭` instead of an
++arrow, and an object without a numeric `orientation` adds nothing to the
++header.
++Grid headers and the preview's matrix labels omit the grid's dimensions; its
++row and column coordinates show its size.
+ Wide grids split into column panels rather than dropping cells. The final
+ comparison keeps **Expected** before **Result**, followed by an
+ exact-match badge in green or a mismatch badge in red, the unchanged difference
+@@ -219,9 +233,15 @@ numbers, and key order stay exactly as written. The return value is one JSON
+ array, with a separate entry per file. New JSON files need no additional
+ imports or registration in the loader. An unreadable directory or file fails
+ explicitly. `document()` does not parse the files, so it passes malformed JSON
+-through; `llm.generate` parses the combined array when it builds the few-shot
+-message, so a malformed dataset fails there, with a JSON syntax error that does
+-not name the file.
++through. By default `llm.generate` sends that array as it is in its
++`few_shot_examples` message, so a malformed dataset reaches the model
++unchanged. Its `crop_instances` option, off by default, parses the array
++instead, so a malformed dataset fails there with a JSON syntax error that does
++not name the file. It then replaces each instance's `input_instance_matrix`
++and `output_instance_matrix` with its crop to the nonzero bounding box, from
++`Matrix.crop`, or an empty list for an all-zero mask, and keeps every other
++field, so `input_x`, `input_y`, `output_x`, and `output_y` still give each
++crop's position. The dataset files keep their full-canvas matrices.
  
- ## Puzzle
-@@ -108,6 +108,51 @@ regenerated every snapshot with the accepted runtime at `491512d`, and the
- caller replayed every pair offline against the unchanged grids, masks,
- positions and instance names. No solver run has measured this version yet.
- 
-+### Is comparisons
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to apply
-+[NUC 86](../../docs/nuc-0086.md) to the existing datasets where it fits. Both
-+conditions now read with `is`, NUC 86's spelling of `==`, and the rules read:
-+
-+```nuc
-+if $Obj.vertex_color is 1:
-+    $Obj.tag = 'l1707'
-+    $Obj.marker_color = 7
-+    $Obj.x = $Obj.x@first - 1
-+    $Obj.y = $Obj.y@first - 1
-+    $Obj.width = $Obj.width@first + 2
-+    $Obj.height = $Obj.height@first + 2
-+if $Obj.vertex_color is 2:
-+    $Obj.tag = 'l2404'
-+    $Obj.marker_color = 4
-+    $Obj.x = $Obj.x@first - 1
-+    $Obj.y = $Obj.y@first - 1
-+    $Obj.width = $Obj.width@first + 2
-+    $Obj.height = $Obj.height@first + 2
-+```
-+
-+`is` compares exactly as `==` does, with the same loose equality and
-+precedence, and an `if` header is one of the enclosed positions where NUC 86
-+reads it as an operator. The right operands are the numbers 1 and 2, not bare
-+words, so each condition is the same standing rule as before. Only the two
-+header lines changed. The class, the branch bodies, the grids, masks,
-+positions, instance names, implementations, and snapshots are as before, and
-+the world model keeps its level, so the gestalt overview above still holds.
-+Replaying the rules now needs a runtime at `7096171`, the NUC 86 commit, or
-+later. No NUC was requested, so no proposal strategy was selected and
-+strategy learning did not apply.
-+
-+The arc-dataset worker respelled the headers in an external staging
-+directory and regenerated all 30 input and output snapshots with the accepted
-+runtime at `34d0b19`, which includes NUC 86; each is byte-identical to the
-+previous version's. The caller's own offline check passed all 43 of its checks
-+on the staged file and again after integration: the file equals the previous
-+one with only `==` respelled, its pairs are unchanged, no `==` or `!=` is
-+left in its declarations, every snapshot replays on that runtime, and the
-+instance names stay unique across all datasets. `document()` loads it with
-+the other 28 datasets. At the user's choice, no solver run has measured this
-+version.
-+
- ## Decision: locate the delta from the initial position (NUC 53 and NUC 55)
- 
- ### Why the world model has to move the object
-@@ -189,6 +234,11 @@ debug runtime and a 30-minute limit. The exit status is the difference score;
- seconds are the workflow's wall time for the puzzle, from each run's
- `arc-puzzle-report` artifact. No local `bun start 0ca9ddb6` run is recorded.
- 
-+None of these runs measured the current version: the standard entries of
-+5-Nov-2026 and the `is` conditions of 6-Nov-2026 came later, and the user
-+chose offline verification for the respelling. Its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **Runs from `c2fff09` on saw the answer.** Resolved on 6-Nov-2026: the user
-@@ -201,3 +251,15 @@ seconds are the workflow's wall time for the puzzle, from each run's
-   expected output. The exact matches at `c2fff09`, `b90a525`, and `ed49ce3`
-   therefore do not show that the rule was inferred from the training pairs;
-   the runs at `3cca0aa` and `3f734a8`, which predate it, also matched exactly.
-+- **The `is` version is unmeasured.** No solver run, local or in the
-+  **ARC Benchmark** workflow, has used the version of 6-Nov-2026. Its snapshots
-+  are unchanged, but every run's few-shot context now shows `is` in
-+  conditions. NUC 86 reads `is` as an operator only in enclosed positions, so a
-+  model that copies it straight into an assignment value, such as
-+  `$Obj.flag = $Obj.color is 5`, gets `is` read as
+ Each non-genesis puzzle has exactly one `dataset.<puzzle_id>.json`, containing
+ all its original `train` pairs from `data\training\<puzzle_id>.json` in source
 ```
 
-**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +48/-3)
+**File**: `arc/src/analyzer.ts` (modified, +2/-1)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
--| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c` |
-+| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026 |
- | Output canvas | `EXACT` |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) and the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None; suggested changes await review, not applied |
--| Solver runs | 1 local run on 4-Nov-2026, exit 0 |
-+| Solver runs | 1 local run on 4-Nov-2026, exit 0; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -165,7 +165,8 @@ export async function value({
+ }
  
- ## Puzzle
-@@ -115,6 +115,38 @@ migration worker regenerated every snapshot with the accepted runtime at
- grids, masks, positions and instance names. No solver run has measured this
- version yet.
- 
-+### Is comparisons
+ export async function state(train_dataset) {
+-  const objects: Record<string, unknown>[] = [];
++  const objects = [];
 +
-+On 6-Nov-2026 the user asked `/arc-purposal` to apply
-+[NUC 86](../../docs/nuc-0086.md) to the existing datasets where it fits. The
-+second `find` now takes the partner with `is not`, NUC 86's spelling of `!=`:
-+
-+```nuc
-+$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)
-+```
-+
-+`is not` compares exactly as `!=` does, with the same loose equality and
-+precedence. The callback is a call argument, one of the enclosed positions
-+where NUC 86 reads `is` as an operator, and its right operand,
-+`$Obj.color@first`, is an anchored property rather than a bare word, so it
-+reads as it did with `!=`. Only that comparison changed. The class, the pair
-+list, the grids, masks, positions, instance names, implementations, and
-+snapshots are as before, and the world model keeps its level, so the gestalt
-+overview above still holds. Replaying the rule now needs a runtime at
-+`7096171`, the NUC 86 commit, or later. No NUC was requested, so no proposal
-+strategy was selected and strategy learning did not apply.
-+
-+The arc-dataset worker respelled the comparison in an external staging
-+directory and regenerated all 30 input and output snapshots with the accepted
-+runtime at `34d0b19`, which includes NUC 86; each is byte-identical to the
-+previous version's. The caller's own offline check passed all 44 of its checks
-+on the staged file and again after integration: the file equals the previous
-+one with only `!=` respelled, its pairs are unchanged, no `==` or `!=` is
-+left in its declarations, every snapshot replays on that runtime, and the
-+instance names stay unique across all datasets. `document()` loads it with
-+the other 28 datasets. At the user's choice, no solver run has measured this
-+version.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -138,6 +170,11 @@ nothing there. The few-shot document parsed, with all 15 JSON datasets,
- before the run. The puzzle has not been in an **ARC puzzle report** workflow
- run.
- 
-+The run used the first version of the dataset. No solver run has measured the
-+version with standard entries or the version with `is not` of 6-Nov-2026,
-+which the user chose to verify offline, so their difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **The run saw the answer.** Resolved on 6-Nov-2026: the user decided this is
-@@ -167,3 +204,11 @@ run.
-   still lists the stale README paragraph about `dataset.0d3d703e.json` as
-   open; `ebd026c` replaced that paragraph, so the item can be closed there.
- - **Committed.** `a526fec` committed this record with the dataset.
-+- **The `is not` version is unmeasured.** No solver run, local or in the
-+  **ARC Benchmark** workflow, has used the version of 6-Nov-2026. Its
-+  snapshots are unchanged, but every run's few-shot context now shows `is`
-+  and `is not` in conditions and callbacks. NUC 86 reads them as operators
-+  only in enclosed positions, so a model that copies `is` straight into an
-+  assignment value, such as `$Obj.flag = $Obj.color is 5`, gets `is` read as
-+  a name and a `ReferenceError`. A dispatched **ARC Benchmark** run would
-+  measure the effect.
+   for (const dataset of train_dataset.dataset) {
+     const implementations = dataset.instances.map(
+       ({ implementation }) => implementation
 ```
 
-**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +52/-3)
+**File**: `arc/src/lib/milestone.ts` (modified, +42/-18)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
--| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record |
-+| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026 |
- | Output canvas | `EXACT` |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md) and the conditional expression of [NUC 59](../../docs/nuc-0059.md) |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None; suggested changes await review, not applied |
--| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
-+| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -1,6 +1,11 @@
+ import * as Matrix from "./Matrix.ts";
+ import * as terminal from "./terminal.ts";
  
- ## Puzzle
-@@ -122,6 +122,44 @@ runtime at `491512d`, and the caller replayed every pair offline against the
- unchanged grids, masks, positions and instance names. No solver run has
- measured this version yet.
++function oriented(title: string, orientation: unknown): string {
++  const direction: string | undefined = terminal.orientation(orientation);
++  return direction ? `${title} · ${direction}` : title;
++}
++
+ export function start({
+   version,
+   puzzle_id,
+@@ -83,10 +88,11 @@ export function instance_constructed({
+     key: "implementation",
+     loop: true,
+   });
+-  terminal.value(`Input state · ${instance_name}`, input_value, {
+-    key: "input_state",
+-    loop: true,
+-  });
++  terminal.value(
++    oriented(`Input state · ${instance_name}`, input_value?.orientation),
++    input_value,
++    { key: "input_state", loop: true }
++  );
+ }
  
-+### Is comparisons
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to apply
-+[NUC 86](../../docs/nuc-0086.md) to the existing datasets where it fits. The
-+rule's condition now reads with `is`, NUC 86's spelling of `==`:
-+
-+```nuc
-+$Obj.fill_color = 5 if $Obj.parts.distinct().length is 1 else 0
-+```
-+
-+`is` compares exactly as `==` does, with the same loose equality and
-+precedence. The condition of a Python-style conditional is one of the
-+enclosed positions where NUC 86 reads `is` as an operator, and the right
-+operand is the number 1, not a bare word. Only that comparison changed. The
-+class, the grids, masks, positions, instance names, implementations, and
-+snapshots are as before, and the world model keeps its level, so the gestalt
-+overview above still holds. Replaying the rule now needs a runtime at
-+`7096171`, the NUC 86 commit, or later. No NUC was requested, so no proposal
-+strategy was selected and strategy learning did not apply.
-+
-+The arc-dataset worker respelled the condition in an external staging
-+directory and regenerated all 30 input and output snapshots with the accepted
-+runtime at `34d0b19`, which includes NUC 86; each is byte-identical to the
-+previous version's. It also confirmed that the comparison written directly as
-+an assignment value raises `ReferenceError: is is not defined`, because `is`
-+stays a name where a statement can follow:
-+
-+```nuc
-+$Obj.uniform = $Obj.parts.distinct().length is 1
-+```
-+
-+The caller's own offline check passed all 44 of its checks on the staged file
-+and again after integration: the file equals the previous one with only `==`
-+respelled, its pairs are unchanged, no `==` or `!=` is left in its
-+declarations, every snapshot replays on that runtime, and the instance names
-+stay unique across all datasets. `document()` loads it with the other 28
-+datasets. At the user's choice, no solver run has measured this version.
-+
- ## Runs
+ export function state({
+@@ -138,7 +144,16 @@ export function synthesizing_instance({ instance_name }) {
+   });
+ }
  
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -141,6 +179,10 @@ UTC. The runtime's hash and the dataset's were the same before and after the
- run. The invocation authorizes one run, so none was repeated. The puzzle has
- not been in an **ARC puzzle report** workflow run.
+-export function instance_synthesized({ instance_name, implementation }) {
++export function instance_synthesized({
++  instance_name,
++  input_instance_matrix,
++  implementation,
++}) {
++  terminal.grid(
++    `Input crop · ${instance_name}`,
++    Matrix.crop(input_instance_matrix),
++    { key: "input_crop", loop: true }
++  );
+   terminal.code(`Implementation · ${instance_name}`, implementation, {
+     key: "implementation",
+     loop: true,
+@@ -153,10 +168,11 @@ export function executing_transformation({ instance_name }) {
+ }
  
-+No solver run has measured any version of this dataset: the one run stopped
-+before its first model request, and the user chose offline verification for
-+the `is` version of 6-Nov-2026. The difference is unknown, not zero.
-+
- ## Open items
+ export function transformation_executed({ instance_name, input_value }) {
+-  terminal.value(`Input state · ${instance_name}`, input_value, {
+-    key: "input_state",
+-    loop: true,
+-  });
++  terminal.value(
++    oriented(`Input state · ${instance_name}`, input_value?.orientation),
++    input_value,
++    { key: "input_state", loop: true }
++  );
+ }
  
- - **No model credential.** The run's process had no `OPENROUTER_API_KEY` in
-@@ -175,3 +217,10 @@ not been in an **ARC puzzle report** workflow run.
-   pair's input and output grids to the caller. The caller's review and its
-   question to the user used the training pairs only, and nothing from the
-   test pair reached another agent, the rules, or the run.
-+- **The `is` version is unmeasured.** No solver run, local or in the
-+  **ARC Benchmark** workflow, has used the version of 6-Nov-2026. Its snapshots
-+  are unchanged, but every run's few-shot context now shows `is` in
-+  conditions. NUC 86 reads `is` as an operator only in enclosed positions, so a
-+  model that copies it straight into an assignment value, as ab
+ export function composing_output({ instance_name }) {
+@@ -168,17 +184,25 @@ export function composing_output({ instance_name }) {
+ 
+ export function output_composed({
+   instance_name,
+-  orientation,
++  input_instance_matrix,
+   output_instance_matrix,
++  output_value,
+ }) {
+-  const direction: string | undefined = terminal.orientation(orientation);
+-  const title: string = direction
+-    ? `Output crop · ${instance_name} · ${direction}`
+-    : `Output crop · ${instance_name}`;
+-  terminal.grid(title, output_instance_matrix, {
+-    key: "output_crop",
+-    loop: true,
+-  });
++  terminal.grid(
++    `Input crop · ${instance_name}`,
++    Matrix.crop(input_instance_matrix),
++    { key: "composition_input_crop", loop: true }
++  );
++  terminal.grid(
++    oriented(`Output crop · ${instance_name}`, output_value.orientation),
++    output_instance_matrix,
++    { key: "output_crop", loop: true }
++  );
++  terminal.value(
++    oriented(`Output state · ${instance_name}`, output_value.orientation),
++    output_value,
++    { key: "output_state", loop: true }
++  );
+ }
+ 
+ export function output_placed({
 ```
 
-**File**: `arc/docs/ARC-NUC-6e02f1e3.md` (modified, +52/-3)
+**File**: `arc/src/lib/terminal.ts` (modified, +3/-4)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/6e02f1e3.json`](../data/training/6e02f1e3.json) |
--| Instruction dataset | [`dataset.6e02f1e3.json`](../src/dataset/dataset.6e02f1e3.json): the puzzle's 5 original training pairs and its test pair, 6 mosaic instances, one per pair; committed with this record. An earlier invocation the same day verified a different model offline and did not publish it |
-+| Instruction dataset | [`dataset.6e02f1e3.json`](../src/dataset/dataset.6e02f1e3.json): the puzzle's 5 original training pairs and its test pair, 6 mosaic instances, one per pair; committed with this record. An earlier invocation the same day verified a different model offline and did not publish it. On 6-Nov-2026 its orientation guard was respelled with `is` |
- | Output canvas | `EXACT`, inferred from the training pairs |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rules use the accepted `distinct` list query of [NUC 71](../../docs/nuc-0071.md) |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rules use the accepted `distinct` list query of [NUC 71](../../docs/nuc-0071.md) and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None; suggested changes await review, not applied |
--| Solver runs | 1 local run on 5-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
-+| Solver runs | 1 local run on 5-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -393,9 +393,8 @@ export function grid(title: string, matrix, milestone?: Milestone) {
+   const heading: string = numbered(title, milestone);
+   const rows: number = matrix.length;
+   const columns: number = Math.max(0, ...matrix.map((row) => row.length));
+-  const dimensions: string = `${columns} × ${rows}`;
+   if (rows === 0 || columns === 0) {
+-    block(`${heading} · ${dimensions}`, [styleText("gray", "(empty)")]);
++    block(heading, [styleText("gray", "(empty)")]);
+     return;
+   }
  
- ## Puzzle
-@@ -178,6 +178,43 @@ The migration worker regenerated every snapshot with the accepted runtime at
- grids, masks, positions and instance names. No solver run has measured this
- version yet.
- 
-+### Is comparisons
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to apply
-+[NUC 86](../../docs/nuc-0086.md) to the existing datasets where it fits. The
-+orientation guard now reads with `is`, NUC 86's spelling of `==`, and the
-+rules read:
-+
-+```nuc
-+$Obj.tag = 'l6074'
-+$Obj.orientation = {1: 90, 2: 135, 3: 45}[$Obj.parts.distinct().length]
-+if $Obj.orientation is 90:
-+    $Obj.height = 1
-+$Obj.fill_color = 5
-+```
-+
-+`is` compares exactly as `==` does, with the same loose equality and
-+precedence, and an `if` header is one of the enclosed positions where NUC 86
-+reads it as an operator. The right operand is the number 90, not a bare word,
-+so the condition is the same standing rule as before. Only that header line
-+changed. The class, the other rules, the grids, masks, positions, instance
-+names, implementations, and snapshots are as before, and the world model
-+keeps its level, so the gestalt overview above still holds. Replaying the
-+rules now needs a runtime at `7096171`, the NUC 86 commit, or later. The
-+genesis `dataset.line.json`, whose horizontal-line guard this rule mirrors,
-+was respelled the same way in the same invocation. No NUC was requested, so
-+no proposal strategy was selected and strategy learning did not apply.
-+
-+The arc-dataset worker respelled the header in an external staging directory
-+and regenerated all 12 input and output snapshots with the accepted runtime at
-+`34d0b19`, which includes NUC 86; each is byte-identical to the previous
-+version's. The caller's own offline check passed all 27 of its checks on the
-+staged file and again after integration: the file equals the previous one
-+with only `==` respelled, its pairs are unchanged, no `==` or `!=` is left in
-+its declarations, every snapshot replays on that runtime, and the instance
-+names stay unique across all datasets. `document()` loads it with the other
-+28 datasets. At the user's choice, no solver run has measured this version.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -204,6 +241,10 @@ The runtime, the dataset, and `src/app.ts` had the same hashes before and after
- the run. The invocation authorizes one run, so none was repeated. The puzzle
- has not yet been in an **ARC puzzle report** workflow run.
- 
-+No solver run has measured any version of this dataset: the one run stopped
-+before its first model request, and the user chose offline verification for
-+the `is` version of 6-Nov-2026. The difference is unknown, not zero.
-+
- ## Open items
- 
- - **No model credential.** As in the runs of
-@@ -239,3 +280,11 @@ has not yet been in an **ARC puzzle report** workflow run.
-   `ceil(listed puzzles / ARC_CONCURRENCY) * 30 + 20` minutes, within GitHub
-   Actions' 360-minute job limit. The workflow's 150-minute timeout covers its
-   20 listed puzzles.
-+- **The `is` version is unmeasured.** No solver run, local or in the
-+  **ARC Benchmark** workflow, has used the version of 6-Nov-2026. Its snapshots
-+  are unchanged, but every
-```
-
-**File**: `arc/docs/ARC-NUC-c8f0f002.md` (modified, +51/-3)
-```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/c8f0f002.json`](../data/training/c8f0f002.json) |
--| Instruction dataset | [`dataset.c8f0f002.json`](../src/dataset/dataset.c8f0f002.json): the puzzle's 3 original training pairs and its test pair, 12 color-region instances, 3 in each pair; committed with this record |
-+| Instruction dataset | [`dataset.c8f0f002.json`](../src/dataset/dataset.c8f0f002.json): the puzzle's 3 original training pairs and its test pair, 12 color-region instances, 3 in each pair; committed with this record; condition respelled with `is` later on 6-Nov-2026 |
- | Output canvas | `EXACT` |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None applied or suggested; the JSON-only message question carried over from earlier records stays open |
--| Solver runs | 1 local run on 6-Nov-2026: exit 0, difference 0 |
-+| Solver runs | 1 local run on 6-Nov-2026: exit 0, difference 0, before the `is` respelling; none of the current version |
- | Updated | 6-Nov-2026 |
- 
- ## Puzzle
-@@ -133,6 +133,42 @@ the `dataset.a9f96cdd.json` paragraph, and the puzzle's entry in the
- as its own matrix job. The caller made the puzzle the solver's default in
- `src/app.ts`, in place of `c9e6f938`, before the run.
- 
-+### Is comparisons
-+
-+Later on 6-Nov-2026 the user asked `/arc-purposal` to apply
-+[NUC 86](../../docs/nuc-0086.md) to the existing datasets where it fits. The
-+condition now reads with `is`, NUC 86's spelling of `==`:
-+
-+```nuc
-+class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):
-+if $Obj.color@first is 7:
-+    $Obj.color = 5
-+```
-+
-+`is` compares exactly as `==` does, with the same loose equality and
-+precedence, and an `if` header is one of the enclosed positions where NUC 86
-+reads it as an operator. Its left operand, the anchored `$Obj.color@first`,
-+is a complete operand, and its right operand is the number 7, not a bare
-+word, so the condition is the same standing rule as before. Only that header
-+line changed. The class, the body, the grids, masks, positions, instance
-+names, implementations, and snapshots are as before, and the world model
-+keeps its level, so the gestalt overview above still holds. Replaying the
-+rule now needs a runtime at `7096171`, the NUC 86 commit, or later. The
-+README paragraph spells the rejected conditional expression with `is` too,
-+so the two formulations still differ only in structure. No NUC was
-+requested, so no proposal strategy was selected and strategy learning did
-+not apply.
-+
-+The arc-dataset worker respelled the header in an external staging directory
-+and regenerated all 24 input and output snapshots with the accepted runtime at
-+`34d0b19`, which includes NUC 86; each is byte-identical to the previous
-+version's. The caller's own offline check passed all 37 of its checks on the
-+staged file and again after integration: the file equals the previous one
-+with only `==` respelled, its pairs are unchanged, no `==` or `!=` is left in
-+its declarations, every snapshot replays on that runtime, and the instance
-+names stay unique across all datasets. `document()` loads it with the other
-+28 datasets. At the user's choice, no solver run has measured this version.
-+
- ## Runs
- 
- | Date | Command | Runtime | Exit status | Difference | Elapsed |
-@@ -162,6 +198,10 @@ it. The invocation authorizes one run, so none was repeated. The puzzle
- joined the **ARC Benchmark** workflow with this dataset, so no workflow run
- is recorded yet.
- 
-+The exact match above used the version with `==`. No solver run has measured
-+the version with `is` of 6-Nov-2026, which the user chose to verify offline,
-+so its difference is unknown, not zero.
-+
- ## Open items
- 
- - **Messages are not JSON-only.** Carried over from
-@@ -171,3 +211,11 @@ is recorded yet.
-   labels such as `train_dataset:` and `json_format:`, while the ARC
-   instructions require every message to parse as one JSON document. It
-   remains an open question for the user. This dataset does not depend on it.
-+- **The `is` version is unmeasured.** No solver run, local or in the
-+  **ARC Benchmark** workflow, has used the version with `is`. Its snapshots
-+  are unchanged, but every run's few-shot context now shows `is` in
-+  conditions. NUC 86 reads `is` as an operator only in enclosed positions, so a
-+  model that copies it straight into an assi
-```
-
-**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
-     "# There is an Obj type, a single point on the grid,\n# which has its x and y position, its width and height,\n# its orientation and its vertex color as integers\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
--    "# A point of vertex color 1 gains color-7 neighbors\n# above, below, left and right, an orthogonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color == 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
--    "# A point of vertex color 2 gains color-4 neighbors\n# on its four diagonals, a diagonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color == 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
-+    "# A point of vertex color 1 gains color-7 neighbors\n# above, below, left and right, an orthogonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2",
-+    "# A point of vertex color 2 gains color-4 neighbors\n# on its four diagonals, a diagonal cross\n# that starts one column left and one row up\n# and is two columns wider and two rows taller\nif $Obj.vertex_color is 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1\n    $Obj.width = $Obj.width@first + 2\n    $Obj.height = $Obj.height@first + 2"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
-```
-
-**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "declarations": [
-     "# There is an Obj type, a vertical stripe of one color,\n# which has its x and y position, the width and height of its box,\n# its orientation and its color as integers\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l6953'\n    this.color = color",
--    "# Colors come in four pairs, 1 and 5, 2 and 6, 3 and 4, and 8 and 9,\n# whose two colors trade places: every stripe takes the other color\n# of the pair its color belongs to\n$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner != $Obj.color@first)"
-+    "# Colors come in four pairs, 1 and 5, 2 and 6, 3 and 4, and 8 and 9,\n# whose two colors trade places: every stripe takes the other color\n# of the pair its color belongs to\n$Obj.color = [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-   ],
-   "output_canvas": "EXACT",
-   "dataset": [
+@@ -404,7 +403,7 @@ export function grid(title: string, matrix, milestone?: Milestone) {
+   const colored: boolean = colors();
+   for (let start: number = 0; start < columns; start += chunk) {
+     const end: number = Math.min(columns, start + chunk);
+-    block(`${heading} · ${dimensions}`, [
++    block(heading, [
+       ...(columns > chunk
+         ? [styleText("gray", `Columns ${start}–${end - 1}`), ""]
+         : []),
+@@ -428,7 +427,7 @@ function sideBySide(panels) {
+ function previewMatrix(title: string, matrix, colored: boolean) {
+   const columns: number = Math.max(0, ...matrix.map((row) => row.length));
+   return [
+-    styleText("gray", `${title} · ${columns} × ${matrix.length}`),
++    styleText("gray", title),
+     ...matrixLines(matrix, 0, columns, colored),
+   ];
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1656,52 +1357,36 @@ Update the README paragraphs of the five puzzles and the gene
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use NUC 86 `is` comparisons in ARC datasets
+## X. Remove output matrices from analyzer prompts
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9771c244`: Use NUC 86 `is` comparisons in ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3413e65`: Remove output matrices from analyzer prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`output_x` and `output_y`. The genesis rules match categorical colors,
-orientations, and endpoint sides with `is`, the spelling of `==` that
-[NUC 86](../docs/nuc-0086.md) adds, as in the line header
-`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
-such as `left` compares with its own text while nothing defines that name,
-and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
-and implementations keep their quoted strings, as in
-`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
-right operand of `is` reads as a word, and a bare name elsewhere would be
-undefined.
-1 by 1 size. The two branches are guarded by `if $Obj.vertex_color is 1:`
-and `if $Obj.vertex_color is 2:`, with `is`, the spelling of `==` that
-[NUC 86](../docs/nuc-0086.md) adds. Tags identify the geometry: `l1707` is an
-orthogonal cross, `l2404` is a diagonal cross, and `l7544` remains a single
-point.
-`[[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)`:
-of that pair: the comparison `is not` of [NUC 86](../docs/nuc-0086.md), the
-spelling of `!=`, holds only for the color 
+              ({ instance_name, input_instance_matrix, implementation }) => ({
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`output_x` and `output_y`.
-1 by 1 size. Tags identify the geometry: `l1707` is an orthogonal cross,
-`l2404` is a diagonal cross, and `l7544` remains a single point.
-`[[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner != $Obj.color@first)`:
-of that pair. The `@first` anchors read the input color because the rule
-`5 if $Obj.parts.distinct().length == 1 else 0`: the list query `distinct` of
-conditional rule `if $Obj.orientation == 90:` sets `height` to 1, guarding on
-a horizontal line as `dataset.line.json` does: the line along the top row is
+              ({
+                instance_name,
+                input_instance_matrix,
+                output_instance_matrix,
+                implementation,
+              }) => ({
+                output_instance_matrix: Matrix.crop(output_instance_matrix),
+          output_instance_matrix:
+          ${JSON.stringify(Matrix.crop(output_instance_matrix))}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9771c244` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3413e65` are properly handled with clean fallback behavior.
