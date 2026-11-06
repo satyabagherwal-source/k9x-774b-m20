@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-7KXS",
-    "timestamp": "2026-11-04T20:46:42.880Z",
-    "repository": "kotest/kotest",
-    "learningId": "learn-github-kotest-kotest",
-    "contentHash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-7NXR",
-    "timestamp": "2026-11-04T20:46:46.767Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "371c99179a8e5da8fc0b120a6e8010d94de8c3c469e2dd1f6e94807b8c96d626",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-7QID",
-    "timestamp": "2026-11-04T20:46:50.101Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "853567fce6f4f1fc99fe521e554298e5c35dc82b72cc54c3076028b35c87ca47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-G0KW",
-    "timestamp": "2026-11-04T20:53:16.400Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "c02400cdcec71e6469908bf2e16a216c5bc8161497ecce329c89609eeed6ffc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-G3H3",
     "timestamp": "2026-11-04T20:53:20.151Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NIK2",
+    "timestamp": "2026-11-06T00:02:44.018Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NOBQ",
+    "timestamp": "2026-11-06T00:02:51.494Z",
+    "repository": "Permify/permify",
+    "learningId": "learn-github-permify-permify",
+    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NR98",
+    "timestamp": "2026-11-06T00:02:55.292Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NTLG",
+    "timestamp": "2026-11-06T00:02:58.324Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

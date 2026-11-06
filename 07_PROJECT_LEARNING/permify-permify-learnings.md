@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source**: github ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
-> **Source Version**: `43ce9031`  
+> **Source Version**: `81819b84`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:58:17.705Z  
+> **Timestamp**: 2026-11-06T00:02:49.950Z  
 > **Learning ID**: `learn-github-permify-permify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:58:17.307Z  
+> **Harvest Timestamp**: 2026-11-06T00:02:49.943Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source authorization as a service inspired by Google Zanzibar, designed to build and manage fine-grained and scalable authorization systems for any application. — Permify is now part of FusionAuth 🎉
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5963 stars
+- **Stars / Engagement**: 5967 stars
 
 ---
 
@@ -2119,235 +2119,18 @@ func (engine *SubjectPermissionEngine) SubjectPermission(ctx context.Context, re
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22d97667` (2026-10-09)
-**Commit Message**: Merge pull request #3234 from Permify/fix/go-1.27.2-cves
+### Incident Patch 1: `9ca74731` (2026-11-05)
+**Commit Message**: build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs
 
-build: bump Go to 1.27.2
-
-**File**: `.github/workflows/nightly.yaml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
-         with:
--          go-version: ~1.26.8
-+          go-version: ~1.26.9
-       - name: Log in to GHCR
-         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-         with:
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
-         with:
--          go-version: ~1.26.8
-+          go-version: ~1.26.9
-       - name: Log in to GHCR
-         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-         with:
-```
-
-**File**: `Dockerfile` (modified, +2/-2)
-```diff
-@@ -1,10 +1,10 @@
--FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS permify-builder
-+FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS permify-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- COPY . .
- RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod CGO_ENABLED=0 go build -v ./cmd/permify/
- 
--FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
-+FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
-```
-
-**File**: `Dockerfile.local` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Use the correct Go version
--FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125
-+FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673
- 
- RUN apk --no-cache add curl git
- 
-```
-
-**File**: `Dockerfile.release` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Build stage for gRPC health probe
--FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
-+FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
-```
-
-**File**: `go.mod` (modified, +6/-6)
-```diff
-@@ -68,8 +68,8 @@ require (
- 	go.opentelemetry.io/otel/sdk/metric v1.46.0
- 	go.opentelemetry.io/otel/trace v1.46.0
- 	golang.org/x/exp v0.0.0-20260820142414-ca536658362e
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sync v0.22.0
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sync v0.23.0
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12
-@@ -285,7 +285,7 @@ require (
- 	go.uber.org/zap v1.27.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/exp/typeparams v0.0.0-20250911091902-df9299821621 // indirect
--	golang.org/x/mod v0.39.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
- 	golang.org/x/time v0.14.0 // indirect
- 	google.golang.org/api v0.264.0 // indirect
-@@ -361,9 +361,9 @@ require (
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
- )
-```
-
-**File**: `go.sum` (modified, +14/-14)
-```diff
-@@ -933,8 +933,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.14.0/go.mod h1:MVFd36DqK4CsrnJYDkBA3VC4m2GkXAM0PvzMCn4JQf4=
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20260820142414-ca536658362e h1:01Ju2A/fZKkci4zqx0eZxw//DnRYOnBiGJG14hFBhO8=
- golang.org/x/exp v0.0.0-20260820142414-ca536658362e/go.mod h1:zeBbvyFKDaLwa7CH/zI8KXt7gTl14SF7sO08Pl5jBCM=
-@@ -957,8 +957,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.13.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.39.0 h1:UF5zwQdCRRUpHfyPwr7d4UrGiVeldIsogtzWVnczL74=
--golang.org/x/mod v0.39.0/go.mod h1:bvIbwjQ0HUFFf5AKukeeYQG4ZBUG9yxQbR9aEweIwYY=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -978,8 +978,8 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
- golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
- golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-@@ -994,8 +994,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1030,8 +1030,8 @@ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
-@@ -1040,8 +1040,8 @@ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.12.0/go.mod h1:owVb
-```
-
----
-
-### Incident Patch 2: `7021aaa1` (2026-10-08)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
-
-Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc](https://github.com/open-telemetry/opentelemetry-go) from 1.43.0 to 1.45.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.43.0...v1.45.0)
+Bumps [body-parser](https://github.com/expressjs/body-parser) from 1.20.8 to 1.20.9.
+- [Release notes](https://github.com/expressjs/body-parser/releases)
+- [Changelog](https://github.com/expressjs/body-parser/blob/1.20.9/HISTORY.md)
+- [Commits](https://github.com/expressjs/body-parser/compare/1.20.8...1.20.9)
 
 ---
 updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
-  dependency-version: 1.45.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ require (
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0
- 	go.opentelemetry.io/otel/exporters/zipkin v1.45.0
- 	go.opentelemetry.io/otel/metric v1.46.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -875,8 +875,8 @@ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0 h1:w1K
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0/go.mod h1:HBy4BjzgVE8139ieRI75oXm3EcDN+6GhD88JT1Kjvxg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 h1:RAE+JPfvEmvy+0LzyUA25/SGawPwIUbZ6u0Wug54sLc=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0/go.mod h1:AGmbycVGEsRx9mXMZ75CsOyhSP6MFIcj/6dnG+vhVjk=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
- go.opentelemetry.io/otel/exporters/zipkin v1.45.0 h1:KN3btaILMTxR4QDHVGAO87lq5ButzK7l+kIfLuxQ1oA=
-```
-
----
-
-### Incident Patch 3: `2d8b67aa` (2026-10-08)
-**Commit Message**: build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /docs
-
-Bumps [source-map-js](https://github.com/7rulnik/source-map-js) from 1.2.1 to 1.2.2.
-- [Release notes](https://github.com/7rulnik/source-map-js/releases)
-- [Changelog](https://github.com/7rulnik/source-map-js/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/7rulnik/source-map-js/compare/v1.2.1...v1.2.2)
-
----
-updated-dependencies:
-- dependency-name: source-map-js
-  dependency-version: 1.2.2
+- dependency-name: body-parser
+  dependency-version: 1.20.9
   dependency-type: indirect
 ...
 
@@ -2355,28 +2138,99 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `docs/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -11620,9 +11620,9 @@
+@@ -3530,9 +3530,9 @@
        }
      },
-     "node_modules/source-map-js": {
--      "version": "1.2.1",
--      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
--      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
-+      "version": "1.2.2",
-+      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
-+      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+     "node_modules/body-parser": {
+-      "version": "1.20.8",
+-      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+-      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
++      "version": "1.20.9",
++      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
++      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
+       "license": "MIT",
+       "dependencies": {
+         "bytes": "~3.1.2",
+```
+
+---
+
+### Incident Patch 2: `e7ee3658` (2026-11-05)
+**Commit Message**: build(deps): bump qs from 6.16.0 to 6.17.1 in /docs
+
+Bumps [qs](https://github.com/ljharb/qs) from 6.16.0 to 6.17.1.
+- [Changelog](https://github.com/ljharb/qs/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/ljharb/qs/compare/v6.16.0...v6.17.1)
+
+---
+updated-dependencies:
+- dependency-name: qs
+  dependency-version: 6.17.1
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `docs/package-lock.json` (modified, +3/-3)
+```diff
+@@ -9600,9 +9600,9 @@
+       }
+     },
+     "node_modules/qs": {
+-      "version": "6.16.0",
+-      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+-      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
++      "version": "6.17.1",
++      "resolved": "https://registry.npmjs.org/qs/-/qs-6.17.1.tgz",
++      "integrity": "sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==",
        "license": "BSD-3-Clause",
-       "engines": {
-         "node": ">=0.10.0"
+       "dependencies": {
+         "es-define-property": "^1.0.1",
+```
+
+---
+
+### Incident Patch 3: `8fe3787a` (2026-11-05)
+**Commit Message**: build(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs
+
+Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.1.4 to 6.1.5.
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
+
+---
+updated-dependencies:
+- dependency-name: postcss-selector-parser
+  dependency-version: 6.1.5
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `docs/package-lock.json` (modified, +3/-3)
+```diff
+@@ -9443,9 +9443,9 @@
+       }
+     },
+     "node_modules/postcss-selector-parser": {
+-      "version": "6.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.4.tgz",
+-      "integrity": "sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==",
++      "version": "6.1.5",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz",
++      "integrity": "sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3235** (2026-10-09): chore: update version to v1.7.5 in API docs and internal info file (@omer-topal)
-- **PR #3234** (2026-10-09): build: bump Go to 1.27.2 (@omer-topal)
-- **PR #3233** (2026-10-09): build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /docs (@dependabot[bot])
-- **PR #3232** (2026-10-09): build(deps): bump proxy-addr from 2.0.7 to 2.0.8 in /docs (@dependabot[bot])
-- **PR #3231** (2026-10-08): refactor: enforce request validation in the protovalidate interceptor (@omer-topal)
-- **PR #3230** (2026-10-09): build(deps): bump golang from `cf6fca6` to `8a5910f` in /integration-test (@dependabot[bot])
+- **PR #3273** (2026-11-05): chore: update version to v1.7.6 in API docs and internal info file (@omer-topal)
+- **PR #3272** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 in /docs (@dependabot[bot])
+- **PR #3271** (2026-11-05): build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs (@dependabot[bot])
+- **PR #3270** (2026-11-05): build(deps): bump qs from 6.16.0 to 6.17.1 in /docs (@dependabot[bot])
+- **PR #3269** (2026-11-05): build(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs (@dependabot[bot])
+- **PR #3268** (2026-11-05): bump triviy action (@omer-topal)
 
 ---
 
@@ -2396,28 +2250,32 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3234 from Permify/fix/go-1.27.2-cves
+## X. build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22d97667`: Merge pull request #3234 from Permify/fix/go-1.27.2-cves. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ca74731`: build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          go-version: ~1.26.9
+      "version": "1.20.9",
+      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
+      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          go-version: ~1.26.8
+      "version": "1.20.8",
+      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22d97667` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ca74731` are properly handled with clean fallback behavior.

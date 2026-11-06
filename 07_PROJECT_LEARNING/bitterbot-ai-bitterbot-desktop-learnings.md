@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `edd9f02f`  
+> **Source Version**: `f10139f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:25:57.841Z  
+> **Timestamp**: 2026-11-06T00:02:56.805Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:25:56.715Z  
+> **Harvest Timestamp**: 2026-11-06T00:02:56.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1698,184 +1698,166 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edd9f02f` (2026-11-05)
-**Commit Message**: feat(memory): default procedural learning to shadow capture (#364)
+### Incident Patch 1: `f10139f8` (2026-11-05)
+**Commit Message**: feat(memory): run gated failure experiments from idle dreams (#365)
+
+* feat(memory): schedule gated failure experiments from idle dreams
+
+* fix(skills): bind learning promotion to its evaluated incumbent
+
+* fix(memory): commit learning reservations on supported Node versions
+
+---------
 
 Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +1/-0)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@ A consciousness-inspired memory pipeline:
+@@ -15,7 +15,7 @@ A consciousness-inspired memory pipeline:
  - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
  - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
  - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
-+- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
+-- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
++- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
  
  ### 2. Dream Engine (`src/memory/dream-engine.ts`)
  
 ```
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -214,6 +214,8 @@ The gate observes whether the agent actually reads the skill. A skill that does
+@@ -214,7 +214,7 @@ The gate observes whether the agent actually reads the skill. A skill that does
  
  **You can inspect the evidence.** The Evolution tab and `bitterbot skills evidence` expose validation results, credited uses, model information, and lineage. Young nodes may produce few promotions while evidence accumulates.
  
-+Production skill evolution is **on by default**, subject to evidence, model availability and budgets. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for host-supplied experiments. It does not automatically run experiments or put research candidates into live conversations. Set `memory.proceduralLearning.mode: "off"` to disable that facility; `skills.evolution.enabled: false` disables the production evolution loop.
-+
+-Production skill evolution is **on by default**, subject to evidence, model availability and budgets. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for host-supplied experiments. It does not automatically run experiments or put research candidates into live conversations. Set `memory.proceduralLearning.mode: "off"` to disable that facility; `skills.evolution.enabled: false` disables the production evolution loop.
++Production skill evolution is **on by default**, subject to evidence, model availability and budgets. An idle dream tick can now run failure-driven experiments without waiting for a full creative cycle. Candidates must pass the existing task gates before canary exposure; monitoring and rollback continue afterward. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) remains a host-invoked shadow facility, and its research candidates do not become live skills. Set `memory.proceduralLearning.automation.enabled: false` to disable the idle coordinator, `memory.proceduralLearning.mode: "off"` to disable its evidence service, or `skills.evolution.enabled: false` to disable production evolution altogether.
+ 
  Skills can also include **pre-action interceptors**: code that checks proposed tool calls and can modify parameters, add context, require prerequisites, or block execution. Because an interceptor is a code path rather than a prompt, it runs on every matching tool call.
  
- Passing a task suite is a bounded result, not a guarantee of improvement on every task. Published benchmarks include their caveats; broad learning gains remain an active evaluation target.
 ```
 
-**File**: `benchmarks/learning-strategy/README.md` (modified, +2/-0)
+**File**: `benchmarks/learning-strategy/README.md` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -2,7 +2,7 @@
  
  Published evidence: [data/README.md](data/README.md). Restore the checksum-verified archives before following historical `results/` links or running recorded-trace tests. The [readable latest results and branded graphic](published/telecom-repair-reuse-v1/README.md) are available without extraction.
  
-+Current gateway behavior: the [host learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for registered host adapters. Explicit `memory.proceduralLearning.mode: "off"` disables it. The service is lazy and does not schedule these experiments or activate their candidates. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
-+
+-Current gateway behavior: the [host learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for registered host adapters. Explicit `memory.proceduralLearning.mode: "off"` disables it. The service is lazy and does not schedule these experiments or activate their candidates. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
++Current gateway behavior: the [learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode. Its idle dream lane coordinates bounded failure experiments through the production skill-evolution gates. The manual research lab and verified-experience adapters remain separate: the scheduler does not rerun these benchmark studies or activate their candidates. Explicit `memory.proceduralLearning.mode: "off"` disables this service; `automation.enabled: false` disables its idle coordinator. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
+ 
  The latest [conditional procedure reuse study](../../docs/memory/telecom-guarded-procedure-reuse.md) completed 60 comparison attempts and 88 additional-state executions. Two independently generated procedures each repaired **12/28 additional failed states** and preserved **16/16 healthy states with zero mutations**. Execution required no new model calls, but matched advice at **6/12** on the four original inputs. Both failed the frozen qualification gate. These are repeated states within four consumed case clusters, not fresh tasks or recipient transfer.
  
- The study retained four raw-retrieval interface errors and four false success claims by one procedure, all rejected by independent native grading. A separately tested compiler contract now disallows intermediate prerequisites from claiming completion; it does not change the frozen results. New usage was **$7.92346605**, cumulative exposure **$203.64979935**. Reserved recipient cases remain untouched. See the report for complete controls, limitations and reproduction commands. Earlier results and totals below are historical.
 ```
 
-**File**: `docs/benchmarks/index.md` (modified, +6/-0)
+**File**: `docs/concepts/architecture.md` (modified, +3/-1)
 ```diff
-@@ -67,6 +67,12 @@ numbers from other systems mostly use a different judge or reader and are not
- directly comparable. Setup, per-type table, miss analysis and raw outputs:
- [benchmarks/longmemeval](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/main/benchmarks/longmemeval/README.md).
+@@ -69,7 +69,9 @@ The core of Bitterbot. A cognitive architecture grounded in computational neuros
+ | **Evolving Identity**    | `GENOME.md` (immutable safety axioms) constrains evolution. `MEMORY.md` (the Phenotype) is rewritten every dream cycle based on lived experience.                                                                                                                                                                                                                          |
+ | **Consolidation Engine** | Runs every 30 minutes: Ebbinghaus decay, chunk merging, SNN near-merge discovery, orphan cluster rescue, curiosity region mapping, governance enforcement.                                                                                                                                                                                                                 |
  
-+## Procedural learning and repair reuse
+-**Storage:** Single SQLite database per agent at `~/.bitterbot/memory/<agentId>.sqlite`. No external services.
++**Storage:** The memory index lives at `~/.bitterbot/memory/<agentId>.sqlite`. The procedural evidence service uses a separate `procedural-learning.sqlite` in the agent directory, so experiment records survive vector reindexing. No external database service is required.
 +
-+The [learning-strategy archive](../../benchmarks/learning-strategy/README.md) includes all 51 recorded synthetic runs, including unsuccessful and interrupted runs, with SHA-256 manifests, restoration tools and replay instructions. The [latest publication bundle](../../benchmarks/learning-strategy/published/telecom-repair-reuse-v1/README.md) contains all 148 execution rows and the Bitterbot-branded graphic.
-+
-+In the [conditional repair-reuse study](../memory/telecom-guarded-procedure-reuse.md), two generated procedures each repaired 12/28 additional failed recorded states and preserved 16/16 healthy states without mutations. Execution used zero model calls; generation required calls. Both matched advice at 6/12 on the original inputs and failed the frozen qualification gate. These are states within four consumed case clusters, not fresh-task or real-user evidence. The default-on shadow service does not promote these candidates into production.
-+
- ## Reports
++The dream engine also coordinates a [failure-learning lane](../memory/learning-strategy-lab.md#automatic-failure-experiments). Idle ticks can start bounded experiments independently of creative dreaming; proposal generation, task validation, canary monitoring and rollback remain separate modules.
  
- Newest first.
+ Full documentation: [Memory Architecture](../memory/architecture-overview.md) · [Dream Engine](../memory/dream-engine.md) · [Curiosity](../memory/curiosity-and-search.md) · [Emotional System](../memory/emotional-system.md)
+ 
 ```
 
-**File**: `docs/gateway/configuration-reference.md` (modified, +26/-1)
+**File**: `docs/gateway/configuration-reference.md` (modified, +8/-2)
 ```diff
-@@ -1945,7 +1945,32 @@ The same notice is not repeated within 30 minutes.
+@@ -1949,13 +1949,19 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
  
- ## Memory
+ ### `memory.proceduralLearning`
  
--The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity`, ...) are documented with the memory system itself; see [How the memory works](/memory/how-the-memory-works) and [Curiosity and search](/memory/curiosity-and-search). One key is listed here because it is a telemetry switch rather than a behaviour:
-+The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity`, ...) are documented with the memory system itself; see [How the memory works](/memory/how-the-memory-works) and [Curiosity and search](/memory/curiosity-and-search). Research and evidence settings are listed below.
-+
-+### `memory.proceduralLearning`
-+
-+Available by default in shadow mode. No config block is needed. These settings make the host service available; they do not schedule experiments or inject research lessons into live prompts. The separate production skill-evolution loop is already on by default through `skills.evolution.enabled`.
-+
-+```json5
-+{
-+  memory: {
-+    proceduralLearning: {
-+      mode: "shadow", // "off" | "shadow" | "active"; default "shadow"
-+      experienceMemory: {
-+        enabled: true, // redacted experience from verified acquisition runs only
-+        minSupport: 2,
-+        maxPromptChars: 6000,
+-Available by default in shadow mode. No config block is needed. These settings make the host service available; they do not schedule experiments or inject research lessons into live prompts. The separate production skill-evolution loop is already on by default through `skills.evolution.enabled`.
++Available by default in shadow mode. No config block is needed. The service hosts both manual research experiments and an automatic failure-learning coordinator. Idle dream ticks run production experiments through the existing skill-evolution task gates; research candidates remain shadow-only. Production evolution is separately controlled by `skills.evolution.enabled`.
+ 
+ ```json5
+ {
+   memory: {
+     proceduralLearning: {
+       mode: "shadow", // "off" | "shadow" | "active"; default "shadow"
++      automation: {
++        enabled: true, // idle failure experiments through the production gates
++        maxLlmCalls: 64, // callback dispatches, not dollars or provider requests
++        maxAgentTurns: 240, // a trial turn can make multiple model requests
++        maxWallMinutes: 60, // checked before dispatch and promotion
 +      },
-+      maxEntries: 1000,
-+      maxResults: 3,
-+      maxAgeDays: 30,
-+      executionBudget: { providerUsd: 0, toolCalls: 100, wallMs: 60000 },
-+    },
-+  },
-+}
-+```
-+
-+`mode: "off"` prevents the service from opening. `experienceMemory.enabled: false` disables extraction while retaining the lab. Explicit settings survive the default change; restart the gateway to apply changes. The strategy lab requires `shadow`; `active` is for explicit host adapters and does not start autonomous learning. Host integrations supply sandbox adapters, pinned verifiers and experiment budgets. Ordinary conversations are not automatically collected, and held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab) for the API, storage and promotion boundaries.
+       experienceMemory: {
+         enabled: true, // redacted experience from verified acquisition runs only
+         minSupport: 2,
+@@ -1970,7 +1976,7 @@ Available by default in shadow mode. No config block is needed. These settings m
+ }
+ ```
+ 
+-`mode: "off"` prevents the service from opening. `experienceMemory.enabled: false` disables extraction while retaining the lab. Explicit settings survive the default change; restart the gateway to apply changes. The strategy lab requires `shadow`; `active` is for explicit host adapters and does not start autonomous learning. Host integrations supply sandbox adapters, pinned verifiers and experiment budgets. Ordinary conversations are not automatically collected, and held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab) for the API, storage and promotion boundaries.
++`mode: "off"` prevents the service from opening. `automation.enabled: false` disables the idle coordinator while preserving the legacy full-dream evolution hook; `skills.evolution.enabled: false` disables production evolution altogether. `experienceMemory.enabled: false` disables adapter extraction while retaining the lab. Restart the gateway to apply changes. The automatic coordinator and strategy lab require `shadow`; `active` is for explicit host adapters. Automatic work respects the dream idle threshold, evolution cadence, usage budgets and pause state. Dispatch limits are reserved durably before work; exhausted limits hold candidates, and in-flight calls finish under their existing timeouts. Research host integrations still supply their own adapters, verifiers and budgets. The experiment ledger stores journal references and hashes, not raw conversations; held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab#automatic-failure-experiments) for recovery, accounting and promotion boundaries.
  
  ### `memory.curiosity.evidence`
  
 ```
 
-**File**: `docs/memory/architecture-overview.md` (modified, +4/-0)
+**File**: `docs/memory/architecture-overview.md` (modified, +1/-1)
 ```diff
-@@ -475,6 +475,8 @@ All memory configuration flows from `BitterbotConfig.memory`:
- 
- ```typescript
- cfg.memory?.consolidation  → ConsolidationEngine config (decayRate, thresholds, forgottenRetentionDays)
-+cfg.memory?.proceduralLearning → lazy host evidence service (mode: off | shadow | active; default shadow)
-+  .experienceMemory        → verified acquisition capture (enabled by default; host extractor required)
- cfg.memory?.dream          → DreamEngineConfig (modes, tiers, intervals, readiness gates, LLM calls)
- cfg.memory?.curiosity      → CuriosityConfig (weights, thresholds, max regions)
-   .research                → autonomous research on the maintenance tick (interval, pages, attempts)
-@@ -500,6 +502,8 @@ cfg.memory?.healthSweep / .digest / .dreamBrief → scheduled reports
+@@ -502,7 +502,7 @@ cfg.memory?.healthSweep / .digest / .dreamBrief → scheduled reports
  
  Most subsystems have sensible defaults and are enabled by default; disable one by setting `enabled: false` in its config block. The opt-in exceptions: the `exploration` dream mode (`memory.dream.modes.exploration.enabled`), learned construction rules (`memory.architectEvolution.enabled`), the dream engine's Skill Seekers research step (`memory.curiosity.autoResearch.enabled` must be `true`), and harness evolution (`agents.defaults.harnessEvolve.enabled`).
  
-+**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables it. Its per-agent database opens lazily for host use, with verified-experience extraction enabled when an adapter supplies a redacted extractor. This research facility does not automatically collect conversation traces, schedule experiments or modify live prompts. The separate production [skill-evolution loop](skills-pipeline.md) is already on by default and retains its validation, canary and rollback gates. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
-+
+-**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables it. Its per-agent database opens lazily for host use, with verified-experience extraction enabled when an adapter supplies a redacted extractor. This research facility does not automatically collect conversation traces, schedule experiments or modify live prompts. The separate production [skill-evolution loop](skills-pipeline.md) is already on by default and retains its validation, canary and rollback gates. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
++**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables this service. Its separate per-agent database opens lazily and records automatic failure experiments as well as host-requested research. Idle dream ticks coordinate the existing production [skill-evolution loop](skills-pipeline.md), with durable dispatch limits, task validation, canary exposure and rollback. `automation.enabled: false` disables the idle coordinator while retaining the legacy full-cycle hook. The manual strategy lab and adapter-based verified-experience extraction remain shadow-only; research candidates do not become live skills. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
+ 
  **Message Batches lanes.** `memory.batch` (kill switch `enabled`, default `true`) routes latency-tolerant background lanes through the Anthropic Message Batches API: a lane call submits one batch, polls with backoff, and falls back to the live call on timeout (`maxWaitMinutes`, default 20) or any error. Default `lanes`: `memory/dream`, `memory/extraction`, `memory/discovery`, `skills/evolution` (the judge and maintainer; the proposer loop and on-demand RPC lanes always run live). Only Anthropic API-key models qualify; other providers take the live path.
  
- ---
 ```
 
-**File**: `docs/memory/learning-strategy-lab.md` (modified, +30/-3)
+**File**: `docs/memory/dream-engine.md` (modified, +2/-0)
 ```diff
-@@ -3,9 +3,34 @@ title: "Learning Strategy Lab"
+@@ -54,6 +54,8 @@ type DreamState = "DORMANT" | "INCUBATING" | "DREAMING" | "SYNTHESIZING" | "AWAK
+ 
+ A cycle is triggered by a timer (default tick every 120 minutes, adaptive between 30 and 240 minutes by default), manually via `MemoryIndexManager.dream()`, or by an **emotional mini-dream** (see below). A scheduled full cycle also needs at least one new conversation, 60 minutes idle and 8 hours since the last full cycle (`minNewSessions`, `minIdleMinutes`, `minHoursBetween`).
+ 
++The same scheduled tick checks a dedicated [failure-learning lane](learning-strategy-lab.md#automatic-failure-experiments) before the creative-cycle gate. On the default agent, it can propose and test improvements after the idle threshold even if there are no new turns or a full dream ran recently. It shares the production evolution cadence (24 hours by default) and the full-cycle hook's single run, with durable dispatch limits and pause checks. Its task gate, canary and rollback modules retain promotion authority. The lane is serialized with other memory maintenance and may defer it while network work finishes; it does not consume the creative-cycle counters or run in emotional mini-dreams.
++
+ The minimum chunks required to trigger a dream cycle is **5**, so the dream engine activates within a single conversation session rather than requiring days of accumulated data.
+ 
+ After each dream cycle completes, the engine also performs an **RLM Working Memory rewrite** — updating MEMORY.md as a recursive state vector. See [Working Memory](./working-memory.md) for details.
+```
+
+**File**: `docs/memory/learning-strategy-lab.md` (modified, +28/-11)
+```diff
+@@ -3,20 +3,21 @@ title: "Learning Strategy Lab"
  description: "Shadow evaluation of evolving actor and proposer instructions with local execution evidence and authenticated transfer."
  ---
  
--The strategy lab is a host-only experimental capability of the existing procedural-learning service. It does not start a background job, alter the live harness, or publish to the public network. Access `service.strategies` on a configured `ProceduralLearning` instance. The store must be in `shadow` mode; active and off stores reject lab work. Construction is lazy and uses additional tables in the existing database.
-+The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. It does not start a background job, alter the live harness, or publish to the public network. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
+-The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. It does not start a background job, alter the live harness, or publish to the public network. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
++The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. The lab does not schedule research studies or activate its candidates. The same service now also hosts a separate automatic coordinator for production failure experiments, described below. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
  
--Hosts obtain the existing per-agent service with `getProceduralLearning({ cfg, agentId })` from the plugin SDK. The returned service may be null when procedural learning is disabled. A typical experiment registers development and held-out panels, adds the starting strategy with `archive.add`, evaluates it, proposes and evaluates children, selects from `archive.rank(developmentPanelId)`, and freezes the chosen hashes with `archive.seal` before final evaluation. The runnable benchmark below demonstrates this complete sequence, including fixed-proposer controls and recipient imports. Registering a panel is a trusted host operation; the `isolation` declaration is not itself an operating-system sandbox.
-+Hosts obtain the per-agent service with `getProceduralLearning({ cfg, agentId })` from the plugin SDK. No configuration block is required. The returned service may be null when explicitly disabled or when the memory manager is unavailable. A typical experiment registers development and held-out panels, adds the starting strategy with `archive.add`, evaluates it, proposes and evaluates children, selects from `archive.rank(developmentPanelId)`, and freezes the chosen hashes with `archive.seal` before final evaluation. The runnable benchmark below demonstrates this complete sequence, including fixed-proposer controls and recipient imports. Registering a panel is a trusted host operation; the `isolation` declaration is not itself an operating-system sandbox.
-+
-+## Defaults and automatic behavior
-+
-+| Component                                                                  | Default             | What runs                                                                                                                                                                                 |
-+| -------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | The dream post-cycle hook learns from journaled runs and proposes skills when evidence, a model, cadence and budgets permit. Validation, canary monitoring and rollback govern promotion. |
-+| Procedural service (`memory.proceduralLearning.mode`)                      | `shadow`            | A local evidence store opens on first host use. Sandbox evaluations run only when a host registers an adapter and requests them.                                                          |
-+| Verified experience (`memory.proceduralLearning.experienceMemory.enabled`) | `true`              | After a settled acquisition run, a registered adapter's optional redacted extractor can attach experience. Held-out runs and invalid or interrupted outcomes are excluded.                |
-+| Strategy lab (`service.strategies`)                                        | Available in shadow | The host explicitly supplies panels, proposals and evaluations. There is no scheduler or automatic connection to conversation traces.                                                     |
-+
-+The production loop is documented in [Skills pipeline](skills-pipeline.md). Enabling the research service does not feed its candidates into that loop. Shadow lookup supplies no lessons for live decisions, and experience recall requires an explicit shadow-evaluation request. No ordinary user conversation is copied into this store automatically.
-+
-+The defaults need no config. To disable the service:
-+
-+```json5
-+{
-+  memory: {
-+    proceduralLearning: { mode: "off" },
-+  },
-+}
-+```
-+
-+To retain the lab but disable experience extraction, set `memory.proceduralLearning.experienceMemory.enabled: false`. This also prevents the adapter's extraction callbac
-```
-
-**File**: `docs/memory/skills-pipeline.md` (modified, +4/-0)
-```diff
-@@ -12,6 +12,10 @@ The skills pipeline handles the full lifecycle of autonomous skill generation: f
+ Hosts obtain the per-agent service with `getProceduralLearning({ cfg, agentId })` from the plugin SDK. No configuration block is required. The returned service may be null when explicitly disabled or when the memory manager is unavailable. A typical experiment registers development and held-out panels, adds the starting strategy with `archive.add`, evaluates it, proposes and evaluates children, selects from `archive.rank(developmentPanelId)`, and freezes the chosen hashes with `archive.seal` before final evaluation. The runnable benchmark below demonstrates this complete sequence, including fixed-proposer controls and recipient imports. Registering a panel is a trusted host operation; the `isolation` declaration is not itself an operating-system sandbox.
  
- ## How skills are learned today (PLAN-42/44/45)
+ ## Defaults and automatic behavior
  
-+This production loop is on by default (`skills.evolution.enabled`, default `true`). It runs when the dream-cycle gates, model availability, evidence, cadence and budgets permit; setting the flag does not guarantee a proposal or promotion on every cycle.
-+
-+The separate [Learning Strategy Lab](learning-strategy-lab.md) is also available by default, in shadow mode, with verified-experience capture for host-supplied acquisition runs. It is a host-invoked research facility: its candidates are not automatically promoted into this production pipeline. Its synthetic experiment results and failed qualification gates are recorded in the [benchmark archive](../../benchmarks/learning-strategy/README.md).
-+
- The live learning path is the skill-evolution pass in `src/memory/skill-evolution/`,
- run as a dream-engine post-cycle hook:
- 
+-| Component                                                                  | Default             | What runs                                                                                                                                                                                 |
+-| -------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+-| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | The dream post-cycle hook learns from journaled runs and proposes skills when evidence, a model, cadence and budgets permit. Validation, canary monitoring and rollback govern promotion. |
+-| Procedural service (`memory.proceduralLearning.mode`)                      | `shadow`            | A local evidence store opens on first host use. Sandbox evaluations run only when a host registers an adapter and requests them.                                                          |
+-| Verified experience (`memory.proceduralLearning.experienceMemory.enabled`) | `true`              | After a settled acquisition run, a registered adapter's optional redacted extractor can attach experience. Held-out runs and invalid or interrupted outcomes are excluded.                |
+-| Strategy lab (`service.strategies`)                                        | Available in shadow | The host explicitly supplies panels, proposals and evaluations. There is no scheduler or automatic connection to conversation traces.                                                     |
++| Component                                                                  | Default             | What runs                                                                                                                                                                                  |
++| -------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
++| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | Idle dream ticks and the post-cycle hook share a learning lane. Evidence, model availability, cadence and budgets apply; task validation, canary monitoring and rollback govern promotion. |
++| Automatic coordinator (`memory.proceduralLearning.automation.enabled`)     | `true`              | In shadow mode, coordinates failure-driven production experiments on the default agent, with durable reservations and bounded retries.                                                     |
++| Procedural service (`memory.proceduralLearning.mode`)   
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
 - **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
 - **PR #363** (2026-11-05): Add shadow learning strategy lab and publish synthetic benchmark evidence (@VGIL77)
 - **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
 - **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
 - **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
-- **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
 
 ---
 
@@ -1895,13 +1877,13 @@ Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): default procedural learning to shadow capture (#364)
+## X. memory): run gated failure experiments from idle dreams (#365)
 
 **RULE**:
 When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edd9f02f`: memory): default procedural learning to shadow capture (#364). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f10139f8`: memory): run gated failure experiments from idle dreams (#365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
@@ -1909,14 +1891,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
+- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edd9f02f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f10139f8` are properly handled with clean fallback behavior.

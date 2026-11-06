@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-05T23:55:41.541Z",
+  "last_updated": "2026-11-06T00:02:58.343Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
-      "verified_at": "2026-11-05T21:25:59.078Z",
+      "content_hash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
+      "verified_at": "2026-11-06T00:02:58.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:25:59.078Z"
+      "last_updated": "2026-11-06T00:02:58.342Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4161,14 +4161,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-permify-permify",
-      "content_hash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
-      "verified_at": "2026-10-18T21:58:17.884Z",
+      "content_hash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+      "verified_at": "2026-11-06T00:02:51.505Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:58:17.884Z"
+      "last_updated": "2026-11-06T00:02:51.505Z"
     },
     "rustls/rustls": {
       "repository": "rustls/rustls",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
-      "verified_at": "2026-11-05T03:27:39.864Z",
+      "content_hash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
+      "verified_at": "2026-11-06T00:02:44.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:27:39.864Z"
+      "last_updated": "2026-11-06T00:02:44.030Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
-      "verified_at": "2026-11-03T23:46:10.217Z",
+      "content_hash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
+      "verified_at": "2026-11-06T00:02:55.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:46:10.217Z"
+      "last_updated": "2026-11-06T00:02:55.303Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

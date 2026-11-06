@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-05T23:55:41.460Z",
+  "last_updated": "2026-11-06T00:02:58.247Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -117,11 +117,16 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "f8a950c3",
-      "content_hash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
+      "source_version": "f21e0197",
+      "content_hash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "tui: mutate incremental body base in place instead of deep-cloning on append",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1860,
           "title": "Tick every 10ms while the fast-start transcript is still rendering",
@@ -228,7 +233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:27:39.745Z",
+      "verified_at": "2026-11-06T00:02:43.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5285,8 +5290,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "edd9f02f",
-      "content_hash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
+      "source_version": "f10139f8",
+      "content_hash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5298,6 +5303,11 @@
         {
           "number": null,
           "title": "memory): default procedural learning to shadow capture (#364)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "memory): run gated failure experiments from idle dreams (#365)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5506,7 +5516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:25:58.945Z",
+      "verified_at": "2026-11-06T00:02:58.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48570,11 +48580,16 @@
       "slug": "permify-permify",
       "platform": "github",
       "source_url": "https://github.com/Permify/permify",
-      "source_version": "43ce9031",
-      "content_hash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
+      "source_version": "81819b84",
+      "content_hash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
       "dossier_path": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1754,
           "title": "Merge pull request #3234 from Permify/fix/go-1.27.2-cves",
@@ -48586,7 +48601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:58:17.840Z",
+      "verified_at": "2026-11-06T00:02:51.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56276,11 +56291,16 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "e4ec6073",
-      "content_hash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
+      "source_version": "8bddc82a",
+      "content_hash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Build: Declare node types where node built-ins are used",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3041,
           "title": "update yarn.lock for the TypeScript 7 peer range widening",
@@ -56317,7 +56337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:46:10.113Z",
+      "verified_at": "2026-11-06T00:02:55.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

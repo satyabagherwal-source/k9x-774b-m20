@@ -7838,3 +7838,7 @@ Every entry in this ledger must capture:
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `93019c44` | Multi-dimensional audit evidence | 2026-11-05T23:49:02.014Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `c26894aa` | Multi-dimensional audit evidence | 2026-11-05T23:49:04.178Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3592d4bb` | Multi-dimensional audit evidence | 2026-11-05T23:55:41.533Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f21e0197` | Multi-dimensional audit evidence | 2026-11-06T00:02:44.022Z |
+| `learn-github-permify-permify` | `https://github.com/Permify/permify` | `81819b84` | Multi-dimensional audit evidence | 2026-11-06T00:02:51.498Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `8bddc82a` | Multi-dimensional audit evidence | 2026-11-06T00:02:55.295Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f10139f8` | Multi-dimensional audit evidence | 2026-11-06T00:02:58.327Z |

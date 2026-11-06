@@ -7829,3 +7829,7 @@
 | `CYCLE-20261105-5WAJ` | `2026-11-05T23:49:02.011Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`664cc181...`) |
 | `CYCLE-20261105-5XYN` | `2026-11-05T23:49:04.175Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0c5410e1...`) |
 | `CYCLE-20261105-EGKA` | `2026-11-05T23:55:41.530Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`888a72a4...`) |
+| `CYCLE-20261106-NIK2` | `2026-11-06T00:02:44.018Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8941a648...`) |
+| `CYCLE-20261106-NOBQ` | `2026-11-06T00:02:51.494Z` | `Permify/permify` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`787baefb...`) |
+| `CYCLE-20261106-NR98` | `2026-11-06T00:02:55.292Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d2fb52f2...`) |
+| `CYCLE-20261106-NTLG` | `2026-11-06T00:02:58.324Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`359c59ea...`) |

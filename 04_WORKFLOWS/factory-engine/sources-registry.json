@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-05T23:55:44.107Z",
-    "lastVerified": "2026-11-05T23:55:44.107Z",
+    "lastChecked": "2026-11-06T00:03:00.927Z",
+    "lastVerified": "2026-11-06T00:03:00.927Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,22 +140,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T23:32:05.274Z",
-    "lastVerified": "2026-11-05T23:32:05.274Z",
+    "lastChecked": "2026-11-06T00:02:56.798Z",
+    "lastVerified": "2026-11-06T00:02:56.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
+    "contentHash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "edd9f02f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -299,14 +298,14 @@
     "officialUrl": "https://github.com/storybookjs/storybook",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T23:46:09.580Z",
-    "lastVerified": "2026-11-03T23:46:09.580Z",
+    "lastChecked": "2026-11-06T00:02:53.730Z",
+    "lastVerified": "2026-11-06T00:02:53.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
+    "contentHash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2225,12 +2224,12 @@
     "lastVerified": "2026-11-05T23:01:59.293Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T19:22:22.274Z",
-    "lastVerified": "2026-11-05T19:22:22.274Z",
+    "lastChecked": "2026-11-06T00:02:47.187Z",
+    "lastVerified": "2026-11-06T00:02:47.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2239,7 +2238,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8aa18b51"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2741,11 +2741,21 @@
     "lastVerified": "2026-11-04T03:23:31.498Z"
   },
   "permify-permify": {
-    "name": "permify",
+    "name": "Permify/permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-05T08:13:56.601Z",
-    "revisionIdentifier": "43ce9031",
-    "lastVerified": "2026-11-05T08:13:56.601Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-06T00:02:49.943Z",
+    "lastVerified": "2026-11-06T00:02:49.943Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-permify-permify",
+    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -2769,14 +2779,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T03:27:38.431Z",
-    "lastVerified": "2026-11-05T03:27:38.431Z",
+    "lastChecked": "2026-11-06T00:02:41.713Z",
+    "lastVerified": "2026-11-06T00:02:41.713Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
+    "contentHash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6637,8 +6647,8 @@
     "officialUrl": "https://github.com/olric-data/olric",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T07:13:09.152Z",
-    "lastVerified": "2026-11-05T07:13:09.152Z",
+    "lastChecked": "2026-11-06T00:02:49.659Z",
+    "lastVerified": "2026-11-06T00:02:49.659Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-olric-data-olric",
@@ -9850,9 +9860,9 @@
   "codetot-web-schema-test": {
     "name": "schema-test",
     "officialUrl": "https://github.com/codetot-web/schema-test",
-    "lastChecked": "2026-11-03T10:45:37.743Z",
+    "lastChecked": "2026-11-06T00:02:39.592Z",
     "revisionIdentifier": "f395034cc2",
-    "lastVerified": "2026-11-03T10:45:37.743Z"
+    "lastVerified": "2026-11-06T00:02:39.592Z"
   },
   "swiftwebui-swiftwebui": {
     "name": "SwiftWebUI",

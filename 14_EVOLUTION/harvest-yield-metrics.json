@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T23:55:41.538Z",
-  "total_cycles_completed": 7806,
-  "total_learnings_persisted": 7806,
-  "total_rules_promoted": 7448,
+  "last_updated": "2026-11-06T00:02:58.332Z",
+  "total_cycles_completed": 7810,
+  "total_learnings_persisted": 7810,
+  "total_rules_promoted": 7452,
   "history": [
-    {
-      "timestamp": "2026-11-05T11:23:20.037Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:23:23.274Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:23:33.683Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T11:30:44.703Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T11:30:50.799Z",
       "repository": "chrisbanes/skills",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-05T23:55:41.538Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T00:02:44.027Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T00:02:51.502Z",
+      "repository": "Permify/permify",
+      "learningId": "learn-github-permify-permify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T00:02:55.300Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T00:02:58.332Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

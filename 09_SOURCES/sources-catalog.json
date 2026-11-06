@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "edd9f02f",
+    "sourceVersion": "f10139f8",
     "license": "MIT",
-    "contentHash": "715bfd52cb88e3ff2f26b1de2c263ccd00db6f3d1666f57bcc6b04eff89f1d3b",
-    "lastHarvestedAt": "2026-11-05T21:25:59.071Z",
+    "contentHash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
+    "lastHarvestedAt": "2026-11-06T00:02:58.327Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2683,10 +2683,10 @@
     "repository": "Permify/permify",
     "platform": "github",
     "sourceUrl": "https://github.com/Permify/permify",
-    "sourceVersion": "43ce9031",
+    "sourceVersion": "81819b84",
     "license": "AGPL-3.0",
-    "contentHash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
-    "lastHarvestedAt": "2026-10-18T21:58:17.878Z",
+    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+    "lastHarvestedAt": "2026-11-06T00:02:51.498Z",
     "learningId": "learn-github-permify-permify"
   },
   "rustls-rustls": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "f8a950c3",
+    "sourceVersion": "f21e0197",
     "license": "MIT",
-    "contentHash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
-    "lastHarvestedAt": "2026-11-05T03:27:39.848Z",
+    "contentHash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
+    "lastHarvestedAt": "2026-11-06T00:02:44.022Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "e4ec6073",
+    "sourceVersion": "8bddc82a",
     "license": "MIT",
-    "contentHash": "9c26dc48a478c6d3abd68e481019f6225c9f86c4f00cc272dbe705fb285e491b",
-    "lastHarvestedAt": "2026-11-03T23:46:10.207Z",
+    "contentHash": "d2fb52f2b9c01a07311acce6c907ac555fd8edb7939f43d479751df6e49c26a9",
+    "lastHarvestedAt": "2026-11-06T00:02:55.295Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {
