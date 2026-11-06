@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:06:52.973Z",
+  "last_updated": "2026-11-06T21:13:53.928Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
-      "verified_at": "2026-11-06T15:13:16.795Z",
+      "content_hash": "076ddf650a549a61696bd92bd5b9b6fb0971a45c70f651a91b9c4f1765dd638b",
+      "verified_at": "2026-11-06T21:13:53.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:13:16.795Z"
+      "last_updated": "2026-11-06T21:13:53.927Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",

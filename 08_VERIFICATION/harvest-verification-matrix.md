@@ -7919,3 +7919,4 @@
 | `CYCLE-20261106-JOUY` | `2026-11-06T20:59:28.282Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`55cf761b...`) |
 | `CYCLE-20261106-SXW1` | `2026-11-06T21:06:39.889Z` | `aome510/spotify-player` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a0e60b5...`) |
 | `CYCLE-20261106-T7YU` | `2026-11-06T21:06:52.950Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e6480d7a...`) |
+| `CYCLE-20261106-28SB` | `2026-11-06T21:13:53.915Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`076ddf65...`) |

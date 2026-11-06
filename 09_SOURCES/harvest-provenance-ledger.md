@@ -7928,3 +7928,4 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3dbb215e` | Multi-dimensional audit evidence | 2026-11-06T20:59:28.286Z |
 | `learn-github-aome510-spotify-player` | `https://github.com/aome510/spotify-player` | `966d84a6` | Multi-dimensional audit evidence | 2026-11-06T21:06:39.893Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `8853378e` | Multi-dimensional audit evidence | 2026-11-06T21:06:52.953Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `84ccee7a` | Multi-dimensional audit evidence | 2026-11-06T21:13:53.918Z |

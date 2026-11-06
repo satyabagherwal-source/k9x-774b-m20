@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `5974def3`  
+> **Source Version**: `84ccee7a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:20:24.589Z  
+> **Timestamp**: 2026-11-06T21:13:52.761Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:20:24.578Z  
+> **Harvest Timestamp**: 2026-11-06T21:13:50.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1966,11 +1966,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
+  *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
+
 - **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
   *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
-
-- **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
-  *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,360 +1987,405 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5974def3` (2026-11-06)
-**Commit Message**: Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd
+### Incident Patch 1: `84ccee7a` (2026-11-06)
+**Commit Message**: Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding
 
-**File**: `Cargo.lock` (modified, +36/-0)
+**File**: `cli/src/commands/start.rs` (modified, +1/-1)
 ```diff
-@@ -962,6 +962,8 @@ dependencies = [
-  "compression-core",
-  "flate2",
-  "memchr",
-+ "zstd",
-+ "zstd-safe",
- ]
+@@ -1005,7 +1005,7 @@ impl Start {
+             NodeType::Validator => Node::new_validator(node_ip, self.bft, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, &trusted_validators, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), dev_txs, self.dev, dev_hotswap_config, self.proposal_spent_limit_multiplier, signal_handler.clone()).await,
+             NodeType::Prover => Node::new_prover(node_ip, account, &trusted_peers, genesis, node_data_dir, self.trusted_peers_only, self.dev, signal_handler.clone()).await,
+             NodeType::Client => Node::new_client(node_ip, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), self.dev, signal_handler.clone()).await,
+-            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), self.dev).await,
++            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), genesis.hash(), self.dev).await,
+         }?;
  
- [[package]]
-@@ -5661,6 +5663,7 @@ dependencies = [
-  "tokio",
-  "tokio-test",
-  "tracing",
-+ "zstd",
- ]
- 
- [[package]]
-@@ -7602,12 +7605,17 @@ version = "0.6.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
- dependencies = [
-+ "async-compression",
-  "bitflags 2.13.1",
-  "bytes",
-+ "futures-core",
-  "futures-util",
-  "http 1.5.0",
-  "http-body 1.1.0",
-+ "http-body-util",
-  "pin-project-lite",
-+ "tokio",
-+ "tokio-util",
-  "tower",
-  "tower-layer",
-  "tower-service",
-@@ -8649,3 +8657,31 @@ dependencies = [
-  "log",
-  "simd-adler32",
- ]
-+
-+[[package]]
-+name = "zstd"
-+version = "0.14.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
-+dependencies = [
-+ "zstd-safe",
-+]
-+
-+[[package]]
-+name = "zstd-safe"
-+version = "8.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
-+dependencies = [
-+ "zstd-sys",
-+]
-+
-+[[package]]
-+name = "zstd-sys"
-+version = "2.1.2+zstd.1.5.7"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
-+dependencies = [
-+ "cc",
-+ "pkg-config",
-+]
+         if !self.nodisplay {
 ```
 
-**File**: `node/cdn/Cargo.toml` (modified, +5/-2)
+**File**: `node/bft/events/src/disconnect.rs` (modified, +5/-0)
 ```diff
-@@ -58,7 +58,7 @@ workspace = true
+@@ -45,6 +45,8 @@ pub enum DisconnectReason {
+     InvalidChallengeRequest = 9,
+     /// The peer is not an authorized validator.
+     UnauthorizedValidator = 10,
++    /// The peer is on a network with a different genesis block.
++    GenesisMismatch = 11,
+     /// The disconnect reason is not known. This is used for when the peers sends a disconnect reason that is not known to us.
+     UnknownReason = u8::MAX,
+ }
+@@ -65,6 +67,7 @@ impl std::fmt::Display for DisconnectReason {
+             Self::AlreadyConnectedToAleoAddress => write!(f, "already connected to the given Aleo address"),
+             Self::InvalidChallengeRequest => write!(f, "invalid challenge request"),
+             Self::UnauthorizedValidator => write!(f, "unauthorized validator"),
++            Self::GenesisMismatch => write!(f, "genesis mismatch"),
+             Self::UnknownReason => write!(f, "unknown"),
+         }
+     }
+@@ -129,6 +132,7 @@ impl FromBytes for Disconnect {
+             8 => DisconnectReason::AlreadyConnectedToAleoAddress,
+             9 => DisconnectReason::InvalidChallengeRequest,
+             10 => DisconnectReason::UnauthorizedValidator,
++            11 => DisconnectReason::GenesisMismatch,
+             val => {
+                 warn!("received unknown disconnect reason (id={val})");
+                 DisconnectReason::UnknownReason
+@@ -162,6 +166,7 @@ mod tests {
+             DisconnectReason::AlreadyConnectedToAleoAddress,
+             DisconnectReason::InvalidChallengeRequest,
+             DisconnectReason::UnauthorizedValidator,
++            DisconnectReason::GenesisMismatch,
+         ];
  
- [dependencies.reqwest]
- workspace = true
--features = [ "rustls" ]
-+features = [ "rustls", "zstd" ]
- 
- [dependencies.serde]
- workspace = true
-@@ -83,10 +83,13 @@ workspace = true
- 
- [dev-dependencies.tokio]
- workspace = true
--features = [ "rt", "rt-multi-thread" ]
-+features = [ "io-util", "macros", "net", "rt", "rt-multi-thread" ]
- 
- [dev-dependencies.tokio-test]
- version = "0.4"
- 
-+[dev-dependencies.zstd]
-+version = "0.14"
-+
- [package.metadata.cargo-machete]
- ignored = ["serde"]
+         for reason in all_reasons.iter() {
 ```
 
-**File**: `node/cdn/src/blocks.rs` (modified, +66/-3)
+**File**: `node/bft/events/src/helpers/handshake.rs` (modified, +21/-6)
 ```diff
-@@ -59,6 +59,11 @@ const fn cdn_user_agent() -> &'static str {
-     concat!("snarkos/", env!("SNARKOS_VERSION"))
+@@ -253,23 +253,29 @@ impl FromBytes for ConsensusSchedule {
+ pub struct HandshakeTrailer {
+     /// The consensus schedule of the sender's build.
+     pub schedule: Option<ConsensusSchedule>,
++    /// The little-endian bytes of the hash of the sender's genesis block, if it sent one. Bytes of
++    /// the wrong length are kept as sent, so that they fail the genesis check instead of reading as none.
++    pub genesis_hash: Option<Vec<u8>>,
  }
  
-+/// Builds a client for CDN requests.
-+fn cdn_client() -> reqwest::Result<Client> {
-+    Client::builder().use_rustls_tls().zstd(true).user_agent(cdn_user_agent()).build()
+ impl HandshakeTrailer {
+     /// The first event version whose handshake messages 2 and 3 must carry a trailer with a schedule.
+     pub const FIRST_VERSION: u32 = 11;
++    /// The first event version whose handshake trailer must carry the genesis hash.
++    pub const GENESIS_VERSION: u32 = 12;
+ 
+     /// Returns the trailer that this build sends.
+     pub fn of<N: Network>() -> Self {
+-        Self { schedule: Some(ConsensusSchedule::of::<N>()) }
++        Self { schedule: Some(ConsensusSchedule::of::<N>()), genesis_hash: None }
+     }
+ 
+     /// Parses a trailer, or returns `None` if it is malformed.
+     fn parse(bytes: &[u8]) -> Option<Self> {
+         let (length, rest) = bytes.split_first_chunk::<2>()?;
+-        let fields = rest.get(..usize::from(u16::from_le_bytes(*length)))?;
+-        let schedule = ConsensusSchedule::read_le(fields).ok()?;
+-        Some(Self { schedule: Some(schedule) })
++        let mut fields = rest.get(..usize::from(u16::from_le_bytes(*length)))?;
++        let schedule = ConsensusSchedule::read_le(&mut fields).ok()?;
++        let genesis_hash = (!fields.is_empty()).then(|| fields[..fields.len().min(32)].to_vec());
++        Some(Self { schedule: Some(schedule), genesis_hash })
+     }
+ }
+ 
+@@ -279,7 +285,10 @@ impl ToBytes for HandshakeTrailer {
+         let Some(schedule) = &self.schedule else {
+             return Ok(());
+         };
+-        let fields = schedule.to_bytes_le().map_err(io_error)?;
++        let mut fields = schedule.to_bytes_le().map_err(io_error)?;
++        if let Some(genesis_hash) = &self.genesis_hash {
++            fields.extend_from_slice(genesis_hash);
++        }
+         u16::try_from(fields.len()).map_err(io_error)?.write_le(&mut writer)?;
+         writer.write_all(&fields)
+     }
+@@ -420,7 +429,13 @@ pub mod prop_tests {
+     }
+ 
+     pub fn any_trailer() -> BoxedStrategy<HandshakeTrailer> {
+-        proptest::option::of(any_schedule()).prop_map(|schedule| HandshakeTrailer { schedule }).boxed()
++        // A genesis hash is only sent after a schedule, and may be cut short.
++        (proptest::option::of(any_schedule()), proptest::option::of(collection::vec(any::<u8>(), 1..=32)))
++            .prop_map(|(schedule, genesis_hash)| {
++                let genesis_hash = genesis_hash.filter(|_| schedule.is_some());
++                HandshakeTrailer { schedule, genesis_hash }
++            })
++            .boxed()
+     }
+ 
+     pub fn any_peer_info() -> BoxedStrategy<PeerInfo<CurrentNetwork>> {
+```
+
+**File**: `node/bft/events/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -175,7 +175,7 @@ impl<N: Network> Event<N> {
+     /// order to force users to update.
+     pub const MINIMUM_VERSION: u32 = 10;
+     /// The version of the event protocol this node speaks.
+-    pub const VERSION: u32 = 11;
++    pub const VERSION: u32 = 12;
+ 
+     /// Serializes the event's [`Data`] payload, if it holds one that is not already serialized.
+     ///
+@@ -462,6 +462,7 @@ pub mod prop_tests {
+                     DisconnectReason::AlreadyConnectedToAleoAddress,
+                     DisconnectReason::InvalidChallengeRequest,
+                     DisconnectReason::UnauthorizedValidator,
++                    DisconnectReason::GenesisMismatch,
+                 ]),
+                 any::<Selector>()
+             )
+```
+
+**File**: `node/bft/src/gateway.rs` (modified, +45/-6)
+```diff
+@@ -1642,18 +1642,32 @@ impl<N: Network> Handshake for Gateway<N> {
+ 
+         // Retrieve the restrictions ID.
+         let restrictions_id = self.ledger.latest_restrictions_id();
++        // Retrieve the hash of our genesis block, which the peer must share.
++        let genesis_hash = self.ledger.get_block_hash(0).map_err(ConnectError::other)?;
++        let genesis_hash: [u8; 32] = genesis_hash
++            .to_bytes_le()
++            .ok()
++            .and_then(|bytes| bytes.try_into().ok())
++            .ok_or_else(|| ConnectError::other(anyhow!("Failed to encode the genesis hash")))?;
+ 
+         // Perform the handshake; we pass on a mutable reference to peer_ip in case the process is broken at any point in time.
+         //
+         // Validators speak only the Noise handshake. A peer that opens with anything else is turned
+         // away before any key is derived.
+         let handshake_result = if peer_side == ConnectionSide::Responder {
+             write_noise_magic(stream).await?;
+-            self.handshake_inner_initiator_noise(peer_addr, restrictions_id, stream).await
++            self.handshake_inner_initiator_noise(peer_addr, restrictions_id, genesis_hash, stream).await
+         } else {
+             match detect_handshake_protocol(stream).await? {
+                 (HandshakeProtocol::Noise, _) => {
+-                    self.handshake_inner_responder_noise(peer_addr, &mut listener_addr, restrictions_id, stream).await
++                    self.handshake_inner_responder_noise(
++                        peer_addr,
++                        &mut listener_addr,
++                        restrictions_id,
++                        genesis_hash,
++                        stream,
++                    )
++                    .await
+                 }
+                 (HandshakeProtocol::Legacy, _) => {
+                     Err(ConnectError::other(format!("'{peer_addr}' did not offer the Noise handshake")))
+@@ -1834,6 +1848,7 @@ impl<N: Network> Gateway<N> {
+         &'a self,
+         peer_addr: SocketAddr,
+         restrictions_id: Field<N>,
++        genesis_hash: [u8; 32],
+         stream: &'a mut TcpStream,
+     ) -> Result<(PeerInfo<N>, Option<ConsensusSchedule>), ConnectError> {
+         // Note who answered here last time, before the pool entry becomes a connecting one and stops
+@@ -1869,7 +1884,8 @@ impl<N: Network> Gateway<N> {
+         let binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
+ 
+         // Check the peer over before signing anything for it.
+-        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id) {
++        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id, genesis_hash)
++        {
+             return Err(reason.into_connect_error(peer_addr));
+         }
+ 
+@@ -1891,7 +1907,7 @@ impl<N: Network> Gateway<N> {
+         let our_message = InitiatorInfo {
+             info: our_info,
+             signature: Data::Object(our_signature),
+-            trailer: HandshakeTrailer::of::<N>(),
++            trailer: HandshakeTrailer { genesis_hash: Some(genesis_hash.to_vec()), ..HandshakeTrailer::of::<N>() },
+         };
+         noise.send(&encode_payload(&our_message)?).await?;
+ 
+@@ -1941,6 +1957,7 @@ impl<N: Network> Gateway<N> {
+         peer_addr: SocketAddr,
+         peer_ip: &mut Option<SocketAddr>,
+         restrictions_id: Field<N>,
++        genesis_hash: [u8; 32],
+         stream: &'a mut TcpStream,
+     ) -> Result<(PeerInfo<N>, Option<ConsensusSchedule>), ConnectError> {
+         /* Message 1: the peer's cleartext hint. Everything it claims is re-checked in message 3. */
+@@ -1977,7 +1994,12 @@ impl<N: Network> Gateway<N> {
+ 
+         let our_info =
+             PeerInfo::new(self.local_ip().port(), self.account.address(), restrictions_id, self.snarkos_sha());
+-        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer: HandshakeTrailer::of::<N>() })?).await?;
++        noise
++            .send(&encode_payload(&ResponderInfo {
++                info: our_info,
++                trailer: HandshakeTrailer { genesis_hash: Some(genesis_hash.to_vec()), ..HandshakeTrailer::of::<N>() },
++            })?)
++            .await?;
+ 
+         // The binding the initiator is expected to have signed.
+         let peer_binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
+@@ -2003,7 +2025,8 @@ impl<N: Network> Gateway<N> {
+ 
+         // Everything below is a lookup or a comparison; only once all of it passes is the peer
+         // worth the cost of a signature verification.
+-        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id) {
++        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id, genesis_hash)
++        {
+             return self.reject_noise_handshake(peer_addr, noise, reason).await;
+         }
+ 
+@@ -2049,6 +207
+```
+
+**File**: `node/bft/tests/gateway_noise.rs` (modified, +193/-20)
+```diff
+@@ -20,6 +20,7 @@ mod common;
+ 
+ use crate::common::{
+     CurrentNetwork,
++    TranslucentLedgerService,
+     primary::new_test_committee,
+     utils::{sample_gateway, sample_ledger, sample_storage},
+ };
+@@ -45,11 +46,11 @@ use snarkos_node_network::{
+ };
+ use snarkos_node_tcp::P2P;
+ use snarkvm::{
+-    ledger::narwhal::Data,
++    ledger::{narwhal::Data, store::helpers::memory::ConsensusMemory},
+     prelude::{FromBytes, TestRng, ToBytes},
+ };
+ 
+-use std::{io, net::SocketAddr, time::Duration};
++use std::{io, net::SocketAddr, sync::Arc, time::Duration};
+ 
+ use deadline::deadline;
+ use futures::{SinkExt, TryStreamExt};
+@@ -84,19 +85,27 @@ async fn new_test_gateways(
+ 
+     let mut gateways = Vec::with_capacity(n);
+     for account in accounts.iter().take(n) {
+-        let storage = sample_storage(ledger.clone());
+-        let gateway = sample_gateway(account.clone(), storage, ledger.clone());
+-
+-        // Set up primary channels; the rx is discarded as these tests exercise the gateway alone.
+-        let (primary_tx, _primary_rx) = init_primary_channels();
+-        gateway.run(primary_tx, [].into(), None).await;
+-
+-        gateways.push(gateway);
++        gateways.push(run_test_gateway(account.clone(), ledger.clone()).await);
+     }
+ 
+     (accounts, gateways)
+ }
+ 
++/// Builds and runs a gateway for `account` on the given ledger.
++async fn run_test_gateway(
++    account: Account<CurrentNetwork>,
++    ledger: Arc<TranslucentLedgerService<CurrentNetwork, ConsensusMemory<CurrentNetwork>>>,
++) -> Gateway<CurrentNetwork> {
++    let storage = sample_storage(ledger.clone());
++    let gateway = sample_gateway(account, storage, ledger);
++
++    // Set up primary channels; the rx is discarded as these tests exercise the gateway alone.
++    let (primary_tx, _primary_rx) = init_primary_channels();
++    gateway.run(primary_tx, [].into(), None).await;
++
++    gateway
 +}
 +
- /// Updates the metrics during CDN sync.
- #[cfg(feature = "metrics")]
- fn update_block_metrics<N: Network>(height: u32) {
-@@ -171,7 +176,7 @@ impl CdnBlockSync {
-     }
+ #[tokio::test(flavor = "multi_thread")]
+ async fn two_gateways_complete_a_noise_handshake() {
+     let mut rng = TestRng::default();
+@@ -126,7 +135,7 @@ async fn a_noise_handshake_leaves_the_connection_usable() {
+     let peer = accounts[1].clone();
  
-     pub async fn get_cdn_height(&self) -> anyhow::Result<u32> {
--        let client = Client::builder().use_rustls_tls().user_agent(cdn_user_agent()).build()?;
-+        let client = cdn_client()?;
-         cdn_height::<BLOCKS_PER_FILE>(&client, &self.base_url).await
-     }
- }
-@@ -188,7 +193,7 @@ pub async fn load_blocks<N: Network>(
-     process: impl FnMut(Block<N>) -> Result<()> + Clone + Send + Sync + 'static,
- ) -> Result<u32, (u32, anyhow::Error)> {
-     // Create a Client to maintain a connection pool throughout the sync.
--    let client = match Client::builder().use_rustls_tls().user_agent(cdn_user_agent()).build() {
-+    let client = match cdn_client() {
-         Ok(client) => client,
-         Err(error) => {
-             return Err((start_height.saturating_sub(1), anyhow!("Failed to create a CDN request client - {error}")));
-@@ -574,7 +579,7 @@ fn log_progress<const OBJECTS_PER_FILE: u32>(
+     let sign = honest_signer(peer.clone());
+-    let (verdict, mut stream) = handshake_with_gateway(dial_addr(&gateway), &peer, 4140, sign).await.unwrap();
++    let (verdict, mut stream) = handshake_with_gateway(&gateway, &peer, 4140, sign).await.unwrap();
+     assert!(matches!(verdict, ResponderProof::Accepted { .. }), "the handshake should have been accepted");
  
- #[cfg(test)]
- mod tests {
--    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_height, load_blocks, log_progress};
-+    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress};
- 
-     use snarkos_utilities::SimpleStoppable;
- 
-@@ -586,6 +591,64 @@ mod tests {
- 
-     type CurrentNetwork = MainnetV0;
- 
-+    /// Serves one HTTP/1.1 response with the given extra headers and body.
-+    ///
-+    /// Returns the URL to request and a handle that yields the raw request head.
-+    async fn serve_once(headers: &'static str, body: Vec<u8>) -> (String, tokio::task::JoinHandle<String>) {
-+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let url = format!("http://{}/0.50.blocks", listener.local_addr().unwrap());
-+        let handle = tokio::spawn(async move {
-+            let (mut stream, _) = listener.accept().await.unwrap();
-+            let mut request = Vec::new();
-+            let mut buf = [0u8; 1024];
-+            while !request.ends_with(b"\r\n\r\n") {
-+                let n = stream.read(&mut buf).await.unwrap();
-+                assert!(n > 0, "the client closed the connection before sending a request");
-+                request.extend_from_slice(&buf[..n]);
-+            }
-+            let head =
-+                format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n{headers}\r\n", body.len());
-+            stream.write_all(head.as_bytes()).await.unwrap();
-+            stream.write_all(&body).await.unwrap();
-+            String::from_utf8(request).unwrap().to_ascii_lowercase()
-+        });
-+        (url, handle)
-+    }
-+
-+    /// Returns a bincode payload that compresses well.
-+    fn sample_payload() -> (Vec<u64>, Vec<u8>) {
-+        let values: Vec<u64> = (0..10_000).map(|i| i % 7).collect();
-+        let bytes = bincode::serialize(&values).unwrap();
-+        (values, bytes)
-+    }
-+
-+    #[tokio::test]
-+    async fn test_cdn_get_decodes_zstd() {
-+        let (expected, bytes) = sample_payload();
-+        let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
-+        assert!(compressed.len() < bytes.len());
-+        let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
-+
-+        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
-+        assert_eq!(values, expected);
-+
-+        let request = request.await.unwrap();
-+        let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
-+        assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
-+    }
-+
-+    #[tokio::test]
-+    async fn test_cdn_get_reads_identity() {
-+        let (expected, bytes) = sample_payload();
-+        let (url, request) = serve_once("", bytes).await;
-+
-+        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
-+        assert_eq!(values, expected);
-+        request.await.unwrap();
-+    }
-+
-     fn check_load_blocks(start: u32, end: Option<u32>, expected: usize) {
-         let blocks = Arc::new(RwLock::new(Vec::new()));
-         let blocks_clone = blocks.clone();
-```
-
----
-
-### Incident Patch 2: `36c0a22f` (2026-11-06)
-**Commit Message**: Drop the CDN body size limit and use #[tokio::test]
-
-The node applies CDN blocks with unchecked deserialization and no
-check_next_block, so it already trusts the CDN with ledger contents. A
-decoded-size bound guards nothing against such a source. It could also
-reject a legitimate file: mainnet limits allow a 50-block file far above
-256 MiB, which would stall CDN sync until the retries run out.
-
-Switch the remaining zstd and identity tests to #[tokio::test].
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmMTdukLnvrVLzi4rE7
-
-**File**: `node/cdn/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -83,7 +83,7 @@ workspace = true
- 
- [dev-dependencies.tokio]
- workspace = true
--features = [ "io-util", "net", "rt", "rt-multi-thread" ]
-+features = [ "io-util", "macros", "net", "rt", "rt-multi-thread" ]
- 
- [dev-dependencies.tokio-test]
- version = "0.4"
-```
-
-**File**: `node/cdn/src/blocks.rs` (modified, +22/-65)
-```diff
-@@ -29,7 +29,7 @@ use anyhow::{Context, Result, anyhow, bail};
- use locktick::{parking_lot::Mutex, tokio::Mutex as TMutex};
- #[cfg(not(feature = "locktick"))]
- use parking_lot::Mutex;
--use reqwest::{Client, Response};
-+use reqwest::Client;
- use std::{
-     cmp,
-     sync::{
-@@ -50,10 +50,6 @@ const CONCURRENT_REQUESTS: u32 = 16;
- const MAXIMUM_PENDING_BLOCKS: u32 = BLOCKS_PER_FILE * CONCURRENT_REQUESTS * 2;
- /// Maximum number of attempts for a request to the CDN.
- const MAXIMUM_REQUEST_ATTEMPTS: u8 = 10;
--/// Maximum decoded size of a block file from the CDN.
--const MAXIMUM_FILE_BYTES: usize = 256 << 20;
--/// Maximum decoded size of the `latest.json` file from the CDN.
--const MAXIMUM_LATEST_JSON_BYTES: usize = 64 << 10;
- 
- /// The CDN base url.
- pub const CDN_BASE_URL: &str = "https://cdn.provable.com/v0/blocks";
-@@ -461,7 +457,7 @@ async fn cdn_height<const BLOCKS_PER_FILE: u32>(client: &Client, base_url: &http
-         Err(error) => bail!("Failed to fetch the CDN height - {error}"),
-     };
-     // Parse the response.
--    let bytes = match read_body(response, MAXIMUM_LATEST_JSON_BYTES).await {
-+    let bytes = match response.bytes().await {
-         Ok(bytes) => bytes,
-         Err(error) => bail!("Failed to parse the CDN height response - {error}"),
-     };
-@@ -492,7 +488,7 @@ async fn cdn_get<T: 'static + DeserializeOwned + Send>(client: Client, url: &str
-         Err(error) => bail!("Failed to fetch {ctx} - {error}"),
-     };
-     // Parse the response.
--    let bytes = match read_body(response, MAXIMUM_FILE_BYTES).await {
-+    let bytes = match response.bytes().await {
-         Ok(bytes) => bytes,
-         Err(error) => bail!("Failed to parse {ctx} - {error}"),
-     };
-@@ -510,19 +506,6 @@ async fn cdn_get<T: 'static + DeserializeOwned + Send>(client: Client, url: &str
-     }
+     // Now speak events over the same stream, through a codec built from scratch as `Reading` does.
+@@ -215,21 +224,28 @@ fn honest_signer(account: Account<CurrentNetwork>) -> impl Fn(&[u8]) -> Vec<u8>
+     move |binding| account.sign_bytes(binding, &mut rand::rng()).unwrap().to_bytes_le().unwrap()
  }
  
--/// Reads the decoded body of a response, failing once it exceeds `max_bytes`.
--async fn read_body(mut response: Response, max_bytes: usize) -> Result<Vec<u8>> {
--    let capacity = response.content_length().and_then(|len| usize::try_from(len).ok()).unwrap_or(0).min(max_bytes);
--    let mut body = Vec::with_capacity(capacity);
--    while let Some(chunk) = response.chunk().await? {
--        if body.len().saturating_add(chunk.len()) > max_bytes {
--            bail!("the response body exceeds {max_bytes} bytes");
--        }
--        body.extend_from_slice(&chunk);
--    }
--    Ok(body)
--}
--
- /// Converts a duration into a string that humans can read easily.
++/// Returns the little-endian bytes of the hash of the gateway's genesis block.
++fn genesis_hash(gateway: &Gateway<CurrentNetwork>) -> Vec<u8> {
++    gateway.ledger().get_block_hash(0).unwrap().to_bytes_le().unwrap()
++}
++
+ /// Drives a Noise handshake against a gateway by hand, up to and including the verdict, and hands the
+ /// stream back so that a test can carry on speaking events over it.
  ///
- /// # Output
-@@ -596,7 +579,7 @@ fn log_progress<const OBJECTS_PER_FILE: u32>(
+ /// The signature over the binding is produced by `sign`, so that a test can decide whether to
+-/// authenticate honestly or not. It announces the current event version and this build's schedule,
+-/// and reads the gateway's metadata in the original layout, skipping its trailer.
++/// authenticate honestly or not. It announces the current event version, this build's schedule and
++/// the gateway's genesis hash, and reads the gateway's metadata in the original layout, skipping its
++/// trailer.
+ async fn handshake_with_gateway(
+-    gateway_addr: SocketAddr,
++    gateway: &Gateway<CurrentNetwork>,
+     account: &Account<CurrentNetwork>,
+     listener_port: u16,
+     sign: impl Fn(&[u8]) -> Vec<u8>,
+ ) -> io::Result<(ResponderProof<CurrentNetwork>, TcpStream)> {
+     let version = Event::<CurrentNetwork>::VERSION;
+-    let trailer = HandshakeTrailer::of::<CurrentNetwork>();
+-    handshake_with_gateway_sending(gateway_addr, account, listener_port, version, trailer, sign).await
++    let trailer =
++        HandshakeTrailer { genesis_hash: Some(genesis_hash(gateway)), ..HandshakeTrailer::of::<CurrentNetwork>() };
++    handshake_with_gateway_sending(dial_addr(gateway), account, listener_port, version, trailer, sign).await
+ }
  
- #[cfg(test)]
- mod tests {
--    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress, read_body};
-+    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress};
+ /// Drives a Noise handshake like [`handshake_with_gateway`], announcing the event `version` and
+@@ -307,7 +323,7 @@ async fn a_committee_member_that_cannot_prove_its_identity_is_rejected() {
+     let impostor = Account::<CurrentNetwork>::new(&mut rng).unwrap();
+     let sign = move |binding: &[u8]| impostor.sign_bytes(binding, &mut rand::rng()).unwrap().to_bytes_le().unwrap();
  
-     use snarkos_utilities::SimpleStoppable;
+-    let (verdict, _stream) = handshake_with_gateway(dial_addr(&gateway), &accounts[1], 4131, sign).await.unwrap();
++    let (verdict, _stream) = handshake_w
+```
+
+**File**: `node/src/bootstrap_client/handshake.rs` (modified, +4/-2)
+```diff
+@@ -47,7 +47,7 @@ use snarkos_node_network::{
+ };
+ use snarkvm::{
+     ledger::narwhal::Data,
+-    prelude::{Address, Network, io_error},
++    prelude::{Address, Network, ToBytes, io_error},
+ };
  
-@@ -641,55 +624,29 @@ mod tests {
-         (values, bytes)
-     }
+ use futures_util::sink::SinkExt;
+@@ -224,7 +224,9 @@ impl<N: Network> BootstrapClient<N> {
+         let mut noise = pending.into_session()?;
+         // The bootstrap client does not track the block height, so it discloses no commit hash.
+         let our_info = PeerInfo::new(self.local_ip().port(), self.account.address(), self.restrictions_id, None);
+-        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer: HandshakeTrailer::of::<N>() })?).await?;
++        let genesis_hash = self.genesis_hash.to_bytes_le().map_err(ConnectError::other)?;
++        let trailer = HandshakeTrailer { genesis_hash: Some(genesis_hash), ..HandshakeTrailer::of::<N>() };
++        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer })?).await?;
  
--    #[test]
--    fn test_cdn_get_decodes_zstd() {
--        let rt = tokio::runtime::Runtime::new().unwrap();
--        rt.block_on(async {
--            let (expected, bytes) = sample_payload();
--            let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
--            assert!(compressed.len() < bytes.len());
--            let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
-+    #[tokio::test]
-+    async fn test_cdn_get_decodes_zstd() {
-+        let (expected, bytes) = sample_payload();
-+        let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
-+        assert!(compressed.len() < bytes.len());
-+        let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
+         let peer_binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
  
--            let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
--            assert_eq!(values, expected);
-+        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
-+        assert_eq!(values, expected);
- 
--            let request = request.await.unwrap();
--            let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
--            assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
--        });
-+        let request = request.await.unwrap();
-+        let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
-+        assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
-     }
- 
--    #[test]
--    fn test_cdn_get_reads_identity() {
--        let rt = tokio::runtime::Runtime::new().unwrap();
--        rt.block_on(async {
--            let (expected, bytes) = sample_payload();
--            let (url, request) = serve_once("", bytes).await;
--
--            let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
--            assert_eq!(values, expected);
--            request.await.unwrap();
--        });
--    }
-+    #[tokio::tes
+```
+
+**File**: `node/src/bootstrap_client/mod.rs` (modified, +3/-0)
+```diff
+@@ -64,6 +64,7 @@ pub struct InnerBootstrapClient<N: Network> {
+     resolver: RwLock<Resolver<N>>,
+     account: Account<N>,
+     genesis_header: Header<N>,
++    genesis_hash: N::BlockHash,
+     restrictions_id: Field<N>,
+     http_client: reqwest::Client,
+     latest_committee: TMutex<(HashSet<Address<N>>, Instant)>,
+@@ -82,6 +83,7 @@ impl<N: Network> BootstrapClient<N> {
+         listener_addr: SocketAddr,
+         account: Account<N>,
+         genesis_header: Header<N>,
++        genesis_hash: N::BlockHash,
+         dev: Option<u16>,
+     ) -> anyhow::Result<Self> {
+         // Initialize the TCP stack.
+@@ -107,6 +109,7 @@ impl<N: Network> BootstrapClient<N> {
+             resolver,
+             account,
+             genesis_header,
++            genesis_hash,
+             restrictions_id,
+             http_client,
+             latest_committee,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2369,63 +2414,28 @@ Claude-Session: https://claude.ai/code/session_01UYfmmMTdukLnvrVLzi4rE7
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd
+## X. Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/src/commands/start.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5974def3`: Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84ccee7a`: Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/commands/start.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "zstd",
- "zstd-safe",
- "zstd",
- "async-compression",
- "futures-core",
- "http-body-util",
- "tokio",
- "tokio-util",
-
-[[package]]
-name = "zstd"
-version = "0.14.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
-dependencies = [
- "zstd-safe",
-]
-
-[[package]]
-name = "zstd-safe"
-version = "8.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
-dependencies = [
- "zstd-sys",
-]
-
-[[package]]
-name = "zstd-sys"
-version = "2.1.2+zstd.1.5.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
-dependencies = [
- "cc",
- "pkg-config",
-]
+            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), genesis.hash(), self.dev).await,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), self.dev).await,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5974def3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84ccee7a` are properly handled with clean fallback behavior.
