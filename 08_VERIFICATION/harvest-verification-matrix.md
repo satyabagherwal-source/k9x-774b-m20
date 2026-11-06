@@ -7864,3 +7864,5 @@
 | `CYCLE-20261106-9ZAR` | `2026-11-06T13:52:01.011Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5c951d5...`) |
 | `CYCLE-20261106-A0UQ` | `2026-11-06T13:52:03.026Z` | `beclab/Olares` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/beclab-olares-learnings.md` | Yes (`bdd2efaf...`) |
 | `CYCLE-20261106-A4TU` | `2026-11-06T13:52:08.178Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2c55a73e...`) |
+| `CYCLE-20261106-IRMB` | `2026-11-06T13:58:50.963Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`60003d2c...`) |
+| `CYCLE-20261106-ISTA` | `2026-11-06T13:58:52.510Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`343b70e6...`) |

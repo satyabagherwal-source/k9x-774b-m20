@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "7a0908ae",
+    "sourceVersion": "34d0b198",
     "license": "Apache-2.0",
-    "contentHash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
-    "lastHarvestedAt": "2026-11-06T13:27:26.659Z",
+    "contentHash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
+    "lastHarvestedAt": "2026-11-06T13:58:52.513Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "776b9266",
+    "sourceVersion": "33023211",
     "license": "Apache-2.0",
-    "contentHash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
-    "lastHarvestedAt": "2026-11-05T08:15:33.550Z",
+    "contentHash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
+    "lastHarvestedAt": "2026-11-06T13:58:50.965Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

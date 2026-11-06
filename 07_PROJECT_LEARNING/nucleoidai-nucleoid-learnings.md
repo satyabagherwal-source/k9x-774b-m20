@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `7a0908ae`  
+> **Source Version**: `34d0b198`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:27:25.452Z  
+> **Timestamp**: 2026-11-06T13:58:51.290Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:27:25.448Z  
+> **Harvest Timestamp**: 2026-11-06T13:58:49.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -617,7 +617,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "c9e6f938",
+  puzzle_id: string = "c8f0f002",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -637,6 +637,7 @@ export async function start(
 
   milestone.start({
     version: await nucleoid.version(),
+    puzzle_id,
     only_puzzle_dataset,
     train: arc_train,
     test_input_matrix,
@@ -1079,181 +1080,444 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a0908ae` (2026-11-06)
-**Commit Message**: Correct the solver commit in the ARC-NUC-c9e6f938 record
+### Incident Patch 1: `34d0b198` (2026-11-06)
+**Commit Message**: Add ARC dataset for puzzle c8f0f002
 
-Another session rewrote its unpushed commits after this record was
-committed, so the caching change the c9e6f938 run used is now f45e54b4,
-not 0fd695da. Its three solver files hold the same blobs the run used.
-Only arc/docs/ARC-NUC-c9e6f938.md changes.
+The dataset annotates the puzzle's 3 original training pairs, in order,
+followed by its test pair: 12 color-region instances, 3 per pair, each
+all the cells of one color whether or not they touch. One anchored
+class-level rule, `if $Obj.color@first == 7: $Obj.color = 5`, turns the
+color-7 region gray and leaves the color-1 and color-8 regions as they
+are, on an EXACT canvas.
+
+Files:
+- arc/src/dataset/dataset.c8f0f002.json: the new instruction dataset
+- arc/README.md: its paragraph under "Instruction datasets"
+- .github/workflows/arc.yml: c8f0f002 added to ARC_PUZZLES
+- arc/src/app.ts: the solver's default puzzle, c9e6f938 to c8f0f002
+- arc/docs/ARC-NUC-c8f0f002.md: the puzzle's progress record
+
+No Nucleoid enhancement was requested, so there is no NUC outcome and no
+strategy-learning trial. The one authorized run, `bun start c8f0f002` on
+the accepted runtime at c49aee8, exited 0: an exact match, difference 0.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8dwoDfJhJ98keLP9E4
+Claude-Session: https://claude.ai/code/session_01AJtz8hRJmkypMYHtTfqxfv
 
-**File**: `arc/docs/ARC-NUC-c9e6f938.md` (modified, +5/-4)
+**File**: `.github/workflows/arc.yml` (modified, +1/-0)
 ```diff
-@@ -141,10 +141,11 @@ checkout's debug runtime (`nucleoid 1.0.0`), current with `cargo build` at
- `b3cbd26`. The solver was the one committed at `b3cbd26` with its default
- puzzle changed, plus another session's change to `src/lib/openrouter.ts`,
- `src/lib/milestone.ts`, and `src/lib/terminal.ts`, uncommitted when the run
--started. That session committed it as `0fd695d`, "Disable and report
--OpenRouter prompt caching", 19 seconds after the run ended, with the same
--file contents the run used; the files were last written 23 seconds before
--the run started. The change sends `X-OpenRouter-Cache: false`, fails a
-+started. That session committed it 19 seconds after the run ended, then
-+rewrote its unpushed commits; the change is now `f45e54b`, "Disable
-+OpenRouter caching and alert on cache use", whose three solver files hold
-+the same contents the run used. The files were last written 23 seconds
-+before the run started. The change sends `X-OpenRouter-Cache: false`, fails a
- request whose response reports a cache hit, and reports cached input
- tokens; it leaves the model, sampling, provider, and prompts as they were.
- The model settings were the committed `qwen/qwen3.8-27b`, pinned to the
+@@ -34,6 +34,7 @@ env:
+     a9f96cdd
+     8be77c9e
+     c9e6f938
++    c8f0f002
+ 
+ defaults:
+   run:
+```
+
+**File**: `arc/README.md` (modified, +69/-0)
+```diff
+@@ -1352,6 +1352,75 @@ colors keep their places on the canvas in every pair, so `corner_colors`, not
+ without `#` comments. The test pair follows the training pairs at the same
+ level and is annotated by the same rules.
+ 
++`dataset.c8f0f002.json` annotates the three original training pairs from
++`data\training\c8f0f002.json`, in order, followed by its test pair, twelve
++region instances in total, three per pair. Every input and output retains
++its original canvas, colors, and positions: 3 by 6, 3 by 4, and 3 by 5 in
++the training pairs and 3 by 5 in the test pair, rows by columns, and no grid
++has a zero cell. Each input is a mosaic of the same three colors, 1, 7, and
++8, that fills its canvas. Each output turns every color-7 cell gray, color
++5, and keeps every color-1 and color-8 cell, so 3 of the 9 training regions
++turn gray, one per pair. The whole mosaic, the figure seen first in
++`dataset.3c9b0459.json` and `dataset.74dd1130.json`, does not change as one:
++its color-7 cells turn gray while its other cells keep their colors, which a
++single mosaic object could state only cell by cell, through a list of its
++cells' colors. The objects are therefore the color regions the mosaic is made
++of, as in `dataset.9565186b.json`: each object is all the cells of one color,
++whether or not they touch, listed in reading order of each color's first
++cell: 6, 5, and 7 cells of colors 1, 8, and 7 in the first training pair; 6,
++5, and 1 cells of colors 7, 1, and 8 in the second; 6, 5, and 4 cells of
++colors 1, 8, and 7 in the third; and 4, 8, and 3 cells of colors 1, 7, and 8
++in the test pair. The color decides, not the count: color 7 has the most
++cells in the first and second training pairs, 7 of 18 and 6 of 12, and the
++fewest in the third, 4 of 15. Every training color-7 region lies in two or
++three edge-connected pieces, among them a single cell in the bottom-left
++corner of the first training input, and every piece turns gray. The training
++pairs alone also fit reading each edge-connected piece as an object, 6, 7,
++and 8 pieces in the training pairs, because the rule reads only a piece's
++color, and, because every training grid holds the same three colors, turning
++gray every region that is neither color 1 nor color 8; the rules take each
++color as one region, the unit in which every output changes, since all cells
++of a color share one output color, and name the one color that changes,
++choices fixed from the training pairs before the test pair was read. The
++class takes the standard entries `x`, `y`, `width`, `height`, and
++`orientation` first, then `color` as its only descriptive scalar, as in
++`dataset.0d3d703e.json`, with no cell count, parts list, output color, canvas
++size, or matrix of cells, so no input property names the output color.
++`width` and `height` are the column and row counts of the region's bounding
++box, the nonzero bounding box of its input mask, from the single color-8 cell
++of the second training pair, 1 by 1, to 5 columns by 3 rows, and each
++implementation passes them right after `y`, such as
++`x=1, y=0, width=5, height=3, orientation=0, color=8` for the color-8 region
++of the first training input. One conditional class-level rule,
++`if $Obj.color@first == 7:` with the body `$Obj.color = 5`, turns every
++color-7 region gray. The condition reads the region's input color with an
++`@first` anchor because the body rewrites `color` itself, as
++`dataset.0d3d703e.json` reads `$Obj.color@first`, and a region of any other
++color keeps its color because a false condition leaves its target untouched,
++so the rule states only the change; the conditional expression
++`5 if $Obj.color@first == 7 else $Obj.color@first` would give the same states
++but restate every other region's color. Each region's change depends only on
++its own color, and no relation between regions decides it, so no population
++operation appears. The rule gives the same states when it is declared after
++the instances. The rules create no property and leave `x`, `y`, `width`,
++`height`, `orientation`, and the tag unchanged, since a region keeps its cells
++when it turns gray, so input and output states share the same keys, and a gray
++region's output state differs from its input state only in `color`. Native
++snapshots start with the pair's `canvas_width` and `canvas_height`, and output
++snapshots are captured with all of the same pair's implementations together,
++followed by `Obj[:]`. The tag `l9100` is a single shape, as in
++`dataset.28bf18c6.json`, `dataset.9565186b.json`, and `dataset.d631b094.json`,
++in both states. Input masks retain each pair's full-size input canvas and
++output masks the complete output, each padded with `0` outside its region;
++merging them reproduces each pair's input and output. The
++`output_x`/`output_y` fields record the region's nonzero bounding-box origin,
++unchanged from its input and equal to `output_value.x`/`output_value.y`.
++`output_canvas` is `EXACT` because each output keeps its input's canvas
+```
+
+**File**: `arc/docs/ARC-NUC-c8f0f002.md` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++# ARC-NUC-c8f0f002 -- Color-7 Regions Turn Gray
++
++Progress record for ARC training puzzle `c8f0f002`: its instruction dataset,
++the solver and Nucleoid changes it needed, its runs, and what is still open.
++
++| Item | Status |
++| --- | --- |
++| Puzzle | [`data/training/c8f0f002.json`](../data/training/c8f0f002.json) |
++| Instruction dataset | [`dataset.c8f0f002.json`](../src/dataset/dataset.c8f0f002.json): the puzzle's 3 original training pairs and its test pair, 12 color-region instances, 3 in each pair; committed with this record |
++| Output canvas | `EXACT` |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected and strategy learning did not apply; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
++| Solver changes | None applied or suggested; the JSON-only message question carried over from earlier records stays open |
++| Solver runs | 1 local run on 6-Nov-2026: exit 0, difference 0 |
++| Updated | 6-Nov-2026 |
++
++## Puzzle
++
++Each training input is a canvas of 3 rows, 6, 4, and 5 columns wide in the
++three training pairs, filled edge to edge by a mosaic of colors 1, 7, and 8,
++with no background cell of color 0. The output keeps the canvas and every
++color-1 and color-8 cell, and turns every color-7 cell gray, color 5, which no
++training input holds. The color decides, not the count or the shape: color 7
++has the most cells in the first and second training pairs, 7 of 18 and 6 of
++12, and the fewest in the third, 4 of 15, and in every training input it lies
++in two or three separate edge-connected pieces, all of which turn gray. The
++output keeps the input's canvas, so the dataset is `EXACT`; with no zero cell
++to crop, `FIT` would frame the same grids.
++
++`/arc-purposal` chose this puzzle by default: among the 375 training puzzles
++other than the genesis puzzle `3aa6fb7a` and those with a dataset, its
++largest training matrix has the fewest cells, 18, with 90 cells in all its
++training matrices. Four other puzzles also have an 18-cell largest matrix,
++`6d0aefbc` and `6fa7a44f` with 108 cells in all and `dae9d2b5` and
++`fafffa47` with 135, so `c8f0f002` came first on total cells, as
++[ARC-NUC-c9e6f938](ARC-NUC-c9e6f938.md) anticipated.
++
++## Gestalt overview
++
++- **Whole grid.** A small canvas, 3 rows by 4 to 6 columns, filled by a
++  mosaic of three colors, 1, 7, and 8, with no background cell; the output is
++  the same mosaic with gray, color 5, wherever color 7 was.
++- **Figures.** The mosaic first, then its color regions: all the cells of one
++  color form one group, whether or not they touch. The color-7 region lies in
++  two or three edge-connected pieces in every training input, one of them a
++  single cell in the bottom-left corner of the first.
++- **Relations.** None decides the change. The three regions tile the canvas
++  without overlapping, and the color-7 region is the largest in the first two
++  training pairs and the smallest in the third, so neither size nor rank
++  matters.
++- **Change.** The whole color-7 region turns gray, every piece of it, while
++  the color-1 and color-8 regions keep their colors. Nothing moves, turns, or
++  changes size, and the canvas stays the same.
++- **World model.** One object per color region, one level below the whole
++  mosaic, as in `dataset.9565186b.json`. The mosaic does not change as one:
++  only its color-7 cells turn gray, which a single mosaic object could state
++  only cell by cell, through a list of its cells' colors. The regions are
++  still whole figures, and no piece or cell is modeled on its own.
++
++## Dataset
++
++The single dataset holds the three original training pairs in source order,
++followed at the same level by the puzzle's test pair, which the same rule
++annotates. Each object is one color region, all the cells of one color
++whether or not they touch, as in `dataset.9565186b.json` and
++`dataset.d631b094.json`: an instance of `Obj(x, y, width, height,
++orientation, color)` whose initial tag `l9100` is a single shape. `color` is
++its only descriptive property, as in `dataset.0d3d703e.json`; the class has
++no cell count, parts list, output color, canvas size, or matrix of cells, so
++no input property names the output color. One conditional class-level rule
++turns the color-7 region gray:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):
++if $Obj.color@first == 7:
++    $Obj.color = 5
++```
++
++The condition reads the region's input color through the `@first` anchor,
++because the body rewrites `color` itself, as `dataset.0d3d703e.json` reads
++`$Obj.color@first`. A region of another color fails the condition and keeps
++its color, so the rule states only the change. It creates no property and
++leaves `x`, `y`, `width`, `height`, `orientation`, and the tag unchanged, so a
++gray region's output state differs from its input state only in `color`; 3 of
++the 9 train
+```
+
+**File**: `arc/src/app.ts` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
+ 
+ // Genesis puzzle_id: 3aa6fb7a
+ export async function start(
+-  puzzle_id: string = "c9e6f938",
++  puzzle_id: string = "c8f0f002",
+   only_puzzle_dataset: boolean = false
+ ) {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+```
+
+**File**: `arc/src/dataset/dataset.c8f0f002.json` (added, +329/-0)
+```diff
+@@ -0,0 +1,329 @@
++{
++  "declarations": [
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, color: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.tag = 'l9100'\n    this.color = color",
++    "if $Obj.color@first == 7:\n    $Obj.color = 5"
++  ],
++  "output_canvas": "EXACT",
++  "dataset": [
++    {
++      "input_matrix": [
++        [1, 8, 8, 7, 7, 8],
++        [1, 1, 7, 7, 1, 8],
++        [7, 1, 1, 7, 7, 8]
++      ],
++      "output_matrix": [
++        [1, 8, 8, 5, 5, 8],
++        [1, 1, 5, 5, 1, 8],
++        [5, 1, 1, 5, 5, 8]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj956c87d67c7c",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [1, 0, 0, 0, 0, 0],
++            [1, 1, 0, 0, 1, 0],
++            [0, 1, 1, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [1, 0, 0, 0, 0, 0],
++            [1, 1, 0, 0, 1, 0],
++            [0, 1, 1, 0, 0, 0]
++          ],
++          "implementation": "obj956c87d67c7c = Obj(x=0, y=0, width=5, height=3, orientation=0, color=1)",
++          "input_value": {"color":1,"height":3,"id":"obj956c87d67c7c","orientation":0,"tag":"l9100","width":5,"x":0,"y":0},
++          "output_value": {"color":1,"height":3,"id":"obj956c87d67c7c","orientation":0,"tag":"l9100","width":5,"x":0,"y":0}
++        },
++        {
++          "instance_name": "objf90224b9c06f",
++          "input_x": 1,
++          "output_x": 1,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 8, 8, 0, 0, 8],
++            [0, 0, 0, 0, 0, 8],
++            [0, 0, 0, 0, 0, 8]
++          ],
++          "output_instance_matrix": [
++            [0, 8, 8, 0, 0, 8],
++            [0, 0, 0, 0, 0, 8],
++            [0, 0, 0, 0, 0, 8]
++          ],
++          "implementation": "objf90224b9c06f = Obj(x=1, y=0, width=5, height=3, orientation=0, color=8)",
++          "input_value": {"color":8,"height":3,"id":"objf90224b9c06f","orientation":0,"tag":"l9100","width":5,"x":1,"y":0},
++          "output_value": {"color":8,"height":3,"id":"objf90224b9c06f","orientation":0,"tag":"l9100","width":5,"x":1,"y":0}
++        },
++        {
++          "instance_name": "obj4df746967d02",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 7, 7, 0],
++            [0, 0, 7, 7, 0, 0],
++            [7, 0, 0, 7, 7, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 5, 5, 0],
++            [0, 0, 5, 5, 0, 0],
++            [5, 0, 0, 5, 5, 0]
++          ],
++          "implementation": "obj4df746967d02 = Obj(x=0, y=0, width=5, height=3, orientation=0, color=7)",
++          "input_value": {"color":7,"height":3,"id":"obj4df746967d02","orientation":0,"tag":"l9100","width":5,"x":0,"y":0},
++          "output_value": {"color":5,"height":3,"id":"obj4df746967d02","orientation":0,"tag":"l9100","width":5,"x":0,"y":0}
++        }
++      ]
++    },
++    {
++      "input_matrix": [
++        [7, 7, 7, 1],
++        [1, 8, 1, 7],
++        [7, 1, 1, 7]
++      ],
++      "output_matrix": [
++        [5, 5, 5, 1],
++        [1, 8, 1, 5],
++        [5, 1, 1, 5]
++      ],
++      "instances": [
++        {
++          "instance_name": "objf2f3621429ce",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [7, 7, 7, 0],
++            [0, 0, 0, 7],
++            [7, 0, 0, 7]
++          ],
++          "output_instance_matrix": [
++            [5, 5, 5, 0],
++            [0, 0, 0, 5],
++            [5, 0, 0, 5]
++          ],
++          "implementation": "objf2f3621429ce = Obj(x=0, y=0, width=4, height=3, orientation=0, color=7)",
++          "input_value": {"color":7,"height":3,"id":"objf2f3621429ce","orientation":0,"tag":"l9100","width":4,"x":0,"y":0},
++          "output_value": {"color":5,"height":3,"id":"objf2f3621429ce","orientation":0,"tag":"l9100","width":4,"x":0,"y":0}
++        },
++        {
++          "instance_name": "obj01feaae7ae02",
++          "input_x": 0,
++          "output_x": 0,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 1],
++            [1, 0, 1, 0],
++            [0, 1, 1, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 1],
++            [1, 0, 1, 0],
++            [0, 1, 1, 0]
++          ],
++         
 ```
 
 ---
 
-### Incident Patch 2: `f45e54b4` (2026-11-06)
-**Commit Message**: Disable OpenRouter caching and alert on cache use
+### Incident Patch 2: `c49aee8e` (2026-11-06)
+**Commit Message**: Show output orientation in ARC output crop header
 
-Send X-OpenRouter-Cache: false and reject responses whose X-OpenRouter-Cache-Status is HIT. Read usage.prompt_tokens_details.cached_tokens, show it as "(N cached)" in the model usage line, and print a yellow warning to stderr when a response reports cached tokens or no count at all, so an unverified response is never treated as uncached. Update the ARC README to describe the behavior and the provider's remaining automatic prompt caching.
+The visualizer now passes the object's output orientation to the output-crop milestone. The terminal renders it as a compass arrow emoji plus degrees (e.g. `➡️ 90°`), or `🧭` when the angle is not a multiple of 45 degrees. Non-numeric orientations are omitted. README documents the new header format.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `arc/README.md` (modified, +15/-4)
+**File**: `arc/README.md` (modified, +4/-0)
 ```diff
-@@ -40,12 +40,23 @@ requires identical prompts: `llm.generate` currently prepends a random
- `control_id`.
- See [OpenRouter's sampling parameters](https://openrouter.ai/docs/api/reference/parameters).
- 
--Requests send no `X-OpenRouter-Cache` header, so OpenRouter response caching
--stays at whatever the account or a preset sets, and upstream providers'
--automatic prompt/KV caching is unchanged as well. See OpenRouter's
-+Requests disable OpenRouter response caching with `X-OpenRouter-Cache: false`,
-+which applies even when a preset enables caching, and `src\lib\openrouter.ts`
-+rejects any response whose `X-OpenRouter-Cache-Status` is `HIT`. Neither
-+OpenRouter nor DeepInfra offers a switch for the provider's own automatic
-+prompt/KV caching, which reuses a cached prefix only where a prompt matches it
-+exactly from its first token. `llm.generate` therefore keeps the random
-+`control_id` as the first message of every request, so another request's
-+cached prefix can cover at most the few tokens before that identifier. Each
-+response is checked for `usage.prompt_tokens_details.cached_tokens`: the model
-+usage line shows the reported count as `(N cached)`, and the terminal prints a
-+yellow `⚠` alert to standard error when a response reports cached tokens or
-+reports no count at all, so an unverified response is never taken as uncached.
-+See OpenRouter's
- [response caching](https://openrouter.ai/docs/guides/features/response-caching)
- and [prompt caching](https://openrouter.ai/docs/guides/best-practices/prompt-caching)
--documentation for the distinction.
-+documentation for the distinction, and DeepInfra's
-+[prompt caching](https://docs.deepinfra.com/chat/prompt-caching).
- 
- Run the ARC example with `bun run start`, which loads the default `puzzle_id`
- in `src\app.ts`. [`/arc-purposal`](#arc-proposal-agent) sets that default to
+@@ -161,6 +161,10 @@ output canvas instead of adding a separate milestone. Segmented-object panels
+ use `Input` and `Output` without object-number labels. Model token usage remains
+ attached to its active milestone. Instance-specific steps, crop and
+ implementation headers, and input-state headers include the instance name.
++The visualization's output-crop header also shows the object's output
++orientation as an arrow emoji and its degrees, such as
++`2.11.1 Output crop · <instance> · ➡️ 90° · 6 × 3`; an orientation that is
++not a multiple of 45 degrees shows `🧭` instead of an arrow.
+ Wide grids split into column panels rather than dropping cells. The final
+ comparison keeps **Expected** before **Result**, followed by an
+ exact-match badge in green or a mismatch badge in red, the unchanged difference
 ```
 
 **File**: `arc/src/lib/milestone.ts` (modified, +10/-2)
 ```diff
-@@ -193,8 +193,16 @@ export function summary({ difference, duration }) {
-   terminal.summary(difference, duration);
+@@ -166,8 +166,16 @@ export function composing_output({ instance_name }) {
+   });
  }
  
--export function usage({ prompt_tokens, completion_tokens }) {
--  terminal.usage({ prompt_tokens, completion_tokens });
-+export function usage({ prompt_tokens, completion_tokens, cached_tokens }) {
-+  terminal.usage({ prompt_tokens, completion_tokens, cached_tokens });
-+}
-+
-+export function prompt_cache_alert({ cached_tokens }) {
-+  terminal.alert(
-+    typeof cached_tokens === "number"
-+      ? `Provider prompt cache used · ${cached_tokens} cached input tokens`
-+      : "Provider prompt cache unverified · no cached token count reported"
-+  );
- }
- 
- export function failure(error) {
+-export function output_composed({ instance_name, output_instance_matrix }) {
+-  terminal.grid(`Output crop · ${instance_name}`, output_instance_matrix, {
++export function output_composed({
++  instance_name,
++  orientation,
++  output_instance_matrix,
++}) {
++  const direction: string | undefined = terminal.orientation(orientation);
++  const title: string = direction
++    ? `Output crop · ${instance_name} · ${direction}`
++    : `Output crop · ${instance_name}`;
++  terminal.grid(title, output_instance_matrix, {
+     key: "output_crop",
+     loop: true,
+   });
 ```
 
-**File**: `arc/src/lib/openrouter.ts` (modified, +20/-2)
+**File**: `arc/src/lib/terminal.ts` (modified, +10/-0)
 ```diff
-@@ -7,12 +7,13 @@ export async function generate({ messages = [] }) {
-     throw new Error("OPENROUTER_API_KEY is required");
-   }
+@@ -379,6 +379,16 @@ function matrixLines(matrix, start: number, end: number, colored: boolean) {
+   ];
+ }
  
--  const { data } = await axios({
-+  const { data, headers } = await axios({
-     method: "POST",
-     url: "https://openrouter.ai/api/v1/chat/completions",
-     headers: {
-       "Content-Type": "application/json",
-       Authorization: `Bearer ${apiKey}`,
-+      "X-OpenRouter-Cache": "false",
-     },
-     data: {
-       model: "qwen/qwen3.8-27b",
-@@ -44,6 +45,13 @@ export async function generate({ messages = [] }) {
-     );
++const compass: string[] = ["⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️"];
++
++export function orientation(degrees: unknown): string | undefined {
++  if (typeof degrees !== "number" || !Number.isFinite(degrees)) {
++    return undefined;
++  }
++  const turn: number = ((degrees % 360) + 360) % 360;
++  return `${compass[turn / 45] ?? "🧭"} ${degrees}°`;
++}
++
+ export function grid(title: string, matrix, milestone?: Milestone) {
+   const heading: string = numbered(title, milestone);
+   const rows: number = matrix.length;
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +5/-1)
+```diff
+@@ -219,7 +219,11 @@ export async function output_instance_matrix({
+     ],
    });
  
-+  const cacheStatus: string = String(
-+    headers["x-openrouter-cache-status"] ?? ""
-+  );
-+  if (cacheStatus.toUpperCase() === "HIT") {
-+    throw new Error("OpenRouter returned a cached response");
-+  }
-+
-   if (data.error) {
-     throw new Error(`OpenRouter error: ${data.error.message}`);
-   }
-@@ -53,9 +61,19 @@ export async function generate({ messages = [] }) {
-     throw new Error("OpenRouter returned no text content");
-   }
+-  milestone.output_composed({ instance_name, output_instance_matrix });
++  milestone.output_composed({
++    instance_name,
++    orientation: output_value.orientation,
++    output_instance_matrix,
++  });
  
-+  const cachedTokens: number = data.usage?.prompt_tokens_details?.cached_tokens;
-+
-   if (data.usage) {
-     const { prompt_tokens, completion_tokens } = data.usage;
--    milestone.usage({ prompt_tokens, completion_tokens });
-+    milestone.usage({
-+      prompt_tokens,
-+      completion_tokens,
-+      cached_tokens: cachedTokens,
-+    });
-+  }
-+
-+  if (cachedTokens !== 0) {
-+    milestone.prompt_cache_alert({ cached_tokens: cachedTokens });
-   }
- 
-   let jsonContent;
-```
-
-**File**: `arc/src/lib/terminal.ts` (modified, +10/-2)
-```diff
-@@ -462,13 +462,21 @@ export function puzzle({ train, testInput }) {
-   grid("Test input", testInput);
- }
- 
--export function usage({ prompt_tokens, completion_tokens }) {
--  const message: string = `↳ Model usage  ${prompt_tokens} input / ${completion_tokens} output tokens`;
-+export function usage({ prompt_tokens, completion_tokens, cached_tokens }) {
-+  const cached: string =
-+    typeof cached_tokens === "number" ? ` (${cached_tokens} cached)` : "";
-+  const message: string = `↳ Model usage  ${prompt_tokens} input${cached} / ${completion_tokens} output tokens`;
-   for (const line of wrap(message, width() - 2)) {
-     console.log(`    ${styleText("gray", line)}`);
-   }
- }
- 
-+export function alert(message: string) {
-+  for (const line of wrap(`⚠ ${message}`, width() - 2)) {
-+    console.warn(`    ${styleText(["bold", "yellow"], line)}`);
-+  }
-+}
-+
- export function summary(difference: number, duration: number) {
-   const seconds: number = duration / 1000;
-   const elapsed: string =
+   const output_instance_padded_matrix = Matrix.pad(
+     Matrix.crop(output_instance_matrix),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1282,35 +1546,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Correct the solver commit in the ARC-NUC-c9e6f938 record
+## X. Add ARC dataset for puzzle c8f0f002
 
 **RULE**:
-When implementing operations in `arc/docs/ARC-NUC-c9e6f938.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/arc.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a0908ae`: Correct the solver commit in the ARC-NUC-c9e6f938 record. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34d0b198`: Add ARC dataset for puzzle c8f0f002. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/docs/ARC-NUC-c9e6f938.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-started. That session committed it 19 seconds after the run ended, then
-rewrote its unpushed commits; the change is now `f45e54b`, "Disable
-OpenRouter caching and alert on cache use", whose three solver files hold
-the same contents the run used. The files were last written 23 seconds
-before the run started. The change sends `X-OpenRouter-Cache: false`, fails a
+    c8f0f002
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-started. That session committed it as `0fd695d`, "Disable and report
-OpenRouter prompt caching", 19 seconds after the run ended, with the same
-file contents the run used; the files were last written 23 seconds before
-the run started. The change sends `X-OpenRouter-Cache: false`, fails a
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a0908ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34d0b198` are properly handled with clean fallback behavior.

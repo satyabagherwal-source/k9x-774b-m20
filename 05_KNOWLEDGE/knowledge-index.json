@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:52:08.094Z",
+  "last_updated": "2026-11-06T13:58:52.430Z",
   "total_verified_learnings": 1224,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45463,8 +45463,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "7a0908ae",
-      "content_hash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
+      "source_version": "34d0b198",
+      "content_hash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45476,6 +45476,11 @@
         {
           "number": null,
           "title": "Correct the solver commit in the ARC-NUC-c9e6f938 record",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Add ARC dataset for puzzle c8f0f002",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45769,7 +45774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:26.586Z",
+      "verified_at": "2026-11-06T13:58:52.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61289,11 +61294,16 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "776b9266",
-      "content_hash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
+      "source_version": "33023211",
+      "content_hash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "avoid overflow in decoder input size check",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2142,
           "title": "Bump abseil-cpp, gtest and protobuf C++ build dependencies",
@@ -61385,7 +61395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:15:33.434Z",
+      "verified_at": "2026-11-06T13:58:50.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

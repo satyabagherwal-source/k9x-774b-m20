@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T13:52:08.195Z",
-  "total_cycles_completed": 7829,
-  "total_learnings_persisted": 7829,
-  "total_rules_promoted": 7474,
+  "last_updated": "2026-11-06T13:58:52.516Z",
+  "total_cycles_completed": 7831,
+  "total_learnings_persisted": 7831,
+  "total_rules_promoted": 7476,
   "history": [
-    {
-      "timestamp": "2026-11-05T12:36:26.432Z",
-      "repository": "N1nEmAn/sapper-v2",
-      "learningId": "learn-github-n1neman-sapper-v2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T12:36:28.952Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T12:36:40.836Z",
       "repository": "zarf-dev/zarf",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T13:52:08.195Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:58:50.970Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:58:52.516Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

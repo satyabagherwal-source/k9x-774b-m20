@@ -7873,3 +7873,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `1ad12fba` | Multi-dimensional audit evidence | 2026-11-06T13:52:01.014Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `511dc96e` | Multi-dimensional audit evidence | 2026-11-06T13:52:03.039Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `37af1172` | Multi-dimensional audit evidence | 2026-11-06T13:52:08.182Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `33023211` | Multi-dimensional audit evidence | 2026-11-06T13:58:50.965Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `34d0b198` | Multi-dimensional audit evidence | 2026-11-06T13:58:52.513Z |

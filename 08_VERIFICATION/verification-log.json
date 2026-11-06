@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-7HCL",
-    "timestamp": "2026-11-04T21:42:37.461Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "c607eaf4708b31333dbc9c699fcf2d516e63aaee50ada0c952748c22261becd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-7ITO",
-    "timestamp": "2026-11-04T21:42:39.372Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d706c0df83ea1376875240da9f5dccb69319bfcd675add4890d93278b9f80aa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-7V33",
     "timestamp": "2026-11-04T21:42:55.263Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7490,6 +7460,36 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-IRMB",
+    "timestamp": "2026-11-06T13:58:50.963Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "60003d2c571fd1963f054cc698d68c873ef2b2cdabfc20544a73f6a66d34a1af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-ISTA",
+    "timestamp": "2026-11-06T13:58:52.510Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

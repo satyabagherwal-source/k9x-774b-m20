@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `776b9266`  
+> **Source Version**: `33023211`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:15:32.764Z  
+> **Timestamp**: 2026-11-06T13:58:50.108Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:14:07.409Z  
+> **Harvest Timestamp**: 2026-11-06T13:58:48.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7161 stars
+- **Stars / Engagement**: 7163 stars
 
 ---
 
@@ -1065,308 +1065,219 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `776b9266` (2026-11-05)
-**Commit Message**: Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers
+### Incident Patch 1: `c6929b1b` (2026-11-06)
+**Commit Message**: avoid overflow in decoder input size check
 
-Refactoring: Add new string matcher classes
+The check that serialized input is large enough to hold the claimed
+cells multiplied num_blocks, subspace_size and sizeof(T), which could
+wrap around for large (but valid) types, letting the check pass.
+Compare using division instead.
 
-**File**: `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt` (modified, +4/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `eval/src/tests/eval/value_codec/value_codec_test.cpp` (modified, +19/-0)
 ```diff
-@@ -155,10 +155,14 @@ vespa_add_library(searchlib_attribute OBJECT
-     singlestringattribute.cpp
-     singlestringpostattribute.cpp
-     sourceselector.cpp
-+    string_fuzzy_matcher.cpp
-+    string_fuzzy_search_helper.cpp
-     string_matcher.cpp
-     string_posting_search_context.cpp
-     string_range_matcher.cpp
-     string_range_search_helper.cpp
-+    string_regex_matcher.cpp
-+    string_regex_search_helper.cpp
-     string_search_context.cpp
-     string_search_helper.cpp
-     string_sort_blob_writer.cpp
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/multi_enum_search_context.cpp` (modified, +6/-0)
-```diff
-@@ -4,25 +4,31 @@
+@@ -394,4 +394,23 @@ TEST(ValueCodecTest, bad_dense_tensors_are_caught) {
  
- #include "numeric_range_matcher.h"
- #include "numeric_search_context.h"
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- #include "string_search_context.h"
+ //-----------------------------------------------------------------------------
  
- using ValueRef = vespalib::datastore::AtomicEntryRef;
- using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::AtomicEntryRef>;
- 
- namespace search::attribute {
- 
-+template class MultiEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>, ValueRef>;
- template class MultiEnumSearchContext<const char*, StringSearchContextT<StringMatcher>, ValueRef>;
- template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>, ValueRef>;
-+template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>, ValueRef>;
- template class MultiEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>, ValueRef>;
- template class MultiEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>, ValueRef>;
- template class MultiEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>, ValueRef>;
- template class MultiEnumSearchContext<int64_t, NumericSearchContext<NumericRangeMatcher<int64_t>>, ValueRef>;
- template class MultiEnumSearchContext<float, NumericSearchContext<NumericRangeMatcher<float>>, ValueRef>;
- template class MultiEnumSearchContext<double, NumericSearchContext<NumericRangeMatcher<double>>, ValueRef>;
- 
-+template class MultiEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>, WeightedValueRef>;
- template class MultiEnumSearchContext<const char*, StringSearchContextT<StringMatcher>, WeightedValueRef>;
- template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>, WeightedValueRef>;
-+template class MultiEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>, WeightedValueRef>;
- template class MultiEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>, WeightedValueRef>;
- template class MultiEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>, WeightedValueRef>;
- template class MultiEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>, WeightedValueRef>;
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/multi_string_enum_hint_search_context.cpp` (modified, +6/-0)
-```diff
-@@ -2,7 +2,9 @@
- 
- #include "multi_string_enum_hint_search_context.hpp"
- 
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- 
- #include <vespa/searchcommon/attribute/multivalue.h>
- 
-@@ -11,10 +13,14 @@ using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::
- 
- namespace search::attribute {
- 
-+template class MultiStringEnumHintSearchContextT<ValueRef, StringFuzzyMatcher>;
- template class MultiStringEnumHintSearchContextT<ValueRef, StringMatcher>;
- template class MultiStringEnumHintSearchContextT<ValueRef, StringRangeMatcher>;
-+template class MultiStringEnumHintSearchContextT<ValueRef, StringRegexMatcher>;
- 
-+template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringFuzzyMatcher>;
- template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringMatcher>;
- template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringRangeMatcher>;
-+template class MultiStringEnumHintSearchContextT<WeightedValueRef, StringRegexMatcher>;
- 
- } // namespace search::attribute
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/multi_string_enum_search_context.cpp` (modified, +6/-0)
-```diff
-@@ -2,7 +2,9 @@
- 
- #include "multi_string_enum_search_context.hpp"
- 
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- 
- #include <vespa/searchcommon/attribute/multivalue.h>
- 
-@@ -11,10 +13,14 @@ using WeightedValueRef = search::multivalue::WeightedValue<vespalib::datastore::
- 
- namespace search::attribute {
- 
-+template class MultiStringEnumSearchContextT<ValueRef, StringFuzzyMatcher>;
- template class MultiStringEnumSearchContextT<ValueRef, StringMatcher>;
- template class MultiStringEnumSearchContextT<ValueRef, StringRangeMatcher>;
-+template class MultiStringEnumSearchContextT<ValueRef, StringRegexMatcher>;
- 
-+template class MultiStringEnumSearchContextT<WeightedValueRef, StringFuzzyMatcher>;
- template class MultiStringEnumSearchContextT<WeightedValueRef, StringMatcher>;
- template class MultiStringEnumSearchContextT<WeightedValueRef, StringRangeMatcher>;
-+template class MultiStringEnumSearchContextT<WeightedValueRef, StringRegexMatcher>;
- 
- } // namespace search::attribute
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/single_enum_search_context.cpp` (modified, +4/-0)
-```diff
-@@ -4,13 +4,17 @@
- 
- #include "numeric_range_matcher.h"
- #include "numeric_search_context.h"
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- #include "string_search_context.h"
- 
- namespace search::attribute {
- 
-+template class SingleEnumSearchContext<const char*, StringSearchContextT<StringFuzzyMatcher>>;
- template class SingleEnumSearchContext<const char*, StringSearchContextT<StringMatcher>>;
- template class SingleEnumSearchContext<const char*, StringSearchContextT<StringRangeMatcher>>;
-+template class SingleEnumSearchContext<const char*, StringSearchContextT<StringRegexMatcher>>;
- template class SingleEnumSearchContext<int8_t, NumericSearchContext<NumericRangeMatcher<int8_t>>>;
- template class SingleEnumSearchContext<int16_t, NumericSearchContext<NumericRangeMatcher<int16_t>>>;
- template class SingleEnumSearchContext<int32_t, NumericSearchContext<NumericRangeMatcher<int32_t>>>;
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/single_string_enum_hint_search_context.cpp` (modified, +4/-0)
-```diff
-@@ -2,11 +2,15 @@
- 
- #include "single_string_enum_hint_search_context.hpp"
- 
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- 
- namespace search::attribute {
- 
-+template class SingleStringEnumHintSearchContextT<StringFuzzyMatcher>;
- template class SingleStringEnumHintSearchContextT<StringMatcher>;
- template class SingleStringEnumHintSearchContextT<StringRangeMatcher>;
-+template class SingleStringEnumHintSearchContextT<StringRegexMatcher>;
- 
- } // namespace search::attribute
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/single_string_enum_search_context.cpp` (modified, +4/-1)
-```diff
-@@ -2,12 +2,15 @@
- 
- #include "single_string_enum_search_context.hpp"
- 
-+#include "string_fuzzy_matcher.h"
- #include "string_range_matcher.h"
-+#include "string_regex_matcher.h"
- 
- namespace search::attribute {
- 
-+template class SingleStringEnumSearchContextT<StringFuzzyMatcher>;
- template class SingleStringEnumSearchContextT<StringMatcher>;
--
- template class SingleStringEnumSearchContextT<StringRangeMatcher>;
-+template class SingleStringEnumSearchContextT<StringRegexMatcher>;
- 
- } // namespace search::attribute
-```
-
-**File**: `searchlib/src/vespa/searchlib/attribute/string_fuzzy_matcher.cpp` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
-+
-+#include "string_fuzzy_matcher.h"
-+
-+#include "enumstore.h"
-+#include "i_dictionary_lookup.h"
-+
-+#include <vespa/searchlib/query/query_term_ucs4.h>
-+#include <vespa/searchlib/queryeval/executeinfo.h>
-+#include <vespa/vespalib/fuzzy/fuzzy_matcher.h>
-+
-+namespace search::attribute {
-+
-+StringFuzzyMatcher::StringFuzzyMatcher(std::unique_ptr<QueryTermSimple> query_term, bool cased,
-+                                       vespalib::FuzzyMatchingAlgorithm fuzzy_matching_algorithm)
-+    : _query_term(static_cast<QueryTermUCS4*>(query_term.release())),
-+      _helper(*_query_term, cased, fuzzy_matching_algorithm) {
++TEST(ValueCodecTest, claimed_size_overflow_is_caught) {
++    // tensor(x[2^30],y[2^30],z[2]) is a valid type with 2^61 cells;
++    // as doubles that is 2^64 bytes, which wraps to 0 in size_t
++    nbostream data;
++    data.putInt1_4Bytes(2); // dense, default cell type (double)
++    data.putInt1_4Bytes(3);
++    data.writeSmallString("x");
++    data.putInt1_4Bytes(1u << 30);
++    data.writeSmallString("y");
++    data.putInt1_4Bytes(1u << 30);
++    data.writeSmallString("z");
++    data.putInt1_4Bytes(2);
++    data << 1.0;
++    VESPA_EXPECT_EXCEPTION(decode_value(data, factory), vespalib::eval::DecodeValueException,
++                           "serialized input claims 1 blocks of size 2305843009213693952*8, but only");
 +}
 +
-+StringFuzzyMatcher::StringFuzzyMatcher(StringFuzzyMatcher&&) noexcept = default;
++//-----------------------------------------------------------------------------
 +
-+StringFuzzyMatcher::~StringFuzzyMatcher() = default;
-+
-+bool StringFuzzyMatcher::lookup_in_dictionary(const EnumStoreT<const char*>& enum_store,
-+                                              IDictionaryLookup&             dict) const {
-+    if (is_valid()) {
-+        std::string prefix(_helper.get_fuzzy_matcher().getPrefix());
-+        auto        comp = enum_store.prefix_lookup_comparator(prefix.c_str());
-+        dict.lookupRange(comp, comp);
-+        return true;
-+    }
-+
-+    return false;
-+}
-+
-+bool StringFuzzyMatcher::use_dictionary_entry(const EnumStoreT<const char*>&  enum_store,
-+                                              EnumPostingTree::ConstIterator& it) const {
-+    if (_helper.is_cased()) {
-+        if (match(enum_store.get_value(it.getKey().load_acquire()))) {
-+            return true;
-+        }
-+        ++it;
-+        return false;
-+    }
-+
-+    return _helper.is_fuzzy_match(enum_store.get_value(it.getKey().load_acquire()), it, enum_store.get_data_store());
-+}
-+
-+bool StringFuzzyMatcher::use_posting_lists_when_non_strict(const queryeval::ExecuteInfo& info,
-+                                                           uint32_t                      docid_limit) const {
-+    uint32_t           exp_doc_hits = docid_limit * info.hit_rate();
-+    constexpr uint32_t fuzzy_use_posting_lists_doc_limit = 10000;
-+    /**
-+     * The above constant was derived after a query latency experiment with fuzzy matching
-+     * on 2M documents with a dictionary size of 292070.
-+     *
-+     * Cost per document in dfa-based fuzzy matching (scanning the dictionary and merging posting lists) - strict
-+     * iterator: 2.8 ms / 2k = 0.0014 ms 4.4 ms / 20k = 0.00022 ms 9.0 ms / 200k = 0.000045 ms 98 ms / 1M =
-+     * 0.000098 ms
-+     *
-+     * Cost per document in lookup-based fuzzy matching - non-strict iterator:
-+     *   7.6 ms / 2k = 0.0038 ms
-+     *   54 ms / 20k = 0.0027 ms
-+     *   529 ms / 200k = 0.0026 ms
-+     *
-+     * Based on this experiment, we observe that we should avoid lookup-based fuzzy matching
-+     * when the number of documents to calculate this on exceeds a number between 2000 - 20000.
-+     *
-+     * Also note that the cost of scanning the dictionary and performing the fuzzy matching
-+     * is already performed at this point.
-+     * The only work remaining if returning true is merging the posting lists.
-+     */
-+    return exp_doc_hits > fuzzy_use_posting_lists_doc_limit;
-+}
-+
-+} // namespace search::attribute
+ GTEST_MAIN_RUN_ALL_TESTS()
+```
+
+**File**: `eval/src/vespa/eval/eval/value_codec.cpp` (modified, +2/-1)
+```diff
+@@ -185,7 +185,8 @@ struct ContentDecoder {
+     static std::unique_ptr<Value> invoke(nbostream& input, const DecodeState& state,
+                                          const ValueBuilderFactory& factory) {
+         SmallVector<std::string_view> address(state.num_mapped_dims);
+-        if (state.num_blocks * state.subspace_size * sizeof(T) > input.size()) {
++        // avoid overflow; equivalent to num_blocks * subspace_size * sizeof(T) > input.size()
++        if (state.num_blocks > (input.size() / sizeof(T)) / state.subspace_size) {
+             auto err = fmt("serialized input claims %zu blocks of size %zu*%zu, but only %zu bytes available",
+                            state.num_blocks, state.subspace_size, sizeof(T), input.size());
+             throw IllegalStateException(err);
 ```
 
 ---
 
-### Incident Patch 2: `fa6d435a` (2026-11-04)
-**Commit Message**: Merge pull request #38434 from vespa-engine/hmusum/20261104-change-default-value-of-USE_ML_MODEL_IMPORT_CACHE
+### Incident Patch 2: `089273ff` (2026-11-06)
+**Commit Message**: require dimension names to be valid identifiers
 
-Change default value of USE_ML_MODEL_IMPORT_CACHE
+Dimension names must now match the identifier rule of the type spec
+parser ([A-Za-z_][A-Za-z0-9_]*). Previously any non-empty name was
+accepted, letting rename/concat in expressions (which allow leading
+digits, '@' and '$') and decoded binary values create types whose
+spec could not be parsed back, or would parse as a different type.
 
-**File**: `config-model/src/main/java/com/yahoo/config/model/deploy/TestProperties.java` (modified, +1/-1)
+Also make the elementwise rank features fail setup cleanly when given
+an invalid dimension name, instead of throwing.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `eval/src/tests/eval/node_types/node_types_test.cpp` (modified, +3/-0)
 ```diff
-@@ -93,7 +93,7 @@ public class TestProperties implements ModelContext.Properties, ModelContext.Fea
-     private boolean enableLandlock = false;
-     private boolean enableLegacyFeedHandler = true;
-     private boolean productDiscovery = false;
--    private boolean useMlModelImportCache = false;
-+    private boolean useMlModelImportCache = true;
-     private OpenTelemetryConfiguration opentelemetrySdk = OpenTelemetrySettings.createDisabled();
- 
-     @Override public ModelContext.FeatureFlags featureFlags() { return this; }
+@@ -124,6 +124,8 @@ TEST(NodeTypesTest, require_that_rename_resolves_correct_type) {
+     verify("rename(tensor(x{},y[1],z[5]),x,y)", "error");
+     verify("rename(tensor(x{},y[1],z[5]),x,x)", "tensor(x{},y[1],z[5])");
+     verify("rename(tensor(x{},y[1],z[5]),x,w)", "tensor(w{},y[1],z[5])");
++    verify("rename(tensor(x{},y[1],z[5]),x,1w)", "error"); // not a valid dimension name
++    verify("rename(tensor(x{},y[1],z[5]),x,@w)", "error"); // not a valid dimension name
+     verify("rename(tensor(x{},y[1],z[5]),y,w)", "tensor(x{},w[1],z[5])");
+     verify("rename(tensor(x{},y[1],z[5]),z,w)", "tensor(x{},y[1],w[5])");
+     verify("rename(tensor(x{},y[1],z[5]),(x,y,z),(z,y,x))", "tensor(z{},y[1],x[5])");
+@@ -337,6 +339,7 @@ TEST(NodeTypesTest, require_that_tensor_concat_resolves_correct_type) {
+     verify("concat(tensor(x[2]),tensor(x[3]),x)", "tensor(x[5])");
+     verify("concat(tensor(x[2]),tensor(x[2]),y)", "tensor(x[2],y[2])");
+     verify("concat(tensor(x[2]),tensor(x[3]),y)", "error");
++    verify("concat(double,double,1x)", "error"); // not a valid dimension name
+     verify("concat(tensor(x[2]),tensor(x{}),x)", "error");
+     verify("concat(tensor(x[2]),tensor(y{}),x)", "tensor(x[3],y{})");
+     verify("concat(tensor<float>(x[2]),tensor<float>(x[3]),x)", "tensor<float>(x[5])");
 ```
 
-**File**: `flags/src/main/java/com/yahoo/vespa/flags/Flags.java` (modified, +1/-1)
+**File**: `eval/src/tests/eval/value_type/value_type_test.cpp` (modified, +21/-0)
 ```diff
-@@ -264,7 +264,7 @@ public class Flags {
-             TENANT_ID, APPLICATION, INSTANCE_ID);
+@@ -126,6 +126,27 @@ TEST(ValueTypeTest, require_that_empty_dimension_names_result_in_error_types) {
+     EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{"x"}, {""}}).is_error());
+ }
  
-     public static final UnboundBooleanFlag USE_ML_MODEL_IMPORT_CACHE = defineFeatureFlag(
--            "use-ml-model-import-cache", false,
-+            "use-ml-model-import-cache", true,
-             List.of("hmusum"), "2026-10-18", "2027-04-18",
-             "Whether to cache imported ONNX, XGBoost and LightGBM models on config server disk between deployments.",
-             "Takes effect on the next deployment.",
++TEST(ValueTypeTest, require_that_dimension_names_must_be_valid_identifiers) {
++    for (const char* name : {"x", "X", "_", "_x", "x_1", "abc123"}) {
++        EXPECT_FALSE(ValueType::make_type(CellType::DOUBLE, {{name}}).is_error()) << name;
++        EXPECT_FALSE(ValueType::make_type(CellType::DOUBLE, {{name, 3}}).is_error()) << name;
++    }
++    for (const char* name : {"1x", "@x", "x$", "x-y", "x y", " x", "x.y", "x{},y", "x[3]", "\xc3\xa6"}) {
++        EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{name}}).is_error()) << name;
++        EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{name, 3}}).is_error()) << name;
++    }
++    EXPECT_TRUE(ValueType::make_type(CellType::DOUBLE, {{std::string("x\0y", 3)}}).is_error());
++}
++
++TEST(ValueTypeTest, require_that_rename_to_invalid_dimension_name_results_in_error_type) {
++    EXPECT_EQ(type("tensor(x[3])").rename({"x"}, {"1y"}), type("error"));
++    EXPECT_EQ(type("tensor(x{})").rename({"x"}, {"@y"}), type("error"));
++}
++
++TEST(ValueTypeTest, require_that_concat_with_invalid_dimension_name_results_in_error_type) {
++    EXPECT_EQ(ValueType::concat(type("double"), type("double"), "1x"), type("error"));
++}
++
+ TEST(ValueTypeTest, require_that_dense_subspace_size_does_not_overflow) {
+     auto ok_type = ValueType::make_type(CellType::DOUBLE, {{"x", max_size}, {"y", max_size}});
+     EXPECT_FALSE(ok_type.is_error());
+```
+
+**File**: `eval/src/vespa/eval/eval/value_type.cpp` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ void sort_dimensions(DimensionList& dimensions) {
+ bool verify_dimensions(const DimensionList& dimensions) {
+     size_t dense_size = 1;
+     for (size_t i = 0; i < dimensions.size(); ++i) {
+-        if (dimensions[i].name.empty()) {
++        if (!value_type::is_valid_dimension_name(dimensions[i].name)) {
+             return false;
+         }
+         if (dimensions[i].size == 0) {
+```
+
+**File**: `eval/src/vespa/eval/eval/value_type_spec.cpp` (modified, +12/-0)
+```diff
+@@ -188,6 +188,18 @@ CellType parse_cell_type(ParseContext& ctx) {
+ 
+ } // namespace
+ 
++bool is_valid_dimension_name(const std::string& name) {
++    if (name.empty() || !is_ident(name[0], true)) {
++        return false;
++    }
++    for (size_t i = 1; i < name.size(); ++i) {
++        if (!is_ident(name[i], false)) {
++            return false;
++        }
++    }
++    return true;
++}
++
+ ValueType parse_spec(const char* pos_in, const char* end_in, const char*& pos_out,
+                      std::vector<ValueType::Dimension>* unsorted) {
+     ParseContext ctx(pos_in, end_in, pos_out);
+```
+
+**File**: `eval/src/vespa/eval/eval/value_type_spec.h` (modified, +6/-0)
+```diff
+@@ -11,6 +11,12 @@ namespace vespalib::eval::value_type {
+ std::optional<CellType> cell_type_from_name(const std::string& name);
+ std::string cell_type_to_name(CellType cell_type);
+ 
++/**
++ * Is this a valid dimension name; that is, an identifier that can be
++ * parsed as part of a type spec: [A-Za-z_][A-Za-z0-9_]*
++ **/
++bool is_valid_dimension_name(const std::string& name);
++
+ ValueType parse_spec(const char* pos_in, const char* end_in, const char*& pos_out,
+                      std::vector<ValueType::Dimension>* unsorted = nullptr);
+ 
+```
+
+**File**: `searchlib/src/tests/features/elementwise/elementwise_test.cpp` (modified, +7/-0)
+```diff
+@@ -125,6 +125,13 @@ TEST_F(ElementwiseBlueprintTest, blueprint_setup_fails_when_cell_type_is_malform
+     expect_setup_fail({"bm25(is)", "x", "complex"});
+ }
+ 
++TEST_F(ElementwiseBlueprintTest, blueprint_setup_fails_when_dimension_name_is_invalid) {
++    expect_setup_fail({"bm25(is)", "1x"});
++    expect_setup_fail({"bm25(is)", "x-y"});
++    expect_setup_fail({"matches(va)", "1x"});
++    expect_setup_fail({"matches(va)", "x-y"});
++}
++
+ TEST_F(ElementwiseBlueprintTest, blueprint_setup_succeeds_for_index_field) {
+     expect_bm25_setup_succeed({"bm25(is)", "x"});
+     expect_bm25_setup_succeed({"bm25(ia)", "x"});
+```
+
+**File**: `searchlib/src/vespa/searchlib/features/elementwise_utils.cpp` (modified, +3/-0)
+```diff
+@@ -49,6 +49,9 @@ std::optional<std::string> ElementwiseUtils::build_output_tensor_type(ValueType&
+         return make_string("'%s' is not a valid tensor cell type", cell_type_name.c_str());
+     }
+     output_tensor_type = ValueType::make_type(cell_type.value(), {{dimension_name}});
++    if (output_tensor_type.is_error()) {
++        return make_string("'%s' is not a valid tensor dimension name", dimension_name.c_str());
++    }
+     return std::nullopt;
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38436** (2026-11-04): Replace gjoranv with arnej27959 as config-model owner (@arnej27959)
-- **PR #38435** (2026-11-04): Allow selecting summary cache update strategy in services.xml (@arnej27959)
-- **PR #38434** (2026-11-04): Change default value of USE_ML_MODEL_IMPORT_CACHE (@hmusum)
-- **PR #38430** (2026-11-05): Refactoring: Add new string matcher classes (@boeker)
-- **PR #38429** (2026-11-04): Add vectorized quantized vs. quantized dot product kernel (@vekterli)
-- **PR #38428** (2026-11-04): Support ZooKeeper 3.9.7 (@hmusum)
+- **PR #38459** (2026-11-06): Make tensor types more robust (@havardpe)
+- **PR #38458** (2026-11-06): Avoid holding cache stripe lock across backing store writes (@arnej27959)
+- **PR #38456** (2026-11-06): chore: update third-party attributions (@github-actions[bot])
+- **PR #38453** (2026-11-06): Support range limit in string ranges (@boeker)
+- **PR #38452** (2026-11-05): Add cache::update() for write-through that does not bump LRU position (@arnej27959)
+- **PR #38451** (2026-11-05): Remove ZooKeeper server 3.9.5, make 3.9.6 default (@hmusum)
 
 ---
 
@@ -1386,24 +1297,39 @@ Change default value of USE_ML_MODEL_IMPORT_CACHE
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers
+## X. avoid overflow in decoder input size check
 
 **RULE**:
-When implementing operations in `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `eval/src/tests/eval/value_codec/value_codec_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `776b9266`: Merge pull request #38430 from vespa-engine/boeker/add-new-string-matchers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6929b1b`: avoid overflow in decoder input size check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchlib/src/vespa/searchlib/attribute/CMakeLists.txt`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `eval/src/tests/eval/value_codec/value_codec_test.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    string_fuzzy_matcher.cpp
-    string_fuzzy_search_helper.cpp
-    string_regex_matcher.cpp
-    string_regex_search_helper.cpp
+TEST(ValueCodecTest, claimed_size_overflow_is_caught) {
+    // tensor(x[2^30],y[2^30],z[2]) is a valid type with 2^61 cells;
+    // as doubles that is 2^64 bytes, which wraps to 0 in size_t
+    nbostream data;
+    data.putInt1_4Bytes(2); // dense, default cell type (double)
+    data.putInt1_4Bytes(3);
+    data.writeSmallString("x");
+    data.putInt1_4Bytes(1u << 30);
+    data.writeSmallString("y");
+    data.putInt1_4Bytes(1u << 30);
+    data.writeSmallString("z");
+    data.putInt1_4Bytes(2);
+    data << 1.0;
+    VESPA_EXPECT_EXCEPTION(decode_value(data, factory), vespalib::eval::DecodeValueException,
+                           "serialized input claims 1 blocks of size 2305843009213693952*8, but only");
+}
+
+//-----------------------------------------------------------------------------
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1413,4 +1339,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `776b9266` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6929b1b` are properly handled with clean fallback behavior.
