@@ -7916,3 +7916,4 @@
 | `CYCLE-20261106-ADP0` | `2026-11-06T20:52:13.908Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3db6c46d...`) |
 | `CYCLE-20261106-AEZB` | `2026-11-06T20:52:15.575Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e98f3da0...`) |
 | `CYCLE-20261106-AJHV` | `2026-11-06T20:52:21.427Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e46c56b8...`) |
+| `CYCLE-20261106-JOUY` | `2026-11-06T20:59:28.282Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`55cf761b...`) |
