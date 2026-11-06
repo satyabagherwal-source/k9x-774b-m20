@@ -7907,3 +7907,4 @@ Every entry in this ledger must capture:
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `6c5828f3` | Multi-dimensional audit evidence | 2026-11-06T15:27:36.291Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `487676ec` | Multi-dimensional audit evidence | 2026-11-06T15:27:36.818Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `4194a203` | Multi-dimensional audit evidence | 2026-11-06T15:27:39.593Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `bb1c0fbf` | Multi-dimensional audit evidence | 2026-11-06T18:54:46.734Z |

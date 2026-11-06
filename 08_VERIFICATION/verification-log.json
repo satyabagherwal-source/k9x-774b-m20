@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-XU35",
-    "timestamp": "2026-11-04T22:59:06.257Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "1dcb8069dda091ba687238bab5dbda760c29c7c1a3c329b4d0ec229e990dd7d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-6ZMQ",
     "timestamp": "2026-11-04T23:06:13.346Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-3C22",
+    "timestamp": "2026-11-06T18:54:46.730Z",
+    "repository": "dosco/graphjin",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

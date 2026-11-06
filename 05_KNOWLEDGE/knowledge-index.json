@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T15:27:39.532Z",
+  "last_updated": "2026-11-06T18:54:46.640Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11358,11 +11358,16 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "6f14910d",
-      "content_hash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
+      "source_version": "bb1c0fbf",
+      "content_hash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "intro): omit args input types for functions without inputs",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1869,
           "title": "serialize background discovery with config applies",
@@ -11384,7 +11389,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:40:29.239Z",
+      "verified_at": "2026-11-06T18:54:46.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

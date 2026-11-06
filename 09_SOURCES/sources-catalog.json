@@ -3693,10 +3693,10 @@
     "repository": "dosco/graphjin",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "6f14910d",
+    "sourceVersion": "bb1c0fbf",
     "license": "Apache-2.0",
-    "contentHash": "123aeb3fb45c06ad43e73b6c9d97d2d9eb41b26304e35f6813837856376a5f70",
-    "lastHarvestedAt": "2026-10-31T10:40:29.323Z",
+    "contentHash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
+    "lastHarvestedAt": "2026-11-06T18:54:46.734Z",
     "learningId": "learn-github-dosco-graphjin"
   },
   "gravitl-netmaker": {

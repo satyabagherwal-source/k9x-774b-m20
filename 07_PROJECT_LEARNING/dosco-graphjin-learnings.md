@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `6f14910d`  
+> **Source Version**: `bb1c0fbf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:40:28.747Z  
+> **Timestamp**: 2026-11-06T18:54:45.268Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:40:28.645Z  
+> **Harvest Timestamp**: 2026-11-06T18:54:39.440Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One governed graph for AI agents — GraphQL + MCP over your databases, files, APIs, and code
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3225 stars
+- **Stars / Engagement**: 3234 stars
 
 ---
 
@@ -2730,591 +2730,235 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a0d99ef` (2026-10-31)
-**Commit Message**: fix(discovery): aggregate SQLite index statistics per table (#692)
+### Incident Patch 1: `eb10a65e` (2026-11-06)
+**Commit Message**: fix(intro): omit args input types for functions without inputs
 
-**File**: `core/discovery/namespaces.go` (modified, +3/-1)
+A zero-argument database function (for example a column default such as
+public.id_generator()) produced an INPUT_OBJECT with null inputFields.
+GraphQL requires input objects to have at least one field, so graphql-js
+clients failed introspection. Skip the args type and the args argument
+when the function has no inputs, and always serialise inputFields as a
+list.
+
+Fixes #446
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/intro.go` (modified, +10/-3)
 ```diff
-@@ -194,7 +194,9 @@ func sqliteNamespaceRollup(ctx context.Context, db *sql.DB) ([]NamespaceRollup,
- 	const q = `
- SELECT 'main' AS db, '' AS sch,
-        (SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%') AS table_count,
--       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
-+       COALESCE((SELECT SUM(row_count)
-+                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
-+                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
- 	return scanNamespaceRollup(ctx, db, q, true)
- }
+@@ -576,6 +576,11 @@ func (in *Introspection) addTableTypeWithDepth(
+ 	sort.Strings(fnNames)
  
-```
-
-**File**: `core/discovery/rowcount.go` (modified, +11/-17)
-```diff
-@@ -3,7 +3,6 @@ package discovery
- import (
- 	"context"
- 	"database/sql"
--	"fmt"
- 	"log"
- 	"strings"
- 	"time"
-@@ -152,23 +151,15 @@ func bigqueryRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema)
- }
- 
- func sqliteRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
--	var stat sql.NullString
-+	var n sql.NullInt64
- 	err := db.QueryRowContext(ctx,
--		`SELECT stat FROM sqlite_stat1 WHERE tbl = ? LIMIT 1`,
-+		`SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1 WHERE tbl = ?`,
- 		schema.Name,
--	).Scan(&stat)
--	if err != nil || !stat.Valid || stat.String == "" {
--		return 0, false
--	}
--	fields := strings.Fields(stat.String)
--	if len(fields) == 0 {
--		return 0, false
--	}
--	var n int64
--	if _, err := fmt.Sscanf(fields[0], "%d", &n); err != nil || n <= 0 {
-+	).Scan(&n)
-+	if err != nil || !n.Valid || n.Int64 <= 0 {
- 		return 0, false
- 	}
--	return n, true
-+	return n.Int64, true
- }
- 
- func oracleRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
-@@ -315,13 +306,16 @@ WHERE TABLE_TYPE = 'BASE TABLE'
- }
- 
- func sqliteNamespaceRowCounts(ctx context.Context, db *sql.DB) (map[string]int64, error) {
--	// LEFT JOIN: tables without sqlite_stat1 entries get NULL → skipped.
-+	// ANALYZE records one estimate per index. Use the largest estimate per
-+	// table so multiple indexes do not duplicate rows and partial indexes do
-+	// not replace a full-table estimate. Missing stats remain NULL → skipped.
- 	const q = `
- SELECT m.name,
--       CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER)
-+       MAX(CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER))
- FROM sqlite_master m
- LEFT JOIN sqlite_stat1 s ON s.tbl = m.name
--WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'`
-+WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'
-+GROUP BY m.name`
- 	return scanRowCountPairs(ctx, db, q)
- }
- 
-```
-
-**File**: `core/discovery/sqlite_stats_test.go` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+package discovery
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"testing"
-+
-+	core "github.com/dosco/graphjin/core/v3"
-+	_ "github.com/mattn/go-sqlite3"
-+)
-+
-+func TestSQLiteDiscoveryCountsTablesInsteadOfIndexes(t *testing.T) {
-+	db, err := sql.Open("sqlite3", ":memory:")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer db.Close()
-+	db.SetMaxOpenConns(1)
-+	for _, statement := range []string{
-+		"CREATE TABLE orders(id INTEGER PRIMARY KEY, account_id INTEGER, state TEXT)",
-+		"CREATE TABLE customers(id INTEGER PRIMARY KEY)",
-+		"CREATE INDEX aa_full ON orders(account_id)",
-+		"CREATE INDEX bb_full ON orders(state)",
-+		"CREATE INDEX zz_partial ON orders(state) WHERE id <= 2",
-+		"INSERT INTO orders VALUES(1,1,'open'),(2,2,'open'),(3,0,'open'),(4,1,'open'),(5,2,'open'),(6,0,'open'),(7,1,'open'),(8,2,'open'),(9,0,'open'),(10,1,'open')",
-+		"INSERT INTO customers VALUES(1),(2),(3)",
-+		"ANALYZE",
-+	} {
-+		if _, err := db.Exec(statement); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	var orders, customers int64
-+	if err := db.QueryRow("SELECT COUNT(*) FROM orders").Scan(&orders); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := db.QueryRow("SELECT COUNT(*) FROM customers").Scan(&customers); err != nil {
-+		t.Fatal(err)
-+	}
-+	ctx := context.Background()
-+	t.Run("namespace rollup", func(t *testing.T) {
-+		rows, err := sqliteNamespaceRollup(ctx, db)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if len(rows) != 1 || rows[0].TableCount != 2 || rows[0].ApproxRowTotal != orders+customers {
-+			t.Fatalf("got %+v, want two tables with %d rows", rows, orders+customers)
-+		}
-+	})
-+	t.Run("namespace table estimates", func(t *testing.T) {
-+		counts, err := sqliteNamespaceRowCounts(ctx, db)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if counts["orders"] != orders || counts["customers"] != customers {
-+			t.Fatalf("counts = %v, want orders=%d customers=%d", counts, orders, customers)
-+		}
-+	})
-+	t.Run("single table estimate", func(t *testing.T) {
-+		got, available := sqliteRowCount(ctx, db, &core.TableSchema{Name: "orders"})
-+		if !available || got != orders {
-+			t.Fatalf("orders count = %d available=%v, want %d", got, available, orders)
-+		}
-+	})
-+}
-```
-
----
-
-### Incident Patch 2: `0528d728` (2026-10-31)
-**Commit Message**: fix(graph): require complete standalone argument values (#690)
-
-**File**: `core/internal/graph/complete_argument_test.go` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+package graph
-+
-+import "testing"
-+
-+func TestParseArgValueRequiresOneCompleteValue(t *testing.T) {
-+	for _, value := range []string{`{id: {eq: 1}`, `[1, 2`, `{id: 1} {id: 2}`, `1 2`, `"first" "second"`} {
-+		if _, err := ParseArgValue(value, false); err == nil {
-+			t.Errorf("accepted incomplete or trailing input %q", value)
-+		}
-+	}
-+}
-+
-+func TestParseArgValueConsumesTerminalNames(t *testing.T) {
-+	for _, tc := range []struct {
-+		input string
-+		kind  ParserType
-+		value string
-+	}{
-+		{"true", NodeBool, "true"}, {"false", NodeBool, "false"},
-+		{"null", NodeLabel, "null"}, {"ACTIVE", NodeLabel, "ACTIVE"},
-+	} {
-+		node, err := ParseArgValue(tc.input, false)
-+		if err != nil {
-+			t.Errorf("%s: %v", tc.input, err)
+ 	for _, name := range fnNames {
++		// An input object needs at least one field; a function without
++		// inputs takes no args argument, so it needs no args type.
++		if len(functions[name].Inputs) == 0 {
 +			continue
 +		}
-+		if node.Type != tc.kind || node.Val != tc.value {
-+			t.Errorf("%s decoded as %#v", tc.input, node)
-+		}
-+	}
-+	for _, value := range []string{`{id: {eq: 1}}`, `[1, 2]`, `[]`, `{}`, `true # comment`, `"value"`} {
-+		if _, err := ParseArgValue(value, false); err != nil {
-+			t.Errorf("valid %q: %v", value, err)
-+		}
-+	}
-+}
-```
-
-**File**: `core/internal/graph/lex.go` (modified, +0/-5)
-```diff
-@@ -356,11 +356,6 @@ func lexName(l *lexer) StateFn {
- 	for {
- 		r := l.next()
- 
--		if r == eof {
--			l.emit(itemEOF)
--			return nil
--		}
--
- 		if !isAlphaNumeric(r) {
- 			l.backup()
- 			val := l.current()
-```
-
-**File**: `core/internal/graph/parse.go` (modified, +16/-3)
-```diff
-@@ -328,7 +328,14 @@ func ParseArgValue(argVal string, json bool) (*Node, error) {
- 		items: l.items,
- 		json:  json,
+ 		ty := in.addArgsType(table, functions[name])
+ 		in.addType(ty)
  	}
--	return p.parseValue()
-+	node, err := p.parseValue()
-+	if err != nil {
-+		return nil, err
-+	}
-+	if !p.peek(itemEOF) {
-+		return nil, errors.New("unexpected input after argument value")
-+	}
-+	return node, nil
- }
+@@ -888,7 +893,7 @@ func (in *Introspection) addInputType(table sdata.DBTable, ft FullType) (retFT F
  
- func (p *Parser) parseFields(fields []Field) ([]Field, error) {
-@@ -660,7 +667,10 @@ func (p *Parser) parseList() (*Node, error) {
- 
- 	var ty ParserType
- 	for {
--		if p.peek(itemEOF, itemListClose) {
-+		if p.peek(itemEOF) {
-+			return nil, errors.New("end reached before list was closed")
-+		}
-+		if p.peek(itemListClose) {
- 			p.ignore()
- 			break
- 		}
-@@ -700,7 +710,10 @@ func (p *Parser) parseObj() (*Node, error) {
- 	parent.CMap = make(map[string]*Node)
- 
- 	for {
--		if p.peek(itemEOF, itemObjClose) {
-+		if p.peek(itemEOF) {
-+			return nil, errors.New("end reached before object was closed")
-+		}
-+		if p.peek(itemObjClose) {
- 			p.ignore()
- 			break
- 		}
+ // addTableArgsType adds the table arguments type to the introspection schema
+ func (in *Introspection) addTableArgsType(table sdata.DBTable, ft *FullType) {
+-	if table.Type != "function" {
++	if table.Type != "function" || len(table.Func.Inputs) == 0 {
+ 		return
+ 	}
+ 	ty := in.addArgsType(table, table.Func)
+@@ -899,8 +904,10 @@ func (in *Introspection) addTableArgsType(table sdata.DBTable, ft *FullType) {
+ // addArgsType adds the arguments type to the introspection schema
+ func (in *Introspection) addArgsType(table sdata.DBTable, fn sdata.DBFunction) (ft FullType) {
+ 	ft = FullType{
+-		Kind: "INPUT_OBJECT",
+-		Name: (table.Name + fn.Name + SUFFIX_ARGS),
++		Kind:        KIND_INPUT_OBJ,
++		Name:        (table.Name + fn.Name + SUFFIX_ARGS),
++		InputFields: []InputValue{},
++		Interfaces:  []TypeRef{},
+ 	}
+ 	for _, fi := range fn.Inputs {
+ 		var tr *TypeRef
 ```
 
-**File**: `core/internal/psql/role_filter_complete_dialects_test.go` (added, +25/-0)
+**File**: `core/intro_function_args_test.go` (added, +28/-0)
 ```diff
-@@ -0,0 +1,25 @@
-+package psql_test
+@@ -0,0 +1,28 @@
++package core
 +
 +import (
-+	"github.com/dosco/graphjin/core/v3/internal/qcode"
 +	"testing"
++
++	"github.com/dosco/graphjin/core/v3/internal/sdata"
 +)
 +
-+func TestRoleFiltersRequireCompleteValuesAcrossDialects(t *testing.T) {
-+	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
-+		t.Run(dialect, func(t *testing.T) {
-+			for _, filter := range []string{`{ id: { eq: 1 }`, `{ id: { eq: 1 } } { id: { eq: 2 } }`} {
-+				qc, _ := newDialectCompilers(t, dialect)
-+				err := qc.AddRole("restricted", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{filter}}})
-+				if err == nil {
-+					t.Errorf("accepted malformed role filter %q", filter)
-+				}
-+			}
-+			qc, pc := newDialectCompilers(t, dialect)
-+			if err := qc.AddRole("user", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{`{ id: { eq: 1 } }`}}}); err != nil {
-+				t.Fatal(err)
-+			}
-+			compileWith(t, qc, pc, `query { products { id } }`)
-+		})
++// Issue #446: a zero-argument function produced an INPUT_OBJECT with null
++// inputFields, which GraphQL clients reject during introspection.
++func TestIntrospectionOmitsEmptyFunctionArgsTypes(t *testing.T) {
++	cols := []sdata.DBColumn{{Schema: "public", Table: "products", Name: "id", Type: "bigint", PrimaryKey: true}}
++	fns := []sdata.DBFunction{
++		{Schema: "public", Name: "id_generator", Type: "bigint"},
++		{Schema: "public", Name: "add_one", Type: "bigint", Inputs: []sdata.DBFuncParam{{ID: 1, Name: "n", Type: "bigint"}}},
 +	}
++	result := introspectDBInfo(t, sdata.NewDBInfo("postgres", 0, "public", "", cols, fns, nil), nil)
++
++	for _, ty := range result.Schema.Types {
++		if ty.Kind == KIND_INPUT_OBJ && len(ty.InputFields) == 0 {
++			t.Errorf("input object %s has no input fields", ty.Name)
++		}
++		if ty.Name == "productsid_generatorArgsInput" {
++			t.Errorf("unexpected args type for zero-argument function: %s", ty.Name)
++		}
++	}
++	requireIntroType(t, result, "productsadd_oneArgsInput")
 +}
 ```
 
 ---
 
-### Incident Patch 3: `24100083` (2026-10-31)
-**Commit Message**: fix(graph): accept contextual keywords as GraphQL names (#688)
+### Incident Patch 2: `bb1c0fbf` (2026-11-06)
+**Commit Message**: fix(qcode): correct argument type wording in validation errors
 
-**File**: `core/internal/graph/contextual_names_test.go` (added, +49/-0)
+A single allowed type rendered as "must be  or a object". Only join
+with "or" when there is more than one type, and use "an object".
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/internal/qcode/arg_types_text_test.go` (added, +24/-0)
 ```diff
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,24 @@
++package qcode
++
++import (
++	"testing"
++
++	"github.com/dosco/graphjin/core/v3/internal/graph"
++)
++
++func TestArgTypesText(t *testing.T) {
++	for _, tc := range []struct {
++		types []graph.ParserType
++		want  string
++	}{
++		{[]graph.ParserType{graph.NodeObj}, "an object"},
++		{[]graph.ParserType{graph.NodeVar}, "a variable"},
++		{[]graph.ParserType{graph.NodeNum, graph.NodeVar}, "a number or a variable"},
++		{[]graph.ParserType{graph.NodeStr, graph.NodeNum, graph.NodeObj}, "a string, a number or an object"},
++		{[]graph.ParserType{graph.NodeList, graph.NodeStr}, "a list of strings"},
++	} {
++		if got := argTypes(tc.types); got != tc.want {
++			t.Errorf("argTypes(%v) = %q, want %q", tc.types, got, tc.want)
++		}
++	}
++}
+```
+
+**File**: `core/internal/qcode/qcode.go` (modified, +6/-2)
+```diff
+@@ -2017,7 +2017,7 @@ func argTypes(types []graph.ParserType) string {
+ 	lastIndex := len(types) - 1
+ 	for i, t := range types {
+ 		if !list {
+-			if i == lastIndex {
++			if i == lastIndex && i != 0 {
+ 				sb.WriteString(" or ")
+ 			} else if i != 0 {
+ 				sb.WriteString(", ")
+@@ -2029,7 +2029,11 @@ func argTypes(types []graph.ParserType) string {
+ 			continue
+ 		}
+ 		if !list {
+-			sb.WriteString("a ")
++			if t == graph.NodeObj {
++				sb.WriteString("an ")
++			} else {
++				sb.WriteString("a ")
++			}
+ 		}
+ 		switch t {
+ 		case graph.NodeBool:
+```
+
+---
+
+### Incident Patch 3: `de3d1f93` (2026-11-06)
+**Commit Message**: fix(graph): start saved operation text at the operation
+
+parseOp sliced op.Query from the last byte of the preceding token, so when
+a fragment came before the operation the text saved to the allow list
+began with the fragment's closing brace. Start at the operation's first
+token, and at the start of the document when nothing precedes it so a
+leading comment is still kept.
+
+Refs #422
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/internal/graph/op_query_text_test.go` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
 +package graph
 +
 +import "testing"
 +
-+func TestKeywordNamesInFieldContexts(t *testing.T) {
-+	op, err := Parse([]byte(`query on { products { on true false ON True alias: on } }`))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if op.Name != "on" {
-+		t.Fatalf("operation name %q", op.Name)
-+	}
-+	for i, want := range []string{"products", "on", "true", "false", "ON", "True", "on"} {
-+		if op.Fields[i].Name != want {
-+			t.Fatalf("field %d got %q want %q", i, op.Fields[i].Name, want)
-+		}
-+	}
-+}
-+
-+func TestKeywordObjectKeysAndValues(t *testing.T) {
-+	op, err := Parse([]byte(`{ products(where: {on: {eq: on}, true: {eq: true}, false: {eq: false}}) { id } }`))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	where := op.Fields[0].Args[0].Val
-+	if where.Children[0].Name != "on" || where.Children[0].Children[0].Type != NodeLabel || where.Children[0].Children[0].Val != "on" {
-+		t.Fatalf("enum on: %#v", where.Children[0])
-+	}
-+	if where.Children[1].Children[0].Type != NodeBool || where.Children[2].Children[0].Type != NodeBool {
-+		t.Fatal("boolean semantics changed")
-+	}
-+}
-+
-+func TestKeywordNameHandlingPreservesBooleans(t *testing.T) {
-+	op, err := Parse([]byte(`{ products(where: {available: {eq: TRUE}}) { id } }`))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	value := op.Fields[0].Args[0].Val.Children[0].Children[0]
-+	if value.Type != NodeBool || value.Val != "true" {
-+		t.Fatalf("boolean %#v", value)
-+	}
-+	if _, err = Parse([]byte(`fragment on on products { id } query { products { id } }`)); err == nil {
-+		t.Fatal("accepted reserved fragment name on")
-+	}
-+	if _, err = Parse([]byte(`fragment true on products { id } query { products { ...true } }`)); err != nil {
-+		t.Fatal(err)
-+	}
-+}
-```
-
-**File**: `core/internal/graph/lex.go` (modified, +3/-3)
-```diff
-@@ -367,11 +367,11 @@ func lexName(l *lexer) StateFn {
- 
- 			switch {
- 			case equals(val, onToken):
--				l.emitL(itemOn)
-+				l.emit(itemOn)
- 			case equals(val, trueToken):
--				l.emitL(itemBoolVal)
-+				l.emit(itemBoolVal)
- 			case equals(val, falseToken):
--				l.emitL(itemBoolVal)
-+				l.emit(itemBoolVal)
- 			default:
- 				l.emit(itemName)
- 			}
-```
-
-**File**: `core/internal/graph/parse.go` (modified, +18/-13)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"bytes"
- 	"errors"
- 	"fmt"
-+	"strings"
- 	"sync"
- 	"unsafe"
- )
-@@ -187,7 +188,7 @@ func Parse(gql []byte) (op Operation, err error) {
- func (p *Parser) parseFragment() (frag Fragment, err error) {
- 	s := p.curr().pos
- 
--	if p.peek(itemName) {
-+	if p.peek(itemName, itemBoolVal) {
- 		frag.Name = p.val(p.next())
- 	} else {
- 		err = errors.New("fragment: missing name")
-@@ -201,7 +202,7 @@ func (p *Parser) parseFragment() (frag Fragment, err error) {
- 		return
- 	}
- 
--	if p.peek(itemName) {
-+	if p.peek(itemName, itemOn, itemBoolVal) {
- 		frag.On = p.vall(p.next())
- 	} else {
- 		err = errors.New("fragment: missing table name after 'on' keyword")
-@@ -290,7 +291,7 @@ func (p *Parser) parseOpTypeAndArgs(op *Operation) (err error) {
- 
- 	op.Args = op.argsA[:0]
- 
--	if p.peek(itemName) {
-+	if p.peek(itemName, itemOn, itemBoolVal) {
- 		op.Name = p.val(p.next())
- 	}
- 
-@@ -334,7 +335,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
- 	var err error
- 	st := NewStack()
- 
--	if !p.peek(itemName, itemSpread) {
-+	if !p.peek(itemName, itemOn, itemBoolVal, itemSpread) {
- 		return nil, p.tokErr(`field name or ...Fragment`)
- 	}
- 
-@@ -380,7 +381,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
- }
- 
- func (p *Parser) parseNormalFields(st *Stack, fields []Field) ([]Field, error) {
--	if !p.peek(itemName) {
-+	if !p.peek(itemName, itemOn, itemBoolVal) {
- 		return nil, p.tokErr(`expecting an alias or field name`)
- 	}
- 
-@@ -439,7 +440,7 @@ func (p *Parser) parseFragmentFields(st *Stack, fields []Field) ([]Field, error)
- 		}
- 
- 	} else {
--		if !p.peek(itemName) {
-+		if !p.peek(itemName, itemOn, itemBoolVal) {
- 			return nil, fmt.Errorf("expecting a fragment name, got: %s", p.next())
- 		}
- 
-@@ -503,7 +504,7 @@ func (p *Parser) parseField(f *Field) error {
- 	if p.peek(itemColon) {
- 		p.ignore()
- 
--		if p.peek(itemName) {
-+		if p.peek(itemName, itemOn, itemBoolVal) {
- 			f.Alias = p.val(v)
- 			f.Name = p.val(p.next())
- 		} else {
-@@ -571,6 +572,7 @@ func (p *Parser) parseVarDef(op *Operation) (err error) {
- 	p.ignore()
- 
- 	if !p.peek(itemName,
-+		itemOn,
- 		itemStringVal,
- 		itemNumberVal,
- 		itemBoolVal,
-@@ -594,9 +596,9 @@ func (p *Parser) parseArgs(args []Arg) ([]Arg, error) {
- 
- 	var argNameTypes []MType
- 	if p.json {
--		argNameTypes = []MType{itemName, itemStringVal}
-+		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
- 	} else {
--		argNameTypes = []MType{itemName}
-+		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
- 	}
- 
- 	for {
-@@ -634,7 +636,7 @@ func (p *Parser) parseDirective(dirs []Directive) ([]Directive, error) {
- 	var err error
- 	var d Directive
- 
--	if p.peek(itemName) {
-+	if p.peek(itemName, itemOn, itemBoolVal) {
- 		d.Name = p.val(p.next())
- 	} else {
- 		return nil, fmt.Errorf("expecting directive name after @ symbol got: %s", p.peekNext())
-@@ -690,9 +692,9 @@ func (p *Parser) parseObj() (*Node, error) {
- 
- 	var argNameTypes []MType
- 	if p.json {
--		argNameTypes = []MType{itemName, itemStringVal}
-+		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
- 	} else {
--		argNameTypes = []MType{itemName}
-+		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
- 	}
- 
- 	parent.CMap = make(map[string]*Node)
-@@ -755,13 +757,16 @@ func (p *Parser) parseValue() (*Node, error) {
- 		node.Type = NodeBool
- 	case itemVariable:
- 		node.Type = NodeVar
--	case itemName:
-+	case itemName, itemOn:
- 		node.Type = NodeLabel
- 	default:
- 		return nil, fmt.Errorf("expecting a number, string, object, list or variable as an argument value (not '%s' of type '%s')", p.val(item), item._type)
- 
- 	}
- 	node.Val = p.val(item)
-+	if item._type == itemBoolVal {
-+		node.Val = strings.ToLower(node.Val)
-+	}
- 
- 	return node, nil
- }
-```
-
-**File**: `core/internal/graph/schema.go` (modified, +3/-3)
-```diff
-@@ -94,7 +94,7 @@ func (p *Parser) parseType() (t Type, err error) {
- 	}
- 	p.ignore()
- 
--	if !p.peek(itemName) {
-+	if !p.peek(itemName, itemOn, itemBoolVal) {
- 		err = p.tokErr(`type name`)
- 		return
- 	}
-@@ -126,7 +126,7 @@ func (p *Parser) parseType() (t Type, err error) {
- 
- 		var f TField
- 
--		if !p.peek(itemName) {
-+		if !p.peek(itemName, itemOn, itemBoolVal) {
- 			err = p.tokErr(`field name`)
- 			return
- 		}
-@@ -143,7 +143,7 @@ func (p *Parser) parseType() (t Type, err error) {
- 			f.List = true
- 		}
- 
--		if !p.peek(itemName) {
-+		if !p.peek(itemName, itemOn, itemBoolVal) {
- 			err = p.tokErr(`field type`)
- 			return
- 		}
-```
-
-**File**: `core/internal/psql/contextual_names_dialects_test.go` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+package psql_test
-+
-+import (
-+	"github.com/dosco/graphjin/core/v3/internal/psql"
-+	"github.com/dosco/graphjin/core/v3/internal/qcode"
-+	"github.com/dosco/graphjin/core/v3/internal/sdata"
-+	"strings"
-+	"testing"
-+)
-+
-+func TestKeywordColumnNamesAcrossDialects(t *testing.T) {
-+	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
-+		t.Run(dialect, func(t *testing.T) {
-+			cols := []sdata.DBColumn{}
-+			for _, name := range []string{"id", "on", "true", "false"} {
-+				cols = append(cols, sdata.DBColumn{Schema: "public", Table: "switches", Name: name, Type: "text", PrimaryKey: name == "id"})
-+			}
-+			schema, err := sdata.NewDBSchema(sdata.NewDBInfo(dialect, 0, "public", "test", cols, nil, nil), nil)
++// Issue #422: the saved operation text must start at the operation, not at the
++// last character of whatever definition precedes it.
++func TestOperationQueryText(t *testing.T) {
++	for _, tc := range []struct{ name, input, want string }{
++		{"first", "query getUser { users { id } }", "query getUser { users { id } }"},
++		{"leading comment", "# saved\nquery q { users { id } }", "# saved\nquery q { users { id } }"},
++		{"after fragment", "fragment F on users { id }\nquery q { users { ...F } }", "query q { users { ...F } }"},
++		{"anonymous after fragment", "fragment F on users { id }\n{ users { ...F } }", "{ users { ...F } }"},
++		{"before fragment", "query q { users { ...F } }\nfragment F on users { id }", "query q { users { ...F } }"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			op, err := Parse([]byte(tc.input))
 +			if err != nil {
 +				t.Fatal(err)
 +			}
-+			qc, err := qcode.NewCompiler(schema, qcode.Config{DBSchema: "public"})
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			compiled, err := qc.Compile([]byte(`{ switches { id on true false } }`), nil, "user", "")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			_, sql, err := psql.NewCompiler(psql.Config{DBType: dialect}).CompileEx(compiled)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			for _, name := range []string{"on", "true", "false"} {
-+				quote := `"`
-+				if dialect == "mysql" {
-+					quote = "`"
-+				}
-+				if !strings.Contains(string(sql), quote+name+quote) {
-+					t.Fatalf("column %q missing: %s", name, sql)
-+				}
++			if got := string(op.Query); got != tc.want {
++				t.Fatalf("op.Query = %q, want %q", got, tc.want)
 +			}
 +		})
 +	}
 +}
+```
+
+**File**: `core/internal/graph/parse.go` (modified, +7/-2)
+```diff
+@@ -346,7 +346,12 @@ func (p *Parser) parseFragment() (frag Fragment, err error) {
+ }
+ 
+ func (p *Parser) parseOp() (op Operation, err error) {
+-	s := p.curr().pos + 1
++	// Start at the operation's first token. When nothing precedes the
++	// operation, start at the beginning so a leading comment is kept.
++	s := 0
++	if p.pos >= 0 && p.pos+1 < len(p.items) {
++		s = int(p.items[p.pos+1].pos)
++	}
+ 
+ 	if p.peekVal(queryToken, mutationToken, subscriptionToken) {
+ 		err = p.parseOpTypeAndArgs(&op)
+@@ -377,7 +382,7 @@ func (p *Parser) parseOp() (op Operation, err error) {
+ 	}
+ 
+ 	e := p.curr().pos + 1
+-	op.Query = p.input[s-1 : e]
++	op.Query = p.input[s:e]
+ 
+ 	return op, nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
+- **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
+- **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
 - **PR #688** (2026-10-31): fix(graph): parse contextual keyword names (@rudycelekli)
 - **PR #687** (2026-10-31): fix(openapi): expand environment values in nested token request bodies (@rudycelekli)
-- **PR #686** (2026-10-31): fix(openapi): negotiate declared JSON response media types (@rudycelekli)
-- **PR #685** (2026-10-31): fix(openapi): reuse short-lived authentication tokens before expiry (@rudycelekli)
 
 ---
 
@@ -3334,30 +2978,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. discovery): aggregate SQLite index statistics per table (#692)
+## X. intro): omit args input types for functions without inputs
 
 **RULE**:
-When implementing operations in `core/discovery/namespaces.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/intro.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a0d99ef`: discovery): aggregate SQLite index statistics per table (#692). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb10a65e`: intro): omit args input types for functions without inputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/discovery/namespaces.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/intro.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-       COALESCE((SELECT SUM(row_count)
-                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
-                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
+		// An input object needs at least one field; a function without
+		// inputs takes no args argument, so it needs no args type.
+		if len(functions[name].Inputs) == 0 {
+			continue
+		}
+	if table.Type != "function" || len(table.Func.Inputs) == 0 {
+		Kind:        KIND_INPUT_OBJ,
+		Name:        (table.Name + fn.Name + SUFFIX_ARGS),
+		InputFields: []InputValue{},
+		Interfaces:  []TypeRef{},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
+	if table.Type != "function" {
+		Kind: "INPUT_OBJECT",
+		Name: (table.Name + fn.Name + SUFFIX_ARGS),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a0d99ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb10a65e` are properly handled with clean fallback behavior.
