@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `4e1eec78`  
+> **Source Version**: `60cf157a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:53:22.208Z  
+> **Timestamp**: 2026-11-06T14:05:30.143Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:53:21.992Z  
+> **Harvest Timestamp**: 2026-11-06T14:05:29.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39515 stars
+- **Stars / Engagement**: 39548 stars
 
 ---
 
@@ -1630,619 +1630,165 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e1eec78` (2026-11-03)
-**Commit Message**: Update snapshots for compass-ui alpha.25 class names (#39670)
+### Incident Patch 1: `3a74187d` (2026-11-06)
+**Commit Message**: [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is unset mid-publish (#39412)
+
+* [MM-70789] Read the cluster once in PlatformService.Publish
+
+Publish checked ps.clusterIFace for nil and then read it again to send.
+A test swapping the cluster to nil between the two reads (e.g. the
+config-change Publish still in flight from setup's UpdateConfig) made
+the send go through a nil interface and crash the test binary.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* [MM-70789] Clarify TestPublishWhileClusterIsUnset comments
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-**File**: `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap` (modified, +4/-4)
+**File**: `server/channels/app/platform/cluster.go` (modified, +2/-2)
 ```diff
-@@ -632,13 +632,13 @@ exports[`components/SettingItemMin should match snapshot, team icon on source 1`
-             >
-               <button
-                 aria-label="Remove This Icon"
--                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                 data-testid="removeSettingPicture"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
-@@ -774,13 +774,13 @@ exports[`components/SettingItemMin should match snapshot, user icon on source 1`
-             >
-               <button
-                 aria-label="Remove Profile Picture"
--                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                 data-testid="removeSettingPicture"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
+@@ -193,7 +193,7 @@ func (ps *PlatformService) Publish(message *model.WebSocketEvent) {
+ 
+ 	ps.PublishSkipClusterSend(message)
+ 
+-	if ps.clusterIFace != nil {
++	if cluster := ps.clusterIFace; cluster != nil {
+ 		data, err := message.ToJSON()
+ 		if err != nil {
+ 			mlog.Warn("Failed to encode message to JSON", mlog.Err(err))
+@@ -213,7 +213,7 @@ func (ps *PlatformService) Publish(message *model.WebSocketEvent) {
+ 			cm.SendType = model.ClusterSendReliable
+ 		}
+ 
+-		ps.clusterIFace.SendClusterMessage(cm)
++		cluster.SendClusterMessage(cm)
+ 	}
+ }
+ 
 ```
 
-**File**: `webapp/channels/src/components/actions_menu/__snapshots__/actions_menu.test.tsx.snap` (modified, +6/-6)
+**File**: `server/channels/app/platform/cluster_test.go` (modified, +33/-0)
 ```diff
-@@ -10,14 +10,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace disabled
-       aria-expanded="true"
-       aria-haspopup="true"
-       aria-label="actions"
--      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-       data-active="true"
-       id="center_actions_button_post_id_1"
-       type="button"
-     >
-       <span
-         aria-hidden="true"
--        class="_icon-button__icon-slot_13ryy_41"
-+        class="_icon-button__icon-slot_ft92e_41"
-       >
-         <div
-           aria-hidden="true"
-@@ -85,14 +85,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace enabled a
-       aria-expanded="true"
-       aria-haspopup="true"
-       aria-label="actions"
--      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-       data-active="true"
-       id="center_actions_button_post_id_1"
-       type="button"
-     >
-       <span
-         aria-hidden="true"
--        class="_icon-button__icon-slot_13ryy_41"
-+        class="_icon-button__icon-slot_ft92e_41"
-       >
-         <div
-           aria-hidden="true"
-@@ -193,14 +193,14 @@ exports[`components/actions_menu/ActionsMenu no actions - sysadmin - menu should
-     aria-expanded="true"
-     aria-haspopup="true"
-     aria-label="actions"
--    class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+    class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-     data-active="true"
-     id="center_actions_button_post_id_1"
-     type="button"
-   >
-     <span
-       aria-hidden="true"
--      class="_icon-button__icon-slot_13ryy_41"
-+      class="_icon-button__icon-slot_ft92e_41"
-     >
-       <div
-         aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/add_users_to_group_modal/__snapshots__/add_users_to_group_modal.test.tsx.snap` (modified, +4/-4)
-```diff
-@@ -36,12 +36,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
-             >
-               <button
-                 aria-label="Back"
--                class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 modal-header-back-button"
-+                class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 modal-header-back-button"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
-@@ -75,12 +75,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
-             </div>
-             <button
-               aria-label="Close"
--              class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 user-groups-modal__header-close"
-+              class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 user-groups-modal__header-close"
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/admin_console/access_control/__snapshots__/policies.test.tsx.snap` (modified, +8/-8)
-```diff
-@@ -348,13 +348,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-                   aria-expanded="false"
-                   aria-haspopup="true"
-                   aria-label="Policy actions menu"
--                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
-+                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
-                   id="policy-menu-policy1"
-                   type="button"
-                 >
-                   <span
-                     aria-hidden="true"
--                    class="_icon-button__icon-slot_13ryy_41"
-+                    class="_icon-button__icon-slot_ft92e_41"
-                   >
-                     <div
-                       aria-hidden="true"
-@@ -423,13 +423,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-                   aria-expanded="false"
-                   aria-haspopup="true"
-                   aria-label="Policy actions menu"
--                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
-+                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
-                   id="policy-menu-policy2"
-                   type="button"
-                 >
-                   <span
-                     aria-hidden="true"
--                    class="_icon-button__icon-slot_13ryy_41"
-+                    class="_icon-button__icon-slot_ft92e_41"
-                   >
-                     <div
-                       aria-hidden="true"
-@@ -472,13 +472,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-             </span>
-             <button
-               aria-label="Previous page"
--              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-               disabled=""
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
-@@ -505,13 +505,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-             </button>
-             <button
-               aria-label="Next page"
--              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-               disabled=""
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/admin_console/access_control/policy_details/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +12/-12)
-```diff
-@@ -287,13 +287,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -320,13 +320,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -645,13 +645,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -678,13 +678,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1003,13 +1003,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1036,13 +1036,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/__snapshots__/data_retention_settings.test.tsx.snap` (modified, +8/-8)
-```diff
-@@ -473,13 +473,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </span>
-                     <button
-                       aria-label="Previous page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -506,13 +506,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </button>
-                     <button
-                       aria-label="Next page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -844,13 +844,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </span>
-                     <button
-                       aria-label="Previous page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -877,13 +877,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </button>
-                     <button
-                       aria-label="Next page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +8/-8)
-```diff
-@@ -395,13 +395,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -428,13 +428,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1446,13 +1446,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1479,12 +1479,12 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-```
-
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/team_list/__snapshots__/team_list.test.tsx.snap` (modified, +8/-8)
-```diff
-@@ -129,13 +129,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -162,13 +162,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -842,13 +842,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -875,12 +875,12 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
+@@ -7,6 +7,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/mattermost/mattermost/server/public/model"
+ 	"github.com/mattermost/mattermost/server/v8/channels/testlib"
+@@ -60,3 +61,35 @@ func TestIsLeader(t *testing.T) {
+ 		assert.True(t, th.Service.IsLeader())
+ 	})
+ }
++
++// swapOnEncode runs while Publish encodes the event, which is after it has checked for a
++// cluster and before it sends to one.
++type swapOnEncode func()
++
++func (f swapOnEncode) MarshalJSON() ([]byte, error) {
++	f()
++	return []byte(`{}`), nil
++}
++
++// Publish must not crash if the cluster is unset after its nil check.
++func TestPublishWhileClusterIsUnset(t *testing.T) {
++	mainHelper.Parallel(t)
++
++	th := SetupWithStoreMock(t)
++
++	// The hubs encode every event on their own goroutines; detached, the only encode
++	// is the one inside Publish.
++	hubs := th.Service.hubs
++	th.Service.hubs = nil
++	t.Cleanup(func() { th.Service.hubs = hubs })
++
++	cluster := &testlib.FakeClusterInterface{}
++	th.Service.SetCluster(cluster)
++
++	event := model.NewWebSocketEvent(model.WebsocketEventConfigChanged, "", "", "", nil, "")
++	event.Add("config", swapOnEncode(func() { th.Service.SetCluster(nil) }))
++
++	require.NotPanics(t, func() { th.Service.Publish(event) })
++	require.Nil(t, th.Service.Cluster())
++	require.Len(t, cluster.GetMessages(), 1, "the swap must land between Publish's nil check and its send")
++}
 ```
 
 ---
 
-### Incident Patch 2: `388cddcb` (2026-11-03)
-**Commit Message**: fix(webapp): skip classification banner fetch while logged out (#39661)
+### Incident Patch 2: `dd5fe019` (2026-11-05)
+**Commit Message**: fix(e2e): wait for the select attribute menu to take clicks in user_settings.spec.ts (#39735)
 
-GlobalClassificationBanner is mounted for every route under the root
-switch, including the logged-out "/" route that redirects to /login.
-Its bootstrap effect fetched the access_control system property field
-and values, which require a session, so logged-out page loads got two
-401s whose rejections went unhandled. This made
-pre_auth_webapp_plugins.spec.ts flaky on master when the page errors
-landed after the test attached its pageerror listener.
-
-Skip the fetch until there is a current user, and rerun it once one
-logs in.
+The Compass Combobox popup ignores the pointer for two animation frames after
+aria-expanded flips, then scales in. The test measured the first option and hit-tested
+the padding point in that window, so elementFromPoint fell through to the modal.
+A trial click on the first option waits until it is stable and receives pointer events.
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 
-**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.test.tsx` (modified, +17/-1)
+**File**: `e2e-tests/playwright/specs/functional/channels/custom_profile_attributes/user_settings.spec.ts` (modified, +4/-0)
 ```diff
-@@ -71,12 +71,14 @@ type StateOptions = {
-     linkedField?: PropertyField | null;
-     systemValue?: PropertyValue<string> | null;
-     featureFlagEnabled?: boolean;
-+    currentUserId?: string;
- };
- 
- function makeState({
-     linkedField = null,
-     systemValue = null,
-     featureFlagEnabled = true,
-+    currentUserId = MOCK_USER_ID,
- }: StateOptions = {}): DeepPartial<GlobalState> {
-     const fieldsById: Record<string, PropertyField> = {};
-     if (linkedField) {
-@@ -93,7 +95,7 @@ function makeState({
-     return {
-         entities: {
-             users: {
--                currentUserId: MOCK_USER_ID,
-+                currentUserId,
-             },
-             general: {
-                 config: {
-@@ -280,4 +282,18 @@ describe('GlobalClassificationBanner', () => {
-             expect.anything(),
-         );
-     });
+@@ -301,6 +301,10 @@ test(
+         // # Click the menu padding just above its first option
+         const listboxId = `customProfileAttribute_${fieldId}-listbox`;
+         const firstOption = page.locator(`#${listboxId}`).getByRole('option').first();
 +
-+    test('does not fetch fields or values while logged out', () => {
-+        renderWithContext(
-+            <GlobalClassificationBanner position='top'/>,
-+            makeState({linkedField: makeLinkedField([DISPLAY_BANNER_TOP]), currentUserId: ''}),
-+        );
-+        renderWithContext(
-+            <GlobalClassificationBanner position='top'/>,
-+            makeState({linkedField: null, currentUserId: ''}),
-+        );
-+
-+        expect(Client4.getPropertyFields).not.toHaveBeenCalled();
-+        expect(Client4.getSystemPropertyValues).not.toHaveBeenCalled();
-+    });
- });
++        // The menu ignores the pointer for a couple of frames after aria-expanded flips, then
++        // scales in; a trial click waits until the option is stable and receives pointer events.
++        await firstOption.click({trial: true});
+         const optionBox = await firstOption.boundingBox();
+         expect(optionBox).not.toBeNull();
+         const point = {x: optionBox!.x + optionBox!.width / 2, y: optionBox!.y - 3};
 ```
 
-**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.tsx` (modified, +5/-2)
+---
+
+### Incident Patch 3: `09c19333` (2026-11-05)
+**Commit Message**: fix(e2e): repair custom_group_management.spec.ts on master (#39727)
+
+MM-T5598 waited for the last post to contain "added to the channel".
+/invite @group also replies with an ephemeral "@user is already in the
+channel." for the inviter, and the system post is created from a
+goroutine, so either post can arrive last. When the ephemeral landed last
+the wait timed out. Assert on the post that says "added to the channel"
+instead of on whichever post is last.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
+
+**File**: `e2e-tests/playwright/specs/functional/channels/custom_groups/custom_group_management.spec.ts` (modified, +4/-3)
 ```diff
-@@ -11,6 +11,7 @@ import {fetchPropertyFields, fetchSystemPropertyValues} from 'mattermost-redux/a
- import {ACCESS_CONTROL_PROPERTY_GROUP, DISPLAY_BANNER_BOTTOM, DISPLAY_BANNER_TOP} from 'mattermost-redux/constants/properties';
- import {getFeatureFlagValue} from 'mattermost-redux/selectors/entities/general';
- import {getPropertyValueForTargetField} from 'mattermost-redux/selectors/entities/properties';
-+import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
- import {getContrastingSimpleColor} from 'mattermost-redux/utils/theme_utils';
+@@ -74,9 +74,10 @@ test('MM-T5598 invites a custom group to a channel', {tag: '@channels'}, async (
+     await channelsPage.centerView.postCreate.writeMessage(`/invite @${groupName} `);
+     await channelsPage.centerView.postCreate.sendMessage();
  
- import {
-@@ -45,6 +46,7 @@ function selectLinkedSystemField(state: GlobalState): PropertyField | undefined
- export default function GlobalClassificationBanner({position}: Props) {
-     const dispatch = useDispatch();
-     const featureEnabled = useSelector((state: GlobalState) => getFeatureFlagValue(state, 'ClassificationMarkings') === 'true');
-+    const currentUserId = useSelector(getCurrentUserId);
-     const linkedField = useSelector(selectLinkedSystemField);
-     const systemValue = useSelector((state: GlobalState) => {
-         if (!linkedField) {
-@@ -59,8 +61,9 @@ export default function GlobalClassificationBanner({position}: Props) {
-     //
-     // The effect must re-run when linkedField arrives in the store so the values
-     // fetch can proceed (it depends on linkedField being present).
-+    // Both endpoints require a session, so logged out pages such as the login page skip the fetch.
-     useEffect(() => {
--        if (!featureEnabled) {
-+        if (!featureEnabled || !currentUserId) {
-             return;
-         }
-         if (!linkedField) {
-@@ -74,7 +77,7 @@ export default function GlobalClassificationBanner({position}: Props) {
-         if (linkedField && !systemValue) {
-             dispatch(fetchSystemPropertyValues(ACCESS_CONTROL_PROPERTY_GROUP));
-         }
--    }, [featureEnabled, linkedField, systemValue, dispatch]);
-+    }, [featureEnabled, currentUserId, linkedField, systemValue, dispatch]);
+-    // * Verify the group's member was added to the channel
+-    await channelsPage.centerView.waitUntilLastPostContains('added to the channel');
+-    await channelsPage.centerView.waitUntilLastPostContains(member.username);
++    // * Verify the group's member was added to the channel. The system message and the ephemeral
++    // * "already in the channel" reply for the inviter arrive in either order, so don't rely on the last post.
++    const addedPost = await channelsPage.centerView.getPostByText('added to the channel');
++    await expect(addedPost.container).toContainText(member.username);
+ });
  
-     // Display conditions are encoded in the linked field's attrs.actions.
-     const actions = (linkedField?.attrs?.actions as string[] | undefined) ?? [];
+ /**
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39670** (2026-11-03): Fix master CI: update snapshots for compass-ui alpha.25 class names (@marianunez)
-- **PR #39662** (closed): Feat/ec2 deploy (@sespinosab)
-- **PR #39661** (2026-11-03): fix(e2e): repair pre_auth_webapp_plugins.spec.ts on master (classification banner fetches while logged out) (@cursor[bot])
-- **PR #39659** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
-- **PR #39658** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
-- **PR #39654** (2026-11-03): Generate fallback property option IDs without md5 in migration 000223 (@davidkrauser)
+- **PR #39772** (closed): List Boards in the product menu where the product rail isn't shown (@asaadmahmood)
+- **PR #39768** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
+- **PR #39767** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
+- **PR #39766** (2026-11-06): Automated cherry pick of #39740 (@mattermost-build)
+- **PR #39765** (2026-11-06): Automated cherry pick of #39689 (@cursor[bot])
+- **PR #39764** (2026-11-06): Automated cherry pick of #39689 (@cursor[bot])
 
 ---
 
@@ -2262,34 +1808,30 @@ Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update snapshots for compass-ui alpha.25 class names (#39670)
+## X. [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is 
 
 **RULE**:
-When implementing operations in `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/channels/app/platform/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e1eec78`: Update snapshots for compass-ui alpha.25 class names (#39670). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a74187d`: [MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is unset mid-publish (#39412). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/app/platform/cluster.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                  class="_icon-button__icon-slot_ft92e_41"
-                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                  class="_icon-button__icon-slot_ft92e_41"
+	if cluster := ps.clusterIFace; cluster != nil {
+		cluster.SendClusterMessage(cm)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-                  class="_icon-button__icon-slot_13ryy_41"
-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-                  class="_icon-button__icon-slot_13ryy_41"
+	if ps.clusterIFace != nil {
+		ps.clusterIFace.SendClusterMessage(cm)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e1eec78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a74187d` are properly handled with clean fallback behavior.

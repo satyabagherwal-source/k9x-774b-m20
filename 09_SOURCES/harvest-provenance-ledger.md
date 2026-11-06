@@ -7875,3 +7875,5 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `37af1172` | Multi-dimensional audit evidence | 2026-11-06T13:52:08.182Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `33023211` | Multi-dimensional audit evidence | 2026-11-06T13:58:50.965Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `34d0b198` | Multi-dimensional audit evidence | 2026-11-06T13:58:52.513Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `60cf157a` | Multi-dimensional audit evidence | 2026-11-06T14:05:31.084Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-06T14:05:31.987Z |

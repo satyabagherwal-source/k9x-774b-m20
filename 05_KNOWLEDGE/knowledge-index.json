@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:58:52.430Z",
-  "total_verified_learnings": 1224,
+  "last_updated": "2026-11-06T14:05:31.935Z",
+  "total_verified_learnings": 1225,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -40378,11 +40378,16 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "4e1eec78",
-      "content_hash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
+      "source_version": "60cf157a",
+      "content_hash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[MM-70789] Fix nil-pointer panic in PlatformService.Publish when the cluster is",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1715,
           "title": "MM-70921: Fix rich text editor parity with posted messages (#38852)",
@@ -40434,7 +40439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:53:22.731Z",
+      "verified_at": "2026-11-06T14:05:31.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88336,14 +88341,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 986,
       "title": "Left-Padding Invariant for Batched Causal LM Inference",
-      "source_url": "https://huggingface.co/bigscience/bloom",
-      "source_version": "hf-bigscience-bloom",
+      "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
+      "source_version": "hf-webai-official-twil-8b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-05T06:00:30.821Z"
+      "verified_at": "2026-11-06T14:05:31.919Z"
     },
     "rule-987": {
       "learning_id": "rule-987",
@@ -154344,14 +154349,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5314,
       "title": "KV Cache Invariant for Autoregressive Generation",
-      "source_url": "https://huggingface.co/bigscience/bloom",
-      "source_version": "hf-bigscience-bloom",
+      "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
+      "source_version": "hf-webai-official-twil-8b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T14:42:51.283Z"
+      "verified_at": "2026-11-06T14:05:31.919Z"
     },
     "rule-5315": {
       "learning_id": "rule-5315",
@@ -184236,6 +184241,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-06T13:27:19.194Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-webai-official-twil-8b": {
+      "learning_id": "learn-huggingface-webai-official-twil-8b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webAI-Official/TwIL-8B",
+      "repository": "webAI-Official/TwIL-8B",
+      "slug": "hf-webai-official-twil-8b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
+      "source_version": "hf-webai-official-twil-8b",
+      "content_hash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
+      "dossier_path": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "BF16 vs. FP16 Precision Guard for Large Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 986,
+          "title": "Left-Padding Invariant for Batched Causal LM Inference",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5314,
+          "title": "KV Cache Invariant for Autoregressive Generation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T14:05:31.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

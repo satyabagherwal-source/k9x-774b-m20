@@ -20494,5 +20494,17 @@
     "downloads": 9212981,
     "qualityScore": 6350,
     "discoveredAt": "2026-11-06T13:24:51.075Z"
+  },
+  {
+    "name": "webAI-Official/TwIL-8B",
+    "fullName": "webAI-Official/TwIL-8B",
+    "url": "https://huggingface.co/webAI-Official/TwIL-8B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: webAI-Official/TwIL-8B (152 likes, 8209 downloads)",
+    "likes": 152,
+    "downloads": 8209,
+    "qualityScore": 3520,
+    "discoveredAt": "2026-11-06T14:03:04.850Z"
   }
 ]

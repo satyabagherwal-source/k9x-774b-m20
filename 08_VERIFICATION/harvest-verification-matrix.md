@@ -7866,3 +7866,5 @@
 | `CYCLE-20261106-A4TU` | `2026-11-06T13:52:08.178Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2c55a73e...`) |
 | `CYCLE-20261106-IRMB` | `2026-11-06T13:58:50.963Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`60003d2c...`) |
 | `CYCLE-20261106-ISTA` | `2026-11-06T13:58:52.510Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`343b70e6...`) |
+| `CYCLE-20261106-RCCP` | `2026-11-06T14:05:31.081Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`27692df7...`) |
+| `CYCLE-20261106-RD1S` | `2026-11-06T14:05:31.984Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 986, Rule null, Rule 5314` | Yes (`6e0045b4...`) |

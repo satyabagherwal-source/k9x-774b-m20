@@ -4898,3 +4898,7 @@ https://github.com/a2ui-project/a2ui
 https://github.com/milind-soni/OpenMausBot
 # [HUGGINGFACE-AI-MODELS] microsoft/Florence-2-base (6350 score) - Verified Hugging Face Model: microsoft/Florence-2-base (435 likes, 9212981 downl
 https://huggingface.co/microsoft/Florence-2-base
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T14:05:13.988Z] ---
+# [HUGGINGFACE-AI-MODELS] webAI-Official/TwIL-8B (3520 score) - Verified Hugging Face Model: webAI-Official/TwIL-8B (152 likes, 8209 downloads)
+https://huggingface.co/webAI-Official/TwIL-8B

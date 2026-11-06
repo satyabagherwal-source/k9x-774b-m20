@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T13:58:52.519Z",
+  "last_updated": "2026-11-06T14:05:32.002Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3636,14 +3636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mattermost-mattermost",
-      "content_hash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
-      "verified_at": "2026-11-04T00:53:22.827Z",
+      "content_hash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
+      "verified_at": "2026-11-06T14:05:31.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:53:22.827Z"
+      "last_updated": "2026-11-06T14:05:31.091Z"
     },
     "chaos-mesh/chaos-mesh": {
       "repository": "chaos-mesh/chaos-mesh",
@@ -18149,6 +18149,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-06T13:27:19.299Z"
+    },
+    "webAI-Official/TwIL-8B": {
+      "repository": "webAI-Official/TwIL-8B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-webai-official-twil-8b",
+      "content_hash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
+      "verified_at": "2026-11-06T14:05:32.001Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T14:05:32.001Z"
     }
   },
   "repos": {

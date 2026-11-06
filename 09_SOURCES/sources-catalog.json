@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "4e1eec78",
+    "sourceVersion": "60cf157a",
     "license": "NOASSERTION",
-    "contentHash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
-    "lastHarvestedAt": "2026-11-04T00:53:22.819Z",
+    "contentHash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
+    "lastHarvestedAt": "2026-11-06T14:05:31.084Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -12058,5 +12058,15 @@
     "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
     "lastHarvestedAt": "2026-11-06T13:27:19.277Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
+  },
+  "hf-webai-official-twil-8b": {
+    "repository": "webAI-Official/TwIL-8B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
+    "sourceVersion": "hf-webai-official-twil-8b",
+    "license": "Open-Source",
+    "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
+    "lastHarvestedAt": "2026-11-06T14:05:31.987Z",
+    "learningId": "learn-huggingface-webai-official-twil-8b"
   }
 }

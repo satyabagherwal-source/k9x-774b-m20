@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T13:58:52.516Z",
-  "total_cycles_completed": 7831,
-  "total_learnings_persisted": 7831,
-  "total_rules_promoted": 7476,
+  "last_updated": "2026-11-06T14:05:31.991Z",
+  "total_cycles_completed": 7833,
+  "total_learnings_persisted": 7833,
+  "total_rules_promoted": 7480,
   "history": [
-    {
-      "timestamp": "2026-11-05T12:36:40.836Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T12:43:28.358Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T12:50:51.872Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:05:31.088Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:05:31.991Z",
+      "repository": "webAI-Official/TwIL-8B",
+      "learningId": "learn-huggingface-webai-official-twil-8b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

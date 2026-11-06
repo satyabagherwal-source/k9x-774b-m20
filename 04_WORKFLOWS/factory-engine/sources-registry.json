@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T13:58:55.099Z",
-    "lastVerified": "2026-11-06T13:58:55.099Z",
+    "lastChecked": "2026-11-06T14:05:34.572Z",
+    "lastVerified": "2026-11-06T14:05:34.572Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -142,8 +142,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T13:34:53.436Z",
-    "lastVerified": "2026-11-06T13:34:53.436Z",
+    "lastChecked": "2026-11-06T14:05:34.449Z",
+    "lastVerified": "2026-11-06T14:05:34.449Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -525,8 +525,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T21:32:51.728Z",
-    "lastVerified": "2026-11-05T21:32:51.728Z",
+    "lastChecked": "2026-11-06T14:05:29.463Z",
+    "lastVerified": "2026-11-06T14:05:29.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1062,14 +1062,14 @@
     "officialUrl": "https://github.com/mattermost/mattermost",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T00:53:21.992Z",
-    "lastVerified": "2026-11-04T00:53:21.992Z",
+    "lastChecked": "2026-11-06T14:05:29.909Z",
+    "lastVerified": "2026-11-06T14:05:29.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "3a21f9f7bd26c2f3048d40d68ad1e5b8595a454993f67a6d79106bb7637482f5",
+    "contentHash": "27692df7c49b12b651d7eb9f1e94830196b25bc7e2dbffb662229bcf8aeb78e5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3299,9 +3299,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-05T09:44:35.571Z",
+    "lastChecked": "2026-11-06T14:05:26.923Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-05T09:44:35.571Z"
+    "lastVerified": "2026-11-06T14:05:26.923Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -7201,9 +7201,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-05T08:30:24.467Z",
+    "lastChecked": "2026-11-06T14:05:32.082Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-05T08:30:24.467Z"
+    "lastVerified": "2026-11-06T14:05:32.082Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -9988,9 +9988,9 @@
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
     "officialUrl": "https://github.com/ilamaaa/hreflang-checker",
-    "lastChecked": "2026-11-03T11:51:54.685Z",
+    "lastChecked": "2026-11-06T14:05:21.943Z",
     "revisionIdentifier": "f146b56172",
-    "lastVerified": "2026-11-03T11:51:54.685Z"
+    "lastVerified": "2026-11-06T14:05:21.943Z"
   },
   "touchlab-skie": {
     "name": "SKIE",
@@ -13908,6 +13908,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-florence-2-base",
     "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-webai-official-twil-8b": {
+    "name": "webAI-Official/TwIL-8B",
+    "officialUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-06T14:05:19.711Z",
+    "lastVerified": "2026-11-06T14:05:19.711Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-webai-official-twil-8b",
+    "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
