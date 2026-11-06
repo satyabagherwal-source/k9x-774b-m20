@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T23:20:05.329Z",
-    "lastVerified": "2026-11-06T23:20:05.329Z",
+    "lastChecked": "2026-11-06T23:27:19.801Z",
+    "lastVerified": "2026-11-06T23:27:19.801Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T22:56:05.801Z",
-    "lastVerified": "2026-11-06T22:56:05.801Z",
+    "lastChecked": "2026-11-06T23:27:18.358Z",
+    "lastVerified": "2026-11-06T23:27:18.358Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1356,8 +1356,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T15:27:26.820Z",
-    "lastVerified": "2026-11-06T15:27:26.820Z",
+    "lastChecked": "2026-11-06T23:27:13.235Z",
+    "lastVerified": "2026-11-06T23:27:13.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2261,9 +2261,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-05T13:27:10.157Z",
+    "lastChecked": "2026-11-06T23:27:15.775Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-05T13:27:10.157Z"
+    "lastVerified": "2026-11-06T23:27:15.775Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -3757,11 +3757,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "berty-berty": {
-    "name": "berty",
+    "name": "berty/berty",
     "officialUrl": "https://github.com/berty/berty",
-    "lastChecked": "2026-11-04T08:21:42.199Z",
-    "revisionIdentifier": "e4ea1d8b",
-    "lastVerified": "2026-11-04T08:21:42.199Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-06T23:27:12.862Z",
+    "lastVerified": "2026-11-06T23:27:12.862Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "peerdb-io-peerdb": {
     "name": "PeerDB-io/peerdb",
@@ -5422,9 +5432,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-05T09:20:20.616Z",
+    "lastChecked": "2026-11-06T23:27:03.499Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-05T09:20:20.616Z"
+    "lastVerified": "2026-11-06T23:27:03.499Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -5595,14 +5605,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T14:22:48.030Z",
-    "lastVerified": "2026-11-05T14:22:48.030Z",
+    "lastChecked": "2026-11-06T23:27:15.570Z",
+    "lastVerified": "2026-11-06T23:27:15.570Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
+    "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10712,12 +10722,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "scrapy-plugins-scrapy-playwright": {
-    "name": "scrapy-plugins/scrapy-playwright",
+    "name": "scrapy-playwright",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-playwright",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T19:37:38.523Z",
-    "lastVerified": "2026-11-03T19:37:38.523Z",
+    "lastChecked": "2026-11-06T23:27:05.742Z",
+    "lastVerified": "2026-11-06T23:27:05.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
@@ -10726,7 +10736,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3d513d6b"
   },
   "yattee-yattee": {
     "name": "yattee",

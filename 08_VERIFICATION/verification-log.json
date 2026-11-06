@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-G93D",
-    "timestamp": "2026-11-05T01:33:23.593Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-GFM2",
-    "timestamp": "2026-11-05T01:33:32.042Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "66061551b49cf6c4a5af999b4a15e1a6a1f4580dde898a4c4fd9decdaf29820b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-PT59",
     "timestamp": "2026-11-05T01:40:49.485Z",
     "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -7490,6 +7460,36 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-TQUR",
+    "timestamp": "2026-11-06T23:27:15.507Z",
+    "repository": "berty/berty",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-TS63",
+    "timestamp": "2026-11-06T23:27:17.211Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `f5be64bb`  
+> **Source Version**: `cbccb455`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:22:48.162Z  
+> **Timestamp**: 2026-11-06T23:27:15.820Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:22:48.030Z  
+> **Harvest Timestamp**: 2026-11-06T23:27:15.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12132 stars
+- **Stars / Engagement**: 12145 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22858** (2026-11-05): **[mesheryctl] Send perf apply durations in whole seconds and reject the rest**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22856  `splitTestDuration` split `--duration` at the first non-numeric character and sent the parts as the `t` and `dur` query params. The server parses `t` as an integer and treats any `dur` other than `h` or `m` as seconds, so `500ms` ran for 8m20s, `1h30m` ran for 1s and `1.5m` ran for 1m, with no warning.  The duration is now parsed with `time.ParseDuration` and always sent in seconds, so combined and fractional values work. A value that can't be expressed as a whole number of seconds of at least 1s fails with a clear error, before it is saved in a new profile or run. A number without a unit still means seconds, and the server is unchanged.  A saved profile with a sub-second duration now fails with that error instead of running for the wrong length.  - Replaced the `splitTestDuration` tests with table tests for valid and rejected values, and added a test that an invalid duration doesn't create a profile.  **[Signed commits](../CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Performance test durations are now consistently interpreted in seconds, including values with units, whitespace, or no unit.   * Invalid, negative, zero, or sub-second durations are rejected before a test is submitted or a profile is saved.   * B
+- **Issue #22945** (2026-11-06): **[mesheryctl] Remove unused errPatternMsg constant**
+  *Symptoms*: This PR fixes #22809  Removes the unused `errPatternMsg` constant in `design/error.go`. The same usage text is already inlined in `ErrDesignManifest`, `ErrDesignFileNotProvided` and `ErrDesignSourceType`, so nothing needs the constant.  Verified locally with golangci-lint v2.12.2 and the repo's `.github/.golangci.yml`: - Before the fix: `error.go:46:2: const errPatternMsg is unused (unused)` - After the fix: `0 issues.`  **Notes for Reviewers**  - This PR fixes #22809  **Signed commits** - [x] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Removed unused internal command usage text. This cleanup does not change available commands, command output, or runtime behavior. There are no new features or user-visible behavior changes in this update.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #22856** (2026-11-05): **[mesheryctl] `perf apply --duration` silently runs the wrong test length for values like `500ms`, `1h30m` and `1.5m`**
-  *Symptoms*: ### Current Behavior The `--duration` flag of `mesheryctl perf apply` points users to Go's duration format ("e.g. 10s, 5m, 2h. For more, see https://golang.org/pkg/time/#ParseDuration"), but only a whole number followed by exactly `s`, `m` or `h` works.  `splitTestDuration` splits the value at the first non-numeric character and sends the two parts as the `t` and `dur` query params. The server parses `t` as an integer (a failed parse becomes 1) and treats any `dur` other than `h` or `m` as seconds. Neither side rejects the value, so the test runs for a different length with no warning:  | `--duration` | `t` | `dur` | Test runs for | Expected | |---|---|---|---|---| | `500ms` | `500` | `ms` | 8m20s | 500ms | | `1h30m` | `1` | `h30m` | 1s | 1h30m | | `1.5m` | `1.5` | `m` | 1m | 1m30s |  ### Expected Behavior A valid Go duration runs for that duration. A value that can't be honored fails with a clear error before the test starts, rather than silently running for a different length.  ### Environment - mesheryctl built from master 
+- **Issue #22943** (2026-11-06): **[mesheryctl] perf result reads latency percentiles by position instead of by percentile**
+  *Symptoms*: ### Current Behavior `perf result` picks latency percentiles by position, using `Percentiles[0]` as P50, `[2]` as P90 and `[3]` as P99, and only when more than three are returned (`mesheryctl/internal/cli/root/perf/result.go`).  With `--options '{"Percentiles":[50,90,99]}'`, fortio returns three percentiles, so `--view` prints 0 for P50, P90 and P99. If the list has a different order, the values are labelled wrongly with no warning.  This came up in the review of #22939.  ### Desired Behavior `perf result` selects each latency by its `Percentile` value, so custom percentile lists show the right numbers.  ### Screenshots/Logs Found by reading the code. No failing test yet. I will add one with the fix.  ### Environment - Host OS: Linux (Ubuntu on WSL2) - Meshery Server Version: Not run - Meshery Client Version: master - Platform: Not deployed  ---  ### Contributor Resources  - ⌨️ [mesheryctl Contributing Guide](https://github.com/meshery/meshery/blob/master/mesheryctl/README.md) - [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4) - [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) - [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) - ⌨️ [Meshkit errors guide](https://docs.meshery.io/project/contributing/contributing-error) - 🙋🏾🙋🏼 Questions: [Discussion Forum](ht
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,430 +825,634 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a0dfa7a` (2026-11-02)
-**Commit Message**: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions
+### Incident Patch 1: `6be862f0` (2026-11-06)
+**Commit Message**: Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic
 
-- Verifies open fd count remains unchanged via /proc/self/fd on Linux runners during success and corrupted JSON test cases.
+[Server] Prevent nil pointer dereference on in-cluster context discovery
 
-- Decouples live template tests from volatile color and shape branding strings by asserting non-empty values.
-
-- Directly addresses review feedback from @pontusringblom.
-
-Signed-off-by: Aman Singh <[REDACTED_EMAIL]>
-
-**File**: `server/models/k8s_components_registration_test.go` (modified, +21/-9)
+**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +2/-2)
 ```diff
-@@ -39,8 +39,14 @@ func TestLoadK8sMeshModelMetadata_Success(t *testing.T) {
- 	err := os.WriteFile(filePath, []byte(validJSON), 0600)
- 	require.NoError(t, err, "failed to write test file")
- 
-+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
- 	metadata, err := loadK8sMeshModelMetadata(filePath)
- 	require.NoError(t, err, "loadK8sMeshModelMetadata should succeed for valid JSON")
-+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
-+	}
- 
- 	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
- 	require.NotNil(t, metadata.SecondaryColor)
-@@ -75,41 +81,47 @@ func TestLoadK8sMeshModelMetadata_CorruptedJSON(t *testing.T) {
- 	err := os.WriteFile(filePath, []byte(malformedJSON), 0600)
- 	require.NoError(t, err, "failed to write corrupt test file")
- 
-+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
- 	metadata, err := loadK8sMeshModelMetadata(filePath)
- 	assert.Error(t, err, "expected error for corrupted JSON content")
-+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
-+	}
- 	assert.Empty(t, metadata.PrimaryColor)
- 
--	// Verify deferred close executed despite JSON unmarshal error:
-+	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
- 	removeErr := os.Remove(filePath)
- 	assert.NoError(t, removeErr, "file descriptor should be closed even on unmarshal error")
+@@ -2826,8 +2826,8 @@
+         "severity": "Alert",
+         "long_description": "",
+         "short_description": "Nil context generated from in cluster config",
+-        "probable_cause": "",
+-        "suggested_remediation": ""
++        "probable_cause": "No contexts detected in the in-cluster kubeconfig.",
++        "suggested_remediation": "Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."
+       },
+       "1327": {
+         "name": "ErrFailToSaveContextCode",
+```
+
+**File**: `server/handlers/error.go` (modified, +7/-1)
+```diff
+@@ -263,8 +263,14 @@ var (
+ func ErrGenerateClusterContext(err error) error {
+ 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
  }
- 
- // TestLoadK8sMeshModelMetadata_LiveTemplate verifies that the actual project-relative
--// template file at k8sMeshModelPath can be read and parsed.
-+// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
- func TestLoadK8sMeshModelMetadata_LiveTemplate(t *testing.T) {
- 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
- 		t.Skipf("skipping live template test: %s not found from current directory", k8sMeshModelPath)
- 	}
- 
- 	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
- 	require.NoError(t, err, "failed to load live model_template.json")
--	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
-+	assert.NotEmpty(t, metadata.PrimaryColor)
- 	require.NotNil(t, metadata.SecondaryColor)
--	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
-+	assert.NotEmpty(t, *metadata.SecondaryColor)
- 	require.NotNil(t, metadata.Shape)
--	assert.Equal(t, "circle", string(*metadata.Shape))
-+	assert.NotEmpty(t, string(*metadata.Shape))
- }
- 
- // TestK8sMeshModelMetadata_PackageVar verifies that the package-level K8sMeshModelMetadata
--// is initialized by init() when the template file is available.
-+// is initialized by init() when the template file is available without coupling to volatile values.
- func TestK8sMeshModelMetadata_PackageVar(t *testing.T) {
- 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
- 		t.Skipf("skipping package var test: %s not found from current directory", k8sMeshModelPath)
- 	}
- 
--	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
-+	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
- 	require.NotNil(t, K8sMeshModelMetadata.SecondaryColor)
--	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
-+	assert.NotEmpty(t, *K8sMeshModelMetadata.SecondaryColor)
- 	require.NotNil(t, K8sMeshModelMetadata.Shape)
--	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
-+	assert.NotEmpty(t, string(*K8sMeshModelMetadata.Shape))
- }
-```
-
----
-
-### Incident Patch 2: `864c1b0b` (2026-11-05)
-**Commit Message**: Merge pull request #22850 from harshitsaxena214/fix/21259-stdin-prompt-errors
-
-[mesheryctl] Return an error instead of exiting on stdin read failures in prompts
-
-**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +4/-1)
-```diff
-@@ -224,7 +224,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
- 				userResponse = true
- 			} else {
- 				// ask user for confirmation
--				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
-+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
-+				if err != nil {
-+					return err
-+				}
- 			}
- 
- 			if userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/registry/purge.go` (modified, +4/-1)
-```diff
-@@ -128,7 +128,10 @@ mesheryctl registry purge --retain 2 -y
- 
- 		userResponse := utils.SilentFlag
- 		if !userResponse {
--			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
-+			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
-+			if err != nil {
-+				return err
-+			}
- 		}
- 		if !userResponse {
- 			utils.Log.Info("Purge aborted.")
-```
-
-**File**: `mesheryctl/internal/cli/root/system/channel.go` (modified, +4/-1)
-```diff
-@@ -234,7 +234,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
- 			userResponse = true
- 		} else {
- 			// ask user for confirmation
--			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/context.go` (modified, +4/-1)
-```diff
-@@ -153,7 +153,10 @@ mesheryctl system context delete [context name]
- 			if utils.SilentFlag {
- 				res = true
- 			} else {
--				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
-+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
-+				if err != nil {
-+					return err
-+				}
- 			}
- 
- 			if !res {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/delete.go` (modified, +4/-1)
-```diff
-@@ -96,7 +96,10 @@ func deleteContainers() error {
- 		if utils.SilentFlag {
- 			userResponse = true
- 		} else {
--			userResponse = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/provider.go` (modified, +4/-1)
-```diff
-@@ -284,7 +284,10 @@ mesheryctl system provider switch [provider]
- 			userResponse = true
- 		} else {
- 			// ask user for confirmation
--			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/reset.go` (modified, +5/-1)
-```diff
-@@ -52,12 +52,16 @@ mesheryctl system reset
- 
- // resets meshery config, skips conirmation if skipConfirmation is true
- func resetMesheryConfig() error {
-+	var err error
- 	userResponse := false
- 	if utils.SilentFlag {
- 		userResponse = true
- 	} else {
- 		// ask user for confirmation
--		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-+		userResponse, err = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-+		if err != nil {
-+			return err
-+		}
- 	}
- 	if !userResponse {
- 		utils.Log.Info("Reset aborted.")
-```
-
-**File**: `mesheryctl/internal/cli/root/system/restart.go` (modified, +4/-1)
-```diff
-@@ -127,7 +127,10 @@ func restart() error {
- 				userResponse = true
- 			} else {
- 				// ask user for confirmation
--				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-+				userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-+				if err != nil {
-+					return err
-+				}
- 			}
- 			if !userResponse {
- 				utils.Log.Info("Restart aborted.")
-```
-
----
-
-### Incident Patch 3: `f5be64bb` (2026-11-05)
-**Commit Message**: Merge pull request #22858 from Eternity0207/fix/perf-duration
-
-[mesheryctl] Send perf apply durations in whole seconds and reject the rest
-
-**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +26/-13)
-```diff
-@@ -23,6 +23,7 @@ import (
- 	"os"
- 	"strconv"
- 	"strings"
-+	"time"
- 
- 	"github.com/asaskevich/govalidator"
- 	"github.com/ghodss/yaml"
-@@ -59,23 +60,27 @@ var linkDocPerfApply = map[string]string{
- 	"caption": "Usage of mesheryctl perf apply",
- }
- 
--func splitTestDuration(duration string) (string, string) {
--	duration = strings.TrimSpace(duration)
--	if duration == "" {
--		return "30", "s"
-+// splitTestDuration converts a Go duration into the value and unit query
-+// params of a test run. The server only reads a whole number of hours, minutes
-+// or seconds, so the duration is always sent in seconds, and one that can't be
-+// expressed that way is rejected rather than run for a different length.
-+func splitTestDuration(duration string) (string, string, error) {
-+	normalized := strings.ToLower(strings.TrimSpace(duration))
-+	if normalized == "" {
-+		return "30", "s", nil
- 	}
- 
--	unitStart := strings.IndexFunc(duration, func(r rune) bool {
--		return (r < '0' || r > '9') && r != '.'
--	})
--	if unitStart == -1 {
--		return duration, "s"
-+	// A number without a unit means seconds.
-+	if _, err := strconv.Atoi(normalized); err == nil {
-+		normalized += "s"
- 	}
--	if unitStart == 0 {
--		return "30", strings.ToLower(strings.TrimSpace(duration))
 +
-+	parsed, err := time.ParseDuration(normalized)
-+	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
-+		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
- 	}
- 
--	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
-+	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
- }
- 
- var applyCmd = &cobra.Command{
-@@ -315,7 +320,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
- 		q.Add("qps", qps)
- 		q.Add("reqBody", loadTestBody)
- 
--		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
-+		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
-+		if err != nil {
-+			return err
-+		}
- 		q.Add("dur", testDurationUnit)
- 		q.Add("t", testDurationValue)
- 
-@@ -391,6 +399,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
- 		testDuration = "30s"
- 	}
- 
-+	// Reject an invalid duration before it is saved in the profile.
-+	if _, _, err := splitTestDuration(testDuration); err != nil {
-+		return "", "", err
++// ErrNilClusterContext occurs when no Kubernetes contexts are detected from in-cluster configuration.
+ func ErrNilClusterContext(err error) error {
+-	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
++	errStr := ""
++	if err != nil {
++		errStr = err.Error()
 +	}
-+
- 	if loadGenerator == "" {
- 		loadGenerator = "fortio"
- 	}
++	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{errStr}, []string{"No contexts detected in the in-cluster kubeconfig."}, []string{"Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."})
+ }
+ func ErrWriteResponse(err error) error {
+ 	return errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{err.Error()}, []string{}, []string{})
 ```
 
-**File**: `mesheryctl/internal/cli/root/perf/apply_test.go` (modified, +59/-24)
+**File**: `server/handlers/k8sconfig_handler.go` (modified, +6/-3)
 ```diff
-@@ -166,35 +166,43 @@ import (
- 	"github.com/spf13/viper"
+@@ -531,6 +531,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
+ 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
+ }
+ 
++// DiscoverK8SContextFromKubeConfig attempts to discover Kubernetes contexts from the filesystem
++// kubeconfig, falling back to in-cluster configuration discovery when unavailable.
+ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
+ 	var contexts []*models.K8sContext
+ 	// userUUID := uuid.FromStringOrNil(userID)
+@@ -563,9 +565,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string,
+ 		}
+ 		if cc == nil {
+ 			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
+-
+-			h.log.Warn(ErrNilClusterContext(err))
+-			return contexts, err
++			nilContextErr := ErrNilClusterContext(nil)
++			metadata["error"] = nilContextErr
++			h.log.Warn(nilContextErr)
++			return contexts, nilContextErr
+ 		}
+ 		cc.DeploymentType = "in_cluster"
+ 		conn, err := prov.SaveK8sContext(token, *cc, nil)
+```
+
+**File**: `server/handlers/k8sconfig_handler_test.go` (modified, +46/-0)
+```diff
+@@ -2,7 +2,10 @@ package handlers
+ 
+ import (
+ 	"errors"
++	"strings"
+ 	"testing"
++
++	meshkiterrors "github.com/meshery/meshkit/errors"
  )
  
--func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
--	value, unit := splitTestDuration("")
--
--	if value != "30" || unit != "s" {
--		t.Fatalf("expected empty duration to default to 30s, got value=%q unit=%q", value, unit)
--	}
--}
--
--func TestSplitTestDurationTrimsDuration(t *testing.T) {
--	value, unit := splitTestDuration(" 5m ")
--
--	if value != "5" || unit != "m" {
--		t.Fatalf("expected trimmed duration to split into 5 and m, got value=%q unit=%q", value, unit)
-+func TestSplitTestDuration(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		duration string
-+		value    string
+ // TestK8sEventMetadataHasError guards the decision that raises a Kubernetes
+@@ -70,6 +73,16 @@ func TestK8sEventMetadataHasError(t *testing.T) {
+ 			},
+ 			want: true,
+ 		},
++		{
++			name: "in-cluster nil context error reports an error",
++			eventMetadata: map[string]interface{}{
++				"in-cluster": map[string]interface{}{
++					"description": "No contexts detected in the in-cluster kubeconfig.",
++					"error":       ErrNilClusterContext(nil),
++				},
++			},
++			want: true,
++		},
+ 		{
+ 			name: "non-map entries are ignored",
+ 			eventMetadata: map[string]interface{}{
+@@ -87,3 +100,36 @@ func TestK8sEventMetadataHasError(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestErrNilClusterContext verifies that ErrNilClusterContext handles a nil error gracefully
++// without panicking on err.Error(), and includes appropriate error code.
++func TestErrNilClusterContext(t *testing.T) {
++	testCases := []struct {
++		name string
++		err  error
 +	}{
-+		{name: "empty duration defaults to 30s", duration: "", value: "30"},
-+		{name: "number without a unit means seconds", duration: "30", value: "30"},
-+		{name: "seconds", duration: "10s", value: "10"},
-+		{name: "surrounding spaces are trimmed", duration: " 5m ", value: "300"},
-+		{name: "hours", duration: "2h", value: "7200"},
-+		{name: "uppercase unit", duration: "5M", value: "300"},
-+		{name: "combined units", duration: "1h30m", value: "5400"},
-+		{name: "fractional value that is a whole number of seconds", duration: "1.5m", value: "90"},
-+		{name: "milliseconds that are a whole number of seconds", duration: "2000ms", value: "2"},
- 	}
--}
- 
--func TestSplitTestDurationDefaultsUnitlessDuration(t *testing.T) {
--	value, unit := splitTestDuration("30")
--
--	if value != "30" || unit != "s" {
--		t.Fatalf("expected unitless duration to default to seconds, got value=%q unit=%q", value, unit)
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			value, unit, err := splitTestDuration(tt.duration)
-+			if err != nil {
-+				t.Fatalf("unexpected error: %v", err)
-+			}
-+			if value != tt.value || unit != "s" {
-+				t.Fatalf("expected %q to be sent as %ss, got value=%q unit=%q", tt.duration, tt.value, value, unit)
-+			}
-+		})
- 	}
- }
- 
--func TestSplitTestDurationSupportsMultiCharacterUnit(t *testing.T) {
--	value, unit := splitTestDuration("500ms")
--
--	if value != "500" || unit != "ms" {
--		t.Fatalf("expected multi-character unit to be preserved, got value=%q unit=%q", value, unit)
-+func TestSplitTestDurationRejectsInvalidDuration(t *testing.T) {
-+	for _, duration := range []string{"500ms", "1500ms", "1.5", "0s", "0", "-5s", "abc", "s", "5x"} {
-+		t.Run(duration, func(t *testing.T) {
-+			if value, unit, err := splitTestDuration(duration); err == nil {
-+				t.Fatalf("expected %q to be rejected, got value=%q unit=%q", duration, value, unit)
-+			}
-+		})
- 	}
- }
- 
-@@ -290,6 +298,33 @@ func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
- 	}
- }
- 
-+func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	defer utils.StopMockery(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+
-+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-+	if err != nil {
-+		t.Fatalf("failed to get mesheryctl config: %v", err)
++		{
++			name: "nil error",
++			err:  nil,
++		},
++		{
++			name: "non-nil error",
++			err:  errors.New("in-cluster context not found"),
++		},
 +	}
 +
-+	profileURL := testContext.BaseURL + "/api/performance/profiles"
-+	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
-+
-+	resetVariables()
-+	defer resetVariables()
-+	profileName = "test-profile"
-+	testURL = "https://meshery.io"
-+	testDuration = "500ms"
-+
-+	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
-+		t.Fatal("expected an invalid duration to be rejected")
-+	}
-+	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
-+		t.Errorf("expected no profile to be created, got %d request(s)", calls)
++	for _, tc := range testCases {
++		t.Run(tc.name, func(t *testing.T) {
++			res := ErrNilClusterContext(tc.err)
++			if res == nil {
++				t.Fatal("expected non-nil error, got nil")
++			}
++			if code := meshkiterrors.GetCode(res); code != ErrNilClusterContextCode {
++				t.Fatalf("expected error code %s, got %s", ErrNilClusterContextCode, code)
++			}
++			if tc.err != nil && !strings.Contains(res.Error(), tc.err.Error()) {
++				t.Fatalf("expected error to contain %q, got %q", tc.err.Error(), res.Error())
++			}
++		})
 +	}
 +}
+```
+
+---
+
+### Incident Patch 2: `e22ac81d` (2026-11-06)
+**Commit Message**: Merge branch 'master' into fix/nil-cluster-context-panic
+
+**File**: `mesheryctl/pkg/utils/helpers.go` (modified, +7/-5)
+```diff
+@@ -384,10 +384,11 @@ func BackupConfigFile(cfgFile string) {
+ 	if err != nil {
+ 		Log.Fatal(err)
+ 	}
+-	_, err = os.Create(cfgFile)
++	f, err := os.Create(cfgFile)
+ 	if err != nil {
+ 		Log.Fatal(err)
+ 	}
++	_ = f.Close()
+ }
+ 
+ const (
+@@ -456,6 +457,9 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	defer func() {
++		_ = file.Close()
++	}()
+ 	fileContents, err := io.ReadAll(file)
+ 	if err != nil {
+ 		return nil, err
+@@ -464,9 +468,6 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	if err = file.Close(); err != nil {
+-		return nil, err
+-	}
+ 
+ 	body := new(bytes.Buffer)
+ 	writer := multipart.NewWriter(body)
+@@ -577,10 +578,11 @@ func AskForConfirmation(s string) (bool, error) {
+ // CreateConfigFile creates config file in Meshery Folder
+ func CreateConfigFile() error {
+ 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+-		_, err := os.Create(DefaultConfigPath)
++		f, err := os.Create(DefaultConfigPath)
+ 		if err != nil {
+ 			return err
+ 		}
++		_ = f.Close()
+ 	}
+ 	return nil
+ }
+```
+
+**File**: `mesheryctl/pkg/utils/helpers_test.go` (modified, +38/-0)
+```diff
+@@ -867,3 +867,41 @@ func TestTrimFileExtension(t *testing.T) {
+ 		})
+ 	}
+ }
 +
- func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
- 	testContext := utils.InitTestEnvironment(t)
- 	defer utils.StopMockery(t)
++func TestUploadFileWithParams(t *testing.T) {
++	origToken := TokenFlag
++	defer func() { TokenFlag = origToken }()
++	TokenFlag = GetToken(t)
++
++	tmpDir := t.TempDir()
++	sampleFile := filepath.Join(tmpDir, "sample.txt")
++	err := os.WriteFile(sampleFile, []byte("sample content for upload"), 0o600)
++	if err != nil {
++		t.Fatalf("failed to create temp file: %v", err)
++	}
++
++	params := map[string]string{
++		"token": "valid-token",
++		"org":   "meshery",
++	}
++
++	req, err := UploadFileWithParams("http://localhost:9081/api/upload", params, "file", sampleFile)
++	if err != nil {
++		t.Fatalf("UploadFileWithParams returned unexpected error: %v", err)
++	}
++	if req == nil {
++		t.Fatal("UploadFileWithParams returned nil request")
++	}
++	if req.Method != http.MethodPost {
++		t.Errorf("expected POST method, got %s", req.Method)
++	}
++	if !strings.HasPrefix(req.Header.Get("Content-Type"), "multipart/form-data") {
++		t.Errorf("expected multipart/form-data content type, got %s", req.Header.Get("Content-Type"))
++	}
++
++	nonExistent := filepath.Join(tmpDir, "does-not-exist.txt")
++	_, err = UploadFileWithParams("http://localhost:9081/api/upload", params, "file", nonExistent)
++	if err == nil {
++		t.Error("expected error for non-existent file, got nil")
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `fa3473af` (2026-11-06)
+**Commit Message**: Merge pull request #22930 from mayank609/fix/filters-error-notifications
+
+[UI] Show error notifications when filter actions fail
+
+**File**: `ui/components/filters/Filters.constants.ts` (modified, +4/-0)
+```diff
+@@ -19,6 +19,10 @@ export const ACTION_TYPES = {
+     name: 'UPLOAD_FILTERS',
+     error_msg: 'Failed to upload filter file',
+   },
++  UPDATE_FILTERS: {
++    name: 'UPDATE_FILTERS',
++    error_msg: 'Failed to update filter file',
++  },
+   CLONE_FILTERS: {
+     name: 'CLONE_FILTER',
+     error_msg: 'Failed to clone filter file',
+```
+
+**File**: `ui/components/filters/Filters.fileActions.test.tsx` (modified, +163/-0)
+```diff
+@@ -46,6 +46,8 @@ import {
+   createHandlePublish,
+   createHandleClone,
+   createDeleteFilter,
++  createErrorHandler,
++  createFetchSchemaData,
+ } from './Filters.fileActions';
+ 
+ const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+@@ -89,6 +91,29 @@ describe('createHandleSubmit', () => {
+     });
+   });
+ 
++  it('reports a failed delete through the error handler', async () => {
++    const errorHandler = vi.fn();
++    const handleError = vi.fn(() => errorHandler);
++    const notify = vi.fn();
++
++    const handleSubmit = createHandleSubmit({
++      notify,
++      handleError,
++      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
++      resetSelectedRowData: vi.fn(() => vi.fn()),
++      deleteFilterFile: vi.fn(() => reject()),
++      uploadFilterFile: vi.fn(),
++      updateFilterFile: vi.fn(),
++    });
++
++    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
++    await flush();
++
++    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
++    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
++    expect(notify).not.toHaveBeenCalled();
++  });
++
+   it('aborts when modal cancels the delete', async () => {
+     const deleteFilterFile = vi.fn(() => wrap());
+     const showmodal = vi.fn().mockResolvedValueOnce('Cancel');
+@@ -165,6 +190,27 @@ describe('createHandleSubmit', () => {
+     });
+   });
+ 
++  it('reports a failed UPDATE as an update error, not an upload error', async () => {
++    const errorHandler = vi.fn();
++    const handleError = vi.fn(() => errorHandler);
++
++    const handleSubmit = createHandleSubmit({
++      notify: vi.fn(),
++      handleError,
++      showmodal: vi.fn(),
++      resetSelectedRowData: vi.fn(() => vi.fn()),
++      deleteFilterFile: vi.fn(),
++      uploadFilterFile: vi.fn(),
++      updateFilterFile: vi.fn(() => reject()),
++    });
++
++    await handleSubmit({ data: 'cfg', name: 'n', id: 'i-1', type: 'UPDATE' });
++    await flush();
++
++    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPDATE_FILTERS' }));
++    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
++  });
++
+   it('handles an UPDATE with the filter id, name and catalogData', async () => {
+     const updateFilterFile = vi.fn(() => wrap());
+     const handleSubmit = createHandleSubmit({
+@@ -321,6 +367,7 @@ describe('createHandleImportFilter', () => {
+     await flush();
+ 
+     expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPLOAD_FILTERS' }));
++    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+   });
+ });
+ 
+@@ -443,7 +490,37 @@ describe('createHandleClone', () => {
+   });
+ });
+ 
++describe('createHandleClone errors', () => {
++  it('reports a failed clone through the error handler', async () => {
++    const errorHandler = vi.fn();
++    const handleError = vi.fn(() => errorHandler);
++    const clone = createHandleClone({
++      cloneFilter: vi.fn(() => reject()),
++      notify: vi.fn(),
++      handleError,
++    });
++    clone('f-1', 'flt');
++    await flush();
++    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLONE_FILTER' }));
++    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
++  });
++});
++
+ describe('createDeleteFilter', () => {
++  it('reports a failed delete through the error handler', async () => {
++    const errorHandler = vi.fn();
++    const handleError = vi.fn(() => errorHandler);
++    const del = createDeleteFilter({
++      deleteFilterFile: vi.fn(() => reject()),
++      notify: vi.fn(),
++      handleError,
++    });
++    del('f-1');
++    await flush();
++    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
++    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
++  });
++
+   it('deletes a filter and notifies on success', async () => {
+     const deleteFilterFile = vi.fn(() => wrap());
+     const notify = vi.fn();
+@@ -461,3 +538,89 @@ describe('createDeleteFilter', () => {
+     });
+   });
+ });
++
++describe('createFetchSchemaData', () => {
++  it('passes the fetched models to onModels', async () => {
++    const models = [{ displayName: 'istio' }];
++    const onModels = vi.fn();
++    const handleError = vi.fn(() => vi.fn());
++    const fetchSchemaData = createFetchSchemaData({
++      getMeshModels: vi.fn().mockResolvedValue({ models }),
++      onModels,
++      handleError,
++    });
++
++    await fetchSchemaData();
++
++    expect(onModels).toHaveBeenCalledWith(models);
++    expect(handleError).not.toHaveBeenCalled();
++  });
++
++  it('reports a failed model fetch through the error handler', async () => {
++    const errorHandler = vi.fn();
++    const handleError = vi.fn(() => errorHandler);
++    const onModels = vi.fn();
++    const fetchSchemaData = createFetchSchemaData({
++      getMeshModels: vi.fn().mockRejectedValue(new Erro
+```
+
+**File**: `ui/components/filters/Filters.fileActions.ts` (modified, +61/-17)
+```diff
+@@ -6,11 +6,32 @@ import { getUnit8ArrayDecodedFile } from '../../utils/utils';
+ import { trueRandom } from '../../lib/trueRandom';
+ import downloadContent from '../../utils/fileDownloader';
+ import { updateProgress } from '@/store/slices/mesheryUi';
++import { formatApiError } from '../../utils/helpers/meshkitError';
+ import { ACTION_TYPES } from './Filters.constants';
+ 
+ type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
+ 
+-type ErrorHandler = (_action: { error_msg: string }) => (_error: Error | string) => void;
++type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => void;
++
++// Curried: call sites pass the action, then the raw error -
++// `handleError(ACTION_TYPES.X)(error)`. The error is usually an RTK Query
++// rejection object, so it goes through formatApiError instead of being
++// stringified (which would show "[object Object]").
++export function createErrorHandler({ notify }: { notify: Notify }): ErrorHandler {
++  return (action) => (error) => {
++    updateProgress({ showProgress: false });
++    // formatApiError can throw on a malformed MeshKit envelope (e.g. a
++    // non-array suggestedRemediation), which would skip the notification
++    // and leave the rejection unhandled. Fall back to the action message.
++    let message: string;
++    try {
++      ({ message } = formatApiError(error, action.error_msg));
++    } catch {
++      message = action.error_msg;
++    }
++    notify({ message, event_type: EVENT_TYPES.ERROR });
++  };
++}
+ 
+ type SubmitArgs = {
+   data: any;
+@@ -59,9 +80,9 @@ export function createHandleSubmit({
+           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
+           resetSelectedRowData()();
+         })
+-        .catch(() => {
++        .catch((error) => {
+           updateProgress({ showProgress: false });
+-          handleError(ACTION_TYPES.DELETE_FILTERS);
++          handleError(ACTION_TYPES.DELETE_FILTERS)(error);
+         });
+     }
+ 
+@@ -83,9 +104,9 @@ export function createHandleSubmit({
+         .then(() => {
+           updateProgress({ showProgress: false });
+         })
+-        .catch(() => {
++        .catch((error) => {
+           updateProgress({ showProgress: false });
+-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
++          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
+         });
+     }
+ 
+@@ -101,9 +122,9 @@ export function createHandleSubmit({
+         .then(() => {
+           updateProgress({ showProgress: false });
+         })
+-        .catch(() => {
++        .catch((error) => {
+           updateProgress({ showProgress: false });
+-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
++          handleError(ACTION_TYPES.UPDATE_FILTERS)(error);
+         });
+     }
+   };
+@@ -212,9 +233,9 @@ export function createHandleImportFilter({
+         });
+         getFilters();
+       })
+-      .catch(() => {
++      .catch((error) => {
+         updateProgress({ showProgress: false });
+-        handleError(ACTION_TYPES.UPLOAD_FILTERS);
++        handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
+       });
+   };
+ }
+@@ -254,9 +275,9 @@ export function createHandleUnpublishModal({
+                 event_type: EVENT_TYPES.SUCCESS,
+               });
+             })
+-            .catch(() => {
++            .catch((error) => {
+               updateProgress({ showProgress: false });
+-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
++              handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
+             });
+         }
+       };
+@@ -314,9 +335,9 @@ export function createHandlePublish({
+           });
+         }
+       })
+-      .catch(() => {
++      .catch((error) => {
+         updateProgress({ showProgress: false });
+-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
++        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
+       });
+   };
+ }
+@@ -339,9 +360,9 @@ export function createHandleClone({ cloneFilter, notify, handleError }: CreateHa
+         updateProgress({ showProgress: false });
+         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
+       })
+-      .catch(() => {
++      .catch((error) => {
+         updateProgress({ showProgress: false });
+-        handleError(ACTION_TYPES.CLONE_FILTERS);
++        handleError(ACTION_TYPES.CLONE_FILTERS)(error);
+       });
+   };
+ }
+@@ -364,9 +385,32 @@ export function createDeleteFilter({
+         updateProgress({ showProgress: false });
+         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
+       })
+-      .catch(() => {
++      .catch((error) => {
+         updateProgress({ showProgress: false });
+-        handleError(ACTION_TYPES.DELETE_FILTERS);
++        handleError(ACTION_TYPES.DELETE_FILTERS)(error);
+       });
+   };
+ }
++
++type CreateFetchSchemaDataArgs = {
++  getMeshModels: () => Promise<{ models?: any[] }>;
++  onModels: (_models: any[] | undefined) => void;
++  handleError: ErrorHandler;
++};
++
++// Loads the mesh models used to build the publish schema
+```
+
+**File**: `ui/components/filters/Filters.tsx` (modified, +10/-18)
+```diff
+@@ -13,7 +13,6 @@ import { modifyRJSFSchema } from '../../utils/utils';
+ import { getMeshModels } from '../../api/meshmodel';
+ import _ from 'lodash';
+ import { useNotification } from '../../utils/hooks/useNotification';
+-import { EVENT_TYPES } from '../../lib/event-types';
+ import {
+   CustomColumnVisibilityControl,
+   ResponsiveDataTable,
+@@ -44,16 +43,17 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+ import { isLocalProvider } from '@/utils/provider';
+ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+ import { useSelector } from 'react-redux';
+-import { updateProgress } from '@/store/slices/mesheryUi';
+ import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
+ import YAMLEditor from './YAMLEditor';
+ import ImportModal from './ImportModal';
+ import PublishModal from './PublishModal';
+-import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
++import { COLUMN_VIEWS } from './Filters.constants';
+ import { buildFiltersColumns } from './Filters.columns';
+ import { buildFiltersTableOptions } from './Filters.tableOptions';
+ import {
+   createDeleteFilter,
++  createErrorHandler,
++  createFetchSchemaData,
+   createHandleClone,
+   createHandleDownload,
+   createHandleImportFilter,
+@@ -157,14 +157,7 @@ function MesheryFilters() {
+   const [updateFilterFile] = useUpdateFilterFileMutation();
+   const [uploadFilterFile] = useUploadFilterFileMutation();
+ 
+-  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
+-    updateProgress({ showProgress: false });
+-    notify({
+-      message: `${action.error_msg}: ${error}`,
+-      event_type: EVENT_TYPES.ERROR,
+-      details: error.toString(),
+-    });
+-  };
++  const handleError = createErrorHandler({ notify });
+ 
+   const handleSetFilters = (filters: any[] | undefined) => {
+     if (filters != undefined) {
+@@ -301,9 +294,10 @@ function MesheryFilters() {
+    * publish filter capability and setting the canPublishFilter state accordingly
+    */
+   useEffect(() => {
+-    const fetchSchemaData = async () => {
+-      try {
+-        const { models } = await getMeshModels();
++    const fetchSchemaData = createFetchSchemaData({
++      getMeshModels,
++      handleError,
++      onModels: (models) => {
+         const modelNames = _.uniq(models?.map((model) => model.displayName));
+         modelNames.sort();
+ 
+@@ -315,10 +309,8 @@ function MesheryFilters() {
+         );
+         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+         setMeshModels(models);
+-      } catch {
+-        handleError(ACTION_TYPES.SCHEMA_FETCH);
+-      }
+-    };
++      },
++    });
+ 
+     if (capabilitiesData) {
+       // `capabilitiesData.capabilities` is the provider-declared feature list.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22858** (2026-11-05): [mesheryctl] Send perf apply durations in whole seconds and reject the rest (@Eternity0207)
-- **PR #22855** (2026-11-05): [mesheryctl] Accept any case of --output-format in the output formatter factories (@Eternity0207)
-- **PR #22852** (closed): [UI] Type ArrayFieldTemplate props and fix fixed-array detection (@dropps07)
-- **PR #22850** (2026-11-05): [mesheryctl] Return an error instead of exiting on stdin read failures in prompts (@harshitsaxena214)
-- **PR #22846** (closed): [UI] Forward options through initiateQuery (@krishbuilds01)
-- **PR #22839** (2026-11-04): [Server] Close each adapter client per host in Provision (@harshitsaxena214)
+- **PR #22945** (2026-11-06): [mesheryctl] Remove unused errPatternMsg constant (@ayanasarkar)
+- **PR #22939** (2026-11-06): [mesheryctl] Print perf result latencies in milliseconds (@BarbieRajput)
+- **PR #22938** (2026-11-06): [mesheryctl] Send saved headers, cookies and content type in perf apply (@BarbieRajput)
+- **PR #22930** (2026-11-06): [UI] Show error notifications when filter actions fail (@mayank609)
+- **PR #22927** (2026-11-06): [mesheryctl] Restore the adapter event stream and fail fast without it (@Eternity0207)
+- **PR #22926** (2026-11-06): [mesheryctl] Propagate errors and handle non-200 responses in registry update and publish (@aarushdubey)
 
 ---
 
@@ -1268,55 +1472,30 @@ Signed-off-by: Aman Singh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template
+## X. Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic
 
 **RULE**:
-When implementing operations in `server/models/k8s_components_registration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/data/errorref/meshery-server_errors_export.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a0dfa7a`: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6be862f0`: Merge pull request #22823 from nishant-devv/fix/nil-cluster-context-panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/models/k8s_components_registration_test.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorref/meshery-server_errors_export.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
-	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
-	}
-	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
-	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
-	}
-	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
-// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
-	assert.NotEmpty(t, metadata.PrimaryColor)
-	assert.NotEmpty(t, *metadata.SecondaryColor)
-	assert.NotEmpty(t, string(*metadata.Shape))
-// is initialized by init() when the template file is available without coupling to volatile values.
-	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
-	assert.NotEmpty(t, *K8
+        "probable_cause": "No contexts detected in the in-cluster kubeconfig.",
+        "suggested_remediation": "Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-	// Verify deferred close executed despite JSON unmarshal error:
-// template file at k8sMeshModelPath can be read and parsed.
-	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
-	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
-	assert.Equal(t, "circle", string(*metadata.Shape))
-// is initialized by init() when the template file is available.
-	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
-	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
-	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
+        "probable_cause": "",
+        "suggested_remediation": ""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a0dfa7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6be862f0` are properly handled with clean fallback behavior.

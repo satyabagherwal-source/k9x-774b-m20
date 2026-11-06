@@ -4303,10 +4303,10 @@
     "repository": "berty/berty",
     "platform": "github",
     "sourceUrl": "https://github.com/berty/berty",
-    "sourceVersion": "e4ea1d8b",
+    "sourceVersion": "de4ae482",
     "license": "NOASSERTION",
-    "contentHash": "9db3cfcb0b2b3ddc0b5124cfdfe6210f60728f2874756b4b89d4bc0f41713ea5",
-    "lastHarvestedAt": "2026-10-19T01:01:00.919Z",
+    "contentHash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
+    "lastHarvestedAt": "2026-11-06T23:27:15.511Z",
     "learningId": "learn-github-berty-berty"
   },
   "agent-field-agentfield": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "f5be64bb",
+    "sourceVersion": "cbccb455",
     "license": "Apache-2.0",
-    "contentHash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
-    "lastHarvestedAt": "2026-11-05T14:22:48.929Z",
+    "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
+    "lastHarvestedAt": "2026-11-06T23:27:17.215Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

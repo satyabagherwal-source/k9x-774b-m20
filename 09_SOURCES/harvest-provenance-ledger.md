@@ -7963,3 +7963,5 @@ Every entry in this ledger must capture:
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `d03290ee` | Multi-dimensional audit evidence | 2026-11-06T23:19:57.994Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `49808ff5` | Multi-dimensional audit evidence | 2026-11-06T23:20:00.235Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `e2501b0d` | Multi-dimensional audit evidence | 2026-11-06T23:20:02.704Z |
+| `learn-github-berty-berty` | `https://github.com/berty/berty` | `de4ae482` | Multi-dimensional audit evidence | 2026-11-06T23:27:15.511Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `cbccb455` | Multi-dimensional audit evidence | 2026-11-06T23:27:17.215Z |

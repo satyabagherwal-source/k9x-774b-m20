@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T23:20:02.719Z",
-  "total_cycles_completed": 7919,
-  "total_learnings_persisted": 7919,
-  "total_rules_promoted": 7567,
+  "last_updated": "2026-11-06T23:27:17.221Z",
+  "total_cycles_completed": 7921,
+  "total_learnings_persisted": 7921,
+  "total_rules_promoted": 7569,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:15:18.232Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:15:25.072Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T18:15:31.627Z",
       "repository": "risingwavelabs/risingwave",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T23:20:02.719Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T23:27:15.517Z",
+      "repository": "berty/berty",
+      "learningId": "learn-github-berty-berty",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T23:27:17.221Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

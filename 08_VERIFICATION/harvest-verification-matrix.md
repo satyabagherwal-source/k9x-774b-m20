@@ -7954,3 +7954,5 @@
 | `CYCLE-20261106-KD9I` | `2026-11-06T23:19:57.990Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cca585a7...`) |
 | `CYCLE-20261106-KEZQ` | `2026-11-06T23:20:00.230Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d4e4210...`) |
 | `CYCLE-20261106-KGWC` | `2026-11-06T23:20:02.700Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fbe356e...`) |
+| `CYCLE-20261106-TQUR` | `2026-11-06T23:27:15.507Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bc9684ce...`) |
+| `CYCLE-20261106-TS63` | `2026-11-06T23:27:17.211Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1fb7a634...`) |
