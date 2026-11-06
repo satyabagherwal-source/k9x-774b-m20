@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "34d0b198",
+    "sourceVersion": "9771c244",
     "license": "Apache-2.0",
-    "contentHash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
-    "lastHarvestedAt": "2026-11-06T13:58:52.513Z",
+    "contentHash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
+    "lastHarvestedAt": "2026-11-06T15:13:20.965Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "9baea576",
+    "sourceVersion": "84ccee7a",
     "license": "Apache-2.0",
-    "contentHash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
-    "lastHarvestedAt": "2026-11-05T22:25:15.264Z",
+    "contentHash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
+    "lastHarvestedAt": "2026-11-06T15:13:16.776Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "8a3660f9",
+    "sourceVersion": "e4fc0d0e",
     "license": "AGPL-3.0",
-    "contentHash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
-    "lastHarvestedAt": "2026-11-05T10:43:47.277Z",
+    "contentHash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
+    "lastHarvestedAt": "2026-11-06T15:13:11.978Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "3b6bbb46",
+    "sourceVersion": "2709799d",
     "license": "MIT",
-    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
-    "lastHarvestedAt": "2026-11-05T09:44:49.927Z",
+    "contentHash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
+    "lastHarvestedAt": "2026-11-06T15:13:20.728Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

@@ -7887,3 +7887,7 @@
 | `CYCLE-20261106-NIP1` | `2026-11-06T14:58:31.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aade0c5b...`) |
 | `CYCLE-20261106-WWBS` | `2026-11-06T15:05:49.480Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0c9aa84...`) |
 | `CYCLE-20261106-WXHW` | `2026-11-06T15:05:50.996Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`97a889dd...`) |
+| `CYCLE-20261106-6DRA` | `2026-11-06T15:13:11.974Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c02abf43...`) |
+| `CYCLE-20261106-6HGK` | `2026-11-06T15:13:16.772Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ce35c358...`) |
+| `CYCLE-20261106-6KIC` | `2026-11-06T15:13:20.724Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2909e8b0...`) |
+| `CYCLE-20261106-6KOX` | `2026-11-06T15:13:20.961Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a91bd596...`) |

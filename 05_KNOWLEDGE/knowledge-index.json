@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T15:05:50.908Z",
+  "last_updated": "2026-11-06T15:13:20.866Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45533,8 +45533,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "34d0b198",
-      "content_hash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
+      "source_version": "9771c244",
+      "content_hash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45551,6 +45551,11 @@
         {
           "number": null,
           "title": "Add ARC dataset for puzzle c8f0f002",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Use NUC 86 `is` comparisons in ARC datasets",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45844,7 +45849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:58:52.415Z",
+      "verified_at": "2026-11-06T15:13:20.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48599,11 +48604,16 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "8a3660f9",
-      "content_hash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
+      "source_version": "e4fc0d0e",
+      "content_hash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "mysql): batch hot-path metric updates (#5012)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1856,
           "title": "classify mysql lock wait timeout as retry recoverable (#4916)",
@@ -48675,7 +48685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:43:47.157Z",
+      "verified_at": "2026-11-06T15:13:11.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60152,14 +60162,19 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "3b6bbb46",
-      "content_hash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "2709799d",
+      "content_hash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge 'core/dialect: import names instead of spelling out their paths' from Pekk",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2188,
           "title": "Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg",
@@ -60311,7 +60326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:14:39.401Z",
+      "verified_at": "2026-11-06T15:13:20.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73512,13 +73527,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "5974def3",
-      "content_hash": "f73803833cf9ac195b205caf355f9ae0166fd9d1b9dd9985c1730f565b0a86aa",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "84ccee7a",
+      "content_hash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -73533,6 +73548,11 @@
         {
           "number": null,
           "title": "Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -73661,7 +73681,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:20:26.461Z",
+      "verified_at": "2026-11-06T15:13:16.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

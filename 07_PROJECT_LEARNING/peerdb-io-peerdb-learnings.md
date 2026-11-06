@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `8a3660f9`  
+> **Source Version**: `e4fc0d0e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:43:46.460Z  
+> **Timestamp**: 2026-11-06T15:13:10.584Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:43:46.452Z  
+> **Harvest Timestamp**: 2026-11-06T15:13:09.346Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1861,413 +1861,551 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a3660f9` (2026-11-04)
-**Commit Message**: classify ClickHouse Avro Date out-of-range as destination modified (#5021)
+### Incident Patch 1: `e4fc0d0e` (2026-11-06)
+**Commit Message**: fix(mysql): batch hot-path metric updates (#5012)
 
-### Error (sanitized)
+MySQL backlog processing spends substantial CPU recording metrics for
+every event and character column (70% of PullRecords CPU time in a
+backlogged pipe).
 
-Postgres to ClickHouse initial load fails when ClickHouse reads a
-pre-1970 date into a `Date` column. Today it emits `errorClass=OTHER`,
-`errorCode=321`.
+Throttle the gauges to 1 second like Mongo connector does, group them in
+a struct so it's all together. Move counters into a struct as well.
 
-```
-failed to sync records: QRepSync Error: ClickHouse exec error: code: 321, message: Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri ...0000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage
-```
+Before:
+<img width="1129" height="459" alt="image"
+src="https://github.com/user-attachments/assets/6dfd12bc-0240-45ba-9d40-4d08d2fe927e"
+/>
 
-### Investigation
+After - Pull is not the widest anymore:
+<img width="1132" height="389" alt="image"
+src="https://github.com/user-attachments/assets/23250bb1-291b-46ca-b3e3-954a53f8439e"
+/>
 
-PeerDB maps Postgres `date` to `Date32`
-([`kind.go`](https://github.com/PeerDB-io/peerdb/blob/main/flow/shared/types/kind.go#L232)),
-so a `Date` column means the customer created or changed it. ClickHouse
-throws this exact message only for a `Date` target
-([source](https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389)).
-The customer can fix it by switching the column to `Date32` and
-resyncing.
-
-### Change
-
-- New branch in the ClickHouse code 321 case, after the decimal check.
-It matches `"exceeds the range of type Date, "` and returns
-`NOTIFY_DESTINATION_MODIFI
-
-**File**: `flow/alerting/classifier.go` (modified, +6/-0)
+**File**: `flow/connectors/mysql/cdc.go` (modified, +21/-64)
 ```diff
-@@ -1286,6 +1286,12 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			if ClickHouseDecimalParsingRe.MatchString(chException.Message) {
- 				return ErrorUnsupportedDatatype, chErrorInfo
- 			}
-+			//nolint:lll
-+			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
-+			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
-+			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
-+				return ErrorNotifyDestinationModified, chErrorInfo
-+			}
- 		case chproto.ErrBadArguments:
- 			if ClickHouseDecimalInsertRe.MatchString(chException.Message) {
- 				return ErrorUnsupportedDatatype, chErrorInfo
-```
-
-**File**: `flow/alerting/classifier_test.go` (modified, +31/-0)
-```diff
-@@ -268,6 +268,37 @@ func TestClickHouseAvroDecimalErrorShouldBeUnsupportedDatatype(t *testing.T) {
- 	}
- }
+@@ -647,42 +647,33 @@ func (c *MySqlConnector) PullRecords(
  
-+func TestClickHouseAvroDateOutOfRangeShouldBeDestinationModified(t *testing.T) {
-+	err := &clickhouse.Exception{
-+		Code: int32(chproto.ErrValueIsOutOfRangeOfDataType),
-+		//nolint:lll
-+		Message: `Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri clickpipes-svc-3bd17e20-1032-4251-bcf3-6d49358a5e4f/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/37800a62-d8c4-4c11-97e4-d7aa76ff8cc3.000000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage`,
-+	}
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
-+		exceptions.NewClickHouseQRepSyncError(
-+			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
-+	assert.Equal(t, ErrorNotifyDestinationModified, errorClass, "Unexpected error class")
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceClickHouse,
-+		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
-+	}, errInfo, "Unexpected error info")
-+}
-+
-+func TestClickHouseAvroDate32OutOfRangeShouldBeOther(t *testing.T) {
-+	err := &clickhouse.Exception{
-+		Code:    int32(chproto.ErrValueIsOutOfRangeOfDataType),
-+		Message: `Input value -44641 exceeds the range of type Date32, which is [-25567, 120529]: While executing AvroRowInputFormat`,
-+	}
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
-+		exceptions.NewClickHouseQRepSyncError(
-+			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
-+	assert.Equal(t, ErrorOther, errorClass, "Unexpected error class")
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceClickHouse,
-+		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
-+	}, errInfo, "Unexpected error info")
-+}
-+
- func TestClickHouseSelectFromDestinationDuringQrepAsMvError(t *testing.T) {
- 	// Simulate an Avro decimal error
- 	err := &clickhouse.Exception{
-```
-
----
-
-### Incident Patch 2: `e1761f8c` (2026-11-04)
-**Commit Message**: support server-side changeStreamPreAndPostImages (#4990)
-
-On a sharded cluster, native `updateLookup` fetches update sequentially,
-which can lead to perf bottleneck. `changeStreamPreAndPostImages` builds
-post-image from applying updates to locally stored pre-image,
-eliminating the extra mongos-to-shards latency, and improve CDC
-throughput. This PR adds support for this feature by switching from
-`default` to `whenAvailable` when
-`PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP=true`.
-
-For collections with `changeStreamPreAndPostImages` enabled, MongoDB
-supplies each update's post-image in the event, so PeerDB does not
-perform client-side lookup for those updates. For collections without
-`changeStreamPreAndPostImages` enabled, or for those that are enabled
-but pre-image has expired, updates would arrives without a post-image
-and these documents will be fetched client-side.
-
-Fixes: DBI-1276
-
-**File**: `flow/connectors/mongo/cdc.go` (modified, +15/-4)
-```diff
-@@ -455,11 +455,15 @@ func (c *MongoConnector) PullRecords(
- 		// https://www.mongodb.com/docs/manual/reference/method/cursor.batchSize/
- 		SetBatchSize(0)
- 
-+	// By default, the change stream looks up each update's document server-side.
-+	fullDocumentMode := options.UpdateLookup
- 	if c.clientUpdateLookup {
--		changeStreamOpts.SetFullDocument(options.Default)
--	} else {
--		changeStreamOpts.SetFullDocument(options.UpdateLookup)
-+		// Collections with changeStreamPreAndPostImages get the post-image for free. Updates without one
-+		// (option disabled, or pre-image expired) arrive with fullDocument: null and are looked up client-side.
-+		fullDocumentMode = options.WhenAvailable
- 	}
-+	changeStreamOpts.SetFullDocument(fullDocumentMode)
-+	c.logger.Info("[mongo] change stream full document mode", slog.String("mode", string(fullDocumentMode)))
- 
- 	if preimageTables := tablesWithDeletePreimage(req.TableNameMapping, c.excludedOps); len(preimageTables) > 0 {
- 		// whenAvailable, never required: a pre-image can be missing even for a collection that has
-@@ -519,7 +523,7 @@ func (c *MongoConnector) PullRecords(
- 		}
- 	}()
- 
--	var recordCount uint32
-+	var recordCount, updatesWithoutPostImage uint32
- 	var deltaBytesProcessed, cumulativeBytesProcessed atomic.Int64
- 	var receiveTime, processTime, parallelProcessTime, addRecordTime atomic.Int64
+ 	// set when a tx is preventing us from respecting the timeout, immediately exit after we see inTx false
+ 	var overtime bool
+-	var fetchedBytes, totalFetchedBytes, allFetchedBytes atomic.Int64
+-	var receiveTime, processTime, addRecordTime atomic.Int64
++	counters := newMysqlPullCounters(otelManager)
++	gauges := newMysqlPullGauges(otelManager, mysqlClockOffset)
+ 	var processStart time.Time
  	pullStart := time.Now()
-@@ -543,6 +547,10 @@ func (c *MongoConnector) PullRecords(
- 			slog.Int64("bytes", cumulativeBytesProcessed.Load()),
+ 	defer func() {
+ 		span := trace.SpanFromContext(ctx)
+ 		span.SetAttributes(
+ 			attribute.Int64(otel_metrics.RowsInBatchKey, int64(recordCount)),
+-			attribute.Int64(otel_metrics.BytesPulledKey, totalFetchedBytes.Load()),
++			attribute.Int64(otel_metrics.BytesPulledKey, counters.totalFetchedBytes.Load()),
+ 		)
+ 		if updatedOffset != "" {
+ 			span.SetAttributes(attribute.String(otel_metrics.GtidKey, updatedOffset))
+ 		}
+ 		c.logger.Info("[mysql] PullRecords finished streaming",
+ 			slog.Uint64("records", uint64(recordCount)),
+-			slog.Int64("bytes", totalFetchedBytes.Load()),
++			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
  			slog.Int("channelLen", req.RecordStream.ChannelLen()),
  			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
-+		if updatesWithoutPostImage > 0 {
-+			c.logger.Info("[mongo] update events without a post-image were looked up client-side",
-+				slog.Uint64("count", uint64(updatesWithoutPostImage)))
-+		}
  	}()
- 	// Structured ingestion is a per-table setting: resolve each structured table's projector once,
- 	// against the table schema persisted at setup. Decode workers share the projectors, which is safe
-@@ -812,6 +820,9 @@ func (c *MongoConnector) PullRecords(
- 			commitTimeNanos:      commitTimeNanos,
- 			clusterTime:          changeEvent.ClusterTime,
+ 
+-	defer func() {
+-		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
+-		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
+-		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
+-		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
+-		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
+-	}()
++	defer counters.flush(ctx)
++	defer gauges.recordBatchEnd(ctx)
+ 	shutdown := common.Interval(ctx, time.Minute, func() {
+-		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
+-		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
+-		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
+-		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
+-		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
++		counters.flush(ctx)
+ 		c.logger.Info("[mysql] pulling records",
+ 			slog.Uint64("records", uint64(recordCount)),
+-			slog.Int64("bytes", totalFetchedBytes.Load()),
++			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
+ 			slog.Int("channelLen", req.RecordStream.ChannelLen()),
+ 			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
+ 	})
+@@ -701,19 +692,19 @@ func (c *MySqlConnector) PullRecords(
+ 	addRecord := func(ctx context.Context, record model.Record[model.RecordItems]) error {
+ 		recordCount += 1
+ 		addStart := time.Now()
+-		processTime.Add(int64(addStart.Sub(processStart)))
++		counters.processTime.Add(int64(addStart.Sub(processStart)))
+ 		if err := req.RecordStream.AddRecord(ctx, record); err != nil {
+ 			return err
  		}
-+		if c.clientUpdateLookup && event.operationType == operationTypeUpdate && event.maybeFullDocument == nil {
-+			updatesWithoutPostImage++
+ 		processStart = time.Now()
+-		addRecordTime.Add(int64(processStart.Sub(addStart)))
++		counters.addRecordTime.Add(int64(processStart.Sub(addStart)))
+ 		if recordCount == 1 {
+ 			resetTimeout(req.IdleTimeout)
+ 		}
+ 		if recordCount%50000 == 0 {
+ 			c.logger.Info("[mysql] PullRecords streaming",
+ 				slog.Uint64("records", uint64(recordCount)),
+-				slog.Int64("bytes", totalFetchedBytes.Load()),
++				slog.Int64("bytes", counters.totalFetchedBytes.Load()),
+ 				slog.Int("channelLen", req.RecordStream.ChannelLen()),
+ 				slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()),
+ 				slog.Bool("inTx", inTx),
+@@ -722,36 +713,6 @@ func (c *MySqlConnector) PullRecords(
+ 		return nil
+ 	}
+ 
+-	recordSourceEventLag := func(ctx context.Context, event *replication.BinlogEvent) {
+-		if _, isHeartbeat := event.Event.(*replication.HeartbeatEvent); isHeartbeat {
+-			// A heartbeat means there is currently no source change event to lag behind.
+-			// Reset the gauge so a previously backlogged, now-idle pipe does not retain
+-			// the old source-lag value.
+-			otelManager.Metrics.SourceLagGauge.Record(ctx, 0)
+-			return
+-		}
+-
+-		// GTID commit timestamps are precise transaction timestamps. Other binlog
+-		// events only have the common header timestamp, which is seconds-resolution
+-		// but lets older MySQL/MariaDB versions report source lag as well.
+-		timestampMicros := int64(event.Header.Timestamp) * int64(time.Second/time.Microsecond)
+-		switch ev := event.Event.(type) {
+-		case *replication.GTIDEvent:
+-			if ev.ImmediateCommitTimestamp > 0 {
+-				timestampMicros = int64(ev.ImmediateCommitTimestamp)
+-			}
+-		case *replication.GtidTaggedLogEvent:
+-			if ev.ImmediateCommitTimestamp > 0 {
+-				timestampMicros = int64(ev.ImmediateCommitTimestamp)
+-			}
+-		}
+-
+-		if timestampMicros > 0 {
+-			otelManager.Metrics.SourceLagGauge.Record(ctx,
+-				time.Now().UTC().Add(mysqlClockOffset).
+-					Sub(time.UnixMicro(timestampMicros)).Milliseconds())
+-		}
+-	}
+ 	recordUnsupportedEvent := func(ctx context.Context, event *replication.BinlogEvent, prefix string) 
+```
+
+**File**: `flow/connectors/mysql/cdc_metrics.go` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++package connmysql
++
++import (
++	"context"
++	"sync"
++	"sync/atomic"
++	"time"
++
++	"github.com/go-mysql-org/go-mysql/replication"
++	"go.opentelemetry.io/otel/attribute"
++	"go.opentelemetry.io/otel/metric"
++
++	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
++)
++
++// Shared with the common.Interval goroutine.
++type mysqlPullCounters struct {
++	otelManager       *otel_metrics.OtelManager
++	charsetCounts     map[mysqlCharsetMetricKey]int64
++	mu                sync.Mutex
++	fetchedBytes      atomic.Int64
++	totalFetchedBytes atomic.Int64
++	allFetchedBytes   atomic.Int64
++	receiveTime       atomic.Int64
++	processTime       atomic.Int64
++	addRecordTime     atomic.Int64
++}
++
++type mysqlCharsetMetricKey struct {
++	charset string
++	status  string
++}
++
++func newMysqlPullCounters(otelManager *otel_metrics.OtelManager) *mysqlPullCounters {
++	return &mysqlPullCounters{otelManager: otelManager}
++}
++
++func (c *mysqlPullCounters) recordUsedCharset(charset, status string) {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	if c.charsetCounts == nil {
++		c.charsetCounts = make(map[mysqlCharsetMetricKey]int64)
++	}
++	c.charsetCounts[mysqlCharsetMetricKey{charset: charset, status: status}]++
++}
++
++func (c *mysqlPullCounters) flush(ctx context.Context) {
++	// Serialize the interval callback and final flush, and protect charset counts.
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	for key, count := range c.charsetCounts {
++		c.otelManager.Metrics.UsedMySQLCharsetsCounter.Add(ctx, count, metric.WithAttributeSet(attribute.NewSet(
++			attribute.String("charset", key.charset), attribute.String("status", key.status),
++		)))
++	}
++	clear(c.charsetCounts)
++	c.otelManager.Metrics.FetchedBytesCounter.Add(ctx, c.fetchedBytes.Swap(0))
++	c.otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, c.allFetchedBytes.Swap(0))
++	c.otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, c.receiveTime.Swap(0))
++	c.otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, c.processTime.Swap(0))
++	c.otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, c.addRecordTime.Swap(0))
++}
++
++// Accessed only from PullRecords, not shared with the common.Interval goroutine, so it needs no mutex.
++type mysqlPullGauges struct {
++	otelManager    *otel_metrics.OtelManager
++	lastRecordedAt time.Time
++	clockOffset    time.Duration
++	// Latest observed values not yet recorded. Zero lag is valid, hence the flag.
++	sourceLagMillis         int64
++	sourceLagPending        bool
++	latestConsumedTimestamp int64
++}
++
++func newMysqlPullGauges(otelManager *otel_metrics.OtelManager, clockOffset time.Duration) *mysqlPullGauges {
++	return &mysqlPullGauges{otelManager: otelManager, clockOffset: clockOffset}
++}
++
++func (g *mysqlPullGauges) observeEvent(event *replication.BinlogEvent, receivedAt time.Time) {
++	if _, isHeartbeat := event.Event.(*replication.HeartbeatEvent); isHeartbeat {
++		// Clear backlog lag when the source becomes idle.
++		g.sourceLagMillis = 0
++		g.sourceLagPending = true
++		return
++	}
++
++	// Prefer precise GTID commit timestamps over the seconds-resolution header.
++	timestampMicros := int64(event.Header.Timestamp) * int64(time.Second/time.Microsecond)
++	switch ev := event.Event.(type) {
++	case *replication.GTIDEvent:
++		if ev.ImmediateCommitTimestamp > 0 {
++			timestampMicros = int64(ev.ImmediateCommitTimestamp)
 +		}
- 		switch event.operationType {
- 		case operationTypeInsert, operationTypeReplace, operationTypeUpdate, operationTypeDelete:
- 			// Happy path.
-```
-
-**File**: `flow/connectors/mongo/document_lookup.go` (modified, +6/-4)
-```diff
-@@ -50,7 +50,6 @@ const (
- 
- // hydrateUpdateEvents hydrates the update events' `fullDocument` field using client-side lookup.
- func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encodedMongoEvent) (int64, error) {
--	var requests []*documentLookupRequest
- 	requestsMap := make(map[documentLookupKey]*documentLookupRequest)
- 	for i := range events {
- 		event := &events[i]
-@@ -85,10 +84,13 @@ func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encod
- 			keyFields:         strings.Join(fields, keyFieldSeparator),
- 		}
- 		requestsMap[key] = request
--		requests = append(requests, request)
- 	}
- 
--	groupedRequests := groupLookupRequests(requests)
-+	if len(requestsMap) == 0 {
-+		return 0, nil
++	case *replication.GtidTaggedLogEvent:
++		if ev.ImmediateCommitTimestamp > 0 {
++			timestampMicros = int64(ev.ImmediateCommitTimestamp)
++		}
 +	}
 +
-+	groupedRequests := groupLookupRequests(requestsMap)
- 
- 	pref := protoToReadPref[c.config.ReadPreference]
- 	var fetchedSize atomic.Int64
-@@ -164,7 +166,7 @@ func (c *MongoConnector) batchLookup(
- 
- // groupLookupRequests splits requests by source table and key fields into queries of up to
- // lookupQueryBatchSize requests.
--func groupLookupRequests(requests []*documentLookupRequest) [][]*documentLookupRequest {
-+func groupLookupRequests(requests map[documentLookupKey]*documentLookupRequest) [][]*documentLookupRequest {
- 	type batchKey struct{ sourceTable, keyFields string }
- 	var groupedRequests [][]*documentLookupRequest
- 	batches := make(map[batchKey][]*documentLookupRequest)
-```
-
-**File**: `flow/connectors/mongo/document_lookup_test.go` (modified, +44/-7)
-```diff
-@@ -2,6 +2,7 @@ package connmongo
- 
- import (
- 	"slices"
-+	"strconv"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-@@ -94,15 +95,16 @@ func TestRawValueKeyDistinguishesTypes(t *testing.T) {
- 
- func TestGroupLookupQueries(t *testing.T) {
- 	compound := "region" + keyFieldSeparator + "_id"
--	var requests []*documentLookupRequest
-+	requests := make(map[documentLookupKey]*documentLookupRequest)
-+	add := func(request *documentLookupRequest) {
-+		requests[documentLookupKey{sourceTable: request.sourceTable, key: strconv.Itoa(len(requests))}] = request
++	if timestampMicros > 0 {
++		g.sourceLagMillis = receivedAt.Add(g.clockOffset).Sub(time.UnixMicro(timestampMicros)).Milliseconds()
++		g.sourceLagPending = true
 +	}
- 	for range lookupQueryBatchSize + 1 {
--		requests = append(requests, &documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
-+		add(&documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
- 	}
--	requests = append(requests,
--		&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields},
--		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
--		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
--	)
-+	add(&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields})
-+	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
-+	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
- 
- 	queries := groupLookupRequests(requests)
- 
-@@ -176,3 +178,38 @@ func TestDocumentKeyOfMatchesRequestKey(t *testing.T) {
- 	require.Equal(t, requestKey(&documentLookupRequest{documentKey: nullElements}), documentKeyOf(missing, fields),
- 		"a missing shard key field matches a null documentKey value")
- }
-+
-+func TestDecodeEventLeavesMissingPostImageNil(t *testing.T) {
-+	// With fullDocument: "whenAvailable", an update whose pre-image is missing carries fullDocument: null.
-+	// It must decode to nil, because the lookup only fetches updates without a document.
-+	raw, err := bson.Marshal(bson.D{
-+		{Key: "operationType", Value: "update"},
-+		{Key: "documentKey", Value: bson.D{{Key: "_id", Value: int32(1)}}},
-+		{Key: "fullDocument", Value: nil},
-+	})
-+	require.NoError(t, err)
-+	var changeEvent ChangeEvent
-+	require.NoError(t, decodeEvent(raw, &changeEvent))
-+	require.Nil(t, changeEvent.FullDocument)
 +}
 +
-+func TestHydrateUpdateEventsSkipsUpdatesWithPostImage(t *testing.T) {
-+	document, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}, {Key: "v", Value: 2}})
-+	require.NoError(t, err)
-+	postImage := bson.Raw(document)
-+	documentKey, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}})
-+	require.NoError(t, err)
-+	events := []encodedMongoEvent{{
-+		operationType:     operationTypeUpdate,
-+		sourceTableName:   "db.coll",
-+		documentKey:       documentKey,
-+		maybeFullDocument: &postImage,
-+		clusterTime:       bson.Timestamp{T: 1, I: 1},
-+	}}
++func (g *mysqlPullGauges) observeConsumed(timestamp int64) {
++	if timestamp > 0 {
++		g.latestConsumedTimestamp = timestamp
++	}
++}
 +
-+	// The connector has no client, so any lookup query would fail: every update already has its document.
-+	fetched, err := (&MongoConnector{clientUpdateLookup: true}).hydrateUpdateEvents(t.Context(), events)
-+	require.NoError(t, err)
-+	require.Zero(t, fetched)
-+	require.Equal(t, &postImage, events[0].maybeFullDocument)
++func (g *mysqlPullGauges) recordPeriodic(ctx context.Context, now time.Time) {
++	// recording gauges per event is wasteful on CPU given this is on the hot path
++	if now.Sub(g.lastRecordedAt) >= time.Second {
++		g.recordPending(ctx)
++		g.lastRecordedAt = now
++	}
++}
++
++func (g *mysqlPullGauges) recordBatchEnd(ctx context.Context) {
++	g.recordPending(ctx)
++}
++
++func (g *mysqlPullGauges) recordPending(ctx context.Context) {
++	if g.sourceLagPending {
++		g.otelManager.Metrics.SourceLagGauge.Record(ctx, g.sourceLagMillis)
++		g.sourceLagPending = false
++	}
++	if g.latestConsumedTimestamp > 0 {
++		g.otelManager.Metrics.LatestConsumedLogEventGauge.Record(ctx, g.latestConsumedTimestamp)
++		g.latestConsumedTimestamp = 0
++	}
 +}
 ```
 
-**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +97/-0)
+**File**: `flow/connectors/mysql/cdc_metrics_test.go` (added, +131/-0)
 ```diff
-@@ -1348,6 +1348,103 @@ func (s MongoClickhouseSuite) Test_Delete_Preimage_Validation() {
- 	require.NoError(t, err)
- }
- 
-+func (s MongoClickhouseSuite) Test_CDC_Client_Side_Lookup_Post_Images() {
-+	t := s.T()
+@@ -0,0 +1,131 @@
++package connmysql
 +
-+	const parallelDocumentLookupComment = "PeerDB parallel document lookup"
++import (
++	"context"
++	"testing"
++	"time"
 +
-+	srcDatabase := e2e.GetTestDatabase(s.Suffix())
-+	srcTable := "test_use_post_images"
-+	dstTable := "test_use_post_images_dst"
++	"github.com/go-mysql-org/go-mysql/replication"
++	"github.com/stretchr/testify/require"
++	"go.opentelemetry.io/otel/metric"
++	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
++	"go.opentelemetry.io/otel/sdk/metric/metricdata"
++)
 +
-+	connectionGen := e2e.FlowConnectionGenerationConfig{
-+		FlowJobName:   e2e.AddSuffix(s, srcTable),
-+		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
-+		Destination:   s.Peer().Name,
-+	}
-+	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
-+	flowConnConfig.Env["PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP"] = "true"
-+
-+	db := s.Source().(*e2e.MongoSource).AdminClient().Database(srcDatabase)
-+	preAndPostImages := options.CreateCollection().SetChangeStreamPreAndPostImages(bson.D{{Key: "enabled", Value: true}})
-+	require.NoError(t, db.CreateCollection(t.Context(), srcTable, preAndPostImages))
-+	collection := db.Collection(srcTable)
-+
-+	// Only PeerDB's lookup queries are profiled, which shows which updates needed a lookup.
-+	require.NoError(t, db.RunCommand(t.Context(), bson.D{
-+		{Key: "profile", Value: 2},
-+		{Key: "filter", Value: bson.D{{Key: "command.comment", Value: parallelDocumentLookupComment}}},
-+	}).Err())
-+	t.Cleanup(func() {
-+		_ = db.RunCommand(context.Background(), bson.D{{Key: "profile", Value: 0}}).Err()
-+	})
-+	lookedUpIDs := func() map[bson.ObjectID]struct{} {
-+		cursor, err := db.Collection("system.profile").Find(t.Context(), bson.D{
-+			{Key: "command.aggregate", Value: srcTable},
-+			{Key: "command.comment", Value: parallelDocumentLookupComment},
-+		})
++func TestMysqlPullCountersFlush(t *testing.T) {
++	ctx := t.Context()
++	om, reader := newMetricsTestOtelManager(t)
++	for name, counter := range map[string]*metric.Int64Counter{
++		"charsets":    &om.Metrics.UsedMySQLCharsetsCounter,
++		"fetched":     &om.Metrics.FetchedBytesCounter,
++		"all_fetched": &om.Metrics.AllFetchedBytesCounter,
++		"receive":     &om.Metrics.CDCReceiveTimeCounter,
++		"process":     &om.Metrics.CDCProcessTimeCounter,
++		"add_record":  &om.Metrics.CDCAddRecordTimeCounter,
++	} {
++		var err error
++		*counter, err = om.Meter.Int64Counter(name)
 +		require.NoError(t, err)
-+		defer cursor.Close(t.Context())
-+		ids := map[bson.ObjectID]struct{}{}
-+		for cursor.Next(t.Context()) {
-+			in, err := cursor.Current.LookupErr("command", "pipeline", "0", "$match", "_id", "$in")
-+			require.NoError(t, err, "expected an _id lookup to batch with $in")
-+			values, err := in.Array().Values()
-+			require.NoError(t, err)
-+			for _, value := range values {
-+				ids[value.ObjectID()] = struct{}{}
++	}
++	counters := newMysqlPullCounters(om)
++	counters.recordUsedCharset("utf8mb4", "not_transcoded")
++	counters.recordUsedCharset("utf8mb4", "not_transcoded")
++	counters.fetchedBytes.Add(100)
++	counters.totalFetchedBytes.Add(100)
++	counters.allFetchedBytes.Add(200)
++	counters.receiveTime.Add(3)
++	counters.processTime.Add(4)
++	counters.addRecordTime.Add(5)
++	counters.flush(ctx)
++	// A final flush after the interval must not double-count the same observations.
++	counters.flush(ctx)
++	values := collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, map[string]int64{
++		"charsets": 2, "fetched": 100, "all_fetched": 200,
++		"receive": 3, "process": 4, "add_record": 5,
++	}, values)
++	require.Equal(t, int64(100), counters.totalFetchedBytes.Load())
++}
++
++func TestMysqlPullGauges(t *testing.T) {
++	ctx := t.Context()
++	om, reader := newMetricsTestOtelManager(t)
++	var err error
++	om.Metrics.SourceLagGauge, err = om.Meter.Int64Gauge("source_lag")
++	require.NoError(t, err)
++	om.Metrics.LatestConsumedLogEventGauge, err = om.Meter.Int64Gauge("latest_consumed")
++	require.NoError(t, err)
++	at := func(seconds float64) time.Time {
++		return time.Unix(0, int64(seconds*float64(time.Second)))
++	}
++	observe := func(g *mysqlPullGauges, timestamp uint32, receivedAt float64) {
++		g.observeEvent(&replication.BinlogEvent{
++			Header: &replication.EventHeader{Timestamp: timestamp},
++			Event:  &replication.XIDEvent{},
++		}, at(receivedAt))
++	}
++
++	gauges := newMysqlPullGauges(om, 2*time.Second)
++	// A batch without events records nothing at batch end.
++	gauges.recordBatchEnd(ctx)
++	values := collectInt64Metrics(t, ctx, reader)
++	require.Empty(t, values)
++
++	observe(gauges, 100, 100)
++	gauges.observeConsumed(100)
++	gauges.recordPeriodic(ctx, at(100))
++	values = collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, map[string]int64{"source_lag": 2000, "latest_consumed": 100}, values)
++
++	// Within the throttle window nothing is recorded, and the latest value wins over the max.
++	observe(gauges, 99, 100.5)
++	gauges.recordPeriodic(ctx, at(100.5))
++	observe(gauges, 100, 100.8)
++	observe(gauges, 0, 100.9)
++	gauges.observeConsumed(0)
++	gauges.recordPeriodic(ctx, at(100.9))
++	values = collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, map[string]int64{"source_lag": 2000, "latest_consumed": 100}, values)
++
++	// Batch end records the pending lag; the consumed timestamp was already recorded.
++	gauges.recordBatchEnd(ctx)
++	values = collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, map[string]int64{"source_lag": 2800, "latest_consumed": 100}, values)
++	require.False(t, gauges.sourceLagPending)
++	require.Zero(t, gauges.latestConsumedTimestamp)
++
++	gauges.observeEvent(&replication.BinlogEvent{Event: &replication.HeartbeatEvent{}}, at(200))
++	gauges.recordPeriodic(ctx, at(200))
++	values = collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, int64(0), values["source_lag"])
++
++	gauges.observeEvent(&replication.BinlogEvent{
++		Header: &replication.EventHeader{Timestamp: 600},
++		Event:  &replication.GTIDEvent{ImmediateCommitTimestamp: 600_500_000},
++	}, at(601))
++	gauges.recordPeriodic(ctx, at(601))
++	values = collectInt64Metrics(t, ctx, reader)
++	require.Equal(t, int64(2500), values["source_lag"])
++}
++
++func collectInt64Metrics(t *testing.T, ctx context.Context, reader *sdkmetric.ManualReader) map[string]int64 {
++	t.Helper()
++	var result metricdata.ResourceMetrics
++	require.NoError(t, reader.Collect(ctx, &result))
++	values := make(map[string]int64)
++	for _, scope := range result.ScopeMetrics {
++		for _, measurement := range scope.Metrics {
++			switch data := measurement.Data.(type) {
++			case metricdata.Sum[int64]:
++				for _, point := range data.DataPoints {
++					values[measurement.Name] += point.Value
++				}
++			case metricdata.Gauge[int64]:
++				for _, point := range data.DataPoints {
++					values[measurement.Name] = point.Value
++				}
 +			}
 +		}
-+		require.NoError(t, cursor.Err())
-+		return ids
 +	}
-+
-+	tc := e2e.NewTemporalClient(t)
-+	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
-+	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
-+
-+	const numDocs = 300
-+	docs := make([]any, 0, numDocs)
-+	for i := range numDocs {
-+		docs = append(docs, bson.D{{Key: "key", Value: i}, {Key: "v", Value: 0}})
-+	}
-+	insertRes, err := collection.InsertMany(t.Context(), docs)
-+	require.NoError(t, err)
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "insert events", srcTable, dstTable, "_id,doc")
-+
-+	// Tests that updates with a post-image need no lookup.
-+	updateRes, err := collection.UpdateMany(t.Context(), bson.D{}, bson.D{{Key: "$inc", Value: bson.D{{Key: "v", Value: 1}}}})
-+	require.NoError(t, err)
-+	require.Equal(t, int64(numDocs), updateRes.ModifiedCount)
-+	// The post-image is the document right after the update, so it survives a later delete.
-+	_, err = collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: 0}},
-+		bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: -1}}}})
-+	require.NoError(t, err)
-+	_, err = collection.DeleteOne(t.Context(), bson.D{{Key: "key", Value: 0}})
-+	require.NoError(t, err)
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates with post-images", srcTable, dstTable, "_id,doc")
-+	require.Empty(t, lookedUpIDs(), "updates with a post-image must not be looked up")
-+
-+	// Tests that an update without a post-image is looked up instead of written without its document.
-+	require.NoError(t, db.RunCommand(t.Context(), bson.D{
-+		{Key: "collMod", Value: srcTable},
-+		{Key: "changeStreamPreAndPostImages", Value: bson.D{{Key: "enabled", Value: false}}},
-+	}).Err())
-+	const numWithoutPostImage = 10
-+	expectedLookups := make(map[bson.ObjectID]struct{}, numWithoutPostImage)
-+	for i := 1; i <= numWithoutPostImage; i++ {
-+		_, err := collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: i}},
-+			bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: 100 + i}}}})
-+		require.NoError(t, err)
-+		expectedLookups[insertRes.InsertedIDs[i].(bson.ObjectID)] = struct{}{}
-+	}
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates without post-images", srcTable, dstTable, "_id,doc")
-+
-+	env.Cancel(t.Context())
-+	e2e.RequireEnvCanceled(t, env)
-+	require.Equal(t, expectedLookups, lookedUpIDs(), "only the updates without a post-image are looked up")
++	return values
 +}
-+
- func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_ObjectID_Uniform() {
- 	t := s.T()
- 	srcDatabase := e2e.GetTestDatabase(s.Suffix())
 ```
 
-**File**: `flow/internal/dynamicconf.go` (modified, +4/-2)
+**File**: `flow/connectors/mysql/charset.go` (modified, +12/-25)
 ```diff
-@@ -625,8 +625,10 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 		TargetForSetting: protos.DynconfTarget_ALL,
- 	},
- 	{
--		Name:             "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
--		Description:      "Fetch update documents in bounded parallel batches outside the change stream. ",
-+		Name: "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
-+		Description: "If true, PeerDB fetches update documents in bounded parallel batches outside the change stream. " +
-+			"The exception is if the collections already have changeStreamPreAndPostImages enabled, then it will use the " +
-+			"post-image supplied in the change stream event, only missing documents are queried.",
- 		DefaultValue:     "false",
- 		ValueType:        protos.DynconfValueType_BOOL,
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_AFTER_RESUME,
+@@ -6,8 +6,6 @@ import (
+ 	"log/slog"
+ 
+ 	"github.com/go-mysql-org/go-mysql/replication"
+-	"go.opentelemetry.io/otel/attribute"
+-	"go.opentelemetry.io/otel/metric"
+ 	"golang.org/x/text/encoding"
+ 	"golang.org/x/text/encoding/charmap"
+ 	"golang.org/x/text/encoding/japanese"
+@@ -17,8 +15,6 @@ import (
+ 	"golang.org/x/text/encoding/unicode"
+ 	"golang.org/x/text/encoding/unicode/utf32"
+ 	"golang.org/x/text/transform"
+-
+-	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
+ )
+ 
+ // charsetsNoTranscode lists the MySQL character sets whose stored bytes are
+@@ -81,21 +77,12 @@ const (
+ // TABLE_MAP metadata) to the x/text encoding needed to convert that column's
+ // bytes to UTF-8.
+ func (c *MySqlConnector) collationEncoding(
+-	ctx context.Context, collationID uint64, otelManager *otel_metrics.OtelManager,
++	ctx context.Context, collationID uint64, recordUsedCharset func(charset, status string),
+ ) (encoding.Encoding, error) {
+ 	if collationID == 0 {
+ 		return nil, nil
+ 	}
+ 
+-	recordUsedCharsetMetrics := func(ctx context.Context, charset string, status string) {
+-		otelManager.Metrics.UsedMySQLCharsetsCounter.Add(ctx, 1,
+-			metric.WithAttributeSet(attribute.NewSet(
+-				attribute.String("charset", charset),
+-				attribute.String("status", status),
+-			)),
+-		)
+-	}
+-
+ 	charset, err := c.charsetForCollation(ctx, collationID)
+ 	if err != nil {
+ 		return nil, err
+@@ -109,15 +96,15 @@ func (c *MySqlConnector) collationEncoding(
+ 	}
+ 
+ 	if _, skip := charsetsNoTranscode[charset]; skip {
+-		recordUsedCharsetMetrics(ctx, charset, "not_transcoded")
++		recordUsedCharset(charset, "not_transcoded")
+ 		return nil, nil
+ 	}
+ 	if enc, ok := mysqlCharsetEncodings[charset]; ok {
+-		recordUsedCharsetMetrics(ctx, charset, "transcoded")
++		recordUsedCharset(charset, "transcoded")
+ 		return enc, nil
+ 	}
+ 
+-	recordUsedCharsetMetrics(ctx, charset, "unsupported")
++	recordUsedCharset(charset, "unsupported")
+ 	c.warnCharsetOnce(charset, func() {
+ 		c.logger.Warn("unsupported MySQL character set on CDC path, passing bytes through untranscoded",
+ 			slog.String("charset", charset), slog.Uint64("collationID", collationID))
+@@ -131,18 +118,18 @@ func (c *MySqlConnector) tableMapColumnEncodings(
+ 	tableMap *replication.TableMapEvent,
+ 	enumMap map[int][]string,
+ 	setMap map[int][]string,
+-	otelManager *otel_metrics.OtelManager,
++	recordUsedCharset func(charset, status string),
+ ) ([]encoding.Encoding, error) {
+ 	colEncodings, err := c.appendTableMapColumnEncodings(
+-		ctx, otelManager,
++		ctx, recordUsedCharset,
+ 		tableMap, tableMapCharacterCollation, tableMap.DefaultCharset, tableMap.ColumnCharset,
+ 		nil, nil, nil,
+ 	)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	colEncodings, err = c.appendTableMapColumnEncodings(
+-		ctx, otelManager,
++		ctx, recordUsedCharset,
+ 		tableMap, tableMapEnumSetCollation, tableMap.EnumSetDefaultCharset, tableMap.EnumSetColumnCharset,
+ 		enumMap, setMap, colEncodings,
+ 	)
+@@ -154,7 +141,7 @@ func (c *MySqlConnector) tableMapColumnEncodings(
+ 
+ func (c *MySqlConnector) appendTableMapColumnEncodings(
+ 	ctx context.Context,
+-	otelManager *otel_metrics.OtelManager,
++	recordUsedCharset func(charset, status string),
+ 	tableMap *replication.TableMapEvent,
+ 	collationType tableMapCollationType,
+ 	defaultCharset []uint64,
+@@ -178,7 +165,7 @@ func (c *MySqlConnector) appendTableMapColumnEncodings(
+ 			collationID := tableMapDefaultCollation(defaultCharset, collationPos, defaultCollation)
+ 			var err error
+ 			colEncodings, err = c.appendTableMapColumnEncoding(
+-				ctx, otelManager, tableMap, collationType, colIdx, collationID, enumMap, setMap, colEncodings,
++				ctx, recordUsedCharset, tableMap, collationType, colIdx, collationID, enumMap, setMap, colEncodings,
+ 			)
+ 			if err != nil {
+ 				return nil, err
+@@ -203,7 +190,7 @@ func (c *MySqlConnector) appendTableMapColumnEncodings(
+ 
+ 			var err error
+ 			colEncodings, err = c.appendTableMapColumnEncoding(
+-				ctx, otelManager, tableMap, collationType, colIdx, columnCharset[collationPos],
++				ctx, recordUsedCharset, tableMap, collationType, colIdx, columnCharset[collationPos],
+ 				enumMap, setMap, colEncodings,
+ 			)
+ 			if err != nil {
+@@ -241,7 +228,7 @@ func tableMapIncludesCollation(
+ 
+ func (c *MySqlConnector) appendTableMapColumnEncoding(
+ 	ctx context.Context,
+-	otelManager *otel_metrics.OtelManager,
++	recordUsedCharset func(charset, status string),
+ 	tableMap *replication.TableMapEvent,
+ 	collationType tableMapCollationType,
+ 	colIdx int,
+@@ -250,7 +237,7 @@ func (c *MySqlConnector) appendTableMapColumnEncoding(
+ 	setMap map[int][]string,
+ 	colEncodings []encoding.Encoding,
+ ) ([]encoding.Encoding, error) {
+-	enc, err := c.collationEncoding(ctx, collationID, otelManager)
++	enc, err := c.collationEncoding(ctx, collationID, recordUsedCharset)
+ 	if err != nil {
+ 		return nil, err
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5027** (2026-11-06): Add listCursors to Mongo switchboard (@ilidemi)
+- **PR #5025** (closed): Skip generated columns when replicating PG to PG (@Amogh-Bharadwaj)
 - **PR #5021** (2026-11-04): classify ClickHouse Avro Date out-of-range as destination modified (@ilidemi)
 - **PR #5018** (2026-11-04): Wrap BigQuery source time and export errors for classification (@dtunikov)
 - **PR #5016** (closed): mongo: kill change stream cursor leaked on context timeout (@dtunikov)
 - **PR #5015** (2026-11-03): classify DocumentDB too many cursors error as recoverable (@dtunikov)
-- **PR #5014** (2026-11-03): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
-- **PR #5013** (2026-11-04): docs: add tricky-areas.md (@gheorghepucea)
 
 ---
 
@@ -2287,33 +2425,57 @@ Fixes: DBI-1276
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. classify ClickHouse Avro Date out-of-range as destination modified (#5021)
+## X. mysql): batch hot-path metric updates (#5012)
 
 **RULE**:
-When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mysql/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a3660f9`: classify ClickHouse Avro Date out-of-range as destination modified (#5021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4fc0d0e`: mysql): batch hot-path metric updates (#5012). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			//nolint:lll
-			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
-			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
-			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
-				return ErrorNotifyDestinationModified, chErrorInfo
-			}
+	counters := newMysqlPullCounters(otelManager)
+	gauges := newMysqlPullGauges(otelManager, mysqlClockOffset)
+			attribute.Int64(otel_metrics.BytesPulledKey, counters.totalFetchedBytes.Load()),
+			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
+	defer counters.flush(ctx)
+	defer gauges.recordBatchEnd(ctx)
+		counters.flush(ctx)
+			slog.Int64("bytes", counters.totalFetchedBytes.Load()),
+		counters.processTime.Add(int64(addStart.Sub(processStart)))
+		counters.addRecordTime.Add(int64(processStart.Sub(addStart)))
+				slog.Int64("bytes", counters.totalFetchedBytes.Load()),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	var fetchedBytes, totalFetchedBytes, allFetchedBytes atomic.Int64
+	var receiveTime, processTime, addRecordTime atomic.Int64
+			attribute.Int64(otel_metrics.BytesPulledKey, totalFetchedBytes.Load()),
+			slog.Int64("bytes", totalFetchedBytes.Load()),
+	defer func() {
+		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
+		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
+		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
+		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
+		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
+	}()
+		otelManager.Metrics.FetchedBytesCounter.Add(ctx, fetchedBytes.Swap(0))
+		otelManager.Metrics.AllFetchedBytesCounter.Add(ctx, allFetchedBytes.Swap(0))
+		otelManager.Metrics.CDCReceiveTimeCounter.Add(ctx, receiveTime.Swap(0))
+		otelManager.Metrics.CDCProcessTimeCounter.Add(ctx, processTime.Swap(0))
+		otelManager.Metrics.CDCAddRecordTimeCounter.Add(ctx, addRecordTime.Swap(0))
+			slog.Int64("bytes", totalFetchedBytes.Load()),
+		processTime.Add(int64(addStart.Sub(processStart)))
+		addRecordTime.Add(int64(processStart.Sub(addStart)))
+				slog.Int64(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a3660f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4fc0d0e` are properly handled with clean fallback behavior.

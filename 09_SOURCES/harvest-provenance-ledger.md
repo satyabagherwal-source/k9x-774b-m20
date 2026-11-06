@@ -7896,3 +7896,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `76004d06` | Multi-dimensional audit evidence | 2026-11-06T14:58:31.912Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `82b428a7` | Multi-dimensional audit evidence | 2026-11-06T15:05:49.484Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `afb8bc2e` | Multi-dimensional audit evidence | 2026-11-06T15:05:51.000Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `e4fc0d0e` | Multi-dimensional audit evidence | 2026-11-06T15:13:11.978Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `84ccee7a` | Multi-dimensional audit evidence | 2026-11-06T15:13:16.776Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `2709799d` | Multi-dimensional audit evidence | 2026-11-06T15:13:20.728Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9771c244` | Multi-dimensional audit evidence | 2026-11-06T15:13:20.965Z |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T15:05:53.584Z",
-    "lastVerified": "2026-11-06T15:05:53.584Z",
+    "lastChecked": "2026-11-06T15:13:23.586Z",
+    "lastVerified": "2026-11-06T15:13:23.586Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -444,22 +444,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T14:40:42.241Z",
-    "lastVerified": "2026-11-06T14:40:42.241Z",
+    "lastChecked": "2026-11-06T15:13:17.526Z",
+    "lastVerified": "2026-11-06T15:13:17.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
+    "contentHash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "34d0b198"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1168,14 +1167,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:25:13.227Z",
-    "lastVerified": "2026-11-05T22:25:13.227Z",
+    "lastChecked": "2026-11-06T15:13:14.261Z",
+    "lastVerified": "2026-11-06T15:13:14.261Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
+    "contentHash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1576,9 +1575,9 @@
   "react-native-elements-react-native-elements": {
     "name": "react-native-elements",
     "officialUrl": "https://github.com/react-native-elements/react-native-elements",
-    "lastChecked": "2026-11-04T01:44:22.711Z",
+    "lastChecked": "2026-11-06T15:13:02.499Z",
     "revisionIdentifier": "32ae0eda",
-    "lastVerified": "2026-11-04T01:44:22.711Z"
+    "lastVerified": "2026-11-06T15:13:02.499Z"
   },
   "go-kratos-kratos": {
     "name": "kratos",
@@ -3638,9 +3637,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-05T05:23:38.061Z",
+    "lastChecked": "2026-11-06T15:12:57.428Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-05T05:23:38.061Z"
+    "lastVerified": "2026-11-06T15:12:57.428Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -3736,14 +3735,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:43:46.452Z",
-    "lastVerified": "2026-11-05T10:43:46.452Z",
+    "lastChecked": "2026-11-06T15:13:09.346Z",
+    "lastVerified": "2026-11-06T15:13:09.346Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
+    "contentHash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7703,14 +7702,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:44:49.149Z",
-    "lastVerified": "2026-11-05T09:44:49.149Z",
+    "lastChecked": "2026-11-06T15:13:18.035Z",
+    "lastVerified": "2026-11-06T15:13:18.035Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
+    "contentHash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10132,9 +10131,9 @@
   "matthews-wong-structured-data-validator": {
     "name": "structured-data-validator",
     "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
-    "lastChecked": "2026-11-03T13:04:56.046Z",
+    "lastChecked": "2026-11-06T15:12:59.934Z",
     "revisionIdentifier": "e85df7a4",
-    "lastVerified": "2026-11-03T13:04:56.046Z"
+    "lastVerified": "2026-11-06T15:12:59.934Z"
   },
   "zoontek-react-native-permissions": {
     "name": "react-native-permissions",

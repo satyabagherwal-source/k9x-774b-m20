@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T15:05:51.011Z",
+  "last_updated": "2026-11-06T15:13:20.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "f73803833cf9ac195b205caf355f9ae0166fd9d1b9dd9985c1730f565b0a86aa",
-      "verified_at": "2026-11-06T13:20:26.621Z",
+      "content_hash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
+      "verified_at": "2026-11-06T15:13:16.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:20:26.621Z"
+      "last_updated": "2026-11-06T15:13:16.795Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "343b70e693bc7c91c0f69de7f24d52e45496b426ee369fb70652d0e6db02e360",
-      "verified_at": "2026-11-06T13:58:52.518Z",
+      "content_hash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
+      "verified_at": "2026-11-06T15:13:20.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:58:52.518Z"
+      "last_updated": "2026-11-06T15:13:20.986Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
-      "verified_at": "2026-11-05T10:43:47.298Z",
+      "content_hash": "c02abf43b366dbae6c725820d1d03d5710eb8b3af94e692f861e34b4dfb4d18d",
+      "verified_at": "2026-11-06T15:13:11.988Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:43:47.298Z"
+      "last_updated": "2026-11-06T15:13:11.988Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
-      "verified_at": "2026-11-05T12:14:39.557Z",
+      "content_hash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
+      "verified_at": "2026-11-06T15:13:20.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:14:39.557Z"
+      "last_updated": "2026-11-06T15:13:20.738Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
