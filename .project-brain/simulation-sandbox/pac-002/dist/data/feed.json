@@ -1,0 +1,60 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "The Sovereign Chronicle",
+  "home_page_url": "https://chronicle.ai-builder-brain.local/",
+  "feed_url": "https://chronicle.ai-builder-brain.local/data/feed.json",
+  "description": "A Journal of Systems, Engineering, Architecture, and Digital Sovereignty.",
+  "authors": [
+    {
+      "name": "The Sovereign Chronicle Editorial Board",
+      "url": "https://chronicle.ai-builder-brain.local/"
+    }
+  ],
+  "items": [
+    {
+      "id": "art-001",
+      "url": "https://chronicle.ai-builder-brain.local/article.html?slug=fallacy-of-premature-hydration",
+      "title": "The Fallacy of Premature Hydration: Why Zero-Client-JS Architecture Wins",
+      "summary": "Modern web architectures often ship megabytes of client-side JavaScript merely to render static editorial prose. Examining how pure HTML/CSS defaults restore instant LCP and eliminate Total Blocking Time.",
+      "date_published": "2026-11-01T09:00:00Z",
+      "date_modified": "2026-11-04T14:30:00Z",
+      "tags": ["web-performance", "zero-js", "core-web-vitals", "architecture"]
+    },
+    {
+      "id": "art-002",
+      "url": "https://chronicle.ai-builder-brain.local/article.html?slug=cryptographic-authorization-autonomous-ai",
+      "title": "Cryptographic Authorization: Why Boolean Flags Fail in Autonomous AI Systems",
+      "summary": "When autonomous AI agents possess write access to software repositories, Boolean authorization flags create a catastrophic forgery vulnerability. How asymmetric Ed25519 signing establishes unforgeable human oversight.",
+      "date_published": "2026-11-02T11:00:00Z",
+      "date_modified": "2026-11-05T10:15:00Z",
+      "tags": ["ai-security", "cryptography", "governance", "ed25519"]
+    },
+    {
+      "id": "art-003",
+      "url": "https://chronicle.ai-builder-brain.local/article.html?slug=deterministic-redos-defense-linear-time-scanning",
+      "title": "Deterministic ReDoS Defense: Linear-Time Scanning in High-Throughput Engines",
+      "summary": "Regular Expression Denial of Service (ReDoS) remains one of the most neglected operational vulnerabilities. Analysis of how unbounded whitespace matching triggers catastrophic backtracking and how to eliminate it in linear time.",
+      "date_published": "2026-11-03T15:20:00Z",
+      "date_modified": "2026-11-06T08:00:00Z",
+      "tags": ["performance", "security", "regex", "redos", "algorithms"]
+    },
+    {
+      "id": "art-004",
+      "url": "https://chronicle.ai-builder-brain.local/article.html?slug=data-sovereignty-client-side-execution",
+      "title": "Data Sovereignty in the Age of Opaque Cloud Runtimes",
+      "summary": "Why enterprise confidentiality mandates are forcing a return to client-side local execution. How WebAssembly and Canvas APIs allow complete digital utility processing with zero remote network egress.",
+      "date_published": "2026-11-04T12:00:00Z",
+      "date_modified": "2026-11-06T16:00:00Z",
+      "tags": ["privacy", "data-sovereignty", "wasm", "security", "gdpr"]
+    },
+    {
+      "id": "art-005",
+      "url": "https://chronicle.ai-builder-brain.local/article.html?slug=designing-for-the-next-decade-typography",
+      "title": "Designing for the Next Decade: Typography, Contrast, and Long-Form Reading",
+      "summary": "Typography is the physical interface between author thought and reader cognition. An architectural exploration of optical sizing, semantic contrast tokens, and reading-mode physics for technical publishing.",
+      "date_published": "2026-11-05T08:30:00Z",
+      "date_modified": "2026-11-06T18:00:00Z",
+      "tags": ["design-systems", "typography", "accessibility", "ux", "css"]
+    }
+  ]
+}

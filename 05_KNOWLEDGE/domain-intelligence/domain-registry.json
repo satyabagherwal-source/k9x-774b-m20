@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-06T09:10:11.000Z",
-  "total_records": 10,
+  "last_updated": "2026-11-06T17:59:06.963Z",
+  "total_records": 18,
   "domains": {
     "A": {
       "total": 1,
@@ -11,20 +11,29 @@
       ]
     },
     "B": {
-      "total": 0,
-      "record_ids": []
+      "total": 1,
+      "record_ids": [
+        "DOM-B-44DC921B"
+      ]
     },
     "C": {
-      "total": 0,
-      "record_ids": []
+      "total": 1,
+      "record_ids": [
+        "DOM-C-A3EC3CE8"
+      ]
     },
     "D": {
-      "total": 0,
-      "record_ids": []
+      "total": 2,
+      "record_ids": [
+        "DOM-D-C76D1D36",
+        "DOM-D-29BA113A"
+      ]
     },
     "E": {
-      "total": 0,
-      "record_ids": []
+      "total": 1,
+      "record_ids": [
+        "DOM-E-D288C96D"
+      ]
     },
     "F": {
       "total": 1,
@@ -48,13 +57,16 @@
       ]
     },
     "I": {
-      "total": 0,
-      "record_ids": []
-    },
-    "J": {
       "total": 1,
       "record_ids": [
-        "DOM-J-C14FC2D6"
+        "DOM-I-16F011E5"
+      ]
+    },
+    "J": {
+      "total": 2,
+      "record_ids": [
+        "DOM-J-C14FC2D6",
+        "DOM-J-B305372A"
       ]
     },
     "K": {
@@ -70,8 +82,10 @@
       ]
     },
     "M": {
-      "total": 0,
-      "record_ids": []
+      "total": 1,
+      "record_ids": [
+        "DOM-M-85839FD0"
+      ]
     }
   },
   "records": {
@@ -434,6 +448,308 @@
       },
       "confidence": 1,
       "created_at": "2026-11-06T09:07:03.239Z"
+    },
+    "DOM-J-B305372A": {
+      "record_id": "DOM-J-B305372A",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Zero-Client-JS Default Performance",
+      "content": "Eleventy generates pure HTML and CSS without bundling a client-side JavaScript framework runtime.\rDelivers perfect 100/100 Core Web Vitals scores out of the box with zero Total Blocking Time (TBT) and immediate LCP.",
+      "content_hash": "8aba52b8c9258752341384c8f97959b11a400a1d8ca54952f164e087882bf8a9",
+      "summary": "Architectural design pattern from 11ty-eleventy -> Eleventy generates pure HTML and CSS without bundling a client-side JavaScript framework runtime.\rDelivers perfect 100/100 Core Web Vitals s",
+      "provenance": {
+        "source_uri": "project://11ty-eleventy/11ty-eleventy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:35:31.953Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (11ty-eleventy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of 11ty-eleventy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T09:35:34.060Z"
+    },
+    "DOM-D-C76D1D36": {
+      "record_id": "DOM-D-C76D1D36",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zeronsh/zeron",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  \r\n> **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  \r\n> **Source Version**: `971a3271`  \r\n> **License**: MIT  \r\n> **Synthesized By**: zero-clone-structural-synthesizer  \r\n>",
+      "content_hash": "6763a37ad965a09a0d36bbd29cf16d690759ccae9ad639b3e66728e37f16b798",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  \r\n> **Source**: github ([https://github.com/zeronsh/zer -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  \r\n> **Source**: github ([https://github.com/zeronsh/zer",
+      "provenance": {
+        "source_uri": "project://zeronsh-zeron/zeronsh-zeron-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:36:32.089Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zeronsh-zeron)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zeronsh-zeron"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-06T09:36:32.115Z"
+    },
+    "DOM-D-29BA113A": {
+      "record_id": "DOM-D-29BA113A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zeromicro/go-zero",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  \r\n> **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  \r\n> **Source Version**: `43637355`  \r\n> **License**: MIT  \r\n> **Synthesized By**: zero-clone-structural-synt",
+      "content_hash": "59905c1ae46bcb0e3cae7b4fff84728f051e26c555c05f1ab781386e56e98c3e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  \r\n> **Source**: github ([https://github.com/zeromic -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  \r\n> **Source**: github ([https://github.com/zeromic",
+      "provenance": {
+        "source_uri": "project://zeromicro-go-zero/zeromicro-go-zero-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:48:44.014Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zeromicro-go-zero)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zeromicro-go-zero"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-06T09:48:46.405Z"
+    },
+    "DOM-B-44DC921B": {
+      "record_id": "DOM-B-44DC921B",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "Client-Side Drag-and-Drop Ingestion with Immediate In-Memory Preview",
+      "content": "Digital utility products must provide a unified single-dropzone ingestion interface supporting drag-and-drop, clipboard paste, and file picking with instant local preview before execution.",
+      "content_hash": "d8fcff301133425951e417a6d85146f790e1ef563ed8d687c514788452775a10",
+      "summary": "File transformation utilities that require server upload queues or complex multi-step wizards create friction and user drop-off. -> Digital utility products must provide a unified single-dropzone ingestion interface supporting drag-and-drop, clipboard paste, and file pick",
+      "provenance": {
+        "source_uri": "project://glincker-thesvg/glincker-thesvg-learnings.md",
+        "source_version": "fbc9da41",
+        "observed_at": "2026-11-06T16:10:13.177Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (glincker-thesvg)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_TEST_PASS",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "automated-regression-suite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T16:10:13.808Z"
+    },
+    "DOM-E-D288C96D": {
+      "record_id": "DOM-E-D288C96D",
+      "domain_letter": "E",
+      "domain_id": "creative",
+      "domain_name": "Creative Intelligence",
+      "secondary_domains": [],
+      "title": "Accessible Graphic Asset Scaling and Dynamic Semantic Contrast Tokens",
+      "content": "All graphic elements and visual previews must enforce explicit accessibility attributes (hasA11yProp), standard viewBox coordinate scaling, and semantic focus/hover ring contrast classes.",
+      "content_hash": "f27662f0571244a6b0a16330f1ba7c0597d6a6c2a23f2d00dfe71d3df2cfa9cc",
+      "summary": "Iconography and graphic previews often omit accessible labels, scale inconsistently across viewports, or lack visible high-contrast focus ri -> All graphic elements and visual previews must enforce explicit accessibility attributes (hasA11yProp), standard viewBox coordinate scaling, ",
+      "provenance": {
+        "source_uri": "project://lucide-icons-lucide/lucide-icons-lucide-learnings.md",
+        "source_version": "2ca268e7",
+        "observed_at": "2026-11-06T16:10:13.820Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lucide-icons-lucide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_TEST_PASS",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "automated-regression-suite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T16:10:16.635Z"
+    },
+    "DOM-I-16F011E5": {
+      "record_id": "DOM-I-16F011E5",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Deterministic SVG Content Sanitization and XML Entity Expansion Defense",
+      "content": "All ingested SVG XML strings must be sanitized by stripping script elements, dangerous attributes (onload/onclick/javascript:), and validating element hierarchy before rendering or canvas conversion.",
+      "content_hash": "e71c7d0d06a309ad72af857a4f40fa50fe8bca6f9a806fc666a227f0de14f720",
+      "summary": "User-uploaded SVG markup can harbor embedded script tags, external resource references, or nested XML entity expansions that execute malicio -> All ingested SVG XML strings must be sanitized by stripping script elements, dangerous attributes (onload/onclick/javascript:), and validati",
+      "provenance": {
+        "source_uri": "project://lucky-media-astro-seo/lucky-media-astro-seo-learnings.md",
+        "source_version": "3d6ff7b4",
+        "observed_at": "2026-11-06T16:10:16.644Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lucky-media-astro-seo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_TEST_PASS",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "automated-regression-suite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "created_at": "2026-11-06T16:10:19.216Z"
+    },
+    "DOM-M-85839FD0": {
+      "record_id": "DOM-M-85839FD0",
+      "domain_letter": "M",
+      "domain_id": "feedback_evolution",
+      "domain_name": "Feedback & Evolution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Incident-Driven Knowledge Evolution and Parser Memory Regression Quarantine",
+      "content": "When memory retention or execution defects are discovered in production, the root cause must be captured as a formal incident dossier and quarantined with an automated regression test before canonization.",
+      "content_hash": "c95b7776e80aed56ef95bbfcd25f65968b42eada98c92ae82e6cec83ef8b5d3e",
+      "summary": "Performance regressions and memory retention leaks in long-running parsers are often patched informally without preserving the failure mode  -> When memory retention or execution defects are discovered in production, the root cause must be captured as a formal incident dossier and qu",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "284243fb",
+        "observed_at": "2026-11-06T16:10:19.249Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_TEST_PASS",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "automated-regression-suite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.54,
+      "created_at": "2026-11-06T16:10:21.859Z"
+    },
+    "DOM-C-A3EC3CE8": {
+      "record_id": "DOM-C-A3EC3CE8",
+      "domain_letter": "C",
+      "domain_id": "market_business",
+      "domain_name": "Market & Business Intelligence",
+      "secondary_domains": [],
+      "title": "Commercial Viability & Zero-Backend Monetization Model for High-Volume Web Utilities",
+      "content": "Client-side zero-backend processing achieves sustainable gross margin and pricing viability by shifting compute to browser memory, establishing clear market differentiation without recurring infrastructure costs.",
+      "content_hash": "bf3a93a2f47ad9a8258fa71e09bf138bd3c5393ccc9bfcb15f50725ec82379de",
+      "summary": "High server compute and storage costs erode gross margin in high-volume market utilities, threatening business viability and forcing aggress -> Client-side zero-backend processing achieves sustainable gross margin and pricing viability by shifting compute to browser memory, establish",
+      "provenance": {
+        "source_uri": "project://glincker-thesvg/glincker-thesvg-learnings.md",
+        "source_version": "fbc9da41",
+        "observed_at": "2026-11-06T16:11:26.015Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (glincker-thesvg)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_TEST_PASS",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "automated-regression-suite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T16:11:29.594Z"
     }
   }
 }

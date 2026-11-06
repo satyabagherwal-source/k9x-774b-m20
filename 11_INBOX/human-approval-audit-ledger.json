@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-06T16:10:21.872Z",
+  "total_approvals": 1,
+  "approvals": [
+    {
+      "approval_id": "APPR-1793981421872-577F7D",
+      "candidate_id": "PLCAND-EVOL-01",
+      "record_id": "DOM-M-85839FD0",
+      "domain_letter": "M",
+      "human_operator_id": "satyabagherwal-governance",
+      "content_hash": "c95b7776e80aed56ef95bbfcd25f65968b42eada98c92ae82e6cec83ef8b5d3e",
+      "approval_timestamp": "2026-11-06T16:10:19.245Z",
+      "verified_at": "2026-11-06T16:10:21.872Z",
+      "signature_fingerprint": "7f3118fe682bae68",
+      "nonce": "NONCE-1793981419245-bd00750c5ace62b5",
+      "promotion_result": "CANONICAL_PERSISTED"
+    }
+  ]
+}

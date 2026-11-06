@@ -30,6 +30,15 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 
+import {
+  HIGH_IMPACT_DOMAINS,
+  verifyHumanApprovalToken,
+  recordHumanApprovalAudit,
+  recordConsumedNonce,
+  acquireRegistryLock,
+  releaseRegistryLock
+} from './human-approval-authority.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
@@ -320,55 +329,124 @@ export function loadDomainRegistry(customRoot = null) {
 
 /**
  * Saves a Domain Intelligence Record into the registry with atomic persistence.
+ * Enforces strict cryptographic human authorization at the final persistence boundary
+ * for high-impact domains (A, G, M) to prevent AI self-approval and unauthorized mutations.
  */
-export function persistDomainIntelligenceRecord(record, customRoot = null) {
-  const { domainDir, registryFile } = getDomainStoragePaths(customRoot);
-  if (!fs.existsSync(domainDir)) {
-    fs.mkdirSync(domainDir, { recursive: true });
+export function persistDomainIntelligenceRecord(record, customRoot = null, authContext = {}) {
+  const domainLetter = String(record.domain_letter || '').trim().toUpperCase();
+
+  // -------------------------------------------------------------------------
+  // 1. Mandatory Persistence Boundary Enforcement for High-Impact Domains
+  // -------------------------------------------------------------------------
+  let verifiedToken = null;
+  if (HIGH_IMPACT_DOMAINS.includes(domainLetter)) {
+    const token = authContext.humanApprovalToken || authContext.human_approval_token;
+    if (!token) {
+      return {
+        persisted: false,
+        code: 'PERSISTENCE_REJECTED_UNAUTHORIZED_DOMAIN',
+        domain_letter: domainLetter,
+        reason: `Domain ${domainLetter} governs core architecture, governance, or human need. Cryptographic human authorization is mandatory; direct persistence blocked.`
+      };
+    }
+
+    const verification = verifyHumanApprovalToken(record, token, customRoot, {
+      ...(authContext.tokenOptions || {}),
+      consumeNonce: false
+    });
+    if (!verification.valid) {
+      return {
+        persisted: false,
+        code: 'PERSISTENCE_REJECTED_UNAUTHORIZED_DOMAIN',
+        verification_code: verification.code,
+        domain_letter: domainLetter,
+        reason: `Cryptographic human authorization verification failed: ${verification.reason}`
+      };
+    }
+    verifiedToken = token;
   }
 
-  const registry = loadDomainRegistry(customRoot);
-
-  // Check for duplicates via content hash or Jaccard token similarity
-  const existingRecords = Object.values(registry.records);
-  const existingDuplicate = existingRecords.find(r => r.content_hash === record.content_hash);
-  if (existingDuplicate) {
-    return {
-      persisted: false,
-      reason: 'DUPLICATE_CONTENT_HASH',
-      existing_record_id: existingDuplicate.record_id
-    };
-  }
-
-  // Insert record
-  registry.records[record.record_id] = record;
-  registry.total_records = Object.keys(registry.records).length;
-  registry.last_updated = new Date().toISOString();
-
-  if (!registry.domains[record.domain_letter]) {
-    registry.domains[record.domain_letter] = { total: 0, record_ids: [] };
-  }
-  if (!registry.domains[record.domain_letter].record_ids.includes(record.record_id)) {
-    registry.domains[record.domain_letter].record_ids.push(record.record_id);
-    registry.domains[record.domain_letter].total = registry.domains[record.domain_letter].record_ids.length;
-  }
-
-  // Atomic write
-  const tmpFile = `${registryFile}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmpFile, JSON.stringify(registry, null, 2), 'utf-8');
+  // -------------------------------------------------------------------------
+  // 2. Concurrency Lock & Atomic Storage Mutation
+  // -------------------------------------------------------------------------
+  let lockAcquired = false;
   try {
-    fs.renameSync(tmpFile, registryFile);
-  } catch (err) {
-    fs.copyFileSync(tmpFile, registryFile);
-    try { fs.unlinkSync(tmpFile); } catch (e) {}
-  }
+    acquireRegistryLock(customRoot);
+    lockAcquired = true;
 
-  return {
-    persisted: true,
-    record_id: record.record_id,
-    domain_letter: record.domain_letter,
-    total_records: registry.total_records
-  };
+    const { domainDir, registryFile } = getDomainStoragePaths(customRoot);
+    if (!fs.existsSync(domainDir)) {
+      fs.mkdirSync(domainDir, { recursive: true });
+    }
+
+    const registry = loadDomainRegistry(customRoot);
+
+    // Check for duplicates via content hash
+    const existingRecords = Object.values(registry.records);
+    const existingDuplicate = existingRecords.find(r => r.content_hash === record.content_hash);
+    if (existingDuplicate) {
+      return {
+        persisted: false,
+        code: 'DUPLICATE_CONTENT_HASH',
+        reason: 'DUPLICATE_CONTENT_HASH',
+        existing_record_id: existingDuplicate.record_id
+      };
+    }
+
+    // Insert record
+    registry.records[record.record_id] = record;
+    registry.total_records = Object.keys(registry.records).length;
+    registry.last_updated = new Date().toISOString();
+
+    if (!registry.domains[record.domain_letter]) {
+      registry.domains[record.domain_letter] = { total: 0, record_ids: [] };
+    }
+    if (!registry.domains[record.domain_letter].record_ids.includes(record.record_id)) {
+      registry.domains[record.domain_letter].record_ids.push(record.record_id);
+      registry.domains[record.domain_letter].total = registry.domains[record.domain_letter].record_ids.length;
+    }
+
+    // Atomic write via temporary file
+    const tmpFile = `${registryFile}.tmp.${process.pid}.${Date.now()}`;
+    fs.writeFileSync(tmpFile, JSON.stringify(registry, null, 2), 'utf-8');
+    try {
+      fs.renameSync(tmpFile, registryFile);
+    } catch (err) {
+      fs.copyFileSync(tmpFile, registryFile);
+      try { fs.unlinkSync(tmpFile); } catch (e) {}
+    }
+
+    // -----------------------------------------------------------------------
+    // 3. Durable Audit Logging & Nonce Consumption for High-Impact Approvals
+    // -----------------------------------------------------------------------
+    if (HIGH_IMPACT_DOMAINS.includes(domainLetter) && verifiedToken) {
+      // Nonce is consumed strictly AFTER successful disk write (crash-safe ordering)
+      recordConsumedNonce(verifiedToken.nonce, customRoot);
+
+      recordHumanApprovalAudit({
+        candidate_id: verifiedToken.candidate_id || record.record_id,
+        record_id: record.record_id,
+        domain_letter: record.domain_letter,
+        human_operator_id: verifiedToken.human_operator_id,
+        content_hash: record.content_hash,
+        approval_timestamp: verifiedToken.approval_timestamp,
+        signature: verifiedToken.signature,
+        nonce: verifiedToken.nonce,
+        promotion_result: 'CANONICAL_PERSISTED'
+      }, customRoot);
+    }
+
+    return {
+      persisted: true,
+      record_id: record.record_id,
+      domain_letter: record.domain_letter,
+      total_records: registry.total_records
+    };
+  } finally {
+    if (lockAcquired) {
+      releaseRegistryLock(customRoot);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

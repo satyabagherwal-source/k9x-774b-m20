@@ -1,0 +1,115 @@
+{
+  "prd_id": "PRD-prob-the-sovereign-chronicle-9e2",
+  "created_at": "2026-11-06T17:48:21.439Z",
+  "product_name": "The Sovereign Chronicle",
+  "anchored_problem_id": "PROB-the-sovereign-chronicle-9e2868",
+  "anchored_feasibility_id": "FEAS-prob-the-sovereign-chronicle-9e2",
+  "core_thesis": "Frictionless, Lightning-Fast Digital Utility with Clean Aesthetic and Zero Bloat.",
+  "target_persona": "Modern digital professional / developer / end-user",
+  "mvp_scope": [
+    {
+      "feature_id": "FEAT-CORE-01",
+      "name": "Intuitive Drag-and-Drop Ingestion Zone",
+      "priority": "P0_CRITICAL",
+      "description": "Accessible, interactive dropzone supporting file selection, paste from clipboard, and mobile file picker.",
+      "acceptance_criteria": "Files load into memory within 100ms with visual feedback and MIME-type validation."
+    },
+    {
+      "feature_id": "FEAT-CORE-02",
+      "name": "Core In-Browser Processing Pipeline",
+      "priority": "P0_CRITICAL",
+      "description": "Direct transformation engine executed locally via browser APIs (Canvas, WASM, Web Workers).",
+      "acceptance_criteria": "Transformation completes without freezing main thread; zero outbound network requests emitted."
+    },
+    {
+      "feature_id": "FEAT-CORE-03",
+      "name": "Instant Result Preview & 1-Click Export",
+      "priority": "P0_CRITICAL",
+      "description": "Side-by-side or immediate before/after preview with instant download action.",
+      "acceptance_criteria": "Download triggers immediately with sanitized filename; file size and format verified."
+    },
+    {
+      "feature_id": "FEAT-CORE-04",
+      "name": "Responsive Shell & Privacy Guarantee Badge",
+      "priority": "P0_CRITICAL",
+      "description": "Tailwind v4 styled layout displaying verified privacy badge and zero-server guarantee.",
+      "acceptance_criteria": "Fully responsive on viewports from 360px to 4K; 100% keyboard navigable."
+    }
+  ],
+  "negative_scope_exclusions": [
+    {
+      "exclusion_id": "EXCL-01",
+      "feature_name": "User Account Registration & Password Login",
+      "rationale": "Unnecessary barrier for utility tools; increases friction and introduces user database liability."
+    },
+    {
+      "exclusion_id": "EXCL-02",
+      "feature_name": "Cloud File Storage & Multi-Device Sync",
+      "rationale": "Violates the strict privacy guarantee; adds recurring database/storage costs."
+    },
+    {
+      "exclusion_id": "EXCL-03",
+      "feature_name": "Complex Enterprise Role-Based Access Control (RBAC)",
+      "rationale": "Premature optimization for MVP; slows initial delivery without proven demand."
+    },
+    {
+      "exclusion_id": "EXCL-04",
+      "feature_name": "Heavy Client-Side Frameworks with Hydration Overhead",
+      "rationale": "Astro static defaults provide zero-hydration performance and faster First Contentful Paint (FCP)."
+    }
+  ],
+  "user_stories": [
+    {
+      "story_id": "US-01",
+      "as_a": "Modern digital professional / developer / end-user",
+      "i_want_to": "Drag and drop my local files into the browser tool",
+      "so_that": "I can process them instantly without installing heavy native software",
+      "acceptance_criteria": [
+        "Given a supported file format, when dropped, it is accepted immediately.",
+        "Given an unsupported format, when dropped, an accessible error toast explains the accepted MIME types."
+      ]
+    },
+    {
+      "story_id": "US-02",
+      "as_a": "Modern digital professional / developer / end-user",
+      "i_want_to": "Be 100% confident that my confidential files are never uploaded to a cloud server",
+      "so_that": "I comply with enterprise security and data privacy mandates",
+      "acceptance_criteria": [
+        "Network tab confirms 0 POST/PUT requests during processing.",
+        "Privacy badge and clear explanatory disclosure visible above the fold."
+      ]
+    },
+    {
+      "story_id": "US-03",
+      "as_a": "Modern digital professional / developer / end-user",
+      "i_want_to": "Download the finished output in one click",
+      "so_that": "I can resume my primary workflow without delay",
+      "acceptance_criteria": [
+        "Clicking download immediately triggers the native browser save dialog.",
+        "Output file retains high fidelity and expected format specifications."
+      ]
+    }
+  ],
+  "technical_specifications": {
+    "architecture_blueprint": "static-editorial",
+    "processing_location": "CLIENT_PRIMARY_OPTIONAL_EDGE",
+    "supported_formats": [
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/svg+xml"
+    ],
+    "ui_states_required": [
+      "EMPTY_IDLE",
+      "DRAG_HOVER",
+      "PROCESSING_ACTIVE",
+      "SUCCESS_PREVIEW",
+      "ERROR_FEEDBACK"
+    ]
+  },
+  "success_metrics": [
+    "Client-side processing latency < 500ms for standard payloads",
+    "Zero server payload transmission",
+    "Lighthouse Accessibility & SEO score == 100"
+  ]
+}

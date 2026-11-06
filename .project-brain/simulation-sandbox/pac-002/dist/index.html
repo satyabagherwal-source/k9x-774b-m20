@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Sovereign Chronicle | Journal of Systems, Engineering & Architecture</title>
+  <meta name="description" content="A Journal of Systems, Engineering, Architecture, and Digital Sovereignty. In-depth technical monographs without tracking or bloat.">
+  <link rel="canonical" href="https://chronicle.ai-builder-brain.local/">
+  <link rel="alternate" type="application/feed+json" title="The Sovereign Chronicle JSON Feed" href="./data/feed.json">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="./data/sitemap.xml">
+  <link rel="stylesheet" href="./styles/main.css">
+
+  <!-- OpenGraph Metadata (Domain J) -->
+  <meta property="og:site_name" content="The Sovereign Chronicle">
+  <meta property="og:title" content="The Sovereign Chronicle | Journal of Systems, Engineering & Architecture">
+  <meta property="og:description" content="A Journal of Systems, Engineering, Architecture, and Digital Sovereignty.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://chronicle.ai-builder-brain.local/">
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Sovereign Chronicle">
+  <meta name="twitter:description" content="A Journal of Systems, Engineering, Architecture, and Digital Sovereignty.">
+
+  <!-- Schema.org WebSite Structured Data -->
+  <script type="application/ld+json" id="structured-data-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "The Sovereign Chronicle",
+    "url": "https://chronicle.ai-builder-brain.local/",
+    "description": "A Journal of Systems, Engineering, Architecture, and Digital Sovereignty.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "The Sovereign Chronicle Editorial Board"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Accessibility: Skip to Main Content Link (Domain K & E) -->
+  <a href="#main-content" class="sr-only focus:not-sr-only btn btn-primary" style="position: absolute; top: 1rem; left: 1rem; z-index: 110;">
+    Skip to main content
+  </a>
+
+  <!-- Reading Progress Bar (Fixed Top) -->
+  <div class="reading-progress-wrapper" aria-hidden="true">
+    <div id="reading-progress-bar" class="reading-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+
+  <!-- Screen Reader Live Status Announcer (Domain E) -->
+  <div id="aria-live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Header & Navigation -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="/" class="brand-wrapper" id="brand-link" aria-label="The Sovereign Chronicle Homepage">
+        <div class="brand-logo-icon">SC</div>
+        <div>
+          <span class="brand-title">The Sovereign Chronicle</span>
+        </div>
+      </a>
+
+      <!-- Reading Theme Switcher (Domain F & E) -->
+      <nav class="theme-switcher-nav" aria-label="Reading Mode Settings">
+        <span class="sr-only">Choose Reading Theme:</span>
+        <button type="button" class="theme-btn" data-theme-set="light" aria-pressed="false" title="Switch to Light Daylight Theme">Light</button>
+        <button type="button" class="theme-btn active-theme" data-theme-set="dark" aria-pressed="true" title="Switch to Dark Obsidian Theme">Dark</button>
+        <button type="button" class="theme-btn" data-theme-set="sepia" aria-pressed="false" title="Switch to Warm Parchment Sepia Theme">Sepia</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="container" role="main">
+    <!-- VIEW 1: HOME VIEW (Listing, Filters, Search) -->
+    <div id="home-view">
+      <!-- Hero Header -->
+      <section class="hero-editorial" aria-labelledby="hero-heading">
+        <div style="margin-bottom: 0.75rem;">
+          <span class="hero-badge">
+            🏛️ Pure HTML/CSS Static Architecture • Zero Tracking
+          </span>
+        </div>
+        <h1 id="hero-heading" class="hero-title">
+          Essays on Systems, Architecture & Digital Sovereignty
+        </h1>
+        <p class="hero-subtitle">
+          In-depth technical monographs exploring resilient engineering, deterministic algorithmic defense, and long-term digital craft.
+        </p>
+      </section>
+
+      <!-- Search & Filtering Section -->
+      <section class="search-filter-section" aria-label="Search and filter publications">
+        <div class="search-input-wrapper">
+          <label for="search-input" class="sr-only">Search technical monographs by title, tag, or topic</label>
+          <input 
+            type="search" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Search monographs by title, author, or keyword (e.g. ReDoS, Zero-JS, WASM)..." 
+            autocomplete="off"
+            aria-describedby="search-summary"
+          >
+          <button type="button" id="clear-search-btn" class="clear-search-btn hidden" aria-label="Clear search input">
+            <svg style="width: 1.15rem; height: 1.15rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div id="category-pills" class="category-pills-row" role="group" aria-label="Filter essays by category"></div>
+
+        <!-- Live Search Summary -->
+        <div id="search-summary" class="search-summary-text hidden" aria-live="polite"></div>
+      </section>
+
+      <!-- Articles Card Grid -->
+      <section aria-labelledby="articles-heading">
+        <h2 id="articles-heading" class="sr-only">Published Technical Monographs</h2>
+        <div id="article-grid" class="article-grid"></div>
+      </section>
+
+      <!-- Newsletter Demonstration Card (Domain B & C) -->
+      <section class="newsletter-card card" aria-labelledby="newsletter-heading">
+        <h2 id="newsletter-heading" class="newsletter-title">Subscribe to The Chronicle Monograph Dispatch</h2>
+        <p class="newsletter-desc">
+          Receive distilled technical monographs directly in your inbox once monthly. 
+          <br><strong class="text-xs text-muted">[DEMONSTRATION ONLY: Zero-server local memory submission; no data leaves your browser.]</strong>
+        </p>
+        <form id="newsletter-form" class="newsletter-form" novalidate>
+          <label for="newsletter-email" class="sr-only">Email address for newsletter demonstration</label>
+          <input type="email" id="newsletter-email" class="newsletter-input" placeholder="colleague@enterprise.internal" required>
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <div id="newsletter-msg" class="newsletter-feedback hidden" role="status"></div>
+      </section>
+    </div>
+
+    <!-- VIEW 2: ARTICLE DETAIL VIEW (Longform reader, Breadcrumbs, Author Bio, Related) -->
+    <div id="article-view" class="hidden">
+      <div id="article-container"></div>
+    </div>
+  </main>
+
+  <!-- Technical Footer (Domain J & L) -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div>
+        <p><strong>The Sovereign Chronicle</strong> • Universal Construction Intelligence Demonstration (PAC-002)</p>
+        <p style="margin-top: 0.25rem;">Built with Semantic HTML5, Zero-JS Defaults & WCAG 2.1 AA Accessible Tokens</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer Links">
+        <a href="./data/feed.json" class="footer-link" target="_blank" rel="noopener">JSON Feed (RSS)</a>
+        <a href="./data/sitemap.xml" class="footer-link" target="_blank" rel="noopener">Sitemap</a>
+        <a href="./data/robots.txt" class="footer-link" target="_blank" rel="noopener">Robots.txt</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Application Bootstrap -->
+  <script type="module">
+    import { ChronicleApp } from './lib/app.js';
+
+    const app = new ChronicleApp({
+      homeView: document.getElementById('home-view'),
+      articleView: document.getElementById('article-view'),
+      articleContainer: document.getElementById('article-container'),
+      articleGrid: document.getElementById('article-grid'),
+      categoryPillsContainer: document.getElementById('category-pills'),
+      searchInput: document.getElementById('search-input'),
+      clearSearchBtn: document.getElementById('clear-search-btn'),
+      searchSummary: document.getElementById('search-summary'),
+      progressBar: document.getElementById('reading-progress-bar')
+    });
+
+    app.init();
+    window.__chronicleApp = app;
+  </script>
+</body>
+</html>

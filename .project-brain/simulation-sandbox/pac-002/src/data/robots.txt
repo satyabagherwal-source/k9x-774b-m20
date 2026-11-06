@@ -1,0 +1,8 @@
+# Robots.txt for The Sovereign Chronicle
+# Domain J: Search & Distribution Intelligence
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://chronicle.ai-builder-brain.local/data/sitemap.xml
+

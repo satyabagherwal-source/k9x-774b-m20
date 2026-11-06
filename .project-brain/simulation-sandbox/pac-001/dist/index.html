@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG to WebP Client-Side Converter | Privacy-First Image Utility</title>
+  <meta name="description" content="Fast, accessible, in-browser SVG to WebP image converter. 100% client-side rasterization via HTML5 Canvas. Zero file uploads, zero server tracking.">
+  <link rel="canonical" href="https://utility.ai-builder-brain.local/svg-to-webp">
+  <link rel="stylesheet" href="./styles/main.css">
+  
+  <!-- OpenGraph / Social Metadata (Domain J) -->
+  <meta property="og:title" content="SVG to WebP Client-Side Converter">
+  <meta property="og:description" content="Convert vector SVG images to optimized WebP in your browser with zero server uploads.">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data Schema (Domain J) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SVG to WebP Client-Side Converter",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All modern browsers",
+    "browserRequirements": "Requires HTML5 Canvas and WebP export support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Accessibility: Screen Reader Live Announcer (Domain E) -->
+  <div id="aria-live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <main class="container">
+    <header style="margin-bottom: 2rem; text-align: center;">
+      <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">
+        SVG to WebP Converter
+      </h1>
+      <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">
+        Convert scalable vector graphics into lightweight, high-performance WebP images directly in your browser.
+      </p>
+      <div style="margin-top: 1rem;">
+        <span style="display: inline-flex; align-items: center; gap: 0.35rem; background-color: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); color: #6ee7b7; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+          🔒 100% Client-Side Processing • Zero Server Uploads
+        </span>
+      </div>
+    </header>
+
+    <!-- Error Banner -->
+    <div id="error-banner" class="error-banner hidden" role="alert" aria-live="assertive"></div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+      <!-- Drag & Drop Zone -->
+      <section aria-labelledby="upload-heading">
+        <h2 id="upload-heading" class="sr-only">Upload SVG File</h2>
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload SVG file: drag and drop here, or press enter to browse files">
+          <svg style="width: 3rem; height: 3rem; margin: 0 auto 1rem; color: var(--color-border-focus);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">
+            Drop your SVG file here, or <span style="color: #818cf8; text-decoration: underline;">browse files</span>
+          </p>
+          <p style="color: var(--color-text-muted); font-size: 0.85rem;">
+            Supports standard .svg files up to 5MB. In-memory processing only.
+          </p>
+          <input type="file" id="file-input" accept=".svg,image/svg+xml" class="sr-only" aria-hidden="true">
+        </div>
+      </section>
+
+      <!-- Preview Section -->
+      <section id="preview-section" style="margin-top: 1.5rem;" aria-labelledby="preview-heading">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h2 id="preview-heading" style="font-size: 1rem; font-weight: 600; color: var(--color-text-primary);">
+            Vector Preview
+          </h2>
+          <span id="preview-details" style="font-size: 0.8rem; color: var(--color-text-muted);"></span>
+        </div>
+        <div id="preview-box" class="preview-box" aria-label="SVG vector preview area">
+          <span style="color: var(--color-text-muted); font-size: 0.875rem;">No SVG Loaded</span>
+        </div>
+      </section>
+
+      <!-- Conversion Settings Controls -->
+      <section id="controls-section" class="hidden" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border-subtle);" aria-labelledby="settings-heading">
+        <h2 id="settings-heading" style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">
+          Export Settings
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+          <!-- Quality Slider -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label for="quality-slider" class="form-label" style="margin-bottom: 0;">WebP Quality</label>
+              <span id="quality-val" style="font-size: 0.85rem; font-weight: 600; color: #818cf8;">85%</span>
+            </div>
+            <input type="range" id="quality-slider" class="form-range" min="0.1" max="1.0" step="0.05" value="0.85" aria-describedby="quality-val">
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">Balance between compression and visual clarity.</span>
+          </div>
+
+          <!-- Resolution Scaling Factor -->
+          <div class="form-group">
+            <label for="scale-select" class="form-label">Resolution Scale</label>
+            <select id="scale-select" class="form-select">
+              <option value="1">1x (Original Size)</option>
+              <option value="2" selected>2x (High-DPI Retina)</option>
+              <option value="4">4x (Ultra HD Vector Raster)</option>
+            </select>
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">Rasterizes vector curves at chosen multiplier.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Buttons & Status -->
+      <section id="actions-section" class="hidden" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border-subtle);">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 0.75rem;">
+            <button type="button" id="download-btn" class="btn btn-primary" disabled aria-label="Download converted WebP image">
+              <svg style="width: 1.15rem; height: 1.15rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download WebP
+            </button>
+            <button type="button" id="convert-btn" class="btn btn-secondary">
+              Re-convert
+            </button>
+          </div>
+          <button type="button" id="reset-btn" class="btn btn-secondary" style="color: #f87171;">
+            Clear & Reset
+          </button>
+        </div>
+
+        <!-- Status Indicator -->
+        <div id="status-indicator" style="margin-top: 1rem; font-size: 0.85rem; color: #a5b4fc; font-weight: 500;" role="status"></div>
+      </section>
+    </div>
+
+    <!-- Technical Provenance Footer -->
+    <footer style="text-align: center; color: var(--color-text-muted); font-size: 0.8rem; padding: 1rem 0;">
+      <p>AI-Builder-Brain PAC-001 Demonstrator • Universal Construction Intelligence Data System</p>
+      <p style="margin-top: 0.25rem;">Built using HTML5 Canvas Client-Side Engine • Zero Server Transmissions Verified</p>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { SvgToWebpApp } from './lib/app.js';
+
+    const app = new SvgToWebpApp({
+      dropzone: document.getElementById('dropzone'),
+      fileInput: document.getElementById('file-input'),
+      previewContainer: document.getElementById('preview-box'),
+      previewDetails: document.getElementById('preview-details'),
+      qualitySlider: document.getElementById('quality-slider'),
+      qualityValue: document.getElementById('quality-val'),
+      scaleSelect: document.getElementById('scale-select'),
+      convertBtn: document.getElementById('convert-btn'),
+      downloadBtn: document.getElementById('download-btn'),
+      resetBtn: document.getElementById('reset-btn'),
+      statusIndicator: document.getElementById('status-indicator'),
+      errorBanner: document.getElementById('error-banner'),
+      controlsSection: document.getElementById('controls-section'),
+      actionsSection: document.getElementById('actions-section')
+    });
+
+    app.init();
+  </script>
+</body>
+</html>
+

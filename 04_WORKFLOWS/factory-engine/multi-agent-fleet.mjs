@@ -37,6 +37,46 @@ export const FLEET_ROSTER = [
 const RESET = '\x1b[0m';
 
 /**
+ * Creates a sanitized environment object for worker child processes.
+ * Enforces strict environment allowlisting to prevent human signing credentials,
+ * private keys, or internal secrets from leaking into Scout or Harvester child processes.
+ */
+export function getSanitizedWorkerEnv(overrides = {}, baseEnv = process.env) {
+  const SAFE_ALLOWLIST = new Set([
+    'PATH', 'Path', 'PATHEXT', 'SystemRoot', 'windir', 'COMSPEC', 'ComSpec',
+    'TEMP', 'TMP', 'HOME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA',
+    'NODE', 'NODE_ENV', 'NODE_PATH', 'NODE_OPTIONS',
+    'GITHUB_TOKEN', 'GH_TOKEN', 'HF_TOKEN', 'HUGGINGFACE_HUB_TOKEN',
+    'GEMINI_API_KEY', 'GOOGLE_API_KEY',
+    'LANG', 'LC_ALL', 'TERM', 'SHELL', 'COMPUTERNAME', 'PROCESSOR_ARCHITECTURE'
+  ]);
+
+  const merged = { ...baseEnv, ...overrides };
+  const sanitized = {};
+
+  for (const [key, val] of Object.entries(merged)) {
+    // Strip all human authority secrets, private keys, signing keys
+    if (
+      key.startsWith('AI_BUILDER_BRAIN_HUMAN_') ||
+      key.includes('PRIVATE_KEY') ||
+      key.includes('SIGNING_KEY') ||
+      key.includes('SECRET')
+    ) {
+      if (key !== 'GITHUB_TOKEN' && key !== 'GH_TOKEN' && key !== 'HF_TOKEN' && key !== 'GEMINI_API_KEY' && key !== 'GOOGLE_API_KEY') {
+        continue;
+      }
+    }
+
+    if (SAFE_ALLOWLIST.has(key) || overrides[key] !== undefined) {
+      sanitized[key] = val;
+    }
+  }
+
+  return sanitized;
+}
+
+
+/**
  * Returns workers array from harvest-control.json
  */
 export function getFleetWorkers() {
@@ -309,7 +349,7 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
       console.log(`${agentConfig.color}[${agentConfig.id}] Domain ${agentConfig.domain} and queue fully harvested. Single-flight scouting fresh repos...${RESET}`);
       const scoutProc = fork(SCOUT_SCRIPT, [agentConfig.domain], {
         cwd: BRAIN_ROOT,
-        env: { ...process.env, AGENT_NAME: agentConfig.id, TARGET_DOMAIN: agentConfig.domain },
+        env: getSanitizedWorkerEnv({ AGENT_NAME: agentConfig.id, TARGET_DOMAIN: agentConfig.domain }),
         stdio: ['pipe', 'pipe', 'pipe', 'ipc']
       });
 
@@ -346,11 +386,7 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
       console.log(`${agentConfig.color}[LAUNCHING ${agentConfig.id}] Domain: ${agentConfig.domain.toUpperCase()} -> Harvesting Target: ${targetObj.webUrl}${RESET}`);
       updateWorkerState(agentConfig.id, { lastActiveAt: new Date().toISOString() });
 
-      const env = {
-        ...process.env,
-        AGENT_NAME: agentConfig.id,
-        TARGET_DOMAIN: agentConfig.domain
-      };
+      const env = getSanitizedWorkerEnv({ AGENT_NAME: agentConfig.id, TARGET_DOMAIN: agentConfig.domain });
 
       // Run zero-clone harvester directly on the dedicated target URL
       const harvestProc = fork(ZERO_CLONE_SCRIPT, [targetObj.webUrl], {
@@ -524,6 +560,14 @@ export async function runMultiAgentFleet(options = {}) {
     await runSelfBrainHarvest();
   } catch (err) {
     console.warn(`[WARN] Self-brain harvest error: ${err.message}`);
+  }
+
+  // Continuous Knowledge Evolution Pass for newly harvested dossiers
+  try {
+    const { runHarvesterEvolutionCycle } = await import('./cloud-harvester-evolution-bridge.mjs');
+    await runHarvesterEvolutionCycle({ brainRoot: BRAIN_ROOT, cycleResults: results, limit: 3 });
+  } catch (evoErr) {
+    console.warn(`[WARN] Cloud harvester evolution cycle error: ${evoErr.message}`);
   }
 
   // Synchronize Master Brain with atomic rebase retry ONLY if new intelligence was genuinely verified

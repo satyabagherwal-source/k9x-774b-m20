@@ -33,6 +33,11 @@ import {
   getDomainStoragePaths
 } from './domain-intelligence-engine.mjs';
 
+import {
+  HIGH_IMPACT_DOMAINS,
+  verifyHumanApprovalToken
+} from './human-approval-authority.mjs';
+
 import { searchBrain } from './retrieval-engine.mjs';
 import { detectDirectiveOpposition } from './knowledge-acquisition-pipeline.mjs';
 
@@ -54,6 +59,7 @@ export const KNOWLEDGE_STAGE = Object.freeze({
   PROJECT_LOCAL_ONLY: 'PROJECT_LOCAL_ONLY',     // Execution passed, but project-specific (not canonical)
   REJECTED_UNSOUND: 'REJECTED_UNSOUND',         // Fails claim validation or causality
   REJECTED_UNVERIFIED: 'REJECTED_UNVERIFIED',   // Failed execution verification
+  STAGED_FOR_HUMAN_REVIEW: 'STAGED_FOR_HUMAN_REVIEW', // High-impact domain requires human review
   CONFLICTED: 'CONFLICTED',                     // Contradicts an existing rule (quarantined)
   CANONICAL: 'CANONICAL',                       // Formally promoted to Master Brain Domain Registry
   DUPLICATE_SKIPPED: 'DUPLICATE_SKIPPED'        // Existing hash detected, safely skipped
@@ -364,12 +370,50 @@ export function validateProjectLearningCandidate(candidate, verificationProof = 
   };
 
   // -------------------------------------------------------------------------
-  // Pillar 4: Canonical Promotion Approval
+  // Pillar 4: Canonical Promotion Approval (Governed by Policy, Not AI Autonomy)
   // -------------------------------------------------------------------------
   let promotionApproved = true;
-  let approvalReason = 'Approved for canonical domain intelligence tier';
+  let approvalReason = 'Approved for canonical domain intelligence tier under autonomous policy.';
+  let requiresHumanReview = false;
 
-  if (verificationProof.canonical_promotion_approval && verificationProof.canonical_promotion_approval.approved === false) {
+  const domainLetter = candidate.primary_domain?.letter || options.forcedDomain;
+  const confidence = candidate.classification_confidence ?? 1.0;
+
+  // High-Impact Domains that CANNOT be autonomously approved by an AI-generated field:
+  // Domains A (Human Need), G (Architecture & Structural Boundaries), and M (Evolution/Master Brain Invariants)
+  const isHighImpact = HIGH_IMPACT_DOMAINS.includes(domainLetter);
+  const humanToken = verificationProof.canonical_promotion_approval?.humanApprovalToken ||
+                     verificationProof.canonical_promotion_approval?.human_approval_token ||
+                     verificationProof.humanApprovalToken ||
+                     options.humanApprovalToken;
+
+  if (isHighImpact) {
+    if (!humanToken) {
+      promotionApproved = false;
+      requiresHumanReview = true;
+      approvalReason = `HIGH_IMPACT_DOMAIN_STAGED: Domain ${domainLetter} governs structural architecture or core invariants. Mandatory cryptographic human authorization required; AI self-approval blocked.`;
+      failures.push(approvalReason);
+    } else {
+      const tokenVerification = verifyHumanApprovalToken(
+        candidate,
+        humanToken,
+        options.brainRoot || null,
+        { ...(options.tokenOptions || {}), consumeNonce: false }
+      );
+      if (tokenVerification.valid) {
+        approvalReason = `Cryptographically authorized by human operator (${tokenVerification.human_operator_id}) at ${tokenVerification.approval_timestamp}`;
+      } else {
+        promotionApproved = false;
+        requiresHumanReview = true;
+        approvalReason = `HIGH_IMPACT_AUTH_FAILED: Cryptographic human authorization verification failed (${tokenVerification.code}: ${tokenVerification.reason})`;
+        failures.push(approvalReason);
+      }
+    }
+  } else if (confidence < 0.60) {
+    promotionApproved = false;
+    approvalReason = `LOW_CLASSIFICATION_CONFIDENCE: Classification confidence (${confidence}) is below the required 0.60 threshold.`;
+    failures.push(approvalReason);
+  } else if (verificationProof.canonical_promotion_approval && verificationProof.canonical_promotion_approval.approved === false) {
     promotionApproved = false;
     approvalReason = verificationProof.canonical_promotion_approval.reason || 'Canonical promotion not approved by review policy.';
     failures.push(approvalReason);
@@ -389,7 +433,7 @@ export function validateProjectLearningCandidate(candidate, verificationProof = 
   } else if (!pillars[VALIDATION_PILLARS.CROSS_CONTEXT_APPLICABILITY].passed) {
     stage = KNOWLEDGE_STAGE.PROJECT_LOCAL_ONLY;
   } else if (!pillars[VALIDATION_PILLARS.CANONICAL_PROMOTION_APPROVAL].passed) {
-    stage = KNOWLEDGE_STAGE.PROJECT_LOCAL_ONLY;
+    stage = requiresHumanReview ? KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW : KNOWLEDGE_STAGE.PROJECT_LOCAL_ONLY;
   }
 
   const valid = stage === KNOWLEDGE_STAGE.VALIDATED;
@@ -566,12 +610,22 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
   });
 
   // Step 6: Atomic Disk Persistence into 05_KNOWLEDGE/domain-intelligence/
-  const persistRes = persistDomainIntelligenceRecord(domainRecord, customRoot);
+  const authContext = {
+    humanApprovalToken: verificationProof.canonical_promotion_approval?.humanApprovalToken ||
+                        verificationProof.canonical_promotion_approval?.human_approval_token ||
+                        verificationProof.humanApprovalToken ||
+                        options.humanApprovalToken,
+    tokenOptions: options.tokenOptions
+  };
+  const persistRes = persistDomainIntelligenceRecord(domainRecord, customRoot, authContext);
   if (!persistRes.persisted) {
     return {
       success: false,
       candidate_id: validCandidate.candidate_id,
-      stage: KNOWLEDGE_STAGE.DUPLICATE_SKIPPED,
+      stage: persistRes.code === 'PERSISTENCE_REJECTED_UNAUTHORIZED_DOMAIN'
+        ? KNOWLEDGE_STAGE.STAGED_FOR_HUMAN_REVIEW
+        : KNOWLEDGE_STAGE.DUPLICATE_SKIPPED,
+      code: persistRes.code,
       reason: persistRes.reason,
       existing_record_id: persistRes.existing_record_id
     };
