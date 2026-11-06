@@ -2,6 +2,7 @@
 
 > **Reference**: `AI-Builder-Brain/00_START_HERE/AGENT_BOOT_PROTOCOL.md`  
 > **Mandate**: Mandatory execution sequence for any AI agent booting inside any project operating under AI-Builder-Brain.  
+> 🛡️ **Governing Vision & Anti-Drift Mandate**: Every agent MUST be conditioned by [`00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md`](file:///c:/AI-Builder-Brain/00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md) before executing tasks.  
 > ⚡ **Micro-Task Fast Path**: For simple tasks (color, text, single-line fix, basic landing page), use [`00_START_HERE/TASK_COMPLEXITY_ROUTER.md`](file:///c:/AI-Builder-Brain/00_START_HERE/TASK_COMPLEXITY_ROUTER.md) to execute in 3 steps (< 300 tokens).  
 > 🛡️ **Anti-Regression Mandate**: Always enforce [`00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md`](file:///c:/AI-Builder-Brain/00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md) to guarantee zero collateral damage.
 
@@ -9,9 +10,11 @@
 
 ## The Universal Boot Sequence
 
-When an AI agent starts work or boots up in any workspace, it MUST execute these 15 steps:
+When an AI agent starts work or boots up in any workspace, it MUST execute these steps:
 
 ```
+[ 0. Condition on Governing Mandate & Anti-Drift ]
+               ↓
 [ 1. Discover AI-Builder-Brain ]
                ↓
 [ 2. Verify Brain Bridge ]
@@ -45,12 +48,19 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 
 ---
 
+### Step 0: Condition on Governing Mandate & Anti-Drift Infection
+- Read and internalize [`00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md`](file:///c:/AI-Builder-Brain/00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md).
+- Anchor to Master Context:
+  - [`AI-BUILDER-BRAIN-CONTINUITY-CONTEXT-v1.1.md`](file:///c:/AI-Builder-Brain/AI-BUILDER-BRAIN-CONTINUITY-CONTEXT-v1.1.md)
+  - [`AI-Builder-Brain-Universal-Construction-Intelligence-Context-v0.1.md`](file:///c:/AI-Builder-Brain/AI-Builder-Brain-Universal-Construction-Intelligence-Context-v0.1.md)
+  - [`AI-BUILDER-BRAIN-MASTER-VISION-v1.0.md`](file:///c:/AI-Builder-Brain/AI-BUILDER-BRAIN-MASTER-VISION-v1.0.md)
+- Non-negotiable identity: Brain is Data, not an AI model; 13 Equal Domains (A–M); `EXTRACTED ≠ LEARNED ≠ VERIFIED`; Zero context drift; Preserve existing 16-folder architecture and 24/7 Cloud Harvester.
+
 ### Step 1: Discover & Sync AI-Builder-Brain
 - Locate Master Brain (`C:\AI-Builder-Brain`, `AI_BUILDER_BRAIN_PATH`, or sibling).
 - Verify canonical folders (`00_START_HERE`, `01_CORE`, `04_WORKFLOWS`).
 - Auto-pull latest 24/7 cloud-harvested learnings from GitHub remote (`git -C "C:\AI-Builder-Brain" pull --rebase origin main`). This guarantees that all intelligence harvested in the cloud while the laptop was closed or offline is instantly available locally.
 - Enforce strict read-only boundary on Master Brain during child project development.
-
 
 ### Step 2: Verify Brain Bridge
 - Inspect `.project-brain/brain-bridge.json`.
@@ -148,9 +158,3 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - **Strict Separation of Knowledge Learning vs ML Training**: Brain "learning" strictly denotes human-readable engineering patterns, architecture invariants, incident post-mortems, and skills retrieval. It is strictly prohibited to collect, export, or format Brain outputs into an automated dataset for training, fine-tuning, or distilling an artificial intelligence model.
 - **Provenance Integrity**: Promoted rules must carry verified provenance metadata (`13_GOVERNANCE/knowledge-provenance-schema.md`).
 - **Provider Compliance**: All AI model calls must adhere to [`13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md`](file:///c:/AI-Builder-Brain/13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md) and [`multi_provider_rules.md`](file:///c:/AI-Builder-Brain/13_GOVERNANCE/PROVIDER_USAGE_RULES/multi_provider_rules.md).
-
-
-
-
-
-

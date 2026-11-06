@@ -1,9 +1,23 @@
 # 🧭 AI Instant Navigator & Precision Task Router
 
-> **Mandate for All Connecting AI Agents (Antigravity, Claude Code, Cursor, Copilot, ChatGPT)**:  
-> When connecting to `AI-Builder-Brain` to write code, build a website, app, software, or fix an issue:  
+> **Mandate for All Connecting AI Agents (Antigravity, Claude Code, Cursor, Copilot, ChatGPT, Gemini, Local Models)**:  
+> When connecting to `AI-Builder-Brain` or any associated project to write code, build an app, or execute any task:  
+> **YOU MUST BE GOVERNED BY THE MASTER CONTEXT & ANTI-DRIFT MANDATE FIRST**:  
+> 👉 [`00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md`](file:///c:/AI-Builder-Brain/00_START_HERE/GOVERNING_VISION_AND_ANTI_DRIFT_MANDATE.md)  
+> *Core Governing Contexts*: [`AI-BUILDER-BRAIN-CONTINUITY-CONTEXT-v1.1.md`](file:///c:/AI-Builder-Brain/AI-BUILDER-BRAIN-CONTINUITY-CONTEXT-v1.1.md) | [`AI-Builder-Brain-Universal-Construction-Intelligence-Context-v0.1.md`](file:///c:/AI-Builder-Brain/AI-Builder-Brain-Universal-Construction-Intelligence-Context-v0.1.md) | [`AI-BUILDER-BRAIN-MASTER-VISION-v1.0.md`](file:///c:/AI-Builder-Brain/AI-BUILDER-BRAIN-MASTER-VISION-v1.0.md)  
 > **READ ONLY THIS FILE FIRST**. Do NOT wander through folders. Do NOT read `07_PROJECT_LEARNING/` (those are forensic post-mortems).  
 > Match the user's intent below to jump directly to the exact single file needed in **1 step (< 300 tokens)**.
+
+---
+
+## 0. Mandatory Governing Context & Identity Infection
+
+Before taking any action or writing code, every agent MUST understand:
+1. **Brain is DATA, NOT an AI Model**: `Model + Brain + Tools + Evidence + Verification = Universal Construction Intelligence`.
+2. **13 Equal Domains (A–M)**: Construction includes Art, SEO, Needs, Quality, and Evolution — not just coding syntax.
+3. **EXTRACTED ≠ LEARNED ≠ VERIFIED**: Never claim correctness without empirical tests or read-back verification.
+4. **Zero Blast Radius & Anti-Regression**: Protect existing 16-folder architecture, rules, and cloud harvesting.
+5. **No Context Drift**: Do not wander into unprompted refactoring, unrelated files, or unapproved test executions.
 
 ---
 
@@ -79,4 +93,3 @@ Choose your path based on what the user asked:
    - Independent empirical verification (real command outputs, explicit `NOT RUN`, build exit 0 != full correctness).
    - Deliver standard End-of-Task report (`स्थिति: VERIFIED / PARTIALLY VERIFIED / BLOCKED`).
    - Persist lessons to `LEARNINGS.md`.
-
