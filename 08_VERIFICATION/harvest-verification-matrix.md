@@ -7833,3 +7833,15 @@
 | `CYCLE-20261106-NOBQ` | `2026-11-06T00:02:51.494Z` | `Permify/permify` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`787baefb...`) |
 | `CYCLE-20261106-NR98` | `2026-11-06T00:02:55.292Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d2fb52f2...`) |
 | `CYCLE-20261106-NTLG` | `2026-11-06T00:02:58.324Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`359c59ea...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T08:48:35.091Z` | `VectorConverterApp` | REPRODUCIBLE_TEST | `VERIFIED` | `DOM-F-E1100FB5` [Domain F] | Yes (`04fd6f7e...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:02:35.556Z` | `VectorConverterApp` | REPRODUCIBLE_TEST | `VERIFIED` | `DOM-F-7CD5AD0C` [Domain F] | Yes (`b9908ab6...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:05:30.572Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-83C24083` [Domain H] | Yes (`305b6522...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:06:21.400Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-94C4B932` [Domain H] | Yes (`124de928...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:07:03.243Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-2007DF83` [Domain H] | Yes (`cb89023b...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:08:29.723Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-7F8FA9CB` [Domain H] | Yes (`fb10762d...`) |
+| `CYCLE-2026-11-06-STAGED` | `2026-11-06T09:08:32.223Z` | `local` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | Pending |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:08:32.254Z` | `local_workspace` | UNIT_TEST_REPRODUCTION | `VERIFIED` | `DOM-H-D48F3D06` [Domain H] | Yes (`5cb06ba6...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:08:43.652Z` | `VectorConverterApp` | REPRODUCIBLE_TEST | `VERIFIED` | `DOM-F-C647DDF1` [Domain F] | Yes (`d46294f3...`) |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:10:08.572Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-FEDA7FC6` [Domain H] | Yes (`b494df04...`) |
+| `CYCLE-2026-11-06-STAGED` | `2026-11-06T09:10:10.970Z` | `local` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | Pending |
+| `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:10:11.002Z` | `local_workspace` | UNIT_TEST_REPRODUCTION | `VERIFIED` | `DOM-H-120D806F` [Domain H] | Yes (`92bff619...`) |

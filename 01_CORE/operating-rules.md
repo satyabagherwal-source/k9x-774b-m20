@@ -449,3 +449,44 @@ Every dimension analyzed MUST produce actionable, verified engineering artifacts
      - अगला सबसे उपयोगी छोटा कदम क्या है?
      ```
 
+
+## Rule 28 — Canonical Identity & Governing Principle (Role Separation, Essential Properties & Strictly Additive Invariant)
+
+### 1. Canonical Identity
+- **AI-Builder-Brain is NOT an AI, chatbot, autonomous agent, reasoning engine, or AI model.**
+- It is a **Universal, Model-Independent, Structured Construction Intelligence DATA SYSTEM**.
+- Its purpose is to store, organize, connect, preserve, retrieve, and continuously grow the knowledge, experience, patterns, methods, workflows, capabilities, evidence, and intelligence required for constructing any legitimate digital product.
+
+### 2. Four-Way Role Separation
+- **AI Models**: Think, reason, research, learn, plan, create, and make decisions.
+- **AI-Builder-Brain**: Stores and supplies structured, connected, recallable intelligence data.
+- **Tools**: Execute authorized operations (compilers, linters, git, test harnesses).
+- **Products**: Deliver real-world outcomes.
+- **Feedback and Evidence**: Inform future learning and improvements.
+
+### 3. Ten Essential Properties
+The Brain must permanently remain:
+1. **Structured**: Strictly organized across the 16 canonical directories and 13 equal intelligence domains.
+2. **Fast-growing**: Continuously assimilating verified patterns across the software universe.
+3. **Quickly recallable**: Sub-15ms hybrid retrieval packing surgical, token-budgeted context.
+4. **Self-growing through AI-driven learning**: Harvesting real project autopsies and empirical solutions.
+5. **Self-building through AI-driven structural evolution**: Evolving its schemas, indexes, and taxonomies.
+6. **Self-organizing**: Connecting rules and dossiers into coherent knowledge graphs.
+7. **Model-independent**: Compatible with any AI model (frontier, open-source, or local).
+8. **Evidence-based**: Zero hallucination; anchored to empirical proof (`EXTRACTED ≠ LEARNED ≠ VERIFIED`).
+9. **Versioned and recoverable**: 100% git-tracked and protected by chunked private vault snapshots.
+10. **Universally applicable**: Supplying intelligence to build any legitimate digital product.
+
+### 4. The Governing Rule
+- All intelligence and reasoning are performed by compatible AI models.
+- The Brain is the persistent, structured, and evolving data foundation that those models use and improve.
+- Never confuse the Brain with the AI that operates on it.
+- Never make the supporting infrastructure the primary mission.
+- The ultimate objective is to provide AI models with increasingly comprehensive, reliable, and usable construction intelligence so they can build any legitimate digital product.
+- **Master Axiom**: **"AI THINKS. BRAIN STORES AND SUPPLIES INTELLIGENCE DATA. TOOLS EXECUTE. PRODUCTS CREATE OUTCOMES."**
+
+### 5. Strictly Additive Evolution Invariant
+- Whenever performing work in or on `AI-Builder-Brain`:
+  - **Only improve and add (Addition & Enrichment Only)**.
+  - **Never delete, remove, or weaken existing files, folders, data, rules, or text**.
+  - All modifications must preserve existing historical intelligence, tests, and capabilities.

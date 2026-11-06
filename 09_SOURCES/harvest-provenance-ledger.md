@@ -7842,3 +7842,15 @@ Every entry in this ledger must capture:
 | `learn-github-permify-permify` | `https://github.com/Permify/permify` | `81819b84` | Multi-dimensional audit evidence | 2026-11-06T00:02:51.498Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `8bddc82a` | Multi-dimensional audit evidence | 2026-11-06T00:02:55.295Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f10139f8` | Multi-dimensional audit evidence | 2026-11-06T00:02:58.327Z |
+| `learn-dom-f-e1100fb5` | `project://VectorConverterApp` | `1.0.0` | `inline-object` | 2026-11-06T08:48:35.091Z |
+| `learn-dom-f-7cd5ad0c` | `project://VectorConverterApp` | `1.0.0` | `inline-object` | 2026-11-06T09:02:35.556Z |
+| `learn-dom-h-83c24083` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:05:30.572Z |
+| `learn-dom-h-94c4b932` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:06:21.400Z |
+| `learn-dom-h-2007df83` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:07:03.243Z |
+| `learn-dom-h-7f8fa9cb` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:08:29.723Z |
+| `learn-cd-357` | `local_workspace` | `local` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:08:32.224Z |
+| `learn-dom-h-d48f3d06` | `project://local_workspace` | `1.0.0` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:08:32.254Z |
+| `learn-dom-f-c647ddf1` | `project://VectorConverterApp` | `1.0.0` | `inline-object` | 2026-11-06T09:08:43.652Z |
+| `learn-dom-h-feda7fc6` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:10:08.572Z |
+| `learn-cd-357` | `local_workspace` | `local` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:10.971Z |
+| `learn-dom-h-120d806f` | `project://local_workspace` | `1.0.0` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:11.002Z |

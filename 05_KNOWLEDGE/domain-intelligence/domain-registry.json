@@ -1,0 +1,439 @@
+{
+  "version": "1.0.0",
+  "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
+  "last_updated": "2026-11-06T09:10:11.000Z",
+  "total_records": 10,
+  "domains": {
+    "A": {
+      "total": 1,
+      "record_ids": [
+        "DOM-A-DD59FA01"
+      ]
+    },
+    "B": {
+      "total": 0,
+      "record_ids": []
+    },
+    "C": {
+      "total": 0,
+      "record_ids": []
+    },
+    "D": {
+      "total": 0,
+      "record_ids": []
+    },
+    "E": {
+      "total": 0,
+      "record_ids": []
+    },
+    "F": {
+      "total": 1,
+      "record_ids": [
+        "DOM-F-C060CCE1"
+      ]
+    },
+    "G": {
+      "total": 1,
+      "record_ids": [
+        "DOM-G-D1C40B63"
+      ]
+    },
+    "H": {
+      "total": 4,
+      "record_ids": [
+        "DOM-H-C4EF28D3",
+        "DOM-H-83C24083",
+        "DOM-H-94C4B932",
+        "DOM-H-2007DF83"
+      ]
+    },
+    "I": {
+      "total": 0,
+      "record_ids": []
+    },
+    "J": {
+      "total": 1,
+      "record_ids": [
+        "DOM-J-C14FC2D6"
+      ]
+    },
+    "K": {
+      "total": 1,
+      "record_ids": [
+        "DOM-K-353B93D6"
+      ]
+    },
+    "L": {
+      "total": 1,
+      "record_ids": [
+        "DOM-L-1B851132"
+      ]
+    },
+    "M": {
+      "total": 0,
+      "record_ids": []
+    }
+  },
+  "records": {
+    "DOM-A-DD59FA01": {
+      "record_id": "DOM-A-DD59FA01",
+      "domain_letter": "A",
+      "domain_id": "human_need",
+      "domain_name": "Human & Need Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Domain A — Human Need: Privacy Sovereignty & Client-Side Local Execution Invariant",
+      "content": "Users and enterprise professionals handling confidential vector assets, images, or documents require mathematical certainty that their files never transit remote cloud servers. Software handling user data must default to 100% in-browser processing via WebAssembly, Web Workers, or Canvas APIs.",
+      "content_hash": "cc75dba4cea9836b0d2b0c0e747437f170428d808b856558d6a4541771318500",
+      "summary": "Users and enterprise professionals handling confidential vector assets, images, or documents require mathematical certainty that their files never transit remote cloud servers. Software handling user data must default to 100% in-browser processing via WebAssembly, Web Workers, or",
+      "provenance": {
+        "source_uri": "01_CORE/operating-rules.md",
+        "source_version": "1.0",
+        "observed_at": "2026-11-06T08:33:55.400Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_CODE_PATTERN",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "astro-tailwind-v4",
+          "react-spa",
+          "universal"
+        ]
+      },
+      "confidence": 0.94,
+      "created_at": "2026-11-06T08:33:55.400Z"
+    },
+    "DOM-F-C060CCE1": {
+      "record_id": "DOM-F-C060CCE1",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Domain F — Design Intelligence: Tailwind CSS v4 CSS-First Design Token Architecture",
+      "content": "Tailwind CSS v4 replaces legacy JavaScript-based tailwind.config.js with pure CSS-first @theme directive in src/styles/global.css. Design tokens (colors, typography, radii, spacing) must use modern OKLCH color spaces and CSS variables for deterministic light/dark mode and zero runtime overhead.",
+      "content_hash": "7fc7be716ae661f4b8c8d43cfc53e61da91908b189a678af3e716c79ba93bd78",
+      "summary": "Tailwind CSS v4 replaces legacy JavaScript-based tailwind.config.js with pure CSS-first @theme directive in src/styles/global.css. Design tokens (colors, typography, radii, spacing) must use modern OKLCH color spaces and CSS variables for deterministic light/dark mode and zero ru",
+      "provenance": {
+        "source_uri": "05_KNOWLEDGE/engineering-patterns.md",
+        "source_version": "Rule 1670",
+        "observed_at": "2026-11-06T08:33:55.411Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_CODE_PATTERN",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "astro-tailwind-v4",
+          "ai-saas"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T08:33:55.411Z"
+    },
+    "DOM-G-D1C40B63": {
+      "record_id": "DOM-G-D1C40B63",
+      "domain_letter": "G",
+      "domain_id": "architecture",
+      "domain_name": "Architecture Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Domain G — Architecture Intelligence: Strict Environment vs Product Boundary Separation",
+      "content": "Project Factory bootstrap is strictly restricted to initializing the development environment, runtime, Brain OS, and testing infrastructure (Rule 1670). Phase A terminates at ENVIRONMENT READY : CERTIFIED with 0 product code. Product development begins in Phase B upon receiving explicit user product instructions.",
+      "content_hash": "8a657e970c9412a49d9a25ce92fae3a437366dfca6c66dae34ec2e3f45390477",
+      "summary": "Project Factory bootstrap is strictly restricted to initializing the development environment, runtime, Brain OS, and testing infrastructure (Rule 1670). Phase A terminates at ENVIRONMENT READY : CERTIFIED with 0 product code. Product development begins in Phase B upon receiving e",
+      "provenance": {
+        "source_uri": "01_CORE/operating-rules.md",
+        "source_version": "Rule 1670",
+        "observed_at": "2026-11-06T08:33:55.419Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "CANONICAL_INVARIANT",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal"
+        ]
+      },
+      "confidence": 0.68,
+      "created_at": "2026-11-06T08:33:55.419Z"
+    },
+    "DOM-H-C4EF28D3": {
+      "record_id": "DOM-H-C4EF28D3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Domain H — Technical Construction: Zero-Latency Client-Side Canvas & WebAssembly Ingestion",
+      "content": "Client-side file transformation pipelines must ingest files via Blob.arrayBuffer(), parse MIME-types strictly in memory, and transcode using OffscreenCanvas or WebAssembly workers without freezing the main UI thread. All allocations must be revoked via URL.revokeObjectURL().",
+      "content_hash": "cc38fcc0ca7bad9c7d3d294d08464d1ce941cdec18cdfcadbe70dee0f341ac57",
+      "summary": "Client-side file transformation pipelines must ingest files via Blob.arrayBuffer(), parse MIME-types strictly in memory, and transcode using OffscreenCanvas or WebAssembly workers without freezing the main UI thread. All allocations must be revoked via URL.revokeObjectURL().",
+      "provenance": {
+        "source_uri": "05_KNOWLEDGE/engineering-patterns.md",
+        "source_version": "Rule 214",
+        "observed_at": "2026-11-06T08:33:55.425Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_CODE_PATTERN",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "astro-tailwind-v4",
+          "react-spa"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T08:33:55.425Z"
+    },
+    "DOM-J-C14FC2D6": {
+      "record_id": "DOM-J-C14FC2D6",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "I",
+          "id": "content_information",
+          "name": "Content & Information Intelligence"
+        }
+      ],
+      "title": "Domain J — Search & Distribution: Self-Referential Canonical and JSON-LD Structured Data Hierarchy",
+      "content": "Every indexable page must emit a self-referential canonical URL tag, OpenGraph image/title metadata, and a Schema.org WebApplication / SoftwareApplication JSON-LD script block before closing </head> to guarantee maximum search discoverability and zero-indexation duplication.",
+      "content_hash": "e694406cd514c5bb57c781b8359d199867715fa3bdcaab3a0df30c7209bbb81a",
+      "summary": "Every indexable page must emit a self-referential canonical URL tag, OpenGraph image/title metadata, and a Schema.org WebApplication / SoftwareApplication JSON-LD script block before closing </head> to guarantee maximum search discoverability and zero-indexation duplication.",
+      "provenance": {
+        "source_uri": "05_KNOWLEDGE/universal-seo-and-sitemap-governance.md",
+        "source_version": "Rule 79",
+        "observed_at": "2026-11-06T08:33:55.432Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_CODE_PATTERN",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "I"
+        ],
+        "applied_in_blueprints": [
+          "astro-tailwind-v4",
+          "web-seo"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T08:33:55.432Z"
+    },
+    "DOM-K-353B93D6": {
+      "record_id": "DOM-K-353B93D6",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Domain K — Quality & Verification: Zero-Outbound Network Probe & Assertion Barrier",
+      "content": "Verification suites for client-side privacy tools must execute live network inspection probes during transformation workflows. Any outgoing HTTP POST, PUT, or WebSocket connection emitted during file processing constitutes an automatic fatal verification failure.",
+      "content_hash": "1fb11651702f1c4783d02cf0598b19bc3bfb6a225271c154e6f69fb792137be0",
+      "summary": "Verification suites for client-side privacy tools must execute live network inspection probes during transformation workflows. Any outgoing HTTP POST, PUT, or WebSocket connection emitted during file processing constitutes an automatic fatal verification failure.",
+      "provenance": {
+        "source_uri": "08_VERIFICATION/verification-protocol.md",
+        "source_version": "1.0",
+        "observed_at": "2026-11-06T08:33:55.439Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "REPRODUCIBLE_TEST",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T08:33:55.439Z"
+    },
+    "DOM-L-1B851132": {
+      "record_id": "DOM-L-1B851132",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "Domain L — Deployment & Operations: Chunked Multi-Part Vault Backup & 1-Click Recovery",
+      "content": "Disaster recovery snapshots must atomically chunk repositories into 45MB parts to strictly comply with GitHub 100MB blob limits, encrypt credentials with AES-256-GCM, and verify 100% SHA-256 manifest parity prior to state restore.",
+      "content_hash": "3feb286708663a203500e5d0bef8513ffb50891f7aa638a17264c797413a88ec",
+      "summary": "Disaster recovery snapshots must atomically chunk repositories into 45MB parts to strictly comply with GitHub 100MB blob limits, encrypt credentials with AES-256-GCM, and verify 100% SHA-256 manifest parity prior to state restore.",
+      "provenance": {
+        "source_uri": "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs",
+        "source_version": "Rule 1687",
+        "observed_at": "2026-11-06T08:33:55.447Z",
+        "author_or_entity": "AI-Builder-Brain",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "EMPIRICAL_CODE_PATTERN",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": null
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T08:33:55.447Z"
+    },
+    "DOM-H-83C24083": {
+      "record_id": "DOM-H-83C24083",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: 583cd55b]",
+      "content_hash": "305b65228c896f5ff852212b10f00693fe669b591c1a627afc53e9ea7fe71d84",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:05:27.938Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T09:05:30.568Z"
+    },
+    "DOM-H-94C4B932": {
+      "record_id": "DOM-H-94C4B932",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: ccfe1ba1]",
+      "content_hash": "124de928dda730a4728d71085773f3989a3f87b3546f3be4182ddecf9e27f140",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:06:19.162Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T09:06:21.395Z"
+    },
+    "DOM-H-2007DF83": {
+      "record_id": "DOM-H-2007DF83",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Memory Retention & Leak via Memoizer Parse Pinning (BUG-ZOD-V4-02)",
+      "content": "Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient objects. Never store user payload instances in strong collections on static or long-lived service instances.\r\n\r\n--- [Trace Token: 4499fe73]",
+      "content_hash": "cb89023b7b729645c1fe40ef97b067edb04b82f0735bdd3ae10866d894ae68a4",
+      "summary": "The memoizer’s `attach()` hook cached the last seen `ctx` and its associated `bucket` directly on the schema instance for single-parse fast- -> Caches stored on long-lived metadata objects that track transient operational states must use `WeakMap` or `WeakSet` keyed on transient obje",
+      "provenance": {
+        "source_uri": "project://colinhacks-zod/colinhacks-zod-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-06T09:07:02.547Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (colinhacks-zod)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "FORENSIC_REPO_COMMIT_EVIDENCE",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `36f17960`, PR #6572, Issue #6557. Tests in `packages/zod/src/v4/classic/tests/cyclic-data.test.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-06T09:07:03.239Z"
+    }
+  }
+}

@@ -39,7 +39,8 @@ export function getRetrievalPaths(customRoot = null) {
     learningDir: path.join(root, '07_PROJECT_LEARNING'),
     capabilityRegistryFile: path.join(root, '15_METADATA', 'capability-registry.json'),
     cacheDir: path.join(root, '.project-brain', 'cache'),
-    cacheIndexFile: path.join(root, '.project-brain', 'cache', 'retrieval-index.json')
+    cacheIndexFile: path.join(root, '.project-brain', 'cache', 'retrieval-index.json'),
+    domainRegistryFile: path.join(root, '05_KNOWLEDGE', 'domain-intelligence', 'domain-registry.json')
   };
 }
 
@@ -85,6 +86,7 @@ export function computeSourceFilesHash(customRoot = null) {
   if (fs.existsSync(p.coreRulesFile)) hash.update(fs.statSync(p.coreRulesFile).mtimeMs.toString());
   if (fs.existsSync(p.knowledgeIndexFile)) hash.update(fs.statSync(p.knowledgeIndexFile).mtimeMs.toString());
   if (p.capabilityRegistryFile && fs.existsSync(p.capabilityRegistryFile)) hash.update(fs.statSync(p.capabilityRegistryFile).mtimeMs.toString());
+  if (p.domainRegistryFile && fs.existsSync(p.domainRegistryFile)) hash.update(fs.statSync(p.domainRegistryFile).mtimeMs.toString());
   if (fs.existsSync(p.skillsDir)) {
     try {
       const skills = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md'));
@@ -471,6 +473,35 @@ export function parseCapabilities(customRoot = null) {
   }
 }
 
+/**
+ * Parses 05_KNOWLEDGE/domain-intelligence/domain-registry.json into discrete domain documents
+ */
+export function parseDomainIntelligenceRecords(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  if (!p.domainRegistryFile || !fs.existsSync(p.domainRegistryFile)) return [];
+  try {
+    const raw = fs.readFileSync(p.domainRegistryFile, 'utf-8');
+    const data = JSON.parse(raw);
+    const records = Object.values(data.records || {});
+    return records.map(r => ({
+      id: r.record_id,
+      title: r.title,
+      category: 'DOMAIN_INTELLIGENCE',
+      domainLetter: r.domain_letter,
+      domainId: r.domain_id,
+      domainName: r.domain_name,
+      secondaryDomains: (r.secondary_domains || []).map(d => d.letter),
+      filePath: '05_KNOWLEDGE/domain-intelligence/domain-registry.json',
+      lineRange: [1, 100],
+      summary: r.summary,
+      fullContent: `## ${r.record_id} [Domain ${r.domain_letter}: ${r.domain_name}] — ${r.title}\n\n${r.content}\n\n- Provenance: ${r.provenance?.source_uri || 'internal'}\n- Evidence: ${r.evidence?.evidence_type || 'EMPIRICAL'} (${r.evidence?.verification_status || 'VERIFIED'})`,
+      tokens: tokenize(`${r.title} ${r.domain_letter} ${r.domain_id} ${r.domain_name} ${r.summary} ${r.content} domain intelligence`)
+    }));
+  } catch (e) {
+    return [];
+  }
+}
+
 export function resolveAlias(id, maxHops = 3) {
   if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return id;
   try {
@@ -820,7 +851,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
   const indexDocs = parseKnowledgeIndex(p);
 
   const capabilityDocs = parseCapabilities(resolvedRoot);
-  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs];
+  const domainDocs = parseDomainIntelligenceRecords(resolvedRoot);
+  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs, ...domainDocs];
   const N = documents.length;
 
   let totalDocLength = 0;
@@ -850,6 +882,10 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       rule_number: resolvedRuleNum,
       title: doc.title,
       category: doc.category,
+      domainLetter: doc.domainLetter || null,
+      domainId: doc.domainId || null,
+      domainName: doc.domainName || null,
+      secondaryDomains: doc.secondaryDomains || [],
       filePath: doc.filePath,
       lineRange: doc.lineRange,
       summary: doc.summary,
@@ -959,13 +995,50 @@ export function searchBrain(query, options = {}) {
     }
   }
 
-  // Filter category if specified
+  // Resolve target domains if options.domain or options.domains is specified
+  const targetDomains = [];
+  if (options.domain) {
+    const d = String(options.domain).trim().toUpperCase().replace(/^DOMAIN[_-]/i, '');
+    targetDomains.push(d);
+  }
+  if (Array.isArray(options.domains)) {
+    for (const dom of options.domains) {
+      const d = String(dom).trim().toUpperCase().replace(/^DOMAIN[_-]/i, '');
+      targetDomains.push(d);
+    }
+  }
+
+  // Domain relevance boosting (2.5x multiplier for primary matching domain)
+  if (targetDomains.length > 0) {
+    for (let i = 0; i < index.totalDocuments; i++) {
+      if (scores[i] > 0) {
+        const doc = index.documents[i];
+        const docDomain = (doc.domainLetter || '').toUpperCase();
+        const matchesPrimary = targetDomains.includes(docDomain);
+        const matchesSecondary = (doc.secondaryDomains || []).some(s => targetDomains.includes(String(s).toUpperCase()));
+        if (matchesPrimary) {
+          scores[i] *= 2.5;
+        } else if (matchesSecondary) {
+          scores[i] *= 1.5;
+        }
+      }
+    }
+  }
+
+  // Filter category and strictDomain if specified
   const filteredIndices = [];
   for (let i = 0; i < index.totalDocuments; i++) {
     if (scores[i] > 0) {
-      if (!options.category || index.documents[i].category === options.category) {
-        filteredIndices.push(i);
+      if (options.category && index.documents[i].category !== options.category) {
+        continue;
       }
+      if (options.strictDomain && targetDomains.length > 0) {
+        const docDomain = (index.documents[i].domainLetter || '').toUpperCase();
+        if (!targetDomains.includes(docDomain)) {
+          continue;
+        }
+      }
+      filteredIndices.push(i);
     }
   }
 
@@ -983,6 +1056,8 @@ export function searchBrain(query, options = {}) {
       rule_number: doc.ruleNumber ?? null,
       title: doc.title,
       category: doc.category,
+      domainLetter: doc.domainLetter ?? null,
+      domainName: doc.domainName ?? null,
       score: parseFloat(scores[docIdx].toFixed(4)),
       filePath: doc.filePath,
       lineRange: doc.lineRange,

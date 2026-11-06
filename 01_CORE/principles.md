@@ -54,3 +54,37 @@ Every scheduled harvesting cycle must record its execution, inspect sources, and
 
 *"पहले सीखना, फिर सत्यापित करना, फिर स्थायी रूप से सहेजना — कमाई उसके बाद।"*  
 No knowledge is considered stored merely because an AI generated a report in chat or a console log. Stored knowledge requires physical write to disk, SHA-256 validation, Git commit/push to private storage, and confirmed availability for retrieval in subsequent cycles.
+
+## 13. Canonical Identity, Role Separation & Strictly Additive Evolution
+
+### Canonical Identity & Four-Way Separation
+- **AI-Builder-Brain is NOT an AI, chatbot, autonomous agent, reasoning engine, or AI model.**
+- It is a **Universal, Model-Independent, Structured Construction Intelligence DATA SYSTEM.**
+- **AI Models**: Think, reason, research, learn, plan, create, and make decisions.
+- **AI-Builder-Brain**: Stores and supplies structured, connected, recallable intelligence data.
+- **Tools**: Execute authorized operations.
+- **Products**: Deliver real-world outcomes.
+- **Feedback and Evidence**: Inform future learning and improvements.
+
+### Ten Essential Properties
+The Brain must permanently remain:
+1. Structured
+2. Fast-growing
+3. Quickly recallable
+4. Self-growing through AI-driven learning
+5. Self-building through AI-driven structural evolution
+6. Self-organizing
+7. Model-independent
+8. Evidence-based
+9. Versioned and recoverable
+10. Universally applicable
+
+### Governing Rule & Master Axiom
+All intelligence and reasoning are performed by compatible AI models.  
+The Brain is the persistent, structured, and evolving data foundation that those models use and improve.  
+Never confuse the Brain with the AI that operates on it.  
+Never make supporting infrastructure the primary mission.  
+**"AI THINKS. BRAIN STORES AND SUPPLIES INTELLIGENCE DATA. TOOLS EXECUTE. PRODUCTS CREATE OUTCOMES."**
+
+### Strict Additive Improvement Invariant
+Whenever working on the Brain: **Only improve and add (Addition & Enrichment Only). Never delete, remove, or weaken existing files, folders, data, rules, or text.**

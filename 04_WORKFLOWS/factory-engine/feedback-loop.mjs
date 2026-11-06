@@ -376,3 +376,43 @@ export function recordRuleCorrectionOrSupersession(ruleId, correctionDetails = {
     updateType: correctionDetails.supersededBy ? 'SUPERSEDED' : 'CORRECTION_NOTE'
   };
 }
+
+
+/**
+ * Promotes a verified Candidate Directive from 11_INBOX into 05_KNOWLEDGE Domain Intelligence
+ * via the 4-Pillar Validated Project Learning Promotion Bridge.
+ */
+export async function promoteIncidentToDomainIntelligence(candidateId, verificationEvidence = {}, options = {}) {
+  ensureInboxStructure();
+  const registry = loadDirectivesRegistry();
+  const entry = registry.directives.find(d => d.id === candidateId);
+
+  if (!entry) {
+    throw new Error(`Candidate ID "${candidateId}" not found in directives registry.`);
+  }
+
+  const { promoteProjectLearningToMasterBrain } = await import('./project-learning-promotion-bridge.mjs');
+
+  const candidateInput = {
+    candidate_id: entry.id,
+    project_name: entry.source_repo || 'local_workspace',
+    title: entry.directive_title,
+    problem_statement: entry.problem_statement || entry.directive_title,
+    universal_invariant: entry.rule_statement || entry.directive_title,
+    project_specific_facts: `Incident ${entry.incident_id} staged at ${entry.staged_file}`,
+    source_file: entry.staged_file,
+    source_version: '1.0.0'
+  };
+
+  const promoResult = promoteProjectLearningToMasterBrain(candidateInput, verificationEvidence, options);
+
+  if (promoResult.success) {
+    entry.status = 'PROMOTED_CANONICAL_ACTIVE';
+    entry.promoted_date = new Date().toISOString().split('T')[0];
+    entry.canonical_locations.push(`05_KNOWLEDGE/domain-intelligence/domain-registry.json#${promoResult.record_id}`);
+    registry.last_updated = new Date().toISOString();
+    fs.writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2), 'utf-8');
+  }
+
+  return promoResult;
+}
