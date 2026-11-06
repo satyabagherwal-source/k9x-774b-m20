@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "8f38c4e3",
+    "sourceVersion": "ea12300d",
     "license": "MIT",
-    "contentHash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
-    "lastHarvestedAt": "2026-11-04T03:57:39.771Z",
+    "contentHash": "0325089a52eaf4445a380a04d7cabe542a9eb6dddc0aa6924f1ada265c6aad66",
+    "lastHarvestedAt": "2026-11-06T21:59:28.883Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "3b6bbb46",
+    "sourceVersion": "65a31536",
     "license": "MIT",
-    "contentHash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
-    "lastHarvestedAt": "2026-11-05T12:14:39.536Z",
+    "contentHash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
+    "lastHarvestedAt": "2026-11-06T21:59:35.999Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

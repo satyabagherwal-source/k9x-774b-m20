@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T21:52:12.168Z",
-    "lastVerified": "2026-11-06T21:52:12.168Z",
+    "lastChecked": "2026-11-06T21:59:38.572Z",
+    "lastVerified": "2026-11-06T21:59:38.572Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T21:21:10.291Z",
+    "lastChecked": "2026-11-06T21:59:32.540Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T21:21:10.291Z"
+    "lastVerified": "2026-11-06T21:59:32.540Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -415,8 +415,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T13:58:40.234Z",
-    "lastVerified": "2026-11-06T13:58:40.234Z",
+    "lastChecked": "2026-11-06T21:59:27.516Z",
+    "lastVerified": "2026-11-06T21:59:27.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1373,14 +1373,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:14:38.881Z",
-    "lastVerified": "2026-11-05T12:14:38.881Z",
+    "lastChecked": "2026-11-06T21:59:34.577Z",
+    "lastVerified": "2026-11-06T21:59:34.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "299db654ef8488ce08de1752876454f4ac9052488aa7c7269210e527f7940ccf",
+    "contentHash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3097,14 +3097,14 @@
     "officialUrl": "https://github.com/software-mansion/react-native-reanimated",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T03:57:37.924Z",
-    "lastVerified": "2026-11-04T03:57:37.924Z",
+    "lastChecked": "2026-11-06T21:59:27.165Z",
+    "lastVerified": "2026-11-06T21:59:27.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "0325089a52eaf4445a380a04d7cabe542a9eb6dddc0aa6924f1ada265c6aad66",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4819,8 +4819,8 @@
     "officialUrl": "https://github.com/transact-rs/sqlx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T07:41:45.305Z",
-    "lastVerified": "2026-11-05T07:41:45.305Z",
+    "lastChecked": "2026-11-06T21:59:17.470Z",
+    "lastVerified": "2026-11-06T21:59:17.470Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-transact-rs-sqlx",
@@ -4914,9 +4914,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-05T13:05:12.168Z",
+    "lastChecked": "2026-11-06T21:59:24.975Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-05T13:05:12.168Z"
+    "lastVerified": "2026-11-06T21:59:24.975Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -10504,9 +10504,9 @@
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
     "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
-    "lastChecked": "2026-11-03T18:02:18.765Z",
+    "lastChecked": "2026-11-06T21:59:19.945Z",
     "revisionIdentifier": "1788648c",
-    "lastVerified": "2026-11-03T18:02:18.765Z"
+    "lastVerified": "2026-11-06T21:59:19.945Z"
   },
   "chrisbanes-skills": {
     "name": "chrisbanes/skills",

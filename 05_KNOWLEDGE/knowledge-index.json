@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:52:09.531Z",
+  "last_updated": "2026-11-06T21:59:35.896Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55674,8 +55674,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "8f38c4e3",
-      "content_hash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
+      "source_version": "ea12300d",
+      "content_hash": "0325089a52eaf4445a380a04d7cabe542a9eb6dddc0aa6924f1ada265c6aad66",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -55720,7 +55720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:57:39.708Z",
+      "verified_at": "2026-11-06T21:59:28.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60277,17 +60277,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "2709799d",
-      "content_hash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "65a31536",
+      "content_hash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge 'core/dialect: import names instead of spelling out their paths' from Pekk",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'core: implement stored generated columns' from Glauber Costa",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60441,7 +60446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:13:20.595Z",
+      "verified_at": "2026-11-06T21:59:35.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

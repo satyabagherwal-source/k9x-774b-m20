@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:52:09.640Z",
+  "last_updated": "2026-11-06T21:59:36.008Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "7a9d10e895583da3730a2ce686ac15eb46f423a8a365ede5b8ed13f6612b82ac",
-      "verified_at": "2026-11-04T03:57:39.777Z",
+      "content_hash": "0325089a52eaf4445a380a04d7cabe542a9eb6dddc0aa6924f1ada265c6aad66",
+      "verified_at": "2026-11-06T21:59:28.891Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:57:39.777Z"
+      "last_updated": "2026-11-06T21:59:28.891Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2909e8b0bd1b3e9546772b5ee4ff1a95b7817934b3e925d457a777e48fa7560e",
-      "verified_at": "2026-11-06T15:13:20.738Z",
+      "content_hash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
+      "verified_at": "2026-11-06T21:59:36.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:13:20.738Z"
+      "last_updated": "2026-11-06T21:59:36.007Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

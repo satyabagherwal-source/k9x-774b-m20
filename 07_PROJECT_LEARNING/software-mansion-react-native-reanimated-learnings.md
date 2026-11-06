@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `8f38c4e3`  
+> **Source Version**: `ea12300d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:57:39.306Z  
+> **Timestamp**: 2026-11-06T21:59:28.619Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:57:37.924Z  
+> **Harvest Timestamp**: 2026-11-06T21:59:27.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11047 stars
+- **Stars / Engagement**: 11057 stars
 
 ---
 
@@ -898,1279 +898,895 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `134779bf` (2026-11-01)
-**Commit Message**: perf(Reanimated): destroy the light tree's dropped views off the UI thread (#10996)
+### Incident Patch 1: `ea12300d` (2026-11-06)
+**Commit Message**: fix(Reanimated): handle node removals with the animation backend (#11114)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @tomekzaw.
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-On every props update the light tree replaces a node's previous view,
-which is often the last owner of the props from two commits back, so
-destroying them ran inside `pullTransaction` on the UI thread. This
-collects the replaced views and destroys them with
-`LowPriorityExecutor`, as `MountingCoordinator` does with old revisions.
-React Native keeps that header under `react/utils/platform/android` and
-`platform/ios`, so this adds both directories to the include paths, as
-`RNWorklets.podspec` already does on iOS.
+Every animated component calls `markNodeAsRemovable` when it unmounts.
+After a mount, `handleNodeRemovals` drops the props of each marked view
+that is no longer in the mounted tree from the registries. A hidden
+`<Activity>` or a frozen screen stays in the tree, so it keeps its
+props.
+
+With `USE_ANIMATION_BACKEND` this never ran. The commit hook returned
+before it registered the surface in `MountedRootsRegistry`, and the
+mount hook returned before it drained. So with the backend every
+unmounted animated view kept its entries in the props registries until
+the app closed.
+
+This PR:
+
+- registers and removes surfaces in the commit hook with the backend
+too;
+- records the mounted root and drains removals in the mount hook with
+the backend;
+- drains the nodes of the reported surface, and the nodes of surfaces
+that have stopped, in place;
+- drains the nodes of a stopping surface when it commits its empty root,
+so they are released even if no mount is reported after that, for
+example on a paused Android host.
+
+With the bac
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.cpp` (modified, +0/-17)
+```diff
+@@ -1,5 +1,4 @@
+ #include <reanimated/CSS/misc/ViewStylesRepository.h>
+-#include <reanimated/Tools/FeatureFlags.h>
+ 
+ #include <memory>
+ #include <string>
+@@ -68,13 +67,6 @@ jsi::Value ViewStylesRepository::getParentNodeProp(
+ 
+ std::shared_ptr<const ShadowNode> ViewStylesRepository::getNewestNode(
+     const std::shared_ptr<const ShadowNode> &shadowNode) const {
+-  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
+-    // Backend mode has no commit hook (it returns before taking the updates-registry
+-    // lock), so reading the live tree here cannot deadlock and needs no snapshot.
+-    const auto newestNode = uiManager_->getNewestCloneOfShadowNode(*shadowNode);
+-    return newestNode ? newestNode : shadowNode;
+-  }
+-
+   // Resolve shadowNode against the last mounted root without the ShadowTree lock (the
+   // deadlock) that getNewestCloneOfShadowNode takes, falling back to the passed node.
+   // Mirrors RN's getShadowNodeInSubtree:
+@@ -99,15 +91,6 @@ std::shared_ptr<const ShadowNode> ViewStylesRepository::getNewestNode(
+ 
+ std::shared_ptr<const ShadowNode> ViewStylesRepository::getParentNode(
+     const std::shared_ptr<const ShadowNode> &shadowNode) const {
+-  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
+-    // Backend mode resolves against the live tree (see getNewestNode).
+-    std::shared_ptr<const ShadowNode> parentNode = nullptr;
+-    uiManager_->getShadowTreeRegistry().visit(shadowNode->getSurfaceId(), [&](const ShadowTree &shadowTree) {
+-      parentNode = dom::getParentNode(shadowTree.getCurrentRevision().rootShadowNode, *shadowNode);
+-    });
+-    return parentNode;
+-  }
+-
+   const auto root = mountedRootsRegistry_->get(shadowNode->getSurfaceId());
+   if (!root) {
+     return nullptr;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.h` (modified, +0/-6)
+```diff
+@@ -8,7 +8,6 @@
+ #include <react/renderer/components/view/ViewProps.h>
+ #include <react/renderer/core/LayoutableShadowNode.h>
+ #include <react/renderer/dom/DOM.h>
+-#include <react/renderer/uimanager/UIManager.h>
+ 
+ #include <memory>
+ #include <string>
+@@ -25,16 +24,11 @@ class ViewStylesRepository {
+       const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry,
+       const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry);
+ 
+-  void setUIManager(const std::shared_ptr<UIManager> &uiManager) {
+-    uiManager_ = uiManager;
+-  }
+-
+   jsi::Value getNodeProp(const std::shared_ptr<const ShadowNode> &shadowNode, const std::string &propName);
+   jsi::Value getParentNodeProp(const std::shared_ptr<const ShadowNode> &shadowNode, const std::string &propName);
+   folly::dynamic getStyleProp(Tag tag, const PropertyPath &propertyPath);
+ 
+  private:
+-  std::shared_ptr<UIManager> uiManager_;
+   std::shared_ptr<StaticPropsRegistry> staticPropsRegistry_;
+   std::shared_ptr<AnimatedPropsRegistry> animatedPropsRegistry_;
+   std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.cpp` (modified, +5/-0)
+```diff
+@@ -26,6 +26,11 @@ RootShadowNode::Shared MountedRootsRegistry::get(const SurfaceId surfaceId) cons
+   return it == rootsBySurface_.end() ? nullptr : it->second;
+ }
+ 
++bool MountedRootsRegistry::isRunning(const SurfaceId surfaceId) const {
++  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
++  return rootsBySurface_.contains(surfaceId);
++}
++
+ bool MountedRootsRegistry::isMounted(const ShadowNodeFamily &shadowNodeFamily) const {
+   react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
+   const auto it = rootsBySurface_.find(shadowNodeFamily.getSurfaceId());
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.h` (modified, +1/-0)
+```diff
+@@ -15,6 +15,7 @@ class MountedRootsRegistry {
+   void set(const RootShadowNode::Shared &rootShadowNode);
+   void remove(SurfaceId surfaceId);
+   RootShadowNode::Shared get(SurfaceId surfaceId) const;
++  bool isRunning(SurfaceId surfaceId) const;
+   bool isMounted(const ShadowNodeFamily &shadowNodeFamily) const;
+ 
+  private:
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.cpp` (modified, +13/-4)
+```diff
+@@ -17,11 +17,13 @@ ReanimatedCommitHook::ReanimatedCommitHook(
+     const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
+     const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
+     const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
++    const std::shared_ptr<LayoutAnimationsManager> &layoutAnimationsManager,
+     const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker)
+     : uiManager_(uiManager),
+       updatesRegistryManager_(updatesRegistryManager),
+       mountedRootsRegistry_(mountedRootsRegistry),
+       layoutAnimationsProxyRegistry_(layoutAnimationsProxyRegistry),
++      layoutAnimationsManager_(layoutAnimationsManager),
+       synchronousWritesTracker_(synchronousWritesTracker) {
+   uiManager_->registerCommitHook(*this);
+   uiManager_->getShadowTreeRegistry().enumerate([this](const ShadowTree &shadowTree, bool & /*stop*/) {
+@@ -54,15 +56,13 @@ RootShadowNode::Unshared ReanimatedCommitHook::shadowTreeWillCommit(
+     proxy->shadowTreeWillCommit(newRootShadowNode->getChildren().empty());
+   }
+ 
+-  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
+-    return newRootShadowNode;
+-  }
+-
++  std::vector<Tag> removedTags;
+   {
+     auto lock = updatesRegistryManager_->lock();
+     if (newRootShadowNode->getChildren().empty()) {
+       // A stopping surface commits an empty root; its mount is not reported on a paused Android host.
+       mountedRootsRegistry_->remove(shadowTree.getSurfaceId());
++      removedTags = updatesRegistryManager_->handleNodeRemovals(shadowTree.getSurfaceId());
+       if (synchronousWritesTracker_) {
+         synchronousWritesTracker_->onSurfaceStop(shadowTree.getSurfaceId());
+       }
+@@ -71,6 +71,15 @@ RootShadowNode::Unshared ReanimatedCommitHook::shadowTreeWillCommit(
+     }
+   }
+ 
++  // The proxy of the stopping surface still maps these views, so it releases their configs when it unmaps them.
++  if (layoutAnimationsProxyRegistry_) {
++    layoutAnimationsProxyRegistry_->releaseSharedTransitionConfigs(removedTags, *layoutAnimationsManager_);
++  }
++
++  if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
++    return newRootShadowNode;
++  }
++
+   auto reaShadowNode = std::reinterpret_pointer_cast<ReanimatedCommitShadowNode>(newRootShadowNode);
+ 
+   if (reaShadowNode->hasReanimatedCommitTrait()) {
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.h` (modified, +2/-0)
+```diff
+@@ -22,6 +22,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
+       const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
+       const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
+       const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
++      const std::shared_ptr<LayoutAnimationsManager> &layoutAnimationsManager,
+       const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker);
+ 
+   ~ReanimatedCommitHook() noexcept override;
+@@ -54,6 +55,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
+   std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
+   std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
+   std::shared_ptr<LayoutAnimationsProxyRegistry> layoutAnimationsProxyRegistry_;
++  std::shared_ptr<LayoutAnimationsManager> layoutAnimationsManager_;
+   std::shared_ptr<SynchronousWritesTracker> synchronousWritesTracker_;
+ };
+ 
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.cpp` (modified, +15/-9)
+```diff
+@@ -36,7 +36,13 @@ void ReanimatedMountHook::shadowTreeDidMount(
+   ReanimatedSystraceSection s("ReanimatedMountHook::shadowTreeDidMount");
+ 
+   if constexpr (StaticFeatureFlags::getFlag("USE_ANIMATION_BACKEND")) {
+-    // With the animation backend this hook only tracks surface unmounts.
++    std::vector<Tag> removedTags;
++    {
++      auto lock = updatesRegistryManager_->lock();
++      mountedRootsRegistry_->set(rootShadowNode);
++      removedTags = updatesRegistryManager_->handleNodeRemovals(rootShadowNode->getSurfaceId());
++    }
++    releaseSharedTransitionConfigs(removedTags);
+     return;
+   }
+ 
+@@ -57,7 +63,7 @@ void ReanimatedMountHook::shadowTreeDidMount(
+     // animations run every mount carries the mount trait, so returning early here
+     // would skip removals for the whole animation and leak unmounted nodes if the
+     // tree is torn down mid-animation.
+-    removedTags = updatesRegistryManager_->handleNodeRemovals();
++    removedTags = updatesRegistryManager_->handleNodeRemovals(rootShadowNode->getSurfaceId());
+ 
+     if (!isReanimatedMount) {
+       // When a commit from React Native has finished, we reset the skip commit
+@@ -69,13 +75,13 @@ void ReanimatedMountHook::shadowTreeDidMount(
+     }
+   }
+ 
+-  // Outside the registry lock: a pull holds the layout animations lock while it reads synchronous props.
+-  // Only after the mount: the pull that deletes a shared transition source still reads its config.
+-  if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
+-    if (!removedTags.empty() && layoutAnimationsProxyRegistry_) {
+-      layoutAnimationsManager_->clearSharedTransitionConfigs(
+-          layoutAnimationsProxyRegistry_->sharedTransitionConfigsToRelease(removedTags));
+-    }
++  releaseSharedTransitionConfigs(removedTags);
++}
++
++// Only after the mount: the pull that deletes a shared transition source still reads its config.
++void ReanimatedMountHook::releaseSharedTransitionConfigs(const std::vector<Tag> &removedTags) const {
++  if (layoutAnimationsProxyRegistry_) {
++    layoutAnimationsProxyRegistry_->releaseSharedTransitionConfigs(removedTags, *layoutAnimationsManager_);
+   }
+ }
+ 
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.h` (modified, +3/-0)
+```diff
+@@ -10,6 +10,7 @@
+ #include <react/renderer/uimanager/UIManagerMountHook.h>
+ 
+ #include <memory>
++#include <vector>
+ 
+ namespace reanimated {
+ 
+@@ -32,6 +33,8 @@ class ReanimatedMountHook : public UIManagerMountHook {
+   void shadowTreeDidUnmount(SurfaceId surfaceId, HighResTimeStamp unmountTime) noexcept override;
+ 
+  private:
++  void releaseSharedTransitionConfigs(const std::vector<Tag> &removedTags) const;
++
+   const std::shared_ptr<UIManager> uiManager_;
+   const std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
+   const std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
+```
+
+---
+
+### Incident Patch 2: `68d7650a` (2026-11-05)
+**Commit Message**: fix(SET): show the real content of a removed RN Modal while its shared element flies out on iOS (#11112)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
+
+Replaces #11038. GitHub closed that PR as merged into the
+`@bartlomiejbloniarz/set-config-release` branch when I moved it below
+#11037 in the stack, so it can no longer be updated. The review threads
+stay there: the two fixes for them are the last two commits on this
+branch.
+
+Rebased onto `main` after #10880 landed. #10884 no longer has the
+`renderInContext:` render described below, so this PR now only adds the
+hold. The before/after recordings show the old render against the hold.
+
+## Summary
+
+When React unmounts an RN `Modal` while it is presented, for example
+`{open && <Modal visible>}`, React Native dismisses it from a snapshot
+of what the screen showed, taken with
+`snapshotViewAfterScreenUpdates:NO`. A shared element source inside that
+modal is hidden in the same mount, too late to be left out of the
+snapshot. That is why the sheet slid away with a copy of the element.
+Until now we replaced React Native's snapshot with our own
+`renderInContext:` render of the modal without its sources. That
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +56/-0)
+```diff
+@@ -981,6 +981,18 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
+     }
+   }
+   const bool defersTeardown = holdsSnapshottedScreen(node);
++#ifdef __APPLE__
++  if (!defersTeardown && holdsSourceInModal(node, transaction)) {
++    std::unordered_set<Tag> heldTags;
++    collectSubtreeTags(node, heldTags);
++    for (const auto tag : heldTags) {
++      layoutAnimationsManager_->clearLayoutAnimationConfig(tag);
++    }
++    node->setExitingState(COMPLETED);
++    transaction.modalsToHold.push_back(node);
++    return;
++  }
++#endif
+   const SubtreeRemovalConfig config = {
+       .shouldRemoveSubviewsWithoutAnimations = true,
+       .shouldAnimate = !transaction.surfaceDropped,
+@@ -1027,6 +1039,30 @@ bool LayoutAnimationsProxy::holdsSnapshottedScreen([[maybe_unused]] const std::s
+   return false;
+ }
+ 
++#ifdef __APPLE__
++// React Native animates a modal that it removes while presented from a snapshot of what the screen shows, which lags a
++// mount by up to two frames. A modal that holds the source of a transition stays mounted until 34 ms, two frames of a
++// 60 Hz display, after the mount that hides the source.
++bool LayoutAnimationsProxy::holdsSourceInModal(
++    const std::shared_ptr<LightNode> &node,
++    const TransactionMeta &transaction) const {
++  return std::ranges::any_of(transaction.transitionMap, [&](const auto &entry) {
++    bool insideModal = false;
++    for (const auto &ancestor : entry.second.ancestors[BEFORE]) {
++      const auto ancestorIt = lightNodes_.find(ancestor.tag);
++      if (ancestorIt == lightNodes_.end()) {
++        return false;
++      }
++      insideModal = insideModal || !strcmp(ancestorIt->second->current.componentName, "ModalHostView");
++      if (ancestorIt->second == node) {
++        return insideModal;
++      }
++    }
++    return false;
++  });
++}
++#endif
++
+ // A UI-thread pull on Android must not update the views that the next flushing pull removes, because
+ // Android can mount that JS-thread pull first.
+ void LayoutAnimationsProxy::collectDueRemovals(TransactionMeta &transaction) const {
+@@ -1039,6 +1075,23 @@ void LayoutAnimationsProxy::collectDueRemovals(TransactionMeta &transaction) con
+     }
+     finishedExits.push_back(nodeIt->second);
+   }
++#ifdef __APPLE__
++  const auto now = std::chrono::steady_clock::now();
++  for (auto &node : transaction.modalsToHold) {
++    heldModals_.push_back({std::move(node), now + std::chrono::milliseconds(34)});
++  }
++  std::erase_if(heldModals_, [&](const HeldModal &held) {
++    if (!isLightNodeMapped(held.node)) {
++      return true;
++    }
++    if (transaction.surfaceDropped || now >= held.removableAt) {
++      finishedExits.push_back(held.node);
++      return true;
++    }
++    schedulePullOnNextFrame();
++    return false;
++  });
++#endif
+   transaction.dueRemovals = collectRemovals(finishedExits);
+ }
+ 
+@@ -1253,6 +1306,9 @@ void LayoutAnimationsProxy::clearSurfaceState() const {
+     uncommittedScreenPop_.reset();
+     visibleScreens_.clear();
+   }
++#ifdef __APPLE__
++  heldModals_.clear();
++#endif
+ #ifdef ANDROID
+   cleanupPullScheduled_ = false;
+   unqueuedBatchTags_.clear();
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +13/-0)
+```diff
+@@ -16,6 +16,7 @@
+ #include <react/renderer/uimanager/UIManagerBinding.h>
+ 
+ #include <array>
++#include <chrono>
+ #include <memory>
+ #include <optional>
+ #include <string>
+@@ -141,6 +142,13 @@ struct CollectedTransition {
+ using CollectedTransitionMap = std::unordered_map<SharedTag, CollectedTransition>;
+ using CollectedTransitions = std::vector<std::pair<SharedTag, CollectedTransition>>;
+ 
++#ifdef __APPLE__
++struct HeldModal {
++  std::shared_ptr<LightNode> node;
++  std::chrono::steady_clock::time_point removableAt;
++};
++#endif
++
+ struct TransactionMeta {
+   ShadowViewMutationList filteredMutations;
+   ShadowViewMutationList teardownMutations;
+@@ -156,6 +164,7 @@ struct TransactionMeta {
+   std::optional<size_t> screenSnapshotRemoval;
+   std::unordered_map<Tag, Tag> staleSnapshots;
+   std::unordered_set<Tag> dueRemovals;
++  std::vector<std::shared_ptr<LightNode>> modalsToHold;
+   std::unordered_set<Tag> recreatedTags;
+   // Whatever changes a node's children or their exiting states during updateLightTree must reset its cursors.
+   std::unordered_map<Tag, IndexCursors> indexCursors;
+@@ -200,6 +209,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+ #endif
+ 
+ #ifdef __APPLE__
++  mutable std::vector<HeldModal> heldModals_;
+   ForceScreenSnapshotFunction forceScreenSnapshot_;
+   SetSharedTransitionOverlayFunction setSharedTransitionOverlay_;
+   NativeViewPlacementFunction nativeViewPlacement_;
+@@ -500,6 +510,9 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+ 
+   void handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction) const;
+   bool holdsSnapshottedScreen(const std::shared_ptr<LightNode> &node) const;
++#ifdef __APPLE__
++  bool holdsSourceInModal(const std::shared_ptr<LightNode> &node, const TransactionMeta &transaction) const;
++#endif
+   void collectDueRemovals(TransactionMeta &transaction) const;
+   void tearDown(const std::unordered_set<Tag> &removals, ShadowViewMutationList &mutations) const;
+ 
+```
+
+**File**: `packages/react-native-reanimated/changelog/shared-transition-modal-snapshot.other.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Animate a React Native modal that is removed during a shared element transition on iOS with React Native's own snapshot.
+```
+
+---
+
+### Incident Patch 3: `ce75f0ce` (2026-11-06)
+**Commit Message**: fix(LayoutAnimations): report a JS error thrown by a layout animation start instead of terminating the app (#11173)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @tjzel.
+
+## Summary
+
+Since #11135 the Reanimated runtime tests terminate the app on both
+platforms in the suite "Shared transition to a new native stack screen",
+which made every PR red. The test's UI-runtime `start` override reads
+`values.source.globalOriginY`, but the native side builds a flat object
+with `currentGlobalOriginY` and `targetGlobalOriginY`, so the override
+throws a TypeError. The `jsi::JSError` left
+`LayoutAnimationsManager::startLayoutAnimation` on the main thread
+inside `pullTransaction` with no handler, and `std::terminate` aborted
+the app without a crash report. I fixed the test to read the flat keys.
+I also made the native `start` and `stop` calls go through the worklets
+stable API `runSyncOnRuntime`, so a JS error thrown by a layout
+animation start or stop on the UI runtime is reported like an error in
+`runOnUI` instead of terminating the app. This guard is active in Debug
+builds only, the same policy that Worklets applies to every worklet
+runtime call.
 
 ## Test plan
 
-- Release `fabric-example` on a Samsung Galaxy A16, Bokeh example with a
-fixed seed (100 views animating `transform` and `backgroundColor`
-through `useAnimatedStyle`), 4 rounds interleaved with `main`, 12 s
-Perfetto captures. `pullTransaction` per frame: 418 → 318 µs (−24%),
-lower in all 4 rounds.
-- Reanimated runtime tests (`ReleaseRuntimeTests`, Pixel 9a): 429
-passed, 3 failed, 1 skipped. The only failures are `a size render …
-keeps every color frame`, which also fail on `main` on this phone
+Suites "shared e
 
-**File**: `apps/fabric-example/ios/Podfile.lock` (modified, +1/-1)
+**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +1/-0)
 ```diff
-@@ -2601,7 +2601,7 @@ SPEC CHECKSUMS:
-   RNCClipboard: efcb0fcabe40529a32cb0c75fcef4f9c73052c2e
-   RNCMaskedView: 89bb912716973f9715102cfe932f3ca6793b21f9
-   RNGestureHandler: 973d5b5cb7b88aca649eec9aecb783e3de1b9b3f
--  RNReanimated: cbb3ee3f32002440c743e34e00f62b62d404a56f
-+  RNReanimated: 20804e0866504904168c8b7027e323ffa96c1aa3
-   RNScreens: 1b386604ba6e45b594cb15714a078d7dca096211
-   RNSVG: 3dacba6cbd65d6016718d9b2b205e6e09cfc041d
-   RNWorklets: dc52f6581db88fb6d5c25237efbb472ab326f4bc
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +13/-0)
-```diff
-@@ -3,6 +3,7 @@
- #include <react/renderer/mounting/MountingCoordinator.h>
- #include <react/renderer/mounting/ShadowTree.h>
- #include <react/renderer/mounting/ShadowViewMutation.h>
-+#include <react/utils/LowPriorityExecutor.h>
- #include <reanimated/LayoutAnimations/LayoutAnimationsProxy.h>
- #include <reanimated/LayoutAnimations/LayoutAnimationsProxyRegistry.h>
- #include <reanimated/LayoutAnimations/PropsDiffer.h>
-@@ -289,6 +290,7 @@ std::optional<MountingTransaction> LayoutAnimationsProxy::pullTransaction(
-   }
- 
-   react_native_assert(!deletesCreatedTag(filteredMutations) && "Transaction deletes a view that it creates");
-+  releaseDroppedViews();
- #ifdef ANDROID
-   holdFramesUntilBatchIsQueued(filteredMutations);
- #endif
-@@ -682,6 +684,7 @@ void LayoutAnimationsProxy::updateLightNodeProps(
-     const ShadowView &newView) const {
-   const auto currentProps = node->current.props;
-   const auto propsChanged = newView.props != oldView.props;
-+  droppedViews_.push_back(std::move(node->previous));
-   node->previous = oldView;
-   node->current = newView;
-   if (!propsChanged) {
-@@ -777,6 +780,15 @@ void LayoutAnimationsProxy::startSurface(
-   initializeLightTree(mountingCoordinator->getBaseRevision());
- }
- 
-+void LayoutAnimationsProxy::releaseDroppedViews() const {
-+  if (droppedViews_.empty()) {
-+    return;
-+  }
-+  // shared_ptr, because on iOS the executor copies the callable on this thread
-+  LowPriorityExecutor::execute(
-+      [views = std::make_shared<std::vector<ShadowView>>(std::exchange(droppedViews_, {}))]() {});
-+}
-+
- void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRevision) {
-   ShadowViewMutationList initialMutations;
-   if (baseRevision.rootShadowNode) {
-@@ -805,6 +817,7 @@ void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRe
-     }
-   }
-   pendingTransactions_.clear();
-+  releaseDroppedViews();
-   if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
-     topScreen_ = findActiveBoundary(lightNodes_.at(surfaceId_));
-   }
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +3/-0)
-```diff
-@@ -117,6 +117,8 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   mutable std::optional<ProgressTransition> transition_;
-   mutable std::optional<UncommittedScreenPop> uncommittedScreenPop_;
-   mutable std::shared_ptr<LightNode> topScreen_;
-+  // Views the light tree replaced, often the last owners of their props. Destroyed off the UI thread.
-+  mutable std::vector<ShadowView> droppedViews_;
-   // screens that forceScreenSnapshot_ switched to snapshots after updates; React Native Screens never switches them
-   // back
-   mutable std::unordered_set<Tag> snapshottedScreens_;
-@@ -183,6 +185,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const ShadowView &oldView,
-       const ShadowView &newView) const;
-   void resolveLightNodeProps(const std::shared_ptr<LightNode> &node) const;
-+  void releaseDroppedViews() const;
-   void initializeLightTree(const ShadowTreeRevision &baseRevision);
-   bool isLightTreeInitialized() const {
-     return lightNodes_.contains(surfaceId_);
-```
-
-**File**: `packages/react-native-reanimated/RNReanimated.podspec` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ Pod::Spec.new do |s|
-       '"$(PODS_ROOT)/Headers/Private/React-Core"',
-       '"$(PODS_ROOT)/Headers/Private/Yoga"',
-       '"$(PODS_ROOT)/Headers/Public/RNWorklets"',
-+      '"$(PODS_CONFIGURATION_BUILD_DIR)/React-utils/React_utils.framework/Headers/react/utils/platform/ios"',
-     ].join(' '),
-     "FRAMEWORK_SEARCH_PATHS" => '"${PODS_CONFIGURATION_BUILD_DIR}/React-hermes"',
-     "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
-```
-
-**File**: `packages/react-native-reanimated/android/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -79,6 +79,7 @@ target_include_directories(
-           "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
-           "${REACT_NATIVE_DIR}/ReactCommon/jsiexecutor"
-           "${REACT_NATIVE_DIR}/ReactCommon/react/renderer/graphics/platform/cxx"
-+          "${REACT_NATIVE_DIR}/ReactCommon/react/utils/platform/android"
- )
- 
- set_target_properties(reanimated PROPERTIES LINKER_LANGUAGE CXX)
-```
-
-**File**: `packages/react-native-reanimated/changelog/light-tree-release-views-off-ui-thread.other.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Release the views that layout animations stop tracking off the UI thread.
-```
-
----
-
-### Incident Patch 2: `8f38c4e3` (2026-11-03)
-**Commit Message**: fix(FabricExample): keep runtime-test devices and crash diagnostics on the selected device (#11095)
-
-**File**: `apps/fabric-example/scripts/__tests__/android-device.test.mts` (modified, +166/-5)
-```diff
-@@ -10,27 +10,38 @@ type FakeDevice = {
-   avd: string | null;
-   booted: boolean;
-   neverBoots?: boolean;
-+  state?: string;
- };
- 
- type FakeOptions = {
-   devices?: FakeDevice[];
-   avds?: string[];
-   bootsAs?: string | null;
-+  bootExitStatus?: string | null;
-+  onSleep?: (connected: FakeDevice[]) => void;
-   bootTimeoutMs?: number;
-+  exitGraceMs?: number;
- };
- 
- function createFakeAndroid({
-   devices = [],
-   avds = [],
-   bootsAs = null,
-+  bootExitStatus = null,
-+  onSleep = () => {},
-   bootTimeoutMs = 5000,
-+  exitGraceMs = 5000,
- }: FakeOptions) {
-   const connected = devices.map((device) => ({ ...device }));
-   const booted: string[] = [];
-   const queriedAvdNames: string[] = [];
-   const bootChecks: string[] = [];
-   const tools = {
--    listDevices: async () => connected.map((device) => device.serial),
-+    listDevices: async () =>
-+      connected.map((device) => ({
-+        serial: device.serial,
-+        state: device.state ?? 'device',
-+      })),
-     avdName: async (serial: string) => {
-       queriedAvdNames.push(serial);
-       const device = connected.find((d) => d.serial === serial);
-@@ -45,6 +56,7 @@ function createFakeAndroid({
-       if (bootsAs) {
-         connected.push({ serial: bootsAs, avd, booted: false });
-       }
-+      return () => bootExitStatus;
+@@ -168,6 +168,7 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = [
+     testSuiteName: 'layout animations entering',
+     importTest: () => {
+       require('./tests/layoutAnimations/entering/movedBeforeFirstPaint.test');
++      require('./tests/layoutAnimations/startError.test');
      },
-     isBootCompleted: async (serial: string) => {
-       bootChecks.push(serial);
-@@ -59,10 +71,15 @@ function createFakeAndroid({
-       device.booted = true;
-       return wasBooted;
-     },
--    sleep: (ms: number) =>
--      new Promise<void>((resolve) => setTimeout(resolve, Math.min(ms, 1))),
-+    sleep: (ms: number) => {
-+      onSleep(connected);
-+      return new Promise<void>((resolve) =>
-+        setTimeout(resolve, Math.min(ms, 1))
-+      );
-+    },
-     log: () => {},
-     bootTimeoutMs,
-+    exitGraceMs,
-   };
-   return { tools, booted, queriedAvdNames, bootChecks };
- }
-@@ -209,12 +226,156 @@ describe('resolveAndroidDevice', () => {
-     ]);
-   });
- 
--  it('uses the first connected device when no target is given', async () => {
--    const fake = createFakeAndroid({ devices: [OTHER_EMULATOR, PHONE] });
-+  it('uses the only connected device when no target is given', async () => {
-+    const fake = createFakeAndroid({ devices: [PHONE] });
-     assert.equal(
-       await resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      'R58M123ABC'
-+    );
-+  });
-+
-+  it('fails when several devices are connected and no target is given', async () => {
-+    const fake = createFakeAndroid({ devices: [OTHER_EMULATOR, PHONE] });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /2 Android devices are connected \(emulator-5554 device, R58M123ABC device\), pass --serial or --avd/
-+    );
-+    assert.deepEqual(fake.queriedAvdNames, []);
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('counts an offline emulator when no target is given', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+        PHONE,
-+      ],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /2 Android devices are connected \(emulator-5554 offline, R58M123ABC device\)/
-+    );
-+  });
-+
-+  it('does not use the only device when it is not ready', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [{ ...PHONE, state: 'unauthorized' }],
-+      avds: ['Mine'],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /Android device R58M123ABC is unauthorized/
-+    );
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('waits past the exit grace for an offline instance of the AVD', async () => {
-+    let sleeps = 0;
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+      ],
-+      avds: ['Mine'],
-+      bootExitStatus: '1',
-+      exitGraceMs: 0,
-+      onSleep: (connected) => {
-+        sleeps += 1;
-+        if (sleeps === 3) {
-+          connected[0].state = 'device';
-+        }
-+      },
-+    });
-+    assert.equal(
-+      await resolveAndroidDevice({ serial: null, avd: 'Mine' }, fake.tools),
-+      'emulator-5554'
-+    );
-+  });
-+
-+  it('uses an instance of the AVD that was still offline when its duplicate exits', async () => {
-+    let sleeps = 0;
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+      ],
-+      avds: ['Mine'],
-+      bootExitStatus: '1',
-+      onSleep: (connected) => {
-+        sleeps += 1;
-+        if (sleeps === 2) {
-+          connected[0].state = 'device';
-+        }
-+      },
-+    });
-+   
-```
-
-**File**: `apps/fabric-example/scripts/__tests__/runtime-tests-diagnostics.test.mts` (added, +378/-0)
-```diff
-@@ -0,0 +1,378 @@
-+import assert from 'node:assert/strict';
-+import { spawnSync } from 'node:child_process';
-+import fs from 'node:fs';
-+import os from 'node:os';
-+import path from 'node:path';
-+import { afterEach, describe, it } from 'node:test';
-+
-+const SCRIPTS = path.resolve(import.meta.dirname, '..');
-+const NODE_MODULES = path.resolve(
-+  import.meta.dirname,
-+  '..',
-+  '..',
-+  '..',
-+  '..',
-+  'node_modules'
-+);
-+const SELECTED = 'emulator-5554';
-+const HUMAN_PHONE = '5A061JEBF05931';
-+const LAUNCH = ['--launch', '--configuration', 'ReleaseRuntimeTests'];
-+
-+const FAKE_ADB = `#!/bin/sh
-+echo "$*" >> "$FAKE_LOG"
-+if [ "$1" = devices ]; then
-+  echo 'List of devices attached'
-+  for device in $FAKE_DEVICES; do printf '%s\\t%s\\n' "\${device%:*}" "\${device#*:}"; done
-+  exit 0
-+fi
-+if [ "$1" != -s ]; then
-+  echo 'error: more than one device/emulator' >&2
-+  exit 1
-+fi
-+serial=$2
-+shift 2
-+case "$*" in
-+  'logcat -b crash -d') echo 'F libc: Fatal signal 11 (SIGSEGV)' ;;
-+  root) echo 'restarting adbd as root' ;;
-+  'pull -a /data/tombstones '*) mkdir -p "$4/tombstones" && echo '*** *** ***' > "$4/tombstones/tombstone_00" ;;
-+  'shell date +%s') date +%s ;;
-+  'shell getprop sys.boot_completed') [ -f "$FAKE_EMULATOR_PID" ] && echo 1 ;;
-+  'emu avd name')
-+    avd=Fake_AVD
-+    for entry in $FAKE_AVD_NAMES; do [ "\${entry%%=*}" = "$serial" ] && avd=\${entry#*=}; done
-+    echo "$avd"; echo OK ;;
-+  'shell getprop ro.product.cpu.abi') echo arm64-v8a ;;
-+esac
-+`;
-+
-+const FAKE_EMULATOR = `#!/bin/sh
-+echo "emulator $*" >> "$FAKE_LOG"
-+[ "$1" = -list-avds ] && { echo Fake_AVD; exit 0; }
-+[ "$FAKE_EMULATOR_EXIT" = 1 ] && exit 1
-+echo $$ > "$FAKE_EMULATOR_PID"
-+exec sleep 30
-+`;
-+
-+const FAKE_NDK_STACK = `#!/bin/sh
-+echo symbolized
-+`;
-+
-+describe(
-+  'runtime-tests device selection',
-+  { skip: process.platform === 'win32' },
-+  () => {
-+    let workDir = '';
-+
-+    afterEach(() => {
-+      stopFakeEmulator(path.join(workDir, 'emulator.pid'));
-+      fs.rmSync(workDir, { recursive: true, force: true });
-+    });
-+
-+    it('collects server-only crash diagnostics only from --serial', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android', '--serial', SELECTED],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        new RegExp(`collecting crash diagnostics from ${SELECTED}`)
-+      );
-+      assert.deepEqual(result.adbCalls, [
-+        'devices',
-+        `-s ${SELECTED} logcat -b crash -d`,
-+        `-s ${SELECTED} logcat -b crash -d`,
-+        `-s ${SELECTED} logcat -b crash -c`,
-+        `-s ${SELECTED} root`,
-+        `-s ${SELECTED} wait-for-device`,
-+        `-s ${SELECTED} pull -a /data/tombstones ${result.tombstonesDir}`,
-+        `-s ${SELECTED} shell date +%s`,
-+        `-s ${SELECTED} shell rm -f /data/tombstones/*`,
-+        `-s ${SELECTED} shell getprop ro.product.cpu.abi`,
-+      ]);
-+      assert.match(result.stderr, /symbolized native stack trace/);
-+    });
-+
-+    it('collects server-only crash diagnostics only from the --avd emulator', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: ['emulator-5554', 'emulator-5556'],
-+        avdNames: { 'emulator-5556': 'Second_AVD' },
-+        args: ['--platform', 'android', '--avd', 'Second_AVD'],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        /collecting crash diagnostics from emulator-5556/
-+      );
-+      const deviceCalls = result.adbCalls.filter(
-+        (call) => call !== 'devices' && !call.endsWith(' emu avd name')
-+      );
-+      assert.ok(deviceCalls.length > 0);
-+      assert.ok(
-+        deviceCalls.every((call) => call.startsWith('-s emulator-5556 ')),
-+        deviceCalls.join('\n')
-+      );
-+    });
-+
-+    it('skips server-only crash diagnostics without --serial', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android'],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        /no selected Android device available for crash diagnostics/
-+      );
-+      assert.deepEqual(result.adbCalls, []);
-+    });
-+
-+    it('stops when several devices are connected and none is selected', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android', ...LAUNCH],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        new RegExp(
-+          `2 Android devices are connected \\(${SELECTED} device, ${HUMAN_PHONE} device\\), pass --serial or --avd`
-+        )
-+      );
-+      assert.deepEqual(result.adbCalls, ['de
-```
-
-**File**: `apps/fabric-example/scripts/android-device.js` (modified, +84/-17)
-```diff
-@@ -1,13 +1,16 @@
-+/** @typedef {{ serial: string; state: string }} AdbDevice */
-+
- /**
-  * @typedef {{
-- *   listDevices: () => Promise<string[]>;
-+ *   listDevices: () => Promise<AdbDevice[]>;
-  *   avdName: (serial: string) => Promise<string | null>;
-  *   listAvds: () => Promise<string[]>;
-- *   bootAvd: (avd: string) => void;
-+ *   bootAvd: (avd: string) => () => string | null;
-  *   isBootCompleted: (serial: string) => Promise<boolean>;
-  *   sleep: (ms: number) => Promise<void>;
-  *   log: (message: string) => void;
-  *   bootTimeoutMs?: number;
-+ *   exitGraceMs?: number;
-  * }} AndroidTools
-  */
- 
-@@ -17,7 +20,8 @@
-  * @returns {Promise<string>}
-  */
- async function resolveAndroidDevice({ serial, avd }, tools) {
--  const serials = await tools.listDevices();
-+  const devices = await tools.listDevices();
-+  const serials = readySerials(devices);
- 
-   if (serial) {
-     if (!serials.includes(serial)) {
-@@ -31,7 +35,7 @@ async function resolveAndroidDevice({ serial, avd }, tools) {
-   if (avd) {
-     const running = await findRunningAvd(avd, serials, tools);
-     if (running) {
--      return waitForBoot(avd, tools);
-+      return waitForBoot(avd, () => null, tools);
-     }
-     const avds = await tools.listAvds();
-     if (!avds.includes(avd)) {
-@@ -42,13 +46,22 @@ async function resolveAndroidDevice({ serial, avd }, tools) {
-     return bootAndWait(avd, tools);
-   }
- 
--  if (serials.length > 0) {
--    if (serials.length > 1) {
--      tools.log(
--        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
-+  if (devices.length > 1) {
-+    const listed = devices
-+      .map((device) => `${device.serial} ${device.state}`)
-+      .join(', ');
-+    throw new Error(
-+      `${devices.length} Android devices are connected (${listed}), pass --serial or --avd to select one`
-+    );
-+  }
-+  if (devices.length === 1) {
-+    const [device] = devices;
-+    if (device.state !== 'device') {
-+      throw new Error(
-+        `Android device ${device.serial} is ${device.state}, pass --serial or --avd to select a ready one`
-       );
-     }
--    return serials[0];
-+    return device.serial;
-   }
- 
-   const [firstAvd] = await tools.listAvds();
-@@ -83,30 +96,79 @@ async function findRunningAvd(avd, serials, tools) {
-  */
- async function bootAndWait(avd, tools) {
-   tools.log(`[runtime-tests] booting emulator ${avd}`);
--  tools.bootAvd(avd);
--  return waitForBoot(avd, tools);
-+  const exitStatus = tools.bootAvd(avd);
-+  return waitForBoot(avd, exitStatus, tools);
- }
- 
- /**
-  * @param {string} avd
-+ * @param {() => string | null} exitStatus
-  * @param {AndroidTools} tools
-  * @returns {Promise<string>}
-  */
--async function waitForBoot(avd, tools) {
-+async function waitForBoot(avd, exitStatus, tools) {
-   const timeoutMs = tools.bootTimeoutMs ?? 300_000;
-+  const exitGraceMs = tools.exitGraceMs ?? 60_000;
-   const deadline = Date.now() + timeoutMs;
-+  /** @type {number | null} */
-+  let exitedAt = null;
-   while (Date.now() < deadline) {
--    for (const serial of await tools.listDevices()) {
--      const name = await tools.avdName(serial).catch(() => null);
--      if (name === avd && (await tools.isBootCompleted(serial))) {
--        return serial;
-+    const status = exitStatus();
-+    const { booted, starting, unidentified } = await scanForAvd(avd, tools);
-+    if (booted) {
-+      return booted;
-+    }
-+    if (status !== null && !starting) {
-+      exitedAt ??= Date.now();
-+      if (!unidentified || Date.now() - exitedAt >= exitGraceMs) {
-+        throw new Error(`Emulator ${avd} exited (${status}) before it booted`);
-       }
-     }
-     await tools.sleep(2000);
-   }
-   throw new Error(`Emulator ${avd} did not boot within ${timeoutMs / 1000}s`);
- }
- 
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<{
-+ *   booted: string | null;
-+ *   starting: boolean;
-+ *   unidentified: boolean;
-+ * }>}
-+ */
-+async function scanForAvd(avd, tools) {
-+  let starting = false;
-+  let unidentified = false;
-+  for (const device of await tools.listDevices()) {
-+    const ready = device.state === 'device';
-+    if (!ready && !device.serial.startsWith('emulator-')) {
-+      continue;
-+    }
-+    const name = await tools.avdName(device.serial).catch(() => null);
-+    if (name !== avd) {
-+      unidentified ||= !ready && name === null;
-+      continue;
-+    }
-+    if (ready && (await tools.isBootCompleted(device.serial))) {
-+      return { booted: device.serial, starting, unidentified };
-+    }
-+    starting = true;
-+  }
-+  return { booted: null, starting, unidentified };
-+}
-+
-+/**
-+ * @param {AdbDevice[]} devices
-+ * @returns {string[]}
-+ */
-+function readySerials(devices) {
-+  return devices
-+    .filter((device) => device.state === 'device')
-+    .map((device) => device.serial);
-+}
-+
- /**
-  * @param {string} output
-  * @returns {string | null}
-@@ -122,4 +184,9 @@ function parseAvdName(output) {
-   return lines[0];
- }
- 
--module.exports = { resolveAndroidDevice, findRunningAvd, parseAvdNa
-```
-
-**File**: `apps/fabric-example/scripts/runtime-tests-server.js` (modified, +61/-14)
-```diff
-@@ -10,6 +10,7 @@ const WebSocket = require('ws');
- const {
-   resolveAndroidDevice: resolveAndroidTarget,
-   findRunningAvd,
-+  readySerials,
-   parseAvdName,
- } = require('./android-device');
- const WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
-@@ -155,6 +156,8 @@ let idleTimer = null;
- let metroChild = null;
- /** @type {string | null} */
- let androidSerial = null;
-+/** @type {string | null} */
-+let iosUdid = null;
- /** @type {Promise<void> | null} */
- let crashDiagnosticsPromise = null;
- /** @type {Promise<void>} */
-@@ -542,11 +545,11 @@ wss.on('connection', (socket) => {
-       );
-       if (PLATFORM === 'android') {
-         console.error(
--          '[runtime-tests] The app most likely crashed — collecting crash diagnostics below.'
-+          '[runtime-tests] The app most likely crashed — see the crash diagnostics of the selected Android device below.'
-         );
-       } else {
-         console.error(
--          '[runtime-tests] The app most likely crashed — collecting crash reports below.'
-+          '[runtime-tests] The app most likely crashed — see the crash report search below.'
-         );
-       }
-       console.error(
-@@ -828,23 +831,30 @@ async function dumpIOSCrashDiagnostics() {
-     }
-     return;
-   }
-+  const udid = iosUdid ?? UDID;
-+  if (!udid) {
-+    console.error(
-+      '[runtime-tests] no selected iOS simulator for crash reports (pass --udid to select one)'
-+    );
-+    return;
-+  }
-   const reportsDir = path.join(
-     os.homedir(),
-     'Library',
-     'Logs',
-     'DiagnosticReports'
-   );
-   console.error(
--    `[runtime-tests] looking for FabricExample crash reports in ${reportsDir}…`
-+    `[runtime-tests] looking for FabricExample crash reports of ${udid} in ${reportsDir}…`
-   );
-   /** @type {{ name: string; file: string; mtimeMs: number }[]} */
-   let reports = [];
-   for (let attempt = 0; attempt < 10; attempt++) {
-     await sleep(3000);
--    reports = findFreshIOSCrashReports(reportsDir);
-+    reports = findFreshIOSCrashReports(reportsDir, udid);
-     if (reports.length > 0) {
-       await sleep(3000);
--      reports = findFreshIOSCrashReports(reportsDir);
-+      reports = findFreshIOSCrashReports(reportsDir, udid);
-       break;
-     }
-   }
-@@ -1015,9 +1025,10 @@ function printIOSCrashReports(reports) {
- 
- /**
-  * @param {string} reportsDir
-+ * @param {string} udid
-  * @returns {{ name: string; file: string; mtimeMs: number }[]}
-  */
--function findFreshIOSCrashReports(reportsDir) {
-+function findFreshIOSCrashReports(reportsDir, udid) {
-   let names = [];
-   try {
-     names = fs.readdirSync(reportsDir);
-@@ -1035,11 +1046,25 @@ function findFreshIOSCrashReports(reportsDir) {
-       return { name, file, mtimeMs: fs.statSync(file).mtimeMs };
-     })
-     .filter(
--      (report) => report.mtimeMs >= (runStartedAt || serverStartedAt) - 60_000
-+      (report) =>
-+        report.mtimeMs >= (runStartedAt || serverStartedAt) - 60_000 &&
-+        isCrashReportOfSimulator(report.file, udid)
-     )
-     .sort((a, b) => b.mtimeMs - a.mtimeMs);
- }
- 
-+/**
-+ * @param {string} file
-+ * @param {string} udid
-+ * @returns {boolean}
-+ */
-+function isCrashReportOfSimulator(file, udid) {
-+  return fs
-+    .readFileSync(file, 'utf8')
-+    .replaceAll('\\/', '/')
-+    .includes(`/CoreSimulator/Devices/${udid}/`);
-+}
-+
- /**
-  * @typedef {{
-  *   imageIndex?: number;
-@@ -1121,7 +1146,7 @@ async function dumpAndroidCrashDiagnostics() {
-   const serial = await crashDiagnosticsSerial();
-   if (!serial) {
-     console.error(
--      '[runtime-tests] no adb device available for crash diagnostics'
-+      '[runtime-tests] no selected Android device available for crash diagnostics (pass --serial or --avd to select one)'
-     );
-     return;
-   }
-@@ -1768,14 +1793,15 @@ function sleep(ms) {
-   return new Promise((resolve) => setTimeout(resolve, ms));
- }
- 
-+/** @returns {Promise<import('./android-device').AdbDevice[]>} */
- async function listAndroidDevices() {
-   const { stdout } = await run(ADB, ['devices']);
-   return stdout
-     .split('\n')
-     .slice(1)
-     .map((line) => line.trim().split(/\s+/))
--    .filter((parts) => parts.length >= 2 && parts[1] === 'device')
--    .map((parts) => parts[0]);
-+    .filter((parts) => parts.length >= 2)
-+    .map(([serial, state]) => ({ serial, state }));
- }
- 
- /** @returns {import('./android-device').AndroidTools} */
-@@ -1799,6 +1825,15 @@ function androidTools() {
-         { detached: true, stdio: 'ignore' }
-       );
-       child.unref();
-+      /** @type {string | null} */
-+      let exitStatus = null;
-+      child.on('exit', (code, signal) => {
-+        exitStatus = String(code ?? signal);
-+      });
-+      child.on('error', (error) => {
-+        exitStatus = error.message;
-+      });
-+      return () => exitStatus;
-     },
-     isBootCompleted: async (serial) => {
-       const { stdout } = await adb(serial, [
-@@ -1821,14 +1856,22 @@ async function crashDiagnosticsSerial() {
-   if (androidSerial) {
-     return androidSerial;
-   }
--  const s
-```
-
----
-
-### Incident Patch 3: `da5ce1a9` (2026-11-03)
-**Commit Message**: fix(runtime-tests): target the requested AVD instead of any connected device (#11078)
-
-**File**: `apps/fabric-example/scripts/__tests__/android-device.test.mts` (added, +248/-0)
-```diff
-@@ -0,0 +1,248 @@
-+import assert from 'node:assert/strict';
-+import { describe, it } from 'node:test';
-+
-+import androidDevice from '../android-device.js';
-+
-+const { resolveAndroidDevice, parseAvdName } = androidDevice;
-+
-+type FakeDevice = {
-+  serial: string;
-+  avd: string | null;
-+  booted: boolean;
-+  neverBoots?: boolean;
-+};
-+
-+type FakeOptions = {
-+  devices?: FakeDevice[];
-+  avds?: string[];
-+  bootsAs?: string | null;
-+  bootTimeoutMs?: number;
-+};
-+
-+function createFakeAndroid({
-+  devices = [],
-+  avds = [],
-+  bootsAs = null,
-+  bootTimeoutMs = 5000,
-+}: FakeOptions) {
-+  const connected = devices.map((device) => ({ ...device }));
-+  const booted: string[] = [];
-+  const queriedAvdNames: string[] = [];
-+  const bootChecks: string[] = [];
-+  const tools = {
-+    listDevices: async () => connected.map((device) => device.serial),
-+    avdName: async (serial: string) => {
-+      queriedAvdNames.push(serial);
-+      const device = connected.find((d) => d.serial === serial);
-+      if (!device || device.avd === null) {
-+        throw new Error(`error: no emulator detected on ${serial}`);
-+      }
-+      return device.avd;
-+    },
-+    listAvds: async () => avds,
-+    bootAvd: (avd: string) => {
-+      booted.push(avd);
-+      if (bootsAs) {
-+        connected.push({ serial: bootsAs, avd, booted: false });
-+      }
-+    },
-+    isBootCompleted: async (serial: string) => {
-+      bootChecks.push(serial);
-+      const device = connected.find((d) => d.serial === serial);
-+      if (!device) {
-+        return false;
-+      }
-+      if (device.neverBoots) {
-+        return false;
-+      }
-+      const wasBooted = device.booted;
-+      device.booted = true;
-+      return wasBooted;
-+    },
-+    sleep: (ms: number) =>
-+      new Promise<void>((resolve) => setTimeout(resolve, Math.min(ms, 1))),
-+    log: () => {},
-+    bootTimeoutMs,
-+  };
-+  return { tools, booted, queriedAvdNames, bootChecks };
-+}
-+
-+const OTHER_EMULATOR: FakeDevice = {
-+  serial: 'emulator-5554',
-+  avd: 'Other_Agent_AVD',
-+  booted: true,
-+};
-+const PHONE: FakeDevice = { serial: 'R58M123ABC', avd: null, booted: true };
-+
-+describe('resolveAndroidDevice', () => {
-+  it('picks the running emulator of the requested AVD among other devices', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        OTHER_EMULATOR,
-+        PHONE,
-+        { serial: 'emulator-5556', avd: 'Mine', booted: true },
-+      ],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5556');
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('waits for a running emulator of the requested AVD to finish booting', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        OTHER_EMULATOR,
-+        { serial: 'emulator-5556', avd: 'Mine', booted: false },
-+      ],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5556');
-+    assert.deepEqual(fake.booted, []);
-+    assert.deepEqual(fake.bootChecks, ['emulator-5556', 'emulator-5556']);
-+  });
-+
-+  it('boots the requested AVD when only other devices are connected', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR, PHONE],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+      bootsAs: 'emulator-5558',
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5558');
-+    assert.deepEqual(fake.booted, ['Mine']);
-+  });
-+
-+  it('fails without touching other devices when the AVD does not exist', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR],
-+      avds: ['Other_Agent_AVD'],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: 'Missing' }, fake.tools),
-+      /AVD Missing/
-+    );
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('fails instead of falling back when the requested AVD never comes up', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+      bootsAs: null,
-+      bootTimeoutMs: 100,
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: 'Mine' }, fake.tools),
-+      /Emulator Mine did not boot/
-+    );
-+    assert.deepEqual(fake.booted, ['Mine']);
-+  });
-+
-+  it('keeps --serial behaviour and ignores --avd when both are given', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR, PHONE],
-+      avds: ['Mine'],
-+    });
-+    assert.equal(
-+      await resolveAndroidDevice(
-+        { serial: 'R58M123ABC', avd: 'Mine' },
-+        fake.tools
-+      ),
-+      'R58M123ABC'
-+    );
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: 'emul
-```
-
-**File**: `apps/fabric-example/scripts/android-device.js` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+/**
-+ * @typedef {{
-+ *   listDevices: () => Promise<string[]>;
-+ *   avdName: (serial: string) => Promise<string | null>;
-+ *   listAvds: () => Promise<string[]>;
-+ *   bootAvd: (avd: string) => void;
-+ *   isBootCompleted: (serial: string) => Promise<boolean>;
-+ *   sleep: (ms: number) => Promise<void>;
-+ *   log: (message: string) => void;
-+ *   bootTimeoutMs?: number;
-+ * }} AndroidTools
-+ */
-+
-+/**
-+ * @param {{ serial: string | null; avd: string | null }} target
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function resolveAndroidDevice({ serial, avd }, tools) {
-+  const serials = await tools.listDevices();
-+
-+  if (serial) {
-+    if (!serials.includes(serial)) {
-+      throw new Error(
-+        `No connected Android device with serial ${serial} (see \`adb devices\`)`
-+      );
-+    }
-+    return serial;
-+  }
-+
-+  if (avd) {
-+    const running = await findRunningAvd(avd, serials, tools);
-+    if (running) {
-+      return waitForBoot(avd, tools);
-+    }
-+    const avds = await tools.listAvds();
-+    if (!avds.includes(avd)) {
-+      throw new Error(
-+        `AVD ${avd} is not running and does not exist (see \`emulator -list-avds\`)`
-+      );
-+    }
-+    return bootAndWait(avd, tools);
-+  }
-+
-+  if (serials.length > 0) {
-+    if (serials.length > 1) {
-+      tools.log(
-+        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
-+      );
-+    }
-+    return serials[0];
-+  }
-+
-+  const [firstAvd] = await tools.listAvds();
-+  if (!firstAvd) {
-+    throw new Error(
-+      'No Android device connected and no AVDs available (see `emulator -list-avds`)'
-+    );
-+  }
-+  return bootAndWait(firstAvd, tools);
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {string[]} serials
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string | null>}
-+ */
-+async function findRunningAvd(avd, serials, tools) {
-+  for (const serial of serials) {
-+    const name = await tools.avdName(serial).catch(() => null);
-+    if (name === avd) {
-+      return serial;
-+    }
-+  }
-+  return null;
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function bootAndWait(avd, tools) {
-+  tools.log(`[runtime-tests] booting emulator ${avd}`);
-+  tools.bootAvd(avd);
-+  return waitForBoot(avd, tools);
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function waitForBoot(avd, tools) {
-+  const timeoutMs = tools.bootTimeoutMs ?? 300_000;
-+  const deadline = Date.now() + timeoutMs;
-+  while (Date.now() < deadline) {
-+    for (const serial of await tools.listDevices()) {
-+      const name = await tools.avdName(serial).catch(() => null);
-+      if (name === avd && (await tools.isBootCompleted(serial))) {
-+        return serial;
-+      }
-+    }
-+    await tools.sleep(2000);
-+  }
-+  throw new Error(`Emulator ${avd} did not boot within ${timeoutMs / 1000}s`);
-+}
-+
-+/**
-+ * @param {string} output
-+ * @returns {string | null}
-+ */
-+function parseAvdName(output) {
-+  const lines = output
-+    .split(/\r?\n/)
-+    .map((line) => line.trim())
-+    .filter(Boolean);
-+  if (lines.length < 2 || lines[lines.length - 1] !== 'OK') {
-+    return null;
-+  }
-+  return lines[0];
-+}
-+
-+module.exports = { resolveAndroidDevice, findRunningAvd, parseAvdName };
-```
-
-**File**: `apps/fabric-example/scripts/runtime-tests-server.js` (modified, +54/-55)
-```diff
-@@ -7,6 +7,11 @@ const net = require('net');
- const http = require('http');
- const { spawn, execFile } = require('child_process');
- const WebSocket = require('ws');
-+const {
-+  resolveAndroidDevice: resolveAndroidTarget,
-+  findRunningAvd,
-+  parseAvdName,
-+} = require('./android-device');
- const WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
- 
- const LIBRARIES = ['reanimated', 'worklets', 'self-tests'];
-@@ -1113,8 +1118,7 @@ function formatIOSCrashReport(text) {
- }
- 
- async function dumpAndroidCrashDiagnostics() {
--  const serial =
--    androidSerial ?? (await listAndroidDevices().catch(() => []))[0];
-+  const serial = await crashDiagnosticsSerial();
-   if (!serial) {
-     console.error(
-       '[runtime-tests] no adb device available for crash diagnostics'
-@@ -1774,64 +1778,57 @@ async function listAndroidDevices() {
-     .map((parts) => parts[0]);
- }
- 
--async function resolveAndroidDevice() {
--  const serials = await listAndroidDevices();
--
--  if (SERIAL) {
--    if (!serials.includes(SERIAL)) {
--      throw new Error(
--        `No connected Android device with serial ${SERIAL} (see \`adb devices\`)`
--      );
--    }
--    return SERIAL;
--  }
--
--  if (serials.length > 0) {
--    if (serials.length > 1) {
--      console.log(
--        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
--      );
--    }
--    return serials[0];
--  }
--
-+/** @returns {import('./android-device').AndroidTools} */
-+function androidTools() {
-   const emulatorBin = sdkTool('emulator', 'emulator');
--  const { stdout } = await run(emulatorBin, ['-list-avds']);
--  const avds = stdout
--    .split('\n')
--    .map((line) => line.trim())
--    .filter((line) => line && !line.startsWith('INFO'));
--  const avd = AVD ?? avds[0];
--  if (!avd) {
--    throw new Error(
--      'No Android device connected and no AVDs available (see `emulator -list-avds`)'
--    );
--  }
--
--  console.log(`[runtime-tests] booting emulator ${avd}`);
--  const child = spawn(
--    emulatorBin,
--    ['-avd', avd, '-no-snapshot-save', '-no-boot-anim', '-no-audio'],
--    { detached: true, stdio: 'ignore' }
--  );
--  child.unref();
--
--  const deadline = Date.now() + 300_000;
--  while (Date.now() < deadline) {
--    const booted = await listAndroidDevices();
--    if (booted.length > 0) {
--      const { stdout: bootCompleted } = await adb(booted[0], [
-+  return {
-+    listDevices: listAndroidDevices,
-+    avdName: async (serial) =>
-+      parseAvdName((await adb(serial, ['emu', 'avd', 'name'])).stdout),
-+    listAvds: async () => {
-+      const { stdout } = await run(emulatorBin, ['-list-avds']);
-+      return stdout
-+        .split('\n')
-+        .map((line) => line.trim())
-+        .filter((line) => line && !/^INFO\s*\|/.test(line));
-+    },
-+    bootAvd: (avd) => {
-+      const child = spawn(
-+        emulatorBin,
-+        ['-avd', avd, '-no-snapshot-save', '-no-boot-anim', '-no-audio'],
-+        { detached: true, stdio: 'ignore' }
-+      );
-+      child.unref();
-+    },
-+    isBootCompleted: async (serial) => {
-+      const { stdout } = await adb(serial, [
-         'shell',
-         'getprop',
-         'sys.boot_completed',
-       ]).catch(() => ({ stdout: '' }));
--      if (bootCompleted.trim() === '1') {
--        return booted[0];
--      }
--    }
--    await sleep(2000);
-+      return stdout.trim() === '1';
-+    },
-+    sleep,
-+    log: (message) => console.log(message),
-+  };
-+}
-+
-+function resolveAndroidDevice() {
-+  return resolveAndroidTarget({ serial: SERIAL, avd: AVD }, androidTools());
-+}
-+
-+async function crashDiagnosticsSerial() {
-+  if (androidSerial) {
-+    return androidSerial;
-+  }
-+  const serials = await listAndroidDevices().catch(() => []);
-+  if (SERIAL) {
-+    return serials.some((serial) => serial === SERIAL) ? SERIAL : null;
-+  }
-+  if (AVD) {
-+    return findRunningAvd(AVD, serials, androidTools());
-   }
--  throw new Error(`Emulator ${avd} did not boot within 300s`);
-+  return serials[0] ?? null;
- }
- 
- /** @param {string} serial */
-@@ -1906,6 +1903,7 @@ if (SHOULD_LAUNCH) {
-     if (PLATFORM === 'android') {
-       const serial = await resolveAndroidDevice();
-       androidSerial = serial;
-+      console.log(`[runtime-tests] using Android device ${serial}`);
-       if (!SKIP_BUILD) {
-         await buildAndroidApp(serial);
-       }
-@@ -1991,7 +1989,8 @@ Target
-   --simulator <name>        iOS simulator to boot. Default: iPhone 17.
-   --udid <udid>             iOS simulator to reuse, instead of --simulator.
-   --serial <serial>         Android device already running (see \`adb devices\`).
--  --avd <name>              Android AVD to boot when no --serial is given.
-+  --avd <name>              Android AVD to use when no --serial is given.
-+                            Reuses its running emulator or boots it.
- 
- Build and run
-   --configuration <name>    Xcode configuration / Gradle build type.
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@
-     "lint:workspaces": "yarn workspaces foreach --all --exclude \"react-native-reanimated-monorepo\" --parallel --topological-dev run lint",
-     "lint:root": "oxlint . --ignore-pattern 'packages/**' --ignore-pattern 'apps/**' --ignore-pattern 'docs/**' && yarn run --top-level oxfmt --check --ignore-path .prettiereslintignore .",
-     "prepare-vscode": "bash ./scripts/prepare-vscode.sh",
--    "test:scripts": "node --experimental-strip-types --test scripts/__tests__/*.test.mts scripts/changelog/__tests__/*.test.mts",
-+    "test:scripts": "node --experimental-strip-types --test scripts/__tests__/*.test.mts scripts/changelog/__tests__/*.test.mts apps/fabric-example/scripts/__tests__/*.test.mts",
-     "toggle-bundle-mode": "bash ./scripts/toggle-bundle-mode.sh"
    },
-   "devDependencies": {
+   {
+```
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/startError.test.tsx` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++import { StyleSheet } from 'react-native';
++import type {
++  EntryExitAnimationFunction,
++  EntryOrExitLayoutType,
++  LayoutAnimation,
++} from 'react-native-reanimated';
++import Animated, {
++  FadeIn,
++  FadeOut,
++  LinearTransition,
++} from 'react-native-reanimated';
++
++import {
++  describe,
++  expect,
++  expectEventually,
++  getTestComponent,
++  isViewMountedNatively,
++  render,
++  test,
++  notify,
++  useTestRef,
++  waitForFrames,
++  waitForNotification,
++} from '../../../ReJest/RuntimeTestsApi';
++import { ComparisonMode } from '../../../ReJest/types';
++import { runOnUIBlocking } from '../../../ReJest/utils/runOnUIBlocking';
++
++const START_ERROR = 'layout animation start throws on purpose';
++const ON_START_ERROR = 'layout animation onStart throws on purpose';
++const FADE_IN_FINISHED = 'startErrorFadeInFinished';
++
++const throwingOnStart: EntryExitAnimationFunction = () => {
++  'worklet';
++  return {
++    initialValues: { opacity: 0 },
++    animations: {
++      opacity: {
++        current: 0,
++        onStart: () => {
++          throw new Error(ON_START_ERROR);
++        },
++        onFrame: () => true,
++      },
++    },
++  } as unknown as LayoutAnimation;
++};
++
++const notifyingFadeIn = FadeIn.duration(100).withCallback((finished) => {
++  'worklet';
++  if (finished) {
++    notify(FADE_IN_FINISHED);
++  }
++});
++
++function Box({
++  exiting,
++  entering = exiting ? undefined : FadeIn.duration(100),
++}: {
++  exiting?: boolean;
++  entering?: EntryOrExitLayoutType;
++}) {
++  const ref = useTestRef('box');
++  return (
++    <Animated.View
++      ref={ref}
++      entering={entering}
++      exiting={exiting ? FadeOut.duration(100) : undefined}
++      style={styles.box}
++    />
++  );
++}
++
++function LayoutBox({ wide }: { wide: boolean }) {
++  const ref = useTestRef('layoutBox');
++  return (
++    <Animated.View
++      ref={ref}
++      layout={LinearTransition.duration(100)}
++      style={wide ? styles.wideBox : styles.box}
++    />
++  );
++}
++
++function readMountedProps(tag: number) {
++  return runOnUIBlocking(() => {
++    'worklet';
++    return global._obtainMountedViewProps(tag, true);
++  });
++}
++
++function readFrameTimestampOnUI() {
++  return runOnUIBlocking(() => {
++    'worklet';
++    return global.__frameTimestamp;
++  });
++}
++
++async function throwFromLayoutAnimationStart() {
++  await runOnUIBlocking(() => {
++    'worklet';
++    global.originalLayoutAnimationsManager = global.LayoutAnimationsManager;
++    global.LayoutAnimationsManager = {
++      start: () => {
++        throw new Error(START_ERROR);
++      },
++      stop: global.originalLayoutAnimationsManager.stop,
++    };
++  });
++}
++
++async function restoreLayoutAnimationStart() {
++  await runOnUIBlocking(() => {
++    'worklet';
++    global.LayoutAnimationsManager = global.originalLayoutAnimationsManager;
++  });
++}
++
++if (__DEV__) {
++  describe('Layout animation start that throws', () => {
++    test('is reported without terminating the app', async () => {
++      await throwFromLayoutAnimationStart();
++      try {
++        await render(<Box />);
++        await waitForFrames(5);
++      } finally {
++        await restoreLayoutAnimationStart();
++      }
++      const tag = getTestComponent('box').getTag();
++      expect((await readMountedProps(tag))?.opacity).toBe(1);
++      await render(null);
++    });
++
++    test('shows the final frame and props of a layout change', async () => {
++      await render(<LayoutBox wide={false} />);
++      await waitForFrames(3);
++      const tag = getTestComponent('layoutBox').getTag();
++      await throwFromLayoutAnimationStart();
++      try {
++        await render(<LayoutBox wide />);
++        await waitForFrames(5);
++      } finally {
++        await restoreLayoutAnimationStart();
++      }
++      const props = await readMountedProps(tag);
++      expect(props?.width).toBe(WIDE_WIDTH);
++      expect(props?.backgroundColor).toBe(WIDE_COLOR, ComparisonMode.COLOR);
++      await render(null);
++    });
++
++    test('drops the JS state of an animation whose onStart throws', async () => {
++      await render(<Box entering={throwingOnStart} />);
++      await waitForFrames(5);
++      expect(await readFrameTimestampOnUI()).toBe(undefined);
++      await render(null);
++
++      await render(<Box entering={notifyingFadeIn} />);
++      await waitForNotification(FADE_IN_FINISHED);
++      await render(null);
++    });
++
++    test('removes the exiting view at once', async () => {
++      await render(<Box exiting />);
++      await waitForFrames(3);
++      const tag = getTestComponent('box').getTag();
++      expect(await isViewMountedNatively(tag)).toBe(true);
++      await throwFromLayoutAnimationStart();
++      try {
++        await render(null);
++        await expectEventually(() => isViewMountedNatively(tag), 1000).toBe(
++          false
++        );
++      } finally {
++        await restoreLayoutAnimationStart();
++      }
++    });
++  });
++}
++
++const WIDE_WIDTH = 200;
++const WIDE_COLOR = '#dd2222';
++
++const styles = StyleSheet.create({
++  bo
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsManager.cpp` (modified, +44/-13)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ #include <react/debug/react_native_assert.h>
+ 
++#include <functional>
+ #include <memory>
+ #include <unordered_map>
+ #include <utility>
+@@ -130,30 +131,60 @@ void LayoutAnimationsManager::clearSharedTransitionConfigs(const std::vector<Tag
+   }
+ }
+ 
+-void LayoutAnimationsManager::startLayoutAnimation(
++bool LayoutAnimationsManager::startLayoutAnimation(
+     jsi::Runtime &rt,
+     const int tag,
+     const LayoutAnimationType type,
+     const jsi::Object &values,
+     const std::shared_ptr<Serializable> &config) {
+   react_native_assert(config && "layout animation config is null");
+   if (!config) {
+-    return;
++    return false;
+   }
+-  // TODO: cache the following!!
+-  jsi::Value layoutAnimationRepositoryAsValue =
+-      rt.global().getPropertyAsObject(rt, "global").getProperty(rt, "LayoutAnimationsManager");
+-  jsi::Function startAnimationForTag =
+-      layoutAnimationRepositoryAsValue.getObject(rt).getPropertyAsFunction(rt, "start");
+-  startAnimationForTag.call(rt, jsi::Value(tag), jsi::Value(static_cast<int>(type)), values, config->toJSValue(rt));
++  const auto configValue = config->toJSValue(rt);
++  return callLayoutAnimationsManager(rt, "start", [&](jsi::Runtime &runtime, const jsi::Function &start) {
++    start.call(runtime, jsi::Value(tag), jsi::Value(static_cast<int>(type)), values, configValue);
++  });
+ }
+ 
+ void LayoutAnimationsManager::cancelLayoutAnimation(jsi::Runtime &rt, const int tag) const {
+-  jsi::Value layoutAnimationRepositoryAsValue =
+-      rt.global().getPropertyAsObject(rt, "global").getProperty(rt, "LayoutAnimationsManager");
+-  jsi::Function cancelLayoutAnimation =
+-      layoutAnimationRepositoryAsValue.getObject(rt).getPropertyAsFunction(rt, "stop");
+-  cancelLayoutAnimation.call(rt, jsi::Value(tag));
++  callLayoutAnimationsManager(
++      rt, "stop", [&](jsi::Runtime &runtime, const jsi::Function &stop) { stop.call(runtime, jsi::Value(tag)); });
++}
++
++bool LayoutAnimationsManager::callLayoutAnimationsManager(
++    jsi::Runtime &rt,
++    const char *methodName,
++    const std::function<void(jsi::Runtime &, const jsi::Function &)> &call) {
++  return runGuardedOnUIRuntime(rt, methodName, [&](jsi::Runtime &runtime) {
++    const auto method = runtime.global()
++                            .getPropertyAsObject(runtime, "global")
++                            .getPropertyAsObject(runtime, "LayoutAnimationsManager")
++                            .getPropertyAsFunction(runtime, methodName);
++    call(runtime, method);
++  });
++}
++
++bool LayoutAnimationsManager::runGuardedOnUIRuntime(
++    jsi::Runtime &rt,
++    const char *name,
++    const std::function<void(jsi::Runtime &)> &call) {
++  const auto uiRuntime = worklets::getWeakRuntimeFromJSIRuntime(rt).lock();
++  if (!uiRuntime) {
++    return false;
++  }
++  bool completed = false;
++  const auto guardedCall = jsi::Function::createFromHostFunction(
++      rt,
++      jsi::PropNameID::forAscii(rt, name),
++      0,
++      [&](jsi::Runtime &runtime, const jsi::Value &, const jsi::Value *, size_t) {
++        call(runtime);
++        completed = true;
++        return jsi::Value::undefined();
++      });
++  worklets::runSyncOnRuntime(uiRuntime, guardedCall);
++  return completed;
+ }
+ 
+ void LayoutAnimationsManager::transferConfigFromNativeID(const int nativeId, const int tag) {
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsManager.h` (modified, +8/-1)
+```diff
+@@ -6,6 +6,7 @@
+ #include <reanimated/LayoutAnimations/LayoutAnimationType.h>
+ 
+ #include <jsi/jsi.h>
++#include <functional>
+ #include <memory>
+ #include <mutex>
+ #include <optional>
+@@ -68,7 +69,7 @@ class LayoutAnimationsManager {
+   bool hasLayoutAnimationConfigs(const LayoutAnimationType type);
+   std::optional<SharedTransitionConfig> getSharedTransitionConfig(const int tag);
+   std::shared_ptr<Serializable> takeExitingAnimationConfigAndClearTag(int tag);
+-  void startLayoutAnimation(
++  bool startLayoutAnimation(
+       jsi::Runtime &rt,
+       const int tag,
+       const LayoutAnimationType type,
+@@ -80,8 +81,14 @@ class LayoutAnimationsManager {
+   void cancelLayoutAnimation(jsi::Runtime &rt, const int tag) const;
+   void transferConfigFromNativeID(const int nativeId, const int tag);
+   std::shared_ptr<SharedTransitionManager> getSharedTransitionManager();
++  static bool
++  runGuardedOnUIRuntime(jsi::Runtime &rt, const char *name, const std::function<void(jsi::Runtime &)> &call);
+ 
+  private:
++  static bool callLayoutAnimationsManager(
++      jsi::Runtime &rt,
++      const char *methodName,
++      const std::function<void(jsi::Runtime &, const jsi::Function &)> &call);
+   std::unordered_map<int, std::shared_ptr<Serializable>> &getConfigsForType(const LayoutAnimationType type);
+ 
+   std::shared_ptr<SharedTransitionManager> sharedTransitionManager_;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +1/-1)
+```diff
+@@ -941,7 +941,7 @@ void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRe
+ 
+ // MARK: Layout Animation Updates
+ 
+-std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool shouldRemove) {
++std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool shouldRemove) const {
+   auto lock = std::unique_lock<std::recursive_mutex>(mutex);
+   auto layoutAnimationIt = layoutAnimations_.find(tag);
+ 
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-1)
+```diff
+@@ -365,7 +365,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+   void keepTransitioningViewsHidden(
+       ShadowViewMutationList &filteredMutations,
+       const PropsParserContext &propsParserContext) const;
+-  std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) override;
++  std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) const override;
+   void startSurface(
+       const facebook::react::ShadowTree &shadowTree,
+       std::weak_ptr<const facebook::react::MountingOverrideDelegate> mountingOverrideDelegate) override;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.cpp` (modified, +11/-3)
+```diff
+@@ -417,6 +417,7 @@ void LayoutAnimationsProxyCommon::flushLayoutAnimationOperationsLocked() const {
+   pendingLayoutAnimations_.clear();
+   reconcileLayoutAnimationOperations(operations);
+   auto deferredStarts = takeDeferredLayoutAnimationStarts(operations);
++  bool hasFailedStart = false;
+   for (auto operation = takeNextLayoutAnimationOperation(operations); operation;
+        operation = takeNextLayoutAnimationOperation(operations)) {
+     if (const auto *stop = std::get_if<LayoutAnimationStop>(&*operation)) {
+@@ -462,11 +463,14 @@ void LayoutAnimationsProxyCommon::flushLayoutAnimationOperationsLocked() const {
+     }
+     values.setProperty(uiRuntime_, "windowWidth", window.width);
+     values.setProperty(uiRuntime_, "windowHeight", window.height);
+-    layoutAnimationsManager_->startLayoutAnimation(uiRuntime_, start.tag, start.type, values, start.config);
++    if (!layoutAnimationsManager_->startLayoutAnimation(uiRuntime_, start.tag, start.type, values, start.config)) {
++      endLayoutAnimation(start.tag, start.type == LayoutAnimationType::EXITING);
++      hasFailedStart = true;
++    }
+   }
+   const bool hasNewOperations = !layoutAnimationOperations_.empty();
+   requeueLayoutAnimationStarts(std::move(deferredStarts));
+-  if (hasNewOperations) {
++  if (hasNewOperations || hasFailedStart) {
+     requestLayoutAnimationFlush_(surfaceId_);
+   }
+ }
+@@ -773,7 +777,11 @@ void LayoutAnimationsProxyCommon::cleanupCompletedAnimations(
+     auto &animation = completedAnimation.animation;
+     auto finalView = animation.currentView;
+     if (needsFinalFrameReconciliation(animation.type)) {
+-      finalView.layoutMetrics = animation.finalView.layoutMetrics;
++      if (animation.currentView == animation.startView) {
++        finalView = animation.finalView;
++      } else {
++        finalView.layoutMetrics = animation.finalView.layoutMetrics;
++      }
+     }
+     if (!completedAnimation.shouldRemove && animation.opacity) {
+ #ifdef ANDROID
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.h` (modified, +1/-1)
+```diff
+@@ -143,7 +143,7 @@ class LayoutAnimationsProxyCommon : public facebook::react::MountingOverrideDele
+     return false;
+   }
+   std::optional<SurfaceId> progressLayoutAnimation(int tag, const jsi::Object &newStyle);
+-  virtual std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) = 0;
++  virtual std::optional<SurfaceId> endLayoutAnimation(int tag, bool shouldRemove) const = 0;
+   virtual void startSurface(
+       const facebook::react::ShadowTree &shadowTree,
+       std::weak_ptr<const facebook::react::MountingOverrideDelegate> mountingOverrideDelegate);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11118** (2026-11-03): refactor(Worklets): mark AsyncQueueImpl as final (@tshmieldev)
-- **PR #11109** (2026-11-02): ci: skip CI on draft pull requests (@tjzel)
-- **PR #11102** (2026-11-02): refactor(Worklets): fold the Debug and Release copies of the sync run helpers (@tshmieldev)
-- **PR #11099** (2026-10-30): fix(Reanimated): resolve web-only modules for __tests__ in the Jest resolver (@tomekzaw)
-- **PR #11098** (2026-10-30): docs(Reanimated): keep the Slider example's handle in place until the pointer returns (@bartlomiejbloniarz)
-- **PR #11095** (2026-11-03): fix(FabricExample): keep runtime-test devices and crash diagnostics on the selected device (@pawicao)
+- **PR #11212** (2026-11-06): test(runtime-tests): compare recorded shared transition starts with the measured view position (@tjzel)
+- **PR #11211** (2026-11-06): test(Reanimated): compare react-freeze boxes by drift, not by absolute spread (@tjzel)
+- **PR #11210** (2026-11-06): fix(Worklets): resolve the Babel plugin tests against the workspace on 4.7-stable (@tjzel)
+- **PR #11208** (2026-11-06): chore(common-app): mark the fixed iOS shared element transition examples as working (@bartlomiejbloniarz)
+- **PR #11183** (2026-11-06): @tjzel/runtime tests/shared transition start values (@tjzel)
+- **PR #11182** (closed): fix(LayoutAnimations): Fix Android entering animations with reduced motion (@pawicao)
 
 ---
 
@@ -2184,34 +1800,3 @@ keeps every color frame`, which also fail on `main` on this phone
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Reanimated): destroy the light tree's dropped views off the UI thread (#10996)
-
-**RULE**:
-When implementing operations in `apps/fabric-example/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `134779bf`: Reanimated): destroy the light tree's dropped views off the UI thread (#10996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/fabric-example/ios/Podfile.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-  RNReanimated: 20804e0866504904168c8b7027e323ffa96c1aa3
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  RNReanimated: cbb3ee3f32002440c743e34e00f62b62d404a56f
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `134779bf` are properly handled with clean fallback behavior.

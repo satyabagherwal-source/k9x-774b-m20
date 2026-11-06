@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `3b6bbb46`  
+> **Source Version**: `65a31536`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:14:38.980Z  
+> **Timestamp**: 2026-11-06T21:59:34.818Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:14:38.881Z  
+> **Harvest Timestamp**: 2026-11-06T21:59:34.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25170 stars
+- **Stars / Engagement**: 25180 stars
 
 ---
 
@@ -1428,11 +1428,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11434** (2026-11-05): **core: reject a rowid in the fraction of percentile_disc and percentile_cont**
-  *Symptoms*: ## Problem  ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; -- tursopg (Turso's PostgreSQL-compatible server): process panics with --   Cursor not found: CursorKey { table_reference_id: TableInternalId(1), ... } -- PostgreSQL: error ```  The same panic happens in tursopg with `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)`, `percentile_disc(oid = 1)`, on an empty table, and inside `INSERT ... SELECT`. It also happens in tursodb (the SQLite dialect) with `percentile_disc(rowid)`, `percentile_cont(rowid)` and `percentile_disc(t.rowid)`.  `emit_percentile_fraction_check` compiles the fraction once, before the cursors of the query's tables are open. It rejects a fraction that reads a column of those tables (`Expr::Column`), but not one that reads their rowid (`Expr::RowId`). Compiling the rowid read then looks up a cursor that does not exist yet and panics.  ## Fix  `emit_percentile_fraction_check` now treats `Expr::RowId` like `Expr::Column`. A rowid of a table in this query gives the error that `percentile_disc(a)` already gives:  ``` the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows ```  A rowid of an outer query in a correlated subquery is still allowed, the same as an outer column.  Not changed in this pull request: - tursopg returns SQLSTATE 42601 for this error. PostgreSQL returns 42803 for a column and 42703 f
+- **Issue #11548** (2026-11-06): **serverless/go: expose typed HTTP response errors**
+  *Symptoms*: ## Description  Return an exported `*turso.HTTPError` with `StatusCode` and `Message` for non-2xx pipeline and cursor responses. Callers can inspect it with `errors.As`, including through wrapped errors. Existing human-readable formatting and bounded JSON message extraction are preserved; transport failures and Hrana errors remain distinguishable.  ## Motivation and context  Gateways need to distinguish HTTP 401/403 authentication failures from backend and transport failures without matching error strings. Document an authentication check using `OpenConnection`, `Ping`, and `Close` with custom request headers, including lazy connection opening and best-effort cleanup behavior.  ## Description of AI Usage  Codex implemented the change, regression coverage, and documentation, verified that regressions fail with the original handler, and executed the Go module suite with the race detector. A separate Codex agent reviewed the error contract and boundary cases. 
 
-- **Issue #11424** (2026-11-05): **tursopg: percentile_disc and percentile_cont panic when the fraction reads the rowid**
-  *Symptoms*: ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; ```  ## Observed  The statement panics. The process stops.  ```text thread 'main' panicked at core/vdbe/builder.rs:2093:32: Cursor not found: CursorKey { table_reference_id: TableInternalId(1), index: None, is_build: false } ```  - `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)` and `percentile_disc(oid = 1)` panic in the same way. - The table can be empty. The panic also occurs in `INSERT INTO t SELECT percentile_disc(...) ... FROM t`. - A fraction that reads a normal column gives an error, as it must: `percentile_disc(a)` gives `the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows`.  ## Cause  `emit_percentile_fraction_check` in `core/translate/main_loop/init.rs` looks for `Expr::Column` and subqueries in the fraction. It does not look for `Expr::RowId`. So a rowid reference passes the check. Then `translate_expr` reads the rowid before the cursor of the table is open, and `resolve_cursor_id` panics.  ## Expected  An error and no panic. PostgreSQL rejects the query: a user table has no `oid` column (`column "oid" does not exist`). For a column of the aggregated rows, PostgreSQL gives `direct arguments of an ordered-set aggregate must use only grouped columns`. tursopg can give the same error as for `percentile_disc(a)`.  ## Version  turso commit ff97c22 (ff97c2231a118
+- **Issue #11528** (2026-11-06): **core/dialect: import names instead of spelling out their paths**
+  *Symptoms*: The Dialect module had no `use` block and wrote every type as a full path, such as `crate::Result` and `crate::schema::Schema`, in the trait and in its tests. Every later edit to the file copied that style, so new trait methods kept spreading paths like `crate::namespace::NamespaceId` through signatures that other files write with a plain import.  Import the names at the top of the module and in the test module, and refer to them by name. Doc links to items the module does not otherwise use keep their full path. No behavior changes.  Note: #11482 adds methods to this file and will need a small mechanical conflict resolution in `core/dialect/mod.rs` once this lands.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1449,642 +1449,634 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b6bbb46` (2026-11-05)
-**Commit Message**: Merge 'core/time: return NULL instead of panicking when time_date overflows' from 
+### Incident Patch 1: `65a31536` (2026-11-06)
+**Commit Message**: Merge 'core: implement stored generated columns' from Glauber Costa
 
-`SELECT make_date(1, 4, 1453556443)` (and `make_timestamp(2024, 1,
-1453556443, 0, 0, 0)`) panicked with `NaiveDateTime + TimeDelta
-overflowed`.
+`GENERATED ALWAYS AS (expr) STORED` columns were rejected at CREATE
+TABLE, and Turso could not open SQLite databases that have them. This
+adds stored generated columns to SQLite mode. A stored value is computed
+when the row is written and kept in the record on disk, as SQLite does.
 
-`Time::time_date` already checks that the day/hour/minute/second values
-fit in a `chrono::Duration` with `try_days` etc., but then adds them
-with `dt += d`, which panics when the result goes past what
-`NaiveDateTime` can hold. I switched each of those additions (and the
-nanosecond one) to `checked_add_signed` and return `Ok(None)` on
-overflow, same as the year and month steps above already do. So these
-calls now give NULL rather than crashing the process.
+This is the SQLite part of #11323. The PostgreSQL frontend support will
+follow separately.
 
-This also covers the extra cases from your follow-up comment: a negative
-day like `make_date(40, 1, -2147483648)` goes through the same checked
-add, and `year - 1` / `month - 1` / `day - 1` now use `checked_sub` so
-`make_date(-2147483648, 1, 1)` and `make_date(2000, -2147483648, 1)`
-don't hit the subtraction overflow in debug/fuzz builds.
+## Behaviour
+- INSERT, UPDATE, UPSERT (DO UPDATE / DO NOTHING) and REPLACE compute
+stored values. All generated columns of a row are computed in one pass,
+in dependency order across VIRTUAL and STORED columns. NOT NULL and
+CHECK constraints see the computed values.
+- UPDATE and UPSERT compute generated columns after the SET values get
+their column affinity, so stored values match what INSERT would store.
+Indexes on STORED columns are maintained, and CDC records changed STORED
+values.
+- VACUUM copies the ordinary columns and computes the generated ones
+again. Files move both ways between sqlite3 and Turso, and
+`integrity_check` returns ok in both directions.
+- A wholly constant generation expression is computed for every row.
+Before, the register
 
-The issue mentions Postgres raises `date field value out of range` here.
-I kept it as NULL to match how every other out-of-range input to
-`time_date` behaves today; if 
-
-**File**: `core/time/internal.rs` (modified, +131/-34)
+**File**: `core/schema.rs` (modified, +109/-42)
 ```diff
-@@ -205,7 +205,10 @@ impl Time {
+@@ -5449,7 +5449,8 @@ pub(crate) struct GeneratedColGraph {
+     dependencies: Vec<ColumnMask>,
+     /// `dependents[i]` = columns that transitively read from `i` (excludes `i`).
+     dependents: Vec<ColumnMask>,
+-    /// Column indices in topological (dependency) order. Contains all columns.
++    /// All column indices, built by passes over the table in column order, each
++    /// pass taking every column whose inputs are already taken.
+     topological_sort: Vec<usize>,
+ }
  
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
+@@ -5461,9 +5462,11 @@ impl GeneratedColGraph {
+         let mut direct_dependents = try_vec![ColumnMask::default(); n]?;
+         let mut in_degree: Vec<u32> = try_vec![0; n]?;
+ 
+-        // walk each virtual column's expression once to extract edges
++        // walk each generated column's expression once to extract edges
+         for (j, col) in columns.iter().enumerate() {
+-            let GeneratedType::Virtual { ref expr, .. } = col.generated_type() else {
++            let (GeneratedType::Virtual { ref expr, .. } | GeneratedType::Stored { ref expr, .. }) =
++                col.generated_type()
++            else {
+                 continue;
+             };
+             let mut direct = BitSet::default();
+@@ -5482,17 +5485,23 @@ impl GeneratedColGraph {
              }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
+         }
  
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
+-        // Kahn's algorithm (topological sort) over direct_deps.
+         let mut topological_sort: Vec<usize> = Vec::try_with_capacity_ext(n)?;
+-        let mut ready: Vec<usize> = (0..n).filter(|&i| in_degree[i] == 0).try_collect()?;
+-        while let Some(i) = ready.pop() {
+-            topological_sort.try_push(i)?;
+-            for j in direct_dependents[i].iter() {
+-                in_degree[j] -= 1;
+-                if in_degree[j] == 0 {
+-                    ready.try_push(j)?;
++        let mut sorted = try_vec![false; n]?;
++        loop {
++            let sorted_before_pass = topological_sort.len();
++            for i in 0..n {
++                if sorted[i] || in_degree[i] > 0 {
++                    continue;
++                }
++                sorted[i] = true;
++                topological_sort.try_push(i)?;
++                for j in direct_dependents[i].iter() {
++                    in_degree[j] -= 1;
+                 }
              }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Equal => (),
-         };
++            if topological_sort.len() == sorted_before_pass {
++                break;
++            }
+         }
  
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -287,13 +302,17 @@ impl Time {
- 
-         match years.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = dt
--                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Less => {
--                dt = dt
--                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Equal => (),
-@@ -313,7 +332,9 @@ impl Time {
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        dt += chrono::Duration::try_days(days).ok_or(TimeError::CreationError)?;
-+        dt = chrono::Duration::try_days(days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+            .ok_or(TimeError::CreationError)?;
- 
-         Ok(dt.into())
-     }
-@@ -342,10 +363,10 @@ impl Time {
-         self.inner.timestamp_nanos_opt()
+         // see if there's cycles in the graph
+@@ -5735,6 +5744,24 @@ impl BTreeTable {
+         Ok(())
      }
  
--    pub fn add_duration(&self, 
-```
-
-**File**: `core/time/mod.rs` (modified, +52/-6)
-```diff
-@@ -194,13 +194,23 @@ fn time_date_internal(args: &[Value]) -> Value {
-     }
- 
-     if args.len() == 8 {
--        let offset_sec = ok_tri!(args[7].to_integer()) as i32;
--        seconds -= offset_sec as i64;
-+        let offset_sec = ok_tri!(args[7].to_integer());
-+        if i32::try_from(offset_sec).is_err() {
-+            return Value::null();
++    /// Fails when a STORED generated column has a custom type or reads a column that has one.
++    // FIXME: allow custom types in STORED generated columns once custom types stabilize.
++    pub(crate) fn check_stored_columns_have_no_custom_types(&self, schema: &Schema) -> Result<()> {
++        let graph = self.column_graph()?;
++        for (idx, column) in self.columns.iter().enumerate() {
++            if !column.is_stored_generated() {
++                continue;
++            }
++            let uses_custom_type = std::iter::once(idx)
++                .chain(graph.dependencies[idx].iter())
++                .any(|i| schema.column_has_custom_type(&self.columns[i], self.is_strict));
++            if uses_custom_type {
++                bail_parse_error!("stored generated columns cannot use custom types");
++            }
 +        }
-+        seconds = match seconds.checked_sub(offset_sec) {
-+            Some(s) => s,
-+            None => return Value::null(),
-+        };
++        Ok(())
++    }
++
+     /// Whether `column` is part of a UNIQUE, PRIMARY KEY or FOREIGN KEY of the
+     /// table.
+     pub(crate) fn is_key_column(&self, column: &Column) -> bool {
+@@ -5870,6 +5897,10 @@ impl BTreeTable {
+         self.has_virtual_columns
      }
  
-+    let (Ok(year), Ok(month)) = (i32::try_from(year), i32::try_from(month)) else {
-+        return Value::null();
-+    };
-+
-     let t = Time::time_date(
--        year as i32,
--        month as i32,
-+        year,
-+        month,
-         day,
-         hour,
-         minutes,
-@@ -715,7 +725,10 @@ fn time_add(args: &[Value]) -> Value {
- 
-     let d = Duration::from(d);
- 
--    t.add_duration(d).into_blob()
-+    match t.add_duration(d) {
-+        Some(t) => t.into_blob(),
-+        None => Value::null(),
-+    }
- }
- 
- #[scalar(name = "time_add_date")]
-@@ -757,7 +770,11 @@ fn time_add_date(args: &[Value]) -> Value {
-         days = ok_tri!(args[3].to_integer());
-     }
- 
--    let t: Time = tri!(t.time_add_date(years as i32, months as i32, days));
-+    let (Ok(years), Ok(months)) = (i32::try_from(years), i32::try_from(months)) else {
-+        return Value::error_with_message(TimeError::CreationError.to_string());
-+    };
-+
-+    let t: Time = tri!(t.time_add_date(years, months, days));
- 
-     t.into_blob()
- }
-@@ -1029,3 +1046,32 @@ fn time_parse(args: &[Value]) -> Value {
- 
-     Time::from_datetime(dt.and_utc()).into_blob()
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn ints(v: &[i64]) -> Vec<Value> {
-+        v.iter().map(|&i| Value::from_integer(i)).collect()
++    pub fn has_generated_columns(&self) -> bool {
++        self.columns.iter().any(|c| c.is_generated())
 +    }
 +
-+    #[test]
-+    fn time_date_overflowing_args_return_null() {
-+        // seconds - offset_sec overflows i64
-+        let v = time_date_internal(&ints(&[2000, 1, 1, 0, 0, i64::MIN, 0, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, i64::MAX, 0, -1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // year / month that don't fit in i32 must not be truncated
-+        let v = time_date_internal(&ints(&[4294969297, 1, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 4294967297, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // offset that doesn't fit in i32
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 4294967296]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // sanity: normal call still returns a blob
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 3600]));
-+        assert_eq!(v.value_type(), ValueType::Blob);
-+    }
-+}
+     /// Build a `ColumnLayout` for this table's register mapping.
+     pub fn column_layout(&self) -> Result<ColumnLayout, TryReserveError> {
+         ColumnLayout::from_btree(self)
+@@ -6012,14 +6043,7 @@ impl BTreeTable {
+ 
+             push_collation(&mut sql, column.text_collation());
+ 
+-            if let GeneratedType::Virtual { original_sql, .. } = &column.generated_type() {
+-                if column.generated_always {
+-                    sql.push_str(" GENERATED ALWAYS");
+-                }
+-                sql.push_str(" AS (");
+-                sql.push_str(original_sql);
+-                sql.push(')');
+-            }
++            push_generated_clause(&mut sql, column);
+ 
+             // Add column-level CHECK constraints inline
+             for check_constraint in &self.check_constraints {
+@@ -6304,7 +6328,7 @@ impl BTreeTable {
+         {
+             let mut guard = self.columns_mut();
+             for i in 0..guard.len() {
+-                if guard[i].is_virtual_generated() {
++                if guard[i].is_generated() {
+                     let mut expr = guard[i].generated_expr().cloned().unwrap();
+                     resolve_gencol_expr_columns(&mut expr, &guard)?;
+                     *guard[i].generated_expr_mut().unwrap() = expr;
+@@ -6319,7 +6343,7 @@ impl BTre
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/scalar-functions-datetime.sqltest` (modified, +65/-0)
+**File**: `core/translate/alter.rs` (modified, +38/-11)
 ```diff
-@@ -2220,6 +2220,71 @@ test time_date-overflow-issue-5251 {
- expect {
- }
- 
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-day-overflow-issue-11398 {
-+    SELECT make_date(1, 4, 1453556443);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_timestamp-day-overflow-issue-11398 {
-+    SELECT make_timestamp(2024, 1, 1453556443, 0, 0, 0);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-year-wider-than-i32 {
-+    SELECT make_date(4294969297, 1, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-month-wider-than-i32 {
-+    SELECT make_date(2024, 4294967297, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow {
-+    SELECT time_date(2000, 1, 1, 0, 0, -9223372036854775808, 0, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow-negative {
-+    SELECT time_date(2024, 1, 1, 0, 0, 9223372036854775807, 0, -1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add-overflow {
-+    SELECT time_add(time_date(-262143, 1, 1), -9223372036854775807);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-day-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 0, 0, 1453556443);
-+}
-+expect error {
-+    time creation error
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-year-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 2147483647);
-+}
-+expect error {
-+    time creation error
-+}
-+
- # Invalid date and time
- test invalid-date {
-     SELECT date('2024-07-21 24:00:00');
-```
-
----
-
-### Incident Patch 2: `06abd777` (2026-11-05)
-**Commit Message**: core/time: return NULL instead of panicking when time_date overflows
-
-make_date(1, 4, 1453556443) and make_timestamp with a huge day number
-panicked with `NaiveDateTime + TimeDelta overflowed`. The day/hour/
-minute/second offsets were checked to fit in a Duration, but the
-addition itself used `+=`, which panics past NaiveDateTime's range.
-With overflow checks on, `year - 1` / `month - 1` / `day - 1` also
-panicked for the minimum integer value.
-
-Use checked arithmetic for each step and return None like the other
-out-of-range paths in Time::time_date.
-
-Fixes #11398
-
-**File**: `core/time/internal.rs` (modified, +86/-25)
-```diff
-@@ -205,7 +205,10 @@ impl Time {
- 
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
+@@ -1060,11 +1060,11 @@ pub fn translate_alter_table(
+                 }
              }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
  
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
+-            // Check if any virtual column depends on the dropped column
++            // Check if any generated column depends on the dropped column
+             {
+                 let affected = btree.columns_affected_by_update([dropped_index])?;
+                 for idx in &affected {
+-                    if idx != dropped_index && btree.columns()[idx].is_virtual_generated() {
++                    if idx != dropped_index && btree.columns()[idx].is_generated() {
+                         return Err(LimboError::ParseError(format!(
+                             "error in table {table_name} after drop column: no such column: {column_name}"
+                         )));
+@@ -1224,16 +1224,20 @@ pub fn translate_alter_table(
+                     }
+                 )
+             });
+-            if is_stored {
+-                return Err(LimboError::ParseError(
+-                    "cannot add a STORED column".to_string(),
+-                ));
+-            }
+             if is_generated {
+                 for c in &col_def.constraints {
+-                    if let ast::ColumnConstraint::Generated { expr, .. } = &c.constraint {
+-                        crate::schema::validate_generated_expr(expr)?;
+-                        validate_generated_function_calls(expr, &resolver.catalog)?;
++                    match &c.constraint {
++                        ast::ColumnConstraint::Generated { expr, .. } => {
++                            crate::schema::validate_generated_expr(expr)?;
++                            validate_generated_function_calls(expr, &resolver.catalog)?;
++                        }
++                        ast::ColumnConstraint::Default(_) => {
++                            return Err(LimboError::ParseError(format!(
++                                "generated column \"{}\" cannot have a DEFAULT value",
++                                col_def.col_name
++                            )));
++                        }
++                        _ => {}
+                     }
+                 }
              }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
+@@ -1364,6 +1368,16 @@ pub fn translate_alter_table(
+                 ));
+             };
+ 
++            if is_stored {
++                btree.check_stored_columns_have_no_custom_types(resolver.schema())?;
++                emit_halt_if_table_has_rows(
++                    program,
++                    &original_btree,
++                    database_id,
++                    "cannot add a STORED column",
++                )?;
++            }
++
+             let mut computes_default_for_existing_rows = false;
+             if !is_generated {
+                 // Check if we need to verify the table is empty at runtime.
+@@ -1776,7 +1790,7 @@ pub fn translate_alter_table(
+                 )));
+             };
+ 
+-            if btree.get_column(col_name).is_some() {
++            if !col_name.eq_ignore_ascii_case(from) && btree.get_column(col_name).is_some() {
+                 return Err(LimboError::ParseError(format!(
+                     "duplicate column name: \"{col_name}\""
+                 )));
+@@ -1834,6 +1848,19 @@ pub fn translate_alter_table(
+                 }
              }
-             std::cmp::Ordering::Equal => (),
-         };
  
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -601,3 +616,49 @@ impl Deref for Duration {
-         &self.inner
-     }
- }
++            if !rename {
++                let affected = btree.columns_affected_by_update([column_index])?;
++                if (&affected)
++                    .into_iter()
++                    .any(|idx| btree.columns()[idx].is_stored_generated())
++                {
++                    return Err(LimboError::ParseError(
++                        "cannot alter a STORED column or a column that a STORED column uses"
++                            .to_string(),
++                    ));
++                }
++            }
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn utc() -> FixedOffset {
-+        FixedOffset::east_opt(0).unwrap()
-+    }
-+
-+    #[test]
-+    fn time_date_out_of_range_returns_none() {
-+        // make_date(1, 4, 1453556443)
-+        assert!(Time::time_date(1, 4, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_timestamp(2024, 1, 1453556443, 0, 0, 0)
-+        assert!(Time::time_date(2024, 1, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(40, 1, -2147483648)
-+        assert!(Time::time_date(40, 1, -2147483648, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(-2147483648, 1, 1) and make_date(2000, -2147483648, 1)
-+        assert!(Time::time_date(i32::MIN, 1, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, i32::MIN, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, 1, i64::MIN, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // the same overflow through the hour argument
-+        assert!(Time::time_date(2024, 1, 1, 24 * 1453556443, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+    }
-+
-+    #[test]
-+
+             let (rewrites_physical_layout, virtual_generated_values_may_change, replacement_column) =
+                 match rename {
+                     true => (false, false, None),
 ```
 
----
-
-### Incident Patch 3: `b0421529` (2026-11-05)
-**Commit Message**: Merge 'postgres: reject array types with more than 7 dimensions, not panic' from app/turso-github-handyman
-
-## Problem
-
-```sql
-CREATE TABLE v3 (c4 INT[][][][][][][][]);
--- tursopg (Turso's PostgreSQL-compatible server): process stops with
---   panicked at core/schema.rs: array dimensions must be <= 7
--- PostgreSQL 18: CREATE TABLE
-```
-
-The same panic happens with a domain base type
-(`posint[][][][][][][][]`), `ALTER TABLE ... ADD COLUMN`, a cast
-(`'{}'::int[][][][][][][][]`), and a `json_to_recordset(...) AS x(a
-int[][][][][][][][])` column list.
-
-`core` expects an `ast::Type` to have at most
-`ast::MAX_ARRAY_DIMENSIONS` (7) array dimensions, and
-`ColumnInfo::set_array_dimensions` asserts it. The SQLite parser checks
-this limit. The PostgreSQL translator (`postgres/parser/translator.rs`)
-builds `ast::Type` from the `[]` count without checking it.
-
-## Fix
-
-- New `check_array_dimensions` in the translator returns `0A000` "an
-array type with 8 dimensions (at most 7) is not supported".
-- It is called from the two functions that produce array dimensions:
-`map_column_type` (every column type in `CREATE TABLE` and `ALTER TABLE
-ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
-
-**File**: `docs/sql-reference/data-types.mdx` (modified, +2/-0)
+**File**: `core/translate/emitter/gencol.rs` (modified, +48/-3)
 ```diff
-@@ -219,6 +219,8 @@ INSERT INTO matrices VALUES (1, ARRAY[ARRAY[1, 2], ARRAY[3, 4]]);
+@@ -5,6 +5,25 @@ use crate::{Arc, Result};
  
- Every element of an `INTEGER[][]` must be an array (or NULL), and the elements of those are checked as an `INTEGER[]` checks its elements, so `ARRAY[1, 2]` and `ARRAY[ARRAY['abc']]` are errors. Text input has no nested arrays, so build arrays of more than one dimension with `ARRAY[...]`.
+ use super::{ProgramBuilder, Resolver};
  
-+An array type has at most 7 dimensions. A type with more bracket pairs, such as `INTEGER[][][][][][][][]`, is an error.
-+
- Arrays can be inserted using the `ARRAY[...]` constructor or as JSON text:
- 
- ```sql
-```
-
-**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +28/-0)
-```diff
-@@ -264,6 +264,34 @@ fn errors_report_postgres_sqlstates() {
-     }
- }
- 
-+#[test]
-+fn array_types_with_more_than_seven_dimensions_are_not_supported() {
-+    let (_io, conn) = pg_connection();
-+    conn.execute("CREATE DOMAIN posint AS INT").unwrap();
-+    conn.execute("CREATE TABLE seven (a INT[][][][][][][])")
-+        .unwrap();
-+    conn.execute("ALTER TABLE seven ADD COLUMN b posint[][][][][][][]")
-+        .unwrap();
-+    conn.execute("SELECT '{}'::int[][][][][][][]").unwrap();
-+    for sql in [
-+        "CREATE TABLE v3 (c4 INT[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 posint[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 _int4[][][][][][][])",
-+        "ALTER TABLE seven ADD COLUMN c int[][][][][][][][]",
-+        "SELECT '{}'::int[][][][][][][][]",
-+        "SELECT CAST('{}' AS posint[][][][][][][][])",
-+        "SELECT * FROM json_to_recordset('[]') AS x(a int[][][][][][][][])",
-+    ] {
-+        let e = exec_err(&conn, sql);
-+        assert_eq!(e.sqlstate, "0A000", "{sql}: {e:?}");
-+        assert_eq!(
-+            e.to_string(),
-+            "an array type with 8 dimensions (at most 7) is not supported",
-+            "{sql}"
-+        );
-+    }
++/// Emit bytecode to compute the generated columns of a row being written, in dependency order.
++#[turso_macros::trace_stack]
++pub fn compute_generated_columns(
++    program: &mut ProgramBuilder,
++    columns: &ColumnsTopologicalSort<'_>,
++    dml_ctx: &DmlColumnContext,
++    resolver: &Resolver,
++    table: &Arc<BTreeTable>,
++) -> Result<()> {
++    emit_generated_columns(
++        program,
++        columns,
++        dml_ctx,
++        resolver,
++        table,
++        GeneratedColumns::All,
++    )
 +}
 +
- #[test]
- fn nested_begin_keeps_the_open_transaction() {
-     // PostgreSQL warns "there is already a transaction in progress" for BEGIN
-```
-
-**File**: `postgres/parser/translator.rs` (modified, +16/-1)
-```diff
-@@ -6167,10 +6167,12 @@ fn pg_type_name_to_ast_type(
-         _ => &pg_type,
+ /// Emit bytecode to compute virtual generated columns for a row.
+ #[turso_macros::trace_stack]
+ pub fn compute_virtual_columns(
+@@ -13,19 +32,45 @@ pub fn compute_virtual_columns(
+     dml_ctx: &DmlColumnContext,
+     resolver: &Resolver,
+     table: &Arc<BTreeTable>,
++) -> Result<()> {
++    emit_generated_columns(
++        program,
++        columns,
++        dml_ctx,
++        resolver,
++        table,
++        GeneratedColumns::VirtualOnly,
++    )
++}
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum GeneratedColumns {
++    All,
++    VirtualOnly,
++}
++
++fn emit_generated_columns(
++    program: &mut ProgramBuilder,
++    columns: &ColumnsTopologicalSort<'_>,
++    dml_ctx: &DmlColumnContext,
++    resolver: &Resolver,
++    table: &Arc<BTreeTable>,
++    which: GeneratedColumns,
+ ) -> Result<()> {
+     let ctx = SelfTableContext::ForDML {
+         dml_ctx: dml_ctx.clone(),
+         table: Arc::clone(table),
      };
- 
-+    let array_dimensions = type_name.array_bounds.len() as u32;
-+    check_array_dimensions(array_dimensions)?;
-     Ok(ast::Type {
-         name: name.to_string(),
-         size: None,
--        array_dimensions: type_name.array_bounds.len() as u32,
-+        array_dimensions,
-     })
+     resolver.with_self_table_context(program, Some(&ctx), |program, _| {
+         for (idx, column) in columns.iter() {
+-            let GeneratedType::Virtual { expr, .. } = column.generated_type() else {
+-                continue;
++            let expr = match column.generated_type() {
++                GeneratedType::Virtual { expr, .. } => expr,
++                GeneratedType::Stored { expr, .. } if which == GeneratedColumns::All => expr,
++                GeneratedType::Stored { .. } | GeneratedType::NotGenerated => continue,
+             };
+             let target_reg = dml_ctx.to_column_reg(idx);
+             translate_expr(program, None, expr, target_reg, resolver)?;
+-            if dml_ctx.holds_stored_value(idx) {
++            if column.is_virtual_generated() && dml_ctx.holds_stored_value(idx) {
+                 emit_virtual_column_store(program, resolver, column, target_reg, table)?;
+             }
+             program.emit_column_affinity(target_reg, column.affinity());
+```
+
+**File**: `core/translate/emitter/mod.rs` (modified, +8/-0)
+```diff
+@@ -2243,6 +2243,14 @@ fn emit_index_column_value_new_image(
+                 )?;
+                 program.emit_column_affinity(dest_reg, col_in_table.affinity());
+             }
++            GeneratedType::Stored { .. } => {
++                let src_reg = layout.to_register(columns_start_reg, idx_col.pos_in_table);
++                program.emit_insn(Insn::Copy {
++                    src_reg,
++                    dst_reg: dest_reg,
++                    extra_amount: 0,
++                });
++            }
+             GeneratedType::NotGenerated => {
+                 let src_reg = if col_in_table.is_rowid_alias() {
+                     rowid_reg
+```
+
+**File**: `core/translate/emitter/update.rs` (modified, +103/-115)
+```diff
+@@ -1,4 +1,4 @@
+-use super::gencol::compute_virtual_columns;
++use super::gencol::{compute_generated_columns, compute_virtual_columns};
+ use super::TranslateCtx;
+ use crate::alloc::{TryClone, TursoIteratorExt};
+ use crate::namespace::{NamespaceId, NamespaceRef};
+@@ -7,7 +7,6 @@ use crate::translate::collate::CollationSeq;
+ use crate::translate::emitter::RegisterColumn;
+ use crate::translate::plan::ColumnMask;
+ use crate::translate::stmt_journal::any_effective_replace;
+-use crate::vdbe::builder::SelfTableContext;
+ use crate::{
+     ast, emit_explain,
+     error::{SQLITE_CONSTRAINT_NOTNULL, SQLITE_CONSTRAINT_PRIMARYKEY},
+@@ -502,24 +501,20 @@ pub fn emit_program_for_update(
+ /// register layout (`start` + `layout`) that maps column index → register,
+ /// rowid bookkeeping (including whether the UPDATE changes the rowid and
+ /// where the new value comes from), the optional partial-index cursor in use,
+-/// CDC tracking registers, and the mask of columns actually named in the SET
+-/// clause so untouched columns can be copied from the OLD image.
++/// CDC tracking registers, and the mask of columns the UPDATE changes so
++/// untouched columns can be copied from the OLD image.
+ struct UpdateColumnCtx<'a> {
+     cdc_update_alter_statement: Option<&'a str>,
+     target_table: &'a Arc<JoinedTable>,
+     target_table_cursor_id: usize,
+     start: usize,
+-    rowid_reg: usize,
+     updates_rowid: bool,
+     rowid_set_clause_reg: Option<usize>,
+     is_virtual_table: bool,
+     index: &'a Option<(Arc<Index>, usize)>,
+     cdc_updates_register: Option<usize>,
+     layout: &'a ColumnLayout,
+     affected_columns: &'a ColumnMask,
+-    /// The columns whose registers hold the user's values until ENCODE runs;
+-    /// the other columns hold stored values.
+-    user_value_columns: &'a ColumnMask,
  }
  
-@@ -6244,9 +6246,22 @@ fn map_column_type(pg_type: &str, typmods: &[i64]) -> Result<PgTypeMapping, Pars
-     if !typmods.is_empty() && mapping.type_params.is_empty() {
-         return Err(not_supported(format!("a type modifier on {pg_type}")));
+ impl UpdateColumnCtx<'_> {
+@@ -828,21 +823,13 @@ fn emit_update_column_values<'a>(
+     for (idx, table_column) in target_table_columns.iter().enumerate() {
+         let target_reg = column_ctx.layout.to_register(column_ctx.start, idx);
+ 
+-        // If the column needs to be updated, retrieve its column index, or its expression.
+-        // Such a column can be directly updated, in which case `expr` is the right-side of the SET
+-        // clause, or it can be an indirectly updated generated columns, in which case `expr` is the
+-        // column's expression.
++        if table_column.is_generated() && column_ctx.affected_columns.get(idx) {
++            continue;
++        }
+         let update_expr = set_clauses
+             .iter()
+             .find(|set_clause| set_clause.column_index == idx)
+-            .map(UpdateSetClause::emitted_expr)
+-            .or_else(|| {
+-                if column_ctx.affected_columns.get(idx) {
+-                    table_column.generated_expr()
+-                } else {
+-                    None
+-                }
+-            });
++            .map(UpdateSetClause::emitted_expr);
+ 
+         if let Some(expr) = update_expr {
+             if !skip_set_clauses {
+@@ -870,82 +857,59 @@ fn emit_update_column_values<'a>(
+ 
+                     program.emit_null(target_reg, None);
+                 } else {
+-                    let self_table_context = match table_column.generated_type() {
+-                        GeneratedType::Virtual { .. } => Some(SelfTableContext::ForDML {
+-                            dml_ctx: DmlColumnContext::layout(
+-                                column_ctx.target_table.table.columns(),
+-                                column_ctx.start,
+-                                column_ctx.rowid_reg,
+-                                column_ctx.layout.clone(),
+-                                DmlRowForm::StoredExceptUpdated(
+-                                    column_ctx.user_value_columns.clone(),
+-                                ),
+-                            ),
+-                            table: column_ctx.target_table.table.require_btree()?,
+-                        }),
+-                        GeneratedType::NotGenerated => None,
++                    // Save/restore target_union_type so union_value() resolves tags
++                    // against this column's union type. See ProgramBuilder::target_union_type.
++                    let union_td = t_ctx
++                        .resolver
++                        .schema()
++                        .get_type_def_unchecked(&table_column.ty_str)
++                        .filter(|td| td.is_union())
++                        .cloned();
++                    let prev_union = program.target_union_type.take();
++                    program.target_union_type = union_td;
++
++                    // Columns with custom type encode must not have their
++                    // SET expressions hoisted as constants. See the doc
++                    // comment on NoConstantOptReason::CustomTypeEncode.
++                    let has_custom_encode = t_ctx
++                        .resolver
++                        .schema()
++                        .resolve
+```
+
+**File**: `core/translate/index.rs` (modified, +1/-1)
+```diff
+@@ -1077,7 +1077,7 @@ fn resolve_sorted_columns_with_catalog(
+                 .unwrap_or_else(|| column.collation());
+             let expr = match column.generated_type() {
+                 GeneratedType::Virtual { expr, .. } => Some(expr.clone()),
+-                GeneratedType::NotGenerated => None,
++                GeneratedType::Stored { .. } | GeneratedType::NotGenerated => None,
+             };
+             IndexColumn {
+                 name: column_name,
+```
+
+**File**: `core/translate/insert.rs` (modified, +11/-12)
+```diff
+@@ -66,7 +66,7 @@ use crate::{
+     },
+     CaptureDataChangesExt, Connection, LimboError, Result, VirtualTable,
+ };
+-use gencol::compute_virtual_columns;
++use gencol::compute_generated_columns;
+ use std::num::NonZeroUsize;
+ use turso_macros::turso_assert;
+ use turso_parser::ast::{
+@@ -585,7 +585,7 @@ pub fn translate_insert(
+ 
+     let has_before_triggers = !relevant_before_triggers.is_empty();
+     if has_before_triggers {
+-        compute_virtual_columns(
++        compute_generated_columns(
+             program,
+             &ctx.table.columns_topo_sort()?,
+             &dml_ctx,
+@@ -761,10 +761,10 @@ pub fn translate_insert(
+             .schema()
+             .column_has_custom_type(column, ctx.table.is_strict)
+     };
+-    let types_checked_first = has_before_triggers || insertion.has_virtual_columns();
++    let types_checked_first = has_before_triggers || insertion.has_generated_columns();
+     if !types_checked_first {
+         emit_notnulls(program, &ctx, &insertion, resolver, false, |column| {
+-            !column.is_virtual_generated() && !has_custom_type(column)
++            !column.is_generated() && !has_custom_type(column)
+         })?;
      }
-+    check_array_dimensions(mapping.array_dimensions)?;
-     Ok(mapping)
+     if let Some(type_check_table) = &maybe_type_check_table {
+@@ -797,12 +797,12 @@ pub fn translate_insert(
+         });
+     }
+     emit_notnulls(program, &ctx, &insertion, resolver, true, |column| {
+-        !column.is_virtual_generated() && (types_checked_first || has_custom_type(column))
++        !column.is_generated() && (types_checked_first || has_custom_type(column))
+     })?;
+ 
+-    if insertion.has_virtual_columns() {
++    if insertion.has_generated_columns() {
+         //TODO only compute the necessary virtual columns for CHECK and NOT NULL evaluation
+-        compute_virtual_columns(
++        compute_generated_columns(
+             program,
+             &ctx.table.columns_topo_sort()?,
+             &dml_ctx.with_form(DmlRowForm::Stored),
+@@ -827,7 +827,7 @@ pub fn translate_insert(
+             &insertion,
+             resolver,
+             true,
+-            Column::is_virtual_generated,
++            Column::is_generated,
+         )?;
+     }
+ 
+@@ -2612,8 +2612,8 @@ impl<'a> Insertion<'a> {
+         self.record_reg
+     }
+ 
+-    fn has_virtual_columns(&self) -> bool {
+-        self.col_mappings.len() - self.num_non_virtual_cols > 0
++    fn has_generated_columns(&self) -> bool {
++        self.col_mappings.iter().any(|m| m.column.is_generated())
+     }
+ 
+     /// Returns the column mapping for a given column name.
+@@ -2975,8 +2975,7 @@ fn translate_column(
+         program.emit_insn(Insn::SoftNull {
+             reg: column_register,
+         });
+-    } else if column.is_virtual_generated() {
+-        // virtual columns are computed in a separate pass in compute_virtual_columns
++    } else if column.is_generated() {
+     } else if column.hidden() {
+         program.emit_insn(Insn::Null {
+             dest: column_register,
+```
+
+**File**: `core/translate/optimizer/mod.rs` (modified, +1/-1)
+```diff
+@@ -4324,7 +4324,7 @@ fn ephemeral_index_build(
+         .map(|(i, c)| {
+             let expr = match c.generated_type() {
+                 GeneratedType::Virtual { .. } => c.generated_expr().cloned(),
+-                GeneratedType::NotGenerated => None,
++                GeneratedType::Stored { .. } | GeneratedType::NotGenerated => None,
+             };
+             IndexColumn {
+                 name: c.name.clone().unwrap(),
+```
+
+---
+
+### Incident Patch 2: `c6123d1b` (2026-11-06)
+**Commit Message**: tests: check that union_value() fails in RETURNING and WHERE
+
+INSERT, UPDATE and UPSERT set the union type that union_value() resolves
+its tag against while they compile a value for a union column, then put
+back the previous one. Without that, a later union_value() in RETURNING
+or WHERE would resolve against the last union column written instead of
+failing. No existing test called union_value() after a union value in
+the same statement, which is the only place a missing restore shows.
+
+The UPSERT test uses the WHERE of a second ON CONFLICT clause, because
+the INSERT part compiles RETURNING before any DO UPDATE clause and would
+fail on it first.
+
+Tests: each new test fails with the restore removed from its statement.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sqlite/conformance/turso-sqltests/struct_union.sqltest` (modified, +37/-0)
+```diff
+@@ -1306,6 +1306,43 @@ expect error {
+     unknown variant 'red' in union type 'direction'
  }
  
-+/// PostgreSQL accepts any number of `[]` in a type name, but a Turso column
-+/// or cast holds at most [ast::MAX_ARRAY_DIMENSIONS].
-+fn check_array_dimensions(dimensions: u32) -> Result<(), ParseError> {
-+    if dimensions > ast::MAX_ARRAY_DIMENSIONS {
-+        return Err(not_supported(format!(
-+            "an array type with {dimensions} dimensions (at most {})",
-+            ast::MAX_ARRAY_DIMENSIONS
-+        )));
-+    }
-+    Ok(())
++# union_value() resolves its tag against the union column that receives the
++# value. RETURNING and WHERE have no such column, so union_value() there is an
++# error, even when the same statement has just written a union column.
++test union-value-in-insert-returning-rejected {
++    CREATE TYPE number AS UNION(i INT, f REAL);
++    CREATE TABLE tagged(id INT PRIMARY KEY, val number) STRICT;
++    INSERT INTO tagged VALUES (1, union_value('i', 1)) RETURNING union_value('f', 2.5);
++}
++expect error {
++    can only be used in INSERT/UPDATE targeting a union-typed column
 +}
 +
- fn extract_key_columns(keys: &[pg_query::protobuf::Node]) -> Result<Vec<String>, ParseError> {
-     use pg_query::protobuf::node::Node;
- 
++test union-value-in-update-returning-rejected {
++    CREATE TYPE number AS UNION(i INT, f REAL);
++    CREATE TABLE tagged(id INT PRIMARY KEY, val number) STRICT;
++    INSERT INTO tagged VALUES (1, union_value('i', 1));
++    UPDATE tagged SET val = union_value('f', 2.5) RETURNING union_value('i', 3);
++}
++expect error {
++    can only be used in INSERT/UPDATE targeting a union-typed column
++}
++
++# A RETURNING here would fail in the INSERT part before DO UPDATE is compiled,
++# so union_value() goes in the WHERE of a second ON CONFLICT clause, which is
++# compiled after the SET of the first one.
++test union-value-in-second-upsert-where-rejected {
++    CREATE TYPE number AS UNION(i INT, f REAL);
++    CREATE TABLE tagged(id INT PRIMARY KEY, val number, k INT UNIQUE) STRICT;
++    INSERT INTO tagged VALUES (1, union_value('i', 1), 1);
++    INSERT INTO tagged VALUES (1, union_value('i', 2), 2)
++        ON CONFLICT(id) DO UPDATE SET val = union_value('f', 2.5)
++        ON CONFLICT(k) DO UPDATE SET k = 3 WHERE val <> union_value('i', 3);
++}
++expect error {
++    can only be used in INSERT/UPDATE targeting a union-typed column
++}
++
+ # ============================================================================
+ # Nested UNION (union-in-union)
+ # ============================================================================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11434** (2026-11-05): core: reject a rowid in the fraction of percentile_disc and percentile_cont (@turso-github-handyman[bot])
-- **PR #11423** (2026-11-05): postgres: reject array types with more than 7 dimensions, not panic (@turso-github-handyman[bot])
-- **PR #11422** (2026-11-05): core: make lpad and rpad as fast as repeat for long results (@turso-github-handyman[bot])
-- **PR #11419** (2026-11-05): fix (tursopg/parser): reject mismatched VALUES row lengths (@Surajsuthar)
-- **PR #11418** (2026-11-05): tursopg: match LIKE on the operands' text without copying it (@turso-github-handyman[bot])
-- **PR #11414** (2026-11-05): core/translate: skip DO UPDATE when the table has only a non-unique index (@turso-github-handyman[bot])
+- **PR #11548** (2026-11-06): serverless/go: expose typed HTTP response errors (@pedrocarlo)
+- **PR #11528** (2026-11-06): core/dialect: import names instead of spelling out their paths (@penberg)
+- **PR #11510** (closed): core/translate: keep SQLite's group order for DISTINCT with GROUP BY (@abrahamperz)
+- **PR #11494** (2026-11-05): docs: mark WITH RECURSIVE supported and MVCC production ready (@glommer)
+- **PR #11472** (closed): core: refuse unnamed columns and guessed primary key forms in custom-type code (@jussisaurio)
+- **PR #11471** (closed): core: allow custom types and domains only in the main database (@jussisaurio)
 
 ---
 
@@ -2104,85 +2096,70 @@ ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/time: return NULL instead of panicking when time_date overflows' fro
+## X. Merge 'core: implement stored generated columns' from Glauber Costa
 
 **RULE**:
-When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b6bbb46`: Merge 'core/time: return NULL instead of panicking when time_date overflows' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65a31536`: Merge 'core: implement stored generated columns' from Glauber Costa. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/schema.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-                {
-        dt = match day
-            .checked_sub(1)
-            .and_then(chrono::Duration::try_days)
-            .and_then(|d| dt.checked_add_signed(d))
-        {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-      
+    /// All column indices, built by passes over the table in column order, each
+    /// pass taking every column whose inputs are already taken.
+        // walk each generated column's expression once to extract edges
+            let (GeneratedType::Virtual { ref expr, .. } | GeneratedType::Stored { ref expr, .. }) =
+                col.generated_type()
+            else {
+        let mut sorted = try_vec![false; n]?;
+        loop {
+            let sorted_before_pass = topological_sort.len();
+            for i in 0..n {
+                if sorted[i] || in_degree[i] > 0 {
+                    continue;
+                }
+                sorted[i] = true;
+                topological_sort.try_push(i)?;
+                for j in direct_dependents[i].iter() {
+                    in_degree[j] -= 1;
+            if topological_sort.len() == sorted_before_pass {
+                break;
+            }
+    /// Fails when a STORED generated column has a custom type or reads a column that has one.
+    // FIXME: allow custom types in STORED generated columns once custom types stabilize.
+    pub(crate) fn check_stored_columns_have_no_custom_types(&self, schema: &Schema) -> Result<()> {
+        let grap
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-        if let Some(d) = chrono::Duration::try_days(day - 1) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_hours(hour) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_minutes(minutes) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_seconds(seconds) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        dt += chrono::Duration::nanoseconds(nano_secs);
-                dt = dt
-                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-                dt = dt
-                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12)
+    /// Column indices in topological (dependency) order. Contains all columns.
+        // walk each virtual column's expression once to extract edges
+            let GeneratedType::Virtual { ref expr, .. } = col.generated_type() else {
+        // Kahn's algorithm (topological sort) over direct_deps.
+        let mut ready: Vec<usize> = (0..n).filter(|&i| in_degree[i] == 0).try_collect()?;
+        while let Some(i) = ready.pop() {
+            topological_sort.try_push(i)?;
+            for j in direct_dependents[i].iter() {
+                in_degree[j] -= 1;
+                if in_degree[j] == 0 {
+                    ready.try_push(j)?;
+            if let GeneratedType::Virtual { original_sql, .. } = &column.generated_type() {
+                if column.generated_always {
+                    sql.push_str(" GENERATED ALWAYS");
+                }
+                sql.push_str(" AS (");
+                sql.push_str(original_sql);
+                sql.push(')');
+            }
+                if guard[i].is_virtual_generated() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b6bbb46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65a31536` are properly handled with clean fallback behavior.

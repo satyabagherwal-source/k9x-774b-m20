@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T21:52:09.636Z",
-  "total_cycles_completed": 7892,
-  "total_learnings_persisted": 7892,
-  "total_rules_promoted": 7539,
+  "last_updated": "2026-11-06T21:59:36.004Z",
+  "total_cycles_completed": 7894,
+  "total_learnings_persisted": 7894,
+  "total_rules_promoted": 7540,
   "history": [
-    {
-      "timestamp": "2026-11-05T16:52:37.523Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T16:52:45.604Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T16:52:51.338Z",
       "repository": "matrixorigin/matrixone",
@@ -1403,6 +1389,20 @@
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:59:28.888Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:59:36.004Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
