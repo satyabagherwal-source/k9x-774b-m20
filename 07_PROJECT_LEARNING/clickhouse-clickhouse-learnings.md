@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `39b9f2d5`  
+> **Source Version**: `f0e48548`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:25:40.096Z  
+> **Timestamp**: 2026-11-06T14:57:26.160Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:20:38.933Z  
+> **Harvest Timestamp**: 2026-11-06T14:56:35.205Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50751 stars
+- **Stars / Engagement**: 50780 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #129521** (2026-11-06): **A `DataLakeCatalog` (Iceberg REST) catalog that returns an empty namespace entry aborts the ClickHouse server with `LOGICAL_ERROR`**
+  *Symptoms*: :detective: When a `DataLakeCatalog` database with `catalog_type = 'rest'` lists namespaces, `RestCatalog::parseNamespaces` throws `LOGICAL_ERROR` if any entry in the catalog's `namespaces` array is an empty array:  ```cpp // src/Databases/DataLake/RestCatalog.cpp:1519-1521 auto current_namespace_array = namespaces_object->get(static_cast<int>(i)).extract<Poco::JSON::Array::Ptr>(); if (current_namespace_array->size() == 0)     throw DB::Exception(DB::ErrorCodes::LOGICAL_ERROR, "Expected namespace array to be non-empty"); ```  `LOGICAL_ERROR` aborts debug and sanitizer builds (and is a critical error on release). The catalog HTTP endpoint is an external, often untrusted input, so a malformed or malicious REST catalog can crash the server with a one-line response. `SHOW TABLES`, and any operation that lists namespaces, triggers it.  **How to reproduce**  Point a `DataLakeCatalog` at any REST catalog whose `GET /v1/namespaces` returns an entry that is an empty array, e.g.:  ```json {"namespaces": [["good_ns"], []]} ```  ```sql CREATE DATABASE c ENGINE = DataLakeCatalog('http://<rest-catalog>/v1') SETTINGS catalog_type = 'rest', warehouse = 's3://wh', storage_endpoint = 'http://<minio>/wh';  SHOW TABLES FROM c; -- <Fatal> : Logical error: 'Expected namespace array to be non-empty'.  -> server aborts (debug/sanitizer) ```  Reproduced deterministically (2/2) on master `26.11.1.1406` against a mock REST catalog returning `{"namespaces": [[""], [], ["a", ""]]}`.  **Root cause / fix**
+
 - **Issue #129022** (2026-11-03): **Merges of Wide parts issue a prefetch for every column stream, ignoring `filesystem_prefetches_limit`**
   *Symptoms*: During a merge, `MergeTreeReaderWide::readRows` calls `prefetchForAllColumns`, which calls `prefetch` on every `.bin` stream of every column in every source part. The only check is `remote_filesystem_read_prefetch` (default 1), which merges get from the global context.  `SELECT` queries skip these prefetches when the number of columns exceeds `filesystem_prefetches_limit` (default 200). Merges don't have this limit: `MergeTreeReaderSettings::createForMergeMutation` does not copy `filesystem_prefetches_limit`, so it stays 0 (unlimited).  This happens in horizontal merges too, where `MergeTask` passes `prefetch=false`, because the per-column `prefetch` in `readRows` doesn't depend on that flag.  ### Proposal  Apply `filesystem_prefetches_limit` (or a separate MergeTree setting) to merges and mutations in `createForMergeMutation`, or disable the per-column `prefetch` in `readRows` for merges. The next-column prefetch in vertical merges (`vertical_merge_remote_filesystem_prefetch`) is a separate mechanism and should stay as is.
-
-- **Issue #128872** (2026-11-04): **Refreshable materialized view reading a database-qualified parameterized view into a ReplicatedMergeTree table fails with UNKNOWN_FUNCTION**
-  *Symptoms*: ### Company or project name  Halter https://github.com/halter-corp  ### Describe what's wrong  A refreshable materialized view whose top-level `FROM` is a database-qualified parameterized view call, `db.param_view(...)`, fails on refresh when the target is a `Replicated*MergeTree` table and the view lives in a `Replicated` database:  ``` Code: 730. DB::Exception: Refresh failed (on replica r1): Code: 46. DB::Exception: Unknown table function db.param_view:  or incorrect parameterized view. (UNKNOWN_FUNCTION). (REFRESH_FAILED) ```  The same view into a plain `MergeTree` table works. In an `Atomic` database it works until the server restarts, then fails the same way.  The stored query reads `` FROM `db.param_view`(...) ``: once formatted, the qualified name becomes one quoted identifier. `Context::executeTableFunction`, reached through `JoinedTables::getLeftTableStorage` on the replicated `INSERT ... SELECT` path, then looks for a table literally named `db.param_view`:  ``` 4. DB::TableFunctionFactory::get(...) 5. DB::Context::executeTableFunction(...) 6. DB::JoinedTables::getLeftTableStorage() 7. DB::InterpreterInsertQuery::execute() 8. DB::RefreshTask::executeRefreshUnlocked(...) ```  ### Does it reproduce on the most recent release?  Yes. Reproduced on 25.8.33.6, 25.10.7.6, 26.10.3.7 and `head` (26.11.1.1154).  ### How to reproduce  Single server with embedded Keeper. Copy and run as is:  ```bash cat > keeper.xml <<'XML' <clickhouse>   <keeper_server>     <tcp_port>9181</tcp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,102 +1338,272 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdbd1b83` (2026-11-05)
-**Commit Message**: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
+### Incident Patch 1: `216beefe` (2026-11-06)
+**Commit Message**: Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-cache-time-conditions-signed-overflow
 
-Send the fault in test `05043_crash_report_without_global_context` to the parked thread
+Fix signed integer overflow in `QueryConditionCache` time condition floor division
 
-**File**: `tests/queries/0_stateless/05043_crash_report_without_global_context.sh` (modified, +14/-2)
+**File**: `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp` (modified, +1/-1)
 ```diff
-@@ -158,6 +158,18 @@ report_checks() {
-         || echo "$label: no null dereference"
- }
+@@ -124,7 +124,7 @@ std::optional<Int64> constantValueInSeconds(const IDataType & type, const Field
+                 return std::nullopt;
+             Int64 multiplier = DecimalUtils::scaleMultiplier<DateTime64>(decimal.getScale());
+             /// Floor division.
+-            return ticks >= 0 ? ticks / multiplier : -((-ticks + multiplier - 1) / multiplier);
++            return ticks / multiplier - (ticks % multiplier < 0 ? 1 : 0);
+         }
+         default:
+             return std::nullopt;
+```
+
+---
+
+### Incident Patch 2: `6b959f5a` (2026-11-06)
+**Commit Message**: Merge pull request #128237 from yackushevas/fix-storage-kafka2-lock-znonode-race
+
+Fix ZNONODE race when reading StorageKafka2 topic partition locks
+
+**File**: `src/Storages/Kafka/KeeperHandlingConsumer.cpp` (modified, +19/-1)
+```diff
+@@ -289,9 +289,27 @@ KeeperHandlingConsumer::getLockedTopicPartitions()
+     auto lock_nodes = keeper->getChildren(keeper_path / "topic_partition_locks");
+     std::unordered_set<String> replicas_with_lock;
  
-+# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
-+# any thread not blocking the signal can take it, the signal listener included, and a handler running
-+# on the listener waits for itself and reports nothing.
-+fault_main_thread() {
-+    python3 -c "
-+import ctypes, signal, sys
-+pid = int(sys.argv[1])
-+if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
-+    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
-+" "$1"
-+}
++    Strings lock_paths;
++    lock_paths.reserve(lock_nodes.size());
+     for (const auto & lock_name : lock_nodes)
++        lock_paths.push_back(keeper_path / "topic_partition_locks" / lock_name);
 +
- ##########################################################################################
- # Arm 1: keeper. The UUID is read before the global context is created, so the context is absent.
- ##########################################################################################
-@@ -225,7 +237,7 @@ done
- # process has not passed that point.
- grep -q 'Initializing DateLUT' "$klog" && { echo "keeper: the global context already exists"; exit 1; }
- 
--kill -SEGV "$keeper_pid"
-+fault_main_thread "$keeper_pid"
- report_checks "$kdir" "keeper" "$keeper_pid" "$kerr" "$klog"
- 
- ##########################################################################################
-@@ -296,5 +308,5 @@ done
- [ -s "$sdir/data/status" ] || { echo "server: the global context does not exist yet"; exit 1; }
- grep -q 'Initializing DateLUT' "$slog" && { echo "server: the server UUID is already loaded"; exit 1; }
- 
--kill -SEGV "$server_pid"
-+fault_main_thread "$server_pid"
- report_checks "$sdir" "server" "$server_pid" "$serr" "$slog"
++    /// Locks are released and re-acquired as replicas rebalance. A lock listed by
++    /// getChildren() may already be gone by the time we read it; such a lock is held
++    /// by no one, so skip it instead of failing the whole polling round. Batched tryGet
++    /// also replaces N sequential synchronous gets with a single round-trip.
++    auto lock_responses = keeper->tryGet(lock_paths);
++
++    for (size_t i = 0; i < lock_nodes.size(); ++i)
+     {
+-        replicas_with_lock.insert(keeper->get(keeper_path / "topic_partition_locks" / lock_name));
++        const auto & lock_response = lock_responses[i];
++        if (lock_response.error == Coordination::Error::ZNONODE)
++            continue;
++        if (lock_response.error != Coordination::Error::ZOK)
++            throw Coordination::Exception::fromPath(lock_response.error, lock_paths[i]);
++        replicas_with_lock.insert(lock_response.data);
++
++        const auto & lock_name = lock_nodes[i];
+         auto base = lock_name.substr(0, lock_name.size() - 5); // drop ".lock"
+         auto sep = base.rfind('_');
+         if (sep == String::npos)
 ```
 
 ---
 
-### Incident Patch 2: `39b9f2d5` (2026-11-05)
-**Commit Message**: Merge pull request #129259 from ClickHouse/arsenmuk/fix-seaweedfs-local-run
+### Incident Patch 3: `3cd0dd7a` (2026-11-06)
+**Commit Message**: Merge pull request #128292 from groeneai/groeneai/grpc-pretty-squash-race
 
-Fix SeaweedFS setup failing on a repeated local stateless run
+Fix a data race on the gRPC output buffer with the `Pretty` squash thread
 
-**File**: `ci/jobs/scripts/functional_tests/setup_seaweedfs.sh` (modified, +3/-1)
+**File**: `src/Processors/Formats/IOutputFormat.h` (modified, +4/-0)
 ```diff
-@@ -140,7 +140,9 @@ start_seaweedfs() {
- }
+@@ -43,6 +43,10 @@ class IOutputFormat : public IProcessor
+     void flush();
+     void setAutoFlush() { auto_flush = true; }
  
- setup_seaweedfs() {
--  echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
-+  if ! echo "s3.bucket.list" | weed shell -master "localhost:11112" | awk '$1 == "test" { found = 1 } END { exit !found }'; then
-+    echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
-+  fi
-   # writes fail until the initial volume allocation is done on a cold start,
-   # so wait until a real write succeeds
-   local counter=0
++    /// Locks the writing methods. A format can also write from a background thread under this lock (`Pretty` formats
++    /// write the squashed blocks there), so the owner of the output buffer holds it to access the buffer between the calls.
++    std::unique_lock<std::mutex> lockWriting() { return std::unique_lock(writing_mutex); }
++
+     /// Value for rows_before_limit_at_least field.
+     virtual void setRowsBeforeLimit(size_t /*rows_before_limit*/) {}
+ 
 ```
 
----
-
-### Incident Patch 3: `f37c6e75` (2026-11-05)
-**Commit Message**: Merge pull request #129206 from groeneai/fix-01111-random-table-names
-
-Fix repeated table names in `01111_create_drop_replicated_db_stress`
-
-**File**: `tests/queries/0_stateless/01111_create_drop_replicated_db_stress.sh` (modified, +3/-1)
+**File**: `src/Server/GRPCServer.cpp` (modified, +43/-34)
 ```diff
-@@ -56,8 +56,10 @@ function create_table()
-     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-         database=$($CLICKHOUSE_CLIENT -q "select name from system.databases where name like '${CLICKHOUSE_DATABASE}%' order by rand() limit 1")
-         if [ -z "$database" ]; then continue; fi
-+        # Expanded outside the pipeline: bash reseeds $RANDOM in every pipeline child, so names would repeat.
-+        local table="rmt_${RANDOM}_${RANDOM}_${RANDOM}"
-         $CLICKHOUSE_CLIENT --lock_acquire_timeout=120 --distributed_ddl_task_timeout=0 -q \
--        "create table $database.rmt_${RANDOM}_${RANDOM}_${RANDOM} (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
-+        "create table $database.$table (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
-         2>&1| grep -Fa "Exception: " | grep -Fv "Macro 'uuid' in engine arguments is" | grep -Fv "Cannot enqueue query" | grep -Fv "ZooKeeper session expired" | grep -Fv UNKNOWN_DATABASE | grep -Fv TABLE_IS_DROPPED | grep -Fv UNFINISHED | grep -Fv TIMEOUT_EXCEEDED | grep -Fv QUERY_WAS_CANCELLED
-         sleep 0.$RANDOM
-     done
+@@ -877,6 +877,7 @@ namespace
+         void addTotalsToResult(const Block & totals);
+         void addExtremesToResult(const Block & extremes);
+         void addProfileInfoToResult(const ProfileInfo & info);
++        void addOutputToResult(bool final);
+         void sendResult();
+         void throwIfFailedToSendResult();
+         void sendException(const Exception & exception);
+@@ -1492,8 +1493,6 @@ namespace
+             compressing_write_buffer = write_buffer.get();
+         }
+ 
+-        auto has_output = [&] { return (nested_write_buffer->position() != output.data()) || (compressing_write_buffer && compressing_write_buffer->offset()); };
+-
+         output_format_processor = query_context->getOutputFormat(output_format, *write_buffer, header);
+         Stopwatch after_send_progress;
+ 
+@@ -1538,9 +1537,7 @@ namespace
+                 }
+ 
+                 call_responder->takeLogsFromQueue();
+-
+-                if (has_output() || result.has_progress() || call_responder->hasUnsentLogs())
+-                    sendResult();
++                sendResult();
+ 
+                 throwIfFailedToSendResult();
+                 if (!check_for_cancel())
+@@ -1563,7 +1560,7 @@ namespace
+                 addProgressToResult();
+                 call_responder->takeLogsFromQueue();
+ 
+-                if (has_output() || result.has_progress() || call_responder->hasUnsentLogs())
++                if (result.has_progress() || call_responder->hasUnsentLogs())
+                     sendResult();
+ 
+                 throwIfFailedToSendResult();
+@@ -1599,6 +1596,8 @@ namespace
+ 
+     void Call::onException(const Exception & exception)
+     {
++        /// Stops the format's writing thread before the output buffer is finalized.
++        output_format_processor.reset();
+         io.onException();
+ 
+         LOG_ERROR(log, getExceptionMessageAndPattern(exception, send_exception_with_stacktrace));
+@@ -1855,6 +1854,43 @@ namespace
+         stats.set_rows_before_aggregation(info.getRowsBeforeAggregation());
+     }
+ 
++    void Call::addOutputToResult(bool final)
++    {
++        /// The output format can write to the buffer from another thread, and a failed write cancels the buffer,
++        /// so the buffer is checked and copied under the format's writing lock.
++        std::unique_lock<std::mutex> writing_lock;
++        if (output_format_processor)
++            writing_lock = output_format_processor->lockWriting();
++
++        /// A canceled buffer holds incomplete output which can be neither finalized nor sent.
++        if (!write_buffer || write_buffer->isCanceled())
++            return;
++
++        size_t output_size = 0;
++        if (final)
++        {
++            if (compressing_write_buffer)
++                LOG_DEBUG(log, "Compressing final {} bytes", compressing_write_buffer->offset());
++            write_buffer->finalize();
++            output_size = output.size();
++        }
++        else
++        {
++            if (compressing_write_buffer && compressing_write_buffer->offset())
++            {
++                LOG_DEBUG(log, "Compressing {} bytes", compressing_write_buffer->offset());
++                compressing_write_buffer->sync();
++            }
++            output_size = nested_write_buffer->position() - output.data();
++        }
++
++        if (output_size)
++        {
++            result.mutable_output()->assign(output.data(), output_size);
++            nested_write_buffer->restart(); /// We're going to reuse the same buffer again for next block of data.
++        }
++    }
++
+     void CallResponder::addLogsToResult(InternalTextLogsQueue & logs_queue, GRPCResult & result)
+     {
+         static_assert(::clickhouse::grpc::LOG_NONE        == 0);
+@@ -1911,34 +1947,7 @@ namespace
+         if (!send_final_message && !isOutputStreaming(call_type))
+             return;
+ 
+-        /// Copy output to `result.output`, with optional compressing.
+-        /// A canceled buffer holds incomplete output which can be neither finalized nor sent.
+-        if (write_buffer && !write_buffer->isCanceled())
+-        {
+-            size_t output_size = 0;
+-            if (send_final_message)
+-            {
+-                if (compressing_write_buffer)
+-                    LOG_DEBUG(log, "Compressing final {} bytes", compressing_write_buffer->offset());
+-                write_buffer->finalize();
+-                output_size = output.size();
+-            }
+-            else
+-            {
+-                if (compressing_write_buffer && compressing_write_buffer->offset())
+-                {
+-                    LOG_DEBUG(log, "Compressing {} bytes", compressing_write_buffer->offset());
+-                    compressing_write_buffer->sync();
+-                }
+-                output_size = nested_write_buffer->position() - output.data();
+-            }
+-
+-            if (output_size)
+-            {
+-                result.mutable_output()->assign(output.data(), output_size);
+-                nested_write_buffer->restart(); /// We're going to reuse the sa
+```
+
+**File**: `tests/queries/0_stateless/05473_grpc_pretty_squash_output.reference` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++0 1 2 3
++0 1 2 3
++395
++1
+```
+
+**File**: `tests/queries/0_stateless/05473_grpc_pretty_squash_output.sh` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++#!/usr/bin/env bash
++# Tags: no-fasttest
++# Tag no-fasttest: In fasttest, ENABLE_LIBRARIES=0, so the grpc library is not built
++
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CURDIR"/../shell_config.sh
++
++# `Pretty` formats write the squashed blocks from a background thread, into the output buffer of the gRPC call,
++# while the call reads and sends that buffer between the blocks.
++python3 - "$CURDIR/../../../utils/grpc-client/pb2" <<'EOF'
++import os
++import re
++import sys
++sys.path.insert(0, sys.argv[1])
++import grpc
++import clickhouse_grpc_pb2
++import clickhouse_grpc_pb2_grpc
++
++settings = {"max_block_size": "1", "max_threads": "1", "output_format_pretty_squash_consecutive_ms": "1", "interactive_delay": "10000"}
++query = "SELECT number FROM numbers(4) WHERE sleepEachRow(0.05) = 0 FORMAT PrettyCompactNoEscapes"
++
++def values(output):
++    return " ".join(re.findall(r"│\s+(\d+)\s+│", output.decode()))
++
++with grpc.insecure_channel(f"localhost:{os.environ.get('CLICKHOUSE_PORT_GRPC', '9100')}") as channel:
++    stub = clickhouse_grpc_pb2_grpc.ClickHouseStub(channel)
++    query_info = clickhouse_grpc_pb2.QueryInfo(query=query, settings=settings)
++    print(values(stub.ExecuteQuery(query_info, timeout=60).output))
++    print(values(b"".join(result.output for result in stub.ExecuteQueryWithStreamOutput(query_info, timeout=60))))
++    # The exception arrives while the writer may still hold a squashed chunk.
++    query = "SELECT number FROM numbers(4) WHERE if(number < 2, sleepEachRow(0.05) = 0, throwIf(number = 2) = 0) FORMAT PrettyCompactNoEscapes"
++    codes = set()
++    for squash_ms in range(1, 6):
++        for _ in range(4):
++            query_info = clickhouse_grpc_pb2.QueryInfo(
++                query=query, settings={**settings, "output_format_pretty_squash_consecutive_ms": str(squash_ms)})
++            codes.add(stub.ExecuteQuery(query_info, timeout=60).exception.code)
++    print(*sorted(codes))
++    print(stub.ExecuteQuery(clickhouse_grpc_pb2.QueryInfo(query="SELECT 1"), timeout=60).output.decode(), end="")
++EOF
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129427** (2026-11-05): Backport #127416 to 26.10: Fix `Cannot fold actions for projection` when the join order optimizer reorders an outer join converted to INNER (@robot-clickhouse-ci-1)
-- **PR #129413** (2026-11-05): Backport #120110 to 26.10: Make DPsub the default join order algorithm, with the CD-C conflict detector (@robot-ch-test-poll2)
-- **PR #129406** (2026-11-05): Backport #122526 to 26.10: Keep an OR without join keys as one JOIN ON condition (@robot-clickhouse-ci-1)
-- **PR #129397** (2026-11-04): Run `xmllint` in the style check without a shell (@fm4v)
-- **PR #129390** (2026-11-05): Praktika: update submodules in parallel when creating the submodule cache (@groeneai)
-- **PR #129388** (2026-11-05): Keep the no-early-exit `bitmapHasAny` operands of the `bitmap_cardinality` performance test in the L1 cache (@groeneai)
+- **PR #129719** (2026-11-06): Backport #129112 to 26.10: Introspection uses main binary offsets only; disable gRPC library logs (@robot-ch-test-poll2)
+- **PR #129716** (2026-11-06): Fail the Fast test when a test the PR adds takes more than 15 s (7.5 s for no-parallel) (@groeneai)
+- **PR #129711** (closed): fix: `toString` claims injectivity for every type: DST fold splits one GROUP BY key (@xixi-box)
+- **PR #129708** (2026-11-06): Backport #129559 to 26.10: Remove HTTP debug log with a heap address (@robot-clickhouse-ci-2)
+- **PR #129707** (2026-11-06): Backport #129559 to 26.9: Remove HTTP debug log with a heap address (@robot-clickhouse-ci-2)
+- **PR #129704** (2026-11-06): Backport #129607 to 26.10: Update libhdfs3 to not expose thread addresses to the NameNode (@robot-ch-test-poll)
 
 ---
 
@@ -1453,42 +1623,28 @@ Fix repeated table names in `01111_create_drop_replicated_db_stress`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
+## X. Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-c
 
 **RULE**:
-When implementing operations in `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdbd1b83`: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `216beefe`: Merge pull request #129017 from duongynhi000005-oss/fix-125860-query-condition-cache-time-conditions-signed-overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Interpreters/Cache/QueryConditionCacheTimeConditions.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
-# any thread not blocking the signal can take it, the signal listener included, and a handler running
-# on the listener waits for itself and reports nothing.
-fault_main_thread() {
-    python3 -c "
-import ctypes, signal, sys
-pid = int(sys.argv[1])
-if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
-    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
-" "$1"
-}
-
-fault_main_thread "$keeper_pid"
-fault_main_thread "$server_pid"
+            return ticks / multiplier - (ticks % multiplier < 0 ? 1 : 0);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-kill -SEGV "$keeper_pid"
-kill -SEGV "$server_pid"
+            return ticks >= 0 ? ticks / multiplier : -((-ticks + multiplier - 1) / multiplier);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdbd1b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `216beefe` are properly handled with clean fallback behavior.

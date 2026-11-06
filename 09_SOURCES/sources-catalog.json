@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "1889115d",
+    "sourceVersion": "76004d06",
     "license": "NOASSERTION",
-    "contentHash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
-    "lastHarvestedAt": "2026-11-06T14:25:42.661Z",
+    "contentHash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
+    "lastHarvestedAt": "2026-11-06T14:58:31.912Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "ff11b355",
+    "sourceVersion": "a2043817",
     "license": "Apache-2.0",
-    "contentHash": "c3cbf40ea57d8aa6b99e78539fb6f357fa076f2b1899b58c411707dc7b15ffbc",
-    "lastHarvestedAt": "2026-11-04T20:25:07.928Z",
+    "contentHash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
+    "lastHarvestedAt": "2026-11-06T14:57:24.442Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "39b9f2d5",
+    "sourceVersion": "f0e48548",
     "license": "Apache-2.0",
-    "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
-    "lastHarvestedAt": "2026-11-05T09:25:40.957Z",
+    "contentHash": "93f348b14df3720c82cc293ba879d740e94239e382a27f61fddcdd4cff732aac",
+    "lastHarvestedAt": "2026-11-06T14:57:27.574Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

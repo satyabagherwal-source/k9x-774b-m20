@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T14:47:53.638Z",
-    "lastVerified": "2026-11-06T14:47:53.638Z",
+    "lastChecked": "2026-11-06T14:58:34.527Z",
+    "lastVerified": "2026-11-06T14:58:34.527Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,14 +244,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T14:25:40.783Z",
-    "lastVerified": "2026-11-06T14:25:40.783Z",
+    "lastChecked": "2026-11-06T14:56:35.821Z",
+    "lastVerified": "2026-11-06T14:56:35.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
+    "contentHash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -990,8 +990,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:08:26.174Z",
-    "lastVerified": "2026-11-05T22:08:26.174Z",
+    "lastChecked": "2026-11-06T14:56:27.264Z",
+    "lastVerified": "2026-11-06T14:56:27.264Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -1421,9 +1421,9 @@
   "maotoumao-musicfree": {
     "name": "MusicFree",
     "officialUrl": "https://github.com/maotoumao/MusicFree",
-    "lastChecked": "2026-11-04T01:27:40.823Z",
+    "lastChecked": "2026-11-06T14:56:22.271Z",
     "revisionIdentifier": "d118b18b",
-    "lastVerified": "2026-11-04T01:27:40.823Z"
+    "lastVerified": "2026-11-06T14:56:22.271Z"
   },
   "zeromicro-go-zero": {
     "name": "zeromicro/go-zero",
@@ -3507,9 +3507,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-05T05:04:22.860Z",
+    "lastChecked": "2026-11-06T14:56:17.275Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-05T05:04:22.860Z"
+    "lastVerified": "2026-11-06T14:56:17.275Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -3601,22 +3601,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "okteto-okteto": {
-    "name": "okteto",
+    "name": "okteto/okteto",
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:23:09.577Z",
-    "lastVerified": "2026-11-05T10:23:09.577Z",
+    "lastChecked": "2026-11-06T14:56:29.154Z",
+    "lastVerified": "2026-11-06T14:56:29.154Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "c3cbf40ea57d8aa6b99e78539fb6f357fa076f2b1899b58c411707dc7b15ffbc",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ff11b355"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
     "name": "neuron-ai",
@@ -7599,14 +7598,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-05T09:20:38.933Z",
-    "lastVerified": "2026-11-05T09:20:38.933Z",
+    "lastChecked": "2026-11-06T14:56:35.205Z",
+    "lastVerified": "2026-11-06T14:56:35.205Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "02fb9217fa5e447974f1e776f69edd9c07dd8e98999e2ac80ff5d3c6c2f86c9d",
+    "contentHash": "93f348b14df3720c82cc293ba879d740e94239e382a27f61fddcdd4cff732aac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10096,9 +10095,9 @@
   "lifesciforge-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/LifeSciForge/seo-auditor",
-    "lastChecked": "2026-11-03T12:32:07.573Z",
+    "lastChecked": "2026-11-06T14:56:19.799Z",
     "revisionIdentifier": "cb5dbfbf",
-    "lastVerified": "2026-11-03T12:32:07.573Z"
+    "lastVerified": "2026-11-06T14:56:19.799Z"
   },
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",

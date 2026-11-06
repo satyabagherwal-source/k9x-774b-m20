@@ -7891,3 +7891,6 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `1f1e0719` | Multi-dimensional audit evidence | 2026-11-06T14:47:44.689Z |
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `6a1e71d6` | Multi-dimensional audit evidence | 2026-11-06T14:47:46.987Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `467d1ca5` | Multi-dimensional audit evidence | 2026-11-06T14:47:51.030Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `a2043817` | Multi-dimensional audit evidence | 2026-11-06T14:57:24.442Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `f0e48548` | Multi-dimensional audit evidence | 2026-11-06T14:57:27.574Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `76004d06` | Multi-dimensional audit evidence | 2026-11-06T14:58:31.912Z |

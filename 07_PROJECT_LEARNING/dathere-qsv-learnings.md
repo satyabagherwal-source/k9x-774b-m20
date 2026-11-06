@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `1889115d`  
+> **Source Version**: `76004d06`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:25:40.987Z  
+> **Timestamp**: 2026-11-06T14:58:30.064Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:25:40.783Z  
+> **Harvest Timestamp**: 2026-11-06T14:56:35.821Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,550 +2203,36 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28e9db64` (2026-11-06)
-**Commit Message**: fix(cat, applydp, to): read stdin consistently (#5005)
+### Incident Patch 1: `76004d06` (2026-11-06)
+**Commit Message**: docs(changelog): cat with empty stdin succeeds with empty output (#5006)
 
-* fix(cat, applydp, to): read stdin consistently
-
-- cat rows/rowskey/columns: with no <input>, read piped stdin, as
-  `headers` does (c238720e7). process_input only reads stdin for an
-  explicit `-`, so `... | qsv cat rows` failed with "No data on stdin".
-- applydp --batch 0: don't pre-count stdin rows (it consumed the stream
-  and left only the header); read to EOF in one batch like `py` does,
-  and cap the batch preallocation so usize::MAX can't overflow.
-- to: the no-input error said "No data on stdin" even when data was
-  piped; it now says no input was given and to use `-` for stdin.
-  `to parquet` gets the same message.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): note cat/applydp/to stdin fixes (#5005)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): note cat now waits on a terminal stdin with no input
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+The #5005 entry claimed `cat` with an empty or closed stdin still
+errors. It doesn't: `qsv cat rows < /dev/null` exits 0 with no output,
+as `headers` does (roborev 6305). The earlier check ran a binary left
+unfixed by a mutation check.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Fixed
  - **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
-+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
-+- **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
-+- **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
+-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
++- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
+ - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
+ - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
  - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
- 
- ## [28.0.0] - 2026-11-01 🧠 The "DCAT-US v3.0 neuro-symbolic FAIRification" Release 🏛️
-```
-
-**File**: `src/cmd/applydp.rs` (modified, +10/-3)
-```diff
-@@ -409,12 +409,19 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-     // reuse batch buffers
-     let batchsize: usize = if args.flag_batch == 0 {
--        util::count_rows(&rconfig)? as usize
-+        if rconfig.is_stdin() {
-+            // we can't pre-count stdin rows without consuming the stream,
-+            // so read until EOF to honor "0 = entire file in one batch"
-+            usize::MAX
-+        } else {
-+            util::count_rows(&rconfig)? as usize
-+        }
-     } else {
-         args.flag_batch
-     };
--    let mut batch = Vec::with_capacity(batchsize);
--    let mut batch_results = Vec::with_capacity(batchsize);
-+    // capped: usize::MAX (stdin with --batch 0) can't be preallocated
-+    let mut batch = Vec::with_capacity(batchsize.min(50_000));
-+    let mut batch_results = Vec::with_capacity(batchsize.min(50_000));
- 
-     util::njobs(args.flag_jobs);
- 
-```
-
-**File**: `src/cmd/cat.rs` (modified, +6/-0)
-```diff
-@@ -200,6 +200,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut args: Args = util::get_args(USAGE, argv)?;
- 
-     let tmpdir = tempfile::tempdir()?;
-+
-+    // If no input is provided, default to stdin
-+    if args.arg_input.is_empty() {
-+        args.arg_input.push(PathBuf::from("-"));
-+    }
-+
-     (args.arg_input, args.input_sources) =
-         util::process_input_with_sources(args.arg_input, &tmpdir, "")?
-             .into_iter()
-```
-
-**File**: `src/cmd/to.rs` (modified, +6/-3)
-```diff
-@@ -343,8 +343,11 @@ impl From<csvs_convert::DescribeError> for CliError {
-     }
- }
- 
--static EMPTY_STDIN_ERRMSG: &str =
--    "No data on stdin. Need to add connection string as first argument then the input CSVs";
-+// process_input reads stdin only for an explicit `-`, so this fires when no input was given,
-+// even if data was piped
-+static EMPTY_STDIN_ERRMSG: &str = "No input CSV given. List the input CSV(s) after the \
-+                                   destination (connection string or output path), or use `-` to \
-+                                   read stdin.";
- 
- #[cfg(feature = "polars")]
- static DEFAULT_GZIP_COMPRESSION_LEVEL: u8 = 6;
-@@ -510,7 +513,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         debug!("conversion to ODS complete");
-     } else if args.cmd_parquet {
-         debug!("converting to Parquet");
--        arg_input = process_input(arg_input, &tmpdir, "")?;
-+        arg_input = process_input(arg_input, &tmpdir, EMPTY_STDIN_ERRMSG)?;
-         // Each input's delimiter, as other commands read it: --delimiter, else Config's
-         // (QSV_SNIFF_DELIMITER, extension, or QSV_DEFAULT_DELIMITER for spooled stdin and other
-         // files). Resolved before --table renames the input, which would hide that it is
-```
-
-**File**: `tests/test_applydp.rs` (modified, +26/-0)
-```diff
-@@ -47,6 +47,32 @@ fn applydp_ops_upper() {
-     assert_eq!(got, expected);
- }
- 
-+#[test]
-+fn applydp_batch_zero_stdin() {
-+    // --batch 0 pre-counted rows, which consumed stdin and left only the header
-+    use std::io::Write;
-+
-+    let wrk = Workdir::new("applydp_batch_zero_stdin");
-+    let mut cmd = wrk.command("applydp");
-+    cmd.args(["operations", "upper", "name", "--batch", "0"])
-+        .stdin(std::process::Stdio::piped())
-+        .stdout(std::process::Stdio::piped())
-+        .stderr(std::process::Stdio::piped());
-+    let mut child = cmd.spawn().unwrap();
-+    child
-+        .stdin
-+        .take()
-+        .unwrap()
-+        .write_all(b"name\nJohn\nMary\n")
-+        .unwrap();
-+    let output = child.wait_with_output().unwrap();
-+    assert!(output.status.success(), "{output:?}");
-+    assert_eq!(
-+        String::from_utf8_lossy(&output.stdout).trim(),
-+        "name\nJOHN\nMARY"
-+    );
-+}
-+
- #[test]
- fn applydp_ops_escape() {
-     let wrk = Workdir::new("applydp");
-```
-
-**File**: `tests/test_cat.rs` (modified, +34/-0)
-```diff
-@@ -1556,3 +1556,37 @@ fn cat_rows_stdin_default_delimiter_env() {
-         "a|bb\nccc|d"
-     );
- }
-+
-+#[test]
-+fn cat_stdin_without_dash() {
-+    // <input> is optional: with none given, piped stdin is read, as `headers` does. It used to
-+    // fail with "No data on stdin" because only an explicit `-` was read.
-+    use std::io::Write;
-+
-+    let wrk = Workdir::new("cat_stdin_without_dash");
-+    for (subcmd, expected) in [
-+        ("rows", "a,b\n1,2\n3,4"),
-+        ("rowskey", "a,b\n1,2\n3,4"),
-+        ("columns", "a,b\n1,2\n3,4"),
-+    ] {
-+        let mut cmd = wrk.command("cat");
-+        cmd.arg(subcmd)
-+            .stdin(std::process::Stdio::piped())
-+            .stdout(std::process::Stdio::piped())
-+            .stderr(std::process::Stdio::piped());
-+        let mut child = cmd.spawn().unwrap();
-+        child
-+            .stdin
-+            .take()
-+            .unwrap()
-+            .write_all(b"a,b\n1,2\n3,4\n")
-+            .unwrap();
-+        let output = child.wait_with_output().unwrap();
-+        assert!(output.status.success(), "cat {subcmd}: {output:?}");
-+        assert_eq!(
-+            String::from_utf8_lossy(&output.stdout).trim(),
-+            expected,
-+            "cat {subcmd}"
-+        );
-+    }
-+}
-```
-
-**File**: `tests/test_to.rs` (modified, +16/-0)
-```diff
-@@ -1749,6 +1749,22 @@ fn to_parquet_stdin_default_delimiter_env() {
-     );
- }
- 
-+#[test]
-+fn to_no_input_errmsg() {
-+    // stdin is only read for an explicit `-`, so with no input the message must say what's
-+    // missing rather than claim stdin was empty
-+    let wrk = Workdir::new("to_no_input_errmsg");
-+    for (subcmd, dest) in [("xlsx", "out.xlsx"), ("parquet", "outdir")] {
-+        let mut cmd = wrk.command("to");
-+        cmd.args([subcmd, dest]);
-+        let stderr = wrk.output_stderr(&mut cmd);
-+        assert!(
-+            stderr.contains("No input CSV given") && stderr.contains("`-` to read stdin"),
-+            "to {subcmd}: {stderr}"
-+        );
-+    }
-+}
-+
- #[test]
- #[cfg(feature = "polars")]
- fn to_parquet_table_rename_stdin_default_delimiter_env() {
-```
-
----
-
-### Incident Patch 2: `cb4f8bf8` (2026-11-06)
-**Commit Message**: fix(sample): spool stdin so --cluster, --weighted, --systematic and fractional sizes work from stdin (#5003)
-
-* fix(sample): spool stdin so two-pass and row-counting methods see the data
-
-stdin can only be read once, but --cluster and --weighted reopen the input
-for a second pass, and --systematic plus every fractional sample size
-call util::count_rows() first, which consumed the stream. From stdin
-these returned only the header row (#4999).
-
-Copy stdin (no input, or `-`) to a temp stdin.csv via util::process_input
-before building the reader, for every method except --bernoulli, which
-keeps streaming. Corrected the USAGE, which claimed stdin was already
-buffered in memory.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): note sample stdin fix (#5003)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(sample): also guard stdin methods that worked before the spool
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(sample): skip the stats-cache run for the stdin spool
-
-With stdin now spooled to a file, check_stats_cache() stopped bailing
-out for --cluster/--weighted and ran `qsv stats --cardinality` on a
-fresh temp file that can have no cache: e
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
- 
- ### Fixed
-+- **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
- - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
- 
- ## [28.0.0] - 2026-11-01 🧠 The "DCAT-US v3.0 neuro-symbolic FAIRification" Release 🏛️
-```
-
-**File**: `docs/help/sample.md` (modified, +4/-2)
-```diff
-@@ -114,8 +114,10 @@ to a temporary file before sampling begins for all sampling methods except Berno
- streams the file as it samples it, stopping when the desired sample size is reached or the
- end of the file is reached.
- 
--Sampling from stdin is also supported for all sampling methods, copying stdin to a in-memory
--buffer first before sampling begins.
-+Sampling from stdin is also supported for all sampling methods. Bernoulli, stratified,
-+timeseries, and integer-size default, varopt and mergeable-reservoir sampling stream stdin.
-+The others (cluster, weighted, systematic and fractional sample sizes) read the input twice,
-+so stdin is first copied to a temporary file, which needs disk space for the whole input.
- 
- If a stats cache is available, it will be used to do extra checks on systematic,
- weighted and cluster sampling, and to speed up sampling in general.
-```
-
-**File**: `src/cmd/sample.rs` (modified, +75/-5)
-```diff
-@@ -102,8 +102,10 @@ to a temporary file before sampling begins for all sampling methods except Berno
- streams the file as it samples it, stopping when the desired sample size is reached or the
- end of the file is reached.
- 
--Sampling from stdin is also supported for all sampling methods, copying stdin to a in-memory
--buffer first before sampling begins.
-+Sampling from stdin is also supported for all sampling methods. Bernoulli, stratified,
-+timeseries, and integer-size default, varopt and mergeable-reservoir sampling stream stdin.
-+The others (cluster, weighted, systematic and fractional sample sizes) read the input twice,
-+so stdin is first copied to a temporary file, which needs disk space for the whole input.
- 
- If a stats cache is available, it will be used to do extra checks on systematic,
- weighted and cluster sampling, and to speed up sampling in general.
-@@ -463,7 +465,7 @@ macro_rules! with_rng {
-     };
- }
- 
--#[derive(PartialEq)]
-+#[derive(Debug, PartialEq)]
- enum SamplingMethod {
-     Bernoulli,
-     Systematic,
-@@ -710,6 +712,15 @@ fn check_stats_cache(
-     if args.flag_force {
-         return Ok((None, None));
-     }
-+    // A fresh stdin spool has no cache, so this would compute exact cardinality for every
-+    // column (memory ~ distinct values) just to pre-check; skip it, as stdin always did.
-+    if args
-+        .arg_input
-+        .as_deref()
-+        .is_some_and(|p| crate::config::is_stdin_spool(std::path::Path::new(p)))
-+    {
-+        return Ok((None, None));
-+    }
- 
-     // We returned early above when flag_force was set, so this is always
-     // false here. Asserting (rather than hard-coding the literal) keeps the
-@@ -948,6 +959,19 @@ async fn stream_bernoulli_sampling(uri: &str, args: &Args, rng_kind: &RngKind) -
-     Ok(wtr.flush()?)
- }
- 
-+/// Whether `method` reads its input exactly once, so stdin can be sampled without spooling it.
-+/// An allowlist on purpose: anything not listed (including future methods) gets spooled, which
-+/// costs disk space but is never wrong. Fractional sizes count rows first, a second read.
-+fn streams_stdin(method: &SamplingMethod, sample_size: f64) -> bool {
-+    match method {
-+        SamplingMethod::Bernoulli | SamplingMethod::Stratified | SamplingMethod::Timeseries => true,
-+        SamplingMethod::Default | SamplingMethod::VarOpt | SamplingMethod::MergeableReservoir => {
-+            sample_size >= 1.0
-+        },
-+        _ => false,
-+    }
-+}
-+
- pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut args: Args = util::get_args(USAGE, argv)?;
- 
-@@ -1055,6 +1079,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     }
- 
-     let temp_download = NamedTempFile::new()?;
-+    // created only when stdin is spooled; must outlive every reader of the spooled file
-+    let mut stdin_spool_dir: Option<tempfile::TempDir> = None;
- 
-     args.arg_input = match args.arg_input {
-         Some(ref uri) if Url::parse(uri).is_ok() && uri.starts_with("http") => {
-@@ -1081,8 +1107,17 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             // safety: temp_download is a NamedTempFile, so we know can unwrap.to_string
-             Some(temp_download.path().to_str().unwrap().to_string())
-         },
--        Some(uri) => Some(uri), // local file
--        None => None,
-+        Some(uri) if uri != "-" => Some(uri), // local file
-+        // stdin can only be read once, but several methods read the input twice (row count,
-+        // cluster/weighted second pass), so spool it to a temp file unless the method is
-+        // known to make a single pass.
-+        _ if !streams_stdin(&sampling_method, args.arg_sample_size) => {
-+            let spool_dir = stdin_spool_dir.insert(tempfile::tempdir()?);
-+            let spooled = util::process_input(vec![std::path::PathBuf::from("-")], spool_dir, "")?;
-+            // safety: process_input returns at least one path or an error
-+            Some(spooled[0].to_string_lossy().into_owned())
-+        },
-+        stdin => stdin,
-     };
- 
-     let rconfig = Config::new(args.arg_input.as_ref())
-@@ -2418,3 +2453,38 @@ fn sample_sketch_merge(
- 
-     Ok(())
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{SamplingMethod, streams_stdin};
-+
-+    #[test]
-+    fn streams_stdin_allowlist() {
-+        // single-pass: stdin is read as it arrives, never spooled to disk
-+        for method in [
-+            SamplingMethod::Bernoulli,
-+            SamplingMethod::Stratified,
-+            SamplingMethod::Timeseries,
-+        ] {
-+            assert!(streams_stdin(&method, 0.5), "{method:?} 0.5");
-+            assert!(streams_stdin(&method, 10.0), "{method:?} 10");
-+        }
-+        // integer sizes stream; fractional sizes count rows first
-+        for method in [
-+            SamplingMethod::Default,
-+            SamplingMethod::VarOpt,
-+            SamplingMethod::MergeableReservoir,
-+        ] {
-+            assert!(streams_stdin(&method, 10.0), "{method:?} 10");
-+            assert!(!streams_stdin(&method, 0.5), "{method:?} 0.5")
-```
-
-**File**: `tests/test_sample.rs` (modified, +145/-0)
-```diff
-@@ -2611,3 +2611,148 @@ fn sample_varopt_and_weighted_are_mutually_exclusive() {
-         "expected method-collision error, got: {stderr}"
-     );
- }
-+
-+/// Run `qsv sample <args>` reading `csv` from piped stdin (`-` appended when `dash`).
-+fn sample_stdin(wrk: &Workdir, args: &[&str], csv: &str, dash: bool) -> String {
-+    use std::io::Write;
-+
-+    let mut cmd = wrk.command("sample");
-+    cmd.args(args);
-+    if dash {
-+        cmd.arg("-");
-+    }
-+    cmd.stdin(std::process::Stdio::piped())
-+        .stdout(std::process::Stdio::piped())
-+        .stderr(std::process::Stdio::piped());
-+    let mut child = cmd.spawn().unwrap();
-+    child
-+        .stdin
-+        .take()
-+        .unwrap()
-+        .write_all(csv.as_bytes())
-+        .unwrap();
-+    let output = child.wait_with_output().unwrap();
-+    assert!(
-+        output.status.success(),
-+        "sample {args:?} failed: {}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    String::from_utf8(output.stdout).unwrap()
-+}
-+
-+// https://github.com/dathere/qsv/issues/4999: methods that count rows or make a second pass
-+// over the input returned only the header when the input was piped on stdin.
-+#[test]
-+fn sample_stdin_matches_file() {
-+    let wrk = Workdir::new("sample_stdin_matches_file");
-+    let csv = "id,cluster,w\n1,a,1\n2,b,5\n3,b,2\n4,c,9\n5,c,3\n6,d,4\n7,d,8\n8,e,6\n";
-+    wrk.create_from_string("in.csv", csv);
-+
-+    let cases: &[&[&str]] = &[
-+        &["--cluster", "cluster", "2"],
-+        &["--weighted", "w", "3"],
-+        &["--weighted", "w", "0.5"],
-+        &["--systematic", "first", "2"],
-+        &["0.5"],
-+        &["--mergeable-reservoir", "0.5"],
-+        &["--varopt", "w", "0.5"],
-+        // worked from stdin before the spool; guard that it still does
-+        &["3"],
-+        &["--stratified", "cluster", "1"],
-+        &["--varopt", "w", "3"],
-+        &["--mergeable-reservoir", "3"],
-+    ];
-+    for case in cases {
-+        let mut args = vec!["--seed", "42"];
-+        args.extend_from_slice(case);
-+
-+        let mut cmd = wrk.command("sample");
-+        cmd.args(&args).arg("in.csv");
-+        let from_file: String = wrk.stdout(&mut cmd);
-+        assert!(
-+            from_file.lines().count() > 1,
-+            "{case:?}: file sample should have data rows, got {from_file:?}"
-+        );
-+
-+        for dash in [false, true] {
-+            let from_stdin = sample_stdin(&wrk, &args, csv, dash);
-+            assert_eq!(
-+                from_stdin.trim_end(),
-+                from_file,
-+                "{case:?} (dash: {dash}): stdin sample differs from file sample"
-+            );
-+        }
-+    }
-+}
-+
-+#[test]
-+fn sample_stdin_cluster_issue_4999() {
-+    let wrk = Workdir::new("sample_stdin_cluster_issue_4999");
-+    let csv = "control_number,title\n1,foo\n2,bar\n2,baaz\n3,quux\n";
-+
-+    // all 3 clusters requested, so every row comes back regardless of seed
-+    let got = sample_stdin(&wrk, &["--cluster", "control_number", "3"], csv, false);
-+    assert_eq!(got, csv);
-+}
-+
-+// The stdin spool must not trigger a stats-cache run (exact cardinality of every column, so
-+// memory grows with distinct values). With a file, that run's cardinality makes asking for
-+// more clusters than exist an error; from stdin it is skipped, so all clusters come back.
-+#[test]
-+fn sample_stdin_cluster_skips_stats_cache() {
-+    let wrk = Workdir::new("sample_stdin_cluster_skips_stats_cache");
-+    let csv = "control_number,title\n1,foo\n2,bar\n2,baaz\n3,quux\n";
-+
-+    let got = sample_stdin(&wrk, &["--cluster", "control_number", "9"], csv, false);
-+    assert_eq!(got, csv);
-+}
-+
-+// Single-pass methods must stream stdin, not spool it. Observable through autoindexing: a
-+// spooled stdin.csv is a file, so QSV_AUTOINDEX_SIZE indexes it and default sampling turns
-+// into INDEXED sampling, which picks the same seed's rows in a different order than the
-+// reservoir sampling that streamed stdin gets.
-+#[test]
-+fn sample_stdin_streams_single_pass_methods() {
-+    let wrk = Workdir::new("sample_stdin_streams_single_pass_methods");
-+    let mut csv = String::from("n\n");
-+    for i in 1..=50 {
-+        csv.push_str(&format!("{i}\n"));
-+    }
-+    wrk.create_from_string("in.csv", &csv);
-+    wrk.create_from_string("in_indexed.csv", &csv);
-+
-+    let mut cmd = wrk.command("sample");
-+    cmd.args(["--seed", "42", "3", "in.csv"]);
-+    let reservoir: String = wrk.stdout(&mut cmd);
-+
-+    let mut cmd = wrk.command("sample");
-+    cmd.env("QSV_AUTOINDEX_SIZE", "1")
-+        .args(["--seed", "42", "3", "in_indexed.csv"]);
-+    let indexed: String = wrk.stdout(&mut cmd);
-+    // otherwise this test can't tell streaming from spooling
-+    assert_ne!(reservoir, indexed);
-+
-+    let mut cmd = wrk.command("sample");
-+    cmd.env("QSV_AUTOINDEX_SIZE", "1")
-+        .args(["--seed", "42", "3"])
-+        .stdin(std::process::Stdio::piped())
-+        .stdout(std::process::Stdio::piped())
-+        .stderr(std::process::Stdio::piped());
-+    let mut
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5006** (2026-11-06): docs(changelog): cat with empty stdin succeeds with empty output (@jqnatividad)
 - **PR #5005** (2026-11-06): fix(cat, applydp, to): read stdin consistently (@jqnatividad)
 - **PR #5004** (2026-11-06): docs(sample): stdin works for all methods that read CSV, not --sketch-in (@jqnatividad)
 - **PR #5003** (2026-11-06): fix(sample): spool stdin so --cluster, --weighted, --systematic and fractional sizes work from stdin (@jqnatividad)
 - **PR #5002** (2026-11-06): test(template): use Etc/GMT+5 instead of legacy "EST" alias (@jqnatividad)
 - **PR #5001** (2026-11-06): build(deps): bump anthropics/claude-code-action from 1.0.266 to 1.0.267 (@dependabot[bot])
-- **PR #5000** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 
 ---
 
@@ -2766,13 +2252,13 @@ fresh temp file that can have no cache: e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cat, applydp, to): read stdin consistently (#5005)
+## X. docs(changelog): cat with empty stdin succeeds with empty output (#5006)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28e9db64`: cat, applydp, to): read stdin consistently (#5005). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76004d06`: docs(changelog): cat with empty stdin succeeds with empty output (#5006). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2780,16 +2266,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
-- **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
-- **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28e9db64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76004d06` are properly handled with clean fallback behavior.

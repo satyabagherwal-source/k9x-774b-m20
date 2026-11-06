@@ -7882,3 +7882,6 @@
 | `CYCLE-20261106-9NAM` | `2026-11-06T14:47:44.686Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b9f4aae...`) |
 | `CYCLE-20261106-9P2G` | `2026-11-06T14:47:46.984Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4411569f...`) |
 | `CYCLE-20261106-9S6R` | `2026-11-06T14:47:51.027Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8f9b8869...`) |
+| `CYCLE-20261106-M2MU` | `2026-11-06T14:57:24.438Z` | `okteto/okteto` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/okteto-okteto-learnings.md` | Yes (`accdc0ce...`) |
+| `CYCLE-20261106-M51U` | `2026-11-06T14:57:27.570Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93f348b1...`) |
+| `CYCLE-20261106-NIP1` | `2026-11-06T14:58:31.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aade0c5b...`) |

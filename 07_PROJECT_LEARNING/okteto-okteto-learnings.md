@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `ff11b355`  
+> **Source Version**: `a2043817`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:25:07.276Z  
+> **Timestamp**: 2026-11-06T14:57:24.105Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:25:07.104Z  
+> **Harvest Timestamp**: 2026-11-06T14:56:29.154Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,171 +1502,995 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff11b355` (2026-11-04)
-**Commit Message**: Support IPv6 addresses when joining hosts and ports (#5236)
+### Incident Patch 1: `102d8e90` (2026-11-05)
+**Commit Message**: fix(deploy): show dependencies under one stage and only schedule wait: false ones (#5245)
 
-* Support IPv6 addresses when joining hosts and ports
+* fix(deploy): show dependencies under one stage and only schedule wait: false ones
 
-Use net.JoinHostPort so IPv6 addresses are bracketed when connecting to
-the BuildKit pod in-cluster, the syncthing remote address and the SSH
-agent forwarder of remote-run. Found installing Okteto on an IPv6-only
-cluster.
+Dependencies are still deployed in parallel following depends_on, and
+their output goes under one "Deploy dependencies" stage, with every line
+prefixed with the name of its dependency.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Skip the syncthing IPv6 test when there is no IPv6 loopback
-
-TestNewWithIPv6Interface binds ports on [::1], which the CircleCI
-container doesn't have, so it failed with "cannot assign requested
-address" and then panicked dereferencing the nil Syncthing. Skip it when
-[::1] can't be bound, and use require so a failure stops the test.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
-
-* test(syncthing): isolate okteto folder in IPv6 interface test
+The deploy waits for the dependencies with wait: true, their depends_on
+chain and any dependency that another one lists in depends_on, and only
+schedules the rest. The deploy commands start when the awaited ones are
+deployed and the rest scheduled, and from there okteto deploy works as
+before 3.25: no final wait for wait: false dependencies, no 10-minute
+minimum timeout, and no forced plain build progress. A dependency that
+can't be scheduled fails the deploy before the deploy commands, and
+repositories that list each other with wait: false on one side deploy
+again.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Pablo Chico de Guzman <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 
-* test(syncthing): cover the remote address with a table test
+* chore(log): remove the per-stage log API
 
-Extract remoteAddress so the IPv6 case is tested without binding ports
-on an IPv6 loopback or writing to the okteto folder.
+PrintlnWithStage, SuccessWithStage and WarningWithStage were only used to
+show dependencies deployed in parallel under th
 
-Co-
-
-**File**: `cmd/remoterun/ssh.go` (modified, +1/-1)
+**File**: `cmd/deploy/build.go` (modified, +0/-11)
 ```diff
-@@ -112,7 +112,7 @@ func (s *sshForwarder) handleConnection(ctx context.Context, localConn net.Conn,
- 	cfg := s.getTLSConfig()
+@@ -49,7 +49,6 @@ func buildImages(ctx context.Context, builder builderInterface, cmapHandler Conf
+ 				EnableStages: true,
+ 				Manifest:     deployOptions.Manifest,
+ 				CommandArgs:  servicesToBuild,
+-				OutputMode:   buildOutputMode(deployOptions),
+ 			}
  
- 	// Connect to the remote SSH agent over TCP
--	remoteConn, err := tls.Dial("tcp", fmt.Sprintf("%s:%s", host, port), cfg)
-+	remoteConn, err := tls.Dial("tcp", net.JoinHostPort(host, port), cfg)
- 	if err != nil {
- 		oktetoLog.Errorf("Failed to connect to remote SSH agent: %v", err)
- 		return fmt.Errorf("failed to connect to remote SSH agent: %v", err)
+ 			if errBuild := builder.Build(ctx, buildOptions); errBuild != nil {
+@@ -66,7 +65,6 @@ func buildImages(ctx context.Context, builder builderInterface, cmapHandler Conf
+ 			EnableStages: true,
+ 			Manifest:     deployOptions.Manifest,
+ 			CommandArgs:  setToSlice(servicesToBuildSet),
+-			OutputMode:   buildOutputMode(deployOptions),
+ 		}
+ 		oktetoLog.Debug("force build from manifest definition")
+ 		if errBuild := builder.Build(ctx, buildOptions); errBuild != nil {
+@@ -127,12 +125,3 @@ func setDifference[T comparable](set1, set2 map[T]bool) map[T]bool {
+ 	}
+ 	return difference
+ }
+-
+-// buildOutputMode returns the output mode of the build: plain when dependencies log at the same time,
+-// and empty (the default for the current output format) otherwise
+-func buildOutputMode(deployOptions *Options) string {
+-	if deployOptions.forcePlainBuildProgress {
+-		return oktetoLog.PlainFormat
+-	}
+-	return ""
+-}
 ```
 
-**File**: `pkg/build/buildkit/connector/incluster.go` (modified, +8/-1)
+**File**: `cmd/deploy/dependencies.go` (modified, +66/-238)
 ```diff
-@@ -16,7 +16,9 @@ package connector
- import (
- 	"context"
- 	"fmt"
-+	"net"
- 	"net/url"
-+	"strconv"
- 	"sync"
+@@ -24,24 +24,13 @@ import (
  	"time"
  
-@@ -210,9 +212,14 @@ func (ic *InClusterConnector) assignBuildkitPod(ctx context.Context) (string, er
- 	}
- }
- 
-+// buildkitAddress returns the address of the buildkit server of a pod
-+func buildkitAddress(podIP string) string {
-+	return "tcp://" + net.JoinHostPort(podIP, strconv.Itoa(buildkitPort))
-+}
-+
- // createBuildkitClient creates a buildkit client with TLS certificates (like PortForwarder)
- func (ic *InClusterConnector) createBuildkitClient(ctx context.Context) (*client.Client, error) {
--	address := fmt.Sprintf("tcp://%s:%d", ic.podIP, buildkitPort)
-+	address := buildkitAddress(ic.podIP)
- 	ic.ioCtrl.Logger().Infof("creating buildkit client for address: %s", address)
- 
- 	// Get the original hostname from the builder URL for TLS verification
-```
-
-**File**: `pkg/build/buildkit/connector/incluster_test.go` (modified, +16/-0)
-```diff
-@@ -30,3 +30,19 @@ func TestInClusterConnector_GetBuildkitClient_NoPodIP(t *testing.T) {
- 	require.Error(t, err)
- 	require.Contains(t, err.Error(), "no buildkit pod IP available")
- }
-+
-+func TestBuildkitAddress(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		podIP    string
-+		expected string
-+	}{
-+		{name: "IPv4 pod", podIP: "10.42.15.211", expected: "tcp://10.42.15.211:1234"},
-+		{name: "IPv6 pod", podIP: "fd00:10:42:f::184c", expected: "tcp://[fd00:10:42:f::184c]:1234"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			require.Equal(t, tt.expected, buildkitAddress(tt.podIP))
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/syncthing/syncthing.go` (modified, +6/-1)
-```diff
-@@ -201,6 +201,11 @@ type DownloadProgressData struct {
- }
- 
- // New constructs a new Syncthing.
-+// remoteAddress returns the address of the remote syncthing device, forwarded to the dev interface
-+func remoteAddress(iface string, port int) string {
-+	return "tcp://" + net.JoinHostPort(iface, strconv.Itoa(port))
-+}
-+
- func New(dev *model.Dev, namespace string, fs afero.Fs) (*Syncthing, error) {
- 	fullPath := getInstallPath()
- 
-@@ -246,7 +251,7 @@ func New(dev *model.Dev, namespace string, fs afero.Fs) (*Syncthing, error) {
- 		Home:             config.GetAppHome(namespace, dev.Name),
- 		LogPath:          GetLogFile(namespace, dev.Name),
- 		ListenAddress:    net.JoinHostPort(dev.Interface, strconv.Itoa(listenPort)),
--		RemoteAddress:    fmt.Sprintf("tcp://%s:%d", dev.Interface, remotePort),
-+		RemoteAddress:    remoteAddress(dev.Interface, remotePort),
- 		RemoteDeviceID:   DefaultRemoteDeviceID,
- 		RemoteGUIAddress: net.JoinHostPort(dev.Interface, strconv.Itoa(remoteGUIPort)),
- 		LocalGUIPort:     guiPort,
-```
-
-**File**: `pkg/syncthing/syncthing_test.go` (modified, +17/-0)
-```diff
-@@ -22,6 +22,7 @@ import (
+ 	pipelineCMD "github.com/okteto/okteto/cmd/pipeline"
+-	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/deps"
+ 	"github.com/okteto/okteto/pkg/env"
  	oktetoErrors "github.com/okteto/okteto/pkg/errors"
- 	"github.com/spf13/afero"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
+-	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/model"
+ 	"github.com/okteto/okteto/pkg/validator"
  )
  
- func TestGetFiles(t *testing.T) {
-@@ -99,3 +100,19 @@ func TestIdentifyReadinessIssue(t *testing.T) {
- 		})
+-var (
+-	// errDependencyFailed is returned by WaitUntilMainReady when a dependency the main deploy waits for failed.
+-	// The details of every failure are returned by Wait.
+-	errDependencyFailed = errors.New("a dependency failed to deploy")
+-
+-	// errDependenciesStopped is returned by WaitUntilMainReady when Stop was called before the main deploy could start
+-	errDependenciesStopped = errors.New("the dependencies deployment was stopped")
+-)
+-
+ // dependencyRunner deploys a single dependency and returns when it has finished
+ type dependencyRunner interface {
+ 	Run(ctx context.Context, name string, dep *deps.Dependency) error
+@@ -53,98 +42,42 @@ type dependencyResult struct {
+ }
+ 
+ // dependencyScheduler deploys the dependencies of a manifest following their depends_on graph.
+-// A dependency starts as soon as all its predecessors have succeeded. The main deploy is treated
+-// as one more node: it is ready when its predecessors (every dependency with wait: true, and all
+-// their predecessors) have succeeded.
+-// A failing dependency that the main deploy doesn't wait for doesn't block it: after its failure, only the
+-// dependencies the main deploy waits for keep starting. After a failure of one of those (or Stop), no new
+-// dependency is started. The running ones are always allowed to finish.
++// A dependency starts as soon as all its predecessors have succeeded. After a failure or Ctrl+C no new
++// dependency is started, and the running ones are allowed to finish.
+ type dependencyScheduler struct {
+-	runner           dependencyRunner
+-	section          deps.ManifestSection
+-	mainPredecessors map[string]bool
+-	results          chan dependencyResult
+-	mainReady        chan struct{}
+-	done             chan struct{}
+-	mainReadyErr     error
+-	err              error
+-	failed           []string
+-	failures         map[string]error
+-	mainReadyOnce    sync.Once
+-	startOnce        sync.Once
+-	// stopMu is held while a dependency starts, so none starts after Stop returns
+-	stopMu  sync.Mutex
+-	stopped bool
++	runner    dependencyRunner
++	section   deps.ManifestSection
++	results   chan dependencyResult
++	done      chan struct{}
++	err       error
++	startOnce sync.Once
+ }
+ 
+ func newDependencyScheduler(section deps.ManifestSection, runner dependencyRunner) *dependencyScheduler {
+ 	return &dependencyScheduler{
+-		runner:           runner,
+-		section:          section,
+-		mainPredecessors: mainDeployPredecessors(section),
+-		results:          make(chan dependencyResult, len(section)),
+-		mainReady:        make(chan struct{}),
+-		done:             make(chan struct{}),
++		runner:  runner,
++		section: section,
++		results: make(chan dependencyResult, len(section)),
++		done:    make(chan struct{}),
  	}
  }
+ 
+-// Start launches the dependencies graph and returns immediately. It must be called before
+-// WaitUntilMainReady or Wait, and calling it more than once has no effect.
++// Start launches the dependencies graph and returns immediately. It must be called before Wait, and calling it
++// more than once has no effect.
+ func (s *dependencyScheduler) Start(ctx context.Context) {
+ 	s.startOnce.Do(func() {
+ 		go s.coordinate(ctx)
+ 	})
+ }
+ 
+-// WaitUntilMainReady blocks until the main deploy can start, a dependency failed or the context is cancelled
+-func (s *dependencyScheduler) WaitUntilMainReady() error {
+-	<-s.mainReady
+-	return s.mainReadyErr
+-}
+-
+-// MainPredecessors returns the sorted names of the dependencies the main deploy waits for
+-func (s *dependencyScheduler) MainPredecessors() []string {
+-	names := make([]string, 0, len(s.mainPredecessors))
+-	for name := range s.mainPredecessors {
+-		names = append(names, name)
+-	}
+-	sort.Strings(names)
+-	return names
+-}
+-
+-// Failed blocks until every started dependency has finished and returns the sorted names of the ones that failed
+-func (s *dependencyScheduler) Failed() []string {
+-	<-s.done
+-	return s.failed
+-}
+-
+-// FailureOf blocks until every started dependency has finished and returns the error of the dependency, if it failed
+-func (s *dependencyScheduler) FailureOf(name string) error {
+-	<-s.done
+-	return s.failures[name]
+-}
+-
+-// OverlapsMainDeploy returns true when some dependencies can run at the same time as the main deploy:
+-// the ones the main deploy doesn't wait for
+-func (s *dependencyScheduler) OverlapsMainDeploy() bool {
+-	return len(s.section) > len(s.mainPredecessors)
+-}
+-
+-// Stop prevents new dependencies from starting. Running dependencies are allowed to finish.
+-func (s *dependencyScheduler) Stop() {
+-	s.stopMu.Lock()
+-	defer s.stopMu.Unlock()
+-	s.stopped = true
+-}
+
+```
+
+**File**: `cmd/deploy/dependencies_test.go` (modified, +106/-300)
+```diff
+@@ -18,12 +18,15 @@ import (
+ 	"errors"
+ 	"sync"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
++	pipelineCMD "github.com/okteto/okteto/cmd/pipeline"
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/deps"
+ 	"github.com/okteto/okteto/pkg/env"
+ 	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/validator"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -114,34 +117,6 @@ func requireNoMoreStarted(t *testing.T, f *fakeDependencyRunner) {
+ 	require.Empty(t, f.started)
+ }
+ 
+-func requireMainReadyResult(t *testing.T, mainReady <-chan error) error {
+-	t.Helper()
+-	select {
+-	case err := <-mainReady:
+-		return err
+-	case <-time.After(schedulerTestTimeout):
+-		require.FailNow(t, "timed out waiting for the main deploy to be ready")
+-		return nil
+-	}
+-}
+-
+-func requireMainReadyPending(t *testing.T, mainReady <-chan error) {
+-	t.Helper()
+-	select {
+-	case err := <-mainReady:
+-		require.FailNow(t, "main deploy ready too early", "err: %v", err)
+-	default:
+-	}
+-}
+-
+-func waitUntilMainReadyAsync(s *dependencyScheduler) <-chan error {
+-	mainReady := make(chan error, 1)
+-	go func() {
+-		mainReady <- s.WaitUntilMainReady()
+-	}()
+-	return mainReady
+-}
+-
+ func requireWaitResult(t *testing.T, s *dependencyScheduler) error {
+ 	t.Helper()
+ 	result := make(chan error, 1)
+@@ -181,7 +156,6 @@ func TestDependencyScheduler_SpecExample(t *testing.T) {
+ 	s := newDependencyScheduler(section, runner)
+ 
+ 	s.Start(context.Background())
+-	mainReady := waitUntilMainReadyAsync(s)
+ 
+ 	requireStarted(t, runner, "database", "messaging")
+ 
+@@ -190,11 +164,8 @@ func TestDependencyScheduler_SpecExample(t *testing.T) {
+ 
+ 	runner.finish("messaging", nil)
+ 	requireStarted(t, runner, "backend")
+-	requireMainReadyPending(t, mainReady)
+ 
+ 	runner.finish("backend", nil)
+-	require.NoError(t, requireMainReadyResult(t, mainReady))
+-
+ 	runner.finish("analytics", nil)
+ 	require.NoError(t, requireWaitResult(t, s))
+ 	requireNoMoreStarted(t, runner)
+@@ -204,122 +175,57 @@ func TestDependencyScheduler_SpecExample(t *testing.T) {
+ 	require.Less(t, runner.indexOf(t, "end:messaging"), runner.indexOf(t, "start:backend"))
+ }
+ 
+-func TestDependencyScheduler_MainReadyWaitsForAncestorsOfWaitDependencies(t *testing.T) {
+-	section := deps.ManifestSection{
+-		"database": &deps.Dependency{Repository: "https://github.com/okteto/database"},
+-		"backend": &deps.Dependency{
+-			Repository: "https://github.com/okteto/backend",
+-			DependsOn:  deps.DependsOn{"database"},
+-			Wait:       true,
+-		},
+-	}
+-	runner := newFakeDependencyRunner(section)
+-	s := newDependencyScheduler(section, runner)
+-
+-	s.Start(context.Background())
+-	mainReady := waitUntilMainReadyAsync(s)
+-
+-	requireStarted(t, runner, "database")
+-	requireMainReadyPending(t, mainReady)
+-	runner.finish("database", nil)
+-
+-	requireStarted(t, runner, "backend")
+-	requireMainReadyPending(t, mainReady)
+-	runner.finish("backend", nil)
+-
+-	require.NoError(t, requireMainReadyResult(t, mainReady))
+-	require.NoError(t, requireWaitResult(t, s))
+-}
+-
+-func TestDependencyScheduler_MainReadyImmediatelyWithoutWaitDependencies(t *testing.T) {
+-	section := deps.ManifestSection{
+-		"database": &deps.Dependency{Repository: "https://github.com/okteto/database"},
+-	}
+-	runner := newFakeDependencyRunner(section)
+-	s := newDependencyScheduler(section, runner)
+-
+-	s.Start(context.Background())
+-
+-	require.NoError(t, requireMainReadyResult(t, waitUntilMainReadyAsync(s)))
+-	requireStarted(t, runner, "database")
+-
+-	runner.finish("database", nil)
+-	require.NoError(t, requireWaitResult(t, s))
+-}
+-
+ func TestDependencyScheduler_NoDependencies(t *testing.T) {
+ 	section := deps.ManifestSection{}
+ 	s := newDependencyScheduler(section, newFakeDependencyRunner(section))
+ 
+ 	s.Start(context.Background())
+ 
+-	require.NoError(t, requireMainReadyResult(t, waitUntilMainReadyAsync(s)))
+ 	require.NoError(t, requireWaitResult(t, s))
+ }
+ 
+-func TestDependencyScheduler_FailureBeforeMainReady(t *testing.T) {
+-	section := specExampleSection()
+-	runner := newFakeDependencyRunner(section)
+-	s := newDependencyScheduler(section, runner)
++func TestDependencyScheduler_AFailureStopsNewDependencies(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		section := specExampleSection()
++		runner := newFakeDependencyRunner(section)
++		s := newDependencyScheduler(section, runner)
+ 
+-	s.Start(context.Background())
+-	mainReady := waitUntilMainReadyAsync(s)
+-	requireStarted(t, runner, "database", "messaging")
+-
+-	runner.finish("messaging", errors.New("boom"))
+-	require.ErrorIs(t, requireMainReadyResult(t, mainReady), errDependencyFailed)
++		s.Start(context.Background())
++		requireStarted(t, runner, "database", "messaging")
+ 
+-	// database was already running, so it is allowed to finish, but nothing new starts
+-	runner.finish("database", nil)
+-	err := requireWaitResult(t, s)
+-	requireNoMoreStarted(t, runner)
++		runner.finish("messaging", errors
+```
+
+**File**: `cmd/deploy/dependency_output.go` (added, +128/-0)
+```diff
+@@ -0,0 +1,128 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+func TestRemoteAddress(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		iface    string
-+		expected string
-+	}{
-+		{name: "IPv4 interface", iface: "127.0.0.1", expected: "tcp://127.0.0.1:22000"},
-+		{name: "IPv6 interface", iface: "::1", expected: "tcp://[::1]:22000"},
++package deploy
++
++import (
++	"errors"
++	"fmt"
++	"runtime"
++	"strings"
++	"sync"
++
++	"github.com/fatih/color"
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	oktetoLog "github.com/okteto/okteto/pkg/log"
++)
++
++// dependenciesStage is the log stage of the output of every dependency. Like the other stages that deploy or destroy
++// dependencies, it starts with an information line with its name
++const dependenciesStage = "Deploying dependencies"
++
++// dependencyMark is how the logger marks the level of a message: a symbol in a terminal and in JSON, and a label in
++// plain output
++type dependencyMark struct {
++	badge  *color.Color
++	text   func(format string, a ...interface{}) string
++	symbol string
++	label  string
++	level  string
++}
++
++var (
++	successMark = dependencyMark{symbol: successSymbol(), label: "SUCCESS:", level: oktetoLog.InfoLevel, badge: color.New(color.BgGreen, color.FgBlack), text: color.New(color.FgGreen).SprintfFunc()}
++	warningMark = dependencyMark{symbol: " ! ", label: "WARNING:", level: oktetoLog.WarningLevel, badge: color.New(color.BgHiYellow, color.FgBlack), text: color.New(color.FgHiYellow).SprintfFunc()}
++	errorMark   = dependencyMark{symbol: " x ", label: "ERROR:", level: oktetoLog.ErrorLevel, badge: color.New(color.BgHiRed, color.FgBlack), text: color.New(color.FgHiRed).SprintfFunc()}
++)
++
++// successSymbol is the symbol the logger uses for a success
++func successSymbol() string {
++	if runtime.GOOS == "windows" {
++		return " + "
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			require.Equal(t, tt.expected, remoteAddress(tt.iface, 22000))
-+		})
++	return " ✓ "
++}
++
++// print prints msg marked as the logger would, with the prefix before the mark
++func (m dependencyMark) print(prefix, msg string) {
++	switch oktetoLog.GetOutputFormat() {
++	case oktetoLog.JSONFormat:
++		// it prints the line too, with the level of the message
++		oktetoLog.AddToBuffer(m.level, "%s %s %s", prefix, m.symbol, msg)
++	case oktetoLog.TTYFormat:
++		oktetoLog.Println(fmt.Sprintf("%s %s %s", prefix, m.badge.Sprint(m.symbol), m.text("%s", msg)))
++		m.recordError(prefix, msg)
++	default:
++		oktetoLog.Println(fmt.Sprintf("%s %s %s", prefix, m.label, msg))
++		m.recordError(prefix, msg)
 +	}
++}
++
++// recordError stores an error with its level in the output buffer, as the logger does when it prints one
++func (m dependencyMark) recordError(prefix, msg string) {
++	if m.level == oktetoLog.ErrorLevel {
++		oktetoLog.AddToBuffer(oktetoLog.ErrorLevel, "%s %s", prefix, msg)
++	}
++}
++
++// printLine prints a log line of a dependency with its prefix
++func printLine(prefix, line string) {
++	oktetoLog.Println(fmt.Sprintf("%s %s", prefix, line))
++}
++
++// dependencyOutputMu serializes the lines of the dependencies deployed in parallel, so that the lines of a message
++// are printed together. It is global because it guards a process-wide resource: the global logger
++var dependencyOutputMu sync.Mutex
++
++// dependencyOutput is the output of the pipeline deploy of a dependency, printed through the global logger under
++// the dependencies stage. Dependencies are deployed in parallel and their lines are interleaved, so every line is
++// prefixed with the name of its dependency, and the spinner messages are printed once, as lines. A dependency that
++// is only scheduled shows its result, without the messages of its deploy request
++type dependencyOutput struct {
++	name    string
++	awaited bool
++}
++
++func newDependencyOutput(name string, awaited bool) *dependencyOutput {
++	return &dependencyOutput{name: name, awaited: awaited}
++}
++
++// Spinner prints the message once: a spinner can't represent several dependencies at the same time
++func (o *dependencyOutput) Spinner(msg string) {
++	if o.awaited {
++		o.print(printLine, msg)
++	}
++}
++func (*dependencyOutput) StartSpinner()         {}
++func (*dependencyOutput) StopSpinner()          {}
++func (o *dependencyOutput) Success(msg string)  { o.print(successMark.print, msg) }
++func (o *dependencyOutput) Warning(msg string)  { o.print(warningMark.print, msg) }
++func (o *dependencyOutput) Println(line string) { o.print(printLine, line) }
++
++// finish prints the error of the dependency, if it failed. An interruption is not an error of the dependency:
++// the deploy reports it
++func (o *dependencyOutput) finish(err error) {
++	if err != nil && !errors.Is(err, oktetoErrors.ErrIntSig) {
++		o.print(errorMark.print, err.Error())
++	}
++}
++
++// print prefixes every line of msg with the name of the dependency and prints 
+```
+
+**File**: `cmd/deploy/dependency_output_test.go` (added, +201/-0)
+```diff
+@@ -0,0 +1,201 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package deploy
++
++import (
++	"encoding/json"
++	"errors"
++	"fmt"
++	"strings"
++	"sync"
++	"testing"
++
++	oktetoErrors "github.com/okteto/okteto/pkg/errors"
++	oktetoLog "github.com/okteto/okteto/pkg/log"
++	"github.com/sirupsen/logrus"
++	"github.com/stretchr/testify/require"
++)
++
++// captureDependencyOutput resets the logger with the given output format, under the dependencies stage, and
++// returns a function that gives every line of its output buffer as "level: message"
++func captureDependencyOutput(t *testing.T, format string) func() []string {
++	t.Helper()
++	oktetoLog.Init(logrus.WarnLevel)
++	oktetoLog.SetOutputFormat(format)
++	oktetoLog.SetStage(dependenciesStage)
++	t.Cleanup(func() {
++		oktetoLog.SetStage("")
++		oktetoLog.Init(logrus.WarnLevel)
++	})
++	return func() []string {
++		return bufferedLines(t)
++	}
++}
++
++// bufferedLines returns every line of the output buffer as "level: message", checking it's under the dependencies stage
++func bufferedLines(t *testing.T) []string {
++	t.Helper()
++	lines := []string{}
++	for _, line := range strings.Split(strings.TrimSpace(oktetoLog.GetOutputBuffer().String()), "\n") {
++		msg := struct {
++			Level   string `json:"level"`
++			Stage   string `json:"stage"`
++			Message string `json:"message"`
++		}{}
++		require.NoError(t, json.Unmarshal([]byte(line), &msg), line)
++		require.Equal(t, dependenciesStage, msg.Stage, line)
++		lines = append(lines, fmt.Sprintf("%s: %s", msg.Level, strings.TrimRight(msg.Message, "\n")))
++	}
++	return lines
++}
++
++func TestDependencyOutputOfAnAwaitedDependency(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.JSONFormat)
++	out := newDependencyOutput("db", true)
++
++	out.Spinner("Waiting for repository 'db' to be deployed...")
++	out.StartSpinner()
++	out.Println("creating tables")
++	out.StopSpinner()
++	out.Success("Repository 'db' successfully deployed")
++	out.finish(nil)
++
++	require.Equal(t, []string{
++		"info: [db] Waiting for repository 'db' to be deployed...",
++		"info: [db] creating tables",
++		fmt.Sprintf("info: [db] %s Repository 'db' successfully deployed", successSymbol()),
++	}, printed())
++}
++
++func TestDependencyOutputOfAScheduledDependency(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.JSONFormat)
++	out := newDependencyOutput("reports", false)
++
++	out.Spinner("Deploying repository 'reports'...")
++	out.StartSpinner()
++	out.StopSpinner()
++	out.Success("Repository 'reports' scheduled for deployment")
++	out.finish(nil)
++
++	require.Equal(t, []string{fmt.Sprintf("info: [reports] %s Repository 'reports' scheduled for deployment", successSymbol())}, printed())
++}
++
++func TestDependencyOutputPrefixesEveryLine(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.JSONFormat)
++	out := newDependencyOutput("db", true)
++
++	out.Println("line 1\r\nline 2\r\n")
++	out.Warning("reconnecting\nto the logs")
++
++	require.Equal(t, []string{
++		"info: [db] line 1",
++		"info: [db] line 2",
++		"warn: [db]  !  reconnecting",
++		"warn: [db]  !  to the logs",
++	}, printed())
++}
++
++func TestDependencyOutputEndsAFailureWithItsError(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.JSONFormat)
++	out := newDependencyOutput("reports", false)
++
++	out.Spinner("Deploying repository 'reports'...")
++	out.finish(errors.New("failed to deploy pipeline 'reports': forbidden"))
++
++	require.Equal(t, []string{"error: [reports]  x  failed to deploy pipeline 'reports': forbidden"}, printed())
++}
++
++func TestDependencyOutputDoesNotShowAnInterruptionAsAnError(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.JSONFormat)
++	out := newDependencyOutput("db", true)
++
++	out.Println("db: working")
++	out.finish(fmt.Errorf("wait for pipeline 'db' to finish failed: %w", oktetoErrors.ErrIntSig))
++
++	require.Equal(t, []string{"info: [db] db: working"}, printed())
++}
++
++// printEveryLevel prints a message of every level from the output of an awaited dependency, which fails
++func printEveryLevel() {
++	out := newDependencyOutput("db", true)
++	out.Println("creating tables")
++	out.Success("deployed")
++	out.Warning("reconnecting")
++	out.finish(errors.New("exploded"))
++}
++
++func TestDependencyOutputInPlainOutput(t *testing.T) {
++	printed := captureDependencyOutput(t, oktetoLog.PlainFormat)
++
++	printEveryLevel()
++
++	// the plain logger stores the lines it prints twice in the buffer, as it always has
++	require.Subset(t, pri
+```
+
+**File**: `cmd/deploy/deploy.go` (modified, +88/-171)
+```diff
+@@ -21,7 +21,9 @@ import (
+ 	"os"
+ 	"os/signal"
+ 	"path/filepath"
++	"slices"
+ 	"strings"
++	"sync/atomic"
+ 	"time"
+ 
+ 	"github.com/google/uuid"
+@@ -72,9 +74,6 @@ var (
+ 
+ // Options represents options for deploy command
+ type Options struct {
+-	// forcePlainBuildProgress shows the build progress in plain mode: dependencies log at the same time
+-	forcePlainBuildProgress bool
+-
+ 	Manifest *model.Manifest
+ 	// ManifestPathFlag is the option -f as introduced by the user when executing this command.
+ 	// This is stored at the configmap as filename to redeploy from the ui.
+@@ -484,55 +483,26 @@ func (dc *Command) Run(ctx context.Context, deployOptions *Options) error {
+ 
+ 	os.Setenv(constants.OktetoNameEnvVar, deployOptions.Name)
+ 
++	// on Ctrl+C the deploy command doesn't wait for Run: while the dependencies run, the interruption is recorded
++	// so that the deploy doesn't stay in progress. After them, an interruption is handled as before dependencies
++	// were deployed in parallel
++	dependenciesRunning := &atomic.Bool{}
+ 	if deployOptions.Manifest.HasDependencies() {
+-		// on Ctrl+C the deploy command doesn't wait for Run, and dependencies can be running before and after the
+-		// main deploy: the interruption is recorded so the deploy doesn't stay in progress
+-		dc.onCleanUp = append(dc.onCleanUp, dc.recordInterruption(cfg, *data))
+-	}
+-
+-	scheduler, err := dc.startDependencies(ctx, deployOptions)
+-	if err != nil {
+-		if errStatus := dc.CfgMapHandler.UpdateConfigMap(ctx, cfg, data, err); errStatus != nil {
+-			return errStatus
+-		}
+-		return err
++		dependenciesRunning.Store(true)
++		dc.onCleanUp = append(dc.onCleanUp, dc.recordInterruption(cfg, *data, dependenciesRunning))
+ 	}
+ 
+-	if err := scheduler.WaitUntilMainReady(); err != nil {
+-		// a dependency failed or was interrupted: the running ones are allowed to finish and every failure is reported
+-		if depsErr := scheduler.Wait(); depsErr != nil {
+-			err = depsErr
+-		}
+-		recordDependencyFailures(scheduler)
+-		setFailedDependencyStage(scheduler)
++	// when they fail or are interrupted, the interruption is still recorded: the deploy command can exit before
++	// the error is written below
++	if err := dc.deployDependencies(ctx, deployOptions); err != nil {
+ 		if errStatus := dc.CfgMapHandler.UpdateConfigMap(ctx, cfg, data, err); errStatus != nil {
+ 			return errStatus
+ 		}
+ 		return err
+ 	}
+-
+-	if err := dc.exportDependencyEnvVars(ctx, scheduler.MainPredecessors(), deployOptions.Namespace); err != nil {
+-		scheduler.Stop()
+-		err = errors.Join(err, scheduler.Wait())
+-		recordDependencyFailures(scheduler)
+-		if errStatus := dc.CfgMapHandler.UpdateConfigMap(ctx, cfg, data, err); errStatus != nil {
+-			return errStatus
+-		}
+-		return err
+-	}
+-	oktetoLog.SetStage("")
+-	// dependencies running at the same time as the build would break its TTY progress display
+-	deployOptions.forcePlainBuildProgress = scheduler.OverlapsMainDeploy() && oktetoLog.GetOutputFormat() == oktetoLog.TTYFormat
++	dependenciesRunning.Store(false)
+ 
+ 	if deployOptions.Manifest.Deploy == nil {
+-		if err := scheduler.Wait(); err != nil {
+-			recordDependencyFailures(scheduler)
+-			setFailedDependencyStage(scheduler)
+-			if errStatus := dc.CfgMapHandler.UpdateConfigMap(ctx, cfg, data, err); errStatus != nil {
+-				return errStatus
+-			}
+-			return err
+-		}
+ 		// a manifest with only dependencies is deployed when all of them are
+ 		oktetoLog.SetStage("done")
+ 		oktetoLog.AddToBuffer(oktetoLog.InfoLevel, "EOF")
+@@ -541,120 +511,75 @@ func (dc *Command) Run(ctx context.Context, deployOptions *Options) error {
+ 		return dc.CfgMapHandler.UpdateConfigMap(ctx, cfg, data, nil)
+ 	}
+ 
+-	result, mainErr := dc.deployMain(ctx, deployOptions, cwd, c)
+-	// when the main deploy fails, its error belongs to the stage it was running
+-	mainStage := oktetoLog.GetStage()
+-	if mainErr != nil {
+-		// no new dependency starts, but the running ones are allowed to finish
+-		scheduler.Stop()
+-	}
+-	depsErr := scheduler.Wait()
+-	recordDependencyFailures(scheduler)
+-	if mainErr != nil && !errors.Is(mainErr, oktetoErrors.ErrIntSig) && mainStage != "" && scheduler.OverlapsMainDeploy() {
+-		// dependencies may have logged under their stages after the main deploy failed. Its error is written again
+-		// under its stage so that it is the last one before the end, which is where the installer reports the failure
+-		oktetoLog.SetStage(mainStage)
+-		oktetoLog.AddToBuffer(oktetoLog.ErrorLevel, "%s", mainErr.Error())
+-	}
+-	// when only dependencies failed, their error is reported under their stage without the end marker, as when
+-	// they fail before the main deploy
+-	if result.deployRan && (mainErr != nil || depsErr == nil) {
+-		oktetoLog.SetStage("done")
+-		oktetoLog.AddToBuffer(oktetoLog.InfoLevel, "EOF")
+-	}
+-
+-	if errors.Is(mainErr, oktetoErrors.ErrIntSig) {
+-		if depsErr != nil {
+-			oktetoLog.Infof("dependencies failed while the deploy was interrupted: %s", depsErr)
+-		}
+-		return nil
+-	}
+-
+-	err = mainErr
+-	if depsErr != nil {
+-		err
+```
+
+**File**: `cmd/deploy/deploy_test.go` (modified, +379/-229)
+```diff
+@@ -35,6 +35,7 @@ import (
+ 	"github.com/okteto/okteto/pkg/cmd/pipeline"
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/deps"
++	"github.com/okteto/okteto/pkg/env"
+ 	oktetoErrors "github.com/okteto/okteto/pkg/errors"
+ 	"github.com/okteto/okteto/pkg/format"
+ 	"github.com/okteto/okteto/pkg/k8s/configmaps"
+@@ -55,6 +56,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/client-go/kubernetes"
+ 	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
+ 	"k8s.io/client-go/tools/clientcmd/api"
+ 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+ )
+@@ -863,26 +865,24 @@ func (fd *capturingPipelineDeployer) ExecuteDeployPipeline(_ context.Context, op
+ 	return fd.errs[opts.Name]
+ }
+ 
+-func TestStartDependenciesNotAvailableInVanilla(t *testing.T) {
++func TestDeployDependenciesNotAvailableInVanilla(t *testing.T) {
+ 	okteto.CurrentStore = &okteto.ContextStore{
+ 		Contexts:       map[string]*okteto.Context{"test": {Namespace: "test", Cfg: &api.Config{}}},
+ 		CurrentContext: "test",
+ 	}
+ 	dc := &Command{PipelineCMD: &capturingPipelineDeployer{}}
+ 
+-	_, err := dc.startDependencies(context.Background(), &Options{Manifest: fakeManifestWithDependency})
++	err := dc.deployDependencies(context.Background(), &Options{Manifest: fakeManifestWithDependency})
+ 
+ 	require.ErrorIs(t, err, errDepenNotAvailableInVanilla)
+ }
+ 
+-func TestStartDependenciesSharesParentWorkflowID(t *testing.T) {
++func TestDeployDependenciesSharesParentWorkflowID(t *testing.T) {
+ 	setTestOktetoContext()
+ 	deployer := &capturingPipelineDeployer{}
+ 	dc := &Command{PipelineCMD: deployer}
+ 
+-	scheduler, err := dc.startDependencies(context.Background(), &Options{Manifest: fakeManifestWithDependency})
+-	require.NoError(t, err)
+-	require.NoError(t, scheduler.Wait())
++	require.NoError(t, dc.deployDependencies(context.Background(), &Options{Manifest: fakeManifestWithDependency}))
+ 
+ 	require.Len(t, deployer.captured, 2)
+ 	require.NotEmpty(t, deployer.captured["a"].ParentWorkflowID)
+@@ -958,12 +958,18 @@ func resetLogBuffer(t *testing.T) {
+ }
+ 
+ func requireDeployStatus(t *testing.T, c *Command, expected string) {
++	t.Helper()
++	require.Equal(t, expected, deployStatus(t, c))
++}
++
++// deployStatus returns the status of the deploy as stored in its configmap
++func deployStatus(t *testing.T, c *Command) string {
+ 	t.Helper()
+ 	fakeClient, _, err := c.K8sClientProvider.ProvideWithLogger(clientcmdapi.NewConfig(), nil)
+ 	require.NoError(t, err)
+ 	cfg, err := configmaps.Get(context.Background(), pipeline.TranslatePipelineName("movies"), "test", fakeClient)
+ 	require.NoError(t, err)
+-	require.Equal(t, expected, cfg.Data["status"])
++	return cfg.Data["status"]
+ }
+ 
+ func TestRunDependencyFailureSkipsMainDeploy(t *testing.T) {
+@@ -981,7 +987,8 @@ func TestRunDependencyFailureSkipsMainDeploy(t *testing.T) {
+ 	deployer.AssertNotCalled(t, "Get")
+ }
+ 
+-func TestRunDependencyFailureIsReportedUnderTheDependencyStage(t *testing.T) {
++func TestRunDependencyFailureIsTheLastLineOfTheDependenciesStage(t *testing.T) {
++	resetLogBuffer(t)
+ 	t.Cleanup(func() { oktetoLog.SetStage("") })
+ 	pipelineDeployer := &capturingPipelineDeployer{errs: map[string]error{"messaging": assert.AnError}}
+ 	c := newRunWithDependenciesCommand(t, deps.ManifestSection{
+@@ -992,7 +999,8 @@ func TestRunDependencyFailureIsReportedUnderTheDependencyStage(t *testing.T) {
+ 	err := c.Run(context.Background(), &Options{Name: "movies", Namespace: "test"})
+ 
+ 	require.Error(t, err)
+-	require.Contains(t, deployOutput(t, c), `"level":"error","stage":"Deploying dependency messaging","message":"dependency 'messaging' failed`)
++	lines := outputLines(t, c)
++	require.Contains(t, lines[len(lines)-1], `"level":"error","stage":"Deploying dependencies","message":"dependency 'messaging' failed`)
+ }
+ 
+ // deployOutput returns the log of the deploy as stored in its configmap, which is what the UI shows
+@@ -1007,40 +1015,6 @@ func deployOutput(t *testing.T, c *Command) string {
+ 	return string(output)
+ }
+ 
+-func TestRunNotAwaitedDependencyFailureFailsTheDeploy(t *testing.T) {
+-	pipelineDeployer := &capturingPipelineDeployer{errs: map[string]error{"reports": assert.AnError}}
+-	deployer := &fakeDeployer{}
+-	deployer.On("Get", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(deployer, nil)
+-	deployer.On("Deploy", mock.Anything, mock.Anything).Return(nil)
+-	c := newRunWithDependenciesCommand(t, deps.ManifestSection{
+-		"reports": &deps.Dependency{Repository: "https://github.com/okteto/reports"},
+-	}, pipelineDeployer, deployer)
+-
+-	err := c.Run(context.Background(), &Options{Name: "movies", Namespace: "test"})
+-
+-	require.ErrorContains(t, err, "dependency 'reports' failed")
+-	requireDeployStatus(t, c, pipeline.ErrorStatus)
+-	deployer.AssertCalled(t, "Deploy", mock.Anything, mock.Anything)
+-}
+-
+-func TestRunNotAwaitedDependencyFailureDoesNotBlockTheMainDeploy(t *testing.T) {
+-	t.Setenv("OKTETO_DEPENDEN
+```
+
+**File**: `cmd/deploy/local.go` (modified, +2/-2)
+```diff
+@@ -60,8 +60,8 @@ func (ld *localDeployer) Deploy(ctx context.Context, deployOptions *Options) err
+ 		},
+ 	}
+ 
+-	// on an error, the deploy command (Command.Run) sets the "done" stage and the end of the output once the
+-	// dependencies have finished, so that the lines they log meanwhile are not left after the end
++	// on an error, the deploy command (Command.Run) sets the "done" stage and the end of the output, as it does
++	// on success
+ 	return ld.runner.RunDeploy(ctx, params)
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `807bf7bc` (2026-11-06)
+**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.11 to 46.3.12 (#5249)
+
+Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.11 to 46.3.12.
+- [Release notes](https://github.com/renovatebot/github-action/releases)
+- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.11...v46.3.12)
+
+---
+updated-dependencies:
+- dependency-name: renovatebot/github-action
+  dependency-version: 46.3.12
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ jobs:
+         uses: actions/checkout@v7
+ 
+       - name: Run Renovate
+-        uses: renovatebot/github-action@v46.3.11
++        uses: renovatebot/github-action@v46.3.12
+         with:
+           configurationFile: .github/renovate.json
+           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
+```
+
+---
+
+### Incident Patch 3: `b7931868` (2026-11-06)
+**Commit Message**: fix(compose): rename endpoint rule services along with sanitized service names (#5238)
+
+Compose service names with "_", spaces or uppercase are sanitized
+(web_app -> web-app), but endpoint rules kept pointing at the original
+name. The rule then never matched a deployed service and the endpoint
+was silently skipped. Rename the rule's service with the same map used
+for the services.
+
+Fixes #5237
+
+Signed-off-by: poojagosika <[REDACTED_EMAIL]>
+
+**File**: `pkg/model/stack_serializer.go` (modified, +10/-0)
+```diff
+@@ -344,6 +344,16 @@ func (s *Stack) UnmarshalYAML(unmarshal func(interface{}) error) error {
+ 		}
+ 	}
+ 
++	// Endpoint rules reference services by their original name, so point them
++	// to the sanitized name too or the endpoint never matches its service.
++	for _, endpoint := range s.Endpoints {
++		for i, rule := range endpoint.Rules {
++			if newName, ok := sanitizedServicesNames[rule.Service]; ok {
++				endpoint.Rules[i].Service = newName
++			}
++		}
++	}
++
+ 	s.Warnings.NotSupportedFields = getNotSupportedFields(&stackRaw)
+ 	s.Warnings.SanitizedServices = sanitizedServicesNames
+ 	s.Warnings.VolumeMountWarnings = make([]string, 0)
+```
+
+**File**: `pkg/model/stack_serializer_test.go` (modified, +29/-0)
+```diff
+@@ -3296,3 +3296,32 @@ services:
+ 	require.NoError(t, err)
+ 	require.Equal(t, "okteto/vote:2", s.Services["api"].Image)
+ }
++
++func Test_EndpointRulesFollowSanitizedServiceNames(t *testing.T) {
++	manifest := []byte(`services:
++  web_app:
++    image: nginx
++    ports:
++      - 8080:8080
++  api:
++    image: nginx
++    ports:
++      - 3000:3000
++endpoints:
++  main:
++    - path: /
++      service: web_app
++      port: 8080
++    - path: /api
++      service: api
++      port: 3000
++`)
++
++	s, err := ReadStack(manifest, true)
++	require.NoError(t, err)
++
++	require.Contains(t, s.Services, "web-app")
++	require.Len(t, s.Endpoints["main"].Rules, 2)
++	assert.Equal(t, "web-app", s.Endpoints["main"].Rules[0].Service)
++	assert.Equal(t, "api", s.Endpoints["main"].Rules[1].Service)
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5250** (2026-11-06): chore(deps): Update module github.com/go-git/go-git/v6 to v6.0.0-beta.1 (@oktetobot)
+- **PR #5249** (2026-11-06): build(deps): bump renovatebot/github-action from 46.3.11 to 46.3.12 (@dependabot[bot])
+- **PR #5248** (2026-11-05): [Backport release-3.25] fix(deploy): show dependencies under one stage and only schedule wait: false ones (@github-actions[bot])
 - **PR #5247** (2026-11-04): [Backport release-3.17] fix(integration): set GITHUB_OUTPUT for namespace action test (@github-actions[bot])
 - **PR #5246** (2026-11-04): [Backport release-3.17] Support IPv6 addresses when joining hosts and ports (@github-actions[bot])
-- **PR #5243** (2026-11-03): [Backport release-3.25] Upgrade buildkit dependency to v0.34.2-okteto1 (@github-actions[bot])
-- **PR #5242** (2026-11-03): Upgrade buildkit dependency to v0.34.2-okteto1 (@devin-ai-integration[bot])
-- **PR #5241** (2026-11-03): [Backport release-3.25] fix: update vulnerable dependencies (kubectl 1.35.10, helm 3.22.1, git 2.56.0, x/net v0.62.0) (@github-actions[bot])
-- **PR #5240** (2026-11-03): fix: update vulnerable dependencies (kubectl 1.35.10, helm 3.22.1, git 2.56.0, x/net v0.62.0) (@jLopezbarb)
+- **PR #5245** (2026-11-05): fix(deploy): show dependencies under one stage and only schedule wait: false ones (@jLopezbarb)
 
 ---
 
@@ -1680,34 +2504,3 @@ Co-
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Support IPv6 addresses when joining hosts and ports (#5236)
-
-**RULE**:
-When implementing operations in `cmd/remoterun/ssh.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `ff11b355`: Support IPv6 addresses when joining hosts and ports (#5236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/remoterun/ssh.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	remoteConn, err := tls.Dial("tcp", net.JoinHostPort(host, port), cfg)
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-	remoteConn, err := tls.Dial("tcp", fmt.Sprintf("%s:%s", host, port), cfg)
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff11b355` are properly handled with clean fallback behavior.
