@@ -7943,3 +7943,5 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `aa716fca` | Multi-dimensional audit evidence | 2026-11-06T22:13:51.830Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `01b5452f` | Multi-dimensional audit evidence | 2026-11-06T22:13:56.992Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `c22582a1` | Multi-dimensional audit evidence | 2026-11-06T22:21:16.977Z |
+| `learn-github-runanywhereai-runanywhere-sdks` | `https://github.com/RunanywhereAI/runanywhere-sdks` | `87865ea8` | Multi-dimensional audit evidence | 2026-11-06T22:28:43.449Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `ad62c570` | Multi-dimensional audit evidence | 2026-11-06T22:28:46.944Z |

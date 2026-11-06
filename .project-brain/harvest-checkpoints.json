@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T22:21:16.988Z",
+  "last_updated": "2026-11-06T22:28:46.953Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6126,14 +6126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-runanywhereai-runanywhere-sdks",
-      "content_hash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
-      "verified_at": "2026-11-04T07:33:20.856Z",
+      "content_hash": "75b2d47904d371ab3478c33a356d47bdbd87d6b5160e427c08c4e5ccf2c680c9",
+      "verified_at": "2026-11-06T22:28:43.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:33:20.856Z"
+      "last_updated": "2026-11-06T22:28:43.458Z"
     },
     "krakend/krakend-ce": {
       "repository": "krakend/krakend-ce",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "366b72e2fea8307fe8c343b45a4d8c3ad21e7ad884c9bf7987da6b56e7f44f90",
-      "verified_at": "2026-11-05T13:33:48.054Z",
+      "content_hash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
+      "verified_at": "2026-11-06T22:28:46.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:33:48.054Z"
+      "last_updated": "2026-11-06T22:28:46.953Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

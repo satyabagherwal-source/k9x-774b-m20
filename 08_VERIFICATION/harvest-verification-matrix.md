@@ -7934,3 +7934,5 @@
 | `CYCLE-20261106-7CYA` | `2026-11-06T22:13:51.826Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`27efc893...`) |
 | `CYCLE-20261106-7GXO` | `2026-11-06T22:13:56.988Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`690bee15...`) |
 | `CYCLE-20261106-GWFH` | `2026-11-06T22:21:16.973Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`35762a72...`) |
+| `CYCLE-20261106-QGXH` | `2026-11-06T22:28:43.445Z` | `RunanywhereAI/runanywhere-sdks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`75b2d479...`) |
+| `CYCLE-20261106-QJMD` | `2026-11-06T22:28:46.933Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de697b0e...`) |

@@ -4003,10 +4003,10 @@
     "repository": "RunanywhereAI/runanywhere-sdks",
     "platform": "github",
     "sourceUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
-    "sourceVersion": "a403990b",
+    "sourceVersion": "87865ea8",
     "license": "NOASSERTION",
-    "contentHash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
-    "lastHarvestedAt": "2026-11-04T07:33:20.843Z",
+    "contentHash": "75b2d47904d371ab3478c33a356d47bdbd87d6b5160e427c08c4e5ccf2c680c9",
+    "lastHarvestedAt": "2026-11-06T22:28:43.449Z",
     "learningId": "learn-github-runanywhereai-runanywhere-sdks"
   },
   "krakend-krakend-ce": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "fe09a7ba",
+    "sourceVersion": "ad62c570",
     "license": "Apache-2.0",
-    "contentHash": "366b72e2fea8307fe8c343b45a4d8c3ad21e7ad884c9bf7987da6b56e7f44f90",
-    "lastHarvestedAt": "2026-11-05T13:33:48.042Z",
+    "contentHash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
+    "lastHarvestedAt": "2026-11-06T22:28:46.944Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

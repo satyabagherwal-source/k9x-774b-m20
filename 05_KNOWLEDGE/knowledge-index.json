@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:21:16.883Z",
+  "last_updated": "2026-11-06T22:28:46.824Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50310,11 +50310,16 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "fe09a7ba",
-      "content_hash": "366b72e2fea8307fe8c343b45a4d8c3ad21e7ad884c9bf7987da6b56e7f44f90",
+      "source_version": "ad62c570",
+      "content_hash": "de697b0e292fcd07c72ec8d085fc693d0450a878a0d69d3edcf04dadbff71338",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "command injection through Node.js version files when using language version tool",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1998,
           "title": "Build the result of entries as a tuple when the entry types differ (#24783)",
@@ -50416,7 +50421,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:33:47.962Z",
+      "verified_at": "2026-11-06T22:28:46.798Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52771,11 +52776,16 @@
       "slug": "runanywhereai-runanywhere-sdks",
       "platform": "github",
       "source_url": "https://github.com/RunanywhereAI/runanywhere-sdks",
-      "source_version": "a403990b",
-      "content_hash": "38badb1580063ef272cd8a8db036ca898d39572d75ec4500db378d9a70bd8222",
+      "source_version": "87865ea8",
+      "content_hash": "75b2d47904d371ab3478c33a356d47bdbd87d6b5160e427c08c4e5ccf2c680c9",
       "dossier_path": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "model-registry): preserve downloads on inconclusive fs probes (#1267)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1911,
           "title": "swift): return the Sendable handle ref from RagSession, not the raw pointer (#10",
@@ -52792,7 +52802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:33:20.687Z",
+      "verified_at": "2026-11-06T22:28:43.325Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
