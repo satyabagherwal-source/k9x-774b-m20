@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 import { initializeProjectBrainBridge, resolveMasterBrainPath } from './brain-bridge.mjs';
 import { detectProjectClass } from './profile-engine.mjs';
 import { generateProjectBrainFiles, writeProjectBrainFiles } from './project-brain-schemas.mjs';
+import { emitConstructionIntelligence, synthesizeConstructionPackage } from './construction-intelligence.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -75,11 +76,21 @@ export function scaffoldProject(targetDir, projectName, options = {}) {
   const masterBrainPath = resolveMasterBrainPath(options.masterBrainPath);
   initializeProjectBrainBridge(rootDir, masterBrainPath, projectName, profile);
 
+  // 2.5 Synthesize & Emit Construction Intelligence (Domains A, B, C) if intent is provided
+  const intentText = options.intent || profile.intent || '';
+  let constructionPackage = null;
+  let writtenConstructionFiles = [];
+  if (intentText) {
+    constructionPackage = synthesizeConstructionPackage(intentText, profile, { masterBrainPath });
+    writtenConstructionFiles = emitConstructionIntelligence(rootDir, constructionPackage);
+  }
+
   // 3. Generate all 11 Project-Local Brain & OS files
   const brainFiles = generateProjectBrainFiles(rootDir, projectName, profile, {
     masterBrainPath,
     env: options.env,
-    intent: options.intent || profile.intent
+    intent: intentText,
+    constructionPackage
   });
   const writtenBrainFiles = writeProjectBrainFiles(rootDir, brainFiles);
 
@@ -105,8 +116,15 @@ export function scaffoldProject(targetDir, projectName, options = {}) {
     projectName,
     profile,
     blueprintName,
-    filesCreated: files.length + writtenBrainFiles.length,
+    filesCreated: files.length + writtenBrainFiles.length + writtenConstructionFiles.length,
     brainFilesCreated: writtenBrainFiles.length,
+    constructionFilesCreated: writtenConstructionFiles.length,
+    constructionPackage: constructionPackage ? {
+      problemId: constructionPackage.problemRecord.problem_id,
+      prdId: constructionPackage.prdSpecification.prd_id,
+      feasibilityVerdict: constructionPackage.marketFeasibility.feasibility_verdict,
+      artifacts: writtenConstructionFiles
+    } : null,
     masterBrainPath,
     brainConnected: Boolean(masterBrainPath),
     npmInstallSuccess,

@@ -13,6 +13,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { synthesizeConstructionPackage } from './construction-intelligence.mjs';
 
 export function generateProjectBrainFiles(projectDir, projectName, profile, context = {}) {
   const root = path.resolve(projectDir);
@@ -20,6 +21,7 @@ export function generateProjectBrainFiles(projectDir, projectName, profile, cont
   const brainPath = context.masterBrainPath || 'C:\\AI-Builder-Brain';
   const env = context.env || {};
   const intentText = context.intent || profile.intent || '';
+  const constructionPackage = context.constructionPackage || (intentText ? synthesizeConstructionPackage(intentText, profile, { masterBrainPath: brainPath }) : null);
 
   const files = {};
 
@@ -46,6 +48,30 @@ ${profile.description}
 > Product development begins strictly in **Phase B** upon receiving user product instructions.
 
 ${intentText ? `## 📝 Target Product Intent (Context for Phase B)\n*The user provided the following product intent, recorded here as architectural context for Phase B product implementation:*\n> "${intentText}"\n` : ''}
+${constructionPackage ? `## 🎯 Human Need & Problem Intelligence (Domain A)
+- **Problem ID**: \`${constructionPackage.problemRecord.problem_id}\`
+- **Problem Statement**: ${constructionPackage.problemRecord.problem_statement}
+- **Primary Persona**: ${constructionPackage.problemRecord.target_user.primary_persona}
+- **Context of Use**: ${constructionPackage.problemRecord.target_user.context_of_use}
+
+### Key Pain Points:
+${constructionPackage.problemRecord.pain_points.map(p => `- ⚠️ ${p}`).join('\n')}
+
+### Hard Invariants & Technical Constraints:
+${constructionPackage.problemRecord.constraints.map(c => `- 🔒 **Constraint**: ${c}`).join('\n')}
+
+---
+
+## 💡 Commercial Feasibility & Value Proposition (Domain C)
+- **Feasibility ID**: \`${constructionPackage.marketFeasibility.feasibility_id}\`
+- **Core Value Proposition**: ${constructionPackage.marketFeasibility.value_proposition}
+- **Market Verdict**: **${constructionPackage.marketFeasibility.feasibility_verdict}**
+- **Margin Potential**: ${constructionPackage.marketFeasibility.hurdle_rate_evaluation.gross_margin_potential}
+- **Identified Market Gaps**:
+${constructionPackage.marketFeasibility.market_gaps.map(g => `- 🔍 ${g}`).join('\n')}
+
+---
+` : ''}
 
 ## 🏗️ Architecture & Technology Boundaries
 - **Architecture**: \`${profile.architecture}\`
@@ -174,6 +200,17 @@ ${Object.keys(profile.applicableMCPs || {}).length > 0 ? Object.entries(profile.
     masterBrainPath: brainPath,
     brainBridgeConnected: true,
     gitStatus: 'INITIALIZED',
+    construction_intelligence: constructionPackage ? {
+      synthesized: true,
+      problem_id: constructionPackage.problemRecord.problem_id,
+      prd_id: constructionPackage.prdSpecification.prd_id,
+      feasibility_verdict: constructionPackage.marketFeasibility.feasibility_verdict,
+      mvp_features_count: constructionPackage.prdSpecification.mvp_scope.length,
+      negative_scope_exclusions_count: constructionPackage.prdSpecification.negative_scope_exclusions.length,
+      artifacts_directory: ".project-brain/construction/"
+    } : {
+      synthesized: false
+    },
     productGenerationBoundary: {
       verified: true,
       productComponentsCount: 0,
@@ -243,7 +280,7 @@ When a defect is resolved and proven reusable across projects:
 - **Decision**: Selected \`${profile.architecture}\` with frontend \`${profile.frontend}\`, backend \`${profile.backend}\`, and styling engine \`${profile.styling}\`.
 - **Consequences**:
   - Provides minimum required overhead for profile \`${profile.id}\`.
-  - Enforces strict verification pillars (\`${profile.verificationPillars.join(', ')}\`).
+  - Enforces strict verification pillars (\`${(profile.verificationPillars || []).join(', ')}\`).
   - No unnecessary dependencies installed.
 
 ---
@@ -345,7 +382,34 @@ ${projectName}/
 
 ---
 
-## 2. Product Requirements (PHASE B — PENDING USER PRODUCT PROMPT)
+${constructionPackage ? `## 2. Product Requirements & PRD Specification (PHASE B IMPLEMENTATION READY)
+> [!NOTE]
+> *The following structured requirements and constraints were synthesized from user intent by the Construction Intelligence Engine.*
+> *During Phase A (Bootstrap), zero product code was written. These specifications guide Phase B implementation.*
+
+- **Target Product Concept**: "${intentText}"
+- **Problem ID**: \`${constructionPackage.problemRecord.problem_id}\`
+- **PRD ID**: \`${constructionPackage.prdSpecification.prd_id}\`
+- **Target Persona**: ${constructionPackage.prdSpecification.target_persona}
+- **Core Value Proposition**: ${constructionPackage.prdSpecification.core_thesis}
+
+### 📦 Strict MVP Scope (P0 Critical Features to Build)
+| Feature ID | Feature Name | Priority | Core Requirement & Acceptance Criteria |
+| :--- | :--- | :---: | :--- |
+${constructionPackage.prdSpecification.mvp_scope.map(f => `| **\`${f.feature_id}\`** | ${f.name} | \`${f.priority}\` | ${f.description} *(${f.acceptance_criteria})* |`).join('\n')}
+
+### 🚫 Non-Negotiable Negative Scope (What NOT to Build)
+> [!WARNING]
+> The following features are strictly EXCLUDED from MVP scope to prevent scope bloat, cost inflation, and privacy liabilities:
+| Exclusion ID | Forbidden Feature | Architectural Rationale for Exclusion |
+| :--- | :--- | :--- |
+${constructionPackage.prdSpecification.negative_scope_exclusions.map(e => `| **\`${e.exclusion_id}\`** | **${e.feature_name}** | ${e.rationale} |`).join('\n')}
+
+### 👤 Acceptance Criteria & User Scenarios
+${constructionPackage.prdSpecification.user_stories.map(u => `- **[${u.story_id}]** *As a ${u.as_a}*, ${u.i_want_to} -> *So that* ${u.so_that}`).join('\n')}
+
+> Detailed specifications, contracts, and schema definitions are stored in \`.project-brain/construction/CONSTRUCTION_SPECIFICATION.md\`.
+` : `## 2. Product Requirements (PHASE B — PENDING USER PRODUCT PROMPT)
 > [!NOTE]
 > *Product-specific requirements are NOT implemented during Factory Bootstrap.*
 > *This section will be populated in Phase B when the user initiates product development.*
@@ -354,6 +418,7 @@ ${projectName}/
 - **Functional Requirements**: *Pending user product specification in Phase B.*
 - **UI Components**: *Pending user product specification in Phase B.*
 - **Business Logic**: *Pending user product specification in Phase B.*
+`}
 `;
 
   // 10. PROJECT_ENVIRONMENT.md

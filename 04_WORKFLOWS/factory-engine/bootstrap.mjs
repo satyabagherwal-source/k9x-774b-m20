@@ -135,6 +135,13 @@ async function runBootstrap() {
   console.log(`      - PROJECT_CONTEXT.md, PROJECT_RULES.md, PROJECT_KNOWLEDGE.md, PROJECT_SKILLS.md`);
   console.log(`      - PROJECT_STATE.json, PROJECT_LEARNING.md, PROJECT_DECISIONS.md, PROJECT_ARCHITECTURE.md`);
   console.log(`      - PROJECT_REQUIREMENTS.md, PROJECT_ENVIRONMENT.md, ENVIRONMENT_READY_CERTIFICATE.md`);
+  if (scaffoldResult.constructionPackage) {
+    console.log(`   🧠 Synthesized Construction Intelligence (Domains A, B, C):`);
+    console.log(`      - Problem ID: ${scaffoldResult.constructionPackage.problemId} (Domain A: Human Need)`);
+    console.log(`      - PRD ID: ${scaffoldResult.constructionPackage.prdId} (Domain B: Product Specification)`);
+    console.log(`      - Feasibility: ${scaffoldResult.constructionPackage.feasibilityVerdict} (Domain C: Commercial Viability)`);
+    console.log(`      - Artifacts emitted to: .project-brain/construction/ (${scaffoldResult.constructionFilesCreated} structured files)`);
+  }
 
   // Step 5: Establish Zero-Copy Brain Bridge
   console.log(`\n[5/9] 🌉 Verifying Zero-Copy Brain Bridge...`);

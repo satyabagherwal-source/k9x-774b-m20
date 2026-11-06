@@ -89,7 +89,7 @@ try {
   console.log('[PHASE 1] Submitting Task Contract to Universal Layer...');
   const contract = createTaskContract({
     task_type: 'MICRO_FIX',
-    objective: 'Repair Windows CRLF line parser invariant violation in template engine',
+    objective: 'Repair Windows CRLF line-ending parser invariant violation (Rule 12)',
     constraints: {
       max_tokens_budget: 800,
       negative_constraints: ['Never use raw template.split("\\n") without CRLF normalization']
