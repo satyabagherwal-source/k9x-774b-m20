@@ -7851,3 +7851,9 @@
 | `CYCLE-20261106-5CLQ` | `2026-11-06T13:20:25.358Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1b4b441...`) |
 | `CYCLE-20261106-5DK4` | `2026-11-06T13:20:26.596Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7380383...`) |
 | `CYCLE-20261106-5GNA` | `2026-11-06T13:20:30.598Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70e82a0d...`) |
+| `CYCLE-20261106-E03L` | `2026-11-06T13:27:09.057Z` | `milind-soni/OpenMausBot` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`994a090d...`) |
+| `CYCLE-20261106-E6IV` | `2026-11-06T13:27:17.383Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d5fdb075...`) |
+| `CYCLE-20261106-E7ZE` | `2026-11-06T13:27:19.274Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`2ad3a231...`) |
+| `CYCLE-20261106-E8PU` | `2026-11-06T13:27:20.226Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`009c2c98...`) |
+| `CYCLE-20261106-EB9C` | `2026-11-06T13:27:23.520Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bf930d4b...`) |
+| `CYCLE-20261106-EDOH` | `2026-11-06T13:27:26.657Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f86e01e0...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `3592d4bb`  
+> **Source Version**: `7a0908ae`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:55:40.482Z  
+> **Timestamp**: 2026-11-06T13:27:25.452Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:55:39.762Z  
+> **Harvest Timestamp**: 2026-11-06T13:27:25.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -390,10 +390,24 @@ pub fn compile_with_options(source: &str, options: SyntaxOptions) -> Result<Prog
 ### Core Architecture Module: `arc/server.ts`
 ```
 import "dotenv/config";
+import { parseArgs } from "node:util";
 import { start } from "./src/app";
 import * as milestone from "./src/lib/milestone.ts";
 
-start(process.argv[2])
+async function main() {
+  const {
+    positionals: [puzzle_id],
+    values: { "only-puzzle-dataset": only_puzzle_dataset },
+  } = parseArgs({
+    args: process.argv.slice(2),
+    allowPositionals: true,
+    options: { "only-puzzle-dataset": { type: "boolean", default: false } },
+  });
+
+  return start(puzzle_id, only_puzzle_dataset);
+}
+
+main()
   .then((difference: number) => {
     // Exit statuses keep eight bits, so 256 differences would read as 0.
     process.exitCode = Math.min(difference, 255);
@@ -411,11 +425,16 @@ import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as milestone from "./lib/milestone.ts";
 
-export async function declarations({ puzzle_id, train_dataset }) {
+export async function declarations({
+  puzzle_id,
+  only_puzzle_dataset,
+  train_dataset,
+}) {
   milestone.inferring_declarations();
 
   const { declarations, output_canvas } = await llm.generate({
     puzzle_id,
+    only_puzzle_dataset,
     messages: [
       {
         role: "user",
@@ -441,6 +460,7 @@ export async function declarations({ puzzle_id, train_dataset }) {
 
 export async function instances({
   puzzle_id,
+  only_puzzle_dataset,
   declarations,
   input_matrix,
   output_matrix,
@@ -449,6 +469,7 @@ export async function instances({
 
   const { instances } = await llm.generate({
     puzzle_id,
+    only_puzzle_dataset,
     messages: [
       {
         role: "user",
@@ -478,8 +499,10 @@ export async function instances({
 
 export async function value({
   puzzle_id,
+  only_puzzle_dataset,
   instance_name,
   declarations,
+  input_instances,
   input_matrix,
   input_instance_matrix,
   output_instance_matrix,
@@ -488,6 +511,7 @@ export async function value({
 
   const { implementation } = await llm.generate({
     puzzle_id,
+    only_puzzle_dataset,
     messages: [
       {
         role: "user",
@@ -496,6 +520,22 @@ export async function value({
           ${instance_name}
           declarations:
           ${JSON.stringify(declarations)}
+          input_instances:
+          ${JSON.stringify(
+            input_instances.map(
+              ({
+                instance_name,
+                input_instance_matrix,
+                output_instance_matrix,
+                implementation,
+              }) => ({
+                instance_name,
+                input_instance_matrix,
+                output_instance_matrix,
+                implementation,
+              })
+            )
+          )}
           input_instance_matrix:
           ${JSON.stringify(input_instance_matrix)}
           output_instance_matrix:
@@ -576,7 +616,10 @@ import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "ed36ccf7") {
+export async function start(
+  puzzle_id: string = "c9e6f938",
+  only_puzzle_dataset: boolean = false
+) {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -594,6 +637,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
   milestone.start({
     version: await nucleoid.version(),
+    only_puzzle_dataset,
     train: arc_train,
     test_input_matrix,
   });
@@ -604,6 +648,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
   const { declarations, output_canvas } = await analyzer.declarations({
     puzzle_id,
+    only_puzzle_dataset,
     train_dataset,
   });
 
@@ -615,6 +660,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
     const { instances } = await analyzer.instances({
       puzzle_id,
+      only_puzzle_dataset,
       declarations,
       input_matrix,
       output_matrix,
@@ -628,8 +674,12 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
       const { implementation, input_value } = await analyzer.value({
         puzzle_id,
+        only_puzzle_dataset,
         instance_name,
         declarations,
+        input_instances: dataset.instances.filter(
+          ({ implementation }) => implementation
+        ),
         input_matrix,
         input_instance_matrix,
         output_instance_matrix,
@@ -651,6 +701,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
   const { instances } = await visualizer.instances({
     puzzle_id,
+    only_puzzle_dataset,
     train_dataset,
     test_input_matrix,
   });
@@ -669,6 +720,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
     const { implementation, input_value } = await visualizer.value({
       puzzle_id,
+      only_puzzle_dataset,
       declarations,
       train_dataset,
       test_input_matrix,
@@ -693,6 +745,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       puzzle_id,
+      only_puzzle_dataset,
       instance_name,
       test_input_matrix,
       train_dataset,
@@ -722,6 +775,7 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 
   const debug = {
     puzzle_id,
+    only_puzzle_dataset,
     train_dataset,
     test_input_instances: input_instances,
     test_input_matrix,
@@ -746,13 +800,27 @@ export async function start(puzzle_id: string = "ed36ccf7") {
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export function document(puzzle_id?: string): string {
-  void puzzle_id;
+// Each non-genesis puzzle's dataset is named after its eight-digit hexadecimal
+// ARC puzzle ID; the genesis datasets have topic names, such as `core`.
+function genesis_dataset(name: string): boolean {
+  return !/^dataset\.[0-9a-f]{8}\.json$/.test(name);
+}
+
+export function document(
+  puzzle_id?: string,
+  only_puzzle_dataset: boolean = false
+): string {
+  const puzzle_dataset: string = `dataset.${puzzle_id}.json`.toLowerCase();
   const files = readdirSync(__dirname, { withFileTypes: true })
     .filter((file) => {
-      const name = file.name.toLowerCase();
+      const name: string = file.name.toLowerCase();
       return (
-        file.isFile() && name.endsWith(".json") && !name.startsWith(".env")
+        file.isFile() &&
+        name.endsWith(".json") &&
+        !name.startsWith(".env") &&
+        (!only_puzzle_dataset ||
+          genesis_dataset(name) ||
+          name === puzzle_dataset)
       );
     })
     .map((file) => file.name)
@@ -1011,574 +1079,181 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3592d4bb` (2026-11-05)
-**Commit Message**: NUC 85 Fixed Cross-Property Class Anchors
+### Incident Patch 1: `7a0908ae` (2026-11-06)
+**Commit Message**: Correct the solver commit in the ARC-NUC-c9e6f938 record
 
-Automatic-Accepted under the ARC-requested proposal rule. /arc-purposal
-ed36ccf7 requested this single-mode Runtime features NUC
-(existing_comparable). Its frozen candidate meets every hard criterion.
-The puzzle's one solver run was not an exact match, and the independent
-evaluator's overall decision was Rejected, so the failed policy check is
-that evaluator's independent behavior check.
+Another session rewrote its unpushed commits after this record was
+committed, so the caching change the c9e6f938 run used is now f45e54b4,
+not 0fd695da. Its three solver files hold the same blobs the run used.
+Only arc/docs/ARC-NUC-c9e6f938.md changes.
 
-A class cycle made only of fixed history reads of the same instance's
-properties ($C.p@first, @0 or a literal @n) is no longer a circular
-dependency, and those reads stay tracked. Cycles with a live, moving or
-other edge still raise TypeError("Circular Dependency").
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8dwoDfJhJ98keLP9E4
 
-Failed policy check (independent evaluation, Rejected):
-- Fixed-only cycles whose rules build fresh objects never settle, contrary
-  to the NUC's and the specification's settlement claims:
-  $Pair.a = {v: $Pair.b@first} with $Pair.b = {v: $Pair.a@first} reaches
-  the 100,000-step limit and raises "Propagation did not settle" (0.89 s,
-  428 MB in a release build), where the accepted revision raised Circular
-  Dependency at once.
-- One live input waking the fixed cycles of N instances took 1.03
-
-**File**: `README.md` (modified, +7/-0)
+**File**: `arc/docs/ARC-NUC-c9e6f938.md` (modified, +5/-4)
 ```diff
-@@ -1124,6 +1124,13 @@ assert([first.x@0, second.x@first], [10, 30])
-   still raise Circular Dependency. Histories stay read-only, slot-owned and
-   transactional. See the root
-   `nucleoid.spec.md` **Class-level state version anchors** contract.
-+- With [NUC 85](docs/nuc-0085.md), a class rule may also read another
-+  property of its own receiver at a fixed position, so
-+  `$Box.width = $Box.height@first` with `$Box.height = $Box.width@first`
-+  swaps each box's first recorded values. Such a cycle stands only when every
-+  read on it is fixed; a live or moving read still raises Circular
-+  Dependency. Fixed reads stay tracked through deletion and recreation. See
-+  **Fixed cross-property class anchors** in `nucleoid.spec.md`.
- 
- **Reactive base two powers**
- 
+@@ -141,10 +141,11 @@ checkout's debug runtime (`nucleoid 1.0.0`), current with `cargo build` at
+ `b3cbd26`. The solver was the one committed at `b3cbd26` with its default
+ puzzle changed, plus another session's change to `src/lib/openrouter.ts`,
+ `src/lib/milestone.ts`, and `src/lib/terminal.ts`, uncommitted when the run
+-started. That session committed it as `0fd695d`, "Disable and report
+-OpenRouter prompt caching", 19 seconds after the run ended, with the same
+-file contents the run used; the files were last written 23 seconds before
+-the run started. The change sends `X-OpenRouter-Cache: false`, fails a
++started. That session committed it 19 seconds after the run ended, then
++rewrote its unpushed commits; the change is now `f45e54b`, "Disable
++OpenRouter caching and alert on cache use", whose three solver files hold
++the same contents the run used. The files were last written 23 seconds
++before the run started. The change sends `X-OpenRouter-Cache: false`, fails a
+ request whose response reports a cache hit, and reports cached input
+ tokens; it leaves the model, sampling, provider, and prompts as they were.
+ The model settings were the committed `qwen/qwen3.8-27b`, pinned to the
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +6/-0)
+---
+
+### Incident Patch 2: `f45e54b4` (2026-11-06)
+**Commit Message**: Disable OpenRouter caching and alert on cache use
+
+Send X-OpenRouter-Cache: false and reject responses whose X-OpenRouter-Cache-Status is HIT. Read usage.prompt_tokens_details.cached_tokens, show it as "(N cached)" in the model usage line, and print a yellow warning to stderr when a response reports cached tokens or no count at all, so an unverified response is never treated as uncached. Update the ARC README to describe the behavior and the provider's remaining automatic prompt caching.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `arc/README.md` (modified, +15/-4)
 ```diff
-@@ -665,3 +665,9 @@
- {"id":"spec-0665","description":"Nucleoid uses medians in functions methods and conditional expressions","code":"class Team(name, scores):\n    this.name = name\n    this.scores = scores\n    def middle(): return this.scores.median()\ndef lift(team) => team.scores.max() - team.scores.median()\nred = Team(\"red\", [3, 9])\nblue = Team(\"blue\", [8, 5, 7])\nleague = Team.median(team -> team.middle())\nleader = red.middle() > blue.middle() ? red.name : blue.name\nassert: [league, leader, lift(red)], [6.5, \"blue\", 3]\nred.scores.push(10)\nblue.scores.push(2)\nTeam(\"green\", [13])\nassert: [league, leader, lift(red)], [9, \"red\", 1]","return":null}
- {"id":"spec-0666","description":"Nucleoid keeps median as an ordinary name beside the median query","code":"median = 2\nreport = {median: 5}\ndef double median => median * 2\nclass Bag(items):\n    this.items = items\n    def median(): return this.items.median(item -> item * item)\nbag = Bag([1, 3])\nBag([4])\nlevel = bag.items.median() + median + report.median\nbags = Bag.median(each -> each.median())\nassert: [level, bag.median(), bags, double(median)], [9, 5, 10.5, 4]\nassert: bag.items.median, null\nbag.items.push(10)\nmedian = 4\nBag([6])\nassert: [level, bag.median(), bags], [12, 9, 16]","return":null}
- {"id":"spec-0667","description":"Nucleoid rolls back failed median updates","code":"def checked(value):\n    if value > 100:\n        throw \"TOO_LARGE\"\n    return value\namounts = [10, 40]\nmid = amounts.median(checked)\nfailure = \"\"\ntry:\n    amounts.push(500)\ncatch error:\n    failure = error\nassert: [failure, amounts, mid], [\"TOO_LARGE\", [10, 40], 25]\namounts.push(5)\nassert: mid, 10\nclass Item(price): this.price = price\nItem(3)\nItem(8)\ntypical = Item.median(item -> checked(item.price))\nfailure = \"\"\ntry:\n    Item(500)\ncatch error:\n    failure = error\nassert: [failure, Item.length, typical], [\"TOO_LARGE\", 2, 5.5]\nsuppose:\n    Item(12)\n    assert: typical, 8\nassert: [Item.length, typical], [2, 5.5]","return":null}
-+{"id":"spec-0668","description":"Nucleoid swaps two class properties through fixed cross anchors","code":"class Box(width, height):\n    this.width = width\n    this.height = height\nearly = Box(4, 1)\n$Box.width = $Box.height@first\n$Box.height = $Box.width@first\nbox = Box(3, 2)\nassert([box.width, box.height], [2, 3])\nassert([early.width, early.height], [1, 4])\nassert([box.width@first, box.height@first], [3, 2])\nassert([box.width@1, box.height@1, box.width@2], [2, 3, null])\nassert([early.width@1, early.height@1, early.width@2], [1, 4, null])\n[box.width, box.height, early.width, early.height]","return":"[2,3,1,4]"}
-+{"id":"spec-0669","description":"Nucleoid exchanges coordinates and turns rectangles through fixed cross anchors","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n$Point.x = $Point.y@first\n$Point.y = $Point.x@first\np = Point(1, 5)\nq = Point(-2, 4)\nassert([p.x, p.y, q.x, q.y], [5, 1, 4, -2])\nsize = 10\nclass Rect(x, y, width, height):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n$Rect.x = $Rect.y@first\n$Rect.y = size - $Rect.x@first - $Rect.width@first\n$Rect.width = $Rect.height@first\n$Rect.height = $Rect.width@first\nr = Rect(1, 2, 4, 3)\nassert([r.x, r.y, r.width, r.height], [2, 5, 3, 4])\nsize = 20\nassert([r.x, r.y, r.width, r.height], [2, 15, 3, 4])\nassert([r.x@first, r.y@first, r.width@first, r.height@first], [1, 2, 4, 3])\n[p.x, p.y, r.x, r.y]","return":"[5,1,2,15]"}
-+{"id":"spec-0670","description":"Nucleoid rotates class properties with numeric first and indexed anchors","code":"class Triple(a, b, c):\n    this.a = a\n    this.b = b\n    this.c = c\n$Triple.a = $Triple.b@0\n$Triple.b = $Triple[\"c\"]@first\n$Triple.c = $Triple.a@0\nt = Triple(1, 2, 3)\nassert([t.a, t.b, t.c], [2, 3, 1])\nclass Pair(a, b):\n    this.a = a\n    this.b = b\n$Pair.a = $Pair.a@first + $Pair.b@first\n$Pair.b = $Pair.a@first\npair = Pair(1, 2)\nassert([pair.a, pair.b], [3, 1])\nclass Base(a, b):\n    this.a = a\n    this.b = b\nclass Child: Base\n    def init(a, b):\n        super(a, b)\n$Base.a = $Base.b@first\n$Child.b = $Child.a@first\nchild = Child(1, 2)\nparent = Base(5, 6)\nassert([child.a, child.b], [2, 1])\nassert([parent.a, parent.b], [6, 6])\n[t.a, t.b, t.c]","return":"[2,3,1]"}
-+{"id":"spec-0671","description":"Nucleoid keeps fixed cross anchors tracked through slot deletion and recreation","code":"class Box(width, height):\n    this.width = width\n    this.height = height\n$Box.width = $Box.height@first\n$Box.height = $Box.width@first\nclass Frozen(width, height):\n    this.width = width\n    this.height = height\n$Frozen.width = $Frozen.height@first.value\n$Frozen.height = $Frozen.width@first.value\nbox = Box(3, 2)\nfrozen = Frozen(3, 2)\nassert([box.width, box.height, frozen.width, frozen.height], [2, 3, 2, 3])\ndelete box.height\ndelete frozen.height\nassert(box.width, null)\nassert(frozen.width, 2)\nbox.height = 7\nfrozen
+@@ -40,12 +40,23 @@ requires identical prompts: `llm.generate` currently prepends a random
+ `control_id`.
+ See [OpenRouter's sampling parameters](https://openrouter.ai/docs/api/reference/parameters).
+ 
+-Requests send no `X-OpenRouter-Cache` header, so OpenRouter response caching
+-stays at whatever the account or a preset sets, and upstream providers'
+-automatic prompt/KV caching is unchanged as well. See OpenRouter's
++Requests disable OpenRouter response caching with `X-OpenRouter-Cache: false`,
++which applies even when a preset enables caching, and `src\lib\openrouter.ts`
++rejects any response whose `X-OpenRouter-Cache-Status` is `HIT`. Neither
++OpenRouter nor DeepInfra offers a switch for the provider's own automatic
++prompt/KV caching, which reuses a cached prefix only where a prompt matches it
++exactly from its first token. `llm.generate` therefore keeps the random
++`control_id` as the first message of every request, so another request's
++cached prefix can cover at most the few tokens before that identifier. Each
++response is checked for `usage.prompt_tokens_details.cached_tokens`: the model
++usage line shows the reported count as `(N cached)`, and the terminal prints a
++yellow `⚠` alert to standard error when a response reports cached tokens or
++reports no count at all, so an unverified response is never taken as uncached.
++See OpenRouter's
+ [response caching](https://openrouter.ai/docs/guides/features/response-caching)
+ and [prompt caching](https://openrouter.ai/docs/guides/best-practices/prompt-caching)
+-documentation for the distinction.
++documentation for the distinction, and DeepInfra's
++[prompt caching](https://docs.deepinfra.com/chat/prompt-caching).
+ 
+ Run the ARC example with `bun run start`, which loads the default `puzzle_id`
+ in `src\app.ts`. [`/arc-purposal`](#arc-proposal-agent) sets that default to
 ```
 
-**File**: `docs/README.md` (modified, +24/-1)
+**File**: `arc/src/lib/milestone.ts` (modified, +10/-2)
 ```diff
-@@ -1069,6 +1069,29 @@ assert([first.x, second.x], [8, 28])
- assert([first.x@0, second.x@first], [10, 30])
- ```
- 
-+- With [NUC 85](nuc-0085.md), a rule may also read another property of its
-+  own receiver at a fixed position, as in `$Point.x = $Point.y@first`. A class
-+  cycle whose every read is such a fixed anchor, or a fixed self-anchor,
-+  settles and is not a circular dependency; one live or moving read on the
-+  cycle still raises `TypeError("Circular Dependency")`.
-+- Fixed anchors stay tracked: deleting the slot they read makes them read
-+  null, and recreating it makes them follow its new first entry. Only reads
-+  written directly on `$Class` count; helpers, `this` and other objects keep
-+  their existing checks. A missing entry of another property reads null.
-+- The executable reference case is `Class state anchors exchange properties
-+  through fixed cross anchors`. The root contract is **Fixed cross-property
-+  class anchors** in `nucleoid.spec.md`.
-+
-+```
-+class Point(x, y):
-+    this.x = x
-+    this.y = y
-+$Point.x = $Point.y@first
-+$Point.y = $Point.x@first
-+p = Point(1, 5)
-+assert([p.x, p.y], [5, 1])
-+```
-+
- ---
- 
- ## 7. Blocks and Scope
-@@ -3403,7 +3426,7 @@ Messages are exact and are part of the observable behaviour of the language.
- 
- | Condition | Message |
- | --- | --- |
--| An assignment that would close a dependency cycle | `Circular Dependency` |
-+| An assignment that would close a dependency cycle, unless every read on it is a fixed class history anchor | `Circular Dependency` |
- | A type declaration that would close an inheritance cycle | `Circular Inheritance` |
- | Deleting an instance that still has properties | `Cannot delete object '<id>'` |
- | Using `value` as a property name | `Cannot use 'value' as a property` |
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -80,6 +80,7 @@ Created: 31-Jul-2026
- | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Accepted |
- | [74](nuc-0074.md) | Final Rest Parameters | Accepted |
- | [81](nuc-0081.md) | Object Spread Entries | Accepted |
-+| [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- 
- ### Utility enhancement
- 
-@@ -223,6 +224,7 @@ Created: 31-Jul-2026
- | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [83](nuc-0083.md) | Hypothetical Difference Selections | Standards Track | Reasoning enhancement | Accepted |
- | [84](nuc-0084.md) | List and Population Medians | Standards Track | Utility enhancement | Accepted |
-+| [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Standards Track | Runtime features | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0085.md` (added, +492/-0)
-```diff
-@@ -0,0 +1,492 @@
-+# NUC 85 -- Fixed Cross-Property Class Anchors
-+
-+```
-+NUC: 85
-+Title: Fixed Cross-Property Class Anchors
-+Author: Claude <noreply@anthropic.com>
-+Status: Automatic-Accepted
-+Type: Standards Track
-+Category: Runtime features
-+Created: 05-Nov-2026
-+Requires: 53, 55
-+```
-+
-+## Abstract
-+
-+- Extend NUC 55's class-cycle exemption from a rule's own fixed anchor to
-+  fixed history reads of the receiver's other properties. A class property
-+  rule may read `$C.q@first`, `$C.q@n` with a literal non-negative `n`, or
-+  the indexed spellings `$C["q"]@first` and `$C["q"]@n`. Such a read is a
-+  *fixed anchor*.
-+- A class cycle whose every edge is a fixed anchor, including fixed
-+  self-anchors, is no longer a circular dependency. With
-+  `$Box.width = $Box.height@first` and `$Box.height = $Box.width@first`, every
-+  box swaps its first recorded width and height, whether the rules are
-+  declared before or after the instances.
-+- Fixed anchors stay tracked, as other non-self history readers are: they
-+  wake on writes to the slot they read and on its deletion and recreation,
-+  following the slot's current lifetime instead of freezing like `.value`.
-+  The cycle settles because a recorded position never changes during its
-+  slot's lifetime.
-+- A cycle containing a live read, a moving `@last` or `@previous` read, a
-+  compound self-assignment or any other kind of edge still raises
-+  `TypeError("Circular Dependency")`, before instances exist when the static
-+  class check sees it.
-+- No syntax, keyword, token, error type, dependency or version changes. Only
-+  programs that raised `TypeError("Circular Dependency")` at the accepted
-+  revision change. No public type, field, variant or signature changes. The
-+  authoritative contract is
-+  [Fixed cross-property class anchors](../nucleoid.spec.md#fixed-cross-property-class-anchors).
-+- **Automatic-Accepted** on 5-Nov-2026: the candidate meets every hard
-+  criterion, but the independent evaluation's policy decision was Rejected.
-+  Fixed-only cycles whose rules build fresh objects never settle, contrary to
-+  the settlement claims below: `$Pair.a = {v: $Pair.b@first}` with
-+  `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit
-+  and raises `TypeError("Propagation did not settle")`, where the accepted
-+  revision raised `TypeError("Circular Dependency")` at once. See
-+  [Evaluation](#evaluation).
-+
-+## Motivation
-+
-+- A world model often relates an object's properties as they were, not as
-+  they are: a quarter turn exchanges coordinates, a mirror swaps two extents,
-+  a rotation passes values around a ring. Each new value reads another
-+  property's original value.
-+- NUC 55 lets a class rule read its own first recorded value, so
-+  `$Obj.x = $Obj.x@first - 1` does not subtract again whenever it
-+  re-evaluates. It kept every other property read as an ordinary class-cycle
-+  edge, so two rules that read each other's first value are rejected:
-+
-+```nuc
-+class Box(width, height):
-+    this.width = width
-+    this.height = height
-+$Box.width = $Box.height@first
-+$Box.height = $Box.width@first
-+```
-+
-+- The accepted runtime raises `TypeError: Circular Dependency (line 5,
-+  column 1)` for it. Neither rule can change what the other reads: a slot's
-+  first entry is fixed for the slot's lifetime. The cycle exists only because
-+  the check treats a fixed read like a live one.
-+- The accepted workaround is an explicit snapshot,
-+  `$Box.width = $Box.height@first.value`. It gives the same first result but
-+  detaches the rule from the slot it read: after `delete box.height` and
-+  `box.height = 7`, a tracked reader follows the recreated slot to 7 while the
-+  snapshot keeps 2.
-+- An ARC world model requested the feature for a quarter turn that keeps each
-+  object's rules declarative. Its coordinates exchange through each other's
-+  first values, the fixed-only cross-property cycle that the accepted runtime
-+  rejects:
-+
-+```nuc
-+$Obj.orientation = ($Obj.orientation@first + 270) % 360
-+$Obj.x = $Obj.y@first
-+$Obj.y = canvas_width - $Obj.x@first - $Obj.width@first
-+```
-+
-+- The feature is general. This NUC adds no ARC data, puzzle identifiers,
-+  grids, helpers or tests, and changes nothing under `arc/`.
-+
-+## Rationale
-+
-+- **Category and selection.** The caller confirmed Runtime features, NUC 55's
-+  category: the feature extends property-history execution, not grammar. It
-+  is an explicit ARC-requested concrete feature, so no random category draw
-+  applies, and it is a single-proposal request, so token comparison is
-+  skipped. Behavior, integrity, compatibility and development checks are not.
-+- **Runtime applicability: `existing_comparable`.** The feature extends NUC
-+  55's fixed anchors, which are themselves `existing_comparable`. For
-+  instances whose constructor sets every property a cycle reads, each enabled
-+  rule set has an accepted equivalent spelled with `@first.value`, which gives
-+  the same values. Tracked recovery thr
-```
-
-**File**: `nucleoid.spec.md` (modified, +241/-4)
-```diff
-@@ -2505,10 +2505,12 @@ statement positions; caught values and transaction recovery are unchanged.
-   a rule was declared or first activated. Constructor parameters do not
-   implicitly create fields: store `this.orientation = orientation` explicitly.
- - An ordinary class property rule may read its own fixed historical position
--  with `@first` or any numeric `@n`. Only that fixed self-reference is exempt
--  from static class self-cycle validation. Other live reads, non-self history
--  reads and transitive class cycles retain their existing dependency checks.
--  A live self-read alongside an anchor still raises
-+  with `@first` or any numeric `@n`. That fixed self-reference is exempt from
-+  static class self-cycle validation; **Fixed cross-property class anchors**
-+  below extends the exemption to cycles made only of fixed reads of the
-+  receiver's other properties. Live reads, moving history reads and class
-+  cycles through them retain their existing dependency checks. A live
-+  self-read alongside an anchor still raises
-   `TypeError("Circular Dependency")`.
- - Class conditionals may tag an orientation-180 receiver and assign its `x`
-   and `y` from their own first values minus one. Each receiver, including
-@@ -2550,6 +2552,52 @@ statement positions; caught values and transaction recovery are unchanged.
-   each instances first property values` through `Nucleoid preserves moving
-   class conditionals beside fixed first anchors` specify this extension.
- 
-+## Fixed cross-property class anchors
-+
-+- A class property rule may read another property of its own receiver at a
-+  fixed history position, written directly on its class: `$C.q@first`,
-+  `$C.q@n` with a literal non-negative `n`, `$C["q"]@first` or `$C["q"]@n`.
-+  Such a read is a fixed anchor, and `@0` is `@first`. No syntax is added.
-+- A class property cycle whose every edge is a fixed anchor, including fixed
-+  self-anchors, is valid. `$Box.width = $Box.height@first` with
-+  `$Box.height = $Box.width@first` swaps each instance's first recorded
-+  values, whether the rules are declared before or after the instances, and
-+  records one new entry per changed property.
-+- Such a cycle settles: a recorded position never changes during its slot's
-+  lifetime, and storing an equal value records no entry and wakes nothing in a
-+  cascade. The existing propagation limit still applies.
-+- A cycle with any other edge still raises `TypeError("Circular Dependency")`:
-+  a live read `$C.q`, a moving `@last` or `@previous` read, a compound
-+  self-assignment, an index or noun read, or a read not written directly on
-+  `$C`. A property read both as an anchor and in another way by the same rule
-+  is an ordinary read. The static class check raises the error before
-+  instances exist when it sees the cycle.
-+- Anchors are tracked like other non-self history readers. They wake on writes
-+  to the slot they read and on its deletion and recreation: a deleted slot
-+  reads null, and a recreated one is followed from its new first entry.
-+  Instance overrides and deletion still replace or remove that instance's
-+  rule.
-+- A missing entry of another property reads null, as every non-self history
-+  read does, and that null is an ordinary recorded value. Only a rule's own
-+  unavailable fixed self-anchor waits.
-+- Only direct reads on the rule's own receiver are anchors. Reads through
-+  helpers, `this`, other objects, aliases and populations, and any live or
-+  moving read of an anchored slot in the same evaluation, including one inside
-+  a helper, are ordinary dependencies with their existing checks. A cycle
-+  whose only ordinary read is hidden in a helper fails when an instance
-+  applies it.
-+- Propagation order is unchanged: upstream work runs first and ready rules
-+  keep declaration order. Only when every queued rule waits for another does
-+  a rule whose waits all run through fixed anchors go next, in declaration
-+  order. A rule that waits through any other edge, including the structural
-+  link of a reasoning selection, keeps waiting, so a queue that cannot go on
-+  still raises `TypeError("Circular Dependency")` as before. `.value` keeps
-+  its detached snapshot meaning.
-+- Only programs that raised `TypeError("Circular Dependency")` change. The six
-+  appended entries beginning `Nucleoid swaps two class properties through
-+  fixed cross anchors` through `Nucleoid keeps live and moving reads in class
-+  cycles as circular dependencies` specify this extension.
-+
- ## Thin arrows and Python-style lambdas
- 
- - [NUC 57](docs/nuc-0057.md) adds two optional spellings of the existing
-@@ -20931,4 +20979,193 @@ suppose:
-     Item(12)
-     assert: typical, 8
- assert: [Item.length, typical], [2, 5.5]
-+---
-+# Nucleoid swaps two class properties through fixed cross anchors
-+
-+class Box(width, height):
-+    this.width = width
-+    this.height = height
-+early = Box(4, 1)
-+$Box.width = $Box.height@first
-+$Box.height = $Box.width@first
-+box = Box(3, 2)
-+assert([box.width, box
-```
-
-**File**: `src/expression.rs` (modified, +52/-38)
-```diff
-@@ -14,6 +14,16 @@ pub struct Expression<'a> {
-     pub node: &'a Expr,
+@@ -193,8 +193,16 @@ export function summary({ difference, duration }) {
+   terminal.summary(difference, duration);
  }
  
-+/// The `$Class` properties one class rule reads.
-+#[derive(Debug, Default)]
-+pub(crate) struct ClassReads {
-+    /// Read live, at a moving history position, or through any other path.
-+    pub(crate) live: Vec<String>,
-+    /// Read only at `@first` or `@n`, written directly on `$Class`. A fixed
-+    /// position never changes during its slot's lifetime.
-+    pub(crate) fixed: Vec<String>,
+-export function usage({ prompt_tokens, completion_tokens }) {
+-  terminal.usage({ prompt_tokens, completion_tokens });
++export function usage({ prompt_tokens, completion_tokens, cached_tokens }) {
++  terminal.usage({ prompt_tokens, completion_tokens, cached_tokens });
 +}
 +
- impl<'a> Expression<'a> {
-     #[must_use]
-     pub fn new(node: &'a Expr) -> Self {
-@@ -65,17 +75,20 @@ impl<'a> Expression<'a> {
-     /// The `$Class.property` names this expression reads, for the given class.
-     #[must_use]
-     pub fn class_properties(&self, class: &str) -> Vec<String> {
--        let mut found = Vec::new();
--        class_properties(self.node, class, None, &mut found);
--        found
-+        let mut reads = ClassReads::default();
-+        class_properties(self.node, class, false, &mut reads);
-+        reads.live
-     }
- 
--    /// Only a fixed history of the rule's own destination is a self-anchor.
--    /// Other property reads keep the accepted class-cycle checks.
--    pub(crate) fn class_rule_properties(&self, class: &str, destination: &str) -> Vec<String> {
--        let mut found = Vec::new();
--        class_properties(self.node, class, Some(destination), &mut found);
--        found
-+    /// The class properties a rule reads, with those it names only at a fixed
-+    /// history position directly on `$Class` kept apart as anchors.
-+    pub(crate) fn class_rule_reads(&self, class: &str) -> ClassReads {
-+        let mut reads = ClassReads::default();
-+        class_properties(self.node, class, true, &mut reads);
-+        reads
-+            .fixed
-+            .retain(|property| !reads.live.contains(property));
-+        reads
-     }
- 
-     /// Validate calls before a static reference check inspects their values.
-@@ -183,42 +196,43 @@ fn class_reference(expression: &Expr, found: &mut Option<String>) {
-     }
++export function prompt_cache_alert({ cached_tokens }) {
++  terminal.alert(
++    typeof cached_tokens === "number"
++      ? `Provider prompt cache used · ${cached_tokens} cached input tokens`
++      : "Provider prompt cache unverified · no cached token count reported"
++  );
  }
  
--fn class_properties(
--    expression: &Expr,
--    class: &str,
--    destination: Option<&str>,
--    found: &mut Vec<String>,
--) {
-+/// Collects class property reads. With `anchors`, a fixed history read written
-+/// directly on `$Class` is reported as fixed rather than as a live read.
-+fn class_properties(expression: &Expr, class: &str, anchors: bool, reads: &mut ClassReads) {
-     match expression {
-         Expr::Version {
-             reference,
-             selector,
--        } if selector.is_fixed()
--            && destination.is_some_and(|property| class_property(reference, class, property)) => {}
-+        } if anchors && selector.is_fixed() => match class_property(reference, class) {
-+            Some(property) => reads.fixed.push(property.to_string()),
-+            None => visit_children(expression, &mut |child| {
-+                class_properties(child, class, anchors, reads);
-+            }),
-+        },
-         Expr::Member { property, .. } if property == "value" => {}
-         Expr::Member { object, property } => {
--            member_properties(object, property, class, destination, found);
-+            member_properties(object, property, class, anchors, reads);
-         }
-         // The method form `OPERAND.NOUN()` reads its callee `OPERAND.NOUN`, so
-         // `NOUN of OPERAND` reads what that member read does: the class
-         // property `NOUN` for `NOUN of $Class`, otherwise the operand's reads.
-         Expr::Of { noun, operand } => {
--            member_properties(operand, noun.as_str(), class, destination, found);
-+            member_properties(operand, noun.as_str(), class, anchors, reads);
-         }
-         Expr::Index { object, index } => {
-             if let (Expr::ClassRef(name), Expr::String(property)) =
-                 (object.as_ref(), index.as_ref())
-             {
-                 if name == class {
--                    found.push(property.clone());
-+                    reads.live.push(property.clone());
-                 }
-             }
-             visit_children(expression, &mut |child| {
--                class_properties(child, class, destination, found);
-+                class_properties(child, class, anchors, reads);
-             });
-         }
-         _ => visit_children(expression, &mut |child| {
--            class_properties(child, class, destination, found);
-+            class_properties(child, class, anchors, reads);
-         }),
-     }
- }
-@@ -229,28 +243,28 @@ fn member_properties(
-     object: &Expr,
-     property: &str,
-     class: &str,
--    destination: Option<&str>,
--    found: &mut Vec<String>,
-+    anchors: bool,
-+    reads: &mut ClassReads,
- ) {
-     if matches!(object, Expr::ClassRef(name) if name == class) {
--        found.push(property.to_string());
-+        reads.live.push(property.to_string());
-     } else {
--        class_properties(object, class, destination, found);
-+        class_properties(object, class, anchors, reads);
-     }
- }
- 
--fn c
+ export function failure(error) {
 ```
 
-**File**: `src/graph.rs` (modified, +100/-0)
+**File**: `arc/src/lib/openrouter.ts` (modified, +20/-2)
 ```diff
-@@ -180,6 +180,12 @@ impl GraphNode {
-             sequence,
-         }
-     }
+@@ -7,12 +7,13 @@ export async function generate({ messages = [] }) {
+     throw new Error("OPENROUTER_API_KEY is required");
+   }
+ 
+-  const { data } = await axios({
++  const { data, headers } = await axios({
+     method: "POST",
+     url: "https://openrouter.ai/api/v1/chat/completions",
+     headers: {
+       "Content-Type": "application/json",
+       Authorization: `Bearer ${apiKey}`,
++      "X-OpenRouter-Cache": "false",
+     },
+     data: {
+       model: "qwen/qwen3.8-27b",
+@@ -44,6 +45,13 @@ export async function generate({ messages = [] }) {
+     );
+   });
+ 
++  const cacheStatus: string = String(
++    headers["x-openrouter-cache-status"] ?? ""
++  );
++  if (cacheStatus.toUpperCase() === "HIT") {
++    throw new Error("OpenRouter returned a cached response");
++  }
 +
-+    /// Whether this node's statement reads `source` only at fixed history
-+    /// positions of its own class receiver, so that edge is a fixed anchor.
-+    pub(crate) fn anchors_on(&self, source: &NodeKey) -> bool {
-+        self.node.as_ref().is_some_and(|nuc| nuc.anchors_on(source))
-+    }
+   if (data.error) {
+     throw new Error(`OpenRouter error: ${data.error.message}`);
+   }
+@@ -53,9 +61,19 @@ export async function generate({ messages = [] }) {
+     throw new Error("OpenRouter returned no text content");
+   }
+ 
++  const cachedTokens: number = data.usage?.prompt_tokens_details?.cached_tokens;
++
+   if (data.usage) {
+     const { prompt_tokens, completion_tokens } = data.usage;
+-    milestone.usage({ prompt_tokens, completion_tokens });
++    milestone.usage({
++      prompt_tokens,
++      completion_tokens,
++      cached_tokens: cachedTokens,
++    });
++  }
++
++  if (cachedTokens !== 0) {
++    milestone.prompt_cache_alert({ cached_tokens: cachedTokens });
+   }
+ 
+   let jsonContent;
+```
+
+**File**: `arc/src/lib/terminal.ts` (modified, +10/-2)
+```diff
+@@ -462,13 +462,21 @@ export function puzzle({ train, testInput }) {
+   grid("Test input", testInput);
  }
  
- #[derive(Debug, Clone, Default)]
-@@ -367,11 +373,68 @@ impl Graph {
-         false
-     }
+-export function usage({ prompt_tokens, completion_tokens }) {
+-  const message: string = `↳ Model usage  ${prompt_tokens} input / ${completion_tokens} output tokens`;
++export function usage({ prompt_tokens, completion_tokens, cached_tokens }) {
++  const cached: string =
++    typeof cached_tokens === "number" ? ` (${cached_tokens} cached)` : "";
++  const message: string = `↳ Model usage  ${prompt_tokens} input${cached} / ${completion_tokens} output tokens`;
+   for (const line of wrap(message, width() - 2)) {
+     console.log(`    ${styleText("gray", line)}`);
+   }
+ }
  
-+    /// Whether a queued statement, this one included, is upstream of this one
-+    /// along a path that crosses an edge other than a fixed anchor. Statements
-+    /// that are upstream of each other only through fixed anchors, the only
-+    /// edges that may close a cycle, need not wait for each other. Each node
-+    /// is visited at most twice: before and after its path crosses such an
-+    /// edge.
-+    #[must_use]
-+    pub(crate) fn waits_beyond_anchors(
-+        &self,
-+        key: &NodeKey,
-+        candidates: &IndexSet<NodeKey>,
-+    ) -> bool {
-+        let mut seen = IndexSet::new();
-+        let mut pending = Vec::new();
++export function alert(message: string) {
++  for (const line of wrap(`⚠ ${message}`, width() - 2)) {
++    console.warn(`    ${styleText(["bold", "yellow"], line)}`);
++  }
++}
 +
-+        self.upstream_into(key, false, &mut pending);
-+
-+        while let Some((current, crossed)) = pending.pop() {
-+            if crossed && candidates.contains(current) {
-+                return true;
-+            }
-+
-+            if seen.insert((current, crossed)) {
-+                self.upstream_into(current, crossed, &mut pending);
-+            }
-+        }
-+
-+        false
-+    }
-+
-     fn dependencies_into<'a>(&'a self, key: &NodeKey, pending: &mut Vec<&'a NodeKey>) {
-         if let Some(node) = self.nodes.get(key) {
-             pending.extend(&node.dependencies);
-         }
- 
-+        self.shape_sources_into(key, pending);
-+    }
-+
-+    /// The upstream neighbours of `key`, each with whether the path to it has
-+    /// crossed an edge other than a fixed anchor. Structural observations are
-+    /// never fixed anchors.
-+    fn upstream_into<'a>(
-+        &'a self,
-+        key: &NodeKey,
-+        crossed: bool,
-+        pending: &mut Vec<(&'a NodeKey, bool)>,
-+    ) {
-+        if let Some(node) = self.nodes.get(key) {
-+            pending.extend(
-+                node.dependencies
-+                    .iter()
-+                    .map(|dependency| (dependency, crossed || !node.anchors_on(dependency))),
-+            );
-+        }
-+
-+        let mut sources = Vec::new();
-+        self.shape_sources_into(key, &mut sources);
-+        pending.extend(sources.into_iter().map(|source| (source, true)));
-+    }
-+
-+    /// The nodes whose structure `key` observes.
-+    fn shape_sources_into<'a>(&'a self, key: &NodeKey, pending: &mut Vec<&'a NodeKey>) {
-         for source in self.shape_dependencies(key) {
-             match source {
-                 ShapeKey::Node(node) => pending.push(node),
-@@ -388,6 +451,43 @@ impl Graph {
-         }
-     }
- 
-+    /// Whether `reader` reads `source` only at fixed history positions of its
-+    /// own class receiver.
-+    fn anchored(&self, source: &NodeKey, reader: &NodeKey) -> bool {
-+        self.nodes
-+            .get(reader)
-+            .is_some_and(|node| node.anchors_on(source))
-+    }
-+
-+    /// Whether `from` reaches `to` along dependent edges of which at least one
-+    /// is an ordinary read, so that a new fixed-anchor edge from `to` back to
-+    /// `from` would close a cycle through an ordinary read. Each node is
-+    /// visited at most twice: before and after its path crosses one.
-+    #[must_use]
-+    pub(crate) fn reaches_through_ordinary(&self, from: &NodeKey, to: &NodeKey) -> bool {
-+        let mut seen = IndexSet::new();
-+        let mut pending = vec![(from, false)];
-+
-+        while let Some((current, ordinary)) = pending.pop() {
-+            if ordinary && current == to {
-+                return true;
-+            }
-+
-+            if !seen.insert((current, ordinary)) {
-+                continue;
-+            }
-+
-+            if let Some(node) = self.nodes.get(current) {
-+                for dependent in &node.dependents {
-+                    let crossed = ordinary || !self.anchored(current, dependent);
-+                    pending.push((dependent, crossed));
-+                }
-+            }
-+        }
-+
-+        false
-+    }
-+
-     /// Whether `from` can reach `to` by following dependent edges, which is what
-     /// makes a new edge circular.
-     #[must_use]
+ export function summary(difference: number, duration: number) {
+   const seconds: number = duration / 1000;
+   const elapsed: string =
 ```
 
 #### Recent Merged Pull Requests:
@@ -1607,34 +1282,35 @@ Failed policy check (independent evaluation, Rejected):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 85 Fixed Cross-Property Class Anchors
+## X. Correct the solver commit in the ARC-NUC-c9e6f938 record
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/docs/ARC-NUC-c9e6f938.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3592d4bb`: NUC 85 Fixed Cross-Property Class Anchors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a0908ae`: Correct the solver commit in the ARC-NUC-c9e6f938 record. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/docs/ARC-NUC-c9e6f938.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- With [NUC 85](docs/nuc-0085.md), a class rule may also read another
-  property of its own receiver at a fixed position, so
-  `$Box.width = $Box.height@first` with `$Box.height = $Box.width@first`
-  swaps each box's first recorded values. Such a cycle stands only when every
-  read on it is fixed; a live or moving read still raises Circular
-  Dependency. Fixed reads stay tracked through deletion and recreation. See
-  **Fixed cross-property class anchors** in `nucleoid.spec.md`.
+started. That session committed it 19 seconds after the run ended, then
+rewrote its unpushed commits; the change is now `f45e54b`, "Disable
+OpenRouter caching and alert on cache use", whose three solver files hold
+the same contents the run used. The files were last written 23 seconds
+before the run started. The change sends `X-OpenRouter-Cache: false`, fails a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+started. That session committed it as `0fd695d`, "Disable and report
+OpenRouter prompt caching", 19 seconds after the run ended, with the same
+file contents the run used; the files were last written 23 seconds before
+the run started. The change sends `X-OpenRouter-Cache: false`, fails a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3592d4bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a0908ae` are properly handled with clean fallback behavior.

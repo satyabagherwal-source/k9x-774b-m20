@@ -7860,3 +7860,9 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `a55ed393` | Multi-dimensional audit evidence | 2026-11-06T13:20:25.362Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `5974def3` | Multi-dimensional audit evidence | 2026-11-06T13:20:26.601Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `b95e2408` | Multi-dimensional audit evidence | 2026-11-06T13:20:30.602Z |
+| `learn-github-milind-soni-openmausbot` | `https://github.com/milind-soni/OpenMausBot` | `fb31cb7d` | Multi-dimensional audit evidence | 2026-11-06T13:27:09.060Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `d428762a` | Multi-dimensional audit evidence | 2026-11-06T13:27:17.385Z |
+| `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-06T13:27:19.277Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `119488a5` | Multi-dimensional audit evidence | 2026-11-06T13:27:20.228Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0d7f9b32` | Multi-dimensional audit evidence | 2026-11-06T13:27:23.523Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7a0908ae` | Multi-dimensional audit evidence | 2026-11-06T13:27:26.659Z |

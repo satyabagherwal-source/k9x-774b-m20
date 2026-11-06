@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "3592d4bb",
+    "sourceVersion": "7a0908ae",
     "license": "Apache-2.0",
-    "contentHash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
-    "lastHarvestedAt": "2026-11-05T23:55:41.533Z",
+    "contentHash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
+    "lastHarvestedAt": "2026-11-06T13:27:26.659Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "12890d87",
+    "sourceVersion": "0d7f9b32",
     "license": "NOASSERTION",
-    "contentHash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
-    "lastHarvestedAt": "2026-11-04T17:59:34.038Z",
+    "contentHash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
+    "lastHarvestedAt": "2026-11-06T13:27:23.523Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "a723f1e0",
+    "sourceVersion": "119488a5",
     "license": "Apache-2.0",
-    "contentHash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
-    "lastHarvestedAt": "2026-11-05T08:50:19.505Z",
+    "contentHash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
+    "lastHarvestedAt": "2026-11-06T13:27:20.228Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "a7663045",
+    "sourceVersion": "d428762a",
     "license": "NOASSERTION",
-    "contentHash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
-    "lastHarvestedAt": "2026-11-04T00:17:25.246Z",
+    "contentHash": "d5fdb0753493749dc5530130258c0c9d1ff012395ca29a34ddad60b9268bafa2",
+    "lastHarvestedAt": "2026-11-06T13:27:17.385Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
@@ -12038,5 +12038,25 @@
     "contentHash": "b4c2fc4b9fb77f079f8dad115145b927a7fea35fe5aff1ba5a6ae8f0d9be009e",
     "lastHarvestedAt": "2026-11-05T22:47:51.223Z",
     "learningId": "learn-github-a2ui-project-a2ui"
+  },
+  "milind-soni-openmausbot": {
+    "repository": "milind-soni/OpenMausBot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/milind-soni/OpenMausBot",
+    "sourceVersion": "fb31cb7d",
+    "license": "Apache-2.0",
+    "contentHash": "994a090d2ccc6ccf0747efa746cb2c083890fe9d8622794100ab46c0b85e4981",
+    "lastHarvestedAt": "2026-11-06T13:27:09.060Z",
+    "learningId": "learn-github-milind-soni-openmausbot"
+  },
+  "hf-microsoft-florence-2-base": {
+    "repository": "microsoft/Florence-2-base",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
+    "sourceVersion": "hf-microsoft-florence-2-base",
+    "license": "Open-Source",
+    "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+    "lastHarvestedAt": "2026-11-06T13:27:19.277Z",
+    "learningId": "learn-huggingface-microsoft-florence-2-base"
   }
 }

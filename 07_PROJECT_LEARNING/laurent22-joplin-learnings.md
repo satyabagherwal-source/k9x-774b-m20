@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `a7663045`  
+> **Source Version**: `d428762a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:17:24.766Z  
+> **Timestamp**: 2026-11-06T13:27:16.200Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:17:23.311Z  
+> **Harvest Timestamp**: 2026-11-06T13:27:16.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57010 stars
+- **Stars / Engagement**: 57062 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16998** (2026-11-03): **Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum**
-  *Symptoms*: # Summary  Fixes a fatal startup crash in the desktop application caused by `CallbackUrlCommand` being erased at compile time.  # Problem  When starting the desktop application on the latest `dev` branch (`cd packages/app-desktop && yarn start`), the app crashes on startup with the following fatal error:  ```text An error occurred: Fatal error: Cannot read properties of undefined (reading 'OpenNote')  TypeError: Cannot read properties of undefined (reading 'OpenNote')     at packages/app-desktop/gui/MainScreen/handleCallbackUrl.ts:101:21     at init_handleCallbackUrl (packages/app-desktop/main-html.bundle.js:1:524)     at packages/app-desktop/gui/MainScreen.tsx:27:1 ```  ### Root Cause In `packages/lib/callbackUrlUtils.ts`, `CallbackUrlCommand` was declared using `export const enum`: ```typescript export const enum CallbackUrlCommand { ... } ``` Because of `const enum`, TypeScript strips the enum object completely when emitting JavaScript (`packages/lib/callbackUrlUtils.js`). Since `packages/app-desktop/tools/bundleJs.ts` configures esbuild to resolve `@joplin/lib` imports from pre-compiled `.js` files via `joplin--prefer-js-imports`, `CallbackUrlCommand` was `undefined` at runtime.   Accessing `CallbackUrlCommand.OpenNote` at top-level on startup in `handleCallbackUrl.ts:101` immediately threw a fatal `TypeError`.  # Solution  Changed `export const enum CallbackUrlCommand` to standard `export enum CallbackUrlCommand` in `packages/lib/callbackUrlUtils.ts` (matching other enum
+- **Issue #17029** (2026-11-05): **All: Translation: Update eo.po**
+  *Symptoms*:  Small follow-up review of the Esperanto translation (29 strings changed, nothing else touched).  - Fixed wrong meanings: "Dropbox Login" / "OneDrive Login" were translated as "username" (-salutnomo); now "Ensaluto al …" - Consistency: on/off settings now all use ŝalti/malŝalti (some used ebligi); "Restore" now uses restaŭri (restarigi is already used for "Reset"); Malvalida → Nevalida to match the rest of the file; "Label" was "Etikedo" (same as "tag"), now "Surskribo" - Grammar: "molajn linisaltojn", "Eliras el la aplikaĵo", "Ŝanĝi al nota/taska tipo", and added the missing "Ĉu" to two yes/no questions  All placeholders unchanged and verified. <!--  Before contributing, please read the contribution guidelines: https://github.com/laurent22/joplin/blob/dev/readme/dev/index.md  If this is a Google Summer of Code pull request, please read the [GSoC pull request guidelines](https://github.com/joplin/gsoc/blob/master/pull_request_guidelines.md).  ---  **Pull request title**: Please prefix the title with the area you are targeting, then add the issue you are addressing.  The format is:      <Prefix>: <Fixes|Resolves> #<issue>: <description>  Use "Resolves #123" for new features or improvements, and "Fixes #123" for bug fixes.  Examples of good titles:  - Desktop: Resolves #123: Added new setting to change font - Mobile, Desktop: Fixes #456: Fixed config screen error - Mobile, Desktop, Cli: Resolves #777: Improved note search performance  Valid prefixes:  - `Desktop` — the Windows/
 
-- **Issue #16977** (2026-10-30): **Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor**
-  *Symptoms*: # Summary Fixes #16976: In the Markdown editor (CodeMirror 6), spellcheck underlines for misspelled words did not appear upon opening or switching to a note until a space character was typed. While editing, actions such as backspacing or modifying words destroyed existing spelling markers and caused all squiggly underlines to disappear without re-appearing until a space was typed.  ### Root Cause Chromium/Electron's Blink layout engine only schedules spellcheck passes when native keyboard input events contain word delimiters (e.g. spaces, punctuation, enter). In CodeMirror 6, document text is injected programmatically upon note switching, and editing actions like backspacing are intercepted by CodeMirror (`preventDefault()`) which mutates and replaces DOM text nodes. When text nodes are replaced without a native word-boundary input event, Chromium destroys previous spelling markers and skips running its spellcheck pipeline. Consequently, red squiggly underlines never appear on note switch or disappear entirely on backspace until a space character is typed.  ### Solution 1. **`spellCheckRefreshExtension`**:    - Implemented a lightweight `ViewPlugin` registered in the CodeMirror 6 extensions pipeline.    - Schedules a 100ms quick refresh on initial editor creation, note switch (`setNoteIdEffect`), or editor focus gain (`focusChanged && hasFocus`).    - Schedules a 500ms debounced refresh on document edits (`docChanged`). If the user continues typing, the timer resets, ensuring
+- **Issue #17015** (2026-11-04): **Desktop, Mobile: Fixes #16989: Do not schedule alarms for to-dos in the trash**
+  *Symptoms*: ## Problem Trashing a to-do only sets `deleted_time`, but `Note.needAlarm()` and `Note.dueNotes()` didn't check it. On the device where it's trashed, `NOTE_DELETE` clears the alarm. But when the trashed note syncs to another device, it's saved with its to-do fields, `EVENT_NOTE_ALARM_FIELD_CHANGE` fires, and `needAlarm()` still returned true, so the alarm stayed.  ## Solution This adds a `deleted_time` check to both. `dueNotes()` is what `updateAllNotifications()` uses after sync and on startup, so trashed to-dos are no longer rescheduled there either. Restoring from trash re-saves the note with its to-do fields, so the alarm is scheduled again.  ## Test Plan - New test in `Note.test.ts`: `needAlarm()` and `dueNotes()` before trashing, after trashing, and after restoring. It fails without the fix. - `models/Note`, `services/trash` and `services/synchronizer/Synchronizer.basics` tests pass. - Not tested on a device; covered by the unit test above.  Not included: alarms already scheduled for to-dos trashed before this fix aren't cleared, since `garbageCollect()` only removes alarms for notes that no longer exist. I can extend it to also clear alarms for trashed notes if you'd like.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,8 +951,240 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be60c3a2` (2026-11-02)
+### Incident Patch 1: `97ed78d4` (2026-11-01)
+**Commit Message**: Renderer: Security: Always serialise attribute values and drop invalid attribute names when sanitising HTML
+
+(cherry picked from commit ee9ee1080331575e6e420d2b5a17eaa0040f74d2)
+
+**File**: `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html` (modified, +2/-2)
+```diff
+@@ -1,9 +1,9 @@
+-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
++<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
+ &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+ &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
+ &Tab;&Tab;&lt;/svg&gt;
+ &Tab;"/></span>
+-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
++<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
+ &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+ &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
+ &Tab;&Tab;&lt;/svg&gt;
+```
+
+**File**: `packages/app-cli/tests/md_to_html/sanitize.html` (modified, +2/-2)
+```diff
+@@ -1,2 +1,2 @@
+-<img src class="jop-noMdConv"/>
+-<img src class="jop-noMdConv"/>
+\ No newline at end of file
++<img src="" class="jop-noMdConv"/>
++<img src="" class="jop-noMdConv"/>
+\ No newline at end of file
+```
+
+**File**: `packages/app-cli/tests/md_to_html/sanitize_25.html` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<div class="jop-noMdConv"><img src="x" a="" class="jop-noMdConv"/></div>
+```
+
+**File**: `packages/app-cli/tests/md_to_html/sanitize_25.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<div><img src="x" a="" =b="x onerror=alert(1) c"></div>
+```
+
+**File**: `packages/renderer/htmlUtils.test.ts` (modified, +8/-0)
+```diff
+@@ -29,6 +29,14 @@ describe('htmlUtils', () => {
+ 		}
+ 	});
+ 
++	it.each([
++		'<img src="x" a="" =b="x onerror=alert(1) c">',
++		'<img src="x" a =b="x onerror=alert(1) c">',
++		'<div><img src="x" a="" =b="x onerror=alert(1) c"></div>',
++	])('should not let an invalid attribute name bring in an event handler: %s', (html) => {
++		expect(htmlUtils.sanitizeHtml(html)).not.toContain('onerror');
++	});
++
+ 	test('should extract the HTML body', () => {
+ 		const testCases: [string, string][] = [
+ 			[
+```
+
+**File**: `packages/renderer/htmlUtils.ts` (modified, +7/-5)
+```diff
+@@ -35,17 +35,19 @@ interface SanitizeHtmlOptions {
+ 	allowedFilePrefixes?: string[];
+ }
+ 
++// htmlparser2 accepts attribute names that browsers parse differently, such as one starting with "=". Together with a
++// value-less attribute before it (`a =b="x onerror=..."`), the browser would see an attribute the sanitiser never did.
++const validAttributeName = /^[a-zA-Z_:][-a-zA-Z0-9_:.]*$/;
++
+ export const attributesHtml = (attr: Record<string, string>) => {
+ 	const output = [];
+ 
+ 	for (const n in attr) {
+ 		if (!attr.hasOwnProperty(n)) continue;
++		if (!validAttributeName.test(n)) continue;
+ 
+-		if (!attr[n]) {
+-			output.push(n);
+-		} else {
+-			output.push(`${n}="${htmlentities(attr[n])}"`);
+-		}
++		// Always with a value, even an empty one, so that nothing that follows can be read as this attribute's value
++		output.push(`${n}="${htmlentities(attr[n] || '')}"`);
+ 	}
+ 
+ 	return output.join(' ');
+```
+
+---
+
+### Incident Patch 2: `54d4c351` (2026-11-05)
+**Commit Message**: Merge branch 'server-security-fixes' into dev
+
+**File**: `.gitignore` (modified, +2/-0)
+```diff
+@@ -2080,6 +2080,8 @@ packages/lib/utils/joplinCloud/types.js
+ packages/lib/utils/markupLanguageUtils.js
+ packages/lib/utils/prefixWithHttps.js
+ packages/lib/utils/processStartFlags.js
++packages/lib/utils/publicNetworkOnly.test.js
++packages/lib/utils/publicNetworkOnly.js
+ packages/lib/utils/replaceUnsupportedCharacters.test.js
+ packages/lib/utils/replaceUnsupportedCharacters.js
+ packages/lib/utils/resolvePathWithinDir.test.js
+```
+
+**File**: `.ignore.eslint` (modified, +2/-0)
+```diff
+@@ -2106,6 +2106,8 @@ packages/lib/utils/joplinCloud/types.js
+ packages/lib/utils/markupLanguageUtils.js
+ packages/lib/utils/prefixWithHttps.js
+ packages/lib/utils/processStartFlags.js
++packages/lib/utils/publicNetworkOnly.test.js
++packages/lib/utils/publicNetworkOnly.js
+ packages/lib/utils/replaceUnsupportedCharacters.test.js
+ packages/lib/utils/replaceUnsupportedCharacters.js
+ packages/lib/utils/resolvePathWithinDir.test.js
+```
+
+**File**: `.yarn/patches/html-minifier-npm-4.0.0-2c414aaddf.patch` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++diff --git a/src/htmlminifier.js b/src/htmlminifier.js
++index d7efa99148a2123dfd02fc0aa095763df35fa2ff..1ee8f1576cd5a3aa9d611a6f763b3fdca47e989c 100644
++--- a/src/htmlminifier.js
+++++ b/src/htmlminifier.js
++@@ -1305,23 +1305,22 @@ function joinResultSegments(results, options, restoreCustom, restoreIgnore) {
++   var maxLineLength = options.maxLineLength;
++   if (maxLineLength) {
++     var line = '', lines = [];
++-    while (results.length) {
++-      var len = line.length;
++-      var end = results[0].indexOf('\n');
++-      if (end < 0) {
++-        line += restoreIgnore(restoreCustom(results.shift()));
++-      }
++-      else {
++-        line += restoreIgnore(restoreCustom(results[0].slice(0, end)));
++-        results[0] = results[0].slice(end + 1);
++-      }
++-      if (len > 0 && line.length > maxLineLength) {
++-        lines.push(line.slice(0, len));
++-        line = line.slice(len);
++-      }
++-      else if (end >= 0) {
++-        lines.push(line);
++-        line = '';
+++    // Joplin: the original shift()s the results and re-slices the current one at each newline, which is quadratic in
+++    // the output size. Same logic, walking each result's newline-separated parts by index instead.
+++    for (var resultIndex = 0; resultIndex < results.length; resultIndex++) {
+++      var parts = results[resultIndex].split('\n');
+++      for (var partIndex = 0; partIndex < parts.length; partIndex++) {
+++        var len = line.length;
+++        var endsWithNewline = partIndex < parts.length - 1;
+++        line += restoreIgnore(restoreCustom(parts[partIndex]));
+++        if (len > 0 && line.length > maxLineLength) {
+++          lines.push(line.slice(0, len));
+++          line = line.slice(len);
+++        }
+++        else if (endsWithNewline) {
+++          lines.push(line);
+++          line = '';
+++        }
++       }
++     }
++     if (line) {
+```
+
+**File**: `package.json` (modified, +1/-0)
+```diff
+@@ -145,6 +145,7 @@
+     "depd@npm:^1.1.0": "patch:depd@npm%3A2.0.0#~/.yarn/patches/depd-npm-2.0.0-b6c51a4b43.patch",
+     "formidable@npm:^2.0.1": "patch:formidable@npm%3A2.1.2#~/.yarn/patches/formidable-npm-2.1.2-40ba18d67f.patch",
+     "formidable@npm:2.1.2": "patch:formidable@npm%3A2.1.2#~/.yarn/patches/formidable-npm-2.1.2-40ba18d67f.patch",
++    "html-minifier@npm:4.0.0": "patch:html-minifier@npm%3A4.0.0#~/.yarn/patches/html-minifier-npm-4.0.0-2c414aaddf.patch",
+     "@react-native-vector-icons/fontawesome5@npm:12.3.0": "patch:@react-native-vector-icons/fontawesome5@npm%3A12.3.0#~/.yarn/patches/@react-native-vector-icons-fontawesome5-npm-12.3.0-a1ca46610f.patch",
+     "@react-native-vector-icons/ionicons@npm:12.3.0": "patch:@react-native-vector-icons/ionicons@npm%3A12.3.0#~/.yarn/patches/@react-native-vector-icons-ionicons-npm-12.3.0-9bd4746f3f.patch",
+     "@react-native-vector-icons/material-design-icons@npm:12.4.0": "patch:@react-native-vector-icons/material-design-icons@npm%3A12.4.0#~/.yarn/patches/@react-native-vector-icons-material-design-icons-npm-12.4.0-890f7f618b.patch",
+```
+
+**File**: `packages/app-cli/tests/html_to_html/sanitize.dest.html` (modified, +2/-2)
+```diff
+@@ -1,2 +1,2 @@
+-<img src/>
+-<img src/>
+\ No newline at end of file
++<img src=""/>
++<img src=""/>
+\ No newline at end of file
+```
+
+**File**: `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html` (modified, +2/-2)
+```diff
+@@ -1,9 +1,9 @@
+-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
++<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
+ &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+ &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
+ &Tab;&Tab;&lt;/svg&gt;
+ &Tab;"/></span>
+-<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
++<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
+ &Tab;&Tab;&lt;svg width=&quot;1700&quot; height=&quot;1536&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+ &Tab;&Tab;    &lt;path d=&quot;M1280 1344c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm256 0c0-35-29-64-64-64s-64 29-64 64 29 64 64 64 64-29 64-64zm128-224v320c0 53-43 96-96 96H96c-53 0-96-43-96-96v-320c0-53 43-96 96-96h465l135 136c37 36 85 56 136 56s99-20 136-56l136-136h464c53 0 96 43 96 96zm-325-569c10 24 5 52-14 70l-448 448c-12 13-29 19-45 19s-33-6-45-19L339 621c-19-18-24-46-14-70 10-23 33-39 59-39h256V64c0-35 29-64 64-64h256c35 0 64 29 64 64v448h256c26 0 49 16 59 39z&quot;/&gt;
+ &Tab;&Tab;&lt;/svg&gt;
+```
+
+**File**: `packages/app-cli/tests/md_to_html/sanitize.html` (modified, +2/-2)
+```diff
+@@ -1,2 +1,2 @@
+-<img src class="jop-noMdConv"/>
+-<img src class="jop-noMdConv"/>
+\ No newline at end of file
++<img src="" class="jop-noMdConv"/>
++<img src="" class="jop-noMdConv"/>
+\ No newline at end of file
+```
+
+**File**: `packages/app-cli/tests/md_to_html/sanitize_25.html` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<div class="jop-noMdConv"><img src="x" a="" class="jop-noMdConv"/></div>
+```
+
+---
+
+### Incident Patch 3: `e5ed69ad` (2026-11-02)
 **Commit Message**: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag
+
+(cherry picked from commit be60c3a2fd2d961a1f3d7c6b58adc3749e407add)
 
 **File**: `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex` (modified, +2/-0)
 ```diff
@@ -999,339 +1231,13 @@ Observed empirical fixes and code patches:
  });
 ```
 
----
-
-### Incident Patch 2: `8beabc12` (2026-11-03)
-**Commit Message**: chore(deps): update dependency css-loader to v7 (#16996)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/pdf-viewer/package.json` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@
-     "@types/react-dom": "19.1.7",
-     "@types/styled-components": "5.1.32",
-     "babel-jest": "29.7.0",
--    "css-loader": "6.11.0",
-+    "css-loader": "7.1.4",
-     "jest": "29.7.0",
-     "jest-environment-jsdom": "29.7.0",
-     "style-loader": "3.3.4",
-```
-
-**File**: `yarn.lock` (modified, +44/-2)
-```diff
-@@ -13025,7 +13025,7 @@ __metadata:
-     "@types/styled-components": "npm:5.1.32"
-     async-mutex: "npm:0.5.0"
-     babel-jest: "npm:29.7.0"
--    css-loader: "npm:6.11.0"
-+    css-loader: "npm:7.1.4"
-     jest: "npm:29.7.0"
-     jest-environment-jsdom: "npm:29.7.0"
-     pdfjs-dist: "npm:2.16.105"
-@@ -27206,7 +27206,31 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"css-loader@npm:6.11.0, css-loader@npm:^6.11.0":
-+"css-loader@npm:7.1.4":
-+  version: 7.1.4
-+  resolution: "css-loader@npm:7.1.4"
-+  dependencies:
-+    icss-utils: "npm:^5.1.0"
-+    postcss: "npm:^8.4.40"
-+    postcss-modules-extract-imports: "npm:^3.1.0"
-+    postcss-modules-local-by-default: "npm:^4.0.5"
-+    postcss-modules-scope: "npm:^3.2.0"
-+    postcss-modules-values: "npm:^4.0.0"
-+    postcss-value-parser: "npm:^4.2.0"
-+    semver: "npm:^7.6.3"
-+  peerDependencies:
-+    "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
-+    webpack: ^5.27.0
-+  peerDependenciesMeta:
-+    "@rspack/core":
-+      optional: true
-+    webpack:
-+      optional: true
-+  checksum: 10/4a37f3bd5db6d7d13a71f6ffff6d7afc3b243d4e2105c98dd1df9c1ae719cf95c3b46c47aeb6c5fd3675caf60bdb144e9baeba979a432df0906613e8f07b7623
-+  languageName: node
-+  linkType: hard
-+
-+"css-loader@npm:^6.11.0":
-   version: 6.11.0
-   resolution: "css-loader@npm:6.11.0"
-   dependencies:
-@@ -48882,6 +48906,17 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"postcss@npm:^8.4.40":
-+  version: 8.5.32
-+  resolution: "postcss@npm:8.5.32"
-+  dependencies:
-+    nanoid: "npm:^3.3.20"
-+    picocolors: "npm:^1.1.1"
-+    source-map-js: "npm:^1.2.2"
-+  checksum: 10/c86fd279d9f29d34bbec6482e01f54effe00eaf8f4dadbe17f8345d11eac68439da45d642b04bfb5d704886f665d2c31f9a0904f2a3f1b9f8098ee0894f76cea
-+  languageName: node
-+  linkType: hard
-+
- "postcss@npm:^8.5.1, postcss@npm:^8.5.6":
-   version: 8.5.6
-   resolution: "postcss@npm:8.5.6"
-@@ -54595,6 +54630,13 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"source-map-js@npm:^1.2.2":
-+  version: 1.2.2
-+  resolution: "source-map-js@npm:1.2.2"
-+  checksum: 10/4807c894bb6280c8b84886159b96080e3996f42c6e8015e647881edfd4f955f6024ceebb8bb40d33ce8b106e24b2e29c133575e1c60c01c8aae57a05fdf17761
-+  languageName: node
-+  linkType: hard
-+
- "source-map-loader@npm:5.0.0":
-   version: 5.0.0
-   resolution: "source-map-loader@npm:5.0.0"
-```
-
----
-
-### Incident Patch 3: `f95f3012` (2026-11-02)
-**Commit Message**: All: Keep all the CSS of clipped pages, and compact it in linear time
-
-**File**: `.gitignore` (modified, +2/-0)
-```diff
-@@ -2056,6 +2056,8 @@ packages/lib/urlUtils.js
- packages/lib/utils/ActionLogger.test.js
- packages/lib/utils/ActionLogger.js
- packages/lib/utils/attachedResources.js
-+packages/lib/utils/compactCss.test.js
-+packages/lib/utils/compactCss.js
- packages/lib/utils/credentialFiles.js
- packages/lib/utils/dom/makeSandboxedIframe.js
- packages/lib/utils/focusHandler.js
-```
-
-**File**: `.ignore.eslint` (modified, +2/-0)
-```diff
-@@ -2082,6 +2082,8 @@ packages/lib/urlUtils.js
- packages/lib/utils/ActionLogger.test.js
- packages/lib/utils/ActionLogger.js
- packages/lib/utils/attachedResources.js
-+packages/lib/utils/compactCss.test.js
-+packages/lib/utils/compactCss.js
- packages/lib/utils/credentialFiles.js
- packages/lib/utils/dom/makeSandboxedIframe.js
- packages/lib/utils/focusHandler.js
-```
-
-**File**: `packages/app-mobile/web/webpack.config.ts` (modified, +0/-1)
-```diff
-@@ -74,7 +74,6 @@ const buildSharedConfig = (hotReload: boolean): webpack.Configuration => {
- 				'react-native-fingerprint-scanner': emptyLibraryMock,
- 				'@joplin/react-native-saf-x': emptyLibraryMock,
- 				'react-native-quick-actions': emptyLibraryMock,
--				'uglifycss': emptyLibraryMock,
- 				'react-native-share': emptyLibraryMock,
- 				'react-native-camera': emptyLibraryMock,
- 				'react-native-zip-archive': emptyLibraryMock,
-```
-
-**File**: `packages/lib/package.json` (modified, +0/-1)
-```diff
-@@ -103,7 +103,6 @@
-     "string-to-stream": "3.0.1",
-     "tar": "7.5.22",
-     "tcp-port-used": "1.0.3",
--    "uglifycss": "0.0.29",
-     "undici": "8.10.0",
-     "url-parse": "1.5.10",
-     "uuid": "11.1.1",
-```
-
-**File**: `packages/lib/services/rest/routes/notes.ts` (modified, +8/-8)
-```diff
-@@ -34,6 +34,7 @@ import { NoteEntity, ResourceEntity } from '../../database/types';
- import { DownloadController } from '../../../downloadController';
- import { FetchBlobOptions } from '../../../types';
- import RevisionService from '../../RevisionService';
-+import compactCss from '../../../utils/compactCss';
- 
- const logger = Logger.create('routes/notes');
- 
-@@ -122,16 +123,15 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
- 				// Need to remove all whitespaces because whitespace at a beginning of a line
- 				// means a code block in Markdown.
- 				collapseWhitespace: true,
--				minifyCSS: true,
-+				// Also for the CSS, but without the minifier's own, which drops CSS it does not know about and is slow on
-+				// some inputs
-+				minifyCSS: compactCss,
- 				maxLineLength: 300,
-+				// Only needed for templates such as PHP, and looking for them is slow on some inputs
-+				ignoreCustomFragments: [] as RegExp[],
- 			};
- 
--			const uglifycss = require('uglifycss');
--			const styleString = uglifycss.processString(style.join('\n'), {
--				// Need to set a max length because Ace Editor takes forever
--				// to display notes with long lines.
--				maxLineLen: 200,
--			});
-+			const styleString = compactCss(style.join('\n'));
- 
- 			const styleTag = style.length ? `<style>${styleString}</style>` + '\n' : '';
- 			let minifiedHtml = '';
-@@ -145,7 +145,7 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
- 				minifiedHtml = requestNote.body_html;
- 			}
- 			output.body = styleTag + minifiedHtml;
--			output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
-+			if (baseUrl) output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
- 			output.markup_language = MarkupToHtml.MARKUP_LANGUAGE_HTML;
- 		} else {
- 			// Convert to Markdown
-```
-
-**File**: `packages/lib/utils/compactCss.test.ts` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+import compactCss from './compactCss';
-+
-+describe('compactCss', () => {
-+
-+	test.each([
-+		['  .a  >  b {\n    color : red ;\n    margin: 0 auto;\n  }\n', '.a > b{color : red;margin: 0 auto;}'],
-+		['a :hover { color: red; }', 'a :hover{color: red;}'],
-+		['/* comment */ a { /* inner */ color: red; }', 'a{color: red;}'],
-+		['a::before { content: "  two  /* not a comment */  spaces  "; }', 'a::before{content: "  two  /* not a comment */  spaces  ";}'],
-+		['a::before { content: \'it\\\'s  fine\'; }', 'a::before{content: \'it\\\'s  fine\';}'],
-+		['@layer base { a { color: red; } }\n.after { color: green; }', '@layer base{a{color: red;}\n}\n.after{color: green;}'],
-+		['@container (min-width: 400px) { .c { display: grid; } }', '@container (min-width: 400px){.c{display: grid;}\n}'],
-+		['.a { color: red; &:hover { color: blue; } }', '.a{color: red;&:hover{color: blue;}\n}'],
-+		['* { --tw-ring-inset: ; --x: 1px; }', '*{--tw-ring-inset: ;--x: 1px;}'],
-+		['a { background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat; }', 'a{background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat;}'],
-+		['color:   red ;   margin:0', 'color: red;margin:0'],
-+		['screen   and  (max-width: 600px)', 'screen and (max-width: 600px)'],
-+		['a { content: "unterminated\n  b { color: red; }', 'a{content: "unterminated\nb{color: red;}'],
-+		['', ''],
-+	])('should compact %j', (css, expected) => {
-+		expect(compactCss(css)).toBe(expected);
-+	});
-+
-+	test('should not indent any line, and end a line after each rule', () => {
-+		const css = Array.from({ length: 50 }, (_, i) => `\t\t.c${i} {\n\t\t\tcolor: red;\n\t\t}`).join('\n\n');
-+		const lines = compactCss(css).split('\n');
-+		expect(lines.length).toBe(50);
-+		expect(lines.filter(line => /^\s/.test(line))).toEqual([]);
-+	});
-+
-+	test.each([
-+		['strings', '"" '.repeat(500_000)],
-+		['opening braces', '{'.repeat(1_000_000)],
-+		['comments', '/*'.repeat(500_000)],
-+		['whitespace', ' '.repeat(1_000_000)],
-+	])('should compact many %s quickly', (_case, css) => {
-+		const startTime = Date.now();
-+		compactCss(css);
-+		expect(Date.now() - startTime).toBeLessThan(1000);
-+	});
-+});
-```
-
-**File**: `packages/lib/utils/compactCss.ts` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+// Makes the CSS of a clipped page or an email fit in a note: comments are removed, and every run of whitespace outside
-+// strings becomes a single space, so that no line is indented, which could make it render as a code block. Each
-+// closing brace ends a line, so that lines stay short enough for editors. Nothing else is changed, so unlike a
-+// minifier, it keeps any CSS it does not know about, such as newer at-rules or nesting, and it takes linear time.
-+const compactCss = (css: string) => {
-+	const output: string[] = [];
-+	let lastChar = '';
-+	let pendingSpace = false;
-+	let i = 0;
-+
-+	const append = (text: string) => {
-+		if (pendingSpace && lastChar && !'\n{};'.includes(lastChar)) output.push(' ');
-+		pendingSpace = false;
-+		output.push(text);
-+		lastChar = text[text.length - 1];
-+	};
-+
-+	while (i < css.length) {
-+		const c = css[i];
-+
-+		if (c === '/' && css[i + 1] === '*') {
-+			const end = css.indexOf('*/', i + 2);
-+			i = end === -1 ? css.length : end + 2;
-+			pendingSpace = true;
-+		} else if (c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f') {
-+			pendingSpace = true;
-+			i++;
-+		} else if (c === '"' || c === '\'') {
-+			// A string ends at its closing quote, or at an unescaped line break, as in a browser
-+			let end = i + 1;
-+			while (end < css.length && css[end] !== c && css[end] !== '\n') {
-+				end += css[end] === '\\' ? 2 : 1;
-+			}
-+			append(css.substring(i, Math.min(end + 1, css.length)));
-+			i = end + 1;
-+		} else if (c === '{' || c === '}' || c === ';') {
-+			// Except in an empty custom property, which older browsers only accept with a space
-+			if (lastChar !== ':') pendingSpace = false;
-+			append(c === '}' ? '}\n' : c);
-+			i++;
-+		} else {
-+			append(c);
-+			i++;
-+		}
-+	}
-+
-+	return output.join('').trim();
-+};
-+
-+export default compactCss;
-```
-
-**File**: `yarn.lock` (modified, +0/-10)
-```diff
-@@ -12993,7 +12993,6 @@ __metadata:
-     tcp-port-used: "npm:1.0.3"
-     tesseract.js: "npm:7.0.0"
-     typescript: "npm:5.9.3"
--    uglifycss: "npm:0.0.29"
-     undici: "npm:8.10.0"
-     url-parse: "npm:1.5.10"
-     uuid: "npm:11.1.1"
-@@ -58338,15 +58337,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"uglifycss@npm:0.0.29":
--  version: 0.0.29
--  resolution: "uglifycss@npm:0.0.29"
--  bin:
--    uglifycss: ./uglifycss
--  checksum: 10/6304fc0f36c3b656d3b87265b6738daf0663aceb4d614fa0c8214ec77ca333f4ab3dc540399531a1bcb5d5fe606c84ca33dc738e0bf74c46c0e086451ea8678d
--  languageName: node
--  linkType: hard
--
- "uid-number@npm:0.0.6":
-   version: 0.0.6
-   resolution: "uid-number@npm:0.0.6"
-```
-
 #### Recent Merged Pull Requests:
-- **PR #17002** (2026-11-03): chore(deps): update dependency style-loader to v4 (@renovate[bot])
-- **PR #17000** (2026-11-03): chore(deps): update dependency react-tooltip to v5 (@renovate[bot])
-- **PR #16999** (2026-11-03): All: Translation: Update ja_JP.po (@akiratamcat)
-- **PR #16998** (closed): Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum (@saqibmanzoor-dev)
-- **PR #16997** (2026-11-03): chore(deps): update dependency gulp to v5 (@renovate[bot])
-- **PR #16996** (2026-11-03): chore(deps): update dependency css-loader to v7 (@renovate[bot])
+- **PR #17045** (closed): fix(deps): update dependency redux to v5 (@renovate[bot])
+- **PR #17044** (closed): fix(deps): update dependency react-redux to v9 (@renovate[bot])
+- **PR #17043** (closed): fix(deps): update dependency react-native-url-polyfill to v3 (@renovate[bot])
+- **PR #17042** (closed): fix(deps): update dependency re-reselect to v5 (@renovate[bot])
+- **PR #17041** (closed): fix(deps): update dependency node-persist to v4 (@renovate[bot])
+- **PR #17040** (closed): fix(deps): update dependency markdown-it-sub to v2 (@renovate[bot])
 
 ---
 
@@ -1351,29 +1257,30 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo
+## X. Renderer: Security: Always serialise attribute values and drop invalid attribute
 
 **RULE**:
-When implementing operations in `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be60c3a2`: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97ed78d4`: Renderer: Security: Always serialise attribute values and drop invalid attribute names when sanitising HTML. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/md_to_html/resource_nonexistent_image.html`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
-      <application-data key="evernote.captionSource">AI</application-data>
+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt="" data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title="" contenteditable="false"><img src="data:image/svg+xml;utf8,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22345" data-original-alt data-original-title="test" contenteditable="false"><img src="data:image/svg+xml;utf8,
+<span class="not-loaded-resource not-loaded-image-resource resource-status-notDownloaded" data-resource-id="a1test2a1test2a1test2a1test22346" data-original-alt="test" data-original-title contenteditable="false"><img src="data:image/svg+xml;utf8,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be60c3a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97ed78d4` are properly handled with clean fallback behavior.

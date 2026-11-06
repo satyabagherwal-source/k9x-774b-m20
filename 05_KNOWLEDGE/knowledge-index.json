@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:20:30.507Z",
-  "total_verified_learnings": 1222,
+  "last_updated": "2026-11-06T13:27:26.601Z",
+  "total_verified_learnings": 1224,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -36556,11 +36556,16 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "a723f1e0",
-      "content_hash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
+      "source_version": "119488a5",
+      "content_hash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Roll the proxy deployment when the bootstrap config is changed (#14985)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1768,
           "title": "CVE fixes (#14832)",
@@ -36632,7 +36637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:50:19.381Z",
+      "verified_at": "2026-11-06T13:27:20.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38383,11 +38388,16 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "a7663045",
-      "content_hash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
+      "source_version": "d428762a",
+      "content_hash": "d5fdb0753493749dc5530130258c0c9d1ff012395ca29a34ddad60b9268bafa2",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Renderer: Security: Always serialise attribute values and drop invalid attribute",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3052,
           "title": "Trying to fix flaky test failure on CI",
@@ -38419,7 +38429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:17:25.177Z",
+      "verified_at": "2026-11-06T13:27:17.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45418,14 +45428,19 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "3592d4bb",
-      "content_hash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
+      "source_version": "7a0908ae",
+      "content_hash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "NUC 85 Fixed Cross-Property Class Anchors",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Correct the solver commit in the ARC-NUC-c9e6f938 record",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45719,7 +45734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:55:41.441Z",
+      "verified_at": "2026-11-06T13:27:26.586Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52640,11 +52655,16 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "12890d87",
-      "content_hash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
+      "source_version": "0d7f9b32",
+      "content_hash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Move QUIC-specific checks into `Tls13Extensions`",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1755,
           "title": "ci: pass --locked to the i686 crossbuild",
@@ -52751,7 +52771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:59:33.945Z",
+      "verified_at": "2026-11-06T13:27:23.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184090,6 +184110,82 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-05T22:47:51.140Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-milind-soni-openmausbot": {
+      "learning_id": "learn-github-milind-soni-openmausbot",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "milind-soni/OpenMausBot",
+      "repository": "milind-soni/OpenMausBot",
+      "slug": "milind-soni-openmausbot",
+      "platform": "github",
+      "source_url": "https://github.com/milind-soni/OpenMausBot",
+      "source_version": "fb31cb7d",
+      "content_hash": "994a090d2ccc6ccf0747efa746cb2c083890fe9d8622794100ab46c0b85e4981",
+      "dossier_path": "07_PROJECT_LEARNING/milind-soni-openmausbot-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/milind-soni-openmausbot-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #4643 from milind-soni/fix/edge-caddy-lf",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T13:27:08.985Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-microsoft-florence-2-base": {
+      "learning_id": "learn-huggingface-microsoft-florence-2-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "microsoft/Florence-2-base",
+      "repository": "microsoft/Florence-2-base",
+      "slug": "hf-microsoft-florence-2-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/microsoft/Florence-2-base",
+      "source_version": "hf-microsoft-florence-2-base",
+      "content_hash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Unified Task Representation via Prompt-Conditioned Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Structured Output Parsing with Strict Format Invariants",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hierarchical Patching for Computational Efficiency in Vision Encoders",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T13:27:19.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

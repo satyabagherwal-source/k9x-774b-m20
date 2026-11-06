@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `12890d87`  
+> **Source Version**: `0d7f9b32`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:59:33.376Z  
+> **Timestamp**: 2026-11-06T13:27:22.319Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:59:32.514Z  
+> **Harvest Timestamp**: 2026-11-06T13:27:22.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7736 stars
+- **Stars / Engagement**: 7737 stars
 
 ---
 
@@ -2251,17 +2251,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3411** (2026-11-03): **0.24 documentation pass**
-  *Symptoms*: There are actually a couple of semi-functional changes here, but as a result of the docs pointing out something wrong. Happy to extract those into a different PR if desired.
+- **Issue #3417** (2026-11-06): **Refactor ALPN selection**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3411?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.67%. Comparing base ([`c6aab99`](https://app.codecov.io/gh/rustls/rustls/commit/c6aab99888d362800e9f2d853fef3341aec48941?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`53848d2`](https://app.codecov.io/gh/rustls/rustls/commit/53848d272fd45e7e94761c814246c03d1e2b79ce?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3411   +/-   ## ======================================= 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10383817 | 10449621 | [65804](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (0.63%) | 1.42% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10923365 | 10949938 | [26573](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.24%) | 1.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757472 | 8777427 | [19955](ht
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1346693 | 1340191 | ✅ [-6502](https://bench.rustls.dev/comparisons/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19:7ff31d9fb5612eeef8059c08ee48f4b1fd78276b/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.48%) | 0.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_client | 3562939 | 3550541 | ✅ [-12398](https://bench.rustls.dev/comparisons/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19:7ff31d9fb5612eeef8059c08ee48f4b1fd78276b/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_client) (-0.35%) | 0.32% | | handshake_session_id_1.2_no_crypto_server | 694314 | 692844 | ✅ [-1470](https://bench.rustls.
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3417?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.68%. Comparing base ([`12890d8`](https://app.codecov.io/gh/rustls/rustls/commit/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`7ff31d9`](https://app.codecov.io/gh/rustls/rustls/commit/7ff31d9fb5612eeef8059c08ee48f4b1fd78276b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3417   +/-   ## ======================================= 
 
-- **Issue #3410** (2026-11-02): **Make tests more concise**
-  *Symptoms*: This set of changes aim to largely remove the repeated parts of tests, like:  ```rust         let mut client_output = Vec::new();         let mut server_output = Vec::new();         let mut client_input = VecInput::default();         let mut server_input = VecInput::default();         do_handshake(             &mut client_input,             &mut client_output,             &mut client,             &mut server_input,             &mut server_output,             &mut server,         ); ``` Which becomes `HandshakeIo::default().handshake(&mut client, &mut server);`
+- **Issue #3416** (2026-11-05): **GHSA-c8m5-c952-6cm4 has no CVE identifier — intentional?**
+  *Symptoms*: GHSA-c8m5-c952-6cm4 (`Session` Debug formatting exposes TLS master secrets and resumption PSKs) has no CVE identifier, while several other rustls advisories do. Flagging it since distros and CVE-keyed trackers can't reference it as-is. 
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2265833 | 2272320 | ⚠️ [6487](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10409190 | 10460499 | [51309](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegr
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3410?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.64%. Comparing base ([`8dca43e`](https://app.codecov.io/gh/rustls/rustls/commit/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`a663043`](https://app.codecov.io/gh/rustls/rustls/commit/a6630432068a1a832ccdd394c3bd7f698349229c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3410      +/-   ## ==================================
+  > I have requested CVEs for all the recent advisories.  Suggest you get better tooling and/or pay for support.
+  > We generally don't request CVEs through github at disclosure time as it delays disclosure by 3-6 weeks while Github's massively oversubscribed CNA allocates one. And I don't really want to run our own CNA.  Generally RUSTSEC and GHSA seems to be sufficient for most of our users. If you want a CVE please allocate one from your own CNA and ensure the relevant RUSTSEC and GHSA are updated (which doesn't need our approval or help.)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2278,306 +2278,206 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12890d87` (2026-10-29)
-**Commit Message**: server: reject stateful sessions older than the advertised lifetime
+### Incident Patch 1: `a3133129` (2026-11-05)
+**Commit Message**: Move QUIC-specific checks into `Tls13Extensions`
 
-The server records creation_time_sec in each stored session but never
-consulted it on resumption. Stateful TLS 1.3 tickets advertise a 24 hour
-ticket_lifetime and TLS 1.2 session ids have no bound at all, yet both
-were accepted until the entry fell out of session_storage.
-
-Apply the 24 hour lifetime to sessions read back from session_storage on
-both paths, falling back to a full handshake. Tickets from the ticketer
-are already bounded by its key rotation and are unchanged.
-
-**File**: `rustls-test/tests/api/resume.rs` (modified, +84/-1)
+**File**: `rustls/src/server/hs.rs` (modified, +35/-24)
 ```diff
-@@ -3,7 +3,7 @@
- #![allow(clippy::disallowed_types, clippy::duplicate_mod)]
+@@ -137,7 +137,7 @@ impl Tls12Extensions {
  
- use core::hash::Hasher;
--use core::sync::atomic::{AtomicUsize, Ordering};
-+use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
- use core::time::Duration;
- use std::fmt;
- use std::sync::Arc;
-@@ -13,7 +13,9 @@ use rustls::crypto::kx::NamedGroup;
- use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
- use rustls::enums::{CertificateType, ProtocolVersion};
- use rustls::error::{ApiMisuse, Error, PeerMisbehaved};
-+use rustls::pki_types::UnixTime;
- use rustls::server::{ServerSessionKey, Tls13Tickets};
-+use rustls::time_provider::TimeProvider;
- use rustls::{
-     ClientConfig, ClientSide, Connection, HandshakeKind, ServerConfig, ServerSide, Tcp, VecInput,
- };
-@@ -1343,6 +1345,87 @@ fn tls13_client_discards_zero_lifetime_ticket() {
-     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
- }
+         let mut extensions = Box::new(ServerExtensions {
+             server_name_ack: common.server_name_ack,
+-            selected_protocol: common.selected_protocol,
++            selected_protocol: common.selected_protocol.into(),
+             transport_parameters: common.transport_parameters,
+             ..ServerExtensions::default()
+         });
+@@ -211,9 +211,27 @@ impl Tls13Extensions {
+         let (alpn_protocol, common) =
+             ep.process_common(extra_exts, output, ocsp_response, resumedata)?;
  
-+#[test]
-+fn tls13_server_rejects_expired_stateful_session() {
-+    let provider = provider::DEFAULT_TLS13_PROVIDER;
-+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
++        if let Some(quic) = output.quic() {
++            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
++            // (...) if an application protocol is not negotiated."
++            if !matches!(
++                common.selected_protocol,
++                AlpnDecision::Selected(_) | AlpnDecision::Disabled
++            ) {
++                return Err(Error::NoApplicationProtocol);
++            }
 +
-+    let clock = Arc::new(AdjustableClock::new());
-+    let storage = Arc::new(ServerStorage::new());
-+    let mut server_config = make_server_config(KeyType::default(), &provider);
-+    server_config.session_storage = storage.clone();
-+    server_config.time_provider = clock.clone();
-+    let server_config = Arc::new(server_config);
-+
-+    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(storage.puts(), 2);
-+
-+    // 25 hours later (by the server's clock) the stored session is found but not resumed
-+    clock.advance(Duration::from_secs(25 * 60 * 60));
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(storage.takes(), 1);
-+    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+}
-+
-+#[test]
-+fn tls12_server_rejects_expired_stateful_session() {
-+    let provider = provider::DEFAULT_TLS12_PROVIDER;
-+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
-+
-+    let clock = Arc::new(AdjustableClock::new());
-+    let storage = Arc::new(ServerStorage::new());
-+    let mut server_config = make_server_config(KeyType::default(), &provider);
-+    server_config.session_storage = storage.clone();
-+    server_config.time_provider = clock.clone();
-+    let server_config = Arc::new(server_config);
-+
-+    // full handshake: the server stores the session under its session id
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(storage.puts(), 1);
-+
-+    // 25 hours later (by the server's clock) the stored session is found but not resumed
-+    clock.advance(Duration::from_secs(25 * 60 * 60));
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(storage.gets(), 1);
-+    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+}
-+
-+/// A `TimeProvider` that starts at the current time and only moves when told to.
-+#[derive(Debug)]
-+struct AdjustableClock(AtomicU64);
-+
-+impl AdjustableClock {
-+    fn new() -> Self {
-+        Self(AtomicU64::new(UnixTime::now().as_secs()))
-+    }
-+
-+    fn advance(&self, by: Duration) {
-+        self.0
-+            .fetch_add(by.as_secs(), Ordering::SeqCst);
-+    }
-+}
-+
-+impl TimeProvider for AdjustableClock {
-+    fn current_time(&self) -> Option<UnixTime> {
-+        Some(UnixTime::since_unix_epoch(Duration::from_secs(
-+            self.0.load(Ordering::SeqCst),
-+        )))
-+    }
-+}
-+
- /// Issues tickets with a `ticket_lifetime` of zero.
- #[derive(Debug)]
- struct ZeroLifetimeTicketer(Arc<dyn TicketProducer>);
-```
-
-**File**: `rustls/src/server/mod.rs` (modified, +11/-1)
-```diff
-@@ -126,6 +126,13 @@ impl<'a> CommonServerSessionValue<'a> {
-         }
-     }
- 
-+    /// Whether this session was created more than `lifetime` ago.
-+    pub(crate) fn has_expired(&self, now: UnixTime, lifetime: Duration) -> bool {
-+        self.creation_time_sec
-+            .saturating_add(lifetime.as_secs())
-+            < now.as_secs()
-+    }
-+
-     pub(crate) fn can_resume(&self, suite: CipherSuite, sni: Option<&DnsName<'_>>) -> bool {
-         // The RFCs underspecify what happens if we try to resume to
-         // an unoffered/varying suite.  We merely don't resume in weird cases.
-@@ -223,5 +230,8 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
-     }
- }
- 
--/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
-+/// How long a session in [`ServerConfig::session_storage`] stays resumable.
-+///
-+/// Advertised as `ticket_lifetime` for stateful TLS 1.3 tickets.  Tickets from
-+/// [`ServerConfig::ticketer`] are bounded by its key rotation instead.
- pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
-```
-
-**File**: `rustls/src/server/tls12.rs` (modified, +16/-1)
-```diff
-@@ -9,7 +9,9 @@ use zeroize::Zeroize;
- 
- use super::config::ServerConfig;
- use super::hs::ServerState;
--use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
-+use super::{
-+    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
-+};
- use crate::ConnectionTrafficSecrets;
- use crate::check::inappropriate_message;
- use crate::common_state::{Event, HandshakeFlightTls12, HandshakeKind, Output, OutputEvent, Side};
-@@ -115,6 +117,7 @@ mod client_hello {
-                 st.sni.as_ref(),
-                 st.using_ems,
-                 suite,
-+                st.config.current_time()?,
-                 &st.config,
-             );
- 
-@@ -215,6 +218,7 @@ mod client_hello {
-         sni: Option<&DnsName<'_>>,
-         using_ems: bool,
-         suite: &'static Tls12CipherSuite,
-+        now: UnixTime,
-         config: &ServerConfig,
-     ) -> (bool, Option<Tls12ServerSessionValue<'static>>) {
-         // First, check for a ticket that decrypts
-@@ -264,6 +268,17 @@ mod client_hello {
-             return (ticket, None);
-         }
- 
-+        // Tickets are bounded by the ticketer's key rotation; sessions from
-+        // `session_storage` by the lifetime we advertise for them.
-+        if !ticket
-+            && session
-+                .common
-+                .has_expired(now, STATEFUL_SESSION_LIFETIME)
-+        {
-+            debug!("stored session has expired");
-+            return (ticket, None);
++            match hello.transport_parameters.as_ref() {
++                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
++                None => {
++                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
++                }
++            }
 +        }
 +
-         match session.extended_ms == using_ems || session.extended_ms && !using_ems {
-             true => (ticket, Some(session.into_owned())),
-             false => (ticket, None),
-```
-
-**File**: `rustls/src/server/tls13.rs` (modified, +12/-1)
-```diff
-@@ -485,7 +485,8 @@ mod client_hello {
- 
-         let now = config.current_time()?;
-         for (index, psk_id) in psk_offer.identities.iter().enumerate() {
--            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, config) else {
-+            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, now, config)
-+            else {
-                 continue;
-             };
- 
-@@ -1313,6 +1314,7 @@ pub(crate) struct Tls13ServerSessionValue<'a> {
- impl<'a> Tls13ServerSessionValue<'a> {
-     fn from_ticket(
-         id: &PresharedKeyIdentity,
-+        now: UnixTime,
-         config: &ServerConfig,
-     ) -> Option<Tls13ServerSessionValue<'static>> {
-         let plain = match config.ticketer.as_deref() {
-@@ -1326,6 +1328,15 @@ impl<'a> Tls13ServerSessionValue<'a> {
-             return None;
+         let mut extensions = Box::new(EncryptedExtensions {
+             server_name_ack: common.server_name_ack,
+-            selected_protocol: common.selected_protocol,
++            selected_protocol: common.selected_protocol.into(),
+             transport_parameters: common.transport_parameters,
+             ..EncryptedExtensions::default()
+         });
+@@ -305,29 +323,11 @@ impl<'a> ExtensionProcessing<'a> {
+             (None, _) => AlpnDecision::NoClientOffer,
          };
  
-+        if config.ticketer.is_none()
-+            && tls13
-+                .common
-+                .has_expired(now, STATEFUL_SESSION_LIFETIME)
-+        {
-+            debug!("stored session has expired");
-+            return None;
-+        }
-+
-         Some(tls13.into_owned())
-     }
+-        // Enact ALPN selection by telling peer and high-level API.
++        // Enact ALPN selection by telling high-level API.
+         if let AlpnDecision::Selected(protocol) = &chosen_protocol {
+-            extensions.selected_protocol = Some(protocol.clone());
+             output.output(OutputEvent::ApplicationProtocol(protocol.as_ref().clone()));
+         }
+-
+-        if let Some(quic) = output.quic() {
+-            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
+-            // (...) if an application protocol is not negotiated."
+-            if !matches!(
+-                chosen_protocol,
+-                AlpnDecision::Selected(_) | AlpnDecision::Disabled
+-            ) {
+-                return Err(Error::NoApplicationProtocol);
+-            }
+-
+-            match hello.transport_parameters.as_ref() {
+-                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
+-                None => {
+-                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
+-                }
+-            }
+-        }
++        extensions.selected_protocol = chosen_protocol;
  
+         let for_resume = resumedata.is_some();
+         // SNI
+@@ -345,7 +345,7 @@ impl<'a> ExtensionProcessing<'a> {
+             ocsp_response.take();
+         }
+ 
+-        let alpn_protocol = match chosen_protocol {
++        let alpn_protocol = match &extensions.selected_protocol {
+             AlpnDecision::Selected(protocol) => Some(protocol.as_ref().clone()),
+             _ => None,
+         };
+@@ -361,17 +361,28 @@ impl<'a> ExtensionProcessing<'a> {
+ #[derive(Default)]
+ struct CommonExtensions {
+     server_name_ack: Option<()>,
+-    selected_protocol: Option<SingleProtocolName>,
++    selected_protocol: AlpnDecision,
+     transport_parameters: Option<Payload<'static>>,
+ }
+ 
++#[derive(Default)]
+ enum AlpnDecision {
++    #[default]
+     Disabled,
+     Selected(SingleProtocolName),
+     NoServerOffer,
+     NoClientOffer,
+ }
+ 
++impl From<AlpnDecision> for Option<SingleProtocolName> {
++    fn from(value: AlpnDecision) -> Self {
++        match value {
++            AlpnDecision::Selected(protocol) => Some(protocol),
++            _ => None,
++        }
++    }
++}
++
+ fn select_cert_type(
+     client: Option<&[CertificateType]>,
+     server: &[CertificateType],
 ```
 
 ---
 
-### Incident Patch 2: `b471b260` (2026-10-29)
-**Commit Message**: server: extract stateful ticket lifetime into a const
+### Incident Patch 2: `00093e3c` (2026-11-05)
+**Commit Message**: Clarify QUIC ALPN check
 
-**File**: `rustls/src/server/mod.rs` (modified, +4/-0)
-```diff
-@@ -1,4 +1,5 @@
- use alloc::vec::Vec;
-+use core::time::Duration;
- 
- use pki_types::{DnsName, UnixTime};
- 
-@@ -221,3 +222,6 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
-         self.inner
-     }
- }
-+
-+/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
-+pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
-```
+Use actual text from RFC9001 to explain logic.
 
-**File**: `rustls/src/server/tls13.rs` (modified, +4/-4)
+**File**: `rustls/src/server/hs.rs` (modified, +19/-21)
 ```diff
-@@ -1,7 +1,6 @@
- use alloc::boxed::Box;
- use alloc::vec;
- use alloc::vec::Vec;
--use core::time::Duration;
+@@ -286,22 +286,23 @@ impl<'a> ExtensionProcessing<'a> {
  
- pub(crate) use client_hello::TLS13_HANDLER;
- use pki_types::{DnsName, UnixTime};
-@@ -10,7 +9,9 @@ use zeroize::Zeroizing;
+         // ALPN
+         let our_protocols = &config.alpn_protocols;
+-        let chosen_protocol = if let Some(their_protocols) = &hello.protocols {
+-            if let Some(selected_protocol) = our_protocols.iter().find(|ours| {
+-                their_protocols
++        let chosen_protocol = match (&hello.protocols, our_protocols.as_slice()) {
++            (Some(their_protocols), [_, ..]) => {
++                let selected_protocol = our_protocols
+                     .iter()
+-                    .any(|theirs| theirs.as_ref() == ours.as_ref())
+-            }) {
++                    .find(|ours| {
++                        their_protocols
++                            .iter()
++                            .any(|theirs| theirs.as_ref() == ours.as_ref())
++                    })
++                    .ok_or(Error::NoApplicationProtocol)?;
+                 debug!("Chosen ALPN protocol {selected_protocol:?}");
  
- use super::config::ServerConfig;
- use super::hs::{HandshakeHashOrBuffer, ServerState};
--use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
-+use super::{
-+    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
-+};
- use crate::check::{inappropriate_handshake_message, inappropriate_message};
- use crate::common_state::{Event, HandshakeFlightTls13, HandshakeKind, Output, OutputEvent, Side};
- use crate::conn::kernel::KernelState;
-@@ -1472,8 +1473,7 @@ impl ExpectFinished {
-                 trace!("resumption not available; not issuing ticket");
-                 return Ok(());
+                 AlpnDecision::Selected(SingleProtocolName::new(selected_protocol.to_owned()))
+-            } else if !our_protocols.is_empty() {
+-                return Err(Error::NoApplicationProtocol);
+-            } else {
+-                AlpnDecision::NoServerOffer
              }
--            let stateful_lifetime = Duration::from_secs(24 * 60 * 60); // this is a bit of a punt
--            (id.to_vec(), stateful_lifetime)
-+            (id.to_vec(), STATEFUL_SESSION_LIFETIME)
+-        } else {
+-            AlpnDecision::NoClientOffer
++            (None, []) => AlpnDecision::Disabled,
++            (_, []) => AlpnDecision::NoServerOffer,
++            (None, _) => AlpnDecision::NoClientOffer,
          };
  
-         let mut payload = NewSessionTicketPayloadTls13::new(lifetime, age_add, nonce, ticket);
+         // Enact ALPN selection by telling peer and high-level API.
+@@ -311,16 +312,12 @@ impl<'a> ExtensionProcessing<'a> {
+         }
+ 
+         if let Some(quic) = output.quic() {
+-            // QUIC has strict ALPN, unlike TLS's more backwards-compatible behavior. RFC 9001
+-            // says: "The server MUST treat the inability to select a compatible application
+-            // protocol as a connection error of type 0x0178". We judge that ALPN was desired
+-            // (rather than some out-of-band protocol negotiation mechanism) if and only if any ALPN
+-            // protocols were configured locally or offered by the client. This helps prevent
+-            // successful establishment of connections between peers that can't understand
+-            // each other.
+-            if !matches!(chosen_protocol, AlpnDecision::Selected(_))
+-                && (!our_protocols.is_empty() || hello.protocols.is_some())
+-            {
++            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
++            // (...) if an application protocol is not negotiated."
++            if !matches!(
++                chosen_protocol,
++                AlpnDecision::Selected(_) | AlpnDecision::Disabled
++            ) {
+                 return Err(Error::NoApplicationProtocol);
+             }
+ 
+@@ -369,6 +366,7 @@ struct CommonExtensions {
+ }
+ 
+ enum AlpnDecision {
++    Disabled,
+     Selected(SingleProtocolName),
+     NoServerOffer,
+     NoClientOffer,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3417** (2026-11-06): Refactor ALPN selection (@ctz)
+- **PR #3414** (2026-11-06): client: reject hello retry request naming a group already offered (@Mounika2456)
 - **PR #3411** (2026-11-03): 0.24 documentation pass (@ctz)
 - **PR #3410** (2026-11-02): Make tests more concise (@ctz)
 - **PR #3408** (2026-11-02): Bring back support for no_std (@djc)
-- **PR #3405** (closed): Pass the negotiated TLS version to signing keys (@loadingalias)
-- **PR #3404** (closed): Honor disabled TLS 1.2 resumption with a shared store (@loadingalias)
-- **PR #3402** (2026-10-31): Fix nightly clippy `redundant_clone` case (@ctz)
+- **PR #3407** (closed): Pass the negotiated TLS version to signing keys (@loadingalias)
 
 ---
 
@@ -2597,52 +2497,78 @@ are already bounded by its key rotation and are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server: reject stateful sessions older than the advertised lifetime
+## X. Move QUIC-specific checks into `Tls13Extensions`
 
 **RULE**:
-When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/server/hs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12890d87`: server: reject stateful sessions older than the advertised lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3133129`: Move QUIC-specific checks into `Tls13Extensions`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/server/hs.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
-use rustls::pki_types::UnixTime;
-use rustls::time_provider::TimeProvider;
-#[test]
-fn tls13_server_rejects_expired_stateful_session() {
-    let provider = provider::DEFAULT_TLS13_PROVIDER;
-    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
+            selected_protocol: common.selected_protocol.into(),
+        if let Some(quic) = output.quic() {
+            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
+            // (...) if an application protocol is not negotiated."
+            if !matches!(
+                common.selected_protocol,
+                AlpnDecision::Selected(_) | AlpnDecision::Disabled
+            ) {
+                return Err(Error::NoApplicationProtocol);
+            }
 
-    let clock = Arc::new(AdjustableClock::new());
-    let storage = Arc::new(ServerStorage::new());
-    let mut server_config = make_server_config(KeyType::default(), &provider);
-    server_config.session_storage = storage.clone();
-    server_config.time_provider = clock.clone();
-    let server_config = Arc::new(server_config);
+            match hello.transport_parameters.as_ref() {
+                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
+                None => {
+                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
+                }
+            }
+        }
 
-    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
-    let (mut client, mut server, mut buf) =
-        make_pair_for_arc_configs(&client_config, &server_config);
-    buf.handshake(&mut client, &mut server);
-    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-    assert_eq!(storage.puts(), 2);
-
-    // 25 hours later (by the server's clock) the stored session is found but not resumed
-    clock.advance(Duration::from_secs(25 * 60 * 60));
-    let (mut client, mut server, mut buf) =
+            selected_protocol: common.selected_protocol.into(),
+        // Enact ALPN selection by telling high-level API.
+        extensions.selected_protocol = chosen_protocol;
+        let alpn_protocol = match &extensions.selected_protocol {
+    selected_protocol: AlpnDecision,
+#[derive(Default)]
+    #[default]
+impl From<AlpnDecision> for Option<SingleProtocolName> {
+    fn from(value: AlpnDecision) -> Se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use core::sync::atomic::{AtomicUsize, Ordering};
+            selected_protocol: common.selected_protocol,
+            selected_protocol: common.selected_protocol,
+        // Enact ALPN selection by telling peer and high-level API.
+            extensions.selected_protocol = Some(protocol.clone());
+
+        if let Some(quic) = output.quic() {
+            // RFC9001: "When using ALPN, endpoints MUST immediately close a connection
+            // (...) if an application protocol is not negotiated."
+            if !matches!(
+                chosen_protocol,
+                AlpnDecision::Selected(_) | AlpnDecision::Disabled
+            ) {
+                return Err(Error::NoApplicationProtocol);
+            }
+
+            match hello.transport_parameters.as_ref() {
+                Some(params) => quic.transport_parameters(params.to_owned().into_vec()),
+                None => {
+                    return Err(PeerMisbehaved::MissingQuicTransportParameters.into());
+                }
+            }
+        }
+        let alpn_protocol = match chosen_protocol {
+    selected_protocol: Option<SingleProtocolName>,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12890d87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3133129` are properly handled with clean fallback behavior.

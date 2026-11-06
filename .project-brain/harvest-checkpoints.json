@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T13:20:30.621Z",
+  "last_updated": "2026-11-06T13:27:26.666Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "888a72a47d33b43be83de122db6556d290f04d7e6b9cf458fd59be93a19e5406",
-      "verified_at": "2026-11-05T23:55:41.540Z",
+      "content_hash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
+      "verified_at": "2026-11-06T13:27:26.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:55:41.540Z"
+      "last_updated": "2026-11-06T13:27:26.666Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "a925de23ad53640767bf863b3cdf6ef0efade0e506124efdffee84cbd20db241",
-      "verified_at": "2026-11-04T17:59:34.046Z",
+      "content_hash": "bf930d4b4758720baf0f36646074106f215d97f47b80390d76d60aad98e94f49",
+      "verified_at": "2026-11-06T13:27:23.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:59:34.046Z"
+      "last_updated": "2026-11-06T13:27:23.536Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
-      "verified_at": "2026-11-05T08:50:19.522Z",
+      "content_hash": "009c2c9831de0b90522d701b0a87e85438f351ea8c70f587d0640df0f69ba402",
+      "verified_at": "2026-11-06T13:27:20.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:50:19.522Z"
+      "last_updated": "2026-11-06T13:27:20.245Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "cf7ae968dd13b97a38c5309b430884e87127c81f3c4da37239be27698157e2af",
-      "verified_at": "2026-11-04T00:17:25.252Z",
+      "content_hash": "d5fdb0753493749dc5530130258c0c9d1ff012395ca29a34ddad60b9268bafa2",
+      "verified_at": "2026-11-06T13:27:17.391Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:17:25.252Z"
+      "last_updated": "2026-11-06T13:27:17.391Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
@@ -18119,6 +18119,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-05T22:47:51.230Z"
+    },
+    "milind-soni/OpenMausBot": {
+      "repository": "milind-soni/OpenMausBot",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-milind-soni-openmausbot",
+      "content_hash": "994a090d2ccc6ccf0747efa746cb2c083890fe9d8622794100ab46c0b85e4981",
+      "verified_at": "2026-11-06T13:27:09.068Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T13:27:09.068Z"
+    },
+    "microsoft/Florence-2-base": {
+      "repository": "microsoft/Florence-2-base",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-microsoft-florence-2-base",
+      "content_hash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+      "verified_at": "2026-11-06T13:27:19.299Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T13:27:19.299Z"
     }
   },
   "repos": {

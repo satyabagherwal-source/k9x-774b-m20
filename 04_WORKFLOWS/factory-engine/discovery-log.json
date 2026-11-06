@@ -20467,5 +20467,32 @@
     "qualityScore": 9353,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T22:45:57.117Z"
+  },
+  {
+    "name": "OpenMausBot",
+    "fullName": "milind-soni/OpenMausBot",
+    "url": "https://github.com/milind-soni/OpenMausBot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source Grok Bot alternative with a virtual machine that bots can use",
+    "stars": 14381,
+    "forks": 1983,
+    "openIssues": 751,
+    "language": "TypeScript",
+    "qualityScore": 8235,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-06T13:23:19.970Z"
+  },
+  {
+    "name": "microsoft/Florence-2-base",
+    "fullName": "microsoft/Florence-2-base",
+    "url": "https://huggingface.co/microsoft/Florence-2-base",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: microsoft/Florence-2-base (435 likes, 9212981 downloads)",
+    "likes": 435,
+    "downloads": 9212981,
+    "qualityScore": 6350,
+    "discoveredAt": "2026-11-06T13:24:51.075Z"
   }
 ]

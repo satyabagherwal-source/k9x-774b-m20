@@ -4892,3 +4892,9 @@ https://github.com/davila7/claude-code-templates
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T22:47:38.836Z] ---
 # [MOBILE-CROSS-PLATFORM] a2ui-project/a2ui (9353 score) - Open-source generative UI framework: agents stream declarative JSON, and apps re
 https://github.com/a2ui-project/a2ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T13:26:59.511Z] ---
+# [AI-AGENTS] milind-soni/OpenMausBot (8235 score) - Open-source Grok Bot alternative with a virtual machine that bots can use
+https://github.com/milind-soni/OpenMausBot
+# [HUGGINGFACE-AI-MODELS] microsoft/Florence-2-base (6350 score) - Verified Hugging Face Model: microsoft/Florence-2-base (435 likes, 9212981 downl
+https://huggingface.co/microsoft/Florence-2-base
